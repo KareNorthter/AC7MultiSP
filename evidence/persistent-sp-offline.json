@@ -1,0 +1,1318 @@
+{
+  "date": "2026-10-13",
+  "branch": "codex/persistent-sp-research",
+  "steam_build": 9855922,
+  "scope": "自有资源索引及名称线索、历史函数体重新整理；没有实机验证",
+  "game_started": false,
+  "game_process_accessed": false,
+  "runtime_modified": false,
+  "compiled": false,
+  "tests_run": false,
+  "parser_limitation": "UAssetGUI 1.1.0 首个 JSON 导出超时，停止重复调用；无已解析新导出对象",
+  "assets": [
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+      "encrypted_sha256": "686dfa0039376101653804789f743ac6088bed53bfd544c6ebb074a75ef9b9fd",
+      "decoded_sha256": "c2acd426fd4767d9ce32cb4ecc8585954686e58f09076c32e5049378c608acbc",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "ChildSWPMeshes",
+          "file_offset": "0x2e40"
+        },
+        {
+          "name": "GetSwpMeshes",
+          "file_offset": "0x497c"
+        },
+        {
+          "name": "MaxWeaponCount",
+          "file_offset": "0x5b44"
+        },
+        {
+          "name": "PlayerSpecialWeaponConfig",
+          "file_offset": "0x628d"
+        },
+        {
+          "name": "PlayerWeaponActivator",
+          "file_offset": "0x62af"
+        },
+        {
+          "name": "RefuelOffMesh",
+          "file_offset": "0x64e5"
+        },
+        {
+          "name": "RefuelOnMesh",
+          "file_offset": "0x64fb"
+        },
+        {
+          "name": "SpecialWeaponConfig1",
+          "file_offset": "0x6b0f"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "file_offset": "0x6b2c"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "file_offset": "0x6b49"
+        },
+        {
+          "name": "SWP Meshes",
+          "file_offset": "0x6d16"
+        },
+        {
+          "name": "SWP1",
+          "file_offset": "0x6d29"
+        },
+        {
+          "name": "SWP2",
+          "file_offset": "0x6d36"
+        },
+        {
+          "name": "SWP3",
+          "file_offset": "0x6d43"
+        },
+        {
+          "name": "TickClass",
+          "file_offset": "0x6f97"
+        },
+        {
+          "name": "WeaponMeshBase",
+          "file_offset": "0x7444"
+        },
+        {
+          "name": "WeaponMeshBase_GEN_VARIABLE",
+          "file_offset": "0x745b"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_droptank.uasset",
+      "encrypted_sha256": "ce49a2727a86c9cb5fd298213cc7c8e9703d86c09ff9217ac44218b1b990149f",
+      "decoded_sha256": "bdd55174c7cacfc75ecfcafa51385a14a9f73235bf387b2785cf3c4607a1d034",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "Game/Blueprint/Weapons/Bomb_BaseClass",
+          "file_offset": "0xc6"
+        },
+        {
+          "name": "EWeaponID::WID_droptank",
+          "file_offset": "0x80e"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0x9b0"
+        },
+        {
+          "name": "MaxLoadedCount",
+          "file_offset": "0x9fb"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0xe0c"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa44.uasset",
+      "encrypted_sha256": "ae7f864de6d2b97eede8904a568b6ac3886110f97ee5f58413de33b64f1c7be5",
+      "decoded_sha256": "49fd6ddbe7b017573a741699f2a1d06b2c5b5e9003b763f4f72d5fbd75681f15",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "MaxWeaponCount",
+          "file_offset": "0x1a10"
+        },
+        {
+          "name": "PlayerSpecialWeaponConfig",
+          "file_offset": "0x1e1d"
+        },
+        {
+          "name": "PlayerWeaponActivator",
+          "file_offset": "0x1e3f"
+        },
+        {
+          "name": "RefuelOffMesh",
+          "file_offset": "0x1f37"
+        },
+        {
+          "name": "RefuelOnMesh",
+          "file_offset": "0x1f4d"
+        },
+        {
+          "name": "SpecialWeaponConfig1",
+          "file_offset": "0x214d"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "file_offset": "0x216a"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "file_offset": "0x2187"
+        },
+        {
+          "name": "SWP1",
+          "file_offset": "0x2216"
+        },
+        {
+          "name": "SWP1_GEN_VARIABLE",
+          "file_offset": "0x2223"
+        },
+        {
+          "name": "SWP2",
+          "file_offset": "0x223d"
+        },
+        {
+          "name": "SWP2_GEN_VARIABLE",
+          "file_offset": "0x224a"
+        },
+        {
+          "name": "SWP3",
+          "file_offset": "0x2264"
+        },
+        {
+          "name": "SWP3_GEN_VARIABLE",
+          "file_offset": "0x2271"
+        },
+        {
+          "name": "WeaponMeshBase",
+          "file_offset": "0x24b1"
+        },
+        {
+          "name": "WeaponMeshBase_GEN_VARIABLE",
+          "file_offset": "0x24c8"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su35.uasset",
+      "encrypted_sha256": "867296918e3045bbbe5fc0d93ff5cbfcf85f9aa399ef18fdaac590fdd239045a",
+      "decoded_sha256": "72672e206a8b930e75d6820e548176a2cd9c388473fc31f2997b454a602ee417",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "MaxWeaponCount",
+          "file_offset": "0x1588"
+        },
+        {
+          "name": "PlayerSpecialWeaponConfig",
+          "file_offset": "0x19b7"
+        },
+        {
+          "name": "PlayerWeaponActivator",
+          "file_offset": "0x19d9"
+        },
+        {
+          "name": "RefuelOffMesh",
+          "file_offset": "0x1ad2"
+        },
+        {
+          "name": "RefuelOnMesh",
+          "file_offset": "0x1ae8"
+        },
+        {
+          "name": "SpecialWeaponConfig1",
+          "file_offset": "0x1d37"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "file_offset": "0x1d54"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "file_offset": "0x1d71"
+        },
+        {
+          "name": "SWP1",
+          "file_offset": "0x1f37"
+        },
+        {
+          "name": "SWP1_GEN_VARIABLE",
+          "file_offset": "0x1f44"
+        },
+        {
+          "name": "SWP2",
+          "file_offset": "0x1f5e"
+        },
+        {
+          "name": "SWP2_GEN_VARIABLE",
+          "file_offset": "0x1f6b"
+        },
+        {
+          "name": "SWP3",
+          "file_offset": "0x1f85"
+        },
+        {
+          "name": "SWP3_GEN_VARIABLE",
+          "file_offset": "0x1f92"
+        },
+        {
+          "name": "WeaponMeshBase",
+          "file_offset": "0x21b3"
+        },
+        {
+          "name": "WeaponMeshBase_GEN_VARIABLE",
+          "file_offset": "0x21ca"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Information/PartsDataTable.uasset",
+      "encrypted_sha256": "fb73a9dbaf620395d19c59a8be724383d48e203f69159b57da3ad930b0ce2429",
+      "decoded_sha256": "ed93e3b9873da983da4896bbbd7cd5ba2e90b9935c9fca93925eb5299c782aa6",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EPartsEnableGameMode::AllGameModeEnable",
+          "file_offset": "0x344"
+        },
+        {
+          "name": "EPartsEnableGameMode::OnlyCampaignModeEnable",
+          "file_offset": "0x374"
+        },
+        {
+          "name": "EPartsEnableGameMode::OnlyMultiPlayEnable",
+          "file_offset": "0x3a9"
+        },
+        {
+          "name": "EPartsParameterList::BombExplosionRadius",
+          "file_offset": "0xeaa"
+        },
+        {
+          "name": "EPartsParameterList::BombImpactRadius",
+          "file_offset": "0xedb"
+        },
+        {
+          "name": "EPartsParameterList::BombLockonRange",
+          "file_offset": "0xf09"
+        },
+        {
+          "name": "EPartsParameterList::BombPayload",
+          "file_offset": "0xf36"
+        },
+        {
+          "name": "EPartsParameterList::BombPower",
+          "file_offset": "0xf5f"
+        },
+        {
+          "name": "EPartsParameterList::BombReload",
+          "file_offset": "0xf86"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedAccel",
+          "file_offset": "0xfae"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedInit",
+          "file_offset": "0xfde"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedMax",
+          "file_offset": "0x100d"
+        },
+        {
+          "name": "EPartsParameterList::EMLEffectiveTime",
+          "file_offset": "0x103b"
+        },
+        {
+          "name": "EPartsParameterList::EMLEndTime",
+          "file_offset": "0x1069"
+        },
+        {
+          "name": "EPartsParameterList::EMLPower",
+          "file_offset": "0x1091"
+        },
+        {
+          "name": "EPartsParameterList::EMLRayCastRadius",
+          "file_offset": "0x10b7"
+        },
+        {
+          "name": "EPartsParameterList::LaserDamageRadius",
+          "file_offset": "0x1245"
+        },
+        {
+          "name": "EPartsParameterList::LaserEffectiveTime",
+          "file_offset": "0x1274"
+        },
+        {
+          "name": "EPartsParameterList::LaserEndTime",
+          "file_offset": "0x12a4"
+        },
+        {
+          "name": "EPartsParameterList::LaserPower",
+          "file_offset": "0x12ce"
+        },
+        {
+          "name": "EPartsParameterList::MGPEffectiveTime",
+          "file_offset": "0x12f6"
+        },
+        {
+          "name": "EPartsParameterList::MGPEndTime",
+          "file_offset": "0x1324"
+        },
+        {
+          "name": "EPartsParameterList::MGPPower",
+          "file_offset": "0x134c"
+        },
+        {
+          "name": "EPartsParameterList::MslAccel",
+          "file_offset": "0x14f6"
+        },
+        {
+          "name": "EPartsParameterList::MslEndTime",
+          "file_offset": "0x151c"
+        },
+        {
+          "name": "EPartsParameterList::MslHomingAng",
+          "file_offset": "0x1544"
+        },
+        {
+          "name": "EPartsParameterList::MslLockonRange",
+          "file_offset": "0x156e"
+        },
+        {
+          "name": "EPartsParameterList::MslPayload",
+          "file_offset": "0x159a"
+        },
+        {
+          "name": "EPartsParameterList::MslPower",
+          "file_offset": "0x15c2"
+        },
+        {
+          "name": "EPartsParameterList::MslReload",
+          "file_offset": "0x15e8"
+        },
+        {
+          "name": "EPartsParameterList::MslRotAngMax",
+          "file_offset": "0x160f"
+        },
+        {
+          "name": "EPartsParameterList::MslSeekSpeedInit",
+          "file_offset": "0x1639"
+        },
+        {
+          "name": "EPartsParameterList::MslSeekSpeedMax",
+          "file_offset": "0x1667"
+        },
+        {
+          "name": "EPartsParameterList::MslSpeedMax",
+          "file_offset": "0x1694"
+        },
+        {
+          "name": "EPartsParameterList::RktAccel",
+          "file_offset": "0x1c9d"
+        },
+        {
+          "name": "EPartsParameterList::RktEndTime",
+          "file_offset": "0x1cc3"
+        },
+        {
+          "name": "EPartsParameterList::RktHomingAng",
+          "file_offset": "0x1ceb"
+        },
+        {
+          "name": "EPartsParameterList::RktHomingPredictionRate",
+          "file_offset": "0x1d15"
+        },
+        {
+          "name": "EPartsParameterList::RktPower",
+          "file_offset": "0x1d4a"
+        },
+        {
+          "name": "EPartsParameterList::RktRotAngMax",
+          "file_offset": "0x1d70"
+        },
+        {
+          "name": "EPartsParameterList::RktSpeedInit",
+          "file_offset": "0x1d9a"
+        },
+        {
+          "name": "EPartsParameterList::RktSpeedMax",
+          "file_offset": "0x1dc4"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirAccel",
+          "file_offset": "0x1ded"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirEndTime",
+          "file_offset": "0x1e18"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirHomingAng",
+          "file_offset": "0x1e45"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirLockonRange",
+          "file_offset": "0x1e74"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirPayload",
+          "file_offset": "0x1ea5"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirPower",
+          "file_offset": "0x1ed2"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirReload",
+          "file_offset": "0x1efd"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirRotAngMax",
+          "file_offset": "0x1f29"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedAccel",
+          "file_offset": "0x1f58"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedInit",
+          "file_offset": "0x1f8c"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedMax",
+          "file_offset": "0x1fbf"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSpeedMax",
+          "file_offset": "0x1ff1"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdAccel",
+          "file_offset": "0x2251"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdEndTime",
+          "file_offset": "0x227c"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdHomingAng",
+          "file_offset": "0x22a9"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdLockonRange",
+          "file_offset": "0x22d8"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdPayload",
+          "file_offset": "0x2309"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdPower",
+          "file_offset": "0x2336"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdReload",
+          "file_offset": "0x2361"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdRotAngMax",
+          "file_offset": "0x238d"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedAccel",
+          "file_offset": "0x23bc"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedInit",
+          "file_offset": "0x23f0"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedMax",
+          "file_offset": "0x2423"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSpeedMax",
+          "file_offset": "0x2455"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_qaam_a0.uasset",
+      "encrypted_sha256": "465b7e2d60b466c81a59e33178716b7157918f2f626b2650a2421882576d2569",
+      "decoded_sha256": "1c11fc8206af43d424f0666393d73e2c9cd7f6c23633523ffa47c1f41e8c119e",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EWeaponID::WID_qaam",
+          "file_offset": "0x72a"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0x932"
+        },
+        {
+          "name": "LockonRange",
+          "file_offset": "0x9ac"
+        },
+        {
+          "name": "MaxLoadedCount",
+          "file_offset": "0xa4c"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0xe9e"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+      "encrypted_sha256": "7d863c995ec1f1628761686138f11d963b90c0dcc2ffc4930b4621895faaa223",
+      "decoded_sha256": "1cc9049e00f9c93bccf9f057e88d37e6d5b129723a741565747178dbdb8c5bef",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "ChildSWPMeshes",
+          "file_offset": "0x2bb9"
+        },
+        {
+          "name": "GetSwpMeshes",
+          "file_offset": "0x4635"
+        },
+        {
+          "name": "MaxWeaponCount",
+          "file_offset": "0x553a"
+        },
+        {
+          "name": "PlayerSpecialWeaponConfig",
+          "file_offset": "0x5c83"
+        },
+        {
+          "name": "PlayerWeaponActivator",
+          "file_offset": "0x5ca5"
+        },
+        {
+          "name": "RefuelOffMesh",
+          "file_offset": "0x5edb"
+        },
+        {
+          "name": "RefuelOnMesh",
+          "file_offset": "0x5ef1"
+        },
+        {
+          "name": "SpecialWeaponConfig1",
+          "file_offset": "0x640f"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "file_offset": "0x642c"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "file_offset": "0x6449"
+        },
+        {
+          "name": "SWP Meshes",
+          "file_offset": "0x654a"
+        },
+        {
+          "name": "SWP1",
+          "file_offset": "0x655d"
+        },
+        {
+          "name": "SWP2",
+          "file_offset": "0x656a"
+        },
+        {
+          "name": "SWP3",
+          "file_offset": "0x6577"
+        },
+        {
+          "name": "TickClass",
+          "file_offset": "0x67cb"
+        },
+        {
+          "name": "WeaponMeshBase",
+          "file_offset": "0x6c78"
+        },
+        {
+          "name": "WeaponMeshBase_GEN_VARIABLE",
+          "file_offset": "0x6c8f"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_lasm_a0.uasset",
+      "encrypted_sha256": "9a5f10dcc02efd482a8fb8b90232983f7b3cac1a2c33d58080a1121f6247d653",
+      "decoded_sha256": "519e0bd28a5da3a14b8584f0e577cd0a5e40301934d5012b3a05063e52c553bb",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EWeaponID::WID_lasm",
+          "file_offset": "0x940"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0xbfd"
+        },
+        {
+          "name": "LockonRange",
+          "file_offset": "0xc77"
+        },
+        {
+          "name": "MaxLoadedCount",
+          "file_offset": "0xd17"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0x12dd"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_x0.uasset",
+      "encrypted_sha256": "a920d4dee4b16fd3383f6ce54a4119af0adc9727c88f1f89cd5adac87570da00",
+      "decoded_sha256": "8a494b87eb8c13b73ffd83df657a6873fa250a6dc71b86051642e0c0a5877e84",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EWeaponID::WID_plsl",
+          "file_offset": "0xbc4"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0xe3c"
+        },
+        {
+          "name": "MaxLoadedCount",
+          "file_offset": "0xe98"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0x1564"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_6aam_a0.uasset",
+      "encrypted_sha256": "65698bcef9074a2d83a877810804c837a79c3f4c53eb5f17defbc2a4cf4899c0",
+      "decoded_sha256": "4018b5d97e030cfd4882f0f13821a3445281d72b35b9bc7d355b534942d6d86f",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EWeaponID::WID_6aam",
+          "file_offset": "0x771"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0x97e"
+        },
+        {
+          "name": "LockonRange",
+          "file_offset": "0xa1a"
+        },
+        {
+          "name": "MaxLoadedCount",
+          "file_offset": "0xaba"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0xf66"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_eml_x0.uasset",
+      "encrypted_sha256": "a3ff94b76eba55db5362c6c6800111d0188c3ad1f2ee029397a1af5ac456b22d",
+      "decoded_sha256": "7576e4e81db65b16ad1e89c7cb37a6d95431823e1a39debb5baf80965474aa69",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EWeaponID::WID_eml",
+          "file_offset": "0xaca"
+        },
+        {
+          "name": "LoadTime",
+          "file_offset": "0xd19"
+        },
+        {
+          "name": "LockonRange",
+          "file_offset": "0xd3e"
+        },
+        {
+          "name": "WeaponID",
+          "file_offset": "0x146e"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_6aam_r0.uasset",
+      "encrypted_sha256": "c0df3e999dd80914ec2b1c35abd0cc6ae372cff7e17960d59ffafff208130732",
+      "decoded_sha256": "96401137f0d1b29791c5c96a60ebea9b825bd60d73fe16482901dff624503cb5",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_lasm_r0.uasset",
+      "encrypted_sha256": "da2210bcdabd7d3dff9ee98d5431f009f06fb85f61e5ce76a95ef9dba6862d0d",
+      "decoded_sha256": "61459f19dc3b788c9f9318554468590a97bbf6b83f998ff4eba37143a4ca8edb",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su35.uasset",
+      "encrypted_sha256": "f427ed3c7d4fe263697a93b867a21f567ca8ac3da06cee60dd2ba33cb8f25b4e",
+      "decoded_sha256": "852f04dc6bd0ab988d40e3390064e0106d7c4ca50c7d00d879f80f8c7bbbddd4",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "MaxWeaponCount",
+          "file_offset": "0x1567"
+        },
+        {
+          "name": "PlayerSpecialWeaponConfig",
+          "file_offset": "0x1996"
+        },
+        {
+          "name": "PlayerWeaponActivator",
+          "file_offset": "0x19b8"
+        },
+        {
+          "name": "RefuelOffMesh",
+          "file_offset": "0x1ab1"
+        },
+        {
+          "name": "RefuelOnMesh",
+          "file_offset": "0x1ac7"
+        },
+        {
+          "name": "SpecialWeaponConfig1",
+          "file_offset": "0x1d16"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "file_offset": "0x1d33"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "file_offset": "0x1d50"
+        },
+        {
+          "name": "SWP1",
+          "file_offset": "0x1f16"
+        },
+        {
+          "name": "SWP1_GEN_VARIABLE",
+          "file_offset": "0x1f23"
+        },
+        {
+          "name": "SWP2",
+          "file_offset": "0x1f3d"
+        },
+        {
+          "name": "SWP2_GEN_VARIABLE",
+          "file_offset": "0x1f4a"
+        },
+        {
+          "name": "SWP3",
+          "file_offset": "0x1f64"
+        },
+        {
+          "name": "SWP3_GEN_VARIABLE",
+          "file_offset": "0x1f71"
+        },
+        {
+          "name": "WeaponMeshBase",
+          "file_offset": "0x2192"
+        },
+        {
+          "name": "WeaponMeshBase_GEN_VARIABLE",
+          "file_offset": "0x21a9"
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Information/PartsDataTable.uasset",
+      "encrypted_sha256": "08a8d36064ef32fa02ccf9fbaf2dca4acc7dcd07435538df819267ecc7ffb3f9",
+      "decoded_sha256": "18a603d12ec865efe581eae0144f9ed9662b716416545264b0a79bbd450905ab",
+      "evidence_level": "仅离线名称线索，未完成 JSON 结构解析",
+      "identifiers": [
+        {
+          "name": "EPartsEnableGameMode::AllGameModeEnable",
+          "file_offset": "0x303"
+        },
+        {
+          "name": "EPartsEnableGameMode::OnlyCampaignModeEnable",
+          "file_offset": "0x333"
+        },
+        {
+          "name": "EPartsEnableGameMode::OnlyMultiPlayEnable",
+          "file_offset": "0x368"
+        },
+        {
+          "name": "EPartsParameterList::BombExplosionRadius",
+          "file_offset": "0xe69"
+        },
+        {
+          "name": "EPartsParameterList::BombImpactRadius",
+          "file_offset": "0xe9a"
+        },
+        {
+          "name": "EPartsParameterList::BombLockonRange",
+          "file_offset": "0xec8"
+        },
+        {
+          "name": "EPartsParameterList::BombPayload",
+          "file_offset": "0xef5"
+        },
+        {
+          "name": "EPartsParameterList::BombPower",
+          "file_offset": "0xf1e"
+        },
+        {
+          "name": "EPartsParameterList::BombReload",
+          "file_offset": "0xf45"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedAccel",
+          "file_offset": "0xf6d"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedInit",
+          "file_offset": "0xf9d"
+        },
+        {
+          "name": "EPartsParameterList::BombSeekSpeedMax",
+          "file_offset": "0xfcc"
+        },
+        {
+          "name": "EPartsParameterList::EMLEffectiveTime",
+          "file_offset": "0xffa"
+        },
+        {
+          "name": "EPartsParameterList::EMLEndTime",
+          "file_offset": "0x1028"
+        },
+        {
+          "name": "EPartsParameterList::EMLPower",
+          "file_offset": "0x1050"
+        },
+        {
+          "name": "EPartsParameterList::EMLRayCastRadius",
+          "file_offset": "0x1076"
+        },
+        {
+          "name": "EPartsParameterList::LaserDamageRadius",
+          "file_offset": "0x1204"
+        },
+        {
+          "name": "EPartsParameterList::LaserEffectiveTime",
+          "file_offset": "0x1233"
+        },
+        {
+          "name": "EPartsParameterList::LaserEndTime",
+          "file_offset": "0x1263"
+        },
+        {
+          "name": "EPartsParameterList::LaserPower",
+          "file_offset": "0x128d"
+        },
+        {
+          "name": "EPartsParameterList::MGPEffectiveTime",
+          "file_offset": "0x12b5"
+        },
+        {
+          "name": "EPartsParameterList::MGPEndTime",
+          "file_offset": "0x12e3"
+        },
+        {
+          "name": "EPartsParameterList::MGPPower",
+          "file_offset": "0x130b"
+        },
+        {
+          "name": "EPartsParameterList::MslAccel",
+          "file_offset": "0x14b5"
+        },
+        {
+          "name": "EPartsParameterList::MslEndTime",
+          "file_offset": "0x14db"
+        },
+        {
+          "name": "EPartsParameterList::MslHomingAng",
+          "file_offset": "0x1503"
+        },
+        {
+          "name": "EPartsParameterList::MslLockonRange",
+          "file_offset": "0x152d"
+        },
+        {
+          "name": "EPartsParameterList::MslPayload",
+          "file_offset": "0x1559"
+        },
+        {
+          "name": "EPartsParameterList::MslPower",
+          "file_offset": "0x1581"
+        },
+        {
+          "name": "EPartsParameterList::MslReload",
+          "file_offset": "0x15a7"
+        },
+        {
+          "name": "EPartsParameterList::MslRotAngMax",
+          "file_offset": "0x15ce"
+        },
+        {
+          "name": "EPartsParameterList::MslSeekSpeedInit",
+          "file_offset": "0x15f8"
+        },
+        {
+          "name": "EPartsParameterList::MslSeekSpeedMax",
+          "file_offset": "0x1626"
+        },
+        {
+          "name": "EPartsParameterList::MslSpeedMax",
+          "file_offset": "0x1653"
+        },
+        {
+          "name": "EPartsParameterList::RktAccel",
+          "file_offset": "0x1baf"
+        },
+        {
+          "name": "EPartsParameterList::RktEndTime",
+          "file_offset": "0x1bd5"
+        },
+        {
+          "name": "EPartsParameterList::RktHomingAng",
+          "file_offset": "0x1bfd"
+        },
+        {
+          "name": "EPartsParameterList::RktHomingPredictionRate",
+          "file_offset": "0x1c27"
+        },
+        {
+          "name": "EPartsParameterList::RktPower",
+          "file_offset": "0x1c5c"
+        },
+        {
+          "name": "EPartsParameterList::RktRotAngMax",
+          "file_offset": "0x1c82"
+        },
+        {
+          "name": "EPartsParameterList::RktSpeedInit",
+          "file_offset": "0x1cac"
+        },
+        {
+          "name": "EPartsParameterList::RktSpeedMax",
+          "file_offset": "0x1cd6"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirAccel",
+          "file_offset": "0x1cff"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirEndTime",
+          "file_offset": "0x1d2a"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirHomingAng",
+          "file_offset": "0x1d57"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirLockonRange",
+          "file_offset": "0x1d86"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirPayload",
+          "file_offset": "0x1db7"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirPower",
+          "file_offset": "0x1de4"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirReload",
+          "file_offset": "0x1e0f"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirRotAngMax",
+          "file_offset": "0x1e3b"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedAccel",
+          "file_offset": "0x1e6a"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedInit",
+          "file_offset": "0x1e9e"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSeekSpeedMax",
+          "file_offset": "0x1ed1"
+        },
+        {
+          "name": "EPartsParameterList::SpMslAirSpeedMax",
+          "file_offset": "0x1f03"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdAccel",
+          "file_offset": "0x1f31"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdEndTime",
+          "file_offset": "0x1f5c"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdHomingAng",
+          "file_offset": "0x1f89"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdLockonRange",
+          "file_offset": "0x1fb8"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdPayload",
+          "file_offset": "0x1fe9"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdPower",
+          "file_offset": "0x2016"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdReload",
+          "file_offset": "0x2041"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdRotAngMax",
+          "file_offset": "0x206d"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedAccel",
+          "file_offset": "0x209c"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedInit",
+          "file_offset": "0x20d0"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSeekSpeedMax",
+          "file_offset": "0x2103"
+        },
+        {
+          "name": "EPartsParameterList::SpMslGrdSpeedMax",
+          "file_offset": "0x2135"
+        }
+      ]
+    }
+  ],
+  "native_fragments": [
+    {
+      "name": "InitializeWeaponSystem",
+      "source": "evidence/native/自由飞行-native-body-0x81e810.json",
+      "start_rva": "0x81e810",
+      "observed_end_exclusive_rva": "0x81e9b5",
+      "complete_function_in_record": true,
+      "source_sha256": "b2fa4cf346bc1c4d162c950a6d3730dc13efd5ffd9200679ef765c50ea98fd9a",
+      "calls": [
+        {
+          "at_rva": "0x81e82c",
+          "target_rva": "0x815cc0"
+        },
+        {
+          "at_rva": "0x81e843",
+          "target_rva": "0x882e40"
+        },
+        {
+          "at_rva": "0x81e84f",
+          "target_rva": "0x882dc0"
+        },
+        {
+          "at_rva": "0x81e854",
+          "target_rva": "0x58d510"
+        },
+        {
+          "at_rva": "0x81e870",
+          "target_rva": "0x54f720"
+        },
+        {
+          "at_rva": "0x81e890",
+          "target_rva": "0x883d40"
+        },
+        {
+          "at_rva": "0x81e8a9",
+          "target_rva": "0x881860"
+        },
+        {
+          "at_rva": "0x81e8b8",
+          "target_rva": "0x8817f0"
+        },
+        {
+          "at_rva": "0x81e8ce",
+          "target_rva": "0x4c72a0"
+        },
+        {
+          "at_rva": "0x81e974",
+          "target_rva": "0x16d1720"
+        },
+        {
+          "at_rva": "0x81e97f",
+          "indirect": "call qword ptr [rax + 0x6a0]"
+        },
+        {
+          "at_rva": "0x81e98e",
+          "target_rva": "0x3ce380"
+        }
+      ],
+      "observed_memory_writes": [
+        "0x81e819: mov qword ptr [rsp + 0x50], rbx",
+        "0x81e886: mov qword ptr [rsp + 0x58], rsi",
+        "0x81e8fe: movss dword ptr [rsp + 0x20], xmm0",
+        "0x81e90c: movss dword ptr [rsp + 0x28], xmm0",
+        "0x81e912: movss dword ptr [rsp + 0x24], xmm1",
+        "0x81e924: movss dword ptr [rsp + 0x20], xmm0",
+        "0x81e939: movss dword ptr [rsp + 0x24], xmm0",
+        "0x81e94e: movss dword ptr [rsp + 0x28], xmm0",
+        "0x81e970: mov dword ptr [rsp + 0x38], eax"
+      ]
+    },
+    {
+      "name": "激活器配置初始化候选",
+      "source": "evidence/native/自由飞行-native-body-0x882dc0.json",
+      "start_rva": "0x882e40",
+      "observed_end_exclusive_rva": "0x882fb0",
+      "complete_function_in_record": false,
+      "source_sha256": "2fae6decbb64f8c8a117326c5f376b684fd2e30ced8cc40bfcda7a328754e9cb",
+      "calls": [
+        {
+          "at_rva": "0x882e6a",
+          "target_rva": "0x938fb0"
+        },
+        {
+          "at_rva": "0x882ec2",
+          "target_rva": "0x4f7a10"
+        },
+        {
+          "at_rva": "0x882ed7",
+          "target_rva": "0x4f94b0"
+        },
+        {
+          "at_rva": "0x882eec",
+          "indirect": "call qword ptr [rdx + 0x6a0]"
+        },
+        {
+          "at_rva": "0x882f27",
+          "indirect": "call qword ptr [rax + 0x318]"
+        },
+        {
+          "at_rva": "0x882f3d",
+          "target_rva": "0x968300"
+        },
+        {
+          "at_rva": "0x882f7c",
+          "target_rva": "0x4fa2e0"
+        },
+        {
+          "at_rva": "0x882f9c",
+          "target_rva": "0x3a50e0"
+        }
+      ],
+      "observed_memory_writes": [
+        "0x882e40: mov dword ptr [rsp + 0x10], edx",
+        "0x882e9a: mov qword ptr [rdi + 0x250], rbx",
+        "0x882eb0: mov qword ptr [rsp + 0xc8], rsi",
+        "0x882eb8: mov qword ptr [rsp + 0x78], r13",
+        "0x882ebd: mov qword ptr [rsp + 0x70], r15"
+      ]
+    },
+    {
+      "name": "另一路初始化包装函数",
+      "source": "evidence/native/自由飞行-native-body-0x882dc0.json",
+      "start_rva": "0x882dc0",
+      "observed_end_exclusive_rva": "0x882e40",
+      "complete_function_in_record": true,
+      "source_sha256": "2fae6decbb64f8c8a117326c5f376b684fd2e30ced8cc40bfcda7a328754e9cb",
+      "calls": [
+        {
+          "at_rva": "0x882e35",
+          "target_rva": "0x89d980"
+        }
+      ],
+      "observed_memory_writes": [
+        "0x882dfc: mov dword ptr [rsp + 0x48], eax",
+        "0x882e00: movss dword ptr [rsp + 0x40], xmm0",
+        "0x882e0e: movss dword ptr [rsp + 0x38], xmm1",
+        "0x882e14: mov qword ptr [rsp + 0x30], rdx",
+        "0x882e20: mov qword ptr [rsp + 0x28], r8",
+        "0x882e2f: movss dword ptr [rsp + 0x20], xmm0"
+      ]
+    },
+    {
+      "name": "另一路分组初始化",
+      "source": "evidence/native/自由飞行-native-body-0x89d980.json",
+      "start_rva": "0x89d980",
+      "observed_end_exclusive_rva": "0x89da3d",
+      "complete_function_in_record": true,
+      "source_sha256": "80deb63f723d28b94c20671dadc1d515390d8dd857d9322c8245b70b20e8bf8d",
+      "calls": [
+        {
+          "at_rva": "0x89d9f9",
+          "target_rva": "0x99af20"
+        },
+        {
+          "at_rva": "0x89da18",
+          "target_rva": "0x89a4d0"
+        },
+        {
+          "at_rva": "0x89da20",
+          "target_rva": "0x89eda0"
+        }
+      ],
+      "observed_memory_writes": [
+        "0x89d980: mov qword ptr [rsp + 8], rbx",
+        "0x89d985: mov qword ptr [rsp + 0x10], rbp",
+        "0x89d98a: mov qword ptr [rsp + 0x18], rsi",
+        "0x89d9ba: mov dword ptr [rdi + 0xc], eax",
+        "0x89d9c5: movss dword ptr [rdi + 0x18], xmm0",
+        "0x89d9d3: movss dword ptr [rdi + 0x14], xmm3",
+        "0x89d9d8: movss dword ptr [rdi + 0x1c], xmm1",
+        "0x89d9dd: movss dword ptr [rdi + 0x20], xmm0",
+        "0x89d9e2: mov qword ptr [rdi], rdx",
+        "0x89d9e5: mov dword ptr [rdi + 8], r8d",
+        "0x89d9e9: mov dword ptr [rdi + 0x10], ebp",
+        "0x89d9fe: mov qword ptr [rbx], rbp",
+        "0x89da01: mov qword ptr [rbx + 8], rbp"
+      ]
+    },
+    {
+      "name": "槽计时与整数状态重置",
+      "source": "evidence/native/自由飞行-native-body-0x89eda0.json",
+      "start_rva": "0x89eda0",
+      "observed_end_exclusive_rva": "0x89eef4",
+      "complete_function_in_record": true,
+      "source_sha256": "c5f09e8fb2af8b7eafa4dae8c70187b3daf0a79441029bb9bc7079effc560b2f",
+      "calls": [],
+      "observed_memory_writes": [
+        "0x89eda0: mov qword ptr [rsp + 0x10], rbx",
+        "0x89edb3: mov dword ptr [rcx + 0x10], r9d",
+        "0x89eddc: mov qword ptr [rsp + 0x10], rsi",
+        "0x89ee06: mov dword ptr [r9 + rcx + 0x48], eax",
+        "0x89ee0f: movss dword ptr [r9 + rcx + 0x4c], xmm0",
+        "0x89ee2c: mov dword ptr [r9 + rcx + 0xa8], eax",
+        "0x89ee34: movss dword ptr [r9 + rcx + 0xac], xmm0",
+        "0x89ee54: mov dword ptr [r9 + rcx + 0x108], eax",
+        "0x89ee60: movss dword ptr [r9 + rcx + 0x10c], xmm0",
+        "0x89ee88: mov dword ptr [r9 + rcx + 0x168], eax",
+        "0x89ee90: movss dword ptr [r9 + rcx + 0x16c], xmm0",
+        "0x89eed8: movss dword ptr [r9 + rcx + 0x4c], xmm0",
+        "0x89eedf: mov dword ptr [r9 + rcx + 0x48], eax"
+      ]
+    }
+  ]
+}

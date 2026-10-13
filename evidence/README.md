@@ -12,6 +12,7 @@
 | `unusable-packed-disk-code.json` | 加壳磁盘代码不适合作为写入接口的依据 |
 | `native/` | 精选历史函数体与反射接口，不能重用旧进程绝对地址 |
 | `integration/` | 早期实机原型通过记录，保留为研究依据，不等同于最新版本通过 |
+| `persistent-sp-offline.json` | 研究分支新取得的 15 份自有资源副本名称线索，以及 5 个历史函数片段摘要；JSON 结构解析受工具超时限制，没有实机验证，见[路线研究](../docs/research/persistent-sp.md) |
 
 完整 PAK 资源副本、资源解析中间 JSON、早期日志、失败尝试和重复版本检查已回收；重要失败机制与未知项保留在[关键决策](../docs/decisions.md)。当前运行文件与原始发行包 hash 另见[基线记录](../Release/baseline-0.1.7.json)。
 
