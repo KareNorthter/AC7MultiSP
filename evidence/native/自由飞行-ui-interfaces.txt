@@ -1,0 +1,1721 @@
+OBJECT MainTitle_C /Engine/Transient.NimbusGameEngine_0:BP_GameInstance_AC_C_0.MainTitle_C_0
+CLASS WidgetBlueprintGeneratedClass /Game/UI/Menu/Boot/MainTitle.MainTitle_C
+FUNCTION Function /Game/UI/Menu/Boot/MainTitle.MainTitle_C:Construct
+FUNCTION Function /Game/UI/Menu/Boot/MainTitle.MainTitle_C:ExecuteUbergraph_MainTitle
+  PARAM IntProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:ExecuteUbergraph_MainTitle.EntryPoint
+PROPERTY StructProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:UberGraphFrame
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge5_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge4_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge3_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge2_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge1_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_godray_anim
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:Glow
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:AceCombatImage
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:AceCombatImageOverseas
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:Bg
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge1
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge2
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge3
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge4
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_dodge5
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:bg_godray
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:CopyrightText
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:PressButtonText
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:VersionNumber
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:Active Button
+PROPERTY ObjectProperty /Game/UI/Menu/Boot/MainTitle.MainTitle_C:Button Accept
+CLASS Class /Script/Nimbus.MainTitleWidget
+CLASS Class /Script/Nimbus.MenuBaseWidget
+FUNCTION Function /Script/Nimbus.MenuBaseWidget:SimpleDialogInputResult
+  PARAM StructProperty /Script/Nimbus.MenuBaseWidget:SimpleDialogInputResult.DialogData
+FUNCTION Function /Script/Nimbus.MenuBaseWidget:SetIsEnableControl
+  PARAM BoolProperty /Script/Nimbus.MenuBaseWidget:SetIsEnableControl.bEnable
+FUNCTION Function /Script/Nimbus.MenuBaseWidget:OnUnfocusedBP
+FUNCTION Function /Script/Nimbus.MenuBaseWidget:OnFocusedBP
+FUNCTION Function /Script/Nimbus.MenuBaseWidget:IsEnableControl
+  PARAM BoolProperty /Script/Nimbus.MenuBaseWidget:IsEnableControl.ReturnValue
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgUIScrollBar
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:LobbyGameMode
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgBaseWidget
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgTitleText
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgDescriptionText
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgButtonText
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgTabText
+PROPERTY ObjectProperty /Script/Nimbus.MenuBaseWidget:UmgTabIcon
+PROPERTY ArrayProperty /Script/Nimbus.MenuBaseWidget:ItemList
+PROPERTY ArrayProperty /Script/Nimbus.MenuBaseWidget:TabList
+PROPERTY ArrayProperty /Script/Nimbus.MenuBaseWidget:UmgList
+CLASS Class /Script/Nimbus.UIBaseWidget
+FUNCTION Function /Script/Nimbus.UIBaseWidget:GetUIManagerActor
+  PARAM ObjectProperty /Script/Nimbus.UIBaseWidget:GetUIManagerActor.ReturnValue
+PROPERTY BoolProperty /Script/Nimbus.UIBaseWidget:bEnableGlow
+PROPERTY EnumProperty /Script/Nimbus.UIBaseWidget:WidgetMeshShape
+PROPERTY BoolProperty /Script/Nimbus.UIBaseWidget:bUsedForVROverlay
+PROPERTY ArrayProperty /Script/Nimbus.UIBaseWidget:TextHidingGroups
+PROPERTY FloatProperty /Script/Nimbus.UIBaseWidget:DelayTimeBeforeTextAnimation
+PROPERTY ArrayProperty /Script/Nimbus.UIBaseWidget:ImageHidingGroups
+PROPERTY ObjectProperty /Script/Nimbus.UIBaseWidget:UIManagerActor
+PROPERTY ObjectProperty /Script/Nimbus.UIBaseWidget:UIWidgetComponent
+CLASS Class /Script/UMG.UserWidget
+FUNCTION Function /Script/UMG.UserWidget:UnregisterInputComponent
+FUNCTION Function /Script/UMG.UserWidget:Tick
+  PARAM StructProperty /Script/UMG.UserWidget:Tick.MyGeometry
+  PARAM FloatProperty /Script/UMG.UserWidget:Tick.InDeltaTime
+FUNCTION Function /Script/UMG.UserWidget:StopListeningForInputAction
+  PARAM NameProperty /Script/UMG.UserWidget:StopListeningForInputAction.ActionName
+  PARAM ByteProperty /Script/UMG.UserWidget:StopListeningForInputAction.EventType
+FUNCTION Function /Script/UMG.UserWidget:StopListeningForAllInputActions
+FUNCTION Function /Script/UMG.UserWidget:StopAnimation
+  PARAM ObjectProperty /Script/UMG.UserWidget:StopAnimation.InAnimation
+FUNCTION Function /Script/UMG.UserWidget:SetPositionInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:SetPositionInViewport.Position
+  PARAM BoolProperty /Script/UMG.UserWidget:SetPositionInViewport.bRemoveDPIScale
+FUNCTION Function /Script/UMG.UserWidget:SetPlaybackSpeed
+  PARAM ObjectProperty /Script/UMG.UserWidget:SetPlaybackSpeed.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:SetPlaybackSpeed.PlaybackSpeed
+FUNCTION Function /Script/UMG.UserWidget:SetPadding
+  PARAM StructProperty /Script/UMG.UserWidget:SetPadding.InPadding
+FUNCTION Function /Script/UMG.UserWidget:SetOwningPlayer
+  PARAM ObjectProperty /Script/UMG.UserWidget:SetOwningPlayer.LocalPlayerController
+FUNCTION Function /Script/UMG.UserWidget:SetOwningLocalPlayer
+  PARAM ObjectProperty /Script/UMG.UserWidget:SetOwningLocalPlayer.LocalPlayer
+FUNCTION Function /Script/UMG.UserWidget:SetNumLoopsToPlay
+  PARAM ObjectProperty /Script/UMG.UserWidget:SetNumLoopsToPlay.InAnimation
+  PARAM IntProperty /Script/UMG.UserWidget:SetNumLoopsToPlay.NumLoopsToPlay
+FUNCTION Function /Script/UMG.UserWidget:SetInputActionPriority
+  PARAM IntProperty /Script/UMG.UserWidget:SetInputActionPriority.NewPriority
+FUNCTION Function /Script/UMG.UserWidget:SetInputActionBlocking
+  PARAM BoolProperty /Script/UMG.UserWidget:SetInputActionBlocking.bShouldBlock
+FUNCTION Function /Script/UMG.UserWidget:SetForegroundColor
+  PARAM StructProperty /Script/UMG.UserWidget:SetForegroundColor.InForegroundColor
+FUNCTION Function /Script/UMG.UserWidget:SetDesiredSizeInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:SetDesiredSizeInViewport.Size
+FUNCTION Function /Script/UMG.UserWidget:SetColorAndOpacity
+  PARAM StructProperty /Script/UMG.UserWidget:SetColorAndOpacity.InColorAndOpacity
+FUNCTION Function /Script/UMG.UserWidget:SetAnchorsInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:SetAnchorsInViewport.Anchors
+FUNCTION Function /Script/UMG.UserWidget:SetAlignmentInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:SetAlignmentInViewport.Alignment
+FUNCTION Function /Script/UMG.UserWidget:ReverseAnimation
+  PARAM ObjectProperty /Script/UMG.UserWidget:ReverseAnimation.InAnimation
+FUNCTION Function /Script/UMG.UserWidget:RemoveFromViewport
+FUNCTION Function /Script/UMG.UserWidget:RegisterInputComponent
+FUNCTION Function /Script/UMG.UserWidget:PreConstruct
+  PARAM BoolProperty /Script/UMG.UserWidget:PreConstruct.IsDesignTime
+FUNCTION Function /Script/UMG.UserWidget:PlaySound
+  PARAM ObjectProperty /Script/UMG.UserWidget:PlaySound.SoundToPlay
+FUNCTION Function /Script/UMG.UserWidget:PlayAnimationTo
+  PARAM ObjectProperty /Script/UMG.UserWidget:PlayAnimationTo.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationTo.StartAtTime
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationTo.EndAtTime
+  PARAM IntProperty /Script/UMG.UserWidget:PlayAnimationTo.NumLoopsToPlay
+  PARAM ByteProperty /Script/UMG.UserWidget:PlayAnimationTo.PlayMode
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationTo.PlaybackSpeed
+FUNCTION Function /Script/UMG.UserWidget:PlayAnimationForDuration
+  PARAM ObjectProperty /Script/UMG.UserWidget:PlayAnimationForDuration.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationForDuration.StartPercentage
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationForDuration.EndPercentage
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimationForDuration.Duration
+FUNCTION Function /Script/UMG.UserWidget:PlayAnimation
+  PARAM ObjectProperty /Script/UMG.UserWidget:PlayAnimation.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimation.StartAtTime
+  PARAM IntProperty /Script/UMG.UserWidget:PlayAnimation.NumLoopsToPlay
+  PARAM ByteProperty /Script/UMG.UserWidget:PlayAnimation.PlayMode
+  PARAM FloatProperty /Script/UMG.UserWidget:PlayAnimation.PlaybackSpeed
+FUNCTION Function /Script/UMG.UserWidget:PauseAnimation
+  PARAM ObjectProperty /Script/UMG.UserWidget:PauseAnimation.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:PauseAnimation.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnTouchStarted
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchStarted.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchStarted.InTouchEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchStarted.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnTouchMoved
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchMoved.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchMoved.InTouchEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchMoved.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnTouchGesture
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchGesture.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchGesture.GestureEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchGesture.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnTouchEnded
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchEnded.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchEnded.InTouchEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnTouchEnded.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnRemovedFromFocusPath
+  PARAM StructProperty /Script/UMG.UserWidget:OnRemovedFromFocusPath.InFocusEvent
+FUNCTION Function /Script/UMG.UserWidget:OnPreviewMouseButtonDown
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewMouseButtonDown.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewMouseButtonDown.MouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewMouseButtonDown.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnPreviewKeyDown
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewKeyDown.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewKeyDown.InKeyEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnPreviewKeyDown.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnPaint
+  PARAM StructProperty /Script/UMG.UserWidget:OnPaint.Context
+FUNCTION Function /Script/UMG.UserWidget:OnMouseWheel
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseWheel.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseWheel.MouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseWheel.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnMouseMove
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseMove.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseMove.MouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseMove.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnMouseLeave
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseLeave.MouseEvent
+FUNCTION Function /Script/UMG.UserWidget:OnMouseEnter
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseEnter.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseEnter.MouseEvent
+FUNCTION Function /Script/UMG.UserWidget:OnMouseCaptureLost
+FUNCTION Function /Script/UMG.UserWidget:OnMouseButtonUp
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonUp.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonUp.MouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonUp.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnMouseButtonDown
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDown.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDown.MouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDown.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnMouseButtonDoubleClick
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDoubleClick.InMyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDoubleClick.InMouseEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMouseButtonDoubleClick.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnMotionDetected
+  PARAM StructProperty /Script/UMG.UserWidget:OnMotionDetected.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnMotionDetected.InMotionEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnMotionDetected.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnKeyUp
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyUp.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyUp.InKeyEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyUp.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnKeyDown
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyDown.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyDown.InKeyEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyDown.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnKeyChar
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyChar.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyChar.InCharacterEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnKeyChar.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnFocusReceived
+  PARAM StructProperty /Script/UMG.UserWidget:OnFocusReceived.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnFocusReceived.InFocusEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnFocusReceived.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnFocusLost
+  PARAM StructProperty /Script/UMG.UserWidget:OnFocusLost.InFocusEvent
+FUNCTION Function /Script/UMG.UserWidget:OnDrop
+  PARAM StructProperty /Script/UMG.UserWidget:OnDrop.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnDrop.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDrop.Operation
+  PARAM BoolProperty /Script/UMG.UserWidget:OnDrop.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnDragOver
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragOver.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragOver.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDragOver.Operation
+  PARAM BoolProperty /Script/UMG.UserWidget:OnDragOver.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnDragLeave
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragLeave.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDragLeave.Operation
+FUNCTION Function /Script/UMG.UserWidget:OnDragEnter
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragEnter.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragEnter.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDragEnter.Operation
+FUNCTION Function /Script/UMG.UserWidget:OnDragDetected
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragDetected.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragDetected.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDragDetected.Operation
+FUNCTION Function /Script/UMG.UserWidget:OnDragCancelled
+  PARAM StructProperty /Script/UMG.UserWidget:OnDragCancelled.PointerEvent
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnDragCancelled.Operation
+FUNCTION Function /Script/UMG.UserWidget:OnAnimationStarted
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnAnimationStarted.Animation
+FUNCTION Function /Script/UMG.UserWidget:OnAnimationFinished
+  PARAM ObjectProperty /Script/UMG.UserWidget:OnAnimationFinished.Animation
+FUNCTION Function /Script/UMG.UserWidget:OnAnalogValueChanged
+  PARAM StructProperty /Script/UMG.UserWidget:OnAnalogValueChanged.MyGeometry
+  PARAM StructProperty /Script/UMG.UserWidget:OnAnalogValueChanged.InAnalogInputEvent
+  PARAM StructProperty /Script/UMG.UserWidget:OnAnalogValueChanged.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:OnAddedToFocusPath
+  PARAM StructProperty /Script/UMG.UserWidget:OnAddedToFocusPath.InFocusEvent
+FUNCTION Function /Script/UMG.UserWidget:ListenForInputAction
+  PARAM NameProperty /Script/UMG.UserWidget:ListenForInputAction.ActionName
+  PARAM ByteProperty /Script/UMG.UserWidget:ListenForInputAction.EventType
+  PARAM BoolProperty /Script/UMG.UserWidget:ListenForInputAction.bConsume
+  PARAM DelegateProperty /Script/UMG.UserWidget:ListenForInputAction.Callback
+FUNCTION Function /Script/UMG.UserWidget:IsPlayingAnimation
+  PARAM BoolProperty /Script/UMG.UserWidget:IsPlayingAnimation.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsListeningForInputAction
+  PARAM NameProperty /Script/UMG.UserWidget:IsListeningForInputAction.ActionName
+  PARAM BoolProperty /Script/UMG.UserWidget:IsListeningForInputAction.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsInViewport
+  PARAM BoolProperty /Script/UMG.UserWidget:IsInViewport.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsInteractable
+  PARAM BoolProperty /Script/UMG.UserWidget:IsInteractable.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsAnyAnimationPlaying
+  PARAM BoolProperty /Script/UMG.UserWidget:IsAnyAnimationPlaying.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsAnimationPlayingForward
+  PARAM ObjectProperty /Script/UMG.UserWidget:IsAnimationPlayingForward.InAnimation
+  PARAM BoolProperty /Script/UMG.UserWidget:IsAnimationPlayingForward.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:IsAnimationPlaying
+  PARAM ObjectProperty /Script/UMG.UserWidget:IsAnimationPlaying.InAnimation
+  PARAM BoolProperty /Script/UMG.UserWidget:IsAnimationPlaying.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetOwningPlayerPawn
+  PARAM ObjectProperty /Script/UMG.UserWidget:GetOwningPlayerPawn.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetOwningPlayer
+  PARAM ObjectProperty /Script/UMG.UserWidget:GetOwningPlayer.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetOwningLocalPlayer
+  PARAM ObjectProperty /Script/UMG.UserWidget:GetOwningLocalPlayer.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetIsVisible
+  PARAM BoolProperty /Script/UMG.UserWidget:GetIsVisible.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetAnimationCurrentTime
+  PARAM ObjectProperty /Script/UMG.UserWidget:GetAnimationCurrentTime.InAnimation
+  PARAM FloatProperty /Script/UMG.UserWidget:GetAnimationCurrentTime.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetAnchorsInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:GetAnchorsInViewport.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:GetAlignmentInViewport
+  PARAM StructProperty /Script/UMG.UserWidget:GetAlignmentInViewport.ReturnValue
+FUNCTION Function /Script/UMG.UserWidget:Destruct
+FUNCTION Function /Script/UMG.UserWidget:Construct
+FUNCTION Function /Script/UMG.UserWidget:AddToViewport
+  PARAM IntProperty /Script/UMG.UserWidget:AddToViewport.ZOrder
+FUNCTION Function /Script/UMG.UserWidget:AddToPlayerScreen
+  PARAM IntProperty /Script/UMG.UserWidget:AddToPlayerScreen.ZOrder
+  PARAM BoolProperty /Script/UMG.UserWidget:AddToPlayerScreen.ReturnValue
+PROPERTY StructProperty /Script/UMG.UserWidget:ColorAndOpacity
+PROPERTY DelegateProperty /Script/UMG.UserWidget:ColorAndOpacityDelegate
+PROPERTY StructProperty /Script/UMG.UserWidget:ForegroundColor
+PROPERTY DelegateProperty /Script/UMG.UserWidget:ForegroundColorDelegate
+PROPERTY StructProperty /Script/UMG.UserWidget:Padding
+PROPERTY ArrayProperty /Script/UMG.UserWidget:ActiveSequencePlayers
+PROPERTY ArrayProperty /Script/UMG.UserWidget:StoppedSequencePlayers
+PROPERTY ArrayProperty /Script/UMG.UserWidget:NamedSlotBindings
+PROPERTY ObjectProperty /Script/UMG.UserWidget:WidgetTree
+PROPERTY IntProperty /Script/UMG.UserWidget:Priority
+PROPERTY BoolProperty /Script/UMG.UserWidget:bSupportsKeyboardFocus
+PROPERTY BoolProperty /Script/UMG.UserWidget:bIsFocusable
+PROPERTY BoolProperty /Script/UMG.UserWidget:bStopAction
+PROPERTY BoolProperty /Script/UMG.UserWidget:bCanEverTick
+PROPERTY BoolProperty /Script/UMG.UserWidget:bCanEverPaint
+PROPERTY BoolProperty /Script/UMG.UserWidget:bCookedWidgetTree
+PROPERTY ObjectProperty /Script/UMG.UserWidget:InputComponent
+CLASS Class /Script/UMG.Widget
+FUNCTION Function /Script/UMG.Widget:SetVisibility
+  PARAM EnumProperty /Script/UMG.Widget:SetVisibility.InVisibility
+FUNCTION Function /Script/UMG.Widget:SetUserFocus
+  PARAM ObjectProperty /Script/UMG.Widget:SetUserFocus.PlayerController
+FUNCTION Function /Script/UMG.Widget:SetToolTipText
+  PARAM TextProperty /Script/UMG.Widget:SetToolTipText.InToolTipText
+FUNCTION Function /Script/UMG.Widget:SetToolTip
+  PARAM ObjectProperty /Script/UMG.Widget:SetToolTip.Widget
+FUNCTION Function /Script/UMG.Widget:SetRenderTranslation
+  PARAM StructProperty /Script/UMG.Widget:SetRenderTranslation.Translation
+FUNCTION Function /Script/UMG.Widget:SetRenderTransformPivot
+  PARAM StructProperty /Script/UMG.Widget:SetRenderTransformPivot.Pivot
+FUNCTION Function /Script/UMG.Widget:SetRenderTransform
+  PARAM StructProperty /Script/UMG.Widget:SetRenderTransform.InTransform
+FUNCTION Function /Script/UMG.Widget:SetRenderShear
+  PARAM StructProperty /Script/UMG.Widget:SetRenderShear.Shear
+FUNCTION Function /Script/UMG.Widget:SetRenderScale
+  PARAM StructProperty /Script/UMG.Widget:SetRenderScale.Scale
+FUNCTION Function /Script/UMG.Widget:SetRenderAngle
+  PARAM FloatProperty /Script/UMG.Widget:SetRenderAngle.Angle
+FUNCTION Function /Script/UMG.Widget:SetNavigationRule
+  PARAM EnumProperty /Script/UMG.Widget:SetNavigationRule.Direction
+  PARAM EnumProperty /Script/UMG.Widget:SetNavigationRule.Rule
+  PARAM NameProperty /Script/UMG.Widget:SetNavigationRule.WidgetToFocus
+FUNCTION Function /Script/UMG.Widget:SetKeyboardFocus
+FUNCTION Function /Script/UMG.Widget:SetIsEnabled
+  PARAM BoolProperty /Script/UMG.Widget:SetIsEnabled.bInIsEnabled
+FUNCTION Function /Script/UMG.Widget:SetCursor
+  PARAM ByteProperty /Script/UMG.Widget:SetCursor.InCursor
+FUNCTION Function /Script/UMG.Widget:SetClipping
+  PARAM EnumProperty /Script/UMG.Widget:SetClipping.InClipping
+FUNCTION Function /Script/UMG.Widget:SetAllNavigationRules
+  PARAM EnumProperty /Script/UMG.Widget:SetAllNavigationRules.Rule
+  PARAM NameProperty /Script/UMG.Widget:SetAllNavigationRules.WidgetToFocus
+FUNCTION Function /Script/UMG.Widget:ResetCursor
+FUNCTION Function /Script/UMG.Widget:RemoveFromParent
+FUNCTION DelegateFunction /Script/UMG.Widget:OnReply__DelegateSignature
+  PARAM StructProperty /Script/UMG.Widget:OnReply__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:OnPointerEvent__DelegateSignature
+  PARAM StructProperty /Script/UMG.Widget:OnPointerEvent__DelegateSignature.MyGeometry
+  PARAM StructProperty /Script/UMG.Widget:OnPointerEvent__DelegateSignature.MouseEvent
+  PARAM StructProperty /Script/UMG.Widget:OnPointerEvent__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:IsVisible
+  PARAM BoolProperty /Script/UMG.Widget:IsVisible.ReturnValue
+FUNCTION Function /Script/UMG.Widget:IsHovered
+  PARAM BoolProperty /Script/UMG.Widget:IsHovered.ReturnValue
+FUNCTION Function /Script/UMG.Widget:InvalidateLayoutAndVolatility
+FUNCTION Function /Script/UMG.Widget:HasUserFocusedDescendants
+  PARAM ObjectProperty /Script/UMG.Widget:HasUserFocusedDescendants.PlayerController
+  PARAM BoolProperty /Script/UMG.Widget:HasUserFocusedDescendants.ReturnValue
+FUNCTION Function /Script/UMG.Widget:HasUserFocus
+  PARAM ObjectProperty /Script/UMG.Widget:HasUserFocus.PlayerController
+  PARAM BoolProperty /Script/UMG.Widget:HasUserFocus.ReturnValue
+FUNCTION Function /Script/UMG.Widget:HasMouseCapture
+  PARAM BoolProperty /Script/UMG.Widget:HasMouseCapture.ReturnValue
+FUNCTION Function /Script/UMG.Widget:HasKeyboardFocus
+  PARAM BoolProperty /Script/UMG.Widget:HasKeyboardFocus.ReturnValue
+FUNCTION Function /Script/UMG.Widget:HasFocusedDescendants
+  PARAM BoolProperty /Script/UMG.Widget:HasFocusedDescendants.ReturnValue
+FUNCTION Function /Script/UMG.Widget:HasAnyUserFocus
+  PARAM BoolProperty /Script/UMG.Widget:HasAnyUserFocus.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetWidget__DelegateSignature
+  PARAM ObjectProperty /Script/UMG.Widget:GetWidget__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetVisibility
+  PARAM EnumProperty /Script/UMG.Widget:GetVisibility.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetText__DelegateSignature
+  PARAM TextProperty /Script/UMG.Widget:GetText__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetSlateVisibility__DelegateSignature
+  PARAM EnumProperty /Script/UMG.Widget:GetSlateVisibility__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetSlateColor__DelegateSignature
+  PARAM StructProperty /Script/UMG.Widget:GetSlateColor__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetSlateBrush__DelegateSignature
+  PARAM StructProperty /Script/UMG.Widget:GetSlateBrush__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetParent
+  PARAM ObjectProperty /Script/UMG.Widget:GetParent.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetOwningPlayer
+  PARAM ObjectProperty /Script/UMG.Widget:GetOwningPlayer.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetMouseCursor__DelegateSignature
+  PARAM ByteProperty /Script/UMG.Widget:GetMouseCursor__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetLinearColor__DelegateSignature
+  PARAM StructProperty /Script/UMG.Widget:GetLinearColor__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetIsEnabled
+  PARAM BoolProperty /Script/UMG.Widget:GetIsEnabled.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetInt32__DelegateSignature
+  PARAM IntProperty /Script/UMG.Widget:GetInt32__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetFloat__DelegateSignature
+  PARAM FloatProperty /Script/UMG.Widget:GetFloat__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetDesiredSize
+  PARAM StructProperty /Script/UMG.Widget:GetDesiredSize.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetClipping
+  PARAM EnumProperty /Script/UMG.Widget:GetClipping.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetCheckBoxState__DelegateSignature
+  PARAM EnumProperty /Script/UMG.Widget:GetCheckBoxState__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:GetCachedGeometry
+  PARAM StructProperty /Script/UMG.Widget:GetCachedGeometry.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GetBool__DelegateSignature
+  PARAM BoolProperty /Script/UMG.Widget:GetBool__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GenerateWidgetForString__DelegateSignature
+  PARAM StrProperty /Script/UMG.Widget:GenerateWidgetForString__DelegateSignature.Item
+  PARAM ObjectProperty /Script/UMG.Widget:GenerateWidgetForString__DelegateSignature.ReturnValue
+FUNCTION DelegateFunction /Script/UMG.Widget:GenerateWidgetForObject__DelegateSignature
+  PARAM ObjectProperty /Script/UMG.Widget:GenerateWidgetForObject__DelegateSignature.Item
+  PARAM ObjectProperty /Script/UMG.Widget:GenerateWidgetForObject__DelegateSignature.ReturnValue
+FUNCTION Function /Script/UMG.Widget:ForceVolatile
+  PARAM BoolProperty /Script/UMG.Widget:ForceVolatile.bForce
+FUNCTION Function /Script/UMG.Widget:ForceLayoutPrepass
+PROPERTY ObjectProperty /Script/UMG.Widget:Slot
+PROPERTY DelegateProperty /Script/UMG.Widget:bIsEnabledDelegate
+PROPERTY TextProperty /Script/UMG.Widget:ToolTipText
+PROPERTY DelegateProperty /Script/UMG.Widget:ToolTipTextDelegate
+PROPERTY ObjectProperty /Script/UMG.Widget:ToolTipWidget
+PROPERTY DelegateProperty /Script/UMG.Widget:ToolTipWidgetDelegate
+PROPERTY DelegateProperty /Script/UMG.Widget:VisibilityDelegate
+PROPERTY StructProperty /Script/UMG.Widget:RenderTransform
+PROPERTY StructProperty /Script/UMG.Widget:RenderTransformPivot
+PROPERTY BoolProperty /Script/UMG.Widget:bIsVariable
+PROPERTY BoolProperty /Script/UMG.Widget:bCreatedByConstructionScript
+PROPERTY BoolProperty /Script/UMG.Widget:bIsEnabled
+PROPERTY BoolProperty /Script/UMG.Widget:bOverride_Cursor
+PROPERTY BoolProperty /Script/UMG.Widget:bIsVolatile
+PROPERTY ByteProperty /Script/UMG.Widget:Cursor
+PROPERTY EnumProperty /Script/UMG.Widget:Clipping
+PROPERTY EnumProperty /Script/UMG.Widget:Visibility
+PROPERTY ObjectProperty /Script/UMG.Widget:Navigation
+PROPERTY ArrayProperty /Script/UMG.Widget:NativeBindings
+CLASS Class /Script/UMG.Visual
+CLASS Class /Script/CoreUObject.Object
+FUNCTION Function /Script/CoreUObject.Object:ExecuteUbergraph
+  PARAM IntProperty /Script/CoreUObject.Object:ExecuteUbergraph.EntryPoint
+OBJECT BP_GameInstance_AC_C /Engine/Transient.NimbusGameEngine_0:BP_GameInstance_AC_C_0
+CLASS BlueprintGeneratedClass /Game/Blueprint/GameModes/BP_GameInstance_AC.BP_GameInstance_AC_C
+CLASS Class /Script/Nimbus.NimbusGameInstance
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetShowWeaponsInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:SetShowWeaponsInHangar.bShouldShowWeaponsInHangar
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetShowWeaponOnPlaneInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:SetShowWeaponOnPlaneInHangar.bShouldShowWeaponOnPlaneInHangar
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetShowPlaneInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:SetShowPlaneInHangar.bShouldShowPlaneInHangar
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetShowPilotInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:SetShowPilotInHangar.bShouldShowPilotInHangar
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetShowHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:SetShowHangar.bShouldShowHangar
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetSelectedPlaneSkinNo
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:SetSelectedPlaneSkinNo.SelectedPlaneSkinNo
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetSelectedPlaneEmblemID
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:SetSelectedPlaneEmblemID.SelectedPlaneEmblemID
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetSelectedHangarCameraType
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:SetSelectedHangarCameraType.HangarCameraType
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP.SelectedPlaneType
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP.SelectedPlaneSWP
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetMissionID
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:SetMissionID.MissionID
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:SetCurrentGameSaveSlot
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:SetCurrentGameSaveSlot.NewGameSaveSlot
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:IsVRUIMode
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:IsVRUIMode.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:IsVRMode
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:IsVRMode.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:IsVRGameMode
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:IsVRGameMode.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:IsStereoMode
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:IsStereoMode.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:IsShippingMode
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:IsShippingMode.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetShowWeaponsInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:GetShowWeaponsInHangar.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetShowWeaponOnPlaneInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:GetShowWeaponOnPlaneInHangar.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetShowPlaneInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:GetShowPlaneInHangar.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetShowPilotInHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:GetShowPilotInHangar.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetShowHangar
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:GetShowHangar.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneSWP
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneSWP.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneSkinNo
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneSkinNo.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneID
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneID.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneEmblemID
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:GetSelectedPlaneEmblemID.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetSelectedHangarCameraType
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:GetSelectedHangarCameraType.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetPhysicalMaterialName
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:GetPhysicalMaterialName.MaterialType
+  PARAM StrProperty /Script/Nimbus.NimbusGameInstance:GetPhysicalMaterialName.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetMissionID
+  PARAM IntProperty /Script/Nimbus.NimbusGameInstance:GetMissionID.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:GetCurrentGameSaveSlot
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:GetCurrentGameSaveSlot.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncSaveOnlineData
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncSaveOnlineData.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncSaveGameplaySettings
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:AsyncSaveGameplaySettings.GameSaveSlot
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncSaveGameplaySettings.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncSaveAccountSettings
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncSaveAccountSettings.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncLoadOnlineData
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncLoadOnlineData.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncLoadGameplaySettings
+  PARAM EnumProperty /Script/Nimbus.NimbusGameInstance:AsyncLoadGameplaySettings.GameSaveSlot
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncLoadGameplaySettings.ReturnValue
+FUNCTION Function /Script/Nimbus.NimbusGameInstance:AsyncLoadAccountSettings
+  PARAM BoolProperty /Script/Nimbus.NimbusGameInstance:AsyncLoadAccountSettings.ReturnValue
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:HangarManager
+PROPERTY FloatProperty /Script/Nimbus.NimbusGameInstance:HMDOverlayCutoffPitch
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:HUDWidgetRenderTexture
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:StereoUIRenderTexture
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:MenuDecoTexture
+PROPERTY BoolProperty /Script/Nimbus.NimbusGameInstance:bUseMenuDecoTexture
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SkyLightAboveCloudCubeMap
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SkyLightBelowCloudCubeMap
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:AssetLoader
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:TextureManager
+PROPERTY StructProperty /Script/Nimbus.NimbusGameInstance:ResidentAssetReference
+PROPERTY NameProperty /Script/Nimbus.NimbusGameInstance:MainMenuMapName
+PROPERTY NameProperty /Script/Nimbus.NimbusGameInstance:BootMenuMapName
+PROPERTY NameProperty /Script/Nimbus.NimbusGameInstance:CampaignMissionClearMapName
+PROPERTY NameProperty /Script/Nimbus.NimbusGameInstance:TransitionMapName
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:StreamingInstallManager
+PROPERTY ClassProperty /Script/Nimbus.NimbusGameInstance:AIWingTipRibbonCollectionClass
+PROPERTY ClassProperty /Script/Nimbus.NimbusGameInstance:MissileRibbonCollectionClass
+PROPERTY ClassProperty /Script/Nimbus.NimbusGameInstance:DebriefingRibbonCollectionClass
+PROPERTY ClassProperty /Script/Nimbus.NimbusGameInstance:AIWingTipRibbonCollectionClassVR
+PROPERTY ClassProperty /Script/Nimbus.NimbusGameInstance:MissileRibbonCollectionClassVR
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:LoadingScreenManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:ConditionActionManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:TickObject
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:MapChangeManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:FadeManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SubLevelManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:PauseManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SoundReverbManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:GarbageCollectManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SoundPauseManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SystemUserPause
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:MusicPlayer
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:GameInformation
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:DLCInformation
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:MenuSequenseManager
+PROPERTY MulticastDelegateProperty /Script/Nimbus.NimbusGameInstance:MapLoadedEvent
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SeaMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:GroundMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:ConcreteMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:GlassMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:IceMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:BossMaterial
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:MetalMaterial
+PROPERTY ArrayProperty /Script/Nimbus.NimbusGameInstance:SoundBanks
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:DebugFontObject
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:DebugLog
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:TempScreenshot
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:EULAHelper
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:SoundManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:ReplayDataManager
+PROPERTY ObjectProperty /Script/Nimbus.NimbusGameInstance:DebugMissionHitchChecker
+CLASS Class /Script/Engine.GameInstance
+FUNCTION Function /Script/Engine.GameInstance:ReceiveShutdown
+FUNCTION Function /Script/Engine.GameInstance:ReceiveInit
+FUNCTION Function /Script/Engine.GameInstance:HandleTravelError
+  PARAM ByteProperty /Script/Engine.GameInstance:HandleTravelError.FailureType
+FUNCTION Function /Script/Engine.GameInstance:HandleNetworkError
+  PARAM ByteProperty /Script/Engine.GameInstance:HandleNetworkError.FailureType
+  PARAM BoolProperty /Script/Engine.GameInstance:HandleNetworkError.bIsServer
+FUNCTION Function /Script/Engine.GameInstance:DebugRemovePlayer
+  PARAM IntProperty /Script/Engine.GameInstance:DebugRemovePlayer.ControllerId
+FUNCTION Function /Script/Engine.GameInstance:DebugCreatePlayer
+  PARAM IntProperty /Script/Engine.GameInstance:DebugCreatePlayer.ControllerId
+PROPERTY ArrayProperty /Script/Engine.GameInstance:LocalPlayers
+PROPERTY ObjectProperty /Script/Engine.GameInstance:OnlineSession
+CLASS Class /Script/CoreUObject.Object
+FUNCTION Function /Script/CoreUObject.Object:ExecuteUbergraph
+  PARAM IntProperty /Script/CoreUObject.Object:ExecuteUbergraph.EntryPoint
+OBJECT NimbusPlayerController /Game/UI/Menu/Menu.Menu:PersistentLevel.NimbusPlayerController_0
+CLASS Class /Script/Nimbus.NimbusPlayerController
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:UnpauseAllControllerVibrations
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:TogglePlayerDebugInfo
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:ToggleHUD
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:StopControllerVibrationTypes
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:StopControllerVibrationTypes.Type1
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:StopControllerVibrationTypes.Type2
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:StopControllerVibrationType
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:StopControllerVibrationType.Type
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:StopAllControllerVibrationImmediately
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:StartControllerVibration
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:StartControllerVibration.intensity
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:StartControllerVibration.Duration
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:SetXBoxControllerVibrationScalar
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:SetXBoxControllerVibrationScalar.Scalar
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:SetPSControllerVibrationScalar
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:SetPSControllerVibrationScalar.Scalar
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:SetIsSkipIGC
+  PARAM BoolProperty /Script/Nimbus.NimbusPlayerController:SetIsSkipIGC.bSkipIGC
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScales
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScales.Type1
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScales.Type2
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScales.Scale
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScale
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScale.Type
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:SetControllerVibrationScale.Scale
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:PauseAllControllerVibrations
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:ForceStopControllerVibration
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify_OnIGC
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify_OnIGC.Type
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify_OnIGC.Scale
+FUNCTION Function /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify
+  PARAM EnumProperty /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify.Type
+  PARAM FloatProperty /Script/Nimbus.NimbusPlayerController:ControllerVibrationNotify.Scale
+PROPERTY BoolProperty /Script/Nimbus.NimbusPlayerController:bDisplayDebugInfo
+PROPERTY ClassProperty /Script/Nimbus.NimbusPlayerController:ControllerVibrationClass
+PROPERTY ObjectProperty /Script/Nimbus.NimbusPlayerController:ControllerVibration
+CLASS Class /Script/Engine.PlayerController
+FUNCTION Function /Script/Engine.PlayerController:WasInputKeyJustReleased
+  PARAM StructProperty /Script/Engine.PlayerController:WasInputKeyJustReleased.Key
+  PARAM BoolProperty /Script/Engine.PlayerController:WasInputKeyJustReleased.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:WasInputKeyJustPressed
+  PARAM StructProperty /Script/Engine.PlayerController:WasInputKeyJustPressed.Key
+  PARAM BoolProperty /Script/Engine.PlayerController:WasInputKeyJustPressed.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:ToggleSpeaking
+  PARAM BoolProperty /Script/Engine.PlayerController:ToggleSpeaking.bInSpeaking
+FUNCTION Function /Script/Engine.PlayerController:SwitchLevel
+  PARAM StrProperty /Script/Engine.PlayerController:SwitchLevel.URL
+FUNCTION Function /Script/Engine.PlayerController:StopHapticEffect
+  PARAM EnumProperty /Script/Engine.PlayerController:StopHapticEffect.Hand
+FUNCTION Function /Script/Engine.PlayerController:StartFire
+  PARAM ByteProperty /Script/Engine.PlayerController:StartFire.FireModeNum
+FUNCTION Function /Script/Engine.PlayerController:SetVirtualJoystickVisibility
+  PARAM BoolProperty /Script/Engine.PlayerController:SetVirtualJoystickVisibility.bVisible
+FUNCTION Function /Script/Engine.PlayerController:SetViewTargetWithBlend
+  PARAM ObjectProperty /Script/Engine.PlayerController:SetViewTargetWithBlend.NewViewTarget
+  PARAM FloatProperty /Script/Engine.PlayerController:SetViewTargetWithBlend.BlendTime
+  PARAM ByteProperty /Script/Engine.PlayerController:SetViewTargetWithBlend.BlendFunc
+  PARAM FloatProperty /Script/Engine.PlayerController:SetViewTargetWithBlend.BlendExp
+  PARAM BoolProperty /Script/Engine.PlayerController:SetViewTargetWithBlend.bLockOutgoing
+FUNCTION Function /Script/Engine.PlayerController:SetName
+  PARAM StrProperty /Script/Engine.PlayerController:SetName.S
+FUNCTION Function /Script/Engine.PlayerController:SetMouseLocation
+  PARAM IntProperty /Script/Engine.PlayerController:SetMouseLocation.X
+  PARAM IntProperty /Script/Engine.PlayerController:SetMouseLocation.Y
+FUNCTION Function /Script/Engine.PlayerController:SetMouseCursorWidget
+  PARAM ByteProperty /Script/Engine.PlayerController:SetMouseCursorWidget.Cursor
+  PARAM ObjectProperty /Script/Engine.PlayerController:SetMouseCursorWidget.CursorWidget
+FUNCTION Function /Script/Engine.PlayerController:SetHapticsByValue
+  PARAM FloatProperty /Script/Engine.PlayerController:SetHapticsByValue.Frequency
+  PARAM FloatProperty /Script/Engine.PlayerController:SetHapticsByValue.Amplitude
+  PARAM EnumProperty /Script/Engine.PlayerController:SetHapticsByValue.Hand
+FUNCTION Function /Script/Engine.PlayerController:SetControllerLightColor
+  PARAM StructProperty /Script/Engine.PlayerController:SetControllerLightColor.Color
+FUNCTION Function /Script/Engine.PlayerController:SetCinematicMode
+  PARAM BoolProperty /Script/Engine.PlayerController:SetCinematicMode.bInCinematicMode
+  PARAM BoolProperty /Script/Engine.PlayerController:SetCinematicMode.bHidePlayer
+  PARAM BoolProperty /Script/Engine.PlayerController:SetCinematicMode.bAffectsHUD
+  PARAM BoolProperty /Script/Engine.PlayerController:SetCinematicMode.bAffectsMovement
+  PARAM BoolProperty /Script/Engine.PlayerController:SetCinematicMode.bAffectsTurning
+FUNCTION Function /Script/Engine.PlayerController:SetAudioListenerOverride
+  PARAM ObjectProperty /Script/Engine.PlayerController:SetAudioListenerOverride.AttachToComponent
+  PARAM StructProperty /Script/Engine.PlayerController:SetAudioListenerOverride.Location
+  PARAM StructProperty /Script/Engine.PlayerController:SetAudioListenerOverride.Rotation
+FUNCTION Function /Script/Engine.PlayerController:ServerViewSelf
+  PARAM StructProperty /Script/Engine.PlayerController:ServerViewSelf.TransitionParams
+FUNCTION Function /Script/Engine.PlayerController:ServerViewPrevPlayer
+FUNCTION Function /Script/Engine.PlayerController:ServerViewNextPlayer
+FUNCTION Function /Script/Engine.PlayerController:ServerVerifyViewTarget
+FUNCTION Function /Script/Engine.PlayerController:ServerUpdateLevelVisibility
+  PARAM NameProperty /Script/Engine.PlayerController:ServerUpdateLevelVisibility.PackageName
+  PARAM BoolProperty /Script/Engine.PlayerController:ServerUpdateLevelVisibility.bIsVisible
+FUNCTION Function /Script/Engine.PlayerController:ServerUpdateCamera
+  PARAM StructProperty /Script/Engine.PlayerController:ServerUpdateCamera.CamLoc
+  PARAM IntProperty /Script/Engine.PlayerController:ServerUpdateCamera.CamPitchAndYaw
+FUNCTION Function /Script/Engine.PlayerController:ServerUnmutePlayer
+  PARAM StructProperty /Script/Engine.PlayerController:ServerUnmutePlayer.PlayerId
+FUNCTION Function /Script/Engine.PlayerController:ServerToggleAILogging
+FUNCTION Function /Script/Engine.PlayerController:ServerShortTimeout
+FUNCTION Function /Script/Engine.PlayerController:ServerSetSpectatorWaiting
+  PARAM BoolProperty /Script/Engine.PlayerController:ServerSetSpectatorWaiting.bWaiting
+FUNCTION Function /Script/Engine.PlayerController:ServerSetSpectatorLocation
+  PARAM StructProperty /Script/Engine.PlayerController:ServerSetSpectatorLocation.NewLoc
+  PARAM StructProperty /Script/Engine.PlayerController:ServerSetSpectatorLocation.NewRot
+FUNCTION Function /Script/Engine.PlayerController:ServerRestartPlayer
+FUNCTION Function /Script/Engine.PlayerController:ServerPause
+FUNCTION Function /Script/Engine.PlayerController:ServerNotifyLoadedWorld
+  PARAM NameProperty /Script/Engine.PlayerController:ServerNotifyLoadedWorld.WorldPackageName
+FUNCTION Function /Script/Engine.PlayerController:ServerMutePlayer
+  PARAM StructProperty /Script/Engine.PlayerController:ServerMutePlayer.PlayerId
+FUNCTION Function /Script/Engine.PlayerController:ServerCheckClientPossessionReliable
+FUNCTION Function /Script/Engine.PlayerController:ServerCheckClientPossession
+FUNCTION Function /Script/Engine.PlayerController:ServerChangeName
+  PARAM StrProperty /Script/Engine.PlayerController:ServerChangeName.S
+FUNCTION Function /Script/Engine.PlayerController:ServerCamera
+  PARAM NameProperty /Script/Engine.PlayerController:ServerCamera.NewMode
+FUNCTION Function /Script/Engine.PlayerController:ServerAcknowledgePossession
+  PARAM ObjectProperty /Script/Engine.PlayerController:ServerAcknowledgePossession.P
+FUNCTION Function /Script/Engine.PlayerController:SendToConsole
+  PARAM StrProperty /Script/Engine.PlayerController:SendToConsole.Command
+FUNCTION Function /Script/Engine.PlayerController:RestartLevel
+FUNCTION Function /Script/Engine.PlayerController:ProjectWorldLocationToScreen
+  PARAM StructProperty /Script/Engine.PlayerController:ProjectWorldLocationToScreen.WorldLocation
+  PARAM StructProperty /Script/Engine.PlayerController:ProjectWorldLocationToScreen.ScreenLocation
+  PARAM BoolProperty /Script/Engine.PlayerController:ProjectWorldLocationToScreen.bPlayerViewportRelative
+  PARAM BoolProperty /Script/Engine.PlayerController:ProjectWorldLocationToScreen.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:PlayHapticEffect
+  PARAM ObjectProperty /Script/Engine.PlayerController:PlayHapticEffect.HapticEffect
+  PARAM EnumProperty /Script/Engine.PlayerController:PlayHapticEffect.Hand
+  PARAM FloatProperty /Script/Engine.PlayerController:PlayHapticEffect.Scale
+  PARAM BoolProperty /Script/Engine.PlayerController:PlayHapticEffect.bLoop
+FUNCTION Function /Script/Engine.PlayerController:PlayDynamicForceFeedback
+  PARAM FloatProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.intensity
+  PARAM FloatProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.Duration
+  PARAM BoolProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.bAffectsLeftLarge
+  PARAM BoolProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.bAffectsLeftSmall
+  PARAM BoolProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.bAffectsRightLarge
+  PARAM BoolProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.bAffectsRightSmall
+  PARAM ByteProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.Action
+  PARAM StructProperty /Script/Engine.PlayerController:PlayDynamicForceFeedback.LatentInfo
+FUNCTION Function /Script/Engine.PlayerController:Pause
+FUNCTION Function /Script/Engine.PlayerController:OnServerStartedVisualLogger
+  PARAM BoolProperty /Script/Engine.PlayerController:OnServerStartedVisualLogger.bIsLogging
+FUNCTION Function /Script/Engine.PlayerController:LocalTravel
+  PARAM StrProperty /Script/Engine.PlayerController:LocalTravel.URL
+FUNCTION Function /Script/Engine.PlayerController:IsInputKeyDown
+  PARAM StructProperty /Script/Engine.PlayerController:IsInputKeyDown.Key
+  PARAM BoolProperty /Script/Engine.PlayerController:IsInputKeyDown.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetViewportSize
+  PARAM IntProperty /Script/Engine.PlayerController:GetViewportSize.SizeX
+  PARAM IntProperty /Script/Engine.PlayerController:GetViewportSize.SizeY
+FUNCTION Function /Script/Engine.PlayerController:GetSpectatorPawn
+  PARAM ObjectProperty /Script/Engine.PlayerController:GetSpectatorPawn.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetMousePosition
+  PARAM FloatProperty /Script/Engine.PlayerController:GetMousePosition.LocationX
+  PARAM FloatProperty /Script/Engine.PlayerController:GetMousePosition.LocationY
+  PARAM BoolProperty /Script/Engine.PlayerController:GetMousePosition.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetInputVectorKeyState
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputVectorKeyState.Key
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputVectorKeyState.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetInputTouchState
+  PARAM ByteProperty /Script/Engine.PlayerController:GetInputTouchState.FingerIndex
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputTouchState.LocationX
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputTouchState.LocationY
+  PARAM BoolProperty /Script/Engine.PlayerController:GetInputTouchState.bIsCurrentlyPressed
+FUNCTION Function /Script/Engine.PlayerController:GetInputMouseDelta
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputMouseDelta.DeltaX
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputMouseDelta.DeltaY
+FUNCTION Function /Script/Engine.PlayerController:GetInputMotionState
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputMotionState.Tilt
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputMotionState.RotationRate
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputMotionState.Gravity
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputMotionState.Acceleration
+FUNCTION Function /Script/Engine.PlayerController:GetInputKeyTimeDown
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputKeyTimeDown.Key
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputKeyTimeDown.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetInputGamePadSpecialLeftState
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputGamePadSpecialLeftState.StickX
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputGamePadSpecialLeftState.StickY
+FUNCTION Function /Script/Engine.PlayerController:GetInputAnalogStickState
+  PARAM ByteProperty /Script/Engine.PlayerController:GetInputAnalogStickState.WhichStick
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputAnalogStickState.StickX
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputAnalogStickState.StickY
+FUNCTION Function /Script/Engine.PlayerController:GetInputAnalogKeyState
+  PARAM StructProperty /Script/Engine.PlayerController:GetInputAnalogKeyState.Key
+  PARAM FloatProperty /Script/Engine.PlayerController:GetInputAnalogKeyState.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHUD
+  PARAM ObjectProperty /Script/Engine.PlayerController:GetHUD.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects.FingerIndex
+  PARAM ArrayProperty /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects.ObjectTypes
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFingerForObjects.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel.FingerIndex
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel.TraceChannel
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFingerByChannel.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderFinger
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderFinger.FingerIndex
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderFinger.TraceChannel
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFinger.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderFinger.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderFinger.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderCursorForObjects
+  PARAM ArrayProperty /Script/Engine.PlayerController:GetHitResultUnderCursorForObjects.ObjectTypes
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursorForObjects.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderCursorForObjects.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursorForObjects.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderCursorByChannel
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderCursorByChannel.TraceChannel
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursorByChannel.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderCursorByChannel.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursorByChannel.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetHitResultUnderCursor
+  PARAM ByteProperty /Script/Engine.PlayerController:GetHitResultUnderCursor.TraceChannel
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursor.bTraceComplex
+  PARAM StructProperty /Script/Engine.PlayerController:GetHitResultUnderCursor.HitResult
+  PARAM BoolProperty /Script/Engine.PlayerController:GetHitResultUnderCursor.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:GetFocalLocation
+  PARAM StructProperty /Script/Engine.PlayerController:GetFocalLocation.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:FOV
+  PARAM FloatProperty /Script/Engine.PlayerController:FOV.NewFOV
+FUNCTION Function /Script/Engine.PlayerController:EnableCheats
+FUNCTION Function /Script/Engine.PlayerController:DeprojectScreenPositionToWorld
+  PARAM FloatProperty /Script/Engine.PlayerController:DeprojectScreenPositionToWorld.ScreenX
+  PARAM FloatProperty /Script/Engine.PlayerController:DeprojectScreenPositionToWorld.ScreenY
+  PARAM StructProperty /Script/Engine.PlayerController:DeprojectScreenPositionToWorld.WorldLocation
+  PARAM StructProperty /Script/Engine.PlayerController:DeprojectScreenPositionToWorld.WorldDirection
+  PARAM BoolProperty /Script/Engine.PlayerController:DeprojectScreenPositionToWorld.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:DeprojectMousePositionToWorld
+  PARAM StructProperty /Script/Engine.PlayerController:DeprojectMousePositionToWorld.WorldLocation
+  PARAM StructProperty /Script/Engine.PlayerController:DeprojectMousePositionToWorld.WorldDirection
+  PARAM BoolProperty /Script/Engine.PlayerController:DeprojectMousePositionToWorld.ReturnValue
+FUNCTION Function /Script/Engine.PlayerController:ConsoleKey
+  PARAM StructProperty /Script/Engine.PlayerController:ConsoleKey.Key
+FUNCTION Function /Script/Engine.PlayerController:ClientWasKicked
+  PARAM TextProperty /Script/Engine.PlayerController:ClientWasKicked.KickReason
+FUNCTION Function /Script/Engine.PlayerController:ClientVoiceHandshakeComplete
+FUNCTION Function /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus
+  PARAM NameProperty /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus.PackageName
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus.bNewShouldBeLoaded
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus.bNewShouldBeVisible
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus.bNewShouldBlockOnLoad
+  PARAM IntProperty /Script/Engine.PlayerController:ClientUpdateLevelStreamingStatus.LODIndex
+FUNCTION Function /Script/Engine.PlayerController:ClientUnmutePlayer
+  PARAM StructProperty /Script/Engine.PlayerController:ClientUnmutePlayer.PlayerId
+FUNCTION Function /Script/Engine.PlayerController:ClientTravelInternal
+  PARAM StrProperty /Script/Engine.PlayerController:ClientTravelInternal.URL
+  PARAM ByteProperty /Script/Engine.PlayerController:ClientTravelInternal.TravelType
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientTravelInternal.bSeamless
+  PARAM StructProperty /Script/Engine.PlayerController:ClientTravelInternal.MapPackageGuid
+FUNCTION Function /Script/Engine.PlayerController:ClientTravel
+  PARAM StrProperty /Script/Engine.PlayerController:ClientTravel.URL
+  PARAM ByteProperty /Script/Engine.PlayerController:ClientTravel.TravelType
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientTravel.bSeamless
+  PARAM StructProperty /Script/Engine.PlayerController:ClientTravel.MapPackageGuid
+FUNCTION Function /Script/Engine.PlayerController:ClientTeamMessage
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientTeamMessage.SenderPlayerState
+  PARAM StrProperty /Script/Engine.PlayerController:ClientTeamMessage.S
+  PARAM NameProperty /Script/Engine.PlayerController:ClientTeamMessage.Type
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientTeamMessage.MsgLifeTime
+FUNCTION Function /Script/Engine.PlayerController:ClientStopForceFeedback
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientStopForceFeedback.ForceFeedbackEffect
+  PARAM NameProperty /Script/Engine.PlayerController:ClientStopForceFeedback.Tag
+FUNCTION Function /Script/Engine.PlayerController:ClientStopCameraShake
+  PARAM ClassProperty /Script/Engine.PlayerController:ClientStopCameraShake.Shake
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientStopCameraShake.bImmediately
+FUNCTION Function /Script/Engine.PlayerController:ClientStopCameraAnim
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientStopCameraAnim.AnimToStop
+FUNCTION Function /Script/Engine.PlayerController:ClientStartOnlineSession
+FUNCTION Function /Script/Engine.PlayerController:ClientSpawnCameraLensEffect
+  PARAM ClassProperty /Script/Engine.PlayerController:ClientSpawnCameraLensEffect.LensEffectEmitterClass
+FUNCTION Function /Script/Engine.PlayerController:ClientSetViewTarget
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientSetViewTarget.A
+  PARAM StructProperty /Script/Engine.PlayerController:ClientSetViewTarget.TransitionParams
+FUNCTION Function /Script/Engine.PlayerController:ClientSetSpectatorWaiting
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetSpectatorWaiting.bWaiting
+FUNCTION Function /Script/Engine.PlayerController:ClientSetHUD
+  PARAM ClassProperty /Script/Engine.PlayerController:ClientSetHUD.NewHUDClass
+FUNCTION Function /Script/Engine.PlayerController:ClientSetForceMipLevelsToBeResident
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientSetForceMipLevelsToBeResident.Material
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientSetForceMipLevelsToBeResident.ForceDuration
+  PARAM IntProperty /Script/Engine.PlayerController:ClientSetForceMipLevelsToBeResident.CinematicTextureGroups
+FUNCTION Function /Script/Engine.PlayerController:ClientSetCinematicMode
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCinematicMode.bInCinematicMode
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCinematicMode.bAffectsMovement
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCinematicMode.bAffectsTurning
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCinematicMode.bAffectsHUD
+FUNCTION Function /Script/Engine.PlayerController:ClientSetCameraMode
+  PARAM NameProperty /Script/Engine.PlayerController:ClientSetCameraMode.NewCamMode
+FUNCTION Function /Script/Engine.PlayerController:ClientSetCameraFade
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCameraFade.bEnableFading
+  PARAM StructProperty /Script/Engine.PlayerController:ClientSetCameraFade.FadeColor
+  PARAM StructProperty /Script/Engine.PlayerController:ClientSetCameraFade.FadeAlpha
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientSetCameraFade.FadeTime
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientSetCameraFade.bFadeAudio
+FUNCTION Function /Script/Engine.PlayerController:ClientSetBlockOnAsyncLoading
+FUNCTION Function /Script/Engine.PlayerController:ClientReturnToMainMenu
+  PARAM StrProperty /Script/Engine.PlayerController:ClientReturnToMainMenu.ReturnReason
+FUNCTION Function /Script/Engine.PlayerController:ClientRetryClientRestart
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientRetryClientRestart.NewPawn
+FUNCTION Function /Script/Engine.PlayerController:ClientRestart
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientRestart.NewPawn
+FUNCTION Function /Script/Engine.PlayerController:ClientReset
+FUNCTION Function /Script/Engine.PlayerController:ClientRepObjRef
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientRepObjRef.Object
+FUNCTION Function /Script/Engine.PlayerController:ClientReceiveLocalizedMessage
+  PARAM ClassProperty /Script/Engine.PlayerController:ClientReceiveLocalizedMessage.Message
+  PARAM IntProperty /Script/Engine.PlayerController:ClientReceiveLocalizedMessage.Switch
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientReceiveLocalizedMessage.RelatedPlayerState_1
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientReceiveLocalizedMessage.RelatedPlayerState_2
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientReceiveLocalizedMessage.OptionalObject
+FUNCTION Function /Script/Engine.PlayerController:ClientPrestreamTextures
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientPrestreamTextures.ForcedActor
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPrestreamTextures.ForceDuration
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPrestreamTextures.bEnableStreaming
+  PARAM IntProperty /Script/Engine.PlayerController:ClientPrestreamTextures.CinematicTextureGroups
+FUNCTION Function /Script/Engine.PlayerController:ClientPrepareMapChange
+  PARAM NameProperty /Script/Engine.PlayerController:ClientPrepareMapChange.LevelName
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPrepareMapChange.bFirst
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPrepareMapChange.bLast
+FUNCTION Function /Script/Engine.PlayerController:ClientPlaySoundAtLocation
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientPlaySoundAtLocation.Sound
+  PARAM StructProperty /Script/Engine.PlayerController:ClientPlaySoundAtLocation.Location
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlaySoundAtLocation.VolumeMultiplier
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlaySoundAtLocation.PitchMultiplier
+FUNCTION Function /Script/Engine.PlayerController:ClientPlaySound
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientPlaySound.Sound
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlaySound.VolumeMultiplier
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlaySound.PitchMultiplier
+FUNCTION Function /Script/Engine.PlayerController:ClientPlayForceFeedback
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientPlayForceFeedback.ForceFeedbackEffect
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPlayForceFeedback.bLooping
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPlayForceFeedback.bIgnoreTimeDilation
+  PARAM NameProperty /Script/Engine.PlayerController:ClientPlayForceFeedback.Tag
+FUNCTION Function /Script/Engine.PlayerController:ClientPlayCameraShake
+  PARAM ClassProperty /Script/Engine.PlayerController:ClientPlayCameraShake.Shake
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlayCameraShake.Scale
+  PARAM ByteProperty /Script/Engine.PlayerController:ClientPlayCameraShake.PlaySpace
+  PARAM StructProperty /Script/Engine.PlayerController:ClientPlayCameraShake.UserPlaySpaceRot
+FUNCTION Function /Script/Engine.PlayerController:ClientPlayCameraAnim
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.AnimToPlay
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.Scale
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.Rate
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.BlendInTime
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.BlendOutTime
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.bLoop
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.bRandomStartTime
+  PARAM ByteProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.Space
+  PARAM StructProperty /Script/Engine.PlayerController:ClientPlayCameraAnim.CustomPlaySpace
+FUNCTION Function /Script/Engine.PlayerController:ClientMutePlayer
+  PARAM StructProperty /Script/Engine.PlayerController:ClientMutePlayer.PlayerId
+FUNCTION Function /Script/Engine.PlayerController:ClientMessage
+  PARAM StrProperty /Script/Engine.PlayerController:ClientMessage.S
+  PARAM NameProperty /Script/Engine.PlayerController:ClientMessage.Type
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientMessage.MsgLifeTime
+FUNCTION Function /Script/Engine.PlayerController:ClientIgnoreMoveInput
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientIgnoreMoveInput.bIgnore
+FUNCTION Function /Script/Engine.PlayerController:ClientIgnoreLookInput
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientIgnoreLookInput.bIgnore
+FUNCTION Function /Script/Engine.PlayerController:ClientGotoState
+  PARAM NameProperty /Script/Engine.PlayerController:ClientGotoState.NewState
+FUNCTION Function /Script/Engine.PlayerController:ClientGameEnded
+  PARAM ObjectProperty /Script/Engine.PlayerController:ClientGameEnded.EndGameFocus
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientGameEnded.bIsWinner
+FUNCTION Function /Script/Engine.PlayerController:ClientForceGarbageCollection
+FUNCTION Function /Script/Engine.PlayerController:ClientFlushLevelStreaming
+FUNCTION Function /Script/Engine.PlayerController:ClientEndOnlineSession
+FUNCTION Function /Script/Engine.PlayerController:ClientEnableNetworkVoice
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientEnableNetworkVoice.bEnable
+FUNCTION Function /Script/Engine.PlayerController:ClientCommitMapChange
+FUNCTION Function /Script/Engine.PlayerController:ClientClearCameraLensEffects
+FUNCTION Function /Script/Engine.PlayerController:ClientCapBandwidth
+  PARAM IntProperty /Script/Engine.PlayerController:ClientCapBandwidth.Cap
+FUNCTION Function /Script/Engine.PlayerController:ClientCancelPendingMapChange
+FUNCTION Function /Script/Engine.PlayerController:ClientAddTextureStreamingLoc
+  PARAM StructProperty /Script/Engine.PlayerController:ClientAddTextureStreamingLoc.InLoc
+  PARAM FloatProperty /Script/Engine.PlayerController:ClientAddTextureStreamingLoc.Duration
+  PARAM BoolProperty /Script/Engine.PlayerController:ClientAddTextureStreamingLoc.bOverrideLocation
+FUNCTION Function /Script/Engine.PlayerController:ClearAudioListenerOverride
+FUNCTION Function /Script/Engine.PlayerController:Camera
+  PARAM NameProperty /Script/Engine.PlayerController:Camera.NewMode
+FUNCTION Function /Script/Engine.PlayerController:AddYawInput
+  PARAM FloatProperty /Script/Engine.PlayerController:AddYawInput.Val
+FUNCTION Function /Script/Engine.PlayerController:AddRollInput
+  PARAM FloatProperty /Script/Engine.PlayerController:AddRollInput.Val
+FUNCTION Function /Script/Engine.PlayerController:AddPitchInput
+  PARAM FloatProperty /Script/Engine.PlayerController:AddPitchInput.Val
+FUNCTION Function /Script/Engine.PlayerController:ActivateTouchInterface
+  PARAM ObjectProperty /Script/Engine.PlayerController:ActivateTouchInterface.NewTouchInterface
+PROPERTY ObjectProperty /Script/Engine.PlayerController:Player
+PROPERTY ObjectProperty /Script/Engine.PlayerController:AcknowledgedPawn
+PROPERTY ObjectProperty /Script/Engine.PlayerController:ControllingDirTrackInst
+PROPERTY ObjectProperty /Script/Engine.PlayerController:MyHUD
+PROPERTY ObjectProperty /Script/Engine.PlayerController:PlayerCameraManager
+PROPERTY ClassProperty /Script/Engine.PlayerController:PlayerCameraManagerClass
+PROPERTY BoolProperty /Script/Engine.PlayerController:bAutoManageActiveCameraTarget
+PROPERTY BoolProperty /Script/Engine.PlayerController:bUseActiveCameraOnViewTargetDestroyed
+PROPERTY StructProperty /Script/Engine.PlayerController:TargetViewRotation
+PROPERTY FloatProperty /Script/Engine.PlayerController:SmoothTargetViewRotationSpeed
+PROPERTY ArrayProperty /Script/Engine.PlayerController:HiddenActors
+PROPERTY ArrayProperty /Script/Engine.PlayerController:HiddenPrimitiveComponents
+PROPERTY FloatProperty /Script/Engine.PlayerController:LastSpectatorStateSynchTime
+PROPERTY StructProperty /Script/Engine.PlayerController:LastSpectatorSyncLocation
+PROPERTY StructProperty /Script/Engine.PlayerController:LastSpectatorSyncRotation
+PROPERTY IntProperty /Script/Engine.PlayerController:ClientCap
+PROPERTY ObjectProperty /Script/Engine.PlayerController:CheatManager
+PROPERTY ClassProperty /Script/Engine.PlayerController:CheatClass
+PROPERTY ObjectProperty /Script/Engine.PlayerController:PlayerInput
+PROPERTY ArrayProperty /Script/Engine.PlayerController:ActiveForceFeedbackEffects
+PROPERTY BoolProperty /Script/Engine.PlayerController:bPlayerIsWaiting
+PROPERTY ByteProperty /Script/Engine.PlayerController:NetPlayerIndex
+PROPERTY ObjectProperty /Script/Engine.PlayerController:PendingSwapConnection
+PROPERTY ObjectProperty /Script/Engine.PlayerController:NetConnection
+PROPERTY FloatProperty /Script/Engine.PlayerController:InputYawScale
+PROPERTY FloatProperty /Script/Engine.PlayerController:InputPitchScale
+PROPERTY FloatProperty /Script/Engine.PlayerController:InputRollScale
+PROPERTY BoolProperty /Script/Engine.PlayerController:bShowMouseCursor
+PROPERTY BoolProperty /Script/Engine.PlayerController:bEnableClickEvents
+PROPERTY BoolProperty /Script/Engine.PlayerController:bEnableTouchEvents
+PROPERTY BoolProperty /Script/Engine.PlayerController:bEnableMouseOverEvents
+PROPERTY BoolProperty /Script/Engine.PlayerController:bEnableTouchOverEvents
+PROPERTY BoolProperty /Script/Engine.PlayerController:bForceFeedbackEnabled
+PROPERTY FloatProperty /Script/Engine.PlayerController:ForceFeedbackScale
+PROPERTY ArrayProperty /Script/Engine.PlayerController:ClickEventKeys
+PROPERTY ByteProperty /Script/Engine.PlayerController:DefaultMouseCursor
+PROPERTY ByteProperty /Script/Engine.PlayerController:CurrentMouseCursor
+PROPERTY ByteProperty /Script/Engine.PlayerController:DefaultClickTraceChannel
+PROPERTY ByteProperty /Script/Engine.PlayerController:CurrentClickTraceChannel
+PROPERTY FloatProperty /Script/Engine.PlayerController:HitResultTraceDistance
+PROPERTY ObjectProperty /Script/Engine.PlayerController:InactiveStateInputComponent
+PROPERTY BoolProperty /Script/Engine.PlayerController:bShouldPerformFullTickWhenPaused
+PROPERTY ObjectProperty /Script/Engine.PlayerController:CurrentTouchInterface
+PROPERTY ObjectProperty /Script/Engine.PlayerController:SpectatorPawn
+PROPERTY StructProperty /Script/Engine.PlayerController:SpawnLocation
+PROPERTY BoolProperty /Script/Engine.PlayerController:bIsLocalPlayerController
+PROPERTY UInt16Property /Script/Engine.PlayerController:SeamlessTravelCount
+PROPERTY UInt16Property /Script/Engine.PlayerController:LastCompletedSeamlessTravelCount
+CLASS Class /Script/Engine.Controller
+FUNCTION Function /Script/Engine.Controller:UnPossess
+FUNCTION Function /Script/Engine.Controller:StopMovement
+FUNCTION Function /Script/Engine.Controller:SetInitialLocationAndRotation
+  PARAM StructProperty /Script/Engine.Controller:SetInitialLocationAndRotation.NewLocation
+  PARAM StructProperty /Script/Engine.Controller:SetInitialLocationAndRotation.NewRotation
+FUNCTION Function /Script/Engine.Controller:SetIgnoreMoveInput
+  PARAM BoolProperty /Script/Engine.Controller:SetIgnoreMoveInput.bNewMoveInput
+FUNCTION Function /Script/Engine.Controller:SetIgnoreLookInput
+  PARAM BoolProperty /Script/Engine.Controller:SetIgnoreLookInput.bNewLookInput
+FUNCTION Function /Script/Engine.Controller:SetControlRotation
+  PARAM StructProperty /Script/Engine.Controller:SetControlRotation.NewRotation
+FUNCTION Function /Script/Engine.Controller:ResetIgnoreMoveInput
+FUNCTION Function /Script/Engine.Controller:ResetIgnoreLookInput
+FUNCTION Function /Script/Engine.Controller:ResetIgnoreInputFlags
+FUNCTION Function /Script/Engine.Controller:ReceiveInstigatedAnyDamage
+  PARAM FloatProperty /Script/Engine.Controller:ReceiveInstigatedAnyDamage.Damage
+  PARAM ObjectProperty /Script/Engine.Controller:ReceiveInstigatedAnyDamage.DamageType
+  PARAM ObjectProperty /Script/Engine.Controller:ReceiveInstigatedAnyDamage.DamagedActor
+  PARAM ObjectProperty /Script/Engine.Controller:ReceiveInstigatedAnyDamage.DamageCauser
+FUNCTION Function /Script/Engine.Controller:Possess
+  PARAM ObjectProperty /Script/Engine.Controller:Possess.InPawn
+FUNCTION Function /Script/Engine.Controller:OnRep_PlayerState
+FUNCTION Function /Script/Engine.Controller:OnRep_Pawn
+FUNCTION Function /Script/Engine.Controller:LineOfSightTo
+  PARAM ObjectProperty /Script/Engine.Controller:LineOfSightTo.Other
+  PARAM StructProperty /Script/Engine.Controller:LineOfSightTo.ViewPoint
+  PARAM BoolProperty /Script/Engine.Controller:LineOfSightTo.bAlternateChecks
+  PARAM BoolProperty /Script/Engine.Controller:LineOfSightTo.ReturnValue
+FUNCTION Function /Script/Engine.Controller:K2_GetPawn
+  PARAM ObjectProperty /Script/Engine.Controller:K2_GetPawn.ReturnValue
+FUNCTION Function /Script/Engine.Controller:IsPlayerController
+  PARAM BoolProperty /Script/Engine.Controller:IsPlayerController.ReturnValue
+FUNCTION Function /Script/Engine.Controller:IsMoveInputIgnored
+  PARAM BoolProperty /Script/Engine.Controller:IsMoveInputIgnored.ReturnValue
+FUNCTION Function /Script/Engine.Controller:IsLookInputIgnored
+  PARAM BoolProperty /Script/Engine.Controller:IsLookInputIgnored.ReturnValue
+FUNCTION Function /Script/Engine.Controller:IsLocalPlayerController
+  PARAM BoolProperty /Script/Engine.Controller:IsLocalPlayerController.ReturnValue
+FUNCTION Function /Script/Engine.Controller:IsLocalController
+  PARAM BoolProperty /Script/Engine.Controller:IsLocalController.ReturnValue
+FUNCTION Function /Script/Engine.Controller:GetViewTarget
+  PARAM ObjectProperty /Script/Engine.Controller:GetViewTarget.ReturnValue
+FUNCTION Function /Script/Engine.Controller:GetDesiredRotation
+  PARAM StructProperty /Script/Engine.Controller:GetDesiredRotation.ReturnValue
+FUNCTION Function /Script/Engine.Controller:GetControlRotation
+  PARAM StructProperty /Script/Engine.Controller:GetControlRotation.ReturnValue
+FUNCTION Function /Script/Engine.Controller:ClientSetRotation
+  PARAM StructProperty /Script/Engine.Controller:ClientSetRotation.NewRotation
+  PARAM BoolProperty /Script/Engine.Controller:ClientSetRotation.bResetCamera
+FUNCTION Function /Script/Engine.Controller:ClientSetLocation
+  PARAM StructProperty /Script/Engine.Controller:ClientSetLocation.NewLocation
+  PARAM StructProperty /Script/Engine.Controller:ClientSetLocation.NewRotation
+FUNCTION Function /Script/Engine.Controller:CastToPlayerController
+  PARAM ObjectProperty /Script/Engine.Controller:CastToPlayerController.ReturnValue
+PROPERTY ObjectProperty /Script/Engine.Controller:Pawn
+PROPERTY ObjectProperty /Script/Engine.Controller:Character
+PROPERTY ObjectProperty /Script/Engine.Controller:PlayerState
+PROPERTY ObjectProperty /Script/Engine.Controller:TransformComponent
+PROPERTY StructProperty /Script/Engine.Controller:ControlRotation
+PROPERTY BoolProperty /Script/Engine.Controller:bAttachToPawn
+PROPERTY BoolProperty /Script/Engine.Controller:bIsPlayerController
+PROPERTY NameProperty /Script/Engine.Controller:StateName
+PROPERTY MulticastDelegateProperty /Script/Engine.Controller:OnInstigatedAnyDamage
+CLASS Class /Script/Engine.Actor
+FUNCTION Function /Script/Engine.Actor:WasRecentlyRendered
+  PARAM FloatProperty /Script/Engine.Actor:WasRecentlyRendered.Tolerance
+  PARAM BoolProperty /Script/Engine.Actor:WasRecentlyRendered.ReturnValue
+FUNCTION Function /Script/Engine.Actor:UserConstructionScript
+FUNCTION Function /Script/Engine.Actor:TearOff
+FUNCTION Function /Script/Engine.Actor:SnapRootComponentTo
+  PARAM ObjectProperty /Script/Engine.Actor:SnapRootComponentTo.InParentActor
+  PARAM NameProperty /Script/Engine.Actor:SnapRootComponentTo.InSocketName
+FUNCTION Function /Script/Engine.Actor:SetTickGroup
+  PARAM ByteProperty /Script/Engine.Actor:SetTickGroup.NewTickGroup
+FUNCTION Function /Script/Engine.Actor:SetTickableWhenPaused
+  PARAM BoolProperty /Script/Engine.Actor:SetTickableWhenPaused.bTickableWhenPaused
+FUNCTION Function /Script/Engine.Actor:SetReplicates
+  PARAM BoolProperty /Script/Engine.Actor:SetReplicates.bInReplicates
+FUNCTION Function /Script/Engine.Actor:SetReplicateMovement
+  PARAM BoolProperty /Script/Engine.Actor:SetReplicateMovement.bInReplicateMovement
+FUNCTION Function /Script/Engine.Actor:SetOwner
+  PARAM ObjectProperty /Script/Engine.Actor:SetOwner.NewOwner
+FUNCTION Function /Script/Engine.Actor:SetNetDormancy
+  PARAM ByteProperty /Script/Engine.Actor:SetNetDormancy.NewDormancy
+FUNCTION Function /Script/Engine.Actor:SetLifeSpan
+  PARAM FloatProperty /Script/Engine.Actor:SetLifeSpan.InLifespan
+FUNCTION Function /Script/Engine.Actor:SetActorTickInterval
+  PARAM FloatProperty /Script/Engine.Actor:SetActorTickInterval.TickInterval
+FUNCTION Function /Script/Engine.Actor:SetActorTickEnabled
+  PARAM BoolProperty /Script/Engine.Actor:SetActorTickEnabled.bEnabled
+FUNCTION Function /Script/Engine.Actor:SetActorScale3D
+  PARAM StructProperty /Script/Engine.Actor:SetActorScale3D.NewScale3D
+FUNCTION Function /Script/Engine.Actor:SetActorRelativeScale3D
+  PARAM StructProperty /Script/Engine.Actor:SetActorRelativeScale3D.NewRelativeScale
+FUNCTION Function /Script/Engine.Actor:SetActorHiddenInGame
+  PARAM BoolProperty /Script/Engine.Actor:SetActorHiddenInGame.bNewHidden
+FUNCTION Function /Script/Engine.Actor:SetActorEnableCollision
+  PARAM BoolProperty /Script/Engine.Actor:SetActorEnableCollision.bNewActorEnableCollision
+FUNCTION Function /Script/Engine.Actor:RemoveTickPrerequisiteComponent
+  PARAM ObjectProperty /Script/Engine.Actor:RemoveTickPrerequisiteComponent.PrerequisiteComponent
+FUNCTION Function /Script/Engine.Actor:RemoveTickPrerequisiteActor
+  PARAM ObjectProperty /Script/Engine.Actor:RemoveTickPrerequisiteActor.PrerequisiteActor
+FUNCTION Function /Script/Engine.Actor:ReceiveTick
+  PARAM FloatProperty /Script/Engine.Actor:ReceiveTick.DeltaSeconds
+FUNCTION Function /Script/Engine.Actor:ReceiveRadialDamage
+  PARAM FloatProperty /Script/Engine.Actor:ReceiveRadialDamage.DamageReceived
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveRadialDamage.DamageType
+  PARAM StructProperty /Script/Engine.Actor:ReceiveRadialDamage.Origin
+  PARAM StructProperty /Script/Engine.Actor:ReceiveRadialDamage.HitInfo
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveRadialDamage.InstigatedBy
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveRadialDamage.DamageCauser
+FUNCTION Function /Script/Engine.Actor:ReceivePointDamage
+  PARAM FloatProperty /Script/Engine.Actor:ReceivePointDamage.Damage
+  PARAM ObjectProperty /Script/Engine.Actor:ReceivePointDamage.DamageType
+  PARAM StructProperty /Script/Engine.Actor:ReceivePointDamage.HitLocation
+  PARAM StructProperty /Script/Engine.Actor:ReceivePointDamage.HitNormal
+  PARAM ObjectProperty /Script/Engine.Actor:ReceivePointDamage.HitComponent
+  PARAM NameProperty /Script/Engine.Actor:ReceivePointDamage.BoneName
+  PARAM StructProperty /Script/Engine.Actor:ReceivePointDamage.ShotFromDirection
+  PARAM ObjectProperty /Script/Engine.Actor:ReceivePointDamage.InstigatedBy
+  PARAM ObjectProperty /Script/Engine.Actor:ReceivePointDamage.DamageCauser
+  PARAM StructProperty /Script/Engine.Actor:ReceivePointDamage.HitInfo
+FUNCTION Function /Script/Engine.Actor:ReceiveHit
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveHit.MyComp
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveHit.Other
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveHit.OtherComp
+  PARAM BoolProperty /Script/Engine.Actor:ReceiveHit.bSelfMoved
+  PARAM StructProperty /Script/Engine.Actor:ReceiveHit.HitLocation
+  PARAM StructProperty /Script/Engine.Actor:ReceiveHit.HitNormal
+  PARAM StructProperty /Script/Engine.Actor:ReceiveHit.NormalImpulse
+  PARAM StructProperty /Script/Engine.Actor:ReceiveHit.Hit
+FUNCTION Function /Script/Engine.Actor:ReceiveEndPlay
+  PARAM ByteProperty /Script/Engine.Actor:ReceiveEndPlay.EndPlayReason
+FUNCTION Function /Script/Engine.Actor:ReceiveDestroyed
+FUNCTION Function /Script/Engine.Actor:ReceiveBeginPlay
+FUNCTION Function /Script/Engine.Actor:ReceiveAnyDamage
+  PARAM FloatProperty /Script/Engine.Actor:ReceiveAnyDamage.Damage
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveAnyDamage.DamageType
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveAnyDamage.InstigatedBy
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveAnyDamage.DamageCauser
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnReleased
+  PARAM StructProperty /Script/Engine.Actor:ReceiveActorOnReleased.ButtonReleased
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnInputTouchLeave
+  PARAM ByteProperty /Script/Engine.Actor:ReceiveActorOnInputTouchLeave.FingerIndex
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnInputTouchEnter
+  PARAM ByteProperty /Script/Engine.Actor:ReceiveActorOnInputTouchEnter.FingerIndex
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnInputTouchEnd
+  PARAM ByteProperty /Script/Engine.Actor:ReceiveActorOnInputTouchEnd.FingerIndex
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnInputTouchBegin
+  PARAM ByteProperty /Script/Engine.Actor:ReceiveActorOnInputTouchBegin.FingerIndex
+FUNCTION Function /Script/Engine.Actor:ReceiveActorOnClicked
+  PARAM StructProperty /Script/Engine.Actor:ReceiveActorOnClicked.ButtonPressed
+FUNCTION Function /Script/Engine.Actor:ReceiveActorEndOverlap
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveActorEndOverlap.OtherActor
+FUNCTION Function /Script/Engine.Actor:ReceiveActorEndCursorOver
+FUNCTION Function /Script/Engine.Actor:ReceiveActorBeginOverlap
+  PARAM ObjectProperty /Script/Engine.Actor:ReceiveActorBeginOverlap.OtherActor
+FUNCTION Function /Script/Engine.Actor:ReceiveActorBeginCursorOver
+FUNCTION Function /Script/Engine.Actor:PrestreamTextures
+  PARAM FloatProperty /Script/Engine.Actor:PrestreamTextures.Seconds
+  PARAM BoolProperty /Script/Engine.Actor:PrestreamTextures.bEnableStreaming
+  PARAM IntProperty /Script/Engine.Actor:PrestreamTextures.CinematicTextureGroups
+FUNCTION Function /Script/Engine.Actor:OnRep_ReplicateMovement
+FUNCTION Function /Script/Engine.Actor:OnRep_ReplicatedMovement
+FUNCTION Function /Script/Engine.Actor:OnRep_Owner
+FUNCTION Function /Script/Engine.Actor:OnRep_Instigator
+FUNCTION Function /Script/Engine.Actor:OnRep_AttachmentReplication
+FUNCTION Function /Script/Engine.Actor:MakeNoise
+  PARAM FloatProperty /Script/Engine.Actor:MakeNoise.Loudness
+  PARAM ObjectProperty /Script/Engine.Actor:MakeNoise.NoiseInstigator
+  PARAM StructProperty /Script/Engine.Actor:MakeNoise.NoiseLocation
+  PARAM FloatProperty /Script/Engine.Actor:MakeNoise.MaxRange
+  PARAM NameProperty /Script/Engine.Actor:MakeNoise.Tag
+FUNCTION Function /Script/Engine.Actor:MakeMIDForMaterial
+  PARAM ObjectProperty /Script/Engine.Actor:MakeMIDForMaterial.Parent
+  PARAM ObjectProperty /Script/Engine.Actor:MakeMIDForMaterial.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_TeleportTo
+  PARAM StructProperty /Script/Engine.Actor:K2_TeleportTo.DestLocation
+  PARAM StructProperty /Script/Engine.Actor:K2_TeleportTo.DestRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_TeleportTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_SetActorTransform
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorTransform.NewTransform
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorTransform.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorTransform.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorTransform.bTeleport
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorTransform.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_SetActorRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRotation.NewRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRotation.bTeleportPhysics
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRotation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_SetActorRelativeTransform
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeTransform.NewRelativeTransform
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeTransform.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeTransform.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeTransform.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_SetActorRelativeRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeRotation.NewRelativeRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeRotation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeRotation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeRotation.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_SetActorRelativeLocation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeLocation.NewRelativeLocation
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeLocation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorRelativeLocation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorRelativeLocation.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_SetActorLocationAndRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.NewLocation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.NewRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.bTeleport
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocationAndRotation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_SetActorLocation
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorLocation.NewLocation
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_SetActorLocation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocation.bTeleport
+  PARAM BoolProperty /Script/Engine.Actor:K2_SetActorLocation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_OnReset
+FUNCTION Function /Script/Engine.Actor:K2_OnEndViewTarget
+  PARAM ObjectProperty /Script/Engine.Actor:K2_OnEndViewTarget.PC
+FUNCTION Function /Script/Engine.Actor:K2_OnBecomeViewTarget
+  PARAM ObjectProperty /Script/Engine.Actor:K2_OnBecomeViewTarget.PC
+FUNCTION Function /Script/Engine.Actor:K2_GetRootComponent
+  PARAM ObjectProperty /Script/Engine.Actor:K2_GetRootComponent.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_GetActorRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_GetActorRotation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_GetActorLocation
+  PARAM StructProperty /Script/Engine.Actor:K2_GetActorLocation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:K2_DetachFromActor
+  PARAM EnumProperty /Script/Engine.Actor:K2_DetachFromActor.LocationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_DetachFromActor.RotationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_DetachFromActor.ScaleRule
+FUNCTION Function /Script/Engine.Actor:K2_DestroyComponent
+  PARAM ObjectProperty /Script/Engine.Actor:K2_DestroyComponent.Component
+FUNCTION Function /Script/Engine.Actor:K2_DestroyActor
+FUNCTION Function /Script/Engine.Actor:K2_AttachToComponent
+  PARAM ObjectProperty /Script/Engine.Actor:K2_AttachToComponent.Parent
+  PARAM NameProperty /Script/Engine.Actor:K2_AttachToComponent.SocketName
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToComponent.LocationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToComponent.RotationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToComponent.ScaleRule
+  PARAM BoolProperty /Script/Engine.Actor:K2_AttachToComponent.bWeldSimulatedBodies
+FUNCTION Function /Script/Engine.Actor:K2_AttachToActor
+  PARAM ObjectProperty /Script/Engine.Actor:K2_AttachToActor.ParentActor
+  PARAM NameProperty /Script/Engine.Actor:K2_AttachToActor.SocketName
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToActor.LocationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToActor.RotationRule
+  PARAM EnumProperty /Script/Engine.Actor:K2_AttachToActor.ScaleRule
+  PARAM BoolProperty /Script/Engine.Actor:K2_AttachToActor.bWeldSimulatedBodies
+FUNCTION Function /Script/Engine.Actor:K2_AttachRootComponentToActor
+  PARAM ObjectProperty /Script/Engine.Actor:K2_AttachRootComponentToActor.InParentActor
+  PARAM NameProperty /Script/Engine.Actor:K2_AttachRootComponentToActor.InSocketName
+  PARAM ByteProperty /Script/Engine.Actor:K2_AttachRootComponentToActor.AttachLocationType
+  PARAM BoolProperty /Script/Engine.Actor:K2_AttachRootComponentToActor.bWeldSimulatedBodies
+FUNCTION Function /Script/Engine.Actor:K2_AttachRootComponentTo
+  PARAM ObjectProperty /Script/Engine.Actor:K2_AttachRootComponentTo.InParent
+  PARAM NameProperty /Script/Engine.Actor:K2_AttachRootComponentTo.InSocketName
+  PARAM ByteProperty /Script/Engine.Actor:K2_AttachRootComponentTo.AttachLocationType
+  PARAM BoolProperty /Script/Engine.Actor:K2_AttachRootComponentTo.bWeldSimulatedBodies
+FUNCTION Function /Script/Engine.Actor:K2_AddActorWorldTransform
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldTransform.DeltaTransform
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldTransform.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldTransform.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldTransform.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_AddActorWorldRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldRotation.DeltaRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldRotation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldRotation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldRotation.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_AddActorWorldOffset
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldOffset.DeltaLocation
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldOffset.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorWorldOffset.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorWorldOffset.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_AddActorLocalTransform
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalTransform.NewTransform
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalTransform.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalTransform.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalTransform.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_AddActorLocalRotation
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalRotation.DeltaRotation
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalRotation.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalRotation.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalRotation.bTeleport
+FUNCTION Function /Script/Engine.Actor:K2_AddActorLocalOffset
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalOffset.DeltaLocation
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalOffset.bSweep
+  PARAM StructProperty /Script/Engine.Actor:K2_AddActorLocalOffset.SweepHitResult
+  PARAM BoolProperty /Script/Engine.Actor:K2_AddActorLocalOffset.bTeleport
+FUNCTION Function /Script/Engine.Actor:IsOverlappingActor
+  PARAM ObjectProperty /Script/Engine.Actor:IsOverlappingActor.Other
+  PARAM BoolProperty /Script/Engine.Actor:IsOverlappingActor.ReturnValue
+FUNCTION Function /Script/Engine.Actor:IsChildActor
+  PARAM BoolProperty /Script/Engine.Actor:IsChildActor.ReturnValue
+FUNCTION Function /Script/Engine.Actor:IsActorTickEnabled
+  PARAM BoolProperty /Script/Engine.Actor:IsActorTickEnabled.ReturnValue
+FUNCTION Function /Script/Engine.Actor:IsActorBeingDestroyed
+  PARAM BoolProperty /Script/Engine.Actor:IsActorBeingDestroyed.ReturnValue
+FUNCTION Function /Script/Engine.Actor:HasAuthority
+  PARAM BoolProperty /Script/Engine.Actor:HasAuthority.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetVerticalDistanceTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetVerticalDistanceTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetVerticalDistanceTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetVelocity
+  PARAM StructProperty /Script/Engine.Actor:GetVelocity.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetTransform
+  PARAM StructProperty /Script/Engine.Actor:GetTransform.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetTickableWhenPaused
+  PARAM BoolProperty /Script/Engine.Actor:GetTickableWhenPaused.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetSquaredDistanceTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetSquaredDistanceTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetSquaredDistanceTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetRemoteRole
+  PARAM ByteProperty /Script/Engine.Actor:GetRemoteRole.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetParentComponent
+  PARAM ObjectProperty /Script/Engine.Actor:GetParentComponent.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetParentActor
+  PARAM ObjectProperty /Script/Engine.Actor:GetParentActor.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetOwner
+  PARAM ObjectProperty /Script/Engine.Actor:GetOwner.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetOverlappingComponents
+  PARAM ArrayProperty /Script/Engine.Actor:GetOverlappingComponents.OverlappingComponents
+FUNCTION Function /Script/Engine.Actor:GetOverlappingActors
+  PARAM ArrayProperty /Script/Engine.Actor:GetOverlappingActors.OverlappingActors
+  PARAM ClassProperty /Script/Engine.Actor:GetOverlappingActors.ClassFilter
+FUNCTION Function /Script/Engine.Actor:GetLifeSpan
+  PARAM FloatProperty /Script/Engine.Actor:GetLifeSpan.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetInstigatorController
+  PARAM ObjectProperty /Script/Engine.Actor:GetInstigatorController.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetInstigator
+  PARAM ObjectProperty /Script/Engine.Actor:GetInstigator.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetInputVectorAxisValue
+  PARAM StructProperty /Script/Engine.Actor:GetInputVectorAxisValue.InputAxisKey
+  PARAM StructProperty /Script/Engine.Actor:GetInputVectorAxisValue.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetInputAxisValue
+  PARAM NameProperty /Script/Engine.Actor:GetInputAxisValue.InputAxisName
+  PARAM FloatProperty /Script/Engine.Actor:GetInputAxisValue.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetInputAxisKeyValue
+  PARAM StructProperty /Script/Engine.Actor:GetInputAxisKeyValue.InputAxisKey
+  PARAM FloatProperty /Script/Engine.Actor:GetInputAxisKeyValue.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetHorizontalDotProductTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetHorizontalDotProductTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetHorizontalDotProductTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetHorizontalDistanceTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetHorizontalDistanceTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetHorizontalDistanceTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetGameTimeSinceCreation
+  PARAM FloatProperty /Script/Engine.Actor:GetGameTimeSinceCreation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetDotProductTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetDotProductTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetDotProductTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetDistanceTo
+  PARAM ObjectProperty /Script/Engine.Actor:GetDistanceTo.OtherActor
+  PARAM FloatProperty /Script/Engine.Actor:GetDistanceTo.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetComponentsByTag
+  PARAM ClassProperty /Script/Engine.Actor:GetComponentsByTag.ComponentClass
+  PARAM NameProperty /Script/Engine.Actor:GetComponentsByTag.Tag
+  PARAM ArrayProperty /Script/Engine.Actor:GetComponentsByTag.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetComponentsByClass
+  PARAM ClassProperty /Script/Engine.Actor:GetComponentsByClass.ComponentClass
+  PARAM ArrayProperty /Script/Engine.Actor:GetComponentsByClass.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetComponentByClass
+  PARAM ClassProperty /Script/Engine.Actor:GetComponentByClass.ComponentClass
+  PARAM ObjectProperty /Script/Engine.Actor:GetComponentByClass.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetAttachParentSocketName
+  PARAM NameProperty /Script/Engine.Actor:GetAttachParentSocketName.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetAttachParentActor
+  PARAM ObjectProperty /Script/Engine.Actor:GetAttachParentActor.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetAttachedActors
+  PARAM ArrayProperty /Script/Engine.Actor:GetAttachedActors.OutActors
+FUNCTION Function /Script/Engine.Actor:GetAllChildActors
+  PARAM ArrayProperty /Script/Engine.Actor:GetAllChildActors.ChildActors
+  PARAM BoolProperty /Script/Engine.Actor:GetAllChildActors.bIncludeDescendants
+FUNCTION Function /Script/Engine.Actor:GetActorUpVector
+  PARAM StructProperty /Script/Engine.Actor:GetActorUpVector.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorTimeDilation
+  PARAM FloatProperty /Script/Engine.Actor:GetActorTimeDilation.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorTickInterval
+  PARAM FloatProperty /Script/Engine.Actor:GetActorTickInterval.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorScale3D
+  PARAM StructProperty /Script/Engine.Actor:GetActorScale3D.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorRightVector
+  PARAM StructProperty /Script/Engine.Actor:GetActorRightVector.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorRelativeScale3D
+  PARAM StructProperty /Script/Engine.Actor:GetActorRelativeScale3D.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorForwardVector
+  PARAM StructProperty /Script/Engine.Actor:GetActorForwardVector.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorEyesViewPoint
+  PARAM StructProperty /Script/Engine.Actor:GetActorEyesViewPoint.OutLocation
+  PARAM StructProperty /Script/Engine.Actor:GetActorEyesViewPoint.OutRotation
+FUNCTION Function /Script/Engine.Actor:GetActorEnableCollision
+  PARAM BoolProperty /Script/Engine.Actor:GetActorEnableCollision.ReturnValue
+FUNCTION Function /Script/Engine.Actor:GetActorBounds
+  PARAM BoolProperty /Script/Engine.Actor:GetActorBounds.bOnlyCollidingComponents
+  PARAM StructProperty /Script/Engine.Actor:GetActorBounds.Origin
+  PARAM StructProperty /Script/Engine.Actor:GetActorBounds.BoxExtent
+FUNCTION Function /Script/Engine.Actor:ForceNetUpdate
+FUNCTION Function /Script/Engine.Actor:FlushNetDormancy
+FUNCTION Function /Script/Engine.Actor:EnableInput
+  PARAM ObjectProperty /Script/Engine.Actor:EnableInput.PlayerController
+FUNCTION Function /Script/Engine.Actor:DisableInput
+  PARAM ObjectProperty /Script/Engine.Actor:DisableInput.PlayerController
+FUNCTION Function /Script/Engine.Actor:DetachRootComponentFromParent
+  PARAM BoolProperty /Script/Engine.Actor:DetachRootComponentFromParent.bMaintainWorldPosition
+FUNCTION Function /Script/Engine.Actor:AddTickPrerequisiteComponent
+  PARAM ObjectProperty /Script/Engine.Actor:AddTickPrerequisiteComponent.PrerequisiteComponent
+FUNCTION Function /Script/Engine.Actor:AddTickPrerequisiteActor
+  PARAM ObjectProperty /Script/Engine.Actor:AddTickPrerequisiteActor.PrerequisiteActor
+FUNCTION Function /Script/Engine.Actor:AddComponent
+  PARAM NameProperty /Script/Engine.Actor:AddComponent.TemplateName
+  PARAM BoolProperty /Script/Engine.Actor:AddComponent.bManualAttachment
+  PARAM StructProperty /Script/Engine.Actor:AddComponent.RelativeTransform
+  PARAM ObjectProperty /Script/Engine.Actor:AddComponent.ComponentTemplateContext
+  PARAM ObjectProperty /Script/Engine.Actor:AddComponent.ReturnValue
+FUNCTION Function /Script/Engine.Actor:ActorHasTag
+  PARAM NameProperty /Script/Engine.Actor:ActorHasTag.Tag
+  PARAM BoolProperty /Script/Engine.Actor:ActorHasTag.ReturnValue
+PROPERTY StructProperty /Script/Engine.Actor:PrimaryActorTick
+PROPERTY FloatProperty /Script/Engine.Actor:CustomTimeDilation
+PROPERTY BoolProperty /Script/Engine.Actor:bHidden
+PROPERTY BoolProperty /Script/Engine.Actor:bNetTemporary
+PROPERTY BoolProperty /Script/Engine.Actor:bNetStartup
+PROPERTY BoolProperty /Script/Engine.Actor:bOnlyRelevantToOwner
+PROPERTY BoolProperty /Script/Engine.Actor:bAlwaysRelevant
+PROPERTY BoolProperty /Script/Engine.Actor:bReplicateMovement
+PROPERTY BoolProperty /Script/Engine.Actor:bTearOff
+PROPERTY BoolProperty /Script/Engine.Actor:bExchangedRoles
+PROPERTY BoolProperty /Script/Engine.Actor:bNetLoadOnClient
+PROPERTY BoolProperty /Script/Engine.Actor:bNetUseOwnerRelevancy
+PROPERTY BoolProperty /Script/Engine.Actor:bBlockInput
+PROPERTY BoolProperty /Script/Engine.Actor:bAllowTickBeforeBeginPlay
+PROPERTY BoolProperty /Script/Engine.Actor:bActorEnableCollision
+PROPERTY BoolProperty /Script/Engine.Actor:bReplicates
+PROPERTY ByteProperty /Script/Engine.Actor:RemoteRole
+PROPERTY ObjectProperty /Script/Engine.Actor:Owner
+PROPERTY NameProperty /Script/Engine.Actor:NetDriverName
+PROPERTY StructProperty /Script/Engine.Actor:ReplicatedMovement
+PROPERTY FloatProperty /Script/Engine.Actor:InitialLifeSpan
+PROPERTY StructProperty /Script/Engine.Actor:AttachmentReplication
+PROPERTY ByteProperty /Script/Engine.Actor:Role
+PROPERTY ByteProperty /Script/Engine.Actor:NetDormancy
+PROPERTY ByteProperty /Script/Engine.Actor:AutoReceiveInput
+PROPERTY IntProperty /Script/Engine.Actor:InputPriority
+PROPERTY ObjectProperty /Script/Engine.Actor:InputComponent
+PROPERTY FloatProperty /Script/Engine.Actor:NetCullDistanceSquared
+PROPERTY IntProperty /Script/Engine.Actor:NetTag
+PROPERTY FloatProperty /Script/Engine.Actor:NetUpdateFrequency
+PROPERTY FloatProperty /Script/Engine.Actor:MinNetUpdateFrequency
+PROPERTY FloatProperty /Script/Engine.Actor:NetPriority
+PROPERTY BoolProperty /Script/Engine.Actor:bAutoDestroyWhenFinished
+PROPERTY BoolProperty /Script/Engine.Actor:bCanBeDamaged
+PROPERTY BoolProperty /Script/Engine.Actor:bActorIsBeingDestroyed
+PROPERTY BoolProperty /Script/Engine.Actor:bCollideWhenPlacing
+PROPERTY BoolProperty /Script/Engine.Actor:bFindCameraComponentWhenViewTarget
+PROPERTY BoolProperty /Script/Engine.Actor:bRelevantForNetworkReplays
+PROPERTY BoolProperty /Script/Engine.Actor:bGenerateOverlapEventsDuringLevelStreaming
+PROPERTY BoolProperty /Script/Engine.Actor:bCanBeInCluster
+PROPERTY BoolProperty /Script/Engine.Actor:bAllowReceiveTickEventOnDedicatedServer
+PROPERTY BoolProperty /Script/Engine.Actor:bActorSeamlessTraveled
+PROPERTY BoolProperty /Script/Engine.Actor:bIgnoresOriginShifting
+PROPERTY BoolProperty /Script/Engine.Actor:bEnableAutoLODGeneration
+PROPERTY EnumProperty /Script/Engine.Actor:SpawnCollisionHandlingMethod
+PROPERTY ObjectProperty /Script/Engine.Actor:Instigator
+PROPERTY ArrayProperty /Script/Engine.Actor:Children
+PROPERTY ObjectProperty /Script/Engine.Actor:RootComponent
+PROPERTY ArrayProperty /Script/Engine.Actor:ControllingMatineeActors
+PROPERTY ArrayProperty /Script/Engine.Actor:Layers
+PROPERTY WeakObjectProperty /Script/Engine.Actor:ParentComponent
+PROPERTY ArrayProperty /Script/Engine.Actor:Tags
+PROPERTY UInt64Property /Script/Engine.Actor:HiddenEditorViews
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnTakeAnyDamage
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnTakePointDamage
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnActorBeginOverlap
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnActorEndOverlap
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnBeginCursorOver
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnEndCursorOver
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnClicked
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnReleased
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnInputTouchBegin
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnInputTouchEnd
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnInputTouchEnter
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnInputTouchLeave
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnActorHit
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnDestroyed
+PROPERTY MulticastDelegateProperty /Script/Engine.Actor:OnEndPlay
+PROPERTY ArrayProperty /Script/Engine.Actor:BlueprintCreatedComponents
+PROPERTY ArrayProperty /Script/Engine.Actor:InstanceComponents
+CLASS Class /Script/CoreUObject.Object
+FUNCTION Function /Script/CoreUObject.Object:ExecuteUbergraph
+  PARAM IntProperty /Script/CoreUObject.Object:ExecuteUbergraph.EntryPoint
+OBJECT NimbusGameEngine /Engine/Transient.NimbusGameEngine_0
+CLASS Class /Script/Nimbus.NimbusGameEngine
+CLASS Class /Script/Engine.GameEngine
+PROPERTY FloatProperty /Script/Engine.GameEngine:MaxDeltaTime
+PROPERTY FloatProperty /Script/Engine.GameEngine:ServerFlushLogInterval
+PROPERTY ObjectProperty /Script/Engine.GameEngine:GameInstance
+CLASS Class /Script/Engine.Engine
+PROPERTY ObjectProperty /Script/Engine.Engine:TinyFont
+PROPERTY StructProperty /Script/Engine.Engine:TinyFontName
+PROPERTY ObjectProperty /Script/Engine.Engine:SmallFont
+PROPERTY StructProperty /Script/Engine.Engine:SmallFontName
+PROPERTY ObjectProperty /Script/Engine.Engine:MediumFont
+PROPERTY StructProperty /Script/Engine.Engine:MediumFontName
+PROPERTY ObjectProperty /Script/Engine.Engine:LargeFont
+PROPERTY StructProperty /Script/Engine.Engine:LargeFontName
+PROPERTY ObjectProperty /Script/Engine.Engine:SubtitleFont
+PROPERTY StructProperty /Script/Engine.Engine:SubtitleFontName
+PROPERTY ArrayProperty /Script/Engine.Engine:AdditionalFonts
+PROPERTY ArrayProperty /Script/Engine.Engine:AdditionalFontNames
+PROPERTY ClassProperty /Script/Engine.Engine:ConsoleClass
+PROPERTY StructProperty /Script/Engine.Engine:ConsoleClassName
+PROPERTY ClassProperty /Script/Engine.Engine:GameViewportClientClass
+PROPERTY StructProperty /Script/Engine.Engine:GameViewportClientClassName
+PROPERTY ClassProperty /Script/Engine.Engine:LocalPlayerClass
+PROPERTY StructProperty /Script/Engine.Engine:LocalPlayerClassName
+PROPERTY ClassProperty /Script/Engine.Engine:WorldSettingsClass
+PROPERTY StructProperty /Script/Engine.Engine:WorldSettingsClassName
+PROPERTY StructProperty /Script/Engine.Engine:NavigationSystemClassName
+PROPERTY ClassProperty /Script/Engine.Engine:NavigationSystemClass
+PROPERTY StructProperty /Script/Engine.Engine:AvoidanceManagerClassName
+PROPERTY ClassProperty /Script/Engine.Engine:AvoidanceManagerClass
+PROPERTY ClassProperty /Script/Engine.Engine:PhysicsCollisionHandlerClass
+PROPERTY StructProperty /Script/Engine.Engine:PhysicsCollisionHandlerClassName
+PROPERTY StructProperty /Script/Engine.Engine:GameUserSettingsClassName
+PROPERTY ClassProperty /Script/Engine.Engine:GameUserSettingsClass
+PROPERTY StructProperty /Script/Engine.Engine:AIControllerClassName
+PROPERTY ObjectProperty /Script/Engine.Engine:GameUserSettings
+PROPERTY ClassProperty /Script/Engine.Engine:LevelScriptActorClass
+PROPERTY StructProperty /Script/Engine.Engine:LevelScriptActorClassName
+PROPERTY StructProperty /Script/Engine.Engine:DefaultBlueprintBaseClassName
+PROPERTY StructProperty /Script/Engine.Engine:GameSingletonClassName
+PROPERTY ObjectProperty /Script/Engine.Engine:GameSingleton
+PROPERTY StructProperty /Script/Engine.Engine:AssetManagerClassName
+PROPERTY ObjectProperty /Script/Engine.Engine:AssetManager
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultTexture
+PROPERTY StructProperty /Script/Engine.Engine:DefaultTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultDiffuseTexture
+PROPERTY StructProperty /Script/Engine.Engine:DefaultDiffuseTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultBSPVertexTexture
+PROPERTY StructProperty /Script/Engine.Engine:DefaultBSPVertexTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:HighFrequencyNoiseTexture
+PROPERTY StructProperty /Script/Engine.Engine:HighFrequencyNoiseTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultBokehTexture
+PROPERTY StructProperty /Script/Engine.Engine:DefaultBokehTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultBloomKernelTexture
+PROPERTY StructProperty /Script/Engine.Engine:DefaultBloomKernelTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:WireframeMaterial
+PROPERTY StrProperty /Script/Engine.Engine:WireframeMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:DebugMeshMaterial
+PROPERTY StructProperty /Script/Engine.Engine:DebugMeshMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:LevelColorationLitMaterial
+PROPERTY StrProperty /Script/Engine.Engine:LevelColorationLitMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:LevelColorationUnlitMaterial
+PROPERTY StrProperty /Script/Engine.Engine:LevelColorationUnlitMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:LightingTexelDensityMaterial
+PROPERTY StrProperty /Script/Engine.Engine:LightingTexelDensityName
+PROPERTY ObjectProperty /Script/Engine.Engine:ShadedLevelColorationLitMaterial
+PROPERTY StrProperty /Script/Engine.Engine:ShadedLevelColorationLitMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:ShadedLevelColorationUnlitMaterial
+PROPERTY StrProperty /Script/Engine.Engine:ShadedLevelColorationUnlitMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:RemoveSurfaceMaterial
+PROPERTY StructProperty /Script/Engine.Engine:RemoveSurfaceMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorMaterial
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorViewModeMaterial_ColorOnly
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorViewModeMaterialName_ColorOnly
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorViewModeMaterial_AlphaAsColor
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorViewModeMaterialName_AlphaAsColor
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorViewModeMaterial_RedOnly
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorViewModeMaterialName_RedOnly
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorViewModeMaterial_GreenOnly
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorViewModeMaterialName_GreenOnly
+PROPERTY ObjectProperty /Script/Engine.Engine:VertexColorViewModeMaterial_BlueOnly
+PROPERTY StrProperty /Script/Engine.Engine:VertexColorViewModeMaterialName_BlueOnly
+PROPERTY StructProperty /Script/Engine.Engine:DebugEditorMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterial
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialX
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialXAxis
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialY
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialYAxis
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialZ
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialZAxis
+PROPERTY ObjectProperty /Script/Engine.Engine:ConstraintLimitMaterialPrismatic
+PROPERTY ObjectProperty /Script/Engine.Engine:InvalidLightmapSettingsMaterial
+PROPERTY StructProperty /Script/Engine.Engine:InvalidLightmapSettingsMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:PreviewShadowsIndicatorMaterial
+PROPERTY StructProperty /Script/Engine.Engine:PreviewShadowsIndicatorMaterialName
+PROPERTY ObjectProperty /Script/Engine.Engine:ArrowMaterial
+PROPERTY StructProperty /Script/Engine.Engine:ArrowMaterialName
+PROPERTY StructProperty /Script/Engine.Engine:LightingOnlyBrightness
+PROPERTY ArrayProperty /Script/Engine.Engine:ShaderComplexityColors
+PROPERTY ArrayProperty /Script/Engine.Engine:QuadComplexityColors
+PROPERTY ArrayProperty /Script/Engine.Engine:LightComplexityColors
+PROPERTY ArrayProperty /Script/Engine.Engine:StationaryLightOverlapColors
+PROPERTY ArrayProperty /Script/Engine.Engine:LODColorationColors
+PROPERTY ArrayProperty /Script/Engine.Engine:HLODColorationColors
+PROPERTY ArrayProperty /Script/Engine.Engine:StreamingAccuracyColors
+PROPERTY FloatProperty /Script/Engine.Engine:MaxPixelShaderAdditiveComplexityCount
+PROPERTY FloatProperty /Script/Engine.Engine:MaxES2PixelShaderAdditiveComplexityCount
+PROPERTY FloatProperty /Script/Engine.Engine:MinLightMapDensity
+PROPERTY FloatProperty /Script/Engine.Engine:IdealLightMapDensity
+PROPERTY FloatProperty /Script/Engine.Engine:MaxLightMapDensity
+PROPERTY BoolProperty /Script/Engine.Engine:bRenderLightMapDensityGrayscale
+PROPERTY FloatProperty /Script/Engine.Engine:RenderLightMapDensityGrayscaleScale
+PROPERTY FloatProperty /Script/Engine.Engine:RenderLightMapDensityColorScale
+PROPERTY StructProperty /Script/Engine.Engine:LightMapDensityVertexMappedColor
+PROPERTY StructProperty /Script/Engine.Engine:LightMapDensitySelectedColor
+PROPERTY ArrayProperty /Script/Engine.Engine:StatColorMappings
+PROPERTY ObjectProperty /Script/Engine.Engine:DefaultPhysMaterial
+PROPERTY StructProperty /Script/Engine.Engine:DefaultPhysMaterialName
+PROPERTY ArrayProperty /Script/Engine.Engine:ActiveGameNameRedirects
+PROPERTY ArrayProperty /Script/Engine.Engine:ActiveClassRedirects
+PROPERTY ArrayProperty /Script/Engine.Engine:ActivePluginRedirects
+PROPERTY ArrayProperty /Script/Engine.Engine:ActiveStructRedirects
+PROPERTY ObjectProperty /Script/Engine.Engine:PreIntegratedSkinBRDFTexture
+PROPERTY StructProperty /Script/Engine.Engine:PreIntegratedSkinBRDFTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:MiniFontTexture
+PROPERTY StructProperty /Script/Engine.Engine:MiniFontTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:WeightMapPlaceholderTexture
+PROPERTY StructProperty /Script/Engine.Engine:WeightMapPlaceholderTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:LightMapDensityTexture
+PROPERTY StructProperty /Script/Engine.Engine:LightMapDensityTextureName
+PROPERTY ObjectProperty /Script/Engine.Engine:GameViewport
+PROPERTY ArrayProperty /Script/Engine.Engine:DeferredCommands
+PROPERTY IntProperty /Script/Engine.Engine:TickCycles
+PROPERTY IntProperty /Script/Engine.Engine:GameCycles
+PROPERTY IntProperty /Script/Engine.Engine:ClientCycles
+PROPERTY FloatProperty /Script/Engine.Engine:NearClipPlane
+PROPERTY BoolProperty /Script/Engine.Engine:bHardwareSurveyEnabled
+PROPERTY BoolProperty /Script/Engine.Engine:bSubtitlesEnabled
+PROPERTY BoolProperty /Script/Engine.Engine:bSubtitlesForcedOff
+PROPERTY IntProperty /Script/Engine.Engine:MaximumLoopIterationCount
+PROPERTY BoolProperty /Script/Engine.Engine:bCanBlueprintsTickByDefault
+PROPERTY BoolProperty /Script/Engine.Engine:bOptimizeAnimBlueprintMemberVariableAccess
+PROPERTY BoolProperty /Script/Engine.Engine:bAllowMultiThreadedAnimationUpdate
+PROPERTY BoolProperty /Script/Engine.Engine:bEnableEditorPSysRealtimeLOD
+PROPERTY BoolProperty /Script/Engine.Engine:bSmoothFrameRate
+PROPERTY BoolProperty /Script/Engine.Engine:bUseFixedFrameRate
+PROPERTY FloatProperty /Script/Engine.Engine:FixedFrameRate
+PROPERTY StructProperty /Script/Engine.Engine:SmoothedFrameRateRange
+PROPERTY BoolProperty /Script/Engine.Engine:bCheckForMultiplePawnsSpawnedInAFrame
+PROPERTY IntProperty /Script/Engine.Engine:NumPawnsAllowedToBeSpawnedInAFrame
+PROPERTY BoolProperty /Script/Engine.Engine:bShouldGenerateLowQualityLightmaps
+PROPERTY StructProperty /Script/Engine.Engine:C_WorldBox
+PROPERTY StructProperty /Script/Engine.Engine:C_BrushWire
+PROPERTY StructProperty /Script/Engine.Engine:C_AddWire
+PROPERTY StructProperty /Script/Engine.Engine:C_SubtractWire
+PROPERTY StructProperty /Script/Engine.Engine:C_SemiSolidWire
+PROPERTY StructProperty /Script/Engine.Engine:C_NonSolidWire
+PROPERTY StructProperty /Script/Engine.Engine:C_WireBackground
+PROPERTY StructProperty /Script/Engine.Engine:C_ScaleBoxHi
+PROPERTY StructProperty /Script/Engine.Engine:C_VolumeCollision
+PROPERTY StructProperty /Script/Engine.Engine:C_BSPCollision
+PROPERTY StructProperty /Script/Engine.Engine:C_OrthoBackground
+PROPERTY StructProperty /Script/Engine.Engine:C_Volume
+PROPERTY StructProperty /Script/Engine.Engine:C_BrushShape
+PROPERTY FloatProperty /Script/Engine.Engine:StreamingDistanceFactor
+PROPERTY StructProperty /Script/Engine.Engine:GameScreenshotSaveDirectory
+PROPERTY ByteProperty /Script/Engine.Engine:TransitionType
+PROPERTY StrProperty /Script/Engine.Engine:TransitionDescription
+PROPERTY StrProperty /Script/Engine.Engine:TransitionGameMode
+PROPERTY FloatProperty /Script/Engine.Engine:MeshLODRange
+PROPERTY BoolProperty /Script/Engine.Engine:bAllowMatureLanguage
+PROPERTY FloatProperty /Script/Engine.Engine:CameraRotationThreshold
+PROPERTY FloatProperty /Script/Engine.Engine:CameraTranslationThreshold
+PROPERTY FloatProperty /Script/Engine.Engine:PrimitiveProbablyVisibleTime
+PROPERTY FloatProperty /Script/Engine.Engine:MaxOcclusionPixelsFraction
+PROPERTY BoolProperty /Script/Engine.Engine:bPauseOnLossOfFocus
+PROPERTY IntProperty /Script/Engine.Engine:MaxParticleResize
+PROPERTY IntProperty /Script/Engine.Engine:MaxParticleResizeWarn
+PROPERTY ArrayProperty /Script/Engine.Engine:PendingDroppedNotes
+PROPERTY StructProperty /Script/Engine.Engine:PhysicErrorCorrection
+PROPERTY FloatProperty /Script/Engine.Engine:NetClientTicksPerSecond
+PROPERTY FloatProperty /Script/Engine.Engine:DisplayGamma
+PROPERTY FloatProperty /Script/Engine.Engine:MinDesiredFrameRate
+PROPERTY StructProperty /Script/Engine.Engine:DefaultSelectedMaterialColor
+PROPERTY StructProperty /Script/Engine.Engine:SelectedMaterialColor
+PROPERTY StructProperty /Script/Engine.Engine:SelectionOutlineColor
+PROPERTY StructProperty /Script/Engine.Engine:SubduedSelectionOutlineColor
+PROPERTY StructProperty /Script/Engine.Engine:SelectedMaterialColorOverride
+PROPERTY BoolProperty /Script/Engine.Engine:bIsOverridingSelectedColor
+PROPERTY BoolProperty /Script/Engine.Engine:bEnableOnScreenDebugMessages
+PROPERTY BoolProperty /Script/Engine.Engine:bEnableOnScreenDebugMessagesDisplay
+PROPERTY BoolProperty /Script/Engine.Engine:bSuppressMapWarnings
+PROPERTY BoolProperty /Script/Engine.Engine:bDisableAILogging
+PROPERTY UInt32Property /Script/Engine.Engine:bEnableVisualLogRecordingOnStart
+PROPERTY IntProperty /Script/Engine.Engine:ScreenSaverInhibitorSemaphore
+PROPERTY BoolProperty /Script/Engine.Engine:bLockReadOnlyLevels
+PROPERTY StrProperty /Script/Engine.Engine:ParticleEventManagerClassPath
+PROPERTY FloatProperty /Script/Engine.Engine:SelectionHighlightIntensity
+PROPERTY FloatProperty /Script/Engine.Engine:SelectionMeshSectionHighlightIntensity
+PROPERTY FloatProperty /Script/Engine.Engine:BSPSelectionHighlightIntensity
+PROPERTY FloatProperty /Script/Engine.Engine:HoverHighlightIntensity
+PROPERTY FloatProperty /Script/Engine.Engine:SelectionHighlightIntensityBillboards
+PROPERTY ArrayProperty /Script/Engine.Engine:NetDriverDefinitions
+PROPERTY ArrayProperty /Script/Engine.Engine:ServerActors
+PROPERTY ArrayProperty /Script/Engine.Engine:RuntimeServerActors
+PROPERTY BoolProperty /Script/Engine.Engine:bStartedLoadMapMovie
+PROPERTY IntProperty /Script/Engine.Engine:NextWorldContextHandle
+CLASS Class /Script/CoreUObject.Object
+FUNCTION Function /Script/CoreUObject.Object:ExecuteUbergraph
+  PARAM IntProperty /Script/CoreUObject.Object:ExecuteUbergraph.EntryPoint

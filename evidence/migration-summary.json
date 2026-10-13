@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-13",
+  "project_root": "E:\\AC7_MultiSP",
+  "baseline": "0.1.7",
+  "git_branch": "main",
+  "git_tag": "baseline-0.1.7",
+  "asset_integrity": {
+    "copied_files": 9783,
+    "copied_bytes": 835405183,
+    "edited_migration_copies": [
+      "src\\build-core-portable.cmd",
+      "src\\build-ui.cmd",
+      "src\\inspect_native.py",
+      "src\\offline_disassemble.py",
+      "src\\package.ps1",
+      "src\\update-local.ps1",
+      "tests\\README.md",
+      "tests\\run_overlay_portable.cmd",
+      "docs\\native-loadout.md",
+      "docs\\research\\weapon-models.md"
+    ],
+    "broken_document_links": [],
+    "runtime_files_match_installed": 8,
+    "archive_sha256": "1A52844B3CF5A421E773B139ABBF513448A6A420EF42437D15E15886AC53FE80"
+  },
+  "cleanup_status": "完成",
+  "recycled": [
+    {
+      "path": "E:\\CodexTemp\\Temp\\ac7-dualsp-ui",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\Temp\\ac7-dual-sp-lab",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\Temp\\ac7-dual-sp-round2",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC8UI参考",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\Tools\\llvm-mingw-20261006-ucrt-x86_64",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\ac7-dual-sp-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.0-before-fixes-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.1-before-crash-fixes-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.2-before-native-hud-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.3-before-hud-performance-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.4-before-row-layout-20261012",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.5-before-hud-flash-20261013",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-0.1.6-before-native-loadout-20261013",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\backup\\dualsp-current-save-20261012-2006",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\backup\\migration-before-edit",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\Tools\\AC7-toolchain.md",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\Temp\\ac7-asset-inventory.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\CodexTemp\\Temp\\ac7-asset-inventory.json",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\vendor\\imgui.zip",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\vendor\\minhook.zip",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\migrate_assets.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\normalize_migration.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\rewrite_package.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\check_migration_assets.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\prepare_cleanup_plan.py",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\recycle_migration_assets.ps1",
+      "method": "Windows 回收站"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\cleanup-plan.json",
+      "method": "Windows 回收站"
+    }
+  ],
+  "planned_recycle": {
+    "directories": [
+      "E:\\CodexTemp\\Temp\\ac7-dualsp-ui",
+      "E:\\CodexTemp\\Temp\\ac7-dual-sp-lab",
+      "E:\\CodexTemp\\Temp\\ac7-dual-sp-round2",
+      "E:\\AC8UI参考",
+      "E:\\Tools\\llvm-mingw-20261006-ucrt-x86_64",
+      "E:\\CodexTemp\\backup\\ac7-dual-sp-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.0-before-fixes-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.1-before-crash-fixes-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.2-before-native-hud-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.3-before-hud-performance-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.4-before-row-layout-20261012",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.5-before-hud-flash-20261013",
+      "E:\\CodexTemp\\backup\\dualsp-0.1.6-before-native-loadout-20261013",
+      "E:\\CodexTemp\\backup\\dualsp-current-save-20261012-2006",
+      "E:\\AC7_MultiSP\\backup\\migration-before-edit"
+    ],
+    "files": [
+      "E:\\Tools\\AC7-toolchain.md",
+      "E:\\CodexTemp\\Temp\\ac7-asset-inventory.py",
+      "E:\\CodexTemp\\Temp\\ac7-asset-inventory.json",
+      "E:\\AC7_MultiSP\\vendor\\imgui.zip",
+      "E:\\AC7_MultiSP\\vendor\\minhook.zip",
+      "E:\\AC7_MultiSP\\Temp\\migrate_assets.py",
+      "E:\\AC7_MultiSP\\Temp\\normalize_migration.py",
+      "E:\\AC7_MultiSP\\Temp\\rewrite_package.py",
+      "E:\\AC7_MultiSP\\Temp\\check_migration_assets.py",
+      "E:\\AC7_MultiSP\\Temp\\prepare_cleanup_plan.py",
+      "E:\\AC7_MultiSP\\Temp\\recycle_migration_assets.ps1",
+      "E:\\AC7_MultiSP\\Temp\\cleanup-plan.json"
+    ]
+  },
+  "retained": [
+    "当前源码和运行文件",
+    "当前原始安装包",
+    "第三方依赖及许可",
+    "精选研究结论和原生接口",
+    "AC8 参考图",
+    "本机便携工具",
+    "最初的个人存档备份"
+  ],
+  "not_performed": [
+    "编译",
+    "编写或运行功能测试",
+    "启动游戏",
+    "更改游戏安装或存档",
+    "推送远程仓库"
+  ],
+  "notes": [
+    "回收不等于释放磁盘空间；是否清空回收站由用户决定。",
+    "迁移审计清单留在被忽略的 Temp；个人存档备份位于 backup/original-save-20261012。"
+  ]
+}

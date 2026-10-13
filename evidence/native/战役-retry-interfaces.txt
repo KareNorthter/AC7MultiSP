@@ -1,0 +1,54 @@
+Function /Script/Engine.InterpToMovementComponent:RestartMovement
+  FloatProperty /Script/Engine.InterpToMovementComponent:RestartMovement.InitialDirection
+Function /Script/Engine.PlayerController:ClientRestart
+  ObjectProperty /Script/Engine.PlayerController:ClientRestart.NewPawn
+Function /Script/Engine.PlayerController:ClientRetryClientRestart
+  ObjectProperty /Script/Engine.PlayerController:ClientRetryClientRestart.NewPawn
+Function /Script/Engine.PlayerController:RestartLevel
+Function /Script/Engine.PlayerController:ServerRestartPlayer
+Function /Script/Nimbus.RadioManager:OnPreRestartPhaseEvent
+Function /Script/Nimbus.RadioManager:OnPreStartMiniGamePhaseEvent
+  BoolProperty /Script/Nimbus.RadioManager:OnPreStartMiniGamePhaseEvent.bIsRetry
+Function /Script/Nimbus.Mission:OnPreStartReplayHandler
+  BoolProperty /Script/Nimbus.Mission:OnPreStartReplayHandler.bIsRestart
+Function /Script/Nimbus.MissionConditionChecker:OnMissionPhaseRestarted
+  StrProperty /Script/Nimbus.MissionConditionChecker:OnMissionPhaseRestarted.Dummy
+Function /Script/Nimbus.MissionPhase:OnPreStartMiniGamePhaseHandler
+  BoolProperty /Script/Nimbus.MissionPhase:OnPreStartMiniGamePhaseHandler.bIsRetry
+Function /Script/Nimbus.NimbusEventParser:OnPreRestartPhaseEvent
+Function /Script/Nimbus.AirCurrentVolume:OnPreRestartPhaseEvent
+Function /Script/Engine.GameModeBase:K2_OnRestartPlayer
+  ObjectProperty /Script/Engine.GameModeBase:K2_OnRestartPlayer.NewPlayer
+Function /Script/Engine.GameModeBase:PlayerCanRestart
+  ObjectProperty /Script/Engine.GameModeBase:PlayerCanRestart.Player
+  BoolProperty /Script/Engine.GameModeBase:PlayerCanRestart.ReturnValue
+Function /Script/Engine.GameModeBase:RestartPlayer
+  ObjectProperty /Script/Engine.GameModeBase:RestartPlayer.NewPlayer
+Function /Script/Engine.GameModeBase:RestartPlayerAtPlayerStart
+  ObjectProperty /Script/Engine.GameModeBase:RestartPlayerAtPlayerStart.NewPlayer
+  ObjectProperty /Script/Engine.GameModeBase:RestartPlayerAtPlayerStart.StartSpot
+Function /Script/Engine.GameModeBase:RestartPlayerAtTransform
+  ObjectProperty /Script/Engine.GameModeBase:RestartPlayerAtTransform.NewPlayer
+  StructProperty /Script/Engine.GameModeBase:RestartPlayerAtTransform.SpawnTransform
+Function /Script/Engine.GameMode:RestartGame
+Function /Script/Nimbus.MissionAIManager:OnMissionPhaseRestarted
+  StrProperty /Script/Nimbus.MissionAIManager:OnMissionPhaseRestarted.Dummy
+Function /Script/Nimbus.NimbusCheatManager:SNL_SetRetrySaveAutoKickDurationInSeconds
+  FloatProperty /Script/Nimbus.NimbusCheatManager:SNL_SetRetrySaveAutoKickDurationInSeconds.TimeInSeconds
+Function /Script/Engine.PlayerCameraManager:OnPhotographyMultiPartCaptureStart
+Function /Script/Nimbus.NimbusRibbonCollectionActor:OnPreRestartPhaseEvent
+Function /Script/Nimbus.ObjectMapper:OnPreRestartPhaseEvent
+Function /Script/Nimbus.PlayerHUDModeManager:OnPreRestartPhaseHandler
+Function /Script/Nimbus.PlayerHUDModeManager:OnPreStartMiniGamePhaseHandler
+  BoolProperty /Script/Nimbus.PlayerHUDModeManager:OnPreStartMiniGamePhaseHandler.bIsRetry
+Function /Script/Nimbus.SoundChannelManager:OnPreRestartPhaseEvent
+Function /Script/Nimbus.VRRetryWidget:OnFrameOutAnimationEndBP
+Function /Script/Nimbus.VRRetryWidget:PlayFrameInAnimBP
+Function /Script/Nimbus.VRRetryWidget:PlayFrameOutAnimBP
+Function /Script/AIModule.BrainComponent:RestartLogic
+Function /Game/UI/Menu/Campaign/CampaignRetry.CampaignRetry_C:Construct
+Function /Game/UI/Menu/Campaign/CampaignRetry.CampaignRetry_C:ExecuteUbergraph_CampaignRetry
+  IntProperty /Game/UI/Menu/Campaign/CampaignRetry.CampaignRetry_C:ExecuteUbergraph_CampaignRetry.EntryPoint
+Function /Game/Maps/Mission/ms11/ms11_Phase_AerialRefueling.ms11_Phase_AerialRefueling_C:BndEvt__MiniGamePhaseBP_AerialRefueling_32_K2Node_ActorBoundEvent_12_MiniGameRetryEventDelegate__DelegateSignature
+  EnumProperty /Game/Maps/Mission/ms11/ms11_Phase_AerialRefueling.ms11_Phase_AerialRefueling_C:BndEvt__MiniGamePhaseBP_AerialRefueling_32_K2Node_ActorBoundEvent_12_MiniGameRetryEventDelegate__DelegateSignature.MiniGameType
+Function /Game/Maps/Mission/ms11/ms11_global.ms11_global_C:Phase_01_Restart

@@ -1,0 +1,97 @@
+{
+  "game_started": false,
+  "candidate_installed": false,
+  "direct_overlay": {
+    "laam_6aam_identical_positions": 6,
+    "required_loaded_count": {
+      "LAAM": 2,
+      "6AAM": 6
+    },
+    "collision_free_allocation": null,
+    "result": "Rejected: original eligible stations cannot preserve both loaded counts"
+  },
+  "six_aam_lasm_geometry_candidate": {
+    "six_aam_wing_sockets": [
+      "sp25",
+      "sp26",
+      "sp21",
+      "sp22",
+      "sp23",
+      "sp24"
+    ],
+    "lasm_fuselage_sockets": [
+      "sp33",
+      "sp34"
+    ],
+    "retained_loaded_counts": {
+      "6AAM": 6,
+      "LASM": 2
+    },
+    "native_lasm_queue_slots": [
+      "sp31",
+      "sp32",
+      "sp33",
+      "sp34"
+    ],
+    "required_native_remap": {
+      "sp31": "sp33",
+      "sp32": "sp34",
+      "sp33": "sp33",
+      "sp34": "sp34"
+    },
+    "queue_windows": [
+      {
+        "cursor": 0,
+        "native_slots": [
+          "sp31",
+          "sp32"
+        ],
+        "candidate_physical_slots": [
+          "sp33",
+          "sp34"
+        ]
+      },
+      {
+        "cursor": 1,
+        "native_slots": [
+          "sp32",
+          "sp33"
+        ],
+        "candidate_physical_slots": [
+          "sp34",
+          "sp33"
+        ]
+      },
+      {
+        "cursor": 2,
+        "native_slots": [
+          "sp33",
+          "sp34"
+        ],
+        "candidate_physical_slots": [
+          "sp33",
+          "sp34"
+        ]
+      },
+      {
+        "cursor": 3,
+        "native_slots": [
+          "sp34",
+          "sp31"
+        ],
+        "candidate_physical_slots": [
+          "sp34",
+          "sp33"
+        ]
+      }
+    ],
+    "geometry_only": true,
+    "unimplemented": [
+      "native slot transform/socket remap and loaded actor reattachment",
+      "persistent inactive missile models synchronized with reload and remaining ammo",
+      "combined pylon mesh visibility and lifecycle",
+      "firing, resupply and checkpoint validation"
+    ]
+  },
+  "decision": "Do not install a decorative-only implementation; retain DualSP 0.1.5"
+}

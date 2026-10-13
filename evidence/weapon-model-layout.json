@@ -1,0 +1,1756 @@
+{
+  "game_started": false,
+  "game_assets_modified": false,
+  "configurations": [
+    {
+      "name": "SpecialWeaponConfig1",
+      "WeaponClass": -10,
+      "MaxWeaponCount": -1,
+      "WeaponClassName": "plwp_laam_r1_C"
+    },
+    {
+      "name": "SpecialWeaponConfig2",
+      "WeaponClass": -8,
+      "WeaponClassName": "plwp_6aam_r0_C"
+    },
+    {
+      "name": "SpecialWeaponConfig3",
+      "WeaponClass": -11,
+      "WeaponClassName": "plwp_lasm_r0_C"
+    }
+  ],
+  "meshes": {
+    "SWP1_GEN_VARIABLE": {
+      "StaticMesh": -129,
+      "bCastInsetShadow": true,
+      "BodyInstance": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      },
+      "mesh_asset": "su35_SWP1_SM"
+    },
+    "SWP2_GEN_VARIABLE": {
+      "StaticMesh": -130,
+      "bCastInsetShadow": true,
+      "BodyInstance": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      },
+      "mesh_asset": "su35_SWP2_SM"
+    },
+    "SWP3_GEN_VARIABLE": {
+      "StaticMesh": -131,
+      "bCastInsetShadow": true,
+      "BodyInstance": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      },
+      "mesh_asset": "su35_SWP3_SM"
+    },
+    "su35_SWP1_SM": {
+      "sockets": [
+        {
+          "SocketName": "sp15",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 8.930689811706543,
+              "Y": -34.922420501708984,
+              "Z": -1.9739106893539429
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149829864501953,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp16",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 8.930689811706543,
+              "Y": 34.922420501708984,
+              "Z": -1.9739106893539429
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149829864501953,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp11",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -9.465275764465332,
+              "Y": -62.68234634399414,
+              "Z": -2.386582851409912
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149800062179565,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp12",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -8.58944320678711,
+              "Y": 62.68234634399414,
+              "Z": -2.078040361404419
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149800062179565,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp13",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 3.909665584564209,
+              "Y": -46.1624755859375,
+              "Z": -2.1859233379364014
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp14",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 3.909665584564209,
+              "Y": 46.162498474121094,
+              "Z": -2.1859233379364014
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ]
+    },
+    "su35_SWP2_SM": {
+      "sockets": [
+        {
+          "SocketName": "sp25",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 8.930689811706543,
+              "Y": -34.922420501708984,
+              "Z": -1.9739106893539429
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149829864501953,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp26",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 8.930689811706543,
+              "Y": 34.922420501708984,
+              "Z": -1.9739106893539429
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149829864501953,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp21",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -9.465275764465332,
+              "Y": -62.68234634399414,
+              "Z": -2.386582851409912
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149800062179565,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp22",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -8.58944320678711,
+              "Y": 62.68234634399414,
+              "Z": -2.078040361404419
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149800062179565,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp23",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 3.909665584564209,
+              "Y": -46.1624755859375,
+              "Z": -2.1859233379364014
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp24",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 3.909665584564209,
+              "Y": 46.162498474121094,
+              "Z": -2.1859233379364014
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ]
+    },
+    "su35_SWP3_SM": {
+      "sockets": [
+        {
+          "SocketName": "sp31",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 12.86213493347168,
+              "Y": -34.922420501708984,
+              "Z": -3.287104606628418
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": -0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp32",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 12.86173152923584,
+              "Y": 34.922420501708984,
+              "Z": -3.3194382190704346
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": -0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp33",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 20.875877380371094,
+              "Y": -11.855597496032715,
+              "Z": -14.294864654541016
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": -0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp34",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": 20.875877380371094,
+              "Y": 11.855600357055664,
+              "Z": -14.2948637008667
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+              "Pitch": -0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "weapons": {
+    "plwp_6aam_a0": [
+      {
+        "object": "plwp_6aam_a0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 8
+        }
+      },
+      {
+        "object": "Default__plwp_6aam_a0_C",
+        "class": "plwp_6aam_a0_C",
+        "properties": {
+          "HiddenMissileMesh": 9,
+          "FireParticles": 4,
+          "bUseFireLight": true,
+          "FireLight": 5,
+          "FireLightIntensityCurves": -15,
+          "MaxHomingAngle": 60.0,
+          "MaxRotationAngle": 38.0,
+          "AccelerationDelayFromStart": 0.5,
+          "HomingDelayFromStart": 0.5,
+          "ReducedHomingDuration": 1.2000000476837158,
+          "ReducedHomingRotationAngle": 30.0,
+          "HomingReductionInCloud": "+0",
+          "HomingCloudThreshold": "+0",
+          "SpeedMaximum": 13333.333984375,
+          "Acceleration": 3333.33349609375,
+          "IgnitionSoundEvent": -1,
+          "PassSound": 11,
+          "ObjectTypes": [
+            "ObjectTypeQuery9",
+            "ObjectTypeQuery14",
+            "ObjectTypeQuery19"
+          ],
+          "InitialSpeed": "+0",
+          "IgnitionInitialSpeed": 416.66668701171875,
+          "WeaponID": "EWeaponID::WID_6aam",
+          "StaticMesh": 10,
+          "WeaponMovement": 3,
+          "Damage": 80.0,
+          "LifeTime": 9.0,
+          "LoadTime": 18.0,
+          "MaxLoadedCount": 6,
+          "bFireAllInOneShot": true,
+          "bIsHoming": true,
+          "LockOnTargetType": "ETargetType::AIR_ONLY",
+          "PotentialTargets": 6,
+          "LockonAngle": 32.5,
+          "LockonRange": 45000.0,
+          "TargetSelectionMidRange": 100000.0,
+          "LockonInitialSpeed": 30.0,
+          "LockonMaximumSpeed": 360.0,
+          "LockonAccelerationTime": 2.75,
+          "LockonDelayBetweenSeekers": 0.20000000298023224,
+          "LockonReductionInCloud": "+0",
+          "LockonRangeReductionInCloud": "+0",
+          "SelectionAssistRange": "+0",
+          "SelectionAssistAngle": "+0",
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": 0.824999988079071,
+                "Y": "+0",
+                "Z": 6.539999961853027
+              }
+            },
+            "HangarRackMesh": -36
+          },
+          "WeaponBackgroundTexture": -39,
+          "WeaponFillTexture": -40,
+          "OneShotSoundEvent": -2,
+          "bIsPlayCameraShakeImpactResponse": true,
+          "PlayCameraShakeImpactResponse_Conditions": "ENimbusCameraShakeConditions::Unconditional",
+          "PlayCameraShakeImpactResponse_Type": "ENimbusCameraShakeType::BombImpact",
+          "RootComponent": 10
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -9,
+          "ComponentTemplate": 6,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 7
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -35,
+          "BodyInstance": {
+            "MassInKgOverride": 0.5358409881591797
+          }
+        }
+      }
+    ],
+    "plwp_6aam_r0": [
+      {
+        "object": "plwp_6aam_r0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 9,
+          "InheritableComponentHandler": 3
+        }
+      },
+      {
+        "object": "Default__plwp_6aam_r0_C",
+        "class": "plwp_6aam_r0_C",
+        "properties": {
+          "HiddenMissileMesh": 10,
+          "FireParticles": 5,
+          "FireLight": 6,
+          "PassSound": 12,
+          "StaticMesh": 11,
+          "WeaponMovement": 4,
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": "+0",
+                "Y": "+0",
+                "Z": 6.585000038146973
+              }
+            },
+            "HangarRackMesh": -32
+          },
+          "WeaponBackgroundTexture": -35,
+          "WeaponFillTexture": -36,
+          "RootComponent": 11
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 11
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 11
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -8,
+          "ComponentTemplate": 7,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 8
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -31,
+          "BodyInstance": {
+            "MassInKgOverride": 1.2941222190856934
+          }
+        }
+      }
+    ],
+    "plwp_lasm_a0": [
+      {
+        "object": "plwp_lasm_a0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 8
+        }
+      },
+      {
+        "object": "Default__plwp_lasm_a0_C",
+        "class": "plwp_lasm_a0_C",
+        "properties": {
+          "HiddenMissileMesh": 9,
+          "FireParticles": 4,
+          "bUseFireLight": true,
+          "FireLight": 5,
+          "FireLightIntensityCurves": -15,
+          "HomingType": "EHomingType::INFRARED",
+          "MaxHomingAngle": 120.0,
+          "MaxRotationAngle": 45.0,
+          "AccelerationDelayFromStart": 0.5,
+          "HomingDelayFromStart": 0.6000000238418579,
+          "ReducedHomingDuration": 2.0999999046325684,
+          "ReducedHomingRotationAngle": 10.0,
+          "HomingReductionInCloud": "+0",
+          "HomingCloudThreshold": "+0",
+          "bIsAntiShip": true,
+          "bShouldConformToTerrain": true,
+          "MaxRotationAngleDuringTopAttack": 3600.0,
+          "SpeedMaximum": 16666.66796875,
+          "Acceleration": 2777.77783203125,
+          "AltitudeAboveTarget": 250.0,
+          "DistanceFromTargetSquared": 16000000.0,
+          "IgnitionSoundEvent": -1,
+          "PassSound": 11,
+          "ExplosionRadius": 500.0,
+          "AreaOfEffectDamage": 80.0,
+          "ObjectTypes": [
+            "ObjectTypeQuery9",
+            "ObjectTypeQuery14",
+            "ObjectTypeQuery19"
+          ],
+          "DamageDelay": 0.20000000298023224,
+          "InitialSpeed": "+0",
+          "WeaponID": "EWeaponID::WID_lasm",
+          "StaticMesh": 10,
+          "WeaponMovement": 3,
+          "Damage": 80.0,
+          "LifeTime": 15.0,
+          "LoadTime": 10.0,
+          "MaxLoadedCount": 2,
+          "bIsHoming": true,
+          "HomingForesightAmount": 1.0,
+          "LockOnTargetType": "ETargetType::GROUND_ONLY",
+          "PotentialTargets": 6,
+          "LockonAngle": 32.5,
+          "LockonRange": 70000.0,
+          "TargetSelectionMidRange": 100000.0,
+          "LockonInitialSpeed": 40.0,
+          "LockonMaximumSpeed": 640.0,
+          "LockonAccelerationTime": 2.75,
+          "LockonReductionInCloud": "+0",
+          "LockonRangeReductionInCloud": "+0",
+          "SelectionAssistRange": "+0",
+          "SelectionAssistAngle": "+0",
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": 1.6799999475479126,
+                "Y": "+0",
+                "Z": 7.3470001220703125
+              }
+            },
+            "HangarRackMesh": -44
+          },
+          "OnCollisionParticles": -33,
+          "OnSeaCollisionParticle": -36,
+          "OnGroundCollisionParticle": -34,
+          "OnConcreteCollisionParticle": -33,
+          "OnGlassCollisionParticle": -33,
+          "OnIceCollisionParticle": -35,
+          "WeaponBackgroundTexture": -47,
+          "WeaponFillTexture": -48,
+          "OneShotSoundEvent": -2,
+          "bIsPlayCameraShakeImpactResponse": true,
+          "PlayCameraShakeImpactResponse_Conditions": "ENimbusCameraShakeConditions::Unconditional",
+          "PlayCameraShakeImpactResponse_Type": "ENimbusCameraShakeType::BombImpact",
+          "RootComponent": 10
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 10,
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -19.0,
+              "Y": "+0",
+              "Z": "+0"
+            }
+          }
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "LightGuid": {
+            "LightGuid": "{AB68BD40-4A0E-9C68-427B-4A970D895E98}"
+          },
+          "AttachParent": 10,
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -15.5,
+              "Y": "+0",
+              "Z": "+0"
+            }
+          }
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -9,
+          "ComponentTemplate": 6,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 7
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -43,
+          "BodyInstance": {
+            "MassInKgOverride": 1.3889718055725098
+          }
+        }
+      }
+    ],
+    "plwp_lasm_r0": [
+      {
+        "object": "plwp_lasm_r0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 8
+        }
+      },
+      {
+        "object": "Default__plwp_lasm_r0_C",
+        "class": "plwp_lasm_r0_C",
+        "properties": {
+          "HiddenMissileMesh": 9,
+          "FireParticles": 4,
+          "FireLight": 5,
+          "PassSound": 11,
+          "StaticMesh": 10,
+          "WeaponMovement": 3,
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": -1.6619999408721924,
+                "Y": "+0",
+                "Z": 8.156999588012695
+              }
+            },
+            "HangarRackMesh": -30
+          },
+          "WeaponBackgroundTexture": -33,
+          "WeaponFillTexture": -34,
+          "RootComponent": 10
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -7,
+          "ComponentTemplate": 6,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 7
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -29,
+          "BodyInstance": {
+            "MassInKgOverride": 3.2270281314849854
+          }
+        }
+      }
+    ],
+    "plwp_qaam_a0": [
+      {
+        "object": "plwp_qaam_a0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 8
+        }
+      },
+      {
+        "object": "Default__plwp_qaam_a0_C",
+        "class": "plwp_qaam_a0_C",
+        "properties": {
+          "HiddenMissileMesh": 9,
+          "FireParticles": 4,
+          "bUseFireLight": true,
+          "FireLight": 5,
+          "FireLightIntensityCurves": -14,
+          "HomingType": "EHomingType::INFRARED",
+          "MaxHomingAngle": 120.0,
+          "MaxRotationAngle": 65.0,
+          "HomingReductionInCloud": "+0",
+          "HomingCloudThreshold": "+0",
+          "SpeedMaximum": 13333.333984375,
+          "Acceleration": 2500.0,
+          "InitialDropSpeed": 5555.5556640625,
+          "IgnitionSoundEvent": -1,
+          "PassSound": 11,
+          "ObjectTypes": [
+            "ObjectTypeQuery9",
+            "ObjectTypeQuery14",
+            "ObjectTypeQuery19"
+          ],
+          "WeaponID": "EWeaponID::WID_qaam",
+          "StaticMesh": 10,
+          "WeaponMovement": 3,
+          "Damage": 80.0,
+          "LifeTime": 9.0,
+          "LoadTime": 9.0,
+          "MaxLoadedCount": 2,
+          "bIsHoming": true,
+          "HomingForesightAmount": 0.25,
+          "LockOnTargetType": "ETargetType::AIR_ONLY",
+          "PotentialTargets": 6,
+          "LockonAngle": 120.0,
+          "LockonRange": 30000.0,
+          "TargetSelectionMidRange": 100000.0,
+          "LockonInitialSpeed": 40.0,
+          "LockonMaximumSpeed": 640.0,
+          "LockonAccelerationTime": 2.75,
+          "LockonReductionInCloud": "+0",
+          "LockonRangeReductionInCloud": "+0",
+          "SelectionAssistRange": "+0",
+          "SelectionAssistAngle": "+0",
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": 1.5110000371932983,
+                "Y": "+0",
+                "Z": 6.550000190734863
+              }
+            },
+            "HangarRackMesh": -34
+          },
+          "WeaponBackgroundTexture": -37,
+          "WeaponFillTexture": -38,
+          "bIsPlayCameraShakeImpactResponse": true,
+          "PlayCameraShakeImpactResponse_Conditions": "ENimbusCameraShakeConditions::Unconditional",
+          "PlayCameraShakeImpactResponse_Type": "ENimbusCameraShakeType::BombImpact",
+          "RootComponent": 10
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 10,
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -15.0,
+              "Y": "+0",
+              "Z": "+0"
+            }
+          }
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -8,
+          "ComponentTemplate": 6,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 7
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -33,
+          "BodyInstance": {
+            "MassInKgOverride": 0.44973254203796387
+          }
+        }
+      }
+    ],
+    "plwp_laam_a0": [
+      {
+        "object": "plwp_laam_a0_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 8
+        }
+      },
+      {
+        "object": "Default__plwp_laam_a0_C",
+        "class": "plwp_laam_a0_C",
+        "properties": {
+          "HiddenMissileMesh": 9,
+          "FireParticles": 4,
+          "bUseFireLight": true,
+          "FireLight": 5,
+          "FireLightIntensityCurves": -15,
+          "HomingType": "EHomingType::INFRARED",
+          "MaxHomingAngle": 70.0,
+          "MaxRotationAngle": 55.0,
+          "AccelerationDelayFromStart": 0.4000000059604645,
+          "HomingDelayFromStart": 0.4000000059604645,
+          "ReducedHomingDuration": 0.800000011920929,
+          "ReducedHomingRotationAngle": 20.0,
+          "HomingReductionInCloud": "+0",
+          "HomingCloudThreshold": "+0",
+          "SpeedMaximum": 27777.77734375,
+          "Acceleration": 5000.0,
+          "AltitudeAboveTarget": "+0",
+          "IgnitionSoundEvent": -1,
+          "PassSound": 11,
+          "ObjectTypes": [
+            "ObjectTypeQuery9",
+            "ObjectTypeQuery14",
+            "ObjectTypeQuery19"
+          ],
+          "InitialSpeed": "+0",
+          "IgnitionInitialSpeed": 833.3333740234375,
+          "WeaponID": "EWeaponID::WID_laam",
+          "StaticMesh": 10,
+          "WeaponMovement": 3,
+          "Damage": 80.0,
+          "LifeTime": 15.0,
+          "LoadTime": 8.0,
+          "MaxLoadedCount": 2,
+          "bIsHoming": true,
+          "LockOnTargetType": "ETargetType::AIR_ONLY",
+          "PotentialTargets": 6,
+          "LockonAngle": 27.5,
+          "LockonRange": 100000.0,
+          "TargetSelectionMidRange": 100000.0,
+          "LockonInitialSpeed": 40.0,
+          "LockonMaximumSpeed": 640.0,
+          "LockonAccelerationTime": 2.75,
+          "LockonReductionInCloud": "+0",
+          "LockonRangeReductionInCloud": "+0",
+          "SelectionAssistRange": "+0",
+          "SelectionAssistAngle": "+0",
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": 4.061999797821045,
+                "Y": "+0",
+                "Z": 7.380000114440918
+              }
+            },
+            "HangarRackMesh": -36
+          },
+          "WeaponBackgroundTexture": -39,
+          "WeaponFillTexture": -40,
+          "OneShotSoundEvent": -2,
+          "bIsPlayCameraShakeImpactResponse": true,
+          "PlayCameraShakeImpactResponse_Conditions": "ENimbusCameraShakeConditions::Unconditional",
+          "PlayCameraShakeImpactResponse_Type": "ENimbusCameraShakeType::BombImpact",
+          "RootComponent": 10
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 10,
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+              "X": -20.0,
+              "Y": "+0",
+              "Z": "+0"
+            }
+          }
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 10
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -9,
+          "ComponentTemplate": 6,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 7
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -35,
+          "BodyInstance": {
+            "MassInKgOverride": "+0"
+          }
+        }
+      }
+    ],
+    "plwp_laam_r1": [
+      {
+        "object": "plwp_laam_r1_C",
+        "class": "BlueprintGeneratedClass",
+        "properties": {
+          "SimpleConstructionScript": 9,
+          "InheritableComponentHandler": 3
+        }
+      },
+      {
+        "object": "Default__plwp_laam_r1_C",
+        "class": "plwp_laam_r1_C",
+        "properties": {
+          "HiddenMissileMesh": 10,
+          "FireParticles": 5,
+          "FireLight": 6,
+          "PassSound": 12,
+          "StaticMesh": 11,
+          "WeaponMovement": 4,
+          "WeaponHangarSettings": {
+            "HangarMeshOffset": {
+              "HangarMeshOffset": {
+                "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+                "X": 3.509999990463257,
+                "Y": "+0",
+                "Z": 6.869999885559082
+              }
+            },
+            "HangarRackMesh": -32
+          },
+          "WeaponBackgroundTexture": -35,
+          "WeaponFillTexture": -36,
+          "RootComponent": 11
+        }
+      },
+      {
+        "object": "Fire Particles",
+        "class": "ParticleSystemComponent",
+        "properties": {
+          "AttachParent": 11
+        }
+      },
+      {
+        "object": "Fire Light",
+        "class": "PointLightComponent",
+        "properties": {
+          "AttachParent": 11
+        }
+      },
+      {
+        "object": "SCS_Node_1",
+        "class": "SCS_Node",
+        "properties": {
+          "ComponentClass": -8,
+          "ComponentTemplate": 7,
+          "VariableGuid": {
+            "VariableGuid": "{2FCCE5CE-4B96-9B23-D0B1-3EBA03F5A28D}"
+          },
+          "InternalVariableName": "DefaultSceneRoot"
+        }
+      },
+      {
+        "object": "SimpleConstructionScript_1",
+        "class": "SimpleConstructionScript",
+        "properties": {
+          "DefaultSceneRootNode": 8
+        }
+      },
+      {
+        "object": "Static Mesh",
+        "class": "StaticMeshComponent",
+        "properties": {
+          "StaticMesh": -31,
+          "BodyInstance": {
+            "MassInKgOverride": 1.5586457252502441
+          }
+        }
+      }
+    ]
+  },
+  "body_sockets": [
+    {
+      "SocketName": "burner_01",
+      "BoneName": "L_Nozzle",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 9.999999974752427e-07,
+          "Y": 13.406710624694824,
+          "Z": "+0"
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+          "Pitch": "-0",
+          "Yaw": -90.0,
+          "Roll": "+0"
+        }
+      }
+    },
+    {
+      "SocketName": "burner_02",
+      "BoneName": "R_Nozzle",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 0.001851000008173287,
+          "Y": 13.406710624694824,
+          "Z": -0.0013930000131949782
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+          "Pitch": "-0",
+          "Yaw": -90.0,
+          "Roll": "+0"
+        }
+      }
+    },
+    {
+      "SocketName": "cam_tailR",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -32.1917839050293,
+          "Y": 21.32900047302246,
+          "Z": 20.720792770385742
+        }
+      }
+    },
+    {
+      "SocketName": "TEMP_MuzzleFlash",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 67.40906524658203,
+          "Y": 10.257478713989258,
+          "Z": 5.6079254150390625
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT01",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -2.5058348178863525,
+          "Y": -8.904608726501465,
+          "Z": 5.679012298583984
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT02",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 2.6086440086364746,
+          "Y": -21.52193260192871,
+          "Z": 5.977924823760986
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT03",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 13.22257137298584,
+          "Y": -35.40300750732422,
+          "Z": 5.308053970336914
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT04",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 45.824615478515625,
+          "Y": 9.440614700317383,
+          "Z": 8.032105445861816
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT05",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -0.4659568667411804,
+          "Y": -29.381444931030273,
+          "Z": 5.555492401123047
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT06",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -0.9812135100364685,
+          "Y": 24.66314697265625,
+          "Z": 5.592560291290283
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT07",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 75.56382751464844,
+          "Y": 7.690439224243164,
+          "Z": 7.325962543487549
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT08",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 8.535717010498047,
+          "Y": 36.73634338378906,
+          "Z": 5.452709197998047
+        }
+      }
+    },
+    {
+      "SocketName": "ws2",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -8.336999893188477,
+          "Y": 72.9000015258789,
+          "Z": 0.3580000102519989
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+          "Pitch": -1.2379800081253052,
+          "Yaw": "+0",
+          "Roll": "+0"
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT09",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 65.65521240234375,
+          "Y": -9.639978408813477,
+          "Z": 6.409734725952148
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT10",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 10.02406120300293,
+          "Y": 6.956007480621338,
+          "Z": 7.052774429321289
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT11",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 9.960872650146484,
+          "Y": -15.121403694152832,
+          "Z": -7.93729305267334
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT12",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 24.58149528503418,
+          "Y": 29.54331398010254,
+          "Z": 4.8335347175598145
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT13",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -11.433984756469727,
+          "Y": 6.737630367279053,
+          "Z": -5.7639851570129395
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT14",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 24.13153839111328,
+          "Y": 7.349620342254639,
+          "Z": -8.223895072937012
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT15",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 4.257375717163086,
+          "Y": -33.19194412231445,
+          "Z": 3.178351402282715
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT16",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 72.19947814941406,
+          "Y": -6.570751190185547,
+          "Z": 2.456820249557495
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT17",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 66.6315689086914,
+          "Y": 4.2846503257751465,
+          "Z": 1.93600332736969
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT18",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 13.001448631286621,
+          "Y": -6.745362758636475,
+          "Z": -3.6178979873657227
+        }
+      }
+    },
+    {
+      "SocketName": "ws1",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -8.336999893188477,
+          "Y": -72.9000015258789,
+          "Z": 0.3580000102519989
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+          "Pitch": -1.2379800081253052,
+          "Yaw": "+0",
+          "Roll": "+0"
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT19",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 5.711767196655273,
+          "Y": 24.78041648864746,
+          "Z": 3.2516865730285645
+        }
+      }
+    },
+    {
+      "SocketName": "GUNHIT20",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 4.884734153747559,
+          "Y": 14.04083251953125,
+          "Z": -8.121269226074219
+        }
+      }
+    },
+    {
+      "SocketName": "HANGAR_ORIGIN",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 29.549314498901367,
+          "Y": "-0",
+          "Z": -19.862890243530273
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "$type": "UAssetAPI.UnrealTypes.FRotator, UAssetAPI",
+          "Pitch": 2.3561060428619385,
+          "Yaw": "+0",
+          "Roll": "+0"
+        }
+      }
+    },
+    {
+      "SocketName": "cam_thrusters",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -60.80345916748047,
+          "Y": "-0",
+          "Z": -1.5867308378219604
+        }
+      }
+    },
+    {
+      "SocketName": "cam_pilot",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 86.0999984741211,
+          "Y": 2.867705937081508e-14,
+          "Z": 15.800000190734863
+        }
+      }
+    },
+    {
+      "SocketName": "cam_nose",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 138.11376953125,
+          "Y": "-0",
+          "Z": 1.4055466651916504
+        }
+      }
+    },
+    {
+      "SocketName": "cam_tailL",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -32.1917839050293,
+          "Y": -21.328739166259766,
+          "Z": 20.720792770385742
+        }
+      }
+    },
+    {
+      "SocketName": "pitchup_frtFlap_02",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 25.764829635620117,
+          "Y": -28.461639404296875,
+          "Z": 5.7911601066589355
+        }
+      }
+    },
+    {
+      "SocketName": "gun",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 67.40906524658203,
+          "Y": 10.257478713989258,
+          "Z": 5.6079254150390625
+        }
+      }
+    },
+    {
+      "SocketName": "VFX_Dmg_WingR",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 11.42199993133545,
+          "Y": 19.68199920654297,
+          "Z": 6.723999977111816
+        }
+      }
+    },
+    {
+      "SocketName": "vapor02",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -31.823957443237305,
+          "Y": 72.99393463134766,
+          "Z": 3.1816484928131104
+        }
+      }
+    },
+    {
+      "SocketName": "vapor01",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -32.406185150146484,
+          "Y": -73.0594482421875,
+          "Z": 2.951361894607544
+        }
+      }
+    },
+    {
+      "SocketName": "pitchup_body_02",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 53.952205657958984,
+          "Y": 12.63620376586914,
+          "Z": 7.2291154861450195
+        }
+      }
+    },
+    {
+      "SocketName": "pitchup_body_01",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 53.95220184326172,
+          "Y": -12.636204719543457,
+          "Z": 7.229114532470703
+        }
+      }
+    },
+    {
+      "SocketName": "pitchup_frtFlap_01",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": 25.764829635620117,
+          "Y": 28.461639404296875,
+          "Z": 5.7911601066589355
+        }
+      }
+    },
+    {
+      "SocketName": "VFX_Dmg_Body",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -1.8147008419036865,
+          "Y": -24.294450759887695,
+          "Z": 5.570309638977051
+        }
+      }
+    },
+    {
+      "SocketName": "VFX_Dmg_Engine",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -31.323999404907227,
+          "Y": 12.616999626159668,
+          "Z": 5.730000019073486
+        }
+      }
+    },
+    {
+      "SocketName": "VFX_Dmg_WingL",
+      "BoneName": "Body",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+          "X": -14.986618995666504,
+          "Y": -44.59291458129883,
+          "Z": 4.396180152893066
+        }
+      }
+    }
+  ]
+}

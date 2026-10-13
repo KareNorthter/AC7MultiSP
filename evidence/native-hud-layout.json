@@ -1,0 +1,624 @@
+[
+  {
+    "index": 65,
+    "name": "Weapons",
+    "class": "-30:CanvasPanel",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Slots": {
+        "0": 218,
+        "1": 214,
+        "2": 215,
+        "3": 217,
+        "4": 219,
+        "5": 220,
+        "6": 222,
+        "7": 223,
+        "8": 216,
+        "9": 221,
+        "10": 224,
+        "11": 213
+      },
+      "Slot": 198
+    },
+    "slot": {
+      "LayoutData": {
+        "Offsets": {
+          "Right": 324.0,
+          "Bottom": 180.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        },
+        "Alignment": {
+          "Alignment": {
+            "X": 0.5,
+            "Y": 0.5
+          }
+        }
+      },
+      "Parent": 58,
+      "Content": 65
+    }
+  },
+  {
+    "index": 82,
+    "name": "WeaponMessagePanel",
+    "class": "-30:CanvasPanel",
+    "parent": "992:WidgetTree_9",
+    "props": {
+      "Slots": {
+        "0": 299
+      },
+      "Slot": 244
+    },
+    "slot": {
+      "LayoutData": {
+        "Offsets": {
+          "Top": 210.0,
+          "Right": 220.0,
+          "Bottom": 32.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        },
+        "Alignment": {
+          "Alignment": {
+            "X": 0.5,
+            "Y": 0.5
+          }
+        }
+      },
+      "Parent": 69,
+      "Content": 82
+    }
+  },
+  {
+    "index": 890,
+    "name": "DamageTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "C7F434D8413B210DEB8FAA934381375E",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Top": 1.0
+      },
+      "Slot": 980
+    },
+    "slot": {
+      "Parent": 969,
+      "Content": 890
+    }
+  },
+  {
+    "index": 891,
+    "name": "FlareCountTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "132A32014D60A6CD0DE29EB9A1A392E2",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Justification": null,
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 974
+    },
+    "slot": {
+      "Parent": 968,
+      "Content": 891
+    }
+  },
+  {
+    "index": 892,
+    "name": "FlareTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "2F5FC85945CD0B2F57CB579A3B6304AE",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 979
+    },
+    "slot": {
+      "Parent": 969,
+      "Content": 892
+    }
+  },
+  {
+    "index": 893,
+    "name": "GunCountTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "C20625C3492F8FBDA90FF4849F798E9F",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Justification": null,
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 971
+    },
+    "slot": {
+      "Parent": 968,
+      "Content": 893
+    }
+  },
+  {
+    "index": 894,
+    "name": "GunTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "53AF855845E5DE0FEC7E528EE8CF099B",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 976
+    },
+    "slot": {
+      "Parent": 969,
+      "Content": 894
+    }
+  },
+  {
+    "index": 895,
+    "name": "MainWeaponCountTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "A32C180C4E7A2FD95EE04898DA6B4850",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Justification": null,
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 972
+    },
+    "slot": {
+      "Parent": 968,
+      "Content": 895
+    }
+  },
+  {
+    "index": 896,
+    "name": "MainWeaponTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "561F4AAC46DCCF49F4BC6A8E8849BBB6",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Top": 2.0
+      },
+      "Slot": 977
+    },
+    "slot": {
+      "Parent": 969,
+      "Content": 896
+    }
+  },
+  {
+    "index": 897,
+    "name": "NormalWeaponSel",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "C83D42DF4FECA395EE638591E5E07E23",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Left": 4.0
+      },
+      "LineHeightPercentage": 0.875,
+      "Slot": 209
+    },
+    "slot": {
+      "LayoutData": {
+        "Offsets": {
+          "Top": 37.0,
+          "Right": 24.0,
+          "Bottom": 40.0
+        }
+      },
+      "Parent": 62,
+      "Content": 897
+    }
+  },
+  {
+    "index": 903,
+    "name": "SpecialWeaponCountTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "66B2D7D943A69828FF48F29F62D4A47C",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Justification": null,
+      "Margin": {
+        "Top": -7.0
+      },
+      "Slot": 973
+    },
+    "slot": {
+      "Parent": 968,
+      "Content": 903
+    }
+  },
+  {
+    "index": 904,
+    "name": "SpecialWeaponSel",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "FE09DF864C6EAF3833EF3CAAEEF8EB15",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Left": 4.0
+      },
+      "LineHeightPercentage": 0.875,
+      "Slot": 210
+    },
+    "slot": {
+      "LayoutData": {
+        "Offsets": {
+          "Top": 65.0,
+          "Right": 24.0,
+          "Bottom": 40.0
+        }
+      },
+      "Parent": 62,
+      "Content": 904
+    }
+  },
+  {
+    "index": 905,
+    "name": "SpecialWeaponTextBP",
+    "class": "-40:TextBlock",
+    "parent": "991:WidgetTree_8",
+    "props": {
+      "Text": "FF3CCAD14EDE66F02C621791F75A24E5",
+      "ColorAndOpacity": {
+        "SpecifiedColor": {
+          "SpecifiedColor": {
+            "R": 1.0,
+            "G": 1.0,
+            "B": 1.0,
+            "A": 0.5
+          }
+        }
+      },
+      "Font": {
+        "FontObject": -77,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "ShadowOffset": {
+        "ShadowOffset": {
+          "X": "+0",
+          "Y": "+0"
+        }
+      },
+      "ShadowColorAndOpacity": {
+        "ShadowColorAndOpacity": {
+          "R": 1.0,
+          "G": 1.0,
+          "B": 1.0,
+          "A": 1.0
+        }
+      },
+      "Margin": {
+        "Top": -6.0
+      },
+      "Slot": 978
+    },
+    "slot": {
+      "Parent": 969,
+      "Content": 905
+    }
+  }
+]

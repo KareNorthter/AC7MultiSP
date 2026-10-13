@@ -1,0 +1,21 @@
+[
+  "0x89ef00: cwde ",
+  "0x89ef01: hlt ",
+  "0x89ef02: sub edx, esp",
+  "0x89ef04: push 0x26",
+  "0x89ef06: and al, 0x9b",
+  "0x89ef08: loope 0x89eed6",
+  "0x89ef0a: sub al, 0x31",
+  "0x89ef0c: and dword ptr [r10 - 0x1f], r9d",
+  "0x89ef10: imul esp, dword ptr [rdi - 0x54], -0x58",
+  "0x89ef14: std ",
+  "0x89ef15: in eax, 0x26",
+  "0x89ef17: neg byte ptr [rsp + rdx*2 - 2]",
+  "0x89ef1b: jrcxz 0x89ef94",
+  "0x89ef1d: mov bl, 0x85",
+  "0x89ef1f: imul ecx, dword ptr [rax + 0x3ffbd4be], -0xa",
+  "0x89ef26: push rdx",
+  "0x89ef27: jmp 0x89eecb",
+  "0x89ef29: xchg ecx, eax",
+  "0x89ef2a: xchg rdi, rax"
+]

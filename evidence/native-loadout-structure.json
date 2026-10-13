@@ -1,0 +1,320 @@
+{
+  "steam_build": 9855922,
+  "game_started": false,
+  "game_assets_modified": false,
+  "native_parent": "/Script/Nimbus.CampaignHangarWeaponWidget",
+  "blueprint_script_in_weapon_page": false,
+  "controls": [
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "BarA",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Right": 160.0,
+          "Bottom": 17.0
+        }
+      }
+    },
+    {
+      "name": "BaseImage3",
+      "class": "Image",
+      "font": null,
+      "layout": {
+        "Offsets": {
+          "Left": 160.0,
+          "Right": 1.0,
+          "Bottom": 18.0
+        }
+      }
+    },
+    {
+      "name": "DescriptionText",
+      "class": "TextBlock",
+      "font": {
+        "FontObject": -28,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 20
+      },
+      "layout": {
+        "Offsets": {
+          "Left": -729.9609375,
+          "Top": 269.5,
+          "Right": 1066.0,
+          "Bottom": 152.02401733398438
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ItemText0",
+      "class": "TextBlock",
+      "font": {
+        "FontObject": -28,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "layout": {
+        "Offsets": {
+          "Left": -700.5,
+          "Top": -328.0,
+          "Right": 312.0,
+          "Bottom": 37.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ItemText1",
+      "class": "TextBlock",
+      "font": {
+        "FontObject": -28,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "layout": {
+        "Offsets": {
+          "Left": -700.5,
+          "Top": -288.0,
+          "Right": 312.0,
+          "Bottom": 37.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "ItemText2",
+      "class": "TextBlock",
+      "font": {
+        "FontObject": -28,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 22
+      },
+      "layout": {
+        "Offsets": {
+          "Left": -700.5,
+          "Top": -248.0,
+          "Right": 312.0,
+          "Bottom": 37.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "TitleText",
+      "class": "TextBlock",
+      "font": {
+        "FontObject": -28,
+        "TypefaceFontName": "ACES-Regular",
+        "Size": 31
+      },
+      "layout": {
+        "Offsets": {
+          "Left": -759.5,
+          "Top": -444.0,
+          "Right": 800.0,
+          "Bottom": 55.0
+        },
+        "Anchors": {
+          "Minimum": {
+            "Minimum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          },
+          "Maximum": {
+            "Maximum": {
+              "$type": "UAssetAPI.UnrealTypes.FVector2D, UAssetAPI",
+              "X": 0.5,
+              "Y": 0.5
+            }
+          }
+        }
+      }
+    }
+  ],
+  "preserved_native_commit": {
+    "function": "/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",
+    "parameter_types": [
+      "IntProperty SelectedPlaneType",
+      "IntProperty SelectedPlaneSWP"
+    ],
+    "source": "ac7-dual-sp-lab/evidence/ui-interfaces.txt:450"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "native_hud_scenarios": 23,
+  "interleaved_switches": 400,
+  "simulated_resolutions": [
+    "1920x1080",
+    "2560x1440",
+    "3840x2160"
+  ],
+  "simulated_selection_states": [
+    "MSL",
+    "SP1",
+    "SP2"
+  ],
+  "game_started": false,
+  "rendering_verified_in_game": false
+}

@@ -1,0 +1,13 @@
+# 与 Git 相同，排除临时文件、备份及本机工具。
+\Temp
+\backup
+\build
+\build-ui
+\build-core
+\tools
+\Release
+*.pyc
+*.obj
+*.o
+*.pdb
+*.log

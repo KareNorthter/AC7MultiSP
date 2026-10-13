@@ -1,0 +1,49 @@
+{
+  "Version": "0.1.7",
+  "ProfilesPreserved": true,
+  "SaveAndGraphicsFilesPreserved": true,
+  "ExecutablePreserved": true,
+  "Files": [
+    {
+      "File": "bin\\DualSP.dll",
+      "SHA256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+      "Matches": true
+    },
+    {
+      "File": "bin\\DualSPUI.dll",
+      "SHA256": "A617C9D653313A3F5ECF918F165E1D5E7F0D707C2401DB5C0394A4A91214D110",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\main.lua",
+      "SHA256": "6CD9C2110EBBFB32D777FDDF6A20DC1A89F959F90965D9AF0272BDD09192D28C",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\json.lua",
+      "SHA256": "0EACCDA57FABC0330736DE25F45CF589821A42B5E0FE02E4E3125F7DC0BF2B7E",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\weapon_cycle.lua",
+      "SHA256": "3A3BC4EC9FD2B56CD0E466765E54DD5EFE41D8252D5A7FAAD12FA738AAE11F45",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\native_hud.lua",
+      "SHA256": "6662280DCD681B1E0F4FCCD68641B3A603F7B139274033CA970049690B6B88C4",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\loadout_flow.lua",
+      "SHA256": "543F82128AC5D19150693C9151851C0FE70E76A9510660B95AE73661B5BF9974",
+      "Matches": true
+    },
+    {
+      "File": "Scripts\\native_loadout.lua",
+      "SHA256": "C017DA5EE5385FAD3AD0B8124423788F62BD21AC2BCC0537DFDB9BA31F5C4CD8",
+      "Matches": true
+    }
+  ],
+  "GameStartedByAgent": false
+}

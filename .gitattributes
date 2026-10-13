@@ -1,0 +1,20 @@
+# 文本统一按 UTF-8 管理；Windows 入口保留适合本机的行尾。
+* text=auto eol=lf
+*.md text eol=lf
+*.lua text eol=lf
+*.py text eol=lf
+*.cpp text eol=lf
+*.hpp text eol=lf
+*.json text eol=lf
+*.ps1 text eol=crlf
+*.cmd text eol=crlf
+*.dll binary
+*.bin binary
+*.jpg binary
+*.png binary
+
+# 正式运行脚本保留原始字节，保证从 Git 恢复后仍符合基线 SHA256。
+dist/DualSP/Scripts/*.lua -text
+# 加载器和第三方依赖按原分发内容保留，不改动许可证与配置行尾。
+payload/** -text
+vendor/** -text

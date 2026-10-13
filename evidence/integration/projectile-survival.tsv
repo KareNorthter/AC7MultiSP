@@ -1,0 +1,10 @@
+phase	actor	valid	location
+after_shot	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_1	true	-13770.9 119514.2 7981.1
+after_shot	plwp_msl_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_msl_a0_C_0	true	-9155.1 93261.5 6284.1
+after_shot	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_0	true	-6582.5 58507.1 3085.1
+after_switch	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_1	true	-13770.9 119514.2 7981.1
+after_switch	plwp_msl_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_msl_a0_C_0	true	-9155.1 93261.5 6284.1
+after_switch	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_0	true	-6582.5 58507.1 3085.1
+after_500ms	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_1	true	-13454.3 117288.1 7876.8
+after_500ms	plwp_msl_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_msl_a0_C_0	true	-8169.3 87670.8 5980.5
+after_500ms	plwp_qaam_a0_C /Game/Maps/Mission/ms11/ms11.ms11:PersistentLevel.plwp_qaam_a0_C_0	true	-5711.4 51489.4 2582.6
