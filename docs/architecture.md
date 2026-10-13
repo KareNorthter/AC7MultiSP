@@ -1,6 +1,6 @@
 # 架构与关键约束
 
-返回[项目入口](../AGENTS.md)；使用方式见[README](../README.md)，构建与版本管理见[开发说明](development.md)。
+返回[项目入口](../AGENTS.md)；操作见[使用说明](../AGENTS.md#使用说明)，构建与版本管理见[开发说明](development.md)。
 
 ## 模块
 

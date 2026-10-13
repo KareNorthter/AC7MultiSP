@@ -14,12 +14,12 @@ foreach($path in @($release,$source,$releaseZip,$sourceZip)){
 New-Item -ItemType Directory -Path $release,$source -Force|Out-Null
 
 # 安装包包含统一文档入口和完整安装载荷。
-foreach($name in @('Install.ps1','Uninstall.ps1','Install.cmd','Uninstall.cmd','README.md','AGENTS.md','VERSION','docs','payload')){
+foreach($name in @('Install.ps1','Uninstall.ps1','Install.cmd','Uninstall.cmd','AGENTS.md','VERSION','docs','payload')){
     Copy-Item -LiteralPath (Join-Path $root $name) -Destination $release -Recurse
 }
 
 # 源码包复制当前资产，不夹带工具、个人备份和历史版本。
-foreach($name in @('AGENTS.md','README.md','VERSION','.gitignore','.tfignore','.gitattributes',
+foreach($name in @('AGENTS.md','VERSION','.gitignore','.tfignore','.gitattributes',
     'Install.ps1','Uninstall.ps1','Install.cmd','Uninstall.cmd','src','vendor','dist','payload','tests','docs','evidence','references')){
     Copy-Item -LiteralPath (Join-Path $root $name) -Destination $source -Recurse
 }

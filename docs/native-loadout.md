@@ -1,6 +1,6 @@
 # 原生任务准备双 SP 选择：0.1.7
 
-返回[项目入口](../AGENTS.md)，使用方式见[README](../README.md)，模块关系见[架构](architecture.md)。参考图片位于[参考资料](../references/README.md)。
+返回[项目入口](../AGENTS.md)，操作见[使用说明](../AGENTS.md#使用说明)，模块关系见[架构](architecture.md)。参考图片位于[参考资料](../references/README.md)。
 
 本轮实现是在 AC7 原有 `CampaignHangarWeapon` 页面中替换显示控件和分阶段处理输入，保留原生背景、机体场景、布局容器、字体、类别图标、性能条与普通兵装栏。不是 F8 窗口换皮，也没有新增覆盖整个屏幕的外部窗口。参考用户提供的 AC8 三张机体/SP1/SP2 截图。
 
