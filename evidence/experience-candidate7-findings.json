@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-14",
+  "version": "0.1.9-experience-candidate.7",
+  "status": "已构建并安装；新增运行时行为待用户实玩",
+  "user_validation_candidate6": "用户确认主要功能正常；另报告布局、PART 单 SP、TLS 残留及 MSL 自动换 SP1 挂载。",
+  "live_research": {
+    "pid": 31080,
+    "paused_mission": "ms06 AcePlayerPawn_zoef_C",
+    "active_weapons_count": 0,
+    "fired_by_agent": false,
+    "mission_started_by_agent": false
+  },
+  "parts_asset": {
+    "owner": "CampaignHangarParts_C.AircraftWeaponInformation",
+    "information": "HangarPartsInformation_C",
+    "right_spec_origin": [
+      1442,
+      213
+    ],
+    "width": 374,
+    "runtime_checked": false
+  },
+  "tls": {
+    "weapon_id": 25,
+    "active_array_offset": "0x338",
+    "element_size": 8,
+    "owner_offset": "0x3b8",
+    "tick_rva": "0x8757a0",
+    "end_virtual_rva": "0x85f1c0",
+    "request_end_rva": "0x894af0",
+    "path": [
+      "0x895f30 原生结束/池分支",
+      "0x85f1c0 激光清理",
+      "0x894850 移出活动武器",
+      "0x861490 附着清理",
+      "0x897740 最终停用",
+      "0x8b5220 效果结束通知"
+    ],
+    "evidence_level": "只读反射和反汇编；没有发射后实测",
+    "scope": "仅当前玩家活动 TLS，先快照对象列表，收尾后再缓存冷却"
+  },
+  "mount": {
+    "cause": "observeOriginalSwitch 在 MSL 期间主动预加载 SP1",
+    "change": "删除待机重建；ToggleSpecial 实际按键且挂载耗尽时记录请求，由 Lua 选择下一可用 SP",
+    "toggle_rva": "0x886c50",
+    "fingerprint": "488bc45553488bec4883ec68"
+  },
+  "display": {
+    "unready_factor": 0.35,
+    "sp2_gain": 0.7,
+    "prepare_icon_inset": 36,
+    "prepare_column_gap": 76,
+    "supply_column_gap": 50,
+    "supply_pitch": 32,
+    "description_x": 72,
+    "part_ammo": "已安装部件与已保存比例，不模拟悬停增益",
+    "layout_initialization": "左对齐和换行宽度在首次 AddChild 前设置"
+  },
+  "offline": {
+    "version": "0.1.9-experience-candidate.7",
+    "core": "AA01C73BCBD73CF4BA0255A12FB646E5DF83F09ECABAF8489FB01F9944DE7B55",
+    "lua_syntax": true,
+    "ui_api_name_count": 47,
+    "protected_cores_unchanged": true,
+    "wav_unchanged": true,
+    "tls_id": 25,
+    "test_modules_run": false,
+    "runtime_validation": false
+  },
+  "runtime_pending": [
+    "新布局",
+    "PART 双 SP 与拆装部件后载量",
+    "TLS 发射中切至 MSL/另一 SP 后消失及冷却",
+    "SP2→MSL 保持模型",
+    "挂载耗尽后原生切换键可用",
+    "SP2 音量与 35% 就绪亮度"
+  ],
+  "installed_at": "2026-10-14T15:26:13.162922+08:00",
+  "receipt": "experience-candidate.7-installed.json"
+}

@@ -1,5 +1,19 @@
 # 武器状态与生命周期研究结论
 
+## 候选 8 用户复测
+
+2026-10-14 用户确认 TLS 切换收尾正常、符合双 SP 需求。日志记录 `TLS_ENDED_ON_SWITCH 1` 后继续提交 MSL/SP 选择，没有重现此前类型误判导致的停用。用户接受切换至 MSL 也结束光束的当前行为，不要求与原游戏持续发射完全一致。
+
+## 体验候选 8：纠正玩家 TLS 类型
+
+候选 7 的 Tick 类型假设已被真实用户运行否定。玩家 `plwp_tls_x2_C` → AttachedInstantWeapon → AttachedWeapon → WeaponBase，虚表 RVA 0x27373e8，Tick=0x85f470；默认 LaserWeapon 的虚表为 0x274ab60，Tick=0x8757a0。两者的 +0x628/+0x648/+0x680 分别为 0x85f1c0/0x894850/0x861490。收尾按这三个实际接口验证，不再要求 LaserWeapon 的 Tick。下文候选 7 的固定类型条件属于已纠正历史结论，见[证据](../../evidence/experience-candidate8-findings.json)。
+
+## 体验候选 7：TLS 切换收尾
+
+只读确认 build 9855922 的 ActiveWeapons 位于激活器 +0x338，元素为 UObject 指针。TLS 为 WeaponID=25，原生 Tick/收尾虚表入口分别为 RVA 0x8757a0/0x85f1c0。候选在切换离开 TLS 时，先固定当前玩家激光对象列表，再调用自然终止请求 0x894af0，随后才缓存冷却并重建 SP。该链经过原生活动武器移除、粒子/声源停止和生命周期结束；没有活动光束实测，不能宣称已解决所有连续武器问题。证据见[候选 7](../../evidence/experience-candidate7-findings.json)。
+
+> 2026-10-14 体验候选 4：CFA-44/ADMM 现场数组为 126 槽、容量 170，装填窗口 12。原上限 64 导致 setup 拒绝 SP1，并非 EML 被禁用。改为真实数组内存范围与队列校验，保留逐槽计时和重建数量校验；当前只读依据见[候选 4](../../evidence/experience-candidate4-findings.json)，修复后实玩状态见[体验说明](../experience-polish.md)。
+
 > 候选 6 新增重建前的锁定音收尾约束：在 InitializeWeaponSystem 丢弃旧锁定槽之前，经原生 0x4C98A0 逐槽发送配对停止事件并检查引用归零。禁止仅清零计数、全局静音或重建后再收尾。LAGM 的完整飞机切换与部件修正保持。证据见[本轮修订](../input-audio-revision.md)。
 
 返回[项目入口](../../AGENTS.md)；当前实现见[架构](../architecture.md)，实体挂载见[模型研究](weapon-models.md)。

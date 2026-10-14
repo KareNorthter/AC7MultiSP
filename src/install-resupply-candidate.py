@@ -8,6 +8,7 @@ import shutil
 import struct
 import subprocess
 import sys
+import wave
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -34,6 +35,17 @@ def digest(path):
         while block := source.read(1024 * 1024):
             result.update(block)
     return result.hexdigest().upper()
+
+
+def check_selection_wave():
+    """核对本候选指定的用户音频，避免安装错文件或发布时遗漏本地资源。"""
+    path = ROOT / "dist/DualSP/Audio/SP2.wav"  # 不依赖用户临时提取目录进行安装。
+    expected = "278B8F8815823522ED5F121711A1A12EDA2AE8E89991F8522D1FFF22832D9640"
+    if digest(path) != expected:
+        raise RuntimeError("SP2.wav 与本轮用户指定音频不符")
+    with wave.open(str(path), "rb") as audio:
+        if (audio.getnchannels(), audio.getsampwidth(), audio.getframerate(), audio.getnframes()) != (2, 2, 48000, 28982):
+            raise RuntimeError("SP2.wav 的格式或时长不符")
 
 
 def ensure_stopped():
@@ -85,6 +97,9 @@ def check_core(management):
     if management:
         # 输入隔离与音效收尾是本轮必需协议，不能与候选 5 核心混装。
         required.update({"dualsp_resupply_takeoff", "dualsp_resupply_control", "dualsp_prepare_weapon_rebuild"})
+    if VERSION == "0.1.9" or VERSION.startswith("0.1.9-experience-candidate."):
+        required.update({"dualsp_preparation_action", "dualsp_selection_audio", "dualsp_menu_confirm", "dualsp_custom_audio_update",
+                         "dualsp_loadout_ammo", "dualsp_weapon_icon", "dualsp_finish_tls", "dualsp_take_empty_switch"})
     if not required.issubset(exports):
         raise RuntimeError("候选核心缺少补给协议或已有接口")
 
@@ -161,10 +176,32 @@ def main():
     arguments = argparse.ArgumentParser(description=__doc__)
     arguments.add_argument("--merged-hud", action="store_true", help="成套安装补给重选与两个 HUD 新功能")
     arguments.add_argument("--management", action="store_true", help="成套安装原生兵装入口、直接选择和中英文 F8 管理界面")
+    arguments.add_argument("--experience", action="store_true", help="安装 Git 保留的 0.1.9 核心及配套 Lua，不覆盖旧版核心")
     options = arguments.parse_args()
     # 管理源码只能通过管理模式安装；旧候选的记录绝不覆盖。
-    management_source = "dualsp_management_supported" in (ROOT / "dist/DualSP/Scripts/main.lua").read_text(encoding="utf-8")
-    if options.management:
+    controller = (ROOT / "dist/DualSP/Scripts/main.lua").read_text(encoding="utf-8")  # 版本协议来自即将安装的调度器。
+    management_source = "dualsp_management_supported" in controller
+    experience_source = "dualsp_preparation_action" in controller and "dualsp_selection_audio" in controller
+    if options.experience:
+        if not management_source or not experience_source:
+            raise RuntimeError("当前源码不是体验候选，停止安装")
+        options.management = True
+        options.merged_hud = True
+        VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+        if VERSION != "0.1.9" or 'DUALSP_LOADED 0.1.9 MANAGEMENT_UI' not in controller:
+            raise RuntimeError("版本文件与 0.1.9 控制器不匹配")
+        # 版本快照从 Git 保留核心安装，不依赖可能被后续研究覆盖的构建目录。
+        CORE = ROOT / "dist/DualSP/cores/0.1.9/DualSP.dll"
+        if digest(CORE) != "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1":
+            raise RuntimeError("0.1.9 核心与版本快照不一致")
+        FILES += ("Scripts/weapon_names.lua", "Scripts/weapon_presentation.lua", "Audio/SP2.wav")
+        EVIDENCE = ROOT / "evidence/0.1.9-installed.json"
+        # 用户提供的提取音频只在本机保存；缺失或不符时停止，不改用旧音色。
+        check_selection_wave()
+        check_management_ui()
+    elif options.management:
+        if experience_source:
+            raise RuntimeError("当前 Lua 需要体验候选核心；请明确使用 --experience，不得与 0.1.8 核心混装")
         if not management_source:
             raise RuntimeError("当前源码不是管理版，停止安装")
         options.merged_hud = True
@@ -227,6 +264,7 @@ def main():
     expected = {name: digest(path) for name, path in sources.items()}
     shutil.copytree(MOD, staging)
     for name, path in sources.items():
+        (staging / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, staging / name)
     receipt.update(Version=VERSION, InstalledAt=now.isoformat(), Candidate="candidate" in VERSION,
                    CandidateCoreSHA256=expected["bin/DualSP.dll"], BackupPath=str(backup), GameStartedByAgent=False)
@@ -268,15 +306,30 @@ def main():
         "test_modules_run": False, "game_started_by_agent": False, "gameplay_verified": False}
     result["features"] = ["原生中途补给双 SP 重选"]
     if options.merged_hud:
-        result["features"] += ["右下角名称按就绪/耗尽变淡", "中央当前武器简称正常显示常驻"]
+        result["features"] += ["右下角名称按就绪/耗尽变淡"]
+        # 体验候选的中央透明度跟随就绪状态，旧候选仍为固定亮度。
+        result["features"] += ["中央简称按就绪状态常驻" if options.experience else "中央当前武器简称正常显示常驻"]
         result["hud_lua_forwarders"] = forwarders
         result["periodic_hud_file_transactions"] = False
         result["declared_ui_api_names_in_game_image"] = declared_names
         result["runtime_ui_binding_verified"] = False
     if options.management:
         result["features"] += ["键盘与固定手柄直接选择武器", "F8 纯管理界面", "中英文界面", "中央常驻提示独立开关", "按需显示日志"]
-        result["features"] += ["补给双栏性能/类型/预计弹药", "起飞 YES/NO 与返回重选"]
-        result["features"] += ["准备双栏性能/类型/预计弹药", "确认页修改 SP1/SP2", "原生页面重新激活接入", "取消草稿和原生继续分别交接"]
+        result["features"] += ["补给双栏性能/类型/弹药", "起飞 YES/NO 与返回重选"]
+        result["features"] += ["准备双栏性能/类型及右下弹药汇总", "原生页面重新激活接入"]
+        # 体验候选取消额外确认页，回执不再宣称保留旧版两次交接流程。
+        if options.experience:
+            result["features"] += ["机库一步确认和返回", "STANDBY 双 SP 信息", "SP1 预览第二栏 EMPTY",
+                                   "开场 HUD 提前接入", "补给打开和激活时即时接入", "SP2 用户 WAV 与音量暂停联动",
+                                   "原生兵装模型特写跟随光标", "STANDBY 退出动画保留双栏",
+                                   "准备页原生金色选中素材", "准备页与 STANDBY 英文兵装信息",
+                                   "动态武器槽池范围校验", "机库与补给内部步骤原生确认音", "未就绪名称亮度系数 35%",
+                                   "准备页原生彩色分类图标", "准备页弹药仅右下汇总", "补给英文标签与原生绿色泛光",
+                                   "补给完整原生武器介绍", "四页预览计入部件且保留配弹比例",
+                                   "SP2 音量乘以 0.175", "准备图标与三行全名留白", "补给介绍对齐和重排",
+                                   "PART 双 SP 信息", "MSL 保留上一 SP 挂载", "切换离开 TLS 时原生收尾"]
+        else:
+            result["features"] += ["确认页修改 SP1/SP2", "取消草稿和原生继续分别交接"]
         result["features"] += ["原生补给 YES 完整关闭链", "飞机完整切换同步锁定参数与部件效果"]
         result["features"] += ["补给页原生输入独占", "兵装重建前逐槽释放锁定音引用"]
         result["features"] += ["补给阶段实例与任务世界分别校验"]

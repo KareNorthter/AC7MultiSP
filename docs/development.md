@@ -1,5 +1,15 @@
 # 开发与发布
 
+> **当前本地版本为 [0.1.9](version-0.1.9.md)。** 用户已确认候选 9 的其他功能正常；本版只将 SP2 增益再减半至 0.175 并整理版本。`--experience` 从 Git 管理的 `dist/DualSP/cores/0.1.9/DualSP.dll` 安装，核对 VERSION、控制器版本和核心哈希；不依赖 build-core。原 WAV 不入库，需按 Audio 说明本地准备。本轮编译独立核心并安装、提交本地 Git，不新增或运行测试模块，不生成发布包或推送。下列候选及 0.1.8 记录为历史。
+
+> 2026-10-14 最新：用户重新授权全部完成后安装，体验候选 6 已于 14:34 安装，包含 UI 风格、部件预览及候选 5 的 WAV。本地 `dist/DualSP/Audio/SP2.wav` 已被 Git/TF 忽略，安装器核对固定哈希；源码仓库不包含该原始音频。恢复源码时须按 [Audio 说明](../dist/DualSP/Audio/README.md)备齐本地资源。Windows XAudio2 2.9 从系统目录加载，核心链接系统 COM 库；新核心另需导出 `dualsp_loadout_ammo` 和 `dualsp_weapon_icon`。未新增或运行测试模块，新表现待实玩。
+
+> 菜单现场操作：用户提示 F1 可跳过过场/简报，2026-10-14 已现场确认；未生效时可在重新观察页面后再按。进入机库不等于获准出击，STANDBY 的 SORTIE 仍由用户操作。
+
+> 2026-10-14 最新复测与候选 2：体验候选 2 已独立编译并成套安装；候选 1 的机库/HUD 实玩错误及修订见体验优化说明。没有新增或运行测试模块。
+
+> **当前工作分支的[体验候选](experience-polish.md)已编译安装，尚未实玩**。新增核心导出 `dualsp_preparation_action`、`dualsp_selection_audio`；本阶段已获持续编译安装授权，使用 `build-core` 和 `--experience` 成套安装；本次记录见[回执](../evidence/experience-candidate.1-installed.json)。当前分支的 `--management` 会拒绝新 Lua 与旧核心混装。下文 0.1.8 安装入口须配对应的 0.1.8 源码。
+
 > 当前 [0.1.8](version-0.1.8.md) 为用户初步实玩通过的本地版本。`--management` 从 VERSION 读取版本，使用已纳入 Git 的 `dist/DualSP/cores/0.1.8/DualSP.dll`；不依赖 build-core。旧正式载荷、Install.cmd 和旧 ZIP 保留为 0.1.7 恢复入口；打包脚本阻止误标旧载荷，本轮不打包、不编译、不运行测试。后文为候选开发历史。
 
 > 候选 7 仅修改 Lua 的补给阶段身份校验，沿用候选 6 已授权构建的核心和 UI，哈希一致。已于 2026-10-14T08:50:13.678319+08:00 安装；本轮未编译 DLL、未新增或运行测试模块。安装语法核验只 load 脚本，不执行。详见[修订](resupply-completion-revision.md)。
@@ -41,7 +51,8 @@
 | `src/package.ps1` | 生成带文档和许可的发布目录、安装包及源码包；不覆盖现有快照 |
 | `src/update-local.ps1` | 在游戏退出后更新本机安装，并核对配置、存档和运行文件 |
 | `src/install-resupply-candidate.py` | 将 `build-core` 独立候选与当前 Lua 成套安装到已有游戏副本；完整备份原模组，核对配置和保护文件 |
-| `src/install-resupply-candidate.py --management` | 安装当前 0.1.8；从 Git 管理的独立核心及 Lua 成套部署，沿用现有 DLL，不自动构建 |
+| `src/install-resupply-candidate.py --management` | 仅用于恢复历史 0.1.8 源码后的部署；当前源码请使用 --experience |
+| `src/install-resupply-candidate.py --experience` | 安装当前 0.1.9，使用 Git 保留核心、配套 Lua 和本地 WAV，核对完整体验接口 |
 | `src/install-resupply-candidate.py --merged-hud` | 合并安装补给重选、就绪名称变淡与中央简称常驻，核对十个运行文件及专用 Lua 转发接口 |
 | `tests/` | 保留的当前回归源码；使用方式见[现有检查说明](../tests/README.md) |
 

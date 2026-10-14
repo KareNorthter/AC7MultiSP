@@ -1,0 +1,72 @@
+{
+  "version": "0.1.9-experience-candidate.5",
+  "prepared_at": "2026-10-14T14:00:36.269708+08:00",
+  "user_validation_candidate4": {
+    "cfa44_dual_sp": "用户确认：我测试了，CFA44双SP正常。",
+    "other_candidate4_changes": "本轮未另行确认"
+  },
+  "installed": false,
+  "installed_version_retained": "0.1.9-experience-candidate.4",
+  "installed_files_match_candidate4_receipt": true,
+  "core_compiled": true,
+  "core_exports_verified": true,
+  "lua_syntax_compiled_without_execution": true,
+  "installer_python_syntax_compiled": true,
+  "test_modules_run": false,
+  "game_stopped": false,
+  "new_audio_listened_in_game": false,
+  "audio": {
+    "source": "E:\\CodexTemp\\ac8_weapon_audio\\output\\SP2.wav",
+    "channels": 2,
+    "pcm_bits": 16,
+    "sample_rate": 48000,
+    "frames": 28982,
+    "duration_seconds": 0.6037916666666666,
+    "transformed": false,
+    "backend": "Windows XAudio2 2.9",
+    "volume": "当前 NimbusGameInstance+0x5f8 -> SigmaSaveGame+0x130 (SFXVolume)",
+    "volume_read_signature_rva": "0x766776",
+    "volume_read_signature": "488b90f8050000488b8738040000f30f108230010000",
+    "pause_focus_resupply": "按既有约20ms游戏线程调度取消提示，恢复不补播",
+    "ignored_from_git": true
+  },
+  "ammunition": {
+    "formula": "max(1,floor(native_initialized_ammo*ratio))",
+    "default_ratio": 0.5,
+    "native_parts_chain_rvas": [
+      "0x81e810",
+      "0x882e40",
+      "0x87fc60",
+      "0x84c9d0",
+      "0x84bae0"
+    ],
+    "parts_before_mod_scaling": true,
+    "both_sp_use_native_initialization": true,
+    "cfa44_base": [
+      102,
+      52
+    ],
+    "cfa44_default_scaled": [
+      51,
+      26
+    ],
+    "preparation_preview_includes_parts": false,
+    "controlled_parts_ab_gameplay_test": false
+  },
+  "files": {
+    "src/selection_wave.hpp": "DD03C8044EE6F9040A869D95770C0A22C6E909E03889EB4E8BEA3578A16887B6",
+    "src/weapon_bridge.cpp": "F0AAEF5B62BC3D08CBDA97BBDA9D777370F1D42F1E8588F0F7BDD79EF7A47F89",
+    "src/build-core-portable.cmd": "DA93B9EA2D8721E8AB5A4AD6660485C646675A08B424566701AD5E8143D43962",
+    "src/install-resupply-candidate.py": "BFEFA2657AFCA31772B842993321DA09DD90A04E02CAEAEF1C9658249BCEE8B4",
+    "dist/DualSP/Scripts/main.lua": "CA4B2E400AC3EEC07B90A9BD7F811029F37E276738ED93F9D64B1391F85D5A15",
+    "dist/DualSP/Audio/SP2.wav": "278B8F8815823522ED5F121711A1A12EDA2AE8E89991F8522D1FFF22832D9640",
+    "build-core/DualSP.dll": "7AD803B5DCEA7A32DC04D6BE269E4F72A31C9FAC5B5E0C3C4B4EEC2718DCEC7F"
+  },
+  "formal_core_preserved": true,
+  "pending": [
+    "安装授权",
+    "游戏内新SP2音色与响度试听",
+    "暂停/音量/焦点实玩复核",
+    "可选增弹部件A/B对照"
+  ]
+}

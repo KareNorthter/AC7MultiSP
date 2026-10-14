@@ -14,5 +14,5 @@ rem 补给页输入钩子使用项目已有的 MinHook，单独生成核心对�
 cd build-core
 "%CC%" -O2 -c -I ../vendor/minhook-1.3.4/include ../vendor/minhook-1.3.4/src/buffer.c ../vendor/minhook-1.3.4/src/hook.c ../vendor/minhook-1.3.4/src/trampoline.c ../vendor/minhook-1.3.4/src/hde/hde64.c
 if errorlevel 1 exit /b 1
-"%CXX%" -std=c++17 -O2 -shared -static -I ../vendor -I ../vendor/minhook-1.3.4/include ../src/weapon_bridge.cpp buffer.o hook.o trampoline.o hde64.o -o DualSP.dll
+"%CXX%" -std=c++17 -O2 -shared -static -I ../vendor -I ../vendor/minhook-1.3.4/include ../src/weapon_bridge.cpp buffer.o hook.o trampoline.o hde64.o -lole32 -o DualSP.dll
 exit /b %errorlevel%

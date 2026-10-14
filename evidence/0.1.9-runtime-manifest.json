@@ -1,0 +1,73 @@
+{
+  "version": "0.1.9",
+  "install_argument": "--experience",
+  "runtime_files": [
+    {
+      "source": "dist/DualSP/cores/0.1.9/DualSP.dll",
+      "destination": "bin/DualSP.dll",
+      "sha256": "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/bin/DualSPUI.dll",
+      "destination": "bin/DualSPUI.dll",
+      "sha256": "24033AFB2377781B63B809E166E2161AF5341C7D5542F3E12E3CE931A543F174",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/json.lua",
+      "destination": "Scripts/json.lua",
+      "sha256": "0EACCDA57FABC0330736DE25F45CF589821A42B5E0FE02E4E3125F7DC0BF2B7E",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/loadout_flow.lua",
+      "destination": "Scripts/loadout_flow.lua",
+      "sha256": "6F6114D5558C5AECF9ED07C30FDC6780689178301779B8BE32EE802FB247A83B",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/main.lua",
+      "destination": "Scripts/main.lua",
+      "sha256": "02F2CF65A91D99EAA4E2C53A94C589FB105A85B9EB5A15492C34D2A4216C547B",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/native_hud.lua",
+      "destination": "Scripts/native_hud.lua",
+      "sha256": "F2D6C257CB40738EC7950A7A4A449073F50D1F7BF1F77EB207F9F0F06B426826",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/native_loadout.lua",
+      "destination": "Scripts/native_loadout.lua",
+      "sha256": "B9A2661CF2FDB8514B7B7DEB9F384647430898000E8A90B85CE21F42878551D4",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_cycle.lua",
+      "destination": "Scripts/weapon_cycle.lua",
+      "sha256": "3A3BC4EC9FD2B56CD0E466765E54DD5EFE41D8252D5A7FAAD12FA738AAE11F45",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_names.lua",
+      "destination": "Scripts/weapon_names.lua",
+      "sha256": "44B74D99704AE504821CFA8A3E03F04D21C7230DD9BAAE6CE3741516ADB4116D",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_presentation.lua",
+      "destination": "Scripts/weapon_presentation.lua",
+      "sha256": "5A12D8FE1A6B0259EAFF6D5AB5CF8F58CEEED52C6EB9597D7AC97EDA4D63B0C7",
+      "git_managed": true
+    },
+    {
+      "source": "dist/DualSP/Audio/SP2.wav",
+      "destination": "Audio/SP2.wav",
+      "sha256": "278B8F8815823522ED5F121711A1A12EDA2AE8E89991F8522D1FFF22832D9640",
+      "git_managed": false
+    }
+  ],
+  "audio_note": "用户原始提取 WAV 仅本地保存，不提交 Git；缺失时安装器停止。"
+}

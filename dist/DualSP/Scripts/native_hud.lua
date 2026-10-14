@@ -324,15 +324,17 @@ function NativeHUD.new(note)
         return nil
     end
     local function update(plane,profile,options,state,enabled,now)
-        if not enabled then restore();self.status="stock";return end
+        if not enabled then restore();self.status="stock";self.waitingSince=nil;return end
         if self.error then return end
-        if not self.waitingSince then self.waitingSince=now end
+        -- 开场可能很长，输入开放前只等待控件生成；五秒诊断从正式接管时开始。
+        if state.pending then self.waitingSince=nil
+        elseif not self.waitingSince then self.waitingSince=now end
         local c=self.cache
         if c and not valid(c.owner)then self.cache=nil;self.waitingSince=now;self.lastScan=-1;c=nil end
         if not c then c=locate(plane,now)end
         if not c then
             self.status="waiting"
-            if now-self.waitingSince>5 then error("Cannot locate this mission's native CombinedStatsWidget; no supplemental HUD is drawn")end
+            if self.waitingSince and now-self.waitingSince>5 then error("Cannot locate this mission's native CombinedStatsWidget; no supplemental HUD is drawn")end
             return
         end
         for _,key in ipairs(required)do assert(valid(c.widgets[key]),"Native HUD control was destroyed: "..key)end
@@ -343,15 +345,23 @@ function NativeHUD.new(note)
             -- In stretched Canvas slots GetSize is a margin, not a height.
             -- Grow that parent upwards by moving its top edge. A stretched
             -- child follows automatically; only fixed-height children resize.
-            c.panel:ForceLayoutPrepass()
+            -- 原生 SP 源已折叠，开场时从它测量必然可能得到零高。
+            -- 先把实际文字放入最终可见行，再测量该行自己的 Slate 布局。
+            c.columnsTouched=true -- 即使布局核验失败，也能恢复完整原生控件树。
+            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.dual)end
+            for group=1,(c.dual and 2 or 1)do
+                local weaponIndex=group==1 and profile.a or profile.b -- SP 行按逻辑槽固定身份。
+                c.columns[1].rows[group]:SetText(FText(weaponNames.special(options,weaponIndex)))
+                c.columns[2].rows[group]:SetText(FText(state.pending and "—"or tostring(state.cached_sp[group])))
+            end
+            for _,widget in ipairs(c.clones)do widget:SetVisibility(VISIBLE)end
+            local measured=c.columns[1].rows[1] -- 测量控件自身，不依赖尚未显示的 HUD 祖先。
+            measured:ForceLayoutPrepass()
             local padding=c.columns[1].original[3].style.padding
-            local pitch=c.name:GetDesiredSize().Y+padding.Top+padding.Bottom
+            local pitch=measured:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(pitch>0 and pitch<100,"Invalid native text row height: "..tostring(pitch))
             c.row=pitch;if c.dual then resize(c)end
             note(string.format("NATIVE_HUD_ROW_FLOW pitch=%.3f label_font=%d count_font=%d slot_rules=%s,%s",c.row,c.nameFontSize,c.countFontSize,tostring(c.columns[1].original[3].style.size.SizeRule),tostring(c.columns[2].original[3].style.size.SizeRule)))
-            c.columnsTouched=true -- Partial changes must remain recoverable.
-            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.dual)end
-            for _,widget in ipairs(c.clones)do widget:SetVisibility(VISIBLE)end
             c.applied=true
         end
         local active=state.active
@@ -382,7 +392,7 @@ function NativeHUD.new(note)
             for _,widget in ipairs(c.columns[1].rows)do widget:SetFont(c.name.Font)end
             for _,widget in ipairs(c.columns[2].rows)do widget:SetFont(c.count.Font)end
             c.nameFontSize=c.name.Font.Size;c.countFontSize=c.count.Font.Size
-            c.panel:ForceLayoutPrepass()
+            c.columns[1].rows[1]:ForceLayoutPrepass()
             local padding=c.columns[1].original[3].style.padding
             -- The game-owned source is collapsed; measure a visible twin.
             c.row=c.columns[1].rows[1]:GetDesiredSize().Y+padding.Top+padding.Bottom
@@ -391,19 +401,20 @@ function NativeHUD.new(note)
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
         end
         assert(state.ready and type(state.ready[1])=="boolean","MSL 就绪状态缺失")
-        syncNameStyle(c.main,c.widgets.MainWeaponTextBP,state.ready[1]and 1 or .5,c.nameStyles,"main")
+        -- 未就绪时仅保留正常亮度的35%，使装填状态更容易辨认。
+        syncNameStyle(c.main,c.widgets.MainWeaponTextBP,state.ready[1]and 1 or .35,c.nameStyles,"main")
         local countColor=c.count.ColorAndOpacity
         for group=1,(c.dual and 2 or 1)do
             local weaponIndex=group==1 and profile.a or profile.b
             local label=weaponNames.special(options,weaponIndex)
-            local count=tostring(state.cached_sp[group])
+            local count=state.pending and "—"or tostring(state.cached_sp[group]) -- 武器初始化前只显示名称，不展示尚未应用的弹药数。
             local nameWidget,countWidget=c.columns[1].rows[group],c.columns[2].rows[group]
             if label~=c.lastNames[group]then nameWidget:SetText(FText(label));c.lastNames[group]=label;self.writeCount=self.writeCount+1 end
             if count~=c.lastCounts[group]then countWidget:SetText(FText(count));c.lastCounts[group]=count;self.writeCount=self.writeCount+1 end
             countWidget:SetColorAndOpacity(countColor)
             -- 弹药为零由核心统一判定；至少一发就绪即可保持正常文字。
             assert(state.ready and type(state.ready[group+1])=="boolean","SP 就绪状态缺失")
-            syncNameStyle(nameWidget,c.name,state.ready[group+1]and 1 or .5,c.nameStyles,"sp"..group)
+            syncNameStyle(nameWidget,c.name,state.ready[group+1]and 1 or .35,c.nameStyles,"sp"..group)
         end
         self.status="native"
     end

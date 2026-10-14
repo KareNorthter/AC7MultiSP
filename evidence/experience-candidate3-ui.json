@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-14",
+  "version": "0.1.9-experience-candidate.3",
+  "installation": "experience-candidate.3-installed.json",
+  "baseline_user_validation": "experience-candidate2-user-validation.json",
+  "changes": [
+    "SP1/SP2 复用原生金色标记、横线、渐变和光晕",
+    "标题、空兵装、未购买标签和双栏兵装名称采用英文",
+    "长英文名称按语义分为两行，左下说明保留中文",
+    "准备页弹药标题使用 WEAPONS AMMO，移除预计字样"
+  ],
+  "native_cursor": {
+    "owner": "MenuBaseSelector_C.ScrollCanvas",
+    "children": ["BG_Glow_2", "ScrollHighlightImage", "ScrollUnderlineImage", "ScrollHeaderImage"],
+    "source": "当前游戏控件树与只读反射",
+    "fname_correction": "原采集器省略了 FName 数字，BG_Glow 的 number=3 对应完整名称 BG_Glow_2",
+    "highlight_alpha": 0.2,
+    "underline_alpha": 0.7,
+    "header_alpha": 1,
+    "glow_alpha": "复制原生当时值",
+    "position": "横向保留金色素材左边缘锚点和原生位置；纵向使用列表锚点并按选中行中心定位"
+  },
+  "verification": {
+    "core_compiled": true,
+    "lua_syntax_compiled": true,
+    "installed": true,
+    "test_modules_run": false,
+    "final_menu_visual_verified": true,
+    "game_started_by_agent": true,
+    "verified_local_time": "2026-10-14 12:05–12:06 +08:00",
+    "aircraft": "Su-30SM",
+    "mission_menu": "FREE MISSION 01",
+    "observed": [
+      "SP1 6AAM/QAAM 与 SP2 NO WEAPON/LAGM 的金色光标跟随并对齐左侧竖线",
+      "QAAM/LAGM 两行英文全称不跨栏、不遮挡弹药标题",
+      "6AAM/LAGM 一次确认进入 STANDBY，英文信息与弹药 30/10 正确显示",
+      "本次启动后的 mod.log 未见接入错误；04:06:24Z 记录原生确认提交与 STANDBY 接入"
+    ],
+    "screenshots_local": [
+      "Temp/candidate3-sp1-final.png",
+      "Temp/candidate3-sp2-final.png",
+      "Temp/candidate3-standby-final.png"
+    ],
+    "coverage_limit": "仅当前窗口及所列兵装外观；未覆盖其他分辨率、全部兵装或任务内行为",
+    "mission_started_by_agent": false,
+    "weapons_fired_by_agent": false
+  }
+}

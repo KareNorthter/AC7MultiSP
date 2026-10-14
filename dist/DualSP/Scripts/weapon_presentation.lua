@@ -31,7 +31,8 @@ function Presentation.new(note)
             "/Script/UMG.CanvasPanelSlot:GetPosition","/Script/UMG.CanvasPanelSlot:GetSize","/Script/UMG.CanvasPanelSlot:GetZOrder",
             "/Script/UMG.CanvasPanelSlot:SetAnchors","/Script/UMG.CanvasPanelSlot:SetAlignment",
             "/Script/UMG.CanvasPanelSlot:SetPosition","/Script/UMG.CanvasPanelSlot:SetSize","/Script/UMG.CanvasPanelSlot:SetZOrder",
-            "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetFont","/Script/UMG.TextBlock:SetColorAndOpacity"})do
+            "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetFont","/Script/UMG.TextBlock:SetColorAndOpacity",
+            "/Script/UMG.TextBlock:SetShadowColorAndOpacity"})do
             assert(valid(StaticFindObject(api)),"武器提示 API 不可用："..api)
         end
         panelClass=StaticFindObject("/Script/UMG.PanelWidget")
@@ -101,9 +102,11 @@ function Presentation.new(note)
         applyLayout(labelSlot,c.sourceLayout)
         c.label:SetVisibility(HIT_TEST_INVISIBLE)
         -- 原提示可能已进入淡出，不能继承那一瞬间的文字 Alpha。
-        -- 0.5 是已核对的原生文字正常 Alpha；不叠加装填或时间淡化。
+        -- 0.5 是已核对的原生文字正常 Alpha；就绪系数在更新时叠加，不继承原提示的淡出。
         local color=c.sourceText.ColorAndOpacity.SpecifiedColor
-        c.label:SetColorAndOpacity({SpecifiedColor={R=color.R,G=color.G,B=color.B,A=.5},ColorUseRule=0})
+        c.tint={R=color.R,G=color.G,B=color.B,A=.5} -- 固定正常文字基准，避免反复乘 Alpha。
+        local shadow=c.sourceText.ShadowColorAndOpacity -- 阴影与文字使用相同就绪系数。
+        c.shadow={R=shadow.R,G=shadow.G,B=shadow.B,A=shadow.A}
         c.fontSize=c.sourceText.Font.Size
 
         -- 游戏可以继续写入原面板，折叠父容器保证其不会与简称重复显示。
@@ -143,18 +146,29 @@ function Presentation.new(note)
     local function update(plane,profile,options,state,enabled,now)
         if not enabled then restore();self.status="stock";self.waitingSince=nil;return end
         if self.error then return end
-        if not self.waitingSince then self.waitingSince=now end
+        -- 过场期间 HUD 可以尚未生成，正式接管后才启动缺失诊断。
+        if state.pending then self.waitingSince=nil
+        elseif not self.waitingSince then self.waitingSince=now end
         local c=self.cache
         if c and not valid(c.owner)then self.cache=nil;c=nil;self.waitingSince=now;self.lastScan=-1 end
         if not c then c=locate(plane,now)end
         if not c then
             self.status="waiting"
-            assert(now-self.waitingSince<=5,"无法定位当前任务的中央武器提示")
+            assert(not self.waitingSince or now-self.waitingSince<=5,"无法定位当前任务的中央武器提示")
             return
         end
         assert(valid(c.label)and valid(c.sourcePanel),"中央武器提示已销毁")
         local label=names.current(profile,options,state)
         if label~=c.lastLabel then c.label:SetText(FText(label));c.lastLabel=label end
+        -- 与右下角共用核心就绪结果；至少一发可用即正常，未锁定目标不属于装填状态。
+        local selection=state.armed and state.active+2 or 1
+        assert(state.ready and type(state.ready[selection])=="boolean","中央武器提示缺少当前武器就绪状态")
+        local factor=state.ready[selection]and 1 or .35 -- 耗尽和全部装填中仅保留正常亮度的35%。
+        if factor~=c.lastFactor then
+            c.label:SetColorAndOpacity({SpecifiedColor={R=c.tint.R,G=c.tint.G,B=c.tint.B,A=c.tint.A*factor},ColorUseRule=0})
+            c.label:SetShadowColorAndOpacity({R=c.shadow.R,G=c.shadow.G,B=c.shadow.B,A=c.shadow.A*factor})
+            c.lastFactor=factor
+        end
         if c.sourceText.Font.Size~=c.fontSize then
             c.label:SetFont(c.sourceText.Font);c.fontSize=c.sourceText.Font.Size
         end

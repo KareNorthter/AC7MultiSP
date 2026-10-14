@@ -1,6 +1,20 @@
 # 精选证据索引
 
-> 最新版本为 0.1.8：[用户初步验证](0.1.8-user-validation.json)、[运行文件清单](0.1.8-runtime-manifest.json)、[安装回执](0.1.8-installed.json)。下文候选“当前/尚未实玩”为当时记录；用户现已确认补给及所有功能初步可用，大范围和持久测试未完成。
+0.1.9 已安装，见[`0.1.9-installed.json`](0.1.9-installed.json)。本地版本：[`0.1.9-user-validation.json`](0.1.9-user-validation.json) 为用户确认范围；[`0.1.9-runtime-manifest.json`](0.1.9-runtime-manifest.json) 记录 Git 核心与本地 WAV 的来源和哈希。
+
+体验候选 9：[`experience-candidate9-findings.json`](experience-candidate9-findings.json) 记录候选 8 用户通过、已安装音量版本核对和新增音量/名称留白调整。
+
+体验候选 8：[`experience-candidate8-findings.json`](experience-candidate8-findings.json) 记录 TLS 实际类型、候选 7 抛错及修正依据，新增实玩结论独立记录。
+
+体验候选 7：[`experience-candidate7-findings.json`](experience-candidate7-findings.json) 区分用户反馈、只读原生研究及未实测的新修订。已于 15:26 安装，见[`experience-candidate.7-installed.json`](experience-candidate.7-installed.json)。
+
+> 最新：用户提供 AC7 原生 UI 截图，确认弹药预览计入部件并保留比例，重新授权完成后安装。候选 6 一并纳入候选 5 的 SP2 WAV；见[研究与编译记录](experience-candidate6-findings.json)、[安装回执](experience-candidate.6-installed.json)。新界面、部件 A/B 和新音色尚待用户实玩；候选 5 未安装记录保留为历史。
+
+> 最新：[候选 2 用户确认全部功能正常](experience-candidate2-user-validation.json)；[候选 3 金色选中与英文文案安装回执](experience-candidate.3-installed.json)、[机库外观现场记录](experience-candidate3-ui.json)。安装核验与外观实测分别记录，候选 3 代理未出击。
+
+> 本轮新增[体验优化只读研究](experience-polish-findings.json)：STANDBY 与金色光标结构、机库原生动作链、START MISSION 前后 33 秒接入间隔、选择音事件与音库对象。候选已编译安装，见[候选 2 安装回执](experience-candidate.2-installed.json)和[候选 1 复测及修订](experience-candidate2-revision.json)；只读研究和安装核验均不是实玩通过的证明。
+
+> 此前初步实玩通过的版本为 0.1.8：[用户初步验证](0.1.8-user-validation.json)、[运行文件清单](0.1.8-runtime-manifest.json)、[安装回执](0.1.8-installed.json)。下文候选“当前/尚未实玩”为当时记录；用户现已确认补给及所有功能初步可用，大范围和持久测试未完成。
 
 返回[项目入口](../AGENTS.md)，相关结论见[架构](../docs/architecture.md)、[核心研究](../docs/research/core-findings.md)、[模型研究](../docs/research/weapon-models.md)。
 
@@ -15,7 +29,10 @@
 | `preparation-review-findings.json` | 准备页重选/退出/重进的源码缺陷、双栏资源坐标、交接取舍与编译安装摘要；未实玩 |
 | `preparation-live-validation.json` | 授权键盘操作的准备、取消重进、修改、保存与出击结果，以及未测边界和显示遗留；不代表飞行或补给通过 |
 | `resupply-live-findings.json` | 用户实玩补给双选及起飞卡住的日志证据、离线修复记录及候选 6 安装信息；最新实玩失败与修订另见 input-audio-revision.json |
-| `management-candidate.7-installed.json` | 当前全套安装；Lua 分别校验补给阶段关卡与运行任务，DLL 沿用候选 6；安装核验通过，效果待实玩 |
+| `experience-candidate.2-installed.json` | 当前候选 2 安装核验；独立核心及整套 Lua，任务内效果待复测 |
+| `experience-candidate2-revision.json` | 候选 1 用户复测、两处错误日志、VR 音源核对、用户选定的新音效及候选 2 修订依据 |
+| `experience-candidate.1-installed.json` | 历史候选 1 安装核验；随后发现机库、HUD 和 SP2 声音问题 |
+| `management-candidate.7-installed.json` | 历史全套安装；Lua 分别校验补给阶段关卡与运行任务，DLL 沿用候选 6；安装核验通过，效果待实玩 |
 | `resupply-completion-revision.json` | 候选 6 用户复测及暂停现场只读证据；阶段 World 误判原因与候选 7 修订边界 |
 | `management-candidate.6-installed.json` | 历史安装；用户随后确认本次音效未出现、双选及起飞正常，起飞后停用另见候选 7 |
 | `management-candidate.5-installed.json` | 历史候选 5；真实补给 YES 桥接、飞机切换锁定组件同步；独立核心构建，配置/存档/正式核心保护核验，尚未实玩 |
@@ -50,3 +67,6 @@
 ## 候选 6 复测与候选 7 修订
 
 [补给结束记录](resupply-completion-revision.json)记录正常 YES 后阶段世界身份误判。当前候选 7 只更新 Lua，两枚 DLL 沿用候选 6；配置、存档与正式载荷保护核验通过，未由代理实玩。上文“尚未实玩”属于对应候选安装当时状态。
+## 2026-10-14 候选 5 准备记录
+
+[experience-candidate5-prepared.json](experience-candidate5-prepared.json) 记录用户确认 CFA-44 双 SP 正常、自定义 WAV、原生部件调用链及离线核验。本轮暂不安装，不能把编译通过当成新音频游戏内试听通过。

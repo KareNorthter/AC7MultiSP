@@ -10,6 +10,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstring>
+#include <cwchar>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -21,6 +22,7 @@
 #include "common.hpp"
 #include "reload_timer.hpp"
 #include "ue4ss_lua_api.hpp"
+#include "selection_wave.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -116,6 +118,144 @@ void installSupplyHooks() {
     supplyHooksReady=true;
     nativeLog("RESUPPLY_INPUT_HOOKS_READY");
 }
+// 机库双选只排队一个原生决定/返回边沿，跳转、音效、存档校验仍由原生菜单执行。
+using MenuQuery=bool(*)(void*,unsigned char);
+MenuQuery originalMenuEdge=nullptr,originalMenuRepeat=nullptr; // 两个已核对的菜单输入查询入口。
+using PreparationTick=void(*)(void*,float);
+PreparationTick originalPreparationTick=nullptr; // 同一原生 Tick 结束时记录接收结果，避免跨帧漏掉跳转。
+struct PreparationAction {
+    Addr widget{}; // 请求限定到一个 CampaignHangarWeapon 实例。
+    unsigned char action{}; // 1 为决定，2 为返回；零表示没有请求。
+    bool delivered{}; // 一次边沿只交付一次，不因 Lua 与游戏帧率差异重复决定。
+    bool accepted{},rejected{}; // 原生结果留存到 Lua 领取，不要求旧页继续存在。
+} preparationAction;
+bool preparationHooksReady=false; // 全局钩子不改其他页面的输入。
+
+// 持有请求时隔离此页的真实按键，防止同一帧导航改变已确认的 SP1 行。
+bool preparationEdge(void* object,unsigned char key) {
+    if(reinterpret_cast<Addr>(object)!=preparationAction.widget)return originalMenuEdge(object,key);
+    if(key!=preparationAction.action || preparationAction.delivered)return false;
+    preparationAction.delivered=true;
+    return true;
+}
+// 原生方向重复查询在交接期间暂停；其他页面仍使用游戏的查询结果。
+bool preparationRepeat(void* object,unsigned char key) {
+    return reinterpret_cast<Addr>(object)==preparationAction.widget ? false : originalMenuRepeat(object,key);
+}
+// 在决定/返回所属的原生帧内检查结果；返回动作可能在下帧就关闭页面。
+void preparationTick(void* object,float delta) {
+    originalPreparationTick(object,delta);
+    if(reinterpret_cast<Addr>(object)!=preparationAction.widget || !preparationAction.delivered ||
+        preparationAction.accepted || preparationAction.rejected)return;
+    unsigned char transition{}; // object 是刚刚执行完 Tick 的原生 UObject，尚在同一调用栈中。
+    std::memcpy(&transition,reinterpret_cast<const unsigned char*>(object)+0x3c5,sizeof(transition));
+    preparationAction.accepted=transition!=0;
+    preparationAction.rejected=transition==0;
+}
+// 指纹和虚表均来自本 build 的只读现场采集；不在未知版本上尝试菜单动作。
+void installPreparationHooks() {
+    if(preparationHooksReady)return;
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前映像基址。
+    constexpr unsigned char edge[]={0x48,0x8b,0x89,0x88,0x02,0,0,0xe9,0x34,0xa7,0,0};
+    constexpr unsigned char repeat[]={0x48,0x8b,0x89,0x88,0x02,0,0,0xe9,0x34,0xa7,0,0};
+    constexpr unsigned char tick[]={0x40,0x53,0x48,0x83,0xec,0x30,0x0f,0x29,0x74,0x24,0x20};
+    require(std::memcmp(reinterpret_cast<void*>(base+0x61e020),edge,sizeof(edge))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x61e030),repeat,sizeof(repeat))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x6d4640),tick,sizeof(tick))==0,"机库输入查询或 Tick 入口不匹配");
+    const auto status=MH_Initialize(); // 与其他核心钩子共用同一 MinHook 实例。
+    require(status==MH_OK || status==MH_ERROR_ALREADY_INITIALIZED,"无法初始化机库输入钩子");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x61e020),reinterpret_cast<void*>(&preparationEdge),
+        reinterpret_cast<void**>(&originalMenuEdge))==MH_OK,"无法接入机库决定/返回查询");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x61e030),reinterpret_cast<void*>(&preparationRepeat),
+        reinterpret_cast<void**>(&originalMenuRepeat))==MH_OK,"无法接入机库方向查询");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x6d4640),reinterpret_cast<void*>(&preparationTick),
+        reinterpret_cast<void**>(&originalPreparationTick))==MH_OK,"无法接入机库动作回执");
+    require(MH_QueueEnableHook(reinterpret_cast<void*>(base+0x61e020))==MH_OK &&
+        MH_QueueEnableHook(reinterpret_cast<void*>(base+0x61e030))==MH_OK &&
+        MH_QueueEnableHook(reinterpret_cast<void*>(base+0x6d4640))==MH_OK && MH_ApplyQueued()==MH_OK,
+        "无法启用机库输入交接");
+    preparationHooksReady=true;
+    nativeLog("PREPARATION_ACTION_HOOKS_READY");
+}
+// 选择音效只接管当前玩家的 NORMAL/SPECIAL，锁定、搜索、警告均保持原生路径。
+struct AudioString {const wchar_t* data{};int count{},capacity{};}; // 本 build 的 16 字节 FString。
+static_assert(sizeof(AudioString)==16,"FString 布局不匹配");
+using WeaponAudio=void(*)(void*,AudioString*);
+WeaponAudio originalWeaponAudio=nullptr; // 原生激活器的音效包装器，负责暂停/音量/焦点策略。
+using FreeAudioString=void(*)(void*);
+FreeAudioString freeAudioString=nullptr; // 原生 FString 所用分配器的配对释放入口。
+struct SelectionAudio {Addr plane{},activator{};int last{};} selectionAudio; // 最后已提交的逻辑选择。
+bool selectionAudioReady=false; // 挂钩后不再次读取已被改写的入口指纹。
+// MSL/SP1 保持原生事件；SP2 独立播放本地 WAV，不替换共享音库媒体。
+constexpr const wchar_t* selectionEvents[]={L"HUD_WEAPON_SELECT_NORMAL",L"HUD_WEAPON_SELECT_SPECIAL"};
+dualsp::SelectionWave selectionWave; // 游戏线程持有，在解绑或音效错误时明确关闭。
+using ToggleWeapon=bool(*)(void*); // 原生完整飞机入口调用的类别切换，保留其返回值与所有行为。
+ToggleWeapon originalToggleWeapon=nullptr; // 只监听耗尽 SP 的切换请求，不改原生键位。
+bool emptySwitchRequested=false; // 当前挂载耗尽，原生无法产生 armed 变化时的单次请求。
+bool switchInputAllowed=false; // 使用既有任务、暂停和补给状态，在不可操作时清空请求。
+
+// 记录真实切换动作后仍执行原生逻辑；MSL 待机时不再主动重建 SP1。
+bool observeEmptyWeaponSwitch(void* object) {
+    const auto activator=reinterpret_cast<Addr>(object); // 仅监听已绑定的当前玩家。
+    if(switchInputAllowed && activator==selectionAudio.activator &&
+        read<unsigned char>(activator+0x2a1)==0 && read<int>(groupOf(activator,true)+8)==0)
+        emptySwitchRequested=true;
+    return originalToggleWeapon(object);
+}
+
+// 调用方提供原生 FString；只匹配两个完整事件名，拒绝前缀或模糊拦截。
+bool isSelectionEvent(const AudioString& event) {
+    for(int index=0;index<2;++index) {
+        const auto length=std::wcslen(selectionEvents[index])+1; // 包含终止符，排除相似事件。
+        if(event.data && event.count==static_cast<int>(length) && event.capacity>=event.count &&
+            std::memcmp(event.data,selectionEvents[index],length*sizeof(wchar_t))==0)return true;
+    }
+    return false;
+}
+// 原生中间态事件被收回；实际声音由最终逻辑选择提交一次，不能叠加 A/B/C。
+void weaponSelectionAudio(void* object,AudioString* event) {
+    if(reinterpret_cast<Addr>(object)==selectionAudio.activator && isSelectionEvent(*event)) {
+        freeAudioString(const_cast<wchar_t*>(event->data)); // 替代原包装器必须承担其 FString 释放职责。
+        *event={};return;
+    }
+    originalWeaponAudio(object,event);
+}
+// 原生选择音钩子仍只负责 MSL/SP1 的中间态隔离。
+void installSelectionAudio() {
+    if(selectionAudioReady)return;
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 固定 build 的原生入口。
+    constexpr unsigned char post[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x40};
+    constexpr unsigned char copy[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x20};
+    constexpr unsigned char release[]={0x48,0x85,0xc9,0x74,0x1d,0x4c,0x8b,0x05,0x44,0xa6,0x12,0x03};
+    require(std::memcmp(reinterpret_cast<void*>(base+0x885800),post,sizeof(post))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x3e4f40),copy,sizeof(copy))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x99af20),release,sizeof(release))==0,"选择音效或字符串接口不匹配");
+    constexpr unsigned char toggle[]={0x48,0x8b,0xc4,0x55,0x53,0x48,0x8b,0xec,0x48,0x83,0xec,0x68}; // 现场核对的 ToggleSpecial 前导。
+    require(std::memcmp(reinterpret_cast<void*>(base+0x886c50),toggle,sizeof(toggle))==0,"原生切换请求入口不匹配");
+    freeAudioString=reinterpret_cast<FreeAudioString>(base+0x99af20);
+    const auto status=MH_Initialize(); // 与输入钩子使用同一实例。
+    require(status==MH_OK || status==MH_ERROR_ALREADY_INITIALIZED,"无法初始化选择音效钩子");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x885800),reinterpret_cast<void*>(&weaponSelectionAudio),
+        reinterpret_cast<void**>(&originalWeaponAudio))==MH_OK,"无法接入玩家选择音效");
+    require(MH_EnableHook(reinterpret_cast<void*>(base+0x885800))==MH_OK,"无法启用玩家选择音效");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x886c50),reinterpret_cast<void*>(&observeEmptyWeaponSwitch),
+        reinterpret_cast<void**>(&originalToggleWeapon))==MH_OK,"无法监听耗尽兵装的切换请求");
+    require(MH_EnableHook(reinterpret_cast<void*>(base+0x886c50))==MH_OK,"无法启用兵装切换请求监听");
+    selectionAudioReady=true;nativeLog("SELECTION_AUDIO_READY");
+}
+
+// 通过原生字符串复制器取得游戏分配的缓冲区，由原包装器消费并释放。
+void playSelection(int target) {
+    if(target==2){selectionWave.play();return;}
+    selectionWave.stop(); // 换回 MSL/SP1 时结束自定义提示尾音。
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 所有调用保持在游戏线程。
+    const int length=static_cast<int>(std::wcslen(selectionEvents[target])+1); // FString 的 Num 包含零终止符。
+    const AudioString source{selectionEvents[target],length,length}; // 只读的非持有源。
+    AudioString owned{}; // 只传持有游戏内存的副本，不能让游戏释放字符串字面量。
+    using Copy=AudioString*(*)(AudioString*,const AudioString*);
+    reinterpret_cast<Copy>(base+0x3e4f40)(&owned,&source);
+    originalWeaponAudio(reinterpret_cast<void*>(selectionAudio.activator),&owned);
+}
 // 在原生初始化丢弃旧锁定槽之前，逐槽释放其搜索/锁定音引用。
 // 不能只清零计数或发送全局静音；这会丢失原生播放与停止的配对关系。
 void finishSeekerAudio(Addr plane,Addr activator) {
@@ -138,18 +278,62 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
+// 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
+void finishPlayerTLS(Addr plane,Addr activator) {
+    require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 原生自然终止请求入口。
+    constexpr unsigned char end[]={0x80,0xb9,0x68,0x03,0,0,0,0x74,0x0d,0x80,0xb9,0xc0,0x05,0,0,0,0x0f,0x84,0x2a,0x14,0,0,0xc3};
+    require(std::memcmp(reinterpret_cast<void*>(base+0x894af0),end,sizeof(end))==0,"TLS 原生收尾入口不匹配");
+    const auto data=read<Addr>(activator+0x338); // 反射确认的 ActiveWeapons，元素是 8 字节对象指针。
+    const int count=read<int>(activator+0x340),capacity=read<int>(activator+0x344); // 不遍历备用容量。
+    require(count>=0 && count<=capacity,"活动武器数组无效");
+    if(!count)return;
+    checkMemory(data,static_cast<size_t>(count)*sizeof(Addr));
+    std::vector<Addr> lasers; // 结束回调会移除活动数组元素，必须先固定本轮对象列表。
+    for(int index=0;index<count;++index) {
+        const auto weapon=read<Addr>(data+index*sizeof(Addr)); // 只读玩家激活器已经登记的武器。
+        if(!weapon || read<unsigned char>(weapon+0x3b0)!=25 || read<Addr>(weapon+0x3b8)!=plane)continue;
+        if(!read<unsigned char>(weapon+0x368) || read<unsigned char>(weapon+0x5c0))continue;
+        // 玩家 plwp_tls_x2 继承 AttachedInstantWeapon，不能用 LaserWeapon 的 Tick 排除它。
+        // 两者共享下面三个收尾入口；校验真正要调用的生命周期，不限定不同的更新函数。
+        const auto table=read<Addr>(weapon); // 已匹配 TLS 编号和当前玩家归属的活动对象。
+        const auto end=read<Addr>(table+0x628),release=read<Addr>(table+0x648),detach=read<Addr>(table+0x680); // 完整收尾链。
+        if(end!=base+0x85f1c0 || release!=base+0x894850 || detach!=base+0x861490)
+            throw std::runtime_error(Json{{"error","TLS 原生收尾接口不匹配"},{"vtable_rva",table-base},
+                {"end_rva",end-base},{"release_rva",release-base},{"detach_rva",detach-base}}.dump());
+        lasers.push_back(weapon);
+    }
+    using End=void(*)(void*); // 与 TLS 丢失所属机体时使用同一个自然终止请求。
+    for(const auto weapon:lasers)reinterpret_cast<End>(base+0x894af0)(reinterpret_cast<void*>(weapon));
+    if(!lasers.empty())nativeLog("TLS_ENDED_ON_SWITCH "+std::to_string(lasers.size()));
+}
+// 发射槽是原生动态池，不等于机体挂点数；ADMM 现场为 Num=126、Max=170。
+struct WeaponSlotArray { Addr data{}; int count{}; }; // 校验后只暴露有效元素，不读备用容量。
+WeaponSlotArray weaponSlotArray(Addr group) {
+    const auto data=read<Addr>(group+0x58); // 原生 TArray 数据区。
+    const int count=read<int>(group+0x60),capacity=read<int>(group+0x64); // 数量与已分配容量。
+    const int window=read<int>(group+0x10),next=read<int>(group+0x14); // 允许装填的窗口和发射游标。
+    if(!(count>0 && count<=capacity && window>=0 && window<=count && next>=0 && next<count)) {
+        // 只在失败时生成诊断，避免 HUD 每次采样都拼接 JSON。
+        throw std::runtime_error(Json{{"error","武器槽数组或装填队列无效"},{"count",count},
+            {"capacity",capacity},{"window",window},{"next",next}}.dump());
+    }
+    // 以真实分配区校验完整数组，撤除误把容量限制为 64 的机型假设。
+    checkMemory(data,static_cast<size_t>(capacity)*0x60);
+    return {data,count};
+}
+// 逐槽保存冷却，包含原生未启用槽的负计时；不改变池数量和装填窗口。
 Group capture(Addr activator, bool special, double time) {
     const auto address=groupOf(activator,special);
     Group result;
     result.weaponClass=read<Addr>(address);
     checkMemory(address+8,result.scalars.size());
     std::memcpy(result.scalars.data(),reinterpret_cast<void*>(address+8),result.scalars.size());
-    const auto slotData=read<Addr>(address+0x58);
-    const auto num=read<int>(address+0x60);
-    const auto capacity=read<int>(address+0x64);
-    require(num>0 && num<=capacity && capacity<=64,"Unexpected weapon slot array");
+    const auto slots=weaponSlotArray(address); // 所有机型共用结构及内存校验。
+    const auto slotData=slots.data;const int num=slots.count; // 不遍历 TArray 的备用容量。
+    result.slots.reserve(num);
     for(int i=0;i<num;++i) {
-        Slot slot{read<float>(slotData+i*0x60+0x48),read<float>(slotData+i*0x60+0x4c)};
+        Slot slot{read<float>(slotData+static_cast<size_t>(i)*0x60+0x48),read<float>(slotData+static_cast<size_t>(i)*0x60+0x4c)};
         try { dualsp::validateReload(slot.duration,slot.elapsed); }
         catch(const std::exception& e) {
             std::ostringstream detail;
@@ -197,8 +381,8 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
     require(saved.valid,"Uninitialized cached weapon");
     const auto address=groupOf(activator,special);
     require(read<Addr>(address)==saved.weaponClass,"Weapon class changed");
-    const auto slotData=read<Addr>(address+0x58);
-    const auto num=read<int>(address+0x60);
+    const auto slots=weaponSlotArray(address); // 恢复前也校验新建池，不能只检查数量相等。
+    const auto slotData=slots.data;const int num=slots.count;
     require(num==static_cast<int>(saved.slots.size()),"Weapon slot count changed");
     const int loadedCount=scalarInt(saved,8);   // group+0x10
     const int nextSlot=scalarInt(saved,12);     // group+0x14
@@ -289,13 +473,18 @@ Command readCommand() {
     file>>command.request;require(static_cast<bool>(file) && command.request>0,"Missing native request ID");
     return command;
 }
+// 在原生部件计算之后缩减当前/最大弹药；记录输入输出，便于增弹部件的对照验证。
 void scaleAmmo(Addr activator,double ratio) {
     const auto group=groupOf(activator,true);
+    std::array<int,2> before{},after{}; // 当前弹数与最大弹数，各自按同一比例向下取整。
+    size_t index=0; // 对应两个弹药字段，而不是两个逻辑 SP。
     for(auto offset:{8,12}) {
         const int ammo=read<int>(group+offset);
         require(ammo>=0 && ammo<=100000,"Invalid SP ammunition");
-        write<int>(group+offset,std::max(1,static_cast<int>(std::floor(ammo*ratio))));
+        before[index]=ammo;after[index]=std::max(1,static_cast<int>(std::floor(ammo*ratio)));
+        write<int>(group+offset,after[index]);++index;
     }
+    nativeLog(Json{{"event","SP_AMMO_SCALED"},{"ratio",ratio},{"native",before},{"scaled",after}}.dump());
 }
 void execute(const Command& command) {
     verifyVersion();
@@ -376,6 +565,286 @@ void execute(const Command& command) {
 // 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
+}
+
+// op=0 绑定或静默同步，1 提交一次真实选择，2 解绑；初始化和检查点恢复不播放提示。
+extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 返回音效接入错误，不能悄悄混播旧提示。
+    try {
+        static const dualsp::LuaApi bound; // 已核对的加载器栈接口。
+        api=&bound;
+        require(api->top(luaState)==4,"选择音效接口参数数量无效");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 玩家身份，解绑时允许为零。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 当前玩家激活器。
+        const int op=static_cast<int>(api->readInteger(luaState,3)); // 绑定、提交或解绑。
+        const int target=static_cast<int>(api->readInteger(luaState,4)); // MSL/SP1/SP2 分别为 0/1/2。
+        require(op>=0 && op<=2 && target>=0 && target<=2,"选择音效动作无效");
+        if(op==2){selectionAudio={};selectionWave.close();switchInputAllowed=false;emptySwitchRequested=false;} // 世界销毁时不读取旧玩家对象。
+        else {
+            verifyVersion();
+            require(plane && activator && read<Addr>(plane+0x11a8)==activator,"选择音效玩家身份不匹配");
+            if(op==0) {
+                selectionWave.open(modRoot()/"Audio/SP2.wav");
+                installSelectionAudio();selectionAudio={plane,activator,target};emptySwitchRequested=false;
+            } else {
+                require(selectionAudio.plane==plane && selectionAudio.activator==activator,"选择音效尚未绑定本次出击");
+                const bool armed=read<unsigned char>(activator+0x2a1)!=0; // 只允许完成后的真实原生类别。
+                require(armed==(target>0),"选择音效早于原生武器类别完成");
+                require(target==0 || (session.plane==plane && session.activator==activator && session.active==target-1),
+                    "选择音效与最终 SP 槽不一致");
+                if(target!=selectionAudio.last) {
+                    playSelection(target);selectionAudio.last=target;
+                    nativeLog(std::string("SELECTION_AUDIO_COMMITTED ")+std::to_string(target));
+                }
+            }
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        selectionAudio={};
+        switchInputAllowed=false;emptySwitchRequested=false;
+        selectionWave.close();
+        nativeLog(std::string("SELECTION_AUDIO_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 按游戏线程现有调度更新暂停和音量；不通过扫描多个存档副本猜测当前设置。
+extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 与选择接口相同的明确错误回执。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 专用加载器栈接口。
+        require(api->top(luaState)==2,"自定义选择音状态参数数量无效");
+        const auto instance=static_cast<Addr>(api->readInteger(luaState,1)); // 当前 NimbusGameInstance。
+        const auto allowed=api->readInteger(luaState,2); // Lua 已核对任务、补给、暂停和面板状态。
+        require(allowed==0 || allowed==1,"自定义选择音播放状态无效");
+        switchInputAllowed=allowed!=0 && selectionAudio.plane!=0;
+        if(!switchInputAllowed)emptySwitchRequested=false;
+        if(selectionAudio.plane) {
+            float volume=0; // 禁止播放时无需解引用任务或设置对象。
+            if(allowed) {
+                const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // OptionsSound 原生读取路径。
+                constexpr unsigned char optionRead[]={0x48,0x8b,0x90,0xf8,0x05,0,0,0x48,0x8b,0x87,0x38,0x04,0,0,0xf3,0x0f,0x10,0x82,0x30,0x01,0,0};
+                require(std::memcmp(reinterpret_cast<void*>(base+0x766776),optionRead,sizeof(optionRead))==0,
+                    "游戏音效音量读取接口不匹配");
+                require(instance!=0,"自定义选择音缺少当前游戏实例");
+                const auto save=read<Addr>(instance+0x5f8); // 原生声音菜单使用的当前 SigmaSaveGame。
+                volume=read<float>(save+0x130); // OptionsData(0x90) + SFXVolume(0xa0)。
+            }
+            selectionWave.update(allowed!=0,volume);
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    } catch(const std::exception& error) {
+        selectionWave.close();selectionAudio={};
+        switchInputAllowed=false;emptySwitchRequested=false;
+        nativeLog(std::string("CUSTOM_AUDIO_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 消费耗尽 SP 的真实切换请求；原生已切换的普通请求仍由 Lua 的类别观察处理。
+extern "C" __declspec(dllexport) int dualsp_take_empty_switch(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 与现有核心统一返回明确错误。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 游戏线程调用，无跨线程输入队列。
+        require(api->top(luaState)==1,"切换请求接口参数数量无效");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 防止旧世界消费新任务请求。
+        require(plane && plane==selectionAudio.plane,"切换请求的玩家身份不匹配");
+        const bool requested=emptySwitchRequested;emptySwitchRequested=false; // 每次按键只消费一次。
+        api->boolean(luaState,true);api->boolean(luaState,requested);return 2;
+    }catch(const std::exception& error) {
+        emptySwitchRequested=false;nativeLog(std::string("SWITCH_REQUEST_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 必须在保存旧槽冷却之前结束 TLS，以记录原生收尾产生的最终武器状态。
+extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 出错就停止本次选择，不继续重建武器。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 与已安装 UE4SS 共享参数接口。
+        require(api->top(luaState)==2,"TLS 收尾接口参数数量无效");verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
+        finishPlayerTLS(plane,activator);api->boolean(luaState,true);return 1;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("TLS_END_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 仅补齐模组内部确认步骤的声音；函数 0x61b1d0 会按页面管理器选择原生菜单音。
+extern "C" __declspec(dllexport) int dualsp_menu_confirm(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 失败明确返回，不改菜单或兵装。
+    try {
+        static const dualsp::LuaApi bound; // 专用加载器 ABI，调用者在游戏线程。
+        api=&bound;
+        require(api->top(luaState)==1,"菜单确认音参数数量无效");
+        verifyVersion();
+        const auto widget=static_cast<Addr>(api->readInteger(luaState,1)); // 当前已接管的选择页。
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 已核对 build 的游戏映像。
+        const auto table=read<Addr>(widget); // 只接受机库兵装页或已绑定的补给页。
+        const bool preparation=read<Addr>(table+0x420)==base+0x6d4640 && read<Addr>(table+0x460)==base+0x6d3d00;
+        const bool supply=read<Addr>(table+0x408)==base+0x6fa1f0 && read<Addr>(table+0x420)==base+0x6fc6d0;
+        require(preparation || supply,"菜单确认音页面类型不匹配");
+        require(read<Addr>(widget+0x288)!=0,"菜单确认音缺少原生管理器");
+        if(supply)require(supplyWidget==widget && supplyPlane && supplyActivator &&
+            read<Addr>(widget+0x5c0)==supplyPlane && read<Addr>(widget+0x5c8)==supplyActivator,
+            "补给确认音不属于当前输入事务");
+        constexpr unsigned char signature[]={0x48,0x89,0x5c,0x24,0x18,0x48,0x89,0x74,0x24,0x20,0x55,0x57,0x41,0x56};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x61b1d0),signature,sizeof(signature))==0,"原生菜单音入口不匹配");
+        using PlayMenuSound=int(*)(void*,unsigned char); // 两种原生 SP 确认路径都使用事件编号 3。
+        reinterpret_cast<PlayMenuSound>(base+0x61b1d0)(reinterpret_cast<void*>(widget),3);
+        nativeLog(preparation?"PREPARATION_CONFIRM_AUDIO":"RESUPPLY_CONFIRM_AUDIO");
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("MENU_CONFIRM_AUDIO_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 只向模组新增的 Image 绘制原生武器分类，不改原控件或当前兵装。
+extern "C" __declspec(dllexport) int dualsp_weapon_icon(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 明确返回绘制失败，不换用自制图标。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 游戏线程上的加载器接口。
+        require(api->top(luaState)==3,"兵装图标参数数量无效");verifyVersion();
+        const auto image=static_cast<Addr>(api->readInteger(luaState,1)); // Lua 已检查 Image 类型。
+        const auto owner=static_cast<Addr>(api->readInteger(luaState,2)); // 当前机库页面。
+        const auto category=api->readInteger(luaState,3); // 武器表的对空、对地、其他三类。
+        require(category>=0 && category<=2,"未知兵装图标类别");checkMemory(image,0x1d0);
+        const auto manager=read<Addr>(owner+0x288); // 原生菜单自己的 UIManager。
+        const auto style=read<Addr>(manager+0x388); // 与原生全名图标相同的类别颜色表。
+        checkMemory(style,0x290);
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 固定 Steam build。
+        constexpr unsigned char signature[]={0x80,0xc2,0x05,0xe9,0x38,0xfe,0xff,0xff};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x637c70),signature,sizeof(signature))==0,"原生兵装图标入口不匹配");
+        using PaintIcon=void(*)(void*,unsigned char,void*); // 类别内部加 5 后绘制 Offset、颜色与泛光。
+        reinterpret_cast<PaintIcon>(base+0x637c70)(reinterpret_cast<void*>(image),static_cast<unsigned char>(category),reinterpret_cast<void*>(style));
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("WEAPON_ICON_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 原生补给预览的局部修正结构：六类加法/倍率及原生默认尾字段。
+struct AmmoModifiers {
+    std::array<int,6> add{}; // 部件固定增量。
+    std::array<float,6> multiplier{1,1,1,1,1,1}; // 部件倍率，应用于原机体载量。
+    std::array<unsigned char,16> tail{0,0,0,0,0,0,0,0,0,0,0,0,0,100,0,0}; // 原生构造写 +0x3c 的 0x6400。
+};
+static_assert(sizeof(AmmoModifiers)==64);
+
+// 三页共用原生预览算法；仅修改栈上局部数字，不初始化/重建实际武器。
+extern "C" __declspec(dllexport) int dualsp_loadout_ammo(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 失败让 Lua 明确停用此预览，不显示基础数冒充实际值。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 专用加载器 ABI。
+        require(api->top(luaState)==8,"配弹预览参数数量无效");verifyVersion();
+        const auto instance=static_cast<Addr>(api->readInteger(luaState,1)); // 已选机体和部件的唯一来源。
+        const auto planeId=api->readInteger(luaState,2); // 防止切换机体时混入上一机体的部件。
+        require(read<int>(instance+0x4dc)==planeId,"配弹预览机体与当前选择不一致");
+        const auto count=read<int>(instance+0x514); // 原生最多八个部件槽，数组从 +0x4f4 开始。
+        require(count>=0 && count<=8,"配弹预览部件槽数量异常");checkMemory(instance+0x4f4,count*4);
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 只接受已核对的纯计算入口。
+        constexpr unsigned char buildSig[]={0x48,0x85,0xc9,0x0f,0x84,0xa5,0x01,0,0};
+        constexpr unsigned char applySig[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x48,0x89,0x7c,0x24,0x18};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x84e050),buildSig,sizeof(buildSig))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x84dc40),applySig,sizeof(applySig))==0,"原生弹药预览入口不匹配");
+        AmmoModifiers parts,extra; // 部件加成与空的额外加成，初始化与原生补给相同。
+        using Build=void(*)(void*,AmmoModifiers*); // 只读 GameInstance 中当前配装。
+        using Apply=bool(*)(unsigned char,int*,const AmmoModifiers*,const AmmoModifiers*); // 保留原生取整及成对修正。
+        reinterpret_cast<Build>(base+0x84e050)(reinterpret_cast<void*>(instance),&parts);
+        Json amounts=Json::array(); // 返回三种候选各自的完整载量，配弹比例仍在 Lua 中应用。
+        for(int i=0;i<3;++i) {
+            const auto weapon=api->readInteger(luaState,3+i*2); // 原生 WeaponID，不是机体槽号。
+            const auto baseline=api->readInteger(luaState,4+i*2); // 原机体数据表的完整载量。
+            require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"配弹预览兵装参数异常");
+            int amount=static_cast<int>(baseline); // 计算只影响这个局部变量。
+            reinterpret_cast<Apply>(base+0x84dc40)(static_cast<unsigned char>(weapon),&amount,&parts,&extra);
+            require(amount>0 && amount<=100000,"原生弹药预览结果异常");amounts.push_back(amount);
+        }
+        const auto encoded=amounts.dump(); // 小型结果走现有 Lua 字串接口。
+        api->boolean(luaState,true);api->string(luaState,encoded.data(),encoded.size());return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("LOADOUT_AMMO_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// action=1/2 排队决定/返回，3 更新原生光标预览，0 查询回执，-1 取消输入交接。
+// 返回成功、是否已收到原生跳转、错误；只由游戏线程调用，不模拟系统按键。
+extern "C" __declspec(dllexport) int dualsp_preparation_action(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 导出层统一向 Lua 返回可见错误。
+    try {
+        static const dualsp::LuaApi bound; // 已有专用加载器 ABI。
+        api=&bound;
+        require(api->top(luaState)==3,"机库动作接口参数数量无效");
+        const auto widget=static_cast<Addr>(api->readInteger(luaState,1)); // 当前页面身份。
+        const int weapon=static_cast<int>(api->readInteger(luaState,2)); // 最终 SP1 或当前预览的原生编号。
+        const int action=static_cast<int>(api->readInteger(luaState,3)); // 请求或查询类型。
+        require(widget && action>=-1 && action<=3,"机库动作参数无效");
+        bool accepted=false; // 只有已交付边沿且原生设置跳转字段才算接收。
+        if(action==-1) {
+            require(!preparationAction.widget || preparationAction.widget==widget,"取消的机库动作身份不匹配");
+            preparationAction={}; // 取消不解引用可能已销毁的页面。
+        } else if(action==0) {
+            require(preparationAction.widget==widget,"机库动作请求已经丢失");
+            require(!preparationAction.rejected,"原生机库拒绝了决定/返回；已停止交接");
+            accepted=preparationAction.accepted; // 领取同一原生帧记录的结果，不读取已关闭页面。
+            if(accepted)preparationAction={};
+        } else {
+            verifyVersion();
+            const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 已核对的游戏映像。
+            const auto table=read<Addr>(widget); // 必须匹配兵装页的 Tick 与决定/返回回调。
+            require(read<Addr>(table+0x420)==base+0x6d4640 && read<Addr>(table+0x460)==base+0x6d3d00 &&
+                read<Addr>(table+0x468)==base+0x6d3db0 && read<Addr>(table+0x478)==base+0x6d4590,
+                "机库兵装页面类型不匹配");
+            {
+                require(!preparationAction.widget,"已有待完成的机库动作");
+                require(read<unsigned char>(widget+0x3b0)!=0 && read<unsigned char>(widget+0x3c5)==0 &&
+                    read<unsigned char>(widget+0x3c6)==0,"机库页面正在切换，不能重复决定");
+                if(action!=3)installPreparationHooks();
+                if(action==1 || action==3) {
+                    require(weapon>=0 && weapon<3,"机库兵装编号无效");
+                    const auto choices=read<Addr>(widget+0x4f0); // 原生可选择兵装编号表。
+                    const int count=read<int>(widget+0x4f8); // 兵装编号表只含当前机体的可选择行。
+                    const int menuCount=read<int>(widget+0x440); // 菜单定义表还包含其他行，现场值为 240，并非三个兵装。
+                    require(choices && count>0 && count<=3 && read<int>(widget+0x4fc)>=count &&
+                        menuCount>=count && read<int>(widget+0x444)>=menuCount,"机库兵装列表结构不符");
+                    int selected=-1; // 从原生编号反查行，不能假定购买状态不影响行序。
+                    for(int index=0;index<count;++index)if(read<int>(choices+index*4)==weapon)selected=index;
+                    require(selected>=0,"原生机库没有指定的兵装预览行");
+                    const auto item=read<Addr>(widget+0x438)+selected*0x720; // 原生行的禁用与目的页字段。
+                    if(action==1)require(!read<unsigned char>(item+9) && !read<unsigned char>(item+0xa) && !read<unsigned char>(item+0xb) &&
+                        read<unsigned char>(item+0x688)!=0,"原生 SP1 行不可决定");
+                    write<int>(widget+0x2f0,selected); // 原生决定回调自行提交此行，不改存档校验字段。
+                    if(action==3) {
+                        using CursorChanged=void(*)(void*); // 原生导航使用同一虚表回调更新预览与镜头。
+                        reinterpret_cast<CursorChanged>(base+0x6d4590)(reinterpret_cast<void*>(widget));
+                        // 回调只更新机库临时预览；确认另走 +0x460，返回 +0x468 会恢复旧预览。
+                    }
+                }
+                if(action!=3) {
+                    preparationAction={widget,static_cast<unsigned char>(action),false};
+                    nativeLog(action==1?"PREPARATION_DECIDE_QUEUED":"PREPARATION_BACK_QUEUED");
+                }
+            }
+        }
+        api->boolean(luaState,true);api->boolean(luaState,accepted);api->string(luaState,"",0);return 3;
+    }catch(const std::exception& error) {
+        preparationAction={};
+        nativeLog(std::string("PREPARATION_ACTION_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 3;}
+        return 0;
+    }
 }
 
 // 补给开始时取得原生输入所有权；成功、离开任务或检查点恢复时用 0,0 解绑。
@@ -580,7 +1049,9 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
         std::map<std::string,Json> byCode;
         for(const auto row:tableRows(weapons)) {
             Json stats=Json::array();for(int i=0;i<6;++i)stats.push_back(read<unsigned char>(row+40+i));
-            byCode[unrealString(row+16)]={{"weapon_id",read<int>(row+8)},{"stats",stats}};
+            // 分类图标和类型键读取原生武器表，避免另维护一份兵装映射。
+            byCode[unrealString(row+16)]={{"weapon_id",read<int>(row+8)},{"stats",stats},
+                {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}};
         }
         Json catalog=Json::object();
         for(const auto row:tableRows(planes)) {

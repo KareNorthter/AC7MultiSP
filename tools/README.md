@@ -9,6 +9,7 @@
 | `assets/AC7Key.bin`、`AC7Decrypt.cs` | 自有 AC7 资源副本的离线解码资料 |
 | `dotnet8/` | 用户授权的项目本地 .NET 8.0.31 基础与桌面运行库，供 UAssetGUI 使用；不修改系统 PATH |
 | `capstone/`、`pefile.py` 等 | 原生反汇编和 PE 信息读取依赖 |
+| `vgmstream/`、`wwiser.pyz` | vgmstream r2117 与 wwiser v20260808，解析自有 Wwise 音库和生成本地试听；来自官方 GitHub Releases，不随模组发行 |
 | `test-python/` | 既有 Lua 模拟检查及资源解析所需 Python 依赖 |
 
 PowerShell 7、Python 3.13 和 Git 属于本机通用环境，不复制进项目。新建工具或依赖继续安装在 C 盘以外，临时文件使用 `Temp/`。
@@ -16,3 +17,5 @@ PowerShell 7、Python 3.13 和 Git 属于本机通用环境，不复制进项目
 本地 .NET 8 来自[微软官方发行元数据](https://builds.dotnet.microsoft.com/dotnet/release-metadata/8.0/releases.json)，两个 Windows x64 ZIP 分别按元数据 SHA512 核对后解压至 `dotnet8/`。桌面 ZIP 只含桌面组件，需同时安装基础 Runtime ZIP。`src/inspect_resupply_assets.py` 只为资源解析子进程设置 `DOTNET_ROOT_X64`，不设置全局环境变量。
 
 来源：[LLVM-MinGW](https://github.com/mstorsjo/llvm-mingw/releases/tag/20261006)、[UAssetGUI](https://github.com/atenfyr/UAssetGUI)、[UAssetAPI 解码实现](https://github.com/atenfyr/UAssetAPI/blob/master/UAssetAPI/AC7Decrypt.cs)。项目安装载荷使用 [Playmore 的 AC7 专用 UE4SS](https://github.com/Playmore-ModdingConcepts/PM-UE4SS/releases/tag/UE4SS)。许可证保留在各依赖及 `payload/ue4ss/Mods/DualSP/licenses/` 中。
+
+音频研究工具来源：[vgmstream r2117](https://github.com/vgmstream/vgmstream/releases/tag/r2117)、[wwiser v20260808](https://github.com/bnnm/wwiser/releases/tag/v20260808)。原始音库和解码试听只保存在 Temp，不加入 Git。

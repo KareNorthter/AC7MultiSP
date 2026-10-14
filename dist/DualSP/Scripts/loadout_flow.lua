@@ -5,7 +5,7 @@ local function copy(p)return {a=p.a,b=p.b,ratio=p.ratio}end
 function Flow.new(profile,options,reviewLabel,mode)
     assert(#options==3,"Native loadout requires the aircraft's three SP options")
     local self={stage="sp1",cursor=1,draft=copy(profile),options=options,message=nil}
-    local takeoffReview=mode=="resupply" -- 补给最终页显示 YES/NO；出击显示编辑槽位和继续。
+    local takeoffReview=mode=="resupply" -- 补给保留 YES/NO；出击确认 SP2 后直接交接。
     function self:rows()
         local rows={}
         if self.stage=="sp1" then
@@ -23,9 +23,7 @@ function Flow.new(profile,options,reviewLabel,mode)
         elseif self.stage=="review"then
             if takeoffReview then
                 rows={{action="takeoff",code="是 / YES",enabled=true},{action="reselect",code="否 / NO",enabled=true}}
-            else rows={{action="edit_sp1",code="修改 SP1  "..self.options[self.draft.a+1].code:upper(),enabled=true},
-                {action="edit_sp2",code="修改 SP2  "..(self.draft.b<0 and "无兵装"or self.options[self.draft.b+1].code:upper()),enabled=true},
-                {action="continue",code=reviewLabel or "交给原生菜单继续",enabled=true}}end
+            end -- 出击没有额外确认菜单；review 只作为双选已完成的内部状态。
         end
         return rows
     end
@@ -38,23 +36,21 @@ function Flow.new(profile,options,reviewLabel,mode)
         local count=#self:rows();self.cursor=(self.cursor-1+delta)%count+1;self.message=nil
     end
     function self:confirm()
+        assert(self.stage~="review"or takeoffReview,"双 SP 已确认，正在返回 STANDBY")
         local row=self:rows()[self.cursor]
         if not row.enabled then self.message="该兵装尚未购买";return "blocked"end
         self.message=nil
         if self.stage=="sp1"then
-            self.draft.a=row.weapon;self.stage="sp2"
-            if not self:selectWeapon(self.draft.b)then self:selectWeapon(-1)end
-            -- 更换 SP1 后，旧 SP2 可能不再兼容；游标移到明确的空兵装项。
-            if self:rows()[self.cursor].weapon==self.draft.a then self:selectWeapon(-1)end
-            if not self:rows()[self.cursor].enabled then self:selectWeapon(-1)end
+            -- 每次确认 SP1 都重新选择 SP2，旧配置不能冒充本轮已经确认的兵装。
+            self.draft.a=row.weapon;self.draft.b=-1;self.stage="sp2"
+            self:selectWeapon(-1)
             return "sp2"
         elseif self.stage=="sp2"then
-            self.draft.b=row.weapon;self.stage="review";self.cursor=takeoffReview and 2 or 3
-            return "review"
+            self.draft.b=row.weapon;self.stage="review";self.cursor=takeoffReview and 2 or 1
+            return takeoffReview and "review"or "continue"
         elseif self.stage=="review"then
-            if row.action=="takeoff"or row.action=="continue"then return row.action end
-            self.stage=row.action=="edit_sp2"and "sp2"or "sp1"
-            self:selectWeapon(self.stage=="sp1"and self.draft.a or self.draft.b);return self.stage
+            if row.action=="takeoff"then return row.action end
+            self.stage="sp1";self:selectWeapon(self.draft.a);return self.stage
         end
         error("无效的双 SP 草稿阶段")
     end

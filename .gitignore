@@ -32,3 +32,9 @@ __pycache__/
 /dist/DualSP/*-state*.json
 /dist/DualSP/catalogue*.json
 /dist/DualSP/ui-*.json
+
+# 用户提取的音频仅在本机使用，不提交原始游戏媒体。
+/dist/DualSP/Audio/*.wav
+
+# 会话附件的选定参考图已归档到 references，不提交传输目录。
+/.codex-remote-attachments/
