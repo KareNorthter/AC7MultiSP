@@ -97,7 +97,7 @@ def check_core(management):
     if management:
         # 输入隔离与音效收尾是本轮必需协议，不能与候选 5 核心混装。
         required.update({"dualsp_resupply_takeoff", "dualsp_resupply_control", "dualsp_prepare_weapon_rebuild"})
-    if VERSION == "0.1.9" or VERSION.startswith("0.1.9-experience-candidate."):
+    if VERSION in ("1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or VERSION.startswith("0.1.9-experience-candidate."):
         required.update({"dualsp_preparation_action", "dualsp_selection_audio", "dualsp_menu_confirm", "dualsp_custom_audio_update",
                          "dualsp_loadout_ammo", "dualsp_weapon_icon", "dualsp_finish_tls", "dualsp_take_empty_switch"})
     if not required.issubset(exports):
@@ -188,14 +188,14 @@ def main():
         options.management = True
         options.merged_hud = True
         VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-        if VERSION != "0.1.9" or 'DUALSP_LOADED 0.1.9 MANAGEMENT_UI' not in controller:
-            raise RuntimeError("版本文件与 0.1.9 控制器不匹配")
+        if VERSION not in ("1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or f'DUALSP_LOADED {VERSION} MANAGEMENT_UI' not in controller:
+            raise RuntimeError("版本文件与已核对的控制器不匹配")
         # 版本快照从 Git 保留核心安装，不依赖可能被后续研究覆盖的构建目录。
         CORE = ROOT / "dist/DualSP/cores/0.1.9/DualSP.dll"
         if digest(CORE) != "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1":
             raise RuntimeError("0.1.9 核心与版本快照不一致")
         FILES += ("Scripts/weapon_names.lua", "Scripts/weapon_presentation.lua", "Audio/SP2.wav")
-        EVIDENCE = ROOT / "evidence/0.1.9-installed.json"
+        EVIDENCE = ROOT / f"evidence/{VERSION}-installed.json"
         # 用户提供的提取音频只在本机保存；缺失或不符时停止，不改用旧音色。
         check_selection_wave()
         check_management_ui()
@@ -260,13 +260,16 @@ def main():
     batch = now.strftime("%Y%m%d-%H%M%S-%f")
     backup = ROOT / "backup" / ("merged-candidate-" if options.merged_hud else "resupply-candidate-") / batch
     staging = ROOT / "Temp" / ("candidate-install-" + batch) / "DualSP"
-    sources = {name: CORE if name == "bin/DualSP.dll" else ROOT / "dist/DualSP" / name for name in FILES}
+    # 对外名称改变，内部目录不变；版本文件随运行文件一起核验。
+    FILES += ("VERSION",)
+    sources = {name: ROOT / "VERSION" if name == "VERSION" else
+               CORE if name == "bin/DualSP.dll" else ROOT / "dist/DualSP" / name for name in FILES}
     expected = {name: digest(path) for name, path in sources.items()}
     shutil.copytree(MOD, staging)
     for name, path in sources.items():
         (staging / name).parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, staging / name)
-    receipt.update(Version=VERSION, InstalledAt=now.isoformat(), Candidate="candidate" in VERSION,
+    receipt.update(Name="AC7DualSP", Version=VERSION, InstalledAt=now.isoformat(), Candidate="candidate" in VERSION,
                    CandidateCoreSHA256=expected["bin/DualSP.dll"], BackupPath=str(backup), GameStartedByAgent=False)
     (staging / "install-receipt.json").write_text(json.dumps(receipt, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if any(digest(staging / name) != value for name, value in expected.items()):
@@ -319,6 +322,9 @@ def main():
         result["features"] += ["准备双栏性能/类型及右下弹药汇总", "原生页面重新激活接入"]
         # 体验候选取消额外确认页，回执不再宣称保留旧版两次交接流程。
         if options.experience:
+            if VERSION in ("1.0.0", "0.1.9-performance-candidate.1"):
+                result["features"] += ["中央简称字号放大约 11% 与独立绿色样式", "菜单对象发现缓存与激活对象直连",
+                                       "静态性能栏与弹药颜色按变化更新", "补给接管不等待原生控制开放", "15 秒调度耗时汇总"]
             result["features"] += ["机库一步确认和返回", "STANDBY 双 SP 信息", "SP1 预览第二栏 EMPTY",
                                    "开场 HUD 提前接入", "补给打开和激活时即时接入", "SP2 用户 WAV 与音量暂停联动",
                                    "原生兵装模型特写跟随光标", "STANDBY 退出动画保留双栏",

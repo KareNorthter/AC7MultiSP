@@ -32,6 +32,7 @@ function Presentation.new(note)
             "/Script/UMG.CanvasPanelSlot:SetAnchors","/Script/UMG.CanvasPanelSlot:SetAlignment",
             "/Script/UMG.CanvasPanelSlot:SetPosition","/Script/UMG.CanvasPanelSlot:SetSize","/Script/UMG.CanvasPanelSlot:SetZOrder",
             "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetFont","/Script/UMG.TextBlock:SetColorAndOpacity",
+            "/Script/UMG.TextBlock:SetGlowColor","/Script/UMG.TextBlock:SetUseGlobalGlowColor",
             "/Script/UMG.TextBlock:SetShadowColorAndOpacity"})do
             assert(valid(StaticFindObject(api)),"武器提示 API 不可用："..api)
         end
@@ -93,9 +94,14 @@ function Presentation.new(note)
         c.holder:SetVisibility(COLLAPSED)
         assert(valid(c.sourceParent:AddChildToCanvas(c.holder)),"无法保留原生武器提示源容器")
 
-        -- 常驻文字使用原生模板，其文字内容仅由最终兵装选择驱动。
-        c.label=StaticConstructObject(c.sourceText:GetClass(),owner.WidgetTree,FName("DualSPCurrentWeapon_"..self.serial),TRANSIENT,0,false,false,c.sourceText)
+        -- 新建干净文字，只复制所需样式，避免继承原提示的动态颜色绑定和隐藏状态。
+        c.label=StaticConstructObject(c.sourceText:GetClass(),owner.WidgetTree,FName("DualSPCurrentWeapon_"..self.serial),TRANSIENT,0,false,false)
         assert(valid(c.label),"无法建立中央武器简称")
+        c.label.Justification=c.sourceText.Justification
+        c.label.ShadowOffset=vec(c.sourceText.ShadowOffset)
+        c.label.bIsTextHidingEnable=false
+        c.label:SetUseGlobalGlowColor(false)
+        c.label:SetGlowColor({SpecifiedColor={R=.08,G=1,B=.05,A=1},ColorUseRule=0})
         c.label.Slot=nil;c.added[#c.added+1]=c.label
         local labelSlot=c.sourceParent:AddChildToCanvas(c.label)
         assert(valid(labelSlot),"无法接入中央武器简称")
@@ -103,11 +109,10 @@ function Presentation.new(note)
         c.label:SetVisibility(HIT_TEST_INVISIBLE)
         -- 原提示可能已进入淡出，不能继承那一瞬间的文字 Alpha。
         -- 0.5 是已核对的原生文字正常 Alpha；就绪系数在更新时叠加，不继承原提示的淡出。
-        local color=c.sourceText.ColorAndOpacity.SpecifiedColor
-        c.tint={R=color.R,G=color.G,B=color.B,A=.5} -- 固定正常文字基准，避免反复乘 Alpha。
+        c.tint={R=.08,G=1,B=.05,A=.5} -- 已核对资源的正常绿色，不继承瞬时警告色或全局泛光。
         local shadow=c.sourceText.ShadowColorAndOpacity -- 阴影与文字使用相同就绪系数。
         c.shadow={R=shadow.R,G=shadow.G,B=shadow.B,A=shadow.A}
-        c.fontSize=c.sourceText.Font.Size
+        c.fontSize=nil -- 首次更新也应用放大字号；只修改副本自己的字体结构。
 
         -- 游戏可以继续写入原面板，折叠父容器保证其不会与简称重复显示。
         c.sourceMoved=true
@@ -170,7 +175,10 @@ function Presentation.new(note)
             c.lastFactor=factor
         end
         if c.sourceText.Font.Size~=c.fontSize then
-            c.label:SetFont(c.sourceText.Font);c.fontSize=c.sourceText.Font.Size
+            c.fontSize=c.sourceText.Font.Size
+            c.label:SetFont(c.sourceText.Font)
+            local font=c.label.Font -- 原生 18 放大为 20，随原生字号变化保持相同比例。
+            font.Size=math.floor(c.fontSize*10/9+.5);c.label:SetFont(font)
         end
         self.status="native"
     end

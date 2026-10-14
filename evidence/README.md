@@ -1,5 +1,19 @@
 # 精选证据索引
 
+## 当前 1.0.0
+
+- [用户验证](1.0.0-user-validation.json)：性能候选实测没有问题，整理为 AC7DualSP 1.0.0。
+- [安装核验](1.0.0-installed.json)：当前版本的文件、接口、语法、配置与存档保护记录。
+- [发布核验](1.0.0-release.json)：独立 ZIP 的成员及哈希、运行库签名，不代表实机功能测试。
+
+## 历史记录
+
+以下按各阶段保留；“最新/当前/尚待测试”均指当时，不覆盖上方 1.0.0 结论。
+
+性能与显示候选 1：[`0.1.9-performance-candidate.1-installed.json`](0.1.9-performance-candidate.1-installed.json) 记录语法、哈希、安装回读及保护文件核对；[`performance-candidate1-findings.json`](performance-candidate1-findings.json) 区分用户反馈、代码依据、标题页检查和未验证项；说明见[性能调整](../docs/performance-polish.md)。
+
+2026-10-14 音质对照：[`0.1.9-audio-comparison-uninstalled.json`](0.1.9-audio-comparison-uninstalled.json) 记录完整卸载；用户反馈卸载后听感相同，随后按要求恢复，见[`0.1.9-audio-comparison-restored.json`](0.1.9-audio-comparison-restored.json)。源码排查和未验证假设见[音质排查](../docs/research/audio-quality-audit.md)。
+
 0.1.9 已安装，见[`0.1.9-installed.json`](0.1.9-installed.json)。本地版本：[`0.1.9-user-validation.json`](0.1.9-user-validation.json) 为用户确认范围；[`0.1.9-runtime-manifest.json`](0.1.9-runtime-manifest.json) 记录 Git 核心与本地 WAV 的来源和哈希。
 
 体验候选 9：[`experience-candidate9-findings.json`](experience-candidate9-findings.json) 记录候选 8 用户通过、已安装音量版本核对和新增音量/名称留白调整。

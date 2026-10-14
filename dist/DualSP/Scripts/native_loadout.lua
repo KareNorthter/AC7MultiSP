@@ -45,7 +45,22 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     if not supply and not standby then assert(type(weaponIcon)=="function","缺少机库分类图标桥接")end
     if not standby then assert(type(confirmSound)=="function","缺少原生菜单确认音接口")end
     local self={cache=nil,status="waiting",error=nil,lastScan=-1,ignored=nil,ignoredReason=nil,controlDepth=0,serial=0,transaction=nil,phase=nil,phaseObject=nil,
-        phaseWorld=nil} -- 阶段的关卡世界独立于 GameInstance 的运行任务世界。
+        phaseWorld=nil,owners={},ownerWorld=nil,lastDiscovery=-1} -- 页面候选与阶段身份分别缓存。
+    -- 对象发现与可见性检查分开：平时只检查少量页面，不每 50 ms 扫描全局对象表。
+    local function owners(instance,now)
+        local world=instance:GetWorld():GetAddress() -- 换世界后立即重新发现，不能复用旧页面。
+        if self.ownerWorld~=world then
+            self.owners={};self.ownerWorld=world;self.lastDiscovery=-1
+        end
+        if self.eventOwner then return {self.eventOwner}end -- 激活事件已经给出准确对象，无需查找。
+        local interval=supply and .02 or .5 -- 补给仅在短暂等待页面时快速发现，飞行中不调用。
+        if self.lastDiscovery<0 or now-self.lastDiscovery>=interval then
+            local className=supply and "MissionResupplyWidget"or parts and "CampaignHangarPartsWidget"
+                or standby and "CampaignHangarReviewWidget"or "CampaignHangarWeaponWidget"
+            self.owners=FindAllOf(className)or {};self.lastDiscovery=now
+        end
+        return self.owners
+    end
     -- 页面离开时先隐藏其私有根，再还原源控件；重进接管时才恢复根可见性。
     local function releaseClosedRoot()
         local entry=self.closedRoot
@@ -413,6 +428,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local weapon=i==1 and a or b
             local option=weapon>=0 and flow.options[weapon+1]or nil -- 空栏不借用历史兵装的性能或弹药。
             local amount=option and (b<0 and option.max or math.max(1,math.floor(option.max*flow.draft.ratio)))or 0
+            -- 同一栏的静态性能、名称与载量未变时，不重复使原生布局失效。
+            local signature=tostring(weapon)..":"..amount
+            if column.lastContent==signature then goto nextColumn end
             setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or "EMPTY"))
             local fullName=option and assert(weaponFullNames[option.code:lower()],"英文兵装全名缺失："..option.code)or "NO WEAPON"
             local typeText=option and assert(weaponTypes[option.type_key:gsub("^HangarWeaponType_Name_","")],"原生兵装类型未知："..option.type_key)or "NO WEAPON"
@@ -435,6 +453,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
                 setText(c,c.ammo[i].count,option and tostring(amount)or "---")
             end
+            column.lastContent=signature
+            ::nextColumn::
         end
         return a,b
     end
@@ -533,7 +553,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     -- STANDBY 在原右栏上下排列两套兵装，保留左侧机体性能、部件和底部操作提示。
     local function attachStandby(owner,instance,planeId,profile,options)
         local c={owner=owner,instance=instance,planeId=planeId,world=instance:GetWorld():GetAddress(),
-            added={},masked={},moved={},texts={},repositioned={},tint=color(.401978,.651406,1,1),columns={},ammo={}}
+            added={},masked={},moved={},texts={},repositioned={},tint=color(.401978,.651406,1,1),columns={},ammo={},
+            controlEnabled=owner:IsEnableControl()} -- 页面复用时用控制重新开放识别返回。
         self.cache=c
         c.flow=Flow.new(profile,options);c.flow.stage="review" -- 只读快照复用同一套名称、性能和配弹算法。
         local info -- 两套资源共用已核对的右栏结构，字段缺失时明确报错。
@@ -594,15 +615,17 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         -- 输入停用是退出动画的起点，此时保留双 SP 画面直到页面实际隐藏。
         if c then
-            -- 同一机体从部件页返回时也重新取预览，不能沿用旧部件的快照。
-            if c.owner:IsEnableControl()and now-(c.ammoRefreshedAt or -1)>.25 then
+            -- STANDBY 只在返回时刷新，PART 继续观察已安装部件，避免复用页面留下旧载量。
+            local enabled=c.owner:IsEnableControl()
+            if enabled and (not c.controlEnabled or (parts and now-(c.ammoRefreshedAt or -1)>.25))then
                 c.ammoRefreshedAt=now;c.flow.options=options();paintColumns(c)
             end
+            c.controlEnabled=enabled
             return
         end
         if inFlight or panelOpen or not saved or self.error or now-self.lastScan<.05 then return end
         self.lastScan=now
-        for _,owner in ipairs(FindAllOf(parts and "CampaignHangarPartsWidget" or "CampaignHangarReviewWidget")or{})do
+        for _,owner in ipairs(owners(instance,now))do
             if valid(owner)and owner:IsVisible()and owner:IsEnableControl()and valid(owner:GetWorld())
                 and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                 and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then
@@ -813,11 +836,14 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             restore(false);c=nil
         end
         if not c then
-            if now-self.lastScan<.05 then return end
+            if self.error or now-self.lastScan<(supply and .02 or .05)then return end
             self.lastScan=now
             local candidate=nil
-            for _,owner in ipairs(FindAllOf(supply and "MissionResupplyWidget"or "CampaignHangarWeaponWidget")or{})do
-                if valid(owner)and owner:IsVisible()and owner:IsEnableControl()and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
+            for _,owner in ipairs(owners(instance,now))do
+                -- 补给输入已在任务事件中隔离；无需等原生入场动画开放控制才替换单 SP 页面。
+                if valid(owner)and owner:IsVisible()and (supply or owner:IsEnableControl())
+                    and valid(owner.WidgetTree)and valid(owner.WidgetTree.RootWidget)
+                    and valid(owner:GetWorld())and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                     and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then candidate=owner;break end
             end
             if not candidate then self.ignored=nil;self.ignoredReason=nil;if not self.error then self.status="waiting"end;return end
@@ -911,6 +937,12 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     function self:refreshNow(...)
         self.lastScan=-1;self:pump(...)
     end
+    -- 直接接入原生激活事件的页面；下一次轮询仍按世界和可见性核对生命周期。
+    function self:activate(owner,...)
+        self.eventOwner=owner
+        self:refreshNow(...)
+        self.eventOwner=nil
+    end
     -- F8 不能打断已经交给原生处理的一步决定，避免保存事务丢失。
     function self:isPreparationHandoffPending()
         local c=self.cache
@@ -924,6 +956,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         self.ignored=nil;self.ignoredReason=nil;if clearError~=false then self.error=nil end
         self.phase=nil;self.phaseObject=nil;self.phaseWorld=nil
+        self.owners={};self.ownerWorld=nil;self.lastDiscovery=-1;self.eventOwner=nil
         self.status=self.error and "error"or "waiting";self.lastScan=-1
     end
     -- 原生重新启用同一菜单对象时清除关闭标记；模组自己的输入操作不算重进。

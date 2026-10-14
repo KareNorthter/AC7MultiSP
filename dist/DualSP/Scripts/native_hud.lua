@@ -404,6 +404,8 @@ function NativeHUD.new(note)
         -- 未就绪时仅保留正常亮度的35%，使装填状态更容易辨认。
         syncNameStyle(c.main,c.widgets.MainWeaponTextBP,state.ready[1]and 1 or .35,c.nameStyles,"main")
         local countColor=c.count.ColorAndOpacity
+        local countTint=countColor.SpecifiedColor -- 只有源颜色实际变化时才同步弹药文字。
+        local countStyle=table.concat({countTint.R,countTint.G,countTint.B,countTint.A,tostring(countColor.ColorUseRule)},":")
         for group=1,(c.dual and 2 or 1)do
             local weaponIndex=group==1 and profile.a or profile.b
             local label=weaponNames.special(options,weaponIndex)
@@ -411,11 +413,12 @@ function NativeHUD.new(note)
             local nameWidget,countWidget=c.columns[1].rows[group],c.columns[2].rows[group]
             if label~=c.lastNames[group]then nameWidget:SetText(FText(label));c.lastNames[group]=label;self.writeCount=self.writeCount+1 end
             if count~=c.lastCounts[group]then countWidget:SetText(FText(count));c.lastCounts[group]=count;self.writeCount=self.writeCount+1 end
-            countWidget:SetColorAndOpacity(countColor)
+            if c.lastCountStyle~=countStyle then countWidget:SetColorAndOpacity(countColor)end
             -- 弹药为零由核心统一判定；至少一发就绪即可保持正常文字。
             assert(state.ready and type(state.ready[group+1])=="boolean","SP 就绪状态缺失")
             syncNameStyle(nameWidget,c.name,state.ready[group+1]and 1 or .35,c.nameStyles,"sp"..group)
         end
+        c.lastCountStyle=countStyle
         self.status="native"
     end
     function self:update(plane,profile,options,state,enabled,now)

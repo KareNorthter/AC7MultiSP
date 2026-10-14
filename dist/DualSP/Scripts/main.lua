@@ -1,4 +1,4 @@
--- DualSP 体验优化候选：待实玩验证；所有调度回调仍在游戏线程运行。
+-- AC7DualSP 1.0.0：沿用用户实测通过的性能修订；调度回调均在游戏线程运行。
 -- 出击和中途补给使用各自的原生 UMG 页面，F8 只管理设置和日志。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -497,6 +497,8 @@ end
 local function locatePlane()
     local worldContext=instance:GetWorld()
     if not valid(worldContext)then return nil,""end
+    local contextName=worldContext:GetFullName() -- 菜单和简报世界无需反复扫描玩家飞机。
+    if not contextName:find("/Game/Maps/Mission/",1,true)and not contextName:find("/Game/Maps/FreeFlight/",1,true)then return nil,""end
     for _,candidate in ipairs(FindAllOf("PlayerPlane")or{})do
         local name=candidate:GetFullName()
         if name:find(":PersistentLevel.AcePlayerPawn_",1,true) then
@@ -713,18 +715,18 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
         if instance:GetSelectedPlaneID()~=planeId then return end -- 机体改变交给主循环先更新身份。
         local owner=ctx:get() -- 只接入已核对的三个页面，不枚举其他菜单。
         if not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarWeaponWidget"))then
-            nativeLoadout:refreshNow(instance,planeId,function()return profileFor(planeId)end,function()return optionsFor(planeId)end,os.clock(),false,false)
+            nativeLoadout:activate(owner,instance,planeId,function()return profileFor(planeId)end,function()return optionsFor(planeId)end,os.clock(),false,false)
         elseif not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarReviewWidget"))then
-            nativeStandby:refreshNow(instance,planeId,function()
+            nativeStandby:activate(owner,instance,planeId,function()
                 local saved=config.profiles[tostring(planeId)];return saved and copyProfile(saved)or nil
             end,function()return optionsFor(planeId)end,os.clock(),false,false)
         elseif not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarPartsWidget"))then
-            nativeParts:refreshNow(instance,planeId,function()
+            nativeParts:activate(owner,instance,planeId,function()
                 local saved=config.profiles[tostring(planeId)];return saved and copyProfile(saved)or nil
             end,function()return optionsFor(planeId)end,os.clock(),false,false)
         elseif supplySession and supplySession.menuActive and not supplySession.menuClosed
             and owner:IsA(StaticFindObject("/Script/Nimbus.MissionResupplyWidget"))then
-            nativeSupply:refreshNow(instance,supplySession.planeId,function()
+            nativeSupply:activate(owner,instance,supplySession.planeId,function()
                 local profile=copyProfile(supplySession.profile);profile.ratio=config.ammo_ratio or profile.ratio;return profile
             end,function()return supplySession.options end,os.clock(),isFlight,false)
         end
@@ -799,13 +801,27 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 0.1.9 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
 -- game-thread callback instead; delayed callbacks use the same scheduler.
 local threadReady=false
 local threadWaitReported=false
+-- 每 15 秒汇总当前场景的调度耗时；只测本 Lua 回调，不把它当成整帧或 GPU 耗时。
+local performance={scene=nil,count=0,total=0,peak=0,since=0}
+local function recordTickCost(started)
+    local now=os.clock();local elapsed=(now-started)*1000 -- 本机 Windows Lua 时钟的毫秒差值。
+    local scene=supplySession and "resupply"or isFlight and "flight"or "menu"
+    if performance.scene~=scene then performance={scene=scene,count=0,total=0,peak=0,since=now}end
+    performance.count=performance.count+1;performance.total=performance.total+elapsed
+    performance.peak=math.max(performance.peak,elapsed)
+    if now-performance.since>=15 then
+        note(string.format("PERF_TICK scene=%s samples=%d average_ms=%.3f peak_ms=%.3f",scene,performance.count,
+            performance.total/performance.count,performance.peak))
+        performance={scene=scene,count=0,total=0,peak=0,since=now}
+    end
+end
 LoopInGameThreadWithDelay(20,function()
         local ok,err=xpcall(function()
             if not threadReady then
@@ -824,7 +840,8 @@ LoopInGameThreadWithDelay(20,function()
                 threadReady=true
             end
             assert(IsInGameThread(),"Controller callback is outside the game thread")
-            tick()
+            local started=os.clock() -- 不改变输入、武器和 HUD 的既有更新频率。
+            tick();recordTickCost(started)
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);note("ERROR "..errorText)

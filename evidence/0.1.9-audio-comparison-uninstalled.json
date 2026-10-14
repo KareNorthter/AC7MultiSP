@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-14",
+  "action": "按用户要求卸载 DualSP 0.1.9 供音质对照",
+  "backup": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\DualSP-Backups\\uninstall-20261014-210647",
+  "mod_removed": true,
+  "owned_loader_removed": true,
+  "proxy_removed": true,
+  "other_ue4ss_mods_present": false,
+  "complete_mod_backup_verified": true,
+  "profiles_preserved": true,
+  "saves_and_graphics_unchanged": true,
+  "game_started_by_agent": false,
+  "reinstalled": false,
+  "reason": "用户怀疑整体音效质量下降，待其对照测试，不预判因果"
+}

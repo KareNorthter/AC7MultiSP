@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-14",
+  "validated_version": "0.1.9-performance-candidate.1",
+  "release_version": "1.0.0",
+  "release_name": "AC7DualSP",
+  "user_statement": "经过测试，没有问题。现在将版本号更新到1.0.0，正式命名为AC7DualSP，并提交到git。",
+  "scope": "用户确认上一轮性能与显示修订测试没有问题；未提供逐项测量或完整任务矩阵。",
+  "not_claimed": ["全部机体与任务覆盖", "统一帧率提升数值", "完全消除所有偶发问题"],
+  "release_changes": ["版本与产品名称", "管理界面标题", "文档整理", "含依赖的手动安装 ZIP"],
+  "gameplay_logic_changed_for_release": false,
+  "automated_test_modules_added_or_run": false
+}

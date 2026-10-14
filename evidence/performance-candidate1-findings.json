@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-14",
+  "version": "0.1.9-performance-candidate.1",
+  "user_report": {
+    "baseline": "0.1.9",
+    "duration": "几十分钟",
+    "basic_functions": "正常",
+    "menu_fps_reported": "机体页之前正常；兵装页及任务结束简报约 100 降至 50 fps",
+    "flight": "流畅，未发现明显掉帧",
+    "central_label": "字号偏小，偶发绿色变红，触发条件不明",
+    "resupply": "少见几百毫秒原生单 SP 页面闪现"
+  },
+  "code_findings": [
+    "三个未接入的机库页面各以 50 ms 周期查找全局对象",
+    "没有玩家时每 250 ms 扫描玩家对象，未先排除菜单世界",
+    "STANDBY 每 250 ms 重读配装，并重复设置静态性能条大小",
+    "中央完整复制原生文字对象，包含动态状态及全局泛光设置",
+    "补给接管额外等待 IsEnableControl，虽已有独立原生输入隔离"
+  ],
+  "historical_log": {
+    "opened_utc": "2026-10-14T14:01:15Z",
+    "attached_utc": "2026-10-14T14:01:16Z",
+    "precision": "秒级日志，不能推导精确延迟"
+  },
+  "live_inspection": {
+    "game_started_by_agent": true,
+    "stage_reached": "标题画面",
+    "automatic_enter_attempts": 2,
+    "automatic_enter_effective": false,
+    "user_help_requested": true,
+    "mission_started": false,
+    "weapons_fired": false,
+    "startup_candidate_log_error_seen": false,
+    "initial_payload_title_tick_average_ms_range": [0.672, 0.737],
+    "initial_payload_title_tick_peak_ms_range": [12, 50],
+    "measurement_scope": "Lua 主调度回调；未涵盖整帧、GPU 或全部原生模组开销",
+    "final_standby_reentry_refinement": "仅完成安装语法与回读核对，未现场验证",
+    "game_closed_for_final_install": true
+  },
+  "installation": {
+    "final_installed_at": "2026-10-14T22:23:28.085443+08:00",
+    "receipt": "0.1.9-performance-candidate.1-installed.json",
+    "original_0_1_9_backup": "backup/merged-candidate-/20261014-221916-475613/DualSP",
+    "core_recompiled": false,
+    "test_modules_added_or_run": false,
+    "config_and_saves_verified_preserved": true
+  },
+  "unverified": [
+    "兵装页及任务简报帧率改善幅度",
+    "飞行时调度耗时和中央新字号/颜色",
+    "变红原始触发条件",
+    "多次补给是否完全消除闪现"
+  ]
+}
