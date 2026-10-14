@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-14",
+  "steam_build": 9855922,
+  "tested_candidate": "0.1.7-management-candidate.6",
+  "target_candidate": "0.1.7-management-candidate.7",
+  "user_report": {
+    "lock_audio": "本次未再出现",
+    "resupply": "SP1/SP2、起飞确认与起飞正常，随后模组全部失效"
+  },
+  "log_events": [
+    "NATIVE_RESUPPLY_TAKEOFF_REQUESTED 128",
+    "NATIVE_RESUPPLY_TAKEOFF_DISPATCHED 128",
+    "NATIVE_RESUPPLY_NATIVE_VISUAL_RESTORED 128",
+    "NATIVE_RESUPPLY_YES_RETURNED 128",
+    "NATIVE_RESUPPLY_ERROR 补给阶段不属于当前任务世界"
+  ],
+  "failure_time_utc": "2026-10-14T00:38:44Z",
+  "diagnosis": "加载器 Actor.GetWorld 返回返航子关卡 Outer World；旧校验错误地要求它等于 GameInstance 的运行任务 World",
+  "read_only_object_relationship": {
+    "phase": "MiniGamePhaseBP_ReturnLine_C",
+    "phase_outer_world": "ms06_Phase_ReturnLine",
+    "phase_level_owning_world": "ms06",
+    "player_level_owning_world": "ms06",
+    "game_instance_world": "ms06"
+  },
+  "native_actor_getworld_rva": "0x15632F0",
+  "native_level_owningworld_offset": "0xC0",
+  "loader_actor_getworld_rva": "0x368660",
+  "loader_revision": "48e7edfe",
+  "source_changes": [
+    "开始时保存阶段实例和其关卡 World",
+    "结束时严格匹配同一阶段，不再重绑",
+    "阶段关卡与运行任务分别校验",
+    "结束后回调标记完成，仍等待任务成功后提交"
+  ],
+  "core_recompiled": false,
+  "ui_recompiled": false,
+  "tests_run": false,
+  "gameplay_verified": false,
+  "process_memory_written": false,
+  "backup": "E:\\AC7_MultiSP\\backup\\native-flow-20261014-084125",
+  "installed": true,
+  "installed_at": "2026-10-14T08:50:13.678319+08:00",
+  "installation_record": "evidence/management-candidate.7-installed.json",
+  "installation_backup": "E:\\AC7_MultiSP\\backup\\merged-candidate-\\20261014-085013-678319",
+  "candidate6_dll_hashes_preserved": true
+}

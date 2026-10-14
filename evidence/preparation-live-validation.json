@@ -1,0 +1,114 @@
+{
+  "version": "0.1.7-management-candidate.4",
+  "recorded_at": "2026-10-13T12:09:18.376579+00:00",
+  "installed_at": "2026-10-13T19:58:41.393239+08:00",
+  "files": {
+    "bin/DualSP.dll": "F6DB2D112A67B057B6B38906B5BB3CBFEC241C107B28138CC1F90E940096D21D",
+    "bin/DualSPUI.dll": "24033AFB2377781B63B809E166E2161AF5341C7D5542F3E12E3CE931A543F174",
+    "Scripts/main.lua": "B7E666B011E0C6D04C356DF1B5D95AF50B3D5308C7FBAA7DB95EC1EB6E6BB590",
+    "Scripts/json.lua": "0EACCDA57FABC0330736DE25F45CF589821A42B5E0FE02E4E3125F7DC0BF2B7E",
+    "Scripts/weapon_cycle.lua": "3A3BC4EC9FD2B56CD0E466765E54DD5EFE41D8252D5A7FAAD12FA738AAE11F45",
+    "Scripts/native_hud.lua": "40028680C761590880111B36C21AEA4F13383FAA6558976700D73C39D9A35D81",
+    "Scripts/loadout_flow.lua": "2EC44831E9C61079918139E379AF7B25D66DE36843CF0A48567C98735732B048",
+    "Scripts/native_loadout.lua": "376950CD13BAB374D9F46C93780B0EC0EC19B2E386622DE7136EAA3AFE2A1F65",
+    "Scripts/weapon_names.lua": "44B74D99704AE504821CFA8A3E03F04D21C7230DD9BAAE6CE3741516ADB4116D",
+    "Scripts/weapon_presentation.lua": "66452B07E335D4EF96BECEA545DA3D511176D569279FF41CCB682A21EC81FF73"
+  },
+  "authorization": "用户明确授权启动、键盘操作、选择机体和双 SP 并出击；扫描码辅助获单独授权",
+  "method": "computer-use 的 sky 截图/窗口定位；仅当前 AC7 前台窗口扫描码输入；游戏现有日志和配置回读",
+  "route": [
+    "Campaign",
+    "Free Mission",
+    "CASUAL-EASY",
+    "01 Charge Assault",
+    "Su-35S SKIN:03"
+  ],
+  "selected": {
+    "plane_id": 120,
+    "sp1": "LAAM",
+    "sp2": "6AAM",
+    "ratio": 0.30000001192093
+  },
+  "final_install_verified": [
+    "准备页成功接入",
+    "双栏名称/性能/类型/预计弹药可读",
+    "确认保存与当前配置一致",
+    "原生 SORTIE 出击并进入跑道",
+    "任务 LOADOUT 加载 LAAM/6AAM",
+    "无限 MSL 弹药 -1 不再引发 HUD 采样错误",
+    "右下双 SP HUD 接入"
+  ],
+  "earlier_same_flow_verified": [
+    "确认页修改 SP1",
+    "确认页修改 SP2",
+    "取消不保存不同草稿",
+    "原生返回机体页后重新进入"
+  ],
+  "earlier_commit": {
+    "utc": "2026-10-13T11:47:23Z",
+    "before": {
+      "a": 1,
+      "b": 2
+    },
+    "after": {
+      "a": 0,
+      "b": 1
+    },
+    "events": [
+      "PROFILE_SAVED_NATIVE 120",
+      "NATIVE_LOADOUT_COMMITTED_NATIVE_CLOSE 120"
+    ]
+  },
+  "known_display_limits": [
+    "准备页金色原光标仍在旧行，以蓝色高亮为准",
+    "原生待命页仍只显示旧单 SP；确认双栏和任务加载日志为当前双 SP 事实",
+    "预计弹药未完整计入部件增益"
+  ],
+  "withdrawn_probe": "原生光标同名成员实机为空；未验证的处理已经撤回，最终版不依赖它",
+  "not_tested": [
+    "飞行中的 SP 切换与发射",
+    "中途补给双 SP 重选",
+    "手柄与鼠标选择",
+    "检查点恢复",
+    "全部机体和分辨率",
+    "任务全程稳定性或帧时间"
+  ],
+  "audio": "仅保留研究文档，未实现音效",
+  "test_modules_run": false,
+  "formal_core_preserved": true,
+  "events": [
+    "2026-10-13T12:05:56Z NATIVE_LOADOUT_ATTACHED CampaignHangarWeapon_C /Engine/Transient.NimbusGameEngine_0:BP_GameInstance_AC_C_0.CampaignHangarWeapon_C_0",
+    "2026-10-13T12:05:56Z NATIVE_LOADOUT_STAGE sp1:1:0:1:nil:nil:nil:nil",
+    "2026-10-13T12:06:18Z NATIVE_LOADOUT_STAGE sp2:1:0:1:nil:nil:nil:nil",
+    "2026-10-13T12:06:36Z NATIVE_LOADOUT_STAGE review:3:0:1:nil:nil:nil:nil",
+    "2026-10-13T12:06:54Z NATIVE_LOADOUT_STAGE review:3:0:1:nil:true:nil:nil",
+    "2026-10-13T12:06:54Z NATIVE_LOADOUT_STAGE review:3:0:1:nil:true:nil:true",
+    "2026-10-13T12:07:12Z PROFILE_SAVED_NATIVE 120",
+    "2026-10-13T12:07:12Z NATIVE_LOADOUT_COMMITTED_NATIVE_CLOSE 120",
+    "2026-10-13T12:08:02Z WORLD_CHANGED World /Game/Maps/Mission/ms01/ms01.ms01",
+    "2026-10-13T12:08:33Z LOADOUT 120 {\"ratio\":0.30000001192093,\"a\":0,\"b\":1}",
+    "2026-10-13T12:08:33Z NATIVE_HUD_ATTACHED CombinedStatsWidget_C /Engine/Transient.NimbusGameEngine_0:BP_GameInstance_AC_C_0.AceMainFlightHUD_C_0.WidgetTree_0.CombinedStatsWidget"
+  ],
+  "shutdown": {
+    "trigger": "最终版本跑道暂停后 Alt+F4",
+    "observed": "Fatal error! Game has crashed and will close.",
+    "process_ended": true,
+    "fixed": false,
+    "cause": "未取得可归因的调用栈，不能据提示判定根因"
+  },
+  "overall_stability_verified": false,
+  "runtime_hud_snapshot": {
+    "main_ammo": -1,
+    "cached_sp": [
+      12,
+      20
+    ],
+    "ready": [
+      true,
+      true,
+      true
+    ],
+    "native_hud": "native",
+    "weapon_presentation": "native"
+  }
+}

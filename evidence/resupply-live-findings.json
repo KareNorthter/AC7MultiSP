@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-13",
+  "steam_build": 9855922,
+  "tested_candidate": "0.1.7-management-candidate.4",
+  "tester": "用户实玩",
+  "user_report": {
+    "plane": "Su-30SM",
+    "weapons": [
+      "QAAM",
+      "LAGM"
+    ],
+    "map_in_log": "/Game/Maps/Mission/ms06/ms06",
+    "lock_audio": "SP 锁定声持续",
+    "lagm_lock_distance": "用户观察约 2 km，预期约 6–7 km",
+    "resupply": "双选正常，YES 后黑屏；F8 后可恢复画面但确认页卡住",
+    "startup_hud": "原生 MSL＋单 SP 仍短暂闪现，本轮暂缓"
+  },
+  "log_evidence": [
+    "NATIVE_RESUPPLY_TAKEOFF_REQUESTED 120",
+    "RESUPPLY_PROFILE_STAGED 120 {\"a\":0,\"b\":-1,\"ratio\":0.30000001192093}",
+    "NATIVE_RESUPPLY_CONFIRMED 120"
+  ],
+  "missing_after_confirmation": [
+    "RESUPPLY_SUCCESS_PENDING",
+    "RESUPPLY_MENU_CLOSED"
+  ],
+  "offline_diagnosis": [
+    "起飞入口在双选输入回调内同步调用，存在原生阶段重入风险",
+    "结束事件后立即移除临时控件，可能早于原生菜单收尾读取",
+    "补给光标源控件位于每行 Canvas 外的 HorizontalBox 兄弟节点，复制源槽会导致水平错位"
+  ],
+  "source_repairs": [
+    "光标副本移入对应 ItemText 的 Canvas 并对齐行槽",
+    "等待确认键释放后下一次游戏线程 tick 调用原生结束入口",
+    "收到 OnSuccessSupplyPhaseHandler 后才提交配置、释放控件和重建武器"
+  ],
+  "latest_user_test": {
+    "plane": "Su-30SM",
+    "weapons": [
+      "QAAM",
+      "LAGM"
+    ],
+    "map_in_log": "/Game/Maps/Mission/ms06/ms06",
+    "lock_audio": "SP 锁定声持续",
+    "lagm_lock_distance": "用户观察约 2 km，预期约 6–7 km",
+    "resupply": "双选正常，YES 后黑屏；F8 后可恢复画面但确认页卡住",
+    "startup_hud": "原生 MSL＋单 SP 仍短暂闪现，本轮暂缓",
+    "runtime_log_tail": [
+      "NATIVE_RESUPPLY_TAKEOFF_REQUESTED 128",
+      "NATIVE_RESUPPLY_TAKEOFF_DISPATCHED 128",
+      "NATIVE_RESUPPLY_NATIVE_VISUAL_RESTORED 128",
+      "NATIVE_RESUPPLY_NATIVE_CONTROL_RESTORED 128",
+      "NATIVE_RESUPPLY_FINISH_ACCEPTED 128"
+    ],
+    "missing_after_takeoff": [
+      "RESUPPLY_MENU_CLOSED",
+      "RESUPPLY_SUCCESS_PENDING",
+      "RESUPPLY_LOADOUT_APPLIED"
+    ]
+  },
+  "latest_source_repairs": [
+    "改为 MissionResupplyWidget 原生 YES：武器状态收尾、关闭 UI 栈、通知任务",
+    "真实 YES 发出前暂存事务，原生页面隐藏后保留到任务成功；不重新开放旧页输入",
+    "Lua 类别切换与核心 keepArmed 均执行完整飞机切换，重绑锁定参数并保留 PART 修正",
+    "撤回重复释放输入能够解决锁定音效的断言；音效是否同源等待实玩",
+    "HUD 开场单 SP 闪现暂缓，本轮未增加修改"
+  ],
+  "installed": true,
+  "installed_candidate": "0.1.7-management-candidate.7",
+  "installed_at": "2026-10-14T08:50:13.678319+08:00",
+  "installation_record": "evidence/management-candidate.7-installed.json",
+  "backup_path": "E:\\AC7_MultiSP\\backup\\merged-candidate-\\20261014-085013-678319",
+  "game_started_by_agent": false,
+  "runtime_verified": false,
+  "part_plugin_compatibility": {
+    "user_observed": "SP 导弹射程插件提高射程，PART 效果仍在",
+    "scope": "历史单次用户实测不足以排除锁定组件不同步；候选 5 恢复原生部件计算，效果待复测",
+    "source_change": "完整飞机切换会重绑武器参数并走原生部件修正，未硬编码射程"
+  },
+  "historical_candidate4_hypotheses": [
+    "补给起飞交回原生结束入口前恢复原生源控件、遮蔽状态和父槽布局，保留事务缓存直到成功事件",
+    "核心换槽后再次调用 PlayerWeaponActivator:ReleaseWeaponInput，并用已核对的 ToggleSpecial 代替 PlayerPlane 输入按下/释放路径",
+    "任务 HUD 等待控件生成期间约 50 毫秒短扫描并预先折叠原生 SP 行，接管后恢复失败回滚",
+    "PART 的 SP 导弹射程插件由用户实测仍生效；本轮未改写其参数路径",
+    "补给结束钩子在活动任务菜单事务内按真实结束阶段地址重新绑定，避免旧 MiniGamePhase 指针误判"
+  ],
+  "superseded_by": "resupply-completion-revision.json"
+}

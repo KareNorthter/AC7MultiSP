@@ -1,0 +1,280 @@
+{
+  "steam_build": 9855922,
+  "game_started": false,
+  "game_assets_modified": false,
+  "runtime_sequence_verified": false,
+  "pages": [
+    {
+      "native_parent": "/Script/Nimbus.MissionResupplyWidget",
+      "functions": [
+        "Construct",
+        "ExecuteUbergraph_MissionResupply"
+      ],
+      "blueprint_calls": [
+        "Construct",
+        "PlayAnimation"
+      ],
+      "controls": {
+        "WeaponConceptPanel": {
+          "class": "CanvasPanel",
+          "font": null,
+          "slot_class": "CanvasPanelSlot",
+          "parent": "MainPanel_3",
+          "layout": {
+            "Offsets": {
+              "Left": 530.0,
+              "Top": 45.0,
+              "Right": 384.3543395996094,
+              "Bottom": 220.270263671875
+            }
+          }
+        },
+        "WeaponSpecifficationGroup": {
+          "class": "HangarResupplySpecGroup_C",
+          "font": null,
+          "slot_class": "CanvasPanelSlot",
+          "parent": "MainPanel_3",
+          "layout": {
+            "Offsets": {
+              "Left": 834.0,
+              "Top": 49.0,
+              "Right": "+0",
+              "Bottom": "+0"
+            }
+          }
+        },
+        "BarA": {
+          "class": "Image",
+          "font": null,
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "layout": {
+            "Offsets": {
+              "Right": 160.0,
+              "Bottom": 16.0
+            }
+          }
+        },
+        "BaseImage3": {
+          "class": "Image",
+          "font": null,
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "layout": {
+            "Offsets": {
+              "Left": 160.0,
+              "Right": 2.0,
+              "Bottom": 18.0
+            }
+          }
+        },
+        "CursorText0": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_5",
+          "layout": null
+        },
+        "CursorText1": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_194",
+          "layout": null
+        },
+        "CursorText2": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_195",
+          "layout": null
+        },
+        "DescriptionText": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_7",
+          "layout": null
+        },
+        "ItemText0": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_1",
+          "layout": {
+            "Offsets": {
+              "Right": 398.0,
+              "Bottom": 31.0
+            }
+          }
+        },
+        "ItemText1": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "layout": {
+            "Offsets": {
+              "Right": 398.0,
+              "Bottom": 34.0
+            }
+          }
+        },
+        "ItemText2": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_3",
+          "layout": {
+            "Offsets": {
+              "Right": 398.0,
+              "Bottom": 34.0
+            }
+          }
+        },
+        "TitleText": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 16
+          },
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_4",
+          "layout": null
+        },
+        "WeaponAmmo_Label": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 16
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "WeaponAmmoPanel",
+          "layout": {
+            "Offsets": {
+              "Top": 1.0,
+              "Right": 270.0,
+              "Bottom": 38.0
+            }
+          }
+        },
+        "WeaponAmmo_Text": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "WeaponAmmoPanel",
+          "layout": {
+            "Offsets": {
+              "Top": 25.5,
+              "Right": 293.35992431640625,
+              "Bottom": 38.0
+            }
+          }
+        },
+        "WeaponDescriptionText": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "layout": {
+            "Offsets": {
+              "Left": -568.9609375,
+              "Top": 117.45947265625,
+              "Right": 735.0,
+              "Bottom": 121.99398803710938
+            },
+            "Anchors": {
+              "Minimum": {
+                "Minimum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              },
+              "Maximum": {
+                "Maximum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              }
+            }
+          }
+        },
+        "WeaponType_Label": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 16
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "WeaponTypePanel",
+          "layout": {
+            "Offsets": {
+              "Top": 1.0,
+              "Right": 362.0,
+              "Bottom": 38.0
+            }
+          }
+        },
+        "WeaponType_Text": {
+          "class": "TextBlock",
+          "font": {
+            "FontObject": -33,
+            "TypefaceFontName": "ACES-Regular",
+            "Size": 20
+          },
+          "slot_class": "CanvasPanelSlot",
+          "parent": "WeaponTypePanel",
+          "layout": {
+            "Offsets": {
+              "Top": 25.5,
+              "Right": 362.0,
+              "Bottom": 38.0
+            }
+          }
+        }
+      },
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/UI/Menu/Mission/MissionResupply.uasset",
+      "sha256": "2f22691c75f9467d46b2734432d17f8a4b14178f215a01f75735ad950b70262d"
+    }
+  ]
+}

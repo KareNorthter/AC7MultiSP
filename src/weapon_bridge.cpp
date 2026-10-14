@@ -16,9 +16,11 @@
 #include <stdexcept>
 #include <string>
 #include <vector>
+#include "MinHook.h"
 #include <map>
 #include "common.hpp"
 #include "reload_timer.hpp"
+#include "ue4ss_lua_api.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -68,6 +70,74 @@ void verifyVersion() {
     checkMemory(base+0x882390,sizeof(signature));
     require(std::memcmp(reinterpret_cast<void*>(base+0x882390),signature,sizeof(signature))==0,"Unsupported executable layout");
 }
+// 原生补给页直接读取 UIManager 按键，SetIsEnableControl 不会阻止这两个入口。
+// 只隔离本轮玩家补给页；页面 Tick、动画、原生 YES 与其他菜单保持正常执行。
+using SupplyInput = void(*)(void*);
+SupplyInput originalSupplyReview=nullptr,originalSupplyWeapons=nullptr; // 两个输入函数的原生入口。
+Addr supplyPlane{},supplyActivator{},supplyWidget{}; // 当前补给身份，仅由游戏线程维护。
+bool supplyHooksReady=false; // 钩子只安装一次，事务结束后通过身份解绑停止隔离。
+
+// 入口已经限定为 MissionResupplyWidget；只比较当前补给的飞机/激活器身份。
+bool ownsSupplyInput(void* object) {
+    if(!supplyPlane)return false;
+    const auto widget=reinterpret_cast<Addr>(object); // 当前正在读取菜单输入的页面。
+    if(read<Addr>(widget+0x5c0)!=supplyPlane || read<Addr>(widget+0x5c8)!=supplyActivator)return false;
+    if(!supplyWidget) {
+        supplyWidget=widget;
+        nativeLog("RESUPPLY_INPUT_OWNED");
+    }
+    return widget==supplyWidget;
+}
+// 模组接管的页面不再处理原生单 SP 的 YES/NO 按键。
+void supplyReviewInput(void* object) {
+    if(!ownsSupplyInput(object))originalSupplyReview(object);
+}
+// 同一事务的原生单 SP 列表也不能处理双 SP 页正在使用的决定/方向键。
+void supplyWeaponsInput(void* object) {
+    if(!ownsSupplyInput(object))originalSupplyWeapons(object);
+}
+// 首次补给前核对函数指纹并安装两个独立钩子；失败明确返回，不继续混用输入。
+void installSupplyHooks() {
+    if(supplyHooksReady)return;
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 已核对的游戏映像。
+    constexpr unsigned char review[]={0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x20,0x8b,0xb9,0xb8,0x05,0,0};
+    constexpr unsigned char weapons[]={0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x20,0x8b,0xb9,0xbc,0x05,0,0};
+    require(std::memcmp(reinterpret_cast<void*>(base+0x6fccf0),review,sizeof(review))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x6fd2d0),weapons,sizeof(weapons))==0,"补给输入入口不匹配");
+    const auto status=MH_Initialize(); // 本核心的 MinHook 实例，与 UI DLL 分开链接。
+    require(status==MH_OK || status==MH_ERROR_ALREADY_INITIALIZED,"无法初始化补给输入钩子");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x6fccf0),reinterpret_cast<void*>(&supplyReviewInput),
+        reinterpret_cast<void**>(&originalSupplyReview))==MH_OK,"无法接入补给确认输入");
+    require(MH_CreateHook(reinterpret_cast<void*>(base+0x6fd2d0),reinterpret_cast<void*>(&supplyWeaponsInput),
+        reinterpret_cast<void**>(&originalSupplyWeapons))==MH_OK,"无法接入补给兵装输入");
+    require(MH_QueueEnableHook(reinterpret_cast<void*>(base+0x6fccf0))==MH_OK &&
+        MH_QueueEnableHook(reinterpret_cast<void*>(base+0x6fd2d0))==MH_OK && MH_ApplyQueued()==MH_OK,
+        "无法启用补给输入隔离");
+    supplyHooksReady=true;
+    nativeLog("RESUPPLY_INPUT_HOOKS_READY");
+}
+// 在原生初始化丢弃旧锁定槽之前，逐槽释放其搜索/锁定音引用。
+// 不能只清零计数或发送全局静音；这会丢失原生播放与停止的配对关系。
+void finishSeekerAudio(Addr plane,Addr activator) {
+    require(read<Addr>(plane+0x11a8)==activator,"音效收尾的机体与激活器不匹配");
+    const auto seeker=read<Addr>(plane+0x1310); // 当前玩家的锁定组件。
+    require(seeker && read<Addr>(seeker+0x378)==plane,"音效收尾缺少当前玩家锁定组件");
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 原生逐槽音效收尾函数。
+    constexpr unsigned char stop[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x20,
+        0x48,0x8b,0x99,0x68,0x04,0,0};
+    require(std::memcmp(reinterpret_cast<void*>(base+0x4c98a0),stop,sizeof(stop))==0,"原生锁定音收尾入口不匹配");
+    std::array<int,4> before{}; // 四种音效的引用计数，只用于检查和记录。
+    for(size_t i=0;i<before.size();++i) {
+        before[i]=read<int>(seeker+0x4f0+i*4);
+        require(before[i]>=0 && before[i]<=512,"锁定音引用计数无效");
+    }
+    using Stop=void(*)(void*); // 原生内部按每个槽的播放标记发送对应停止事件。
+    reinterpret_cast<Stop>(base+0x4c98a0)(reinterpret_cast<void*>(seeker));
+    for(size_t i=0;i<before.size();++i)
+        require(read<int>(seeker+0x4f0+i*4)==0,"旧锁定音引用已失配，请重新开始任务；停止重建兵装");
+    if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
+        nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
+}
 Group capture(Addr activator, bool special, double time) {
     const auto address=groupOf(activator,special);
     Group result;
@@ -103,6 +173,26 @@ Group capture(Addr activator, bool special, double time) {
     return result;
 }
 int scalarInt(const Group& group, size_t offset) { int value; std::memcpy(&value,group.scalars.data()+offset,sizeof(value)); return value; }
+
+// 判断允许装填的逻辑窗口内是否至少一发就绪；装填窗口数量不是就绪数量。
+bool hasReadyRound(const Group& group,double time) {
+    require(group.valid,"HUD 武器缓存未建立");
+    const int ammo=scalarInt(group,0),window=scalarInt(group,8),next=scalarInt(group,12);
+    const int count=static_cast<int>(group.slots.size());
+    // CASUAL-EASY 的原生无限弹药使用 -1；它仍需按真实装填队列判断就绪。
+    // 仅接受此已实机核对的特殊值，其他负数及无效队列继续明确报错。
+    require(ammo>=-1 && ammo<=100000 && window>=0 && window<=count && next>=0 && next<count,"HUD 武器队列无效");
+    require(std::isfinite(time) && time+0.001>=group.capturedTime,"HUD 游戏时间回退，需先恢复检查点");
+    if(ammo==0)return false;
+    // 未激活 SP 只推进本来允许装填的窗口；活动组捕获时间就是本次时间。
+    const double delta=std::max(0.0,time-group.capturedTime);
+    for(int index=0;index<window;++index) {
+        const auto& slot=group.slots[(next+index)%count];
+        const float elapsed=dualsp::advanceReload(slot.duration,slot.elapsed,delta,true);
+        if(elapsed>=slot.duration)return true;
+    }
+    return false;
+}
 void restore(Addr activator, bool special, const Group& saved, double time) {
     require(saved.valid,"Uninitialized cached weapon");
     const auto address=groupOf(activator,special);
@@ -138,6 +228,7 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
     }
 }
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
+    finishSeekerAudio(command.plane,command.activator); // 先释放旧槽音效，再重建锁定槽和武器池。
     const int gun=read<int>(stateOf(command.activator)+8);
     const auto owner=read<Addr>(command.activator+0x260);
     const int flares=read<int>(owner+0x10c);
@@ -153,9 +244,18 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 }
 void keepArmed(const Command& command,bool armed) {
     if(armed) {
-        using Toggle=bool(*)(void*);
+        // 重建后必须经过飞机完整切换流程。仅 ToggleSpecial 会留下 MSL
+        // 的锁定组件参数；原生飞机入口还会重绑 seeker 并应用 PART 修正。
+        using Switch=void(*)(void*);
         const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
-        reinterpret_cast<Toggle>(base+0x886c50)(reinterpret_cast<void*>(command.activator));
+        constexpr unsigned char pressed[]={0x33,0xd2,0xe9};
+        constexpr unsigned char released[]={0xc6,0x81,0x51,0x1a,0,0,0,0xc3};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x8238d0),pressed,sizeof(pressed))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x8238e0),released,sizeof(released))==0,
+            "原生飞机切换入口不匹配");
+        reinterpret_cast<Switch>(base+0x8238d0)(reinterpret_cast<void*>(command.plane));
+        reinterpret_cast<Switch>(base+0x8238e0)(reinterpret_cast<void*>(command.plane));
+        require(read<unsigned char>(command.activator+0x2a1)!=0,"重建后无法恢复原生 SP 类别");
     }
 }
 std::string snapshotJson(const Command& command) {
@@ -200,12 +300,14 @@ void scaleAmmo(Addr activator,double ratio) {
 void execute(const Command& command) {
     verifyVersion();
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
-    if(command.op=="setup") {
+    // 补给重选需要重建当前组合，同时保留任务已经捕获的检查点。
+    // 此新命令只存在于源码候选；正式 DLL 保持不变，不能直接混装。
+    if(command.op=="setup" || command.op=="resupply_setup") {
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
         session.secondConfig=command.secondConfig;
         session.firstConfig=command.firstConfig;
         session.ratio=command.ratio;
-        checkpointValid=false;
+        if(command.op=="setup")checkpointValid=false;
         session.main=capture(command.activator,false,command.time);
         scaleAmmo(command.activator,session.ratio);
         session.special[0]=capture(command.activator,true,command.time);
@@ -269,6 +371,146 @@ void execute(const Command& command) {
         require(command.op=="snapshot","Unknown command");
     }
 }
+}
+
+// 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
+extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
+    return 0;
+}
+
+// 补给开始时取得原生输入所有权；成功、离开任务或检查点恢复时用 0,0 解绑。
+extern "C" __declspec(dllexport) int dualsp_resupply_control(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // Lua 绑定失败仍保留原生日志。
+    try {
+        static const dualsp::LuaApi bound; // 当前加载器的稳定栈接口。
+        api=&bound;
+        require(api->top(luaState)==2,"补给输入接口参数数量无效");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 零表示解绑。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 与机体共同核对身份。
+        require((plane==0)==(activator==0),"补给输入身份不完整");
+        if(plane) {
+            verifyVersion();
+            require(!supplyPlane,"上一轮补给输入尚未释放");
+            require(read<Addr>(plane+0x11a8)==activator,"补给输入机体不匹配");
+            installSupplyHooks();
+        }
+        supplyPlane=plane;supplyActivator=activator;supplyWidget=0;
+        nativeLog(plane?"RESUPPLY_INPUT_ARMED":"RESUPPLY_INPUT_RELEASED");
+        api->boolean(luaState,true);api->string(luaState,"",0);
+        return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("RESUPPLY_INPUT_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// Lua 的出击/补给初始化也必须在丢弃旧槽前完成音效收尾。
+extern "C" __declspec(dllexport) int dualsp_prepare_weapon_rebuild(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 失败返回明确错误，不清零或静音回退。
+    try {
+        static const dualsp::LuaApi bound; // 复用加载器接口。
+        api=&bound;
+        require(api->top(luaState)==2,"兵装重建收尾接口参数数量无效");
+        verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 当前玩家。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 当前武器组件。
+        finishSeekerAudio(plane,activator);
+        api->boolean(luaState,true);api->string(luaState,"",0);
+        return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("SEEKER_AUDIO_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 候选 5 的实际补给 YES 入口。只接受 Lua 在游戏线程已确认的页面与
+// 玩家绑定，不调用 MiniGamePhase 的结束通知，不替换原生关闭/成功流程。
+extern "C" __declspec(dllexport) int dualsp_resupply_takeoff(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 绑定失败时只能通过 native.log 报错。
+    try {
+        static const dualsp::LuaApi bound; // 复用专用加载器的 Lua 参数接口。
+        api=&bound;
+        require(api->top(luaState)==3,"补给起飞接口参数数量无效");
+        const auto widget=static_cast<Addr>(api->readInteger(luaState,1)); // 当前原生补给页。
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,2)); // 本次补给的玩家机体。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,3)); // 当前武器激活器。
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 已核对的游戏映像。
+        verifyVersion();
+        const auto table=read<Addr>(widget); // 用页面虚表核对类型，拒绝其他菜单对象。
+        require(read<Addr>(table+0x408)==base+0x6fa1f0 && read<Addr>(table+0x420)==base+0x6fc6d0,
+            "补给页面原生类型不匹配");
+        require(read<Addr>(widget+0x5c0)==plane && read<Addr>(widget+0x5c8)==activator &&
+            read<Addr>(plane+0x11a8)==activator,"补给页面与玩家武器不匹配");
+        require(supplyPlane==plane && supplyActivator==activator && supplyWidget==widget,
+            "补给 YES 页面没有独占原生输入");
+        const auto manager=read<Addr>(widget+0x288); // 原生 YES 会由此关闭菜单栈。
+        require(manager && read<int>(manager+0xf28)>0 && read<int>(manager+0xf28)<=64,
+            "补给页面没有活动的原生菜单栈");
+        constexpr unsigned char takeoff[]={0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x20,
+            0x48,0x8b,0xd9,0xb2,0x01,0x48,0x8b,0x89,0xc8,0x05,0,0,0xe8};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x6fc680),takeoff,sizeof(takeoff))==0,
+            "补给原生 YES 入口不匹配");
+        nativeLog(Json{{"event","RESUPPLY_NATIVE_YES_BEGIN"}}.dump());
+        // 原生 YES 依次清理武器状态、关闭 UI 栈并通知任务；不持有核心互斥锁，
+        // 因为关闭过程可以同步回调 Lua。返回值只代表调用返回，不能冒充补给成功。
+        using Takeoff=void(*)(void*);
+        reinterpret_cast<Takeoff>(base+0x6fc680)(reinterpret_cast<void*>(widget));
+        nativeLog(Json{{"event","RESUPPLY_NATIVE_YES_RETURNED"}}.dump());
+        api->boolean(luaState,true);api->string(luaState,"",0);
+        return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("RESUPPLY_NATIVE_YES_ERROR ")+error.what());
+        if(api) {
+            api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));
+            return 2;
+        }
+        return 0;
+    }
+}
+
+// 游戏线程只读采样，直接返回 Lua 值，不经过命令文件或 JSON。
+// 返回：成功、MSL就绪、SP1就绪、SP2就绪、错误文字；不修改武器或核心缓存。
+extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        // 接口解析每个进程只做一次；加载器不匹配则明确报错。
+        static const dualsp::LuaApi bound;
+        api=&bound;
+        std::lock_guard<std::mutex> guard(nativeExecutionMutex);
+        require(api->top(luaState)==4,"HUD 内存接口参数数量无效");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
+        const double time=api->readNumber(luaState,3);
+        const int dual=static_cast<int>(api->readInteger(luaState,4));
+        require(dual==0 || dual==1,"HUD 双 SP 标志无效");
+        require(std::isfinite(time) && time>=0,"HUD 游戏时间无效");
+        verifyVersion();
+        require(read<Addr>(plane+0x11a8)==activator,"HUD 激活器不属于当前玩家机体");
+        const auto main=capture(activator,false,time),special=capture(activator,true,time);
+        const bool mainReady=hasReadyRound(main,time);
+        std::array<bool,2> spReady={hasReadyRound(special,time),false};
+        if(dual) {
+            require(session.plane==plane && session.activator==activator,"HUD 双 SP 会话不匹配");
+            require(session.active==0 || session.active==1,"HUD 活动 SP 无效");
+            spReady[session.active]=hasReadyRound(special,time);
+            spReady[1-session.active]=hasReadyRound(session.special[1-session.active],time);
+        }
+        api->boolean(luaState,true);api->boolean(luaState,mainReady);
+        api->boolean(luaState,spReady[0]);api->boolean(luaState,spReady[1]);api->string(luaState,"",0);
+        return 5;
+    }catch(const std::exception& error) {
+        if(api) {
+            api->boolean(luaState,false);
+            for(int index=0;index<3;++index)api->boolean(luaState,false);
+            api->string(luaState,error.what(),std::strlen(error.what()));
+            return 5;
+        }
+        // Lua 接口本身不能绑定时无法压栈；调度器会因缺少成功值明确显示 HUD 错误。
+        nativeLog(std::string("HUD_LUA_API_ERROR ")+error.what());
+        return 0;
+    }
 }
 
 extern "C" __declspec(dllexport) int lab_native_execute(void*) {

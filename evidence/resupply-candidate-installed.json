@@ -1,0 +1,29 @@
+{
+  "version": "0.1.7-resupply-candidate.1",
+  "installed_at": "2026-10-13T11:10:34.825604+08:00",
+  "game_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7",
+  "backup": "E:\\AC7_MultiSP\\backup\\resupply-candidate-20261013-111034-825604",
+  "files": {
+    "bin/DualSP.dll": "11A7F4BCA69E061E696DBB0634C76AF0B8F89EB179F5DDF256E047E69F31945A",
+    "bin/DualSPUI.dll": "A617C9D653313A3F5ECF918F165E1D5E7F0D707C2401DB5C0394A4A91214D110",
+    "Scripts/main.lua": "76EE839479A540D79BA413E31D311867015FA4131F2A3E0C40B4EF707A93C205",
+    "Scripts/json.lua": "0EACCDA57FABC0330736DE25F45CF589821A42B5E0FE02E4E3125F7DC0BF2B7E",
+    "Scripts/weapon_cycle.lua": "3A3BC4EC9FD2B56CD0E466765E54DD5EFE41D8252D5A7FAAD12FA738AAE11F45",
+    "Scripts/native_hud.lua": "6662280DCD681B1E0F4FCCD68641B3A603F7B139274033CA970049690B6B88C4",
+    "Scripts/loadout_flow.lua": "A8AB21EEA59F0B3312CA51A45DA96CCE173590AAD0EA10585067B3275DDD3662",
+    "Scripts/native_loadout.lua": "5DB71EDA3362AEE9B3B4D16C08539E65D119EF094847E9F27B0B96B9C8E6499A"
+  },
+  "candidate_core_exports_verified": true,
+  "lua54_syntax_compiled_without_execution": true,
+  "old_mod_backup_verified": true,
+  "profiles_preserved": true,
+  "saves_and_graphics_preserved": true,
+  "save_and_graphics_file_count": 1,
+  "formal_core_preserved": true,
+  "game_exe_preserved": true,
+  "mod_list_preserved": true,
+  "baseline_restore_payload_verified": true,
+  "test_modules_run": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false
+}

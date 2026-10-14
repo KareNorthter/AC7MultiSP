@@ -1,0 +1,1692 @@
+{
+  "steam_build": 9855922,
+  "agent_started_game": false,
+  "runtime_slots_verified": false,
+  "pages": [
+    {
+      "asset": "Nimbus/Content/UI/Menu/CommonWidget/HangarAircraftWeaponNameLong.uasset",
+      "sha256": "5a1e7513e463693f7de4a2fe553156660b818cbd673094c8358d250178645f7f",
+      "controls": [
+        {
+          "name": "Name",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_6",
+          "style": {
+            "Padding": {
+              "Top": -1.0
+            },
+            "HorizontalAlignment": "HAlign_Left",
+            "VerticalAlignment": "VAlign_Top",
+            "Parent": 14,
+            "Content": 34
+          }
+        },
+        {
+          "name": "Name",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_6",
+          "style": {
+            "Padding": {
+              "Top": -1.0
+            },
+            "HorizontalAlignment": "HAlign_Left",
+            "VerticalAlignment": "VAlign_Top",
+            "Parent": 16,
+            "Content": 35
+          }
+        }
+      ]
+    },
+    {
+      "asset": "Nimbus/Content/UI/Menu/CommonWidget/HangarAircraftAllWeaponsAmmo.uasset",
+      "sha256": "bbe44b7864483583999a8a767add879ffc411197a0f204c2c4e1779c1f17e04f",
+      "controls": [
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_6",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 9,
+            "Content": 80
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_6",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 9,
+            "Content": 81
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 11,
+            "Content": 82
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 11,
+            "Content": 83
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_2",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 13,
+            "Content": 84
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_2",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 13,
+            "Content": 85
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_3",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 15,
+            "Content": 86
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_3",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 15,
+            "Content": 87
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_4",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 17,
+            "Content": 88
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_4",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 17,
+            "Content": 89
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_5",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 19,
+            "Content": 90
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_5",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 19,
+            "Content": 91
+          }
+        }
+      ]
+    },
+    {
+      "asset": "Nimbus/Content/UI/Menu/LightMenu/LightMenuBase.uasset",
+      "sha256": "0444379abbb4e24d9c2d794221f6438dedaa39cc5a426ceb4ba5ca0f5ce97799",
+      "controls": [
+        {
+          "name": "DescriptionText",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -729.9609375,
+                "Top": 269.5,
+                "Right": 1066.0,
+                "Bottom": 152.02401733398438
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 213
+          }
+        },
+        {
+          "name": "ItemText0",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -328.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 214
+          }
+        },
+        {
+          "name": "ItemText1",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -288.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 215
+          }
+        },
+        {
+          "name": "ItemText2",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -248.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 220
+          }
+        },
+        {
+          "name": "TitleText",
+          "tree": "WidgetTree",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -759.5,
+                "Top": -444.0,
+                "Right": 800.0,
+                "Bottom": 55.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 228
+          }
+        },
+        {
+          "name": "DescriptionText",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -729.9609375,
+                "Top": 269.5,
+                "Right": 1066.0,
+                "Bottom": 152.02401733398438
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 6,
+            "Content": 230
+          }
+        },
+        {
+          "name": "ItemText0",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -328.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 6,
+            "Content": 231
+          }
+        },
+        {
+          "name": "ItemText1",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -288.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 6,
+            "Content": 232
+          }
+        },
+        {
+          "name": "ItemText2",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -248.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 6,
+            "Content": 237
+          }
+        },
+        {
+          "name": "TitleText",
+          "tree": "WidgetTree_0",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -759.5,
+                "Top": -444.0,
+                "Right": 800.0,
+                "Bottom": 55.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 6,
+            "Content": 245
+          }
+        }
+      ]
+    },
+    {
+      "asset": "Nimbus/Content/UI/Menu/LightMenu/LightMenuItemIconCategory.uasset",
+      "sha256": "3169e821a8a43c3733a36c4c6b2c812812498ec064619db864a6610e6e912edb",
+      "controls": []
+    },
+    {
+      "asset": "Nimbus/Content/UI/Menu/LightMenu/LightMenuItemIconStatus.uasset",
+      "sha256": "44681b2f278b296fd1d30d10c9c30ca535129a4055a07735e333f46f7c6f4422",
+      "controls": [
+        {
+          "name": "ItemIconL0",
+          "tree": "WidgetTree",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -318.5,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 4,
+            "Content": 34
+          }
+        },
+        {
+          "name": "ItemIconL1",
+          "tree": "WidgetTree",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -279.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 4,
+            "Content": 35
+          }
+        },
+        {
+          "name": "ItemIconL2",
+          "tree": "WidgetTree",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -239.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 4,
+            "Content": 40
+          }
+        },
+        {
+          "name": "ItemIconL0",
+          "tree": "WidgetTree_0",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -318.5,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 48
+          }
+        },
+        {
+          "name": "ItemIconL1",
+          "tree": "WidgetTree_0",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -279.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 49
+          }
+        },
+        {
+          "name": "ItemIconL2",
+          "tree": "WidgetTree_0",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -239.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 5,
+            "Content": 54
+          }
+        }
+      ]
+    },
+    {
+      "asset": "Nimbus/Content/UI/Menu/Hangar/CampaignHangarWeapon.uasset",
+      "sha256": "632c25e75326a8f9485460c80ea1310842b250733bfb9761e6ba0215f38459db",
+      "controls": [
+        {
+          "name": "ItemIconL0",
+          "tree": "WidgetTree_2",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -318.5,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 9,
+            "Content": 285
+          }
+        },
+        {
+          "name": "ItemIconL1",
+          "tree": "WidgetTree_2",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -279.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 9,
+            "Content": 286
+          }
+        },
+        {
+          "name": "ItemIconL2",
+          "tree": "WidgetTree_2",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -758.5,
+                "Top": -239.0,
+                "Right": 20.0,
+                "Bottom": 20.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 9,
+            "Content": 291
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_8",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 42,
+            "Content": 309
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_8",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 42,
+            "Content": 310
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_8",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 42,
+            "Content": 311
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_8",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 42,
+            "Content": 315
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_10",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 44,
+            "Content": 316
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_10",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 44,
+            "Content": 317
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_10",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 44,
+            "Content": 318
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_10",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 44,
+            "Content": 322
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_12",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 46,
+            "Content": 323
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_12",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 46,
+            "Content": 324
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_12",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 46,
+            "Content": 325
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_12",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 46,
+            "Content": 329
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_14",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 48,
+            "Content": 330
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_14",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 48,
+            "Content": 331
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_14",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 48,
+            "Content": 332
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_14",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 48,
+            "Content": 336
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_16",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 50,
+            "Content": 337
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_16",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 50,
+            "Content": 338
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_16",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 50,
+            "Content": 339
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_16",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 50,
+            "Content": 343
+          }
+        },
+        {
+          "name": "BarA",
+          "tree": "WidgetTree_18",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 52,
+            "Content": 344
+          }
+        },
+        {
+          "name": "BarB",
+          "tree": "WidgetTree_18",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 52,
+            "Content": 345
+          }
+        },
+        {
+          "name": "BarC",
+          "tree": "WidgetTree_18",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 160.0,
+                "Bottom": 17.0
+              }
+            },
+            "Parent": 52,
+            "Content": 346
+          }
+        },
+        {
+          "name": "Transition",
+          "tree": "WidgetTree_18",
+          "class": "Image",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_171",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Right": 162.0,
+                "Bottom": 18.0
+              }
+            },
+            "ZOrder": 2,
+            "Parent": 52,
+            "Content": 350
+          }
+        },
+        {
+          "name": "DescriptionText",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -729.9609375,
+                "Top": 269.5,
+                "Right": 1066.0,
+                "Bottom": 152.02401733398438
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 7,
+            "Content": 654
+          }
+        },
+        {
+          "name": "ItemText0",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -328.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 7,
+            "Content": 655
+          }
+        },
+        {
+          "name": "ItemText1",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -288.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 7,
+            "Content": 656
+          }
+        },
+        {
+          "name": "ItemText2",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -700.5,
+                "Top": -248.0,
+                "Right": 312.0,
+                "Bottom": 37.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 7,
+            "Content": 661
+          }
+        },
+        {
+          "name": "TitleText",
+          "tree": "WidgetTree_1",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_0",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": -759.5,
+                "Top": -444.0,
+                "Right": 800.0,
+                "Bottom": 55.0
+              },
+              "Anchors": {
+                "Minimum": {
+                  "Minimum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                },
+                "Maximum": {
+                  "Maximum": {
+                    "X": 0.5,
+                    "Y": 0.5
+                  }
+                }
+              }
+            },
+            "Parent": 7,
+            "Content": 669
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_26",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 18,
+            "Content": 673
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_26",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 18,
+            "Content": 674
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_21",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 20,
+            "Content": 675
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_21",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 20,
+            "Content": 676
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_22",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 22,
+            "Content": 677
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_22",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 22,
+            "Content": 678
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_23",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 24,
+            "Content": 679
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_23",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 24,
+            "Content": 680
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_24",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 26,
+            "Content": 681
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_24",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 26,
+            "Content": 682
+          }
+        },
+        {
+          "name": "WeaponsAmmo",
+          "tree": "WidgetTree_25",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Left": 58.0,
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 28,
+            "Content": 683
+          }
+        },
+        {
+          "name": "WeaponsName",
+          "tree": "WidgetTree_25",
+          "class": "TextBlock",
+          "slot_class": "CanvasPanelSlot",
+          "parent": "CanvasPanel_2",
+          "style": {
+            "LayoutData": {
+              "Offsets": {
+                "Bottom": 32.0
+              }
+            },
+            "Parent": 28,
+            "Content": 684
+          }
+        },
+        {
+          "name": "Name",
+          "tree": "WidgetTree_19",
+          "class": "TextBlock",
+          "slot_class": "HorizontalBoxSlot",
+          "parent": "HorizontalBox_6",
+          "style": {
+            "Padding": {
+              "Top": -1.0
+            },
+            "HorizontalAlignment": "HAlign_Left",
+            "VerticalAlignment": "VAlign_Top",
+            "Parent": 258,
+            "Content": 689
+          }
+        }
+      ]
+    }
+  ]
+}

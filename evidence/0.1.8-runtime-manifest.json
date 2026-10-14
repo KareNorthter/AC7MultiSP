@@ -1,0 +1,63 @@
+{
+  "version": "0.1.8",
+  "steam_build": 9855922,
+  "validation": "用户初步实玩通过，长期及更大范围测试待完成",
+  "based_on": "0.1.7-management-candidate.7",
+  "runtime_logic_unchanged_from_candidate7": true,
+  "installed_at": "2026-10-14T09:01:56.150558+08:00",
+  "runtime_files": [
+    {
+      "source": "dist/DualSP/cores/0.1.8/DualSP.dll",
+      "installed_path": "bin/DualSP.dll",
+      "sha256": "3FFF19496467F1616DD2DB7F5434D2008D84C4E1375C16C51D7F49AE93262A49"
+    },
+    {
+      "source": "dist/DualSP/bin/DualSPUI.dll",
+      "installed_path": "bin/DualSPUI.dll",
+      "sha256": "24033AFB2377781B63B809E166E2161AF5341C7D5542F3E12E3CE931A543F174"
+    },
+    {
+      "source": "dist/DualSP/Scripts/main.lua",
+      "installed_path": "Scripts/main.lua",
+      "sha256": "52EBA8930F068939F4F9E63398CB497D249F03A9946760630454248E7B18BBC9"
+    },
+    {
+      "source": "dist/DualSP/Scripts/json.lua",
+      "installed_path": "Scripts/json.lua",
+      "sha256": "0EACCDA57FABC0330736DE25F45CF589821A42B5E0FE02E4E3125F7DC0BF2B7E"
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_cycle.lua",
+      "installed_path": "Scripts/weapon_cycle.lua",
+      "sha256": "3A3BC4EC9FD2B56CD0E466765E54DD5EFE41D8252D5A7FAAD12FA738AAE11F45"
+    },
+    {
+      "source": "dist/DualSP/Scripts/native_hud.lua",
+      "installed_path": "Scripts/native_hud.lua",
+      "sha256": "5756B72A423C5D84B244A4DE6ECF7018D0CEBF83C0A4A1E84BBE29A87DEF2A23"
+    },
+    {
+      "source": "dist/DualSP/Scripts/loadout_flow.lua",
+      "installed_path": "Scripts/loadout_flow.lua",
+      "sha256": "2EC44831E9C61079918139E379AF7B25D66DE36843CF0A48567C98735732B048"
+    },
+    {
+      "source": "dist/DualSP/Scripts/native_loadout.lua",
+      "installed_path": "Scripts/native_loadout.lua",
+      "sha256": "D017EA7868A5F8D01F171B22B5D4AF59E5A6635B07D2579A24BDC65A182F6B20"
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_names.lua",
+      "installed_path": "Scripts/weapon_names.lua",
+      "sha256": "44B74D99704AE504821CFA8A3E03F04D21C7230DD9BAAE6CE3741516ADB4116D"
+    },
+    {
+      "source": "dist/DualSP/Scripts/weapon_presentation.lua",
+      "installed_path": "Scripts/weapon_presentation.lua",
+      "sha256": "529C22BD1536AA7FFCBE460C007798CF5CD1D619CFA40FB4DDC55DC45B3D2884"
+    }
+  ],
+  "installation_entry": "python -X utf8 src/install-resupply-candidate.py --management",
+  "protected_legacy_core": "dist/DualSP/bin/DualSP.dll",
+  "new_archive_created": false
+}

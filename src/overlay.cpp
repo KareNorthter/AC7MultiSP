@@ -6,11 +6,15 @@
 #include <atomic>
 #include <chrono>
 #include <vector>
+#include <array>
+#include <algorithm>
+#include <iterator>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
 #include "MinHook.h"
 #include "panel_pointer.hpp"
+#include "ue4ss_lua_api.hpp"
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"xinput.lib")
@@ -42,9 +46,20 @@ RECT restoreClip{};
 bool restoreClipValid=false;
 dualsp::PanelPointer pointer;
 std::atomic<bool> startup{false};
-int draftA=0,draftB=-1,lastPlane=-1,lastRequest=-1,lastClose=-1;
-float draftRatio=.5f;bool showHud=true,ignoreUnlocks=false,nativeLoadoutEnabled=true;float hudScale=1;
-std::string notice;
+// 管理草稿与保存回执；不再维护或提交 SP1/SP2 兵装选择。
+int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
+float draftRatio=.5f;
+bool showHud=true,centralHint=true,directSelectEnabled=true,ignoreUnlocks=false;
+std::array<int,3> draftKeys{49,50,51};
+std::string draftLanguage="zh",notice,managementError;
+// 日志只在页面打开或手动刷新时读取。
+bool logsLoaded=false;
+std::string modLogText,nativeLogText,logError;
+// 输入函数声明供窗口消息使用；实现与管理页集中在后文。
+const char* tr(const char* zh,const char* en);
+void loadManagementDraft();
+void captureKeyboardKey(int key);
+bool directInputEnabled();
 void enqueue(Json action) {std::lock_guard<std::mutex> guard(queueMutex);actions.push_back(std::move(action));}
 bool gameFocused() {return gameWindow && GetForegroundWindow()==GetAncestor(gameWindow,GA_ROOT);}
 HCURSOR WINAPI panelSetCursor(HCURSOR requested) {
@@ -80,22 +95,37 @@ void togglePanel(bool open) {
         if(originalClipCursor)originalClipCursor(gameFocused()&&clipped?&clip:nullptr);
         if(imguiContext){ImGui::GetIO().ClearInputKeys();ImGui::GetIO().ClearInputMouse();}
     }
+    if(!open)captureSlot=-1;
     enqueue({{"type",open?"open":"close"}});
     if(open) {
-        const auto p=state.value("profile",Json::object());
-        draftA=p.value("a",0);draftB=p.value("b",-1);draftRatio=p.value("ratio",.5f);
-        showHud=state.value("hud",true);hudScale=state.value("hud_scale",1.0f);ignoreUnlocks=state.value("ignore_unlocks",false);
-        nativeLoadoutEnabled=state.value("native_loadout_enabled",true);
-        notice.clear();
+        notice.clear();captureSlot=-1;managementError.clear();
+        if(state.value("management_protocol",0)==1) {
+            try {loadManagementDraft();}
+            catch(const std::exception& error){managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());}
+        }
     }
 }
 LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
+    // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;captureSlot=-1;}
+    if((msg==WM_KEYDOWN||msg==WM_KEYUP)&&suppressedCaptureKey==static_cast<int>(w)) {
+        if(msg==WM_KEYUP)suppressedCaptureKey=0;
+        return 0;
+    }
     if(msg==WM_KEYDOWN && !(l&(1LL<<30))) {
+        // 捕获时不让同一个按键顺带激活按钮、关闭页面或触发游戏操作。
+        if(panel&&captureSlot>=0){suppressedCaptureKey=static_cast<int>(w);captureKeyboardKey(static_cast<int>(w));return 0;}
         if(w==VK_F8){togglePanel(!panel);return 0;}
-        if(w==VK_F9 && !panel){enqueue({{"type","cycle"}});return 0;}
-        if(w==VK_ESCAPE && panel){togglePanel(false);return 0;}
+        if(w==VK_ESCAPE&&panel){togglePanel(false);return 0;}
+        if(directInputEnabled()) {
+            const auto keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
+            for(int slot=0;slot<3;++slot)if(keys.at(slot).get<int>()==static_cast<int>(w)) {
+                enqueue({{"type","select_weapon"},{"target",slot}});break;
+            }
+        }
+        // 直接选择键继续交给游戏原生映射；冲突由用户自行处理。
     }
     // A HUD is a passive overlay. Feeding its mouse messages into ImGui would
     // let the backend capture the mouse and change the native menu's cursor.
@@ -169,127 +199,240 @@ bool init(IDXGISwapChain* swap) {
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
-std::string codeLabel(const Json& weapon) {
-    auto code=weapon.value("code",std::string("?"));
-    for(auto& c:code)c=static_cast<char>(toupper(static_cast<unsigned char>(c)));
-    return code;
+// 管理界面的文字按用户选择显示；日志正文保留记录时的原文。
+const char* tr(const char* zh,const char* en) {return draftLanguage=="en"?en:zh;}
+
+// 单键绑定支持常用键盘键；F8 为管理入口，Esc 为改键取消键。
+bool supportedKey(int key) {
+    return (key>=48&&key<=57)||(key>=65&&key<=90)||(key>=96&&key<=111)
+        ||(key>=112&&key<=135&&key!=VK_F8)||(key>=186&&key<=192)||(key>=219&&key<=222)
+        ||key==VK_BACK||key==VK_TAB||key==VK_RETURN||key==VK_SPACE
+        ||(key>=VK_PRIOR&&key<=VK_DOWN)||key==VK_INSERT||key==VK_DELETE;
 }
-void refreshState() {
-    static uint64_t consumedGeneration{};
-    if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
-    try {
-        {std::lock_guard<std::mutex> guard(publishedMutex);
-            state=publishedState;consumedGeneration=publishedGeneration.load();}
-        const int sequence=state.value("sequence",0);
-        if(sequence!=lastSequence){lastSequence=sequence;lastControllerUpdate=GetTickCount64();}
-        const int request=state.value("request_open",0);
-        if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
-        const int close=state.value("request_close",0);
-        if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
-        const int plane=state.value("plane_id",0);
-        if(plane!=lastPlane) {
-            lastPlane=plane;const auto p=state.value("profile",Json::object());
-            draftA=p.value("a",0);draftB=p.value("b",-1);draftRatio=p.value("ratio",.5f);
-        }
-    }catch(const Json::exception& e){notice=std::string("界面数据错误：")+e.what();}
-}
-void weaponIcon(ImDrawList* draw,ImVec2 center,const std::string& code,float scale,ImU32 color) {
-    const bool bomb=code.find("GB")!=std::string::npos || code.find("FF")!=std::string::npos || code.find("DB")!=std::string::npos;
-    if(bomb) {draw->AddEllipse(center,{10*scale,25*scale},color,0,24,1.7f);draw->AddLine({center.x-12*scale,center.y-18*scale},{center.x+12*scale,center.y-18*scale},color,2);}
-    else if(code=="EML"||code=="TLS"||code=="PLSL") {
-        draw->AddRect({center.x-17*scale,center.y-8*scale},{center.x+17*scale,center.y+8*scale},color,2.0f,2.0f,ImDrawFlags_None);
-        for(int k=-1;k<=1;++k)draw->AddLine({center.x+20*scale,center.y+k*6*scale},{center.x+39*scale,center.y+k*6*scale},color,1.5f);
-    }else {
-        draw->AddLine({center.x,center.y-28*scale},{center.x,center.y+24*scale},color,3*scale);
-        draw->AddTriangle({center.x,center.y-30*scale},{center.x-6*scale,center.y-15*scale},{center.x+6*scale,center.y-15*scale},color,1.5f);
-        draw->AddLine({center.x-14*scale,center.y+15*scale},{center.x+14*scale,center.y+15*scale},color,2*scale);
+
+// 返回稳定的键位名称，不依赖 Windows 显示语言。
+std::string keyLabel(int key) {
+    if((key>='0'&&key<='9')||(key>='A'&&key<='Z'))return std::string(1,static_cast<char>(key));
+    if(key>=VK_F1&&key<=VK_F24)return "F"+std::to_string(key-VK_F1+1);
+    if(key>=VK_NUMPAD0&&key<=VK_NUMPAD9)return std::string(tr("小键盘 ","Numpad "))+std::to_string(key-VK_NUMPAD0);
+    switch(key) {
+        case VK_BACK:return "Backspace";case VK_TAB:return "Tab";case VK_RETURN:return "Enter";
+        case VK_SPACE:return tr("空格","Space");case VK_PRIOR:return "Page Up";case VK_NEXT:return "Page Down";
+        case VK_END:return "End";case VK_HOME:return "Home";case VK_LEFT:return tr("左方向键","Left Arrow");
+        case VK_UP:return tr("上方向键","Up Arrow");case VK_RIGHT:return tr("右方向键","Right Arrow");
+        case VK_DOWN:return tr("下方向键","Down Arrow");case VK_INSERT:return "Insert";case VK_DELETE:return "Delete";
+        case VK_MULTIPLY:return "Numpad *";case VK_ADD:return "Numpad +";case VK_SEPARATOR:return "Numpad Separator";
+        case VK_SUBTRACT:return "Numpad -";case VK_DECIMAL:return "Numpad .";case VK_DIVIDE:return "Numpad /";
+        case VK_OEM_1:return ";";case VK_OEM_PLUS:return "=";case VK_OEM_COMMA:return ",";case VK_OEM_MINUS:return "-";
+        case VK_OEM_PERIOD:return ".";case VK_OEM_2:return "/";case VK_OEM_3:return "`";
+        case VK_OEM_4:return "[";case VK_OEM_5:return "\\";case VK_OEM_6:return "]";case VK_OEM_7:return "'";
     }
+    return tr("不支持的键","Unsupported key");
 }
-void chooseSlot(int slot,const Json& weapons,bool enabled,float width) {
-    ImGui::BeginChild(slot==0?"SlotA":"SlotB",{width,190},ImGuiChildFlags_Borders);
-    ImGui::TextColored({.37f,.89f,.83f,1},"%s",slot==0?"SP 1 / 第一特殊兵装":"SP 2 / 第二特殊兵装");
-    int& selected=slot==0?draftA:draftB;
-    std::string title=selected<0?"不搭载 / 单 SP":codeLabel(weapons.at(selected));
-    ImGui::BeginDisabled(!enabled);
-    if(ImGui::BeginCombo(slot==0?"##weaponA":"##weaponB",title.c_str())) {
-        if(slot==1 && ImGui::Selectable("不搭载 / 单 SP",selected<0))selected=-1;
-        for(size_t i=0;i<weapons.size();++i) {
-            const auto& item=weapons[i];bool owned=item.value("owned",false);
-            const bool other=(slot==0?draftB:draftA)==static_cast<int>(i);
-            const bool compatible=item.value("available",true)||(slot==0&&draftB<0);
-            auto label=codeLabel(item)+(other?"  · 已用于另一槽位":(!owned?"  · 未购买":(!compatible?"  · 暂不支持双挂载":"")));
-            ImGui::BeginDisabled(!owned||other||!compatible);
-            if(ImGui::Selectable(label.c_str(),selected==static_cast<int>(i)))selected=static_cast<int>(i);
-            ImGui::EndDisabled();
-        }
-        ImGui::EndCombo();
+
+// 三个动作不可共用同一键；直接选择与原生键位的冲突由用户管理。
+bool bindingsValid() {
+    for(int key:draftKeys)if(!supportedKey(key))return false;
+    return draftKeys[0]!=draftKeys[1]&&draftKeys[0]!=draftKeys[2]&&draftKeys[1]!=draftKeys[2];
+}
+
+// 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
+bool directInputEnabled() {
+    return !panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==1
+        &&state.value("direct_select",false)&&state.value("direct_selection_available",false);
+}
+
+// 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
+void captureKeyboardKey(int key) {
+    if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
+    if(!supportedKey(key)){notice=tr("此键不能绑定，请使用普通单键；F8 和 Esc 为保留键。","Choose a regular single key. F8 and Esc are reserved.");return;}
+    for(int slot=0;slot<3;++slot)if(slot!=captureSlot&&draftKeys[slot]==key) {
+        notice=tr("此键已绑定另一武器，请选择其他键。","This key is already assigned to another weapon.");return;
     }
-    ImGui::EndDisabled();
-    if(selected>=0) {
-        const auto& item=weapons.at(selected);const int stock=item.value("max",0);
-        const int loaded=draftB<0?stock:std::max(1,static_cast<int>(stock*draftRatio));
-        ImGui::Text("%s",item.value("description",std::string()).c_str());
-        ImGui::Text("携带 %d   /   单挂载 %d",loaded,stock);
-        weaponIcon(ImGui::GetWindowDrawList(),{ImGui::GetWindowPos().x+width-55,ImGui::GetWindowPos().y+135},codeLabel(item),1,IM_COL32(100,215,201,255));
-    }else ImGui::TextWrapped("只使用第一种 SP，保留原始完整载弹量。");
-    ImGui::EndChild();
+    draftKeys[captureSlot]=key;captureSlot=-1;notice.clear();
 }
+
+// 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
+void loadManagementDraft() {
+    draftLanguage=state.value("language",std::string("zh"));
+    showHud=state.value("hud",true);centralHint=state.value("central_hint",true);
+    directSelectEnabled=state.value("direct_select",true);ignoreUnlocks=state.value("ignore_unlocks",false);
+    draftRatio=state.value("ammo_ratio",.5f);
+    const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
+    if(keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
+    for(int slot=0;slot<3;++slot)draftKeys[slot]=keys.at(slot).get<int>();
+    if(!bindingsValid())throw std::runtime_error("Management keyboard bindings are invalid");
+    saveRequest=std::max(saveRequest,state.value("settings_response",0));
+    captureSlot=-1;logsLoaded=false;
+}
+
+// 最多读取每份日志最后 64 KiB；超出时丢掉截断首行，不在飞行中读日志。
+std::string readLogTail(const char* filename) {
+    const auto file=modRoot()/filename; // 路径限定为模组自己的两份日志。
+    std::ifstream input(file,std::ios::binary);
+    if(!input)throw std::runtime_error(std::string("Cannot read log: ")+filename);
+    input.seekg(0,std::ios::end);
+    const std::streamoff end=input.tellg(); // 负数表示读取定位失败，不能冒充空日志。
+    if(end<0)throw std::runtime_error(std::string("Cannot locate log end: ")+filename);
+    const std::streamoff start=std::max<std::streamoff>(0,end-65536);
+    input.seekg(start);
+    if(start>0){std::string partial;std::getline(input,partial);}
+    std::string result((std::istreambuf_iterator<char>(input)),std::istreambuf_iterator<char>());
+    if(input.bad())throw std::runtime_error(std::string("Cannot read log contents: ")+filename);
+    return result;
+}
+
+// 日志只有打开页面或用户点击刷新时读取，失败保持可见。
+void refreshLogs() {
+    logError.clear();modLogText.clear();nativeLogText.clear();logsLoaded=true;
+    try {modLogText=readLogTail("mod.log");nativeLogText=readLogTail("native.log");}
+    catch(const std::exception& error){logError=error.what();nativeLog(std::string("MANAGEMENT_LOG_ERROR ")+error.what());}
+}
+
+// 保存按钮只提交完整参数；收到游戏线程的请求回执后才显示保存成功。
+void saveManagementSettings() {
+    pendingSave=++saveRequest;
+    enqueue({{"type","settings"},{"request",pendingSave},{"language",draftLanguage},{"hud",showHud},
+        {"central_hint",centralHint},{"direct_select",directSelectEnabled},{"ignore_unlocks",ignoreUnlocks},
+        {"keyboard_keys",draftKeys},{"ammo_ratio",draftRatio}});
+    notice=tr("正在保存…","Saving...");
+}
+
+// 只提供功能开关、参数、按键与日志；兵装选择统一留在原生页面。
 void drawPanel() {
-    const auto display=ImGui::GetIO().DisplaySize;
-    const float width=std::min(920.f,display.x-40),height=std::min(690.f,display.y-35);
+    const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
+    const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin("DUAL SP / 兵装配置",nullptr,ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(ImGui::BeginTabBar("DualSPTabs")) {
-        if(ImGui::BeginTabItem("兵装选择")) {
-            ImGui::TextColored({.37f,.89f,.83f,1},"%s",state.value("plane_name",std::string("正在读取机体")).c_str());
-            ImGui::SameLine();ImGui::BeginDisabled(!state.value("allow_edit",false)||draftB<0);
-            if(ImGui::SmallButton("交换两个槽位"))std::swap(draftA,draftB);ImGui::EndDisabled();
-            ImGui::TextDisabled("普通导弹始终保留。为两个槽位选择不同的特殊兵装。");
-            const auto weapons=state.value("weapons",Json::array());
-            const bool editable=state.value("allow_edit",false)&&!state.contains("error");
-            if(weapons.size()==3) {
-                draftA=std::clamp(draftA,0,2);draftB=std::clamp(draftB,-1,2);
-                const float col=(ImGui::GetContentRegionAvail().x-14)/2;
-                chooseSlot(0,weapons,editable,col);ImGui::SameLine();chooseSlot(1,weapons,editable,col);
-                ImGui::Separator();
-                ImGui::BeginDisabled(!editable||draftB<0);
-                float percent=draftRatio*100.f;
-                if(ImGui::SliderFloat("双挂载配弹比例",&percent,10.f,100.f,"%.0f%%",ImGuiSliderFlags_AlwaysClamp))draftRatio=percent/100.f;
-                ImGui::EndDisabled();
-                ImGui::TextDisabled("默认 50%% 为本模组平衡规则；AC8 的精确配弹比例尚未确认。");
-                const auto stats=weapons.at(draftA).value("stats",Json::array());
-                const char* labels[]={"对空","对地","制导","装填","射程","范围"};
-                if(stats.size()==6)for(int k=0;k<6;++k){ImGui::Text("%s",labels[k]);ImGui::SameLine(90);ImGui::ProgressBar(std::clamp(stats[k].get<float>()/100.f,0.f,1.f),{width-160,5},"");}
-                if(!editable)ImGui::TextWrapped("本次出击的兵装已经锁定。回到机库后可重新选择。");
-                const bool valid=weapons.at(draftA).value("owned",false)&&(draftB<0||(draftB!=draftA&&weapons.at(draftB).value("owned",false)));
-                ImGui::BeginDisabled(!editable||!valid);
-                if(ImGui::Button("确认装备 / 应用",{230,42})) {
-                    enqueue({{"type","apply"},{"plane_id",state.value("plane_id",0)},{"a",draftA},{"b",draftB},{"ratio",draftRatio}});
-                    notice="正在应用兵装…";
-                }
-                ImGui::EndDisabled();ImGui::SameLine();if(ImGui::Button("取消 / 返回",{170,42}))togglePanel(false);
-            } else ImGui::TextWrapped("当前机体数据尚未就绪，请在机库选择机体后打开此界面。");
+    ImGui::Begin(tr("DualSP 管理###DualSPManagement","DualSP Management###DualSPManagement"),nullptr,
+        ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
+    if(state.value("management_protocol",0)!=1||!managementError.empty()) {
+        ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
+        if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
+        if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
+        ImGui::End();return;
+    }
+    // 语言切换只影响界面草稿，点击保存后持久化；稳定 ID 保留当前页和焦点。
+    int language=draftLanguage=="en"?1:0;
+    ImGui::SetNextItemWidth(210);
+    if(ImGui::Combo("Language / 语言",&language,"中文\0English\0"))draftLanguage=language==1?"en":"zh";
+    ImGui::Separator();
+    if(ImGui::BeginTabBar("ManagementTabs")) {
+        if(ImGui::BeginTabItem(tr("功能与参数###Features","Features & Parameters###Features"))) {
+            ImGui::Checkbox(tr("右下双 SP 列表与就绪名称变淡###HUD","Weapon list and readiness dimming###HUD"),&showHud);
+            ImGui::Checkbox(tr("中央提示：常驻当前武器简称###Central","Persistent current weapon abbreviation###Central"),&centralHint);
+            ImGui::TextWrapped("%s",tr("关闭中央常驻提示后，恢复游戏原本的短暂武器切换提示。","Disabling the persistent hint restores the game's temporary weapon switch message."));
+            ImGui::Checkbox(tr("启用直接选择武器###Direct","Enable direct weapon selection###Direct"),&directSelectEnabled);
+            ImGui::TextWrapped("%s",tr("原游戏循环切换键继续可用。兵装选择只能通过原生出击或补给页面完成。","The original cycling key remains available. Choose loadouts through the game's departure or resupply page."));
+            float percent=draftRatio*100.f; // 全局配弹参数只在下一次原生确认时应用。
+            if(ImGui::SliderFloat(tr("双 SP 配弹比例###Ratio","Dual SP ammo ratio###Ratio"),&percent,10.f,100.f,"%.0f%%",ImGuiSliderFlags_AlwaysClamp))draftRatio=percent/100.f;
+            ImGui::TextWrapped("%s",tr("比例分别作用于两个 SP，默认各 50%；SP2 为空时 SP1 保留完整载弹量。当前任务弹药不因改设置而重算。","Each SP uses this ratio, 50% by default. With SP2 empty, SP1 retains its full stock. Current mission ammo is not recalculated."));
+            ImGui::Checkbox(tr("允许未购买兵装（试玩参数）###Unlocks","Allow unpurchased weapons (experimental)###Unlocks"),&ignoreUnlocks);
+            ImGui::TextWrapped("%s",tr("不修改存档购买记录；用于下一次新开的原生选择页面。","Does not change purchase records; used when a new native selection page opens."));
             ImGui::EndTabItem();
         }
-        if(ImGui::BeginTabItem("界面设置")) {
-            ImGui::Checkbox("使用原生出击 SP 选择界面",&nativeLoadoutEnabled);
-            ImGui::TextDisabled("原兵装页顺序选择 SP1 / SP2；F8 保留为备用和调试入口。");
-            ImGui::Checkbox("启用原生双 SP 兵装列表",&showHud);
-            ImGui::TextDisabled("沿用游戏原生字体、颜色和位置；关闭后恢复单 SP 列表。");
-            ImGui::Checkbox("允许选择未购买兵装（试玩模式）",&ignoreUnlocks);ImGui::TextDisabled("不改变原存档中的购买记录。");
-            if(ImGui::Button("保存界面设置",{230,40})){enqueue({{"type","settings"},{"hud",showHud},{"hud_scale",hudScale},{"ignore_unlocks",ignoreUnlocks},{"native_loadout",nativeLoadoutEnabled}});notice="界面设置已保存";}
-            ImGui::Separator();ImGui::TextWrapped("F8：打开 / 关闭配置。F9：额外的武器循环键。原游戏武器切换键仍可使用。手柄使用原切换键；Back + Y 可打开配置，十字键、A、B 可操作菜单。");
-            ImGui::TextWrapped("配置按机体保存。任务中打开菜单会暂停游戏；取消会恢复之前的暂停状态。双 SP 的弹药与装填进度独立保存。");
+        if(ImGui::BeginTabItem(tr("按键###Bindings","Bindings###Bindings"))) {
+            ImGui::TextWrapped("%s",tr("点击键位后按下新键。仅支持单键，Esc 取消；三个键不能重复。","Click a binding, then press a new key. Single keys only; Esc cancels. Bindings must be distinct."));
+            ImGui::TextWrapped("%s",tr("与原生键位冲突时，请自行调整游戏或模组键位。","If a binding conflicts with the game, adjust either mapping yourself."));
+            if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp)) {
+                ImGui::TableSetupColumn(tr("选择","Selection"));ImGui::TableSetupColumn(tr("键盘","Keyboard"));
+                ImGui::TableSetupColumn(tr("手柄（固定）","Controller (fixed)"));ImGui::TableHeadersRow();
+                const char* weapons[]={"MSL","SP1","SP2"}; // 固定逻辑槽，实际简称由任务 HUD 显示。
+                const char* pads[]={tr("十字键左","D-pad Left"),tr("十字键上","D-pad Up"),tr("十字键右","D-pad Right")};
+                for(int slot=0;slot<3;++slot) {
+                    ImGui::PushID(slot);ImGui::TableNextRow();ImGui::TableNextColumn();ImGui::TextUnformatted(weapons[slot]);
+                    ImGui::TableNextColumn();
+                    const auto label=captureSlot==slot?std::string(tr("请按键…","Press a key...")):keyLabel(draftKeys[slot]);
+                    if(ImGui::Button(label.c_str(),{190,0})){captureSlot=slot;notice.clear();}
+                    ImGui::TableNextColumn();ImGui::TextUnformatted(pads[slot]);ImGui::PopID();
+                }
+                ImGui::EndTable();
+            }
+            if(captureSlot>=0&&ImGui::Button(tr("取消改键","Cancel capture")))captureSlot=-1;
+            if(ImGui::Button(tr("恢复默认 1 / 2 / 3","Reset to 1 / 2 / 3"))){draftKeys={49,50,51};captureSlot=-1;notice.clear();}
+            ImGui::TextWrapped("%s",tr("装填中的武器可以选择；空 SP2 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
+            ImGui::EndTabItem();
+        }
+        if(ImGui::BeginTabItem(tr("日志###Logs","Logs###Logs"))) {
+            if(!logsLoaded)refreshLogs();
+            if(ImGui::Button(tr("刷新日志","Refresh logs")))refreshLogs();
+            ImGui::SameLine();ImGui::TextDisabled("%s",tr("每份最多显示末尾 64 KiB，点击刷新更新。","Last 64 KiB per log; refresh to update."));
+            if(!logError.empty())ImGui::TextWrapped("%s",logError.c_str());
+            if(ImGui::BeginTabBar("LogFiles")) {
+                const char* files[]={"mod.log","native.log"}; // 日志文件固定，不开放任意路径访问。
+                const std::string* text[]={&modLogText,&nativeLogText};
+                for(int file=0;file<2;++file)if(ImGui::BeginTabItem(files[file])) {
+                    ImGui::BeginChild(files[file],{0,260},ImGuiChildFlags_Borders,ImGuiWindowFlags_HorizontalScrollbar);
+                    ImGui::TextUnformatted(text[file]->c_str());ImGui::EndChild();ImGui::EndTabItem();
+                }
+                ImGui::EndTabBar();
+            }
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
     }
-    if(state.contains("error")){ImGui::TextColored({1,.43f,.35f,1},"%s",state["error"].get<std::string>().c_str());ImGui::TextWrapped("请退出任务，保留 mod.log 和 native.log 供排查。");}
-    if(state.contains("hud_error")){ImGui::TextColored({1,.7f,.35f,1},"原生双 SP 列表接入失败，兵装功能继续运行。");ImGui::TextWrapped("%s",state["hud_error"].get<std::string>().c_str());}
-    if(state.contains("menu_error")){ImGui::TextColored({1,.7f,.35f,1},"原生出击选择接入失败，可继续在 F8 中配置兵装。");ImGui::TextWrapped("%s",state["menu_error"].get<std::string>().c_str());}
+    ImGui::Separator();
+    ImGui::BeginDisabled(captureSlot>=0||!bindingsValid()||pendingSave>0);
+    if(ImGui::Button(tr("保存设置","Save settings"),{180,36}))saveManagementSettings();
+    ImGui::EndDisabled();ImGui::SameLine();
+    if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
+    ImGui::TextWrapped("%s",tr("开关和键位保存后生效；配弹比例用于下一次新开的原生选择页面。已有选择草稿和当前任务不重新配弹。关闭会丢弃未保存修改。","Saved switches and keys take effect after saving. Ammo ratio applies to the next newly opened native selection page. Existing drafts and current mission ammo stay unchanged. Closing discards unsaved changes."));
+    ImGui::TextWrapped("%s",tr("F8 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","F8 or controller Back + Y opens/closes management. Opening during a mission pauses the game."));
+    // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
+    const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
+    for(const char* field:errorFields)if(state.contains(field)) {
+        ImGui::TextColored({1,.55f,.35f,1},"%s",tr("功能或保存错误（详见日志）","Feature or save error (see logs)"));
+        ImGui::TextWrapped("%s",state.at(field).get<std::string>().c_str());
+    }
+    if(state.contains("input_notice")) {
+        const auto reason=state.at("input_notice").get<std::string>(); // 拒绝直接选择的原因显示在管理页。
+        ImGui::TextWrapped("%s",reason=="empty_sp2"?tr("SP2 未配置，保持当前武器。","SP2 is empty; selection unchanged."):
+            tr("目标 SP 弹药耗尽，保持当前武器。","Target SP is depleted; selection unchanged."));
+    }
     if(!notice.empty())ImGui::TextWrapped("%s",notice.c_str());
     ImGui::End();
 }
+
+// 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
+void refreshState() {
+    static uint64_t consumedGeneration{}; // 一份状态只消费一次，不在每帧重复复制。
+    if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
+    try {
+        const bool wasManagement=state.value("management_protocol",0)==1;
+        {
+            std::lock_guard<std::mutex> guard(publishedMutex);
+            state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
+        }
+        // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
+        if(state.value("management_protocol",0)==1) {
+            const auto& keys=state.at("keyboard_keys");
+            if(!keys.is_array()||keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
+            std::array<int,3> checkedKeys{};
+            for(int slot=0;slot<3;++slot) {
+                if(!keys.at(slot).is_number_integer())throw std::runtime_error("Management keyboard binding is not an integer");
+                checkedKeys[slot]=keys.at(slot).get<int>();
+                if(!supportedKey(checkedKeys[slot]))throw std::runtime_error("Management keyboard binding is unsupported");
+            }
+            if(checkedKeys[0]==checkedKeys[1]||checkedKeys[0]==checkedKeys[2]||checkedKeys[1]==checkedKeys[2])
+                throw std::runtime_error("Management keyboard bindings must be distinct");
+            state.at("direct_select").get<bool>();state.at("direct_selection_available").get<bool>();
+        }
+        const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
+        if(sequence!=lastSequence){lastSequence=sequence;lastControllerUpdate=GetTickCount64();}
+        const int request=state.value("request_open",0),close=state.value("request_close",0);
+        if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
+        if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
+        if(!wasManagement&&panel&&state.value("management_protocol",0)==1)loadManagementDraft();
+        if(!panel)draftLanguage=state.value("language",std::string("zh"));
+        if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
+            notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
+                tr("保存失败，详见错误和日志。","Save failed; see the error and logs.");
+            pendingSave=0;
+        }
+    }catch(const std::exception& error) {
+        managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());
+    }
+}
+
 HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
     {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
@@ -308,12 +451,28 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if((keyState&1)&&!down&&!mouseWas[k]){ImGui::GetIO().AddMouseButtonEvent(k,true);ImGui::GetIO().AddMouseButtonEvent(k,false);}
                     if(down!=mouseWas[k]){ImGui::GetIO().AddMouseButtonEvent(k,down);mouseWas[k]=down;}
                 }
-                static bool chordWas=false;static ULONGLONG lastPadPoll{};
+                // 复用同一次手柄读取；启用直接选择时最多每 20 ms 采样一次。
+                static bool chordWas=false,padWasConnected=false;
+                static WORD previousPadButtons=0;
+                static ULONGLONG lastPadPoll{};
                 const auto padNow=GetTickCount64();
-                if(padNow-lastPadPoll>=100) {
-                    lastPadPoll=padNow;XINPUT_STATE pad{};
-                    const bool chord=foreground&&XInputGetState(0,&pad)==ERROR_SUCCESS&&(pad.Gamepad.wButtons&(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y))==(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y);
+                const ULONGLONG pollInterval=managementError.empty()&&state.value("direct_select",false)?20:100;
+                if(padNow-lastPadPoll>=pollInterval) {
+                    lastPadPoll=padNow;
+                    XINPUT_STATE pad{};
+                    const bool connected=XInputGetState(0,&pad)==ERROR_SUCCESS;
+                    const WORD buttons=connected?pad.Gamepad.wButtons:0;
+                    const bool chord=foreground&&connected&&(buttons&(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y))==(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y);
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
+                    const WORD pressed=buttons&~previousPadButtons;
+                    if(connected&&padWasConnected&&directInputEnabled()) {
+                        const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT};
+                        int desired=-1,count=0; // 同时按下多个方向不猜测目标。
+                        for(int slot=0;slot<3;++slot)if(pressed&keys[slot]){desired=slot;++count;}
+                        if(count==1)enqueue({{"type","select_weapon"},{"target",desired}});
+                        else if(count>1)nativeLog("DIRECT_SELECTION_AMBIGUOUS_PAD: 多个方向同时按下，未切换");
+                    }
+                    previousPadButtons=buttons;padWasConnected=connected;
                 }
                 // Flight HUD is native UMG. With the menu closed there is no
                 // ImGui frame, backend update or render-target state change.
@@ -374,6 +533,24 @@ DWORD WINAPI startThread(void*) {
     }else nativeLog("OVERLAY_START_ERROR: cannot create DX11 device");
     DestroyWindow(hidden);UnregisterClassW(wc.lpszClassName,wc.hInstance);return 0;
 }
+}
+// 新版管理协议标记，Lua 与安装程序都据此拒绝旧界面混装。
+extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
+// 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
+extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
+    try {
+        static const dualsp::LuaApi api; // 沿用已核对的专用加载器栈接口。
+        std::lock_guard<std::recursive_mutex> guard(renderMutex);
+        const bool ready=initialized&&gameWindow;
+        const bool enabled=ready&&!panel&&gameFocused(); // 失焦及 F8 打开时不驱动原生选择。
+        const bool up=enabled&&((GetAsyncKeyState(VK_UP)&0x8000)||(GetAsyncKeyState('W')&0x8000));
+        const bool down=enabled&&((GetAsyncKeyState(VK_DOWN)&0x8000)||(GetAsyncKeyState('S')&0x8000));
+        api.boolean(luaState,up);api.boolean(luaState,down);api.boolean(luaState,ready);
+        return 3;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("PREPARATION_INPUT_ERROR ")+error.what());
+        return 0; // Lua 必须检查返回类型并报告，不能静默换回已确认失效的来源。
+    }
 }
 extern "C" __declspec(dllexport) int dualsp_overlay_start(void*) {
     if(!startup.exchange(true)){HANDLE thread=CreateThread(nullptr,0,startThread,nullptr,0,nullptr);if(thread)CloseHandle(thread);else nativeLog("OVERLAY_START_ERROR: worker thread");}

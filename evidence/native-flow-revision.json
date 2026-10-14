@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-13",
+  "steam_build": 9855922,
+  "tested_version": "0.1.7-management-candidate.4",
+  "candidate_version": "0.1.7-management-candidate.5",
+  "user_test": {
+    "plane": "Su-30SM",
+    "weapons": [
+      "QAAM",
+      "LAGM"
+    ],
+    "map_in_log": "/Game/Maps/Mission/ms06/ms06",
+    "lock_audio": "SP 锁定声持续",
+    "lagm_lock_distance": "用户观察约 2 km，预期约 6–7 km",
+    "resupply": "双选正常，YES 后黑屏；F8 后可恢复画面但确认页卡住",
+    "startup_hud": "原生 MSL＋单 SP 仍短暂闪现，本轮暂缓"
+  },
+  "latest_failure_utc": "2026-10-13T15:17:18Z",
+  "last_events": [
+    "NATIVE_RESUPPLY_TAKEOFF_REQUESTED 128",
+    "NATIVE_RESUPPLY_TAKEOFF_DISPATCHED 128",
+    "NATIVE_RESUPPLY_NATIVE_VISUAL_RESTORED 128",
+    "NATIVE_RESUPPLY_NATIVE_CONTROL_RESTORED 128",
+    "NATIVE_RESUPPLY_FINISH_ACCEPTED 128"
+  ],
+  "missing_events": [
+    "RESUPPLY_MENU_CLOSED",
+    "RESUPPLY_SUCCESS_PENDING",
+    "RESUPPLY_LOADOUT_APPLIED"
+  ],
+  "inspection": {
+    "authorization": "用户自行启动并停在主菜单，允许只读分析",
+    "process_access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ",
+    "agent_started_game": false,
+    "agent_operated_game": false,
+    "agent_wrote_process_memory": false,
+    "gameplay_tested": false,
+    "note": "RVA 来自此次进程中的运行时代码；加壳磁盘函数体不可用，不保存或复用绝对地址"
+  },
+  "native_paths": {
+    "supply_yes": "MissionResupplyWidget tick 0x6FC6D0 → YES input 0x6FCCF0 → 0x6FC680 → 0x884F10(activator,true) → 0x6208B0(UIManager)",
+    "supply_finished_notification": "exec 0x8EC530 → 0x50D970 → 0x50D830，弹出阶段状态",
+    "weapon_pressed": "exec 0x93C040 → 0x8238D0 → 0x82A730 → 0x8238F0",
+    "weapon_sync": "0x8238F0 调用 0x886C50 后，读取当前武器/参数/类别并调用 0x4C72A0",
+    "weapon_released": "0x8238E0 清除 PlayerPlane+0x1A51 持续按下标志",
+    "seeker_parameters": "0x4C72A0 更新锁定组件，并经 0x84DEE0 应用部件修正"
+  },
+  "diagnosis": {
+    "resupply": "旧代码跳过原生 YES 的关闭菜单链而直接调用阶段结束通知",
+    "range": "Lua 与核心 keepArmed 的 ToggleSpecial 均漏掉飞机层的锁定组件重绑",
+    "audio": "可能同源，尚未通过战斗复测证实，不能宣称已定位全部音效原因"
+  },
+  "source_ready": true,
+  "built": true,
+  "installed": true,
+  "runtime_verified": false,
+  "tests_run": false,
+  "backup": "E:\\AC7_MultiSP\\backup\\native-flow-20261013-233400",
+  "installed_at": "2026-10-13T23:44:28.586733+08:00",
+  "installation_record": "evidence/management-candidate.5-installed.json",
+  "candidate_core_sha256": "DA3FE40A43B45279185EA0909B1A2A3B2F67A159F5C54DF17F79ED034DBCE1DD",
+  "installation_backup": "E:\\AC7_MultiSP\\backup\\merged-candidate-\\20261013-234428-586733",
+  "build_authorization": "用户明确授权编译并安装候选 5，且已退出游戏"
+}

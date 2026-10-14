@@ -4,6 +4,8 @@ $ErrorActionPreference='Stop'
 # 发布路径统一由项目根目录和版本文件确定。
 $root=Split-Path $PSScriptRoot -Parent
 $version=[IO.File]::ReadAllText((Join-Path $root 'VERSION')).Trim()
+# 当前只整理本地验证版本；正式载荷仍是 0.1.7，禁止将旧载荷标为新版发布。
+if($version -ne '0.1.7'){throw '当前版本仅通过管理安装器部署。正式发布前需另行同步新版核心、十个运行文件及安装入口；不能将旧载荷打成新版安装包。'}
 $release=Join-Path $root ("Release\DualSP-$version")
 $source=Join-Path $root ("Release\DualSP-$version-source")
 $releaseZip=Join-Path $root ("Release\DualSP-$version.zip")

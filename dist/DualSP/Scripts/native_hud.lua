@@ -3,6 +3,9 @@
 -- controls remain alive under a collapsed native parent: native SetText calls
 -- can arrive before or after a switch without ever painting in the wrong row.
 local NativeHUD={}
+-- 两处 HUD 共用武器简称生成规则。
+local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local weaponNames=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 local VISIBLE,COLLAPSED=0,1
 local TRANSIENT=0x40
 local function valid(o)return o and o:IsValid()end
@@ -18,13 +21,36 @@ local function applyStyle(slot,style)
     slot:SetPadding(style.padding);slot:SetSize(style.size)
     slot:SetHorizontalAlignment(style.horizontal);slot:SetVerticalAlignment(style.vertical)
 end
+-- 箭头保留原生 Canvas 位置；源箭头的可见性不再直接控制可见克隆。
+local function canvasStyle(slot)
+    local anchors=slot:GetAnchors()
+    return {anchors={Minimum=vec(anchors.Minimum),Maximum=vec(anchors.Maximum)},alignment=vec(slot:GetAlignment()),
+        position=vec(slot:GetPosition()),size=vec(slot:GetSize()),z=slot:GetZOrder()}
+end
+local function applyCanvasStyle(slot,style)
+    slot:SetAnchors(style.anchors);slot:SetAlignment(style.alignment)
+    slot:SetPosition(style.position);slot:SetSize(style.size);slot:SetZOrder(style.z)
+end
 local required={"PlaneTextStatPanel","SpecialWeaponTextBP","SpecialWeaponCountTextBP","SpecialWeaponSel","NormalWeaponSel",
+    "GunTextBP","GunCountTextBP","MainWeaponTextBP","MainWeaponCountTextBP",
     "FlareTextBP","FlareCountTextBP","DamageTextBP","DamagePercentageTextBP"}
 
+-- 旧引擎通过文字/阴影颜色的 Alpha 控制透明度，克隆名称不会被游戏抢写。
+local function syncNameStyle(widget,source,factor,cache,key)
+    local tint,shadow=source.ColorAndOpacity.SpecifiedColor,source.ShadowColorAndOpacity
+    local alpha,shadowAlpha=tint.A*factor,shadow.A*factor
+    local signature=table.concat({tint.R,tint.G,tint.B,alpha,shadow.R,shadow.G,shadow.B,shadowAlpha},":")
+    if cache[key]==signature then return end
+    widget:SetColorAndOpacity({SpecifiedColor={R=tint.R,G=tint.G,B=tint.B,A=alpha},ColorUseRule=0})
+    widget:SetShadowColorAndOpacity({R=shadow.R,G=shadow.G,B=shadow.B,A=shadowAlpha})
+    cache[key]=signature
+end
+
 function NativeHUD.new(note)
-    local self={cache=nil,status="waiting",error=nil,lastScan=-1,waitingSince=nil,writeCount=0}
+    local self={cache=nil,status="waiting",error=nil,lastScan=-1,waitingSince=nil,writeCount=0,prehidden={}}
     local panelClass=nil
     local verticalBoxClass=nil
+    local canvasPanelClass=nil
     local cloneSerial=0
     local function inspectTree(root,result)
         if not valid(root)then return end
@@ -36,7 +62,8 @@ function NativeHUD.new(note)
             end)
         end
     end
-    local function arrange(column,withExtra,holder)
+    -- 固定 GUN/MSL/SP/FLR/DMG 顺序；单 SP 也使用独立的 MSL/SP 名称。
+    local function arrange(column,enabled,holder,dual)
         -- Build the fixed order once on enable, restore it once on disable.
         -- Never reparent visible rows during weapon switching.
         local function detach(widget)
@@ -48,6 +75,7 @@ function NativeHUD.new(note)
         end
         for _,entry in ipairs(column.original)do detach(entry.widget)end
         for _,widget in ipairs(column.rows)do detach(widget)end
+        if column.main then detach(column.main)end
         local function append(entry)
             if valid(entry.widget)then
                 local slot=column.box:AddChildToVerticalBox(entry.widget)
@@ -55,22 +83,54 @@ function NativeHUD.new(note)
                 applyStyle(slot,entry.style)
             end
         end
-        if withExtra then
-            -- A collapsed parent protects against native child visibility writes
-            -- and keeps the original controls rooted in the live widget tree.
-            assert(valid(holder:AddChildToVerticalBox(column.original[1].widget)),"Cannot retain native SP source")
-            for _,widget in ipairs(column.rows)do append({widget=widget,style=column.original[1].style})end
-        else append(column.original[1])end
-        append(column.original[2]);append(column.original[3])
+        if enabled then
+            append(column.original[1])
+            if column.main then
+                assert(valid(holder:AddChildToVerticalBox(column.original[2].widget)),"无法保留原生 MSL 名称")
+                append({widget=column.main,style=column.original[2].style})
+            else append(column.original[2])end
+            assert(valid(holder:AddChildToVerticalBox(column.original[3].widget)),"无法保留原生 SP 来源")
+            append({widget=column.rows[1],style=column.original[3].style})
+            if dual then append({widget=column.rows[2],style=column.original[3].style})
+            else assert(valid(holder:AddChildToVerticalBox(column.rows[2])),"无法保留未启用的 SP2 行")end
+            append(column.original[4]);append(column.original[5])
+        else
+            for _,entry in ipairs(column.original)do append(entry)end
+            -- 关闭时克隆仍留在折叠父容器内，避免失去控件树引用。
+            for _,widget in ipairs(column.rows)do assert(valid(holder:AddChildToVerticalBox(widget)),"无法保留已关闭的 SP 行")end
+            if column.main then assert(valid(holder:AddChildToVerticalBox(column.main)),"无法保留已关闭的 MSL 行")end
+        end
     end
     local function resize(c)
         if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-c.row))
         else c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+c.row})end
         if not c.hboxStretched then c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y+c.row})end
     end
+    -- HUD 创建和武器初始化不同步。先把原生 SP 行折叠，避免双栏接管前
+    -- 先画出 MSL+单 SP；接管或失败时再恢复原始可见性。
+    local function restorePrehidden(entries)
+        for _,entry in ipairs(entries or self.prehidden)do
+            if valid(entry.widget)then entry.widget:SetVisibility(entry.visibility)end
+        end
+    end
+    local function hideStock(owner,widgets)
+        local seen={}
+        for _,entry in ipairs(self.prehidden)do
+            if valid(entry.widget)then seen[entry.widget:GetAddress()]=true end
+        end
+        for _,name in ipairs({"SpecialWeaponTextBP","SpecialWeaponCountTextBP","SpecialWeaponSel"})do
+            local widget=widgets[name]
+            if valid(widget)and not seen[widget:GetAddress()]then
+                self.prehidden[#self.prehidden+1]={widget=widget,visibility=widget:GetVisibility()}
+                widget:SetVisibility(COLLAPSED)
+                seen[widget:GetAddress()]=true
+                note("NATIVE_HUD_STOCK_ROW_HIDDEN "..owner:GetFullName().." "..name)
+            end
+        end
+    end
     local function restore()
         local c=self.cache
-        if not c then return end
+        if not c then restorePrehidden();self.prehidden={};return end
         if c.columnsTouched then
             for _,column in ipairs(c.columns)do
                 if valid(column.box)then arrange(column,false,c.holder)end
@@ -78,31 +138,47 @@ function NativeHUD.new(note)
             c.columnsTouched=false
         end
         for _,widget in ipairs(c.clones or {})do if valid(widget)then widget:SetVisibility(COLLAPSED)end end
+        -- 原生箭头继续接收游戏更新，禁用模组时恢复其原父容器和布局。
+        for _,entry in ipairs(c.arrowSources or {})do
+            if valid(entry.source)and valid(entry.parent)then
+                if not valid(entry.source.Slot)or entry.source.Slot.Parent:GetAddress()~=entry.parent:GetAddress()then
+                    if valid(entry.source.Slot)then assert(entry.source.Slot.Parent:RemoveChild(entry.source),"无法释放原生选择箭头")end
+                    local slot=entry.parent:AddChildToCanvas(entry.source)
+                    assert(valid(slot),"无法恢复原生选择箭头");applyCanvasStyle(slot,entry.style)
+                end
+            end
+        end
         if valid(c.panelSlot)and c.panelSize then c.panelSlot:SetSize(c.panelSize)end
         if valid(c.hboxSlot)and c.hboxSize then c.hboxSlot:SetSize(c.hboxSize)end
         if valid(c.panelSlot)and c.panelPos then c.panelSlot:SetPosition(c.panelPos)end
         for _,item in ipairs(c.shifted)do
             if valid(item.widget)then item.widget:SetRenderTranslation(item.original)end
         end
+        restorePrehidden(c.prehidden)
         c.applied=false
         c.lastActive=nil
+        c.lastSelection=nil
     end
     local function preflight()
         -- Reject an unsupported engine API before modifying any visible widget.
         local functions={"/Script/UMG.VerticalBox:AddChildToVerticalBox","/Script/UMG.CanvasPanel:AddChildToCanvas","/Script/UMG.CanvasPanelSlot:SetSize",
             "/Script/UMG.CanvasPanelSlot:GetSize","/Script/UMG.CanvasPanelSlot:GetPosition",
             "/Script/UMG.CanvasPanelSlot:GetAnchors","/Script/UMG.CanvasPanelSlot:SetPosition",
+            "/Script/UMG.CanvasPanelSlot:GetAlignment","/Script/UMG.CanvasPanelSlot:GetZOrder",
+            "/Script/UMG.CanvasPanelSlot:SetAnchors","/Script/UMG.CanvasPanelSlot:SetAlignment","/Script/UMG.CanvasPanelSlot:SetZOrder",
             "/Script/UMG.PanelWidget:RemoveChild",
             "/Script/UMG.VerticalBoxSlot:SetPadding","/Script/UMG.VerticalBoxSlot:SetSize",
             "/Script/UMG.VerticalBoxSlot:SetHorizontalAlignment","/Script/UMG.VerticalBoxSlot:SetVerticalAlignment",
             "/Script/UMG.Widget:ForceLayoutPrepass","/Script/UMG.Widget:GetDesiredSize","/Script/UMG.TextBlock:SetFont",
-            "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetColorAndOpacity",
-            "/Script/UMG.Widget:SetRenderTranslation","/Script/UMG.Widget:SetVisibility"}
+            "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetColorAndOpacity","/Script/UMG.TextBlock:SetShadowColorAndOpacity",
+            "/Script/UMG.Widget:SetRenderTranslation","/Script/UMG.Widget:SetVisibility","/Script/UMG.Widget:GetVisibility"}
         for _,path in ipairs(functions)do assert(valid(StaticFindObject(path)),"Native HUD API is unavailable: "..path)end
         panelClass=StaticFindObject("/Script/UMG.PanelWidget")
         assert(valid(panelClass),"Native panel class is unavailable")
         verticalBoxClass=StaticFindObject("/Script/UMG.VerticalBox")
         assert(valid(verticalBoxClass),"Native source holder class is unavailable")
+        canvasPanelClass=StaticFindObject("/Script/UMG.CanvasPanel")
+        assert(valid(canvasPanelClass),"箭头源容器类不可用")
     end
     local function clone(source,tree,name,parent)
         -- Use the live native template so font, margins, alignment and color
@@ -116,8 +192,52 @@ function NativeHUD.new(note)
         widget:SetVisibility(COLLAPSED)
         return widget,slot
     end
+    -- 原生会先把选择箭头切到 MSL；通过独立克隆显示最终逻辑选择。
+    local function attachArrows(c)
+        cloneSerial=cloneSerial+1
+        c.arrowHolder=StaticConstructObject(canvasPanelClass,c.owner.WidgetTree,FName("DualSPArrowSource_"..cloneSerial),TRANSIENT,0,false,false)
+        assert(valid(c.arrowHolder),"无法建立原生箭头源容器")
+        c.arrowHolder:SetVisibility(COLLAPSED)
+        assert(valid(c.panel:AddChildToCanvas(c.arrowHolder)),"无法接入原生箭头源容器")
+        c.arrowSources={}
+        for index,source in ipairs({c.widgets.NormalWeaponSel,c.widgets.SpecialWeaponSel})do
+            assert(source.Slot:GetClass():GetFullName()=="Class /Script/UMG.CanvasPanelSlot","箭头布局槽不是 Canvas")
+            local entry={source=source,parent=source.Slot.Parent,style=canvasStyle(source.Slot)}
+            c.arrowSources[#c.arrowSources+1]=entry
+            cloneSerial=cloneSerial+1
+            local widget=StaticConstructObject(source:GetClass(),c.owner.WidgetTree,FName("DualSPSelectedArrow_"..cloneSerial),TRANSIENT,0,false,false,source)
+            assert(valid(widget),"无法建立独立选择箭头")
+            widget.Slot=nil;c.clones[#c.clones+1]=widget;widget:SetVisibility(COLLAPSED)
+            local slot=entry.parent:AddChildToCanvas(widget)
+            assert(valid(slot),"无法接入独立选择箭头");applyCanvasStyle(slot,entry.style)
+            -- 0.5 来自本构建箭头模板的正常 Alpha，不继承源箭头的瞬时隐藏值。
+            local tint=source.ColorAndOpacity.SpecifiedColor
+            widget:SetColorAndOpacity({SpecifiedColor={R=tint.R,G=tint.G,B=tint.B,A=.5},ColorUseRule=0})
+            assert(entry.parent:RemoveChild(source),"无法隔离原生选择箭头")
+            local sourceSlot=c.arrowHolder:AddChildToCanvas(source)
+            assert(valid(sourceSlot),"无法保留原生选择箭头");applyCanvasStyle(sourceSlot,entry.style)
+            if index==1 then c.mainArrow=widget else c.arrow=widget end
+        end
+    end
+    -- HUD 关闭后原箭头已恢复，再启用时重新隔离来源，不重新创建克隆。
+    local function retainArrows(c)
+        for index,entry in ipairs(c.arrowSources)do
+            local slot=entry.source.Slot
+            assert(valid(slot),"原生箭头缺少布局槽")
+            if slot.Parent:GetAddress()~=c.arrowHolder:GetAddress()then
+                assert(slot.Parent:GetAddress()==entry.parent:GetAddress(),"原生箭头被移到未知父容器")
+                entry.style=canvasStyle(slot)
+                local widget=index==1 and c.mainArrow or c.arrow
+                applyCanvasStyle(widget.Slot,entry.style)
+                assert(entry.parent:RemoveChild(entry.source),"无法重新隔离原生选择箭头")
+                local retained=c.arrowHolder:AddChildToCanvas(entry.source)
+                assert(valid(retained),"无法重新保留原生选择箭头");applyCanvasStyle(retained,entry.style)
+            end
+        end
+    end
     local function attach(owner,widgets)
-        local c={owner=owner,widgets=widgets,shifted={},clones={},applied=false}
+        local c={owner=owner,widgets=widgets,shifted={},clones={},applied=false,prehidden=self.prehidden}
+        self.prehidden={}
         self.cache=c -- Keep partial construction recoverable if an API rejects it.
         c.panel=widgets.PlaneTextStatPanel
         c.panelSlot=c.panel.Slot;c.panelSize=vec(c.panelSlot:GetSize())
@@ -144,8 +264,8 @@ function NativeHUD.new(note)
             c.shifted[#c.shifted+1]={widget=widget,original=translation(widget)}
         end
         c.columns={}
-        for _,spec in ipairs({{box=nameBox,names={"SpecialWeaponTextBP","FlareTextBP","DamageTextBP"}},
-            {box=countBox,names={"SpecialWeaponCountTextBP","FlareCountTextBP","DamagePercentageTextBP"}}})do
+        for _,spec in ipairs({{box=nameBox,names={"GunTextBP","MainWeaponTextBP","SpecialWeaponTextBP","FlareTextBP","DamageTextBP"}},
+            {box=countBox,names={"GunCountTextBP","MainWeaponCountTextBP","SpecialWeaponCountTextBP","FlareCountTextBP","DamagePercentageTextBP"}}})do
             local column={box=spec.box,original={}}
             for _,name in ipairs(spec.names)do
                 column.original[#column.original+1]={widget=widgets[name],style=slotStyle(widgets[name])}
@@ -163,17 +283,26 @@ function NativeHUD.new(note)
         for i,column in ipairs(c.columns)do
             column.rows={}
             for group=1,2 do
-                local widget=clone(column.original[1].widget,owner.WidgetTree,"DualSP"..group..(i==1 and "Name" or "Count"),column.box)
+                local widget=clone(column.original[3].widget,owner.WidgetTree,"DualSP"..group..(i==1 and "Name" or "Count"),column.box)
                 column.rows[group]=widget;c.clones[#c.clones+1]=widget
             end
         end
         c.nameFontSize=c.name.Font.Size;c.countFontSize=c.count.Font.Size
         c.lastNames={};c.lastCounts={};c.lastActive=nil
+        -- MSL 也使用固定克隆名称，避免原生每帧更新覆盖装填状态颜色。
+        c.main=clone(widgets.MainWeaponTextBP,owner.WidgetTree,"DualSPMainName",nameBox)
+        c.columns[1].main=c.main;c.clones[#c.clones+1]=c.main
+        c.main:SetText(FText("MSL"));c.mainFontSize=widgets.MainWeaponTextBP.Font.Size
+        c.nameStyles={}
+        c.arrowFontSize=widgets.SpecialWeaponSel.Font.Size;c.mainArrowFontSize=widgets.NormalWeaponSel.Font.Size
+        attachArrows(c)
         note("NATIVE_HUD_ATTACHED "..owner:GetFullName())
         return c
     end
     local function locate(plane,now)
-        if now-self.lastScan<.5 then return nil end
+        -- 等待 HUD 实例出现时高频短扫描只持续数秒；接管后不进入此路径，
+        -- 不把正常飞行轮询变成全局对象枚举。
+        if now-self.lastScan<.05 then return nil end
         self.lastScan=now
         if not panelClass then preflight()end
         local world=plane:GetWorld():GetAddress()
@@ -184,6 +313,7 @@ function NativeHUD.new(note)
                     local ownerWorld=owner:GetWorld()
                     if valid(ownerWorld)and ownerWorld:GetAddress()==world and valid(owner.WidgetTree)then
                         local widgets={};inspectTree(owner.WidgetTree.RootWidget,widgets)
+                        hideStock(owner,widgets)
                         local complete=true
                         for _,key in ipairs(required)do if not valid(widgets[key])then complete=false end end
                         if complete then return attach(owner,widgets)end
@@ -207,17 +337,20 @@ function NativeHUD.new(note)
         end
         for _,key in ipairs(required)do assert(valid(c.widgets[key]),"Native HUD control was destroyed: "..key)end
         if not c.applied then
+            -- 只有双 SP 增加一行；单 SP 保留原生面板高度。
+            c.dual=profile.b>=0
+            retainArrows(c)
             -- In stretched Canvas slots GetSize is a margin, not a height.
             -- Grow that parent upwards by moving its top edge. A stretched
             -- child follows automatically; only fixed-height children resize.
             c.panel:ForceLayoutPrepass()
-            local padding=c.columns[1].original[1].style.padding
+            local padding=c.columns[1].original[3].style.padding
             local pitch=c.name:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(pitch>0 and pitch<100,"Invalid native text row height: "..tostring(pitch))
-            c.row=pitch;resize(c)
-            note(string.format("NATIVE_HUD_ROW_FLOW pitch=%.3f label_font=%d count_font=%d slot_rules=%s,%s",c.row,c.nameFontSize,c.countFontSize,tostring(c.columns[1].original[1].style.size.SizeRule),tostring(c.columns[2].original[1].style.size.SizeRule)))
+            c.row=pitch;if c.dual then resize(c)end
+            note(string.format("NATIVE_HUD_ROW_FLOW pitch=%.3f label_font=%d count_font=%d slot_rules=%s,%s",c.row,c.nameFontSize,c.countFontSize,tostring(c.columns[1].original[3].style.size.SizeRule),tostring(c.columns[2].original[3].style.size.SizeRule)))
             c.columnsTouched=true -- Partial changes must remain recoverable.
-            for _,column in ipairs(c.columns)do arrange(column,true,c.holder)end
+            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.dual)end
             for _,widget in ipairs(c.clones)do widget:SetVisibility(VISIBLE)end
             c.applied=true
         end
@@ -227,29 +360,50 @@ function NativeHUD.new(note)
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
             c.lastActive=active
         end
+        -- 两个可见箭头只接受最终选择；原生 MSL 中间态被源容器隔离。
+        local selection=state.armed and active+1 or 0
+        if c.lastSelection~=selection then
+            c.mainArrow:SetVisibility(selection==0 and VISIBLE or COLLAPSED)
+            c.arrow:SetVisibility(selection>0 and VISIBLE or COLLAPSED)
+            c.lastSelection=selection
+        end
+        if c.widgets.SpecialWeaponSel.Font.Size~=c.arrowFontSize then
+            c.arrow:SetFont(c.widgets.SpecialWeaponSel.Font);c.arrowFontSize=c.widgets.SpecialWeaponSel.Font.Size
+        end
+        if c.widgets.NormalWeaponSel.Font.Size~=c.mainArrowFontSize then
+            c.mainArrow:SetFont(c.widgets.NormalWeaponSel.Font);c.mainArrowFontSize=c.widgets.NormalWeaponSel.Font.Size
+        end
         -- Ancestor scaling handles resolution. Match a native font change too,
         -- without invalidating layout on every normal 100 ms HUD update.
+        if c.widgets.MainWeaponTextBP.Font.Size~=c.mainFontSize then
+            c.main:SetFont(c.widgets.MainWeaponTextBP.Font);c.mainFontSize=c.widgets.MainWeaponTextBP.Font.Size
+        end
         if c.name.Font.Size~=c.nameFontSize or c.count.Font.Size~=c.countFontSize then
             for _,widget in ipairs(c.columns[1].rows)do widget:SetFont(c.name.Font)end
             for _,widget in ipairs(c.columns[2].rows)do widget:SetFont(c.count.Font)end
             c.nameFontSize=c.name.Font.Size;c.countFontSize=c.count.Font.Size
             c.panel:ForceLayoutPrepass()
-            local padding=c.columns[1].original[1].style.padding
+            local padding=c.columns[1].original[3].style.padding
             -- The game-owned source is collapsed; measure a visible twin.
             c.row=c.columns[1].rows[1]:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(c.row>0 and c.row<100,"Invalid resized native text row height")
-            resize(c);c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
+            if c.dual then resize(c)end
+            c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
         end
-        local nameColor,countColor=c.name.ColorAndOpacity,c.count.ColorAndOpacity
-        for group=1,2 do
+        assert(state.ready and type(state.ready[1])=="boolean","MSL 就绪状态缺失")
+        syncNameStyle(c.main,c.widgets.MainWeaponTextBP,state.ready[1]and 1 or .5,c.nameStyles,"main")
+        local countColor=c.count.ColorAndOpacity
+        for group=1,(c.dual and 2 or 1)do
             local weaponIndex=group==1 and profile.a or profile.b
-            local label=options[weaponIndex+1].code:upper()
+            local label=weaponNames.special(options,weaponIndex)
             local count=tostring(state.cached_sp[group])
             local nameWidget,countWidget=c.columns[1].rows[group],c.columns[2].rows[group]
             if label~=c.lastNames[group]then nameWidget:SetText(FText(label));c.lastNames[group]=label;self.writeCount=self.writeCount+1 end
             if count~=c.lastCounts[group]then countWidget:SetText(FText(count));c.lastCounts[group]=count;self.writeCount=self.writeCount+1 end
-            nameWidget:SetColorAndOpacity(nameColor)
             countWidget:SetColorAndOpacity(countColor)
+            -- 弹药为零由核心统一判定；至少一发就绪即可保持正常文字。
+            assert(state.ready and type(state.ready[group+1])=="boolean","SP 就绪状态缺失")
+            syncNameStyle(nameWidget,c.name,state.ready[group+1]and 1 or .5,c.nameStyles,"sp"..group)
         end
         self.status="native"
     end
@@ -276,6 +430,9 @@ function NativeHUD.new(note)
                 end
                 if valid(c.holder)and valid(c.holder.Slot)and valid(c.holder.Slot.Parent)then
                     assert(c.holder.Slot.Parent:RemoveChild(c.holder),"Cannot release native SP source holder")
+                end
+                if valid(c.arrowHolder)and valid(c.arrowHolder.Slot)and valid(c.arrowHolder.Slot.Parent)then
+                    assert(c.arrowHolder.Slot.Parent:RemoveChild(c.arrowHolder),"无法释放箭头源容器")
                 end
             end)
             if not removed then note("NATIVE_HUD_RELEASE_ERROR "..tostring(removeErr))end

@@ -1,0 +1,60 @@
+{
+  "date": "2026-10-13",
+  "steam_build": 9855922,
+  "previous_candidate": "0.1.7-management-candidate.1",
+  "candidate": "0.1.7-management-candidate.2",
+  "screenshots": {
+    "起飞.jpg": "D0CEB9062C9B4E2259B88DF43B776963EE25112A6022E388C2C341839909FFFE",
+    "选择SP1.jpg": "7DAEB2E4B30EF8132A0A5226D70D3E337868ACFAAEA0A9773842E6E97B45D30E",
+    "选择SP2.jpg": "31F0B411AE36023EC382A720416033A5AD70F253402E781CB0C221FAF0191794"
+  },
+  "visible_facts": [
+    "SP1/SP2 分两页选择",
+    "SP2 有 NO WEAPON",
+    "两组性能和类型并列显示",
+    "起飞页 YES/NO，NO 高亮且说明为变更特殊兵装",
+    "汇总含 GUN/MSL/FLR 及两个 SP 数量"
+  ],
+  "not_proven_by_screenshots": [
+    "截图并非同一选择组合的连续录像",
+    "NO 或返回键实际跳转目标",
+    "起飞页默认选项",
+    "配弹比例和部件增益",
+    "补给、起飞及检查点事件顺序"
+  ],
+  "implementation_choices": [
+    "两栏显示性能、兵装类型说明与 SP 预计数",
+    "NO 从 SP1 重选",
+    "返回从起飞页回 SP2",
+    "起飞页初始 NO",
+    "真实 YES 调用绑定阶段的原生补给结束入口，不增加额外决定步骤"
+  ],
+  "native_finish_signature": {
+    "function": "/Script/Nimbus.MiniGamePhase:OnFinishdSupplyMenuHandler",
+    "parameters": [],
+    "evidence": "native/战役-lifecycle-interfaces.txt",
+    "runtime_call_verified": false
+  },
+  "layout_asset": "native-resupply-structure.json",
+  "layout_note": "双栏复用视频/类型区域与原生性能行距；只构造空 Canvas 和叶模板，完整保留源控件及自动尺寸属性",
+  "unchanged": [
+    "武器核心",
+    "F8 管理界面 DLL",
+    "直接选择键",
+    "两个任务 HUD 功能",
+    "补给成功后重建与保存",
+    "检查点保护协议",
+    "原生出击双选流程"
+  ],
+  "differences": [
+    "原生 AC7 背景/颜色/字体/镜头",
+    "只有 SP 预计数，无全弹种汇总预估",
+    "类型用已有简称说明，无 AC8 完整长说明",
+    "基础配弹预计数不能证明部件加成"
+  ],
+  "core_recompiled": false,
+  "ui_recompiled": false,
+  "test_modules_run": false,
+  "agent_started_game": false,
+  "gameplay_verified": false
+}

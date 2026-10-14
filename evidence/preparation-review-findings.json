@@ -1,0 +1,87 @@
+{
+  "version": "0.1.7-management-candidate.3",
+  "installed_at": "2026-10-13T16:43:36.369377+08:00",
+  "evidence_kind": "源码复核、原生资源坐标和历史反射；未实玩",
+  "findings": [
+    {
+      "problem": "确认页由原生单 SP 菜单读取导航，模组不能修改两个槽位",
+      "change": "确认页由草稿控制，提供修改 SP1/SP2，返回回 SP2；明确继续后才交接"
+    },
+    {
+      "problem": "关闭/确认后仅忽略对象地址，同一页面对象复用可能不能再接入",
+      "change": "观察已核对的原生 SetIsEnableControl 和页面可见性，区分自己的输入操作、关闭、提交和错误"
+    },
+    {
+      "problem": "高亮挂在已被折叠的原 ItemText 父级",
+      "change": "挂可见克隆父级，位置来自可见行和图标"
+    },
+    {
+      "problem": "性能与类型仅展示一种 SP，SP1 预览时清空 SP2 弹药显示",
+      "change": "两栏同时展示名称、六项性能、类型说明、预计弹药；冲突旧 SP2 明确待重选"
+    },
+    {
+      "problem": "取消后恢复可操作的原单 SP 显示",
+      "change": "取消交接保留只读双栏和退出提示，原生写入保护进入时的 SP1，不保存草稿"
+    }
+  ],
+  "preparation_layout": {
+    "asset": "CampaignHangarWeapon",
+    "reference_size": [
+      1920,
+      1080
+    ],
+    "columns": [
+      [
+        1040.0,
+        162.0
+      ],
+      [
+        1442.0,
+        162.0
+      ]
+    ],
+    "width": 374.0,
+    "gap": 28,
+    "row_pitch": 34.0,
+    "panel_bottom": 604.0,
+    "new_parent": "WeaponInformation.WidgetTree.RootWidget（原生 Canvas）",
+    "masked_sources": [
+      "HangarSpecGroupR",
+      "HangarAircraftWeaponNameLong",
+      "HangarAircraftWeaponProperties",
+      "HangarAircraftWeaponType"
+    ],
+    "preserved_ammo": [
+      "GUN",
+      "MSL",
+      "FLR",
+      "SP1",
+      "SP2"
+    ],
+    "information_color": "资源核对的信息蓝，避免捕获原生列表高亮的深色"
+  },
+  "native_interface_evidence": "evidence/native/自由飞行-ui-interfaces.txt",
+  "tradeoffs": [
+    "准备确认页增加明确选择继续，再松开按键交回原生；原生决定才能保存",
+    "完全退出仍需两次分开的返回操作，没有猜测一步退出函数",
+    "取消后误按原生决定不能提交草稿，但不能阻止游戏自身的决定跳转",
+    "补给 YES/NO 和成功后应用不采用准备页的额外交接步骤"
+  ],
+  "validation": {
+    "ui_compiled": true,
+    "candidate_core_recompiled": false,
+    "lua_syntax_compiled_without_execution": true,
+    "test_modules_run": false,
+    "game_started_by_agent": false,
+    "runtime_binding_verified": false,
+    "gameplay_verified": false
+  },
+  "needs_gameplay_review": [
+    "原生出击是否加载",
+    "确认页分别修改两槽及连续返回",
+    "取消不保存，离开后同机体重进",
+    "确认继续后再返回重进，以及切换机体",
+    "两个信息栏的实际可读性和不同宽高比",
+    "补给 NO/返回/YES 与配弹"
+  ]
+}

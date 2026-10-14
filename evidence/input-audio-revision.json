@@ -1,0 +1,77 @@
+{
+  "tested_candidate": "0.1.7-management-candidate.5",
+  "source_candidate": "0.1.7-management-candidate.6",
+  "steam_build": 9855922,
+  "user_report": {
+    "range": "LAGM 暂未复现异常",
+    "audio": "与此前一样持续播放",
+    "resupply": "SP1/SP2 后直接起飞，没有确认页，随后模组功能失效"
+  },
+  "failure_utc": "2026-10-13T15:49:06Z",
+  "last_stage": "sp2:2:0:2:nil",
+  "error": "原生结束通知早于双 SP 的 YES 请求",
+  "mod_takeoff_requested": false,
+  "native_yes_bridge_called": false,
+  "process_inspection": {
+    "pid": 12968,
+    "access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ",
+    "state": "用户补给后暂停任务",
+    "memory_written": false,
+    "agent_played": false
+  },
+  "native_input": {
+    "tick": "0x6FC6D0",
+    "review": "0x6FCCF0",
+    "weapons": "0x6FD2D0",
+    "reads_control_enabled": false,
+    "source": "UIManager dc0/dd8/d90 输入数组"
+  },
+  "seeker_audio_snapshot": {
+    "counts_at_4f0": [
+      1,
+      0,
+      0,
+      0
+    ],
+    "slot_flags_at_118": [
+      [
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "slot_states": [
+      0,
+      0
+    ]
+  },
+  "audio_lifecycle": {
+    "rebuild": "0x81E810 → 0x882E40 → 0x4C6D10，清空旧锁定槽",
+    "stop_all_slots": "0x4C98A0 → 0x4C0080 → 0x4C00C0",
+    "play_slot": "0x4BF200，置槽标记并递增对应组件计数",
+    "required_order": "旧槽仍存在时配对停止音效，再初始化兵装"
+  },
+  "new_exports": [
+    "dualsp_resupply_control",
+    "dualsp_prepare_weapon_rebuild"
+  ],
+  "built": true,
+  "installed": true,
+  "runtime_verified": false,
+  "tests_run": false,
+  "backup": "E:\\AC7_MultiSP\\backup\\native-flow-20261013-235219",
+  "installed_at": "2026-10-14T00:04:18.337146+08:00",
+  "candidate_core_sha256": "3FFF19496467F1616DD2DB7F5434D2008D84C4E1375C16C51D7F49AE93262A49",
+  "installation_record": "evidence/management-candidate.6-installed.json",
+  "installation_backup": "E:\\AC7_MultiSP\\backup\\merged-candidate-\\20261014-000418-337146",
+  "game_closed_normally": true,
+  "game_started_by_agent": false,
+  "build_authorization": "用户明确授权编译并安装候选 6"
+}

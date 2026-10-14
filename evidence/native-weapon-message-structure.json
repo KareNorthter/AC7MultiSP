@@ -1,0 +1,183 @@
+{
+  "date": "2026-10-13",
+  "steam_build": 9855922,
+  "game_started": false,
+  "game_assets_modified": false,
+  "runtime_hide_mechanism_verified": false,
+  "weapon_message_animation_found": false,
+  "pages": [
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/UI/HUD/AceMainFlightHUD.uasset",
+      "sha256": "dab51aa9e64e54b605bd4bb112c2bb7a18ad745509a9a0b7e4434dc6cefde040",
+      "native_parent": "UserWidget",
+      "controls": {
+        "WeaponMessagePanel": {
+          "class": "CanvasPanel",
+          "parent": "CanvasPanel_0",
+          "layout": {
+            "Offsets": {
+              "Top": 210.0,
+              "Right": 220.0,
+              "Bottom": 32.0
+            },
+            "Anchors": {
+              "Minimum": {
+                "Minimum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              },
+              "Maximum": {
+                "Maximum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              }
+            },
+            "Alignment": {
+              "Alignment": {
+                "X": 0.5,
+                "Y": 0.5
+              }
+            }
+          },
+          "font_size": null,
+          "justification": null,
+          "color": null
+        },
+        "WeaponMessageText": {
+          "class": "TextBlock",
+          "parent": "WeaponMessagePanel",
+          "layout": {
+            "Offsets": {
+              "Right": 220.0,
+              "Bottom": 32.0
+            }
+          },
+          "font_size": 18,
+          "justification": "ETextJustify::Center",
+          "color": {
+            "SpecifiedColor": {
+              "SpecifiedColor": {
+                "R": 0.07999999821186066,
+                "G": 1.0,
+                "B": 0.05000000074505806,
+                "A": 0.5
+              }
+            }
+          }
+        }
+      },
+      "widget_animations": [
+        "ShowComPortraitAnimation_INST"
+      ],
+      "blueprint_functions": [
+        "Get_ScoreText_Text_0",
+        "Get_TimeText_Text_0",
+        "Get_MissileAlertText_Text_0",
+        "Get_SystemMessageText_Text_0",
+        "Get_SpeedText_Text_0",
+        "Get_AltText_Text_0",
+        "Get_WarningMessageText_Text_0",
+        "GetEnemyMovePattern"
+      ],
+      "blueprint_calls": [
+        "Default__Function",
+        "GetPlayerPawn",
+        "IsValid",
+        "Conv_StringToText",
+        "LocalizeString"
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/UI/HUD/AceMainFlightHUD.uasset",
+      "sha256": "7edc593663938c0128abef40ad452e95c1ee1e6c585e126d49fa446a8a063a20",
+      "native_parent": "UserWidget",
+      "controls": {
+        "WeaponMessagePanel": {
+          "class": "CanvasPanel",
+          "parent": "CanvasPanel_0",
+          "layout": {
+            "Offsets": {
+              "Top": 210.0,
+              "Right": 220.0,
+              "Bottom": 32.0
+            },
+            "Anchors": {
+              "Minimum": {
+                "Minimum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              },
+              "Maximum": {
+                "Maximum": {
+                  "X": 0.5,
+                  "Y": 0.5
+                }
+              }
+            },
+            "Alignment": {
+              "Alignment": {
+                "X": 0.5,
+                "Y": 0.5
+              }
+            }
+          },
+          "font_size": null,
+          "justification": null,
+          "color": null
+        },
+        "WeaponMessageText": {
+          "class": "TextBlock",
+          "parent": "WeaponMessagePanel",
+          "layout": {
+            "Offsets": {
+              "Right": 220.0,
+              "Bottom": 32.0
+            }
+          },
+          "font_size": 18,
+          "justification": "ETextJustify::Center",
+          "color": {
+            "SpecifiedColor": {
+              "SpecifiedColor": {
+                "R": 0.07999999821186066,
+                "G": 1.0,
+                "B": 0.05000000074505806,
+                "A": 0.5
+              }
+            }
+          }
+        }
+      },
+      "widget_animations": [
+        "ShowComPortraitAnimation_INST"
+      ],
+      "blueprint_functions": [
+        "Get_ScoreText_Text_0",
+        "Get_TimeText_Text_0",
+        "Get_MissileAlertText_Text_0",
+        "Get_SystemMessageText_Text_0",
+        "Get_SpeedText_Text_0",
+        "Get_AltText_Text_0",
+        "Get_WarningMessageText_Text_0",
+        "GetEnemyMovePattern"
+      ],
+      "blueprint_calls": [
+        "Default__Function",
+        "GetPlayerPawn",
+        "IsValid",
+        "Conv_StringToText",
+        "LocalizeString"
+      ]
+    }
+  ],
+  "limitations": [
+    "控件存在不证明运行时隐藏机制",
+    "未测量原生提示停留时间",
+    "没有实玩验证"
+  ]
+}

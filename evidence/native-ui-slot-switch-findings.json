@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-13",
+  "steam_build": 9855922,
+  "reported_candidate": "0.1.7-merged-candidate.2",
+  "repair_candidate": "0.1.7-merged-candidate.3",
+  "user_report": {
+    "central_short_name": "基本正常",
+    "unready_name_alpha": "基本正常",
+    "native_departure": "仍加载失败",
+    "sp1_to_sp2": "右下箭头及中央简称短暂先显示 MSL",
+    "resupply": "未测试"
+  },
+  "runtime_errors": [
+    "2026-10-13T04:44:06Z NATIVE_LOADOUT_ERROR ...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:98: Unsupported native preparation slot",
+    "2026-10-13T04:44:19Z NATIVE_LOADOUT_ERROR ...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:98: Unsupported native preparation slot",
+    "2026-10-13T04:44:41Z NATIVE_LOADOUT_ERROR ...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:98: Unsupported native preparation slot"
+  ],
+  "failure_stage": "复制原生列表 TitleText 时的布局槽类型判断",
+  "runtime_slot_class_recorded_in_old_log": false,
+  "class_lookup_or_runtime_type_root_cause_verified": false,
+  "asset_structure": "native-loadout-slots.json",
+  "asset_slots": {
+    "TitleText/DescriptionText/ItemText0..2": "CanvasPanelSlot",
+    "Name": "HorizontalBoxSlot",
+    "WeaponsName/WeaponsAmmo": "CanvasPanelSlot"
+  },
+  "slot_change": "直接读取实际槽的原生类全名；只支持资源已核对的 Canvas/Horizontal，未知类型报告控件/槽/类/父容器，不猜布局",
+  "presentation_change": "同一次逻辑选择事务完成后提交两处 HUD；独立箭头隔离原生 MSL 中间态；原游戏键与 F9 共用",
+  "resupply_uses_shared_slot_change": true,
+  "resupply_confirm_or_commit_protocol_changed": false,
+  "core_sha256": "3833705F2C246364E79D521A9F4978195C4BB64C3030FBA96290807FADFCDD15",
+  "core_recompiled": false,
+  "ui_recompiled": false,
+  "test_modules_run": false,
+  "agent_started_game": false,
+  "repair_gameplay_verified": false
+}
