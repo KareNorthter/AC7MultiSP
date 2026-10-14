@@ -1,0 +1,1659 @@
+{
+  "steam_build": 9855922,
+  "game_operated_by": "用户",
+  "agent_read_only": true,
+  "candidate_installed": false,
+  "dual_mount_implemented": false,
+  "boundaries": [
+    "仅当前 Su-30SM s03 一次任务",
+    "显隐来自反射标志，不替代画面碰撞检查",
+    "发射快照在弹体离架之后，未测量生成瞬间世界坐标",
+    "未验证双模型候选、补给、检查点或 Part 效果"
+  ],
+  "switch_comparison": [
+    {
+      "name": "SWP2",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": true,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_PlaneBodyMesh_ws1",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_PlaneBodyMesh_ws2",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP2_sp23",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "SWP3",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": true
+    },
+    {
+      "name": "SWP1",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP2_sp24",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP2_sp21",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP2_sp22",
+      "same_identity": true,
+      "before_visible": true,
+      "before_hidden": false,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP1_sp15",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP3_sp31",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP3_sp33",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP1_sp11",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP1_sp13",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP1_sp14",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP3_sp34",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP3_sp35",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP1_sp12",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    },
+    {
+      "name": "WeapMesh_SWP3_sp32",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP3_sp36",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": false,
+      "after_hidden": true
+    },
+    {
+      "name": "WeapMesh_SWP1_sp16",
+      "same_identity": true,
+      "before_visible": false,
+      "before_hidden": true,
+      "after_visible": true,
+      "after_hidden": false
+    }
+  ],
+  "samples": [
+    {
+      "source_file": "su30sm-paused-first.json",
+      "sha256": "89456af489a000f61dbe9c95f7bff5221fa3d82aaad8c29ccc268c3bfdef26be",
+      "captured_local": "2026-10-14T17:23:12.836403+08:00",
+      "plane": {
+        "address": "0x1f8a86fe390",
+        "index": 55209,
+        "serial": 15358,
+        "name": "AcePlayerPawn_su30sm_s03_C",
+        "class_name": "AcePlayerPawn_su30sm_s03_C"
+      },
+      "groups": {
+        "MSL": {
+          "address": "0x1f92b416e48",
+          "ammo": 126,
+          "max_ammo": 126,
+          "window": 2,
+          "cursor": 0,
+          "count": 2,
+          "capacity": 4,
+          "weapon_class": "plwp_msl_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": null,
+              "duration": 5.5,
+              "elapsed": 5.5
+            },
+            {
+              "index": 1,
+              "socket": null,
+              "duration": 5.5,
+              "elapsed": 5.5
+            }
+          ]
+        },
+        "SP": {
+          "address": "0x1f92b416ed0",
+          "ammo": 12,
+          "max_ammo": 12,
+          "window": 2,
+          "cursor": 0,
+          "count": 4,
+          "capacity": 4,
+          "weapon_class": "plwp_qaam_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": null,
+              "duration": 9.0,
+              "elapsed": 9.0
+            },
+            {
+              "index": 1,
+              "socket": null,
+              "duration": 9.0,
+              "elapsed": 9.0
+            },
+            {
+              "index": 2,
+              "socket": null,
+              "duration": 9.0,
+              "elapsed": 0.0
+            },
+            {
+              "index": 3,
+              "socket": null,
+              "duration": 9.0,
+              "elapsed": 0.0
+            }
+          ]
+        }
+      },
+      "mounts": {
+        "SWP2": {
+          "address": "0x1f9229409f0",
+          "index": 54386,
+          "serial": 18533,
+          "name": "SWP2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "None",
+          "mesh": "su30sm_SWP2_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "WeapMesh_PlaneBodyMesh_ws1": {
+          "address": "0x1f90e338100",
+          "index": 105917,
+          "serial": 18535,
+          "name": "WeapMesh_PlaneBodyMesh_ws1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws1",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_PlaneBodyMesh_ws2": {
+          "address": "0x1f90e33c080",
+          "index": 105916,
+          "serial": 18536,
+          "name": "WeapMesh_PlaneBodyMesh_ws2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws2",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_SWP2_sp23": {
+          "address": "0x1f901c08100",
+          "index": 105907,
+          "serial": 18545,
+          "name": "WeapMesh_SWP2_sp23",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp23",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "SWP3": {
+          "address": "0x1f91afb6140",
+          "index": 54385,
+          "serial": 18534,
+          "name": "SWP3",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP3_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP1": {
+          "address": "0x1f9229431a0",
+          "index": 54389,
+          "serial": 18554,
+          "name": "SWP1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP1_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "WeapMesh_SWP2_sp24": {
+          "address": "0x1f901c05160",
+          "index": 105906,
+          "serial": 18546,
+          "name": "WeapMesh_SWP2_sp24",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp24",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP2_sp21": {
+          "address": "0x1f901c0a8b0",
+          "index": 105909,
+          "serial": 18543,
+          "name": "WeapMesh_SWP2_sp21",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp21",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP2_sp22": {
+          "address": "0x1f901c04970",
+          "index": 105908,
+          "serial": 18544,
+          "name": "WeapMesh_SWP2_sp22",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp22",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP1_sp15": {
+          "address": "0x1f90aad8100",
+          "index": 105911,
+          "serial": 18541,
+          "name": "WeapMesh_SWP1_sp15",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp15",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp31": {
+          "address": "0x1f901c03990",
+          "index": 105905,
+          "serial": 18547,
+          "name": "WeapMesh_SWP3_sp31",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp31",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp33": {
+          "address": "0x1f901c0e830",
+          "index": 105903,
+          "serial": 18549,
+          "name": "WeapMesh_SWP3_sp33",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp33",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp11": {
+          "address": "0x1f90e33e040",
+          "index": 105915,
+          "serial": 18537,
+          "name": "WeapMesh_SWP1_sp11",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp11",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp13": {
+          "address": "0x1f90301e040",
+          "index": 105913,
+          "serial": 18539,
+          "name": "WeapMesh_SWP1_sp13",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp13",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp14": {
+          "address": "0x1f90301a0c0",
+          "index": 105912,
+          "serial": 18540,
+          "name": "WeapMesh_SWP1_sp14",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp14",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp34": {
+          "address": "0x1f901c0d850",
+          "index": 105902,
+          "serial": 18550,
+          "name": "WeapMesh_SWP3_sp34",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp34",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp35": {
+          "address": "0x1f901c05950",
+          "index": 105901,
+          "serial": 18551,
+          "name": "WeapMesh_SWP3_sp35",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp35",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp12": {
+          "address": "0x1f9030198d0",
+          "index": 105914,
+          "serial": 18538,
+          "name": "WeapMesh_SWP1_sp12",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp12",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp32": {
+          "address": "0x1f901c0d060",
+          "index": 105904,
+          "serial": 18548,
+          "name": "WeapMesh_SWP3_sp32",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp32",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp36": {
+          "address": "0x1f901c0c870",
+          "index": 105900,
+          "serial": 18552,
+          "name": "WeapMesh_SWP3_sp36",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp36",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp16": {
+          "address": "0x1f90aadc870",
+          "index": 105910,
+          "serial": 18542,
+          "name": "WeapMesh_SWP1_sp16",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp16",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        }
+      },
+      "active_projectiles": [],
+      "mesh_manager": null,
+      "mesh_arrays": {}
+    },
+    {
+      "source_file": "su30sm-paused-6aam.json",
+      "sha256": "f01f98a6b5aa888547c553dc6d1688d3ab813cc998e206f9c087b8b7066862eb",
+      "captured_local": "2026-10-14T17:25:13.947690+08:00",
+      "plane": {
+        "address": "0x1f8a86fe390",
+        "index": 55209,
+        "serial": 15358,
+        "name": "AcePlayerPawn_su30sm_s03_C",
+        "class_name": "AcePlayerPawn_su30sm_s03_C"
+      },
+      "groups": {
+        "MSL": {
+          "address": "0x1f92b416e48",
+          "ammo": 126,
+          "max_ammo": 126,
+          "window": 2,
+          "cursor": 0,
+          "count": 2,
+          "capacity": 4,
+          "weapon_class": "plwp_msl_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "ws1",
+              "duration": 5.5,
+              "elapsed": 5.5
+            },
+            {
+              "index": 1,
+              "socket": "ws2",
+              "duration": 5.5,
+              "elapsed": 5.5
+            }
+          ]
+        },
+        "SP": {
+          "address": "0x1f92b416ed0",
+          "ammo": 34,
+          "max_ammo": 34,
+          "window": 6,
+          "cursor": 0,
+          "count": 6,
+          "capacity": 24,
+          "weapon_class": "plwp_6aam_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "sp11",
+              "duration": 18.0,
+              "elapsed": 18.0
+            },
+            {
+              "index": 1,
+              "socket": "sp12",
+              "duration": 18.0,
+              "elapsed": 18.0
+            },
+            {
+              "index": 2,
+              "socket": "sp13",
+              "duration": 18.0,
+              "elapsed": 18.0
+            },
+            {
+              "index": 3,
+              "socket": "sp14",
+              "duration": 18.0,
+              "elapsed": 18.0
+            },
+            {
+              "index": 4,
+              "socket": "sp15",
+              "duration": 18.0,
+              "elapsed": 18.0
+            },
+            {
+              "index": 5,
+              "socket": "sp16",
+              "duration": 18.0,
+              "elapsed": 18.0
+            }
+          ]
+        }
+      },
+      "mounts": {
+        "WeapMesh_PlaneBodyMesh_ws1": {
+          "address": "0x1f90e338100",
+          "index": 105917,
+          "serial": 18535,
+          "name": "WeapMesh_PlaneBodyMesh_ws1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws1",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_PlaneBodyMesh_ws2": {
+          "address": "0x1f90e33c080",
+          "index": 105916,
+          "serial": 18536,
+          "name": "WeapMesh_PlaneBodyMesh_ws2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws2",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_SWP1_sp15": {
+          "address": "0x1f90aad8100",
+          "index": 105911,
+          "serial": 18541,
+          "name": "WeapMesh_SWP1_sp15",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp15",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp23": {
+          "address": "0x1f901c08100",
+          "index": 105907,
+          "serial": 18545,
+          "name": "WeapMesh_SWP2_sp23",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp23",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP1_sp11": {
+          "address": "0x1f90e33e040",
+          "index": 105915,
+          "serial": 18537,
+          "name": "WeapMesh_SWP1_sp11",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp11",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp13": {
+          "address": "0x1f90301e040",
+          "index": 105913,
+          "serial": 18539,
+          "name": "WeapMesh_SWP1_sp13",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp13",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp14": {
+          "address": "0x1f90301a0c0",
+          "index": 105912,
+          "serial": 18540,
+          "name": "WeapMesh_SWP1_sp14",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp14",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp31": {
+          "address": "0x1f901c03990",
+          "index": 105905,
+          "serial": 18547,
+          "name": "WeapMesh_SWP3_sp31",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp31",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp12": {
+          "address": "0x1f9030198d0",
+          "index": 105914,
+          "serial": 18538,
+          "name": "WeapMesh_SWP1_sp12",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp12",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp34": {
+          "address": "0x1f901c0d850",
+          "index": 105902,
+          "serial": 18550,
+          "name": "WeapMesh_SWP3_sp34",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp34",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp35": {
+          "address": "0x1f901c05950",
+          "index": 105901,
+          "serial": 18551,
+          "name": "WeapMesh_SWP3_sp35",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp35",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "SWP1": {
+          "address": "0x1f9229431a0",
+          "index": 54389,
+          "serial": 18554,
+          "name": "SWP1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "None",
+          "mesh": "su30sm_SWP1_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "WeapMesh_SWP3_sp32": {
+          "address": "0x1f901c0d060",
+          "index": 105904,
+          "serial": 18548,
+          "name": "WeapMesh_SWP3_sp32",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp32",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP2_sp24": {
+          "address": "0x1f901c05160",
+          "index": 105906,
+          "serial": 18546,
+          "name": "WeapMesh_SWP2_sp24",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp24",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP2_sp21": {
+          "address": "0x1f901c0a8b0",
+          "index": 105909,
+          "serial": 18543,
+          "name": "WeapMesh_SWP2_sp21",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp21",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp33": {
+          "address": "0x1f901c0e830",
+          "index": 105903,
+          "serial": 18549,
+          "name": "WeapMesh_SWP3_sp33",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp33",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp16": {
+          "address": "0x1f90aadc870",
+          "index": 105910,
+          "serial": 18542,
+          "name": "WeapMesh_SWP1_sp16",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp16",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp22": {
+          "address": "0x1f901c04970",
+          "index": 105908,
+          "serial": 18544,
+          "name": "WeapMesh_SWP2_sp22",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp22",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp36": {
+          "address": "0x1f901c0c870",
+          "index": 105900,
+          "serial": 18552,
+          "name": "WeapMesh_SWP3_sp36",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp36",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "SWP3": {
+          "address": "0x1f91afb6140",
+          "index": 54385,
+          "serial": 18534,
+          "name": "SWP3",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP3_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP2": {
+          "address": "0x1f9229409f0",
+          "index": 54386,
+          "serial": 18533,
+          "name": "SWP2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP2_SM",
+          "parent": "WeaponMeshBase"
+        }
+      },
+      "active_projectiles": [],
+      "mesh_manager": {
+        "address": "0x1f92c703880",
+        "uobject": true,
+        "index": 105918,
+        "serial": 18556,
+        "name": "WeaponMeshManager",
+        "number": 0,
+        "class": "0x1f886715200",
+        "class_name": "WeaponMeshManager",
+        "outer": "0x1f8a86fe390",
+        "flags": 64,
+        "vtable_rva": "0x275dc20"
+      },
+      "mesh_arrays": {
+        "MSL": [
+          "WeapMesh_PlaneBodyMesh_ws1",
+          "WeapMesh_PlaneBodyMesh_ws2"
+        ],
+        "SWP1": [
+          "WeapMesh_SWP1_sp11",
+          "WeapMesh_SWP1_sp12",
+          "WeapMesh_SWP1_sp13",
+          "WeapMesh_SWP1_sp14",
+          "WeapMesh_SWP1_sp15",
+          "WeapMesh_SWP1_sp16"
+        ],
+        "SWP2": [
+          "WeapMesh_SWP2_sp21",
+          "WeapMesh_SWP2_sp22",
+          "WeapMesh_SWP2_sp23",
+          "WeapMesh_SWP2_sp24"
+        ],
+        "SWP3": [
+          "WeapMesh_SWP3_sp31",
+          "WeapMesh_SWP3_sp32",
+          "WeapMesh_SWP3_sp33",
+          "WeapMesh_SWP3_sp34",
+          "WeapMesh_SWP3_sp35",
+          "WeapMesh_SWP3_sp36"
+        ]
+      }
+    },
+    {
+      "source_file": "su30sm-paused-qaam-fired.json",
+      "sha256": "b7a39b4448ea83b0ef693277fcef48d11d72be0859249f14ff747853c4493533",
+      "captured_local": "2026-10-14T17:27:49.610329+08:00",
+      "plane": {
+        "address": "0x1f8a86fe390",
+        "index": 55209,
+        "serial": 15358,
+        "name": "AcePlayerPawn_su30sm_s03_C",
+        "class_name": "AcePlayerPawn_su30sm_s03_C"
+      },
+      "groups": {
+        "MSL": {
+          "address": "0x1f92b416e48",
+          "ammo": 126,
+          "max_ammo": 126,
+          "window": 2,
+          "cursor": 0,
+          "count": 2,
+          "capacity": 4,
+          "weapon_class": "plwp_msl_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "ws1",
+              "duration": 5.5,
+              "elapsed": 5.5
+            },
+            {
+              "index": 1,
+              "socket": "ws2",
+              "duration": 5.5,
+              "elapsed": 5.5
+            }
+          ]
+        },
+        "SP": {
+          "address": "0x1f92b416ed0",
+          "ammo": 11,
+          "max_ammo": 11,
+          "window": 2,
+          "cursor": 1,
+          "count": 4,
+          "capacity": 4,
+          "weapon_class": "plwp_qaam_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "sp21",
+              "duration": 9.0,
+              "elapsed": 0.0
+            },
+            {
+              "index": 1,
+              "socket": "sp22",
+              "duration": 9.0,
+              "elapsed": 9.0
+            },
+            {
+              "index": 2,
+              "socket": "sp23",
+              "duration": 9.0,
+              "elapsed": 3.3705270290374756
+            },
+            {
+              "index": 3,
+              "socket": "sp24",
+              "duration": 9.0,
+              "elapsed": 0.0
+            }
+          ]
+        }
+      },
+      "mounts": {
+        "WeapMesh_PlaneBodyMesh_ws1": {
+          "address": "0x1f90e338100",
+          "index": 105917,
+          "serial": 18535,
+          "name": "WeapMesh_PlaneBodyMesh_ws1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws1",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_PlaneBodyMesh_ws2": {
+          "address": "0x1f90e33c080",
+          "index": 105916,
+          "serial": 18536,
+          "name": "WeapMesh_PlaneBodyMesh_ws2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws2",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_SWP1_sp15": {
+          "address": "0x1f90aad8100",
+          "index": 105911,
+          "serial": 18541,
+          "name": "WeapMesh_SWP1_sp15",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp15",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp23": {
+          "address": "0x1f901c08100",
+          "index": 105907,
+          "serial": 18545,
+          "name": "WeapMesh_SWP2_sp23",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp23",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP1_sp11": {
+          "address": "0x1f90e33e040",
+          "index": 105915,
+          "serial": 18537,
+          "name": "WeapMesh_SWP1_sp11",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp11",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp13": {
+          "address": "0x1f90301e040",
+          "index": 105913,
+          "serial": 18539,
+          "name": "WeapMesh_SWP1_sp13",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp13",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp14": {
+          "address": "0x1f90301a0c0",
+          "index": 105912,
+          "serial": 18540,
+          "name": "WeapMesh_SWP1_sp14",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp14",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp31": {
+          "address": "0x1f901c03990",
+          "index": 105905,
+          "serial": 18547,
+          "name": "WeapMesh_SWP3_sp31",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp31",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp12": {
+          "address": "0x1f9030198d0",
+          "index": 105914,
+          "serial": 18538,
+          "name": "WeapMesh_SWP1_sp12",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp12",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp34": {
+          "address": "0x1f901c0d850",
+          "index": 105902,
+          "serial": 18550,
+          "name": "WeapMesh_SWP3_sp34",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp34",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp35": {
+          "address": "0x1f901c05950",
+          "index": 105901,
+          "serial": 18551,
+          "name": "WeapMesh_SWP3_sp35",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp35",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp32": {
+          "address": "0x1f901c0d060",
+          "index": 105904,
+          "serial": 18548,
+          "name": "WeapMesh_SWP3_sp32",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp32",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP2_sp24": {
+          "address": "0x1f901c05160",
+          "index": 105906,
+          "serial": 18546,
+          "name": "WeapMesh_SWP2_sp24",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp24",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP2_sp21": {
+          "address": "0x1f901c0a8b0",
+          "index": 105909,
+          "serial": 18543,
+          "name": "WeapMesh_SWP2_sp21",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": false,
+          "socket": "sp21",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp33": {
+          "address": "0x1f901c0e830",
+          "index": 105903,
+          "serial": 18549,
+          "name": "WeapMesh_SWP3_sp33",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp33",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp16": {
+          "address": "0x1f90aadc870",
+          "index": 105910,
+          "serial": 18542,
+          "name": "WeapMesh_SWP1_sp16",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp16",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp22": {
+          "address": "0x1f901c04970",
+          "index": 105908,
+          "serial": 18544,
+          "name": "WeapMesh_SWP2_sp22",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp22",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp36": {
+          "address": "0x1f901c0c870",
+          "index": 105900,
+          "serial": 18552,
+          "name": "WeapMesh_SWP3_sp36",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp36",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "SWP2": {
+          "address": "0x1f9229409f0",
+          "index": 54386,
+          "serial": 18533,
+          "name": "SWP2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "None",
+          "mesh": "su30sm_SWP2_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP1": {
+          "address": "0x1f9229431a0",
+          "index": 54389,
+          "serial": 18554,
+          "name": "SWP1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP1_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP3": {
+          "address": "0x1f91afb6140",
+          "index": 54385,
+          "serial": 18534,
+          "name": "SWP3",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP3_SM",
+          "parent": "WeaponMeshBase"
+        }
+      },
+      "active_projectiles": [
+        {
+          "address": "0x1f9031e4980",
+          "index": 121709,
+          "serial": 22965,
+          "name": "plwp_qaam_r0_C",
+          "class_name": "plwp_qaam_r0_C",
+          "owner": "AcePlayerPawn_su30sm_s03_C",
+          "root": {
+            "address": "0x1f92d997910",
+            "index": 121705,
+            "serial": 22961,
+            "name": "Static Mesh",
+            "class_name": "StaticMeshComponent"
+          },
+          "mesh": "w_qaam_r0_SM",
+          "root_parent": {
+            "address": "0x0",
+            "uobject": false
+          }
+        }
+      ],
+      "mesh_manager": {
+        "address": "0x1f92c703880",
+        "uobject": true,
+        "index": 105918,
+        "serial": 18556,
+        "name": "WeaponMeshManager",
+        "number": 0,
+        "class": "0x1f886715200",
+        "class_name": "WeaponMeshManager",
+        "outer": "0x1f8a86fe390",
+        "flags": 64,
+        "vtable_rva": "0x275dc20"
+      },
+      "mesh_arrays": {
+        "MSL": [
+          "WeapMesh_PlaneBodyMesh_ws1",
+          "WeapMesh_PlaneBodyMesh_ws2"
+        ],
+        "SWP1": [
+          "WeapMesh_SWP1_sp11",
+          "WeapMesh_SWP1_sp12",
+          "WeapMesh_SWP1_sp13",
+          "WeapMesh_SWP1_sp14",
+          "WeapMesh_SWP1_sp15",
+          "WeapMesh_SWP1_sp16"
+        ],
+        "SWP2": [
+          "WeapMesh_SWP2_sp21",
+          "WeapMesh_SWP2_sp22",
+          "WeapMesh_SWP2_sp23",
+          "WeapMesh_SWP2_sp24"
+        ],
+        "SWP3": [
+          "WeapMesh_SWP3_sp31",
+          "WeapMesh_SWP3_sp32",
+          "WeapMesh_SWP3_sp33",
+          "WeapMesh_SWP3_sp34",
+          "WeapMesh_SWP3_sp35",
+          "WeapMesh_SWP3_sp36"
+        ]
+      }
+    },
+    {
+      "source_file": "su30sm-paused-qaam-reloaded.json",
+      "sha256": "596e583fbcbaa5924921c62adf466a0df9a759ba103e9a9ffc8e8608438ae54a",
+      "captured_local": "2026-10-14T17:30:38.467508+08:00",
+      "plane": {
+        "address": "0x1f8a86fe390",
+        "index": 55209,
+        "serial": 15358,
+        "name": "AcePlayerPawn_su30sm_s03_C",
+        "class_name": "AcePlayerPawn_su30sm_s03_C"
+      },
+      "groups": {
+        "MSL": {
+          "address": "0x1f92b416e48",
+          "ammo": 126,
+          "max_ammo": 126,
+          "window": 2,
+          "cursor": 0,
+          "count": 2,
+          "capacity": 4,
+          "weapon_class": "plwp_msl_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "ws1",
+              "duration": 5.5,
+              "elapsed": 5.5
+            },
+            {
+              "index": 1,
+              "socket": "ws2",
+              "duration": 5.5,
+              "elapsed": 5.5
+            }
+          ]
+        },
+        "SP": {
+          "address": "0x1f92b416ed0",
+          "ammo": 11,
+          "max_ammo": 11,
+          "window": 2,
+          "cursor": 1,
+          "count": 4,
+          "capacity": 4,
+          "weapon_class": "plwp_qaam_r0_C",
+          "slots": [
+            {
+              "index": 0,
+              "socket": "sp21",
+              "duration": 9.0,
+              "elapsed": 0.0
+            },
+            {
+              "index": 1,
+              "socket": "sp22",
+              "duration": 9.0,
+              "elapsed": 9.0
+            },
+            {
+              "index": 2,
+              "socket": "sp23",
+              "duration": 9.0,
+              "elapsed": 9.0028657913208
+            },
+            {
+              "index": 3,
+              "socket": "sp24",
+              "duration": 9.0,
+              "elapsed": 0.0
+            }
+          ]
+        }
+      },
+      "mounts": {
+        "WeapMesh_PlaneBodyMesh_ws1": {
+          "address": "0x1f90e338100",
+          "index": 105917,
+          "serial": 18535,
+          "name": "WeapMesh_PlaneBodyMesh_ws1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws1",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_PlaneBodyMesh_ws2": {
+          "address": "0x1f90e33c080",
+          "index": 105916,
+          "serial": 18536,
+          "name": "WeapMesh_PlaneBodyMesh_ws2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "ws2",
+          "mesh": "w_msl_r0_SM",
+          "parent": "PlaneBodyMesh"
+        },
+        "WeapMesh_SWP1_sp15": {
+          "address": "0x1f90aad8100",
+          "index": 105911,
+          "serial": 18541,
+          "name": "WeapMesh_SWP1_sp15",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp15",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp23": {
+          "address": "0x1f901c08100",
+          "index": 105907,
+          "serial": 18545,
+          "name": "WeapMesh_SWP2_sp23",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp23",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP1_sp11": {
+          "address": "0x1f90e33e040",
+          "index": 105915,
+          "serial": 18537,
+          "name": "WeapMesh_SWP1_sp11",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp11",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp13": {
+          "address": "0x1f90301e040",
+          "index": 105913,
+          "serial": 18539,
+          "name": "WeapMesh_SWP1_sp13",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp13",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP1_sp14": {
+          "address": "0x1f90301a0c0",
+          "index": 105912,
+          "serial": 18540,
+          "name": "WeapMesh_SWP1_sp14",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp14",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp31": {
+          "address": "0x1f901c03990",
+          "index": 105905,
+          "serial": 18547,
+          "name": "WeapMesh_SWP3_sp31",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp31",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp12": {
+          "address": "0x1f9030198d0",
+          "index": 105914,
+          "serial": 18538,
+          "name": "WeapMesh_SWP1_sp12",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp12",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP3_sp34": {
+          "address": "0x1f901c0d850",
+          "index": 105902,
+          "serial": 18550,
+          "name": "WeapMesh_SWP3_sp34",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp34",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp35": {
+          "address": "0x1f901c05950",
+          "index": 105901,
+          "serial": 18551,
+          "name": "WeapMesh_SWP3_sp35",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp35",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP3_sp32": {
+          "address": "0x1f901c0d060",
+          "index": 105904,
+          "serial": 18548,
+          "name": "WeapMesh_SWP3_sp32",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp32",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP2_sp24": {
+          "address": "0x1f901c05160",
+          "index": 105906,
+          "serial": 18546,
+          "name": "WeapMesh_SWP2_sp24",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp24",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP2_sp21": {
+          "address": "0x1f901c0a8b0",
+          "index": 105909,
+          "serial": 18543,
+          "name": "WeapMesh_SWP2_sp21",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp21",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp33": {
+          "address": "0x1f901c0e830",
+          "index": 105903,
+          "serial": 18549,
+          "name": "WeapMesh_SWP3_sp33",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp33",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "WeapMesh_SWP1_sp16": {
+          "address": "0x1f90aadc870",
+          "index": 105910,
+          "serial": 18542,
+          "name": "WeapMesh_SWP1_sp16",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp16",
+          "mesh": "w_4aam_r0_SM",
+          "parent": "SWP1"
+        },
+        "WeapMesh_SWP2_sp22": {
+          "address": "0x1f901c04970",
+          "index": 105908,
+          "serial": 18544,
+          "name": "WeapMesh_SWP2_sp22",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "sp22",
+          "mesh": "w_qaam_r0_SM",
+          "parent": "SWP2"
+        },
+        "WeapMesh_SWP3_sp36": {
+          "address": "0x1f901c0c870",
+          "index": 105900,
+          "serial": 18552,
+          "name": "WeapMesh_SWP3_sp36",
+          "class_name": "StaticMeshComponent",
+          "visible": false,
+          "hidden_in_game": true,
+          "socket": "sp36",
+          "mesh": "w_lasm_r0_SM",
+          "parent": "SWP3"
+        },
+        "SWP2": {
+          "address": "0x1f9229409f0",
+          "index": 54386,
+          "serial": 18533,
+          "name": "SWP2",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": false,
+          "socket": "None",
+          "mesh": "su30sm_SWP2_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP1": {
+          "address": "0x1f9229431a0",
+          "index": 54389,
+          "serial": 18554,
+          "name": "SWP1",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP1_SM",
+          "parent": "WeaponMeshBase"
+        },
+        "SWP3": {
+          "address": "0x1f91afb6140",
+          "index": 54385,
+          "serial": 18534,
+          "name": "SWP3",
+          "class_name": "StaticMeshComponent",
+          "visible": true,
+          "hidden_in_game": true,
+          "socket": "None",
+          "mesh": "su30sm_SWP3_SM",
+          "parent": "WeaponMeshBase"
+        }
+      },
+      "active_projectiles": [],
+      "mesh_manager": {
+        "address": "0x1f92c703880",
+        "uobject": true,
+        "index": 105918,
+        "serial": 18556,
+        "name": "WeaponMeshManager",
+        "number": 0,
+        "class": "0x1f886715200",
+        "class_name": "WeaponMeshManager",
+        "outer": "0x1f8a86fe390",
+        "flags": 64,
+        "vtable_rva": "0x275dc20"
+      },
+      "mesh_arrays": {
+        "MSL": [
+          "WeapMesh_PlaneBodyMesh_ws1",
+          "WeapMesh_PlaneBodyMesh_ws2"
+        ],
+        "SWP1": [
+          "WeapMesh_SWP1_sp11",
+          "WeapMesh_SWP1_sp12",
+          "WeapMesh_SWP1_sp13",
+          "WeapMesh_SWP1_sp14",
+          "WeapMesh_SWP1_sp15",
+          "WeapMesh_SWP1_sp16"
+        ],
+        "SWP2": [
+          "WeapMesh_SWP2_sp21",
+          "WeapMesh_SWP2_sp22",
+          "WeapMesh_SWP2_sp23",
+          "WeapMesh_SWP2_sp24"
+        ],
+        "SWP3": [
+          "WeapMesh_SWP3_sp31",
+          "WeapMesh_SWP3_sp32",
+          "WeapMesh_SWP3_sp33",
+          "WeapMesh_SWP3_sp34",
+          "WeapMesh_SWP3_sp35",
+          "WeapMesh_SWP3_sp36"
+        ]
+      }
+    }
+  ]
+}

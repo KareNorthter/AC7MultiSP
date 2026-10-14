@@ -1,0 +1,963 @@
+{
+  "game_process_read": false,
+  "game_files_modified": false,
+  "runtime_verified": false,
+  "assets": [
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+      "encrypted_sha256": "686dfa0039376101653804789f743ac6088bed53bfd544c6ebb074a75ef9b9fd",
+      "decoded_sha256": "c2acd426fd4767d9ce32cb4ecc8585954686e58f09076c32e5049378c608acbc",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_C",
+          "parent": "PlayerPlane"
+        }
+      ],
+      "configs": [
+        {
+          "name": "SpecialWeaponConfig1",
+          "class": "plwp_qaam_a0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_a0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "class": "plwp_qaam_a0_C"
+        }
+      ],
+      "components": [
+        {
+          "name": "SCS_Node_0",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SceneComponent_0",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotMesh_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "InternalVariableName": "PilotMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_10",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotSeat_ShadowMesh_GEN_VARIABLE",
+            "InternalVariableName": "PilotSeat_ShadowMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_11",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "RadarWidget_GEN_VARIABLE",
+            "InternalVariableName": "RadarWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_12",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "IconWidget_GEN_VARIABLE",
+            "InternalVariableName": "IconWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_13",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CompassWidget_GEN_VARIABLE",
+            "InternalVariableName": "CompassWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_15",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CameraView55788C354F2BE396E392F1BBD0F5B068",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "CameraView"
+          }
+        },
+        {
+          "name": "SCS_Node_16",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "Scene_VR_GEN_VARIABLE",
+            "ChildNodes": [
+              130,
+              131,
+              134,
+              132
+            ],
+            "InternalVariableName": "Scene_VR"
+          }
+        },
+        {
+          "name": "SCS_Node_17",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ThirdPersonCamera1CD7759564CEBD751F4535E83A087CF0E",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              120
+            ],
+            "InternalVariableName": "ThirdPersonCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_18",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DamagedState129FC5454886B1394DB5FDB978A6E75B",
+            "InternalVariableName": "DamagedState"
+          }
+        },
+        {
+          "name": "SCS_Node_19",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+            "ParentComponentOrVariableName": "RootComponent",
+            "ChildNodes": [
+              108,
+              110,
+              118,
+              116,
+              124,
+              117,
+              128,
+              129,
+              107,
+              112,
+              109
+            ],
+            "InternalVariableName": "CockpitMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_2",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "VelocityVector_GEN_VARIABLE",
+            "InternalVariableName": "VelocityVector"
+          }
+        },
+        {
+          "name": "SCS_Node_20",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "IconStatWidget_GEN_VARIABLE",
+            "InternalVariableName": "IconStatWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_21",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PitchMeterWidget_GEN_VARIABLE",
+            "InternalVariableName": "PitchMeterWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_22",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FirstPersonCameraInput1D028841A42834860A13DFDA039C1C82E",
+            "InternalVariableName": "FirstPersonCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_23",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ThirdPersonCameraInput911355934D39CAC89956ACAC9D5CCBD9",
+            "InternalVariableName": "ThirdPersonCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_24",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CockpitCameraInput11107C69A4D9C7FED78FD9AAB2F2F108B",
+            "InternalVariableName": "CockpitCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_25",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PlayerPlaneSoundB2EBCA094137C1EAA6DC53B104B93323",
+            "InternalVariableName": "PlayerPlaneSound"
+          }
+        },
+        {
+          "name": "SCS_Node_26",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CockpitCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              121
+            ],
+            "InternalVariableName": "CockpitCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_29",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "GuideMessageWidget_GEN_VARIABLE",
+            "InternalVariableName": "GuideMessageWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_3",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "EnemyMissileIndicator_GEN_VARIABLE",
+            "InternalVariableName": "EnemyMissileIndicator"
+          }
+        },
+        {
+          "name": "SCS_Node_30",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ImpactCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "ImpactCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_31",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FlyBySound_GEN_VARIABLE",
+            "InternalVariableName": "FlyBySound"
+          }
+        },
+        {
+          "name": "SCS_Node_32",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotLegLeft_GEN_VARIABLE",
+            "InternalVariableName": "PilotLegLeft"
+          }
+        },
+        {
+          "name": "SCS_Node_33",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotLegRight_GEN_VARIABLE",
+            "InternalVariableName": "PilotLegRight"
+          }
+        },
+        {
+          "name": "SCS_Node_34",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayLeft_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayLeft"
+          }
+        },
+        {
+          "name": "SCS_Node_35",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayRight_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayRight"
+          }
+        },
+        {
+          "name": "SCS_Node_36",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "Scene_HUDglass_Center_GEN_VARIABLE",
+            "InternalVariableName": "Scene_HUDglass_Center"
+          }
+        },
+        {
+          "name": "SCS_Node_4",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PlaneVFX_GEN_VARIABLE",
+            "InternalVariableName": "PlaneVFX"
+          }
+        },
+        {
+          "name": "SCS_Node_5",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayCenter_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayCenter"
+          }
+        },
+        {
+          "name": "SCS_Node_6",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FirstPersonCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              119
+            ],
+            "InternalVariableName": "FirstPersonCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_7",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "WeaponMeshBase_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "WeaponMeshBase"
+          }
+        },
+        {
+          "name": "SCS_Node_8",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "MiniGameCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "MiniGameCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_9",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "TargetSelection7F75C693426E9FFC1AC71EB6C97D9DD3",
+            "InternalVariableName": "TargetSelection"
+          }
+        },
+        {
+          "name": "PilotLegLeft_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "Lleg_Rig",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "PilotLegRight_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "Rleg_Rig",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "bVisible": false
+          }
+        },
+        {
+          "name": "LandingGearOnMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "PlaneBodyMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "PilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "LP_pilot_SM",
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "PilotSeat_ShadowMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "PilotSeat_ShadowMesh",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -1.0,
+                "Y": "+0",
+                "Z": -1.5
+              }
+            },
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayCenter_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayLeft_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayRight_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "VelocityVector_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 250.0,
+                "Y": "+0",
+                "Z": "+0"
+              }
+            },
+            "RelativeScale3D": {
+              "RelativeScale3D": {
+                "X": 0.00139999995008111,
+                "Y": 0.0020000000949949026,
+                "Z": 0.00139999995008111
+              }
+            },
+            "bVisible": false
+          }
+        },
+        {
+          "name": "CanopyWeatherMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "RootComponent",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "LandingGearOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOnMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+      "encrypted_sha256": "7d863c995ec1f1628761686138f11d963b90c0dcc2ffc4930b4621895faaa223",
+      "decoded_sha256": "1cc9049e00f9c93bccf9f057e88d37e6d5b129723a741565747178dbdb8c5bef",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_C",
+          "parent": "PlayerPlane"
+        }
+      ],
+      "configs": [
+        {
+          "name": "SpecialWeaponConfig1",
+          "class": "plwp_qaam_a0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_a0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "class": "plwp_qaam_a0_C"
+        }
+      ],
+      "components": [
+        {
+          "name": "SCS_Node_0",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SceneComponent_0",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotMesh_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "InternalVariableName": "PilotMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_10",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotSeat_ShadowMesh_GEN_VARIABLE",
+            "InternalVariableName": "PilotSeat_ShadowMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_11",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "RadarWidget_GEN_VARIABLE",
+            "InternalVariableName": "RadarWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_12",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "IconWidget_GEN_VARIABLE",
+            "InternalVariableName": "IconWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_13",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CompassWidget_GEN_VARIABLE",
+            "InternalVariableName": "CompassWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_15",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CameraView55788C354F2BE396E392F1BBD0F5B068",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "CameraView"
+          }
+        },
+        {
+          "name": "SCS_Node_16",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "Scene_VR_GEN_VARIABLE",
+            "ChildNodes": [
+              129,
+              130,
+              133,
+              131
+            ],
+            "InternalVariableName": "Scene_VR"
+          }
+        },
+        {
+          "name": "SCS_Node_17",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ThirdPersonCamera1CD7759564CEBD751F4535E83A087CF0E",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              119
+            ],
+            "InternalVariableName": "ThirdPersonCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_18",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DamagedState129FC5454886B1394DB5FDB978A6E75B",
+            "InternalVariableName": "DamagedState"
+          }
+        },
+        {
+          "name": "SCS_Node_19",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+            "ParentComponentOrVariableName": "RootComponent",
+            "ChildNodes": [
+              107,
+              109,
+              117,
+              115,
+              123,
+              116,
+              127,
+              128,
+              106,
+              111,
+              108
+            ],
+            "InternalVariableName": "CockpitMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_2",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "VelocityVector_GEN_VARIABLE",
+            "InternalVariableName": "VelocityVector"
+          }
+        },
+        {
+          "name": "SCS_Node_20",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "IconStatWidget_GEN_VARIABLE",
+            "InternalVariableName": "IconStatWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_21",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PitchMeterWidget_GEN_VARIABLE",
+            "InternalVariableName": "PitchMeterWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_22",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FirstPersonCameraInput1D028841A42834860A13DFDA039C1C82E",
+            "InternalVariableName": "FirstPersonCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_23",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ThirdPersonCameraInput911355934D39CAC89956ACAC9D5CCBD9",
+            "InternalVariableName": "ThirdPersonCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_24",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CockpitCameraInput11107C69A4D9C7FED78FD9AAB2F2F108B",
+            "InternalVariableName": "CockpitCameraInput"
+          }
+        },
+        {
+          "name": "SCS_Node_25",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PlayerPlaneSoundB2EBCA094137C1EAA6DC53B104B93323",
+            "InternalVariableName": "PlayerPlaneSound"
+          }
+        },
+        {
+          "name": "SCS_Node_26",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CockpitCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              120
+            ],
+            "InternalVariableName": "CockpitCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_29",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "GuideMessageWidget_GEN_VARIABLE",
+            "InternalVariableName": "GuideMessageWidget"
+          }
+        },
+        {
+          "name": "SCS_Node_3",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "EnemyMissileIndicator_GEN_VARIABLE",
+            "InternalVariableName": "EnemyMissileIndicator"
+          }
+        },
+        {
+          "name": "SCS_Node_30",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "ImpactCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "ImpactCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_31",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FlyBySound_GEN_VARIABLE",
+            "InternalVariableName": "FlyBySound"
+          }
+        },
+        {
+          "name": "SCS_Node_32",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotLegLeft_GEN_VARIABLE",
+            "InternalVariableName": "PilotLegLeft"
+          }
+        },
+        {
+          "name": "SCS_Node_33",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PilotLegRight_GEN_VARIABLE",
+            "InternalVariableName": "PilotLegRight"
+          }
+        },
+        {
+          "name": "SCS_Node_34",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayLeft_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayLeft"
+          }
+        },
+        {
+          "name": "SCS_Node_35",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayRight_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayRight"
+          }
+        },
+        {
+          "name": "SCS_Node_36",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "Scene_HUDglass_Center_GEN_VARIABLE",
+            "InternalVariableName": "Scene_HUDglass_Center"
+          }
+        },
+        {
+          "name": "SCS_Node_4",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "PlaneVFX_GEN_VARIABLE",
+            "InternalVariableName": "PlaneVFX"
+          }
+        },
+        {
+          "name": "SCS_Node_5",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SM_DisplayCenter_GEN_VARIABLE",
+            "InternalVariableName": "SM_DisplayCenter"
+          }
+        },
+        {
+          "name": "SCS_Node_6",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "FirstPersonCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PlaneBodyMesh",
+            "ChildNodes": [
+              118
+            ],
+            "InternalVariableName": "FirstPersonCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_7",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "WeaponMeshBase_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "WeaponMeshBase"
+          }
+        },
+        {
+          "name": "SCS_Node_8",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "MiniGameCamera_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "RootComponent",
+            "InternalVariableName": "MiniGameCamera"
+          }
+        },
+        {
+          "name": "SCS_Node_9",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "TargetSelection7F75C693426E9FFC1AC71EB6C97D9DD3",
+            "InternalVariableName": "TargetSelection"
+          }
+        },
+        {
+          "name": "PilotLegLeft_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "Lleg_Rig",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "PilotLegRight_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "Rleg_Rig",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "bVisible": false
+          }
+        },
+        {
+          "name": "LandingGearOnMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "PlaneBodyMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "PilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "LP_pilot_SM",
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "PilotSeat_ShadowMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "PilotSeat_ShadowMesh",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -1.0,
+                "Y": "+0",
+                "Z": -1.5
+              }
+            },
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayCenter_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayLeft_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "SM_DisplayRight_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "bVisible": false,
+            "bHiddenInGame": true
+          }
+        },
+        {
+          "name": "VelocityVector_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "Plane",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 250.0,
+                "Y": "+0",
+                "Z": "+0"
+              }
+            },
+            "RelativeScale3D": {
+              "RelativeScale3D": {
+                "X": 0.00139999995008111,
+                "Y": 0.0020000000949949026,
+                "Z": 0.00139999995008111
+              }
+            },
+            "bVisible": false
+          }
+        },
+        {
+          "name": "CanopyWeatherMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "RootComponent",
+            "bVisible": false
+          }
+        },
+        {
+          "name": "LandingGearOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOnMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "AttachParent": "PlaneBodyMesh"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": []
+    }
+  ]
+}

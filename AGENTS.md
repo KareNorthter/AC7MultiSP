@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+- **2026-10-14 双 SP 实体挂载研究分支。** 本工作区从 0.1.9 建立 `codex/su30sm-dual-mount-research`，仅研究 Su-30SM 双挂，不改变主工作区或已安装模组。已解析该机三套挂点，优先研究 6AAM＋QAAM；完整双组构建及发射仍待验证，见[本轮报告](docs/research/su30sm-dual-mount.md)。下列安装状态继续作为可玩基线。
+
 - **2026-10-14 17:08 已安装 DualSP 0.1.9。** 用户确认候选 9 除 SP2 音量外其他功能正常；本版仅把音量系数从 0.35 降至 0.175，并统一版本标记。独立核心编译、语法和安装回读通过，配置/存档保留；本轮整理本地 Git 快照，最终音量待试听。见[安装回执](evidence/0.1.9-installed.json)。见[版本说明](docs/version-0.1.9.md)、[用户验证](evidence/0.1.9-user-validation.json)。以下候选状态为历史记录。
 
 - **2026-10-14 16:19 已安装体验候选 9。** 用户确认候选 8 的 TLS 及其他调整正常；本批将 SP2 增益从 0.70 降至 0.35，准备页为三行全名与标题留白，性能/类型整体下移。编译、语法和安装回读通过，配置/存档保留；新的音量与布局待复测，见[安装回执](evidence/experience-candidate.9-installed.json)。见[说明](docs/experience-polish.md)、[依据](evidence/experience-candidate9-findings.json)。
@@ -85,6 +87,7 @@ F8 支持中英文、功能开关、键盘单键设置、配弹比例和日志�
 | MSL/SP1/SP2 选择音效与暂停的研究 | [音效研究](docs/research/weapon-switch-audio.md) |
 | 补给重选与两个 HUD 新功能的合并候选 | [合并候选说明](docs/hud-candidate.md) |
 | 双模型挂载可行性与后续目标 | [模型研究](docs/research/weapon-models.md) |
+| Su-30SM 挂点、首个组合与持久分组门槛 | [Su-30SM 双挂研究](docs/research/su30sm-dual-mount.md) |
 | 为什么采用当前方案 | [关键决策](docs/decisions.md) |
 | 保留了哪些证据 | [证据目录](evidence/README.md) |
 | AC8 参考图 | [参考资料](references/README.md) |

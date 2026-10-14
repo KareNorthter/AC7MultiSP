@@ -1,0 +1,28 @@
+{
+  "recorded_local": "2026-10-14T17:29:35.397643+08:00",
+  "source_commit": "2564c62",
+  "research_branch": "codex/su30sm-dual-mount-research",
+  "primary_branch": "codex/experience-polish",
+  "primary_head": "2564c6233e1096772b3b8803d55492ac58f49e3e",
+  "main_ref": "6381ccdf9bd2e8fa330d407f41ff39cc51cf977f",
+  "primary_status": "",
+  "formal_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+  "installed_0_1_9_files_match_receipt": {
+    "bin/DualSP.dll": true,
+    "bin/DualSPUI.dll": true,
+    "Scripts/main.lua": true,
+    "Scripts/json.lua": true,
+    "Scripts/weapon_cycle.lua": true,
+    "Scripts/native_hud.lua": true,
+    "Scripts/loadout_flow.lua": true,
+    "Scripts/native_loadout.lua": true,
+    "Scripts/weapon_names.lua": true,
+    "Scripts/weapon_presentation.lua": true,
+    "Audio/SP2.wav": true
+  },
+  "compiled": false,
+  "test_modules_created_or_run": false,
+  "game_started_and_operated_by": "用户",
+  "game_memory_written": false,
+  "installed_candidate": false
+}

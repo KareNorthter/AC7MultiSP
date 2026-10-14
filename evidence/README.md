@@ -1,5 +1,9 @@
 # 精选证据索引
 
+本研究分支新增 [`su30sm-mount-assets.json`](su30sm-mount-assets.json) 和 [`su30sm-base-pawn-assets.json`](su30sm-base-pawn-assets.json)：来自自有资源副本的配置、挂点、继承和组件摘要。完整双模型尚未实现，结论与现场边界见[Su-30SM 双挂报告](../docs/research/su30sm-dual-mount.md)。
+
+[`su30sm-mount-live.json`](su30sm-mount-live.json) 记录用户配合的 QAAM、6AAM、QAAM 射后、装填后四份只读快照；[`su30sm-native-mount-findings.json`](su30sm-native-mount-findings.json) 保存显示管理与初始化函数的必要摘录；[`su30sm-research-preservation.json`](su30sm-research-preservation.json) 核对主工作区干净、正式核心哈希及安装文件。此组证据不代表双模型功能已经实现。
+
 0.1.9 已安装，见[`0.1.9-installed.json`](0.1.9-installed.json)。本地版本：[`0.1.9-user-validation.json`](0.1.9-user-validation.json) 为用户确认范围；[`0.1.9-runtime-manifest.json`](0.1.9-runtime-manifest.json) 记录 Git 核心与本地 WAV 的来源和哈希。
 
 体验候选 9：[`experience-candidate9-findings.json`](experience-candidate9-findings.json) 记录候选 8 用户通过、已安装音量版本核对和新增音量/名称留白调整。

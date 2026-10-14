@@ -1,0 +1,2513 @@
+{
+  "game_process_read": false,
+  "game_files_modified": false,
+  "runtime_verified": false,
+  "assets": [
+    {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30sm.uasset",
+      "encrypted_sha256": "c8d422cbdaa60eae67cf97f723aa430b33d2dd535efaebab39124487c1a32ed3",
+      "decoded_sha256": "8caec86f95214dc6543aabcd0de729a9c1f4c82ae3866a713cc95834353f37b0",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_su30sm_C",
+          "parent": "AcePlayerPawn_C"
+        }
+      ],
+      "configs": [
+        {
+          "name": "SpecialWeaponConfig1",
+          "class": "plwp_6aam_r0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_r0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "class": "plwp_lagm_r0_C"
+        }
+      ],
+      "components": [
+        {
+          "name": "SCS_Node_0",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot_GEN_VARIABLE",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CoPilotMesh_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PilotMesh",
+            "InternalVariableName": "CoPilotMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_2",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP1_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP1"
+          }
+        },
+        {
+          "name": "SCS_Node_3",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP2_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP2"
+          }
+        },
+        {
+          "name": "SCS_Node_4",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP3_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP3"
+          }
+        },
+        {
+          "name": "PilotLegLeft_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 88.25360107421875,
+                "Y": -1.710587978363037,
+                "Z": 10.32187557220459
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -0.084228515625,
+                "Yaw": -6.256714820861816,
+                "Roll": -0.003877999959513545
+              }
+            }
+          }
+        },
+        {
+          "name": "PilotLegRight_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 88.25360107421875,
+                "Y": 1.7105880975723267,
+                "Z": 10.32187557220459
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -0.084197998046875,
+                "Yaw": 6.256723403930664,
+                "Roll": 0.0038787610828876495
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm_CP"
+          }
+        },
+        {
+          "name": "LandingGearOnMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm_GearOn",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "PlaneBodyMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm",
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "CoPilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "LP_pilot_SM",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -15.0,
+                "Y": "+0",
+                "Z": 2.0
+              }
+            }
+          }
+        },
+        {
+          "name": "PilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 85.0,
+                "Y": "+0",
+                "Z": 9.0
+              }
+            },
+            "bHiddenInGame": false
+          }
+        },
+        {
+          "name": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP1_SM"
+          }
+        },
+        {
+          "name": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP2_SM"
+          }
+        },
+        {
+          "name": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP3_SM"
+          }
+        },
+        {
+          "name": "CanopyWeatherMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_FX_Canopy_SM",
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "LandingGearOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_GearOff_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_RefuelOff_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOnMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_RefuelOn_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_qaam_a0.uasset",
+      "encrypted_sha256": "465b7e2d60b466c81a59e33178716b7157918f2f626b2650a2421882576d2569",
+      "decoded_sha256": "1c11fc8206af43d424f0666393d73e2c9cd7f6c23633523ffa47c1f41e8c119e",
+      "classes": [
+        {
+          "name": "plwp_qaam_a0_C",
+          "parent": "MSL_BaseClass_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_qaam_a0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_qaam_a0_C",
+          "class": "plwp_qaam_a0_C",
+          "properties": {
+            "InitialDropSpeed": 5555.5556640625,
+            "WeaponID": "EWeaponID::WID_qaam",
+            "StaticMesh": "Static Mesh",
+            "LoadTime": 9.0,
+            "MaxLoadedCount": 2,
+            "LockOnTargetType": "ETargetType::AIR_ONLY",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_lagm_a0.uasset",
+      "encrypted_sha256": "acc658c55ad44db6ba73c01c483b171d7fadf6598f1382069cd7aa36ef47ba7b",
+      "decoded_sha256": "7e14e05e8753c4560c3e3415db8d45541b38251cc25970fd4b10d4e675068128",
+      "classes": [
+        {
+          "name": "plwp_lagm_a0_C",
+          "parent": "MSL_BaseClass_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_lagm_a0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_lagm_a0_C",
+          "class": "plwp_lagm_a0_C",
+          "properties": {
+            "InitialSpeed": "+0",
+            "IgnitionInitialSpeed": 277.77777099609375,
+            "WeaponID": "EWeaponID::WID_lagm",
+            "StaticMesh": "Static Mesh",
+            "LoadTime": 10.0,
+            "MaxLoadedCount": 2,
+            "LockOnTargetType": "ETargetType::GROUND_ONLY",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_6aam_a0.uasset",
+      "encrypted_sha256": "65698bcef9074a2d83a877810804c837a79c3f4c53eb5f17defbc2a4cf4899c0",
+      "decoded_sha256": "4018b5d97e030cfd4882f0f13821a3445281d72b35b9bc7d355b534942d6d86f",
+      "classes": [
+        {
+          "name": "plwp_6aam_a0_C",
+          "parent": "MSL_BaseClass_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_4aam_a0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_6aam_a0_C",
+          "class": "plwp_6aam_a0_C",
+          "properties": {
+            "InitialSpeed": "+0",
+            "IgnitionInitialSpeed": 416.66668701171875,
+            "WeaponID": "EWeaponID::WID_6aam",
+            "StaticMesh": "Static Mesh",
+            "LoadTime": 18.0,
+            "MaxLoadedCount": 6,
+            "bFireAllInOneShot": true,
+            "LockOnTargetType": "ETargetType::AIR_ONLY",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_lagm_r0.uasset",
+      "encrypted_sha256": "785f6421461aac0c2e4ecfad7fbba6f59139ce1db796de1b8bce792ce1db49b8",
+      "decoded_sha256": "a1c1e73a69d8d33a518f5d0260700a7cbe9e9b092426d728c4947c4ca305919c",
+      "classes": [
+        {
+          "name": "plwp_lagm_r0_C",
+          "parent": "plwp_lagm_a0_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_lasm_r0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_lagm_r0_C",
+          "class": "plwp_lagm_r0_C",
+          "properties": {
+            "StaticMesh": "Static Mesh",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su30sm/su30sm_Skeleton.uasset",
+      "encrypted_sha256": "9154dd6a63458a21a4a8f9a0a8d5e83a2739bc2d9b8bbc6e0e7f07a147979def",
+      "decoded_sha256": "2a1ec0dc8dcb9c1d5c9734ada1f01ddc87de24acd69c232afc9e8f97a3ab32a9",
+      "classes": [],
+      "configs": [],
+      "components": [
+        {
+          "name": "SkeletalMeshSocket_0",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.629857063293457,
+                "Y": 0.0032770000398159027,
+                "Z": -0.0021230001002550125
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": "-0",
+                "Yaw": 180.0,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_1",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.600457191467285,
+                "Y": -0.0032770000398159027,
+                "Z": -0.0021230001002550125
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": "-0",
+                "Yaw": 180.0,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_12",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -31.823957443237305,
+                "Y": 72.99393463134766,
+                "Z": 3.1816484928131104
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_13",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -32.406185150146484,
+                "Y": -73.0594482421875,
+                "Z": 2.951361894607544
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_14",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -9.833999633789062,
+                "Y": 72.87699890136719,
+                "Z": 0.8360000252723694
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_15",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -9.833999633789062,
+                "Y": -72.87699890136719,
+                "Z": 0.8360000252723694
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_16",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 66.09410095214844,
+                "Y": 10.910789489746094,
+                "Z": 5.966159820556641
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_17",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 66.09400177001953,
+                "Y": 10.91100025177002,
+                "Z": 5.966000080108643
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": "-0",
+                "Yaw": "+0",
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_18",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -61.35116958618164,
+                "Y": "-0",
+                "Z": -1.6976001262664795
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_19",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 86.68296813964844,
+                "Y": "-0",
+                "Z": 15.699999809265137
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_2",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.171651840209961,
+                "Y": 43.629451751708984,
+                "Z": 4.065526962280273
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_20",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -29.804349899291992,
+                "Y": 22.801000595092773,
+                "Z": 20.20823097229004
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_21",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 145.90371704101562,
+                "Y": "-0",
+                "Z": 2.0829904079437256
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_22",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 4.884734153747559,
+                "Y": 12.063016891479492,
+                "Z": 6.599654674530029
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_23",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 5.711767196655273,
+                "Y": 23.401750564575195,
+                "Z": 6.391323566436768
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_24",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 22.882869720458984,
+                "Y": -7.550885200500488,
+                "Z": 8.354178428649902
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_25",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 12.763420104980469,
+                "Y": -9.409394264221191,
+                "Z": 7.298551559448242
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_26",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -20.392988204956055,
+                "Y": -3.6162428855895996,
+                "Z": 5.2693071365356445
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_27",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -4.069408416748047,
+                "Y": -29.54890251159668,
+                "Z": 5.751400470733643
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_28",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 27.27637481689453,
+                "Y": 4.272960186004639,
+                "Z": 11.561939239501953
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_29",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -12.28597354888916,
+                "Y": 5.483344078063965,
+                "Z": 5.5188469886779785
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_3",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.171651840209961,
+                "Y": -44.08412551879883,
+                "Z": 4.065526962280273
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_30",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -5.447551727294922,
+                "Y": 32.66315460205078,
+                "Z": 5.613410472869873
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_31",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 5.779444217681885,
+                "Y": -25.76712417602539,
+                "Z": 6.383810043334961
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_32",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 33.04924011230469,
+                "Y": "-0",
+                "Z": -19.408302307128906
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 1.0108921527862549,
+                "Yaw": "+0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_33",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -25.75631332397461,
+                "Y": 19.023273468017578,
+                "Z": 2.6059083938598633
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_34",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 51.844051361083984,
+                "Y": -8.583901405334473,
+                "Z": 9.871465682983398
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_35",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 16.87398910522461,
+                "Y": 19.834924697875977,
+                "Z": 7.075494766235352
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_36",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -41.626041412353516,
+                "Y": -18.62803077697754,
+                "Z": 2.7009756565093994
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_37",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -0.9812135100364685,
+                "Y": 24.66314697265625,
+                "Z": 3.236008405685425
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_38",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -15.783464431762695,
+                "Y": -48.9687614440918,
+                "Z": 4.771442413330078
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_39",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 45.824615478515625,
+                "Y": 9.440614700317383,
+                "Z": 8.883106231689453
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_4",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 77.17469787597656,
+                "Y": -9.84000015258789,
+                "Z": 4.977043628692627
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_40",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 16.104022979736328,
+                "Y": -35.40300750732422,
+                "Z": 3.8376917839050293
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_41",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 2.6086440086364746,
+                "Y": -21.52193260192871,
+                "Z": 1.9052374362945557
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_42",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -2.5058348178863525,
+                "Y": -8.904608726501465,
+                "Z": 6.0881428718566895
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_43",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -29.804349899291992,
+                "Y": -22.801025390625,
+                "Z": 20.20823097229004
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_5",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 77.17469787597656,
+                "Y": 9.840041160583496,
+                "Z": 4.977043628692627
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 2.5444437748716082e-14,
+                "Yaw": -6.361109437179021e-15,
+                "Roll": -1.2380000352859497
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_6",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -39.61471176147461,
+                "Y": 11.739989280700684,
+                "Z": 5.65653657913208
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_7",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -13.603099822998047,
+                "Y": -39.40370178222656,
+                "Z": 4.832492828369141
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_8",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 6.026500225067139,
+                "Y": 39.415191650390625,
+                "Z": 5.503763198852539
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshSocket_9",
+          "class": "SkeletalMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 4.984336853027344,
+                "Y": -22.71134376525879,
+                "Z": 6.552999973297119
+              }
+            }
+          }
+        }
+      ],
+      "sockets": [
+        {
+          "SocketName": "burner_01",
+          "BoneName": "L_Nozzle",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.629857063293457,
+              "Y": 0.0032770000398159027,
+              "Z": -0.0021230001002550125
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": "-0",
+              "Yaw": 180.0,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "burner_02",
+          "BoneName": "R_Nozzle",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.600457191467285,
+              "Y": -0.0032770000398159027,
+              "Z": -0.0021230001002550125
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": "-0",
+              "Yaw": 180.0,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "vapor02",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -31.823957443237305,
+              "Y": 72.99393463134766,
+              "Z": 3.1816484928131104
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "vapor01",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -32.406185150146484,
+              "Y": -73.0594482421875,
+              "Z": 2.951361894607544
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "ws2",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -9.833999633789062,
+              "Y": 72.87699890136719,
+              "Z": 0.8360000252723694
+            }
+          }
+        },
+        {
+          "SocketName": "ws1",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -9.833999633789062,
+              "Y": -72.87699890136719,
+              "Z": 0.8360000252723694
+            }
+          }
+        },
+        {
+          "SocketName": "Gun",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 66.09410095214844,
+              "Y": 10.910789489746094,
+              "Z": 5.966159820556641
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "TEMP_muzzleFlash",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 66.09400177001953,
+              "Y": 10.91100025177002,
+              "Z": 5.966000080108643
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": "-0",
+              "Yaw": "+0",
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "cam_thrusters",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -61.35116958618164,
+              "Y": "-0",
+              "Z": -1.6976001262664795
+            }
+          }
+        },
+        {
+          "SocketName": "cam_pilot",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 86.68296813964844,
+              "Y": "-0",
+              "Z": 15.699999809265137
+            }
+          }
+        },
+        {
+          "SocketName": "pitchup_frtFlap_02",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.171651840209961,
+              "Y": 43.629451751708984,
+              "Z": 4.065526962280273
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "cam_tailR",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -29.804349899291992,
+              "Y": 22.801000595092773,
+              "Z": 20.20823097229004
+            }
+          }
+        },
+        {
+          "SocketName": "cam_nose",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 145.90371704101562,
+              "Y": "-0",
+              "Z": 2.0829904079437256
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT20",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 4.884734153747559,
+              "Y": 12.063016891479492,
+              "Z": 6.599654674530029
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT19",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 5.711767196655273,
+              "Y": 23.401750564575195,
+              "Z": 6.391323566436768
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT18",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 22.882869720458984,
+              "Y": -7.550885200500488,
+              "Z": 8.354178428649902
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT17",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 12.763420104980469,
+              "Y": -9.409394264221191,
+              "Z": 7.298551559448242
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT16",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -20.392988204956055,
+              "Y": -3.6162428855895996,
+              "Z": 5.2693071365356445
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT15",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -4.069408416748047,
+              "Y": -29.54890251159668,
+              "Z": 5.751400470733643
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT14",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 27.27637481689453,
+              "Y": 4.272960186004639,
+              "Z": 11.561939239501953
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT13",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -12.28597354888916,
+              "Y": 5.483344078063965,
+              "Z": 5.5188469886779785
+            }
+          }
+        },
+        {
+          "SocketName": "pitchup_frtFlap_01",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.171651840209961,
+              "Y": -44.08412551879883,
+              "Z": 4.065526962280273
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT12",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -5.447551727294922,
+              "Y": 32.66315460205078,
+              "Z": 5.613410472869873
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT11",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 5.779444217681885,
+              "Y": -25.76712417602539,
+              "Z": 6.383810043334961
+            }
+          }
+        },
+        {
+          "SocketName": "HANGAR_ORIGIN",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 33.04924011230469,
+              "Y": "-0",
+              "Z": -19.408302307128906
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 1.0108921527862549,
+              "Yaw": "+0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT10",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -25.75631332397461,
+              "Y": 19.023273468017578,
+              "Z": 2.6059083938598633
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT09",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 51.844051361083984,
+              "Y": -8.583901405334473,
+              "Z": 9.871465682983398
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT08",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 16.87398910522461,
+              "Y": 19.834924697875977,
+              "Z": 7.075494766235352
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT07",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -41.626041412353516,
+              "Y": -18.62803077697754,
+              "Z": 2.7009756565093994
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT06",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -0.9812135100364685,
+              "Y": 24.66314697265625,
+              "Z": 3.236008405685425
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT05",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -15.783464431762695,
+              "Y": -48.9687614440918,
+              "Z": 4.771442413330078
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT04",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 45.824615478515625,
+              "Y": 9.440614700317383,
+              "Z": 8.883106231689453
+            }
+          }
+        },
+        {
+          "SocketName": "pitchup_body_02",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 77.17469787597656,
+              "Y": -9.84000015258789,
+              "Z": 4.977043628692627
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT03",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 16.104022979736328,
+              "Y": -35.40300750732422,
+              "Z": 3.8376917839050293
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT02",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 2.6086440086364746,
+              "Y": -21.52193260192871,
+              "Z": 1.9052374362945557
+            }
+          }
+        },
+        {
+          "SocketName": "GUNHIT01",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -2.5058348178863525,
+              "Y": -8.904608726501465,
+              "Z": 6.0881428718566895
+            }
+          }
+        },
+        {
+          "SocketName": "cam_tailL",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -29.804349899291992,
+              "Y": -22.801025390625,
+              "Z": 20.20823097229004
+            }
+          }
+        },
+        {
+          "SocketName": "pitchup_body_01",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 77.17469787597656,
+              "Y": 9.840041160583496,
+              "Z": 4.977043628692627
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 2.5444437748716082e-14,
+              "Yaw": -6.361109437179021e-15,
+              "Roll": -1.2380000352859497
+            }
+          }
+        },
+        {
+          "SocketName": "VFX_Dmg_Engine",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -39.61471176147461,
+              "Y": 11.739989280700684,
+              "Z": 5.65653657913208
+            }
+          }
+        },
+        {
+          "SocketName": "VFX_Dmg_WingL",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -13.603099822998047,
+              "Y": -39.40370178222656,
+              "Z": 4.832492828369141
+            }
+          }
+        },
+        {
+          "SocketName": "VFX_Dmg_WingR",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 6.026500225067139,
+              "Y": 39.415191650390625,
+              "Z": 5.503763198852539
+            }
+          }
+        },
+        {
+          "SocketName": "VFX_Dmg_Body",
+          "BoneName": "Body",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 4.984336853027344,
+              "Y": -22.71134376525879,
+              "Z": 6.552999973297119
+            }
+          }
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_6aam_r0.uasset",
+      "encrypted_sha256": "c0df3e999dd80914ec2b1c35abd0cc6ae372cff7e17960d59ffafff208130732",
+      "decoded_sha256": "96401137f0d1b29791c5c96a60ebea9b825bd60d73fe16482901dff624503cb5",
+      "classes": [
+        {
+          "name": "plwp_6aam_r0_C",
+          "parent": "plwp_6aam_a0_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_4aam_r0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_6aam_r0_C",
+          "class": "plwp_6aam_r0_C",
+          "properties": {
+            "StaticMesh": "Static Mesh",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_qaam_r0.uasset",
+      "encrypted_sha256": "b41d409c98fc05156f7051ef6112e564f232149b0efd913eca6f8590e98e0ca9",
+      "decoded_sha256": "34474f03da136791f6b1c9ee881aa3d2827c136c0d7ab607a15e9040353de801",
+      "classes": [
+        {
+          "name": "plwp_qaam_r0_C",
+          "parent": "plwp_qaam_a0_C"
+        }
+      ],
+      "configs": [],
+      "components": [
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot726FEB624E66DFD08843ADAE262BB0E2",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "w_qaam_r0_SM"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": [
+        {
+          "name": "Default__plwp_qaam_r0_C",
+          "class": "plwp_qaam_r0_C",
+          "properties": {
+            "StaticMesh": "Static Mesh",
+            "RootComponent": "Static Mesh"
+          }
+        }
+      ]
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su30sm/su30sm_SWP1_SM.uasset",
+      "encrypted_sha256": "c457abdc41bf7baf4240bdbaf327d4f7cdc8898d941899cd55adb8900246ff49",
+      "decoded_sha256": "368c04901ac0e0f21d33ddb2876a2db4b2cf167e80475fb49085b286a9576c71",
+      "classes": [],
+      "configs": [],
+      "components": [
+        {
+          "name": "StaticMeshSocket_10",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 11.8149995803833,
+                "Y": -11.774999618530273,
+                "Z": -13.821000099182129
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -1.059999942779541,
+                "Yaw": -0.2199999988079071,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_11",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 11.8149995803833,
+                "Y": 11.774999618530273,
+                "Z": -13.821000099182129
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -1.059999942779541,
+                "Yaw": 0.2199999988079071,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_6",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -0.12210182845592499,
+                "Y": -46.15999984741211,
+                "Z": -2.350663423538208
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_7",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -0.12200000137090683,
+                "Y": 46.15999984741211,
+                "Z": -2.3510000705718994
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_8",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 4.89900016784668,
+                "Y": -34.91999816894531,
+                "Z": -2.1389999389648438
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_9",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 4.89900016784668,
+                "Y": 34.91999816894531,
+                "Z": -2.1389999389648438
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        }
+      ],
+      "sockets": [
+        {
+          "SocketName": "sp15",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 11.8149995803833,
+              "Y": -11.774999618530273,
+              "Z": -13.821000099182129
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": -1.059999942779541,
+              "Yaw": -0.2199999988079071,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp16",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 11.8149995803833,
+              "Y": 11.774999618530273,
+              "Z": -13.821000099182129
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": -1.059999942779541,
+              "Yaw": 0.2199999988079071,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp11",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -0.12210182845592499,
+              "Y": -46.15999984741211,
+              "Z": -2.350663423538208
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp12",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -0.12200000137090683,
+              "Y": 46.15999984741211,
+              "Z": -2.3510000705718994
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp13",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 4.89900016784668,
+              "Y": -34.91999816894531,
+              "Z": -2.1389999389648438
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp14",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 4.89900016784668,
+              "Y": 34.91999816894531,
+              "Z": -2.1389999389648438
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su30sm/su30sm_SWP2_SM.uasset",
+      "encrypted_sha256": "114660f982485079747f9b6bfb50a98c976b68aee0e4367e8b849b25cbaab203",
+      "decoded_sha256": "603b210a6324321d8aa0ed35fc76168a2762567d201f3c45e206d7856f623e8a",
+      "classes": [],
+      "configs": [],
+      "components": [
+        {
+          "name": "StaticMeshSocket_4",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -11.776000022888184,
+                "Y": -62.68000030517578,
+                "Z": -2.3340001106262207
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_5",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -11.776000022888184,
+                "Y": 62.68000030517578,
+                "Z": -2.3340001106262207
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_6",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 2.1089999675750732,
+                "Y": -46.15999984741211,
+                "Z": -2.124000072479248
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_7",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 2.1089999675750732,
+                "Y": 46.15999984741211,
+                "Z": -2.124000072479248
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        }
+      ],
+      "sockets": [
+        {
+          "SocketName": "sp21",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -11.776000022888184,
+              "Y": -62.68000030517578,
+              "Z": -2.3340001106262207
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp22",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": -11.776000022888184,
+              "Y": 62.68000030517578,
+              "Z": -2.3340001106262207
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp23",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 2.1089999675750732,
+              "Y": -46.15999984741211,
+              "Z": -2.124000072479248
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp24",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 2.1089999675750732,
+              "Y": 46.15999984741211,
+              "Z": -2.124000072479248
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su30sm/su30sm_SWP3_SM.uasset",
+      "encrypted_sha256": "31c6cecaa15ec408f69c32860bf57379125d693d80c76028e7226ee04056ac19",
+      "decoded_sha256": "8b181692c541c1f8605d0af03e827cbeb0cd18d06511cef1049913c795be5dd8",
+      "classes": [],
+      "configs": [],
+      "components": [
+        {
+          "name": "StaticMeshSocket_10",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.531999588012695,
+                "Y": -11.781000137329102,
+                "Z": -14.303000450134277
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -1.059999942779541,
+                "Yaw": -0.2199999988079071,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_11",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 13.531999588012695,
+                "Y": 11.781000137329102,
+                "Z": -14.303000450134277
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -1.059999942779541,
+                "Yaw": 0.2199999988079071,
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_6",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 1.152999997138977,
+                "Y": -46.13999938964844,
+                "Z": -2.8480000495910645
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_7",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 1.152999997138977,
+                "Y": 46.13999938964844,
+                "Z": -2.8480000495910645
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.7149999737739563,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_8",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 5.771999835968018,
+                "Y": -34.900001525878906,
+                "Z": -2.6389999389648438
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.699999988079071,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        },
+        {
+          "name": "StaticMeshSocket_9",
+          "class": "StaticMeshSocket",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 5.771999835968018,
+                "Y": 34.900001525878906,
+                "Z": -2.6389999389648438
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": 0.699999988079071,
+                "Yaw": "-0",
+                "Roll": "+0"
+              }
+            }
+          }
+        }
+      ],
+      "sockets": [
+        {
+          "SocketName": "sp35",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.531999588012695,
+              "Y": -11.781000137329102,
+              "Z": -14.303000450134277
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": -1.059999942779541,
+              "Yaw": -0.2199999988079071,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp36",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 13.531999588012695,
+              "Y": 11.781000137329102,
+              "Z": -14.303000450134277
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": -1.059999942779541,
+              "Yaw": 0.2199999988079071,
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp31",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 1.152999997138977,
+              "Y": -46.13999938964844,
+              "Z": -2.8480000495910645
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp32",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 1.152999997138977,
+              "Y": 46.13999938964844,
+              "Z": -2.8480000495910645
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.7149999737739563,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp33",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 5.771999835968018,
+              "Y": -34.900001525878906,
+              "Z": -2.6389999389648438
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.699999988079071,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        },
+        {
+          "SocketName": "sp34",
+          "RelativeLocation": {
+            "RelativeLocation": {
+              "X": 5.771999835968018,
+              "Y": 34.900001525878906,
+              "Z": -2.6389999389648438
+            }
+          },
+          "RelativeRotation": {
+            "RelativeRotation": {
+              "Pitch": 0.699999988079071,
+              "Yaw": "-0",
+              "Roll": "+0"
+            }
+          }
+        }
+      ],
+      "parameters": []
+    },
+    {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30sm.uasset",
+      "encrypted_sha256": "f43be7895f79e63cc7336c67371a5125f558c6e7db4885abb39efb08fed1a54c",
+      "decoded_sha256": "f7c0577e42d66d1fddfda5e30c19b85cd538ff61655e4494bffbc9cead1465b3",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_su30sm_C",
+          "parent": "AcePlayerPawn_C"
+        }
+      ],
+      "configs": [
+        {
+          "name": "SpecialWeaponConfig1",
+          "class": "plwp_6aam_r0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_r0_C"
+        },
+        {
+          "name": "SpecialWeaponConfig3",
+          "class": "plwp_lagm_r0_C"
+        }
+      ],
+      "components": [
+        {
+          "name": "SCS_Node_0",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "DefaultSceneRoot_GEN_VARIABLE",
+            "InternalVariableName": "DefaultSceneRoot"
+          }
+        },
+        {
+          "name": "SCS_Node_1",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "CoPilotMesh_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "PilotMesh",
+            "InternalVariableName": "CoPilotMesh"
+          }
+        },
+        {
+          "name": "SCS_Node_2",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP1_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP1"
+          }
+        },
+        {
+          "name": "SCS_Node_3",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP2_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP2"
+          }
+        },
+        {
+          "name": "SCS_Node_4",
+          "class": "SCS_Node",
+          "properties": {
+            "ComponentTemplate": "SWP3_GEN_VARIABLE",
+            "ParentComponentOrVariableName": "WeaponMeshBase",
+            "InternalVariableName": "SWP3"
+          }
+        },
+        {
+          "name": "PilotLegLeft_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 88.25360107421875,
+                "Y": -1.710587978363037,
+                "Z": 10.32187557220459
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -0.084228515625,
+                "Yaw": -6.256714820861816,
+                "Roll": -0.003877999959513545
+              }
+            }
+          }
+        },
+        {
+          "name": "PilotLegRight_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 88.25360107421875,
+                "Y": 1.7105880975723267,
+                "Z": 10.32187557220459
+              }
+            },
+            "RelativeRotation": {
+              "RelativeRotation": {
+                "Pitch": -0.084197998046875,
+                "Yaw": 6.256723403930664,
+                "Roll": 0.0038787610828876495
+              }
+            }
+          }
+        },
+        {
+          "name": "SkeletalMeshB67E700A4DA57390A0EC4096810B7249",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm_CP"
+          }
+        },
+        {
+          "name": "LandingGearOnMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm_GearOn",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "PlaneBodyMesh",
+          "class": "SkeletalMeshComponent",
+          "properties": {
+            "SkeletalMesh": "su30sm",
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "CoPilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "LP_pilot_SM",
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": -15.0,
+                "Y": "+0",
+                "Z": 2.0
+              }
+            }
+          }
+        },
+        {
+          "name": "PilotMesh_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "RelativeLocation": {
+              "RelativeLocation": {
+                "X": 85.0,
+                "Y": "+0",
+                "Z": 9.0
+              }
+            },
+            "bHiddenInGame": false
+          }
+        },
+        {
+          "name": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP1_SM"
+          }
+        },
+        {
+          "name": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP2_SM"
+          }
+        },
+        {
+          "name": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_SWP3_SM"
+          }
+        },
+        {
+          "name": "CanopyWeatherMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_FX_Canopy_SM",
+            "AttachParent": "RootComponent"
+          }
+        },
+        {
+          "name": "LandingGearOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_GearOff_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOffMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_RefuelOff_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        },
+        {
+          "name": "RefuelOnMesh",
+          "class": "StaticMeshComponent",
+          "properties": {
+            "StaticMesh": "su30sm_RefuelOn_SM",
+            "AttachParent": "PlaneBodyMesh"
+          }
+        }
+      ],
+      "sockets": [],
+      "parameters": []
+    }
+  ]
+}
