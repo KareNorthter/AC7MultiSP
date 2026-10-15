@@ -1,3 +1,5 @@
+当前更新：候选 .6 已实现 TLS→MSL 局部修订，跨 SP 仍主动结束；实玩待用户。本批说明见 static-mount-batch.txt。以下为此前只读研究，旧“未修改运行源码”仅描述当时状态。
+
 TLS 与 ECM 持续效果：当前架构可行性研究
 2026-10-15；独立分支 codex/aircraft-mount-survey；研究基线 af4ce5d。
 

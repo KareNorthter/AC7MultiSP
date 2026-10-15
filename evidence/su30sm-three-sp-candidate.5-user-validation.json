@@ -1,0 +1,12 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.5",
+  "date": "2026-10-15",
+  "user_feedback": "两项均正常",
+  "verified_by_user": [
+    "出击及补给 SP2/SP3 默认指向第一个可选兵装",
+    "PART 页 WEAPON AMMO 区域不再重叠"
+  ],
+  "runtime_manifest_verified_files": 13,
+  "source_thread": "01a139ad-5557-7ef1-bf87-16d3786e0533",
+  "boundary": "不扩大为新机型、三挂检查点或 TLS 持续效果通过"
+}

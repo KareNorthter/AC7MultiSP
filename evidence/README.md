@@ -151,3 +151,6 @@
 ## 2026-10-14 候选 5 准备记录
 
 [experience-candidate5-prepared.json](experience-candidate5-prepared.json) 记录用户确认 CFA-44 双 SP 正常、自定义 WAV、原生部件调用链及离线核验。本轮暂不安装，不能把编译通过当成新音频游戏内试听通过。
+
+
+2026-10-15 集中候选 .6：`static-mount-batch-research.json` 记录 F-35C 在旧 .5 上的只读运行时采样、模型池身份比较、静态挂架几何摘要及边界；原始快照留 Temp。`su30sm-three-sp-candidate.5-user-validation.json` 仅记录用户确认两项 UI 正常。`.6-build.json` 与 `.6-installed.json` 记录构建/语法/接口/成套备份及安装核验，不能代替新功能实玩结论。

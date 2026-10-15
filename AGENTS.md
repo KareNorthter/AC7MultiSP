@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+2026-10-15 集中候选 `.6`：本工作区现位于 `codex/static-mount-batch`，继续独立于主工作区。用户确认 `.5` 默认光标与 PART 弹药位置均正常，并要求扩大每批验证范围。已实现 Su-30SM 含 QAAM 的两种双挂、F-35C SOD＋8AGM 静态固定挂载和 TLS→MSL 保留原光束的局部修订。F-35C 在旧 `.5` 上已完成用户操作配合的只读现场采样，确认两槽 SOD、十二槽/八枚窗口 8AGM、池身份稳定及 SWP2/3 偏移差异；不等于新功能已实玩通过。21:08 已构建并安装，Lua 语法/接口/13 个文件核验通过，配置、存档及其他模组已备份保留。游戏已正常关闭且未重新启动，未新增或运行测试模块；新功能实玩待用户。见[构建回执](evidence/su30sm-three-sp-candidate.6-build.json)、[安装回执](evidence/su30sm-three-sp-candidate.6-installed.json)；详见[本批说明与集中测试顺序](docs/research/static-mount-batch.txt)、[研究证据](evidence/static-mount-batch-research.json)。XFA-27 当前不可选，本批未适配；F-22 舱门、机库预览和跨 SP 持续效果未实现。
+
 收尾部署：2026-10-15 20:47 已安装 `1.0.2-su30sm-three-sp.5`，构建、Lua 语法和文件核验通过；个人配置、存档及其他模组已备份保留，游戏保持关闭。见[构建回执](evidence/su30sm-three-sp-candidate.5-build.json)、[安装回执](evidence/su30sm-three-sp-candidate.5-installed.json)。未运行测试模块，最后两项 UI 实玩待用户。
 
 2026-10-15 阶段收尾候选 .5：用户确认 6AAM＋LAGM 双挂正常，.4 日志显示三挂补给切至 [0,2,-1]，本会话无 Lua ERROR。按最新要求，出击/补给 SP2/SP3 默认选择第一可选项（跳过未购买项，无可用兵装才选 EMPTY）；PART 弹药区整体下移 100，STANDBY 不变。最终两项仍待用户复测。本阶段不再扩展机型/挂载/持续效果，准备转交其他聊天；首先阅读[完整阶段交接](docs/research/STAGE-HANDOFF.txt)。独立分支与主工作区边界、构建部署回退、已验证项和剩余工作均在交接中。

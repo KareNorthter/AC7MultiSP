@@ -30,6 +30,7 @@ def main():
         '1.0.2-su30sm-three-sp.3': 'su30sm-three-sp-candidate.2-installed.json',
         '1.0.2-su30sm-three-sp.4': 'su30sm-three-sp-candidate.3-installed.json',
         '1.0.2-su30sm-three-sp.5': 'su30sm-three-sp-candidate.4-installed.json',
+        '1.0.2-su30sm-three-sp.6': 'su30sm-three-sp-candidate.5-installed.json',
     }
     revision = version in previous_receipts  # 修订保留已迁移的 schema 2。
     if version != '1.0.2-su30sm-three-sp.1' and not revision:

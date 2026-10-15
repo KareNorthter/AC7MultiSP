@@ -1,4 +1,4 @@
-"""只读采集暂停中的 Su-30SM 挂载、原生槽及对象引用，不调用游戏函数。"""
+"""只读采集暂停中的指定机体挂载、原生槽及对象引用，不调用游戏函数。"""
 
 import argparse
 import json
@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--expected-sp", choices=("6AAM", "LAGM", "QAAM"))
+    parser.add_argument("--expected-plane", choices=("su30sm", "fa27", "f35c"), default="su30sm")  # 新机体先核对真实父类，不复用旧玩家地址。
     args = parser.parse_args()
     # 完整运行快照只能进入本研究工作区的忽略目录。
     temporary_root = Path(__file__).resolve().parents[2] / "Temp"
@@ -149,8 +150,20 @@ def main():
         command = (mod / "native-command.txt").read_text(encoding="utf-8").split()
         plane, activator = int(command[1], 16), int(command[2], 16)
         identity = describe(plane)
-        if "su30sm" not in identity.get("class_name", "").lower() or pointer(plane + 0x11a8) != activator:
-            raise ValueError("当前模组玩家线索不是有效 Su-30SM，请进入任务并暂停")
+        cls = pointer(plane + 0x10)  # 沿实际对象父类确认原版机体，允许原生涂装派生类。
+        matched = False  # 只有类名及所属资源完整匹配才接受采样。
+        for depth in range(32):
+            if not cls:
+                break
+            row = describe(cls)
+            if row.get('name') == 'AcePlayerPawn_' + args.expected_plane + '_C':
+                matched = describe(pointer(cls + 0x20)).get('name') == '/Game/Blueprint/Player/Pawn/AcePlayerPawn_' + args.expected_plane
+                break
+            cls = pointer(cls + 0x30)
+        if not matched or pointer(plane + 0x11a8) != activator:
+            raise ValueError('当前模组玩家线索不是有效 ' + args.expected_plane + '，请进入任务并暂停')
+        if args.expected_sp and args.expected_plane != 'su30sm':
+            raise ValueError('--expected-sp 目前仅登记 Su-30SM 的实际武器类')
         owner = pointer(activator + 0x260)
         state = pointer(owner + 0xf0)
         report = {"captured_local": datetime.now().astimezone().isoformat(), "pid": args.pid,

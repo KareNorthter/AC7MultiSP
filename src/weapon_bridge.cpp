@@ -443,7 +443,7 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
 #endif
         elapsed=dualsp::rebuildReload(slot.duration,elapsed,rebuiltElapsed);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        if(special && i<6 && logicalElapsed>=slot.duration && elapsed<slot.duration)
+        if(special && i<static_cast<int>(fixedMount.order.size()) && logicalElapsed>=slot.duration && elapsed<slot.duration)
             fixedMount.pendingReadyMask|=1u<<i; // 仅标记这次 restore 明确降到门槛下的槽。
 #endif
         write<float>(slotData+i*0x60+0x4c,elapsed);

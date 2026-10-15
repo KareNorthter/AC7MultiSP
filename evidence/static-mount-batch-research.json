@@ -1,0 +1,307 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.6",
+  "date": "2026-10-15",
+  "steam_build": 9855922,
+  "game_operated_by": "用户",
+  "agent_read_only": true,
+  "game_functions_called": false,
+  "process_memory_written": false,
+  "samples": [
+    {
+      "source": "f35c-static-before.json",
+      "sha256": "1384ffc44e2dae8e1132a1e760cc7e6540ecb599f156a2d9c5fb826428aac9ab",
+      "plane_class": "AcePlayerPawn_f35c_s05_C",
+      "weapon_class": "plwp_sod_a0_C",
+      "slot_count": 2,
+      "load_window": 2,
+      "slots": [
+        "sp11",
+        "sp12"
+      ],
+      "rack_offsets": {
+        "SWP1": "0x1ba0",
+        "SWP2": "0x1b90",
+        "SWP3": "0x1b98",
+        "WeaponMeshBase": "0x1ae0"
+      },
+      "mesh_pools": {
+        "MSL": [
+          {
+            "socket": "ws1",
+            "mesh": "w_msl_a0_SM"
+          },
+          {
+            "socket": "ws2",
+            "mesh": "w_msl_a0_SM"
+          }
+        ],
+        "SWP1": [
+          {
+            "socket": "sp11",
+            "mesh": "w_sod_a0_closed_SM"
+          },
+          {
+            "socket": "sp12",
+            "mesh": "w_sod_a0_closed_SM"
+          }
+        ],
+        "SWP2": [
+          {
+            "socket": "sp21",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp22",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp23",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp24",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp25",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp26",
+            "mesh": "w_4aam_a0_SM"
+          }
+        ],
+        "SWP3": [
+          {
+            "socket": "sp31",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp32",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp33",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp34",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp35",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp36",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp37",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp38",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp39",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp40",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp41",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp42",
+            "mesh": "w_8agm_a0_SM"
+          }
+        ]
+      }
+    },
+    {
+      "source": "f35c-static-after.json",
+      "sha256": "a8c846e0ee9a4fe95fe0d6f4911536ef895e14c1820a2c668a594dcdc979aae5",
+      "plane_class": "AcePlayerPawn_f35c_s05_C",
+      "weapon_class": "plwp_8agm_a0_C",
+      "slot_count": 12,
+      "load_window": 8,
+      "slots": [
+        "sp31",
+        "sp32",
+        "sp33",
+        "sp34",
+        "sp35",
+        "sp36",
+        "sp37",
+        "sp38",
+        "sp39",
+        "sp40",
+        "sp41",
+        "sp42"
+      ],
+      "rack_offsets": {
+        "SWP1": "0x1ba0",
+        "SWP2": "0x1b90",
+        "SWP3": "0x1b98",
+        "WeaponMeshBase": "0x1ae0"
+      },
+      "mesh_pools": {
+        "MSL": [
+          {
+            "socket": "ws1",
+            "mesh": "w_msl_a0_SM"
+          },
+          {
+            "socket": "ws2",
+            "mesh": "w_msl_a0_SM"
+          }
+        ],
+        "SWP1": [
+          {
+            "socket": "sp11",
+            "mesh": "w_sod_a0_closed_SM"
+          },
+          {
+            "socket": "sp12",
+            "mesh": "w_sod_a0_closed_SM"
+          }
+        ],
+        "SWP2": [
+          {
+            "socket": "sp21",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp22",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp23",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp24",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp25",
+            "mesh": "w_4aam_a0_SM"
+          },
+          {
+            "socket": "sp26",
+            "mesh": "w_4aam_a0_SM"
+          }
+        ],
+        "SWP3": [
+          {
+            "socket": "sp31",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp32",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp33",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp34",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp35",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp36",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp37",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp38",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp39",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp40",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp41",
+            "mesh": "w_8agm_a0_SM"
+          },
+          {
+            "socket": "sp42",
+            "mesh": "w_8agm_a0_SM"
+          }
+        ]
+      }
+    }
+  ],
+  "plane_identity_unchanged": true,
+  "mesh_pools_identity_unchanged": true,
+  "geometry": [
+    {
+      "mesh": "f35c_SWP1_SM",
+      "json_sha256": "d13b8f930f1777cd4d7831adb56d830b859c8e5e505d07b92bab448ae712f055",
+      "sockets": 2,
+      "section_offset": 48,
+      "sections": 1,
+      "vertices": 496,
+      "bounds": {
+        "min": [
+          13.8814115524292,
+          -11.41502571105957,
+          -4.3951616287231445
+        ],
+        "max": [
+          26.00942039489746,
+          11.415024757385254,
+          -2.356855630874634
+        ]
+      },
+      "min_abs_y": 9.370078086853027
+    },
+    {
+      "mesh": "f35c_SWP3_SM",
+      "json_sha256": "4ad91d4090566a8943b98ecb80a78cd8ea9b74cbe994609b6cb007a9c7d672c6",
+      "sockets": 12,
+      "section_offset": 88,
+      "sections": 1,
+      "vertices": 4202,
+      "bounds": {
+        "min": [
+          -10.420482635498047,
+          -45.470252990722656,
+          -8.479754447937012
+        ],
+        "max": [
+          18.89649200439453,
+          45.470252990722656,
+          -0.8363597393035889
+        ]
+      },
+      "min_abs_y": 27.851646423339844
+    }
+  ],
+  "geometry_conclusion": "SWP1 顶点绝对 Y 最大 11.4151；SWP3 顶点绝对 Y 最小 27.8516；父级及单位变换已现场确认。顶点横向带分离支持同时显示，尚未逐三角面或武器体积核对，最终接合与穿插仍待画面观察。",
+  "limits": [
+    "此采样来自旧 .5，证明原生对象、池与布局；不等于新固定挂载实玩通过",
+    "未发射，不代表已核对生成瞬间位置或命中效果",
+    "不接管 F-35C 4AAM 活动弹仓",
+    "XFA-27 用户列表不可选，本批不实现适配"
+  ],
+  "test_modules_run": false
+}
