@@ -711,7 +711,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         c.repositioned[1]={widget=ammoCanvas,layout=readLayout(ammoCanvas.Slot,ammoCanvas)}
         assert(c.repositioned[1].layout.kind=="canvas","STANDBY 弹药区不是 Canvas 布局")
         local ammoPosition=ammoCanvas.Slot:GetPosition() -- 原弹药块比右侧性能基准多 5 个逻辑像素。
-        local ammoTop=leftOrigin.Y+460 -- 在左侧部件信息下留白；当前原生坐标对应 Y=673。
+        local ammoTop=leftOrigin.Y+(parts and 560 or 460) -- PART 多出三类容量条，弹药整体下移 100；STANDBY 保持原位置。
         ammoCanvas.Slot:SetPosition({X=ammoPosition.X+leftOrigin.X-origin.X,Y=ammoTop})
         mask(c,ammo.WeaponsSP1);mask(c,wrapper)
         mask(c,info.HangarAircraftWeaponNameShortR);mask(c,info.HangarAircraftWeaponType)

@@ -35,6 +35,14 @@ function Flow.new(profile,options,reviewLabel,mode,translate)
         for i,row in ipairs(self:rows())do if row.weapon==index then self.cursor=i;return true end end
         return false
     end
+    -- 新进入可选槽时定位到第一项可选兵装；无可用兵装时列表只剩可选的 EMPTY。
+    -- 未购买项保留展示，但不能成为默认光标；返回上一步仍恢复先前选择。
+    function self:selectFirstAvailable()
+        for index,row in ipairs(self:rows())do
+            if row.enabled then self.cursor=index;return end
+        end
+        error("可选 SP 列表缺少可选项")
+    end
     function self:move(delta)
         local count=#self:rows();self.cursor=(self.cursor-1+delta)%count+1;self.message=nil
     end
@@ -46,7 +54,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate)
         if self.stage=="sp1"then
             -- 每次确认 SP1 都重新选择 SP2，旧配置不能冒充本轮已经确认的兵装。
             self.draft.a=row.weapon;self.draft.b=-1;self.draft.c=-1;self.draft.ratio=1;self.stage="sp2"
-            self:selectWeapon(-1)
+            self:selectFirstAvailable()
             return "sp2"
         elseif self.stage=="sp2"or self.stage=="sp3"then
             -- 选了 SP2 后再选 SP3；任一可选槽为空即结束，后续槽清空。
@@ -54,7 +62,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate)
             self.draft[second and "b"or "c"]=row.weapon
             if second then self.draft.c=-1 end
             self.draft=copy(self.draft)
-            if second and row.weapon>=0 then self.stage="sp3";self:selectWeapon(-1);return "sp3"end
+            if second and row.weapon>=0 then self.stage="sp3";self:selectFirstAvailable();return "sp3"end
             Profile.validate(self.draft,self.options)
             self.lastStage=second and 2 or 3;self.stage="review";self.cursor=takeoffReview and 2 or 1
             return takeoffReview and "review"or "continue"

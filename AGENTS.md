@@ -4,6 +4,10 @@
 
 ## 当前状态
 
+收尾部署：2026-10-15 20:47 已安装 `1.0.2-su30sm-three-sp.5`，构建、Lua 语法和文件核验通过；个人配置、存档及其他模组已备份保留，游戏保持关闭。见[构建回执](evidence/su30sm-three-sp-candidate.5-build.json)、[安装回执](evidence/su30sm-three-sp-candidate.5-installed.json)。未运行测试模块，最后两项 UI 实玩待用户。
+
+2026-10-15 阶段收尾候选 .5：用户确认 6AAM＋LAGM 双挂正常，.4 日志显示三挂补给切至 [0,2,-1]，本会话无 Lua ERROR。按最新要求，出击/补给 SP2/SP3 默认选择第一可选项（跳过未购买项，无可用兵装才选 EMPTY）；PART 弹药区整体下移 100，STANDBY 不变。最终两项仍待用户复测。本阶段不再扩展机型/挂载/持续效果，准备转交其他聊天；首先阅读[完整阶段交接](docs/research/STAGE-HANDOFF.txt)。独立分支与主工作区边界、构建部署回退、已验证项和剩余工作均在交接中。
+
 2026-10-15 UI 回归修订 .4 已安装：用户报告 .3 失效，日志明确为 performanceBar 对运行时 OverlaySlot 调用 Canvas GetPosition。只读六个原生性能条实例确认图片包装层，改用既有 canvasSlot 查找外层真实定位槽；补给背景/边框的修改和恢复同步处理同类层级。保留 .2 已验证的切换/剪影及固定挂载逻辑。构建、Lua 语法、接口与安装核验通过，游戏已退出且未重新启动；实玩待复测，不能把 .3 UI 记为通过。见[回归证据](evidence/su30sm-three-sp-ui-wrapper-fix.json)、[安装回执](evidence/su30sm-three-sp-candidate.4-installed.json)、[说明](docs/research/su30sm-three-sp-ui-sync.txt)。
 
 2026-10-15 三挂 UI 同步：用户确认 .2 快速切换及剪影正常，当前会话无 Lua ERROR。补给由三挂改为 QAAM＋LAGM，按未适配范围使用原生模型切换，用户认可；不是已适配 6AAM＋LAGM 失效。候选 .3 同步指定三 SP 线程的选装加宽、STANDBY/PART 布局、原生基础性能条及扩大补给面板，保留本分支切换/HUD 修复。ECM/UAV 继续单挂；机库预览和补给演出多挂未实现/验证，含 QAAM 双挂仍未适配。见[同步及范围](docs/research/su30sm-three-sp-ui-sync.txt)、[前版用户验证](evidence/su30sm-three-sp-candidate.2-user-validation.json)、[来源清单](evidence/su30sm-three-sp-ui-sync.json)。20:22 完成核心/UI 构建、Lua 语法与接口核验、整套备份安装；[candidate.3 安装回执](evidence/su30sm-three-sp-candidate.3-installed.json)。配置、外部模组及主线保留，游戏保持关闭；未运行测试模块，新 UI 实玩待用户。

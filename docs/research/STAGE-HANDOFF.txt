@@ -1,0 +1,93 @@
+AC7DualSP 固定挂载研究：阶段交接
+更新时间：2026-10-15
+当前收尾候选：1.0.2-su30sm-three-sp.5（独立研究候选，不是正式发布版）
+部署状态：2026-10-15 20:47 已构建并安装，Lua 语法及安装文件核验通过；游戏保持关闭，最后两项 UI 修订仍待用户实玩。
+
+一、先确认工作区，避免覆盖别的任务
+本阶段唯一写入工作区：E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype
+当前分支：codex/three-sp-switch-hud-fix
+主工作区 E:/AC7_MultiSP 属于另一个三 SP 研究任务，有自己的修改；只读参考，不在其中切换分支或覆盖文件。
+先读本工作区 AGENTS.md，并检查 git status、当前分支、游戏实际 VERSION 和安装回执。
+本阶段代码、说明、精简证据已经提交 Git；本文件不代替下一轮现场核验。
+正式版本仍为 1.0.2，现有正式 ZIP 未更改。本阶段未推送或公开发布，不把研究分支打包器与正式安装器混用。
+
+二、本阶段完成与验证层次
+1. Su-30SM 固定实体挂载与真实离架模型：
+   三挂为外翼 2 QAAM、内翼 2 6AAM、机腹 2 LAGM；6AAM＋LAGM 双挂为四加二。
+   允许重复位置出弹；原生锁定数、齐射数、冷却及弹药逻辑保留。
+   用户确认三挂六处模型、各 SP 发射正常；最新 .4 再次确认 6AAM＋LAGM 双挂正常。
+2. 三 SP 选装与状态：
+   选择 1 至 3 种，按已装部件后的完整载量除以实际槽数并向下取整。
+   逻辑槽独立缓存弹药/冷却；schema 2、管理协议 3、核心命令协议 3。
+   默认 1/2/3/4 对应 MSL/SP1/SP2/SP3；手柄左/上/右/下；管理键 F6，保留自定义设置。
+3. 快速切换与 HUD：
+   .1 原生滚轮快速向上触发 80 ms 延迟回调断言，错误后释放模组接管。
+   .2 改为同一游戏线程按下/释放/核对，并取消额外观察屏蔽。不是吞断言或限制用户速度。
+   HUD 贴图缓存与图标显隐同时刷新，数量/进度由原生装填窗口决定。用户明确确认两项正常。
+4. 补给：
+   .2 三挂→QAAM＋LAGM 成功；因未适配该组合，正常使用原生切换模型，用户认可。
+   .4 三挂→6AAM＋LAGM 日志确认并获用户反馈正常。
+   早期双挂检查点重来已通过；本轮未确认三挂补给前后检查点恢复，不扩大验证范围。
+5. UI 同步与修正：
+   来源任务 01a13edb-e42d-7502-9e1f-2618ea8e973c，来源是未提交但复制前后哈希稳定的工作文件。
+   选装三栏加宽；STANDBY/PART 左下弹药、右侧三卡；原生透明底细边框基础性能条；补给面板 1680×680。
+   .3 把性能条图片运行时 OverlaySlot 当 CanvasSlot，选装失效；已在 .4 使用现有 canvasSlot 向外层定位修正。
+   同时修复补给背景/边框同类布局假设，修改和归还作用于外层真实定位对象。
+   .4 日志确认选装、STANDBY/PART、补给和任务均接入，无 Lua ERROR；用户截图仍发现 PART 弹药标题重叠。
+6. 最后收尾 .5：
+   出击/补给进入 SP2/SP3 时，默认指向第一个 enabled 项，跳过未购买项；没有可选兵装才停 EMPTY。
+   返回上一步仍恢复先前选择，补给 YES/NO 默认 NO 不变。
+   PART 弹药整体下移 100 原生逻辑单位，Y=leftOrigin.Y+560；STANDBY 仍为 +460。
+   .5 的上述两项实玩待用户确认。编译/语法/文件核验不等于实玩通过。
+
+三、明确保留的范围与问题
+固定挂载只接入匹配原版资源的 Su-30SM：三挂、6AAM＋LAGM 双挂。选择顺序不影响布局。
+QAAM＋6AAM、QAAM＋LAGM 两种双挂、单挂及其他机体仍使用原生当前 SP 模型；用户认可未适配时这一行为。
+已匹配组合出现身份/布局异常仍明确报错，不能把程序错误伪装成未适配回退。
+机库背景预览未接入固定挂载，不能因为 UI 展示三种就宣称背景模型也已三挂。
+补给降落/起飞演出挂载未专项观察，尚未确认是否复用任务玩家实例及重置时机。
+ECM/UAV 按实际武器编号 31/26 只支持单挂；原版 MSL 保留。不能仅删除菜单限制来开放。
+TLS 切走仍主动结束光束；TLS→MSL 有局部改善方向，跨 SP 持续效果需要生命周期归属，未实现。
+性能条目前仅基础图表；绿色已装部件增量、黄色光标预览/闪烁未实现。
+无全机型/全任务/长期稳定性保证；未验证的状态不能继承旧版本通过结论。
+
+四、建议接手顺序
+先完成 .5 两项小改复测，确认选装/补给默认光标、PART 不重叠，作为本阶段收尾。
+随后补齐 Su-30SM 含 QAAM 的两种双挂，可复用三挂固定位置，未选位置留空；保留已验证四加二双挂规则。
+再处理机库预览与补给演出的独立生命周期，不要为显示模型初始化任务弹药会话。
+F-22 等共享弹仓后续再做：用户硬要求同仓 SP 互切不重播开关动画，舱门姿态/进度保持；实际发射动作允许。
+TLS/ECM 持续效果允许涉及大改时暂缓，不作为本阶段必须完成项。
+八类机型资源抽样已完成，仅离线研究，不是其他机体实玩验证。
+
+五、关键入口
+运行调度：dist/DualSP/Scripts/main.lua
+选装草稿与默认光标：dist/DualSP/Scripts/loadout_flow.lua
+原生页面、PART 弹药、性能条与补给几何：dist/DualSP/Scripts/native_loadout.lua
+任务 HUD：dist/DualSP/Scripts/native_hud.lua
+核心状态与原生接口：src/weapon_bridge.cpp
+Su-30SM 固定挂载：src/su30sm_fixed_mount.hpp
+布局/发射：docs/research/su30sm-three-sp-fixed-mount.txt
+切换/剪影：docs/research/three-sp-switch-hud-fix.txt
+UI 来源、回归、适配范围：docs/research/su30sm-three-sp-ui-sync.txt
+跨机型：docs/research/aircraft-mount-survey.txt
+持续效果：docs/research/continuous-sp-effects.txt
+最近用户反馈：evidence/su30sm-three-sp-candidate.2-user-validation.json、candidate.4-user-validation.json（同前缀）
+
+六、构建、安装和回退
+游戏根：E:/SteamLibrary/steamapps/common/ACE COMBAT 7
+模组目录：ue4ss/Mods/DualSP；日志 mod.log/native.log，配置 profiles.json；不要提交个人配置/存档。
+独立构建：python -X utf8 src/research/build_su30sm_candidate.py --tools-root E:/AC7_MultiSP/tools --output-dir Temp/新的构建目录
+候选核心/UI 产物保存在本工作区 Temp，候选 .5 在 Temp/su30sm-three-sp-candidate5-build。
+安装：src/research/install_su30sm_three_sp.py；只接受已登记相邻版本与前版运行哈希，默认预检，--apply 才安装。
+该脚本不是幂等重装器。新增候选先登记来源回执，不要修改历史回执绕过保护。
+本轮安装结果：evidence/su30sm-three-sp-candidate.5-installed.json；构建结果：对应 candidate.5-build.json。
+安装前关闭游戏，完整备份 DualSP/配置/日志/存档；安装后逐文件核验，不启动任务或发射。
+回退先退出游戏，把当前 DualSP 移到新的备份位置，再恢复安装回执 backup 下完整 DualSP，不混装核心、Lua、UI。
+受保护旧核心 dist/DualSP/bin/DualSP.dll 必须保持 SHA256 D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339。
+允许编译、语法核对、安装和停止游戏；不自动新增/运行测试模块。正式发布/推送尚未授权。
+
+七、交接验收清单
+- 读当前分支和安装回执，不从主工作区直接覆盖候选。
+- 优先核对 .5 最后两项复测结果；若用户未测，标为待验证，不写成已完成验收。
+- 明确本轮研究目标，沿用已接受的未适配组合原生显示，不把所有遗留项一次性展开。
+- 变更同步中文文档，保留证据来源与用户实测边界。

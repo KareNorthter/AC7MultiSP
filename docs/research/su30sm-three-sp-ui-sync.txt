@@ -1,3 +1,5 @@
+阶段收尾：候选 .5 改为 SP2/SP3 默认首个可选项，并将 PART 弹药整体下移 100；两项待复测。完整交接见 STAGE-HANDOFF.txt。
+
 最新修订：候选 .4 修复 .3 运行时 Overlay 包装导致的选装失败，已构建并安装，实玩待用户。
 下文 .3 的“已安装”不表示通过；错误和现场证据见 evidence/su30sm-three-sp-ui-wrapper-fix.json。
 
