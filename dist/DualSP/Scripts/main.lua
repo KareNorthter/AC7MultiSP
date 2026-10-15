@@ -1,4 +1,4 @@
--- AC7DualSP 1.0.1 兼容候选：按实际武器类识别行为，读取模组提供的原生名称。
+-- AC7DualSP 1.0.2：按实际武器类识别行为，读取模组提供的原生名称。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F8，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -196,6 +196,17 @@ local function ownedWeapons()
     end
     return set
 end
+local function isSelectedPlane(sourcePlane,code)
+    -- 直接核对已加载实例的类及父类；不再按显示大小写拼路径后做全局对象查找。
+    local baseName="aceplayerpawn_"..code:lower() -- 表内机体代码与资源显示名称可能大小写不同。
+    local expected="blueprintgeneratedclass /game/blueprint/player/pawn/"..baseName.."."..baseName.."_c" -- 比较完整路径，避免同短名误认。
+    local actualClass=sourcePlane:GetClass() -- 从当前原生预览/玩家实例取得真实类身份。
+    while valid(actualClass)do
+        if actualClass:GetFullName():lower()==expected then return true end
+        actualClass=actualClass:GetSuperStruct() -- 涂装派生类必须能追溯到所选机体的基础类。
+    end
+    return false
+end
 local function optionsFor(id)
     -- Purchases cannot change during a sortie. Do not scan the global object
     -- registry or enumerate PurchasedWeapons for every HUD refresh.
@@ -209,11 +220,16 @@ local function optionsFor(id)
         local hangar=instance.HangarManager -- 原生机库管理器持有实际展示对象，无需全局猜测或另行生成机体。
         assert(valid(hangar),"当前机库管理器未就绪")
         sourcePlane=hangar.LoadedPlayerPlane
+        -- 选择编号先改变、预览模型后加载属于原生异步换机；返回显式等待原因，不能记成永久接入错误。
+        if not valid(sourcePlane)then return {},"preview_missing selected="..info.code end
+        if instance:GetSelectedPlaneID()~=id or not isSelectedPlane(sourcePlane,info.code)then
+            return {},"preview_changing selected="..info.code.." actual="..sourcePlane:GetClass():GetFullName()
+        end
     end
     assert(valid(sourcePlane),"当前机体实例未加载，请确认模型已安装："..info.code)
     assert(valid(sourcePlane:GetWorld())and sourcePlane:GetWorld():GetAddress()==instance:GetWorld():GetAddress(),"机体兵装来源不属于当前世界")
-    -- 机库预览实例的 PlaneTypeID 可为 -1，必须按实际蓝图类与所选机体核对身份。
-    assert(sourcePlane:GetClass():GetFName():ToString()=="AcePlayerPawn_"..info.code.."_C","机库模型尚未切换到当前机体："..info.code)
+    -- 机库预览实例的 PlaneTypeID 可为 -1，以实际类继承链核对当前选择，保留完整路径约束。
+    assert(isSelectedPlane(sourcePlane,info.code),"机库模型尚未切换到当前机体："..info.code.." actual="..sourcePlane:GetClass():GetFullName())
     local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
@@ -261,7 +277,8 @@ local function menuConfirm(owner)
 end
 nativeLoadout=dofile(root.."Scripts/native_loadout.lua").new(note,function(id,profile)
     assert(not isFlight and id==planeId,"Aircraft changed before native preparation commit")
-    local options=optionsFor(id)
+    local options,waiting=optionsFor(id) -- 提交不能等待或使用前一机体的兵装。
+    assert(not waiting,"确认时机库预览尚未就绪："..tostring(waiting))
     assert(options[profile.a+1].owned and (profile.b<0 or options[profile.b+1].owned),"Prepared SP is not purchased")
     assert(profile.b<0 or (profile.a~=profile.b and options[profile.a+1].available and options[profile.b+1].available),"Prepared SP pair is incompatible")
     currentProfile=profile;config.profiles[tostring(id)]=profile;saveConfig()
@@ -934,7 +951,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

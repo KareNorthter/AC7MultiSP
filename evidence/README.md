@@ -3,6 +3,7 @@
 ## Su-30SM 固定挂载独立研究
 
 - [当前基线快照](fixed-mount-base-snapshot.json)：正式 1.0.1 加未提交兼容修订，复制时的逐文件哈希；主工作区保持原状。
+- [对齐正式 1.0.2](su30sm-fixed-mount-base-1.0.2.json)：将 `a114616` 合入研究分支，运行文件与正式提交一致；主工作区仍在修改的文件不纳入。
 - [四翼下两机腹方案](su30sm-fixed-mount-plan.json)：6AAM 六槽映射四处、LAGM 六槽映射两处；旧快照变换候选与资源比较，不是原型验收。
 - [本阶段保护核对](su30sm-fixed-mount-stage1.json)：主工作区分支与 HEAD、正式保护核心、11 个已安装 Lua/DLL 文件；明确记录快照后外部继续修改 main.lua 的事实，不将状态清单相同误认为文件内容相同。
 - [当前六阶段现场](su30sm-fixed-mount-live.json)：初始 LAGM、6AAM 切换/单发、LAGM 切换/单发/装填；模型身份、活动路由、弹体及延迟恢复队列，未改游戏内存。
@@ -11,7 +12,14 @@
 - [历史资源摘要](su30sm-mount-assets.json)、[基类摘要](su30sm-base-pawn-assets.json)、[历史四阶段现场](su30sm-mount-live.json)、[历史原生入口](su30sm-native-mount-findings.json)：从 `c44e3b9` 引入的 0.1.9 证据，不冒充当前 1.0.1 实测。
 - 当前实施范围、工具和未确认项见[固定挂载研究](../docs/research/su30sm-fixed-mount.md)。
 
-## 当前 1.0.1
+
+## 当前仓库 1.0.2
+
+- [版本与兼容摘要](../docs/version-1.0.2.txt)：分批验证成果、合装范围与待验证时序修订。
+- [用户验证](1.0.2-user-validation.json)：J-20 恢复双选/出击，以及用户后续反馈的偶发单 SP。
+- [仓库准备记录](1.0.2-prepared.json)：版本、语法、UI 构建与保护核验；本轮保持游戏运行，未部署新版本。
+
+## 历史 1.0.1
 
 - [用户验证](1.0.1-user-validation.json)：用户反馈一切正常；日志补充双 SP 补给成功且继续切换。记录验证边界，不外推所有任务均已覆盖。
 - [正式安装回执](1.0.1-installed.json)：独立正式核心与正式标题 UI 成套安装；本轮不重启游戏、不制作 ZIP。

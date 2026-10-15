@@ -11,13 +11,6 @@
   "moved_to_backup": [
     "PWMKI_Add-On_P.pak"
   ],
-  "archived_profiles": {
-    "148": {
-      "a": 2,
-      "b": 0,
-      "ratio": 1
-    }
-  },
   "expected_catalogue_size": 54,
   "expected_addons": {
     "148": "adlra",
@@ -59,5 +52,10 @@
   "test_modules_run": false,
   "game_stopped": true,
   "game_started": false,
-  "runtime_verified": false
+  "runtime_verified": false,
+  "superseded_by": "compatibility-nexus-samples-installed.json",
+  "archived_profile_ids": [
+    "148"
+  ],
+  "personal_profile_values_omitted": true
 }

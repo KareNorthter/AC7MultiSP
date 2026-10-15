@@ -124,5 +124,6 @@
       "category": "光束武器参数",
       "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/190?tab=files"
     }
-  ]
+  ],
+  "superseded_by": "compatibility-nexus-samples-installed.json"
 }

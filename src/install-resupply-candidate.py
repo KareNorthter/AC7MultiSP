@@ -97,10 +97,10 @@ def check_core(management):
     if management:
         # 输入隔离与音效收尾是本轮必需协议，不能与候选 5 核心混装。
         required.update({"dualsp_resupply_takeoff", "dualsp_resupply_control", "dualsp_prepare_weapon_rebuild"})
-    if VERSION in ("1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or VERSION.startswith("0.1.9-experience-candidate."):
+    if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or VERSION.startswith("0.1.9-experience-candidate."):
         required.update({"dualsp_preparation_action", "dualsp_selection_audio", "dualsp_menu_confirm", "dualsp_custom_audio_update",
                          "dualsp_loadout_ammo", "dualsp_weapon_icon", "dualsp_finish_tls", "dualsp_take_empty_switch"})
-    if VERSION in ("1.0.1", "1.0.1-candidate.1"):
+    if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
         required.add("dualsp_runtime_gate")  # 多人禁用不能只依赖 Lua 或旧核心。
     if not required.issubset(exports):
         raise RuntimeError("候选核心缺少补给协议或已有接口")
@@ -114,7 +114,7 @@ def check_management_ui():
     with pefile.PE(str(path)) as library:
         exports = {entry.name.decode("ascii") for entry in library.DIRECTORY_ENTRY_EXPORT.symbols if entry.name}
         required = {"dualsp_management_supported", "dualsp_preparation_navigation"}
-        if VERSION in ("1.0.1", "1.0.1-candidate.1"):
+        if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
             required.add("dualsp_runtime_gate")  # 窗口消息、F8 和手柄均需同步禁用。
         if library.FILE_HEADER.Machine != 0x8664 or not required <= exports:
             raise RuntimeError("F8 管理界面尚未构建或版本不符；请先按项目规则明确要求构建新版 UI，再统一安装")
@@ -192,17 +192,19 @@ def main():
         options.management = True
         options.merged_hud = True
         VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-        if VERSION not in ("1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or f'DUALSP_LOADED {VERSION} MANAGEMENT_UI' not in controller:
+        if VERSION not in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or f'DUALSP_LOADED {VERSION} MANAGEMENT_UI' not in controller:
             raise RuntimeError("版本文件与已核对的控制器不匹配")
         # 版本快照从 Git 保留核心安装，不依赖可能被后续研究覆盖的构建目录。
         core_version = VERSION if VERSION in ("1.0.1", "1.0.1-candidate.1") else "0.1.9"  # 正式快照与候选分别保留。
+        if VERSION == "1.0.2":
+            core_version = "1.0.1"  # 兼容修订只改 Lua/UI，明确复用已实测核心，不另复制同一 DLL。
         CORE = ROOT / "dist/DualSP/cores" / core_version / "DualSP.dll"
         core_hash = ("EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF"
-                     if VERSION in ("1.0.1", "1.0.1-candidate.1") else "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1")
+                     if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1") else "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1")
         if digest(CORE) != core_hash:
             raise RuntimeError("所选核心与版本快照不一致")
         FILES += ("Scripts/weapon_names.lua", "Scripts/weapon_presentation.lua", "Audio/SP2.wav")
-        if VERSION in ("1.0.1", "1.0.1-candidate.1"):
+        if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
             FILES += ("Scripts/runtime_context.lua",)
         EVIDENCE = ROOT / f"evidence/{VERSION}-installed.json"
         # 用户提供的提取音频只在本机保存；缺失或不符时停止，不改用旧音色。
@@ -331,10 +333,10 @@ def main():
         result["features"] += ["准备双栏性能/类型及右下弹药汇总", "原生页面重新激活接入"]
         # 体验候选取消额外确认页，回执不再宣称保留旧版两次交接流程。
         if options.experience:
-            if VERSION in ("1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9-performance-candidate.1"):
+            if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9-performance-candidate.1"):
                 result["features"] += ["中央简称字号放大约 11% 与独立绿色样式", "菜单对象发现缓存与激活对象直连",
                                        "静态性能栏与弹药颜色按变化更新", "补给接管不等待原生控制开放", "15 秒调度耗时汇总"]
-            if VERSION in ("1.0.1", "1.0.1-candidate.1"):
+            if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
                 result["features"] += ["多人网络/大厅/菜单禁用与核心/UI 双重许可", "原生操作提示跟随游戏文本语言",
                                        "F8 支持跟随游戏及保留手动语言", "英文说明换行保留单词间空格", "补给起飞 HUD 预建与同回调提交"]
                 result["multiplayer_gameplay_verified"] = False

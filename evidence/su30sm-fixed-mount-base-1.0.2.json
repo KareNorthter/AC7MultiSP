@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-15",
+  "imported_commit": "a114616ee87f1c8cca01f6d71d064e2fadc5d4ca",
+  "imported_version": "1.0.2",
+  "prior_research_commit": "9a2605f",
+  "runtime_and_existing_source_files_compared": 42,
+  "different_files": [],
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "source_worktree_uncommitted_at_check": [
+    "dist/DualSP/Scripts/native_loadout.lua"
+  ],
+  "uncommitted_changes_imported": false,
+  "game_files_written": false,
+  "compiled": false,
+  "tests_run": false,
+  "resolution": "重叠运行文件和兼容文档使用正式提交；保留独立研究入口、报告和研究工具。新增研究工具不属于正式运行文件。"
+}

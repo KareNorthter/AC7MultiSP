@@ -271,7 +271,47 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         c.visualRestored=true
     end
+    local function clearModelWait(releaseInput)
+        -- 只归还等待阶段借用的说明文字和输入，不改变根节点显隐。
+        local pending=self.modelWait -- 等待记录绑定具体页面、机体及世界。
+        if not pending then return end
+        self.modelWait=nil
+        if valid(pending.description)then pending.description:SetText(FText(pending.originalText))end
+        if pending.inputOwned and releaseInput~=false and valid(pending.owner)and pending.owner:IsVisible()then
+            setControl(pending.owner,pending.originalControl)
+        end
+    end
+    local function modelChoices(owner,instance,planeId,options,now)
+        -- 未就绪是有限等待状态；只在模型身份一致后建立双选，真实组件/资源异常仍由原错误路径处理。
+        local choices,reason=options() -- 第二返回值仅表示原生预览尚未跟上当前选择。
+        if not reason then
+            if self.modelWait then
+                note("NATIVE_MODEL_READY plane="..planeId)
+                clearModelWait(true)
+            end
+            return choices
+        end
+        assert(not supply,"补给不允许等待机库模型："..reason)
+        if not self.modelWait then
+            local pending={owner=owner,planeId=planeId,world=instance:GetWorld():GetAddress(),started=now} -- 当前等待上下文。
+            self.modelWait=pending
+            if not standby then
+                if not panelClass then api()end
+                pending.description=controls(owner).DescriptionText
+                assert(valid(pending.description),"机库等待提示控件缺失")
+                pending.originalText=pending.description.Text:ToString()
+                pending.originalControl=owner:IsEnableControl();pending.inputOwned=true
+                setControl(owner,false) -- 等待期间不允许原生单 SP 消费确认键。
+                pending.description:SetText(FText(tr("正在加载机体兵装，请稍候……","Loading aircraft weapons. Please wait...")))
+            end
+            note("NATIVE_MODEL_WAIT plane="..planeId.." "..reason)
+        end
+        self.status="waiting_model"
+        assert(now-self.modelWait.started<10,"机体兵装等待超过 10 秒，请检查模型并重新选机："..reason)
+        return nil
+    end
     local function restore(releaseInput)
+        clearModelWait(releaseInput)
         local c=self.cache;if not c then return end
         if c.actionQueued then
             local ok,_,err=preparationAction(c.actionWidget,0,-1)
@@ -619,7 +659,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             -- STANDBY 只在返回时刷新，PART 继续观察已安装部件，避免复用页面留下旧载量。
             local enabled=c.owner:IsEnableControl()
             if enabled and (not c.controlEnabled or (parts and now-(c.ammoRefreshedAt or -1)>.25))then
-                c.ammoRefreshedAt=now;c.flow.options=options();paintColumns(c)
+                local choices=modelChoices(c.owner,instance,planeId,options,now) -- 部件页也不能拿上一架预览计算载量。
+                if not choices then return end
+                c.ammoRefreshedAt=now;c.flow.options=choices;paintColumns(c);self.status=mode
             end
             c.controlEnabled=enabled
             return
@@ -631,7 +673,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                 and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then
                 if not panelClass then api()end
-                attachStandby(owner,instance,planeId,saved,options());return
+                local choices=modelChoices(owner,instance,planeId,options,now) -- 等待只影响本模组显示，不接管只读页输入。
+                if choices then attachStandby(owner,instance,planeId,saved,choices)end
+                return
             end
         end
         self.status="waiting"
@@ -842,7 +886,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local candidate=nil
             for _,owner in ipairs(owners(instance,now))do
                 -- 补给输入已在任务事件中隔离；无需等原生入场动画开放控制才替换单 SP 页面。
-                if valid(owner)and owner:IsVisible()and (supply or owner:IsEnableControl())
+                if valid(owner)and owner:IsVisible()and (supply or owner:IsEnableControl()
+                    or(self.modelWait and self.modelWait.owner:GetAddress()==owner:GetAddress()))
                     and valid(owner.WidgetTree)and valid(owner.WidgetTree.RootWidget)
                     and valid(owner:GetWorld())and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                     and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then candidate=owner;break end
@@ -852,7 +897,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 releaseClosedRoot();self.ignored=nil;self.ignoredReason=nil
             end
             if candidate:GetAddress()==self.ignored then return end
-            local choices=options();if #choices~=3 then return end
+            local choices=modelChoices(candidate,instance,planeId,options,now);if not choices or #choices~=3 then return end
             self.ignored=candidate:GetAddress();self.ignoredReason="error" -- 接入失败只记录一次，不在每次轮询重试。
             if not panelClass then api()end
             c=(supply and attachSupply or attach)(candidate,instance,planeId,profile(),choices)
@@ -931,7 +976,15 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         if not c.continueRequested and not c.exitRequested then paint(c)end
     end
     function self:pump(...)
-        local args={...};local ok,err=xpcall(function()(standby and pumpStandby or pump)(table.unpack(args))end,debug.traceback)
+        local args={...};local ok,err=xpcall(function()
+            local pending=self.modelWait -- 换机、换世界、离页或打开管理界面时结束本次等待，不能遗留输入锁。
+            if pending and (not valid(pending.owner)or not pending.owner:IsVisible()or args[2]~=pending.planeId
+                or args[1]:GetWorld():GetAddress()~=pending.world or args[6]or args[7])then
+                note("NATIVE_MODEL_WAIT_CANCELLED plane="..pending.planeId)
+                clearModelWait(not args[6])
+            end
+            (standby and pumpStandby or pump)(table.unpack(args))
+        end,debug.traceback)
         if not ok then fail(err)end
     end
     -- 页面激活或补给打开事件中同步接入，不再等待 250 ms 的常规扫描。
