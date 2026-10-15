@@ -54,7 +54,7 @@ int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppr
 int draftRatioStep=0; // 0 至 10 对应 50% 至 100%，每 5% 一档，共 11 个可选值。
 bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
 std::array<int,3> draftKeys{49,50,51};
-int managementKey=VK_F8; // 管理入口由已校验状态提供；旧配置仍默认 F8。
+int managementKey=VK_F6; // 默认 F6；已校验状态会提供用户显式保存的管理键。
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 // 日志只在页面打开或手动刷新时读取。
 bool logsLoaded=false;
