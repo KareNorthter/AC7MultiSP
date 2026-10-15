@@ -1,0 +1,167 @@
+{
+  "prepared_at": "2026-10-15T12:30:47.754899",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-addons-20261015-123041",
+  "game_stopped": true,
+  "game_started": false,
+  "installed_paks": {
+    "ADA01_AddOn_Standalone_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\ADA-01 Adler - Standalone-1770-1-0-1693016489\\ADA01_AddOn_Standalone_P.pak",
+      "sha256": "7AF63314AE6570F72676A2AF708554B8AEF8B5EDCFAE41FCB02EECE171DFFA52"
+    },
+    "PWMKI_Add-On_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\PW-MK.I - Standalone-1565-2-0-1706343718\\PWMKI_Add-On_P.pak",
+      "sha256": "F28106000D18CFF7C9CB96C666843887D2CA5DC81517AB380343C9BBEF4DAA64"
+    },
+    "~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\Addon Compatibility Mod PPDT and PWDT 2154 66.1 2026-09-27T01-58Z tIqkH1kVT\\~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak",
+      "sha256": "DDBAF7DF93BA8EE89DA805DDCEE803940F132F5F5A2DC972C6B075B9E636EB53"
+    },
+    "~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\Addon Compatibility Mod PPDT and PWDT 2154 66.1 2026-09-27T01-58Z tIqkH1kVT\\~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak",
+      "sha256": "A656AFC50025339426C217D7CFC94B7A62586E6567C58A8F038B5E24ADC7E60A"
+    },
+    "~~~~~~~~~!since_Localisation_AVDT_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\since_Localisation_AVDT_P.pak 2274 7.61 2026-09-27T02-00Z NYrbdmb4m\\~~~~~~~~~!since_Localisation_AVDT_P.pak",
+      "sha256": "A3DF2CF83D1C874C2250035EAE44384ABD7FC05B8F27D8058F1966ED1C76A51D"
+    },
+    "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak": {
+      "source": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\downloaded\\since_SDT_Add-On_P.pak 2274 7.61 2026-09-27T02-00Z XqKz98zFR\\~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak",
+      "sha256": "E66034BB17A66A2E6F1996F3A1C2F698073C386B4D7D38C44A8AB06F1635E83B"
+    }
+  },
+  "retained_paks": [
+    "FOV +S_P.pak",
+    "proportional guided missile_P.pak"
+  ],
+  "removed_to_backup": [
+    "~~CFA_PW1_P.pak",
+    "~~~PWMKI_Module_P.pak",
+    "PWMKI_Skin01_Monarch_P.pak",
+    "~~~~PWMKI_GlowActivator_01_Module_P.pak"
+  ],
+  "external_pak_bytes_unchanged": true,
+  "flight_and_dualsp_binaries_scripts_unchanged": true,
+  "mods_txt_unchanged": true,
+  "save_files_unchanged": true,
+  "archived_profile_140": {
+    "b": 2,
+    "a": 0,
+    "ratio": 1
+  },
+  "profile_change_reason": "CFA-44 从 PW-MKI 替换版恢复原版，旧双 SP 方案武器身份已变；仅移除该机体方案，其余保留",
+  "expected_aircraft": [
+    {
+      "PlaneID": 165,
+      "PlaneStringID": "adlra",
+      "SpWeaponID1": "sdbm",
+      "SpWeaponID2": "hgp",
+      "SpWeaponID3": "mstm"
+    },
+    {
+      "PlaneID": 166,
+      "PlaneStringID": "adlrb",
+      "SpWeaponID1": "mpbm",
+      "SpWeaponID2": "mgp",
+      "SpWeaponID3": "4agm"
+    },
+    {
+      "PlaneID": 192,
+      "PlaneStringID": "pw01",
+      "SpWeaponID1": "bmlu",
+      "SpWeaponID2": "rg",
+      "SpWeaponID3": "mpbm"
+    }
+  ],
+  "ppdt_count": 195,
+  "pwdt_count": 98,
+  "unresolved_weapon_references": [],
+  "overlapping_assets": {
+    "../../../Nimbus/Content/Blueprint/Information/AircraftViewerDataTable.uasset": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Blueprint/Information/PlayerPlaneDataTable.uasset": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Blueprint/Information/SkinDataTable.uasset": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/A.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/B.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/C.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/Cmn.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/D.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/E.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/F.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/G.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/H.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/I.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/J.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/K.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/L.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Localization/Game/M.dat": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Blueprint/Information/AircraftViewerDataTable.uexp": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Blueprint/Information/PlayerPlaneDataTable.uexp": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak"
+    ],
+    "../../../Nimbus/Content/Blueprint/Information/SkinDataTable.uexp": [
+      "PWMKI_Add-On_P.pak",
+      "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak"
+    ]
+  },
+  "overlap_resolution": "作者统一表文件名具有更高 PAK 优先级，预计覆盖 PW-MKI 自带旧表；未启动游戏，实际加载仍待验证",
+  "missing_aircraft_notice": "统一表含大量未安装机体，当前只测试 Adler A/B 与 PW-MKI，其他新增项不可选择",
+  "runtime_verified": false,
+  "test_modules_run": false,
+  "build_run": false,
+  "subsequent_user_result": "三架安装机体模型、SP 名称和模型正常；大量未安装机体空模型，DualSP 失效",
+  "superseded_by": "compatibility-small-addon-prepared.json"
+}

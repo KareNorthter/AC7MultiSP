@@ -4,6 +4,24 @@
 
 ## 当前状态
 
+2026-10-15 14:10 Adler 抽样批次准备中：用户要求重新加入 Adler，并抽样高赞的不同类型模组。已停止游戏、备份配置/日志/存档，换下独立 PW-MKI，安装 Adler 主包及其原配本地化/数据表。静态表为 54 条，仅新增 Adler A/B（148/149），不安装全局兼容表；148 号 PW 方案已备份清除，其他方案保留。拟新增 All Part In CampaignMode（623）、Lock-On Crosshair UI（649）、TLS Damage and Range increase（190）；浏览器下载超时，三个文件尚未取得，整批尚未就绪。见[准备回执](evidence/compatibility-adler-samples-prepared.json)、[抽样安排](docs/research/mod-compatibility.txt)。本轮未改功能代码、编译或运行测试，未启动游戏。下文“跳过 Adler”已被用户本次请求更新。
+
+2026-10-15 小批次用户验证通过：用户确认 Su-47 与独立 PW-MKI 双 SP、换机、出击、补给均正常。当前目录实际为 53 条，日志确认 PW-MKI（148）补给换装成功，本次会话无 Lua 错误。见[小批次用户验证](evidence/compatibility-small-addon-user-validation.json)。用户倾向不继续测 Adler，按未验证保留，不重新安装、不将 PW-MKI 结果扩大到 Adler；现有已验证组合保持不变。本轮仅更新记录，未改变游戏运行状态、未编译或运行测试、未发布或推送。
+
+2026-10-15 13:51 缩减独立机体批次、未启动：用户反馈大量空模型机体且 DualSP 失效。日志确认统一 PPDT 加载 195 条机体，先后在 zx01 蓝图未安装、su47 默认兵装组件缺失处停止选装；错误未按机体结束，后续 PW-MKI 也无法接入。已撤至备份：Adler 与 2154/2274 共 5 包，仅保留 PW-MKI 独立包、FOV+S、比例制导以及原飞控。PW 单独表为原 52 条加 pw01（148）一条，不再用统一表的 192 号。Lua 改为读取 HangarManager.LoadedPlayerPlane／任务玩家实例兵装组件，按类和世界核对身份；换机后记录并清理旧机体页面错误。恢复选装页 closedRoot.owner 身份字段，STANDBY/PART 不隐藏根的修正仍保留。语法核验通过，核心/UI/外部文件不变，游戏已停止，按此前要求没有启动，实测待用户。见[小批次回执](evidence/compatibility-small-addon-prepared.json)。下方大批次已被取代，不能按旧清单重新装回。
+
+2026-10-15 12:30 新增机体批次已准备、禁止自动启动：用户确认 DarkStar 上鼠标飞控、比例制导、FOV 正常，要求关闭游戏并准备下一批，晚些自行启动。已停止进程、备份配置/日志/存档，把 PW-MKI 替换版 4 个 PAK 移入备份，安装 Adler Standalone、PW-MKI Standalone、2154 配套 PPDT/PWDT、2274 名称/展示表与 NON-ASS 皮肤表。保留 FOV+S、比例制导、飞控和本 mod F6 入口。仅备份清除 CFA-44（140）的替换版旧方案，避免恢复原机后沿用不同武器；其他配置不变。文件核验通过，未编译/运行测试模块、未启动，新增机体实测待用户。见[新增批次回执](evidence/compatibility-addons-prepared.json)、[DarkStar 反馈](evidence/compatibility-flight-user-validation.json)。当前新增测试仅 PW-MKI、Adler A/B，统一表其他未安装项不可选择。
+
+2026-10-15 11:54 飞控批次：用户确认 ADMM+ECM、50% 配弹并装增弹部件、检查点重来补测无问题，要求下一阶段优先 FOV/飞控/比例制导。已保留原 6 个 PAK，原样安装 AC7MouseAim 0.6.0-beta.1，不安装 AC7Weapons；管理入口新增配置 management_key，本机 F6（117），默认 F8，手柄 Back+Y 不变。Lua 语法和 UI 构建通过，核心/加载器/个人机体方案保留；见[飞控回执](evidence/compatibility-flight-batch-installed.json)与[当前测试顺序](docs/research/mod-compatibility.txt)。新增机体批次推迟，飞控实玩待用户，不将第一批通过扩大到本批。
+
+2026-10-15 第一批实测更新：用户确认 STANDBY 换机 UI 消失已解决；PW-MKI 替换版出击、双 SP、降落补给与切换正常。日志对应机体 140、任务 ms06、100% 配弹，出击槽 0+1、补给后槽 2+1，当前会话无 Lua 错误。旧名称 ADMM/EML/ECM 来自替换版沿用 CFA-44 表项，实际武器类分别为 admm/railgun/eufm，不能把旧 ECM 简称当作实际 ECM。见[用户验证记录](evidence/compatibility-batch1-user-validation.json)。尚未完成 50% 配弹、增弹部件、检查点及新增机体/飞控批次；本次未更改游戏文件或停止当前任务。下方“菜单复测待用户”是本次反馈前的安装时状态。
+
+2026-10-15 11:30 第二次换机修订：用户按 Su-57（TGM）双选→STANDBY→F-14A 再次复现 UI 消失。现场仍为 Review 根节点 Collapsed，第一次恢复钩子未触发。现取消 STANDBY/PART 的整页根节点隐藏及补救钩子，只还原本模组修改的兵装区域，由原生控制页面退出与复用。Lua 语法核对通过，已备份、安装并重启，外部 PAK 与个人配置未变。见[第二次修订回执](evidence/compatibility-standby-fix2-installed.json)，菜单复测待用户；不得把第一次尝试记为已解决，也不得据此认定外部模组冲突。
+
+2026-10-15 11:21（未解决）：用户报告 ADF-11F 的 UAV 只能单挂（符合限制），并在 STANDBY 更换 Su-57（TGM）后失去全部菜单。首次尝试在 STANDBY/PART 重新激活时归还根节点，安装并重启；第三方 PAK、配置、核心/UI 均保持不变。见[第一次安装回执](evidence/compatibility-standby-fix-installed.json)。此尝试未通过随后用户复测。
+
+2026-10-15 10:57：用户授权组织第三方模组分批安装与测试，并启动游戏。已在 1.0.1 基线上部署仅修改 Lua 的兼容候选：原生兵装名称、实际武器类编号驱动的弹药预览/行为判定。第一批为 PW-MKI 替换版及配套武器/第 1 皮肤/发光模块、FOV +S、比例制导；新增机体及飞控尚未安装。启动日志确认加载与单人菜单启用，实玩待用户。后续以[测试安排](docs/research/mod-compatibility.txt)和[第一批安装回执](evidence/compatibility-batch1-installed.json)为准；下方“本轮不重新启动”是此前正式整理阶段的边界，已被本次用户启动授权更新。正式版本与 ZIP 不变，不推送远程。
+
 2026-10-15，用户反馈“一切正常”，要求停止游戏、更新版本、提交 Git，无需发布包。已验证候选整理为 1.0.1，功能逻辑不变，只统一版本标识与 UI 标题。最新日志记录双 SP 补给成功并继续切换。范围见[1.0.1 说明](docs/version-1.0.1.md)、[用户验证](evidence/1.0.1-user-validation.json)，部署见[安装回执](evidence/1.0.1-installed.json)。不重新启动游戏、不推送远程。
 
 以下候选阶段记录属于历史，旧“待验证”和失败判断不覆盖当前版本结论：

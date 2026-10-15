@@ -1,0 +1,63 @@
+{
+  "prepared_at": "2026-10-15T14:10:12.954846",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-adler-samples-20261015-141007",
+  "status": "Adler 已安装；三个抽样文件待下载与资源核对，整批尚未就绪",
+  "installed_paks": {
+    "ADA01_AddOn_Standalone_P.pak": "7AF63314AE6570F72676A2AF708554B8AEF8B5EDCFAE41FCB02EECE171DFFA52",
+    "FOV +S_P.pak": "25B378E34A3854A08D78531A70A663C9B582B44A14B8CBD0FC859A9EAD68EC78",
+    "proportional guided missile_P.pak": "41B49AD83D60509795DB910A02FD24C159AB39C324B5D1B745906F4A95A094E5",
+    "~~~~ADA01_AddOn_Localization_Datatables_P.pak": "A8FEA56D4276C41E9230AFE97573A6A49521E15EB76F2865775CFBA918F56D41"
+  },
+  "moved_to_backup": [
+    "PWMKI_Add-On_P.pak"
+  ],
+  "archived_profiles": {
+    "148": {
+      "a": 2,
+      "b": 0,
+      "ratio": 1
+    }
+  },
+  "expected_catalogue_size": 54,
+  "expected_addons": {
+    "148": "adlra",
+    "149": "adlrb"
+  },
+  "pending_downloads": [
+    {
+      "id": 623,
+      "name": "All Part In CampaignMode",
+      "file": "AllPartInCampaignMode2025",
+      "version": "1.3.2",
+      "size": "304KB",
+      "category": "战役部件",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/623?tab=files"
+    },
+    {
+      "id": 649,
+      "name": "Lock-On Crosshair UI",
+      "file": "Lock-on Crosshair",
+      "version": "Release-1",
+      "size": "6.1MB",
+      "category": "锁定准星 UI",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/649?tab=files"
+    },
+    {
+      "id": 190,
+      "name": "TLS Damage and Range increase Mod",
+      "file": "TlsDamageAndRangeMod 3.0",
+      "version": "3.0",
+      "size": "92KB",
+      "category": "光束武器参数",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/190?tab=files"
+    }
+  ],
+  "external_bytes_unchanged": true,
+  "other_profiles_preserved": true,
+  "protected_file_count": 68,
+  "core_ui_build": false,
+  "test_modules_run": false,
+  "game_stopped": true,
+  "game_started": false,
+  "runtime_verified": false
+}

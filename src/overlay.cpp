@@ -54,6 +54,7 @@ int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppr
 int draftRatioStep=0; // 0 至 10 对应 50% 至 100%，每 5% 一档，共 11 个可选值。
 bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
 std::array<int,3> draftKeys{49,50,51};
+int managementKey=VK_F8; // 管理入口由已校验状态提供；旧配置仍默认 F8。
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 // 日志只在页面打开或手动刷新时读取。
 bool logsLoaded=false;
@@ -122,7 +123,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(msg==WM_KEYDOWN && !(l&(1LL<<30))) {
         // 捕获时不让同一个按键顺带激活按钮、关闭页面或触发游戏操作。
         if(panel&&captureSlot>=0){suppressedCaptureKey=static_cast<int>(w);captureKeyboardKey(static_cast<int>(w));return 0;}
-        if(w==VK_F8){togglePanel(!panel);return 0;}
+        if(w==static_cast<WPARAM>(managementKey)){togglePanel(!panel);return 0;}
         if(w==VK_ESCAPE&&panel){togglePanel(false);return 0;}
         if(directInputEnabled()) {
             const auto keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
@@ -211,10 +212,10 @@ const char* tr(const char* zh,const char* en) {
     return language=="zh"?zh:en;
 }
 
-// 单键绑定支持常用键盘键；F8 为管理入口，Esc 为改键取消键。
-bool supportedKey(int key) {
+// 单键绑定支持常用键盘键；当前管理入口和 Esc 不能绑定为武器选择。
+bool supportedKey(int key,int reservedKey=managementKey) {
     return (key>=48&&key<=57)||(key>=65&&key<=90)||(key>=96&&key<=111)
-        ||(key>=112&&key<=135&&key!=VK_F8)||(key>=186&&key<=192)||(key>=219&&key<=222)
+        ||(key>=112&&key<=135&&key!=reservedKey)||(key>=186&&key<=192)||(key>=219&&key<=222)
         ||key==VK_BACK||key==VK_TAB||key==VK_RETURN||key==VK_SPACE
         ||(key>=VK_PRIOR&&key<=VK_DOWN)||key==VK_INSERT||key==VK_DELETE;
 }
@@ -254,7 +255,7 @@ bool directInputEnabled() {
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
 void captureKeyboardKey(int key) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
-    if(!supportedKey(key)){notice=tr("此键不能绑定，请使用普通单键；F8 和 Esc 为保留键。","Choose a regular single key. F8 and Esc are reserved.");return;}
+    if(!supportedKey(key)){notice=tr("此键不能绑定，请使用普通单键；管理快捷键和 Esc 为保留键。","Choose a regular single key. The management hotkey and Esc are reserved.");return;}
     for(int slot=0;slot<3;++slot)if(slot!=captureSlot&&draftKeys[slot]==key) {
         notice=tr("此键已绑定另一武器，请选择其他键。","This key is already assigned to another weapon.");return;
     }
@@ -384,7 +385,7 @@ void drawPanel() {
     ImGui::EndDisabled();ImGui::SameLine();
     if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
     ImGui::TextWrapped("%s",tr("开关和键位保存后生效；配弹比例用于下一次新开的原生选择页面。已有选择草稿和当前任务不重新配弹。关闭会丢弃未保存修改。","Saved switches and keys take effect after saving. Ammo ratio applies to the next newly opened native selection page. Existing drafts and current mission ammo stay unchanged. Closing discards unsaved changes."));
-    ImGui::TextWrapped("%s",tr("F8 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","F8 or controller Back + Y opens/closes management. Opening during a mission pauses the game."));
+    ImGui::TextWrapped(tr("%s 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","%s or controller Back + Y opens/closes management. Opening during a mission pauses the game."),keyLabel(managementKey).c_str());
     // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
     const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
     for(const char* field:errorFields)if(state.contains(field)) {
@@ -412,17 +413,22 @@ void refreshState() {
         }
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
         if(state.value("management_protocol",0)==2) {
+            const auto& hotkey=state.at("management_key"); // Lua/UI 成套部署；缺少新字段明确报告。
+            if(!hotkey.is_number_integer())throw std::runtime_error("Management hotkey is not an integer");
+            const int checkedManagementKey=hotkey.get<int>(); // 完整校验后才替换窗口消息使用的键。
+            if(checkedManagementKey<VK_F1||checkedManagementKey>VK_F24)throw std::runtime_error("Management hotkey must be F1 through F24");
             const auto& keys=state.at("keyboard_keys");
             if(!keys.is_array()||keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
             std::array<int,3> checkedKeys{};
             for(int slot=0;slot<3;++slot) {
                 if(!keys.at(slot).is_number_integer())throw std::runtime_error("Management keyboard binding is not an integer");
                 checkedKeys[slot]=keys.at(slot).get<int>();
-                if(!supportedKey(checkedKeys[slot]))throw std::runtime_error("Management keyboard binding is unsupported");
+                if(!supportedKey(checkedKeys[slot],checkedManagementKey))throw std::runtime_error("Management keyboard binding is unsupported");
             }
             if(checkedKeys[0]==checkedKeys[1]||checkedKeys[0]==checkedKeys[2]||checkedKeys[1]==checkedKeys[2])
                 throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
+            managementKey=checkedManagementKey;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
         if(sequence!=lastSequence){lastSequence=sequence;lastControllerUpdate=GetTickCount64();}

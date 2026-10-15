@@ -1,5 +1,5 @@
--- AC7DualSP 1.0.1：沿用用户确认通过的多人禁用、语言、管理与补给 HUD 逻辑。
--- 出击和中途补给使用各自的原生 UMG 页面，F8 只管理设置和日志。
+-- AC7DualSP 1.0.1 兼容候选：按实际武器类识别行为，读取模组提供的原生名称。
+-- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F8，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
 local json=dofile(root.."Scripts/json.lua")
@@ -73,23 +73,26 @@ end
 if config.language==nil then config.language="auto"end
 if config.central_hint==nil then config.central_hint=true end
 if config.keyboard_keys==nil then config.keyboard_keys={49,50,51}end
+if config.management_key==nil then config.management_key=119 end -- 旧配置继续使用 F8；本机飞控批次显式设为 F6。
 config.native_loadout=nil -- 原生双选为唯一入口，不再提供旧的关闭选项。
--- 键位只接受单个普通键，F8 固定管理入口，Esc 用于取消改键。
-local function supportedKey(key)
+-- 键位只接受单个普通键，管理快捷键和 Esc 不可用于武器选择。
+local function supportedKey(key,managementKey)
     return type(key)=="number"and key%1==0 and
         ((key>=48 and key<=57)or(key>=65 and key<=90)or(key>=96 and key<=111)
-        or(key>=112 and key<=135 and key~=119)or(key>=186 and key<=192)or(key>=219 and key<=222)
+        or(key>=112 and key<=135 and key~=managementKey)or(key>=186 and key<=192)or(key>=219 and key<=222)
         or key==8 or key==9 or key==13 or key==32 or(key>=33 and key<=40)or key==45 or key==46)
 end
 -- 所有管理设置先完整验证，再写盘，不允许部分保存或静默替换错误键位。
 local function validateSettings(settings)
+    local managementKey=settings.management_key -- 管理入口仅支持功能键，关闭游戏后修改配置。
+    assert(type(managementKey)=="number"and managementKey%1==0 and managementKey>=112 and managementKey<=135,"管理快捷键须为 F1 至 F24 的整数键码")
     assert(settings.language=="auto"or settings.language=="zh"or settings.language=="en","Language must be auto, zh or en")
     assert(type(settings.central_hint)=="boolean","中央简称开关必须为布尔值")
     assert(settings.hud==nil and settings.direct_select==nil and settings.ignore_unlocks==nil,"旧功能开关已移除")
     assert(type(settings.keyboard_keys)=="table"and #settings.keyboard_keys==3,"需要 MSL/SP1/SP2 三个键位")
     local used={}
     for _,key in ipairs(settings.keyboard_keys)do
-        assert(supportedKey(key),"不支持此键位，F8 和 Esc 保留给管理界面")
+        assert(supportedKey(key,managementKey),"不支持此键位，管理快捷键和 Esc 为保留键")
         assert(not used[key],"三个武器选择键不能重复");used[key]=true
     end
     local ratio=settings.ammo_ratio -- 配弹步长在控制器也校验，不能绕过滑动块提交任意比例。
@@ -166,7 +169,7 @@ local descriptions={
     lasm="远程反舰导弹",lagm="远程空对地导弹",lacm="远程巡航导弹",["4agm"]="四目标空对地导弹",["8agm"]="八目标空对地导弹",
     ugb="无制导炸弹",gpb="精确制导炸弹",xsdb="小直径炸弹",sffs="自锻破片子母弹",sod="远距撒布弹药",faeb="燃料空气炸弹",
     eml="电磁轨道炮",plsl="脉冲激光炮",tls="战术激光系统",rkt="火箭弹",grkt="制导火箭弹",mgp="机炮吊舱",mpbm="多用途爆炸导弹",uav="无人机",ecm="电子干扰",mstm="多目标导弹",admm="全向多用途导弹"}
-local unsupportedDual={uav=true,ecm=true}
+local unsupportedDual={[26]=true,[31]=true} -- 按实际武器类的 UAV/ECM 编号限制，不按可被模组重用的菜单简称。
 local names={f04e="F-4E Phantom II",f15c="F-15C Eagle",f15e="F-15E Strike Eagle",f18f="F/A-18F Super Hornet",f16c="F-16C Fighting Falcon",f22a="F-22A Raptor",f35c="F-35C Lightning II",a10a="A-10C Thunderbolt II",f14d="F-14D Super Tomcat",f02a="F-2A",f15j="F-15J",j39e="Gripen E",m21b="MiG-21bis",m29a="MiG-29A",m31b="MiG-31B",mr2k="Mirage 2000-5",rflm="Rafale M",typn="Typhoon",pkfa="Su-57",su30="Su-30M2",su30sm="Su-30SM",su33="Su-33",su34="Su-34",su35="Su-35S",su37="Su-37",su47="Su-47",x02s="X-02S Strike Wyvern",adf11f="ADF-11F Raven",zoef="ADF-01 FALKEN",mrgn="ADFX-01 Morgan",dark="DarkStar",f18e="F/A-18E",f18etg="F/A-18E Top Gun",f14a="F-14A",f14atg="F-14A Top Gun",su57tg="Su-57 Top Gun",f104="F-104C",asfx="ASF-X Shinden II",fa27="XFA-27",fa44="CFA-44 Nosferatu",f15m="F-15 S/MTD",f16x="F-16XL",fb22="FB-22",f18x="F/A-18F Block III",f02x="F-2A Super Kai",m35d="MiG-35D",yf23="YF-23"}
 
 local function valid(object)return object and object:IsValid()end
@@ -200,16 +203,38 @@ local function optionsFor(id)
     local info=catalogue and catalogue[tostring(id)]
     if not info or not info.supported then return {} end
     assert(IsInGameThread()and valid(instance),"弹药预览需要当前游戏线程与机体选择")
+    -- 菜单直接读取机库当前展示的实例，任务读取玩家实例；不假定蓝图默认对象已具备完整组件。
+    local sourcePlane=plane -- 任务实例已由现有世界/生命周期检查确定。
+    if not isFlight then
+        local hangar=instance.HangarManager -- 原生机库管理器持有实际展示对象，无需全局猜测或另行生成机体。
+        assert(valid(hangar),"当前机库管理器未就绪")
+        sourcePlane=hangar.LoadedPlayerPlane
+    end
+    assert(valid(sourcePlane),"当前机体实例未加载，请确认模型已安装："..info.code)
+    assert(valid(sourcePlane:GetWorld())and sourcePlane:GetWorld():GetAddress()==instance:GetWorld():GetAddress(),"机体兵装来源不属于当前世界")
+    -- 机库预览实例的 PlaneTypeID 可为 -1，必须按实际蓝图类与所选机体核对身份。
+    assert(sourcePlane:GetClass():GetFName():ToString()=="AcePlayerPawn_"..info.code.."_C","机库模型尚未切换到当前机体："..info.code)
+    local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
+    assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
+    local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
+    for i=1,3 do
+        local weaponClass=sourceActivator["SpecialWeaponConfig"..i].WeaponClass -- 每槽可被替换模组独立改写。
+        assert(valid(weaponClass),"当前机体兵装类缺失："..info.code.."/"..i)
+        local weaponDefault=weaponClass:GetCDO() -- 原生枚举仍受核心范围校验保护。
+        assert(valid(weaponDefault),"当前机体兵装默认对象缺失："..info.code.."/"..i)
+        weaponIds[i]=weaponDefault.WeaponID
+        assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
+    end
     local w=info.weapons -- 原生部件先作用于完整载量；草稿随后仍使用原配弹比例。
-    local ok,encoded=nativeLoadoutAmmo(instance:GetAddress(),id,w[1].weapon_id,w[1].max,w[2].weapon_id,w[2].max,w[3].weapon_id,w[3].max)
+    local ok,encoded=nativeLoadoutAmmo(instance:GetAddress(),id,weaponIds[1],w[1].max,weaponIds[2],w[2].max,weaponIds[3],w[3].max)
     assert(ok,encoded);local amounts=json.decode(encoded)
     assert(type(amounts)=="table"and #amounts==3,"原生弹药预览结果不完整")
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
-        options[i]={index=item.index,code=item.code,max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
+        options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
             stats=item.stats,description=descriptions[item.code]or item.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
-            available=not unsupportedDual[item.code]}
+            available=not unsupportedDual[weaponIds[i]]}
     end
     return options
 end
@@ -436,7 +461,7 @@ local function selectLogicalWeapon(desired)
     internal=true
     switchGuardUntil=os.clock()+.15
     -- 原生按键可能已把类别暂时切成 MSL；按当前挂载识别 TLS，避免漏掉仍在发射的光束。
-    if desired~=active+1 and flightOptions and flightOptions[currentProfile[active==0 and "a"or "b"]+1].code:lower()=="tls"then
+    if desired~=active+1 and flightOptions and flightOptions[currentProfile[active==0 and "a"or "b"]+1].runtime_weapon_id==25 then
         local ended,err=finishTLS(plane:GetAddress(),activator:GetAddress())
         assert(ended,err or "TLS 原生收尾未完成")
     end
@@ -541,7 +566,7 @@ local function publishState()
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=2,language=config.language,game_language=runtimeContext.language,central_hint=config.central_hint,
-        keyboard_keys=config.keyboard_keys,ammo_ratio=config.ammo_ratio,
+        keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_ratio=config.ammo_ratio,
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
@@ -671,8 +696,17 @@ local function tick()
     end
     local selected=instance:GetSelectedPlaneID()
     if selected~=lastSelected then
+        local previousPlaneId=planeId -- 页面错误属于引发错误的机体，换机后重新建立适配上下文。
         planeId=selected;lastSelected=selected;currentProfile=profileFor(planeId);previewOptions=nil
-        if not isFlight and not supplySession then errorText=nil end
+        if not isFlight and not supplySession then
+            errorText=nil
+            for _,adapter in ipairs({nativeLoadout,nativeStandby,nativeParts})do
+                if adapter.error then
+                    note("MENU_ERROR_CONTEXT_ENDED from="..previousPlaneId.." to="..planeId.." prior="..adapter.error)
+                    adapter:reset(true,false) -- 原错误已写日志；仅新机体可重新接入，不循环重试失败页面。
+                end
+            end
+        end
     end
     -- 玩家对象与 HUD 在 START MISSION 前已经生成；先建立显示，不提前初始化武器或消耗冷却。
     if isFlight and not configured and not supplySession and not errorText and valid(activator)and os.clock()-lastPreviewHUD>=.05 then

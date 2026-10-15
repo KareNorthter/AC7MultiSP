@@ -1,0 +1,96 @@
+{
+  "base_commit": "fc4bc2ec30de8c39e3e5a36ab73c0bee2cf21332",
+  "source_branch": "codex/experience-polish",
+  "source_status": " M AGENTS.md\n M dist/DualSP/Scripts/main.lua\n M dist/DualSP/Scripts/native_loadout.lua\n M dist/DualSP/bin/DualSPUI.dll\n M docs/architecture.md\n M docs/development.md\n M docs/mod-management.md\n M docs/research/sp-ammunition.md\n M src/overlay.cpp\n?? docs/research/mod-compatibility.txt\n?? evidence/compatibility-addons-prepared.json\n?? evidence/compatibility-adler-j20-prepared.json\n?? evidence/compatibility-adler-samples-prepared.json\n?? evidence/compatibility-batch1-installed.json\n?? evidence/compatibility-batch1-user-validation.json\n?? evidence/compatibility-flight-batch-installed.json\n?? evidence/compatibility-flight-user-validation.json\n?? evidence/compatibility-small-addon-prepared.json\n?? evidence/compatibility-small-addon-user-validation.json\n?? evidence/compatibility-standby-fix-installed.json\n?? evidence/compatibility-standby-fix2-installed.json\n?? src/build_local_compatibility.py\n",
+  "description": "1.0.1 加当前未提交兼容修订的只读快照，主工作区与索引保持原状。",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "1096534f122a30080b3071b8a35965068dffd78727a05a22af4eb3989a5d7113"
+    },
+    {
+      "path": "dist/DualSP/Scripts/main.lua",
+      "sha256": "5f4decee585acc526c43df84922bfea86a59e344e63b242fff7aab327860cc4d"
+    },
+    {
+      "path": "dist/DualSP/Scripts/native_loadout.lua",
+      "sha256": "a49acb961ab63e1e5f96da9bc75d69e66dac5912ab8f6df41953990c6c08365d"
+    },
+    {
+      "path": "dist/DualSP/bin/DualSPUI.dll",
+      "sha256": "a35d5aeb4f50ef2a3d366dee2f3f915ab04b89bcceed70bb314bcd28e17fe3ef"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "a6fc6be01b7bbec282973353253c50c311183641e7f7902daf032f3eaa70a75a"
+    },
+    {
+      "path": "docs/development.md",
+      "sha256": "72d90a801ad6b3ca7dc68699d0f9c9efeafff0a136036d67316b6920e55bf13d"
+    },
+    {
+      "path": "docs/mod-management.md",
+      "sha256": "1577ae7b67c2c85c05d090e6534c591bed872a64d61d9049045f00f1b75cdd9c"
+    },
+    {
+      "path": "docs/research/mod-compatibility.txt",
+      "sha256": "b0d623090bc25505238c4a0c437954b0625bd51ae487fadaa152e20d870ce8d2"
+    },
+    {
+      "path": "docs/research/sp-ammunition.md",
+      "sha256": "1349e2894388350d7f48c37e5ee5e6ddc9d4d4c8707e9a9ae2fcbb0b07e3be88"
+    },
+    {
+      "path": "evidence/compatibility-addons-prepared.json",
+      "sha256": "fa2ca126efd30c507fcc5c9ba4cdd2a7f5f861877a461550201a93a781bc4ca0"
+    },
+    {
+      "path": "evidence/compatibility-adler-j20-prepared.json",
+      "sha256": "a0f31761137d793ccb1563cf84f3c7fc98018c3b1704a7df9611ff4a9a407c60"
+    },
+    {
+      "path": "evidence/compatibility-adler-samples-prepared.json",
+      "sha256": "1c3bf511390514265ec45f84b089a0d6d28a9da994e8ec0f32db1369afe210fc"
+    },
+    {
+      "path": "evidence/compatibility-batch1-installed.json",
+      "sha256": "dd97856f891bddc04b02f87acfe8c648a5029c9315a09195cda87b813c872dda"
+    },
+    {
+      "path": "evidence/compatibility-batch1-user-validation.json",
+      "sha256": "92a2fb2ced859997765cee2b79e93459b4e9117a99ee668a5848970d74bdd030"
+    },
+    {
+      "path": "evidence/compatibility-flight-batch-installed.json",
+      "sha256": "363766c4b9d26a6aa6a94a1a548f5ac6a5379b3f496ffb22da6327fb1bca755c"
+    },
+    {
+      "path": "evidence/compatibility-flight-user-validation.json",
+      "sha256": "112ab192ea8b806a2a2c64fd03d890d3931a4e4d9e8c80da366e8494f410d471"
+    },
+    {
+      "path": "evidence/compatibility-small-addon-prepared.json",
+      "sha256": "de7043950bcad793cb635d8ea9f8cf65cd16ade235e1b6e85b233368ba8d3569"
+    },
+    {
+      "path": "evidence/compatibility-small-addon-user-validation.json",
+      "sha256": "c604ce6f23676dc70f8e22ee55d267c08f8f923d9e2f3132ad15914dceab2c67"
+    },
+    {
+      "path": "evidence/compatibility-standby-fix-installed.json",
+      "sha256": "e6b3cb96abf07683f6176f16f4a46585b3e158710b33401c4d73d2ab3fef42c1"
+    },
+    {
+      "path": "evidence/compatibility-standby-fix2-installed.json",
+      "sha256": "103462594f8cd3fb5de38a4c5c4e7794d031b4e7ee753ec90fa3ee4bc25518cf"
+    },
+    {
+      "path": "src/build_local_compatibility.py",
+      "sha256": "7cd99710f0af48186e8a86ea9f3d518242bede43f9c65f64e53ff1c7e0e85f00"
+    },
+    {
+      "path": "src/overlay.cpp",
+      "sha256": "023481f207e555454a33125ac966298f7ccd38e68fe5527dcebb2c5d449fe914"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "installed_at": "2026-10-15T11:21:41.715415",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-standby-fix-20261015-112138",
+  "base": "1.0.1 + compatibility-lua-1",
+  "issue": "STANDBY 根节点在切换到无已存方案机体后仍被折叠",
+  "observed_plane": 137,
+  "observed_root_visibility": 1,
+  "observed_widget_visibility": 4,
+  "prior_version_has_same_lifecycle_logic": true,
+  "external_paks_unchanged": true,
+  "profiles_preserved": true,
+  "files": {
+    "main.lua": "55E900F0A08B2F4B45EC581A21A1E345BDF7FC68CC21DD80898650AA1F35274D",
+    "native_loadout.lua": "67F3E505699AC3023CD1CACF52989981ED93A359908248FB28C5F5475D1D56C4"
+  },
+  "lua_syntax_checked": true,
+  "test_modules_run": false,
+  "menu_recheck": false,
+  "gameplay_verified": false,
+  "game_restarted": true,
+  "launch_pid": 20344,
+  "startup_script_loaded": true,
+  "menu_recheck_limitation": "窗口工具两次发送 Enter 后仍停在标题页，未进一步重复输入；待用户按原路径复核",
+  "subsequent_user_retest": {
+    "passed": false,
+    "route": "Su-57（TGM）双选→STANDBY→F-14A",
+    "result": "UI 全部消失"
+  },
+  "superseded_by": "compatibility-standby-fix2-installed.json"
+}

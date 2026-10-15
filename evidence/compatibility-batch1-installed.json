@@ -1,0 +1,83 @@
+{
+  "batch": 1,
+  "base_version": "1.0.1",
+  "candidate": "compatibility-lua-1",
+  "installed_at": "2026-10-15T10:57:31.844960",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-batch1-20261015-105729",
+  "game": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7",
+  "paks": {
+    "~~CFA_PW1_P.pak": "79C4E7E0931E8F977DE23A75499519AC0BDB5460E3A4CDA3AA4C081AE2FB145D",
+    "~~~PWMKI_Module_P.pak": "DF571676699293C14F5E28C4B8A357F9049F208BB7241A4F33E3638EE326C27B",
+    "PWMKI_Skin01_Monarch_P.pak": "862FAAC0CD74CE91D8160DE6A5C57D1440F7B01FF556E7170232CB4976B10B2A",
+    "~~~~PWMKI_GlowActivator_01_Module_P.pak": "62DAFC26647278E27930FFCA6A93E66F037E5D074E5ED2BB00C217B948B59F03",
+    "FOV +S_P.pak": "25B378E34A3854A08D78531A70A663C9B582B44A14B8CBD0FC859A9EAD68EC78",
+    "proportional guided missile_P.pak": "41B49AD83D60509795DB910A02FD24C159AB39C324B5D1B745906F4A95A094E5"
+  },
+  "scripts": {
+    "main.lua": "AF68EEC17D1859128FFF097E5DAB5A136F82924778F72EA77B06B8CAD7B3782B",
+    "native_loadout.lua": "0877719DF896EF427730DF0A9EEBD312238A5119D810A192691C623A12A08C1F"
+  },
+  "protected_files_unchanged": true,
+  "third_party_files_modified": false,
+  "lua_syntax_checked": true,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "flight_mod_installed": false,
+  "AC7Weapons_enabled": false,
+  "proportional_guidance_enabled": true,
+  "restore": "游戏退出后，将本清单列出的六个 PAK 移出 ~mods 至 backup；从备份恢复 DualSP/Scripts 中本清单的两个 Lua 文件。恢复前另备份测试后配置和日志。",
+  "overlap_paths": {
+    "../../../nimbus/content/blueprint/player/pawn/aceplayerpawn_fa44.uasset": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak",
+      "~~~~PWMKI_GlowActivator_01_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/aircraft/fa44/fa44_swp3.uasset": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/aircraft/fa44/fa44_swp3_skeleton.uasset": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/weapons/weaponrack/weaponrack_w_eml_x2.uasset": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/player/pawn/aceplayerpawn_fa44.uexp": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak",
+      "~~~~PWMKI_GlowActivator_01_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/aircraft/fa44/fa44_swp3.uexp": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/aircraft/fa44/fa44_swp3_skeleton.uexp": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/vehicles/weapons/weaponrack/weaponrack_w_eml_x2.uexp": [
+      "~~CFA_PW1_P.pak",
+      "~~~PWMKI_Module_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/playerweapondatatable.uasset": [
+      "~~~PWMKI_Module_P.pak",
+      "~~~~PWMKI_GlowActivator_01_Module_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/playerweapondatatable.uexp": [
+      "~~~PWMKI_Module_P.pak",
+      "~~~~PWMKI_GlowActivator_01_Module_P.pak"
+    ]
+  },
+  "launch": {
+    "method": "Steam app 502500",
+    "pid": 5944,
+    "start_local": "2026-10-15T10:57:43+08:00",
+    "script_loaded": true,
+    "singleplayer_menu_enabled": true,
+    "catalogue_planes": 52,
+    "game_text_culture": "en",
+    "gameplay_verified": false
+  }
+}

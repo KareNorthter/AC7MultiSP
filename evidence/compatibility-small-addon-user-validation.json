@@ -1,0 +1,32 @@
+{
+  "recorded_at": "2026-10-15T14:02:04.958174",
+  "source": "用户实测与当前会话日志",
+  "user_statement": "我测试了Su-47和PW-MKI，双SP和换机都正常，出击、补给也没问题。Adler是不是跟这个差不多，我感觉不用测试了。",
+  "revision": "compatibility-small-addon-prepared.json",
+  "user_passed": [
+    "Su-47 与独立 PW-MKI 双 SP",
+    "换机",
+    "出击",
+    "补给"
+  ],
+  "observed_catalogue_size": 53,
+  "observed_pw_mki_id": 148,
+  "log_excerpt": [
+    "2026-10-15T05:57:29Z PROFILE_SAVED_NATIVE 122",
+    "2026-10-15T05:57:33Z NATIVE_STANDBY_DETACHED plane=122 next=122",
+    "2026-10-15T05:57:47Z PROFILE_SAVED_NATIVE 148",
+    "2026-10-15T05:57:52Z NATIVE_STANDBY_DETACHED plane=148 next=148",
+    "2026-10-15T05:58:09Z NATIVE_STANDBY_DETACHED plane=148 next=148",
+    "2026-10-15T05:58:31Z LOADOUT 148 {\"a\":1,\"b\":0,\"ratio\":1}",
+    "2026-10-15T06:00:02Z LOADOUT 148 {\"a\":2,\"b\":0,\"ratio\":1}",
+    "2026-10-15T06:00:02Z RESUPPLY_LOADOUT_APPLIED 148 {\"a\":2,\"b\":0,\"ratio\":1}"
+  ],
+  "lua_errors_in_session": [],
+  "adler_status": "按用户意向跳过进一步测试，仍未验证；未重新安装",
+  "remaining_limits": [
+    "不代表 Adler 或任意第三方机体兼容",
+    "不代表长时间、多任务、所有持续发射/耗尽边界已覆盖"
+  ],
+  "game_installation_changed": false,
+  "game_process_changed": false
+}

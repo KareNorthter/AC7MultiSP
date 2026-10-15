@@ -46,3 +46,5 @@ LLVM-MinGW 默认位置见[工具清单](../tools/README.md)，可以通过 DUAL
 ## 管理参数第 2 版部署
 
 本轮仅需重编译管理 UI，候选武器核心不变。Lua/UI 必须成套部署，management_protocol=2；运行时首次迁移 profiles.json 后管理参数 revision=2。安装器仍在启动前验证原配置未变，启动后的预期参数迁移须另行回读并核对机体方案未变，不能把两者混为同一核验。不得用旧 UI 搭配新的设置请求字段。
+
+2026-10-15 飞控兼容候选：管理状态新增 `management_key`，UI/Lua 必须成套更新。本机设为 F6，默认仍为 F8，详情见[管理说明](mod-management.md)。本轮仅构建 UI，旧受保护核心与当前武器核心不变，不新增或运行测试模块。飞控按作者载荷清单复制 AC7MouseAim 目录，合并启用行，共享加载器不覆盖；保留比例制导时不安装 AC7Weapons。安装和备份见[飞控批次回执](../evidence/compatibility-flight-batch-installed.json)。
