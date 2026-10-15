@@ -18,11 +18,12 @@ local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOC
     Rocket="ROCKET",Bomb="BOMB",Laser="LASER",Other="OTHER"}
 
 -- 补给适配器复用原生控件操作和输入读取，保持两种页面各自的布局。
-function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparationAction,confirmSound,weaponIcon,translate)
+function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparationAction,confirmSound,weaponIcon,translate,partsAmmoPreview)
     local tr=assert(translate,"缺少原生页面语言提供器") -- 页面语言由游戏文本文化决定。
     -- 每个适配器独立保存草稿、控件与原生确认事务。
     local supply=mode=="resupply"
     local parts=mode=="parts" -- PART 页复用右栏只读展示，不接管部件选择。
+    if parts then assert(type(partsAmmoPreview)=="function","PART 缺少只读弹药预览接口")end
     local standby=mode=="standby" or parts -- 两个只读页面均展示已保存方案。
     assert(type(keyboardNavigation)=="function","缺少原生页面键盘导航接口")
     if supply then assert(type(takeoff)=="function","缺少原生补给 YES 桥接")end
@@ -38,6 +39,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             self.owners={};self.ownerWorld=world;self.lastDiscovery=-1
         end
         if self.eventOwner then return {self.eventOwner}end -- 激活事件已经给出准确对象，无需查找。
+        if self.modelWait then return {self.modelWait.owner}end -- 等待已绑定模型期间不每 500 ms 重新扫描页面；pump 已核对身份。
         local interval=supply and .02 or .5 -- 补给仅在短暂等待页面时快速发现，飞行中不调用。
         if self.lastDiscovery<0 or now-self.lastDiscovery>=interval then
             local className=supply and "MissionResupplyWidget"or parts and "CampaignHangarPartsWidget"
@@ -328,10 +330,12 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     end
     local function modelChoices(owner,instance,planeId,options,now)
         -- 未就绪是有限等待状态；只在模型身份一致后建立多槽选择，真实组件/资源异常仍由原错误路径处理。
+        local started=os.clock() -- 仅测本次 Lua 同步调用；不当作整帧或模型资源加载耗时。
         local choices,reason=options() -- 第二返回值仅表示原生预览尚未跟上当前选择。
+        self.optionsCost=(os.clock()-started)*1000 -- 最后一次选项查询耗时，接入成功时汇总一次。
         if not reason then
             if self.modelWait then
-                note("NATIVE_MODEL_READY plane="..planeId)
+                note(string.format("NATIVE_MODEL_READY plane=%d lua_clock_wait_ms=%.3f",planeId,(now-self.modelWait.started)*1000))
                 clearModelWait(true)
             end
             return choices
@@ -350,6 +354,14 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         self.status="waiting_model"
         assert(now-self.modelWait.started<10,"机体兵装等待超过 10 秒，请检查模型并重新选机："..reason)
         return nil
+    end
+    -- 一次接入只写一条分段记录，便于把选项计算和控件集中创建分开观察。
+    local function measuredAttach(create,owner,instance,planeId,profile,choices)
+        local started=os.clock() -- 与既有 PERF_TICK 相同的 Lua 时钟，仅代表同步调用范围。
+        local c=create(owner,instance,planeId,profile,choices) -- 保留原接入顺序与错误传播。
+        note(string.format("NATIVE_UI_ATTACH_COST mode=%s plane=%d options_ms=%.3f build_ms=%.3f",mode or "preparation",
+            planeId,self.optionsCost or 0,(os.clock()-started)*1000))
+        return c
     end
     local function restore(releaseInput)
         clearModelWait(releaseInput)
@@ -528,6 +540,20 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         return c.weaponFullNames[code]
     end
+    -- 原生上下文与三 SP 数字独立刷新；不将悬停结果写入 Flow 或 options.max。
+    local function refreshPartsPreview(c,now)
+        if not parts then return end
+        c.partsPreview=partsAmmoPreview(c.owner,c.instance,c.planeId,c.flow.options)
+        c.partsPreviewAt=now -- 正常轮询只访问当前已绑定页面，不扫描全局对象。
+        if c.partsPreview.pending then
+            if not c.partsWaitAt then
+                c.partsWaitAt=now;note("PARTS_AMMO_WAIT plane="..c.planeId)
+            end
+            assert(now-c.partsWaitAt<3,"PART 原生弹药上下文超过 3 秒未同步到当前机体")
+        elseif c.partsWaitAt then
+            c.partsWaitAt=nil;note("PARTS_AMMO_READY plane="..c.planeId)
+        end
+    end
     -- SP1 阶段尚未选择 SP2，始终显示 EMPTY；SP2 阶段才展示其当前候选。
     local function paintColumns(c)
         local flow=c.flow;local stage=flow.stage;local row=flow:rows()[flow.cursor]
@@ -538,16 +564,32 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         for i,column in ipairs(c.columns)do
             local weapon=preview[Profile.fields[i]]
             local option=weapon>=0 and flow.options[weapon+1]or nil -- 空栏不借用历史兵装的性能或弹药。
-            local amount=option and Profile.ammo(option.max,count)or 0
-            -- 同一栏的静态性能、名称与载量未变时，不重复使原生布局失效。
-            local signature=tostring(weapon)..":"..amount
+            local pending=parts and c.partsPreview.pending -- 等待只清空模组数字，不阻止原生 PART 导航。
+            local entry=parts and option and not pending and c.partsPreview.amounts[weapon+1]or nil -- 当前实际 WeaponID 对应结果。
+            local amount=option and not pending and Profile.ammo(entry and entry.preview or option.max,count)or 0
+            local affects=entry and entry.affects or false -- 不能用“整数变大”替代原生候选影响标记。
+            local ammoText=option and not pending and tostring(amount)or "---" -- EMPTY 与未就绪均不展示猜测数量。
+            local ammoSignature=ammoText..":"..tostring(affects)..":"..tostring(pending) -- 数字相同也能立即切换黄色。
+            if column.lastAmmo~=ammoSignature then
+                if column.ammo then
+                    setText(c,column.ammo,ammoText)
+                    if parts then
+                        column.ammo:SetColorAndOpacity(affects and c.ammoCandidate or c.ammoStandard)
+                        column.ammo:SetUseGlobalGlowColor(not affects)
+                        if affects then column.ammo:SetGlowColor(c.ammoCandidateGlow)end -- 标准状态交还全局泛光，与原生一致。
+                    end
+                end
+                if c.ammo then setText(c,c.ammo[i].count,ammoText)end
+                column.lastAmmo=ammoSignature
+            end
+            -- 悬停数量与颜色独立更新，不反复重画未变的名称和 18 个基础性能条。
+            local signature=tostring(weapon)
             if column.lastContent==signature then goto nextColumn end
             setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or "EMPTY"))
             local fullName=option and weaponFullName(c,option)or "NO WEAPON" -- 空挂载不查询不存在的兵装键。
             local typeText=option and assert(weaponTypes[option.type_key:gsub("^HangarWeaponType_Name_","")],"原生兵装类型未知："..option.type_key)or "NO WEAPON"
             if column.fullName then setText(c,column.fullName,fullName)else typeText=fullName end -- STANDBY 紧凑栏保留原有全名位置。
             setText(c,column.type,typeText)
-            if column.ammo then setText(c,column.ammo,option and tostring(amount)or "---")end
             if column.icon then
                 column.icon:SetVisibility(option and VISIBLE or COLLAPSED)
                 if option and column.category~=option.category then
@@ -563,7 +605,6 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             -- 准备页普通弹药汇总中的两个 SP 格与上方三栏保持一致。
             if c.ammo then
                 setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
-                setText(c,c.ammo[i].count,option and tostring(amount)or "---")
             end
             column.lastContent=signature
             ::nextColumn::
@@ -681,15 +722,26 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local weaponTemplate=controls(ammo.WeaponsSP1)
         local typeTemplate=controls(info.HangarAircraftWeaponType)
         local origin=vec(group.Slot:GetPosition()) -- 原右栏在 1920 逻辑坐标中的 X=1442。
+        local cardX=origin.X+32 -- 只将三个 SP 卡片右移；弹药区仍使用未经平移的原生基准。
         local leftOrigin=vec(leftGroup.Slot:GetPosition()) -- 同一逻辑坐标系中的左栏 X=1039。
         local width=canvasSlot(group.SpecGroupName):GetSize().X+group.SpecItem1.Slot:GetPosition().X
         assert(width>300 and width<450 and origin.X>1400 and origin.Y>100,"STANDBY 右栏布局已变化")
         assert(leftOrigin.X>900 and leftOrigin.X+width<=origin.X,"STANDBY 左右栏对齐基准已变化")
+        assert(cardX+width<=1880,"STANDBY 三 SP 卡片超出右侧安全边距")
+        if parts then
+            local manager=owner:GetUIManagerActor() -- 黄字样式与当前原生机库主题一致。
+            assert(valid(manager),"PART 原生颜色管理器缺失")
+            local style=manager.HangarColorParameters -- 原生用 OnCursor，而非 ValueOver。
+            local function textColor(value)return color(value.R,value.G,value.B,value.A)end -- 复制线性色，避免保存结构引用。
+            c.ammoStandard=textColor(style.TextColorStandard)
+            c.ammoCandidate=textColor(style.TextColorOnCursor)
+            c.ammoCandidateGlow=textColor(style.TextGlowOnCursor)
+        end
         origin.Y=origin.Y-39 -- 对齐原右侧兵装名称，不侵占上方标题。
         local cardPitch,cardHeight=252,240 -- 移走弹药区后增加卡片高度，三组底部仍避开原生操作栏。
         local statTop,statPitch=34,26 -- 性能行从 18 增至 26，文字与条形不再紧贴。
         for index=1,3 do
-            local panel=infoCanvas(c,root,{X=origin.X,Y=origin.Y+(index-1)*cardPitch},{X=width,Y=cardHeight})
+            local panel=infoCanvas(c,root,{X=cardX,Y=origin.Y+(index-1)*cardPitch},{X=width,Y=cardHeight})
             local column={bars={},barWidth=width*.40};c.columns[index]=column
             column.name=infoWidget(c,assert(weaponTemplate.WeaponsName),panel,{X=0,Y=0},{X=width,Y=30},false)
             for stat=1,6 do
@@ -715,6 +767,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         ammoCanvas.Slot:SetPosition({X=ammoPosition.X+leftOrigin.X-origin.X,Y=ammoTop})
         mask(c,ammo.WeaponsSP1);mask(c,wrapper)
         mask(c,info.HangarAircraftWeaponNameShortR);mask(c,info.HangarAircraftWeaponType)
+        refreshPartsPreview(c,os.clock())
         paintColumns(c);self.status=mode;note("NATIVE_"..mode:upper().."_ATTACHED "..owner:GetFullName())
         return c
     end
@@ -737,7 +790,10 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             if enabled and (not c.controlEnabled or (parts and now-(c.ammoRefreshedAt or -1)>.25))then
                 local choices=modelChoices(c.owner,instance,planeId,options,now) -- 部件页也不能拿上一架预览计算载量。
                 if not choices then return end
-                c.ammoRefreshedAt=now;c.flow.options=choices;paintColumns(c);self.status=mode
+                c.ammoRefreshedAt=now;c.flow.options=choices
+                refreshPartsPreview(c,now);paintColumns(c);self.status=mode
+            elseif enabled and parts and now-c.partsPreviewAt>=.05 then
+                refreshPartsPreview(c,now);paintColumns(c) -- 50 ms 只读候选刷新，不重建控件或重新查询机体选项。
             end
             c.controlEnabled=enabled
             return
@@ -750,7 +806,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then
                 if not panelClass then api()end
                 local choices=modelChoices(owner,instance,planeId,options,now) -- 等待只影响本模组显示，不接管只读页输入。
-                if choices then attachStandby(owner,instance,planeId,saved,choices)end
+                if choices then measuredAttach(attachStandby,owner,instance,planeId,saved,choices)end
                 return
             end
         end
@@ -1012,7 +1068,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local choices=modelChoices(candidate,instance,planeId,options,now);if not choices or #choices~=3 then return end
             self.ignored=candidate:GetAddress();self.ignoredReason="error" -- 接入失败只记录一次，不在每次轮询重试。
             if not panelClass then api()end
-            c=(supply and attachSupply or attach)(candidate,instance,planeId,profile(),choices)
+            c=measuredAttach(supply and attachSupply or attach,candidate,instance,planeId,profile(),choices)
             self.ignored=nil;self.ignoredReason=nil
         end
         local input=inputs(c)
@@ -1105,6 +1161,12 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     end
     -- 直接接入原生激活事件的页面；下一次轮询仍按世界和可见性核对生命周期。
     function self:activate(owner,...)
+        if self.modelWait and (not valid(self.modelWait.owner)or self.modelWait.owner:GetAddress()~=owner:GetAddress())then
+            note("NATIVE_MODEL_WAIT_CANCELLED reason=page_replaced")
+            clearModelWait(true) -- 新页面代次不能继续使用旧页面的等待身份或输入锁。
+        end
+        -- 保留原生激活事件给出的准确页面，后续无需立即全局发现一次相同对象。
+        self.owners={owner};self.ownerWorld=owner:GetWorld():GetAddress();self.lastDiscovery=os.clock()
         self.eventOwner=owner
         self:refreshNow(...)
         self.eventOwner=nil

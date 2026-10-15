@@ -108,8 +108,8 @@ function Presentation.new(note)
         applyLayout(labelSlot,c.sourceLayout)
         c.label:SetVisibility(HIT_TEST_INVISIBLE)
         -- 原提示可能已进入淡出，不能继承那一瞬间的文字 Alpha。
-        -- 0.5 是已核对的原生文字正常 Alpha；就绪系数在更新时叠加，不继承原提示的淡出。
-        c.tint={R=.08,G=1,B=.05,A=.5} -- 已核对资源的正常绿色，不继承瞬时警告色或全局泛光。
+        -- 正常 Alpha 从原生 0.5 提高到 0.7；就绪系数在更新时叠加，不继承原提示的淡出。
+        c.tint={R=.08,G=1,B=.05,A=.7} -- 保留原生绿色，提高文字不透明度以改善清晰度。
         local shadow=c.sourceText.ShadowColorAndOpacity -- 阴影与文字使用相同就绪系数。
         c.shadow={R=shadow.R,G=shadow.G,B=shadow.B,A=shadow.A}
         c.fontSize=nil -- 首次更新也应用放大字号；只修改副本自己的字体结构。
@@ -177,8 +177,8 @@ function Presentation.new(note)
         if c.sourceText.Font.Size~=c.fontSize then
             c.fontSize=c.sourceText.Font.Size
             c.label:SetFont(c.sourceText.Font)
-            local font=c.label.Font -- 原生 18 放大为 20，随原生字号变化保持相同比例。
-            font.Size=math.floor(c.fontSize*10/9+.5);c.label:SetFont(font)
+            local font=c.label.Font -- 原生 18 放大为 22，比此前 20 略大；随原生字号保持相同比例。
+            font.Size=math.floor(c.fontSize*11/9+.5);c.label:SetFont(font)
         end
         self.status="native"
     end

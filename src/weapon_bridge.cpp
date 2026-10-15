@@ -890,6 +890,78 @@ struct AmmoModifiers {
 };
 static_assert(sizeof(AmmoModifiers)==64);
 
+// HangarStatus 的原生弹药快照；只复制已核对的 0x34 字节，不解释其后的更新标记。
+struct PartsAmmoContext {
+    int plane{},weapon{},reserved{},candidate{}; // 机体、原生 SP、未使用字段、光标候选。
+    std::array<int,8> parts{}; // 原生上下文列表，替换/卸件时不擅自改成 GameInstance 列表。
+    int count{}; // 有效部件数，范围 0 至 8。
+};
+static_assert(sizeof(PartsAmmoContext)==0x34);
+
+// PART 只读查询：复用原生 A/B 修正，既不调用绘制入口，也不临时装备部件。
+extern "C" __declspec(dllexport) int dualsp_parts_ammo_preview(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 结构或签名变化明确报错，禁止返回猜测数量。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 游戏线程调用，沿用专用加载器 ABI。
+        require(runtimeEnabled,"Mod disabled outside single-player");
+        require(api->top(luaState)==11,"PART 弹药预览参数数量无效");verifyVersion();
+        const auto page=static_cast<Addr>(api->readInteger(luaState,1)); // Lua 已核对当前可见 PART 页和世界。
+        const auto status=static_cast<Addr>(api->readInteger(luaState,2)); // 页面反射属性 HangarStatus。
+        const auto board=static_cast<Addr>(api->readInteger(luaState,3)); // status.BoardWeaponsAmmo。
+        const auto instance=static_cast<Addr>(api->readInteger(luaState,4)); // 当前 GameInstance。
+        const auto planeId=api->readInteger(luaState,5); // 防止换机期间混用旧上下文。
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 本 build 的原生纯计算函数。
+        require(read<Addr>(page+0x4f8)==status && read<Addr>(board+0x28)==status,"PART 预览对象归属改变");
+        require(read<Addr>(read<Addr>(status)+0x258)==base+0x8df120 &&
+            read<Addr>(read<Addr>(board)+0x258)==base+0x8df100,"PART 预览上下文访问器不匹配");
+        require(read<int>(instance+0x4dc)==planeId,"PART 预览与当前所选机体不一致");
+        constexpr unsigned char contextSig[]={0x48,0x8d,0x41,0x4c,0xc3};
+        constexpr unsigned char partSig[]={0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x8b,0xda,0xe8,0xf2,0x8f,0xca,0xff};
+        constexpr unsigned char applySig[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x48,0x89,0x7c,0x24,0x18};
+        // Board 更新入口以 +0x58==2 选择模式 3，否则模式 2；核对这一段后才解释字段。
+        constexpr unsigned char modeSig[]={0x33,0xc9,0x4c,0x8d,0x43,0x50,0x83,0x7b,0x58,0x02,0x0f,0x94,0xc1,0x83,0xc1,0x02};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x8df120),contextSig,sizeof(contextSig))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x84e770),partSig,sizeof(partSig))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x84dc40),applySig,sizeof(applySig))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x6ec5ee),modeSig,sizeof(modeSig))==0,"PART 原生预览入口不匹配");
+        const auto context=read<PartsAmmoContext>(status+0x4c); // 同一游戏线程一次复制，不跨页缓存裸指针。
+        const int mode=read<int>(board+0x58)==2 ? 3 : 2; // 与 0x6ec5c0 完全相同，不读取可能未刷新的 +0x50。
+        Json result={{"pending",context.plane!=planeId},{"plane",context.plane}}; // 正常换机尚未同步时明确等待。
+        if(context.plane==planeId) {
+            require(context.count>=0 && context.count<=8,"PART 上下文部件数量异常");
+            AmmoModifiers installed,candidate,empty; // 每次从原生默认值重建，绝不修改实际配装。
+            using BuildPart=void(*)(int,AmmoModifiers*); // 0x84e770 按单个 PartsID 查实际加载的部件表。
+            using Apply=bool(*)(unsigned char,int*,const AmmoModifiers*,const AmmoModifiers*); // 返回候选适用标记。
+            const auto build=reinterpret_cast<BuildPart>(base+0x84e770); // 栈上修正的唯一来源。
+            const auto apply=reinterpret_cast<Apply>(base+0x84dc40); // 保留原生截断和偶数规则。
+            bool alreadyInstalled=false; // 原生禁止候选在上下文中重复加成。
+            for(int i=0;i<context.count;++i) {
+                alreadyInstalled=alreadyInstalled || context.parts[i]==context.candidate;
+                build(context.parts[i],&installed);
+            }
+            if(mode==3 && !alreadyInstalled)build(context.candidate,&candidate);
+            Json amounts=Json::array(); // 三种原生配置各自的完整载量，均分仍由 Lua 负责。
+            for(int i=0;i<3;++i) {
+                const auto weapon=api->readInteger(luaState,6+i*2); // 实际 WeaponID，不能使用 PWDT 配置序号。
+                const auto baseline=api->readInteger(luaState,7+i*2); // 不含任何已装或候选修正的基础载量。
+                require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"PART 兵装参数异常");
+                int current=static_cast<int>(baseline),preview=current; // 两次计算分别从基础值开始。
+                apply(static_cast<unsigned char>(weapon),&current,&installed,&empty);
+                const bool affects=apply(static_cast<unsigned char>(weapon),&preview,&installed,&candidate); // 取整相同也可为 true。
+                require(current>0 && current<=100000 && preview>0 && preview<=100000,"PART 原生载量结果异常");
+                amounts.push_back({{"current",current},{"preview",preview},{"affects",affects}});
+            }
+            result["candidate"]=context.candidate;result["mode"]=mode;result["amounts"]=std::move(amounts);
+        }
+        const auto encoded=result.dump(); // 只返回展示快照，不保存 GameInstance/Flow/任务状态。
+        api->boolean(luaState,true);api->string(luaState,encoded.data(),encoded.size());return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("PARTS_AMMO_PREVIEW_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
 // 三页共用原生预览算法；仅修改栈上局部数字，不初始化/重建实际武器。
 extern "C" __declspec(dllexport) int dualsp_loadout_ammo(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 失败让 Lua 明确停用此预览，不显示基础数冒充实际值。

@@ -22,7 +22,7 @@ local nativeLoadout=nil
 -- 原生补给页与出击页分别拥有控件和草稿，不能互相提交。
 local nativeSupply=nil
 local nativeStandby=nil -- STANDBY 独立展示已保存方案，不改变原生机库导航。
-local nativeParts=nil -- PART 页只显示当前已保存的多 SP 与已装部件载量。
+local nativeParts=nil -- PART 页只读展示已保存的多 SP 和原生悬停载量，不提交候选部件。
 local function readJson(path)
     local file=io.open(path,"r");if not file then return nil end
     local text=file:read("*a");file:close();return json.decode(text)
@@ -54,6 +54,7 @@ local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切�
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
 local nativeLoadoutAmmo=loadExport("dualsp_loadout_ammo") -- 三页统一读取部件加成后的完整载量。
+local nativePartsAmmo=loadExport("dualsp_parts_ammo_preview") -- PART 只读候选快照；旧核心缺少接口时明确拒绝混装。
 local nativeWeaponIcon=loadExport("dualsp_weapon_icon") -- 机库全名前复用原生分类图标。
 local prepareWeaponRebuild=loadExport("dualsp_prepare_weapon_rebuild") -- 丢弃锁定槽前配对停止音效。
 local catalogExport=loadExport("dualsp_catalogue")
@@ -245,7 +246,8 @@ local function optionsFor(id)
     assert(valid(sourcePlane),"当前机体实例未加载，请确认模型已安装："..info.code)
     assert(valid(sourcePlane:GetWorld())and sourcePlane:GetWorld():GetAddress()==instance:GetWorld():GetAddress(),"机体兵装来源不属于当前世界")
     -- 机库预览实例的 PlaneTypeID 可为 -1，以实际类继承链核对当前选择，保留完整路径约束。
-    assert(isSelectedPlane(sourcePlane,info.code),"机库模型尚未切换到当前机体："..info.code.." actual="..sourcePlane:GetClass():GetFullName())
+    -- 菜单分支刚核对过同一实例的类链，避免重复遍历；任务实例仍在这里独立核对。
+    if isFlight then assert(isSelectedPlane(sourcePlane,info.code),"任务机体与当前选择不符："..info.code)end
     local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
@@ -300,7 +302,30 @@ nativeLoadout=dofile(root.."Scripts/native_loadout.lua").new(note,function(id,pr
     lastUIKey=nil;note("PROFILE_SAVED_NATIVE "..id)
 end,nil,preparationNavigation,nil,nativePreparationAction,menuConfirm,nativeWeaponIcon,tr)
 nativeStandby=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"standby",preparationNavigation,nil,nil,nil,nil,tr)
-nativeParts=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"parts",preparationNavigation,nil,nil,nil,nil,tr)
+-- 候选只进入展示快照，不改 optionsFor 的已装结果或保存的方案。
+local function partsAmmoPreview(owner,selectedInstance,id,options)
+    assert(IsInGameThread()and valid(owner)and valid(selectedInstance),"PART 预览需要当前游戏线程及有效页面")
+    assert(owner:IsVisible()and owner:GetWorld():GetAddress()==selectedInstance:GetWorld():GetAddress(),"PART 预览页面或世界已变化")
+    assert(owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarPartsWidget")),"PART 预览页面类型不符")
+    assert(selectedInstance:GetSelectedPlaneID()==id and #options==3,"PART 预览机体或兵装选项不符")
+    local status=owner.HangarStatus -- 原生已处理当前光标、页签及部件列表的状态对象。
+    assert(valid(status)and valid(status.BoardWeaponsAmmo),"PART 原生弹药上下文缺失")
+    local board=status.BoardWeaponsAmmo -- 每次从当前页面读取，不跨代次保存对象。
+    local ok,encoded=nativePartsAmmo(owner:GetAddress(),status:GetAddress(),board:GetAddress(),selectedInstance:GetAddress(),id,
+        options[1].runtime_weapon_id,options[1].base_max,options[2].runtime_weapon_id,options[2].base_max,
+        options[3].runtime_weapon_id,options[3].base_max)
+    assert(ok,encoded)
+    local result=json.decode(encoded) -- pending 与真实数量严格区分，不把上架机体数量拿来占位。
+    assert(type(result)=="table"and type(result.pending)=="boolean","PART 预览结果缺少状态")
+    if not result.pending then
+        assert(result.plane==id and type(result.amounts)=="table"and #result.amounts==3,"PART 预览结果不完整")
+        for _,entry in ipairs(result.amounts)do
+            assert(type(entry.affects)=="boolean"and type(entry.preview)=="number"and type(entry.current)=="number","PART 预览数量或影响标记缺失")
+        end
+    end
+    return result
+end
+nativeParts=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"parts",preparationNavigation,nil,nil,nil,nil,tr,partsAmmoPreview)
 -- 原生补给菜单确认只暂存方案；此时不改武器，也不保存到配置文件。
 nativeSupply=dofile(root.."Scripts/native_loadout.lua").new(note,function(id,profile)
     assert(supplySession and id==supplySession.planeId,"补给确认期间机体已变化")
