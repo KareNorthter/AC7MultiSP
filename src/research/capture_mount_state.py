@@ -79,6 +79,7 @@ def main():
         def fields(address):
             """通过反射读对象引用、数组和变换，不把候选偏移当作已证实字段。"""
             result = {}
+            animation_instance = 'AnimBP' in describe(address).get('class_name', '')  # 动画实例完整记录标量，避免逐字段重复读身份。
             cls = pointer(address + 0x10)
             seen = set()  # 拒绝循环或异常反射链。
             while cls:
@@ -101,7 +102,8 @@ def main():
                             report.setdefault('plane_field_layout', []).append({'name': label, 'kind': kind, 'offset': hex(offset),
                                 'element_size': unpack(child + 0x34, '<I')[0]})  # 只记录布局，用于核对动画配置来源。
                         if kind in ('IntProperty', 'ByteProperty', 'FloatProperty') and (
-                                offset == 0xb4c or any(term in label.lower() for term in ('weapon', 'cover', 'spw', 'anim'))):
+                                animation_instance or offset == 0xb4c
+                                or any(term in label.lower() for term in ('weapon', 'cover', 'spw', 'anim'))):
                             fmt = '<f' if kind == 'FloatProperty' else '<B' if kind == 'ByteProperty' else '<i'  # 按反射类型读取标量。
                             result[label] = {'offset': hex(offset), 'scalar': unpack(address + offset, fmt)[0]}
                         if kind in ("ObjectProperty", "ClassProperty"):
@@ -118,7 +120,8 @@ def main():
                             result[label] = {"offset": hex(offset), "name": fname(name), "number": number}
                         elif kind == "StructProperty" and label in ("RelativeLocation", "RelativeRotation", "RelativeScale3D"):
                             result[label] = {"offset": hex(offset), "xyz": unpack(address + offset, "<fff")}
-                        elif kind == "BoolProperty" and (label in ("bVisible", "bHiddenInGame", "bHidden") or 'cover' in label.lower()):
+                        elif kind == "BoolProperty" and (animation_instance
+                                or label in ("bVisible", "bHiddenInGame", "bHidden") or 'cover' in label.lower()):
                             # 位掩码语义留待核对，先记录值和属性元数据，不直接猜布尔值。
                             result[label] = {"offset": hex(offset), "raw": memory.read(address + offset, 8).hex(),
                                 "property_tail": memory.read(child + 0x70, 8).hex()}
@@ -286,7 +289,7 @@ def main():
                 report["objects"][hex(address)] = row
                 for label, entry in row["fields"].items():
                     if label in ("SWP1", "SWP2", "SWP3", "ActiveSWPMeshComponent", "WeaponMeshBase",
-                                 "StaticMesh", "RootComponent", "AttachParent", "HiddenMissileMesh"):
+                                 "StaticMesh", "RootComponent", "AttachParent", "HiddenMissileMesh", "AnimScriptInstance"):
                         value = entry.get("value", {})
                         if value.get("uobject"):
                             queued.add(int(value["address"], 16))

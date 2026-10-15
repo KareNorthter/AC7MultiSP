@@ -646,6 +646,7 @@ void execute(const Command& command) {
     }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountCommit(command); // 同一游戏线程内完成重建后的布局，原型只处理严格匹配的组合。
+    bindF35Cover(command.plane); // 舱门输出跟飞机生命周期绑定，包含补给转单挂。
 #endif
 }
 }

@@ -1,4 +1,4 @@
--- AC7DualSP 1.0.2-su30sm-three-sp.7：按实际武器类识别行为，读取模组提供的原生名称。
+-- AC7DualSP 1.0.2-su30sm-three-sp.8：按实际武器类识别行为，读取模组提供的原生名称。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -49,7 +49,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.7") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.8") -- 与三 SP 协议 3 核心及 UI 成套安装。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -443,7 +443,9 @@ local function primeFlightHUD(profile,options,prewarm)
 end
 -- 正常出击建立检查点；补给重建只替换当前兵装，保留任务检查点。
 local function configureFlight(profile,resupply)
-    assert(ready(),"Wait until the mission's flight controls are active")
+    -- 补给在原生成功事件返回后即可重建；等待飞控输入开放会把旧挂载多留在起飞画面约一秒。
+    assert((resupply and supplySession and supplySession.success and valid(plane)and valid(activator))or ready(),
+        "武器初始化需要已开放的出击控制，或已经成功返回的补给事务")
     assert(not configured or resupply,"Loadout is locked for this sortie")
     -- 在触碰武器前检查候选协议；正式 0.1.7 核心不能冒充支持补给重选。
     if resupply and profile.b>=0 then
@@ -472,6 +474,22 @@ local function configureFlight(profile,resupply)
     if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
+end
+-- 在原生补给成功回调返回的同一帧提交，模型、弹药、HUD 共用一个事务边界。
+local function completeSupplyHandoff()
+    if not(supplySession and supplySession.success and isFlight and valid(plane)and valid(activator))then return end
+    assert(not errorText,errorText)
+    assert(not nativeSupply.error,nativeSupply.error)
+    assert(planeId==supplySession.planeId and currentWorld==supplySession.world,"补给返回了不同机体或任务世界")
+    local profile=nativeSupply:completeSupply() -- 成功之前不提交草稿，不在 NO、取消或降落期间重建。
+    assert(supplySession.confirmed,"原生补给成功，但未收到多 SP 的起飞确认")
+    instance:SetPlaneAndSWP(planeId,profile.a)
+    assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
+    configureFlight(profile,true)
+    config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
+    nativeSupply:reset(false,false);ownSupplyInput(false);supplySession=nil;lastUIKey=nil
+    refreshHUD(os.clock())
+    note("RESUPPLY_LOADOUT_APPLIED "..planeId.." "..json.encode(profile))
 end
 -- 重建前释放发射输入；该接口不负责更新 seeker，也不能作为停止锁定音的修复。
 releaseWeaponInput=function(reason)
@@ -764,22 +782,8 @@ local function tick()
     if supplySession and supplySession.menuClosed and supplySession.preview and isFlight and valid(activator)and not errorText then
         primeFlightHUD(supplySession.preview,supplySession.options,true)
     end
-    -- 成功事件只排队：原生阶段先完成自己的收尾，随后才释放补给控件并重建武器。
-    if supplySession and supplySession.success and isFlight and ready()and not errorText then
-        assert(not nativeSupply.error,nativeSupply.error)
-        assert(planeId==supplySession.planeId and currentWorld==supplySession.world,"补给返回了不同机体或任务世界")
-        -- 事务在 OnFinishdSupplyMenuHandler 后仍保留；此处收到成功事件后才提交并清理页面。
-        local profile=nativeSupply:completeSupply()
-        assert(supplySession.confirmed,"原生补给成功，但未收到多 SP 的起飞确认")
-        -- 原生单 SP 选择始终与新方案 SP1 对齐；完整补给由初始化和核心重建完成。
-        instance:SetPlaneAndSWP(planeId,profile.a)
-        assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
-        configureFlight(profile,true)
-        config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
-        nativeSupply:reset(false,false);ownSupplyInput(false);supplySession=nil;lastUIKey=nil
-        refreshHUD(os.clock()) -- 完成同一回调内的最终显示，不等待下一次 100 ms 周期。
-        note("RESUPPLY_LOADOUT_APPLIED "..planeId.." "..json.encode(profile))
-    end
+    -- 若任务成功事件到达时玩家尚未回到世界，沿现有身份发现流程等待实例；不再等待武器输入开关。
+    if supplySession and supplySession.success and not errorText then completeSupplyHandoff()end
     if isFlight and ready()and not configured and not supplySession and not errorText then
         local saved=config.profiles[tostring(planeId)]
         local options=optionsFor(planeId)
@@ -971,10 +975,11 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
     assert(supplySession and supplySession.mission==ctx:get():GetAddress(),"补给成功事件与当前任务不匹配")
     assert(not supplySession.success,"同一轮补给重复成功")
     supplySession.success=true;note("RESUPPLY_SUCCESS_PENDING")
+    completeSupplyHandoff() -- 此处是原生事件后置回调，原生补给已经完成，画面尚未推进到下一帧。
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.7 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.8 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

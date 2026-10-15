@@ -1,0 +1,345 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.8",
+  "steam_build": 9855922,
+  "process_written": false,
+  "native_functions_executed_during_research": false,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "source_hashes": {
+    "Temp/f35c-batch7-engine-cover.json": "ceca96b7303468a7b876199646cb2cc9cf44213fa99776e4af5d94e55b662100",
+    "Temp/f35c-batch7-engine-closed.json": "a144ed9d3051886a47f9a604f2fa9d8f8852481ee7d5627ecaf33210425688cc",
+    "Temp/f35c-batch7-sod-msl-closed.json": "b0cccc44c8fbd5c39c478692119629388fcf6f8520e532d8799a8778a1d64bac",
+    "Temp/f35c-batch7-three-sp-4aam.json": "94c73b5f8c2d7a0d4443cf6d56c613f3334bfd6c4aa60902b0fccfe333eede20",
+    "Temp/f35c-batch8-native-verified.json": "78d21af6d4835164bae4aeb077b236b38f481da585e600530f311da3ffce1ce9",
+    "Temp/f35c-batch8-output-mapping.json": "3eb17e0712854accab33a8500e0993289a47ed274d3a930d40d11c18c458da18",
+    "Temp/f35c-batch8-cover-native/1ce6d70.txt": "c2414a82bb983349d4b4b067939d443af722796a26d13cb69f839061b2a1737c",
+    "Temp/f35c-batch8-cover-state/manifest.json": "1c477169b5cf95af18e004f7bf73974e589a99f2cbfab94c3c57747524e5d5b4",
+    "Temp/f35c-batch8-geometry.json": "06691203def21608be3df9f189b7f748e204276af9c4ebd864e22641bdb43554",
+    "Temp/su30sm-lagm-routes.json": "d11f21b08de37fdbe5e0c7d4f448e5645544889adcc2660a38c63fcca56bc3d4",
+    "Temp/su30sm-lagm-fired.json": "cddf11b4c3d3999f873558a1c7c3fd0a9473c5f6e5c83e8ffed511af2a1e249c",
+    "Temp/su30sm-lagm-reloaded.json": "6bd06775bb7e17680a9d0de6bcbeef740319987e7b451c417792e986f8f04278"
+  },
+  "f35c": {
+    "class": "AcePlayerPawn_f35c_s05_C",
+    "captured": "2026-10-15T22:43:31.336282+08:00",
+    "active_weapon": "plwp_4aam_a0_C",
+    "logical_slots": 6,
+    "reload_window": 4,
+    "pools": {
+      "MSL": 2,
+      "SWP1": 2,
+      "SWP2": 6,
+      "SWP3": 12
+    },
+    "bad_channels": {
+      "0x17c": -0.009999999776482582,
+      "0x180": 1.0,
+      "0x184": 0.0,
+      "0x188": -0.009999999776482582,
+      "0x18c": -0.009999999776482582,
+      "0x190": -0.009999999776482582,
+      "0x194": 1.0
+    },
+    "closed_channels": {
+      "0x17c": -0.009999999776482582,
+      "0x180": -0.009999999776482582,
+      "0x184": 0.0,
+      "0x188": -0.009999999776482582,
+      "0x18c": -0.009999999776482582,
+      "0x190": -0.009999999776482582,
+      "0x194": -0.009999999776482582
+    },
+    "native_update_rva": "0x1ce6d70",
+    "new_entry_prefix_verified": [
+      [
+        "0x1ce6d70",
+        true
+      ]
+    ],
+    "native_constants": {
+      "0x257beec": 0.25,
+      "0x25a35ec": 0.4000000059604645,
+      "0x2d7cb00": -0.009999999776482582
+    },
+    "root_cause": "原生仅复制当前 SP 进度到对应通道；切走后旧 SP1 及 SP1/2 共用输出冻结，.7 编号同步不足",
+    "change": "保留原生完整更新，补齐非当前通道的收拢与共用通道聚合，同舱切换继承进度",
+    "full_combinations": [
+      "SOD+4AAM",
+      "4AAM+8AGM",
+      "SOD+8AGM",
+      "SOD+4AAM+8AGM"
+    ],
+    "shared_sod_4aam_layout": "SOD 两点，4AAM 仅 sp25/26 两个活动点；六逻辑槽和四发窗口不变",
+    "geometry": {
+      "method": "LOD0 顶点变换后 AABB；参考姿态及暂停时原生活动槽姿态，不代表全动画碰撞检测",
+      "states": {
+        "reference": [
+          {
+            "4aam": "sp26",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.62193368257118,
+              -11.530658070690762,
+              4.219008821623396
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp26",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.62193368257118,
+              1.154106102899207,
+              4.219008821623396
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp22",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.803069911591265,
+              -17.148572184307667,
+              5.226796941040131
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp22",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.803069911591265,
+              4.428177613138223,
+              5.226796941040131
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp25",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.62192113047195,
+              1.1540441157551173,
+              4.21901102403362
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp25",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.62192113047195,
+              -11.5306567434021,
+              4.21901102403362
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp21",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.803057355427995,
+              4.42819350854611,
+              5.226760029323743
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp21",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.803057355427995,
+              -17.14855628889978,
+              5.226760029323743
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp23",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.778729560356545,
+              2.6664591267571227,
+              3.0024292469024694
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp23",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.778729560356545,
+              -14.312306424489869,
+              3.0024292469024694
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp24",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.77874324406278,
+              -14.306895871526518,
+              3.0024292469024694
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp24",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.77874324406278,
+              2.6611376675860035,
+              3.0024292469024694
+            ],
+            "overlaps": true
+          }
+        ],
+        "open": [
+          {
+            "4aam": "sp21",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.7978365303979,
+              3.361567043634187,
+              2.1606188317381196
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp21",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.7978365303979,
+              -18.215182753811703,
+              2.1606188317381196
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp22",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.79782970222814,
+              -18.212806184675124,
+              2.1609096915978068
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp22",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.79782970222814,
+              3.3639436127707683,
+              2.1609096915978068
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp23",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.77872624026299,
+              2.6674012281521113,
+              3.002259339124019
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp23",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.77872624026299,
+              -14.31324947476994,
+              3.002259339124019
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp24",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.778739989839465,
+              -14.306106914109659,
+              3.002156340930103
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp24",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.778739989839465,
+              2.6603488078174022,
+              3.002156340930103
+            ],
+            "overlaps": true
+          },
+          {
+            "4aam": "sp25",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.402104373632284,
+              0.2034573780793716,
+              -1.6400348719606619
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp25",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.402104373632284,
+              -10.442660068915272,
+              -1.6400348719606619
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp26",
+            "sod": "sp11",
+            "overlap_xyz": [
+              36.390093956477344,
+              -10.443642332966476,
+              -1.6406448877209172
+            ],
+            "overlaps": false
+          },
+          {
+            "4aam": "sp26",
+            "sod": "sp12",
+            "overlap_xyz": [
+              36.390093956477344,
+              0.20433555623380162,
+              -1.6406448877209172
+            ],
+            "overlaps": false
+          }
+        ]
+      }
+    }
+  },
+  "su30sm": {
+    "change": "QAAM+LAGM 的备用库存扣除由当前补装窗口回溯的已发射位置，补装完成再恢复；实际就绪弹优先",
+    "ammo_reload_or_salvo_changed": false
+  },
+  "resupply": {
+    "log_observations_local": [
+      "22:12:03 成功，22:12:04 完成换装",
+      "22:12:47 成功，22:12:48 完成换装"
+    ],
+    "change": "成功事件后置回调同帧提交，不再等待武器输入开放；NO、取消和菜单收尾不初始化"
+  },
+  "ui_merge": {
+    "thread": "01a13edb-e42d-7502-9e1f-2618ea8e973c",
+    "source_commit": "7b8ce4c8d4d2f72ff7bafd79101e87de89ab55af",
+    "integrated_commit": "5031f9d",
+    "new_required_export": "dualsp_parts_ammo_preview"
+  },
+  "limits": [
+    "参考闭舱包围盒相交；sp25/26 在采样开舱状态分离，不代表全动画无穿插",
+    "舱门 hook、提前到成功事件的换装和 UI 弹药预览均待实玩",
+    "跨 SP TLS 持续效果未修复；不宣称全机体/全部任务通过"
+  ]
+}

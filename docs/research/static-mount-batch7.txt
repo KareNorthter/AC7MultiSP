@@ -1,3 +1,5 @@
+当前已安装 .8，见 static-mount-batch8.txt。.7 用户反馈见 evidence/su30sm-three-sp-candidate.7-user-validation.json；下文仅保留本版交付时状态，不覆盖后续反馈。
+
 固定挂载布局与原生兵装编号修订
 日期：2026-10-15
 候选：1.0.2-su30sm-three-sp.7
