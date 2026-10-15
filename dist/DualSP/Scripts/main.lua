@@ -1,5 +1,5 @@
 -- AC7DualSP 1.0.2：按实际武器类识别行为，读取模组提供的原生名称。
--- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F8，可配置以避开其他模组。
+-- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
 local json=dofile(root.."Scripts/json.lua")
@@ -73,7 +73,7 @@ end
 if config.language==nil then config.language="auto"end
 if config.central_hint==nil then config.central_hint=true end
 if config.keyboard_keys==nil then config.keyboard_keys={49,50,51}end
-if config.management_key==nil then config.management_key=119 end -- 旧配置继续使用 F8；本机飞控批次显式设为 F6。
+if config.management_key==nil then config.management_key=117 end -- 缺省使用 F6，已有显式管理键继续保留。
 config.native_loadout=nil -- 原生双选为唯一入口，不再提供旧的关闭选项。
 -- 键位只接受单个普通键，管理快捷键和 Esc 不可用于武器选择。
 local function supportedKey(key,managementKey)
@@ -758,7 +758,7 @@ local function tick()
         local saved=config.profiles[tostring(planeId)]
         local options=optionsFor(planeId)
         local canUse=saved and #options==3 and options[saved.a+1]and options[saved.a+1].owned and (saved.b<0 or (options[saved.b+1]and options[saved.b+1].owned))
-        assert(canUse,"没有已确认且可用的原生双 SP 配置，请返回机库通过原生兵装页确认后出击；F8 不提供兵装选择")
+        assert(canUse,"没有已确认且可用的原生双 SP 配置，请返回机库通过原生兵装页确认后出击；管理界面不提供兵装选择")
         configureFlight(profileFor(planeId))
     end
     local now=os.clock()

@@ -6,6 +6,8 @@
 
 ## 当前组成
 
+1.0.2 同版本发布修订：默认管理键为 F6，已有配置的显式管理键保留；Lua/UI 同步调整，UI 重新构建。旧发布 ZIP 移至 backup 留存，初始回执保留为 evidence/1.0.2-release-initial.json，最新包仍名 AC7DualSP-1.0.2.zip。本轮不重新部署游戏，安装回执和最终实玩记录描述修订前的已测载荷；新包校验单独记录。
+
 1.0.2 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`。兼容修订在 Lua/UI，武器核心不变；1.0.2 整理因标题变化重编译仓库 UI。异步换机等待及视觉连续性修改已部署，用户复测正常，日志确认等待分支触发并恢复。0.1.9 核心保留供 1.0.0 历史版本使用。
 
 内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。仓库、本机安装及 ZIP 的 VERSION、加载标记、窗口标题统一为 1.0.2。安装回执见 evidence/1.0.2-installed.json，发布回执见 evidence/1.0.2-release.json。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
