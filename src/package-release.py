@@ -9,14 +9,14 @@ from pathlib import Path
 
 # 当前成品复用已实测核心；旧正式核心和原音频分别核对固定值。
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.0.0"
+VERSION = "1.0.2"
 NAME = "AC7DualSP"
-CORE_HASH = "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1"
+CORE_HASH = "EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF"
 OLD_CORE_HASH = "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339"
 WAVE_HASH = "278B8F8815823522ED5F121711A1A12EDA2AE8E89991F8522D1FFF22832D9640"
 PWSH = r"C:\Program Files\PowerShell\7\pwsh.exe"
 SCRIPTS = ("main.lua", "json.lua", "weapon_cycle.lua", "native_hud.lua", "loadout_flow.lua",
-           "native_loadout.lua", "weapon_names.lua", "weapon_presentation.lua")
+           "native_loadout.lua", "weapon_names.lua", "weapon_presentation.lua", "runtime_context.lua")
 LICENSES = ("UE4SS.txt", "DearImGui.txt", "MinHook.txt", "nlohmann-json.txt")
 
 
@@ -58,7 +58,7 @@ def main():
         raise RuntimeError("UI DLL 未包含当前正式标题，请先构建")
 
     # 只选择当前所需文件，明确绕开 payload 中的旧 Lua 与武器核心。
-    core = ROOT / "dist/DualSP/cores/0.1.9/DualSP.dll"
+    core = ROOT / "dist/DualSP/cores/1.0.1/DualSP.dll"  # 1.0.2 沿用实测核心，兼容修改位于 Lua/UI。
     wave = ROOT / "dist/DualSP/Audio/SP2.wav"
     for path, expected in ((core, CORE_HASH), (ROOT / "dist/DualSP/bin/DualSP.dll", OLD_CORE_HASH), (wave, WAVE_HASH)):
         if digest(path.read_bytes()) != expected:
@@ -73,6 +73,7 @@ def main():
         mod_prefix + "Audio/SP2.wav": wave,
         mod_prefix + "VERSION": ROOT / "VERSION",
         "安装说明.txt": ROOT / "docs/AC7DualSP-安装说明.txt",
+        "版本说明.txt": ROOT / "docs/release-1.0.2.txt",
     }
     sources.update({mod_prefix + "Scripts/" + name: ROOT / "dist/DualSP/Scripts" / name for name in SCRIPTS})
     sources.update({mod_prefix + "licenses/" + name: ROOT / "payload/ue4ss/Mods/DualSP/licenses" / name for name in LICENSES})
@@ -126,7 +127,7 @@ def main():
               "all_members_verified": True, "test_modules_run": False,
               "runtime_source": "本机 Steamworks Shared/_CommonRedist，未修改原安装文件",
               "microsoft_signatures": signatures, "files": manifest["files"]}
-    (ROOT / "evidence/1.0.0-release.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (ROOT / f"evidence/{VERSION}-release.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({key: value for key, value in result.items() if key != "files"}, ensure_ascii=False, indent=2))
 
 

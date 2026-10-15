@@ -1,14 +1,14 @@
 # 开发与发布
 
-> 当前仓库版本为 [1.0.2](version-1.0.2.txt)。--experience 明确复用 cores/1.0.1 核心，要求核心/UI 的 dualsp_runtime_gate 导出及 runtime_context.lua。2026-10-15 16:11 已按用户要求关闭游戏并安装，等待用户启动复测；不制作 ZIP，打包器仍固定 1.0.0，会拒绝当前 VERSION。
+> 当前正式版本为 [1.0.2](version-1.0.2.txt)。--experience 明确复用 cores/1.0.1 核心，要求核心/UI 的 dualsp_runtime_gate 导出及 runtime_context.lua。用户复测正常，已制作本地 ZIP；打包器已更新为 1.0.2，包含 runtime_context.lua 与版本说明。
 
 返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.2**，本轮验证见[兼容摘要](version-1.0.2.txt)，更早记录见[历史索引](history-1.0.0.md)。
 
 ## 当前组成
 
-1.0.2 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`。兼容修订在 Lua/UI，武器核心不变；1.0.2 整理因标题变化重编译仓库 UI。异步换机等待及视觉连续性修改已部署，尚未实玩。0.1.9 核心保留供 1.0.0 历史版本使用。
+1.0.2 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`。兼容修订在 Lua/UI，武器核心不变；1.0.2 整理因标题变化重编译仓库 UI。异步换机等待及视觉连续性修改已部署，用户复测正常，日志确认等待分支触发并恢复。0.1.9 核心保留供 1.0.0 历史版本使用。
 
-内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。仓库及本机安装 VERSION、加载标记、窗口标题统一为 1.0.2，无新发布包。安装回执见 evidence/1.0.2-installed.json。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
+内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。仓库、本机安装及 ZIP 的 VERSION、加载标记、窗口标题统一为 1.0.2。安装回执见 evidence/1.0.2-installed.json，发布回执见 evidence/1.0.2-release.json。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
 
 ## 开发入口
 
@@ -18,7 +18,7 @@
 | `src/build-core-portable.cmd` | 独立候选核心输出到 build-core，不覆盖旧正式核心 |
 | `src/build.cmd` | 两种构建入口；只需改 UI 时不要调用它 |
 | `src/install-resupply-candidate.py --experience` | 现有本机安装受控升级，支持 1.0.2；保留历史脚本名 |
-| `src/package-release.py --redist-root <_CommonRedist路径>` | 仅保留的 1.0.0 打包入口，本轮不运行，不能直接生成 1.0.1 |
+| `src/package-release.py --redist-root <_CommonRedist路径>` | 当前 1.0.2 打包入口，显式选择实测核心及完整脚本，不覆盖旧包 |
 | `src/inspect_*` | 用户自有资源的研究工具，原始资源和中间结果放 Temp |
 | `src/build_local_compatibility.py` | 按明确机体清单筛选作者 PPDT 并生成仅供本机使用的目录 PAK，不自动安装 |
 | `tests/` | 历史回归模块，非自动流程；未经用户要求不运行或新增 |
