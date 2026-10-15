@@ -1,0 +1,5210 @@
+{
+  "steam_build": 9855922,
+  "method": "原版资源解析、参考骨架复合变换、通道关联和挂点原点距离枚举",
+  "game_started": false,
+  "gameplay_tested": false,
+  "runtime_files_modified": false,
+  "animation_requirement": "同一弹仓内切换 SP 保留舱门姿态/进度，不重复触发开关；发射、检查点和补给另行处理",
+  "samples": [
+    {
+      "code": "f22a",
+      "name": "F-22A",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f22a_SWP1",
+          "weapon": {
+            "class": "plwp_qaam_a0_C",
+            "blueprint_chain": [
+              "plwp_qaam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_qaam",
+                "source": "plwp_qaam_a0"
+              },
+              "LoadTime": {
+                "value": 9.0,
+                "source": "plwp_qaam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_qaam_a0"
+              }
+            }
+          },
+          "asset": "f22a_SWP1_Skeleton",
+          "bone_count": 16,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.40757,
+                -7.79931,
+                -6.54757
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp12",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.40757,
+                7.79931,
+                -6.49715
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp13",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.02039,
+                -4.96142,
+                -6.49715
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp14",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.02039,
+                4.96142,
+                -6.49715
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp15",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.40757,
+                -2.12352,
+                -6.49719
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp16",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.40757,
+                2.12352,
+                -6.49719
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "f22a_SWP1_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 1,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f22a_SWP2",
+          "weapon": {
+            "class": "plwp_xsdb_a0_C",
+            "blueprint_chain": [
+              "plwp_xsdb_a0"
+            ],
+            "unparsed_parent": "Bomb",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_xsdb",
+                "source": "plwp_xsdb_a0"
+              },
+              "LoadTime": {
+                "value": 7.0,
+                "source": "plwp_xsdb_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 4,
+                "source": "plwp_xsdb_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_xsdb_a0"
+              }
+            }
+          },
+          "asset": "f22a_SWP2_Skeleton",
+          "bone_count": 16,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.56379,
+                -7.85457,
+                -6.76705
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp22",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.56379,
+                7.74406,
+                -6.76705
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp23",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.05756,
+                -4.93761,
+                -6.76705
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp24",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.05756,
+                4.98522,
+                -6.76705
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp25",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.56379,
+                -2.12729,
+                -6.76705
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp26",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.56379,
+                2.11975,
+                -6.76708
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "f22a_SWP2_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 2,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f22a_SWP3",
+          "weapon": {
+            "class": "plwp_8aam_a0_C",
+            "blueprint_chain": [
+              "plwp_8aam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_8aam",
+                "source": "plwp_8aam_a0"
+              },
+              "LoadTime": {
+                "value": 18.0,
+                "source": "plwp_8aam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 8,
+                "source": "plwp_8aam_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_8aam_a0"
+              }
+            }
+          },
+          "asset": "f22a_SWP3_Skeleton",
+          "bone_count": 30,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": "SWPCover_29",
+              "reference_position": [
+                27.36345,
+                -37.35715,
+                -9.72102
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp32",
+              "bone": "SWPCover_31",
+              "reference_position": [
+                27.35,
+                37.35715,
+                -9.72102
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp37",
+              "bone": "SWPCover_30",
+              "reference_position": [
+                27.35,
+                -31.87885,
+                -9.72102
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp38",
+              "bone": "SWPCover_32",
+              "reference_position": [
+                27.35,
+                31.87885,
+                -9.72102
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp42",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.05756,
+                4.98522,
+                -6.77275
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp41",
+              "bone": "SWPCover_21",
+              "reference_position": [
+                49.05756,
+                -4.93761,
+                -6.77275
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp34",
+              "bone": "SWPCover_34",
+              "reference_position": [
+                23.6,
+                36.618,
+                -7.19984
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp36",
+              "bone": "SWPCover_34",
+              "reference_position": [
+                23.6,
+                32.618,
+                -7.19984
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp33",
+              "bone": "SWPCover_33",
+              "reference_position": [
+                23.59956,
+                -36.618,
+                -7.19984
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp35",
+              "bone": "SWPCover_33",
+              "reference_position": [
+                23.59956,
+                -32.618,
+                -7.19984
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp40",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.56379,
+                7.74406,
+                -6.77275
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp39",
+              "bone": "SWPCover_24",
+              "reference_position": [
+                45.56379,
+                -7.85457,
+                -6.77275
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp44",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.56379,
+                2.11975,
+                -6.77278
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp43",
+              "bone": "SWPCover_18",
+              "reference_position": [
+                45.56379,
+                -2.12729,
+                -6.77275
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "f22a_SWP3_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 0.27349,
+          "pairs_within_1_resource_unit": 6,
+          "closest": [
+            [
+              0.27349,
+              "sp14",
+              "sp24"
+            ],
+            [
+              0.27349,
+              "sp13",
+              "sp23"
+            ],
+            [
+              0.27501,
+              "sp11",
+              "sp21"
+            ],
+            [
+              0.31184,
+              "sp15",
+              "sp25"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 0.27911,
+          "pairs_within_1_resource_unit": 6,
+          "closest": [
+            [
+              0.27911,
+              "sp14",
+              "sp42"
+            ],
+            [
+              0.27911,
+              "sp13",
+              "sp41"
+            ],
+            [
+              0.27958,
+              "sp11",
+              "sp39"
+            ],
+            [
+              0.31678,
+              "sp15",
+              "sp43"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 0.0057,
+          "pairs_within_1_resource_unit": 6,
+          "closest": [
+            [
+              0.0057,
+              "sp21",
+              "sp39"
+            ],
+            [
+              0.0057,
+              "sp22",
+              "sp40"
+            ],
+            [
+              0.0057,
+              "sp23",
+              "sp41"
+            ],
+            [
+              0.0057,
+              "sp24",
+              "sp42"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": true,
+        "bPartsExistsPartsMsslcoverExist": true,
+        "bPartsExistsPartsSpwccoverExist": true,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws2",
+          "bone": "Missile_Cover_07",
+          "reference_position": [
+            46.85427,
+            13.45009,
+            -3.62602
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        },
+        {
+          "name": "ws1",
+          "bone": "Missile_Cover_02",
+          "reference_position": [
+            46.85427,
+            -13.45008,
+            -3.62602
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "f35c",
+      "name": "F-35C",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f35c_SWP1_SM",
+          "weapon": {
+            "class": "plwp_sod_a0_C",
+            "blueprint_chain": [
+              "plwp_sod_a0"
+            ],
+            "unparsed_parent": "SODBomb",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_sod",
+                "source": "plwp_sod_a0"
+              },
+              "LoadTime": {
+                "value": 10.0,
+                "source": "plwp_sod_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_sod_a0"
+              }
+            }
+          },
+          "asset": "f35c_SWP1_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": null,
+              "reference_position": [
+                19.9,
+                -10.4,
+                -6.5
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp12",
+              "bone": null,
+              "reference_position": [
+                19.9,
+                10.4,
+                -6.5
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 1,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f35c_SWP2",
+          "weapon": {
+            "class": "plwp_4aam_a0_C",
+            "blueprint_chain": [
+              "plwp_4aam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_4aam",
+                "source": "plwp_4aam_a0"
+              },
+              "LoadTime": {
+                "value": 11.0,
+                "source": "plwp_4aam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 4,
+                "source": "plwp_4aam_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_4aam_a0"
+              }
+            }
+          },
+          "asset": "f35c_SWP2_Skeleton",
+          "bone_count": 5,
+          "sockets": [
+            {
+              "name": "sp26",
+              "bone": "SWPCoverC_05",
+              "reference_position": [
+                23.16875,
+                6.08723,
+                -7.60188
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "swcc"
+              ]
+            },
+            {
+              "name": "sp22",
+              "bone": "SWPCoverC_04",
+              "reference_position": [
+                18.49512,
+                11.65513,
+                -7.30489
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "swcc"
+              ]
+            },
+            {
+              "name": "sp25",
+              "bone": "SWPCoverC_02",
+              "reference_position": [
+                23.16875,
+                -6.08723,
+                -7.60188
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "swcc"
+              ]
+            },
+            {
+              "name": "sp21",
+              "bone": "SWPCoverC_01",
+              "reference_position": [
+                18.49512,
+                -11.65513,
+                -7.30489
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "swcc"
+              ]
+            },
+            {
+              "name": "sp23",
+              "bone": "Body",
+              "reference_position": [
+                20.38129,
+                -8.82015,
+                -4.91535
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp24",
+              "bone": "Body",
+              "reference_position": [
+                20.38109,
+                8.81483,
+                -4.91535
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [
+            "swcc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "f35c_SWP2_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 2,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "f35c_SWP3_SM",
+          "weapon": {
+            "class": "plwp_8agm_a0_C",
+            "blueprint_chain": [
+              "plwp_8agm_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_8agm",
+                "source": "plwp_8agm_a0"
+              },
+              "LoadTime": {
+                "value": 15.0,
+                "source": "plwp_8agm_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 8,
+                "source": "plwp_8agm_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_8agm_a0"
+              }
+            }
+          },
+          "asset": "f35c_SWP3_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": null,
+              "reference_position": [
+                4.12663,
+                -44.99063,
+                -8.41653
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp32",
+              "bone": null,
+              "reference_position": [
+                4.12663,
+                44.99063,
+                -8.41653
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp33",
+              "bone": null,
+              "reference_position": [
+                5.06531,
+                -42.55313,
+                -9.04023
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp34",
+              "bone": null,
+              "reference_position": [
+                5.06531,
+                42.55313,
+                -9.04023
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp35",
+              "bone": null,
+              "reference_position": [
+                4.12663,
+                -40.11563,
+                -8.41653
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp36",
+              "bone": null,
+              "reference_position": [
+                4.12663,
+                40.11563,
+                -8.41653
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp37",
+              "bone": null,
+              "reference_position": [
+                10.84063,
+                -33.20626,
+                -8.69823
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp38",
+              "bone": null,
+              "reference_position": [
+                10.84063,
+                33.20626,
+                -8.69823
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp39",
+              "bone": null,
+              "reference_position": [
+                11.77931,
+                -30.76876,
+                -9.32193
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp40",
+              "bone": null,
+              "reference_position": [
+                11.77931,
+                30.76876,
+                -9.32193
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp41",
+              "bone": null,
+              "reference_position": [
+                10.84063,
+                -28.33126,
+                -8.69823
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp42",
+              "bone": null,
+              "reference_position": [
+                10.84063,
+                28.33126,
+                -8.69823
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 2.04863,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              2.04863,
+              "sp11",
+              "sp21"
+            ],
+            [
+              2.04863,
+              "sp12",
+              "sp22"
+            ],
+            [
+              2.28882,
+              "sp11",
+              "sp23"
+            ],
+            [
+              2.29245,
+              "sp12",
+              "sp24"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 20.20976,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              20.20976,
+              "sp11",
+              "sp41"
+            ],
+            [
+              20.20976,
+              "sp12",
+              "sp42"
+            ],
+            [
+              22.10871,
+              "sp11",
+              "sp39"
+            ],
+            [
+              22.10871,
+              "sp12",
+              "sp40"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 18.40179,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              18.40179,
+              "sp21",
+              "sp41"
+            ],
+            [
+              18.40179,
+              "sp22",
+              "sp42"
+            ],
+            [
+              20.35931,
+              "sp21",
+              "sp39"
+            ],
+            [
+              20.35931,
+              "sp22",
+              "sp40"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": false,
+        "bPartsExistsPartsMsslcoverExist": false,
+        "bPartsExistsPartsSpwccoverExist": false,
+        "bPartsExistsPartsSpw1coverExist": true,
+        "bPartsExistsPartsSpw2coverExist": true,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws2",
+          "bone": "Body",
+          "reference_position": [
+            2.97487,
+            51.15014,
+            -5.25986
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        },
+        {
+          "name": "ws1",
+          "bone": "Body",
+          "reference_position": [
+            2.97487,
+            -51.15014,
+            -5.25986
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        }
+      ]
+    },
+    {
+      "code": "pkfa",
+      "name": "Su-57",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "pkfa_SWP1",
+          "weapon": {
+            "class": "plwp_4aam_r1_C",
+            "blueprint_chain": [
+              "plwp_4aam_r1",
+              "plwp_4aam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_4aam",
+                "source": "plwp_4aam_a0"
+              },
+              "LoadTime": {
+                "value": 11.0,
+                "source": "plwp_4aam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 4,
+                "source": "plwp_4aam_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_4aam_a0"
+              }
+            }
+          },
+          "asset": "pkfa_SWP1_Skeleton",
+          "bone_count": 11,
+          "sockets": [
+            {
+              "name": "sp14",
+              "bone": "SWPAnim1_01",
+              "reference_position": [
+                -41.41213,
+                2.19727,
+                -2.84056
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp13",
+              "bone": "SWPAnim1_01",
+              "reference_position": [
+                -41.41213,
+                -2.19727,
+                -2.84056
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp12",
+              "bone": "SWPAnim1_08",
+              "reference_position": [
+                12.03304,
+                2.19727,
+                -3.13813
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp11",
+              "bone": "SWPAnim1_08",
+              "reference_position": [
+                12.03304,
+                -2.19727,
+                -3.13813
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "pkfa_SWP1_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 1,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "pkfa_SWP2_SM",
+          "weapon": {
+            "class": "plwp_gpb_r0_C",
+            "blueprint_chain": [
+              "plwp_gpb_r0",
+              "plwp_gpb_a0"
+            ],
+            "unparsed_parent": "Bomb",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_gpb",
+                "source": "plwp_gpb_a0"
+              },
+              "LoadTime": {
+                "value": 11.0,
+                "source": "plwp_gpb_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_gpb_a0"
+              }
+            }
+          },
+          "asset": "pkfa_SWP2_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": null,
+              "reference_position": [
+                13.77038,
+                0.0,
+                -1.90834
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": null,
+              "reference_position": [
+                -39.45581,
+                -0.0,
+                -2.12806
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 2,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "pkfa_SWP3_SM",
+          "weapon": {
+            "class": "plwp_plsl_x0_C",
+            "blueprint_chain": [
+              "plwp_plsl_x0"
+            ],
+            "unparsed_parent": "Plsl_Bullet",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_plsl",
+                "source": "plwp_plsl_x0"
+              },
+              "LoadTime": {
+                "value": 0.4000000059604645,
+                "source": "plwp_plsl_x0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_plsl_x0"
+              }
+            }
+          },
+          "asset": "pkfa_SWP3_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": null,
+              "reference_position": [
+                1.04321,
+                -39.99234,
+                -4.79251
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp32",
+              "bone": null,
+              "reference_position": [
+                1.04321,
+                39.99234,
+                -4.79251
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 3.02702,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              3.02702,
+              "sp13",
+              "sp22"
+            ],
+            [
+              3.02702,
+              "sp14",
+              "sp22"
+            ],
+            [
+              3.0592,
+              "sp11",
+              "sp21"
+            ],
+            [
+              3.0592,
+              "sp12",
+              "sp21"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 39.39519,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              39.39519,
+              "sp11",
+              "sp31"
+            ],
+            [
+              39.39519,
+              "sp12",
+              "sp32"
+            ],
+            [
+              43.62885,
+              "sp11",
+              "sp32"
+            ],
+            [
+              43.62885,
+              "sp12",
+              "sp31"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 42.06764,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              42.06764,
+              "sp21",
+              "sp31"
+            ],
+            [
+              42.06764,
+              "sp21",
+              "sp32"
+            ],
+            [
+              56.97945,
+              "sp22",
+              "sp31"
+            ],
+            [
+              56.97945,
+              "sp22",
+              "sp32"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": true,
+        "bPartsExistsPartsMsslcoverExist": true,
+        "bPartsExistsPartsSpwccoverExist": false,
+        "bPartsExistsPartsSpw1coverExist": true,
+        "bPartsExistsPartsSpw2coverExist": true,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws2",
+          "bone": "Missile_Cover_03",
+          "reference_position": [
+            4.44849,
+            26.8568,
+            -1.40379
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        },
+        {
+          "name": "ws1",
+          "bone": "Missile_Cover_06",
+          "reference_position": [
+            4.44849,
+            -26.8568,
+            -1.40379
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "fa44",
+      "name": "CFA-44",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa44_SWP1",
+          "weapon": {
+            "class": "plwp_admm_x0_C",
+            "blueprint_chain": [
+              "plwp_admm_x0"
+            ],
+            "unparsed_parent": "VLSMissile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_admm",
+                "source": "plwp_admm_x0"
+              },
+              "LoadTime": {
+                "value": 22.0,
+                "source": "plwp_admm_x0"
+              },
+              "MaxLoadedCount": {
+                "value": 12,
+                "source": "plwp_admm_x0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_admm_x0"
+              }
+            }
+          },
+          "asset": "fa44_SWP1_Skeleton",
+          "bone_count": 8,
+          "sockets": [
+            {
+              "name": "sp001",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                40.74706,
+                -20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp004",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                40.74706,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp007",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                40.74706,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp010",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                39.18286,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp013",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                39.18286,
+                -19.2292,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp016",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                39.18286,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp019",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                39.18286,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp022",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                37.61866,
+                -20.13172,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp025",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                37.61866,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp028",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                37.61866,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp031",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                36.05446,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp034",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                36.05446,
+                -19.2292,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp037",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                36.05446,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp040",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                36.05446,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp043",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                34.49026,
+                -20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp046",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                34.49026,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp049",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                34.49026,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp052",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                32.92606,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp055",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                32.92606,
+                -19.2292,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp058",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                32.92606,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp061",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                32.92606,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp064",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                31.36186,
+                -20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp067",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                31.36185,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp070",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                31.36185,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp073",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                29.79765,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp076",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                29.79765,
+                -19.2292,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp079",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                29.79765,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp082",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                29.79765,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp085",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                28.23345,
+                -20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp088",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                28.23345,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp091",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                28.23345,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp094",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                26.66925,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp097",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                26.66925,
+                -19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp100",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                26.66925,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp103",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                26.66925,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp106",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                25.10505,
+                -20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp109",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                25.10504,
+                -18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp112",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                25.10504,
+                -16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp115",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                23.54084,
+                -21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp118",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                23.54084,
+                -19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp121",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                23.54084,
+                -17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp124",
+              "bone": "SWPCover_01",
+              "reference_position": [
+                23.54084,
+                -15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp002",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                40.74706,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp005",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                40.74706,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp008",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                40.74706,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp011",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                39.18286,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp014",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                39.18286,
+                17.42417,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp017",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                39.18286,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp020",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                39.18286,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp023",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                37.61866,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp026",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                37.61866,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp029",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                37.61866,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp032",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                36.05446,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp035",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                36.05446,
+                17.42417,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp038",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                36.05446,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp041",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                36.05446,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp044",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                34.49026,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp047",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                34.49026,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp050",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                34.49026,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp053",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                32.92606,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp056",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                32.92606,
+                17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp059",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                32.92606,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp062",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                32.92606,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp065",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                31.36186,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp068",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                31.36185,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp071",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                31.36185,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp074",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                29.79765,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp077",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                29.79765,
+                17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp080",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                29.79765,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp083",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                29.79765,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp086",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                28.23345,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp089",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                28.23345,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp092",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                28.23345,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp095",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                26.66925,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp098",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                26.66925,
+                17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp101",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                26.66925,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp104",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                26.66925,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp107",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                25.10505,
+                16.52164,
+                0.42917
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp110",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                25.10504,
+                18.32668,
+                0.22351
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp113",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                25.10504,
+                20.13173,
+                0.01785
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp116",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                23.54084,
+                15.61912,
+                0.532
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp119",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                23.54084,
+                17.42416,
+                0.32634
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp122",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                23.54084,
+                19.22921,
+                0.12068
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp125",
+              "bone": "SWPCover_04",
+              "reference_position": [
+                23.54084,
+                21.03425,
+                -0.08498
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp003",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                36.06834,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp006",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                36.06834,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp009",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                36.06834,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp012",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                34.50414,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp015",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                34.50414,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp018",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                34.50414,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp021",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                34.50413,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp024",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                32.93993,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp027",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                32.93993,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp030",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                32.93993,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp033",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                31.37573,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp036",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                31.37573,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp039",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                31.37573,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp042",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                31.37573,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp045",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                29.81153,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp048",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                29.81153,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp051",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                29.81153,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp054",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                28.24732,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp057",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                28.24732,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp060",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                28.24732,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp063",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                28.24732,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp066",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                26.68312,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp069",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                26.68312,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp072",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                26.68312,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp075",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                25.11892,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp078",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                25.11892,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp081",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                25.11892,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp084",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                25.11892,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp087",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                23.56289,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp090",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                23.56499,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp093",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                23.56708,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp096",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                21.99764,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp099",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                21.99974,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp102",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                22.00183,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp105",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                22.00392,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp108",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                20.42631,
+                -1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp111",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                20.42631,
+                0.0,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp114",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                20.42631,
+                1.81672,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp117",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                18.87342,
+                -2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp120",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                18.87342,
+                -0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp123",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                18.87342,
+                0.90836,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp126",
+              "bone": "SWPCover_07",
+              "reference_position": [
+                18.87342,
+                2.72508,
+                -6.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "fa44_SWP1_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 1,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa44_SWP2",
+          "weapon": {
+            "class": "plwp_eml_x2_C",
+            "blueprint_chain": [
+              "plwp_eml_x2",
+              "plwp_eml_x0"
+            ],
+            "unparsed_parent": "EMLBullet",
+            "defaults": {
+              "LoadTime": {
+                "value": 10.5,
+                "source": "plwp_eml_x2"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_eml_x2"
+              },
+              "WeaponID": {
+                "value": "EWeaponID::WID_eml",
+                "source": "plwp_eml_x0"
+              }
+            }
+          },
+          "asset": "fa44_SWP2_Skeleton",
+          "bone_count": 19,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": "SWPCover_03",
+              "reference_position": [
+                17.13747,
+                0.0,
+                0.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            },
+            {
+              "name": "sp22",
+              "bone": "SWPCover_12",
+              "reference_position": [
+                17.13747,
+                0.0,
+                0.0
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "fa44_SWP2_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 2,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa44_SWP3",
+          "weapon": {
+            "class": "plwp_ecmp_x1_C",
+            "blueprint_chain": [
+              "plwp_ecmp_x1",
+              "plwp_esm_x0"
+            ],
+            "unparsed_parent": "ElectronicSupportMeasures",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_ecm",
+                "source": "plwp_esm_x0"
+              },
+              "LoadTime": {
+                "value": 42.0,
+                "source": "plwp_esm_x0"
+              }
+            }
+          },
+          "asset": "fa44_SWP3_Skeleton",
+          "bone_count": 7,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": "Body",
+              "reference_position": null,
+              "position_status": "资源省略 RelativeLocation，未读取引擎默认值",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "fa44_SWP3_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 6.31179,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              6.31179,
+              "sp120",
+              "sp21"
+            ],
+            [
+              6.31179,
+              "sp120",
+              "sp22"
+            ],
+            [
+              6.31179,
+              "sp123",
+              "sp21"
+            ],
+            [
+              6.31179,
+              "sp123",
+              "sp22"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": null,
+          "pairs_within_1_resource_unit": 0,
+          "closest": []
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": null,
+          "pairs_within_1_resource_unit": 0,
+          "closest": []
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": true,
+        "bPartsExistsPartsMsslcoverExist": true,
+        "bPartsExistsPartsSpwccoverExist": true,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws1",
+          "bone": "Missile_Cover_03",
+          "reference_position": [
+            -1.03152,
+            -46.43666,
+            -3.98254
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        },
+        {
+          "name": "ws2",
+          "bone": "Missile_Cover_06",
+          "reference_position": [
+            -1.03152,
+            46.43666,
+            -3.98254
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "x02s",
+      "name": "X-02S",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "x02s_SWP1",
+          "weapon": {
+            "class": "plwp_4aam_x0_C",
+            "blueprint_chain": [
+              "plwp_4aam_x0",
+              "plwp_4aam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_4aam",
+                "source": "plwp_4aam_a0"
+              },
+              "LoadTime": {
+                "value": 11.0,
+                "source": "plwp_4aam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 4,
+                "source": "plwp_4aam_a0"
+              },
+              "bFireAllInOneShot": {
+                "value": true,
+                "source": "plwp_4aam_a0"
+              }
+            }
+          },
+          "asset": "x02s_SWP1_Skeleton",
+          "bone_count": 5,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": "Body",
+              "reference_position": [
+                14.58257,
+                -2.9,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp12",
+              "bone": "Body",
+              "reference_position": [
+                14.58257,
+                2.9,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp13",
+              "bone": "Body",
+              "reference_position": [
+                14.58257,
+                0.0,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp14",
+              "bone": "Body",
+              "reference_position": [
+                -22.99327,
+                -2.9,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp15",
+              "bone": "Body",
+              "reference_position": [
+                -22.99327,
+                2.9,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp16",
+              "bone": "Body",
+              "reference_position": [
+                -22.99327,
+                0.0,
+                -2.2
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "x02s_SWP1_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 1,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "x02s_SWP2",
+          "weapon": {
+            "class": "plwp_lasm_x0_C",
+            "blueprint_chain": [
+              "plwp_lasm_x0",
+              "plwp_lasm_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_lasm",
+                "source": "plwp_lasm_a0"
+              },
+              "LoadTime": {
+                "value": 10.0,
+                "source": "plwp_lasm_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_lasm_a0"
+              }
+            }
+          },
+          "asset": "x02s_SWP2_Skeleton",
+          "bone_count": 5,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": "Body",
+              "reference_position": [
+                -4.771,
+                -2.21,
+                -2.19386
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": "Body",
+              "reference_position": [
+                -4.771,
+                2.21,
+                -2.19386
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "x02s_SWP2_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        },
+        {
+          "configuration": 2,
+          "component_class": "SkeletalMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "x02s_SWP3",
+          "weapon": {
+            "class": "plwp_eml_x1_C",
+            "blueprint_chain": [
+              "plwp_eml_x1",
+              "plwp_eml_x0"
+            ],
+            "unparsed_parent": "EMLBullet",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_eml",
+                "source": "plwp_eml_x0"
+              },
+              "LoadTime": {
+                "value": 8.0,
+                "source": "plwp_eml_x0"
+              }
+            }
+          },
+          "asset": "x02s_SWP3_Skeleton",
+          "bone_count": 16,
+          "sockets": [
+            {
+              "name": "sp",
+              "bone": "SWPCover_06",
+              "reference_position": [
+                49.69661,
+                0.0,
+                -3.52824
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [
+                "spwc"
+              ]
+            }
+          ],
+          "animation_channels": [
+            "spwc"
+          ],
+          "animation": {
+            "node": "AnimNode_FlightEngineBlend",
+            "bone_config": "PlaneBodyConfig",
+            "sequence": "x02s_SWP3_Anim",
+            "frames": 101,
+            "asset_length": 3.3333332538604736,
+            "boundary": "资源采样长度不代表舱门实际播放耗时；未读取游戏中的控制输出值"
+          }
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 18.23533,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              18.23533,
+              "sp14",
+              "sp21"
+            ],
+            [
+              18.23533,
+              "sp15",
+              "sp22"
+            ],
+            [
+              18.3558,
+              "sp16",
+              "sp21"
+            ],
+            [
+              18.3558,
+              "sp16",
+              "sp22"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 35.13915,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              35.13915,
+              "sp13",
+              "sp"
+            ],
+            [
+              35.25862,
+              "sp11",
+              "sp"
+            ],
+            [
+              35.25862,
+              "sp12",
+              "sp"
+            ],
+            [
+              72.70201,
+              "sp16",
+              "sp"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 54.52876,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              54.52876,
+              "sp21",
+              "sp"
+            ],
+            [
+              54.52876,
+              "sp22",
+              "sp"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": true,
+        "bPartsExistsPartsMsslcoverExist": true,
+        "bPartsExistsPartsSpwccoverExist": true,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws1",
+          "bone": "Missile_Cover_04",
+          "reference_position": [
+            1.06622,
+            -10.95792,
+            -8.42007
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        },
+        {
+          "name": "ws2",
+          "bone": "Missile_Cover_10",
+          "reference_position": [
+            1.06622,
+            10.95792,
+            -8.42007
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "adf11f",
+      "name": "ADF-11F",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "adf11f_SWP1_SM",
+          "weapon": {
+            "class": "plwp_tls_x3_C",
+            "blueprint_chain": [
+              "plwp_tls_x3"
+            ],
+            "unparsed_parent": "AttachedInstantWeapon",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_tls",
+                "source": "plwp_tls_x3"
+              },
+              "LoadTime": {
+                "value": 13.0,
+                "source": "plwp_tls_x3"
+              }
+            }
+          },
+          "asset": "adf11f_SWP1_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": null,
+              "reference_position": [
+                114.85738,
+                -0.0,
+                2.40802
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 1,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "adf11f_SWP2_SM",
+          "weapon": {
+            "class": "plwp_qaam_a0_C",
+            "blueprint_chain": [
+              "plwp_qaam_a0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_qaam",
+                "source": "plwp_qaam_a0"
+              },
+              "LoadTime": {
+                "value": 9.0,
+                "source": "plwp_qaam_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_qaam_a0"
+              }
+            }
+          },
+          "asset": "adf11f_SWP2_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": null,
+              "reference_position": [
+                -17.19462,
+                -58.0,
+                -7.1
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": null,
+              "reference_position": [
+                -17.19462,
+                58.0,
+                -7.1
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp23",
+              "bone": null,
+              "reference_position": [
+                -0.44525,
+                -45.0,
+                -7.1
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp24",
+              "bone": null,
+              "reference_position": [
+                -0.44562,
+                45.0,
+                -7.1
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 2,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "adf11f_SWP3_SM",
+          "weapon": {
+            "class": "plwp_WeaponUAV_C",
+            "blueprint_chain": [
+              "plwp_WeaponUAV"
+            ],
+            "unparsed_parent": "WeaponUAV",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_uav",
+                "source": "plwp_WeaponUAV"
+              },
+              "LoadTime": {
+                "value": 15.199999809265137,
+                "source": "plwp_WeaponUAV"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_WeaponUAV"
+              }
+            }
+          },
+          "asset": "adf11f_SWP3_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": null,
+              "reference_position": [
+                -19.21233,
+                -58.0,
+                -9.5
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp32",
+              "bone": null,
+              "reference_position": [
+                -19.21233,
+                58.0,
+                -9.5
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 124.13742,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              124.13742,
+              "sp11",
+              "sp23"
+            ],
+            [
+              124.13776,
+              "sp11",
+              "sp24"
+            ],
+            [
+              144.54111,
+              "sp11",
+              "sp21"
+            ],
+            [
+              144.54111,
+              "sp11",
+              "sp22"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 146.56223,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              146.56223,
+              "sp11",
+              "sp31"
+            ],
+            [
+              146.56223,
+              "sp11",
+              "sp32"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 3.13547,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              3.13547,
+              "sp21",
+              "sp31"
+            ],
+            [
+              3.13547,
+              "sp22",
+              "sp32"
+            ],
+            [
+              22.95538,
+              "sp24",
+              "sp32"
+            ],
+            [
+              22.95568,
+              "sp23",
+              "sp31"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": false,
+        "bPartsExistsPartsMsslcoverExist": true,
+        "bPartsExistsPartsSpwccoverExist": false,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws1",
+          "bone": "Missile_Cover_05",
+          "reference_position": [
+            -24.2,
+            -27.07112,
+            -5.7335
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        },
+        {
+          "name": "ws2",
+          "bone": "Missile_Cover_06",
+          "reference_position": [
+            -24.2,
+            27.07112,
+            -5.7335
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": [
+            "misc"
+          ]
+        }
+      ]
+    },
+    {
+      "code": "mrgn",
+      "name": "ADFX-01",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "mrgn_SWP1_SM",
+          "weapon": {
+            "class": "plwp_tls_x1_C",
+            "blueprint_chain": [
+              "plwp_tls_x1"
+            ],
+            "unparsed_parent": "AttachedInstantWeapon",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_tls",
+                "source": "plwp_tls_x1"
+              },
+              "LoadTime": {
+                "value": 13.0,
+                "source": "plwp_tls_x1"
+              }
+            }
+          },
+          "asset": "mrgn_SWP1_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": null,
+              "reference_position": [
+                24.77436,
+                0.0,
+                17.25491
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 1,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "mrgn_SWP2_SM",
+          "weapon": {
+            "class": "plwp_mpbm_x0_C",
+            "blueprint_chain": [
+              "plwp_mpbm_x0"
+            ],
+            "unparsed_parent": "Missile_FinallySpawnWeapon",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_mpbm",
+                "source": "plwp_mpbm_x0"
+              },
+              "LoadTime": {
+                "value": 16.0,
+                "source": "plwp_mpbm_x0"
+              }
+            }
+          },
+          "asset": "mrgn_SWP2_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": null,
+              "reference_position": [
+                0.59684,
+                -41.29745,
+                -9.8
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": null,
+              "reference_position": [
+                0.59684,
+                41.29745,
+                -9.8
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 2,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "mrgn_SWP3_SM",
+          "weapon": {
+            "class": "plwp_esm_x0_C",
+            "blueprint_chain": [
+              "plwp_esm_x0"
+            ],
+            "unparsed_parent": "ElectronicSupportMeasures",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_ecm",
+                "source": "plwp_esm_x0"
+              },
+              "LoadTime": {
+                "value": 42.0,
+                "source": "plwp_esm_x0"
+              }
+            }
+          },
+          "asset": "mrgn_SWP3_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp31",
+              "bone": null,
+              "reference_position": null,
+              "position_status": "资源省略 RelativeLocation，未读取引擎默认值",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 54.97272,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              54.97272,
+              "sp11",
+              "sp21"
+            ],
+            [
+              54.97272,
+              "sp11",
+              "sp22"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": null,
+          "pairs_within_1_resource_unit": 0,
+          "closest": []
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": null,
+          "pairs_within_1_resource_unit": 0,
+          "closest": []
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": false,
+        "bPartsExistsPartsMsslcoverExist": false,
+        "bPartsExistsPartsSpwccoverExist": false,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws2",
+          "bone": "Body",
+          "reference_position": [
+            9.43481,
+            51.78491,
+            -7.2
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        },
+        {
+          "name": "ws1",
+          "bone": "Body",
+          "reference_position": [
+            9.43554,
+            -51.78491,
+            -7.2
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        }
+      ]
+    },
+    {
+      "code": "fa27",
+      "name": "XFA-27",
+      "groups": [
+        {
+          "configuration": 0,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa27_SWP1_SM",
+          "weapon": {
+            "class": "plwp_sod_a0_C",
+            "blueprint_chain": [
+              "plwp_sod_a0"
+            ],
+            "unparsed_parent": "SODBomb",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_sod",
+                "source": "plwp_sod_a0"
+              },
+              "LoadTime": {
+                "value": 10.0,
+                "source": "plwp_sod_a0"
+              },
+              "MaxLoadedCount": {
+                "value": 2,
+                "source": "plwp_sod_a0"
+              }
+            }
+          },
+          "asset": "fa27_SWP1_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp11",
+              "bone": null,
+              "reference_position": [
+                22.30553,
+                -26.37308,
+                -6.74208
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp12",
+              "bone": null,
+              "reference_position": [
+                22.30553,
+                26.37308,
+                -6.74208
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 1,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa27_SWP2_SM",
+          "weapon": {
+            "class": "plwp_mstm_x0_C",
+            "blueprint_chain": [
+              "plwp_mstm_x0",
+              "MSL_BaseClass"
+            ],
+            "unparsed_parent": "Missile",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_mstm",
+                "source": "plwp_mstm_x0"
+              },
+              "LoadTime": {
+                "value": 5.5,
+                "source": "plwp_mstm_x0"
+              },
+              "MaxLoadedCount": {
+                "value": 4,
+                "source": "plwp_mstm_x0"
+              }
+            }
+          },
+          "asset": "fa27_SWP2_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": null,
+              "reference_position": [
+                23.27561,
+                -26.37308,
+                -6.43751
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": null,
+              "reference_position": [
+                23.27561,
+                26.37308,
+                -6.43751
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp23",
+              "bone": null,
+              "reference_position": [
+                23.66305,
+                -22.09475,
+                -1.90187
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp24",
+              "bone": null,
+              "reference_position": [
+                23.66305,
+                22.09475,
+                -1.90187
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        },
+        {
+          "configuration": 2,
+          "component_class": "StaticMeshComponent",
+          "parent_references": [
+            "WeaponMeshBase"
+          ],
+          "component_transform_overrides": {},
+          "mesh": "fa27_SWP3_SM",
+          "weapon": {
+            "class": "plwp_ecmp_x2_C",
+            "blueprint_chain": [
+              "plwp_ecmp_x2",
+              "plwp_esm_x0"
+            ],
+            "unparsed_parent": "ElectronicSupportMeasures",
+            "defaults": {
+              "WeaponID": {
+                "value": "EWeaponID::WID_ecm",
+                "source": "plwp_esm_x0"
+              },
+              "LoadTime": {
+                "value": 42.0,
+                "source": "plwp_esm_x0"
+              }
+            }
+          },
+          "asset": "fa27_SWP3_SM",
+          "bone_count": 0,
+          "sockets": [
+            {
+              "name": "sp21",
+              "bone": null,
+              "reference_position": [
+                23.27561,
+                -26.37308,
+                -6.43751
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp22",
+              "bone": null,
+              "reference_position": [
+                23.27561,
+                26.37308,
+                -6.43751
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp23",
+              "bone": null,
+              "reference_position": [
+                23.66305,
+                -22.09475,
+                -1.90187
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            },
+            {
+              "name": "sp24",
+              "bone": null,
+              "reference_position": [
+                23.66305,
+                22.09475,
+                -1.90187
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": []
+            }
+          ],
+          "animation_channels": [],
+          "animation": null
+        }
+      ],
+      "reference_origin_comparison": [
+        {
+          "configs": [
+            0,
+            1
+          ],
+          "minimum_distance": 1.01677,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              1.01677,
+              "sp11",
+              "sp21"
+            ],
+            [
+              1.01677,
+              "sp12",
+              "sp22"
+            ],
+            [
+              6.60111,
+              "sp11",
+              "sp23"
+            ],
+            [
+              6.60111,
+              "sp12",
+              "sp24"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            0,
+            2
+          ],
+          "minimum_distance": 1.01677,
+          "pairs_within_1_resource_unit": 0,
+          "closest": [
+            [
+              1.01677,
+              "sp11",
+              "sp21"
+            ],
+            [
+              1.01677,
+              "sp12",
+              "sp22"
+            ],
+            [
+              6.60111,
+              "sp11",
+              "sp23"
+            ],
+            [
+              6.60111,
+              "sp12",
+              "sp24"
+            ]
+          ]
+        },
+        {
+          "configs": [
+            1,
+            2
+          ],
+          "minimum_distance": 0.0,
+          "pairs_within_1_resource_unit": 4,
+          "closest": [
+            [
+              0.0,
+              "sp21",
+              "sp21"
+            ],
+            [
+              0.0,
+              "sp22",
+              "sp22"
+            ],
+            [
+              0.0,
+              "sp23",
+              "sp23"
+            ],
+            [
+              0.0,
+              "sp24",
+              "sp24"
+            ]
+          ]
+        }
+      ],
+      "cover_options": {
+        "bOptionsAnimAbkLcover": false,
+        "bOptionsAnimWpCover": false,
+        "bPartsExistsPartsGuncoverExist": false,
+        "bPartsExistsPartsMsslcoverExist": false,
+        "bPartsExistsPartsSpwccoverExist": false,
+        "bPartsExistsPartsSpw1coverExist": false,
+        "bPartsExistsPartsSpw2coverExist": false,
+        "bPartsExistsPartsSpw3coverExist": false
+      },
+      "body_missile_sockets": [
+        {
+          "name": "ws2",
+          "bone": "Body",
+          "reference_position": [
+            23.86295,
+            30.5514,
+            -1.90817
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        },
+        {
+          "name": "ws1",
+          "bone": "Body",
+          "reference_position": [
+            23.86295,
+            -30.5514,
+            -1.90817
+          ],
+          "position_status": "已解析并换算",
+          "ancestor_animation_channels": []
+        }
+      ]
+    }
+  ],
+  "sources": {
+    "PlaneBodyConfig": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PlaneBodyConfig.uasset",
+      "sha256": "39d6dd695d63756d06b1db5adbc9e97c6ae5520dd1e2ad1ac5502464fa5eb505",
+      "json_sha256": "ff68e3930bc645609feb918402ce2b3b70df9e1c605dd0f19ba440a6e4b423e2"
+    },
+    "AcePlayerPawn": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+      "sha256": "686dfa0039376101653804789f743ac6088bed53bfd544c6ebb074a75ef9b9fd",
+      "json_sha256": "2c9613e467d36bcd4fb83312c1ad7d8629fca5bf5d4fdc3062152d8cd1d319f6"
+    },
+    "AcePlayerPawn_f22a": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f22a.uasset",
+      "sha256": "098c35e3893bf00b5d1ad9349e6e460514154e8975b1d61c293ad5de6235ffb0",
+      "json_sha256": "3a81674bb32e2c475d993df1fbd8449b9e03e62e8002cadb3d5781f8442b77a2"
+    },
+    "PartsAnimationConfig_f22a": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_f22a.uasset",
+      "sha256": "0265fcc6e8d3973d36926d4ce1c7d45948294343eb34e6359196d5d0a148561e",
+      "json_sha256": "9276e89918fdf596d5445a33f96a70f49908bc3813903e1720179b6228a84217"
+    },
+    "f22a_SWP1_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP1_Skeleton.uasset",
+      "sha256": "9f0faa6bde50420aac96a6d1f17b7fdb98f6b99504f9914f3b089f93b1b058aa",
+      "json_sha256": "1a8b3c7e43028795f710352440d283d607f1c6231fbd78ac1c768e8e771b68eb"
+    },
+    "plwp_qaam_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_qaam_a0.uasset",
+      "sha256": "465b7e2d60b466c81a59e33178716b7157918f2f626b2650a2421882576d2569",
+      "json_sha256": "62781a0ae54879b8b5d983d88d405f07215de0c828c549f63e852d1de6335c52"
+    },
+    "MSL_BaseClass": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/MSL_BaseClass.uasset",
+      "sha256": "704085a3000e951a1b9681411a92290202c5becc2844082f29ff4fbdebeb7468",
+      "json_sha256": "34d218d13fc5fd6868e35d495f4a15f383b44a3e9d51a963df7073faac913351"
+    },
+    "f22a_SWP1_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f22a_SWP1_AnimBP.uasset",
+      "sha256": "c457b5b455960c5e740f01f69f309ed3ad3244d2e7980f50be3175ffc9580bda",
+      "json_sha256": "6ab1a77ede3148ae657673676361632f71ce4c9c57c000b0de6677a74c646002"
+    },
+    "f22a_SWP1_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP1_Anim.uasset",
+      "sha256": "c48e54fb27b5486f2ac4f1c06340a02ac189c7f2658605943b502ebf4a3960b0",
+      "json_sha256": "f54eb814b52f3ff78b329e0bb67105da3faf07c90748b3bd53df586c387c9aae"
+    },
+    "f22a_SWP2_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP2_Skeleton.uasset",
+      "sha256": "3a45d322f9c47b5bc99f50bd7d135b6870dca0fa0d4400ef51e279019cc8adfa",
+      "json_sha256": "4b44b3295d199dca98b9100d6c772c38a07a1dbf70633db9222054e45ee67c96"
+    },
+    "plwp_xsdb_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_xsdb_a0.uasset",
+      "sha256": "bcd2468ac9c3ad246892a3f3cee51a205b8b2745abbebbddeeb384cc8232a331",
+      "json_sha256": "9482ebce49f4774fe43b13895311cc5f04a9997c5bf27230850ba0e9f8ffb31e"
+    },
+    "f22a_SWP2_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f22a_SWP2_AnimBP.uasset",
+      "sha256": "c32a51176fa547c90aa90bd998eafbebc258f369044c91db17a6062487421cbf",
+      "json_sha256": "a4e114bcd60688c72a51901abad9e0354894b61e01f605e45e03e7475bca67fe"
+    },
+    "f22a_SWP2_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP2_Anim.uasset",
+      "sha256": "0222b1dcebb28f19087dad5e9516ceb82c41239b250a8e56286cf278bdf56d9d",
+      "json_sha256": "aad58984e6d81974c9588157dc3897439521ef69b37476678662ca5ff993cc82"
+    },
+    "f22a_SWP3_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP3_Skeleton.uasset",
+      "sha256": "8c479bceca1a1b8cb1013a21928ef1f26851a47e03bd66a4b5e6b0d527bf457d",
+      "json_sha256": "9cec1b9520f122c7a77a105818b1666a236b473709a8440728eca58a46e37ff8"
+    },
+    "plwp_8aam_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_8aam_a0.uasset",
+      "sha256": "3e66016deff12ce3b1c15cf3c0d8e797559682c6ebf29b54b80c587cb68ebdd6",
+      "json_sha256": "82e0deae809c1432eb1141cd570e65e0c7c65abd89e629fc77203884a7f61206"
+    },
+    "f22a_SWP3_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f22a_SWP3_AnimBP.uasset",
+      "sha256": "1caabcd47537163317cf987fd852a0ba4b6ce6cfd6b94a1917f274e75c2276ea",
+      "json_sha256": "67e96767f08b932f2e795ca2cccf38690328ad693c6667419f4a9a46c2423134"
+    },
+    "f22a_SWP3_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP3_Anim.uasset",
+      "sha256": "77b1dd6e0bf6a590bb030a68f562c689f8df5abef130f59af0df0f995c291016",
+      "json_sha256": "453b83a92192aebd74ad8bf5ad02399820770ecd53fc9faff1077ae3a09b666a"
+    },
+    "f22a_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_Skeleton.uasset",
+      "sha256": "7b2bd4d079aa6624127a4f4c2d6585a2c45612a5bd09e514363e04bbaf8c8c72",
+      "json_sha256": "0c7585ad3750baaa2ccb16cea36a93a2b94646e4f85f51d76f079910a4246ac5"
+    },
+    "AcePlayerPawn_f35c": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f35c.uasset",
+      "sha256": "ad07bbb9679fda8ed0744d6ab8daec125d7c1904634c190650eabe1244f939e8",
+      "json_sha256": "e8a2b69c9ba07cf56cea569d724f5c8dbb12a0e963cf4f1674e7779e741e13ae"
+    },
+    "PartsAnimationConfig_f35c": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_f35c.uasset",
+      "sha256": "d930d127c7189ec611de503ee0963a62ee627d1092996a7b6871c7caa0e735f5",
+      "json_sha256": "59aa6a4b56119737c1cd48ed6b14d3df15b643a11c40e8a08224c6a9195453a4"
+    },
+    "f35c_SWP1_SM": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f35c/f35c_SWP1_SM.uasset",
+      "sha256": "545900c604911bee5613e1e927c594a1509c64906e0bb3dd48cf6d4341ce1323",
+      "json_sha256": "d13b8f930f1777cd4d7831adb56d830b859c8e5e505d07b92bab448ae712f055"
+    },
+    "plwp_sod_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_sod_a0.uasset",
+      "sha256": "a16b12a6dcaac1534b9a8343f7b9d166e6c5484b1e92b13e16d7cd6cd53eb4af",
+      "json_sha256": "338f4f684ba035edcd8fa572045a2cb133efe23674bf7699da3d0c9330b4a619"
+    },
+    "f35c_SWP2_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f35c/f35c_SWP2_Skeleton.uasset",
+      "sha256": "a9d1d9ccfac7d35b89155a8f438e84d90705e9d45841f75b5f05842c95e0938d",
+      "json_sha256": "5d4d69b4ee1c7181cd146e2c5c13c917befa0524b5aadd57bee69f91cb9059a3"
+    },
+    "plwp_4aam_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_4aam_a0.uasset",
+      "sha256": "917e5eced34fc57e33801e0214d3a5bf2ff197b00e77664e5ac3c338803acf06",
+      "json_sha256": "8f8fbec0113e3bc6b4b6e19908a8623c3c01d21664ea075837ccfb425ef3ebe0"
+    },
+    "f35c_SWP2_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f35c_SWP2_AnimBP.uasset",
+      "sha256": "39f43c5eb61f47fb47c6adf567eb4784c60230546c774b7006494aa0ec6a8bb9",
+      "json_sha256": "ec264aefd28f072601bee4172a32102dcbba219549bbd9fbef6dd563ebfcca87"
+    },
+    "f35c_SWP2_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f35c/f35c_SWP2_Anim.uasset",
+      "sha256": "57210aff45b593db0a35b731bf6d5b2ea17e230f352746d7c2e41e6fa30b8ec2",
+      "json_sha256": "6f44b475aafc72ee95a2da39cec21a1c297d34da44bec9a741d005e604897d82"
+    },
+    "f35c_SWP3_SM": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f35c/f35c_SWP3_SM.uasset",
+      "sha256": "220c9fefd1da81e2f50795c0a67a01e7ed1261035cd98392156e2d60d1eb8b2f",
+      "json_sha256": "4ad91d4090566a8943b98ecb80a78cd8ea9b74cbe994609b6cb007a9c7d672c6"
+    },
+    "plwp_8agm_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_8agm_a0.uasset",
+      "sha256": "f18dfb66d31a1ad8f80c2c7504da0135533c39b5282f1d2719f882f0d674df43",
+      "json_sha256": "3c4be736a52323b1946278bf51d79ec620faf26105cf3762af2dd825cdac2b0a"
+    },
+    "f35c_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f35c/f35c_Skeleton.uasset",
+      "sha256": "72497729cb3cc4720db61bbbe40f078fb6fa2b21b972f118eb54bb649f931560",
+      "json_sha256": "921c484af33f109c67a4753a3b0962d10ab4692b2c531a51ddb6647ec0ea4a84"
+    },
+    "AcePlayerPawn_pkfa": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_pkfa.uasset",
+      "sha256": "ceff6b599b6e996b5f21dd62966d80f803e64b0878e8252acf5f0d2e3f758a62",
+      "json_sha256": "85a54e445be7ee26b50e24d98331d8b1621bad364d0d7065f1c206e0400eceb5"
+    },
+    "PartsAnimationConfig_pkfa": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_pkfa.uasset",
+      "sha256": "b9dfbc73fadc5a05a5f8faa8a1e6139b305ec5a6a1ee3768bff39f2fd4a97c1f",
+      "json_sha256": "a689fac52d828d63680a62e04fb167f37c80dbaa059dbb45fc6ebcc70cf250df"
+    },
+    "pkfa_SWP1_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP1_Skeleton.uasset",
+      "sha256": "4d9667ca0a916a2df9a14d4fee776c9bba3f18d4e83c695ea74878d80c9c9228",
+      "json_sha256": "028b7e696a8cd2b5b2a93769c878b842cce647dab458ac0fab5aa139743c078f"
+    },
+    "plwp_4aam_r1": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_4aam_r1.uasset",
+      "sha256": "bec35a75f06c1cc2df7086311e7790793c8407c73b53a23e2d79294c1e88faa7",
+      "json_sha256": "bf180f17dcbb61ea9d19b512f8677b4e6d4e125f94408d5228ce2494ba8eab1d"
+    },
+    "pkfa_SWP1_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/pkfa_SWP1_AnimBP.uasset",
+      "sha256": "43c54bbec5e74eac375fc33e80ec9e611948f8179cd3409332aff481ba55490a",
+      "json_sha256": "8e6b6e6f2c8792ab8c30238d7d35f4e436ea6619634c8663f7c8ef4044f776bb"
+    },
+    "pkfa_SWP1_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP1_Anim.uasset",
+      "sha256": "e1850d745b4693f52a6c73a1939b414426e215c7cf53fb500bb1979b5d960917",
+      "json_sha256": "f4400cd501983106b7258b53368d79a3bfd1b0d2358b1fc720f8160ae09ef2d7"
+    },
+    "pkfa_SWP2_SM": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP2_SM.uasset",
+      "sha256": "3d52bc0a879aca0bdc6781e562f6e930b11e5dbde302c6b07f86f839bc22caa0",
+      "json_sha256": "904f90096d845c4d0518256345cab05a6755fc40cd1579b453da8f6b80cf25b4"
+    },
+    "plwp_gpb_r0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_gpb_r0.uasset",
+      "sha256": "dbb1c0b9b396e782d74139ace7f9468ac2ae8fe5776319f18e7fb84d9d8666f6",
+      "json_sha256": "a49c59268f497c679ded5508c969c0bdd20ac69179f3df3647ec54055f8ba837"
+    },
+    "plwp_gpb_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_gpb_a0.uasset",
+      "sha256": "641ddaefc298da0228fdbfc164bcd541c2889e5edd81592d02fb2c84a424c9c7",
+      "json_sha256": "a7a3942f69ad5ef0cbb7cf4fe4c918c857510879a7dfe436ebb6224338ddd1dd"
+    },
+    "pkfa_SWP3_SM": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP3_SM.uasset",
+      "sha256": "b86fdbc534a45590870d6441770449828b6392d5a40ad6b4c8b135f54b63169f",
+      "json_sha256": "508b366cdddb5ac6bbc2b8ec4543df17b69c2c015c9d46000aa6e63b21e4dcba"
+    },
+    "plwp_plsl_x0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_x0.uasset",
+      "sha256": "a920d4dee4b16fd3383f6ce54a4119af0adc9727c88f1f89cd5adac87570da00",
+      "json_sha256": "e71e7c7101e2435488cfddb7ba32025a7f6c3be1240cd7041c2210b8ff82705b"
+    },
+    "pkfa_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_Skeleton.uasset",
+      "sha256": "44a71f2886b1a8f17725a4a1431eb97b201b6c18f0dacda4bac25675baf9b651",
+      "json_sha256": "15803148a5e3525c585c85aa3c5c75f6cc88ef9b3c77dc81119102bb198fe71c"
+    },
+    "AcePlayerPawn_fa44": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa44.uasset",
+      "sha256": "ae7f864de6d2b97eede8904a568b6ac3886110f97ee5f58413de33b64f1c7be5",
+      "json_sha256": "752041002162933281f9a43ee0557bb8be6c8e36586383c657e4c4703e2cd348"
+    },
+    "PartsAnimationConfig_fa44": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_fa44.uasset",
+      "sha256": "c2c4c57b92a19d9792fb34de83035c33d701e07fc6eb4a6076ef167f0d584a85",
+      "json_sha256": "978d5697527a178e630c7d36be5e10f1e3fd7635b3b4ff309ab48097e2609da4"
+    },
+    "fa44_SWP1_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP1_Skeleton.uasset",
+      "sha256": "619f4098a395768222e5f5e94223c534840336722579ec0ba8bd825979e73684",
+      "json_sha256": "a081404484c266ee70d1466373d88ca8fb7f18e3bd472d3f5063a8a8db574ba8"
+    },
+    "plwp_admm_x0": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_admm_x0.uasset",
+      "sha256": "86eadb621323c71dde6555787c6dfca567543dd35afcaae5f3d9efb209362db9",
+      "json_sha256": "8ff260179444f4a2cffe6954c46a50366cb711f9eb7595cbcbc576f8fe86f0a8"
+    },
+    "fa44_SWP1_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/fa44_SWP1_AnimBP.uasset",
+      "sha256": "aefb2077854798c67f03fd15e31c58860fe0c0c19a5444e35b99888e4af6cb29",
+      "json_sha256": "6a9255eeb29feaa610cbc1c2bf1fe2ef1ae82766b2db75517bf6c54688f0cedd"
+    },
+    "fa44_SWP1_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP1_Anim.uasset",
+      "sha256": "d073e714044877debfe6895bdfda8c2759caea5060441a92f6b5307196452b5c",
+      "json_sha256": "024f1b9c28eac823f8b568c3024541999ad04847f14a2175946b1d7f3c02c6da"
+    },
+    "fa44_SWP2_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP2_Skeleton.uasset",
+      "sha256": "30fbbc857437c6ba89933dd443003e38ee1ddc633c2ba4163256df76038ac57e",
+      "json_sha256": "b4627c58f2a314984e14bc9a575464d5d40844e4b6d8faa10930b6d4a56b5d19"
+    },
+    "plwp_eml_x2": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_eml_x2.uasset",
+      "sha256": "d1b9a69384e479ae89c20fb7c7b07a98884ac9de746bab7880843e99c81955b5",
+      "json_sha256": "e74043736a78a82806770e584b99d289240de2e4b1a3799460b9d30572f80085"
+    },
+    "plwp_eml_x0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_eml_x0.uasset",
+      "sha256": "a3ff94b76eba55db5362c6c6800111d0188c3ad1f2ee029397a1af5ac456b22d",
+      "json_sha256": "ae8812288b12788f1fa6873fb700b96edcb50baa7d2cc554a9fb766ddd220dd5"
+    },
+    "fa44_SWP2_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/fa44_SWP2_AnimBP.uasset",
+      "sha256": "026d9cf02da647be2d3a8be2d9b34781a0de06239133fb001d00529dbf741373",
+      "json_sha256": "76c33ec5d111b0a76353565471508a767753c61e3572a93045c7240b626c7826"
+    },
+    "fa44_SWP2_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP2_Anim.uasset",
+      "sha256": "bdaa4670d1e8eaa7a982255e865d0e3162cf33c12575d789bdc0bd900e911eee",
+      "json_sha256": "857aad17e0134cb78afee3e4458f154e777481991613b63001cec41d6040c092"
+    },
+    "fa44_SWP3_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP3_Skeleton.uasset",
+      "sha256": "a16c85a44c8afa458d3d66cacec7ff22a1b60b0b5ef3125ee65fb4e0c858ca8e",
+      "json_sha256": "f63ad45c16787c19b2dc41e90892d76b6c21fd318e075858d01b993fa9241e6f"
+    },
+    "plwp_ecmp_x1": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1.uasset",
+      "sha256": "6ffc4b65d6e35c7e38b718b873d57b804a7db100619362ca4f8f2be788ec17bb",
+      "json_sha256": "533b5176452d2e5470ebb3d52478b2128b8943df060c2cc4e2a2c6ff9d92359a"
+    },
+    "plwp_esm_x0": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_esm_x0.uasset",
+      "sha256": "bb976d92ec824d1ffc13ab3eeb356f18a61cdb86f458e45db56d2be9d3723007",
+      "json_sha256": "a6a484643e3fc779cdf981eeb58d6a637f28f0af95d9d3cc0ab193bfdb044b60"
+    },
+    "fa44_SWP3_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/fa44_SWP3_AnimBP.uasset",
+      "sha256": "9ecd48288f463a39070c31cce286c2875e67da00d6014b5e1bf7c248b26132fd",
+      "json_sha256": "c11cd4640461b80f8ec37f06f9389c30f4578c8cbd20c5a3af56b723a8f4a383"
+    },
+    "fa44_SWP3_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_SWP3_Anim.uasset",
+      "sha256": "91da76d6c126a4cc4d956e5818f69136b5798c3984286580fc142bdbe4488d32",
+      "json_sha256": "19a5d53d5ccb43ff7058fb3d19fcc23bf116ffe6e37599bea450556b17ca1689"
+    },
+    "fa44_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa44/fa44_Skeleton.uasset",
+      "sha256": "6ade603d96e2e42f927f7b387e9aae7d17f0733739bc6d0b06e956171692068c",
+      "json_sha256": "a1cc62b7e4ac202470c009b3cf37c67c6483d7bdbc795e12fd7c79f42eebefec"
+    },
+    "AcePlayerPawn_x02s": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_x02s.uasset",
+      "sha256": "c5e8c1babf172a9446e8622c9e2087c3981ee8c104ef08da1fe02a878ba89359",
+      "json_sha256": "03b0a65084cd76ad2dbcd2c084573898dde420fa02f418fd934d1c64c33f3927"
+    },
+    "PartsAnimationConfig_x02s": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_x02s.uasset",
+      "sha256": "77f6dd3b915254f0f7647f7fc6d94ae6f90def1e327d1e0130a60abe6f9adb4e",
+      "json_sha256": "39db9d52017ad0e93f7b9beae035e278956ea9d3ac40d52d39dc421f319f2bd7"
+    },
+    "x02s_SWP1_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP1_Skeleton.uasset",
+      "sha256": "d3a2a699b94cf1c085682f65efb63947a678b26060bc0426264e9f9edcdbdf19",
+      "json_sha256": "1ecf8d6bb757e3a50f6a9c7ae132daaef4f91c2c3ec57682f69d623b6fec3240"
+    },
+    "plwp_4aam_x0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_4aam_x0.uasset",
+      "sha256": "a7cc2711e8ee00b109e4fcbdc0b4554d18249a2dcfad3fd39f897cd6da4ce72f",
+      "json_sha256": "f13d5a785889635a229277b19223834ef6a141c1486c1a2c8660947cf48b38f0"
+    },
+    "x02s_SWP1_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/x02s_SWP1_AnimBP.uasset",
+      "sha256": "558cd6058a4c7e015f8d07cecfdc55368af123131292e0f18213119be8e5b961",
+      "json_sha256": "1066f3239c364d0c0439b5b978bc44f168e43a4550b69a5c3a55026929a90cdb"
+    },
+    "x02s_SWP1_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP1_Anim.uasset",
+      "sha256": "c0aa739fe6d16c0718be924b192ee4ed6f50c5013a43345494c382da939abb90",
+      "json_sha256": "28e4d120ab6fa5be2e35fca97b4af6449b02de64c6f18bcb10e9c6b6bf61ae6e"
+    },
+    "x02s_SWP2_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP2_Skeleton.uasset",
+      "sha256": "404d1035903b550ff98c470b2a90a17db4c3d478b32bccf1997791bafeb9a471",
+      "json_sha256": "29545f25455b43344fe327987a0a78e92e7a12c1b2a1379d7345f164c9388211"
+    },
+    "plwp_lasm_x0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_lasm_x0.uasset",
+      "sha256": "c0013b91e186084d68bf614c878e124aedfca5a9be600f23c403854986bd73fa",
+      "json_sha256": "dc124a8b0c23f6a79f2b98299696713371ddb140186455ff24767e439e34db44"
+    },
+    "plwp_lasm_a0": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_lasm_a0.uasset",
+      "sha256": "9a5f10dcc02efd482a8fb8b90232983f7b3cac1a2c33d58080a1121f6247d653",
+      "json_sha256": "e5bff70adc48a0c10b740d606160d93ab3adc489f9ab91d4ac91cb12d5cb81b3"
+    },
+    "x02s_SWP2_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/x02s_SWP2_AnimBP.uasset",
+      "sha256": "e4e09b8298f208c7f5a3c46855499799442a2ce51e4dc3fdc64c96f6f0de557b",
+      "json_sha256": "93f4b071ea1c12b5af30dbcad88991326549b795127dfcdf01e40a70c2fbff71"
+    },
+    "x02s_SWP2_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP2_Anim.uasset",
+      "sha256": "d1af2a95960682c46a35dfa813487f21b2e42477d22f890dca64ee707771a6c3",
+      "json_sha256": "8e3e3d2a3f6f4022070b3606b59da9bce4af44a5f54f3c647921db0eb4fb6050"
+    },
+    "x02s_SWP3_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP3_Skeleton.uasset",
+      "sha256": "290c4f915082cbd5f97679f1ab826ec12df051021f7137602672bc21c2f6758d",
+      "json_sha256": "03d895034f48130009c2ff09aeec69ff73dbb2c4cad513fc01d5241a6c7c98e7"
+    },
+    "plwp_eml_x1": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_eml_x1.uasset",
+      "sha256": "3b8be9c4379395c94b00dff6bfd730b808f5f879fb4e0b6eda4226087cc001f4",
+      "json_sha256": "8419b3faf0bc4963337ffb90739910883d9e6f28307071057b93441ae1cffa64"
+    },
+    "x02s_SWP3_AnimBP": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/x02s_SWP3_AnimBP.uasset",
+      "sha256": "807885235dc7be4c157e7a6986796c196ca1781dcb26e2a0dbfd85ba75a9ed15",
+      "json_sha256": "bdf6992b28694cba8b008c906a915fa759d25205418d63e67b5ba2b8ca0d1f37"
+    },
+    "x02s_SWP3_Anim": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP3_Anim.uasset",
+      "sha256": "80a69ed69fdd3c7ddefd9362911ecffdbd30150f2b209248b53bfb49fc0fa36e",
+      "json_sha256": "2c36a484528c8c0e58371db6d114a5bb9ac3cad8681f039c09750ceb73855cd4"
+    },
+    "x02s_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_Skeleton.uasset",
+      "sha256": "86b01a24d110ade78fee1790370b4c1d67bca16964d4e41396ebcc5a0e7a55d7",
+      "json_sha256": "07af47f31ed2cad2329d4d64a54d7f92e679b2f9b117491277ffe1e57b31491d"
+    },
+    "AcePlayerPawn_adf11f": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_adf11f.uasset",
+      "sha256": "a499a91e01be9c447eb8aee3cb2cedad4ff70000a0b3c27dddb03e7482279fc1",
+      "json_sha256": "1a5136098abde74c65a4826e85a7f16c6a7780f67a7a5bbc28da430e519c3f2e"
+    },
+    "PartsAnimationConfig_adf11f": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_adf11f.uasset",
+      "sha256": "3f9309f34162baefe465fa12ce48cc1276747482c6e6a05c5d986b44938eb114",
+      "json_sha256": "4434fc7fe11f522861127d6a8df32f0d191ba02d211302a9569b721762c41e89"
+    },
+    "adf11f_SWP1_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/adf11f/adf11f_SWP1_SM.uasset",
+      "sha256": "b54e3165440a7b22b2de0b62bda46b94242091bd06c4892ff7409c5ef0a44229",
+      "json_sha256": "9d6175ff06d6b7747c9511147669083d882bed480ebe5626680b80bec297723e"
+    },
+    "plwp_tls_x3": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_tls_x3.uasset",
+      "sha256": "41dcab4c1aa6821ba9c47e495678fdc5094e8d7de3f8527bc00356f5d6071ea6",
+      "json_sha256": "fb5e2dd0f98f218f3f03dfa55d539dba0b6a398ee61f359888810443de712c28"
+    },
+    "adf11f_SWP2_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/adf11f/adf11f_SWP2_SM.uasset",
+      "sha256": "1db6147d05602393c5ef57123e629cd0ce36a8ec3c309afb0750b459f70d39ff",
+      "json_sha256": "e776e90c144a8a98263e0a0502a4f8cadeef5611be26243eb69deb310deecc7f"
+    },
+    "adf11f_SWP3_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/adf11f/adf11f_SWP3_SM.uasset",
+      "sha256": "a76a6b970a30d8d22256ae26adbe93cb27a32fa42bd961b5eb1d410facd8052e",
+      "json_sha256": "6c0be3696e337edef3529ea7b19ec2e708a7de98bc5d340a5b7909adfdd17760"
+    },
+    "plwp_WeaponUAV": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_WeaponUAV.uasset",
+      "sha256": "3fd519769efdca2dff1487f9bc1bf13f00035108c434cca0216fae2e24d23348",
+      "json_sha256": "e271e293d43ffe5194f577c2776696a9f6e48aeae8a9b4e12124d3e203a5b2cb"
+    },
+    "adf11f_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/adf11f/adf11f_Skeleton.uasset",
+      "sha256": "7bd5f45deb41b938c0e32d733d6d591063fa5b1032d070be7cae0ba7a1950d22",
+      "json_sha256": "08ee5835f6ade220206a7f322f01a694b645f4d56bd2c303113fa7aa41acbe9b"
+    },
+    "AcePlayerPawn_mrgn": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_mrgn.uasset",
+      "sha256": "597130ae6db063ccae780139494df896fde1a63089d86e3c2d509fb654101090",
+      "json_sha256": "b66c5d6fa1f4bfa8dd8b7a3e5c2a5a9a127a65ac92ec6ab8665c2a4129a55ff2"
+    },
+    "PartsAnimationConfig_mrgn": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_mrgn.uasset",
+      "sha256": "b977fe291872f844b6e5dfd2d1e53f70775c0ffedf6423f1a25ce890be7cd047",
+      "json_sha256": "595c9b0733a2138ef2c3a23e38a20f40b6e9dcd7ef43c0b079001bb03df83058"
+    },
+    "mrgn_SWP1_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/mrgn/mrgn_SWP1_SM.uasset",
+      "sha256": "bf97bc143a003eba8833e21e9fe9813fac36fe9d1fa6d3ceef572d90081447b0",
+      "json_sha256": "83ca5ce53c83896e64c26379647b5feb1555d5b797c14b921414c437aedeac72"
+    },
+    "plwp_tls_x1": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_tls_x1.uasset",
+      "sha256": "a9a4d32c5647a987e20e7223cfc2abf08fc1f031401d4371f9d1411dc01c9b88",
+      "json_sha256": "0bb62a03ba34349fa216c971ded5b66fa341bd51d0350b35fed6d093b350419a"
+    },
+    "mrgn_SWP2_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/mrgn/mrgn_SWP2_SM.uasset",
+      "sha256": "7f006da10e47e2aafc0339403c8e9356586c37a73bbfa2427727e293f4b82842",
+      "json_sha256": "1e8502dec868ad725e3c2fde4e89e18d319b7f6f7a7c2019b579e3098239fa25"
+    },
+    "plwp_mpbm_x0": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mpbm_x0.uasset",
+      "sha256": "af67be62924b2a65af6af0f30ba878192d0cb3255d45d4632f07170a4533768f",
+      "json_sha256": "0d85f2389ff7dbd8884ccb542abf61244568375f21ad6e8bfd18aa12a0fd98ac"
+    },
+    "mrgn_SWP3_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/mrgn/mrgn_SWP3_SM.uasset",
+      "sha256": "10d10d01dfade50d1e1512524f4e9ba6d8eeb8833341b190f28333fffb55bdb7",
+      "json_sha256": "3f10fbce2fdff2e9f7b49f317b1acf138203933caca71954a96b054236c9b201"
+    },
+    "mrgn_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/mrgn/mrgn_Skeleton.uasset",
+      "sha256": "24a906f2db2867b6543ade08166cdbcaa3d5b508f33acca2bc28c4ad55281847",
+      "json_sha256": "56ea814a5b798c19ab751ec7875d1530d7ffd116500e3574cdfa5a65d7b9ffef"
+    },
+    "AcePlayerPawn_fa27": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa27.uasset",
+      "sha256": "231ecaa8f71e871d9813df9719c738041f1885e596fb904d93d59d17e327c0bc",
+      "json_sha256": "59581252225708f893416df86a88a8f68f32324716dd089e538d321615e8fcdd"
+    },
+    "PartsAnimationConfig_fa27": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_fa27.uasset",
+      "sha256": "564147734600ded1b68b09dbcb5e6ce1048abff8c712f5487a9b9cc29dcfe7f7",
+      "json_sha256": "f41450ab51490cdc5d9847d71f7705cba7fdf8c5811b787def6a85958849ccf0"
+    },
+    "fa27_SWP1_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa27/fa27_SWP1_SM.uasset",
+      "sha256": "5de51353e51c85fe92573752316a064e150ff8b4822da2c93c2d78ec9b3d8e4b",
+      "json_sha256": "b14d67b5320a449a6896ce3f06241755ccbc333f8dc40a53fba5915fe9e4954a"
+    },
+    "fa27_SWP2_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa27/fa27_SWP2_SM.uasset",
+      "sha256": "07b79ac86dda72ce6ee24c51a96ae879e64625bfd335cb63c81c14a498402a76",
+      "json_sha256": "af82989c87ca0dbc788acdd7ca470ac7e31d1936c313dab5e3d69d86c52e27d2"
+    },
+    "plwp_mstm_x0": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mstm_x0.uasset",
+      "sha256": "34ec1e575c26450c9654f7e6d174b84269e7a43450506022c591ad2c031db5d1",
+      "json_sha256": "d0acf81640644d9726796b26c32de99eb2f68baf2b758f54be9cd225e262fa08"
+    },
+    "fa27_SWP3_SM": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa27/fa27_SWP3_SM.uasset",
+      "sha256": "f30c55f27d90a3d56e801c2b1d2d76fd2c8f67e37c0dfcbab3389c6ed33af4f2",
+      "json_sha256": "56633fd2b8b1fe4128f3853ed8715c37905a57a5a76ada0f49b487a02249a3fe"
+    },
+    "plwp_ecmp_x2": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2.uasset",
+      "sha256": "5be7742c27a68a0b15056d21b5ab474e812631e7801333367ea322e80768e405",
+      "json_sha256": "fe2a198611453f51318a7223857aa60a253d4b0fa2a0ed3f0b506ea7f9778080"
+    },
+    "fa27_Skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/fa27/fa27_Skeleton.uasset",
+      "sha256": "bbb8e1fd77971e0d6634731feb1e34fd12876f3943a8847efa1cfc65fa330d65",
+      "json_sha256": "21046ae2fc638c9b2cfef082f4760029627cf968864746b26fd544a74cb836fe"
+    }
+  },
+  "limits": [
+    "不含第三方 PAK 覆盖",
+    "参考姿态不是实时开舱状态",
+    "原点距离不是网格碰撞",
+    "资源挂点顺序不代替运行时槽映射",
+    "未修改安装候选"
+  ]
+}

@@ -1,0 +1,744 @@
+{
+  "kind": "离线布局和轮转枚举实验",
+  "gameplay_tested": false,
+  "candidate_installed": false,
+  "samples": [
+    {
+      "aircraft": "F-22A",
+      "code": "f22a",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_qaam_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 6,
+          "chosen_sockets": [
+            "sp15",
+            "sp16"
+          ],
+          "logical_to_chosen_socket": [
+            "sp15",
+            "sp16",
+            "sp15",
+            "sp16",
+            "sp15",
+            "sp16"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": {
+            "cursor_count": 6,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 1,
+          "weapon": "plwp_xsdb_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 6,
+          "chosen_sockets": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "logical_to_chosen_socket": [
+            "sp21",
+            "sp22",
+            "sp21",
+            "sp24",
+            "sp23",
+            "sp24"
+          ],
+          "loaded_window": 4,
+          "queue_experiment": {
+            "cursor_count": 6,
+            "minimum_unique_origins": 3,
+            "maximum_rounds_per_origin": 2,
+            "cursors_with_repeated_origins": [
+              0,
+              2,
+              3,
+              5
+            ]
+          },
+          "naive_round_robin_result": {
+            "cursor_count": 6,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 2,
+            "cursors_with_repeated_origins": [
+              3,
+              4,
+              5
+            ]
+          },
+          "mapping_search": {
+            "surjective_same_side_mappings_examined": 36,
+            "best_minimum_unique_origins": 3,
+            "all_four_distinct_for_every_cursor_possible": false,
+            "boundary": "仍允许重复离架；不证明真实槽顺序、门体或弹体净空"
+          }
+        }
+      ],
+      "minimum_reference_origin_distance": 4.61675,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "F-35C",
+      "code": "f35c",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_sod_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 2,
+          "chosen_sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "logical_to_chosen_socket": [
+            "sp11",
+            "sp12"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": {
+            "cursor_count": 2,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 2,
+          "weapon": "plwp_8agm_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 12,
+          "chosen_sockets": [
+            "sp31",
+            "sp32",
+            "sp33",
+            "sp34",
+            "sp35",
+            "sp36",
+            "sp37",
+            "sp38",
+            "sp39",
+            "sp40",
+            "sp41",
+            "sp42"
+          ],
+          "logical_to_chosen_socket": [
+            "sp31",
+            "sp32",
+            "sp33",
+            "sp34",
+            "sp35",
+            "sp36",
+            "sp37",
+            "sp38",
+            "sp39",
+            "sp40",
+            "sp41",
+            "sp42"
+          ],
+          "loaded_window": 8,
+          "queue_experiment": {
+            "cursor_count": 12,
+            "minimum_unique_origins": 8,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        }
+      ],
+      "minimum_reference_origin_distance": 20.20976,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "Su-57",
+      "code": "pkfa",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_4aam_r1_C",
+          "role": "消耗型",
+          "resource_socket_count": 4,
+          "chosen_sockets": [
+            "sp14",
+            "sp13",
+            "sp12",
+            "sp11"
+          ],
+          "logical_to_chosen_socket": [
+            "sp14",
+            "sp13",
+            "sp12",
+            "sp11"
+          ],
+          "loaded_window": 4,
+          "queue_experiment": {
+            "cursor_count": 4,
+            "minimum_unique_origins": 4,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 2,
+          "weapon": "plwp_plsl_x0_C",
+          "role": "固定发射器",
+          "resource_socket_count": 2,
+          "chosen_sockets": [
+            "sp31",
+            "sp32"
+          ],
+          "logical_to_chosen_socket": [
+            "sp31",
+            "sp32"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "固定发射器不以弹药冷却隐藏炮体"
+        }
+      ],
+      "minimum_reference_origin_distance": 39.39519,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "CFA-44",
+      "code": "fa44",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_admm_x0_C",
+          "role": "垂直发射阵列",
+          "resource_socket_count": 126,
+          "chosen_sockets": [
+            "sp001",
+            "sp004",
+            "sp007",
+            "sp010",
+            "sp013",
+            "sp016",
+            "sp019",
+            "sp022",
+            "sp025",
+            "sp028",
+            "sp031",
+            "sp034",
+            "sp037",
+            "sp040",
+            "sp043",
+            "sp046",
+            "sp049",
+            "sp052",
+            "sp055",
+            "sp058",
+            "sp061",
+            "sp064",
+            "sp067",
+            "sp070",
+            "sp073",
+            "sp076",
+            "sp079",
+            "sp082",
+            "sp085",
+            "sp088",
+            "sp091",
+            "sp094",
+            "sp097",
+            "sp100",
+            "sp103",
+            "sp106",
+            "sp109",
+            "sp112",
+            "sp115",
+            "sp118",
+            "sp121",
+            "sp124",
+            "sp002",
+            "sp005",
+            "sp008",
+            "sp011",
+            "sp014",
+            "sp017",
+            "sp020",
+            "sp023",
+            "sp026",
+            "sp029",
+            "sp032",
+            "sp035",
+            "sp038",
+            "sp041",
+            "sp044",
+            "sp047",
+            "sp050",
+            "sp053",
+            "sp056",
+            "sp059",
+            "sp062",
+            "sp065",
+            "sp068",
+            "sp071",
+            "sp074",
+            "sp077",
+            "sp080",
+            "sp083",
+            "sp086",
+            "sp089",
+            "sp092",
+            "sp095",
+            "sp098",
+            "sp101",
+            "sp104",
+            "sp107",
+            "sp110",
+            "sp113",
+            "sp116",
+            "sp119",
+            "sp122",
+            "sp125",
+            "sp003",
+            "sp006",
+            "sp009",
+            "sp012",
+            "sp015",
+            "sp018",
+            "sp021",
+            "sp024",
+            "sp027",
+            "sp030",
+            "sp033",
+            "sp036",
+            "sp039",
+            "sp042",
+            "sp045",
+            "sp048",
+            "sp051",
+            "sp054",
+            "sp057",
+            "sp060",
+            "sp063",
+            "sp066",
+            "sp069",
+            "sp072",
+            "sp075",
+            "sp078",
+            "sp081",
+            "sp084",
+            "sp087",
+            "sp090",
+            "sp093",
+            "sp096",
+            "sp099",
+            "sp102",
+            "sp105",
+            "sp108",
+            "sp111",
+            "sp114",
+            "sp117",
+            "sp120",
+            "sp123",
+            "sp126"
+          ],
+          "logical_to_chosen_socket": [
+            "sp001",
+            "sp004",
+            "sp007",
+            "sp010",
+            "sp013",
+            "sp016",
+            "sp019",
+            "sp022",
+            "sp025",
+            "sp028",
+            "sp031",
+            "sp034",
+            "sp037",
+            "sp040",
+            "sp043",
+            "sp046",
+            "sp049",
+            "sp052",
+            "sp055",
+            "sp058",
+            "sp061",
+            "sp064",
+            "sp067",
+            "sp070",
+            "sp073",
+            "sp076",
+            "sp079",
+            "sp082",
+            "sp085",
+            "sp088",
+            "sp091",
+            "sp094",
+            "sp097",
+            "sp100",
+            "sp103",
+            "sp106",
+            "sp109",
+            "sp112",
+            "sp115",
+            "sp118",
+            "sp121",
+            "sp124",
+            "sp002",
+            "sp005",
+            "sp008",
+            "sp011",
+            "sp014",
+            "sp017",
+            "sp020",
+            "sp023",
+            "sp026",
+            "sp029",
+            "sp032",
+            "sp035",
+            "sp038",
+            "sp041",
+            "sp044",
+            "sp047",
+            "sp050",
+            "sp053",
+            "sp056",
+            "sp059",
+            "sp062",
+            "sp065",
+            "sp068",
+            "sp071",
+            "sp074",
+            "sp077",
+            "sp080",
+            "sp083",
+            "sp086",
+            "sp089",
+            "sp092",
+            "sp095",
+            "sp098",
+            "sp101",
+            "sp104",
+            "sp107",
+            "sp110",
+            "sp113",
+            "sp116",
+            "sp119",
+            "sp122",
+            "sp125",
+            "sp003",
+            "sp006",
+            "sp009",
+            "sp012",
+            "sp015",
+            "sp018",
+            "sp021",
+            "sp024",
+            "sp027",
+            "sp030",
+            "sp033",
+            "sp036",
+            "sp039",
+            "sp042",
+            "sp045",
+            "sp048",
+            "sp051",
+            "sp054",
+            "sp057",
+            "sp060",
+            "sp063",
+            "sp066",
+            "sp069",
+            "sp072",
+            "sp075",
+            "sp078",
+            "sp081",
+            "sp084",
+            "sp087",
+            "sp090",
+            "sp093",
+            "sp096",
+            "sp099",
+            "sp102",
+            "sp105",
+            "sp108",
+            "sp111",
+            "sp114",
+            "sp117",
+            "sp120",
+            "sp123",
+            "sp126"
+          ],
+          "loaded_window": 12,
+          "queue_experiment": {
+            "cursor_count": 126,
+            "minimum_unique_origins": 12,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 1,
+          "weapon": "plwp_eml_x2_C",
+          "role": "固定发射器",
+          "resource_socket_count": 2,
+          "chosen_sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "logical_to_chosen_socket": [
+            "sp21",
+            "sp22"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "固定发射器不以弹药冷却隐藏炮体"
+        }
+      ],
+      "minimum_reference_origin_distance": 6.31179,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "X-02S",
+      "code": "x02s",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_4aam_x0_C",
+          "role": "消耗型",
+          "resource_socket_count": 6,
+          "chosen_sockets": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16"
+          ],
+          "logical_to_chosen_socket": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16"
+          ],
+          "loaded_window": 4,
+          "queue_experiment": {
+            "cursor_count": 6,
+            "minimum_unique_origins": 4,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 2,
+          "weapon": "plwp_eml_x1_C",
+          "role": "固定发射器",
+          "resource_socket_count": 1,
+          "chosen_sockets": [
+            "sp"
+          ],
+          "logical_to_chosen_socket": [
+            "sp"
+          ],
+          "loaded_window": null,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "固定发射器不以弹药冷却隐藏炮体"
+        }
+      ],
+      "minimum_reference_origin_distance": 35.13915,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "ADF-11F",
+      "code": "adf11f",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_tls_x3_C",
+          "role": "固定发射器",
+          "resource_socket_count": 1,
+          "chosen_sockets": [
+            "sp11"
+          ],
+          "logical_to_chosen_socket": [
+            "sp11"
+          ],
+          "loaded_window": null,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "固定发射器不以弹药冷却隐藏炮体"
+        },
+        {
+          "configuration": 1,
+          "weapon": "plwp_qaam_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 4,
+          "chosen_sockets": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "logical_to_chosen_socket": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": {
+            "cursor_count": 4,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        }
+      ],
+      "minimum_reference_origin_distance": 124.13742,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "ADFX-01",
+      "code": "mrgn",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_tls_x1_C",
+          "role": "固定发射器",
+          "resource_socket_count": 1,
+          "chosen_sockets": [
+            "sp11"
+          ],
+          "logical_to_chosen_socket": [
+            "sp11"
+          ],
+          "loaded_window": null,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "固定发射器不以弹药冷却隐藏炮体"
+        },
+        {
+          "configuration": 1,
+          "weapon": "plwp_mpbm_x0_C",
+          "role": "消耗型",
+          "resource_socket_count": 2,
+          "chosen_sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "logical_to_chosen_socket": [
+            "sp21",
+            "sp22"
+          ],
+          "loaded_window": null,
+          "queue_experiment": null,
+          "queue_not_applied_reason": "装填窗口继承原生类默认值，本批没有直接读取"
+        }
+      ],
+      "minimum_reference_origin_distance": 54.97272,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    },
+    {
+      "aircraft": "XFA-27",
+      "code": "fa27",
+      "choices": [
+        {
+          "configuration": 0,
+          "weapon": "plwp_sod_a0_C",
+          "role": "消耗型",
+          "resource_socket_count": 2,
+          "chosen_sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "logical_to_chosen_socket": [
+            "sp11",
+            "sp12"
+          ],
+          "loaded_window": 2,
+          "queue_experiment": {
+            "cursor_count": 2,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 1,
+            "cursors_with_repeated_origins": []
+          }
+        },
+        {
+          "configuration": 1,
+          "weapon": "plwp_mstm_x0_C",
+          "role": "消耗型",
+          "resource_socket_count": 4,
+          "chosen_sockets": [
+            "sp23",
+            "sp24"
+          ],
+          "logical_to_chosen_socket": [
+            "sp23",
+            "sp24",
+            "sp23",
+            "sp24"
+          ],
+          "loaded_window": 4,
+          "queue_experiment": {
+            "cursor_count": 4,
+            "minimum_unique_origins": 2,
+            "maximum_rounds_per_origin": 2,
+            "cursors_with_repeated_origins": [
+              0,
+              1,
+              2,
+              3
+            ]
+          }
+        }
+      ],
+      "minimum_reference_origin_distance": 6.60111,
+      "geometry_clearance_verified": false,
+      "native_launch_order_verified": false,
+      "animation_replay_suppressed_in_game": false
+    }
+  ],
+  "shared_bay_comparison": {
+    "aircraft": "F-22A",
+    "weapons": [
+      "QAAM",
+      "XSDB"
+    ],
+    "bone_count": 16,
+    "reference_bones_exactly_equal": true,
+    "shared_channel": "spwc",
+    "does_not_prove": [
+      "动画采样曲线相同",
+      "运行时不重置舱门",
+      "两套舱门网格可直接叠加"
+    ],
+    "candidate": "同一弹仓保留一个舱门呈现对象及控制状态，兵装切换不重新发出开关请求"
+  },
+  "bay_acceptance_cases": [
+    "关闭时来回切换仍关闭",
+    "开启时来回切换仍开启",
+    "开启过程中切换不归零或重放，沿原进度继续",
+    "关闭过程中切换不反向重启",
+    "MSL/SP 切换不误改另一弹仓的 misc 通道",
+    "检查点与补给按自身生命周期恢复，不沿用旧世界对象"
+  ],
+  "limitations": [
+    "全部数量基于原版资源；未完成各机型运行时队列对照",
+    "重复离架仅为研究候选，本轮未扩展到已安装模组",
+    "参考原点有距离不代表弹体或舱门无穿插"
+  ]
+}

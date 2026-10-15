@@ -1,5 +1,12 @@
 # 精选证据索引
 
+## 多机型挂载抽样（离线）
+
+- [八机资源摘要](aircraft-mount-survey.json)：原版资源、参考骨架坐标和控制通道；不含第三方覆盖，不等于现场状态。
+- [布局与轮转枚举](aircraft-mount-layout-experiments.json)：各类型候选、F-22 映射反例和共享骨架、舱门连续性验收情景。
+- [本轮保护核对](aircraft-mount-survey-preservation.json)：当前安装文件未改，未编译、安装或启动游戏。
+- [研究结论与后续顺序](../docs/research/aircraft-mount-survey.txt)。
+
 # 当前独立集成候选
 
 - `su30sm-fixed-mount-checkpoint-validation.json`：用户确认双挂候选 .2 检查点恢复显示完整，含对应四条原生日志事件。

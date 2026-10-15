@@ -1,0 +1,86 @@
+{
+  "recorded_at": "2026-10-15T18:40:07.020892+08:00",
+  "branch": "codex/aircraft-mount-survey",
+  "base_commit": "be58c83546547df07d159c233c2fa82d83ed45d2",
+  "installed_candidate": "1.0.2-su30sm-three-sp.1",
+  "installed_file_checks": {
+    "Scripts/json.lua": {
+      "expected": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+      "actual": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e"
+    },
+    "Scripts/loadout_flow.lua": {
+      "expected": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b",
+      "actual": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b"
+    },
+    "Scripts/loadout_profile.lua": {
+      "expected": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+      "actual": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4"
+    },
+    "Scripts/main.lua": {
+      "expected": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9",
+      "actual": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9"
+    },
+    "Scripts/native_hud.lua": {
+      "expected": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8",
+      "actual": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8"
+    },
+    "Scripts/native_loadout.lua": {
+      "expected": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0",
+      "actual": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0"
+    },
+    "Scripts/runtime_context.lua": {
+      "expected": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+      "actual": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6"
+    },
+    "Scripts/weapon_cycle.lua": {
+      "expected": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+      "actual": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65"
+    },
+    "Scripts/weapon_names.lua": {
+      "expected": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+      "actual": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada"
+    },
+    "Scripts/weapon_presentation.lua": {
+      "expected": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb",
+      "actual": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+    },
+    "bin/DualSP.dll": {
+      "expected": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508",
+      "actual": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508"
+    },
+    "bin/DualSPUI.dll": {
+      "expected": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750",
+      "actual": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750"
+    },
+    "VERSION": {
+      "expected": "3380181cf53b2b157f61c3695a3bd651f176c327c4203f9a1f1af278a5319612",
+      "actual": "3380181cf53b2b157f61c3695a3bd651f176c327c4203f9a1f1af278a5319612"
+    }
+  },
+  "all_installed_files_match": true,
+  "protected_legacy_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "game_process_count_at_final_check": 0,
+  "game_started_by_agent": false,
+  "runtime_files_modified_by_agent": false,
+  "game_memory_written": false,
+  "compiled": false,
+  "installed": false,
+  "test_modules_added_or_run": false,
+  "gameplay_tested": false,
+  "experiments": "原版资源解析、参考骨架换算、原点距离比较、全部游标枚举与 F-22 受约束映射搜索",
+  "main_worktree_modified_by_agent": false,
+  "main_worktree_boundary": "主工作区由其他任务继续修改；本回执不宣称其全部内容保持不变",
+  "files": {
+    "src/research/survey_aircraft_mounts.py": "a4e66315d7ac34248c43c31547ee0871a78f50fb2537a7a075c65c8272ce6e02",
+    "src/research/experiment_mount_layouts.py": "9e6d84201b32a104b3c2af542abcff921ae752a4fe0b50fdf70b2beef58e1853",
+    "evidence/aircraft-mount-survey.json": "3e8ddb86729a1ec2633a84c59606df5646537b3bd19d242ceae433c70a7d23c9",
+    "evidence/aircraft-mount-layout-experiments.json": "3515311ce79062d8f20400456546473b1ec52c499e75ff8ceded174ae725bb38",
+    "docs/research/aircraft-mount-survey.txt": "ba23db63e97a578c6ba7d1771eb35377f1d062e6181f6c2acfdc97eb18fa52ff"
+  },
+  "raw_inputs": [
+    "Temp/mount-assets-20261015-182045-025844/manifest.json",
+    "Temp/mount-assets-20261015-182234-951259/manifest.json",
+    "Temp/mount-assets-20261015-182458-702517/manifest.json"
+  ],
+  "raw_game_assets_committed": false
+}
