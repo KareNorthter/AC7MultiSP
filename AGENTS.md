@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+**本工作区是独立固定挂载研究分支，不是主线安装入口。** 2026-10-15 从 1.0.1 及当时未提交兼容修订建立 `codex/su30sm-fixed-mount-prototype`，基线快照为 `cadacde`。研究目标为 Su-30SM 四处 6AAM＋两处 LAGM，允许重复出弹。已准备具体映射与只读采集工具，尚未修改运行核心或安装原型；用户稍后配合自由飞行。后续见[固定挂载研究](docs/research/su30sm-fixed-mount.md)。以下兼容批次是复制基线时的主工作区背景，不在本分支继续安装其他模组。
+
 2026-10-15 14:10 Adler 抽样批次准备中：用户要求重新加入 Adler，并抽样高赞的不同类型模组。已停止游戏、备份配置/日志/存档，换下独立 PW-MKI，安装 Adler 主包及其原配本地化/数据表。静态表为 54 条，仅新增 Adler A/B（148/149），不安装全局兼容表；148 号 PW 方案已备份清除，其他方案保留。拟新增 All Part In CampaignMode（623）、Lock-On Crosshair UI（649）、TLS Damage and Range increase（190）；浏览器下载超时，三个文件尚未取得，整批尚未就绪。见[准备回执](evidence/compatibility-adler-samples-prepared.json)、[抽样安排](docs/research/mod-compatibility.txt)。本轮未改功能代码、编译或运行测试，未启动游戏。下文“跳过 Adler”已被用户本次请求更新。
 
 2026-10-15 小批次用户验证通过：用户确认 Su-47 与独立 PW-MKI 双 SP、换机、出击、补给均正常。当前目录实际为 53 条，日志确认 PW-MKI（148）补给换装成功，本次会话无 Lua 错误。见[小批次用户验证](evidence/compatibility-small-addon-user-validation.json)。用户倾向不继续测 Adler，按未验证保留，不重新安装、不将 PW-MKI 结果扩大到 Adler；现有已验证组合保持不变。本轮仅更新记录，未改变游戏运行状态、未编译或运行测试、未发布或推送。

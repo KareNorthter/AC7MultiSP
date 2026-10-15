@@ -1,0 +1,82 @@
+{
+  "date": "2026-10-15",
+  "stage": "独立基线与离线方案，等待用户进入自由飞行",
+  "source_worktree": {
+    "branch": "codex/experience-polish",
+    "head": "fc4bc2ec30de8c39e3e5a36ab73c0bee2cf21332",
+    "head_unchanged": true,
+    "status_unchanged": true,
+    "snapshot_files_changed_since_copy": [
+      "dist/DualSP/Scripts/main.lua"
+    ]
+  },
+  "installed_runtime": {
+    "files_count": 11,
+    "changed_since_readonly_baseline": [],
+    "baseline_files": [
+      {
+        "path": "Scripts\\json.lua",
+        "sha256": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e"
+      },
+      {
+        "path": "Scripts\\loadout_flow.lua",
+        "sha256": "3e4aedff87d825369fbe1a2afb5f9871cf2eba0330137ad9033565f2a1979a26"
+      },
+      {
+        "path": "Scripts\\main.lua",
+        "sha256": "5f4decee585acc526c43df84922bfea86a59e344e63b242fff7aab327860cc4d"
+      },
+      {
+        "path": "Scripts\\native_hud.lua",
+        "sha256": "61821364cd7fe7ece73cd539e5390b0a75611346dad637852b2f9e58028707b2"
+      },
+      {
+        "path": "Scripts\\native_loadout.lua",
+        "sha256": "a49acb961ab63e1e5f96da9bc75d69e66dac5912ab8f6df41953990c6c08365d"
+      },
+      {
+        "path": "Scripts\\runtime_context.lua",
+        "sha256": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6"
+      },
+      {
+        "path": "Scripts\\weapon_cycle.lua",
+        "sha256": "3a3bc4ec9fd2b56cd0e466765e54dd5efe41d8252d5a7faad12fa738aae11f45"
+      },
+      {
+        "path": "Scripts\\weapon_names.lua",
+        "sha256": "44b74d99704ae504821cfa8a3e03f04d21c7230dd9baae6ce3741516adb4116d"
+      },
+      {
+        "path": "Scripts\\weapon_presentation.lua",
+        "sha256": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+      },
+      {
+        "path": "bin\\DualSP.dll",
+        "sha256": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+      },
+      {
+        "path": "bin\\DualSPUI.dll",
+        "sha256": "a35d5aeb4f50ef2a3d366dee2f3f915ab04b89bcceed70bb314bcd28e17fe3ef"
+      }
+    ]
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "protected_core_matches": true,
+  "syntax_parse_only": [
+    "capture_mount_native.py",
+    "capture_mount_state.py",
+    "inspect_mount_assets.py",
+    "plan_su30sm_fixed_mount.py",
+    "summarize_mount_assets.py",
+    "summarize_mount_state.py"
+  ],
+  "game_started": false,
+  "game_stopped": false,
+  "game_process_read_this_stage": false,
+  "process_write": false,
+  "game_functions_called": false,
+  "runtime_code_changed": false,
+  "candidate_compiled": false,
+  "candidate_installed": false,
+  "test_modules_added_or_run": false
+}

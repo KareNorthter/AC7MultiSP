@@ -1,0 +1,498 @@
+{
+  "steam_build": 9855922,
+  "aircraft": "Su-30SM",
+  "status": "离线方案，尚未接入运行时",
+  "source_sha256": "3ea0ed1b3e96d1dfca5dcc3d3f353f113ef844ceacd4405934af73044de7e52e",
+  "user_accepts_repeated_launch_origin": true,
+  "weapons": {
+    "6AAM": {
+      "native_configuration": 0,
+      "native_slot_count_expected": 6,
+      "loaded_window_expected": 6,
+      "mapping": {
+        "sp11": "sp11",
+        "sp12": "sp12",
+        "sp13": "sp13",
+        "sp14": "sp14",
+        "sp15": "sp13",
+        "sp16": "sp14"
+      },
+      "physical_positions": {
+        "sp11": {
+          "location": [
+            -0.12210182845592499,
+            -46.15999984741211,
+            -2.350663423538208
+          ],
+          "rotation": [
+            0.7149999737739563,
+            -0.0,
+            0.0
+          ]
+        },
+        "sp12": {
+          "location": [
+            -0.12200000137090683,
+            46.15999984741211,
+            -2.3510000705718994
+          ],
+          "rotation": [
+            0.7149999737739563,
+            -0.0,
+            0.0
+          ]
+        },
+        "sp13": {
+          "location": [
+            4.89900016784668,
+            -34.91999816894531,
+            -2.1389999389648438
+          ],
+          "rotation": [
+            0.7149999737739563,
+            -0.0,
+            0.0
+          ]
+        },
+        "sp14": {
+          "location": [
+            4.89900016784668,
+            34.91999816894531,
+            -2.1389999389648438
+          ],
+          "rotation": [
+            0.7149999737739563,
+            -0.0,
+            0.0
+          ]
+        }
+      },
+      "queue_windows": [
+        {
+          "cursor": 0,
+          "logical_slots": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16"
+          ],
+          "physical_positions": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp13",
+            "sp14"
+          ]
+        },
+        {
+          "cursor": 1,
+          "logical_slots": [
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16",
+            "sp11"
+          ],
+          "physical_positions": [
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp13",
+            "sp14",
+            "sp11"
+          ]
+        },
+        {
+          "cursor": 2,
+          "logical_slots": [
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16",
+            "sp11",
+            "sp12"
+          ],
+          "physical_positions": [
+            "sp13",
+            "sp14",
+            "sp13",
+            "sp14",
+            "sp11",
+            "sp12"
+          ]
+        },
+        {
+          "cursor": 3,
+          "logical_slots": [
+            "sp14",
+            "sp15",
+            "sp16",
+            "sp11",
+            "sp12",
+            "sp13"
+          ],
+          "physical_positions": [
+            "sp14",
+            "sp13",
+            "sp14",
+            "sp11",
+            "sp12",
+            "sp13"
+          ]
+        },
+        {
+          "cursor": 4,
+          "logical_slots": [
+            "sp15",
+            "sp16",
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14"
+          ],
+          "physical_positions": [
+            "sp13",
+            "sp14",
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14"
+          ]
+        },
+        {
+          "cursor": 5,
+          "logical_slots": [
+            "sp16",
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15"
+          ],
+          "physical_positions": [
+            "sp14",
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp13"
+          ]
+        }
+      ]
+    },
+    "LAGM": {
+      "native_configuration": 2,
+      "native_slot_count_expected": 6,
+      "loaded_window_expected": 2,
+      "mapping": {
+        "sp31": "sp35",
+        "sp32": "sp36",
+        "sp33": "sp35",
+        "sp34": "sp36",
+        "sp35": "sp35",
+        "sp36": "sp36"
+      },
+      "physical_positions": {
+        "sp35": {
+          "location": [
+            13.531999588012695,
+            -11.781000137329102,
+            -14.303000450134277
+          ],
+          "rotation": [
+            -1.059999942779541,
+            -0.2199999988079071,
+            0.0
+          ]
+        },
+        "sp36": {
+          "location": [
+            13.531999588012695,
+            11.781000137329102,
+            -14.303000450134277
+          ],
+          "rotation": [
+            -1.059999942779541,
+            0.2199999988079071,
+            0.0
+          ]
+        }
+      },
+      "queue_windows": [
+        {
+          "cursor": 0,
+          "logical_slots": [
+            "sp31",
+            "sp32"
+          ],
+          "physical_positions": [
+            "sp35",
+            "sp36"
+          ]
+        },
+        {
+          "cursor": 1,
+          "logical_slots": [
+            "sp32",
+            "sp33"
+          ],
+          "physical_positions": [
+            "sp36",
+            "sp35"
+          ]
+        },
+        {
+          "cursor": 2,
+          "logical_slots": [
+            "sp33",
+            "sp34"
+          ],
+          "physical_positions": [
+            "sp35",
+            "sp36"
+          ]
+        },
+        {
+          "cursor": 3,
+          "logical_slots": [
+            "sp34",
+            "sp35"
+          ],
+          "physical_positions": [
+            "sp36",
+            "sp35"
+          ]
+        },
+        {
+          "cursor": 4,
+          "logical_slots": [
+            "sp35",
+            "sp36"
+          ],
+          "physical_positions": [
+            "sp35",
+            "sp36"
+          ]
+        },
+        {
+          "cursor": 5,
+          "logical_slots": [
+            "sp36",
+            "sp31"
+          ],
+          "physical_positions": [
+            "sp36",
+            "sp35"
+          ]
+        }
+      ]
+    }
+  },
+  "runtime_modified": false,
+  "native_launch_origin_verified": false,
+  "historical_slot_analysis": {
+    "source_file": "su30sm-paused-6aam.json",
+    "sha256": "f01f98a6b5aa888547c553dc6d1688d3ab813cc998e206f9c087b8b7066862eb",
+    "version": "0.1.9",
+    "samples": [
+      {
+        "slot": 0,
+        "socket": "sp11",
+        "translation_candidate_at_0x20": [
+          -0.11891365051269531,
+          -46.15877914428711,
+          -2.3509156703948975
+        ],
+        "asset_translation": [
+          -0.12210182845592499,
+          -46.15999984741211,
+          -2.350663423538208
+        ],
+        "distance_in_resource_units": 0.0034231890385707123,
+        "quaternion_candidate_at_0x10": [
+          0.0,
+          -0.006239511072635651,
+          3.725290298461914e-09,
+          0.9999803900718689
+        ],
+        "quaternion_norm": 0.999999856013346,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          0,
+          0
+        ]
+      },
+      {
+        "slot": 1,
+        "socket": "sp12",
+        "translation_candidate_at_0x20": [
+          -0.12821006774902344,
+          46.15810012817383,
+          -2.3508622646331787
+        ],
+        "asset_translation": [
+          -0.12200000137090683,
+          46.15999984741211,
+          -2.3510000705718994
+        ],
+        "distance_in_resource_units": 0.006495602210854426,
+        "quaternion_candidate_at_0x10": [
+          0.0,
+          -0.006239511072635651,
+          3.725290298461914e-09,
+          0.9999803900718689
+        ],
+        "quaternion_norm": 0.999999856013346,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          1,
+          1
+        ]
+      },
+      {
+        "slot": 2,
+        "socket": "sp13",
+        "translation_candidate_at_0x20": [
+          4.900228500366211,
+          -34.92241287231445,
+          -2.1396262645721436
+        ],
+        "asset_translation": [
+          4.89900016784668,
+          -34.91999816894531,
+          -2.1389999389648438
+        ],
+        "distance_in_resource_units": 0.0027806252724587944,
+        "quaternion_candidate_at_0x10": [
+          0.0,
+          -0.006239511072635651,
+          3.725290298461914e-09,
+          0.9999803900718689
+        ],
+        "quaternion_norm": 0.999999856013346,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          2,
+          2
+        ]
+      },
+      {
+        "slot": 3,
+        "socket": "sp14",
+        "translation_candidate_at_0x20": [
+          4.893547058105469,
+          34.9219970703125,
+          -2.139587640762329
+        ],
+        "asset_translation": [
+          4.89900016784668,
+          34.91999816894531,
+          -2.1389999389648438
+        ],
+        "distance_in_resource_units": 0.005837585624913881,
+        "quaternion_candidate_at_0x10": [
+          0.0,
+          -0.006239511072635651,
+          3.725290298461914e-09,
+          0.9999803900718689
+        ],
+        "quaternion_norm": 0.999999856013346,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          3,
+          3
+        ]
+      },
+      {
+        "slot": 4,
+        "socket": "sp15",
+        "translation_candidate_at_0x20": [
+          11.812356948852539,
+          -11.778217315673828,
+          -13.820310592651367
+        ],
+        "asset_translation": [
+          11.8149995803833,
+          -11.774999618530273,
+          -13.821000099182129
+        ],
+        "distance_in_resource_units": 0.0042204852293283865,
+        "quaternion_candidate_at_0x10": [
+          1.775895361788571e-05,
+          0.0092500951141119,
+          -0.001919776201248169,
+          0.9999552965164185
+        ],
+        "quaternion_norm": 0.9999999225734479,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          4,
+          4
+        ]
+      },
+      {
+        "slot": 5,
+        "socket": "sp16",
+        "translation_candidate_at_0x20": [
+          11.812524795532227,
+          11.77791690826416,
+          -13.8203125
+        ],
+        "asset_translation": [
+          11.8149995803833,
+          11.774999618530273,
+          -13.821000099182129
+        ],
+        "distance_in_resource_units": 0.0038868923429665023,
+        "quaternion_candidate_at_0x10": [
+          -1.7758924514055252e-05,
+          0.0092500951141119,
+          0.001919776201248169,
+          0.9999552369117737
+        ],
+        "quaternion_norm": 0.9999998629714625,
+        "scale_candidate_at_0x30": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "unknown_indices_at_0x40_0x44": [
+          5,
+          5
+        ]
+      }
+    ],
+    "boundary": "相近坐标和单位四元数支持缓存变换解释；尚未确认读取时机及两个索引用途。"
+  },
+  "required_research": [
+    "实际离架使用缓存变换还是实时 Socket",
+    "发射和装填分别如何选择显示组件",
+    "重建队列旋转与持久挂点序号的对应",
+    "LAGM 六槽两装填窗口的现场核对",
+    "挂架网格整体重叠与未用挂架的可接受性"
+  ]
+}

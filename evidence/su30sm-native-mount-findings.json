@@ -1,0 +1,162 @@
+{
+  "steam_build": 9855922,
+  "pid": 35184,
+  "source": "本轮用户暂停进程的只读机器码采集",
+  "agent_called_functions": false,
+  "interpretation": {
+    "0x882e40": "遍历原生 SP 配置并控制挂架显隐、选中挂架引用，随后仍初始化战斗状态",
+    "0x880720": "分别遍历普通导弹和三组 SP Socket，进入显示组件登记路径",
+    "0x8a0480": "按 SP 配置索引登记到显示管理对象的三个组件数组；不是已确认的战斗分组构造器",
+    "0x89e7a0": "仅在显示管理指针为空时创建对应管理对象",
+    "0x883777_call_0x89da40": "传入机炮/MSL/当前SP类的战斗状态初始化研究入口，未调用或修改"
+  },
+  "confirmed_live_mesh_arrays": {
+    "manager_class": "WeaponMeshManager",
+    "owner_pointer_offset": "0x150",
+    "MSL": {
+      "offset": "0x140",
+      "count": 2
+    },
+    "SWP1": {
+      "offset": "0x150",
+      "count": 6
+    },
+    "SWP2": {
+      "offset": "0x160",
+      "count": 4
+    },
+    "SWP3": {
+      "offset": "0x170",
+      "count": 6
+    }
+  },
+  "cautions": [
+    "PE异常展开记录不一定覆盖整个业务函数；已按分支补采片段",
+    "0x8a0480 中 +0x130 字段仅确认存在非零跳过创建的判断，字段含义未证实",
+    "这些 RVA 不是对外稳定接口，未证明可安全调用",
+    "UObject 静态模型组与战斗弹药槽组是不同结构"
+  ],
+  "excerpts": [
+    {
+      "source_file": "extended-882e40.txt",
+      "source_sha256": "a671c80d1f91f5b981c5e91f26b25383a1d8c25ed665a1289d81c0202ab065ca",
+      "selected_instructions": [
+        "0x88343b: test r14b, r14b",
+        "0x88343e: mov r8b, 1",
+        "0x883441: mov rcx, rbx",
+        "0x883444: sete dl",
+        "0x883447: call 0x16f62b0",
+        "0x88344c: mov rax, qword ptr [rbx]",
+        "0x88344f: xor r8d, r8d",
+        "0x883452: movzx edx, r14b",
+        "0x883456: mov rcx, rbx",
+        "0x883459: call qword ptr [rax + 0x240]",
+        "0x8834c0: test r14b, r14b",
+        "0x8834c3: je 0x88350d",
+        "0x8834c5: mov rcx, qword ptr [rdi + 0x250]",
+        "0x8834cc: mov qword ptr [rdi + 0x240], rbx",
+        "0x8834d3: mov byte ptr [rdi + 0x248], 1",
+        "0x88371f: mov rcx, qword ptr [rdi + 0x260]",
+        "0x883726: call 0x89e7a0",
+        "0x88372b: mov rcx, rdi",
+        "0x88372e: call 0x880720",
+        "0x883733: cmp qword ptr [rdi + 0x120], 0",
+        "0x88373b: je 0x88375f",
+        "0x88373d: call 0x8beb00",
+        "0x883742: mov rdx, qword ptr [rdi + 0x120]",
+        "0x883749: mov rcx, rdx",
+        "0x88374c: test rdx, rdx",
+        "0x88374f: je 0x88375f",
+        "0x883751: cmp rcx, rax",
+        "0x883754: je 0x883762",
+        "0x883756: mov rcx, qword ptr [rcx + 0x30]",
+        "0x88375a: test rcx, rcx",
+        "0x88375d: jne 0x883751",
+        "0x88375f: mov rdx, r12",
+        "0x883762: mov r9, qword ptr [rdi + 0x1f8]",
+        "0x883769: mov r8, qword ptr [rdi + 0x130]",
+        "0x883770: mov rcx, qword ptr [rdi + 0x260]",
+        "0x883777: call 0x89da40",
+        "0x88377c: mov rcx, rdi",
+        "0x88377f: call 0x884650"
+      ]
+    },
+    {
+      "source_file": "current-880720.txt",
+      "source_sha256": "7d4f85f6614c8553c3453070e11cc6134c9c1192b62ad34873b46b447381eb8f",
+      "selected_instructions": [
+        "0x8808f0: mov rax, qword ptr [r14 + 0x280]",
+        "0x8808f7: mov rdi, qword ptr [rdi + rax]",
+        "0x8808fb: mov rsi, qword ptr [rdi + 0x18]",
+        "0x8808ff: mov qword ptr [rbp - 0x21], rsi",
+        "0x880903: test rsi, rsi",
+        "0x880906: je 0x880a98",
+        "0x88090c: cmp qword ptr [rdi], 0",
+        "0x880910: je 0x880a98",
+        "0x880a42: movzx eax, byte ptr [r14 + 0x249]",
+        "0x880a4a: mov r8, r13",
+        "0x880a4d: mov r9, qword ptr [rbp - 0x21]",
+        "0x880a51: mov edx, ebx",
+        "0x880a53: mov rcx, qword ptr [rbp + 0x7f]",
+        "0x880a57: mov byte ptr [rsp + 0x30], al",
+        "0x880a5b: mov eax, dword ptr [rbp + 0x6f]",
+        "0x880a5e: mov byte ptr [rsp + 0x28], al",
+        "0x880a62: mov rax, qword ptr [rbp + 0x67]",
+        "0x880a66: mov qword ptr [rsp + 0x20], rax",
+        "0x880a6b: call 0x8a0480"
+      ]
+    },
+    {
+      "source_file": "extended-8a0480.txt",
+      "source_sha256": "9fd51b7e622db25143c6d8a2ea4ec30f1c57ca64a1297f2367e0113d839f9f62",
+      "selected_instructions": [
+        "0x8a048a: cmp qword ptr [rcx + 0x130], 0",
+        "0x8a0492: mov r10, r9",
+        "0x8a0495: mov r11, r8",
+        "0x8a0498: mov edi, edx",
+        "0x8a049a: mov rbx, rcx",
+        "0x8a049d: jne 0x8a0573",
+        "0x8a04cd: cmp edi, 2",
+        "0x8a04d0: jne 0x8a0501",
+        "0x8a04d2: movsxd rdi, dword ptr [rbx + 0x178]",
+        "0x8a04d9: lea ecx, [rdi + 1]",
+        "0x8a04dc: mov dword ptr [rbx + 0x178], ecx",
+        "0x8a04e2: cmp ecx, dword ptr [rbx + 0x17c]",
+        "0x8a04e8: jle 0x8a04f8",
+        "0x8a04ea: mov edx, edi",
+        "0x8a04ec: lea rcx, [rbx + 0x170]",
+        "0x8a04f3: call 0xe3bfb0",
+        "0x8a04f8: mov rax, qword ptr [rbx + 0x170]",
+        "0x8a04ff: jmp 0x8a0562",
+        "0x8a0501: cmp edi, 1",
+        "0x8a0504: jne 0x8a0535",
+        "0x8a0506: movsxd rdi, dword ptr [rbx + 0x168]",
+        "0x8a0535: movsxd rdi, dword ptr [rbx + 0x158]",
+        "0x8a053c: lea eax, [rdi + 1]",
+        "0x8a0562: lea rdx, [rax + rdi*8]",
+        "0x8a0566: test rdx, rdx",
+        "0x8a0569: je 0x8a056e",
+        "0x8a056b: mov qword ptr [rdx], rsi"
+      ]
+    },
+    {
+      "source_file": "extended-89e7a0.txt",
+      "source_sha256": "37a27bbdee84c9726ff7ede433330bdec87b5a15c71367f144bb97a5516a16e6",
+      "selected_instructions": [
+        "0x89e878: call 0xbeeb80",
+        "0x89e87d: mov rcx, rax",
+        "0x89e880: mov qword ptr [rdi + 0x150], rax",
+        "0x89e887: call 0x1688440",
+        "0x89e88c: mov rsi, qword ptr [rsp + 0x80]",
+        "0x89e894: add rsp, 0x50",
+        "0x89e898: pop rdi",
+        "0x89e899: pop rbp",
+        "0x89e89a: pop rbx",
+        "0x89e89b: ret ",
+        "0x89e9da: movzx edi, byte ptr [rsi + 0x1bc]",
+        "0x89e9e1: shr dil, 4",
+        "0x89e9e5: and dil, 1"
+      ]
+    }
+  ]
+}
