@@ -1,0 +1,357 @@
+{
+  "recorded_at": "2026-10-15T19:08:00.214089+08:00",
+  "research_base": "af4ce5d",
+  "branch": "codex/aircraft-mount-survey",
+  "user_report": "原版 TLS 切到 MSL 会持续随飞机发射；本模组曾出现切换 SP 后光束留在原地，故主动收尾。",
+  "user_scope_update": "如涉及底层架构大改，TLS 不强求当下解决。优先研究局部可改范围，ECM 仅核查风险。",
+  "runtime_code_modified": false,
+  "compiled": false,
+  "installed": false,
+  "gameplay_tested": false,
+  "game_functions_called": false,
+  "game_memory_written": false,
+  "test_modules_added_or_run": false,
+  "game_started_by_agent": false,
+  "game_process_count_at_check": 0,
+  "assets": {
+    "plwp_tls_x3": {
+      "parent": "AttachedInstantWeapon",
+      "explicit_defaults": {
+        "WeaponID": "EWeaponID::WID_tls",
+        "LifeTime": 8.0,
+        "LoadTime": 13.0,
+        "bIsBaseAttached": true,
+        "bSwitchWeaponOnLastDestroyed": true
+      },
+      "unserialized_fields_not_assumed": [
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_tls_x3.uasset",
+      "asset_sha256": "41dcab4c1aa6821ba9c47e495678fdc5094e8d7de3f8527bc00356f5d6071ea6",
+      "json_sha256": "fb5e2dd0f98f218f3f03dfa55d539dba0b6a398ee61f359888810443de712c28"
+    },
+    "plwp_esm_x0": {
+      "parent": "ElectronicSupportMeasures",
+      "explicit_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0,
+        "EffectRangeMeter": 3200.0,
+        "JammingTimeCampaign": 26.0,
+        "SupportTimeCampaign": 26.0
+      },
+      "unserialized_fields_not_assumed": [
+        "bIsBaseAttached",
+        "bSwitchWeaponOnLastDestroyed",
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_esm_x0.uasset",
+      "asset_sha256": "bb976d92ec824d1ffc13ab3eeb356f18a61cdb86f458e45db56d2be9d3723007",
+      "json_sha256": "a6a484643e3fc779cdf981eeb58d6a637f28f0af95d9d3cc0ab193bfdb044b60"
+    },
+    "plwp_ecmp_x2": {
+      "parent": "plwp_esm_x0_C",
+      "explicit_defaults": {},
+      "unserialized_fields_not_assumed": [
+        "WeaponID",
+        "LifeTime",
+        "LoadTime",
+        "bIsBaseAttached",
+        "bSwitchWeaponOnLastDestroyed",
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2.uasset",
+      "asset_sha256": "5be7742c27a68a0b15056d21b5ab474e812631e7801333367ea322e80768e405",
+      "json_sha256": "fe2a198611453f51318a7223857aa60a253d4b0fa2a0ed3f0b506ea7f9778080"
+    },
+    "plwp_ecmp_x1": {
+      "parent": "plwp_esm_x0_C",
+      "explicit_defaults": {},
+      "unserialized_fields_not_assumed": [
+        "WeaponID",
+        "LifeTime",
+        "LoadTime",
+        "bIsBaseAttached",
+        "bSwitchWeaponOnLastDestroyed",
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1.uasset",
+      "asset_sha256": "6ffc4b65d6e35c7e38b718b873d57b804a7db100619362ca4f8f2be788ec17bb",
+      "json_sha256": "533b5176452d2e5470ebb3d52478b2128b8943df060c2cc4e2a2c6ff9d92359a"
+    },
+    "plwp_tls_x1": {
+      "parent": "AttachedInstantWeapon",
+      "explicit_defaults": {
+        "WeaponID": "EWeaponID::WID_tls",
+        "LifeTime": 8.0,
+        "LoadTime": 13.0,
+        "bIsBaseAttached": true,
+        "bSwitchWeaponOnLastDestroyed": true
+      },
+      "unserialized_fields_not_assumed": [
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_tls_x1.uasset",
+      "asset_sha256": "a9a4d32c5647a987e20e7223cfc2abf08fc1f031401d4371f9d1411dc01c9b88",
+      "json_sha256": "0bb62a03ba34349fa216c971ded5b66fa341bd51d0350b35fed6d093b350419a"
+    },
+    "plwp_tls_x2": {
+      "parent": "AttachedInstantWeapon",
+      "explicit_defaults": {
+        "WeaponID": "EWeaponID::WID_tls",
+        "LifeTime": 8.0,
+        "LoadTime": 11.0,
+        "bIsBaseAttached": true,
+        "bSwitchWeaponOnLastDestroyed": true
+      },
+      "unserialized_fields_not_assumed": [
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_tls_x2.uasset",
+      "asset_sha256": "149858ec1c6139e8cac33afadd24b48bf6b9b4e0e5bbfbeaa55cba8d09dbb358",
+      "json_sha256": "881ca50bdfc006dc165ed5fa6e9aee40f226ab20e7ffc252122e5f8ca153d07f"
+    },
+    "plwp_tls_x0": {
+      "parent": "AttachedInstantWeapon",
+      "explicit_defaults": {
+        "WeaponID": "EWeaponID::WID_tls",
+        "LifeTime": 8.0,
+        "LoadTime": 13.0,
+        "bIsBaseAttached": true,
+        "bSwitchWeaponOnLastDestroyed": true
+      },
+      "unserialized_fields_not_assumed": [
+        "bReloadOnFire",
+        "bReloadAfterAllFired",
+        "EffectRangeMeter",
+        "JammingTimeCampaign",
+        "SupportTimeCampaign",
+        "bSupportEnable",
+        "bJammingEnable"
+      ],
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_tls_x0.uasset",
+      "asset_sha256": "72c4abff4f7e995ef001f17610dd9134fc9649640c278c1c1f384ba69aa43ca1",
+      "json_sha256": "2170fda74633bbc78efd6fb377b05333c3b5a6e3c7776a92e2c7c59df7b76afa"
+    }
+  },
+  "historical_tls_reflection": [
+    {
+      "name": "bIsBaseAttached",
+      "kind": "BoolProperty",
+      "offset": "0x638"
+    },
+    {
+      "name": "AttachedComponent",
+      "kind": "ObjectProperty",
+      "offset": "0x640"
+    },
+    {
+      "name": "AttachedSocketName",
+      "kind": "NameProperty",
+      "offset": "0x648"
+    },
+    {
+      "name": "OwningGameObject",
+      "kind": "ObjectProperty",
+      "offset": "0x3b8"
+    },
+    {
+      "name": "LifeTime",
+      "kind": "FloatProperty",
+      "offset": "0x438"
+    },
+    {
+      "name": "LoadTime",
+      "kind": "FloatProperty",
+      "offset": "0x43c"
+    },
+    {
+      "name": "bReloadOnFire",
+      "kind": "BoolProperty",
+      "offset": "0x458"
+    },
+    {
+      "name": "bReloadAfterAllFired",
+      "kind": "BoolProperty",
+      "offset": "0x459"
+    },
+    {
+      "name": "bSwitchWeaponOnLastDestroyed",
+      "kind": "BoolProperty",
+      "offset": "0x45d"
+    }
+  ],
+  "native_observations": [
+    {
+      "entry": "0x85f470",
+      "fact": "玩家 AttachedInstantWeapon Tick 调用 0x8614c0；后者调用通用更新并检查所属机体有效性和健康。",
+      "boundary": "历史玩家 x2 类型已核对，不能据 Tick 片段唯一判定定点光束原因。"
+    },
+    {
+      "entry": "0x884f10",
+      "sites": [
+        "0x884fa5",
+        "0x884faf"
+      ],
+      "fact": "initialize 调用链将 activator+0x338 的 ActiveWeapons 数量清零。",
+      "boundary": "代码事实；不等同于已证明光束停止跟随的具体机制。"
+    },
+    {
+      "entry": "0x89da40",
+      "callee": "0x89bc40",
+      "fact": "清理旧组动态数组并重建原生组，不能保留旧池指针当有效上下文。"
+    },
+    {
+      "entry": "0x894850",
+      "callee": "0x885240",
+      "sites": [
+        "0x885277",
+        "0x8852f6",
+        "0x885304",
+        "0x885327",
+        "0x885342"
+      ],
+      "fact": "TLS 结束回调移除活动对象，并读取当前 SP 默认对象、弹药和结束对象的最后销毁切换标志。",
+      "boundary": "显示跨 SP 结束归属冲突风险；未实测错误切换。"
+    },
+    {
+      "entry": "0x897010",
+      "callee": "0x89e3c0",
+      "fact": "通用收尾有条件地用保存的 owner/group/slot 访问当前组并推进装填。",
+      "boundary": "是否走此分支由原生标志决定，TLS/ECM 每个变体均未现场确认。"
+    }
+  ],
+  "disk_executable_probe": {
+    "rva": "0x85f470",
+    "sample_length": 32,
+    "matches_historical_memory": false,
+    "action": "停止从磁盘该入口推导；未猜测差异原因。"
+  },
+  "assessments": {
+    "tls_to_msl": "明确局部候选：最终目标 MSL 不主动终止，不重建；未实施、待活动发射对照。",
+    "tls_to_another_sp": "保持强制收尾；完整解决需源槽归属、活动登记、附着、自然结束和装填通知闭合，较大改动暂缓。",
+    "ecm": "实际 ECM 仍只单挂，不走跨 SP 重建且不触发 TLS 收尾。持续状态风险未复现，暂不解除限制。"
+  },
+  "live_acceptance_pending": [
+    "TLS 跟随机体转弯且伤害正确",
+    "MSL/同 TLS/另一 SP 的三类转移",
+    "自然结束、冷却、最后一发与快速切换",
+    "ECM 真实作用中心和目标效果撤销",
+    "补给、检查点、死亡和世界切换清理"
+  ],
+  "source_hashes": {
+    "E:\\AC7_MultiSP\\Temp\\candidate8-tls-type.txt": "dab79979faaefab1c9f17810562c51e28e0a72427d396a3ee1da64172e42eab1",
+    "E:\\AC7_MultiSP\\Temp\\experience-object-index.json": "0cbe2aba2387c84488385e6d85a44440722d6ef2b932182bad77c75390bcf6f1",
+    "E:\\AC7_MultiSP\\Temp\\candidate7-interfaces.txt": "dcb7f32c57a1c9161a077adededf87439735f570d5610dd237d5358cf18aa0bf",
+    "E:\\AC7_MultiSP\\Temp\\flow-85f470.bin": "2a9eaefaa8a7910ff7063545ef61863908d48f9bf31ba64fde0f0cf1f7d4bf3f",
+    "E:\\AC7_MultiSP\\Temp\\flow-8614c0.bin": "00bc61d534f547578801eb3b250abca5fa0148409a5925a68c141d27f59432f9",
+    "E:\\AC7_MultiSP\\Temp\\flow-897010.bin": "c1fe1d0149996cdf7eb71135185fd81bb13b8950f4a4492bc77b1abd0c3ec531",
+    "E:\\AC7_MultiSP\\Temp\\flow-894850.bin": "69517a7b2ac88debe2fdafdcc92b2d6f3099662d985281441f2b31928dd7932f",
+    "E:\\AC7_MultiSP\\Temp\\flow-861490.bin": "4f9dabde2445b5eaf5973fa17c7f73189b1f19ca2c0e1ecf2725450b0107765c",
+    "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\native-stage4-crosscheck\\mount-87f000-9000.bin": "7b6ffcd2ec4a8c4f6e0d25d8babf7eb21f7539c43131ab4ae48c5c5b1031911b",
+    "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\native-stage4-crosscheck\\mount-898000-c000.bin": "ec4452f4e6bc4e160d73d67c17ea6d8c8b29c274431d36b71707847e43123b35",
+    "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\native-stage4-crosscheck\\manifest.json": "4e822303afd0ad27d894f3c819cc9e28af4db6c5523fac07ed61fa62279b92a1"
+  },
+  "source_code_hashes": {
+    "src\\weapon_bridge.cpp": "98df956dd687c9f83d957940e72a8808d5023fbdd66442eb5f7b8a79e3d4428c",
+    "dist\\DualSP\\Scripts\\main.lua": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9",
+    "dist\\DualSP\\Scripts\\loadout_profile.lua": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4"
+  },
+  "installed_candidate": "1.0.2-su30sm-three-sp.1",
+  "installed_file_checks": {
+    "Scripts/json.lua": {
+      "expected": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+      "actual": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e"
+    },
+    "Scripts/loadout_flow.lua": {
+      "expected": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b",
+      "actual": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b"
+    },
+    "Scripts/loadout_profile.lua": {
+      "expected": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+      "actual": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4"
+    },
+    "Scripts/main.lua": {
+      "expected": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9",
+      "actual": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9"
+    },
+    "Scripts/native_hud.lua": {
+      "expected": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8",
+      "actual": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8"
+    },
+    "Scripts/native_loadout.lua": {
+      "expected": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0",
+      "actual": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0"
+    },
+    "Scripts/runtime_context.lua": {
+      "expected": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+      "actual": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6"
+    },
+    "Scripts/weapon_cycle.lua": {
+      "expected": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+      "actual": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65"
+    },
+    "Scripts/weapon_names.lua": {
+      "expected": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+      "actual": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada"
+    },
+    "Scripts/weapon_presentation.lua": {
+      "expected": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb",
+      "actual": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+    },
+    "bin/DualSP.dll": {
+      "expected": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508",
+      "actual": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508"
+    },
+    "bin/DualSPUI.dll": {
+      "expected": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750",
+      "actual": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750"
+    },
+    "VERSION": {
+      "expected": "3380181cf53b2b157f61c3695a3bd651f176c327c4203f9a1f1af278a5319612",
+      "actual": "3380181cf53b2b157f61c3695a3bd651f176c327c4203f9a1f1af278a5319612"
+    }
+  },
+  "main_worktree_modified_by_agent": false,
+  "raw_resources_committed": false
+}

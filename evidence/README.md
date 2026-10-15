@@ -1,5 +1,10 @@
 # 精选证据索引
 
+## TLS / ECM 持续效果研究
+
+- [来源与判断](continuous-sp-effects-research.json)：四种原版 TLS、ECM 继承链、历史反射及原生初始化/收尾冲突；未实机验证，安装候选未改。
+- [局部改善与暂缓范围](../docs/research/continuous-sp-effects.txt)：优先 TLS→MSL，较大生命周期改动按用户要求后置。
+
 ## 多机型挂载抽样（离线）
 
 - [八机资源摘要](aircraft-mount-survey.json)：原版资源、参考骨架坐标和控制通道；不含第三方覆盖，不等于现场状态。

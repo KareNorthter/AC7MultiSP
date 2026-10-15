@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+2026-10-15 TLS/ECM 持续效果研究：用户允许涉及大改时暂缓。源码确认 TLS→MSL 不重建 SP，但现有通用收尾仍会主动关光束，因此有局部改善候选；不同 SP 切换会清空 ActiveWeapons 并重建组，旧 TLS 自然结束又访问当前 SP，需要更完整的生命周期归属，现阶段不改。ECM 仍仅单挂，资源显示独立范围/作用时长/寿命，未复现持续效果故障。本轮只读源码、原版资源和历史原生快照，未改运行代码、编译、部署或实机测试，游戏保持关闭。见[持续效果研究](docs/research/continuous-sp-effects.txt)、[证据](evidence/continuous-sp-effects-research.json)。
+
 2026-10-15 多机型离线抽样已完成：当前研究分支 `codex/aircraft-mount-survey`，基于 `be58c83`，已安装的 Su-30SM 三 SP 候选保持原样。八架原版样本覆盖弹仓、混合挂架、固定激光/电磁炮、ADMM 阵列和 UAV。F-22 QAAM＋XSDB 共用参考骨架与 spwc 通道，适合优先研究共享舱门；尚未确认运行时重置入口。用户新增硬要求：同一弹仓切换 SP 不改变舱门姿态或重置动画进度，发射引起的合法动作保留。本轮仅资源解析和布局枚举，未启动游戏、编译、安装或运行测试模块，不能记为新机型实测通过。见[抽样报告](docs/research/aircraft-mount-survey.txt)、[布局实验](evidence/aircraft-mount-layout-experiments.json)、[保护核对](evidence/aircraft-mount-survey-preservation.json)。HUD 剪影问题仍只登记。
 
 2026-10-15 18:03 三 SP 固定挂载集成已安装，游戏保持关闭：当前独立分支 `codex/su30sm-three-sp-fixed-mount`，候选 `1.0.2-su30sm-three-sp.1`。用户确认旧候选 .2 检查点重来后四加二显示完整。本轮融合指定兼容任务的正式 F6 修订 `b6b6979`，以及三 SP 任务在 `5628a62` 上未提交的稳定源码快照；不改主工作区。Su-30SM 三挂为外翼两处 QAAM、内翼两处 6AAM、机腹两处 LAGM，允许重复出弹；原 6AAM＋LAGM 双挂仍四加二。核心/UI、Lua 语法与安装核对通过，三挂尚未实玩。配置 schema 2、协议 3、自动按实际槽数均分；首次启动迁移，旧第三槽为空。原候选、配置、日志及存档已备份，外部模组和正式 ZIP 保留。HUD 剪影问题本轮不修，代理不自动出击或发射。见[集成说明](docs/research/su30sm-three-sp-fixed-mount.txt)、[安装回执](evidence/su30sm-three-sp-installed.json)、[双挂检查点验证](evidence/su30sm-fixed-mount-checkpoint-validation.json)。下方均为历史状态；本分支不能使用正式打包器或原三 SP 安装入口覆盖当前候选。
