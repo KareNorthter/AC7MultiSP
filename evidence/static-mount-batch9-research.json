@@ -1,0 +1,84 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.9",
+  "steam_build": 9855922,
+  "process_written": false,
+  "game_functions_called": false,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "source_hashes": {
+    "Temp/f35c-batch8-single-4aam-paused.json": "2e430a4593a7e3dcf8457119a70becbd4e402ef4c11e63733a841df594b1a805",
+    "Temp/f35c-batch8-three-8agm-protruding.json": "13215ae112064554640fac1e53417b9640261402e8a820f71fc99fb63f909355",
+    "Temp/f35-reflection9.json": "e765d23b3091ad5489239242dcbff388846c11ffc6532393dc173d44f43fdf7e",
+    "Temp/f35-animation-layout9.json": "18150c64cac7c174144206980072d2a45b0d494c9f429e63fade6a287623a434",
+    "Temp/f35-component-layout9.json": "14709b4cc0eb8583581801a0c3dc47590d71272dcbb514e706db320e8c153e34",
+    "Temp/f35-node-update9.txt": "8dbbd9038d6db09d566034ce47d5e699ead6652b03437c32e31a510946a7bf10",
+    "Temp/f35-body-output9.txt": "136426f47836b647c20ad13c145c343a2d41c681c9cc220c26d8bff68cf418c9",
+    "Temp/f35-pause-native9.txt": "df1417ad83f56f7acc42135a05651dfd20b34886784e4d4116f029f752a3af68",
+    "Temp/f35-component-tick-native9.txt": "0924f8f35166eb9319336187a53529a2fd0a0537cd629805238d9a5c4ca9674b",
+    "Temp/f35-tick-state9.txt": "28ca2010976eaa748e711a787952f2e7d978aa526b1ec3c223f809d2e1fba73d",
+    "Temp/f35-animation-freeze9.json": "3b9ee276a9cd75800ffeec5dd800a01db2cfce08d4bdbc874dd833a8923b13b7",
+    "Temp/f35c-batch8-cover-native/88a800.txt": "de6775606051835fc57f815b50c893b4440f6c012664a978f7012275890a70ce",
+    "Temp/f35c-batch8-cover-native/1cd4660.txt": "67931237b36fcf74f78ff7811c461088871b3aa51877f07c1e30df098cfdea9a"
+  },
+  "f35c_single": {
+    "actual_config": 1,
+    "stale_plane_selection": 2,
+    "cause": "Lua 初始化第一槽未同步编号；单挂核心不进入其他槽重建路径",
+    "change": "核心统一初始化第一槽，Lua 删除重复入口，重建次数不增加"
+  },
+  "f35c_freeze": {
+    "plane_outputs": [
+      1.0,
+      -0.009999999776482582,
+      -0.009999999776482582,
+      1.0,
+      1.0,
+      1.0,
+      -0.009999999776482582
+    ],
+    "rack_cached_outputs": [
+      1.0,
+      -0.009999999776482582,
+      1.0,
+      -0.009999999776482582,
+      1.0,
+      -0.009999999776482582,
+      1.0
+    ],
+    "rack_animation_flags": 2,
+    "rack_tick_enabled": 0,
+    "output_order": [
+      "Spwc",
+      "Swc1",
+      "Swc2",
+      "Swc3",
+      "Swca",
+      "Swcb",
+      "Swcc"
+    ],
+    "setter_prefix": "48895c2408574883ec20f6413c02",
+    "cause": "飞机 Swcc 已闭合，SWP2 缓存仍全开；原生非当前骨架 bPauseAnims=true、组件 Tick=false",
+    "native_disable_rva": "0x7f0210",
+    "tick_setter_rva": "0x168aaa0",
+    "change": "固定布局提交时恢复已选 SWP2 动画更新；解绑归还最近原生请求，不直接改骨骼/缓存或藏导弹",
+    "correction": "此前把公共进度为 1 推断为外露直接原因并不充分；动画实例缓存与暂停标记给出直接原因，不为外置 8AGM 改写公共开火就绪进度"
+  },
+  "same_bay": {
+    "cause": "武器重建强制把 SP 请求设为闭舱，下一次武装重新触发打开",
+    "change": "仅 SOD/4AAM 普通切换在初始化前后保存/恢复 SP 舱门请求、状态与进度，早于 keepArmed；补给和检查点不复用"
+  },
+  "combinations": [
+    "SOD+4AAM",
+    "SOD+8AGM",
+    "4AAM+8AGM",
+    "SOD+4AAM+8AGM"
+  ],
+  "pending": [
+    "四组合实玩与快速轮换",
+    "补给三挂↔单挂 4AAM",
+    "发射离架/装填",
+    "检查点",
+    "UI 本轮用户验证"
+  ],
+  "ui": "沿用 .8 已合并的 5031f9d；无额外 UI 功能修改"
+}

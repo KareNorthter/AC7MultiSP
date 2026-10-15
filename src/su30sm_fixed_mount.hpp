@@ -47,6 +47,8 @@ struct FixedMountState {
     int physicalCount{6}; // 只遍历本机布局，不把空余容量视为有效位置。
     unsigned rackMask{4}; // 明确选择挂架，固定炮体不按待发弹药显隐。
     std::vector<MountVisual> visuals; // 已核对的武器及挂架显隐；活动骨架保留原父链、动画和 Socket。
+    MountIdentity animatedRack; // 已选择并需要持续播放的 F-35C SWP2；显隐接管也必须接管动画生命周期。
+    bool nativeRackPaused{},nativeRackTick{}; // 最近一次原生重建请求，解除固定挂载时归还。
     unsigned readyMask{}; // 实际物理位置的聚合就绪状态。
     unsigned pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
@@ -111,6 +113,18 @@ bool mountAlive(const MountIdentity& identity) {
     const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24; // 当前条目。
     return read<Addr>(entry)==identity.address && read<int>(entry+16)==identity.serial;
 }
+// 使用已核对的组件 Tick 接口更新调度队列，不能仅改 Tick 状态字节。
+void mountSetRackAnimation(Addr rack,bool paused,bool tick) {
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前构建的 SetComponentTickEnabled。
+    constexpr unsigned char prefix[]={0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x20,0xf6,0x41,0x3c,0x02};
+    require(read<Addr>(read<Addr>(rack)+0x308)==base+0x168aaa0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x168aaa0),prefix,sizeof(prefix))==0,"活动挂架：原生 Tick 接口改变");
+    const auto flags=read<unsigned>(rack+0x9b0); // 反射确认 bPauseAnims 为位 1，不改 bNoSkeletonUpdate。
+    write<unsigned>(rack+0x9b0,paused?(flags|2u):(flags&~2u));
+    using SetTick=void(*)(void*,bool); // 原生维护注册队列和启用状态。
+    reinterpret_cast<SetTick>(base+0x168aaa0)(reinterpret_cast<void*>(rack),tick);
+    require((read<unsigned char>(rack+0x3f)!=0)==tick,"活动挂架：Tick 状态未按请求更新");
+}
 // 涂装派生类必须继承已登记原版机体的完整资源类。
 MountAircraft mountAircraft(Addr plane) {
     Addr cls=read<Addr>(plane+0x10); // 从真实实例沿类父链检查。
@@ -162,6 +176,8 @@ void mountApply() {
 void fixedMountRelease() {
     f35Cover={}; // 生命周期结束或重建后由当前飞机重新绑定动画状态。
     fixedMount.bound=false; // 先直通，避免归还显示的调用再次被过滤。
+    if(mountAlive(fixedMount.animatedRack))
+        mountSetRackAnimation(fixedMount.animatedRack.address,fixedMount.nativeRackPaused,fixedMount.nativeRackTick);
     for(const auto& visual:fixedMount.visuals)if(mountAlive(visual.identity)) {
         mountOriginalHidden(reinterpret_cast<void*>(visual.identity.address),visual.nativeHidden,0);
         mountOriginalVisibility(reinterpret_cast<void*>(visual.identity.address),visual.nativeVisible,0);
@@ -487,6 +503,16 @@ void fixedMountCommit(const Command& command) {
     fixedMount.weaponKinds=kinds;
     for(int index=0;index<session.count;++index)fixedMount.weaponClasses[index]=session.special[index].weaponClass;
     if(command.op=="setup" || command.op=="resupply_setup" || command.op=="resupply")fixedMount.order={0,1,2,3,4,5,6,7,8,9,10,11};
+    if(aircraft==MountAircraft::F35c && (kindsMask&4) &&
+       (command.op=="setup" || command.op=="resupply_setup" || command.op=="resupply" ||
+        command.op=="switch" || command.op=="checkpoint_restore")) {
+        // 原生初始化暂停非当前挂架并关闭 Tick；持久显示的 SWP2 必须继续读取 Swcc，才能随腹舱收回。
+        const Addr rack=read<Addr>(command.plane+0x1b90); // 已在绑定时核对骨架类型和资源。
+        fixedMount.animatedRack=mountIdentity(rack);
+        fixedMount.nativeRackPaused=(read<unsigned>(rack+0x9b0)&2)!=0;
+        fixedMount.nativeRackTick=read<unsigned char>(rack+0x3f)!=0;
+        mountSetRackAnimation(rack,false,true);
+    }
     fixedMount.rebuilding=false;
     fixedMountRefresh(command.time);
 }

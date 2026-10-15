@@ -472,6 +472,21 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #endif
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    // 仅普通 SP 切换保留同一内置弹舱；补给、出击和检查点必须服从各自的新状态。
+    const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
+        session.configs[session.active]<2 && index<2;
+    const Addr cover=sameBay?f35Cover.parts:0; // 只有已绑定且身份有效的 F-35C 才读取通道。
+    std::array<float,7> coverProgress{}; // 公共、独立及组合通道在重建期间没有经过一帧。
+    int coverRequest{},coverState{}; // 原生初始化会强制关舱，恢复请求须早于 keepArmed。
+    if(sameBay) {
+        require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==cover,"同舱切换：飞机或动画实例改变");
+        coverRequest=read<int>(cover+0x58);coverState=read<int>(cover+0x274);
+        require(coverRequest>=0 && coverRequest<=3 && coverState>=0 && coverState<=3,"同舱切换：舱门状态无效");
+        for(int i=0;i<7;++i) {
+            coverProgress[i]=read<float>(cover+0x17c+i*4);
+            require(std::isfinite(coverProgress[i]) && coverProgress[i]>=-1 && coverProgress[i]<=1,"同舱切换：动画进度无效");
+        }
+    }
     fixedMount.rebuilding=true; // 原生临时武器池按原规则建立，最终事务再提交固定出弹映射。
     fixedMount.pendingReadyMask=0; // 每次重建重新记录，不把上一武器的完成事件带过来。
 #endif
@@ -485,6 +500,13 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     syncPlaneWeaponSelection(command.plane,index); // 保持原生选择编号与本次真实配置一致，舱门继续由原生更新。
 #endif
     reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    if(sameBay) {
+        // 两种内置兵装共用实际腹舱；接续原有开/闭过程，避免重建后重新请求开舱。
+        write<int>(cover+0x58,coverRequest);write<int>(cover+0x274,coverState);
+        for(int i=0;i<7;++i)write<float>(cover+0x17c+i*4,coverProgress[i]);
+    }
+#endif
     // A loadout rebuild also resets the machine gun. Preserve its ammunition,
     // plus flare count, during an SP change; a deliberate resupply uses defaults.
     if(preserveAuxiliary) {
@@ -571,6 +593,8 @@ void execute(const Command& command) {
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
         session.count=command.count;session.configs=command.configs;
         if(command.op=="setup")checkpointValid=false;
+        // 第一槽与其余槽走同一初始化入口，包含单挂；重建次数与原 Lua 路径相同。
+        initialize(command,session.configs[0],false);
         session.main=capture(command.activator,false,command.time);
         scaleAmmo(command.activator,session.count);
         session.special[0]=capture(command.activator,true,command.time);

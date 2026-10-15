@@ -1,0 +1,13 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.8",
+  "recorded_at": "2026-10-15T23:50:47.492740+08:00",
+  "source": "当前用户反馈及按请求完成的暂停现场，范围不扩大到未逐项测试内容",
+  "su30sm": "用户表示一切正常；本批 LAGM 空位及补给换装反馈通过",
+  "f35c": {
+    "triple_4aam_to_8agm": "腹舱关闭但两枚 4AAM 外露，失败",
+    "sod_to_4aam": "互切重复打开舱门，失败",
+    "single_4aam_after_resupply": "切到 SP 和发射无舱门动画，没有模型外露，失败"
+  },
+  "other_combinations_ui": "用户未逐个测试，不记为通过",
+  "tls_other_sp": "已知低优先级问题保留"
+}

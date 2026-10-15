@@ -180,6 +180,15 @@ def main():
             "process_write": False, "game_functions_called": False, "base": hex(memory.base),
             "plane": identity, "activator": describe(activator), "owner": describe(owner),
             "state": hex(state), "command": command, "groups": {}, "objects": {}}
+        if args.expected_plane == 'f35c':
+            # 舱门通道偏移已由 .8 原生更新函数核对，原件只保存在 Temp。
+            engine = pointer(plane + 0x1410)
+            parts = memory.read(engine + 0xf90, 0x2a0)
+            report['f35_parts'] = {'engine': hex(engine), 'raw': parts.hex(),
+                'selection': struct.unpack_from('<i', parts, 0x178)[0],
+                'channels': {hex(offset): struct.unpack_from('<f', parts, offset)[0]
+                    for offset in (0x17c, 0x180, 0x184, 0x188, 0x18c, 0x190, 0x194)},
+                'sp_request': struct.unpack_from('<i', parts, 0x58)[0]}
         queued = {plane, activator, owner}  # 后续仅展开挂载相关对象，不扫描全世界对象内容。
         # 本轮原生 0x89e7a0 与 0x880720 指向的显示管理对象，先验证 UObject 身份。
         mesh_manager = pointer(owner + 0x150)
