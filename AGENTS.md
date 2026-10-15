@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+2026-10-15 当前阶段新增约束：挂载布局以美观为主要原则。满载时优先布局协调、充分利用合适挂点，避免不必要的空挂架、穿插和突兀空位；未使用挂架能独立控制时应隐藏。发射和装填造成的正常空位允许存在，不能为外观增加真实弹药、锁定数或可发射窗口。用户正在测试 `.7`；UI 优化由「UI工作」线程 `01a13edb-e42d-7502-9e1f-2618ea8e973c` 在独立工作区推进，本线程负责合并成下一批更新。测试期间不覆盖运行目录或打断游戏；中央 HUD 移位及方框仍仅为候选需求。
+
 2026-10-15 集中候选 `.7` 已于 21:59 构建安装：Su-30SM 含 QAAM 双挂改为两处 QAAM＋四处另一 SP；F-35C 重建前补齐原生兵装编号同步，舱门修订待实玩；F-15E 新增原版 6AAM/SFFS/TLS 任意双挂和三挂模型共存。备用弹外观不增加可发射窗口。TLS→MSL 沿用用户已确认行为，跨 SP 仍结束。构建、Lua 语法、接口和 13 个运行文件核验通过；配置、存档和外部模组保留，旧版完整备份。游戏正常关闭且未重启，未新增或运行测试模块，所有 `.7` 新行为待用户复测。见[本批说明与集中复测](docs/research/static-mount-batch7.txt)、[研究证据](evidence/static-mount-batch7-research.json)、[安装回执](evidence/su30sm-three-sp-candidate.7-installed.json)。下方为历史阶段状态。
 
 2026-10-15 集中候选 `.6`：本工作区现位于 `codex/static-mount-batch`，继续独立于主工作区。用户确认 `.5` 默认光标与 PART 弹药位置均正常，并要求扩大每批验证范围。已实现 Su-30SM 含 QAAM 的两种双挂、F-35C SOD＋8AGM 静态固定挂载和 TLS→MSL 保留原光束的局部修订。F-35C 在旧 `.5` 上已完成用户操作配合的只读现场采样，确认两槽 SOD、十二槽/八枚窗口 8AGM、池身份稳定及 SWP2/3 偏移差异；不等于新功能已实玩通过。21:08 已构建并安装，Lua 语法/接口/13 个文件核验通过，配置、存档及其他模组已备份保留。游戏已正常关闭且未重新启动，未新增或运行测试模块；新功能实玩待用户。见[构建回执](evidence/su30sm-three-sp-candidate.6-build.json)、[安装回执](evidence/su30sm-three-sp-candidate.6-installed.json)；详见[本批说明与集中测试顺序](docs/research/static-mount-batch.txt)、[研究证据](evidence/static-mount-batch-research.json)。XFA-27 当前不可选，本批未适配；F-22 舱门、机库预览和跨 SP 持续效果未实现。
