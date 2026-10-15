@@ -1073,6 +1073,48 @@ extern "C" __declspec(dllexport) int dualsp_resupply_takeoff(void* luaState) {
     }
 }
 
+// 兵装事务结束后使原生装填剪影失效；不改弹药、窗口数、冷却或实体模型。
+extern "C" __declspec(dllexport) int dualsp_refresh_weapon_icons(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 错误交给 HUD 模块明确报告，不静默沿用旧剪影。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 调用方必须在游戏线程提交最终选择。
+        std::lock_guard<std::mutex> guard(nativeExecutionMutex); // 与兵装重建使用同一事务边界。
+        require(runtimeEnabled,"Mod disabled outside single-player");
+        require(api->top(luaState)==3,"装填剪影接口参数数量无效");verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 当前玩家机体。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // HUD 与核心共同绑定的组件。
+        const auto widget=static_cast<Addr>(api->readInteger(luaState,3)); // Lua 已核对当前世界的 CombinedStatsWidget。
+        require(session.plane==plane && session.activator==activator,"装填剪影兵装会话不符");
+        require(read<Addr>(plane+0x11a8)==activator && read<Addr>(widget+0x210)==plane &&
+            read<Addr>(widget+0x2b0)==activator,"装填剪影 HUD 玩家身份不符");
+        const auto icons=widget+0x420; // PersistentUserWidget 内的原生装填图管理器。
+        require(read<Addr>(icons+0x98)==activator && read<Addr>(icons+0xa0)==plane,
+            "装填剪影内部玩家引用不符");
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 仅支持已研究的 Steam build。
+        const auto changed=read<Addr>(read<Addr>(widget)+0x440); // 原生 OnSpecialWeaponChanged 的虚方法。
+        constexpr unsigned char method[]={0x48,0x81,0xc1,0x20,0x04,0,0,0xe9};
+        constexpr unsigned char refresh[]={0x48,0x83,0xec,0x38,0x4c,0x8b,0x91,0x98,0,0,0};
+        constexpr unsigned char dirty[]={0x38,0x47,0x54,0x75,0x0c,0x84,0xc0};
+        require(changed==base+0x3f2320 &&
+            std::memcmp(reinterpret_cast<void*>(changed),method,sizeof(method))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x49f2f0),refresh,sizeof(refresh))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x49edc1),dirty,sizeof(dirty))==0,
+            "原生装填剪影刷新入口不匹配");
+        using Changed=void(*)(void*); // 原生无参回调从当前武器读取背景/填充贴图。
+        reinterpret_cast<Changed>(changed)(reinterpret_cast<void*>(widget));
+        const auto armed=read<unsigned char>(activator+0x2a1); // 原生重绘条件是该标记等于当前类别。
+        require(armed<=1,"装填剪影武器类别无效");
+        // SP→SP 的最终类别不变，原生不会自行重新显示先前隐藏的第 3–6 枚图标。
+        // 标记下一次原生更新重绑贴图和显隐；数量与进度仍取实际武器装填窗口。
+        write<unsigned char>(icons+0x54,armed);
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("HUD_ICONS_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
 // 游戏线程只读采样，直接返回 Lua 值，不经过命令文件或 JSON。
 // 返回：成功、MSL就绪、SP1就绪、SP2就绪、SP3就绪、错误文字；不修改武器或核心缓存。
 extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {

@@ -47,7 +47,7 @@ local function syncNameStyle(widget,source,factor,cache,key)
     cache[key]=signature
 end
 
-function NativeHUD.new(note)
+function NativeHUD.new(note,refreshIcons)
     local self={cache=nil,status="waiting",error=nil,lastScan=-1,waitingSince=nil,writeCount=0,prehidden={}}
     local panelClass=nil
     local verticalBoxClass=nil
@@ -161,6 +161,7 @@ function NativeHUD.new(note)
         c.applied=false
         c.lastActive=nil
         c.lastSelection=nil
+        c.iconRevision=nil -- 再次显示时重新提交原生剪影，避免沿用关闭前的缓存。
     end
     local function preflight()
         -- Reject an unsupported engine API before modifying any visible widget.
@@ -374,6 +375,18 @@ function NativeHUD.new(note)
         if c.lastActive~=active then
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
             c.lastActive=active
+        end
+        -- 预热期间尚未初始化武器。正式提交按重建编号和类别更新一次，
+        -- 原生每帧继续负责真实装填进度；不按物理挂点数量伪造剪影。
+        if not state.pending and (c.iconRevision~=state.weapon_revision or c.iconArmed~=state.armed)then
+            assert(type(state.weapon_revision)=="number","HUD 缺少兵装重建编号")
+            assert(valid(c.owner.PlayerPlane)and c.owner.PlayerPlane:GetAddress()==plane:GetAddress(),"剪影 HUD 玩家身份不符")
+            local weaponActivator=c.owner.PlayerWeaponActivator -- 当前 HUD 自己绑定的原生组件。
+            assert(valid(weaponActivator),"剪影 HUD 尚未绑定兵装组件")
+            local ok,err=refreshIcons(plane:GetAddress(),weaponActivator:GetAddress(),c.owner:GetAddress())
+            assert(ok,err or "原生装填剪影刷新失败")
+            c.iconRevision=state.weapon_revision;c.iconArmed=state.armed
+            note("NATIVE_HUD_ICONS_COMMITTED revision="..state.weapon_revision.." armed="..tostring(state.armed))
         end
         -- 两个可见箭头只接受最终选择；原生 MSL 中间态被源容器隔离。
         local selection=state.armed and active+1 or 0

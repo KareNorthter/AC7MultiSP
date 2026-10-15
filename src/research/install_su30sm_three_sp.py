@@ -1,4 +1,4 @@
-"""将三 SP 固定挂载候选整套安装到已验证的双 SP 候选 .2；默认仅预检。"""
+"""整套安装三 SP 固定挂载候选；限定首次迁移或 .1→.2，默认仅预检。"""
 import argparse
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -23,7 +23,10 @@ def main():
     if not build.is_relative_to((root / 'Temp').resolve()):
         raise ValueError('候选必须来自当前工作区 Temp')
     receipt = json.loads((build / 'build-receipt.json').read_text(encoding='utf-8'))
-    version = '1.0.2-su30sm-three-sp.1'  # 此入口只处理本次集成版本。
+    version = (root / 'VERSION').read_text(encoding='utf-8').strip()  # 只接受已列明的候选升级。
+    revision = version == '1.0.2-su30sm-three-sp.2'  # 此修订保留已迁移的 schema 2。
+    if version not in ('1.0.2-su30sm-three-sp.1', '1.0.2-su30sm-three-sp.2'):
+        raise ValueError('安装器未定义此候选的升级来源')
     if receipt['candidate'] != version or (root / 'VERSION').read_text(encoding='utf-8').strip() != version:
         raise ValueError('候选版本不匹配')
     for name, expected in (receipt['lua_sources'] | receipt['cpp_sources'] | receipt['protected_files']).items():
@@ -42,19 +45,28 @@ def main():
     formal = json.loads((root / 'evidence/1.0.2-installed.json').read_text(encoding='utf-8'))['files']
     previous = json.loads((root / 'evidence/su30sm-fixed-mount-candidate.2-installed.json').read_text(encoding='utf-8'))
     expected_old = formal | previous['changed_files']  # 任一旧运行文件被其他任务改变即停止。
+    if revision:
+        previous = json.loads((root / 'evidence/su30sm-three-sp-installed.json').read_text(encoding='utf-8'))
+        expected_old = previous['runtime_files']
+        if 'dualsp_refresh_weapon_icons' not in receipt['required_exports_verified']:
+            raise ValueError('修订核心缺少装填剪影刷新接口')
     for name, expected in expected_old.items():
         if digest(mod / name) != expected.lower():
             raise ValueError('当前安装已改变，停止覆盖：' + name)
     settings = json.loads((mod / 'profiles.json').read_text(encoding='utf-8-sig'))
-    if settings.get('schema') != 1 or 52 in settings.get('keyboard_keys', []):
-        raise ValueError('旧配置不能直接迁移，需要人工核对 schema 或 4 键占用')
-    if (mod / 'profiles.before-three-sp.json').exists():
-        raise ValueError('发现已有三 SP 迁移备份，需要先核对')
+    if revision:
+        if settings.get('schema') != 2 or settings.get('management_revision') != 3:
+            raise ValueError('修订必须基于已迁移的三 SP 配置')
+    else:
+        if settings.get('schema') != 1 or 52 in settings.get('keyboard_keys', []):
+            raise ValueError('旧配置不能直接迁移，需要人工核对 schema 或 4 键占用')
+        if (mod / 'profiles.before-three-sp.json').exists():
+            raise ValueError('发现已有三 SP 迁移备份，需要先核对')
     sources = {name.removeprefix('dist/DualSP/'): root / name for name in receipt['lua_sources']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
     plan = {'candidate': version, 'base': previous['candidate'], 'runtime_files': hashes,
-            'configuration_migration': '下次启动由 Lua 备份 schema 1 并迁移到 schema 2，旧 SP3 为空',
+            'configuration_migration': '保留 schema 2，不再迁移' if revision else '下次启动由 Lua 备份 schema 1 并迁移到 schema 2，旧 SP3 为空',
             'game_started_by_agent': False, 'test_modules_run': False, 'gameplay_verified': False}
     if not args.apply:
         print(json.dumps({**plan, 'status': '预检通过，未安装'}, ensure_ascii=False))
@@ -106,7 +118,8 @@ def main():
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
               'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,
               'other_mod_files_preserved': True, 'protected_files_verified': len(protected), 'main_worktree_modified': False}
-    with (root / 'evidence/su30sm-three-sp-installed.json').open('x', encoding='utf-8') as stream:
+    receipt_name = 'su30sm-three-sp-candidate.2-installed.json' if revision else 'su30sm-three-sp-installed.json'  # 不覆盖历史安装证据。
+    with (root / 'evidence' / receipt_name).open('x', encoding='utf-8') as stream:
         json.dump(result, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
     print(json.dumps(result, ensure_ascii=False))

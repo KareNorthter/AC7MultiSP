@@ -1,0 +1,87 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.2",
+  "branch": "codex/three-sp-switch-hud-fix",
+  "base_commit": "5006e05",
+  "user_validation_previous_candidate": {
+    "candidate": "1.0.2-su30sm-three-sp.1",
+    "passed": [
+      "任务前选装三种 SP",
+      "Su-30SM 六处挂载模型",
+      "三种 SP 发射",
+      "HUD 三种 SP 名称",
+      "初期切换"
+    ],
+    "failed": [
+      "快速滚轮向上触发模组退出接管",
+      "错误后检查点重来仍失效",
+      "HUD 装填剪影不匹配"
+    ],
+    "wheel_binding": "原生切换武器；用户报告向下正常，向上立即出错",
+    "resupply": "未测试"
+  },
+  "failure": {
+    "time_utc": "2026-10-15T11:37:44Z",
+    "message": "原生武器类别切换未完成",
+    "source": "旧 main.lua:480 的 80 ms 延迟释放回调",
+    "log_excerpt": "2026-10-15T11:37:44Z ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:480: 原生武器类别切换未完成\nstack traceback:\n\t[C]: in function 'assert'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:480: in upvalue 'fn'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:454: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:451>\n\t[C]: in function 'xpcall'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:451: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:450>\n2026-10-15T11:37:52Z PERF_TICK scene=flight samples=612 average_ms=2.598 peak_ms=39.000\n2026-10-15T11:38:07Z PERF_TICK scene=flight samples=711 average_ms=0.354 peak_ms=9.000\n2026-10-15T11:38:22Z PERF_TICK scene=flight samples=671 average_ms=0.386 peak_ms=12.000\n2026-10-15T11:38:37Z PERF_TICK scene=flight samples=711 average_ms=0.395 peak_ms=10.000\n2026-10-15T11:38:52Z PERF_TICK scene=flight samples=713 average_ms=0.362 peak_ms=9.000\n2026-10-15T11:39:07Z PERF_TICK scene=flight samples=712 average_ms=0.402 peak_ms=12.000\n2026-10-15T11:39:22Z PERF_TIC",
+    "scope": "Lua 报错后释放接管，不是游戏进程崩溃",
+    "checkpoint": "错误状态不会因检查点重来自动清除，不能把后续现场弹药当作错误瞬间数值"
+  },
+  "native_analysis": {
+    "build": 9855922,
+    "process_access": "只读；不执行游戏函数、不修改进程内存",
+    "switch_chain": [
+      "0x8238d0→0x82a730→0x8238f0",
+      "0x823994 同步调用 ToggleSpecial(0x886c50)",
+      "OnWeaponSwitchReleased(0x8238e0)只清除机体+0x1a51长按标记"
+    ],
+    "hud": {
+      "OnWeaponActivatorInitialize": "0x9371f0→0x3f2330→0x4b3740，刷新文字子结构",
+      "OnSpecialWeaponChanged": "0x8e1190→vtable+0x440→0x3f2320→0x49f2f0→0x882800",
+      "icon_context": "PersistentUserWidget+0x420；+0x98=activator，+0xa0=plane",
+      "texture_cache": "context+0x68/0x70 为 MSL 背景/填充，+0x78/0x80 为 SP 背景/填充；来自武器实例+0x560/0x568",
+      "update": "0x49ece0；只在缓存为空时补读贴图；context+0x54等于当前armed才重新显示并绑定贴图，随后翻转标记",
+      "live_progress": "0x881920根据当前armed读取原生装填进度数组；本修订不改数组、数量、冷却或实体挂点",
+      "interpretation": "SP→SP同帧重建且最终仍为SP时，旧图标可见性/贴图缓存未失效，解释六枚变两枚及沿用LAGM外观；修复效果待用户复测"
+    },
+    "capture_lifetime": "早期HUD对象随后已销毁；停止使用旧地址，后续只解析模块函数。游戏关闭前未对HUD执行实验写入"
+  },
+  "implementation": [
+    "同一游戏线程内完成按下、释放、核对及提交，取消80ms延迟和150ms观察屏蔽",
+    "保留完整飞机切换入口、断言和显式错误处理",
+    "兵装重建编号覆盖setup/switch/resupply_setup/resupply/checkpoint_restore；普通snapshot不刷新剪影",
+    "HUD最终提交时调用已核对原生贴图回调并标记显隐重绘；原生继续处理装填窗口",
+    "不改变三挂映射、TLS收尾、ECM限制或其他机型范围"
+  ],
+  "verification": {
+    "live_fix_verified": false,
+    "test_modules_created": false,
+    "test_modules_run": false,
+    "game_started_by_agent": false,
+    "compiled": true,
+    "lua_syntax_verified": true,
+    "exports_verified": true,
+    "installed": true,
+    "installation_manifest_verified": true,
+    "game_closed_by_user_request": true,
+    "build_receipt": "evidence/su30sm-three-sp-candidate.2-build.json",
+    "install_receipt": "evidence/su30sm-three-sp-candidate.2-installed.json"
+  },
+  "raw_capture_hashes": {
+    "native-3f2320.bin": "b65defa09d361a8dd88be8863062be794c9e25e9f5f3fa042a62d0ae2b4a3066",
+    "native-3f2330.bin": "60b2aac0b1b38fc7a2741f5c6b38a4aaad8198b7c9f04c310200f37af9672a2a",
+    "native-49e300.bin": "47f0e94b7d2931f6c66cec0aaae0d57ec1b0897e180ab1a66ae1cafbcc476547",
+    "native-49ed00.bin": "0f7b937e3b657f0948312b41ccff6978ae4d5f0a60a48f4d461b4a57b58d95a7",
+    "native-49f2f0.bin": "cb875ab22499ea6b9f5602158b9f880dac475f493b82d5359ee7e5c724930058",
+    "native-4b3740.bin": "bdd3bea95f43a5c95614d6540b22aa6dd397fda1a8031487bf2a276a5b2f9574",
+    "native-823650.bin": "335a2c5c74e6928f7320626fab7c11191d59e3c12200b7a984de95c4286cd5b0",
+    "native-8238d0.bin": "6a2ff899f97a563e393e733041db3a0bd0b0bec3f72095a5a6fc7ee6b4ffec87",
+    "native-8238f0.bin": "9a0a74d8e5f08f61352bc35f50de784317e4fa0ab46cdd59c1f40ecfcae813f8",
+    "native-82a730.bin": "7bf8a5fca1037469c5c82ff3eba267a17c6d66d8686ea39c9ef481eec369a986",
+    "native-881920.bin": "e6d94067e4b06bc95fcb9d254681335de495792d12b6cc20566a8966adbbd74a",
+    "native-882800.bin": "8e9106e48feab82559a1b73fef1d94046d9e653f58b3f2f921a71a8d88ea6c64",
+    "native-8e1190.bin": "3bcc0eedd0e3370c305b4ec2d172596c6a6e4293fb410d4dbe996c01784f4733",
+    "native-9371f0.bin": "c4a3a43d016d1d8808c63f7e10a2bb96540820e24aac435b34c7b4d18345966c",
+    "native-icons.bin": "58cc39b49996bbb13592eeb0d73349b3434362fd4715b0a5134f0aff0892e7fe"
+  }
+}

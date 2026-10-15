@@ -1,4 +1,4 @@
--- AC7DualSP 1.0.2-su30sm-three-sp.1：按实际武器类识别行为，读取模组提供的原生名称。
+-- AC7DualSP 1.0.2-su30sm-three-sp.2：按实际武器类识别行为，读取模组提供的原生名称。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -12,10 +12,9 @@ local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面
 local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
 local runtimeFailed=false -- 模式识别出错后明确停用到重启，不不断重试或沿用旧许可。
 local syncRuntime=nil -- 完整状态清理函数在各模块定义之后建立。
-local runtimeEpoch=0 -- 跨模式切换使未完成的延迟操作失效。
 local log=assert(io.open(root.."mod.log","a"))
 local function note(message)log:write(os.date("!%Y-%m-%dT%H:%M:%SZ ")..tostring(message).."\n");log:flush()end
-local nativeHud=dofile(root.."Scripts/native_hud.lua").new(note)
+local nativeHud=nil -- 核心剪影刷新接口加载后再建立 HUD 模块。
 -- 中央简称独立管理，右下角 MSL/单 SP/多 SP 名称由固定行模块统一处理。
 local weaponPresentation=dofile(root.."Scripts/weapon_presentation.lua").new(note)
 local refreshHUD=nil
@@ -42,13 +41,15 @@ local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立�
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
+local refreshNativeIcons=loadExport("dualsp_refresh_weapon_icons") -- 最终兵装提交后刷新原生剪影和显隐。
+nativeHud=dofile(root.."Scripts/native_hud.lua").new(note,refreshNativeIcons)
 local nativeTakeoff=loadExport("dualsp_resupply_takeoff") -- 候选 5：真正的原生补给 YES 入口。
 local nativeSupplyControl=loadExport("dualsp_resupply_control") -- 候选 6：隔离原生补给输入入口。
 local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验候选：原生机库一步确认/返回。
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.1") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.2") -- 与三 SP 协议 3 核心及 UI 成套安装。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -134,9 +135,6 @@ local configured=false
 local lastArmed=nil
 local active=0
 local internal=false
--- 原生输入边沿和核心换槽可能分布在相邻帧；短暂锁定观察器，避免
--- 同一次切换被误判成第二次切换而在 MSL/SP 间反复触发。
-local switchGuardUntil=0
 local panelOpen=false
 local pausedBefore=false
 local gatedWidgets={}
@@ -160,6 +158,7 @@ local restorePending=false
 local supplySession=nil
 -- 检查点配置随武器快照保存，返航重选不能改写已经捕获的旧检查点。
 local checkpointProfile=nil
+local weaponRevision=0 -- 只在兵装重建成功后递增；同槽补给也必须刷新剪影。
 local nativeRequest=0
 local lastPublish=0
 local lastActions=-1
@@ -196,6 +195,10 @@ local function native(op,target)
     bridge();local result=assert(readJson(root.."native-status.json"))
     assert(result.request==nativeRequest,"Native response does not match the current request")
     assert(result.ok,result.error)
+    if op=="setup"or op=="resupply_setup"or op=="switch"or op=="checkpoint_restore"or op=="resupply"then
+        weaponRevision=weaponRevision+1
+    end
+    result.weapon_revision=weaponRevision
     active=result.active;nativeState=result
     -- 核心事务只更新数据；HUD 由选择事务结束或周期调度统一提交。
     -- snapshot/重建返回时的类别可能仍是原生切换过程中的 MSL，不能立即绘制。
@@ -445,20 +448,6 @@ local function configureFlight(profile,resupply)
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
 end
-local function delay(ms,fn)
-    local epoch=runtimeEpoch -- 只允许同一单人运行阶段的回调继续。
-    ExecuteInGameThreadWithDelay(ms,function()
-        local ok,err=xpcall(function()
-            assert(IsInGameThread(),"Delayed switch callback is outside the game thread")
-            if not syncRuntime()or runtimeEpoch~=epoch then return end
-            fn()
-        end,debug.traceback)
-        if not ok then
-            errorText=tostring(err);internal=false;note("ERROR "..errorText)
-            releaseRuntimeOwnership() -- 停止切换逻辑时同步释放音效与固定模型。
-        end
-    end)
-end
 -- 重建前释放发射输入；该接口不负责更新 seeker，也不能作为停止锁定音的修复。
 releaseWeaponInput=function(reason)
     assert(valid(activator),"Player weapon activator is unavailable")
@@ -468,27 +457,24 @@ releaseWeaponInput=function(reason)
 end
 -- 原生按下/释放属于同一切换事务，完成后再向两处 HUD 提交选择。
 local function pressSwitch(desired)
+    assert(IsInGameThread(),"武器类别切换必须在游戏线程完成")
     internal=true
-    local switchedAddress=plane:GetAddress()
-    local desiredArmed=not plane:IsSpecialWeaponArmed() -- 原生类别变化后必须与目标一致。
-    -- 完整飞机入口还会更新锁定距离、seeker 与部件效果，不能换成 ToggleSpecial。
+    local desiredArmed=desired>0 -- 按逻辑目标核对最终类别，不能依赖中间态。
+    -- 原生按下会同步更新类别；释放只结束长按输入。与核心 keepArmed 一样
+    -- 在同一调用中完成，避免等待期间滚轮再次切换，导致旧回调误判失败。
     plane:OnWeaponSwitchPressed()
-    delay(80,function()
-        if not valid(plane)or plane:GetAddress()~=switchedAddress then internal=false;note("SWITCH_CANCELLED_WORLD_CHANGE");return end
-        plane:OnWeaponSwitchReleased()
-        lastArmed=plane:IsSpecialWeaponArmed()
-        assert(lastArmed==desiredArmed,"原生武器类别切换未完成")
-        switchGuardUntil=os.clock()+.15;internal=false
-        selectionAudio(1,desired)
-        note("WEAPON_CATEGORY_COMMITTED "..tostring(lastArmed))
-        if configured and flightOptions and not supplySession then refreshHUD(os.clock())end
-    end)
+    plane:OnWeaponSwitchReleased()
+    lastArmed=plane:IsSpecialWeaponArmed()
+    assert(lastArmed==desiredArmed,"原生武器类别切换未完成")
+    internal=false
+    selectionAudio(1,desired)
+    note("WEAPON_CATEGORY_COMMITTED "..tostring(lastArmed))
+    if configured and flightOptions and not supplySession then refreshHUD(os.clock())end
 end
 -- MSL/SP 类别转换与 SP 重建共同完成后才刷新，避免暴露中间的 MSL 状态。
 local function selectLogicalWeapon(desired)
     assert(desired>=0 and desired<=3,"无效的逻辑武器选择")
     internal=true
-    switchGuardUntil=os.clock()+.15
     -- 原生按键可能已把类别暂时切成 MSL；按当前挂载识别 TLS，避免漏掉仍在发射的光束。
     if desired~=active+1 and flightOptions and flightOptions[currentProfile[Profile.fields[active+1]]+1].runtime_weapon_id==25 then
         local ended,err=finishTLS(plane:GetAddress(),activator:GetAddress())
@@ -529,10 +515,9 @@ local function directSelect(desired)
 end
 local function observeOriginalSwitch()
     if not configured then return end
-    local requestOK,emptyRequested=takeEmptySwitch(plane:GetAddress()) -- 不可操作或防重复期间丢弃过期请求。
+    local requestOK,emptyRequested=takeEmptySwitch(plane:GetAddress()) -- 不可操作期间丢弃过期请求。
     assert(requestOK,emptyRequested or "原生切换请求读取失败")
     if not configured or supplySession or internal or panelOpen or errorText or not ready()or game:IsGamePaused(plane)then return end
-    if os.clock()<switchGuardUntil then return end
     local armed=plane:IsSpecialWeaponArmed()
     -- The live SP count is authoritative; inactive SP counts are captured on
     -- each swap. A consumed last round must not wait for the 100 ms HUD update.
@@ -623,7 +608,7 @@ local function checkRuntime(activatedWidget)
         runtimeContext.enterMultiplayerMenu(instance);allowed=false;reason="multiplayer_menu"
     end
     if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
-    runtimeChanging=true;runtimeEpoch=runtimeEpoch+1
+    runtimeChanging=true
     runtimeAllowed=allowed;runtimeReason=reason
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
@@ -655,7 +640,7 @@ syncRuntime=function(activatedWidget)
     if runtimeFailed or runtimeChanging then return false end
     local ok,result=xpcall(function()return checkRuntime(activatedWidget)end,debug.traceback)
     if ok then return result end
-    runtimeFailed=true;runtimeAllowed=false;runtimeChanging=true;runtimeEpoch=runtimeEpoch+1
+    runtimeFailed=true;runtimeAllowed=false;runtimeChanging=true
     errorText=tostring(result);note("RUNTIME_CONTEXT_ERROR "..errorText)
     local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
     if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
@@ -963,7 +948,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
