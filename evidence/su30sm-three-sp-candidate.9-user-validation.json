@@ -1,0 +1,79 @@
+{
+  "recorded_date": "2026-10-16",
+  "candidate": "1.0.2-su30sm-three-sp.9",
+  "user_validation": {
+    "ui": "用户确认先前 UI 优化均正常生效；不扩大到尚未实现的性能条功能",
+    "f35c_triple": "用户表示三挂均正常，随后频繁切换并使用 SP 后发生 crash 弹窗；稳定性未通过",
+    "last_fired_weapon": "用户确认发射过一些 SP，最后发射哪种记不清",
+    "other_combinations_and_single": "本轮没有得到逐项复测结果"
+  },
+  "log_facts": {
+    "loaded_utc": "2026-10-15T15:56:18Z",
+    "last_completed_switch": {
+      "request": 43,
+      "target_config": 0,
+      "weapon": "SOD",
+      "native_tick_ms": 72709843
+    },
+    "later_visual_vacancies_ticks_ms": [
+      72710218,
+      72710250
+    ],
+    "boundary": "空位记录符合发射后的显示变化，但不是异常栈，不能据此把最后发射或故障原因确定为 SOD",
+    "lua_native_error_observed": false,
+    "other_mod_worker_continued_after_gameplay_log": true
+  },
+  "crash_evidence": {
+    "current_dump_found": false,
+    "current_exception_code_known": false,
+    "current_callstack_known": false,
+    "searched": [
+      "游戏目录",
+      "用户 CrashDumps",
+      "Windows 应用事件及 WER 归档",
+      "CrashReportClient",
+      "用户临时目录"
+    ],
+    "latest_existing_dump": "Ace7Game.exe.20200.dmp",
+    "latest_existing_dump_local_time": "2026-10-15T23:53:53+08:00",
+    "older_shutdown_event": {
+      "module": "UE4SS.dll",
+      "exception": "0xc0000005",
+      "offset": "0x2f5957",
+      "pid": 20200
+    },
+    "correction": "该异常发生于 .8 进程接收退出请求期间，早于 .9 启动；此前称正常退出不严谨，应仅称已请求退出并确认进程结束。不能用于解释本次任务内崩溃"
+  },
+  "investigation_status": "崩溃未定位，不用频率限制、异常吞掉或猜测性动画改动冒充修复",
+  "validation_policy": {
+    "per_adapted_aircraft": [
+      "SP1",
+      "SP2",
+      "SP3",
+      "SP1+SP2",
+      "SP2+SP3",
+      "SP1+SP3",
+      "SP1+SP2+SP3"
+    ],
+    "transitions": [
+      "直接单挂出击",
+      "补给多挂转单挂",
+      "补给单挂转多挂",
+      "检查点恢复",
+      "切换结合发射/装填"
+    ],
+    "current_priority": "先定位并修复崩溃，再补齐当前三架的单挂及转换；暂不要求用户遍测所有原版和第三方机体"
+  },
+  "raw_log_archive": "Temp/batch9-crash-20261016",
+  "raw_log_sha256": {
+    "native.log": "e02da0cf76bb9a22327ca2f7ef34be52f7e78c9f1e19db8eed31ade33ed1233c",
+    "mod.log": "dcbeb83c2f51f60167675c628dc0896016f3491bf717663cca06be318b1a1993",
+    "UE4SS.log": "1de608f87cf0c6c6578537e336a5471f7ded1d3a8404b16d4905e3c5152374b2",
+    "MouseAim-00017.log": "7a52782bfb6ebfbd767527d88af8d71536b540bad0a80773aff8eaa5deb7ee04"
+  },
+  "runtime_files_match_installed_receipt": true,
+  "runtime_modified": false,
+  "compiled": false,
+  "test_modules_run": false,
+  "game_started": false
+}

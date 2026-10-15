@@ -1,4 +1,9 @@
-当前接手更新（2026-10-15 23:53，.9 已安装）：先看 static-mount-batch9.txt、.8-user-validation.json 和 static-mount-batch9-research.json，以及 .9-build/.9-installed 回执。
+当前接手更新（2026-10-16）：.9 UI 获用户确认正常，F-35C 三挂常规行为正常，但切换并使用多种 SP 后任务内崩溃。最后发射兵装不确定，原因未定位，不能把频繁切换或 SOD 定为根因。
+先看 evidence/su30sm-three-sp-candidate.9-user-validation.json。未找到本次有效转储；原始日志已存 Temp/batch9-crash-20261016，当前进程已退出。保留运行 .9 原样，没有猜测性修复、重新构建或安装。
+后续先获取崩溃现场，再恢复扩测；每架验收补齐三种单挂，合计七组合，并覆盖单挂/多挂补给转换。暂不让用户遍测全部机体。
+更正此前退出描述：旧 PID 20200 在 23:53 退出请求期间发生 UE4SS.dll+0x2f5957 访问异常；已确认进程结束不等于正常退出。此事件早于 .9 启动，与本次任务内 crash 分开调查。
+
+历史接手更新（2026-10-15 23:53，.9 已安装）：先看 static-mount-batch9.txt、.8-user-validation.json 和 static-mount-batch9-research.json，以及 .9-build/.9-installed 回执。
 核心 fa6c09c0019b836bf28f349a7bbd25b8ebb35501fccbd268d2bc85f653a8da7b；13 个运行文件核验通过，配置/存档/其他模组保留，完整备份 backup/su30sm-three-sp-20261015-235355-367919。
 游戏已正常关闭且未重启，PID 20200 已失效；新采样必须重新取得进程与对象身份。未运行测试模块，用户实玩待进行。
 用户确认 Su-30SM 本批正常，F-35C 三项问题未通过。直接原因已细分：单挂初始化未同步编号、非当前 SWP2 被暂停并关闭 Tick、同舱重建强制关舱。
