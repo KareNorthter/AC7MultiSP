@@ -1,0 +1,90 @@
+{
+  "recorded_at": "2026-10-15T11:43:15.282495",
+  "source": "用户实玩反馈，辅以本轮运行日志；代理没有进行任务操作",
+  "user_statement": "standby界面选择其他飞机后，UI都正常，此问题解决。我选择了PWMK1出击，双sp也正常，任务降落补给、切换sp也正常。PWMK1的三个SP名称还是 ADMM,ECM,EML（以前CFA44的SP名称），但是模型和特效变了，ECM变成了一个巨大的炸弹/导弹,ADMM能发射很多发，EML特效极其华丽。",
+  "installed_revision": "compatibility-standby-fix2-installed.json",
+  "passed_by_user": [
+    "STANDBY 更换飞机后 UI 正常",
+    "PW-MKI 替换版出击与双 SP 正常",
+    "任务降落补给与 SP 切换正常"
+  ],
+  "log_scope": {
+    "plane_id": 140,
+    "mission": "ms06",
+    "ammo_ratio": 1,
+    "initial_slots": [
+      0,
+      1
+    ],
+    "resupply_slots": [
+      2,
+      1
+    ]
+  },
+  "weapon_mapping_from_installed_module": [
+    {
+      "slot": 0,
+      "menu_code": "ADMM",
+      "class": "plwp_admm_x0_C",
+      "description": "替换包的多重导弹"
+    },
+    {
+      "slot": 1,
+      "menu_code": "EML",
+      "class": "plwp_railgun_x0_C",
+      "description": "替换包的电磁炮"
+    },
+    {
+      "slot": 2,
+      "menu_code": "ECM",
+      "class": "plwp_eufm_x0_C",
+      "description": "替换包的自定义大型导弹，已不使用原 ECM 行为"
+    }
+  ],
+  "naming_finding": "当前替换版保留 CFA-44 槽位名称；已安装 Base/Module/Glow PAK 未包含本地化或机体表替换。不能根据旧简称判断实际武器类型，也不应全局重命名 ECM/EML/ADMM。",
+  "not_yet_confirmed": [
+    "耗尽及连续发射中切换边界",
+    "长时间和多次补给",
+    "新增机体批次",
+    "飞控批次"
+  ],
+  "lua_errors_in_session": [],
+  "native_diagnostic_note": "RELOAD_TIMER_OUTSIDE_PROGRESS_RANGE 中 elapsed=-1 为既有负计时诊断；代码保留该值，本轮未据此判定兼容失败。",
+  "mod_log_excerpt": [
+    "2026-10-15T03:34:45Z NATIVE_STANDBY_DETACHED plane=129 next=129",
+    "2026-10-15T03:34:58Z NATIVE_STANDBY_DETACHED plane=104 next=104",
+    "2026-10-15T03:35:38Z NATIVE_STANDBY_DETACHED plane=124 next=124",
+    "2026-10-15T03:35:56Z NATIVE_STANDBY_DETACHED plane=140 next=140",
+    "2026-10-15T03:36:20Z NATIVE_STANDBY_DETACHED plane=140 next=140",
+    "2026-10-15T03:36:45Z LOADOUT 140 {\"a\":0,\"ratio\":1,\"b\":1}",
+    "2026-10-15T03:38:37Z NATIVE_RESUPPLY_FINISH_ACCEPTED 140",
+    "2026-10-15T03:38:40Z RESUPPLY_PROFILE_STAGED 140 {\"a\":2,\"ratio\":1,\"b\":1}",
+    "2026-10-15T03:38:40Z LOADOUT 140 {\"a\":2,\"ratio\":1,\"b\":1}",
+    "2026-10-15T03:38:40Z RESUPPLY_LOADOUT_APPLIED 140 {\"a\":2,\"ratio\":1,\"b\":1}"
+  ],
+  "native_log_excerpt": [
+    "28311375 {\"a\":2,\"b\":1,\"event\":\"NATIVE_BEGIN\",\"op\":\"resupply_setup\",\"request\":4,\"target\":0,\"thread\":16124}",
+    "28311375 {\"event\":\"SP_AMMO_SCALED\",\"native\":[10,10],\"ratio\":1.0,\"scaled\":[10,10]}",
+    "28311375 {\"event\":\"SP_AMMO_SCALED\",\"native\":[52,52],\"ratio\":1.0,\"scaled\":[52,52]}",
+    "28311375 {\"active\":0,\"event\":\"NATIVE_DONE\",\"main_ammo\":150,\"op\":\"resupply_setup\",\"request\":4,\"sp\":[10,52]}",
+    "28311375 RESUPPLY_INPUT_RELEASED",
+    "28317828 SELECTION_AUDIO_COMMITTED 1",
+    "28323281 {\"a\":2,\"b\":1,\"event\":\"NATIVE_BEGIN\",\"op\":\"switch\",\"request\":5,\"target\":1,\"thread\":16124}",
+    "28323281 {\"active\":1,\"event\":\"NATIVE_DONE\",\"main_ammo\":148,\"op\":\"switch\",\"request\":5,\"sp\":[9,52]}",
+    "28323375 SELECTION_AUDIO_COMMITTED 2",
+    "28325515 SELECTION_AUDIO_COMMITTED 0",
+    "28325984 {\"a\":2,\"b\":1,\"event\":\"NATIVE_BEGIN\",\"op\":\"switch\",\"request\":6,\"target\":0,\"thread\":16124}",
+    "28325984 {\"active\":0,\"event\":\"NATIVE_DONE\",\"main_ammo\":148,\"op\":\"switch\",\"request\":6,\"sp\":[9,51]}",
+    "28326000 SELECTION_AUDIO_COMMITTED 1"
+  ],
+  "installed_script_sha256": {
+    "main.lua": "AF68EEC17D1859128FFF097E5DAB5A136F82924778F72EA77B06B8CAD7B3782B",
+    "native_loadout.lua": "750DD981ED78FB0CE845682BC7CA9AB2C993A9C27C56C96420D7DA8ACE73D083"
+  },
+  "followup_user_statement": "已测试，没问题。现在开始下一阶段测试。我希望测试FOV和飞控，以及比例引导",
+  "followup_passed_by_user": [
+    "ADMM+ECM 组合",
+    "50% 配弹并装增弹部件",
+    "检查点重来"
+  ]
+}

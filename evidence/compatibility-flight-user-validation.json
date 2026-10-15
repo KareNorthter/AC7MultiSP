@@ -1,0 +1,25 @@
+{
+  "recorded_at": "2026-10-15T12:30:47.776131",
+  "user_statement": "经过测试，鼠标飞控、比例引导、fov都正常。使用的是darkstar测试的。现在关闭游戏。还有什么要测的吗？请准备，但是不用启动游戏，晚点我自己启动。",
+  "aircraft": "DarkStar",
+  "plane_id": 132,
+  "user_passed": [
+    "鼠标飞控",
+    "比例制导",
+    "FOV"
+  ],
+  "scope": "用户实测；未扩大为所有机体、镜头状态和任务边界通过",
+  "lua_errors": [],
+  "mod_log_excerpt": [
+    "2026-10-15T04:22:19Z LOADOUT 132 {\"b\":0,\"a\":2,\"ratio\":1}"
+  ],
+  "flight_log_excerpt": [
+    "31003406 CONTROL_MODE selected=0 name=PEACE; learned models retained",
+    "31004359 CONTROL_MODE selected=3 name=WAR; learned models retained",
+    "31034328 CONTROL_MODE selected=0 name=PEACE; learned models retained",
+    "31037984 CONTROL_MODE selected=3 name=WAR; learned models retained",
+    "31045078 CONTROL_MODE selected=0 name=PEACE; learned models retained"
+  ],
+  "stopped_at": "2026-10-15T12:30:47.777371",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-addons-20261015-123041"
+}

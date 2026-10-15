@@ -1,14 +1,14 @@
 # 开发与发布
 
-> 当前版本为 [1.0.1](version-1.0.1.md)。--experience 从对应 cores 目录安装，要求核心/UI 的 dualsp_runtime_gate 导出及第九个 Lua runtime_context.lua。本轮不制作 ZIP；打包器仍固定 1.0.0，会拒绝当前 VERSION。
+> 当前仓库版本为 [1.0.2](version-1.0.2.txt)。--experience 明确复用 cores/1.0.1 核心，要求核心/UI 的 dualsp_runtime_gate 导出及 runtime_context.lua。本轮保持游戏运行，不执行安装器或制作 ZIP；打包器仍固定 1.0.0，会拒绝当前 VERSION。
 
-返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.1**，本轮研究见[候选记录](version-1.0.1-candidate.1.md)，更早记录见[历史索引](history-1.0.0.md)。
+返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.2**，本轮验证见[兼容摘要](version-1.0.2.txt)，更早记录见[历史索引](history-1.0.0.md)。
 
 ## 当前组成
 
-1.0.1 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`，与实测候选一致。正式整理只因标题变化重编译 UI；武器核心和 Lua 功能逻辑不变。0.1.9 核心保留供 1.0.0 历史版本使用。
+1.0.2 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`。兼容修订在 Lua/UI，武器核心不变；1.0.2 整理因标题变化重编译仓库 UI。最后新增的异步换机等待逻辑尚未部署或实玩。0.1.9 核心保留供 1.0.0 历史版本使用。
 
-内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。VERSION、加载标记、窗口标题与当前说明统一为 1.0.1，无新发布包。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
+内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。仓库 VERSION、加载标记、窗口标题统一为 1.0.2，无新发布包。本轮不改游戏运行文件，下一次退出游戏后才能部署。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
 
 ## 开发入口
 
@@ -20,6 +20,7 @@
 | `src/install-resupply-candidate.py --experience` | 现有本机安装受控升级，支持 1.0.1；保留历史脚本名 |
 | `src/package-release.py --redist-root <_CommonRedist路径>` | 仅保留的 1.0.0 打包入口，本轮不运行，不能直接生成 1.0.1 |
 | `src/inspect_*` | 用户自有资源的研究工具，原始资源和中间结果放 Temp |
+| `src/build_local_compatibility.py` | 按明确机体清单筛选作者 PPDT 并生成仅供本机使用的目录 PAK，不自动安装 |
 | `tests/` | 历史回归模块，非自动流程；未经用户要求不运行或新增 |
 
 LLVM-MinGW 默认位置见[工具清单](../tools/README.md)，可以通过 DUALSP_TOOLCHAIN 指定。发布依赖从本机 Steamworks Shared 的 _CommonRedist 读取；工具本身不随成品发布。SP2.wav 按 [Audio 说明](../dist/DualSP/Audio/README.md)准备，缺失即停止。
@@ -46,3 +47,13 @@ LLVM-MinGW 默认位置见[工具清单](../tools/README.md)，可以通过 DUAL
 ## 管理参数第 2 版部署
 
 本轮仅需重编译管理 UI，候选武器核心不变。Lua/UI 必须成套部署，management_protocol=2；运行时首次迁移 profiles.json 后管理参数 revision=2。安装器仍在启动前验证原配置未变，启动后的预期参数迁移须另行回读并核对机体方案未变，不能把两者混为同一核验。不得用旧 UI 搭配新的设置请求字段。
+
+2026-10-15 飞控兼容候选：管理状态新增 `management_key`，UI/Lua 必须成套更新。本机设为 F6，默认仍为 F8，详情见[管理说明](mod-management.md)。本轮仅构建 UI，旧受保护核心与当前武器核心不变，不新增或运行测试模块。飞控按作者载荷清单复制 AC7MouseAim 目录，合并启用行，共享加载器不覆盖；保留比例制导时不安装 AC7Weapons。安装和备份见[飞控批次回执](../evidence/compatibility-flight-batch-installed.json)。
+
+## 本地新增机体目录（2026-10-15）
+
+`build_local_compatibility.py` 输入作者 PPDT 解码 JSON、显式编号/代码清单、全新输出目录、UAssetGUI 和 .NET 路径。当前输入及中间资源均在 `Temp/compatibility-20261015`；清单为 `adler-j20-manifest.json`，输出为 `adler-j20-catalogue-plain`。该工具核对编号与代码、保留完整选中行，用 UAssetGUI 写回再解析比较，生成含 uasset/uexp 的未压缩 UE4 PAK v3，写出构建回执。输入不符或输出目录已存在即停止，不自动猜测、追加或回退。
+
+当前目录仅 47 条原战役记录加 Adler A/B 和 J-20A，总计 50；其余共用武器/名称/皮肤表使用作者原包。原始 52 条中的四条 VR 与 Avril 记录不在作者共用表中，本批不扩展该范围。完整 195 条 PPDT 不安装。输出 PAK 只在用户本地游戏目录使用，不入 Git、不放入 DualSP 发布包、不分发作者资源；外部原包不改字节。具体输入哈希、输出哈希、行集合及安装回执见 [本批回执](../evidence/compatibility-nexus-samples-installed.json)。
+
+本轮还部署 main.lua 的机体类身份检查修订，语法核对通过，核心/UI 无需编译。安装前备份 DualSP、存档和被替换的 J-20 旧包，安装后核对 16 个 PAK、脚本及未改保护项。游戏未启动，未新增或运行测试模块，兼容性仍待用户实玩。

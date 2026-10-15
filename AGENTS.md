@@ -1,8 +1,32 @@
 # AC7DualSP 项目入口
 
-正式名称 **AC7DualSP**，当前正式版本 **1.0.1**。面向 Steam 版《皇牌空战 7》build **9855922**：保留普通导弹，同时选择和切换两种特殊兵装，分别保存弹药与冷却。现有 ZIP 仍为 1.0.0，本轮按用户要求不打包。
+正式名称 **AC7DualSP**，当前仓库版本 **1.0.2**。面向 Steam 版《皇牌空战 7》build **9855922**：保留普通导弹，同时选择和切换两种特殊兵装，分别保存弹药与冷却。现有 ZIP 仍为 1.0.0，本轮按用户要求不打包。
 
 ## 当前状态
+
+2026-10-15 版本整理：用户确认 J-20 恢复正常，要求保持游戏运行、升版、提交 Git，并简要记录兼容成果。仓库统一为 1.0.2，UI 已构建，核心复用 1.0.1；不部署、不停止或重启游戏、不制作 ZIP、不推送。随后用户反馈偶发单 SP、重选恢复，日志对应新选择与旧预览模型不一致。已在源码增加显式模型等待：暂停选装页原生确认、显示提示，就绪接入，10 秒超时明确报错；该时序修正未部署、未实玩，不能算已通过。当前游戏仍运行显示 1.0.1 的已验证兼容候选。见[版本与兼容摘要](docs/version-1.0.2.txt)、[本次验证](evidence/1.0.2-user-validation.json)、[仓库准备记录](evidence/1.0.2-prepared.json)。下方旧待验证结论按时间理解；下一次退出游戏后才可部署并复测快速换机。
+
+2026-10-15 15:34 J-20 接入修订已安装、未启动：用户确认 Adler A 双 SP/使用/补给、Hex 准星、LV2 增弹和 F-15E TLS 使用/结束正常；J-20 模型与涂装正常但仍为原生单 SP，未出击。运行目录已确认 50 条、J-20（181）supported=true，日志两次报“当前机体蓝图类未加载：j20a”。上轮按拼接路径 StaticFindObject 再做 IsA 的实现未解决 J-20，不能记为通过。现改为从实际实例 GetClass 沿 GetSuperStruct 遍历，完整类路径统一小写后核对所选机体，不再全局查找机体类；保留世界与组件检查。只更新 main.lua，语法/安装保护项核验通过，全部 16 个 PAK、核心/UI、配置与存档不变，游戏已关闭且未重启。见[用户反馈](evidence/compatibility-nexus-samples-user-validation.json)、[修订回执](evidence/compatibility-j20-identity-fix-installed.json)。J-20 待复测；Adler B 与 50% 配弹部件组合未据此标为通过。
+
+2026-10-15 15:00 Adler/J-20A 与三个小样本已安装，等待用户实测：用户已下载四个 Nexus 文件，现部署 J-20A 1.1 主包＋独立模块、All Part In CampaignMode 1.3.2、Hex 锁定准星 Release-1、TLS 参数 3.0 的五个组件；保留 Adler、FOV+S、比例制导和飞控，管理键 F6。共 16 个 PAK，外部文件均原样；J-20 旧镜像已备份替换。共用作者 PWDT/名称/皮肤表，并由本项目本地目录包覆盖 PPDT，只含 47 条原战役记录与 Adler A/B（165/166）、J-20A（181）三条新增，不装 195 条完整 PPDT。未加入需要 FB-22 的 R-40 目录及替换模块。Lua 改为按原生类身份及 IsA 校验机体实例，解决 J-20A 类名大小写和涂装派生类与旧字符串检查不符的问题；保留世界/组件核对。语法、文件及保护项核验通过，未编译核心/UI、未运行测试模块、未启动游戏。见[完整安装回执](evidence/compatibility-nexus-samples-installed.json)、[当前测试清单](docs/research/mod-compatibility.txt)。以下 14:10 下载阻塞与 Adler 单独表状态已被取代；当前合装不能套用先前单机体的通过结论。
+
+2026-10-15 14:10 Adler 抽样批次准备中：用户要求重新加入 Adler，并抽样高赞的不同类型模组。已停止游戏、备份配置/日志/存档，换下独立 PW-MKI，安装 Adler 主包及其原配本地化/数据表。静态表为 54 条，仅新增 Adler A/B（148/149），不安装全局兼容表；148 号 PW 方案已备份清除，其他方案保留。拟新增 All Part In CampaignMode（623）、Lock-On Crosshair UI（649）、TLS Damage and Range increase（190）；浏览器下载超时，三个文件尚未取得，整批尚未就绪。见[准备回执](evidence/compatibility-adler-samples-prepared.json)、[抽样安排](docs/research/mod-compatibility.txt)。本轮未改功能代码、编译或运行测试，未启动游戏。下文“跳过 Adler”已被用户本次请求更新。
+
+2026-10-15 小批次用户验证通过：用户确认 Su-47 与独立 PW-MKI 双 SP、换机、出击、补给均正常。当前目录实际为 53 条，日志确认 PW-MKI（148）补给换装成功，本次会话无 Lua 错误。见[小批次用户验证](evidence/compatibility-small-addon-user-validation.json)。用户倾向不继续测 Adler，按未验证保留，不重新安装、不将 PW-MKI 结果扩大到 Adler；现有已验证组合保持不变。本轮仅更新记录，未改变游戏运行状态、未编译或运行测试、未发布或推送。
+
+2026-10-15 13:51 缩减独立机体批次、未启动：用户反馈大量空模型机体且 DualSP 失效。日志确认统一 PPDT 加载 195 条机体，先后在 zx01 蓝图未安装、su47 默认兵装组件缺失处停止选装；错误未按机体结束，后续 PW-MKI 也无法接入。已撤至备份：Adler 与 2154/2274 共 5 包，仅保留 PW-MKI 独立包、FOV+S、比例制导以及原飞控。PW 单独表为原 52 条加 pw01（148）一条，不再用统一表的 192 号。Lua 改为读取 HangarManager.LoadedPlayerPlane／任务玩家实例兵装组件，按类和世界核对身份；换机后记录并清理旧机体页面错误。恢复选装页 closedRoot.owner 身份字段，STANDBY/PART 不隐藏根的修正仍保留。语法核验通过，核心/UI/外部文件不变，游戏已停止，按此前要求没有启动，实测待用户。见[小批次回执](evidence/compatibility-small-addon-prepared.json)。下方大批次已被取代，不能按旧清单重新装回。
+
+2026-10-15 12:30 新增机体批次已准备、禁止自动启动：用户确认 DarkStar 上鼠标飞控、比例制导、FOV 正常，要求关闭游戏并准备下一批，晚些自行启动。已停止进程、备份配置/日志/存档，把 PW-MKI 替换版 4 个 PAK 移入备份，安装 Adler Standalone、PW-MKI Standalone、2154 配套 PPDT/PWDT、2274 名称/展示表与 NON-ASS 皮肤表。保留 FOV+S、比例制导、飞控和本 mod F6 入口。仅备份清除 CFA-44（140）的替换版旧方案，避免恢复原机后沿用不同武器；其他配置不变。文件核验通过，未编译/运行测试模块、未启动，新增机体实测待用户。见[新增批次回执](evidence/compatibility-addons-prepared.json)、[DarkStar 反馈](evidence/compatibility-flight-user-validation.json)。当前新增测试仅 PW-MKI、Adler A/B，统一表其他未安装项不可选择。
+
+2026-10-15 11:54 飞控批次：用户确认 ADMM+ECM、50% 配弹并装增弹部件、检查点重来补测无问题，要求下一阶段优先 FOV/飞控/比例制导。已保留原 6 个 PAK，原样安装 AC7MouseAim 0.6.0-beta.1，不安装 AC7Weapons；管理入口新增配置 management_key，本机 F6（117），默认 F8，手柄 Back+Y 不变。Lua 语法和 UI 构建通过，核心/加载器/个人机体方案保留；见[飞控回执](evidence/compatibility-flight-batch-installed.json)与[当前测试顺序](docs/research/mod-compatibility.txt)。新增机体批次推迟，飞控实玩待用户，不将第一批通过扩大到本批。
+
+2026-10-15 第一批实测更新：用户确认 STANDBY 换机 UI 消失已解决；PW-MKI 替换版出击、双 SP、降落补给与切换正常。日志对应机体 140、任务 ms06、100% 配弹，出击槽 0+1、补给后槽 2+1，当前会话无 Lua 错误。旧名称 ADMM/EML/ECM 来自替换版沿用 CFA-44 表项，实际武器类分别为 admm/railgun/eufm，不能把旧 ECM 简称当作实际 ECM。见[用户验证记录](evidence/compatibility-batch1-user-validation.json)。尚未完成 50% 配弹、增弹部件、检查点及新增机体/飞控批次；本次未更改游戏文件或停止当前任务。下方“菜单复测待用户”是本次反馈前的安装时状态。
+
+2026-10-15 11:30 第二次换机修订：用户按 Su-57（TGM）双选→STANDBY→F-14A 再次复现 UI 消失。现场仍为 Review 根节点 Collapsed，第一次恢复钩子未触发。现取消 STANDBY/PART 的整页根节点隐藏及补救钩子，只还原本模组修改的兵装区域，由原生控制页面退出与复用。Lua 语法核对通过，已备份、安装并重启，外部 PAK 与个人配置未变。见[第二次修订回执](evidence/compatibility-standby-fix2-installed.json)，菜单复测待用户；不得把第一次尝试记为已解决，也不得据此认定外部模组冲突。
+
+2026-10-15 11:21（未解决）：用户报告 ADF-11F 的 UAV 只能单挂（符合限制），并在 STANDBY 更换 Su-57（TGM）后失去全部菜单。首次尝试在 STANDBY/PART 重新激活时归还根节点，安装并重启；第三方 PAK、配置、核心/UI 均保持不变。见[第一次安装回执](evidence/compatibility-standby-fix-installed.json)。此尝试未通过随后用户复测。
+
+2026-10-15 10:57：用户授权组织第三方模组分批安装与测试，并启动游戏。已在 1.0.1 基线上部署仅修改 Lua 的兼容候选：原生兵装名称、实际武器类编号驱动的弹药预览/行为判定。第一批为 PW-MKI 替换版及配套武器/第 1 皮肤/发光模块、FOV +S、比例制导；新增机体及飞控尚未安装。启动日志确认加载与单人菜单启用，实玩待用户。后续以[测试安排](docs/research/mod-compatibility.txt)和[第一批安装回执](evidence/compatibility-batch1-installed.json)为准；下方“本轮不重新启动”是此前正式整理阶段的边界，已被本次用户启动授权更新。正式版本与 ZIP 不变，不推送远程。
 
 2026-10-15，用户反馈“一切正常”，要求停止游戏、更新版本、提交 Git，无需发布包。已验证候选整理为 1.0.1，功能逻辑不变，只统一版本标识与 UI 标题。最新日志记录双 SP 补给成功并继续切换。范围见[1.0.1 说明](docs/version-1.0.1.md)、[用户验证](evidence/1.0.1-user-validation.json)，部署见[安装回执](evidence/1.0.1-installed.json)。不重新启动游戏、不推送远程。
 
@@ -22,7 +46,7 @@
 
 ## 安装与使用
 
-现有 1.0.0 ZIP 的[TXT 安装说明](docs/AC7DualSP-安装说明.txt)无需命令行。`Release/AC7DualSP-1.0.0.zip` 提供游戏文件、专用加载器、SP2 音频和运行库；它不是 1.0.1，本轮没有新 ZIP。本机 1.0.1 通过受控升级部署。
+现有 1.0.0 ZIP 的[TXT 安装说明](docs/AC7DualSP-安装说明.txt)无需命令行。`Release/AC7DualSP-1.0.0.zip` 提供游戏文件、专用加载器、SP2 音频和运行库；它不是 1.0.2，本轮没有新 ZIP。当前仓库 1.0.2 尚未部署，游戏内保持本轮已安装的兼容候选。
 
 退出游戏并备份既有模组，将包内 `GameFiles` 的内容复制到含 `Ace7Game.exe` 的游戏根目录。已有其他加载器时不要直接覆盖。内部目录及启用行仍是 `DualSP` / `DualSP : 1`，确保旧配置兼容。
 
@@ -48,7 +72,7 @@
 
 | 内容 | 入口 |
 |---|---|
-| 当前 1.0.1 功能与验证范围 | [当前版本说明](docs/version-1.0.1.md) |
+| 当前 1.0.2 与兼容验证范围 | [版本与兼容摘要](docs/version-1.0.2.txt) |
 | 新手复制安装、配置、卸载 | [TXT 说明](docs/AC7DualSP-安装说明.txt) |
 | 1.0.0 发布与验证范围 | [版本说明](docs/version-1.0.0.md) |
 | 模块、数据流与生命周期 | [架构](docs/architecture.md) |

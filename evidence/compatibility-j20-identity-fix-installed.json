@@ -1,0 +1,21 @@
+{
+  "installed_at": "2026-10-15T15:33:49.363075",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-j20-identity-20261015-153340",
+  "game_stopped": true,
+  "game_started": false,
+  "runtime_verified": false,
+  "lua_syntax_checked": true,
+  "core_ui_build": false,
+  "test_modules_run": false,
+  "main_lua_sha256": "D477666B445C37D1DAE22A3D625BC12861BCCD4A833E50DBAEAF77FC3B70897C",
+  "installed_paks_unchanged": true,
+  "configuration_and_saves_unchanged": true,
+  "protected_file_count": 84,
+  "previous_install": "compatibility-nexus-samples-installed.json",
+  "observed_failure": "模型和目录均存在；按拼接名称 StaticFindObject 查找 j20a 类失败，原生双选未接入",
+  "removed_assumption": "上轮以为字符串重载会自动消除路径大小写差异，实机未成立；不能把失败对象查找当作缺模型",
+  "change": "从实例 GetClass 开始遍历 GetSuperStruct；类完整路径统一小写后精确核对所选机体，保留世界和兵装组件校验",
+  "api_reference": "https://docs.ue4ss.com/lua-api/classes/ustruct.html",
+  "api_available_in_installed_loader": true,
+  "pending_user_check": "J-20 默认涂装双 SP、STANDBY 换机、出击和一次补给；通过后再测其他涂装"
+}

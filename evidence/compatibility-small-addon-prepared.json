@@ -1,0 +1,108 @@
+{
+  "prepared_at": "2026-10-15T13:51:36.266621",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-small-addon-20261015-135129",
+  "game_stopped": true,
+  "game_started": false,
+  "retained_paks": {
+    "FOV +S_P.pak": "25B378E34A3854A08D78531A70A663C9B582B44A14B8CBD0FC859A9EAD68EC78",
+    "PWMKI_Add-On_P.pak": "F28106000D18CFF7C9CB96C666843887D2CA5DC81517AB380343C9BBEF4DAA64",
+    "proportional guided missile_P.pak": "41B49AD83D60509795DB910A02FD24C159AB39C324B5D1B745906F4A95A094E5"
+  },
+  "removed_to_backup": [
+    "ADA01_AddOn_Standalone_P.pak",
+    "~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak",
+    "~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak",
+    "~~~~~~~~~!since_Localisation_AVDT_P.pak",
+    "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak"
+  ],
+  "expected_catalogue_size": 53,
+  "expected_addon": {
+    "plane_id": 148,
+    "code": "pw01",
+    "weapon_codes": [
+      "admm",
+      "eml",
+      "mpbm"
+    ]
+  },
+  "profile_ids_archived": {},
+  "other_profiles_and_settings_preserved": true,
+  "external_mod_bytes_unchanged": true,
+  "script_sha256": {
+    "main.lua": "5F4DECEE585ACC526C43DF84922BFEA86A59E344E63B242FFF7AAB327860CC4D",
+    "native_loadout.lua": "A49ACB961AB63E1E5F96DA9BC75D69E66DAC5912AB8F6DF41953990C6C08365D"
+  },
+  "protected_hashes": {
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\dwmapi.dll": "EA3CDBB755DD61B9F4DE70590B78A15974BE65BA5FB3837EA2E1799D78D4C116",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\UE4SS.dll": "7C6219D0B13B7FCFFCE59F5B62111A783EB64E02B206DBF8D43517E7EB540ACD",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\UE4SS-settings.ini": "4FAE00D921A9D54CDE9D64DDF8FA22C20AB99575DA419A790C2CB19C2D4B5FA5",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\mods.txt": "D4EC83551ABDF35C46A97F2A9D76FF4666E055DD9FE4D3524BFB1BC7F1307453",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\bin\\DualSP.dll": "EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\bin\\DualSPUI.dll": "A35D5AEB4F50EF2A3D366DEE2F3F915AB04B89BCCEED70BB314BCD28E17FE3EF",
+    "E:\\AC7_MultiSP\\dist\\DualSP\\bin\\DualSP.dll": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\config.ini": "1BA2CCB101E268E999F49EF8CCC9E3231406DDFC0E254EFE0325B9706DD5BCEE",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Logs\\FE-00001.csv": "03D87AEAC9E40143E4B61BCA13615E29CF4C979C2A9BED86ADAC58BB7A67A9D7",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Logs\\MouseAim-00001.log": "84C078BAB017E6D40F91C900E16665A9B7DEC7232CF81A4EFCEF78F81DCD9C62",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Logs\\MouseAim-00002.log": "2C78383F55B8971B5EB152D44FB82511A8D0C35BFD5D1DE25114EBDF21F8B055",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Logs\\MouseAim-00003.log": "AD70288796244BEEAD51A65BE767C35DBCD80975CBCE33887AAFEDAD4BA53588",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Logs\\Shadow-00001.csv": "3E490EB887BC7F26F5A8E34A3382345CC871C6C157B3C97F6639657DD2E22D2F",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ac7_mouse_aim.dll": "1FC2844C65D2D0866B6A0DB3888BE8F6D91FB37DADB1F893CBA9EE1DC3A1073E",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\camera-settings.lua": "DC4867A4DFAE403C1D5B7D8408DFEAB5B405A4E0B9DDFE7B552010D207362F1F",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\camera.lua": "33444B20396012B6B581C0F4FF34F245A588C065D509F653B623AB00CBA07C7D",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\full-health.csv": "6F11C27C43CB2107B25176C45E5694C67F99E0547440ADEDFDC5386F4D5FC92D",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\full.lua": "4F5751F1EA81DA4DF58492D240D985DA01EC791DCF5564F85204717AA99AC77C",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\helmet.lua": "5FA218EAFB211A225AF382E31EF5587A1309D4BAE5D289E2A31389F567996655",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\main.lua": "7037097B3259F0B9354DD94C66ED6A9450122E74D3E944530B291CFE8EAE22F8",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\mouse-aim-status.txt": "3F2A35664DFD0861F74B701C671B21E656299A686F54D7CD8F985529ABBBC76F",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\native_hud.lua": "7DFAEE77C4D2FC1C7A1E98D3FB5EBD31A9CE27369B27CB2052531B59A2B3FCCA",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\rig_math.lua": "5EA279FE6E3DF2D75934A9BAC7796A9B331D298581333FDC7B27BDB2FFA21498",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\view_context.lua": "11F5AA45BE35F10B2E4B334DDE7BCDF34EE36A9008D8A14E1225ADF181D21F0B",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\view_guard.lua": "69EE137EBBBC2AC645CA9DC6E82D95452DC67D7B6220E2C28B89F67A6F342035",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ui-fonts\\chakra-petch-600-latin.ttf": "21CBEBC8C7C83BDB4BD48D3E02891356145F4113F920732888D310BDBE06159C",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ui-fonts\\OFL-Chakra-Petch.txt": "13831D02389D917D22FCFA6C79F98F8ACBF61D230ADD0E73A4D4DC5F3BFB9E56",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ui-fonts\\OFL-Share-Tech-Mono.txt": "9D96F445B6E9C701428811D0177F894874F8D6F07ECC30D568C506542368F3FF",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ui-fonts\\share-tech-mono-400-latin.ttf": "9DF4BF36823D720EB3CB3DF5456A06B342F52507B74E4FDAB90B8D8E84F43E05",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Compat.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\DeviceProfiles.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\EditorPerProjectUserSettings.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Engine.ini": "8EEE0F9EB8AD25124C18E6A90980E4D6E477377057FF43A86B3D8355F56DFF53",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Game.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\GameUserSettings.ini": "C518BF4110155D15ECD26196C10FCB16A806441FA9E3FE7CD5A8EE6836ABB043",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Hardware.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Input.ini": "32F39997281D0B85F824889719DC3005097E5091BC0DFEA658B4F57E02554356",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Lightmass.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\Config\\Scalability.ini": "7EB70257593DA06F682A3DDDA54A9D260D4FC514F645237F5CA74B08F8DA61A6",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\SaveGames\\<STEAM_ID>\\ACE7Save.sav": "C7E69909F230843053C46B36EB942845F5A7AD6CA3C71CEF7B354981A6CEEE6B",
+    "C:\\Users\\83717\\AppData\\Local\\BANDAI NAMCO Entertainment\\ACE COMBAT 7\\SaveGames\\<STEAM_ID>\\steam_autocloud.vdf": "CE859DF75955808293B12DA8B602C9F02C954E9DA1B3D203E171CE7BACCEC466",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\proportional guided missile_P.pak": "41B49AD83D60509795DB910A02FD24C159AB39C324B5D1B745906F4A95A094E5",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\PWMKI_Add-On_P.pak": "F28106000D18CFF7C9CB96C666843887D2CA5DC81517AB380343C9BBEF4DAA64",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\FOV +S_P.pak": "25B378E34A3854A08D78531A70A663C9B582B44A14B8CBD0FC859A9EAD68EC78"
+  },
+  "lua_syntax_checked": true,
+  "core_ui_build": false,
+  "test_modules_run": false,
+  "runtime_verified": true,
+  "findings": [
+    "统一 PPDT 195 条记录造成未安装机体进入机库列表",
+    "两次故障为 zx01 蓝图未加载及 su47 默认兵装组件缺失，错误持续阻止后续选装接入",
+    "现场 HangarManager.LoadedPlayerPlane 指向实际 PW-MKI；预览 PlaneTypeID=-1，故用蓝图类核对身份"
+  ],
+  "changes": [
+    "菜单从 HangarManager.LoadedPlayerPlane 读取兵装组件，任务从玩家实例读取；取消机体 CDO 假设",
+    "换机后明确记录并结束旧机体的页面错误；同一失败上下文不自动重试",
+    "恢复选装页暂存根节点的 owner 身份字段，使原有重进判断有效"
+  ],
+  "offline_table_comparison": {
+    "baseline_count": 52,
+    "new_count": 53,
+    "extra": [
+      {
+        "id": 148,
+        "code": "pw01"
+      }
+    ],
+    "changed_existing_identity": [],
+    "missing_weapon_codes": []
+  },
+  "runtime_validation_scope": "用户确认 Su-47 与独立 PW-MKI 的双 SP、换机、出击、补给；见 compatibility-small-addon-user-validation.json"
+}

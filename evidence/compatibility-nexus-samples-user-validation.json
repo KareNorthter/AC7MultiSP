@@ -1,0 +1,93 @@
+{
+  "recorded_at": "2026-10-15T15:33:42.701659",
+  "revision": "compatibility-nexus-samples-installed.json",
+  "user_statement": "J20 模型和涂装正常，但只能原生单 SP，未出击；AdlerA 选装、使用、补给正常，准星改变，LV2 弹药部件生效；F15E TLS 红色激光使用和结束正常。",
+  "user_passed": [
+    "Adler A 双 SP 选装、使用与补给",
+    "Hex 锁定准星变化",
+    "LV2 增弹部件生效",
+    "F-15E TLS 使用与结束"
+  ],
+  "user_failed": [
+    "J-20A 未接入双 SP，仅原生单 SP，未出击"
+  ],
+  "observed_catalogue_size": 50,
+  "j20_catalogue": {
+    "code": "j20a",
+    "id": 181,
+    "main_max": 150,
+    "supported": true,
+    "weapons": [
+      {
+        "category": 0,
+        "code": "laam",
+        "index": 0,
+        "max": 40,
+        "stats": [
+          55,
+          0,
+          54,
+          51,
+          70,
+          0
+        ],
+        "type_key": "HangarWeaponType_Name_Atalom",
+        "weapon_id": 13
+      },
+      {
+        "category": 0,
+        "code": "4aam",
+        "index": 1,
+        "max": 68,
+        "stats": [
+          60,
+          0,
+          41,
+          41,
+          34,
+          0
+        ],
+        "type_key": "HangarWeaponType_Name_Atalom",
+        "weapon_id": 2
+      },
+      {
+        "category": 1,
+        "code": "xsdb",
+        "index": 2,
+        "max": 94,
+        "stats": [
+          0,
+          63,
+          37,
+          54,
+          24,
+          16
+        ],
+        "type_key": "HangarWeaponType_Name_Atglob",
+        "weapon_id": 28
+      }
+    ]
+  },
+  "log_excerpt": [
+    "2026-10-15T07:19:30Z NATIVE_LOADOUT_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a",
+    "2026-10-15T07:20:01Z MENU_ERROR_CONTEXT_ENDED from=181 to=166 prior=...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a",
+    "2026-10-15T07:20:19Z NATIVE_LOADOUT_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a",
+    "2026-10-15T07:20:42Z MENU_ERROR_CONTEXT_ENDED from=181 to=166 prior=...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a",
+    "2026-10-15T07:22:02Z LOADOUT 165 {\"a\":0,\"ratio\":1,\"b\":1}",
+    "2026-10-15T07:23:53Z RESUPPLY_PROFILE_STAGED 165 {\"a\":1,\"ratio\":1,\"b\":2}",
+    "2026-10-15T07:23:53Z LOADOUT 165 {\"a\":1,\"ratio\":1,\"b\":2}",
+    "2026-10-15T07:23:53Z RESUPPLY_LOADOUT_APPLIED 165 {\"a\":1,\"ratio\":1,\"b\":2}",
+    "2026-10-15T07:26:41Z LOADOUT 102 {\"a\":2,\"ratio\":1,\"b\":1}"
+  ],
+  "lua_errors_in_session": [
+    "2026-10-15T07:19:30Z NATIVE_LOADOUT_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a",
+    "2026-10-15T07:20:03Z NATIVE_LOADOUT_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:219: 机库模型尚未切换到当前机体：su57tg",
+    "2026-10-15T07:20:19Z NATIVE_LOADOUT_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:218: 当前机体蓝图类未加载：j20a"
+  ],
+  "scope_notes": [
+    "本批日志配弹为 100%，不将 LV2 反馈扩展为 50% 配弹通过",
+    "Adler B、J-20 飞行/补给和涂装换兵装仍未验证",
+    "另有一次 Su-57 TGM 预览身份不符错误，随后有该机体选装提交；不将该错误记为已专项复测"
+  ],
+  "game_started": false
+}

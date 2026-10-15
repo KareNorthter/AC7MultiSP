@@ -1,0 +1,220 @@
+{
+  "installed_at": "2026-10-15T15:00:08.053286",
+  "backup": "E:\\AC7_MultiSP\\backup\\compatibility-nexus-samples-20261015-145958",
+  "status": "整批文件已安装，游戏未启动，等待用户实测",
+  "game_started": false,
+  "runtime_verified": false,
+  "installed_paks": {
+    "ADA01_AddOn_Standalone_P.pak": "7AF63314AE6570F72676A2AF708554B8AEF8B5EDCFAE41FCB02EECE171DFFA52",
+    "Adf11fTLSDamageMod_0_P.PAK": "83130463CF6E25730A2E7B6615ABDFCC95B9084063B3C3F3766B070D02AF69A2",
+    "AllPartInCampaignMode2025v2_0_P.PAK": "646CEEACBA7204658FA0DB0776BDFD79C10DC959BFEC7DA78E709499D24C6AF2",
+    "FalkenTLSDamageMod_0_P.PAK": "E0A3ECEB8E3FA37B01D41C5141E4D1D21F1B80471EA28081316CAD87E0347AB4",
+    "FOV +S_P.pak": "25B378E34A3854A08D78531A70A663C9B582B44A14B8CBD0FC859A9EAD68EC78",
+    "J20A_MainFiles_P.pak": "8F2C43C3AC25E7FD477AFE07BA8DC054AE930F3EC57A65364ABF2CCAAC1BE7A0",
+    "MorganTLSDamageMod_0_P.PAK": "07BF69E8E78CCFDBB95E0DF1288C571659C1D25916466C51B08413E833BA90E7",
+    "NormalTlsDamageModv2.PAK": "F0A22F4B573776E072F26C214BE3F13A53F9CAF2ED3EDD165349DFD2FA4A68AA",
+    "proportional guided missile_P.pak": "41B49AD83D60509795DB910A02FD24C159AB39C324B5D1B745906F4A95A094E5",
+    "TlsRadiusModv2.PAK": "7EA20CC6FC20D9D13D65579166CDFE9C7688217C44E679E35C65C07EA4B20D99",
+    "~J20A_Addon_P.pak": "B22C0C71EFD4C4A71F0A3B227FB73E9CF3FF5E9F165CB50748438B40C0D9DA63",
+    "~~!UI (Lock-on Crosshair) Hex!~~_P.pak": "5B9018904BA09135C29BD4E4DC18F40A6CB8518A119015FAC672CA3E5AE65EB2",
+    "~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak": "A656AFC50025339426C217D7CFC94B7A62586E6567C58A8F038B5E24ADC7E60A",
+    "~~~~~~~~~!since_Localisation_AVDT_P.pak": "A3DF2CF83D1C874C2250035EAE44384ABD7FC05B8F27D8058F1966ED1C76A51D",
+    "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak": "E66034BB17A66A2E6F1996F3A1C2F698073C386B4D7D38C44A8AB06F1635E83B",
+    "~~~~~~~~~~~~~~~~AC7DualSP_LocalCatalogue_P.pak": "19420CB14D2AAD5E76E233CEA58B69898F8B59C028630CB164FAFDC78C7B3D1A"
+  },
+  "archives": {
+    "AllPartInCampaignMode2025-623-1-3-2-1749440210.zip": "70D7D004638FD2FA9B28E5849DC7F37ADE8CD4451321523E179A0299722F2329",
+    "TlsDamageAndRangeMod 3.0-190-3-0-1589642405.zip": "118C0EB1A14E7B1B312B558B3AF36EA57A5E5B685F822E8898B48B633C04902C",
+    "J-20A Overhauled and Addon-2267-1-1-1698813751.zip": "04262459655447A35527D9CFD65220C454AEA046391B18CE62629AFE08CD584F",
+    "Lock-on Crosshair-649-Release-1-1590506460.rar": "95062D741D2C6B67202EA853E29D011AAF97B7F4911E6B0146B3C4C625593117"
+  },
+  "j20_version": "Nexus 1.1 / 2023-11-01",
+  "j20_mode": "独立版，非 FB-22 替换版",
+  "expected_catalogue_size": 50,
+  "expected_addons": {
+    "165": "adlra",
+    "166": "adlrb",
+    "181": "j20a"
+  },
+  "catalogue_scope": "47 条原版战役记录加 3 条新增；沿用作者表不含 VR/Avril 记录的范围",
+  "full_195_plane_table_installed": false,
+  "external_mod_bytes_unchanged": true,
+  "dlc_restrictions_preserved": true,
+  "crosshair_variant": "Hex / Release-1",
+  "parts_version": "Nexus 1.3.2 / AllPartInCampaignMode2025v2_0_P.PAK",
+  "tls_version": "3.0，基础 TLS、三架 DLC TLS 变体和半径曲线共五包",
+  "retained_features": [
+    "FOV +S",
+    "比例制导",
+    "AC7MouseAim",
+    "DualSP F6"
+  ],
+  "excluded_features": [
+    "AC7Weapons",
+    "J-20 FB-22 替换模块",
+    "J-20 R-40 机体目录",
+    "J-20 EG/飞行参数/可选模块"
+  ],
+  "no_direct_asset_overlap_for_three_samples": true,
+  "intentional_table_overrides": {
+    "../../../nimbus/content/blueprint/information/aircraftviewerdatatable.uasset": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/aircraftviewerdatatable.uexp": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/playerplanedatatable.uasset": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~~~~~~~~AC7DualSP_LocalCatalogue_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/playerplanedatatable.uexp": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~~~~~~~~AC7DualSP_LocalCatalogue_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/skindatatable.uasset": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak"
+    ],
+    "../../../nimbus/content/blueprint/information/skindatatable.uexp": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_SDT_Add-On_NON-ASS_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/a.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/b.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/c.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/cmn.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/d.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/e.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/f.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/g.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/h.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/i.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/j.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/k.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/l.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ],
+    "../../../nimbus/content/localization/game/m.dat": [
+      "~J20A_Addon_P.pak",
+      "~~~~~~~~~!since_Localisation_AVDT_P.pak"
+    ]
+  },
+  "own_lua_change": "以引擎机体类身份及 IsA 校验实例，允许大小写差异和涂装派生类；世界和组件检查保留",
+  "j20_blueprint_evidence": [
+    "AcePlayerPawn_J20A_C",
+    "AcePlayerPawn_J20A_s01_C 派生自 AcePlayerPawn_J20A_C"
+  ],
+  "main_lua_sha256": "22B550A87FC2FA919FED4E353D4BE01866B8619061158E5D990F445D059D78C0",
+  "protected_file_count": 65,
+  "configuration_and_saves_unchanged": true,
+  "lua_syntax_checked": true,
+  "core_ui_build": false,
+  "test_modules_run": false,
+  "local_catalogue_build": {
+    "planes": {
+      "100": "f04e",
+      "101": "f15c",
+      "102": "f15e",
+      "103": "f18f",
+      "104": "f15j",
+      "105": "f35c",
+      "106": "a10a",
+      "107": "f02a",
+      "108": "f14d",
+      "109": "f16c",
+      "110": "f22a",
+      "111": "j39e",
+      "112": "m21b",
+      "113": "m29a",
+      "114": "m31b",
+      "115": "mr2k",
+      "116": "pkfa",
+      "117": "rflm",
+      "118": "su33",
+      "119": "su34",
+      "120": "su35",
+      "121": "su37",
+      "122": "su47",
+      "123": "typn",
+      "124": "yf23",
+      "125": "su30",
+      "126": "adf11f",
+      "127": "x02s",
+      "128": "su30sm",
+      "129": "f104",
+      "130": "zoef",
+      "131": "mrgn",
+      "132": "dark",
+      "133": "f18e",
+      "134": "f14a",
+      "135": "f18etg",
+      "136": "f14atg",
+      "137": "su57tg",
+      "138": "asfx",
+      "139": "fa27",
+      "140": "fa44",
+      "141": "f15m",
+      "142": "f16x",
+      "143": "fb22",
+      "145": "f18x",
+      "146": "f02x",
+      "147": "m35d",
+      "165": "adlra",
+      "166": "adlrb",
+      "181": "j20a"
+    },
+    "count": 50,
+    "source_sha256": "115aee3c844f2aeea5fb44abe5c54d5beb21d3d264eb00be942dc7232c678696",
+    "pak": "E:\\AC7_MultiSP\\Temp\\compatibility-20261015\\adler-j20-catalogue-plain\\~~~~~~~~~~~~~~~~AC7DualSP_LocalCatalogue_P.pak",
+    "sha256": "19420cb14d2aad5e76e233cea58b69898f8b59c028630cb164fafdc78c7b3d1a",
+    "roundtrip_equal": true
+  },
+  "pending_runtime_checks": [
+    "新增机体模型/名称/双 SP/换机",
+    "部件增弹及补给",
+    "Hex 锁定显示",
+    "TLS 发射与切换收尾",
+    "J-20A 默认涂装后再测 Spare/Strider 的兵装变化；动态简称尚未确认"
+  ],
+  "subsequent_user_validation": "compatibility-nexus-samples-user-validation.json",
+  "lua_revision_superseded_by": "compatibility-j20-identity-fix-installed.json"
+}

@@ -10,23 +10,6 @@ local function key(name)return {KeyName=FName(name)}end
 local function color(r,g,b,a)return {SpecifiedColor={R=r,G=g,B=b,A=a},ColorUseRule=0}end
 local function copyProfile(p)return {a=p.a,b=p.b,ratio=p.ratio}end
 
--- 机库信息采用原生风格的英文兵装全称；中文说明继续用于补给和左下操作提示。
-local weaponFullNames={
-    qaam="QUICK MANEUVER\nAIR-TO-AIR MISSILE",sasm="SHORT-RANGE AERIAL\nSUPPRESSION MISSILE",
-    hcaa="HIGH-CAPACITY\nAIR-TO-AIR MISSILE",hpaa="HIGH-POWER\nAIR-TO-AIR MISSILE",
-    hvaa="HYPER VELOCITY\nAIR-TO-AIR MISSILE",laam="LONG-RANGE\nAIR-TO-AIR MISSILE",
-    saam="SEMI-ACTIVE\nAIR-TO-AIR MISSILE",["4aam"]="4 TARGET AIR-TO-AIR MISSILE",
-    ["6aam"]="6 TARGET AIR-TO-AIR MISSILE",["8aam"]="8 TARGET AIR-TO-AIR MISSILE",
-    lasm="LONG-RANGE\nANTI-SHIP MISSILE",lagm="LONG-RANGE\nAIR-TO-GROUND MISSILE",
-    lacm="LAND ATTACK CRUISE MISSILE",["4agm"]="4 TARGET\nAIR-TO-GROUND MISSILE",
-    ["8agm"]="8 TARGET\nAIR-TO-GROUND MISSILE",ugb="UNGUIDED BOMB",gpb="GUIDED PENETRATION BOMB",
-    xsdb="ADVANCED SMALL DIAMETER BOMB",sffs="SELF-FORGING FRAGMENTS\nSUBMUNITIONS",
-    sod="STAND-OFF DISPENSER",faeb="FUEL-AIR EXPLOSIVE BOMB",eml="ELECTROMAGNETIC LAUNCHER",
-    plsl="PULSE LASER",tls="TACTICAL LASER SYSTEM",rkt="ROCKET LAUNCHER",
-    grkt="GUIDED ROCKET LAUNCHER",mgp="MACHINE GUN POD",mpbm="MULTI-PURPOSE BURST MISSILE",
-    uav="UNMANNED AERIAL VEHICLE",ecm="ELECTRONIC COUNTERMEASURES",
-    mstm="MULTIPLE TARGET\nSTANDARD MISSILE",admm="ALL DIRECTION\nMULTI-PURPOSE MISSILE"}
-
 -- 类型对应原生 WeaponConceptText 的键；不再把兵装全名放进 TYPE。
 local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOCK-ON MISSILE",
     Atglob="AIR TO GROUND LOCK-ON BOMB",Atglor="AIR TO GROUND LOCK-ON ROCKET",
@@ -62,7 +45,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         return self.owners
     end
-    -- 页面离开时先隐藏其私有根，再还原源控件；重进接管时才恢复根可见性。
+    -- 选装页交接时暂存私有根的显隐；只读 STANDBY/PART 不接管整页显隐。
     local function releaseClosedRoot()
         local entry=self.closedRoot
         if entry and valid(entry.root)then entry.root:SetVisibility(entry.visibility)end
@@ -73,7 +56,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         releaseClosedRoot()
         if valid(c.owner)and valid(c.owner.WidgetTree)and valid(c.owner.WidgetTree.RootWidget)then
             local root=c.owner.WidgetTree.RootWidget -- 不影响游戏共享菜单前景。
-            self.closedRoot={owner=c.owner:GetAddress(),root=root,visibility=root:GetVisibility()}
+            self.closedRoot={owner=c.owner:GetAddress(),root=root,visibility=root:GetVisibility()} -- 选装页重进需核对原页面身份。
             root:SetVisibility(COLLAPSED)
         end
     end
@@ -288,7 +271,47 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         c.visualRestored=true
     end
+    local function clearModelWait(releaseInput)
+        -- 只归还等待阶段借用的说明文字和输入，不改变根节点显隐。
+        local pending=self.modelWait -- 等待记录绑定具体页面、机体及世界。
+        if not pending then return end
+        self.modelWait=nil
+        if valid(pending.description)then pending.description:SetText(FText(pending.originalText))end
+        if pending.inputOwned and releaseInput~=false and valid(pending.owner)and pending.owner:IsVisible()then
+            setControl(pending.owner,pending.originalControl)
+        end
+    end
+    local function modelChoices(owner,instance,planeId,options,now)
+        -- 未就绪是有限等待状态；只在模型身份一致后建立双选，真实组件/资源异常仍由原错误路径处理。
+        local choices,reason=options() -- 第二返回值仅表示原生预览尚未跟上当前选择。
+        if not reason then
+            if self.modelWait then
+                note("NATIVE_MODEL_READY plane="..planeId)
+                clearModelWait(true)
+            end
+            return choices
+        end
+        assert(not supply,"补给不允许等待机库模型："..reason)
+        if not self.modelWait then
+            local pending={owner=owner,planeId=planeId,world=instance:GetWorld():GetAddress(),started=now} -- 当前等待上下文。
+            self.modelWait=pending
+            if not standby then
+                if not panelClass then api()end
+                pending.description=controls(owner).DescriptionText
+                assert(valid(pending.description),"机库等待提示控件缺失")
+                pending.originalText=pending.description.Text:ToString()
+                pending.originalControl=owner:IsEnableControl();pending.inputOwned=true
+                setControl(owner,false) -- 等待期间不允许原生单 SP 消费确认键。
+                pending.description:SetText(FText(tr("正在加载机体兵装，请稍候……","Loading aircraft weapons. Please wait...")))
+            end
+            note("NATIVE_MODEL_WAIT plane="..planeId.." "..reason)
+        end
+        self.status="waiting_model"
+        assert(now-self.modelWait.started<10,"机体兵装等待超过 10 秒，请检查模型并重新选机："..reason)
+        return nil
+    end
     local function restore(releaseInput)
+        clearModelWait(releaseInput)
         local c=self.cache;if not c then return end
         if c.actionQueued then
             local ok,_,err=preparationAction(c.actionWidget,0,-1)
@@ -419,6 +442,21 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             setText(c,column.typeHeading,"[TYPE]")
         end
     end
+    -- 兵装全名来自当前原生名称表，支持模组新增或替换的名称；缺项明确报错。
+    local function weaponFullName(c,option)
+        c.weaponFullNames=c.weaponFullNames or {} -- 缓存只属于当前页面，重新进入即可反映语言变化。
+        local code=option.code:lower() -- 采用目录里的真实兵装代码，不自行映射为原版武器。
+        if not c.weaponFullNames[code]then
+            local localizer=StaticFindObject("/Script/Nimbus.Default__LocalizationManager") -- 游戏已合并加载的名称源。
+            local nameKey="Weapon_Name_"..code -- 与原生机库兵装名称使用同一组键。
+            assert(valid(localizer),"原生兵装名称接口缺失")
+            assert(localizer:HasString(nameKey),"原生兵装名称不存在："..nameKey)
+            local name=localizer:LocalizeString(nameKey,true,""):ToString() -- 跟随原生语言，不改写全局语言。
+            assert(#name>0,"原生兵装名称为空："..nameKey)
+            c.weaponFullNames[code]=name
+        end
+        return c.weaponFullNames[code]
+    end
     -- SP1 阶段尚未选择 SP2，始终显示 EMPTY；SP2 阶段才展示其当前候选。
     local function paintColumns(c)
         local flow=c.flow;local stage=flow.stage;local row=flow:rows()[flow.cursor]
@@ -433,7 +471,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local signature=tostring(weapon)..":"..amount
             if column.lastContent==signature then goto nextColumn end
             setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or "EMPTY"))
-            local fullName=option and assert(weaponFullNames[option.code:lower()],"英文兵装全名缺失："..option.code)or "NO WEAPON"
+            local fullName=option and weaponFullName(c,option)or "NO WEAPON" -- 空挂载不查询不存在的兵装键。
             local typeText=option and assert(weaponTypes[option.type_key:gsub("^HangarWeaponType_Name_","")],"原生兵装类型未知："..option.type_key)or "NO WEAPON"
             if column.fullName then setText(c,column.fullName,fullName)else typeText=fullName end -- STANDBY 紧凑栏保留原有全名位置。
             setText(c,column.type,typeText)
@@ -611,7 +649,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         if c and (inFlight or not saved or not valid(c.owner)or not c.owner:IsVisible()
             or c.planeId~=planeId or c.world~=instance:GetWorld():GetAddress()
             or c.flow.draft.a~=saved.a or c.flow.draft.b~=saved.b or c.flow.draft.ratio~=saved.ratio)then
-            hideClosedRoot(c)
+            -- 只撤回自己修改的兵装区域。原生会复用此页，隐藏整个根会越过本适配器的生命周期。
+            -- 页面退出已由原生显隐控制，不能再折叠根并等待另一次启用事件来补救。
+            note("NATIVE_"..mode:upper().."_DETACHED plane="..c.planeId.." next="..planeId)
             restore(false);c=nil
         end
         -- 输入停用是退出动画的起点，此时保留双 SP 画面直到页面实际隐藏。
@@ -619,7 +659,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             -- STANDBY 只在返回时刷新，PART 继续观察已安装部件，避免复用页面留下旧载量。
             local enabled=c.owner:IsEnableControl()
             if enabled and (not c.controlEnabled or (parts and now-(c.ammoRefreshedAt or -1)>.25))then
-                c.ammoRefreshedAt=now;c.flow.options=options();paintColumns(c)
+                local choices=modelChoices(c.owner,instance,planeId,options,now) -- 部件页也不能拿上一架预览计算载量。
+                if not choices then return end
+                c.ammoRefreshedAt=now;c.flow.options=choices;paintColumns(c);self.status=mode
             end
             c.controlEnabled=enabled
             return
@@ -631,8 +673,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                 and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then
                 if not panelClass then api()end
-                releaseClosedRoot()
-                attachStandby(owner,instance,planeId,saved,options());return
+                local choices=modelChoices(owner,instance,planeId,options,now) -- 等待只影响本模组显示，不接管只读页输入。
+                if choices then attachStandby(owner,instance,planeId,saved,choices)end
+                return
             end
         end
         self.status="waiting"
@@ -843,7 +886,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local candidate=nil
             for _,owner in ipairs(owners(instance,now))do
                 -- 补给输入已在任务事件中隔离；无需等原生入场动画开放控制才替换单 SP 页面。
-                if valid(owner)and owner:IsVisible()and (supply or owner:IsEnableControl())
+                if valid(owner)and owner:IsVisible()and (supply or owner:IsEnableControl()
+                    or(self.modelWait and self.modelWait.owner:GetAddress()==owner:GetAddress()))
                     and valid(owner.WidgetTree)and valid(owner.WidgetTree.RootWidget)
                     and valid(owner:GetWorld())and owner:GetWorld():GetAddress()==instance:GetWorld():GetAddress()
                     and not owner:GetFullName():find("WidgetArchetype",1,true)and not owner:GetFullName():find("Default__",1,true)then candidate=owner;break end
@@ -853,7 +897,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 releaseClosedRoot();self.ignored=nil;self.ignoredReason=nil
             end
             if candidate:GetAddress()==self.ignored then return end
-            local choices=options();if #choices~=3 then return end
+            local choices=modelChoices(candidate,instance,planeId,options,now);if not choices or #choices~=3 then return end
             self.ignored=candidate:GetAddress();self.ignoredReason="error" -- 接入失败只记录一次，不在每次轮询重试。
             if not panelClass then api()end
             c=(supply and attachSupply or attach)(candidate,instance,planeId,profile(),choices)
@@ -932,7 +976,15 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         if not c.continueRequested and not c.exitRequested then paint(c)end
     end
     function self:pump(...)
-        local args={...};local ok,err=xpcall(function()(standby and pumpStandby or pump)(table.unpack(args))end,debug.traceback)
+        local args={...};local ok,err=xpcall(function()
+            local pending=self.modelWait -- 换机、换世界、离页或打开管理界面时结束本次等待，不能遗留输入锁。
+            if pending and (not valid(pending.owner)or not pending.owner:IsVisible()or args[2]~=pending.planeId
+                or args[1]:GetWorld():GetAddress()~=pending.world or args[6]or args[7])then
+                note("NATIVE_MODEL_WAIT_CANCELLED plane="..pending.planeId)
+                clearModelWait(not args[6])
+            end
+            (standby and pumpStandby or pump)(table.unpack(args))
+        end,debug.traceback)
         if not ok then fail(err)end
     end
     -- 页面激活或补给打开事件中同步接入，不再等待 250 ms 的常规扫描。
@@ -963,7 +1015,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     end
     -- 原生重新启用同一菜单对象时清除关闭标记；模组自己的输入操作不算重进。
     function self:onControlChanged(ctx,enabled)
-        if supply or self.controlDepth>0 then return end
+        if supply or standby or self.controlDepth>0 then return end
         local owner=ctx:get();local address=owner:GetAddress();local c=self.cache
         if (not c or c.owner:GetAddress()~=address)and address~=self.ignored then return end
         local ok,err=xpcall(function()
