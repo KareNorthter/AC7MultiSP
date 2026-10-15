@@ -68,16 +68,16 @@ def main():
     for name, expected in protected.items():
         if digest(root / name) != expected:
             raise ValueError("构建期间保护文件改变：" + name)
-    report = {"candidate": "1.0.2-su30sm-mount.1", "candidate_sha256": digest(candidate),
+    report = {"candidate": "1.0.2-su30sm-mount.2", "candidate_sha256": digest(candidate),
               "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE", "compiled": True,
               "lua_syntax_only": True, "required_exports_verified": sorted(required),
               "game_installed": False, "game_validated": False, "test_modules_run": False,
-              "installation_blockers": ["补读完整初始化调用链", "补读祖先显隐传播尾部并核对钩子范围"],
+              "installation_blockers": [], "native_research_evidence": "evidence/su30sm-fixed-mount-stage4.json",
               "protected_files": protected, "lua_sources": scripts,
               "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp")}}
     (output / "build-receipt.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"candidate": str(candidate), "sha256": report["candidate_sha256"],
-                      "status": "已构建，尚未满足安装条件"}, ensure_ascii=False))
+                      "status": "已构建；安装前须核对本阶段证据和正式安装文件"}, ensure_ascii=False))
 
 
 if __name__ == "__main__":

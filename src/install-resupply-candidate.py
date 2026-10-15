@@ -184,6 +184,8 @@ def main():
     options = arguments.parse_args()
     # 管理源码只能通过管理模式安装；旧候选的记录绝不覆盖。
     controller = (ROOT / "dist/DualSP/Scripts/main.lua").read_text(encoding="utf-8")  # 版本协议来自即将安装的调度器。
+    if 'loadExport("dualsp_fixed_mount_update")' in controller:
+        raise RuntimeError("当前是固定挂载研究 Lua，必须使用专用 install_su30sm_candidate.py；不能搭配正式核心")
     management_source = "dualsp_management_supported" in controller
     experience_source = "dualsp_preparation_action" in controller and "dualsp_selection_audio" in controller
     if options.experience:

@@ -45,6 +45,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-mount.2") -- 研究版本单独记录，正式 UI 保持 1.0.2。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。

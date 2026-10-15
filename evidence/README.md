@@ -10,6 +10,8 @@
 - [原生路由分析](su30sm-fixed-mount-routing.json)：实际发射变换、父链选池、单枚显隐和延迟恢复；明确区分静态指令路径与现场实际观察。
 - [本轮保护核对](su30sm-fixed-mount-stage2.json)：组件连续身份、语法解析、保护核心与已安装文件核对；不作为原型验收。
 - [第三阶段候选](su30sm-fixed-mount-stage3.json)：原生队列清理链、独立构建和接口核对；原型未安装，完整初始化和显隐传播仍待补读。
+- [第四阶段补采](su30sm-fixed-mount-stage4.json)：初始化链闭合，显隐传播参数和共同父链确认；满足首轮试装静态条件，不等于实机通过。
+- [候选 .2 构建](su30sm-fixed-mount-candidate.2-built.json)、[候选 .2 安装](su30sm-fixed-mount-candidate.2-installed.json)：正式 1.0.2 整套备份后安装；四个计划文件改变，其余运行文件、配置、存档和加载器保留，待用户启动观察。
 - [挂架几何范围](su30sm-fixed-mount-geometry.json)：两个挂架的 LOD0 section 数与六处空间范围；采用单挂架候选，不冒充实机贴合或逐面相交验证。
 - [历史资源摘要](su30sm-mount-assets.json)、[基类摘要](su30sm-base-pawn-assets.json)、[历史四阶段现场](su30sm-mount-live.json)、[历史原生入口](su30sm-native-mount-findings.json)：从 `c44e3b9` 引入的 0.1.9 证据，不冒充当前 1.0.1 实测。
 - 当前实施范围、工具和未确认项见[固定挂载研究](../docs/research/su30sm-fixed-mount.md)。

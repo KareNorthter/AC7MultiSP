@@ -1,0 +1,158 @@
+{
+  "date": "2026-10-15",
+  "phase": "第四阶段只读补采，满足首轮试装前的静态接入条件",
+  "steam_build": 9855922,
+  "installed_version_at_capture": "1.0.2",
+  "pid": 33216,
+  "process_write": false,
+  "game_functions_called": false,
+  "native_checks_complete": true,
+  "source_manifests": [
+    "Temp/native-stage4/manifest.json",
+    "Temp/native-stage4-crosscheck/manifest.json"
+  ],
+  "native_ranges": [
+    {
+      "rva": "0x81e810",
+      "length": 2048,
+      "file": "mount-81e810-800.bin",
+      "sha256": "8c965213496e63ac203e773d85bf5849c2e561d951bbe26d9165dddb935c8b28"
+    },
+    {
+      "rva": "0x16f8bc0",
+      "length": 768,
+      "file": "mount-16f8bc0-300.bin",
+      "sha256": "7a5c12ceb14cb7fb06d4aa53b594249c56c2c08ddffcaccab0c52b9416d135d1"
+    },
+    {
+      "rva": "0x16f62b0",
+      "length": 768,
+      "file": "mount-16f62b0-300.bin",
+      "sha256": "c2766fa5635fdb45939208dde8e89a40d701a77409a633192073b970db515aa0"
+    },
+    {
+      "rva": "0x898000",
+      "length": 49152,
+      "file": "mount-898000-c000.bin",
+      "sha256": "ec4452f4e6bc4e160d73d67c17ea6d8c8b29c274431d36b71707847e43123b35"
+    },
+    {
+      "rva": "0x87f000",
+      "length": 36864,
+      "file": "mount-87f000-9000.bin",
+      "sha256": "7b6ffcd2ec4a8c4f6e0d25d8babf7eb21f7539c43131ab4ae48c5c5b1031911b"
+    }
+  ],
+  "snapshot_sha256": "d4ae90de45ac9e9676ef0bbd4300f2052b0292f6dc1c35581acdcd3dd01046ba",
+  "previous_weapon_native_ranges_byte_identical": true,
+  "observed": {
+    "plane": "AcePlayerPawn_su30sm_s03_C",
+    "weapon": "plwp_6aam_r0_C",
+    "ammo": 68,
+    "window": 6,
+    "count": 6,
+    "cursor": 0
+  },
+  "binding": {
+    "pid": 33216,
+    "class_chain": [
+      {
+        "class": "AcePlayerPawn_su30sm_s03_C",
+        "package": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su30sm_s03"
+      },
+      {
+        "class": "AcePlayerPawn_su30sm_C",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_su30sm"
+      },
+      {
+        "class": "AcePlayerPawn_C",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn"
+      },
+      {
+        "class": "PlayerPlane",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "GameObject",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "Pawn",
+        "package": "/Script/Engine"
+      },
+      {
+        "class": "Actor",
+        "package": "/Script/Engine"
+      },
+      {
+        "class": "Object",
+        "package": "/Script/CoreUObject"
+      }
+    ],
+    "common_parent_chain": [
+      "RootComponent",
+      "WeaponMeshBase",
+      "SWP1/2/3"
+    ],
+    "pools": [
+      {
+        "pool": 1,
+        "count": 6,
+        "socket_parent_mesh_verified": true
+      },
+      {
+        "pool": 2,
+        "count": 4,
+        "socket_parent_mesh_verified": true
+      },
+      {
+        "pool": 3,
+        "count": 6,
+        "socket_parent_mesh_verified": true
+      }
+    ],
+    "process_write": false,
+    "game_functions_called": false
+  },
+  "initialization": {
+    "caller": "0x81e810",
+    "call_site": "0x81e843",
+    "callee": "0x882e40",
+    "verified_chain": [
+      "0x81e810",
+      "0x882e40",
+      "0x884f10",
+      "0x89c530",
+      "0x89ff10(-1)"
+    ],
+    "conclusion": "现有切换初始化会清空全部延迟显隐队列；无需额外清理逻辑。"
+  },
+  "visibility": {
+    "visible_entry": "0x16f8bc0",
+    "hidden_entry": "0x16f62b0",
+    "propagation_enum": {
+      "0": "只改当前组件",
+      "1": "自身状态变化时通知后代渲染更新，不递归改状态",
+      "2": "遍历全部后代，以参数0调用同一显隐入口，再通知渲染更新"
+    },
+    "recursive_call_sites": [
+      "0x16f8da1",
+      "0x16f6491"
+    ],
+    "hook_implication": "后代状态写入经过已有组件入口钩子。共同祖先 RootComponent/WeaponMeshBase 的传播必须保留整组请求，不能强制把隐藏飞机的挂载单独显示。"
+  },
+  "code_changes": [
+    "修正参数1与2的含义，仅参数2更新子模型原生状态记录",
+    "核对共同父链并保存祖先显隐传播请求，固定模型服从整组隐藏"
+  ],
+  "ready_for_first_controlled_install": true,
+  "runtime_validated": false,
+  "remaining_gameplay": [
+    "首次绑定与四加二显示",
+    "切换连续性和单挂架贴合",
+    "6AAM六发出弹及LAGM轮转",
+    "射后切换/装填/暂停/末弹",
+    "补给、检查点、退出任务和全局显隐"
+  ],
+  "boundary": "只读代码与对象核对不等同游戏内调用验证；首轮试装仍是研究候选。"
+}

@@ -41,7 +41,7 @@ LLVM-MinGW 默认位置见[工具清单](../tools/README.md)，可以通过 DUAL
 
 ## Git 与保护
 
-固定挂载研究分支使用专用构建：`python -X utf8 src/research/build_su30sm_candidate.py --tools-root E:/AC7_MultiSP/tools --output-dir Temp/su30sm-candidate.1-build`。输出目录必须不存在；构建启用 `DUALSP_SU30SM_MOUNT_PROTOTYPE`，语法编译 Lua 并检查核心导出，不运行脚本、不加载 DLL、不安装。研究 Lua 新增必需接口，不能用普通核心构建或正式 DLL 搭配。候选仍未满足安装门槛，见[研究说明](research/su30sm-fixed-mount.md)。该段只适用于独立研究分支，不改变主线构建方式。
+固定挂载研究分支使用专用构建：`python -X utf8 src/research/build_su30sm_candidate.py --tools-root E:/AC7_MultiSP/tools --output-dir Temp/su30sm-candidate.2-build`。输出目录必须不存在；构建启用 `DUALSP_SU30SM_MOUNT_PROTOTYPE`，语法编译 Lua 并检查核心导出，不运行脚本、不加载 DLL、不安装。研究 Lua 新增必需接口，不能用普通核心构建或正式 DLL 搭配。专用安装器 `src/research/install_su30sm_candidate.py --build-dir Temp/su30sm-candidate.2-build` 默认只预检，显式加 `--apply` 才执行；它只接受已核对的正式 1.0.2 现场，拒绝覆盖已经安装的研究候选。候选 .2 已备份并安装、待实机观察，见[研究与恢复说明](research/su30sm-fixed-mount.md)。该段只适用于独立研究分支，不改变主线构建方式。
 
 当前源码、版本 DLL、加载器、第三方许可、研究结论和发布回执进入 Git。Release ZIP、运行库、原始音频、Temp、backup 和个人状态不入 Git；不自动推送。旧 0.1.7 ZIP 及 baseline 清单保持原值。
 

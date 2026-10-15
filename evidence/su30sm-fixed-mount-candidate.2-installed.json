@@ -1,0 +1,31 @@
+{
+  "candidate": "1.0.2-su30sm-mount.2",
+  "core_sha256": "e5cc499b69279904105ddf3515ae574d6cf86e649c3a59c01cbf74ceeb2aa014",
+  "replacement_files": [
+    "bin/DualSP.dll",
+    "Scripts/main.lua",
+    "VERSION",
+    "install-receipt.json"
+  ],
+  "base": "1.0.2",
+  "game_started_by_agent": false,
+  "installed_at": "2026-10-15T17:27:40.354848+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\backup\\su30sm-mount-20261015-172740-354848",
+  "installed": true,
+  "changed_files": {
+    "bin/DualSP.dll": "e5cc499b69279904105ddf3515ae574d6cf86e649c3a59c01cbf74ceeb2aa014",
+    "Scripts/main.lua": "899e33bf68b16481fbba3878aa956a2bef37f80d0da8c5d5c528b8a92016dc0e",
+    "VERSION": "b23fe8f88338a25cf9ad81b5ee0d1825ee1565491b5ec56ea877bc434c573991",
+    "install-receipt.json": "5d1c8b7ac9f2ad54d9865fa67f21aa27c5086cb6d6a3e4ef51cb4764c1426018"
+  },
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 5,
+  "profiles_preserved": true,
+  "full_backup_verified": true,
+  "gameplay_verified": false,
+  "test_modules_run": false,
+  "main_worktree_modified": false,
+  "main_head_at_final_check": "5628a6277055578fdf410b1329650e42e6b3ecc4",
+  "main_uncommitted_work_observed": true,
+  "main_coordination_note": "安装后主工作区出现其他任务的未提交改动；未复制或修改它们，本候选仍基于已发布1.0.2，当前已安装候选哈希未变。"
+}

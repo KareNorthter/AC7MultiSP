@@ -11,6 +11,8 @@ struct MountVisual {
 struct FixedMountState {
     bool bound{},rebuilding{}; // 重建期间仅固定外观，不改变原生临时武器池取位。
     MountIdentity plane,manager,meshManager; // 限定当前玩家，其他飞机全部直通。
+    MountIdentity root,weaponBase; // 现场确认的共同祖先：RootComponent → WeaponMeshBase → SWP。
+    bool ancestorVisible{true},ancestorHidden{}; // 祖先最近一次向下传播的整组显示请求。
     std::array<Addr,2> weaponClasses{}; // 会话 SP1/SP2 的真实武器类。
     std::array<int,2> weaponKinds{}; // 0=6AAM，1=LAGM；支持两种选择顺序。
     std::array<int,6> order{0,1,2,3,4,5}; // 当前原生槽对应的持久挂点序号。
@@ -21,7 +23,7 @@ struct FixedMountState {
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
 } fixedMount;
 
-using MountVisibility=void(*)(void*,bool,unsigned char); // 第三参为引擎传播枚举，0 表示不传播。
+using MountVisibility=void(*)(void*,bool,unsigned char); // 已读完整实现：0 不传播，1 仅通知子级渲染，2 改子级状态。
 using MountTransform=bool(*)(void*,void*,int,int); // MeshManager、输出 FTransform、分组、逻辑槽。
 using MountSelection=void(*)(void*,unsigned char,void*,int*); // 保留原生选槽，只替换已选槽的输出变换。
 using MountMaster=void(*)(void*,bool,bool); // 原生总显隐及强制更新参数。
@@ -98,7 +100,7 @@ float fixedMountElapsed(int index,float duration,float elapsed) {
 // 所有可视组件均保留原父链；只使用一个挂架网格，避免重复几何。
 bool mountDesired(const MountVisual& visual) {
     const bool master=read<unsigned char>(fixedMount.meshManager.address+0x120)!=0; // 原生总显隐。
-    if(!master)return false;
+    if(!master || !fixedMount.ancestorVisible || fixedMount.ancestorHidden)return false;
     if(visual.index<0)return visual.pool==2; // 仅显示 SWP3 挂架。
     if(visual.pool==0 && visual.index<4)return (fixedMount.readyMask&(1u<<visual.index))!=0;
     if(visual.pool==2 && visual.index>=4)return (fixedMount.readyMask&(1u<<visual.index))!=0;
@@ -140,11 +142,17 @@ void fixedMountFail(const char* message) noexcept {
 void mountFilterVisibility(void* object,bool requested,unsigned char propagation,bool hidden) {
     const auto original=hidden?mountOriginalHidden:mountOriginalVisibility; // 两种引擎接口分别处理。
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound)try {
+        const Addr address=reinterpret_cast<Addr>(object); // 先处理整架飞机/整组挂载的传播请求。
+        if(propagation==2 && (address==fixedMount.root.address || address==fixedMount.weaponBase.address)) {
+            require(mountAlive(fixedMount.root) && mountAlive(fixedMount.weaponBase),"固定挂载：祖先组件身份失效");
+            (hidden?fixedMount.ancestorHidden:fixedMount.ancestorVisible)=requested;
+            // 原生随后遍历后代并以参数 0 回调同一入口，固定模型将服从这次整组请求。
+        }
         for(auto& visual:fixedMount.visuals)if(visual.identity.address==reinterpret_cast<Addr>(object)) {
             require(mountAlive(visual.identity),"固定挂载：显隐对象身份失效");
             (hidden?visual.nativeHidden:visual.nativeVisible)=requested;
             // 原生挂架传播语义保留在归还记录中，固定显示期间不覆盖子模型。
-            if(visual.index<0 && propagation)for(auto& child:fixedMount.visuals)
+            if(visual.index<0 && propagation==2)for(auto& child:fixedMount.visuals)
                 if(child.pool==visual.pool && child.index>=0)(hidden?child.nativeHidden:child.nativeVisible)=requested;
             original(object,hidden?false:mountDesired(visual),0);
             return;
@@ -288,9 +296,16 @@ void fixedMountCommit(const Command& command) {
         fixedMount.plane=mountIdentity(command.plane);
         fixedMount.manager=mountIdentity(read<Addr>(command.activator+0x260));
         fixedMount.meshManager=mountIdentity(read<Addr>(fixedMount.manager.address+0x150));
+        fixedMount.root=mountIdentity(read<Addr>(command.plane+0x160));
+        fixedMount.weaponBase=mountIdentity(read<Addr>(command.plane+0x1ae0));
+        require(read<Addr>(fixedMount.weaponBase.address+0x100)==fixedMount.root.address &&
+            read<Addr>(fixedMount.root.address+0x100)==0,"固定挂载：共同祖先链不匹配");
+        const auto ancestorFlags=read<unsigned char>(fixedMount.weaponBase.address+0x1bc); // 初始总组状态来自共同挂载父级。
+        fixedMount.ancestorVisible=bool(ancestorFlags&0x10);fixedMount.ancestorHidden=bool(ancestorFlags&0x20);
         const std::array<size_t,3> offsets{0x1ba0,0x1b98,0x1b90}; // 本轮反射确认的 SWP1/2/3。
         for(int pool=0;pool<3;++pool) {
             const Addr rack=read<Addr>(command.plane+offsets[pool]); // 原生挂架父组件。
+            require(read<Addr>(rack+0x100)==fixedMount.weaponBase.address,"固定挂载：挂架共同父级不匹配");
             const std::string expected="su30sm_SWP"+std::to_string(pool+1)+"_SM"; // 精确资源名。
             require(mountName(read<Addr>(rack+0x728))==expected,"固定挂载：挂架资源被替换");
             const auto flags=read<unsigned char>(rack+0x1bc); // 退出原型时归还的原生状态。
