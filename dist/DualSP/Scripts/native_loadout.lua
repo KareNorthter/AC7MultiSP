@@ -450,10 +450,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         assert(valid(source)and valid(source.BarA),"原生性能基础条缺失")
         local bottom,left,right=source.BaseImage1,source.BaseImage2,source.BaseImage3 -- 原资源分别为底、左、右边框。
         assert(valid(bottom)and valid(left)and valid(right),"原生性能边框缺失")
-        local fillHeight=bottom.Slot:GetPosition().Y -- 机库 17、补给 16；保留各页原生高度和线宽。
-        local frameHeight=right.Slot:GetSize().Y -- 两种原生边框总高均为 18。
-        local leftWidth,rightWidth=left.Slot:GetSize().X,right.Slot:GetSize().X -- 机库 1、补给 2。
-        local bottomHeight=bottom.Slot:GetSize().Y -- 底边线厚度，不跟随横向栏宽拉伸。
+        -- 运行时会给图片增加 Overlay；资源中的直接 Canvas 槽不能代表现场层级。
+        -- 与原生文字定位共用外层 Canvas 查找，明确核对类型后再读取几何。
+        local bottomSlot,leftSlot,rightSlot=canvasSlot(bottom),canvasSlot(left),canvasSlot(right)
+        local fillHeight=bottomSlot:GetPosition().Y -- 机库 17、补给 16；保留各页原生高度和线宽。
+        local frameHeight=rightSlot:GetSize().Y -- 两种原生边框总高均为 18。
+        local leftWidth,rightWidth=leftSlot:GetSize().X,rightSlot:GetSize().X -- 机库 1、补给 2。
+        local bottomHeight=bottomSlot:GetSize().Y -- 底边线厚度，不跟随横向栏宽拉伸。
         local fillWidth=width-rightWidth -- 右边框占用的空间不计入性能值范围。
         assert(fillHeight>0 and fillHeight<frameHeight and frameHeight<=24
             and leftWidth>0 and rightWidth>0 and bottomHeight>0 and fillWidth>0,"原生性能边框尺寸不符")
@@ -764,23 +767,26 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         -- 每个原控件先记录再修改，成功退出和接入报错均走同一还原流程。
         local function resize(widget,position,dimensions)
             assert(valid(widget)and valid(widget.Slot),"补给背景或边框缺失")
-            assert(widget:GetAddress()==parent:GetAddress()or widget.Slot.Parent:GetAddress()==parent:GetAddress(),"补给背景或边框不属于主容器")
-            local layout=readLayout(widget.Slot,widget) -- 不保存可被随后 SetSize 改写的结构引用。
+            local slot=canvasSlot(widget) -- 背景/边框图片同样可能有运行时 Overlay 包装。
+            local positioned=slot.Content -- 几何归属外层容器，还原时也必须归还这一层。
+            assert(valid(positioned),"补给定位槽内容缺失")
+            assert(positioned:GetAddress()==parent:GetAddress()or slot.Parent:GetAddress()==parent:GetAddress(),"补给背景或边框不属于主容器")
+            local layout=readLayout(slot,positioned) -- 不保存可被随后 SetSize 改写的结构引用。
             assert(layout.kind=="canvas"and layout.anchors.Minimum.X==0 and layout.anchors.Minimum.Y==0
                 and layout.anchors.Maximum.X==0 and layout.anchors.Maximum.Y==0,"补给背景或边框定位方式已变化")
-            c.repositioned[#c.repositioned+1]={widget=widget,layout=layout}
-            widget.Slot:SetPosition(position);widget.Slot:SetSize(dimensions);widget.Slot:SetAutoSize(false)
+            c.repositioned[#c.repositioned+1]={widget=positioned,layout=layout}
+            slot:SetPosition(position);slot:SetSize(dimensions);slot:SetAutoSize(false)
         end
         resize(parent,{X=original.position.X-(size.X-original.size.X)/2,Y=original.position.Y-(size.Y-original.size.Y)/2},size)
         local backgroundLeft,backgroundRight=list.Background_Left,list.Background_Right -- 原生左右渐变背景分别延展。
         assert(valid(backgroundLeft)and valid(backgroundRight),"补给左右背景缺失")
-        local split=backgroundLeft.Slot:GetSize().X/original.size.X*size.X -- 保留原左右背景的宽度比例。
+        local split=canvasSlot(backgroundLeft):GetSize().X/original.size.X*size.X -- 保留原左右背景的宽度比例。
         assert(split>0 and split<size.X,"补给背景分界不符")
         resize(backgroundLeft,{X=0,Y=0},{X=split,Y=size.Y})
         resize(backgroundRight,{X=split,Y=0},{X=size.X-split,Y=size.Y})
         for _,name in ipairs({"Border_TOP","Border_BTM","Border_Left","Border_Right"})do
             local border=assert(list[name],"补给边框缺失："..name) -- 四条边框只延长跨度，保留原线厚。
-            local oldSize=border.Slot:GetSize() -- 水平边取高度，垂直边取宽度。
+            local oldSize=canvasSlot(border):GetSize() -- 水平边取高度，垂直边取宽度。
             local horizontal=name=="Border_TOP"or name=="Border_BTM"
             local thickness=horizontal and oldSize.Y or oldSize.X -- 原生 2 个逻辑像素。
             assert(thickness>0 and thickness<=4,"补给边框线厚异常")

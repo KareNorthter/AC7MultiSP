@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+2026-10-15 UI 回归修订 .4 已安装：用户报告 .3 失效，日志明确为 performanceBar 对运行时 OverlaySlot 调用 Canvas GetPosition。只读六个原生性能条实例确认图片包装层，改用既有 canvasSlot 查找外层真实定位槽；补给背景/边框的修改和恢复同步处理同类层级。保留 .2 已验证的切换/剪影及固定挂载逻辑。构建、Lua 语法、接口与安装核验通过，游戏已退出且未重新启动；实玩待复测，不能把 .3 UI 记为通过。见[回归证据](evidence/su30sm-three-sp-ui-wrapper-fix.json)、[安装回执](evidence/su30sm-three-sp-candidate.4-installed.json)、[说明](docs/research/su30sm-three-sp-ui-sync.txt)。
+
 2026-10-15 三挂 UI 同步：用户确认 .2 快速切换及剪影正常，当前会话无 Lua ERROR。补给由三挂改为 QAAM＋LAGM，按未适配范围使用原生模型切换，用户认可；不是已适配 6AAM＋LAGM 失效。候选 .3 同步指定三 SP 线程的选装加宽、STANDBY/PART 布局、原生基础性能条及扩大补给面板，保留本分支切换/HUD 修复。ECM/UAV 继续单挂；机库预览和补给演出多挂未实现/验证，含 QAAM 双挂仍未适配。见[同步及范围](docs/research/su30sm-three-sp-ui-sync.txt)、[前版用户验证](evidence/su30sm-three-sp-candidate.2-user-validation.json)、[来源清单](evidence/su30sm-three-sp-ui-sync.json)。20:22 完成核心/UI 构建、Lua 语法与接口核验、整套备份安装；[candidate.3 安装回执](evidence/su30sm-three-sp-candidate.3-installed.json)。配置、外部模组及主线保留，游戏保持关闭；未运行测试模块，新 UI 实玩待用户。
 
 2026-10-15 三挂修订：独立分支 `codex/three-sp-switch-hud-fix` 基于 `5006e05`，候选 `1.0.2-su30sm-three-sp.2`。用户确认 .1 三选 UI、六处模型、三种发射和初期切换正常，但原生滚轮向上快速切换触发延迟回调断言，检查点重来仍失效；补给未测。用户已授权修复 HUD 剪影，覆盖下方历史“仅登记”。本修订将类别切换改为同一线程同步按下/释放/提交，并在最终兵装提交后刷新原生剪影贴图和显隐状态；不改变三挂布局、TLS/ECM 或机型范围。游戏已按用户要求关闭；19:56 完成独立核心/UI 构建、Lua 语法及接口检查、备份安装和文件核验，个人配置保留 schema 2，不再次迁移。实玩待用户复测，未运行测试模块、未启动游戏。见[构建](evidence/su30sm-three-sp-candidate.2-build.json)、[安装回执](evidence/su30sm-three-sp-candidate.2-installed.json)。见[修订说明](docs/research/three-sp-switch-hud-fix.txt)、[故障及研究证据](evidence/three-sp-switch-hud-research.json)。

@@ -51,3 +51,5 @@ GraphLongRange、GraphDamageRange、GraphReload。
 资源只读提取/解析文件在 Temp/sp-stat-style 和 Temp/sp-stat-parts，均不入 Git。
 结构摘要及验证回执：evidence/three-sp-stat-style-prepared.json。
 没有更改游戏 PAK、个人配置或存档，没有重新整理安装载荷。
+
+运行时更正（候选 .4）：静态 BaseImage 槽为 CanvasPanelSlot，但现场被 Overlay 包装；性能条应由 canvasSlot 找外层定位槽，不能直接调用图片 Slot 的 Canvas 方法。候选 .3 因此接入失败，.4 已修正并安装，实玩待复测。

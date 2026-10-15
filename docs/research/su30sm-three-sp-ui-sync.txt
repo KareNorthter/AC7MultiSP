@@ -1,3 +1,6 @@
+最新修订：候选 .4 修复 .3 运行时 Overlay 包装导致的选装失败，已构建并安装，实玩待用户。
+下文 .3 的“已安装”不表示通过；错误和现场证据见 evidence/su30sm-three-sp-ui-wrapper-fix.json。
+
 Su-30SM 三 SP 候选 .3：UI 同步及挂载范围
 日期：2026-10-15
 版本：1.0.2-su30sm-three-sp.3
@@ -64,3 +67,14 @@ QAAM＋LAGM：未适配，使用原生当前 SP 模型；本轮补给正是此�
 
 完整备份：backup/su30sm-three-sp-20261015-202207-058207。
 回退到 .2 时先退出游戏，将当前 DualSP 移入新备份，再恢复该目录下完整 DualSP；不混装 Lua/UI/核心。
+
+候选 .4：运行时控件层级修正
+用户报告 .3 mod 失效。日志确认 NATIVE_LOADOUT_ERROR 在 performanceBar 调用 GetPosition 时发生。
+只读现场采到六个 HangarSpecBar 实例：三个 BaseImage 的直接槽均为 OverlaySlot，BarA 为 CanvasPanelSlot。
+因此并非缺失边框或加载器失效，而是把静态资源中的 Canvas 槽当作运行时直接槽，调用了不适用的成员。
+使用工程已有 canvasSlot 沿父链找到真正的 Canvas 定位；保留明确类型/尺寸校验，不吞错或使用默认尺寸代替。
+补给背景/边框也取消直接槽假设，通过外层 Canvas 的 Content 保存、修改与恢复几何；扩大面板的设计不变。
+本轮现场在后续读取前已退出，只有第一份有效快照；未在失效进程继续读取或做写入实验。
+保留 .2 已验证的切换与剪影、三挂核心和位置映射，不回退功能。
+编译、Lua 语法、接口和文件核对通过；未运行测试模块，菜单/补给实际显示待用户重新启动验证。
+安装证据：evidence/su30sm-three-sp-candidate.4-installed.json；完整备份位置见该回执。

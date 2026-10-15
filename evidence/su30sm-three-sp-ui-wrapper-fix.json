@@ -1,0 +1,41 @@
+{
+  "failed_candidate": "1.0.2-su30sm-three-sp.3",
+  "fix_candidate": "1.0.2-su30sm-three-sp.4",
+  "source_commit": "faf50a8",
+  "failure": "...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:453: Tried calling a member function but the UObject instance is nullptr\n\nstack traceback:\n\t[C]: in method 'GetPosition'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:453: in upvalue 'performanceBar'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:501: in upvalue 'informationColumns'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:606: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:570>\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1009: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:956>\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1092: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1085>\n\t[C]: in function 'xpcall'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1085: in method 'pump'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:825: in upvalue 'tick'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:991: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:973>\n\t[C]: in function 'xpcall'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:973: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:972>\nstack traceback:\n\t[C]: in method 'GetPosition'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:453: in upvalue 'performanceBar'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:501: in upvalue 'informationColumns'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:606: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:570>\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1009: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:956>\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1092: in function <...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1085>\n\t[C]: in function 'xpcall'\n\t...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:1085: in method 'pump'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:825: in upvalue 'tick'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:991: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:973>\n\t[C]: in function 'xpcall'\n\t...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:973: in function <...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:972>",
+  "root_cause": "新性能条直接对图片OverlaySlot调用Canvas GetPosition；资源静态槽类型不代表运行时插入包装后的类型",
+  "live_read_only_sample": {
+    "pid": 13268,
+    "instances": 6,
+    "base_image_slot_classes": [
+      "OverlaySlot"
+    ],
+    "bar_a_slot_classes": [
+      "CanvasPanelSlot"
+    ],
+    "sample_sha256": "e431ff6e9adb1060199d4f1525fb9bab63e8675b7c7ff5f99ab4168dafa41af2",
+    "writes": false,
+    "game_functions_called": false
+  },
+  "fix": [
+    "复用既有canvasSlot沿父链找真正的Canvas定位槽",
+    "性能条取外层位置尺寸，保持原生边框样式",
+    "同时修复新补给背景/边框的同类直接Slot假设；修改和归还均针对外层槽Content"
+  ],
+  "preserved": [
+    "信息栏扩宽及补给面板尺寸",
+    "同步武器切换",
+    "装填剪影修复",
+    "固定挂载映射",
+    "个人方案键位"
+  ],
+  "validation": {
+    "lua_syntax": true,
+    "compiled": true,
+    "test_modules_run": false,
+    "gameplay_verified": false,
+    "installed": true,
+    "install_receipt": "evidence/su30sm-three-sp-candidate.4-installed.json"
+  },
+  "game_closed_before_install": true
+}
