@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-15",
+  "steam_build": 9855922,
+  "scope": "当前已安装 1.0.1 兼容环境，Su-30SM s03，6AAM + LAGM，配弹比例 1.0",
+  "method": "只读运行内存、反射对象、已知入口反汇编与用户操作前后快照对照；没有调用研究入口",
+  "runtime_modified": false,
+  "prototype_installed": false,
+  "native_source_manifests": ["Temp/native-current/manifest.json", "Temp/native-helpers/manifest.json"],
+  "native_source_hashes": {
+    "Temp/native-current/mount-898000-c000.bin": "ec4452f4e6bc4e160d73d67c17ea6d8c8b29c274431d36b71707847e43123b35",
+    "Temp/native-current/mount-87f000-9000.bin": "7b6ffcd2ec4a8c4f6e0d25d8babf7eb21f7539c43131ab4ae48c5c5b1031911b",
+    "Temp/native-helpers/mount-16ef600-100.bin": "629c080fd3c14d2ffd7912834655ccf2f5ca81ad15197f455333122756bfe669",
+    "Temp/native-helpers/mount-16f62b0-180.bin": "af3f514177414006f6f98adedc8e490e1d2b69df7ea38e9c52ef8d96fd4282c3",
+    "Temp/native-helpers/mount-16f8bc0-180.bin": "3478dd35ddb2961c8966dd827ad20b600e51d7f254b099feac92c79abf676645"
+  },
+  "findings": [
+    {
+      "name": "实际发射变换读取",
+      "rvas": ["0x8997d6", "0x8a0960", "0x89cdb0", "0x89a009"],
+      "evidence": "发射路径从 group+0x68 索引表取项，调用 0x8a0960；后者查 MeshManager+0xf0 活动路由，读取组件+0x180/+0x190/+0x1a0世界变换，或无组件时查询父级Socket。另一个选槽入口有缓存变换分支。",
+      "implication": "只改slot缓存坐标不能覆盖所有路径。函数签名与生成瞬间改位仍未通过调用验证。"
+    },
+    {
+      "name": "持久模型池与活动路由分离",
+      "rvas": ["0x8a0a40", "0x8a0ef0", "0x8a08b0", "0x16ef600"],
+      "evidence": "+0x140起四池分别持有2/6/4/6个组件；+0xf0活动路由按组重建。0x8a08b0通过0x16ef600遍历AttachParent父链选池。",
+      "correction": "曾在中途口头推测按可见性选池，进一步追踪后已更正为挂接父链判断；不把错误推断作为实施依据。",
+      "implication": "保留挂接身份，不通过随意改父级使两套模型同时出现。"
+    },
+    {
+      "name": "隐藏和恢复索引",
+      "rvas": ["0x8a0e60", "0x8a1710", "0x89e3c0"],
+      "evidence": "隐藏读slot+0x40，恢复读slot+0x44；同时修改route+8逻辑可见和MeshManager+0x100显示数量。0x89e3c0存在按窗口推进索引的写入路径。",
+      "boundary": "本次6AAM和LAGM单发前后，slot+0x40/+0x44均维持初始值；不能把存在的推进路径直接说成本次发射实际执行的路径。",
+      "implication": "不能把两索引当固定挂点号直接覆写，也不能简单将多条显示路由指向同一模型。"
+    },
+    {
+      "name": "延迟显示队列",
+      "rvas": ["0x8a0260", "0x8a12f0"],
+      "layout": "MeshManager+0x110 TArray，entry16: +0组byte，+4槽int，+8剩余float，+0xc动画byte，+0xd消费标志byte",
+      "evidence": "LAGM单发后group2/slot0/remaining8.090618，装填后队列为空且route0恢复；就绪槽已从0轮转到2。",
+      "boundary": "已读0x8a0a40未见清队列，但调用者或其他阶段是否清理尚待确认；不是已证实的现有切换bug。"
+    },
+    {
+      "name": "显隐须经过引擎更新",
+      "rvas": ["0x16f8bc0", "0x16f62b0"],
+      "evidence": "分别修改可见位和游戏内隐藏位，并处理传播与组件渲染更新。",
+      "implication": "固定显示需在游戏线程协调原生事件，不直接写bool，不采用每帧反隐藏。"
+    }
+  ],
+  "live_findings": {
+    "six_aam": {"ammo_before": 68, "ammo_after": 67, "shots_observed": 1, "locked_salvo_observed": false, "actor": "plwp_6aam_r0_C", "mount_and_projectile_mesh": "w_4aam_r0_SM"},
+    "lagm": {"ammo_before": 28, "ammo_after": 27, "shots_observed": 1, "window": 2, "slot_count": 6, "active_indices_before": [0, 1], "active_indices_after": [2, 1], "actor": "plwp_lagm_r0_C", "mount_and_projectile_mesh": "w_lasm_r0_SM", "reload_observed": true},
+    "geometry_boundary": "仅离架后快照，未测量弹体生成瞬间坐标；固定四加二布局尚未应用。"
+  },
+  "remaining_before_prototype": [
+    "确定实际变换路径的完整接入范围，避免仅改缓存坐标。",
+    "确认切换重建与延迟显隐队列的处理边界，设计共享模型的事件聚合。",
+    "保持原父链并确定挂架网格组合，避免整套挂架重叠。",
+    "安装前对齐主工作区随后完成的兼容修订，候选核心独立构建。"
+  ]
+}

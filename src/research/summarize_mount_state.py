@@ -52,10 +52,19 @@ def summarize(path):
         groups[label] = {key: group[key] for key in ("address", "ammo", "max_ammo", "window", "cursor", "count", "capacity")}
         groups[label]["weapon_class"] = group["class"]["name"]
         groups[label]["slots"] = [{"index": slot["index"], "socket": slot.get("socket_name_candidate"),
-            "duration": slot["duration"], "elapsed": slot["elapsed"]} for slot in group["slots"]]
+            "duration": slot["duration"], "elapsed": slot["elapsed"],
+            "route_indices_0x40_0x44": slot.get("index_candidates_at_0x40_0x44")}
+            for slot in group["slots"]]
+        groups[label]["launch_index_table"] = group.get("launch_index_table")
+    # 旧采样未读路由和计时队列时保留空值，不能把缺失说成空队列。
+    routes = [{"group": group["group"], "entries": [
+        {"index": entry["index"], "component": entry["component"].get("name"),
+         "logical_visible": entry["logical_visible"]} for entry in group["entries"]]}
+        for group in snapshot["launch_mesh_routes"]] if "launch_mesh_routes" in snapshot else None
     return {"source_file": path.name, "sha256": hashlib.sha256(raw).hexdigest(),
         "captured_local": snapshot["captured_local"], "plane": identity(snapshot["plane"]),
         "groups": groups, "mounts": mounts, "active_projectiles": projectiles,
+        "launch_mesh_routes": routes, "mesh_display_timers": snapshot.get("mesh_display_timers"),
         "mesh_manager": snapshot.get("mesh_manager"),
         "mesh_arrays": {key: [row["name"] for row in entries] for key, entries in snapshot.get("mesh_arrays", {}).items()}}
 

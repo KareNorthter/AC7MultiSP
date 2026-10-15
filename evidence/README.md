@@ -5,6 +5,9 @@
 - [当前基线快照](fixed-mount-base-snapshot.json)：正式 1.0.1 加未提交兼容修订，复制时的逐文件哈希；主工作区保持原状。
 - [四翼下两机腹方案](su30sm-fixed-mount-plan.json)：6AAM 六槽映射四处、LAGM 六槽映射两处；旧快照变换候选与资源比较，不是原型验收。
 - [本阶段保护核对](su30sm-fixed-mount-stage1.json)：主工作区分支与 HEAD、正式保护核心、11 个已安装 Lua/DLL 文件；明确记录快照后外部继续修改 main.lua 的事实，不将状态清单相同误认为文件内容相同。
+- [当前六阶段现场](su30sm-fixed-mount-live.json)：初始 LAGM、6AAM 切换/单发、LAGM 切换/单发/装填；模型身份、活动路由、弹体及延迟恢复队列，未改游戏内存。
+- [原生路由分析](su30sm-fixed-mount-routing.json)：实际发射变换、父链选池、单枚显隐和延迟恢复；明确区分静态指令路径与现场实际观察。
+- [本轮保护核对](su30sm-fixed-mount-stage2.json)：组件连续身份、语法解析、保护核心与已安装文件核对；不作为原型验收。
 - [历史资源摘要](su30sm-mount-assets.json)、[基类摘要](su30sm-base-pawn-assets.json)、[历史四阶段现场](su30sm-mount-live.json)、[历史原生入口](su30sm-native-mount-findings.json)：从 `c44e3b9` 引入的 0.1.9 证据，不冒充当前 1.0.1 实测。
 - 当前实施范围、工具和未确认项见[固定挂载研究](../docs/research/su30sm-fixed-mount.md)。
 

@@ -175,6 +175,38 @@ def main():
                 raise ValueError("显示数组存在非 UObject 引用")
             report["mesh_arrays"][label] = [describe(address) for address in entries]
             queued.update(entries)
+        # 0x8a0960 实际读取的分组路由；与 +0x140 起的持久模型池分开保存。
+        route_data, route_count, route_capacity = unpack(mesh_manager + 0xf0, "<Qii")
+        if not 0 <= route_count <= route_capacity <= 16:
+            raise ValueError("显示路由分组边界无效")
+        report["launch_mesh_routes"] = []
+        for group_index in range(route_count):
+            entries_data, entries_count, entries_capacity = unpack(route_data + group_index * 16, "<Qii")
+            if not 0 <= entries_count <= entries_capacity <= 4096:
+                raise ValueError("显示路由元素边界无效")
+            entries = []  # 每项为组件、显示状态、备用父组件及 Socket 的 0x20 字节结构。
+            for entry_index in range(entries_count):
+                raw = memory.read(entries_data + entry_index * 0x20, 0x20)
+                component, visible, parent, socket_index, socket_number = struct.unpack("<QB7xQII", raw)
+                entries.append({"index": entry_index, "component": describe(component),
+                    "logical_visible": visible, "parent_without_mesh": describe(parent),
+                    "socket_without_mesh": fname(socket_index), "socket_number": socket_number})
+                if component:
+                    if component not in known:
+                        raise ValueError("显示路由引用不是有效 UObject")
+                    queued.add(component)
+            report["launch_mesh_routes"].append({"group": group_index, "count": entries_count,
+                "entries": entries})
+        # 0x8a12f0 消费的延迟显示队列：保存组号和槽号，不擅自解释为物理挂点。
+        timer_data, timer_count, timer_capacity = unpack(mesh_manager + 0x110, "<Qii")
+        if not 0 <= timer_count <= timer_capacity <= 4096:
+            raise ValueError("延迟显示队列边界无效")
+        report["mesh_display_timers"] = []
+        for timer_index in range(timer_count):
+            group_id, slot_id, remaining, animation, consumed = unpack(
+                timer_data + timer_index * 16, "<B3xifBB2x")
+            report["mesh_display_timers"].append({"group": group_id, "slot": slot_id,
+                "remaining": remaining, "animation": animation, "consumed": consumed})
         for label, offset in (("MSL", 0x88), ("SP", 0x110)):
             group = state + offset
             data, length, capacity = unpack(group + 0x58, "<Qii")
@@ -211,10 +243,15 @@ def main():
             report["groups"][label] = {"address": hex(group), "class": describe(pointer(group)),
                 "ammo": ammo, "max_ammo": max_ammo, "window": window, "cursor": cursor,
                 "count": length, "capacity": capacity, "raw": memory.read(group, 0x88).hex(), "slots": slots}
+            # 0x8997d6 与 0x89ce61 读取的整数索引表，不能当成当前可用弹数。
+            indices_data, indices_count, indices_capacity = unpack(group + 0x68, "<Qii")
+            if not 0 <= indices_count <= indices_capacity <= 4096:
+                raise ValueError("发射索引表边界无效")
+            report["groups"][label]["launch_index_table"] = list(unpack(indices_data, "<" + "i" * indices_count)) if indices_count else []
         if args.expected_sp:
             expected_class = {"6AAM": "plwp_6aam_r0_C", "LAGM": "plwp_lagm_r0_C", "QAAM": "plwp_qaam_r0_C"}[args.expected_sp]
             if report["groups"]["SP"]["class"]["name"] != expected_class:
-                raise ValueError(f"当前活动 SP 不是 {args.expected_sp}")
+                raise ValueError(f"当前活动 SP 不是 {args.expected_sp}，实际为 {report['groups']['SP']['class']['name']}")
         for depth in range(3):
             pending = queued - {int(key, 16) for key in report["objects"]}
             for address in pending:
@@ -222,6 +259,10 @@ def main():
                     continue
                 row = describe(address)
                 row["fields"] = fields(address)
+                if row["class_name"] == "StaticMeshComponent":
+                    # 此偏移由本轮 0x8a0960 的三次向量读取直接定位，不以通用 UE 布局猜测。
+                    row["launch_reader_world_transform"] = {"rotation_xyzw": unpack(address + 0x180, "<4f"),
+                        "translation": unpack(address + 0x190, "<3f"), "scale": unpack(address + 0x1a0, "<3f")}
                 report["objects"][hex(address)] = row
                 for label, entry in row["fields"].items():
                     if label in ("SWP1", "SWP2", "SWP3", "ActiveSWPMeshComponent", "WeaponMeshBase",

@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-15",
+  "stage": "当前环境只读切换、单发和装填研究",
+  "research_branch": "codex/su30sm-fixed-mount-prototype",
+  "base_commit": "9bab80cc69275a7e11d91366a0bec8e7aea7c274",
+  "source_branch": "codex/experience-polish",
+  "source_head": "a114616ee87f1c8cca01f6d71d064e2fadc5d4ca",
+  "source_main_lua_sha256": "f6cffcdec9e0dfded3e31ffbf8c82b1cc4ce91908504cff4fc1081aed8dd20f6",
+  "research_main_lua_sha256": "5f4decee585acc526c43df84922bfea86a59e344e63b242fff7aab327860cc4d",
+  "component_identity_comparison": [
+    {
+      "sample": "su30sm-current-observed.json",
+      "component_count": 21,
+      "changed_identities": []
+    },
+    {
+      "sample": "su30sm-6aam-routes.json",
+      "component_count": 21,
+      "changed_identities": []
+    },
+    {
+      "sample": "su30sm-6aam-fired.json",
+      "component_count": 21,
+      "changed_identities": []
+    },
+    {
+      "sample": "su30sm-lagm-routes.json",
+      "component_count": 21,
+      "changed_identities": []
+    },
+    {
+      "sample": "su30sm-lagm-fired.json",
+      "component_count": 21,
+      "changed_identities": []
+    },
+    {
+      "sample": "su30sm-lagm-reloaded.json",
+      "component_count": 21,
+      "changed_identities": []
+    }
+  ],
+  "installed_files": [
+    {
+      "path": "Scripts\\json.lua",
+      "sha256": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\loadout_flow.lua",
+      "sha256": "3e4aedff87d825369fbe1a2afb5f9871cf2eba0330137ad9033565f2a1979a26",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\main.lua",
+      "sha256": "d477666b445c37d1dae22a3d625bc12861bccd4a833e50dbaeaf77fc3b70897c",
+      "matches_stage1": false
+    },
+    {
+      "path": "Scripts\\native_hud.lua",
+      "sha256": "61821364cd7fe7ece73cd539e5390b0a75611346dad637852b2f9e58028707b2",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\native_loadout.lua",
+      "sha256": "a49acb961ab63e1e5f96da9bc75d69e66dac5912ab8f6df41953990c6c08365d",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\runtime_context.lua",
+      "sha256": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\weapon_cycle.lua",
+      "sha256": "3a3bc4ec9fd2b56cd0e466765e54dd5efe41d8252d5a7faad12fa738aae11f45",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\weapon_names.lua",
+      "sha256": "44b74d99704ae504821cfa8a3e03f04d21c7230dd9baae6ce3741516adb4116d",
+      "matches_stage1": true
+    },
+    {
+      "path": "Scripts\\weapon_presentation.lua",
+      "sha256": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb",
+      "matches_stage1": true
+    },
+    {
+      "path": "bin\\DualSP.dll",
+      "sha256": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af",
+      "matches_stage1": true
+    },
+    {
+      "path": "bin\\DualSPUI.dll",
+      "sha256": "a35d5aeb4f50ef2a3d366dee2f3f915ab04b89bcceed70bb314bcd28e17fe3ef",
+      "matches_stage1": true
+    }
+  ],
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "protected_core_matches": true,
+  "syntax_parse_only": [
+    "src/research/capture_mount_state.py",
+    "src/research/summarize_mount_state.py"
+  ],
+  "game_operated_by": "用户",
+  "process_write": false,
+  "game_functions_called": false,
+  "runtime_code_changed": false,
+  "candidate_compiled": false,
+  "candidate_installed": false,
+  "test_modules_added_or_run": false,
+  "game_started_or_stopped_by_agent": false
+}
