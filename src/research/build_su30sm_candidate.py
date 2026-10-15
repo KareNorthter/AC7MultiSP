@@ -57,6 +57,21 @@ def main():
                     "-I", str(minhook / "include"), str(root / "src/weapon_bridge.cpp"),
                     "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-lole32", "-o", str(candidate)],
                    cwd=output, env=environment, check=True)
+    # 三 SP 管理协议与核心成套构建；所有中间文件仍在独立 Temp。
+    imgui = root / "vendor/imgui-1.92.9b"
+    ui_sources = [root / "src/overlay.cpp"] + [imgui / name for name in (
+        "imgui.cpp", "imgui_draw.cpp", "imgui_tables.cpp", "imgui_widgets.cpp",
+        "backends/imgui_impl_win32.cpp", "backends/imgui_impl_dx11.cpp")]
+    subprocess.run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-c",
+                    "-I", str(root / "vendor"), "-I", str(minhook / "include"),
+                    "-I", str(imgui), "-I", str(imgui / "backends"), *map(str, ui_sources)],
+                   cwd=output, env=environment, check=True)
+    ui = output / "DualSPUI.dll"  # 不覆盖工作区中任何已验证的二进制。
+    subprocess.run([str(compiler / "clang++.exe"), "-shared", "-static",
+                    *[path.stem + ".o" for path in ui_sources],
+                    "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-o", str(ui),
+                    "-ld3d11", "-ldxgi", "-lxinput", "-ld3dcompiler", "-lgdi32", "-ldwmapi"],
+                   cwd=output, env=environment, check=True)
     with pefile.PE(str(candidate)) as library:
         exports = {item.name.decode("ascii") for item in library.DIRECTORY_ENTRY_EXPORT.symbols if item.name}
         if library.FILE_HEADER.Machine != 0x8664:
@@ -65,16 +80,22 @@ def main():
     required = set(re.findall(r'loadExport\("([^"]+)"\)', main_source))  # 排除明确指定 UI DLL 的接口。
     if "dualsp_fixed_mount_update" not in required or required - exports:
         raise ValueError("候选核心接口不完整：" + repr(sorted(required - exports)))
+    ui_required = set(re.findall(r'loadExport\("([^"]+)","DualSPUI.dll"\)', main_source))
+    with pefile.PE(str(ui)) as library:
+        ui_exports = {item.name.decode("ascii") for item in library.DIRECTORY_ENTRY_EXPORT.symbols if item.name}
+        if library.FILE_HEADER.Machine != 0x8664 or ui_required - ui_exports:
+            raise ValueError("候选管理界面架构或接口不完整")
     for name, expected in protected.items():
         if digest(root / name) != expected:
             raise ValueError("构建期间保护文件改变：" + name)
-    report = {"candidate": "1.0.2-su30sm-mount.2", "candidate_sha256": digest(candidate),
+    report = {"candidate": (root / "VERSION").read_text(encoding="utf-8").strip(), "candidate_sha256": digest(candidate),
+              "ui_sha256": digest(ui), "required_ui_exports_verified": sorted(ui_required),
               "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE", "compiled": True,
               "lua_syntax_only": True, "required_exports_verified": sorted(required),
               "game_installed": False, "game_validated": False, "test_modules_run": False,
               "installation_blockers": [], "native_research_evidence": "evidence/su30sm-fixed-mount-stage4.json",
               "protected_files": protected, "lua_sources": scripts,
-              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp")}}
+              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/overlay.cpp")}}
     (output / "build-receipt.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"candidate": str(candidate), "sha256": report["candidate_sha256"],
                       "status": "已构建；安装前须核对本阶段证据和正式安装文件"}, ensure_ascii=False))

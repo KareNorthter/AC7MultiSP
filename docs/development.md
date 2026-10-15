@@ -1,5 +1,7 @@
 # 开发与发布
 
+当前独立研究分支安装的是 `1.0.2-su30sm-three-sp.1`，未发布。使用 `src/research/build_su30sm_candidate.py` 构建核心和协议 3 UI，使用 `src/research/install_su30sm_three_sp.py` 成套核对、备份和安装；核心快照在 `dist/DualSP/cores/1.0.2-su30sm-three-sp.1/`。禁止用下文正式打包器或原三 SP 候选安装入口处理本集成版本。旧 `bin/DualSP.dll` 仍受保护。来源、安装和回退见[集成说明](research/su30sm-three-sp-fixed-mount.txt)；仅构建、语法和文件核验通过，三挂未实玩。下文为正式 1.0.2 的历史开发说明。
+
 > 当前正式版本为 [1.0.2](version-1.0.2.txt)。--experience 明确复用 cores/1.0.1 核心，要求核心/UI 的 dualsp_runtime_gate 导出及 runtime_context.lua。用户复测正常，已制作本地 ZIP；打包器已更新为 1.0.2，包含 runtime_context.lua 与版本说明。
 
 返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.2**，本轮验证见[兼容摘要](version-1.0.2.txt)，更早记录见[历史索引](history-1.0.0.md)。

@@ -107,3 +107,5 @@ Runtimes：微软 VC++ x64 和 DirectX 离线安装文件，原程序及许可�
 本包不含个人存档、个人配置、日志或开发工具。无需 Python、编译器或命令行。
 不包含第三方机体、武器、飞控或本机精简机库 PAK；不改变 DLC 购买条件。
 本地打包使用用户提供的 SP2 提示音；音频不属于本项目原创，未授予其额外权利。
+独立研究工作区提示：当前源码/本机候选为 1.0.2-su30sm-three-sp.1，安装与回退请见 docs/research/su30sm-three-sp-fixed-mount.txt 和 evidence/su30sm-three-sp-installed.json。
+下文面向正式发布包，不能用于把本集成候选的 Lua 与正式核心混装。

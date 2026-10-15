@@ -4,6 +4,8 @@
 
 ## 当前状态
 
+2026-10-15 18:03 三 SP 固定挂载集成已安装，游戏保持关闭：当前独立分支 `codex/su30sm-three-sp-fixed-mount`，候选 `1.0.2-su30sm-three-sp.1`。用户确认旧候选 .2 检查点重来后四加二显示完整。本轮融合指定兼容任务的正式 F6 修订 `b6b6979`，以及三 SP 任务在 `5628a62` 上未提交的稳定源码快照；不改主工作区。Su-30SM 三挂为外翼两处 QAAM、内翼两处 6AAM、机腹两处 LAGM，允许重复出弹；原 6AAM＋LAGM 双挂仍四加二。核心/UI、Lua 语法与安装核对通过，三挂尚未实玩。配置 schema 2、协议 3、自动按实际槽数均分；首次启动迁移，旧第三槽为空。原候选、配置、日志及存档已备份，外部模组和正式 ZIP 保留。HUD 剪影问题本轮不修，代理不自动出击或发射。见[集成说明](docs/research/su30sm-three-sp-fixed-mount.txt)、[安装回执](evidence/su30sm-three-sp-installed.json)、[双挂检查点验证](evidence/su30sm-fixed-mount-checkpoint-validation.json)。下方均为历史状态；本分支不能使用正式打包器或原三 SP 安装入口覆盖当前候选。
+
 2026-10-15 固定挂载首轮用户验证：用户确认 Su-30SM 候选 .2 挂载、模型、切换和发射正常，符合预期。日志有 20 次 SP 切换、两种弹药消耗和六处装填恢复，当前会话无错误。HUD 装填剪影偶发把 6AAM 显示成类似 LAGM 的两枚图标，用户要求本轮只记录、不修复；其“可能是旧问题”的判断尚未证实。见[用户验证](evidence/su30sm-fixed-mount-user-validation.json)、[问题登记](docs/research/hud-reload-silhouette-issue.md)。现继续检查点/补给生命周期研究；代码审阅发现转单 SP 缺少显式解绑的可能缺口，未改运行代码，待后续处理。下方未实测状态属于安装阶段。
 
 **本工作区是独立固定挂载研究分支，不是主线安装入口。** `codex/su30sm-fixed-mount-prototype` 基于正式 1.0.2 运行文件。2026-10-15 17:27，补采完整初始化和显隐传播后，修正传播枚举及共同祖先处理，构建并安装 `1.0.2-su30sm-mount.2`：四处 6AAM＋两处 LAGM，允许重复出弹，先用单套 SWP3 挂架。正式 1.0.2 已整套备份，主工作区及发布 ZIP 未改；候选尚未启动/实测，等待用户重新进入任务。Lua 必须与独立候选核心匹配，普通安装器拒绝混装。代理不自动出击或发射。见[研究说明及恢复方法](docs/research/su30sm-fixed-mount.md)、[第四阶段](evidence/su30sm-fixed-mount-stage4.json)、[安装回执](evidence/su30sm-fixed-mount-candidate.2-installed.json)。以下正式安装记录为其他任务的历史背景，本分支不安装其他模组。

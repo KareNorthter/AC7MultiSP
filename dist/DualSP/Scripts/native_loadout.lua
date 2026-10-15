@@ -1,14 +1,15 @@
--- 在 CampaignHangarWeapon 和 MissionResupply 各自的原生页面内改造双选。
+-- 在 CampaignHangarWeapon 和 MissionResupply 各自的原生页面内改造多槽选择。
 -- 不创建外部窗口、不模拟按键；页面跳转继续交给 AC7 原生菜单。
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Flow=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_flow.lua")
+local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 预览与核心共用均分规则。
 local NativeLoadout={}
 local TRANSIENT,VISIBLE,COLLAPSED=0x40,0,1
 local function valid(o)return o and o:IsValid()end
 local function vec(v)return {X=v.X,Y=v.Y}end
 local function key(name)return {KeyName=FName(name)}end
 local function color(r,g,b,a)return {SpecifiedColor={R=r,G=g,B=b,A=a},ColorUseRule=0}end
-local function copyProfile(p)return {a=p.a,b=p.b,ratio=p.ratio}end
+local copyProfile=Profile.copy -- 交接快照包含第三槽。
 
 -- 类型对应原生 WeaponConceptText 的键；不再把兵装全名放进 TYPE。
 local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOCK-ON MISSILE",
@@ -272,8 +273,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         c.visualRestored=true
     end
     local function showModelWait(pending)
-        -- 过渡期间只展示等待状态，不能先露出原生单 SP 列表/参数再跳成双栏。
-        if standby and self.cache then return end -- 已存在的双栏维持到资料就绪，不退回原生单栏。
+        -- 过渡期间只展示等待状态，不能先露出原生单 SP 列表/参数再跳成三栏。
+        if standby and self.cache then return end -- 已存在的三栏维持到资料就绪，不退回原生单栏。
         if not panelClass then api()end
         local view={owner=pending.owner,added={},masked={},moved={},texts={}} -- 复用现有控件所有权与归还流程。
         pending.view=view
@@ -284,7 +285,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local ammo=info.HangarAircraftBoardWeaponsAmmo -- 保留 GUN/MSL 等其他行，只替换原 SP 行的文字。
             assert(valid(ammo)and valid(ammo.WeaponsSP1),"等待中的只读弹药模板缺失")
             local row=controls(ammo.WeaponsSP1) -- 不显示尚未确认的名称或弹数。
-            setText(view,clone(view,assert(row.WeaponsName),false),"SP1 / SP2")
+            setText(view,clone(view,assert(row.WeaponsName),false),"SP1 / SP2 / SP3")
             setText(view,clone(view,assert(row.WeaponsAmmo),false),"…")
             mask(view,info.HangarSpecGroupR)
             mask(view,info.HangarAircraftWeaponNameShortR)
@@ -294,18 +295,17 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local base=pending.owner.LightMenuBaseWidget -- 列表标题、说明与三条原生兵装行。
         assert(valid(base),"等待中的原生兵装列表缺失")
         local list=controls(base)
-        setText(view,clone(view,assert(list.TitleText),false),tr("特殊兵装 1 / 2","SP WEAPON 1 / 2"))
+        setText(view,clone(view,assert(list.TitleText),false),tr("特殊兵装 1 / 2 / 3","SP WEAPON 1 / 2 / 3"))
         setText(view,clone(view,assert(list.DescriptionText),false),tr("正在加载兵装，请稍候……","Loading weapons. Please wait..."))
         for index=0,2 do mask(view,assert(list["ItemText"..index]))end
         info=pending.owner.WeaponInformation
         assert(valid(info)and valid(info.HangarAircraftAllWeaponsAmmo),"等待中的兵装信息区缺失")
         local ammo=info.HangarAircraftAllWeaponsAmmo -- 两条 SP 占位，不展示原单 SP 内容或猜测载量。
-        for index=1,2 do
+        for index=1,3 do
             local row=controls(ammo["WeaponsSP"..index])
             setText(view,clone(view,assert(row.WeaponsName),false),"SP"..index)
             setText(view,clone(view,assert(row.WeaponsAmmo),false),"…")
         end
-        mask(view,ammo.WeaponsSP3)
         mask(view,info.HangarSpecGroupR)
         mask(view,info.HangarAircraftWeaponNameLong)
         mask(view,info.HangarAircraftWeaponProperties)
@@ -317,7 +317,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         mask(view,manager.MenuForegroundWidget.ScrollCanvas)
     end
     local function clearModelWait(releaseInput)
-        -- 就绪时在同一回调内归还模板并接入双栏；只有离页或明确失败才恢复原生显示。
+        -- 就绪时在同一回调内归还模板并接入三栏；只有离页或明确失败才恢复原生显示。
         local pending=self.modelWait -- 等待记录绑定具体页面、机体及世界。
         if not pending then return end
         self.modelWait=nil
@@ -327,7 +327,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
     end
     local function modelChoices(owner,instance,planeId,options,now)
-        -- 未就绪是有限等待状态；只在模型身份一致后建立双选，真实组件/资源异常仍由原错误路径处理。
+        -- 未就绪是有限等待状态；只在模型身份一致后建立多槽选择，真实组件/资源异常仍由原错误路径处理。
         local choices,reason=options() -- 第二返回值仅表示原生预览尚未跟上当前选择。
         if not reason then
             if self.modelWait then
@@ -407,7 +407,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local result={accept=mappedDown(c,c.accept),cancel=mappedDown(c,c.cancel),up=keyboardUp or down(c,c.up)or axis>.55,down=keyboardDown or down(c,c.down)or axis<-.55}
         return result
     end
-    -- 双栏采用原生文字/图片模板的叶控件，空 Canvas 不复制任何 Slots 或子树。
+    -- 三栏采用原生文字/图片模板的叶控件，空 Canvas 不复制任何 Slots 或子树。
     local function infoWidget(c,source,parent,position,size,isImage,wrap)
         assert(valid(source),"兵装信息模板缺失")
         self.serial=self.serial+1
@@ -428,6 +428,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             widget.bIsImageHidingEnable=false
         else
             widget:SetColorAndOpacity(c.tint);widget.bIsTextHidingEnable=false
+            local font=widget.Font -- 三槽信息字体，字号不随原生候选动画漂移。
+            font.Size=math.min(font.Size,standby and 16 or 18);widget:SetFont(font)
         end
         return widget
     end
@@ -448,7 +450,10 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         c.columns={}
         local tint=supply and c.tint.SpecifiedColor or templates.items[1].SpecBar.BarA.ColorAndOpacity
         local detailsOffset=supply and 0 or 1.5*pitch -- 准备页为三行全名及半行留白预留高度，两栏基线一致。
-        for index=1,2 do
+        -- 复用原三栏总宽，三栏不侵入左侧列表或屏幕外。
+        width=(2*width-gap)/3
+        assert(width>=180,"三 SP 信息区宽度不足")
+        for index=1,3 do
             local panel=infoCanvas(c,parent,{X=origin.X+(index-1)*(width+gap),Y=origin.Y},{X=width,Y=height+detailsOffset})
             local column={bars={},barWidth=width*.40}
             c.columns[index]=column
@@ -467,7 +472,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             for i,item in ipairs(templates.items)do
                 local y=(i+3)*pitch+detailsOffset -- 性能和类型整体下移，不挤压名称或内部行距。
                 local label=infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.58,Y=pitch},false) -- 标签与条形区分开。
-                if supply then local font=label.Font;font.Size=18;label:SetFont(font)end
+                local font=label.Font;font.Size=16;label:SetFont(font) -- 三栏缩短标签，保留全部性能项。
                 local track=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
                 track:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=.2})
                 local bar=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
@@ -501,13 +506,14 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     -- SP1 阶段尚未选择 SP2，始终显示 EMPTY；SP2 阶段才展示其当前候选。
     local function paintColumns(c)
         local flow=c.flow;local stage=flow.stage;local row=flow:rows()[flow.cursor]
-        local a=stage=="sp1"and row.weapon or flow.draft.a
-        local b=stage=="sp1"and -1 or stage=="sp2"and row.weapon or flow.draft.b
+        local preview=flow:preview() -- 当前光标与已经确认的前置槽组成展示方案。
+        local count=Profile.count(preview) -- 候选变化后立即重算所有可见载量。
+        local a,b=preview.a,preview.b
         local statOrder={1,2,3,5,6,4} -- 目录与原生行顺序：后三项对应范围、伤害范围、装填。
         for i,column in ipairs(c.columns)do
-            local weapon=i==1 and a or b
+            local weapon=preview[Profile.fields[i]]
             local option=weapon>=0 and flow.options[weapon+1]or nil -- 空栏不借用历史兵装的性能或弹药。
-            local amount=option and (b<0 and option.max or math.max(1,math.floor(option.max*flow.draft.ratio)))or 0
+            local amount=option and Profile.ammo(option.max,count)or 0
             -- 同一栏的静态性能、名称与载量未变时，不重复使原生布局失效。
             local signature=tostring(weapon)..":"..amount
             if column.lastContent==signature then goto nextColumn end
@@ -528,7 +534,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 local percent=option and option.stats[statOrder[stat]]or 0
                 bar.Slot:SetSize({X=column.barWidth*math.max(0,math.min(1,percent/100)),Y=16})
             end
-            -- 准备页普通弹药汇总中的两个 SP 格与上方双栏保持一致。
+            -- 准备页普通弹药汇总中的两个 SP 格与上方三栏保持一致。
             if c.ammo then
                 setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
                 setText(c,c.ammo[i].count,option and tostring(amount)or "---")
@@ -536,7 +542,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             column.lastContent=signature
             ::nextColumn::
         end
-        return a,b
+        return a,b,preview.c
     end
     local function attach(owner,instance,planeId,profile,options)
         local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,originalControl=owner:IsEnableControl(),originalWeapon=instance:GetSelectedPlaneSWP(),flow=Flow.new(profile,options,nil,nil,tr)}
@@ -567,10 +573,10 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local origin=vec(group.Slot:GetPosition()) -- 右栏沿用原右侧性能区，左栏向左展开。
         local width=canvasSlot(group.SpecGroupName):GetSize().X+items[1].Slot:GetPosition().X
         local pitch=items[2].Slot:GetPosition().Y-items[1].Slot:GetPosition().Y
-        assert(width>300 and width<450 and pitch>20 and pitch<60,"准备双栏尺寸不符")
+        assert(width>300 and width<450 and pitch>20 and pitch<60,"准备三栏尺寸不符")
         origin.X=origin.X-width-76;origin.Y=origin.Y-1.5*pitch
-        assert(origin.X>900 and origin.Y>100,"准备双栏位置不符，停止接入")
-        -- 新双栏挂信息区的根 Canvas，不能挂进随后折叠的原性能组件子树。
+        assert(origin.X>900 and origin.Y>100,"准备三栏位置不符，停止接入")
+        -- 新三栏挂信息区的根 Canvas，不能挂进随后折叠的原性能组件子树。
         local infoRoot=info.WidgetTree.RootWidget
         assert(valid(infoRoot)and infoRoot:GetClass():GetFullName()=="Class /Script/UMG.CanvasPanel","准备信息区根 Canvas 不符")
         informationColumns(c,infoRoot,origin,width,pitch,13*pitch,
@@ -579,16 +585,15 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
              typeHeading=assert(typeTemplate.WeaponTypeLabel),type=assert(typeTemplate.WeaponTypeText),
              ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",76)
         c.ammo={}
-        for i=1,2 do
+        for i=1,3 do
             local widgets=controls(ammo["WeaponsSP"..i])
             c.ammo[i]={name=clone(c,assert(widgets.WeaponsName),false),count=clone(c,assert(widgets.WeaponsAmmo),false)}
         end
-        mask(c,ammo.WeaponsSP3) -- 保留 GUN/MSL/FLR，避免把第三个候选误看成已挂载兵装。
         mask(c,wrapper);mask(c,info.HangarAircraftWeaponNameLong)
         mask(c,info.HangarAircraftWeaponProperties);mask(c,info.HangarAircraftWeaponType)
         -- 原状态图标是未读标记，不能当作兵装类别；新列表以简称和选中底色识别。
         mask(c,owner.LightMenuItemIconStatusWidget)
-        mask(c,owner.LightMenuItemIconCategoryWidget) -- 右侧原生单兵装类别图标不能混入新的双栏。
+        mask(c,owner.LightMenuItemIconCategoryWidget) -- 右侧原生单兵装类别图标不能混入新的三栏。
         -- 现场确认金色光标属于共享前景的 ScrollCanvas，兵装页上的同名 Marker 不是实际对象。
         local manager=owner:GetUIManagerActor() -- 只接管本页所属管理器，离开时恢复给 STANDBY。
         assert(valid(manager)and valid(manager.MenuForegroundWidget),"准备页原生前景选择器缺失")
@@ -650,22 +655,22 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local width=canvasSlot(group.SpecGroupName):GetSize().X+group.SpecItem1.Slot:GetPosition().X
         assert(width>300 and width<450 and origin.X>1400 and origin.Y>100,"STANDBY 右栏布局已变化")
         origin.Y=origin.Y-39 -- 对齐原右侧兵装名称，不侵占上方标题。
-        for index=1,2 do
-            local panel=infoCanvas(c,root,{X=origin.X,Y=origin.Y+(index-1)*274},{X=width,Y=258})
+        for index=1,3 do
+            local panel=infoCanvas(c,root,{X=origin.X,Y=origin.Y+(index-1)*182},{X=width,Y=176})
             local column={bars={},barWidth=width*.40};c.columns[index]=column
             column.name=infoWidget(c,assert(weaponTemplate.WeaponsName),panel,{X=0,Y=0},{X=width,Y=30},false)
             for stat=1,6 do
                 local item=group["SpecItem"..stat] -- 性能名称和画刷取自原生右侧兵装组。
                 assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar.BarA),"STANDBY 性能模板缺失")
-                local y=34+(stat-1)*26
-                infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.52,Y=26},false)
+                local y=27+(stat-1)*18
+                infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.52,Y=18},false)
                 local tint=item.SpecBar.BarA.ColorAndOpacity
                 local track=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
                 track:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=.2})
                 local bar=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
                 bar:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=1});column.bars[stat]=bar
             end
-            column.type=infoWidget(c,assert(typeTemplate.WeaponTypeText),panel,{X=0,Y=196},{X=width,Y=62},false,true)
+            column.type=infoWidget(c,assert(typeTemplate.WeaponTypeText),panel,{X=0,Y=138},{X=width,Y=38},false,true)
             -- 部件加成及比例处理后的载弹量统一放在下方弹药区。
             local ammoParent=ammo.WeaponsSP1.Slot.Parent
             c.ammo[index]={name=infoWidget(c,weaponTemplate.WeaponsName,ammoParent,{X=217,Y=26+(index-1)*34},{X=108,Y=32},false),
@@ -689,13 +694,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local c=self.cache
         if c and (inFlight or not saved or not valid(c.owner)or not c.owner:IsVisible()
             or c.planeId~=planeId or c.world~=instance:GetWorld():GetAddress()
-            or c.flow.draft.a~=saved.a or c.flow.draft.b~=saved.b or c.flow.draft.ratio~=saved.ratio)then
+            or c.flow.draft.a~=saved.a or c.flow.draft.b~=saved.b or c.flow.draft.c~=saved.c or c.flow.draft.ratio~=saved.ratio)then
             -- 只撤回自己修改的兵装区域。原生会复用此页，隐藏整个根会越过本适配器的生命周期。
             -- 页面退出已由原生显隐控制，不能再折叠根并等待另一次启用事件来补救。
             note("NATIVE_"..mode:upper().."_DETACHED plane="..c.planeId.." next="..planeId)
             restore(false);c=nil
         end
-        -- 输入停用是退出动画的起点，此时保留双 SP 画面直到页面实际隐藏。
+        -- 输入停用是退出动画的起点，此时保留多 SP 画面直到页面实际隐藏。
         if c then
             -- STANDBY 只在返回时刷新，PART 继续观察已安装部件，避免复用页面留下旧载量。
             local enabled=c.owner:IsEnableControl()
@@ -721,7 +726,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         self.status="waiting"
     end
-    -- 在 MissionResupply 原有背景内双选，并列展示 SP1/SP2。
+    -- 在 MissionResupply 原有背景内多槽选择，并列展示 SP1/SP2。
     local function attachSupply(owner,instance,planeId,profile,options)
         assert(self.phase and valid(self.phaseObject),"补给菜单缺少原生阶段绑定")
         local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,
@@ -785,7 +790,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local right=typePanel.Slot:GetPosition().X+typePanel.Slot:GetSize().X
         local gap=50 -- 拉开两栏，给左栏介绍和列间留白；整体仍由原生页面缩放。
         local width=(math.min(right,mainSize.X-20)-origin.X-gap)/2
-        assert(width>250 and width<600 and mainSize.Y>450,"补给双栏可用空间不符")
+        assert(width>250 and width<600 and mainSize.Y>450,"补给三栏可用空间不符")
         local items={} -- 直接使用已核对的 SpecName/SpecBar 原生变量，不复制 UserWidget 子树。
         for i=1,6 do
             local item=group["SpecItem"..i]
@@ -819,13 +824,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         note(string.format("NATIVE_RESUPPLY_ATTACHED %s columns=%.1f pitch=%.1f",owner:GetFullName(),width,pitch))
         return c
     end
-    -- 悬停更新当前栏，另一栏保留已选兵装；确认页保留完整双栏。
+    -- 悬停更新当前栏，另一栏保留已选兵装；确认页保留完整三栏。
     local function paintSupply(c)
         local flow=c.flow;local rows=flow:rows();local stage=flow.stage
-        local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..tostring(flow.message)
+        local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..flow.draft.c..":"..tostring(flow.message)
         if signature==c.lastPaint then return end
         c.lastPaint=signature
-        setText(c,c.title,stage=="sp1"and "[SELECT SP WEAPON 1]"or stage=="sp2"and "[SELECT SP WEAPON 2]"or "[TAKE OFF]")
+        setText(c,c.title,stage=="sp1"and "[SELECT SP WEAPON 1]"or stage=="sp2"and "[SELECT SP WEAPON 2]"or stage=="sp3"and "[SELECT SP WEAPON 3]"or "[TAKE OFF]")
         for i=1,3 do
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
@@ -840,21 +845,21 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 c.cursors[i]:SetColorAndOpacity(c.tint)
             end
         end
-        local a,b=paintColumns(c)
+        local a,b,third=paintColumns(c)
         local option=nil -- 最终页按 YES/NO 给说明；选择页才显示当前候选说明。
-        if stage~="review"then option=flow.options[(stage=="sp1"and a or b)+1]end
-        local description=stage=="review"and (flow.cursor==1 and tr("决定：按本次方案起飞。返回：重新选择 SP2。","Confirm: take off. Back: reselect SP2.")or tr("决定：返回 SP1，重新选择特殊兵装。","Confirm: reselect special weapons from SP1."))
-            or stage=="sp1"and tr("决定：选择 SP1。","Confirm: select SP1.")or tr("决定：选择 SP2。返回：重选 SP1。","Confirm: select SP2. Back: reselect SP1.")
+        if stage~="review"then option=flow.options[(stage=="sp1"and a or stage=="sp2"and b or third)+1]end
+        local description=stage=="review"and (flow.cursor==1 and tr("决定：按本次方案起飞。返回：修改最后一个选择。","Confirm: take off. Back: edit the last choice.")or tr("决定：返回 SP1，重新选择特殊兵装。","Confirm: reselect special weapons from SP1."))
+            or stage=="sp1"and tr("决定：选择 SP1。","Confirm: select SP1.")or tr("决定：选择当前 SP，或无兵装结束。返回：修改上一槽。","Confirm this SP, or NO WEAPON to finish. Back: edit the previous slot.")
         if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description)
-        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选 SP1、SP2 重新起飞。","Take off with the selected SP1 and SP2."))
-            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载 SP2，SP1 保留完整载弹量。","No SP2. SP1 retains its full ammunition capacity."))
+        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选的 1 至 3 个 SP 重新起飞。","Take off with the selected one to three SP weapons."))
+            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载当前及后续槽，按已选数量均分弹药。","Leave this and later slots empty. Ammunition is divided by the selected count."))
         self.status=stage;note("NATIVE_RESUPPLY_STAGE "..signature)
     end
 
     local function paint(c)
         local flow=c.flow;local rows=flow:rows();local stage=flow.stage
-        local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..tostring(flow.message)..":"..tostring(c.continueRequested)..":"..tostring(c.exitRequested)..":"..tostring(c.handedOff)
+        local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..flow.draft.c..":"..tostring(flow.message)..":"..tostring(c.continueRequested)..":"..tostring(c.exitRequested)..":"..tostring(c.handedOff)
         if signature==c.lastPaint then return end
         c.lastPaint=signature
         local blue=color(.401978,.651406,1,1);local selected=color(1,1,1,1)
@@ -865,7 +870,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local ok,_,err=preparationAction(c.owner:GetAddress(),preview,3)
             assert(ok,err);c.previewWeapon=preview
         end
-        setText(c,c.title,stage=="sp1"and "SELECT SP WEAPON 1"or "SELECT SP WEAPON 2")
+        setText(c,c.title,"SELECT SP WEAPON "..assert(stage:match("sp([123])")))
         for i=1,3 do
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
@@ -882,21 +887,21 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         paintColumns(c)
         local description=stage=="sp1"and tr("请选择第一种特殊兵装。","Select your first special weapon.")
-            or tr("请选择第二种特殊兵装。不搭载时，第一种特殊兵装保留完整载弹量。","Select a second special weapon, or NO WEAPON for full SP1 ammunition.")
+            or tr("请选择当前槽兵装；无兵装结束选装。弹药按已选数量均分。","Select this SP, or NO WEAPON to finish. Ammunition is divided by the selected count.")
         if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description);c.description:SetColorAndOpacity(blue)
         self.status=stage
         note("NATIVE_LOADOUT_STAGE "..signature)
     end
     local function pump(instance,planeId,profile,options,now,inFlight,panelOpen)
-        -- F8 只暂停补给页读取，不能释放双选控制让原生单 SP 直接起飞。
+        -- F8 只暂停补给页读取，不能释放多槽选择控制让原生单 SP 直接起飞。
         if supply and panelOpen then return end
         if (inFlight and not supply)or panelOpen then if self.cache then restore(not inFlight)end;return end
         local c=self.cache
         -- 原生 YES 已发出后，页面隐藏/停用属于正常关闭过程；保留草稿到
         -- 任务成功事件。不能因 IsVisible 变为 false 就丢弃确认事务或重新接入。
         if supply and c and c.handedOff then self.status="awaiting_success";return end
-        -- 原生输入桥接报告已接收后才保存；动画期间保留双栏，隐藏后再恢复源控件。
+        -- 原生输入桥接报告已接收后才保存；动画期间保留三栏，隐藏后再恢复源控件。
         if not supply and c and c.actionQueued then
             assert(c.planeId==planeId and instance:GetWorld():GetAddress()==c.world,"机库交接期间机体或世界已变化")
             local ok,accepted,err=preparationAction(c.actionWidget,0,0) -- 回执不依赖旧页面继续存活。
@@ -970,7 +975,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             if direction~=0 and(direction~=oldDirection or now>=c.repeatAt)then
                 c.flow:move(direction);c.repeatAt=now+(direction~=oldDirection and .35 or .12)
             elseif input.cancel and not c.previous.cancel then
-                if c.flow.stage=="sp1"then c.flow.message=tr("请完成 SP1、SP2 选择后确认起飞","Select SP1 and SP2 before confirming takeoff")
+                if c.flow.stage=="sp1"then c.flow.message=tr("请完成所需 SP 选择后确认起飞","Finish selecting your SP loadout before confirming takeoff")
                 else c.flow:back()end
             elseif input.accept and not c.previous.accept then
                 local result=c.flow:confirm()
@@ -1004,12 +1009,12 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 c.flow:move(direction);c.repeatAt=now+(direction~=oldDirection and .35 or .12)
             elseif input.cancel and not c.previous.cancel then
                 if c.flow.stage=="sp1"then
-                    c.exitRequested=true -- 保留双栏直到原生退出，取消草稿不暴露旧单 SP 显示。
+                    c.exitRequested=true -- 保留三栏直到原生退出，取消草稿不暴露旧单 SP 显示。
                     note("NATIVE_LOADOUT_DRAFT_CANCELLED "..c.planeId)
                 else c.flow:back()end
             elseif input.accept and not c.previous.accept then
                 local result=c.flow:confirm() -- SP2 的最终决定由原生交接播放，不能重复叠音。
-                if result=="sp2"then confirmSound(c.owner)end
+                if result=="sp2"or result=="sp3"then confirmSound(c.owner)end
                 c.continueRequested=result=="continue"or nil
             end
         end
@@ -1063,7 +1068,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             if self.transaction then return end -- 原生提交的前后回调之间不能丢掉待保存事务。
             if c and c.owner:GetAddress()==address then
                 -- 原生先停用旧页再提交选择；真实决定期间保留事务来源，不能提前清掉草稿。
-                if c.handedOff then return end -- 原生关闭期间保留双栏和待确认事务。
+                if c.handedOff then return end -- 原生关闭期间保留三栏和待确认事务。
                 restore(false);self.ignored=address;self.ignoredReason="closed"
             end
             if enabled:get()and self.ignoredReason~="error"then
@@ -1124,9 +1129,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     function self:beforeSupplyFinish(ctx)
         local c=self.cache
         local phase=ctx:get()
-        assert(c and c.handedOff and self.transaction,"原生结束通知早于双 SP 的 YES 请求")
+        assert(c and c.handedOff and self.transaction,"原生结束通知早于多 SP 的 YES 请求")
         assert(validateSupplyPhase(c,phase)==self.transaction.phase,"补给结束事件与 YES 事务不匹配")
-        assert(c.flow.stage=="review","补给未完成 SP1/SP2 选择")
+        assert(c.flow.stage=="review","补给尚未完成兵装选择")
         assert(c.flow.cursor==1,"只有起飞 YES 才能提交补给方案")
         -- 结束通知可能在动画后到达，不要求玩家继续按住决定键，也不设置一秒的提交窗口。
         note("NATIVE_RESUPPLY_FINISH_VALIDATED "..c.planeId)

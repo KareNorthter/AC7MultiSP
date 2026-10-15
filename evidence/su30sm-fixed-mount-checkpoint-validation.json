@@ -1,0 +1,25 @@
+{
+  "version": "1.0.2-su30sm-mount.2",
+  "captured_local": "2026-10-15T17:52:13.405078+08:00",
+  "user_feedback": "已经做了，显示完整。",
+  "requested_operation": "两种 SP 装填完成后从检查点重新开始，重新出现飞机后暂停",
+  "raw_snapshot_sha256": "9c8a2930f5224551096a3640719573e5ed931c8bf0fbbcf5021ff0f6e722a86d",
+  "native_log_sha256": "32074f1c1fdb466ebad754ac8dec506308712c27d873dfa260f02bb29ffaea7c",
+  "native_checkpoint_events": [
+    "50582171 {\"a\":0,\"b\":2,\"event\":\"NATIVE_BEGIN\",\"op\":\"checkpoint_restore\",\"request\":23,\"target\":0,\"thread\":37108}",
+    "50582187 {\"active\":0,\"event\":\"NATIVE_DONE\",\"main_ammo\":126,\"op\":\"checkpoint_restore\",\"request\":23,\"sp\":[68,28]}",
+    "50582203 {\"a\":0,\"b\":2,\"event\":\"NATIVE_BEGIN\",\"op\":\"checkpoint_save\",\"request\":24,\"target\":0,\"thread\":37108}",
+    "50582203 {\"active\":0,\"event\":\"NATIVE_DONE\",\"main_ammo\":126,\"op\":\"checkpoint_save\",\"request\":24,\"sp\":[68,28]}"
+  ],
+  "aircraft_class": "AcePlayerPawn_su30sm_s03_C",
+  "restored_ammo": {
+    "MSL": 126,
+    "6AAM": 68,
+    "LAGM": 28
+  },
+  "read_only_capture": true,
+  "game_functions_called_by_capture": false,
+  "full_layout_confirmed_by_user": true,
+  "three_sp_verified": false,
+  "boundary": "只证实候选 .2 的双挂检查点恢复，不包含补给换组合或三挂恢复"
+}

@@ -6,6 +6,7 @@ local NativeHUD={}
 -- 两处 HUD 共用武器简称生成规则。
 local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local weaponNames=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/weapon_names.lua")
+local Profile=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 按实际槽数排列。
 local VISIBLE,COLLAPSED=0,1
 local TRANSIENT=0x40
 local function valid(o)return o and o:IsValid()end
@@ -63,7 +64,7 @@ function NativeHUD.new(note)
         end
     end
     -- 固定 GUN/MSL/SP/FLR/DMG 顺序；单 SP 也使用独立的 MSL/SP 名称。
-    local function arrange(column,enabled,holder,dual)
+    local function arrange(column,enabled,holder,count)
         -- Build the fixed order once on enable, restore it once on disable.
         -- Never reparent visible rows during weapon switching.
         local function detach(widget)
@@ -91,8 +92,10 @@ function NativeHUD.new(note)
             else append(column.original[2])end
             assert(valid(holder:AddChildToVerticalBox(column.original[3].widget)),"无法保留原生 SP 来源")
             append({widget=column.rows[1],style=column.original[3].style})
-            if dual then append({widget=column.rows[2],style=column.original[3].style})
-            else assert(valid(holder:AddChildToVerticalBox(column.rows[2])),"无法保留未启用的 SP2 行")end
+            for index=2,3 do
+                if index<=count then append({widget=column.rows[index],style=column.original[3].style})
+                else assert(valid(holder:AddChildToVerticalBox(column.rows[index])),"无法保留未启用的 SP 行")end
+            end
             append(column.original[4]);append(column.original[5])
         else
             for _,entry in ipairs(column.original)do append(entry)end
@@ -102,9 +105,9 @@ function NativeHUD.new(note)
         end
     end
     local function resize(c)
-        if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-c.row))
-        else c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+c.row})end
-        if not c.hboxStretched then c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y+c.row})end
+        if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-c.row*(c.countSP-1)))
+        else c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+c.row*(c.countSP-1)})end
+        if not c.hboxStretched then c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y+c.row*(c.countSP-1)})end
     end
     -- HUD 创建和武器初始化不同步。先把原生 SP 行折叠，避免双栏接管前
     -- 先画出 MSL+单 SP；接管或失败时再恢复原始可见性。
@@ -282,7 +285,7 @@ function NativeHUD.new(note)
         -- Names/counts stay in the same column slots for the entire sortie.
         for i,column in ipairs(c.columns)do
             column.rows={}
-            for group=1,2 do
+            for group=1,3 do
                 local widget=clone(column.original[3].widget,owner.WidgetTree,"DualSP"..group..(i==1 and "Name" or "Count"),column.box)
                 column.rows[group]=widget;c.clones[#c.clones+1]=widget
             end
@@ -338,11 +341,11 @@ function NativeHUD.new(note)
             return
         end
         -- 补给可从双 SP 改为单 SP，或反向改变；同帧还原尺寸再重排，不跨帧露出原行。
-        if c.applied and c.dual~=(profile.b>=0)then restore()end
+        if c.applied and c.countSP~=Profile.count(profile)then restore()end
         for _,key in ipairs(required)do assert(valid(c.widgets[key]),"Native HUD control was destroyed: "..key)end
         if not c.applied then
             -- 只有双 SP 增加一行；单 SP 保留原生面板高度。
-            c.dual=profile.b>=0
+            c.countSP=Profile.count(profile)
             retainArrows(c)
             -- In stretched Canvas slots GetSize is a margin, not a height.
             -- Grow that parent upwards by moving its top edge. A stretched
@@ -350,9 +353,9 @@ function NativeHUD.new(note)
             -- 原生 SP 源已折叠，开场时从它测量必然可能得到零高。
             -- 先把实际文字放入最终可见行，再测量该行自己的 Slate 布局。
             c.columnsTouched=true -- 即使布局核验失败，也能恢复完整原生控件树。
-            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.dual)end
-            for group=1,(c.dual and 2 or 1)do
-                local weaponIndex=group==1 and profile.a or profile.b -- SP 行按逻辑槽固定身份。
+            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.countSP)end
+            for group=1,c.countSP do
+                local weaponIndex=profile[Profile.fields[group]] -- SP 行按逻辑槽固定身份。
                 c.columns[1].rows[group]:SetText(FText(weaponNames.special(options,weaponIndex)))
                 c.columns[2].rows[group]:SetText(FText(state.pending and "—"or tostring(state.cached_sp[group])))
             end
@@ -362,12 +365,12 @@ function NativeHUD.new(note)
             local padding=c.columns[1].original[3].style.padding
             local pitch=measured:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(pitch>0 and pitch<100,"Invalid native text row height: "..tostring(pitch))
-            c.row=pitch;if c.dual then resize(c)end
+            c.row=pitch;if c.countSP>1 then resize(c)end
             note(string.format("NATIVE_HUD_ROW_FLOW pitch=%.3f label_font=%d count_font=%d slot_rules=%s,%s",c.row,c.nameFontSize,c.countFontSize,tostring(c.columns[1].original[3].style.size.SizeRule),tostring(c.columns[2].original[3].style.size.SizeRule)))
             c.applied=true
         end
         local active=state.active
-        assert(active==0 or active==1,"Invalid native HUD SP selection")
+        assert(active>=0 and active<c.countSP,"Invalid native HUD SP selection")
         if c.lastActive~=active then
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
             c.lastActive=active
@@ -399,7 +402,7 @@ function NativeHUD.new(note)
             -- The game-owned source is collapsed; measure a visible twin.
             c.row=c.columns[1].rows[1]:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(c.row>0 and c.row<100,"Invalid resized native text row height")
-            if c.dual then resize(c)end
+            if c.countSP>1 then resize(c)end
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
         end
         assert(state.ready and type(state.ready[1])=="boolean","MSL 就绪状态缺失")
@@ -408,8 +411,8 @@ function NativeHUD.new(note)
         local countColor=c.count.ColorAndOpacity
         local countTint=countColor.SpecifiedColor -- 只有源颜色实际变化时才同步弹药文字。
         local countStyle=table.concat({countTint.R,countTint.G,countTint.B,countTint.A,tostring(countColor.ColorUseRule)},":")
-        for group=1,(c.dual and 2 or 1)do
-            local weaponIndex=group==1 and profile.a or profile.b
+        for group=1,c.countSP do
+            local weaponIndex=profile[Profile.fields[group]]
             local label=weaponNames.special(options,weaponIndex)
             local count=state.pending and "—"or tostring(state.cached_sp[group]) -- 武器初始化前只显示名称，不展示尚未应用的弹药数。
             local nameWidget,countWidget=c.columns[1].rows[group],c.columns[2].rows[group]

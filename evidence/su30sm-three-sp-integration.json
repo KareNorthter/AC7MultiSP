@@ -1,0 +1,89 @@
+{
+  "version": "1.0.2-su30sm-three-sp.1",
+  "branch": "codex/su30sm-three-sp-fixed-mount",
+  "fixed_mount_parent": "c378de2",
+  "formal_f6_source": "b6b6979",
+  "formal_merge_commit": "cc38ff5",
+  "requested_thread": "01a13d50-883c-7c33-958f-cb8f3bd820c9",
+  "three_sp_source_thread": "01a13edb-e42d-7502-9e1f-2618ea8e973c",
+  "three_sp_source": {
+    "source_head": "5628a6277055578fdf410b1329650e42e6b3ecc4",
+    "files": {
+      "VERSION": "f6b5a64e2f2af8b43702db002109d1b6b8e9630a65d7d8aad067cd3becbe48e2",
+      "src/weapon_bridge.cpp": "6a6c8ad16635289e3cedc0e112580f39fb9ee977dec83f3cc1daf60707981bb6",
+      "src/overlay.cpp": "e9a6cc8dcc6127e2c2c1c65f1c22802eb9322be8b2ffa6303abde045af3cfd2e",
+      "src/install-resupply-candidate.py": "67b3fe6a0fde5bb1ffb9f06ed027a5a73e0ee47490f31bcfbd262d933d0c6cc9",
+      "src/prepare-three-sp-candidate.py": "af31493ce1947415a53043d928544db604154277aeeadcd34e46118933006811",
+      "docs/research/three-sp-candidate.txt": "9036fd233e99c24bab6a81f8ecc2d62216099221761c99fcaa2f8c1484a97b1f",
+      "evidence/three-sp-candidate-build.json": "c19a5588b5eff896416eb34952083722f85e141787dc38d6e2f35b9f3d1d07bb",
+      "dist/DualSP/bin/DualSPUI.dll": "11984ce8c78d98062fe9cad3aa1337c8ea828950607f05470700e4f6422e0604",
+      "dist/DualSP/Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+      "dist/DualSP/Scripts/loadout_flow.lua": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b",
+      "dist/DualSP/Scripts/loadout_profile.lua": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+      "dist/DualSP/Scripts/main.lua": "378dfbca74f51e2c6bc20b361209ee330b0cb87e4d902a1a287a892ce190d825",
+      "dist/DualSP/Scripts/native_hud.lua": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8",
+      "dist/DualSP/Scripts/native_loadout.lua": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0",
+      "dist/DualSP/Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+      "dist/DualSP/Scripts/weapon_cycle.lua": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+      "dist/DualSP/Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+      "dist/DualSP/Scripts/weapon_presentation.lua": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+    }
+  },
+  "three_sp_source_was_uncommitted": true,
+  "source_files_unchanged_verified": true,
+  "layout": {
+    "QAAM": {
+      "sockets": [
+        "sp23",
+        "sp24"
+      ],
+      "logical_to_physical": [
+        0,
+        1,
+        0,
+        1
+      ]
+    },
+    "6AAM": {
+      "sockets": [
+        "sp13",
+        "sp14"
+      ],
+      "logical_to_physical": [
+        2,
+        3,
+        2,
+        3,
+        2,
+        3
+      ]
+    },
+    "LAGM": {
+      "sockets": [
+        "sp35",
+        "sp36"
+      ],
+      "logical_to_physical": [
+        4,
+        5,
+        4,
+        5,
+        4,
+        5
+      ]
+    }
+  },
+  "rack": "SWP3",
+  "ammo_rule": "部件后完整量除以实际槽数，向下取整，正数至少一发",
+  "lifecycle_changes": [
+    "原生新配置初始化前解绑旧挂载",
+    "检查点恢复先解绑并按快照重建",
+    "QAAM 四槽持久序号轮转"
+  ],
+  "hud_silhouette_issue": "HUD-SP-SILHOUETTE-001 本轮不修复",
+  "gameplay_verified": false,
+  "main_worktree_modified": false,
+  "tests_run": false,
+  "core_sha256": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508",
+  "ui_sha256": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750"
+}

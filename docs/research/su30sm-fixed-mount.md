@@ -1,5 +1,9 @@
 # Su-30SM 四翼下与两机腹固定挂载研究
 
+# 后续三 SP 集成
+
+2026-10-15：用户确认候选 .2 检查点重来后四处 6AAM＋两处 LAGM 显示完整，已补[验证证据](../../evidence/su30sm-fixed-mount-checkpoint-validation.json)。按用户授权另建 `codex/su30sm-three-sp-fixed-mount`，融合正式 F6 与三 SP 成果，构建安装 `1.0.2-su30sm-three-sp.1`；三挂每种两处，双挂四加二保留。补给初始化前与检查点恢复前已显式解绑，三挂尚未实玩。后续以[三挂集成说明](su30sm-three-sp-fixed-mount.txt)为准，下文为双挂研究历史。
+
 2026-10-15。目标是在 Su-30SM 上固定显示四处 6AAM、两处 LAGM，选择兵装时保持布局，6AAM 仍允许六发齐射，其中两处重复出弹。用户明确接受重复出弹造成的视觉不一致，不要求制作双联挂架。
 
 用户已确认 `1.0.2-su30sm-mount.2` 的实体挂载、模型显示、武器切换和发射正常，符合四处 6AAM＋两处 LAGM 的预期。日志对应 20 次 SP 切换，弹药从 68/28 消耗至 56/24，六处就绪状态装填后恢复，当前会话无错误。**这不是全部生命周期和机型的验收**。右下角装填剪影偶发不匹配已单独记录，按用户要求本轮不调查或修复。见[用户验证](../../evidence/su30sm-fixed-mount-user-validation.json)、[HUD 问题](hud-reload-silhouette-issue.md)。此前“尚未启动/实测”为安装阶段记录。

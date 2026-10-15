@@ -1,5 +1,7 @@
 # 架构与关键约束
 
+本研究分支当前为 `1.0.2-su30sm-three-sp.1`，下文正式版说明作为基线。集成新增 `loadout_profile.lua` 统一 1–3 槽与自动均分，核心 Session/检查点保存实际 count、三个配置及各槽弹药冷却；命令、管理和就绪接口使用三 SP 协议。`su30sm_fixed_mount.hpp` 将 Su-30SM 逻辑槽映射到六处固定模型，显隐和发射共用映射，重建前解绑，QAAM 四槽独立轮转。其他机体沿用原生活动模型。完整设计及未验证范围见[三 SP 固定挂载](research/su30sm-three-sp-fixed-mount.txt)。
+
 > 1.0.1 候选增量：runtime_context.lua 只读核对网络模式、GameMode、当前菜单页面与文本文化；Lua、核心及 UI 均以单人许可控制功能。模式切换清空旧事务，延迟回调绑定模式代次。补给 HUD 保留并在 YES 交接后预建，只在成功初始化后提交真实数据；详见[候选说明](version-1.0.1-candidate.1.md)。下文为 1.0.0 基线。
 
 返回[项目入口](../AGENTS.md)。当前仓库为 **AC7DualSP 1.0.2**，沿用下文基线与兼容增量；版本及待验证范围见[1.0.2](version-1.0.2.txt)，更早方案见[历史索引](history-1.0.0.md)。

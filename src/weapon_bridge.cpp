@@ -27,7 +27,16 @@
 
 namespace {
 using Addr = uintptr_t;
-struct Command { std::string op; Addr plane{}, activator{}; int target{}; double time{}; int secondConfig{1}, firstConfig{}; double ratio{1}; uint64_t request{}; };
+// Lua 每次提交完整方案；配置编号与逻辑槽编号不得混用。
+struct Command {
+    std::string op; // 初始化、换槽、补给或检查点动作。
+    Addr plane{}, activator{}; // 当前玩家及其兵装组件身份。
+    int target{}; // 目标逻辑槽，取值 0 至 count-1。
+    double time{}; // 游戏时间，用于冷却推进与检查点时间重定位。
+    int count{1}; // 实际搭载数量，同时决定均分分母。
+    std::array<int,3> configs{0,-1,-1}; // 原生配置，未使用槽必须为 -1。
+    uint64_t request{}; // 请求序号，防止旧响应被重复消费。
+};
 std::mutex nativeExecutionMutex;
 struct Slot {
     float duration{}, elapsed{}; // 原生装填时长和已过时间。
@@ -45,13 +54,12 @@ struct Group {
 struct Session {
     Addr plane{}, activator{};
     int active{};
-    int secondConfig{1};
-    int firstConfig{};
+    int count{1}; // 有效逻辑槽数量；空槽不初始化。
+    std::array<int,3> configs{0,-1,-1}; // 各逻辑槽映射到机体原生配置。
     int gun{}, flares{};
-    std::array<int,2> maximum{};
-    double ratio{1};
+    std::array<int,3> maximum{}; // 每个逻辑槽独立的配弹上限。
     Group main;
-    std::array<Group,2> special;
+    std::array<Group,3> special; // 每槽的弹药、装填队列和捕获时间。
 } session;
 Session checkpoint;
 bool checkpointValid=false;
@@ -258,6 +266,8 @@ void installSelectionAudio() {
 // 通过原生字符串复制器取得游戏分配的缓冲区，由原包装器消费并释放。
 void playSelection(int target) {
     if(target==2){selectionWave.play();return;}
+    // SP3 明确复用原生 SP 提示音；没有第三份语音素材，不伪造 SP3 语音。
+    if(target==3)target=1;
     selectionWave.stop(); // 换回 MSL/SP1 时结束自定义提示尾音。
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 所有调用保持在游戏线程。
     const int length=static_cast<int>(std::wcslen(selectionEvents[target])+1); // FString 的 Num 包含零终止符。
@@ -489,7 +499,7 @@ std::string snapshotJson(const Command& command) {
        <<",\"flares\":"<<read<int>(read<Addr>(command.activator+0x260)+0x10c)
        <<",\"armed\":"<<(read<unsigned char>(command.activator+0x2a1)!=0 ? "true":"false")
        <<",\"cached_sp\":[";
-    for(int i=0;i<2;++i) { if(i)out<<','; out<<(i==session.active ? scalarInt(special,0) : (session.special[i].valid ? scalarInt(session.special[i],0) : -999)); }
+    for(int i=0;i<session.count;++i) { if(i)out<<','; out<<(i==session.active ? scalarInt(special,0) : (session.special[i].valid ? scalarInt(session.special[i],0) : -999)); }
     out<<']';
     return out.str();
 }
@@ -498,28 +508,35 @@ Command readCommand() {
     Command command;
     file>>command.op>>std::hex>>command.plane>>command.activator>>std::dec>>command.target>>command.time;
     require(static_cast<bool>(file),"Malformed command");
-    file>>command.secondConfig>>command.firstConfig;
-    require(static_cast<bool>(file),"Missing weapon configurations");
-    require(command.target==0 || command.target==1,"Prototype supports two logical SP slots");
-    require(command.secondConfig>=0 && command.secondConfig<3 && command.firstConfig>=0 && command.firstConfig<3,"Unsupported SP configuration");
-    require(command.firstConfig!=command.secondConfig,"SP selections must be different");
+    // 协议 3 显式携带槽数和三个配置；旧命令在修改游戏前即被拒绝。
+    int protocol{}; // 独立于管理 UI 协议的核心命令标记。
+    file>>protocol>>command.count>>command.configs[0]>>command.configs[1]>>command.configs[2]>>command.request;
+    require(static_cast<bool>(file) && protocol==3,"需要三 SP 核心命令协议 3");
+    require(command.count>=1 && command.count<=3,"SP 数量必须为 1 至 3");
+    require(command.target>=0 && command.target<command.count,"目标 SP 不在已选槽范围内");
+    for(int index=0;index<3;++index) {
+        const int config=command.configs[index]; // 只允许连续、不同的原生兵装配置。
+        require(index<command.count ? config>=0 && config<3 : config==-1,"SP 配置与槽数不符");
+        for(int prior=0;prior<index && index<command.count;++prior)
+            require(config!=command.configs[prior],"SP 配置重复");
+    }
     require(std::isfinite(command.time) && command.time>=0,"Invalid game time");
-    file>>command.ratio;require(static_cast<bool>(file) && command.ratio>=0.1 && command.ratio<=1,"Invalid ammo ratio");
-    file>>command.request;require(static_cast<bool>(file) && command.request>0,"Missing native request ID");
+    require(command.request>0,"Missing native request ID");
     return command;
 }
 // 在原生部件计算之后缩减当前/最大弹药；记录输入输出，便于增弹部件的对照验证。
-void scaleAmmo(Addr activator,double ratio) {
+void scaleAmmo(Addr activator,int count) {
+    require(count>=1 && count<=3,"配弹槽数无效");
     const auto group=groupOf(activator,true);
     std::array<int,2> before{},after{}; // 当前弹数与最大弹数，各自按同一比例向下取整。
     size_t index=0; // 对应两个弹药字段，而不是两个逻辑 SP。
     for(auto offset:{8,12}) {
         const int ammo=read<int>(group+offset);
         require(ammo>=0 && ammo<=100000,"Invalid SP ammunition");
-        before[index]=ammo;after[index]=std::max(1,static_cast<int>(std::floor(ammo*ratio)));
+        before[index]=ammo;after[index]=ammo==0 ? 0 : std::max(1,ammo/count); // 整数除法避免三等分浮点误差。
         write<int>(group+offset,after[index]);++index;
     }
-    nativeLog(Json{{"event","SP_AMMO_SCALED"},{"ratio",ratio},{"native",before},{"scaled",after}}.dump());
+    nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"native",before},{"scaled",after}}.dump());
 }
 void execute(const Command& command) {
     verifyVersion();
@@ -531,30 +548,32 @@ void execute(const Command& command) {
         fixedMountRelease(); // 新组合不沿用上一组合的视觉状态。
 #endif
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
-        session.secondConfig=command.secondConfig;
-        session.firstConfig=command.firstConfig;
-        session.ratio=command.ratio;
+        session.count=command.count;session.configs=command.configs;
         if(command.op=="setup")checkpointValid=false;
         session.main=capture(command.activator,false,command.time);
-        scaleAmmo(command.activator,session.ratio);
+        scaleAmmo(command.activator,session.count);
         session.special[0]=capture(command.activator,true,command.time);
         session.maximum[0]=scalarInt(session.special[0],0);
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
-        initialize(command,session.secondConfig);
-        scaleAmmo(command.activator,session.ratio);
-        session.special[1]=capture(command.activator,true,command.time);
-        session.maximum[1]=scalarInt(session.special[1],0);
-        initialize(command,session.firstConfig);
+        // 单挂不重建第二份；多挂依次捕获每个实际配置，再回到 SP1。
+        for(int index=1;index<session.count;++index) {
+            initialize(command,session.configs[index]);
+            scaleAmmo(command.activator,session.count);
+            session.special[index]=capture(command.activator,true,command.time);
+            session.maximum[index]=scalarInt(session.special[index],0);
+        }
+        if(session.count>1)initialize(command,session.configs[0]);
         restore(command.activator,false,session.main,command.time);
         restore(command.activator,true,session.special[0],command.time);
         keepArmed(command,armed);
     } else if(command.op=="switch") {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
+        require(command.target<session.count && command.configs==session.configs && command.count==session.count,"切换方案与当前会话不符");
         require(command.target!=session.active,"Already using requested SP");
         session.main=capture(command.activator,false,command.time);
         session.special[session.active]=capture(command.activator,true,command.time);
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
-        initialize(command,command.target==0 ? session.firstConfig : session.secondConfig);
+        initialize(command,session.configs[command.target]);
         restore(command.activator,false,session.main,command.time);
         restore(command.activator,true,session.special[command.target],command.time);
         session.active=command.target;
@@ -568,14 +587,18 @@ void execute(const Command& command) {
         checkpoint=session; checkpointTime=command.time; checkpointValid=true;
     } else if(command.op=="checkpoint_restore") {
         require(checkpointValid,"No captured checkpoint");
+        require(command.configs==checkpoint.configs && command.count==checkpoint.count,"检查点方案与控制器不一致");
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        fixedMountRelease(); // 检查点可能来自补给前的另一组合，重建前先归还旧布局。
+#endif
         // Pointer-independent timers and scalar caches can be restored to a newly
         // spawned plane of the same class. restore() validates weapon identities.
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
         session=checkpoint; session.plane=command.plane; session.activator=command.activator;
         const double rebase=command.time-checkpointTime;
         session.main.capturedTime+=rebase;
-        for(auto& sp:session.special)sp.capturedTime+=rebase;
-        initialize(command,session.active==0 ? session.firstConfig : session.secondConfig);
+        for(int index=0;index<session.count;++index)session.special[index].capturedTime+=rebase;
+        initialize(command,session.configs[session.active]);
         restore(command.activator,false,session.main,command.time);
         restore(command.activator,true,session.special[session.active],command.time);
         write<int>(stateOf(command.activator)+8,session.gun);
@@ -585,14 +608,17 @@ void execute(const Command& command) {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
         const int active=session.active;
-        initialize(command,session.firstConfig,false);
-        scaleAmmo(command.activator,session.ratio);
+        // 原生补给不重选时，也只补充当前实际配置的槽。
+        for(int index=0;index<session.count;++index) {
+            initialize(command,session.configs[index],false);
+            scaleAmmo(command.activator,session.count);
+            session.special[index]=capture(command.activator,true,command.time);
+            session.maximum[index]=scalarInt(session.special[index],0);
+        }
         session.main=capture(command.activator,false,command.time);
-        session.special[0]=capture(command.activator,true,command.time);
-        initialize(command,session.secondConfig,false);
-        scaleAmmo(command.activator,session.ratio);
-        session.special[1]=capture(command.activator,true,command.time);
-        if(active==0) {initialize(command,session.firstConfig,false);scaleAmmo(command.activator,session.ratio);}
+        if(active!=session.count-1)initialize(command,session.configs[active],false);
+        restore(command.activator,false,session.main,command.time);
+        restore(command.activator,true,session.special[active],command.time);
         keepArmed(command,armed);
     } else {
         require(command.op=="snapshot","Unknown command");
@@ -629,6 +655,8 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     }
 }
 
+// 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
+extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
 }
@@ -672,7 +700,7 @@ extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 当前玩家激活器。
         const int op=static_cast<int>(api->readInteger(luaState,3)); // 绑定、提交或解绑。
         const int target=static_cast<int>(api->readInteger(luaState,4)); // MSL/SP1/SP2 分别为 0/1/2。
-        require(op>=0 && op<=2 && target>=0 && target<=2,"选择音效动作无效");
+        require(op>=0 && op<=2 && target>=0 && target<=3,"选择音效动作无效");
         if(op==2){selectionAudio={};selectionWave.close();switchInputAllowed=false;emptySwitchRequested=false;} // 世界销毁时不读取旧玩家对象。
         else {
             require(runtimeEnabled,"Mod disabled outside single-player");
@@ -1046,7 +1074,7 @@ extern "C" __declspec(dllexport) int dualsp_resupply_takeoff(void* luaState) {
 }
 
 // 游戏线程只读采样，直接返回 Lua 值，不经过命令文件或 JSON。
-// 返回：成功、MSL就绪、SP1就绪、SP2就绪、错误文字；不修改武器或核心缓存。
+// 返回：成功、MSL就绪、SP1就绪、SP2就绪、SP3就绪、错误文字；不修改武器或核心缓存。
 extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1059,29 +1087,27 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         const double time=api->readNumber(luaState,3);
-        const int dual=static_cast<int>(api->readInteger(luaState,4));
-        require(dual==0 || dual==1,"HUD 双 SP 标志无效");
+        const int count=static_cast<int>(api->readInteger(luaState,4)); // Lua 提供实际挂载数。
+        require(count>=1 && count<=3,"HUD SP 数量无效");
         require(std::isfinite(time) && time>=0,"HUD 游戏时间无效");
         verifyVersion();
         require(read<Addr>(plane+0x11a8)==activator,"HUD 激活器不属于当前玩家机体");
         const auto main=capture(activator,false,time),special=capture(activator,true,time);
         const bool mainReady=hasReadyRound(main,time);
-        std::array<bool,2> spReady={hasReadyRound(special,time),false};
-        if(dual) {
-            require(session.plane==plane && session.activator==activator,"HUD 双 SP 会话不匹配");
-            require(session.active==0 || session.active==1,"HUD 活动 SP 无效");
-            spReady[session.active]=hasReadyRound(special,time);
-            spReady[1-session.active]=hasReadyRound(session.special[1-session.active],time);
-        }
+        std::array<bool,3> spReady{}; // 未搭载槽固定不就绪。
+        require(session.plane==plane && session.activator==activator && session.count==count,"HUD SP 会话不匹配");
+        require(session.active>=0 && session.active<count,"HUD 活动 SP 无效");
+        for(int index=0;index<count;++index)
+            spReady[index]=hasReadyRound(index==session.active ? special : session.special[index],time);
         api->boolean(luaState,true);api->boolean(luaState,mainReady);
-        api->boolean(luaState,spReady[0]);api->boolean(luaState,spReady[1]);api->string(luaState,"",0);
-        return 5;
+        for(bool ready:spReady)api->boolean(luaState,ready);
+        api->string(luaState,"",0);return 6;
     }catch(const std::exception& error) {
         if(api) {
             api->boolean(luaState,false);
-            for(int index=0;index<3;++index)api->boolean(luaState,false);
+            for(int index=0;index<4;++index)api->boolean(luaState,false);
             api->string(luaState,error.what(),std::strlen(error.what()));
-            return 5;
+            return 6;
         }
         // Lua 接口本身不能绑定时无法压栈；调度器会因缺少成功值明确显示 HUD 错误。
         nativeLog(std::string("HUD_LUA_API_ERROR ")+error.what());
@@ -1098,12 +1124,12 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         request=command.request;
         require(runtimeEnabled,"Mod disabled outside single-player");
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
-            {"target",command.target},{"a",command.firstConfig},{"b",command.secondConfig},{"thread",GetCurrentThreadId()}}.dump());
+            {"target",command.target},{"configs",command.configs},{"count",command.count},{"thread",GetCurrentThreadId()}}.dump());
         execute(command);
         Json state=Json::parse("{"+snapshotJson(command)+"}");
-        state["ok"]=true;state["request"]=request;state["maximum"]=session.maximum;
+        state["count"]=session.count;state["configs"]=session.configs;state["ok"]=true;state["request"]=request;state["maximum"]=session.maximum;
         state["slots"]=Json::array();
-        for(int index=0;index<2;++index) {
+        for(int index=0;index<session.count;++index) {
             const auto g=index==session.active?capture(command.activator,true,command.time):session.special[index];
             Json bars=Json::array();
             if(g.valid) {

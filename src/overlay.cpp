@@ -51,9 +51,8 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 管理草稿与保存回执；不再维护或提交 SP1/SP2 兵装选择。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-int draftRatioStep=0; // 0 至 10 对应 50% 至 100%，每 5% 一档，共 11 个可选值。
 bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
-std::array<int,3> draftKeys{49,50,51};
+std::array<int,4> draftKeys{49,50,51,52};
 int managementKey=VK_F6; // 默认 F6；已校验状态会提供用户显式保存的管理键。
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 // 日志只在页面打开或手动刷新时读取。
@@ -104,7 +103,7 @@ void togglePanel(bool open) {
     enqueue({{"type",open?"open":"close"}});
     if(open) {
         notice.clear();captureSlot=-1;managementError.clear();
-        if(state.value("management_protocol",0)==2) {
+        if(state.value("management_protocol",0)==3) {
             try {loadManagementDraft();}
             catch(const std::exception& error){managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());}
         }
@@ -127,7 +126,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         if(w==VK_ESCAPE&&panel){togglePanel(false);return 0;}
         if(directInputEnabled()) {
             const auto keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
-            for(int slot=0;slot<3;++slot)if(keys.at(slot).get<int>()==static_cast<int>(w)) {
+            for(int slot=0;slot<4;++slot)if(keys.at(slot).get<int>()==static_cast<int>(w)) {
                 enqueue({{"type","select_weapon"},{"target",slot}});break;
             }
         }
@@ -243,12 +242,14 @@ std::string keyLabel(int key) {
 // 三个动作不可共用同一键；直接选择与原生键位的冲突由用户管理。
 bool bindingsValid() {
     for(int key:draftKeys)if(!supportedKey(key))return false;
-    return draftKeys[0]!=draftKeys[1]&&draftKeys[0]!=draftKeys[2]&&draftKeys[1]!=draftKeys[2];
+    for(size_t index=0;index<draftKeys.size();++index)
+        for(size_t prior=0;prior<index;++prior)if(draftKeys[index]==draftKeys[prior])return false;
+    return true;
 }
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
-    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==2
+    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==3
         &&state.value("direct_selection_available",false);
 }
 
@@ -256,7 +257,7 @@ bool directInputEnabled() {
 void captureKeyboardKey(int key) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
     if(!supportedKey(key)){notice=tr("此键不能绑定，请使用普通单键；管理快捷键和 Esc 为保留键。","Choose a regular single key. The management hotkey and Esc are reserved.");return;}
-    for(int slot=0;slot<3;++slot)if(slot!=captureSlot&&draftKeys[slot]==key) {
+    for(int slot=0;slot<4;++slot)if(slot!=captureSlot&&draftKeys[slot]==key) {
         notice=tr("此键已绑定另一武器，请选择其他键。","This key is already assigned to another weapon.");return;
     }
     draftKeys[captureSlot]=key;captureSlot=-1;notice.clear();
@@ -266,13 +267,11 @@ void captureKeyboardKey(int key) {
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     centralHint=state.at("central_hint").get<bool>();
-    const double ratio=state.at("ammo_ratio").get<double>(); // 拒绝不匹配的参数，不静默夹到有效范围。
-    if(!std::isfinite(ratio)||ratio<.5||ratio>1||std::abs(ratio*20-std::round(ratio*20))>.00001)
-        throw std::runtime_error("Ammo ratio must be 50% to 100% in 5% steps");
-    draftRatioStep=static_cast<int>(std::lround(ratio*20))-10;
+    if(state.at("ammo_mode").get<std::string>()!="equal_share")
+        throw std::runtime_error("三 SP 仅支持按数量均分弹药");
     const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
-    if(keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
-    for(int slot=0;slot<3;++slot)draftKeys[slot]=keys.at(slot).get<int>();
+    if(keys.size()!=4)throw std::runtime_error("Management keyboard binding data is invalid");
+    for(int slot=0;slot<4;++slot)draftKeys[slot]=keys.at(slot).get<int>();
     if(!bindingsValid())throw std::runtime_error("Management keyboard bindings are invalid");
     saveRequest=std::max(saveRequest,state.value("settings_response",0));
     captureSlot=-1;logsLoaded=false;
@@ -304,8 +303,8 @@ void refreshLogs() {
 // 保存按钮只提交完整参数；收到游戏线程的请求回执后才显示保存成功。
 void saveManagementSettings() {
     pendingSave=++saveRequest;
-    enqueue({{"type","settings"},{"management_protocol",2},{"request",pendingSave},{"language",draftLanguage},
-        {"central_hint",centralHint},{"keyboard_keys",draftKeys},{"ammo_ratio",(10+draftRatioStep)/20.0}});
+    enqueue({{"type","settings"},{"management_protocol",3},{"request",pendingSave},{"language",draftLanguage},
+        {"central_hint",centralHint},{"keyboard_keys",draftKeys}});
     notice=tr("正在保存…","Saving...");
 }
 
@@ -314,9 +313,9 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7DualSP 1.0.2 管理###DualSPManagement","AC7DualSP 1.0.2 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.1 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.1 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(state.value("management_protocol",0)!=2||!managementError.empty()) {
+    if(state.value("management_protocol",0)!=3||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
@@ -333,21 +332,18 @@ void drawPanel() {
             ImGui::Checkbox(tr("中央提示：常驻当前武器简称###Central","Persistent current weapon abbreviation###Central"),&centralHint);
             ImGui::TextWrapped("%s",tr("关闭中央常驻提示后，恢复游戏原本的短暂武器切换提示。","Disabling the persistent hint restores the game's temporary weapon switch message."));
             ImGui::TextWrapped("%s",tr("原游戏循环切换键继续可用。兵装选择只能通过原生出击或补给页面完成。","The original cycling key remains available. Choose loadouts through the game's departure or resupply page."));
-            const auto ratioFormat=std::to_string(50+draftRatioStep*5)+"%%"; // 整数滑块只允许 11 档，显示真实百分比。
-            ImGui::SliderInt(tr("双 SP 配弹比例###Ratio","Dual SP ammo ratio###Ratio"),&draftRatioStep,0,10,ratioFormat.c_str(),
-                ImGuiSliderFlags_AlwaysClamp|ImGuiSliderFlags_NoInput);
-            ImGui::TextWrapped("%s",tr("比例分别作用于两个 SP，默认各 50%；SP2 为空时 SP1 保留完整载弹量。当前任务弹药不因改设置而重算。","Each SP uses this ratio, 50% by default. With SP2 empty, SP1 retains its full stock. Current mission ammo is not recalculated."));
+            ImGui::TextWrapped("%s",tr("自动均分：单挂完整载量，双挂各 1/2，三挂各 1/3。先计入部件，再向下取整；正载量至少一发。只能在出击或补给确认时应用。","Automatic allocation: full stock for one SP, 1/2 each for two, 1/3 each for three. Parts apply first; round down, with at least one round for positive stock. Applied only on departure or resupply confirmation."));
             ImGui::EndTabItem();
         }
         if(ImGui::BeginTabItem(tr("按键###Bindings","Bindings###Bindings"))) {
-            ImGui::TextWrapped("%s",tr("点击键位后按下新键。仅支持单键，Esc 取消；三个键不能重复。","Click a binding, then press a new key. Single keys only; Esc cancels. Bindings must be distinct."));
+            ImGui::TextWrapped("%s",tr("点击键位后按下新键。仅支持单键，Esc 取消；四个键不能重复。","Click a binding, then press a new key. Single keys only; Esc cancels. Bindings must be distinct."));
             ImGui::TextWrapped("%s",tr("与原生键位冲突时，请自行调整游戏或模组键位。","If a binding conflicts with the game, adjust either mapping yourself."));
             if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp)) {
                 ImGui::TableSetupColumn(tr("选择","Selection"));ImGui::TableSetupColumn(tr("键盘","Keyboard"));
                 ImGui::TableSetupColumn(tr("手柄（固定）","Controller (fixed)"));ImGui::TableHeadersRow();
-                const char* weapons[]={"MSL","SP1","SP2"}; // 固定逻辑槽，实际简称由任务 HUD 显示。
-                const char* pads[]={tr("十字键左","D-pad Left"),tr("十字键上","D-pad Up"),tr("十字键右","D-pad Right")};
-                for(int slot=0;slot<3;++slot) {
+                const char* weapons[]={"MSL","SP1","SP2","SP3"}; // 固定逻辑槽，实际简称由任务 HUD 显示。
+                const char* pads[]={tr("十字键左","D-pad Left"),tr("十字键上","D-pad Up"),tr("十字键右","D-pad Right"),tr("十字键下","D-pad Down")};
+                for(int slot=0;slot<4;++slot) {
                     ImGui::PushID(slot);ImGui::TableNextRow();ImGui::TableNextColumn();ImGui::TextUnformatted(weapons[slot]);
                     ImGui::TableNextColumn();
                     const auto label=captureSlot==slot?std::string(tr("请按键…","Press a key...")):keyLabel(draftKeys[slot]);
@@ -357,8 +353,8 @@ void drawPanel() {
                 ImGui::EndTable();
             }
             if(captureSlot>=0&&ImGui::Button(tr("取消改键","Cancel capture")))captureSlot=-1;
-            if(ImGui::Button(tr("恢复默认 1 / 2 / 3","Reset to 1 / 2 / 3"))){draftKeys={49,50,51};captureSlot=-1;notice.clear();}
-            ImGui::TextWrapped("%s",tr("装填中的武器可以选择；空 SP2 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
+            if(ImGui::Button(tr("恢复默认 1 / 2 / 3 / 4","Reset to 1 / 2 / 3 / 4"))){draftKeys={49,50,51,52};captureSlot=-1;notice.clear();}
+            ImGui::TextWrapped("%s",tr("装填中的武器可以选择；未搭载的 SP 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
             ImGui::EndTabItem();
         }
         if(ImGui::BeginTabItem(tr("日志###Logs","Logs###Logs"))) {
@@ -384,7 +380,7 @@ void drawPanel() {
     if(ImGui::Button(tr("保存设置","Save settings"),{180,36}))saveManagementSettings();
     ImGui::EndDisabled();ImGui::SameLine();
     if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
-    ImGui::TextWrapped("%s",tr("开关和键位保存后生效；配弹比例用于下一次新开的原生选择页面。已有选择草稿和当前任务不重新配弹。关闭会丢弃未保存修改。","Saved switches and keys take effect after saving. Ammo ratio applies to the next newly opened native selection page. Existing drafts and current mission ammo stay unchanged. Closing discards unsaved changes."));
+    ImGui::TextWrapped("%s",tr("开关和键位保存后生效。弹药由所选 SP 数量决定；当前任务不会因管理设置变化而重新配弹。关闭会丢弃未保存修改。","Saved switches and keys take effect after saving. Ammunition follows the selected SP count; management changes do not refill the current mission. Closing discards unsaved changes."));
     ImGui::TextWrapped(tr("%s 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","%s or controller Back + Y opens/closes management. Opening during a mission pauses the game."),keyLabel(managementKey).c_str());
     // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
     const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
@@ -394,7 +390,7 @@ void drawPanel() {
     }
     if(state.contains("input_notice")) {
         const auto reason=state.at("input_notice").get<std::string>(); // 拒绝直接选择的原因显示在管理页。
-        ImGui::TextWrapped("%s",reason=="empty_sp2"?tr("SP2 未配置，保持当前武器。","SP2 is empty; selection unchanged."):
+        ImGui::TextWrapped("%s",reason=="empty_sp"?tr("此 SP 未配置，保持当前武器。","This SP is empty; selection unchanged."):
             tr("目标 SP 弹药耗尽，保持当前武器。","Target SP is depleted; selection unchanged."));
     }
     if(!notice.empty())ImGui::TextWrapped("%s",notice.c_str());
@@ -406,27 +402,28 @@ void refreshState() {
     static uint64_t consumedGeneration{}; // 一份状态只消费一次，不在每帧重复复制。
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
-        const bool wasManagement=state.value("management_protocol",0)==2;
+        const bool wasManagement=state.value("management_protocol",0)==3;
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
         }
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
-        if(state.value("management_protocol",0)==2) {
+        if(state.value("management_protocol",0)==3) {
             const auto& hotkey=state.at("management_key"); // Lua/UI 成套部署；缺少新字段明确报告。
             if(!hotkey.is_number_integer())throw std::runtime_error("Management hotkey is not an integer");
             const int checkedManagementKey=hotkey.get<int>(); // 完整校验后才替换窗口消息使用的键。
             if(checkedManagementKey<VK_F1||checkedManagementKey>VK_F24)throw std::runtime_error("Management hotkey must be F1 through F24");
             const auto& keys=state.at("keyboard_keys");
-            if(!keys.is_array()||keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
-            std::array<int,3> checkedKeys{};
-            for(int slot=0;slot<3;++slot) {
+            if(!keys.is_array()||keys.size()!=4)throw std::runtime_error("Management keyboard binding data is invalid");
+            std::array<int,4> checkedKeys{};
+            for(int slot=0;slot<4;++slot) {
                 if(!keys.at(slot).is_number_integer())throw std::runtime_error("Management keyboard binding is not an integer");
                 checkedKeys[slot]=keys.at(slot).get<int>();
                 if(!supportedKey(checkedKeys[slot],checkedManagementKey))throw std::runtime_error("Management keyboard binding is unsupported");
             }
-            if(checkedKeys[0]==checkedKeys[1]||checkedKeys[0]==checkedKeys[2]||checkedKeys[1]==checkedKeys[2])
-                throw std::runtime_error("Management keyboard bindings must be distinct");
+            for(size_t index=0;index<checkedKeys.size();++index)
+                for(size_t prior=0;prior<index;++prior)if(checkedKeys[index]==checkedKeys[prior])
+                    throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
             managementKey=checkedManagementKey;
         }
@@ -435,7 +432,7 @@ void refreshState() {
         const int request=state.value("request_open",0),close=state.value("request_close",0);
         if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
-        if(!wasManagement&&panel&&state.value("management_protocol",0)==2)loadManagementDraft();
+        if(!wasManagement&&panel&&state.value("management_protocol",0)==3)loadManagementDraft();
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
@@ -481,9 +478,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
                     const WORD pressed=buttons&~previousPadButtons;
                     if(connected&&padWasConnected&&directInputEnabled()) {
-                        const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT};
+                        const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
                         int desired=-1,count=0; // 同时按下多个方向不猜测目标。
-                        for(int slot=0;slot<3;++slot)if(pressed&keys[slot]){desired=slot;++count;}
+                        for(int slot=0;slot<4;++slot)if(pressed&keys[slot]){desired=slot;++count;}
                         if(count==1)enqueue({{"type","select_weapon"},{"target",desired}});
                         else if(count>1)nativeLog("DIRECT_SELECTION_AMBIGUOUS_PAD: 多个方向同时按下，未切换");
                     }
@@ -573,6 +570,8 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     }
 }
 
+// 四键与均分协议的具名握手，阻止旧 UI 与新 Lua 混装。
+extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {

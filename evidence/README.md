@@ -1,5 +1,13 @@
 # 精选证据索引
 
+# 当前独立集成候选
+
+- `su30sm-fixed-mount-checkpoint-validation.json`：用户确认双挂候选 .2 检查点恢复显示完整，含对应四条原生日志事件。
+- `su30sm-three-sp-integration.json`：正式 F6 合并与三 SP 未提交源码快照来源、文件哈希、固定布局及验证边界。
+- `su30sm-three-sp-build.json`：本集成候选核心/UI 构建、Lua 语法与接口核验；未运行测试模块。
+- `su30sm-three-sp-installed.json`：完整备份及安装回执；未启动、三挂未实玩。
+- `three-sp-candidate-build.json`：导入的另一任务原始候选构建证据，不代表本次集成核心；以 `su30sm-three-sp-*` 记录为准。
+
 ## Su-30SM 固定挂载独立研究
 
 - [候选用户验证](su30sm-fixed-mount-user-validation.json)：用户确认实体挂载、切换和发射正常；日志支持 20 次切换与装填恢复。HUD 装填剪影异常独立登记，本轮不调查或修复，不能确认是否旧版本引入。

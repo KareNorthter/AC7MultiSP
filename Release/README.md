@@ -9,3 +9,4 @@
 ZIP 是本地产物，不入 Git，也未上传或公开发布。Git 保存当前源码、必要 DLL、加载器、许可证与核验记录。原始 SP2 音频不入 Git，从源码重建时需另行准备。
 
 旧 `DualSP-0.1.7.zip` 与 [baseline](baseline-0.1.7.json)仅用于历史恢复，不是当前版本。其字节保持不变；旧包内文档按当时快照理解。根目录旧安装入口已退役，避免误装。
+当前独立研究分支为 `codex/su30sm-three-sp-fixed-mount`，安装候选 `1.0.2-su30sm-three-sp.1`，未制作发布包。正式 ZIP 未修改。三 SP 固定挂载需成套核心/UI/Lua，不能使用正式打包入口从本分支生成 1.0.2 包；详见[集成说明](../docs/research/su30sm-three-sp-fixed-mount.txt)。

@@ -1,0 +1,69 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.1",
+  "candidate_sha256": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508",
+  "ui_sha256": "3acccc81a58ca67a1b5a375558aa15d46ebbdee8bc997b9f4f02d4600cabb750",
+  "required_ui_exports_verified": [
+    "dualsp_drain_actions",
+    "dualsp_management_supported",
+    "dualsp_overlay_start",
+    "dualsp_preparation_navigation",
+    "dualsp_publish",
+    "dualsp_runtime_gate",
+    "dualsp_three_sp_supported"
+  ],
+  "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+  "compiled": true,
+  "lua_syntax_only": true,
+  "required_exports_verified": [
+    "dualsp_catalogue",
+    "dualsp_custom_audio_update",
+    "dualsp_finish_tls",
+    "dualsp_fixed_mount_update",
+    "dualsp_hud_readiness",
+    "dualsp_loadout_ammo",
+    "dualsp_menu_confirm",
+    "dualsp_preparation_action",
+    "dualsp_prepare_weapon_rebuild",
+    "dualsp_resupply_control",
+    "dualsp_resupply_takeoff",
+    "dualsp_runtime_gate",
+    "dualsp_selection_audio",
+    "dualsp_take_empty_switch",
+    "dualsp_three_sp_supported",
+    "dualsp_weapon_icon",
+    "lab_native_execute"
+  ],
+  "game_installed": false,
+  "game_validated": false,
+  "test_modules_run": false,
+  "installation_blockers": [],
+  "native_research_evidence": "evidence/su30sm-fixed-mount-stage4.json",
+  "protected_files": {
+    "dist/DualSP/bin/DualSP.dll": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "dist/DualSP/cores/1.0.1/DualSP.dll": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+  },
+  "lua_sources": {
+    "dist/DualSP/Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "dist/DualSP/Scripts/loadout_flow.lua": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b",
+    "dist/DualSP/Scripts/loadout_profile.lua": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+    "dist/DualSP/Scripts/main.lua": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9",
+    "dist/DualSP/Scripts/native_hud.lua": "bd4c9ba4fe227b2eb2131753331bbc89440d3707721554353326082bfbdc0ef8",
+    "dist/DualSP/Scripts/native_loadout.lua": "bf58a9859a522ac99b2749aa53183dc63990c346553a3c6f04841a9eaa62bba0",
+    "dist/DualSP/Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+    "dist/DualSP/Scripts/weapon_cycle.lua": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+    "dist/DualSP/Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "dist/DualSP/Scripts/weapon_presentation.lua": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+  },
+  "cpp_sources": {
+    "src/weapon_bridge.cpp": "98df956dd687c9f83d957940e72a8808d5023fbdd66442eb5f7b8a79e3d4428c",
+    "src/su30sm_fixed_mount.hpp": "42cb986f41dcbc15b936e6100d7971c0748c70481193b53ef32fc205bf636b28",
+    "src/overlay.cpp": "3938bf477fca6478a302e445c3ba0193beafefb1930da08266802164817c04fc"
+  },
+  "lua_line_ending_revision": {
+    "file": "dist/DualSP/Scripts/main.lua",
+    "before_sha256": "08199e1619d2dbf9ae98cc38735b389a098f8ffe427f5789b21548c2019f4eb0",
+    "after_sha256": "ec933654aca90b407341542f19c6f043f704080703bf386cf66af963ea7ccff9",
+    "syntax_rechecked": true,
+    "runtime_code_changed": false
+  }
+}
