@@ -1,0 +1,79 @@
+{
+  "date": "2026-10-15",
+  "candidate": "1.0.2-su30sm-mount.2",
+  "user_feedback": "经测试，挂载正常，模型显示正常，切换武器和发射全都正常，符合预期。",
+  "user_confirmed": [
+    "四处6AAM加两处LAGM挂载及模型显示符合预期",
+    "切换武器正常",
+    "发射正常"
+  ],
+  "evidence_boundary": "这是用户报告的实际游玩范围；未逐项确认六目标锁定齐射、末弹、补给、检查点、反向选择或其他涂装。",
+  "installed_core_sha256": "e5cc499b69279904105ddf3515ae574d6cf86e649c3a59c01cbf74ceeb2aa014",
+  "session_log_evidence": {
+    "first_done": {
+      "active": 0,
+      "event": "NATIVE_DONE",
+      "main_ammo": 126,
+      "op": "setup",
+      "request": 1,
+      "sp": [
+        68,
+        28
+      ]
+    },
+    "last_done": {
+      "active": 0,
+      "event": "NATIVE_DONE",
+      "main_ammo": 120,
+      "op": "switch",
+      "request": 22,
+      "sp": [
+        56,
+        24
+      ]
+    },
+    "switch_transactions": 20,
+    "mask_events": 25,
+    "last_mask": {
+      "after": 63,
+      "before": 55,
+      "event": "FIXED_MOUNT_MASK",
+      "game_time": 102.59886932373047
+    },
+    "zero_mask_observed": true,
+    "current_session_errors": [],
+    "raw_logs": "Temp/su30sm-user-validation"
+  },
+  "hud_issue": {
+    "id": "HUD-SP-SILHOUETTE-001",
+    "status": "已记录，本轮不修复、不调查根因",
+    "reported": "6AAM装填剪影偶发显示为两枚，且与LAGM剪影相同。",
+    "screenshot": "references/su30sm-fixed-mount/hud-silhouette-6aam.png",
+    "screenshot_sha256": "01d1d9d8ea5bf36a4a88e33b928a246528f6e8b13c948d1f7e520e48252fcc0e",
+    "visible_facts": "箭头选择6AAM；文字弹药6AAM=56、LAGM=24；飞机示意图两侧各一个大导弹剪影，下方另有两个小符号。",
+    "user_origin_assessment": "用户怀疑此前就存在、并非本次更新引入。",
+    "origin_confirmed": false,
+    "root_cause_confirmed": false,
+    "do_not_infer": "截图不能证明实际6AAM齐射数或装填窗口降为两枚，也不能据此更改固定挂点方案。"
+  },
+  "remaining_research": [
+    "检查点原地恢复与任务重新创建实例的区别",
+    "补给保留组合、撤销组合和反向组合",
+    "末弹分配与无限弹药",
+    "暂停不推进及退出任务清理"
+  ],
+  "code_modified": false,
+  "compiled": false,
+  "game_stopped": false,
+  "test_modules_run": false,
+  "lifecycle_review": {
+    "finding": "补给或检查点从固定双SP转成单SP时，Lua单SP分支未显式释放固定挂载接管",
+    "source_paths": [
+      "dist/DualSP/Scripts/main.lua:configureFlight",
+      "dist/DualSP/Scripts/main.lua:restorePending",
+      "src/su30sm_fixed_mount.hpp:fixedMountRelease"
+    ],
+    "status": "代码路径分析，尚未实机复现；本轮只记录，未修改候选",
+    "proposed_boundary": "在新组合的原生初始化前及单SP检查点恢复时显式解绑，不靠每帧纠正。"
+  }
+}
