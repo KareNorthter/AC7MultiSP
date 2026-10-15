@@ -1,0 +1,55 @@
+{
+  "recorded_at": "2026-10-15T22:28:50+08:00",
+  "scope": "独立 UI 优化源码交付；不构建、安装或操作正在运行的游戏。",
+  "base_commit": "8d2c716fca2e47ea7f99816f2c1f32d8b418e24a",
+  "base_version": "1.0.2-su30sm-three-sp.7",
+  "branch": "codex/three-sp-ui-polish",
+  "worktree": "C:/Users/83717/.codex/worktrees/three-sp-ui-polish/AC7_MultiSP",
+  "document": "docs/research/ui-polish-batch.txt",
+  "implemented_source": [
+    "中央简称 Alpha 0.7，原生 18 对应字号 22；位置与现有开关不变。",
+    "STANDBY/PART 三卡片右移 32 逻辑像素；弹药用原定位基准，保留 PART 下移 100。",
+    "dualsp_parts_ammo_preview 只读原生上下文，分别计算三种真实 WeaponID 的当前/候选完整载量。",
+    "PART 数字按 1/2/3 SP 均分后显示，以原生候选影响标记决定黄色和局部泛光；MSL 保留原生所有权。",
+    "50 ms 候选读取与静态栏绘制分开；模型等待复用页面，减少重复对象发现和类链校验。",
+    "新增 NATIVE_UI_ATTACH_COST 分段记录，MODEL_READY 记录 Lua 时钟等待差值。"
+  ],
+  "new_native_api": "dualsp_parts_ammo_preview",
+  "integration_requirement": "必须由集成方重新构建核心并核对新导出，不能单独把新 Lua 装到旧 .7 核心；不修改管理协议或版本。",
+  "native_evidence": {
+    "archive": "此前 parts-ammo-hover/runtime-text.bin 与 object-index.json，仅离线分析。",
+    "context": "页面+0x4f8为HangarStatus，控制器+0x28指向同一status；虚表+0x258分别核对0x8df120/0x8df100。",
+    "mode": "0x6ec5ee～0x6ec5fe：控制器+0x58等于2时绘制模式3，否则模式2。",
+    "modifier_build": "0x84e770；列表构成A，模式3且候选不在列表时构成B。",
+    "modifier_apply": "0x84dc40；返回候选适用标记，并非比较最终整数。",
+    "style": "TextColorStandard、TextColorOnCursor、TextGlowOnCursor；标准状态恢复全局泛光。",
+    "graph_leads_only": ["0x6ef1a0", "0x637e60", "0x6d7250", "0x84e8d0", "0x84e6b0", "0x84f190", "0x6d8a00"]
+  },
+  "verification": {
+    "lua_parse_only_passed": ["main.lua", "native_loadout.lua", "weapon_presentation.lua"],
+    "cpp_syntax_only_passed": "clang++ -std=c++17 -fsyntax-only -DDUALSP_SU30SM_MOUNT_PROTOTYPE",
+    "native_signatures_match_prior_runtime_archive": ["0x8df120", "0x84e770", "0x84dc40", "0x6ec5ee"],
+    "git_diff_check_passed": true,
+    "protected_old_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "unchanged_against_base": [
+      "VERSION", "src/su30sm_fixed_mount.hpp", "src/overlay.cpp",
+      "dist/DualSP/Scripts/loadout_flow.lua", "dist/DualSP/Scripts/native_hud.lua",
+      "dist/DualSP/Scripts/weapon_cycle.lua", "dist/DualSP/bin/DualSP.dll"
+    ]
+  },
+  "not_implemented_or_not_proven": [
+    "绿色已装图表增量与黄色闪烁未启用；仍缺完整武器分类/覆盖/模式/上限与负向段对照。",
+    "卡顿未认定解决，无现场帧时间或提速比例；只有有限重复工作优化和分段观测。",
+    "PART 同组替换、卸件、容量满、不可装和MSL黄字尚未实玩；计算遵循原生上下文，不自创替换算法。",
+    "HUD上移、方框、固定开启只保留候选说明。"
+  ],
+  "dll_built": false,
+  "installed": false,
+  "game_validated": false,
+  "test_modules_added_or_run": false,
+  "game_process_accessed_this_batch": false,
+  "game_directory_config_or_save_modified": false,
+  "main_or_integration_worktree_modified": false,
+  "game_started_stopped_or_controlled": false,
+  "raw_game_resources_committed": false
+}

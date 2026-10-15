@@ -1,0 +1,72 @@
+{
+  "recorded_at": "2026-10-15T21:08:01.717258+08:00",
+  "scope": "只读研究 PART 悬停增弹及黄色数字；未实现模组修改。",
+  "document": "docs/research/parts-ammo-hover-preview.txt",
+  "steam_build": 9855922,
+  "evidence_sources": [
+    "本机原生 UI 资源及 UIManagerActor 样式",
+    "本次游戏进程的只读反射和原生指令",
+    "用户悬停 Take off weight augmentation (SP.W) Lv.1 时的只读记录",
+    "现有 main.lua / native_loadout.lua / weapon_bridge.cpp 源码"
+  ],
+  "hover_observation": {
+    "candidate_part_id": 107,
+    "candidate_was_equipped": false,
+    "native_source_msl_text": "126",
+    "native_source_sp1_text": "68",
+    "native_source_sp1_color": [
+      0.4019779860973358,
+      0.6514059901237488,
+      1.0,
+      1.0
+    ],
+    "mod_enabled": true,
+    "user_report": "右侧 SP 数量可能为 mod 重绘，未变黄",
+    "native_without_mod_comparison_performed": false
+  },
+  "confirmed_native_paths": {
+    "cursor_part_id": "页面 +0x2f0 索引，+0x4e0 ID 数组，+0x4e8 数量；0x6cf850/0x6cf890 读取候选",
+    "context_access": "BoardWeaponsAmmo 0x8df100 转发；HangarStatus 0x8df120 返回 +0x4c",
+    "ammo_draw": "0x6efd90，调用方包括 0x6ec5c0",
+    "build_one_part_modifier": "0x84e770，按 PartsID 调用 0x4f7770 查表，再累计参数",
+    "apply_modifiers": "0x84dc40，A 为已装，B 为候选；返回 B 对当前 WeaponID 是否含非默认修正",
+    "candidate_guard": "预览模式 3 且候选不在上下文部件列表时，构建 B",
+    "color_path": "MSL:0x6f0d1f–0x6f0d90；SP:0x6f16d0–0x6f172d",
+    "color_fields": [
+      "TextColorStandard",
+      "TextColorOnCursor",
+      "TextGlowOnCursor"
+    ],
+    "color_behavior": "有候选影响时切换 OnCursor 色、关闭全局泛光继承并设置局部泛光；无影响时恢复标准色和全局继承",
+    "hover_color_linear_rgba": [
+      0.760525,
+      0.520996,
+      0.012983,
+      1
+    ],
+    "hover_glow_current_linear_rgba": [
+      0,
+      0,
+      0,
+      0.2
+    ],
+    "own_ammo_widget_animation_found": false
+  },
+  "recommended_design": "保留原生 MSL 所有权；新只读桥接捕获当前 PART 快照并逐 SP 计算完整预览，再按已选 1/2/3 数量均分；仅弹数字段使用原生候选色，离开/确认/换页清除预览。",
+  "not_yet_verified": [
+    "MSL 悬停与移开实玩对照",
+    "模组关闭时的原生黄字 A/B",
+    "替换/卸件/容量满/不可安装的完整上下文语义",
+    "三 SP 新预览实现及其显示刷新时序"
+  ],
+  "process_read_notes": "磁盘 EXE 指令不匹配运行时签名，未采用其分析结果；页面重建后旧地址失效，刷新快照后取得悬停记录。用户离开 PART 后停止页面读取。",
+  "files_unchanged_checked": 50,
+  "mod_source_and_payload_unchanged": true,
+  "game_functions_called": false,
+  "game_memory_written": false,
+  "inputs_sent": false,
+  "core_or_ui_built": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_started_or_stopped_by_agent": false
+}
