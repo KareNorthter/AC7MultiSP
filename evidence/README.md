@@ -1,3 +1,10 @@
+## 当前集中候选 .7
+
+- [前版用户反馈](su30sm-three-sp-candidate.6-user-validation.json)：功能通过范围与外观/开舱问题分开记录。
+- [本批研究](static-mount-batch7-research.json)：F-15E 真实池/固定炮体、F-35C 编号不一致及原生同步入口，几何结论仅为参考姿态。
+- [构建](su30sm-three-sp-candidate.7-build.json)、[安装](su30sm-three-sp-candidate.7-installed.json)：已备份安装且游戏关闭，新行为待用户复测。
+- [说明与集中复测](../docs/research/static-mount-batch7.txt)。
+
 # 精选证据索引
 
 ## TLS / ECM 持续效果研究

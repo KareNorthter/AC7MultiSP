@@ -1,3 +1,6 @@
+当前候选已更新为 .7；本文件保留 .6 实施历史。新布局、F-35C 原生编号同步和 F-15E 首次适配见 static-mount-batch7.txt。
+.6 用户确认功能并报告外观/开舱问题，详见 evidence/su30sm-three-sp-candidate.6-user-validation.json；.7 尚待实玩。
+
 静态挂载与 TLS 集中候选
 日期：2026-10-15
 候选：1.0.2-su30sm-three-sp.6

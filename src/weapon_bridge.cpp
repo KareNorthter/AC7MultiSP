@@ -452,6 +452,24 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
     if(special)fixedMountRestoreOrder(saved,nextSlot); // 与冷却队列使用完全相同的旋转。
 #endif
 }
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 原生换装先同步飞机及飞行引擎编号，再重建武器；只重建池会让舱门仍按旧 SP 响应。
+void syncPlaneWeaponSelection(Addr plane,int index) {
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 本构建只读采样确认的原生赋值入口。
+    constexpr unsigned char setter[]={0x48,0x8b,0x41,0x08,0x89,0x90,0x08,0x11,0,0,0xc3}; // 仅更新引擎配置编号，不重置动画。
+    require(index>=0 && index<3 && std::memcmp(reinterpret_cast<void*>(base+0x1cd4620),setter,sizeof(setter))==0,"兵装编号同步：原生入口或目标无效");
+    const Addr engine=read<Addr>(plane+0x1410); // 飞行引擎包装器 plane+0x1408 内的实例指针。
+    const int oldPlane=read<int>(plane+0xb4c),oldEngine=read<int>(engine+0x1108); // PlaneSWP 已由反射确认。
+    require(oldPlane>=-1 && oldPlane<3 && oldEngine>=-1 && oldEngine<3,"兵装编号同步：原生状态越界");
+    checkMemory(plane+0xb4c,sizeof(int));checkMemory(engine+0x1108,sizeof(int));
+    if(oldPlane==index && oldEngine==index)return;
+    using SetSelection=void(*)(void*,int); // 与原生换装函数的前两步相同，不调用其补弹或任务恢复分支。
+    write<int>(plane+0xb4c,index);
+    reinterpret_cast<SetSelection>(base+0x1cd4620)(reinterpret_cast<void*>(plane+0x1408),index);
+    require(read<int>(plane+0xb4c)==index && read<int>(engine+0x1108)==index,"兵装编号同步：写入后状态不符");
+    nativeLog(Json{{"event","PLANE_SWP_SYNCHRONIZED"},{"old_plane",oldPlane},{"old_engine",oldEngine},{"target",index}}.dump());
+}
+#endif
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMount.rebuilding=true; // 原生临时武器池按原规则建立，最终事务再提交固定出弹映射。
@@ -463,6 +481,9 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     const int flares=read<int>(owner+0x10c);
     using Init=void(*)(void*,int);
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    syncPlaneWeaponSelection(command.plane,index); // 保持原生选择编号与本次真实配置一致，舱门继续由原生更新。
+#endif
     reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
     // A loadout rebuild also resets the machine gun. Preserve its ammunition,
     // plus flare count, during an SP change; a deliberate resupply uses defaults.

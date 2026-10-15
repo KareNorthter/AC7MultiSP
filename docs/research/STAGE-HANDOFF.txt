@@ -1,3 +1,10 @@
+当前接手状态（2026-10-15 21:59）：候选 1.0.2-su30sm-three-sp.7 已构建安装，游戏关闭且未重启。
+唯一写入工作区和分支仍为本目录、codex/static-mount-batch，主工作区不改。
+用户已确认 .6 模型共存/发射功能及 TLS→MSL，但提出 Su-30SM 空挂架和 F-35C 开舱问题；F-15E 本批首次适配。
+优先阅读 static-mount-batch7.txt，以及 evidence/static-mount-batch7-research.json 和 candidate.7 构建/安装回执。
+下一步由用户集中复测三机布局、离架、快速切换、F-35C 舱门与 F-15E 补给/检查点；不得把新行为记为通过。
+旧版完整备份路径见 candidate.7-installed.json，回退必须整套恢复。以下 .6/.5 交接仅为历史。
+
 接手更新（2026-10-15）：.5 两项 UI 已获用户明确复测通过。
 当前工作区分支为 codex/static-mount-batch，21:08 已构建并安装集中候选 .6，游戏关闭、新功能待实玩；
 新增范围、现场证据、集中测试及部署状态见 static-mount-batch.txt 和对应 candidate.6 回执。

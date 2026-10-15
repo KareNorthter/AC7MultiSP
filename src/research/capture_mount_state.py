@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--expected-sp", choices=("6AAM", "LAGM", "QAAM"))
-    parser.add_argument("--expected-plane", choices=("su30sm", "fa27", "f35c"), default="su30sm")  # 新机体先核对真实父类，不复用旧玩家地址。
+    parser.add_argument("--expected-plane", choices=("su30sm", "fa27", "f35c", "f15e"), default="su30sm")  # 新机体先核对真实父类，不复用旧玩家地址。
     args = parser.parse_args()
     # 完整运行快照只能进入本研究工作区的忽略目录。
     temporary_root = Path(__file__).resolve().parents[2] / "Temp"
@@ -97,6 +97,13 @@ def main():
                         offset = unpack(child + 0x44, "<I")[0]
                         if offset > 0x10000:
                             raise ValueError("反射字段偏移异常")
+                        if address == plane:
+                            report.setdefault('plane_field_layout', []).append({'name': label, 'kind': kind, 'offset': hex(offset),
+                                'element_size': unpack(child + 0x34, '<I')[0]})  # 只记录布局，用于核对动画配置来源。
+                        if kind in ('IntProperty', 'ByteProperty', 'FloatProperty') and (
+                                offset == 0xb4c or any(term in label.lower() for term in ('weapon', 'cover', 'spw', 'anim'))):
+                            fmt = '<f' if kind == 'FloatProperty' else '<B' if kind == 'ByteProperty' else '<i'  # 按反射类型读取标量。
+                            result[label] = {'offset': hex(offset), 'scalar': unpack(address + offset, fmt)[0]}
                         if kind in ("ObjectProperty", "ClassProperty"):
                             result[label] = {"offset": hex(offset), "value": describe(pointer(address + offset))}
                         elif kind == "ArrayProperty" and label in (
@@ -111,7 +118,7 @@ def main():
                             result[label] = {"offset": hex(offset), "name": fname(name), "number": number}
                         elif kind == "StructProperty" and label in ("RelativeLocation", "RelativeRotation", "RelativeScale3D"):
                             result[label] = {"offset": hex(offset), "xyz": unpack(address + offset, "<fff")}
-                        elif kind == "BoolProperty" and label in ("bVisible", "bHiddenInGame", "bHidden"):
+                        elif kind == "BoolProperty" and (label in ("bVisible", "bHiddenInGame", "bHidden") or 'cover' in label.lower()):
                             # 位掩码语义留待核对，先记录值和属性元数据，不直接猜布尔值。
                             result[label] = {"offset": hex(offset), "raw": memory.read(address + offset, 8).hex(),
                                 "property_tail": memory.read(child + 0x70, 8).hex()}
@@ -136,7 +143,7 @@ def main():
                     item = describe(child)
                     label = item.get("name", "")
                     if item.get("class_name") == "Function" and label not in methods and any(
-                        term in label.lower() for term in ("weapon", "reload", "fire", "shot", "socket", "visib", "hidden", "transform")):
+                        term in label.lower() for term in ("weapon", "reload", "fire", "shot", "socket", "visib", "hidden", "transform", "cover", "flightengine")):
                         entry = pointer(child + 0xb0)  # 当前构建已用过的 UFunction 原生入口字段。
                         methods[label] = {"declaring_class": describe(cls).get("name"),
                                           "function": describe(child), "entry": hex(entry),

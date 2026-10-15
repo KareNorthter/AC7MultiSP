@@ -1,0 +1,156 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.7",
+  "date": "2026-10-15",
+  "research_process_write": false,
+  "research_game_functions_called": false,
+  "user_validation_previous": "su30sm-three-sp-candidate.6-user-validation.json",
+  "f35c": {
+    "captured_local": "2026-10-15T21:39:27.459288+08:00",
+    "plane_class": "AcePlayerPawn_f35c_s05_C",
+    "active_class": "plwp_8agm_a0_C",
+    "slots": 12,
+    "window": 8,
+    "PlaneSWP": {
+      "offset": "0xb4c",
+      "scalar": 0
+    },
+    "engine_selection_observation": {
+      "wrapper_offset": "0x1408",
+      "instance_offset": "0x1410",
+      "field_offset": "0x1108",
+      "value": 0,
+      "source": "同次只读现场附加读取"
+    },
+    "native_sequence": [
+      "写 PlaneSWP",
+      "0x1cd4620 同步引擎编号",
+      "0x81e810 InitializeWeaponSystem"
+    ],
+    "setter_bytes": "488b4108899008110000c3",
+    "setter_semantics": "mov rax,[rcx+8]; mov [rax+0x1108],edx; ret；没有动画重置",
+    "conclusion": "已证明实际武器与两份原生选择编号不一致；门动画消费链未完整确认，修订效果待用户复测"
+  },
+  "f15e": {
+    "captured_local": "2026-10-15T21:33:04.148801+08:00",
+    "plane_class": "AcePlayerPawn_f15e_s06_C",
+    "pool_counts": {
+      "MSL": 2,
+      "SWP1": 6,
+      "SWP2": 12,
+      "SWP3": 1
+    },
+    "weapon_classes": [
+      "plwp_6aam_a0_C",
+      "plwp_sffs_a0_C",
+      "plwp_tls_x0_C"
+    ],
+    "rack_offsets": [
+      "0x1ba0",
+      "0x1b98",
+      "0x1b90"
+    ],
+    "tls_structure": "SWP3 的单个空 StaticMeshComponent 为发射点；炮体在 f15e_SWP3_SM 内，选中后常驻",
+    "rack_geometry": [
+      {
+        "mesh": "f15e_SWP1_SM",
+        "sections": 1,
+        "vertices": 1481,
+        "bounds": {
+          "min": [
+            37.219215393066406,
+            -19.153060913085938,
+            -10.634675025939941
+          ],
+          "max": [
+            43.017120361328125,
+            19.153060913085938,
+            -9.734726905822754
+          ]
+        }
+      },
+      {
+        "mesh": "f15e_SWP2_SM",
+        "sections": 1,
+        "vertices": 1474,
+        "bounds": {
+          "min": [
+            48.627262115478516,
+            -19.153060913085938,
+            -10.634675025939941
+          ],
+          "max": [
+            54.4251594543457,
+            19.153060913085938,
+            -9.734726905822754
+          ]
+        }
+      },
+      {
+        "mesh": "f15e_SWP3_SM",
+        "sections": 3,
+        "vertices": 2086,
+        "bounds": {
+          "min": [
+            2.999988555908203,
+            -5.008142948150635,
+            -18.200000762939453
+          ],
+          "max": [
+            63.5,
+            5.008142948150635,
+            -5.874514579772949
+          ]
+        }
+      }
+    ],
+    "reference_geometry": {
+      "method": "LOD0顶点边界＋Socket参考位置/旋转；缺省旋转按UE静态Socket原生零值",
+      "chosen_6aam_with_sffs": [
+        "sp11",
+        "sp12"
+      ],
+      "sffs_positions": [
+        "sp21",
+        "sp22",
+        "sp23",
+        "sp24",
+        "sp25",
+        "sp26",
+        "sp27",
+        "sp28",
+        "sp29",
+        "sp30",
+        "sp31",
+        "sp32"
+      ],
+      "overlap_pairs": [],
+      "racks": "SWP1仅含内侧挂架；共存时外侧6AAM由原机体翼下承载，显示SWP2及已选TLS炮体",
+      "boundary": "参考姿态包围盒非实玩验收；未使用不同可见状态下的世界AABB作为布局证明"
+    },
+    "layout": "同选 SFFS 时 6AAM 六槽交替使用 sp11/12；SFFS 保留 sp21..32；仅 6AAM+TLS 时保留六个导弹位置"
+  },
+  "su30sm": {
+    "qaam_6aam": "两处 QAAM 加 SWP1 sp13..16 四处 6AAM",
+    "qaam_lagm": "两处 QAAM 加 SWP3 sp33..36 四处 LAGM",
+    "unchanged": "三挂两加两加两、6AAM+LAGM 四加二"
+  },
+  "reserve_visuals": "仅 Su-30SM QAAM+LAGM 的 LAGM、F-15E SFFS 按实际库存显示窗口外备用弹；不改变装填窗口、弹药、锁定数或发射数",
+  "tls_boundary": "TLS→MSL 继续沿用已确认的 .6；TLS→另一 SP 仍结束，未实现跨 SP 持续",
+  "gameplay_verified": false,
+  "test_modules_run": false,
+  "source_sha256": {
+    "Temp/f15e-three-sp-current.json": "60cda2c47a306a781a10f0752e6ff055b89536aced5767bfdf3552bc7be0c969",
+    "Temp/f35c-batch6-8agm-open.json": "7b1c6f6155b053e48f8d3d967fc3a6d5de9d46bced994def142e6d16af81ac95",
+    "Temp/f15e-mount-asset-summary.json": "530d86242389c588c5de1ce0e25656754ea450c62d7097fe39ded47aec57dee9",
+    "Temp/f15e-geometry-summary.json": "5a8ef428748331584548f0d2d2e1dbb9bca589f7db09c80aff12b67bcfab274b",
+    "Temp/f15e-reference-bounds-comparison.json": "a7413a2e642709d8c0ac8e2ebefe3feb0bd8b0d09bd6f39d48821e054abc8cf2",
+    "Temp/f35c-cover-native/function-816fe0.txt": "fcaeedf7c26e5658c146f3c67c3e2a57ba4bf1323ff0f683b460709002922aa5",
+    "Temp/f35c-cover-native/function-826510.txt": "501f3a164acbc33b97d492477f65ea060f178f110affe0999005988f729eadb9",
+    "Temp/f35c-cover-native/function-828d10.txt": "e9bb59a3b2629012bc903ad19b863efe082ff9cd64ba711efa7e3694d446b7cb",
+    "Temp/f35c-cover-native/plane-swp-references.txt": "6f92e616e95ebd85caad92dce9dfa7534a38f76ea74d41bc51eb2f85b16cf859",
+    "Temp/f35c-cover-engine/manifest.json": "6cd0f54fa6086e29aeb3cc4a5787fd35aa014684eaddb6e879c05209128eff6b",
+    "Temp/f35c-cover-engine/mount-1cd4600-300.bin": "55636f132f9afc085191e396156a258338c278fc91bdf0105d82f477da2a0919",
+    "Temp/mount-assets-20261015-213400-692862/manifest.json": "55c0f215d204f53b648d198ce05f52805dc3d0a3720089a7fb8dcb8e0aeb0c4f",
+    "Temp/mount-assets-20261015-214340-350986/manifest.json": "f96688a39b42121ed471310628a76a545d29cf5f4042a505877d1660268db2a9"
+  }
+}
