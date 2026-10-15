@@ -50,6 +50,7 @@ struct Session {
 Session checkpoint;
 bool checkpointValid=false;
 double checkpointTime{};
+bool runtimeEnabled=false; // 未收到游戏线程的明确单人许可前，原生接口和钩子全部直通/拒绝修改。
 
 void require(bool condition, const char* message) { if (!condition) throw std::runtime_error(message); }
 void checkMemory(Addr address, size_t size) {
@@ -81,7 +82,7 @@ bool supplyHooksReady=false; // 钩子只安装一次，事务结束后通过身
 
 // 入口已经限定为 MissionResupplyWidget；只比较当前补给的飞机/激活器身份。
 bool ownsSupplyInput(void* object) {
-    if(!supplyPlane)return false;
+    if(!runtimeEnabled || !supplyPlane)return false;
     const auto widget=reinterpret_cast<Addr>(object); // 当前正在读取菜单输入的页面。
     if(read<Addr>(widget+0x5c0)!=supplyPlane || read<Addr>(widget+0x5c8)!=supplyActivator)return false;
     if(!supplyWidget) {
@@ -133,19 +134,19 @@ bool preparationHooksReady=false; // 全局钩子不改其他页面的输入。
 
 // 持有请求时隔离此页的真实按键，防止同一帧导航改变已确认的 SP1 行。
 bool preparationEdge(void* object,unsigned char key) {
-    if(reinterpret_cast<Addr>(object)!=preparationAction.widget)return originalMenuEdge(object,key);
+    if(!runtimeEnabled || reinterpret_cast<Addr>(object)!=preparationAction.widget)return originalMenuEdge(object,key);
     if(key!=preparationAction.action || preparationAction.delivered)return false;
     preparationAction.delivered=true;
     return true;
 }
 // 原生方向重复查询在交接期间暂停；其他页面仍使用游戏的查询结果。
 bool preparationRepeat(void* object,unsigned char key) {
-    return reinterpret_cast<Addr>(object)==preparationAction.widget ? false : originalMenuRepeat(object,key);
+    return runtimeEnabled && reinterpret_cast<Addr>(object)==preparationAction.widget ? false : originalMenuRepeat(object,key);
 }
 // 在决定/返回所属的原生帧内检查结果；返回动作可能在下帧就关闭页面。
 void preparationTick(void* object,float delta) {
     originalPreparationTick(object,delta);
-    if(reinterpret_cast<Addr>(object)!=preparationAction.widget || !preparationAction.delivered ||
+    if(!runtimeEnabled || reinterpret_cast<Addr>(object)!=preparationAction.widget || !preparationAction.delivered ||
         preparationAction.accepted || preparationAction.rejected)return;
     unsigned char transition{}; // object 是刚刚执行完 Tick 的原生 UObject，尚在同一调用栈中。
     std::memcpy(&transition,reinterpret_cast<const unsigned char*>(object)+0x3c5,sizeof(transition));
@@ -197,7 +198,7 @@ bool switchInputAllowed=false; // 使用既有任务、暂停和补给状态，�
 // 记录真实切换动作后仍执行原生逻辑；MSL 待机时不再主动重建 SP1。
 bool observeEmptyWeaponSwitch(void* object) {
     const auto activator=reinterpret_cast<Addr>(object); // 仅监听已绑定的当前玩家。
-    if(switchInputAllowed && activator==selectionAudio.activator &&
+    if(runtimeEnabled && switchInputAllowed && activator==selectionAudio.activator &&
         read<unsigned char>(activator+0x2a1)==0 && read<int>(groupOf(activator,true)+8)==0)
         emptySwitchRequested=true;
     return originalToggleWeapon(object);
@@ -214,7 +215,7 @@ bool isSelectionEvent(const AudioString& event) {
 }
 // 原生中间态事件被收回；实际声音由最终逻辑选择提交一次，不能叠加 A/B/C。
 void weaponSelectionAudio(void* object,AudioString* event) {
-    if(reinterpret_cast<Addr>(object)==selectionAudio.activator && isSelectionEvent(*event)) {
+    if(runtimeEnabled && reinterpret_cast<Addr>(object)==selectionAudio.activator && isSelectionEvent(*event)) {
         freeAudioString(const_cast<wchar_t*>(event->data)); // 替代原包装器必须承担其 FString 释放职责。
         *event={};return;
     }
@@ -563,6 +564,28 @@ void execute(const Command& command) {
 }
 
 // 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
+// 模式改变时清除本模块私有状态；禁止解引用旧玩家，不向多人武器写回单人快照。
+extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 错误显式返回，禁用状态先于清理生效。
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1,"Runtime gate expects one argument");
+        const auto allowed=api->readInteger(luaState,1); // 只接受明确的单人允许或禁用。
+        require(allowed==0 || allowed==1,"Invalid runtime gate value");
+        runtimeEnabled=allowed!=0;
+        if(!runtimeEnabled) {
+            supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
+            selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;selectionWave.close();
+            session={};checkpoint={};checkpointValid=false;checkpointTime=0;
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        runtimeEnabled=false;nativeLog(std::string("RUNTIME_GATE_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
 }
@@ -581,6 +604,7 @@ extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
         require(op>=0 && op<=2 && target>=0 && target<=2,"选择音效动作无效");
         if(op==2){selectionAudio={};selectionWave.close();switchInputAllowed=false;emptySwitchRequested=false;} // 世界销毁时不读取旧玩家对象。
         else {
+            require(runtimeEnabled,"Mod disabled outside single-player");
             verifyVersion();
             require(plane && activator && read<Addr>(plane+0x11a8)==activator,"选择音效玩家身份不匹配");
             if(op==0) {
@@ -618,7 +642,8 @@ extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) 
         const auto instance=static_cast<Addr>(api->readInteger(luaState,1)); // 当前 NimbusGameInstance。
         const auto allowed=api->readInteger(luaState,2); // Lua 已核对任务、补给、暂停和面板状态。
         require(allowed==0 || allowed==1,"自定义选择音播放状态无效");
-        switchInputAllowed=allowed!=0 && selectionAudio.plane!=0;
+        require(runtimeEnabled || allowed==0,"Mod disabled outside single-player");
+        switchInputAllowed=runtimeEnabled && allowed!=0 && selectionAudio.plane!=0;
         if(!switchInputAllowed)emptySwitchRequested=false;
         if(selectionAudio.plane) {
             float volume=0; // 禁止播放时无需解引用任务或设置对象。
@@ -651,6 +676,7 @@ extern "C" __declspec(dllexport) int dualsp_take_empty_switch(void* luaState) {
         require(api->top(luaState)==1,"切换请求接口参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 防止旧世界消费新任务请求。
         require(plane && plane==selectionAudio.plane,"切换请求的玩家身份不匹配");
+        require(runtimeEnabled,"Mod disabled outside single-player");
         const bool requested=emptySwitchRequested;emptySwitchRequested=false; // 每次按键只消费一次。
         api->boolean(luaState,true);api->boolean(luaState,requested);return 2;
     }catch(const std::exception& error) {
@@ -665,6 +691,7 @@ extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 出错就停止本次选择，不继续重建武器。
     try {
         static const dualsp::LuaApi bound;api=&bound; // 与已安装 UE4SS 共享参数接口。
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==2,"TLS 收尾接口参数数量无效");verifyVersion();
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
@@ -682,6 +709,7 @@ extern "C" __declspec(dllexport) int dualsp_menu_confirm(void* luaState) {
     try {
         static const dualsp::LuaApi bound; // 专用加载器 ABI，调用者在游戏线程。
         api=&bound;
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==1,"菜单确认音参数数量无效");
         verifyVersion();
         const auto widget=static_cast<Addr>(api->readInteger(luaState,1)); // 当前已接管的选择页。
@@ -712,6 +740,7 @@ extern "C" __declspec(dllexport) int dualsp_weapon_icon(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 明确返回绘制失败，不换用自制图标。
     try {
         static const dualsp::LuaApi bound;api=&bound; // 游戏线程上的加载器接口。
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==3,"兵装图标参数数量无效");verifyVersion();
         const auto image=static_cast<Addr>(api->readInteger(luaState,1)); // Lua 已检查 Image 类型。
         const auto owner=static_cast<Addr>(api->readInteger(luaState,2)); // 当前机库页面。
@@ -746,6 +775,7 @@ extern "C" __declspec(dllexport) int dualsp_loadout_ammo(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 失败让 Lua 明确停用此预览，不显示基础数冒充实际值。
     try {
         static const dualsp::LuaApi bound;api=&bound; // 专用加载器 ABI。
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==8,"配弹预览参数数量无效");verifyVersion();
         const auto instance=static_cast<Addr>(api->readInteger(luaState,1)); // 已选机体和部件的唯一来源。
         const auto planeId=api->readInteger(luaState,2); // 防止切换机体时混入上一机体的部件。
@@ -796,11 +826,13 @@ extern "C" __declspec(dllexport) int dualsp_preparation_action(void* luaState) {
             require(!preparationAction.widget || preparationAction.widget==widget,"取消的机库动作身份不匹配");
             preparationAction={}; // 取消不解引用可能已销毁的页面。
         } else if(action==0) {
+            require(runtimeEnabled,"Mod disabled outside single-player");
             require(preparationAction.widget==widget,"机库动作请求已经丢失");
             require(!preparationAction.rejected,"原生机库拒绝了决定/返回；已停止交接");
             accepted=preparationAction.accepted; // 领取同一原生帧记录的结果，不读取已关闭页面。
             if(accepted)preparationAction={};
         } else {
+            require(runtimeEnabled,"Mod disabled outside single-player");
             verifyVersion();
             const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 已核对的游戏映像。
             const auto table=read<Addr>(widget); // 必须匹配兵装页的 Tick 与决定/返回回调。
@@ -858,6 +890,7 @@ extern "C" __declspec(dllexport) int dualsp_resupply_control(void* luaState) {
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 与机体共同核对身份。
         require((plane==0)==(activator==0),"补给输入身份不完整");
         if(plane) {
+            require(runtimeEnabled,"Mod disabled outside single-player");
             verifyVersion();
             require(!supplyPlane,"上一轮补给输入尚未释放");
             require(read<Addr>(plane+0x11a8)==activator,"补给输入机体不匹配");
@@ -880,6 +913,7 @@ extern "C" __declspec(dllexport) int dualsp_prepare_weapon_rebuild(void* luaStat
     try {
         static const dualsp::LuaApi bound; // 复用加载器接口。
         api=&bound;
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==2,"兵装重建收尾接口参数数量无效");
         verifyVersion();
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 当前玩家。
@@ -901,6 +935,7 @@ extern "C" __declspec(dllexport) int dualsp_resupply_takeoff(void* luaState) {
     try {
         static const dualsp::LuaApi bound; // 复用专用加载器的 Lua 参数接口。
         api=&bound;
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==3,"补给起飞接口参数数量无效");
         const auto widget=static_cast<Addr>(api->readInteger(luaState,1)); // 当前原生补给页。
         const auto plane=static_cast<Addr>(api->readInteger(luaState,2)); // 本次补给的玩家机体。
@@ -948,6 +983,7 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         static const dualsp::LuaApi bound;
         api=&bound;
         std::lock_guard<std::mutex> guard(nativeExecutionMutex);
+        require(runtimeEnabled,"Mod disabled outside single-player");
         require(api->top(luaState)==4,"HUD 内存接口参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
@@ -989,6 +1025,7 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
     try {
         const auto command=readCommand();
         request=command.request;
+        require(runtimeEnabled,"Mod disabled outside single-player");
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
             {"target",command.target},{"a",command.firstConfig},{"b",command.secondConfig},{"thread",GetCurrentThreadId()}}.dump());
         execute(command);

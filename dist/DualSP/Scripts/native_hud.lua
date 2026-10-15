@@ -337,6 +337,8 @@ function NativeHUD.new(note)
             if self.waitingSince and now-self.waitingSince>5 then error("Cannot locate this mission's native CombinedStatsWidget; no supplemental HUD is drawn")end
             return
         end
+        -- 补给可从双 SP 改为单 SP，或反向改变；同帧还原尺寸再重排，不跨帧露出原行。
+        if c.applied and c.dual~=(profile.b>=0)then restore()end
         for _,key in ipairs(required)do assert(valid(c.widgets[key]),"Native HUD control was destroyed: "..key)end
         if not c.applied then
             -- 只有双 SP 增加一行；单 SP 保留原生面板高度。

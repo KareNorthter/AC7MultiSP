@@ -34,7 +34,8 @@ local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOC
     Rocket="ROCKET",Bomb="BOMB",Laser="LASER",Other="OTHER"}
 
 -- 补给适配器复用原生控件操作和输入读取，保持两种页面各自的布局。
-function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparationAction,confirmSound,weaponIcon)
+function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparationAction,confirmSound,weaponIcon,translate)
+    local tr=assert(translate,"缺少原生页面语言提供器") -- 页面语言由游戏文本文化决定。
     -- 每个适配器独立保存草稿、控件与原生确认事务。
     local supply=mode=="resupply"
     local parts=mode=="parts" -- PART 页复用右栏只读展示，不接管部件选择。
@@ -459,7 +460,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         return a,b
     end
     local function attach(owner,instance,planeId,profile,options)
-        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,originalControl=owner:IsEnableControl(),originalWeapon=instance:GetSelectedPlaneSWP(),flow=Flow.new(profile,options)}
+        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,originalControl=owner:IsEnableControl(),originalWeapon=instance:GetSelectedPlaneSWP(),flow=Flow.new(profile,options,nil,nil,tr)}
         self.cache=c
         c.controller=owner:GetOwningPlayer();assert(valid(c.controller),"准备页所属输入控制器缺失")
         c.world=instance:GetWorld():GetAddress();bindings(c)
@@ -556,7 +557,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             added={},masked={},moved={},texts={},repositioned={},tint=color(.401978,.651406,1,1),columns={},ammo={},
             controlEnabled=owner:IsEnableControl()} -- 页面复用时用控制重新开放识别返回。
         self.cache=c
-        c.flow=Flow.new(profile,options);c.flow.stage="review" -- 只读快照复用同一套名称、性能和配弹算法。
+        c.flow=Flow.new(profile,options,nil,nil,tr);c.flow.stage="review" -- 只读快照复用同一套名称、性能和配弹算法。
         local info -- 两套资源共用已核对的右栏结构，字段缺失时明确报错。
         if parts then info=owner.AircraftWeaponInformation else info=owner.ReviewInformation end
         assert(valid(info)and valid(info.WidgetTree),"只读兵装信息区缺失："..mode)
@@ -640,7 +641,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     local function attachSupply(owner,instance,planeId,profile,options)
         assert(self.phase and valid(self.phaseObject),"补给菜单缺少原生阶段绑定")
         local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,
-            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply"),phase=self.phase,phaseWorld=self.phaseWorld,
+            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr),phase=self.phase,phaseWorld=self.phaseWorld,
             takeoffPending=false,visualRestored=false}
         self.cache=c
         c.controller=owner:GetOwningPlayer();assert(valid(c.controller),"补给页所属输入控制器缺失")
@@ -683,7 +684,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             assert(#description>0,"原生武器说明为空："..descriptionKey)
             -- 原生介绍自带针对宽面板的硬换行；本栏重新排版，保留空行划分的段落。
             description=description:gsub("\r\n","\n"):gsub("\r","\n")
-            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",""):gsub("\1","\n\n")
+            -- 英文换行转为空格，避免两个单词粘连；中文仍去除排版用硬换行。
+            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr(""," ")):gsub("\1","\n\n")
             c.weaponDescriptions[option.code]=description
         end
         local group=assert(list.WeaponSpecifficationGroup,"补给性能组缺失")
@@ -757,12 +759,12 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local a,b=paintColumns(c)
         local option=nil -- 最终页按 YES/NO 给说明；选择页才显示当前候选说明。
         if stage~="review"then option=flow.options[(stage=="sp1"and a or b)+1]end
-        local description=stage=="review"and (flow.cursor==1 and "决定：按本次方案起飞。返回：重新选择 SP2。"or "决定：返回 SP1，重新选择特殊兵装。")
-            or stage=="sp1"and "决定：选择 SP1。"or "决定：选择 SP2。返回：重选 SP1。"
-        if flow.message then description=flow.message.."。"..description end
+        local description=stage=="review"and (flow.cursor==1 and tr("决定：按本次方案起飞。返回：重新选择 SP2。","Confirm: take off. Back: reselect SP2.")or tr("决定：返回 SP1，重新选择特殊兵装。","Confirm: reselect special weapons from SP1."))
+            or stage=="sp1"and tr("决定：选择 SP1。","Confirm: select SP1.")or tr("决定：选择 SP2。返回：重选 SP1。","Confirm: select SP2. Back: reselect SP1.")
+        if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description)
-        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and "变更特殊兵装。"or "按已选 SP1、SP2 重新起飞。")
-            or option and assert(c.weaponDescriptions[option.code])or "不搭载 SP2，SP1 保留完整载弹量。")
+        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选 SP1、SP2 重新起飞。","Take off with the selected SP1 and SP2."))
+            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载 SP2，SP1 保留完整载弹量。","No SP2. SP1 retains its full ammunition capacity."))
         self.status=stage;note("NATIVE_RESUPPLY_STAGE "..signature)
     end
 
@@ -795,9 +797,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             part.widget.Slot:SetPosition({X=part.x,Y=position.Y+size.Y*.5+part.y})
         end
         paintColumns(c)
-        local description=stage=="sp1"and "请选择第一种特殊兵装。"
-            or "请选择第二种特殊兵装。不搭载时，第一种特殊兵装保留完整载弹量。"
-        if flow.message then description=flow.message.."。"..description end
+        local description=stage=="sp1"and tr("请选择第一种特殊兵装。","Select your first special weapon.")
+            or tr("请选择第二种特殊兵装。不搭载时，第一种特殊兵装保留完整载弹量。","Select a second special weapon, or NO WEAPON for full SP1 ammunition.")
+        if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description);c.description:SetColorAndOpacity(blue)
         self.status=stage
         note("NATIVE_LOADOUT_STAGE "..signature)
@@ -883,7 +885,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             if direction~=0 and(direction~=oldDirection or now>=c.repeatAt)then
                 c.flow:move(direction);c.repeatAt=now+(direction~=oldDirection and .35 or .12)
             elseif input.cancel and not c.previous.cancel then
-                if c.flow.stage=="sp1"then c.flow.message="请完成 SP1、SP2 选择后确认起飞"
+                if c.flow.stage=="sp1"then c.flow.message=tr("请完成 SP1、SP2 选择后确认起飞","Select SP1 and SP2 before confirming takeoff")
                 else c.flow:back()end
             elseif input.accept and not c.previous.accept then
                 local result=c.flow:confirm()
@@ -1055,6 +1057,15 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         restore(false);self.status="committed"
         note("NATIVE_RESUPPLY_CONFIRMED "..transaction.planeId)
         return profile
+    end
+    -- 只读已交接的草稿供起飞过场预建 HUD；此处不保存、不提交、不重建兵装。
+    function self:previewSupply()
+        assert(supply and self.transaction and self.transaction.finished,"Supply HUD preview requires a finished handoff")
+        return copyProfile(self.transaction.profile)
+    end
+    -- 操作提示可在下一次绘制更新；原生长说明在下次建立补给页面时重新本地化。
+    function self:languageChanged()
+        if self.cache then self.cache.lastPaint=nil;self.cache.flow.message=nil end
     end
     -- 管理界面和日志可据此区分普通补给编辑与原生起飞交接阶段。
     function self:isSupplyHandoffPending()

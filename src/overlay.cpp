@@ -9,6 +9,7 @@
 #include <array>
 #include <algorithm>
 #include <iterator>
+#include <cmath>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
@@ -46,12 +47,14 @@ RECT restoreClip{};
 bool restoreClipValid=false;
 dualsp::PanelPointer pointer;
 std::atomic<bool> startup{false};
+std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏线程确认单人后才开放。
+std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 管理草稿与保存回执；不再维护或提交 SP1/SP2 兵装选择。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-float draftRatio=.5f;
-bool showHud=true,centralHint=true,directSelectEnabled=true,ignoreUnlocks=false;
+int draftRatioStep=0; // 0 至 10 对应 50% 至 100%，每 5% 一档，共 11 个可选值。
+bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
 std::array<int,3> draftKeys{49,50,51};
-std::string draftLanguage="zh",notice,managementError;
+std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 // 日志只在页面打开或手动刷新时读取。
 bool logsLoaded=false;
 std::string modLogText,nativeLogText,logError;
@@ -80,6 +83,7 @@ BOOL WINAPI panelClipCursor(const RECT* requested) {
     return originalClipCursor(requested);
 }
 void togglePanel(bool open) {
+    if(open&&!runtimeEnabled.load())return;
     if(panel==open)return;panel=open;
     if(open) {
         RECT client{};GetClientRect(gameWindow,&client);
@@ -99,7 +103,7 @@ void togglePanel(bool open) {
     enqueue({{"type",open?"open":"close"}});
     if(open) {
         notice.clear();captureSlot=-1;managementError.clear();
-        if(state.value("management_protocol",0)==1) {
+        if(state.value("management_protocol",0)==2) {
             try {loadManagementDraft();}
             catch(const std::exception& error){managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());}
         }
@@ -107,6 +111,7 @@ void togglePanel(bool open) {
 }
 LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
+    if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
     if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;captureSlot=-1;}
@@ -200,7 +205,11 @@ bool init(IDXGISwapChain* swap) {
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
 // 管理界面的文字按用户选择显示；日志正文保留记录时的原文。
-const char* tr(const char* zh,const char* en) {return draftLanguage=="en"?en:zh;}
+const char* tr(const char* zh,const char* en) {
+    // 跟随游戏只解析显示语言，不覆盖用户已保存的手动选择。
+    const auto language=draftLanguage=="auto"?state.value("game_language",std::string("en")):draftLanguage;
+    return language=="zh"?zh:en;
+}
 
 // 单键绑定支持常用键盘键；F8 为管理入口，Esc 为改键取消键。
 bool supportedKey(int key) {
@@ -238,8 +247,8 @@ bool bindingsValid() {
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
-    return !panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==1
-        &&state.value("direct_select",false)&&state.value("direct_selection_available",false);
+    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==2
+        &&state.value("direct_selection_available",false);
 }
 
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
@@ -254,10 +263,12 @@ void captureKeyboardKey(int key) {
 
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
 void loadManagementDraft() {
-    draftLanguage=state.value("language",std::string("zh"));
-    showHud=state.value("hud",true);centralHint=state.value("central_hint",true);
-    directSelectEnabled=state.value("direct_select",true);ignoreUnlocks=state.value("ignore_unlocks",false);
-    draftRatio=state.value("ammo_ratio",.5f);
+    draftLanguage=state.at("language").get<std::string>();
+    centralHint=state.at("central_hint").get<bool>();
+    const double ratio=state.at("ammo_ratio").get<double>(); // 拒绝不匹配的参数，不静默夹到有效范围。
+    if(!std::isfinite(ratio)||ratio<.5||ratio>1||std::abs(ratio*20-std::round(ratio*20))>.00001)
+        throw std::runtime_error("Ammo ratio must be 50% to 100% in 5% steps");
+    draftRatioStep=static_cast<int>(std::lround(ratio*20))-10;
     const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
     if(keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
     for(int slot=0;slot<3;++slot)draftKeys[slot]=keys.at(slot).get<int>();
@@ -292,9 +303,8 @@ void refreshLogs() {
 // 保存按钮只提交完整参数；收到游戏线程的请求回执后才显示保存成功。
 void saveManagementSettings() {
     pendingSave=++saveRequest;
-    enqueue({{"type","settings"},{"request",pendingSave},{"language",draftLanguage},{"hud",showHud},
-        {"central_hint",centralHint},{"direct_select",directSelectEnabled},{"ignore_unlocks",ignoreUnlocks},
-        {"keyboard_keys",draftKeys},{"ammo_ratio",draftRatio}});
+    enqueue({{"type","settings"},{"management_protocol",2},{"request",pendingSave},{"language",draftLanguage},
+        {"central_hint",centralHint},{"keyboard_keys",draftKeys},{"ammo_ratio",(10+draftRatioStep)/20.0}});
     notice=tr("正在保存…","Saving...");
 }
 
@@ -303,31 +313,29 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7DualSP 1.0.0 管理###DualSPManagement","AC7DualSP 1.0.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7DualSP 1.0.1 管理###DualSPManagement","AC7DualSP 1.0.1 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(state.value("management_protocol",0)!=1||!managementError.empty()) {
+    if(state.value("management_protocol",0)!=2||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
         ImGui::End();return;
     }
     // 语言切换只影响界面草稿，点击保存后持久化；稳定 ID 保留当前页和焦点。
-    int language=draftLanguage=="en"?1:0;
+    int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
     ImGui::SetNextItemWidth(210);
-    if(ImGui::Combo("Language / 语言",&language,"中文\0English\0"))draftLanguage=language==1?"en":"zh";
+    if(ImGui::Combo("语言选择/Select Language###Language",&language,"Game Language\0中文 / Chinese\0English\0"))
+        draftLanguage=language==0?"auto":language==1?"zh":"en";
     ImGui::Separator();
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(ImGui::BeginTabItem(tr("功能与参数###Features","Features & Parameters###Features"))) {
-            ImGui::Checkbox(tr("右下双 SP 列表与就绪名称变淡###HUD","Weapon list and readiness dimming###HUD"),&showHud);
             ImGui::Checkbox(tr("中央提示：常驻当前武器简称###Central","Persistent current weapon abbreviation###Central"),&centralHint);
             ImGui::TextWrapped("%s",tr("关闭中央常驻提示后，恢复游戏原本的短暂武器切换提示。","Disabling the persistent hint restores the game's temporary weapon switch message."));
-            ImGui::Checkbox(tr("启用直接选择武器###Direct","Enable direct weapon selection###Direct"),&directSelectEnabled);
             ImGui::TextWrapped("%s",tr("原游戏循环切换键继续可用。兵装选择只能通过原生出击或补给页面完成。","The original cycling key remains available. Choose loadouts through the game's departure or resupply page."));
-            float percent=draftRatio*100.f; // 全局配弹参数只在下一次原生确认时应用。
-            if(ImGui::SliderFloat(tr("双 SP 配弹比例###Ratio","Dual SP ammo ratio###Ratio"),&percent,10.f,100.f,"%.0f%%",ImGuiSliderFlags_AlwaysClamp))draftRatio=percent/100.f;
+            const auto ratioFormat=std::to_string(50+draftRatioStep*5)+"%%"; // 整数滑块只允许 11 档，显示真实百分比。
+            ImGui::SliderInt(tr("双 SP 配弹比例###Ratio","Dual SP ammo ratio###Ratio"),&draftRatioStep,0,10,ratioFormat.c_str(),
+                ImGuiSliderFlags_AlwaysClamp|ImGuiSliderFlags_NoInput);
             ImGui::TextWrapped("%s",tr("比例分别作用于两个 SP，默认各 50%；SP2 为空时 SP1 保留完整载弹量。当前任务弹药不因改设置而重算。","Each SP uses this ratio, 50% by default. With SP2 empty, SP1 retains its full stock. Current mission ammo is not recalculated."));
-            ImGui::Checkbox(tr("允许未购买兵装（试玩参数）###Unlocks","Allow unpurchased weapons (experimental)###Unlocks"),&ignoreUnlocks);
-            ImGui::TextWrapped("%s",tr("不修改存档购买记录；用于下一次新开的原生选择页面。","Does not change purchase records; used when a new native selection page opens."));
             ImGui::EndTabItem();
         }
         if(ImGui::BeginTabItem(tr("按键###Bindings","Bindings###Bindings"))) {
@@ -397,13 +405,13 @@ void refreshState() {
     static uint64_t consumedGeneration{}; // 一份状态只消费一次，不在每帧重复复制。
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
-        const bool wasManagement=state.value("management_protocol",0)==1;
+        const bool wasManagement=state.value("management_protocol",0)==2;
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
         }
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
-        if(state.value("management_protocol",0)==1) {
+        if(state.value("management_protocol",0)==2) {
             const auto& keys=state.at("keyboard_keys");
             if(!keys.is_array()||keys.size()!=3)throw std::runtime_error("Management keyboard binding data is invalid");
             std::array<int,3> checkedKeys{};
@@ -414,15 +422,15 @@ void refreshState() {
             }
             if(checkedKeys[0]==checkedKeys[1]||checkedKeys[0]==checkedKeys[2]||checkedKeys[1]==checkedKeys[2])
                 throw std::runtime_error("Management keyboard bindings must be distinct");
-            state.at("direct_select").get<bool>();state.at("direct_selection_available").get<bool>();
+            state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
         if(sequence!=lastSequence){lastSequence=sequence;lastControllerUpdate=GetTickCount64();}
         const int request=state.value("request_open",0),close=state.value("request_close",0);
         if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
-        if(!wasManagement&&panel&&state.value("management_protocol",0)==1)loadManagementDraft();
-        if(!panel)draftLanguage=state.value("language",std::string("zh"));
+        if(!wasManagement&&panel&&state.value("management_protocol",0)==2)loadManagementDraft();
+        if(!panel)draftLanguage=state.value("language",std::string("auto"));
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
                 tr("保存失败，详见错误和日志。","Save failed; see the error and logs.");
@@ -439,7 +447,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
         if(!initialized)init(swap);
         if(initialized&&swap==mainSwap) {
             ImGui::SetCurrentContext(imguiContext);if(!target)makeTarget(swap);
-            if(target) {
+            if(target&&runtimeEnabled.load()) {
                 refreshState();
                 static bool mouseWas[5]={};const int mouseKeys[]={VK_LBUTTON,VK_RBUTTON,VK_MBUTTON,VK_XBUTTON1,VK_XBUTTON2};
                 const bool foreground=gameFocused();
@@ -456,13 +464,14 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 static WORD previousPadButtons=0;
                 static ULONGLONG lastPadPoll{};
                 const auto padNow=GetTickCount64();
-                const ULONGLONG pollInterval=managementError.empty()&&state.value("direct_select",false)?20:100;
+                const ULONGLONG pollInterval=directInputEnabled()?20:100; // 非飞行选择场景只轮询管理组合键。
                 if(padNow-lastPadPoll>=pollInterval) {
                     lastPadPoll=padNow;
                     XINPUT_STATE pad{};
                     const bool connected=XInputGetState(0,&pad)==ERROR_SUCCESS;
                     const WORD buttons=connected?pad.Gamepad.wButtons:0;
                     const bool chord=foreground&&connected&&(buttons&(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y))==(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y);
+                    if(reseedPad.exchange(false)){chordWas=chord;previousPadButtons=buttons;padWasConnected=connected;}
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
                     const WORD pressed=buttons&~previousPadButtons;
                     if(connected&&padWasConnected&&directInputEnabled()) {
@@ -535,6 +544,29 @@ DWORD WINAPI startThread(void*) {
 }
 }
 // 新版管理协议标记，Lua 与安装程序都据此拒绝旧界面混装。
+// 游戏线程直接同步许可，不依赖每秒发布的 UI 文件；关闭后所有窗口输入直通。
+extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 先禁用再报告接口错误。
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        if(api->top(luaState)!=1)throw std::runtime_error("Runtime gate expects one argument");
+        const auto enabled=api->readInteger(luaState,1); // 只允许游戏线程提供 0 或 1。
+        if(enabled!=0&&enabled!=1)throw std::runtime_error("Invalid UI runtime gate value");
+        std::lock_guard<std::recursive_mutex> guard(renderMutex);
+        runtimeEnabled.store(enabled!=0);reseedPad.store(true);
+        if(!enabled) {
+            if(panel)togglePanel(false);
+            captureSlot=-1;suppressedCaptureKey=0;pendingSave=0;notice.clear();
+            std::lock_guard<std::mutex> queueGuard(queueMutex);actions.clear();
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        runtimeEnabled.store(false);nativeLog(std::string("UI_RUNTIME_GATE_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
@@ -542,7 +574,7 @@ extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaStat
         static const dualsp::LuaApi api; // 沿用已核对的专用加载器栈接口。
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         const bool ready=initialized&&gameWindow;
-        const bool enabled=ready&&!panel&&gameFocused(); // 失焦及 F8 打开时不驱动原生选择。
+        const bool enabled=runtimeEnabled.load()&&ready&&!panel&&gameFocused(); // 多人、失焦及 F8 打开时不驱动选择。
         const bool up=enabled&&((GetAsyncKeyState(VK_UP)&0x8000)||(GetAsyncKeyState('W')&0x8000));
         const bool down=enabled&&((GetAsyncKeyState(VK_DOWN)&0x8000)||(GetAsyncKeyState('S')&0x8000));
         api.boolean(luaState,up);api.boolean(luaState,down);api.boolean(luaState,ready);

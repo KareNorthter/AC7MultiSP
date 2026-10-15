@@ -1,9 +1,17 @@
--- AC7DualSP 1.0.0：沿用用户实测通过的性能修订；调度回调均在游戏线程运行。
+-- AC7DualSP 1.0.1：沿用用户确认通过的多人禁用、语言、管理与补给 HUD 逻辑。
 -- 出击和中途补给使用各自的原生 UMG 页面，F8 只管理设置和日志。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
 local json=dofile(root.."Scripts/json.lua")
 local weaponCycle=dofile(root.."Scripts/weapon_cycle.lua")
+local runtimeContext=dofile(root.."Scripts/runtime_context.lua") -- 模式与游戏文本语言共用只读来源。
+local tr=runtimeContext.text -- 原生页面文字跟随游戏，不跟随 F8 手动语言。
+local runtimeAllowed=false -- 未确认单人状态前，所有模组功能均禁止。
+local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面绘制提示。
+local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
+local runtimeFailed=false -- 模式识别出错后明确停用到重启，不不断重试或沿用旧许可。
+local syncRuntime=nil -- 完整状态清理函数在各模块定义之后建立。
+local runtimeEpoch=0 -- 跨模式切换使未完成的延迟操作失效。
 local log=assert(io.open(root.."mod.log","a"))
 local function note(message)log:write(os.date("!%Y-%m-%dT%H:%M:%SZ ")..tostring(message).."\n");log:flush()end
 local nativeHud=dofile(root.."Scripts/native_hud.lua").new(note)
@@ -27,6 +35,8 @@ local function loadExport(name,dll)
 end
 -- The validated weapon core and the rebuilt menu renderer are separate modules.
 local bridge=loadExport("lab_native_execute")
+local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
+local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
 local nativeTakeoff=loadExport("dualsp_resupply_takeoff") -- 候选 5：真正的原生补给 YES 入口。
@@ -47,14 +57,21 @@ local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 -- 管理版 Lua 必须搭配新版界面，防止旧 F8 再次提交兵装配置。
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
 local preparationNavigation=loadExport("dualsp_preparation_navigation","DualSPUI.dll") -- 原生页面的只读键盘导航。
-local config=readJson(root.."profiles.json") or {schema=1,hud=true,hud_scale=1,ignore_unlocks=false,profiles={}}
+local config=readJson(root.."profiles.json") or {schema=1,profiles={}} -- 个人机体方案独立于管理参数版本。
 assert(config.schema==1 and type(config.profiles)=="table","Unsupported DualSP configuration schema")
--- 旧配置新增字段的默认值；原机体的配弹比例在首次保存管理设置前保留。
-if config.language==nil then config.language="zh"end
-if config.hud==nil then config.hud=true end
-if config.ignore_unlocks==nil then config.ignore_unlocks=false end
+local migrateSettings=config.management_revision==nil -- 管理参数第 2 版只迁移一次，不反复重置手动语言。
+assert(migrateSettings or config.management_revision==2,"Unsupported management settings revision")
+if migrateSettings then
+    local oldRatio=config.ammo_ratio or .5 -- 只调整全局参数，不改已存机体方案和检查点。
+    assert(type(oldRatio)=="number"and oldRatio>=.1 and oldRatio<=1,"旧配弹比例无效，停止迁移")
+    config.ammo_ratio=math.max(.5,math.floor(oldRatio*20+.5)/20)
+    config.language="auto";config.management_revision=2
+    config.hud=nil;config.direct_select=nil;config.ignore_unlocks=nil;config.hud_scale=nil
+    note("MANAGEMENT_MIGRATION revision=2 language=auto ratio="..oldRatio.."->"..config.ammo_ratio)
+end
+-- 新配置缺省值；已迁移配置的显式语言和键位继续保留。
+if config.language==nil then config.language="auto"end
 if config.central_hint==nil then config.central_hint=true end
-if config.direct_select==nil then config.direct_select=true end
 if config.keyboard_keys==nil then config.keyboard_keys={49,50,51}end
 config.native_loadout=nil -- 原生双选为唯一入口，不再提供旧的关闭选项。
 -- 键位只接受单个普通键，F8 固定管理入口，Esc 用于取消改键。
@@ -66,19 +83,18 @@ local function supportedKey(key)
 end
 -- 所有管理设置先完整验证，再写盘，不允许部分保存或静默替换错误键位。
 local function validateSettings(settings)
-    assert(settings.language=="zh"or settings.language=="en","界面语言只能为中文或英文")
-    for _,field in ipairs({"hud","central_hint","direct_select","ignore_unlocks"})do
-        assert(type(settings[field])=="boolean","设置必须为布尔值："..field)
-    end
+    assert(settings.language=="auto"or settings.language=="zh"or settings.language=="en","Language must be auto, zh or en")
+    assert(type(settings.central_hint)=="boolean","中央简称开关必须为布尔值")
+    assert(settings.hud==nil and settings.direct_select==nil and settings.ignore_unlocks==nil,"旧功能开关已移除")
     assert(type(settings.keyboard_keys)=="table"and #settings.keyboard_keys==3,"需要 MSL/SP1/SP2 三个键位")
     local used={}
     for _,key in ipairs(settings.keyboard_keys)do
         assert(supportedKey(key),"不支持此键位，F8 和 Esc 保留给管理界面")
         assert(not used[key],"三个武器选择键不能重复");used[key]=true
     end
-    if settings.ammo_ratio~=nil then
-        assert(type(settings.ammo_ratio)=="number"and settings.ammo_ratio>=.1 and settings.ammo_ratio<=1,"配弹比例须为 10% 至 100%")
-    end
+    local ratio=settings.ammo_ratio -- 配弹步长在控制器也校验，不能绕过滑动块提交任意比例。
+    assert(type(ratio)=="number"and ratio>=.5 and ratio<=1,"配弹比例须为 50% 至 100%")
+    assert(math.abs(ratio*20-math.floor(ratio*20+.5))<.00001,"配弹比例必须为 5% 的整数档位")
 end
 validateSettings(config)
 -- 设置保存可传入完整新配置；只有写盘成功后才替换当前配置。
@@ -88,6 +104,7 @@ local function saveConfig(nextConfig)
     if old then local text=old:read("*a");old:close();local backup=assert(io.open(root.."profiles.previous.json","w"));backup:write(text);backup:close()end
     writeJson(root.."profiles.json",nextConfig or config)
 end
+if migrateSettings then saveConfig();note("MANAGEMENT_MIGRATION_SAVED revision=2")end
 local catalogue=nil
 local game=nil
 local plane=nil
@@ -191,16 +208,16 @@ local function optionsFor(id)
     for i,item in ipairs(info.weapons)do
         options[i]={index=item.index,code=item.code,max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
             stats=item.stats,description=descriptions[item.code]or item.code:upper(),
-            owned=config.ignore_unlocks or item.index==0 or owned[id*10+item.index]==true,
+            owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=not unsupportedDual[item.code]}
     end
     return options
 end
 local function profileFor(id)
     local saved=config.profiles[tostring(id)]
-    if saved then return {a=saved.a,b=saved.b,ratio=config.ammo_ratio or saved.ratio}end
+    if saved then return {a=saved.a,b=saved.b,ratio=config.ammo_ratio}end
     local selected=valid(instance) and instance:GetSelectedPlaneSWP()or 0
-    return {a=math.max(0,math.min(2,selected)),b=-1,ratio=config.ammo_ratio or .5}
+    return {a=math.max(0,math.min(2,selected)),b=-1,ratio=config.ammo_ratio}
 end
 -- 复制小配置，避免补给草稿与检查点引用同一张可修改的表。
 local function copyProfile(profile)return {a=profile.a,b=profile.b,ratio=profile.ratio}end
@@ -224,9 +241,9 @@ nativeLoadout=dofile(root.."Scripts/native_loadout.lua").new(note,function(id,pr
     assert(profile.b<0 or (profile.a~=profile.b and options[profile.a+1].available and options[profile.b+1].available),"Prepared SP pair is incompatible")
     currentProfile=profile;config.profiles[tostring(id)]=profile;saveConfig()
     lastUIKey=nil;note("PROFILE_SAVED_NATIVE "..id)
-end,nil,preparationNavigation,nil,nativePreparationAction,menuConfirm,nativeWeaponIcon)
-nativeStandby=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"standby",preparationNavigation)
-nativeParts=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"parts",preparationNavigation)
+end,nil,preparationNavigation,nil,nativePreparationAction,menuConfirm,nativeWeaponIcon,tr)
+nativeStandby=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"standby",preparationNavigation,nil,nil,nil,nil,tr)
+nativeParts=dofile(root.."Scripts/native_loadout.lua").new(note,nil,"parts",preparationNavigation,nil,nil,nil,nil,tr)
 -- 原生补给菜单确认只暂存方案；此时不改武器，也不保存到配置文件。
 nativeSupply=dofile(root.."Scripts/native_loadout.lua").new(note,function(id,profile)
     assert(supplySession and id==supplySession.planeId,"补给确认期间机体已变化")
@@ -239,8 +256,9 @@ end,"resupply",preparationNavigation,function(owner)
     assert(owner:GetWorld():GetAddress()==plane:GetWorld():GetAddress(),"补给页面与玩家不在同一世界")
     local ok,err=nativeTakeoff(owner:GetAddress(),plane:GetAddress(),activator:GetAddress()) -- 原生负责关闭页面并通知任务。
     assert(ok,err or "原生补给 YES 接口未返回成功状态")
-end,nil,menuConfirm)
+end,nil,menuConfirm,nil,tr)
 local function setPanel(open)
+    if open and not runtimeAllowed then return end
     if panelOpen==open then return end
     if open and nativeLoadout:isPreparationHandoffPending()then
         note("MANAGEMENT_WAITING_FOR_PREPARATION_CLOSE");return
@@ -300,9 +318,9 @@ refreshHUD=function(now)
     assert(IsInGameThread(),"武器 HUD 必须在游戏线程更新")
     if internal then return end
     -- HUD 生命周期不依赖武器输入许可；过场暂时禁止操作不能把已接管的双 SP 恢复成单 SP。
-    local enabled=not errorText and not supplySession and valid(plane)and plane:GetNimbusHUDEnabled()
-    -- 两处提示独立开关，但共用一次采样；关闭右下 HUD 仍更新中央就绪颜色。
-    if enabled and (config.hud or config.central_hint)and not hudSamplingError then
+    local enabled=runtimeAllowed and not errorText and (not supplySession or supplySession.applied)and valid(plane)and plane:GetNimbusHUDEnabled()
+    -- 右下 HUD 始终启用；中央简称可独立关闭，两处显示共用一次就绪采样。
+    if enabled and not hudSamplingError then
         local callOK,sampleOK,mainReady,sp1Ready,sp2Ready,err=pcall(readReadiness,
             plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),dual and 1 or 0)
         nativeState.ready=nil
@@ -315,7 +333,7 @@ refreshHUD=function(now)
     end
     nativeState.armed=plane:IsSpecialWeaponArmed()
     -- 单 SP 出击也处理名称就绪状态，但保持原生面板高度。
-    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and config.hud and not hudSamplingError,now)
+    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now)
     if enabled and config.central_hint and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
@@ -329,12 +347,13 @@ local releaseWeaponInput
 -- 游戏绘制一行原生 SP，下一次 Lua tick 才能插入第二行，双 SP 出击时会
 -- 出现肉眼可见的 MSL+单 SP 短暂画面。预热只建立控件和最终文本，不写武器
 -- 内存；真实就绪状态在核心初始化后由 refreshHUD 立即替换。
-local function primeFlightHUD(profile,options)
+local function primeFlightHUD(profile,options,prewarm)
     local seed={active=0,armed=false,main_ammo=0,
         cached_sp={0,0},maximum={0,0}, -- 开场不读取可能尚未初始化的武器状态，计数以 pending 隐藏。
         slots={{},{}} ,ready={false,false,false},pending=true} -- 初始化前不把原生单 SP 数量冒充双 SP 实际弹药。
     local visible=plane:GetNimbusHUDEnabled()
-    nativeHud:update(plane,profile,options,seed,visible and config.hud,os.clock())
+    -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
+    nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
     weaponPresentation:update(plane,profile,options,seed,visible and config.central_hint,os.clock())
 end
 -- 正常出击建立检查点；补给重建只替换当前兵装，保留任务检查点。
@@ -368,13 +387,16 @@ local function configureFlight(profile,resupply)
     end
     configured=true;active=0;lastArmed=plane:IsSpecialWeaponArmed();note("LOADOUT "..planeId.." "..json.encode(profile))
     if not resupply then checkpointProfile=copyProfile(profile)end
+    if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
 end
 local function delay(ms,fn)
+    local epoch=runtimeEpoch -- 只允许同一单人运行阶段的回调继续。
     ExecuteInGameThreadWithDelay(ms,function()
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"Delayed switch callback is outside the game thread")
+            if not syncRuntime()or runtimeEpoch~=epoch then return end
             fn()
         end,debug.traceback)
         if not ok then
@@ -435,7 +457,7 @@ end
 -- 直接选择只在允许武器操作的任务中执行；已选中目标时不重建。
 local function directSelect(desired)
     assert(type(desired)=="number"and desired%1==0 and desired>=0 and desired<=2,"直接选择目标无效")
-    if not config.direct_select or not configured or supplySession or panelOpen or internal or errorText or restorePending or checkpointPending
+    if not configured or supplySession or panelOpen or internal or errorText or restorePending or checkpointPending
         or not isFlight or not ready()or game:IsGamePaused(plane)then return end
     inputNotice=nil
     if desired==2 and not dual then inputNotice="empty_sp2";note("DIRECT_SELECTION_REJECTED EMPTY_SP2");return end
@@ -483,7 +505,8 @@ local function applyAction(action)
         local ok,err=xpcall(function()
             assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
             local nextConfig=json.decode(json.encode(config))
-            for _,field in ipairs({"language","hud","central_hint","direct_select","ignore_unlocks","keyboard_keys","ammo_ratio"})do
+            assert(action.management_protocol==2,"管理界面协议不匹配，请成套安装")
+            for _,field in ipairs({"language","central_hint","keyboard_keys","ammo_ratio"})do
                 assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
             end
             validateSettings(nextConfig);saveConfig(nextConfig);config=nextConfig
@@ -515,10 +538,10 @@ local function publishState()
     publishSequence=publishSequence+1
     local info=catalogue and catalogue[tostring(planeId)]
     -- 仅发布管理参数和只读状态，不给界面提供兵装编辑事务。
-    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or"请选择机体",
-        configured=configured,state=nativeState,hud=config.hud,ignore_unlocks=config.ignore_unlocks,request_open=requestOpen,request_close=requestClose,
-        management_protocol=1,language=config.language,central_hint=config.central_hint,direct_select=config.direct_select,
-        keyboard_keys=config.keyboard_keys,ammo_ratio=config.ammo_ratio or (currentProfile and currentProfile.ratio)or .5,
+    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
+        configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
+        management_protocol=2,language=config.language,game_language=runtimeContext.language,central_hint=config.central_hint,
+        keyboard_keys=config.keyboard_keys,ammo_ratio=config.ammo_ratio,
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
@@ -537,9 +560,70 @@ local function publishState()
     if errorText then state.error=errorText;state.state=nil end
     writeJson(root.."ui-state.pending.json",state);publish()
 end
+-- 禁用先关闭原生与渲染侧入口，再释放自己的控件和事务；不改多人兵装或配置。
+local function checkRuntime(activatedWidget)
+    if runtimeChanging then return false end
+    local allowed,reason=runtimeContext.allowed(instance) -- 每次重新检查，避免事件早于周期更新。
+    if activatedWidget and runtimeContext.isMultiplayerWidget(activatedWidget)then
+        runtimeContext.enterMultiplayerMenu(instance);allowed=false;reason="multiplayer_menu"
+    end
+    if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
+    runtimeChanging=true;runtimeEpoch=runtimeEpoch+1
+    runtimeAllowed=allowed;runtimeReason=reason
+    local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
+    assert(uiOK,uiErr)
+    if not allowed then
+        local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
+        assert(coreOK,coreErr)
+        if panelOpen then setPanel(false)end
+        nativeLoadout:reset(true,false);nativeSupply:reset(true,false)
+        nativeStandby:reset(true,false);nativeParts:reset(true,false)
+        nativeHud:reset();weaponPresentation:reset()
+        supplySession=nil;checkpointProfile=nil;checkpointPending=false;restorePending=false
+        cachedPlane=nil;cachedWorld="";plane=nil;activator=nil;planeAddress=nil;currentWorld=""
+        configured=false;isFlight=false;dual=false;internal=false;lastArmed=nil;nativeState=nil
+        currentProfile=nil;flightOptions=nil;previewOptions=nil;lastPlaneScan=-1;lastSelected=-1
+        lastHUD=-1;lastPreviewHUD=-1;lastUIKey=nil;inputNotice=nil;hudSamplingError=nil
+        -- 已生成但未消费的动作属于上一模式，只丢弃，不在返回单人后重放。
+        local stale=io.open(root.."ui-actions.json","r")
+        if stale then stale:close();assert(os.remove(root.."ui-actions.json"),"Cannot discard stale UI actions")end
+    else
+        local coreOK,coreErr=nativeRuntimeGate(1)
+        assert(coreOK,coreErr);errorText=nil;lastUIKey=nil
+    end
+    note("RUNTIME_MODE "..(allowed and "enabled "or "disabled ")..reason.." "..runtimeContext.describe(instance))
+    runtimeChanging=false
+    return allowed
+end
+-- 反射事件也共用显式失败边界，防止错误跨出引擎回调并留下上次的单人许可。
+syncRuntime=function(activatedWidget)
+    if runtimeFailed or runtimeChanging then return false end
+    local ok,result=xpcall(function()return checkRuntime(activatedWidget)end,debug.traceback)
+    if ok then return result end
+    runtimeFailed=true;runtimeAllowed=false;runtimeChanging=true;runtimeEpoch=runtimeEpoch+1
+    errorText=tostring(result);note("RUNTIME_CONTEXT_ERROR "..errorText)
+    local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
+    if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
+    if panelOpen then
+        local closed,err=pcall(function()setPanel(false)end)
+        if not closed then note("RUNTIME_PANEL_RESTORE_ERROR "..tostring(err))end
+    end
+    -- 识别失败也释放已有自定义控件；分别记录清理错误，不让一个模块阻断其他模块收尾。
+    for _,entry in ipairs({{"loadout",nativeLoadout},{"supply",nativeSupply},{"standby",nativeStandby},
+        {"parts",nativeParts},{"hud",nativeHud},{"central",weaponPresentation}})do
+        local cleaned,err=pcall(function()entry[2]:reset(true,false)end)
+        if not cleaned then note("RUNTIME_VIEW_RESTORE_ERROR "..entry[1].." "..tostring(err))end
+    end
+    runtimeChanging=false
+    return false
+end
 local function tick()
     if not valid(instance)then instance=FindFirstOf("NimbusGameInstance")end
-    if not valid(instance)then return end
+    if not syncRuntime()then return end
+    if runtimeContext.updateLanguage(os.clock())then
+        lastUIKey=nil;note("GAME_TEXT_CULTURE "..runtimeContext.culture)
+        nativeLoadout:languageChanged();nativeSupply:languageChanged()
+    end
     -- 返回主菜单明确结束本轮补给，防止旧事务阻止下一次任务配置。
     if supplySession then
         local worldContext=instance:GetWorld()
@@ -599,6 +683,10 @@ local function tick()
             primeFlightHUD(copyProfile(saved),previewOptions)
         end
     end
+    -- 起飞过场即可预建已确认的显示，不等玩家武器输入重新开放。
+    if supplySession and supplySession.menuClosed and supplySession.preview and isFlight and valid(activator)and not errorText then
+        primeFlightHUD(supplySession.preview,supplySession.options,true)
+    end
     -- 成功事件只排队：原生阶段先完成自己的收尾，随后才释放补给控件并重建武器。
     if supplySession and supplySession.success and isFlight and ready()and not errorText then
         assert(not nativeSupply.error,nativeSupply.error)
@@ -606,14 +694,13 @@ local function tick()
         -- 事务在 OnFinishdSupplyMenuHandler 后仍保留；此处收到成功事件后才提交并清理页面。
         local profile=nativeSupply:completeSupply()
         assert(supplySession.confirmed,"原生补给成功，但未收到双 SP 的起飞确认")
-        nativeHud:reset()
-        weaponPresentation:reset()
         -- 原生单 SP 选择始终与新方案 SP1 对齐；完整补给由初始化和核心重建完成。
         instance:SetPlaneAndSWP(planeId,profile.a)
         assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
         configureFlight(profile,true)
         config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
         nativeSupply:reset(false,false);ownSupplyInput(false);supplySession=nil;lastUIKey=nil
+        refreshHUD(os.clock()) -- 完成同一回调内的最终显示，不等待下一次 100 ms 周期。
         note("RESUPPLY_LOADOUT_APPLIED "..planeId.." "..json.encode(profile))
     end
     if isFlight and ready()and not configured and not supplySession and not errorText then
@@ -682,7 +769,7 @@ local function tick()
         nativeSupply:pump(instance,supplySession.planeId,function()
                 -- 新参数只用于新开的原生选择草稿，不改返航前方案及取消恢复。
                 local profile=copyProfile(supplySession.profile)
-                profile.ratio=config.ammo_ratio or profile.ratio;return profile
+                profile.ratio=config.ammo_ratio;return profile
             end,
             function()return supplySession.options end,now,isFlight,panelOpen)
         if nativeSupply.error then error(nativeSupply.error)end
@@ -701,11 +788,14 @@ local function tick()
     end
 end
 RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,selectedPlane,selectedWeapon)
+    if not syncRuntime()then return end
     nativeLoadout:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
     nativeSupply:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
 end,function()end)
 -- 原生页面可能复用同一对象；真实输入激活事件作为新一轮准备的边界。
 RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,function(ctx,enabled)
+    if runtimeChanging then return end
+    if not syncRuntime(enabled:get()and ctx:get()or nil)then return end
     nativeLoadout:onControlChanged(ctx,enabled)
     -- 激活事件内完成双栏，原生第一次绘制前即可使用模组文字；自身输入操作不重入。
     if not enabled:get()or nativeLoadout.controlDepth>0 or nativeSupply.controlDepth>0
@@ -727,7 +817,7 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
         elseif supplySession and supplySession.menuActive and not supplySession.menuClosed
             and owner:IsA(StaticFindObject("/Script/Nimbus.MissionResupplyWidget"))then
             nativeSupply:activate(owner,instance,supplySession.planeId,function()
-                local profile=copyProfile(supplySession.profile);profile.ratio=config.ammo_ratio or profile.ratio;return profile
+                local profile=copyProfile(supplySession.profile);profile.ratio=config.ammo_ratio;return profile
             end,function()return supplySession.options end,os.clock(),isFlight,false)
         end
     end,debug.traceback)
@@ -736,9 +826,11 @@ end)
 -- These reflected entry points cover normal dynamic mission events. Their
 -- checkpoint/resupply coverage remains experimental and is logged explicitly.
 RegisterHook("/Script/Nimbus.Mission:OnStartNextPhaseHandler",function()end,function()
+    if not syncRuntime()then return end
     if configured then checkpointPending=true end
 end)
 RegisterHook("/Script/Nimbus.PlayerPlane:RestoreWeaponFromCheckpoint",function()end,function(ctx)
+    if not syncRuntime()then return end
     if configured and valid(plane)and ctx:get():GetAddress()==plane:GetAddress()then
         -- 检查点重试中止尚未完成的返航草稿，恢复已捕获方案。
         if supplySession then nativeSupply:reset(false,false);ownSupplyInput(false);supplySession=nil;note("RESUPPLY_CANCELLED_CHECKPOINT")end
@@ -748,10 +840,11 @@ end)
 -- 生命周期失败明确停用武器修改；不能忽略异常后继续应用旧方案。
 local function supplyHook(callback)
     return function(...)
-        if errorText then return end
+        if runtimeChanging or errorText then return end
         local args={...}
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"补给事件不在游戏线程")
+            if not syncRuntime()then return end
             callback(table.unpack(args))
         end,debug.traceback)
         if not ok then errorText=tostring(err);note("NATIVE_RESUPPLY_ERROR "..errorText);releaseSelectionAudio()end
@@ -764,7 +857,8 @@ RegisterHook("/Script/Nimbus.Mission:OnStartSupplyPhaseHandler",function()end,su
     -- 任务和原机体绑定用于排除其他任务、菜单或机体触发的事件。
     supplySession={mission=ctx:get():GetAddress(),world=currentWorld,planeId=planeId,profile=copyProfile(currentProfile),
         options=optionsFor(planeId),menuActive=false,menuClosed=false,confirmed=nil,success=false}
-    nativeHud:reset();weaponPresentation:reset();note("RESUPPLY_STARTED "..planeId)
+    -- 现有右下双 SP 行留在原生 HUD 树中，过场显隐由祖先控制，不露回单 SP 源。
+    weaponPresentation:reset();note("RESUPPLY_STARTED "..planeId)
 end))
 RegisterHook("/Script/Nimbus.MiniGamePhase:OnStartSupplyMenuHandler",function()end,supplyHook(function(ctx)
     assert(supplySession,"补给菜单打开前未收到补给开始事件")
@@ -774,7 +868,7 @@ RegisterHook("/Script/Nimbus.MiniGamePhase:OnStartSupplyMenuHandler",function()e
     nativeSupply:beginSupplyMenu(ctx:get());note("RESUPPLY_MENU_OPENED")
     -- 原生菜单创建完成的同一事件内接管；事件先于构造的任务仍由激活事件接入。
     nativeSupply:refreshNow(instance,supplySession.planeId,function()
-        local profile=copyProfile(supplySession.profile);profile.ratio=config.ammo_ratio or profile.ratio;return profile
+        local profile=copyProfile(supplySession.profile);profile.ratio=config.ammo_ratio;return profile
     end,function()return supplySession.options end,os.clock(),isFlight,panelOpen)
     assert(not nativeSupply.error,nativeSupply.error)
 end))
@@ -786,12 +880,17 @@ RegisterHook("/Script/Nimbus.MiniGamePhase:OnFinishdSupplyMenuHandler",supplyHoo
     nativeSupply:beforeSupplyFinish(ctx)
 end),supplyHook(function(ctx)
     nativeSupply:afterSupplyFinish(ctx)
+    -- 只有结束回调已返回，草稿才可用于预建；关闭事件可能嵌套在结束回调内部。
+    supplySession.preview=nativeSupply:previewSupply()
+    if valid(plane)then primeFlightHUD(supplySession.preview,supplySession.options,true)end
 end))
 RegisterHook("/Script/Nimbus.MiniGamePhase:OnCloseSupplyMenu",function()end,supplyHook(function(ctx)
     if supplySession and supplySession.menuPhase==ctx:get():GetAddress()then
         -- 关闭不能单独提交草稿；结束回调可能尚未返回，保留控件事务。
         assert(nativeSupply:isSupplyHandoffPending(),"原生补给菜单在 YES 请求前关闭")
-        supplySession.menuClosed=true;note("RESUPPLY_MENU_CLOSED")
+        supplySession.menuClosed=true
+        if supplySession.preview and valid(plane)then primeFlightHUD(supplySession.preview,supplySession.options,true)end
+        note("RESUPPLY_MENU_CLOSED")
     end
 end))
 RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,supplyHook(function(ctx)
@@ -801,7 +900,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
@@ -845,6 +944,13 @@ LoopInGameThreadWithDelay(20,function()
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);note("ERROR "..errorText)
+            if runtimeChanging or not runtimeAllowed then
+                -- 模式识别/清理失败只保留诊断，绝不沿用上次单人许可。
+                runtimeAllowed=false;runtimeChanging=false;runtimeReason="context_error"
+                local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
+                if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
+                return false
+            end
             releaseSelectionAudio()
             -- Report once, freeze weapon mutations, and keep the UI/error visible.
             -- A user closes the panel to resume the game; no hidden loadout retry.

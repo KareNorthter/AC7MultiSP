@@ -1,12 +1,14 @@
 # 开发与发布
 
-返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.0**，旧候选过程见[历史索引](history-1.0.0.md)。
+> 当前版本为 [1.0.1](version-1.0.1.md)。--experience 从对应 cores 目录安装，要求核心/UI 的 dualsp_runtime_gate 导出及第九个 Lua runtime_context.lua。本轮不制作 ZIP；打包器仍固定 1.0.0，会拒绝当前 VERSION。
+
+返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.1**，本轮研究见[候选记录](version-1.0.1-candidate.1.md)，更早记录见[历史索引](history-1.0.0.md)。
 
 ## 当前组成
 
-1.0.0 复用 `dist/DualSP/cores/0.1.9/DualSP.dll`，SHA256 为 `46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1`。本轮仅因可见标题更名而重新编译 UI；武器核心不重编译，Lua 逻辑沿用用户确认的性能候选。
+1.0.1 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`，与实测候选一致。正式整理只因标题变化重编译 UI；武器核心和 Lua 功能逻辑不变。0.1.9 核心保留供 1.0.0 历史版本使用。
 
-内部 DualSP 名称、导出、配置格式保持不变。VERSION、main.lua 加载标记、管理窗口标题、发布包和说明使用 1.0.0。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
+内部名称 DualSP 不变；配置 schema=1、management_revision=2，管理协议为 2。VERSION、加载标记、窗口标题与当前说明统一为 1.0.1，无新发布包。不要把旧 `dist/DualSP/bin/DualSP.dll` 当作当前核心。
 
 ## 开发入口
 
@@ -15,8 +17,8 @@
 | `src/build-ui.cmd` | 编译当前 UI；输出 dist/DualSP/bin/DualSPUI.dll |
 | `src/build-core-portable.cmd` | 独立候选核心输出到 build-core，不覆盖旧正式核心 |
 | `src/build.cmd` | 两种构建入口；只需改 UI 时不要调用它 |
-| `src/install-resupply-candidate.py --experience` | 已有本机安装的受控升级，支持当前 1.0.0；历史文件名保留，避免重写已验证部署流程 |
-| `src/package-release.py --redist-root <_CommonRedist路径>` | 按显式文件清单打包，不调用旧 payload 同步器；校验后输出独立 ZIP |
+| `src/install-resupply-candidate.py --experience` | 现有本机安装受控升级，支持 1.0.1；保留历史脚本名 |
+| `src/package-release.py --redist-root <_CommonRedist路径>` | 仅保留的 1.0.0 打包入口，本轮不运行，不能直接生成 1.0.1 |
 | `src/inspect_*` | 用户自有资源的研究工具，原始资源和中间结果放 Temp |
 | `tests/` | 历史回归模块，非自动流程；未经用户要求不运行或新增 |
 
@@ -41,3 +43,6 @@ LLVM-MinGW 默认位置见[工具清单](../tools/README.md)，可以通过 DUAL
 当前源码、版本 DLL、加载器、第三方许可、研究结论和发布回执进入 Git。Release ZIP、运行库、原始音频、Temp、backup 和个人状态不入 Git；不自动推送。旧 0.1.7 ZIP 及 baseline 清单保持原值。
 
 1.0.0 的版本号不是全面稳定性保证。用户复测、离线核验和未覆盖场景分别记录，不把语法检查等同实机测试。菜单操作授权不包含代理出击或发射武器。
+## 管理参数第 2 版部署
+
+本轮仅需重编译管理 UI，候选武器核心不变。Lua/UI 必须成套部署，management_protocol=2；运行时首次迁移 profiles.json 后管理参数 revision=2。安装器仍在启动前验证原配置未变，启动后的预期参数迁移须另行回读并核对机体方案未变，不能把两者混为同一核验。不得用旧 UI 搭配新的设置请求字段。

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-15",
+  "user_report": "Steam 语言改为 English 后 F8 无法打开，要求关闭游戏修复再启动",
+  "log": "2026-10-15T01:38:31Z RUNTIME_MODE disabled multiplayer_mode world=World /Game/UI/Menu/Boot.Boot mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceUIGameMode.AceUIGameMode_C",
+  "live_read_only_process": 23220,
+  "hierarchy": ["AceUIGameMode_C", "UIGameMode", "LobbyGameMode", "MultiPlayerGameMode", "NimbusGameMode", "GameMode", "GameModeBase", "Info", "Actor", "Object"],
+  "diagnosis": "上一修正只移除 LobbyGameMode，遗漏其父类 MultiPlayerGameMode 仍会匹配共享 UI 模式，与 English 本身无关",
+  "change": "联网状态优先禁止；已知菜单地图中的 UIGameMode 交由当前多人页面及过渡锁定识别；其他多人模式继续禁止；菜单管理器必须属于当前世界",
+  "installed_at": "2026-10-15T09:42:29.457113+08:00",
+  "game_restarted_process": 26164,
+  "runtime_after_fix": "2026-10-15T01:42:43Z RUNTIME_MODE enabled singleplayer_menu；GAME_TEXT_CULTURE en；CATALOGUE_READY",
+  "ui_state_verified": {"management_protocol": 1, "game_language": "en", "language": "zh", "plane_name": "Select an aircraft", "error_present": false},
+  "f8_user_interaction_verified": false,
+  "mission_started_by_agent": false,
+  "multiplayer_verified": false,
+  "test_modules_run": false
+}

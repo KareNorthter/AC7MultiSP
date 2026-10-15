@@ -1,7 +1,23 @@
 # 精选证据索引
 
-## 当前 1.0.0
+## 当前 1.0.1
 
+- [用户验证](1.0.1-user-validation.json)：用户反馈一切正常；日志补充双 SP 补给成功且继续切换。记录验证边界，不外推所有任务均已覆盖。
+- [正式安装回执](1.0.1-installed.json)：独立正式核心与正式标题 UI 成套安装；本轮不重启游戏、不制作 ZIP。
+
+## 1.0.1 候选
+
+以下为历史过程，待验证与失败修正状态不覆盖当前正式版结论。
+
+- [管理参数第 2 版](1.0.1-candidate1-management-revision2.json)：用户确认多人屏蔽和英文正常；记录 F8 精简、语言/档位迁移，以及补给 NO WEAPON 日志与用户复测决定。
+- [菜单继承与英文启动](1.0.1-candidate1-menu-inheritance.json)：前一次修正仍失败，现场确认 UIGameMode 经 LobbyGameMode 继承 MultiPlayerGameMode。当前已重装并启动，日志确认单人菜单启用、语言 en；F8 实际操作仍待用户确认。
+- [共享菜单误禁用](1.0.1-candidate1-mode-regression.json)：用户启动后全部失效；LobbyGameMode 为共享菜单类型，已移除其多人专用判定并重新安装，实际恢复待验证。[首次安装回执](1.0.1-candidate.1-initial-installed.json) 单独保留。
+- [修订依据](1.0.1-candidate1-findings.json)：多人识别、英文提示及补给 HUD 的源码/反射依据，实玩待用户验证。
+- [安装回执](1.0.1-candidate.1-installed.json)：独立核心、UI、9 个 Lua、音频与版本的安装核对及旧配置/存档保护。
+
+## 历史 1.0.0
+
+- [补给起飞后右下 HUD 短暂闪回](1.0.0-post-resupply-hud-flash.json)：2026-10-15 用户反馈，约几百毫秒后自行恢复；仅记录、暂不修复，原因未确认。
 - [用户验证](1.0.0-user-validation.json)：性能候选实测没有问题，整理为 AC7DualSP 1.0.0。
 - [安装核验](1.0.0-installed.json)：当前版本的文件、接口、语法、配置与存档保护记录。
 - [发布核验](1.0.0-release.json)：独立 ZIP 的成员及哈希、运行库签名，不代表实机功能测试。

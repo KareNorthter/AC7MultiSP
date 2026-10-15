@@ -1,6 +1,8 @@
 # 架构与关键约束
 
-返回[项目入口](../AGENTS.md)。本文描述 **AC7DualSP 1.0.0**；修订经过与旧方案见[历史索引](history-1.0.0.md)。
+> 1.0.1 候选增量：runtime_context.lua 只读核对网络模式、GameMode、当前菜单页面与文本文化；Lua、核心及 UI 均以单人许可控制功能。模式切换清空旧事务，延迟回调绑定模式代次。补给 HUD 保留并在 YES 交接后预建，只在成功初始化后提交真实数据；详见[候选说明](version-1.0.1-candidate.1.md)。下文为 1.0.0 基线。
+
+返回[项目入口](../AGENTS.md)。当前正式版为 **AC7DualSP 1.0.1**，沿用下文的 1.0.0 基线与已说明的 1.0.1 增量；版本范围见[1.0.1](version-1.0.1.md)，更早方案见[历史索引](history-1.0.0.md)。
 
 ## 模块
 
@@ -49,8 +51,16 @@ selection_wave.hpp 使用系统 XAudio2 2.9，SP2 WAV 增益为原生音效音�
 
 ## HUD 与失败边界
 
-中央为干净 TextBlock，固定正常绿色、局部绿色泛光，字号原生的 10/9；不复制动态颜色绑定或隐藏动画。中央与右下未就绪时亮度为正常 35%，共用只读就绪采样，各有独立开关并服从全局显隐。
+中央为干净 TextBlock，固定正常绿色、局部绿色泛光，字号原生的 10/9；不复制动态颜色绑定或隐藏动画。中央与右下未就绪时亮度为正常 35%，共用只读就绪采样并服从全局显隐。1.0.1 管理参数第 2 版仅中央保留开关，右下固定启用。
 
 武器错误停止修改；UI 错误明确展示与记录，不静默改用其他界面。控件关闭要还原原生状态，不能用吞错继续冒充接入成功。安装器拒绝不匹配的 DLL/Lua/加载器组合。
 
 细节依据保留在[核心研究](research/core-findings.md)、[弹药](research/sp-ammunition.md)、[原生流程](native-flow-revision.md)、[输入音效](input-audio-revision.md)与[补给阶段身份](resupply-completion-revision.md)。
+
+## 模式识别注意事项
+
+2026-10-15 现场确认：AceUIGameMode_C → UIGameMode → LobbyGameMode → MultiPlayerGameMode。两种父类型都不能单独证明正在进行多人游戏。先拒绝联网世界，再将已知菜单地图中的 UIGameMode 交给页面识别；非共享菜单中的多人类型继续禁止。共享菜单仍检查多人页面和过渡锁定，不等于整张菜单地图无条件放行。详见 1.0.1 候选说明。
+
+## 管理参数第 2 版
+
+当前右下 HUD 与直接选择固定启用，中央简称独立开关；移除未购买兵装试用逻辑。UI 与 Lua 共用 management_protocol=2，配弹仅允许 50% 至 100% 的 5% 档位。profiles.json 的 management_revision=2 标记一次性迁移，机体方案不变。详细迁移规则见[管理说明](mod-management.md)。

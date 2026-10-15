@@ -2,7 +2,8 @@
 local Flow={}
 local function copy(p)return {a=p.a,b=p.b,ratio=p.ratio}end
 -- 出击与补给共用双选规则，最终确认文字由原生页面用途决定。
-function Flow.new(profile,options,reviewLabel,mode)
+function Flow.new(profile,options,reviewLabel,mode,translate)
+    local tr=assert(translate,"缺少双选草稿语言提供器") -- 不改变草稿协议，只提供用户文字。
     assert(#options==3,"Native loadout requires the aircraft's three SP options")
     local self={stage="sp1",cursor=1,draft=copy(profile),options=options,message=nil}
     local takeoffReview=mode=="resupply" -- 补给保留 YES/NO；出击确认 SP2 后直接交接。
@@ -19,10 +20,10 @@ function Flow.new(profile,options,reviewLabel,mode)
                     rows[#rows+1]={weapon=index-1,enabled=option.owned,code=option.code:upper()}
                 end
             end
-            rows[#rows+1]={weapon=-1,enabled=true,code="无兵装 / NO WEAPON"}
+            rows[#rows+1]={weapon=-1,enabled=true,code=tr("无兵装","NO WEAPON")}
         elseif self.stage=="review"then
             if takeoffReview then
-                rows={{action="takeoff",code="是 / YES",enabled=true},{action="reselect",code="否 / NO",enabled=true}}
+                rows={{action="takeoff",code=tr("是","YES"),enabled=true},{action="reselect",code=tr("否","NO"),enabled=true}}
             end -- 出击没有额外确认菜单；review 只作为双选已完成的内部状态。
         end
         return rows
@@ -38,7 +39,7 @@ function Flow.new(profile,options,reviewLabel,mode)
     function self:confirm()
         assert(self.stage~="review"or takeoffReview,"双 SP 已确认，正在返回 STANDBY")
         local row=self:rows()[self.cursor]
-        if not row.enabled then self.message="该兵装尚未购买";return "blocked"end
+        if not row.enabled then self.message=tr("该兵装尚未购买","This weapon has not been purchased");return "blocked"end
         self.message=nil
         if self.stage=="sp1"then
             -- 每次确认 SP1 都重新选择 SP2，旧配置不能冒充本轮已经确认的兵装。
