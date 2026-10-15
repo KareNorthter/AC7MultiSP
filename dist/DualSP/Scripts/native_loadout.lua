@@ -271,12 +271,57 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         c.visualRestored=true
     end
+    local function showModelWait(pending)
+        -- 过渡期间只展示等待状态，不能先露出原生单 SP 列表/参数再跳成双栏。
+        if standby and self.cache then return end -- 已存在的双栏维持到资料就绪，不退回原生单栏。
+        if not panelClass then api()end
+        local view={owner=pending.owner,added={},masked={},moved={},texts={}} -- 复用现有控件所有权与归还流程。
+        pending.view=view
+        local info -- 各页面仅遮蔽兵装区域，机体背景、导航和整页根节点仍由游戏管理。
+        if standby then
+            if parts then info=pending.owner.AircraftWeaponInformation else info=pending.owner.ReviewInformation end
+            assert(valid(info),"等待中的只读兵装信息区缺失")
+            local ammo=info.HangarAircraftBoardWeaponsAmmo -- 保留 GUN/MSL 等其他行，只替换原 SP 行的文字。
+            assert(valid(ammo)and valid(ammo.WeaponsSP1),"等待中的只读弹药模板缺失")
+            local row=controls(ammo.WeaponsSP1) -- 不显示尚未确认的名称或弹数。
+            setText(view,clone(view,assert(row.WeaponsName),false),"SP1 / SP2")
+            setText(view,clone(view,assert(row.WeaponsAmmo),false),"…")
+            mask(view,info.HangarSpecGroupR)
+            mask(view,info.HangarAircraftWeaponNameShortR)
+            mask(view,info.HangarAircraftWeaponType)
+            return
+        end
+        local base=pending.owner.LightMenuBaseWidget -- 列表标题、说明与三条原生兵装行。
+        assert(valid(base),"等待中的原生兵装列表缺失")
+        local list=controls(base)
+        setText(view,clone(view,assert(list.TitleText),false),tr("特殊兵装 1 / 2","SP WEAPON 1 / 2"))
+        setText(view,clone(view,assert(list.DescriptionText),false),tr("正在加载兵装，请稍候……","Loading weapons. Please wait..."))
+        for index=0,2 do mask(view,assert(list["ItemText"..index]))end
+        info=pending.owner.WeaponInformation
+        assert(valid(info)and valid(info.HangarAircraftAllWeaponsAmmo),"等待中的兵装信息区缺失")
+        local ammo=info.HangarAircraftAllWeaponsAmmo -- 两条 SP 占位，不展示原单 SP 内容或猜测载量。
+        for index=1,2 do
+            local row=controls(ammo["WeaponsSP"..index])
+            setText(view,clone(view,assert(row.WeaponsName),false),"SP"..index)
+            setText(view,clone(view,assert(row.WeaponsAmmo),false),"…")
+        end
+        mask(view,ammo.WeaponsSP3)
+        mask(view,info.HangarSpecGroupR)
+        mask(view,info.HangarAircraftWeaponNameLong)
+        mask(view,info.HangarAircraftWeaponProperties)
+        mask(view,info.HangarAircraftWeaponType)
+        mask(view,pending.owner.LightMenuItemIconStatusWidget)
+        mask(view,pending.owner.LightMenuItemIconCategoryWidget)
+        local manager=pending.owner:GetUIManagerActor() -- 原金色选择光标不能停留在已遮蔽的单选列表上。
+        assert(valid(manager)and valid(manager.MenuForegroundWidget),"等待中的原生前景选择器缺失")
+        mask(view,manager.MenuForegroundWidget.ScrollCanvas)
+    end
     local function clearModelWait(releaseInput)
-        -- 只归还等待阶段借用的说明文字和输入，不改变根节点显隐。
+        -- 就绪时在同一回调内归还模板并接入双栏；只有离页或明确失败才恢复原生显示。
         local pending=self.modelWait -- 等待记录绑定具体页面、机体及世界。
         if not pending then return end
         self.modelWait=nil
-        if valid(pending.description)then pending.description:SetText(FText(pending.originalText))end
+        restoreVisual(pending.view)
         if pending.inputOwned and releaseInput~=false and valid(pending.owner)and pending.owner:IsVisible()then
             setControl(pending.owner,pending.originalControl)
         end
@@ -296,14 +341,10 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local pending={owner=owner,planeId=planeId,world=instance:GetWorld():GetAddress(),started=now} -- 当前等待上下文。
             self.modelWait=pending
             if not standby then
-                if not panelClass then api()end
-                pending.description=controls(owner).DescriptionText
-                assert(valid(pending.description),"机库等待提示控件缺失")
-                pending.originalText=pending.description.Text:ToString()
                 pending.originalControl=owner:IsEnableControl();pending.inputOwned=true
                 setControl(owner,false) -- 等待期间不允许原生单 SP 消费确认键。
-                pending.description:SetText(FText(tr("正在加载机体兵装，请稍候……","Loading aircraft weapons. Please wait...")))
             end
+            showModelWait(pending)
             note("NATIVE_MODEL_WAIT plane="..planeId.." "..reason)
         end
         self.status="waiting_model"

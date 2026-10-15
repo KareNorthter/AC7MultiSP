@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-15",
+  "version": "1.0.2",
+  "user_principle": "正常过渡尽量不露出原生单 SP 选装/HUD；真正接入失败允许恢复原生单 SP",
+  "changes": [
+    "等待时遮蔽原生兵装列表、参数、候选弹药与金色光标，显示加载提示和 SP1/SP2 占位",
+    "只读页已存在双栏时保留双栏，否则遮蔽单兵装信息并显示占位",
+    "模型就绪后在同一回调内归还模板并接入双选，不主动插入原生单选显示阶段",
+    "真正失败或 10 秒超时继续记录错误并恢复原生功能",
+    "不隐藏整页根节点；已有任务 HUD 接管逻辑保持不变"
+  ],
+  "repository_native_loadout_sha256": "B82FAB61D26ABEC4DCB34235651DB37252344E0733E48A76C6B27064E7FC0CD6",
+  "installed_native_loadout_sha256": "A49ACB961AB63E1E5F96DA9BC75D69E66DAC5912AB8F6DF41953990C6C08365D",
+  "installed_main_sha256": "D477666B445C37D1DAE22A3D625BC12861BCCD4A833E50DBAEAF77FC3B70897C",
+  "lua_syntax_checked": true,
+  "diff_whitespace_checked": true,
+  "runtime_verified": false,
+  "visual_continuity_verified": false,
+  "deployed": false,
+  "game_process_id": 20608,
+  "game_process_started": "2026-10-15 15:35:32 Asia/Shanghai",
+  "game_stopped_or_restarted": false,
+  "tests_added_or_run": false,
+  "core_ui_rebuilt": false,
+  "archive_created": false
+}
