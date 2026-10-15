@@ -1,6 +1,6 @@
 # HUD-SP-SILHOUETTE-001：特殊兵装装填剪影偶发不匹配
 
-当前状态（2026-10-15）：用户已授权修复。候选 `1.0.2-su30sm-three-sp.2` 同步刷新原生贴图缓存与显隐重绘标志，实玩效果待复测。见[本次修订](three-sp-switch-hud-fix.txt)及[原生函数证据](../../evidence/three-sp-switch-hud-research.json)。以下是最初登记时的历史范围，不再作为禁止修复的依据。
+当前状态（2026-10-15）：用户已授权修复。候选 `1.0.2-su30sm-three-sp.2` 同步刷新原生贴图缓存与显隐重绘标志，用户随后确认武器切换和剪影均正常，见[复测证据](../../evidence/su30sm-three-sp-candidate.2-user-validation.json)。见[本次修订](three-sp-switch-hud-fix.txt)及[原生函数证据](../../evidence/three-sp-switch-hud-research.json)。以下是最初登记时的历史范围，不再作为禁止修复的依据。
 
 2026-10-15，用户在 Su-30SM 固定挂载候选 `1.0.2-su30sm-mount.2` 中反馈：6AAM 本应显示六枚导弹的装填图标，偶尔变成两枚，并与 LAGM 剪影相同。用户明确要求本次只记录、不修复，继续其他固定挂载研究。
 

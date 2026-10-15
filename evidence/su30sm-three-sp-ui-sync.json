@@ -1,0 +1,30 @@
+{
+  "requested_thread": "01a13edb-e42d-7502-9e1f-2618ea8e973c",
+  "source_title": "研究三种SP搭载与出击",
+  "source_head": "5628a6277055578fdf410b1329650e42e6b3ecc4",
+  "source_working_files": {
+    "dist/DualSP/Scripts/native_loadout.lua": "6355eaeca460dc9740deca76ff30997ce90ccbd560e89a2a4cb9c28bbd23d3aa",
+    "docs/research/sp-stat-style.txt": "e815ed04c0835d0109b2ce04e5743190266756bb344b44f484a58ac5124d8690",
+    "evidence/three-sp-preparation-width-prepared.json": "637427f16210d57598bb943212c588d79149cafca5b64faa49074d6f1b8d6c9d",
+    "evidence/three-sp-resupply-layout-prepared.json": "f4148d072c02093c6cdb958ad2a9a0221c914a62b65b9a8593bad6cb16bad72d",
+    "evidence/three-sp-standby-layout-prepared.json": "e0bfacb3c2dc2712c2081bb96ebec27d03ec50a865a4c76bc84aaf5adcd7df02",
+    "evidence/three-sp-stat-style-prepared.json": "0532433d18e7fe3e4de3617156b75ca78d789f40e383c3fea88151aebcbf00f8"
+  },
+  "source_snapshot_stable": true,
+  "source_ui_uncommitted": true,
+  "scope": "只同步 native_loadout.lua 与其设计证据；原线程 main/native_hud 不覆盖已验证修复",
+  "source_gameplay_verified": false,
+  "target_candidate": "1.0.2-su30sm-three-sp.3",
+  "target_branch": "codex/three-sp-switch-hud-fix",
+  "test_modules_run": false,
+  "game_started_by_agent": false,
+  "compiled": true,
+  "lua_syntax_verified": true,
+  "installed": true,
+  "gameplay_verified": false,
+  "build_receipt": "evidence/su30sm-three-sp-candidate.3-build.json",
+  "install_receipt": "evidence/su30sm-three-sp-candidate.3-installed.json",
+  "weapon_core_source_preserved": true,
+  "fixed_mount_source_preserved": true,
+  "hud_fix_source_preserved": true
+}

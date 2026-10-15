@@ -429,7 +429,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         else
             widget:SetColorAndOpacity(c.tint);widget.bIsTextHidingEnable=false
             local font=widget.Font -- 三槽信息字体，字号不随原生候选动画漂移。
-            font.Size=math.min(font.Size,standby and 16 or 18);widget:SetFont(font)
+            font.Size=math.min(font.Size,18);widget:SetFont(font)
         end
         return widget
     end
@@ -445,21 +445,46 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         panel:SetVisibility(VISIBLE)
         return panel
     end
+    -- 复用原生基础条与三条细边框；空白部分保持透明，不铺满宽度的底色。
+    local function performanceBar(c,source,parent,position,width)
+        assert(valid(source)and valid(source.BarA),"原生性能基础条缺失")
+        local bottom,left,right=source.BaseImage1,source.BaseImage2,source.BaseImage3 -- 原资源分别为底、左、右边框。
+        assert(valid(bottom)and valid(left)and valid(right),"原生性能边框缺失")
+        local fillHeight=bottom.Slot:GetPosition().Y -- 机库 17、补给 16；保留各页原生高度和线宽。
+        local frameHeight=right.Slot:GetSize().Y -- 两种原生边框总高均为 18。
+        local leftWidth,rightWidth=left.Slot:GetSize().X,right.Slot:GetSize().X -- 机库 1、补给 2。
+        local bottomHeight=bottom.Slot:GetSize().Y -- 底边线厚度，不跟随横向栏宽拉伸。
+        local fillWidth=width-rightWidth -- 右边框占用的空间不计入性能值范围。
+        assert(fillHeight>0 and fillHeight<frameHeight and frameHeight<=24
+            and leftWidth>0 and rightWidth>0 and bottomHeight>0 and fillWidth>0,"原生性能边框尺寸不符")
+        -- 图片同时保留画刷、颜色透明度与局部泛光，避免重复乘蓝色或改成实心色块。
+        local function image(template,x,y,w,h,z)
+            local widget=infoWidget(c,template,parent,{X=position.X+x,Y=position.Y+y},{X=w,Y=h},true) -- 新叶控件，不复制原生动画状态。
+            widget:SetColorAndOpacity(template.ColorAndOpacity)
+            widget:SetGlowColor(template.GlowColor);widget:SetUseGlobalGlowColor(template.bUseGlobalGlowColor)
+            widget.Slot:SetZOrder(z)
+            return widget
+        end
+        local fill=image(source.BarA,0,0,fillWidth,fillHeight,0) -- 仅绘制目录中可核实的基础值。
+        image(bottom,0,fillHeight,width,bottomHeight,5)
+        image(left,0,0,leftWidth,frameHeight,5)
+        image(right,fillWidth,0,rightWidth,frameHeight,5)
+        -- 不复制绿色/黄色图层：未接通部件图表增量前，不能用装饰条冒充真实加成。
+        return {fill=fill,width=fillWidth,height=fillHeight}
+    end
     -- 全名位于性能上方；准备页弹药仅留在原右下汇总，补给保留独立数量。
     local function informationColumns(c,parent,origin,width,pitch,height,templates,ammoLabel,gap)
         c.columns={}
-        local tint=supply and c.tint.SpecifiedColor or templates.items[1].SpecBar.BarA.ColorAndOpacity
-        local detailsOffset=supply and 0 or 1.5*pitch -- 准备页为三行全名及半行留白预留高度，两栏基线一致。
-        -- 复用原三栏总宽，三栏不侵入左侧列表或屏幕外。
-        width=(2*width-gap)/3
+        local detailsOffset=1.5*pitch -- 选装和补给均为三行全名及半行留白预留高度。
+        -- 调用方传入每栏实际宽度，各页面按自己的可用区域排版。
         assert(width>=180,"三 SP 信息区宽度不足")
         for index=1,3 do
-            local panel=infoCanvas(c,parent,{X=origin.X+(index-1)*(width+gap),Y=origin.Y},{X=width,Y=height+detailsOffset})
+            local panel=infoCanvas(c,parent,{X=origin.X+(index-1)*(width+gap),Y=origin.Y},{X=width,Y=height})
             local column={bars={},barWidth=width*.40}
             c.columns[index]=column
             column.name=infoWidget(c,templates.name,panel,{X=0,Y=0},{X=width,Y=30},false)
             local inset=templates.icon and 36 or 0 -- 只有机库使用彩色类别图标，补给仍全绿色。
-            column.fullName=infoWidget(c,templates.fullName or templates.type,panel,{X=inset,Y=pitch},{X=width-inset,Y=(supply and 2 or 3)*pitch},false,true)
+            column.fullName=infoWidget(c,templates.fullName or templates.type,panel,{X=inset,Y=pitch},{X=width-inset,Y=3*pitch},false,true)
             if templates.icon then
                 column.icon=infoWidget(c,templates.icon,panel,{X=0,Y=pitch+3},{X=20,Y=20},true)
                 local material=StaticFindObject("/Game/UI/Menu/LightMenu/Materials/ItemIconCategoryMaterial_Inst0.ItemIconCategoryMaterial_Inst0")
@@ -473,16 +498,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 local y=(i+3)*pitch+detailsOffset -- 性能和类型整体下移，不挤压名称或内部行距。
                 local label=infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.58,Y=pitch},false) -- 标签与条形区分开。
                 local font=label.Font;font.Size=16;label:SetFont(font) -- 三栏缩短标签，保留全部性能项。
-                local track=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
-                track:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=.2})
-                local bar=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
-                bar:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=1});column.bars[i]=bar
+                column.bars[i]=performanceBar(c,item.SpecBar,panel,{X=width*.60,Y=y+4},column.barWidth)
             end
             column.typeHeading=infoWidget(c,templates.typeHeading,panel,{X=0,Y=10.2*pitch+detailsOffset},{X=width,Y=24},false)
             column.type=infoWidget(c,templates.type,panel,{X=0,Y=11*pitch+detailsOffset},{X=width,Y=2*pitch},false,true)
             if supply then
-                column.ammoHeading=infoWidget(c,templates.ammoHeading,panel,{X=0,Y=13.2*pitch},{X=width,Y=24},false)
-                column.ammo=infoWidget(c,templates.ammo,panel,{X=0,Y=14*pitch},{X=width,Y=32},false)
+                column.ammoHeading=infoWidget(c,templates.ammoHeading,panel,{X=0,Y=13.2*pitch+detailsOffset},{X=width,Y=24},false)
+                column.ammo=infoWidget(c,templates.ammo,panel,{X=0,Y=14*pitch+detailsOffset},{X=width,Y=32},false)
                 setText(c,column.ammoHeading,ammoLabel)
             end
             setText(c,column.typeHeading,"[TYPE]")
@@ -532,7 +554,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             end
             for stat,bar in ipairs(column.bars)do
                 local percent=option and option.stats[statOrder[stat]]or 0
-                bar.Slot:SetSize({X=column.barWidth*math.max(0,math.min(1,percent/100)),Y=16})
+                bar.fill.Slot:SetSize({X=bar.width*math.max(0,math.min(1,percent/100)),Y=bar.height})
+                bar.fill:SetVisibility(percent>0 and VISIBLE or COLLAPSED) -- EMPTY 保留边框，不留下零宽度亮线。
             end
             -- 准备页普通弹药汇总中的两个 SP 格与上方三栏保持一致。
             if c.ammo then
@@ -570,20 +593,21 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar)and valid(item.SpecBar.BarA),"准备性能项模板缺失")
             items[i]=item
         end
-        local origin=vec(group.Slot:GetPosition()) -- 右栏沿用原右侧性能区，左栏向左展开。
-        local width=canvasSlot(group.SpecGroupName):GetSize().X+items[1].Slot:GetPosition().X
-        local pitch=items[2].Slot:GetPosition().Y-items[1].Slot:GetPosition().Y
+        local origin=vec(group.Slot:GetPosition()) -- 以原生性能区右边界为基准，向左展开三栏。
+        local width=canvasSlot(group.SpecGroupName):GetSize().X+items[1].Slot:GetPosition().X -- 原生性能区宽度。
+        local pitch=items[2].Slot:GetPosition().Y-items[1].Slot:GetPosition().Y -- 沿用原生性能行距。
         assert(width>300 and width<450 and pitch>20 and pitch<60,"准备三栏尺寸不符")
-        origin.X=origin.X-width-76;origin.Y=origin.Y-1.5*pitch
-        assert(origin.X>900 and origin.Y>100,"准备三栏位置不符，停止接入")
+        local columnWidth,gap=320,36 -- 原生逻辑坐标；加宽名称和性能区，栏间仍留出明确间隔。
+        origin.X=origin.X+width-3*columnWidth-2*gap;origin.Y=origin.Y-1.5*pitch
+        assert(origin.X>700 and origin.Y>100,"准备三栏位置不符，停止接入")
         -- 新三栏挂信息区的根 Canvas，不能挂进随后折叠的原性能组件子树。
         local infoRoot=info.WidgetTree.RootWidget
         assert(valid(infoRoot)and infoRoot:GetClass():GetFullName()=="Class /Script/UMG.CanvasPanel","准备信息区根 Canvas 不符")
-        informationColumns(c,infoRoot,origin,width,pitch,13*pitch,
+        informationColumns(c,infoRoot,origin,columnWidth,pitch,14.5*pitch,
             {name=assert(ammoTemplate.WeaponsName),fullName=assert(fullNameTemplate.Name),icon=assert(fullNameTemplate.Icon),
              heading=assert(group.SpecGroupName),items=items,
              typeHeading=assert(typeTemplate.WeaponTypeLabel),type=assert(typeTemplate.WeaponTypeText),
-             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",76)
+             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",gap)
         c.ammo={}
         for i=1,3 do
             local widgets=controls(ammo["WeaponsSP"..i])
@@ -635,7 +659,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         self.status="sp1";self.error=nil
         return c
     end
-    -- STANDBY 在原右栏上下排列两套兵装，保留左侧机体性能、部件和底部操作提示。
+    -- STANDBY/PART 左栏展示机体、部件和弹药，右栏用完整高度排列三个 SP。
     local function attachStandby(owner,instance,planeId,profile,options)
         local c={owner=owner,instance=instance,planeId=planeId,world=instance:GetWorld():GetAddress(),
             added={},masked={},moved={},texts={},repositioned={},tint=color(.401978,.651406,1,1),columns={},ammo={},
@@ -647,42 +671,45 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         assert(valid(info)and valid(info.WidgetTree),"只读兵装信息区缺失："..mode)
         local root=info.WidgetTree.RootWidget
         local wrapper=info.HangarSpecGroupR;local group=valid(wrapper)and wrapper.SpecGroup
+        local leftWrapper=info.HangarSpecGroupL -- 左侧机体性能栏是弹药区的横向对齐基准。
+        local leftGroup=valid(leftWrapper)and leftWrapper.SpecGroup -- 两页均使用原生 SpecGroup 定位。
         local ammo=info.HangarAircraftBoardWeaponsAmmo
-        assert(valid(root)and valid(group)and valid(ammo)and valid(ammo.WeaponsSP1),"STANDBY 性能或弹药模板缺失")
+        assert(valid(root)and valid(group)and valid(leftGroup)and valid(ammo)and valid(ammo.WeaponsSP1),"STANDBY 性能或弹药模板缺失")
         local weaponTemplate=controls(ammo.WeaponsSP1)
         local typeTemplate=controls(info.HangarAircraftWeaponType)
         local origin=vec(group.Slot:GetPosition()) -- 原右栏在 1920 逻辑坐标中的 X=1442。
+        local leftOrigin=vec(leftGroup.Slot:GetPosition()) -- 同一逻辑坐标系中的左栏 X=1039。
         local width=canvasSlot(group.SpecGroupName):GetSize().X+group.SpecItem1.Slot:GetPosition().X
         assert(width>300 and width<450 and origin.X>1400 and origin.Y>100,"STANDBY 右栏布局已变化")
+        assert(leftOrigin.X>900 and leftOrigin.X+width<=origin.X,"STANDBY 左右栏对齐基准已变化")
         origin.Y=origin.Y-39 -- 对齐原右侧兵装名称，不侵占上方标题。
+        local cardPitch,cardHeight=252,240 -- 移走弹药区后增加卡片高度，三组底部仍避开原生操作栏。
+        local statTop,statPitch=34,26 -- 性能行从 18 增至 26，文字与条形不再紧贴。
         for index=1,3 do
-            local panel=infoCanvas(c,root,{X=origin.X,Y=origin.Y+(index-1)*182},{X=width,Y=176})
+            local panel=infoCanvas(c,root,{X=origin.X,Y=origin.Y+(index-1)*cardPitch},{X=width,Y=cardHeight})
             local column={bars={},barWidth=width*.40};c.columns[index]=column
             column.name=infoWidget(c,assert(weaponTemplate.WeaponsName),panel,{X=0,Y=0},{X=width,Y=30},false)
             for stat=1,6 do
                 local item=group["SpecItem"..stat] -- 性能名称和画刷取自原生右侧兵装组。
                 assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar.BarA),"STANDBY 性能模板缺失")
-                local y=27+(stat-1)*18
-                infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.52,Y=18},false)
-                local tint=item.SpecBar.BarA.ColorAndOpacity
-                local track=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
-                track:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=.2})
-                local bar=infoWidget(c,item.SpecBar.BarA,panel,{X=width*.60,Y=y+4},{X=column.barWidth,Y=16},true)
-                bar:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=1});column.bars[stat]=bar
+                local y=statTop+(stat-1)*statPitch -- 六行性能共用固定节奏，随原生父容器缩放。
+                infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.52,Y=statPitch},false)
+                column.bars[stat]=performanceBar(c,item.SpecBar,panel,{X=width*.60,Y=y+4},column.barWidth)
             end
-            column.type=infoWidget(c,assert(typeTemplate.WeaponTypeText),panel,{X=0,Y=138},{X=width,Y=38},false,true)
-            -- 部件加成及比例处理后的载弹量统一放在下方弹药区。
+            column.type=infoWidget(c,assert(typeTemplate.WeaponTypeText),panel,{X=0,Y=194},{X=width,Y=46},false,true)
+            -- 部件加成及均分后的载量统一放在左下弹药区，不占用右侧卡片。
             local ammoParent=ammo.WeaponsSP1.Slot.Parent
             c.ammo[index]={name=infoWidget(c,weaponTemplate.WeaponsName,ammoParent,{X=217,Y=26+(index-1)*34},{X=108,Y=32},false),
                 count=infoWidget(c,assert(weaponTemplate.WeaponsAmmo),ammoParent,{X=325,Y=26+(index-1)*34},{X=56,Y=32},false)}
             column.ammo=c.ammo[index].count
         end
-        -- 原弹药容器内部 Canvas 独立定位，向下移开双兵装区，不移动左侧部件信息。
+        -- 整块移动原弹药 Canvas，保留 GUN/MSL/FLR、三个 SP 及标题的相对排版。
         local ammoCanvas=ammo.WeaponsSP1.Slot.Parent
         c.repositioned[1]={widget=ammoCanvas,layout=readLayout(ammoCanvas.Slot,ammoCanvas)}
         assert(c.repositioned[1].layout.kind=="canvas","STANDBY 弹药区不是 Canvas 布局")
-        local ammoPosition=ammoCanvas.Slot:GetPosition()
-        ammoCanvas.Slot:SetPosition({X=ammoPosition.X,Y=origin.Y+560})
+        local ammoPosition=ammoCanvas.Slot:GetPosition() -- 原弹药块比右侧性能基准多 5 个逻辑像素。
+        local ammoTop=leftOrigin.Y+460 -- 在左侧部件信息下留白；当前原生坐标对应 Y=673。
+        ammoCanvas.Slot:SetPosition({X=ammoPosition.X+leftOrigin.X-origin.X,Y=ammoTop})
         mask(c,ammo.WeaponsSP1);mask(c,wrapper)
         mask(c,info.HangarAircraftWeaponNameShortR);mask(c,info.HangarAircraftWeaponType)
         paintColumns(c);self.status=mode;note("NATIVE_"..mode:upper().."_ATTACHED "..owner:GetFullName())
@@ -726,10 +753,46 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         self.status="waiting"
     end
-    -- 在 MissionResupply 原有背景内多槽选择，并列展示 SP1/SP2。
+    -- 扩大原生补给容器及背景边框；离页统一归还原布局，避免复用页面时越变越大。
+    local function expandSupplyPanel(c,parent,list)
+        local original=readLayout(parent.Slot,parent) -- 已核对资源采用左上锚点、固定尺寸。
+        assert(original.kind=="canvas"and original.anchors.Minimum.X==0 and original.anchors.Minimum.Y==0
+            and original.anchors.Maximum.X==0 and original.anchors.Maximum.Y==0
+            and original.alignment.X==0 and original.alignment.Y==0,"补给主容器定位方式已变化")
+        assert(original.size.X>1200 and original.size.X<1400 and original.size.Y>500 and original.size.Y<650,"补给原面板尺寸已变化")
+        local size={X=1680,Y=680} -- 原生 1920×1080 逻辑坐标，左右仍保留约 120 的屏幕边距。
+        -- 每个原控件先记录再修改，成功退出和接入报错均走同一还原流程。
+        local function resize(widget,position,dimensions)
+            assert(valid(widget)and valid(widget.Slot),"补给背景或边框缺失")
+            assert(widget:GetAddress()==parent:GetAddress()or widget.Slot.Parent:GetAddress()==parent:GetAddress(),"补给背景或边框不属于主容器")
+            local layout=readLayout(widget.Slot,widget) -- 不保存可被随后 SetSize 改写的结构引用。
+            assert(layout.kind=="canvas"and layout.anchors.Minimum.X==0 and layout.anchors.Minimum.Y==0
+                and layout.anchors.Maximum.X==0 and layout.anchors.Maximum.Y==0,"补给背景或边框定位方式已变化")
+            c.repositioned[#c.repositioned+1]={widget=widget,layout=layout}
+            widget.Slot:SetPosition(position);widget.Slot:SetSize(dimensions);widget.Slot:SetAutoSize(false)
+        end
+        resize(parent,{X=original.position.X-(size.X-original.size.X)/2,Y=original.position.Y-(size.Y-original.size.Y)/2},size)
+        local backgroundLeft,backgroundRight=list.Background_Left,list.Background_Right -- 原生左右渐变背景分别延展。
+        assert(valid(backgroundLeft)and valid(backgroundRight),"补给左右背景缺失")
+        local split=backgroundLeft.Slot:GetSize().X/original.size.X*size.X -- 保留原左右背景的宽度比例。
+        assert(split>0 and split<size.X,"补给背景分界不符")
+        resize(backgroundLeft,{X=0,Y=0},{X=split,Y=size.Y})
+        resize(backgroundRight,{X=split,Y=0},{X=size.X-split,Y=size.Y})
+        for _,name in ipairs({"Border_TOP","Border_BTM","Border_Left","Border_Right"})do
+            local border=assert(list[name],"补给边框缺失："..name) -- 四条边框只延长跨度，保留原线厚。
+            local oldSize=border.Slot:GetSize() -- 水平边取高度，垂直边取宽度。
+            local horizontal=name=="Border_TOP"or name=="Border_BTM"
+            local thickness=horizontal and oldSize.Y or oldSize.X -- 原生 2 个逻辑像素。
+            assert(thickness>0 and thickness<=4,"补给边框线厚异常")
+            resize(border,{X=name=="Border_Right"and size.X-thickness or 0,Y=name=="Border_BTM"and size.Y-thickness or 0},
+                {X=horizontal and size.X or thickness,Y=horizontal and thickness or size.Y})
+        end
+        return size
+    end
+    -- 在扩大的原生补给背景内多槽选择，并列展示三个 SP；不改变原生确认事务。
     local function attachSupply(owner,instance,planeId,profile,options)
         assert(self.phase and valid(self.phaseObject),"补给菜单缺少原生阶段绑定")
-        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,
+        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},repositioned={},lastPaint=nil,
             originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr),phase=self.phase,phaseWorld=self.phaseWorld,
             takeoffPending=false,visualRestored=false}
         self.cache=c
@@ -783,14 +846,10 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local ammoPanel=assert(list.WeaponAmmoPanel,"补给弹药区域缺失")
         local parent=group.Slot.Parent
         assert(parent:GetAddress()==video.Slot.Parent:GetAddress()and parent:GetAddress()==typePanel.Slot.Parent:GetAddress(),"补给信息区域不在同一原生容器")
-        local mainSize=parent.Slot:GetSize()
-        local anchors=parent.Slot:GetAnchors()
-        assert(math.abs(anchors.Maximum.X-anchors.Minimum.X)<.001 and math.abs(anchors.Maximum.Y-anchors.Minimum.Y)<.001,"补给主容器尺寸模式已变化")
-        local origin=video.Slot:GetPosition()
-        local right=typePanel.Slot:GetPosition().X+typePanel.Slot:GetSize().X
-        local gap=50 -- 拉开两栏，给左栏介绍和列间留白；整体仍由原生页面缩放。
-        local width=(math.min(right,mainSize.X-20)-origin.X-gap)/2
-        assert(width>250 and width<600 and mainSize.Y>450,"补给三栏可用空间不符")
+        local mainSize=expandSupplyPanel(c,parent,list) -- 同时扩大背景和四边框，并保持原面板中心。
+        local origin={X=560,Y=48} -- 左侧保留列表、操作提示及 458 宽的武器说明。
+        local columnWidth,gap=320,40 -- 三栏宽度与机库选装一致，标题及性能标签不再挤在一起。
+        assert(origin.X+3*columnWidth+2*gap<=mainSize.X-60,"补给三栏超出面板安全边距")
         local items={} -- 直接使用已核对的 SpecName/SpecBar 原生变量，不复制 UserWidget 子树。
         for i=1,6 do
             local item=group["SpecItem"..i]
@@ -799,12 +858,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         local pitch=items[2].Slot:GetPosition().Y-items[1].Slot:GetPosition().Y
         assert(pitch>20 and pitch<60,"补给性能行距不符")
-        pitch=32 -- 原生 35 行距令弹药贴近下边框，收紧纵向节奏并增加底部留白。
-        informationColumns(c,parent,origin,width,pitch,mainSize.Y-origin.Y-20,
+        pitch=34 -- 加高面板后放宽行距；三行全名、类型和弹药各自保留空间。
+        assert(origin.Y+15.5*pitch+32<=mainSize.Y-40,"补给弹药信息超出面板安全边距")
+        informationColumns(c,parent,origin,columnWidth,pitch,mainSize.Y-origin.Y-20,
             {name=list.WeaponAmmo_Text,heading=assert(group.SpecGroupName),items=items,
              typeHeading=list.WeaponType_Label,type=list.WeaponType_Text,
              ammoHeading=list.WeaponAmmo_Label,ammo=list.WeaponAmmo_Text},"[WEAPONS AMMO]",gap)
-        -- 说明仅占左侧列表下方，不再延伸至新的两栏。
+        -- 说明仅占左侧列表下方，与右侧三栏保留明确间隔。
         local descriptionX=72 -- 与原生左侧列表标题的逻辑基线对齐。
         local descriptionWidth=origin.X-descriptionX-30 -- 与右侧信息栏保留间隙。
         c.weaponDescription=clone(c,assert(list.WeaponDescriptionText),false,true,descriptionWidth)
@@ -821,7 +881,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         setControl(owner,false)
         c.previous=inputs(c);c.repeatAt=0
         self.status="sp1";self.error=nil
-        note(string.format("NATIVE_RESUPPLY_ATTACHED %s columns=%.1f pitch=%.1f",owner:GetFullName(),width,pitch))
+        note(string.format("NATIVE_RESUPPLY_ATTACHED %s panel=%.0fx%.0f columns=%.1f pitch=%.1f",owner:GetFullName(),mainSize.X,mainSize.Y,columnWidth,pitch))
         return c
     end
     -- 悬停更新当前栏，另一栏保留已选兵装；确认页保留完整三栏。

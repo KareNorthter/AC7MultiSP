@@ -103,3 +103,6 @@ selection_wave.hpp 使用系统 XAudio2 2.9，SP2 WAV 增益为原生音效音�
 ## 独立三挂候选 .2 的切换与剪影提交
 
 仅 `codex/three-sp-switch-hud-fix`：Lua 类别切换在同一游戏线程完成原生按下、释放、核对及 HUD 提交，取消跨帧延迟和额外防抖等待。成功的兵装重建递增 `weapon_revision`，普通快照保持编号。右下 HUD 在编号或类别变化后调用 `dualsp_refresh_weapon_icons`，校验当前 HUD/玩家身份，再刷新原生贴图缓存并标记显隐重绘。原生每帧继续从实际装填窗口计算数量和进度，不使用固定挂点数量。具体依据与待验证范围见[修订说明](research/three-sp-switch-hud-fix.txt)。
+
+
+独立三挂候选 .3 只同步原生页面布局和基础性能条；兵装核心、固定挂载白名单及 .2 的同步切换/剪影提交保持原样。固定挂载属于任务实例，机库预览需独立生命周期；未适配组合明确使用原生当前 SP 模型。详见[同步与范围](research/su30sm-three-sp-ui-sync.txt)。

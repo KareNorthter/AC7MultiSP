@@ -1,0 +1,49 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.2",
+  "date": "2026-10-15",
+  "user_confirmed": [
+    "武器切换没问题了",
+    "HUD剪影也没问题"
+  ],
+  "user_observations": [
+    "ECM/UAV选择后不能多挂",
+    "准备界面机体仍显示单SP",
+    "补给后三挂改双挂恢复原生模型切换"
+  ],
+  "current_session_errors": [],
+  "hud_icon_commit_count": 140,
+  "resupply": {
+    "plane_id": 128,
+    "before": [
+      0,
+      1,
+      2
+    ],
+    "after": [
+      1,
+      2,
+      -1
+    ],
+    "after_weapons": [
+      "QAAM",
+      "LAGM"
+    ],
+    "interpretation": "已确认非固定挂载白名单组合，按设计使用原生模型切换；不是已支持的6AAM+LAGM失效"
+  },
+  "scope_limits": [
+    "补给降落演出模型未观察",
+    "本轮没有确认三挂检查点重来",
+    "不把其它机体泛化为固定挂载已通过"
+  ],
+  "log_evidence": [
+    "2026-10-15T12:03:54Z LOADOUT 128 {\"c\":2,\"b\":1,\"a\":0,\"ratio\":0.33333333333333}",
+    "2026-10-15T12:08:06Z NATIVE_RESUPPLY_FINISH_ACCEPTED 128",
+    "2026-10-15T12:08:09Z RESUPPLY_PROFILE_STAGED 128 {\"c\":-1,\"b\":2,\"a\":1,\"ratio\":0.5}",
+    "2026-10-15T12:08:09Z LOADOUT 128 {\"c\":-1,\"b\":2,\"a\":1,\"ratio\":0.5}",
+    "2026-10-15T12:08:09Z RESUPPLY_LOADOUT_APPLIED 128 {\"c\":-1,\"b\":2,\"a\":1,\"ratio\":0.5}"
+  ],
+  "logs_sha256": {
+    "mod.log": "b22432fea22ddcc7eca7197040b2731dcfa2e2da53412c3352da40b41ea773c8",
+    "native.log": "ccfd657d07ac01cb37f6c874543dd55af042ca0978fd344dfa6cf03980ea84b4"
+  }
+}

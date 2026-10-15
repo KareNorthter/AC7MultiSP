@@ -313,7 +313,7 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.2 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.2 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.3 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.3 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=3||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));

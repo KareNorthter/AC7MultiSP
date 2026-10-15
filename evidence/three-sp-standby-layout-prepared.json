@@ -1,0 +1,36 @@
+{
+  "recorded_at": "2026-10-15T19:47:35.638596+08:00",
+  "branch": "codex/three-sp-research",
+  "user_feedback": "UI 基本正常，有少许要优化；弹药块左移对齐机体性能栏并放在其下方，右侧三个 SP 放宽布局；改完暂不安装。",
+  "reference": "用户提供的 1920×1080 STANDBY 截图；只确认旧布局基本可用，不扩大到三 SP 飞行验证。",
+  "scope": [
+    "STANDBY",
+    "PART"
+  ],
+  "layout": {
+    "ammo_alignment": "按左右 SpecGroup 实际 X 差值平移整个弹药 Canvas，保留内部缩进",
+    "ammo_origin_reference": [
+      1044,
+      673
+    ],
+    "right_sp_origin_reference": [
+      1442,
+      174
+    ],
+    "card_pitch": 252,
+    "card_height": 240,
+    "stat_pitch": 26,
+    "font_cap": 18,
+    "last_card_bottom_reference": 918,
+    "layout_restored_on_exit": true
+  },
+  "source_sha256": "7194BDAFF4E4FEF9158D6E66907A961E44E3873FCC024CEB3502281E09931774",
+  "lua_syntax_compiled_without_execution": true,
+  "core_or_ui_built": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_state_changed": false,
+  "layout_verified_in_game": false,
+  "candidate_directory_regenerated": false,
+  "previous_build_receipt": "three-sp-candidate-build.json；旧清单及候选目录不包含此次布局调整，安装前需重新整理。"
+}

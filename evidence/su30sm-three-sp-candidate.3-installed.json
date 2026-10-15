@@ -1,0 +1,32 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.3",
+  "base": "1.0.2-su30sm-three-sp.2",
+  "runtime_files": {
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "bb249272ebca957713455cdaa54d285badaa0b397d006394b325a548e983139b",
+    "Scripts/loadout_profile.lua": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+    "Scripts/main.lua": "e5506f43e42413eaa70508831c536ceaf04024d26285804bd8189b20c60a9314",
+    "Scripts/native_hud.lua": "cc30120f651af8e09e25da68cb931b25202e48e6f7f9de2b79da00cebabbd1eb",
+    "Scripts/native_loadout.lua": "6355eaeca460dc9740deca76ff30997ce90ccbd560e89a2a4cb9c28bbd23d3aa",
+    "Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+    "Scripts/weapon_cycle.lua": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb",
+    "bin/DualSP.dll": "0a9b07047c85617134bbc0d0f8d960734cd49077c4924bd7a24e5b5d190b6a2c",
+    "bin/DualSPUI.dll": "0ef99bbf78cf01d4a6438e81473791ba7e7ad8fa2d84bd49753f9ed0ab62f8b3",
+    "VERSION": "064056144be5d5c1a5fe6630639407ab7e478e0a6b330c72fab79cd9c4e74daa"
+  },
+  "configuration_migration": "保留 schema 2，不再迁移",
+  "game_started_by_agent": false,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "installed": true,
+  "installed_at": "2026-10-15T20:22:07.058207+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\backup\\su30sm-three-sp-20261015-202207-058207",
+  "full_backup_verified": true,
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 5,
+  "main_worktree_modified": false
+}

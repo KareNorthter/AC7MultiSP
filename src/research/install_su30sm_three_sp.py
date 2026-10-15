@@ -1,4 +1,4 @@
-"""整套安装三 SP 固定挂载候选；限定首次迁移或 .1→.2，默认仅预检。"""
+"""整套安装三 SP 固定挂载候选；限定已登记的相邻升级，默认仅预检。"""
 import argparse
 from datetime import datetime, timedelta, timezone
 import importlib.util
@@ -24,8 +24,13 @@ def main():
         raise ValueError('候选必须来自当前工作区 Temp')
     receipt = json.loads((build / 'build-receipt.json').read_text(encoding='utf-8'))
     version = (root / 'VERSION').read_text(encoding='utf-8').strip()  # 只接受已列明的候选升级。
-    revision = version == '1.0.2-su30sm-three-sp.2'  # 此修订保留已迁移的 schema 2。
-    if version not in ('1.0.2-su30sm-three-sp.1', '1.0.2-su30sm-three-sp.2'):
+    # 每个修订绑定唯一的前版回执，不能跨过尚未核对的安装状态。
+    previous_receipts = {
+        '1.0.2-su30sm-three-sp.2': 'su30sm-three-sp-installed.json',
+        '1.0.2-su30sm-three-sp.3': 'su30sm-three-sp-candidate.2-installed.json',
+    }
+    revision = version in previous_receipts  # 修订保留已迁移的 schema 2。
+    if version != '1.0.2-su30sm-three-sp.1' and not revision:
         raise ValueError('安装器未定义此候选的升级来源')
     if receipt['candidate'] != version or (root / 'VERSION').read_text(encoding='utf-8').strip() != version:
         raise ValueError('候选版本不匹配')
@@ -46,7 +51,7 @@ def main():
     previous = json.loads((root / 'evidence/su30sm-fixed-mount-candidate.2-installed.json').read_text(encoding='utf-8'))
     expected_old = formal | previous['changed_files']  # 任一旧运行文件被其他任务改变即停止。
     if revision:
-        previous = json.loads((root / 'evidence/su30sm-three-sp-installed.json').read_text(encoding='utf-8'))
+        previous = json.loads((root / 'evidence' / previous_receipts[version]).read_text(encoding='utf-8'))
         expected_old = previous['runtime_files']
         if 'dualsp_refresh_weapon_icons' not in receipt['required_exports_verified']:
             raise ValueError('修订核心缺少装填剪影刷新接口')
@@ -118,7 +123,7 @@ def main():
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
               'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,
               'other_mod_files_preserved': True, 'protected_files_verified': len(protected), 'main_worktree_modified': False}
-    receipt_name = 'su30sm-three-sp-candidate.2-installed.json' if revision else 'su30sm-three-sp-installed.json'  # 不覆盖历史安装证据。
+    receipt_name = 'su30sm-three-sp-candidate.' + version.rsplit('.', 1)[1] + '-installed.json' if revision else 'su30sm-three-sp-installed.json'  # 不覆盖历史安装证据。
     with (root / 'evidence' / receipt_name).open('x', encoding='utf-8') as stream:
         json.dump(result, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
