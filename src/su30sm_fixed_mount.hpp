@@ -1,0 +1,322 @@
+// Su-30SM 固定挂载研究原型；仅由独立候选构建启用，不属于正式运行路径。
+// 包含位置在核心私有命名空间中，复用已有内存校验、弹药缓存和日志。
+#pragma once
+
+struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
+struct MountVisual {
+    MountIdentity identity; // 被本原型管理的一个模型或挂架。
+    int pool{},index{}; // pool=0/1/2 对应 SWP1/2/3，index=-1 表示挂架本体。
+    bool nativeVisible{},nativeHidden{}; // 原生最后请求的状态，用于明确退出时归还显示。
+};
+struct FixedMountState {
+    bool bound{},rebuilding{}; // 重建期间仅固定外观，不改变原生临时武器池取位。
+    MountIdentity plane,manager,meshManager; // 限定当前玩家，其他飞机全部直通。
+    std::array<Addr,2> weaponClasses{}; // 会话 SP1/SP2 的真实武器类。
+    std::array<int,2> weaponKinds{}; // 0=6AAM，1=LAGM；支持两种选择顺序。
+    std::array<int,6> order{0,1,2,3,4,5}; // 当前原生槽对应的持久挂点序号。
+    std::array<Addr,6> physical{}; // 四翼下、两机腹模型，同时提供世界变换。
+    std::vector<MountVisual> visuals; // 三个挂架和十六个原生 SP 模型，不包含普通导弹。
+    unsigned readyMask{}; // 六个物理位置的聚合就绪状态。
+    unsigned pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
+    std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
+} fixedMount;
+
+using MountVisibility=void(*)(void*,bool,unsigned char); // 第三参为引擎传播枚举，0 表示不传播。
+using MountTransform=bool(*)(void*,void*,int,int); // MeshManager、输出 FTransform、分组、逻辑槽。
+using MountSelection=void(*)(void*,unsigned char,void*,int*); // 保留原生选槽，只替换已选槽的输出变换。
+using MountMaster=void(*)(void*,bool,bool); // 原生总显隐及强制更新参数。
+MountVisibility mountOriginalVisibility{},mountOriginalHidden{}; // 绕过本原型钩子的引擎接口。
+MountTransform mountOriginalTransform{}; // 原生直接取位入口。
+MountSelection mountOriginalSelection{}; // 原生选槽取位入口。
+MountMaster mountOriginalMaster{}; // 原生总显隐入口。
+bool mountHooksReady=false; // 同一进程只安装一次，解绑后按对象身份直通。
+std::string mountHookFailure; // 安装失败明确阻止本进程重试，不留下半套钩子反复接入。
+std::atomic<DWORD> mountGameThread{0}; // 全局显隐入口可能被别的线程调用，只有绑定线程可读取本原型状态。
+
+// 只解码本研究使用的 ASCII 对象名；名称表及最大长度均有边界。
+std::string mountNameIndex(unsigned index) {
+    require(index<4000000,"固定挂载：名称索引越界");
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前主映像。
+    const Addr names=read<Addr>(base+0x3bc7070); // 本 build 的分块名称表。
+    const Addr chunk=read<Addr>(names+(index/0x4000)*8); // 每块 16384 项。
+    const Addr entry=read<Addr>(chunk+(index%0x4000)*8); // 名称条目含 16 字节头。
+    require((read<unsigned char>(entry)&1)==0,"固定挂载：预期的资源名不是 ASCII");
+    std::string name; // 最长读取 240 字节，不跨越未知名称空间。
+    for(int offset=0;offset<240;++offset) {
+        const char value=read<char>(entry+16+offset); // 单字节读取同时检查页边界。
+        if(!value)return name;
+        name.push_back(value);
+    }
+    throw std::runtime_error("固定挂载：资源名没有终止符");
+}
+// 资源身份使用对象本名，不依赖用户配置的机体编号。
+std::string mountName(Addr object) { return mountNameIndex(read<unsigned>(object+0x18)); }
+
+// 对象表只做按索引访问，避免在每次更新中扫描全局对象。
+MountIdentity mountIdentity(Addr object) {
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前 UObject 表。
+    const int index=read<int>(object+0xc),count=read<int>(base+0x3bcfdb0+12); // 实例索引和表长度。
+    require(index>=0 && index<count && count<3000000,"固定挂载：对象索引无效");
+    const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(index)*24; // 每项含地址与序列号。
+    require(read<Addr>(entry)==object,"固定挂载：对象表身份不匹配");
+    return {object,index,read<int>(entry+16)};
+}
+// 先核对对象表，再读取实例，拒绝已销毁对象及地址复用。
+bool mountAlive(const MountIdentity& identity) {
+    if(!identity.address)return false;
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 对象表全局地址。
+    const int count=read<int>(base+0x3bcfdb0+12); // 当前长度。
+    require(count>=0 && count<3000000,"固定挂载：对象表长度无效");
+    if(identity.index<0 || identity.index>=count)return false;
+    const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24; // 当前条目。
+    return read<Addr>(entry)==identity.address && read<int>(entry+16)==identity.serial;
+}
+// 涂装派生类必须继承原版 Su-30SM 的完整资源类。
+bool mountIsSu30(Addr plane) {
+    Addr cls=read<Addr>(plane+0x10); // 从真实实例沿类父链检查。
+    for(int depth=0;cls && depth<32;++depth,cls=read<Addr>(cls+0x30)) {
+        if(mountName(cls)=="AcePlayerPawn_su30sm_C")
+            return mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_su30sm";
+    }
+    return false;
+}
+// 绑定成功后，活动组采样继承持久序号；原生初始化期间的新池使用新顺序。
+int fixedMountOrdinal(Addr weaponClass,int index) {
+    if(fixedMount.bound && !fixedMount.rebuilding && index>=0 && index<6 &&
+       weaponClass==fixedMount.weaponClasses[session.active])return fixedMount.order[index];
+    return index;
+}
+// 只识别本次重建主动写入的 nextafter 门槛，不用宽泛误差把真正未装填的弹判为就绪。
+float fixedMountElapsed(int index,float duration,float elapsed) {
+    if(!fixedMount.bound || fixedMount.rebuilding || index<0 || index>=6)return elapsed;
+    const unsigned bit=1u<<index; // 原生数组下标，与本次 restore 的记录一致。
+    if(!(fixedMount.pendingReadyMask&bit))return elapsed;
+    if(duration>0 && elapsed==std::nextafter(duration,0.0f))return duration;
+    fixedMount.pendingReadyMask&=~bit; // 原生已完成装填或发射，后续完全使用实际计时。
+    return elapsed;
+}
+// 所有可视组件均保留原父链；只使用一个挂架网格，避免重复几何。
+bool mountDesired(const MountVisual& visual) {
+    const bool master=read<unsigned char>(fixedMount.meshManager.address+0x120)!=0; // 原生总显隐。
+    if(!master)return false;
+    if(visual.index<0)return visual.pool==2; // 仅显示 SWP3 挂架。
+    if(visual.pool==0 && visual.index<4)return (fixedMount.readyMask&(1u<<visual.index))!=0;
+    if(visual.pool==2 && visual.index>=4)return (fixedMount.readyMask&(1u<<visual.index))!=0;
+    return false;
+}
+// 只在状态发生变化时调用引擎更新；不逐帧强制反隐藏。
+void mountApply() {
+    for(const auto& visual:fixedMount.visuals) {
+        require(mountAlive(visual.identity),"固定挂载：组件已销毁");
+        const Addr object=visual.identity.address; // 已验证的当前组件。
+        const auto flags=read<unsigned char>(object+0x1bc); // 两个反射确认的显隐位。
+        const bool desired=mountDesired(visual); // 聚合结果和原生总显隐共同决定。
+        if(flags&0x20)mountOriginalHidden(reinterpret_cast<void*>(object),false,0);
+        if(bool(flags&0x10)!=desired)mountOriginalVisibility(reinterpret_cast<void*>(object),desired,0);
+    }
+}
+// 退出固定挂载时归还原生最后请求的显示；失效对象不再解引用。
+void fixedMountRelease() {
+    fixedMount.bound=false; // 先直通，避免归还显示的调用再次被过滤。
+    for(const auto& visual:fixedMount.visuals)if(mountAlive(visual.identity)) {
+        mountOriginalHidden(reinterpret_cast<void*>(visual.identity.address),visual.nativeHidden,0);
+        mountOriginalVisibility(reinterpret_cast<void*>(visual.identity.address),visual.nativeVisible,0);
+    }
+    fixedMount={};
+}
+// 明确记录错误并停止原型；下次 Lua 更新继续上报，不能伪装为成功。
+void fixedMountFail(const char* message) noexcept {
+    const std::string failure=message; // 清理会销毁状态字符串，先取得独立副本。
+    try {
+        nativeLog(std::string("FIXED_MOUNT_ERROR ")+failure);
+        fixedMountRelease();fixedMount.error=failure;
+    }catch(const std::exception& cleanup) {
+        fixedMount.bound=false;
+        fixedMount.error=failure+"；归还显示失败："+cleanup.what();
+        nativeLog(std::string("FIXED_MOUNT_RELEASE_ERROR ")+fixedMount.error);
+    }
+}
+// 原生显隐请求仍记账，但固定布局的组件由聚合状态决定；挂架请求不传播到武器。
+void mountFilterVisibility(void* object,bool requested,unsigned char propagation,bool hidden) {
+    const auto original=hidden?mountOriginalHidden:mountOriginalVisibility; // 两种引擎接口分别处理。
+    if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound)try {
+        for(auto& visual:fixedMount.visuals)if(visual.identity.address==reinterpret_cast<Addr>(object)) {
+            require(mountAlive(visual.identity),"固定挂载：显隐对象身份失效");
+            (hidden?visual.nativeHidden:visual.nativeVisible)=requested;
+            // 原生挂架传播语义保留在归还记录中，固定显示期间不覆盖子模型。
+            if(visual.index<0 && propagation)for(auto& child:fixedMount.visuals)
+                if(child.pool==visual.pool && child.index>=0)(hidden?child.nativeHidden:child.nativeVisible)=requested;
+            original(object,hidden?false:mountDesired(visual),0);
+            return;
+        }
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
+    original(object,requested,propagation); // 非本机模型或明确退出后的原生行为。
+}
+// 两个入口保留引擎传播枚举，不将其简化为 bool ABI。
+void mountVisibility(void* object,bool visible,unsigned char propagation) { mountFilterVisibility(object,visible,propagation,false); }
+void mountHidden(void* object,bool hidden,unsigned char propagation) { mountFilterVisibility(object,hidden,propagation,true); }
+
+// 逻辑槽映射物理位置，不修改原生隐藏/恢复索引，也不改变六发数量。
+void mountCopyTransform(void* output,int slot) {
+    require(slot>=0 && slot<6,"固定挂载：发射槽超出六槽范围");
+    const int ordinal=fixedMount.order[slot],kind=fixedMount.weaponKinds[session.active]; // 已重排的持久序号。
+    require(ordinal>=0 && ordinal<6,"固定挂载：持久挂点序号无效");
+    const int physical=kind==0?(ordinal<4?ordinal:ordinal-2):4+ordinal%2; // 四处 6AAM、两处 LAGM。
+    const Addr component=fixedMount.physical[physical]; // 与可见模型一致的世界变换来源。
+    const auto visual=std::find_if(fixedMount.visuals.begin(),fixedMount.visuals.end(),[&](const MountVisual& item){return item.identity.address==component;}); // 验证目的模型仍属于本次出击。
+    require(visual!=fixedMount.visuals.end() && mountAlive(visual->identity),"固定挂载：目的模型身份失效");
+    checkMemory(component+0x180,48);checkMemory(reinterpret_cast<Addr>(output),48);
+    std::memcpy(output,reinterpret_cast<void*>(component+0x180),48);
+}
+// 直接发射路径使用逻辑槽取位；普通导弹、其他飞机及重建过程保持原生。
+bool mountTransform(void* manager,void* output,int group,int slot) {
+    if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && group==2 &&
+       reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try {
+        require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：发射身份失效");
+        mountCopyTransform(output,slot);return true;
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
+    return mountOriginalTransform(manager,output,group,slot);
+}
+// 先由原生选出就绪槽，再替换结果，覆盖原生使用缓存变换的另一条发射路径。
+void mountSelection(void* manager,unsigned char group,void* output,int* selected) {
+    mountOriginalSelection(manager,group,output,selected);
+    if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && group==2 && *selected>=0 &&
+       reinterpret_cast<Addr>(manager)==fixedMount.manager.address)try {
+        require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.manager),"固定挂载：选槽身份失效");
+        const Addr nativeGroup=groupOf(session.activator,true); // 原生输出是索引表位置，不是物理挂点。
+        const int count=read<int>(nativeGroup+0x70); // 活动索引表长度。
+        require(*selected<count && count<=6,"固定挂载：原生选槽索引无效");
+        const int slot=read<int>(read<Addr>(nativeGroup+0x68)+static_cast<Addr>(*selected)*4); // 转换为逻辑槽。
+        mountCopyTransform(output,slot);
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
+}
+// 原生总显隐只遍历当前路由；补充更新未激活 SP 的固定模型。
+void mountMaster(void* manager,bool visible,bool force) {
+    mountOriginalMaster(manager,visible,force);
+    if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try { mountApply(); }
+    catch(const std::exception& error) { fixedMountFail(error.what()); }
+}
+// 核对固定 build 的入口指纹，整组创建后一次启用；不是扫描或猜测近似函数。
+void mountInstallHooks() {
+    if(mountHooksReady) {
+        require(GetCurrentThreadId()==mountGameThread.load(),"固定挂载：绑定线程改变");
+        return;
+    }
+    require(mountHookFailure.empty(),mountHookFailure.c_str());
+    struct Entry { Addr rva; const char* prefix; void* hook; void** original; }; // 已读代码入口及指纹。
+    const Entry entries[]={
+        {0x16f8bc0,"48895c2418555657488d6c24b94881ec00010000",reinterpret_cast<void*>(&mountVisibility),reinterpret_cast<void**>(&mountOriginalVisibility)},
+        {0x16f62b0,"48895c2418555657488d6c24b94881ec00010000",reinterpret_cast<void*>(&mountHidden),reinterpret_cast<void**>(&mountOriginalHidden)},
+        {0x8a0960,"40534883ec60488b0593760103",reinterpret_cast<void*>(&mountTransform),reinterpret_cast<void**>(&mountOriginalTransform)},
+        {0x89cdb0,"40555657415441574881eca0000000",reinterpret_cast<void*>(&mountSelection),reinterpret_cast<void**>(&mountOriginalSelection)},
+        {0x8a11b0,"405641574883ec280fb6f2",reinterpret_cast<void*>(&mountMaster),reinterpret_cast<void**>(&mountOriginalMaster)}};
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 本进程游戏映像。
+    for(const auto& entry:entries) {
+        const std::string hex=entry.prefix; // 精确字节对，不接受通配符。
+        for(size_t i=0;i<hex.size();i+=2)
+            require(read<unsigned char>(base+entry.rva+i/2)==std::stoul(hex.substr(i,2),nullptr,16),"固定挂载：入口指纹不匹配");
+    }
+    const auto status=MH_Initialize(); // 复用现有核心的 MinHook 实例。
+    require(status==MH_OK || status==MH_ERROR_ALREADY_INITIALIZED,"固定挂载：钩子库初始化失败");
+    mountGameThread.store(GetCurrentThreadId()); // 完成所有原生指针初始化后才批量启用钩子。
+    std::vector<void*> created; // 记录本次创建的入口，失败时只撤销本原型的钩子。
+    try {
+        for(const auto& entry:entries) {
+            void* target=reinterpret_cast<void*>(base+entry.rva); // 当前已核对入口。
+            require(MH_CreateHook(target,entry.hook,entry.original)==MH_OK,"固定挂载：创建钩子失败");
+            created.push_back(target);
+        }
+        for(void* target:created)require(MH_QueueEnableHook(target)==MH_OK,"固定挂载：安排启用钩子失败");
+        require(MH_ApplyQueued()==MH_OK,"固定挂载：启用钩子失败");
+    }catch(const std::exception& error) {
+        mountHookFailure=error.what();
+        for(auto target=created.rbegin();target!=created.rend();++target) {
+            const auto cleanup=MH_RemoveHook(*target); // 同时撤销可能已启用的部分，失败也必须报告。
+            if(cleanup!=MH_OK)mountHookFailure+="；撤销钩子失败："+std::to_string(cleanup);
+        }
+        throw std::runtime_error(mountHookFailure);
+    }
+    mountHooksReady=true;nativeLog("FIXED_MOUNT_HOOKS_READY");
+}
+// 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。
+void fixedMountRestoreOrder(const Group& saved,int next) {
+    if(saved.slots.size()!=6)return; // 非原型机体的队列不参与固定映射。
+    for(int index=0;index<6;++index)fixedMount.order[index]=saved.slots[(next+index)%6].mountOrdinal;
+}
+// 根据真实弹药和允许装填的窗口聚合六处显示；未激活 SP 使用游戏时间推进。
+void fixedMountRefresh(double time) {
+    require(fixedMount.error.empty(),fixedMount.error.c_str());
+    if(!fixedMount.bound)return;
+    require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：更新时身份失效");
+    unsigned mask=0; // 本次所有物理位置的完整结果。
+    for(int weapon=0;weapon<2;++weapon) {
+        const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon]; // 当前或缓存队列。
+        const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
+        require(group.slots.size()==6 && ammo>=-1 && window>=0 && window<=6 && cursor>=0 && cursor<6,"固定挂载：逻辑队列无效");
+        require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
+        const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
+        const int available=ammo<0?window:std::min(window,ammo); // 不让最后一发同时分配给多个位置。
+        for(int distance=0;distance<available;++distance) {
+            const Slot& slot=group.slots[(cursor+distance)%6]; // 窗口中的一个逻辑弹位。
+            require(slot.mountOrdinal>=0 && slot.mountOrdinal<6,"固定挂载：缓存挂点序号无效");
+            if(dualsp::advanceReload(slot.duration,slot.elapsed,delta,true)<slot.duration)continue;
+            const int physical=fixedMount.weaponKinds[weapon]==0?(slot.mountOrdinal<4?slot.mountOrdinal:slot.mountOrdinal-2):4+slot.mountOrdinal%2;
+            mask|=1u<<physical;
+        }
+    }
+    if(mask!=fixedMount.readyMask)nativeLog(Json{{"event","FIXED_MOUNT_MASK"},{"before",fixedMount.readyMask},{"after",mask},{"game_time",time}}.dump());
+    fixedMount.readyMask=mask;mountApply();
+}
+// 在双 SP 事务完成后绑定或复核组件，拒绝第三方替换的同编号或同名近似布局。
+void fixedMountCommit(const Command& command) {
+    require(fixedMount.error.empty(),fixedMount.error.c_str());
+    if(command.op=="checkpoint_save" || command.op=="snapshot") { fixedMountRefresh(command.time);return; }
+    if(!mountIsSu30(command.plane)) { fixedMountRelease();return; }
+    std::array<int,2> kinds{}; // 两个逻辑选择对应的实际武器种类。
+    for(int index=0;index<2;++index) {
+        const std::string name=mountName(session.special[index].weaponClass); // 必须使用真实武器类。
+        if(name=="plwp_6aam_r0_C")kinds[index]=0;
+        else if(name=="plwp_lagm_r0_C")kinds[index]=1;
+        else { fixedMountRelease();return; } // 此组合不在原型作用范围内，正常保留原生双SP。
+    }
+    require(kinds[0]!=kinds[1],"固定挂载：两槽武器重复");
+    if(!fixedMount.bound || fixedMount.plane.address!=command.plane) {
+        const auto order=fixedMount.order; // restore 可能已为检查点的新实例重建顺序。
+        const unsigned pending=fixedMount.pendingReadyMask; // 同时保留新池一次性装填完成事件。
+        fixedMountRelease();fixedMount.order=order;fixedMount.pendingReadyMask=pending;
+        mountInstallHooks();
+        fixedMount.plane=mountIdentity(command.plane);
+        fixedMount.manager=mountIdentity(read<Addr>(command.activator+0x260));
+        fixedMount.meshManager=mountIdentity(read<Addr>(fixedMount.manager.address+0x150));
+        const std::array<size_t,3> offsets{0x1ba0,0x1b98,0x1b90}; // 本轮反射确认的 SWP1/2/3。
+        for(int pool=0;pool<3;++pool) {
+            const Addr rack=read<Addr>(command.plane+offsets[pool]); // 原生挂架父组件。
+            const std::string expected="su30sm_SWP"+std::to_string(pool+1)+"_SM"; // 精确资源名。
+            require(mountName(read<Addr>(rack+0x728))==expected,"固定挂载：挂架资源被替换");
+            const auto flags=read<unsigned char>(rack+0x1bc); // 退出原型时归还的原生状态。
+            fixedMount.visuals.push_back({mountIdentity(rack),pool,-1,bool(flags&0x10),bool(flags&0x20)});
+            const Addr array=fixedMount.meshManager.address+0x150+pool*16; // 三套持久模型池。
+            const int count=read<int>(array+8); // QAAM 四个，其余六个。
+            require(count==(pool==1?4:6) && read<int>(array+12)>=count,"固定挂载：模型池数量不匹配");
+            for(int index=0;index<count;++index) {
+                const Addr component=read<Addr>(read<Addr>(array)+index*8); // 数组顺序须与 Socket 一致。
+                std::string socket=mountNameIndex(read<unsigned>(component+0x108)); // 资源混用 SP/sp 大小写。
+                for(char& character:socket)if(character>='A' && character<='Z')character+=32;
+                require(socket=="sp"+std::to_string(pool+1)+std::to_string(index+1) && read<Addr>(component+0x100)==rack,"固定挂载：Socket 或父链不匹配");
+                const std::array<const char*,3> meshes{"w_4aam_r0_SM","w_qaam_r0_SM","w_lasm_r0_SM"}; // 现场核对的实际模型名。
+                require(mountName(read<Addr>(component+0x728))==meshes[pool],"固定挂载：武器模型被替换");
+                const auto flags=read<unsigned char>(component+0x1bc); // 原生显隐快照。
+                fixedMount.visuals.push_back({mountIdentity(component),pool,index,bool(flags&0x10),bool(flags&0x20)});
+                if(pool==0 && index<4)fixedMount.physical[index]=component;
+                if(pool==2 && index>=4)fixedMount.physical[index]=component;
+            }
+        }
+        fixedMount.bound=true;
+        nativeLog("FIXED_MOUNT_BOUND Su-30SM 4x6AAM+2xLAGM rack=SWP3");
+    }
+    fixedMount.weaponKinds=kinds;
+    for(int index=0;index<2;++index)fixedMount.weaponClasses[index]=session.special[index].weaponClass;
+    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="resupply")fixedMount.order={0,1,2,3,4,5};
+    fixedMount.rebuilding=false;
+    fixedMountRefresh(command.time);
+}

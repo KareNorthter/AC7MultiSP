@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <algorithm>
 #include <array>
+#include <atomic>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -28,7 +29,12 @@ namespace {
 using Addr = uintptr_t;
 struct Command { std::string op; Addr plane{}, activator{}; int target{}; double time{}; int secondConfig{1}, firstConfig{}; double ratio{1}; uint64_t request{}; };
 std::mutex nativeExecutionMutex;
-struct Slot { float duration{}, elapsed{}; };
+struct Slot {
+    float duration{}, elapsed{}; // 原生装填时长和已过时间。
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    int mountOrdinal{-1}; // 只在独立原型中保存逻辑挂点身份。
+#endif
+};
 struct Group {
     bool valid{};
     Addr weaponClass{};
@@ -51,6 +57,10 @@ Session checkpoint;
 bool checkpointValid=false;
 double checkpointTime{};
 bool runtimeEnabled=false; // 未收到游戏线程的明确单人许可前，原生接口和钩子全部直通/拒绝修改。
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+int fixedMountOrdinal(Addr weaponClass,int index); // 原型采样时保留重排前的挂点身份。
+float fixedMountElapsed(int index,float duration,float elapsed); // 区分实际冷却与重建用的一次性完成事件。
+#endif
 
 void require(bool condition, const char* message) { if (!condition) throw std::runtime_error(message); }
 void checkMemory(Addr address, size_t size) {
@@ -335,6 +345,13 @@ Group capture(Addr activator, bool special, double time) {
     result.slots.reserve(num);
     for(int i=0;i<num;++i) {
         Slot slot{read<float>(slotData+static_cast<size_t>(i)*0x60+0x48),read<float>(slotData+static_cast<size_t>(i)*0x60+0x4c)};
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        slot.mountOrdinal=i; // 新建逻辑队列按资源顺序编号。
+        if(special) {
+            slot.mountOrdinal=fixedMountOrdinal(result.weaponClass,i);
+            slot.elapsed=fixedMountElapsed(i,slot.duration,slot.elapsed);
+        }
+#endif
         try { dualsp::validateReload(slot.duration,slot.elapsed); }
         catch(const std::exception& e) {
             std::ostringstream detail;
@@ -378,6 +395,9 @@ bool hasReadyRound(const Group& group,double time) {
     }
     return false;
 }
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+#include "su30sm_fixed_mount.hpp"
+#endif
 void restore(Addr activator, bool special, const Group& saved, double time) {
     require(saved.valid,"Uninitialized cached weapon");
     const auto address=groupOf(activator,special);
@@ -408,11 +428,25 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
         // a completed timer skips the native reload-completion event. Let the next
         // game tick cross the threshold and perform the actual native reload.
         const float rebuiltElapsed=read<float>(slotData+i*0x60+0x4c);
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        const float logicalElapsed=elapsed; // 保留原装填结果，原型不能把重建门槛当成新冷却。
+#endif
         elapsed=dualsp::rebuildReload(slot.duration,elapsed,rebuiltElapsed);
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        if(special && i<6 && logicalElapsed>=slot.duration && elapsed<slot.duration)
+            fixedMount.pendingReadyMask|=1u<<i; // 仅标记这次 restore 明确降到门槛下的槽。
+#endif
         write<float>(slotData+i*0x60+0x4c,elapsed);
     }
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    if(special)fixedMountRestoreOrder(saved,nextSlot); // 与冷却队列使用完全相同的旋转。
+#endif
 }
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    fixedMount.rebuilding=true; // 原生临时武器池按原规则建立，最终事务再提交固定出弹映射。
+    fixedMount.pendingReadyMask=0; // 每次重建重新记录，不把上一武器的完成事件带过来。
+#endif
     finishSeekerAudio(command.plane,command.activator); // 先释放旧槽音效，再重建锁定槽和武器池。
     const int gun=read<int>(stateOf(command.activator)+8);
     const auto owner=read<Addr>(command.activator+0x260);
@@ -493,6 +527,9 @@ void execute(const Command& command) {
     // 补给重选需要重建当前组合，同时保留任务已经捕获的检查点。
     // 此新命令只存在于源码候选；正式 DLL 保持不变，不能直接混装。
     if(command.op=="setup" || command.op=="resupply_setup") {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        fixedMountRelease(); // 新组合不沿用上一组合的视觉状态。
+#endif
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
         session.secondConfig=command.secondConfig;
         session.firstConfig=command.firstConfig;
@@ -560,6 +597,9 @@ void execute(const Command& command) {
     } else {
         require(command.op=="snapshot","Unknown command");
     }
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    fixedMountCommit(command); // 同一游戏线程内完成重建后的布局，原型只处理严格匹配的组合。
+#endif
 }
 }
 
@@ -574,6 +614,9 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+            fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
+#endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;selectionWave.close();
             session={};checkpoint={};checkpointValid=false;checkpointTime=0;
@@ -589,6 +632,34 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
 }
+
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 独立原型的视觉调度，使用游戏时间；不把有副作用的更新塞进只读 HUD 接口。
+extern "C" __declspec(dllexport) int dualsp_fixed_mount_update(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 错误回执由既有 Lua 控制器显示。
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==2,"固定挂载更新需要玩家地址和游戏时间");
+        const Addr plane=static_cast<Addr>(api->readInteger(luaState,1)); // 零表示离开本次玩家实例。
+        const double time=api->readNumber(luaState,2); // 暂停时不推进。
+        if(!plane)fixedMountRelease();
+        else {
+            require(runtimeEnabled,"固定挂载只允许单人任务");
+            require(std::isfinite(time) && time>=0,"固定挂载游戏时间无效");
+            require(fixedMount.error.empty(),fixedMount.error.c_str());
+            if(fixedMount.bound) {
+                require(fixedMount.plane.address==plane && session.plane==plane,"固定挂载玩家会话不一致");
+                fixedMountRefresh(time);
+            }
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        fixedMountFail(error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+#endif
 
 // op=0 绑定或静默同步，1 提交一次真实选择，2 解绑；初始化和检查点恢复不播放提示。
 extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
@@ -1050,6 +1121,9 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_DONE"},{"op",command.op},{"request",request},
             {"active",session.active},{"main_ammo",state["main_ammo"]},{"sp",state["cached_sp"]}}.dump());
     } catch(const std::exception& error) {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        fixedMountFail(error.what()); // 原型错误写日志并归还原生显示，既有错误回执继续向用户报告。
+#endif
         result=Json{{"ok",false},{"request",request},{"error",error.what()}}.dump();nativeLog(result);
     }
     // A reader must see an entire response. Include the request ID so an I/O

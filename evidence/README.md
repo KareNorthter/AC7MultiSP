@@ -9,6 +9,8 @@
 - [当前六阶段现场](su30sm-fixed-mount-live.json)：初始 LAGM、6AAM 切换/单发、LAGM 切换/单发/装填；模型身份、活动路由、弹体及延迟恢复队列，未改游戏内存。
 - [原生路由分析](su30sm-fixed-mount-routing.json)：实际发射变换、父链选池、单枚显隐和延迟恢复；明确区分静态指令路径与现场实际观察。
 - [本轮保护核对](su30sm-fixed-mount-stage2.json)：组件连续身份、语法解析、保护核心与已安装文件核对；不作为原型验收。
+- [第三阶段候选](su30sm-fixed-mount-stage3.json)：原生队列清理链、独立构建和接口核对；原型未安装，完整初始化和显隐传播仍待补读。
+- [挂架几何范围](su30sm-fixed-mount-geometry.json)：两个挂架的 LOD0 section 数与六处空间范围；采用单挂架候选，不冒充实机贴合或逐面相交验证。
 - [历史资源摘要](su30sm-mount-assets.json)、[基类摘要](su30sm-base-pawn-assets.json)、[历史四阶段现场](su30sm-mount-live.json)、[历史原生入口](su30sm-native-mount-findings.json)：从 `c44e3b9` 引入的 0.1.9 证据，不冒充当前 1.0.1 实测。
 - 当前实施范围、工具和未确认项见[固定挂载研究](../docs/research/su30sm-fixed-mount.md)。
 

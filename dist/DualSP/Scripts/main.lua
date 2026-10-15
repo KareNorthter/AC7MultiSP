@@ -44,6 +44,7 @@ local nativeSupplyControl=loadExport("dualsp_resupply_control") -- 候选 6：�
 local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验候选：原生机库一步确认/返回。
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
+local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -350,9 +351,12 @@ local function selectionAudio(op,target)
     assert(ok,err or "选择音效接口没有返回成功")
 end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
-local function releaseSelectionAudio()
+local function releaseRuntimeOwnership()
     local ok,err=pcall(function()selectionAudio(2)end)
     if not ok then note("SELECTION_AUDIO_RELEASE_ERROR "..tostring(err))end
+    -- 发生任何控制器错误后已停止视觉调度，必须同时释放固定模型的所有权。
+    local mountCallOK,mountOK,mountError=pcall(updateFixedMount,0,0)
+    if not mountCallOK or not mountOK then note("FIXED_MOUNT_RELEASE_ERROR "..tostring(mountCallOK and mountError or mountOK))end
 end
 
 -- 就绪采样与两处提示使用同一最终选择；错误只停用新 HUD，保持武器逻辑。
@@ -443,7 +447,7 @@ local function delay(ms,fn)
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);internal=false;note("ERROR "..errorText)
-            releaseSelectionAudio() -- 停止切换逻辑时同步释放音效所有权。
+            releaseRuntimeOwnership() -- 停止切换逻辑时同步释放音效与固定模型。
         end
     end)
 end
@@ -695,6 +699,8 @@ local function tick()
     local address=found and found:GetAddress()or nil
     if address~=planeAddress then
         -- No stale actor pointers or cached loadout cross a world transition.
+        local mountOK,mountError=updateFixedMount(0,0) -- 新世界不能继续持有旧模型身份。
+        assert(mountOK,mountError)
         if panelOpen then setPanel(false)end
         selectionAudio(2)
         nativeHud:reset()
@@ -796,6 +802,10 @@ local function tick()
             checkpointProfile=copyProfile(currentProfile);note("CHECKPOINT_CAPTURED")
         end
         if dual then observeOriginalSwitch()end
+        if dual then
+            local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 只在状态改变时更新模型。
+            assert(mountOK,mountError)
+        end
     end
     if now-lastHUD>=.1 then
         lastHUD=now
@@ -872,7 +882,7 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
             end,function()return supplySession.options end,os.clock(),isFlight,false)
         end
     end,debug.traceback)
-    if not ok then errorText=tostring(err);note("NATIVE_MENU_ACTIVATION_ERROR "..errorText);releaseSelectionAudio()end
+    if not ok then errorText=tostring(err);note("NATIVE_MENU_ACTIVATION_ERROR "..errorText);releaseRuntimeOwnership()end
 end)
 -- These reflected entry points cover normal dynamic mission events. Their
 -- checkpoint/resupply coverage remains experimental and is logged explicitly.
@@ -898,7 +908,7 @@ local function supplyHook(callback)
             if not syncRuntime()then return end
             callback(table.unpack(args))
         end,debug.traceback)
-        if not ok then errorText=tostring(err);note("NATIVE_RESUPPLY_ERROR "..errorText);releaseSelectionAudio()end
+        if not ok then errorText=tostring(err);note("NATIVE_RESUPPLY_ERROR "..errorText);releaseRuntimeOwnership()end
     end
 end
 RegisterHook("/Script/Nimbus.Mission:OnStartSupplyPhaseHandler",function()end,supplyHook(function(ctx)
@@ -1002,7 +1012,7 @@ LoopInGameThreadWithDelay(20,function()
                 if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
                 return false
             end
-            releaseSelectionAudio()
+            releaseRuntimeOwnership()
             -- Report once, freeze weapon mutations, and keep the UI/error visible.
             -- A user closes the panel to resume the game; no hidden loadout retry.
             local published,publishErr=pcall(publishState)

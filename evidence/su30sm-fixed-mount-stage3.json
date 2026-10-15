@@ -1,0 +1,115 @@
+{
+  "candidate": "1.0.2-su30sm-mount.1",
+  "candidate_sha256": "35f534748971bd2dcc58b2790672883a9f6ad1fd6f75d27f947bc292e6b1ff43",
+  "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+  "compiled": true,
+  "lua_syntax_only": true,
+  "required_exports_verified": [
+    "dualsp_catalogue",
+    "dualsp_custom_audio_update",
+    "dualsp_finish_tls",
+    "dualsp_fixed_mount_update",
+    "dualsp_hud_readiness",
+    "dualsp_loadout_ammo",
+    "dualsp_menu_confirm",
+    "dualsp_preparation_action",
+    "dualsp_prepare_weapon_rebuild",
+    "dualsp_resupply_control",
+    "dualsp_resupply_takeoff",
+    "dualsp_runtime_gate",
+    "dualsp_selection_audio",
+    "dualsp_take_empty_switch",
+    "dualsp_weapon_icon",
+    "lab_native_execute"
+  ],
+  "game_installed": false,
+  "game_validated": false,
+  "test_modules_run": false,
+  "installation_blockers": [
+    "补读完整初始化调用链",
+    "补读祖先显隐传播尾部并核对钩子范围"
+  ],
+  "protected_files": {
+    "dist/DualSP/bin/DualSP.dll": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "dist/DualSP/cores/1.0.1/DualSP.dll": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+  },
+  "lua_sources": {
+    "dist/DualSP/Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "dist/DualSP/Scripts/loadout_flow.lua": "3e4aedff87d825369fbe1a2afb5f9871cf2eba0330137ad9033565f2a1979a26",
+    "dist/DualSP/Scripts/main.lua": "99e3a790433ac728c08223444a9834022218480b1ff65c24fb834ebe9de21b12",
+    "dist/DualSP/Scripts/native_hud.lua": "61821364cd7fe7ece73cd539e5390b0a75611346dad637852b2f9e58028707b2",
+    "dist/DualSP/Scripts/native_loadout.lua": "b82fab61d26abec4dcb34235651db37252344e0733e48a76c6b27064e7fc0cd6",
+    "dist/DualSP/Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+    "dist/DualSP/Scripts/weapon_cycle.lua": "3a3bc4ec9fd2b56cd0e466765e54dd5efe41d8252d5a7faad12fa738aae11f45",
+    "dist/DualSP/Scripts/weapon_names.lua": "44b74d99704ae504821cfa8a3e03f04d21c7230dd9baae6ce3741516adb4116d",
+    "dist/DualSP/Scripts/weapon_presentation.lua": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb"
+  },
+  "cpp_sources": {
+    "src/weapon_bridge.cpp": "eb6ec0ce6ca76a04499c0352a09f21877f168633252f16998f47b68456eccf7c",
+    "src/su30sm_fixed_mount.hpp": "b3fd1edcb13d7c6c82373dc29b21bc055ed5e5af7f204f029cf66d560edafdfb"
+  },
+  "date": "2026-10-15",
+  "research_branch": "codex/su30sm-fixed-mount-prototype",
+  "base_includes": [
+    "a114616",
+    "a396c9b",
+    "839eb80"
+  ],
+  "main_head_observed": "839eb8006fb994517908105bee9ebb1f52f3c961",
+  "main_status_observed": "",
+  "main_worktree_modified_by_research": false,
+  "installed_files_match_other_task_1_0_2_receipt": true,
+  "installed_files_read_only": {
+    "bin/DualSP.dll": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af",
+    "bin/DualSPUI.dll": "c871b976a75c66cfd1228bcfe4cb63922ca405d2ce2eec09ad2045714f88d372",
+    "Scripts/main.lua": "f6cffcdec9e0dfded3e31ffbf8c82b1cc4ce91908504cff4fc1081aed8dd20f6",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/weapon_cycle.lua": "3a3bc4ec9fd2b56cd0e466765e54dd5efe41d8252d5a7faad12fa738aae11f45",
+    "Scripts/native_hud.lua": "61821364cd7fe7ece73cd539e5390b0a75611346dad637852b2f9e58028707b2",
+    "Scripts/loadout_flow.lua": "3e4aedff87d825369fbe1a2afb5f9871cf2eba0330137ad9033565f2a1979a26",
+    "Scripts/native_loadout.lua": "b82fab61d26abec4dcb34235651db37252344e0733e48a76c6b27064e7fc0cd6",
+    "Scripts/weapon_names.lua": "44b74d99704ae504821cfa8a3e03f04d21c7230dd9baae6ce3741516adb4116d",
+    "Scripts/weapon_presentation.lua": "b378a2ce48e8af3e83c1797c7f71c5caf0a552fd4667692c390d1f75a54f37cb",
+    "Audio/SP2.wav": "278b8f8815823522ed5f121711a1a12eda2ae8e89991f8522d1fff22832d9640",
+    "Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+    "VERSION": "9fd28642d3aca191e5c7fc2383cfd6fabb2aac8743f029dabb8989ac584e31bc"
+  },
+  "candidate_output": "Temp/su30sm-candidate.1-build/DualSP.dll",
+  "native_source_hashes": {
+    "Temp/native-current/mount-898000-c000.bin": "ec4452f4e6bc4e160d73d67c17ea6d8c8b29c274431d36b71707847e43123b35",
+    "Temp/native-current/mount-87f000-9000.bin": "7b6ffcd2ec4a8c4f6e0d25d8babf7eb21f7539c43131ab4ae48c5c5b1031911b",
+    "Temp/native-helpers/mount-16f8bc0-180.bin": "3478dd35ddb2961c8966dd827ad20b600e51d7f254b099feac92c79abf676645",
+    "Temp/native-helpers/mount-16f62b0-180.bin": "af3f514177414006f6f98adedc8e490e1d2b69df7ea38e9c52ef8d96fd4282c3"
+  },
+  "queue_clear_analysis": {
+    "chain": [
+      "0x882e40",
+      "0x884f10",
+      "0x89c530",
+      "0x89ff10(-1)"
+    ],
+    "meaning": "完整初始化内部清空延迟显隐队列，再恢复路由状态；不新增清队列补丁。",
+    "pending": "0x81e810 到该初始化链的上层调用仍需补读"
+  },
+  "launch_paths": [
+    "0x8a0960：按逻辑槽直接取位",
+    "0x89cdb0：原生选槽后替换输出，覆盖缓存变换路径"
+  ],
+  "visibility_paths": [
+    "0x16f8bc0：组件可见性",
+    "0x16f62b0：游戏内隐藏",
+    "0x8a11b0：挂载总显隐"
+  ],
+  "prototype_scope": "Su-30SM 基类完整资源与模型布局严格匹配；6AAM/LAGM 两种选择顺序；四处6AAM加两处LAGM。",
+  "geometry_evidence": "evidence/su30sm-fixed-mount-geometry.json",
+  "failed_supplement_capture": "原进程退出；未取得新的初始化或显隐尾部代码。旧快照完整。",
+  "user_preparation_status": "用户表示准备好后通知；未要求重复发射，未自动启动游戏。",
+  "not_validated": [
+    "游戏中调用ABI与两个发射路径的真实输出",
+    "祖先显隐传播是否绕过组件钩子",
+    "隐藏父挂架时子模型是否按设定显示",
+    "共用SWP3挂架与四枚6AAM贴合程度",
+    "齐射、射后切换、末弹、暂停、补给和检查点"
+  ],
+  "protection_scope": "本研究只写研究工作区；正式1.0.2由另一任务安装。当前保护哈希与安装回执核对通过，不将外部安装声称为本研究动作。"
+}
