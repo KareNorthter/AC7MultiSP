@@ -1,0 +1,5092 @@
+{
+  "schema_version": 1,
+  "steam_build": 9855922,
+  "baseline": "v2.4.0",
+  "scope": "本机官方资源中的有武装玩家机体；不含第三方模组与f104av无武装展示型",
+  "display_names": {
+    "source": "dist/DualSP/Scripts/main.lua 的 local names 表",
+    "zh_policy": "原表未提供中文显示名，保留资源code，不自行翻译"
+  },
+  "category_note": "沿用已核对清单：基础28架（含X-02S特殊机）、官方DLC19架；PAK包位置不表示购买许可",
+  "batch_rules": {
+    "reference": "既有三机布局参考，本轮不复测",
+    "static_intro": "首批六机；须保持三个SWP均为静态组件",
+    "static_base": "基础机型的静态常规弹挂载",
+    "static_dlc": "官方DLC的静态常规弹挂载",
+    "static_system": "静态组件中的固定炮体或持续系统；能力与布局分别研究",
+    "skeletal_swp3": "仅SWP3使用骨架；先核对该组活动行为",
+    "skeletal_complex": "其他骨架结构；逐机核对舱门、父链及动画"
+  },
+  "base_pawn_source": {
+    "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+    "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn.uasset",
+    "encrypted_sha256": "686dfa0039376101653804789f743ac6088bed53bfd544c6ebb074a75ef9b9fd",
+    "decoded_sha256": "c2acd426fd4767d9ce32cb4ecc8585954686e58f09076c32e5049378c608acbc"
+  },
+  "verification": {
+    "aircraft_count": 47,
+    "unique_codes": 47,
+    "config_count": 141,
+    "swp_component_count": 141,
+    "hashed_source_records": 48,
+    "pawn_manifest_hash_pairs_verified": 47,
+    "base_hash_status": "本轮原版提取副本已计算哈希，无独立既存manifest期望值",
+    "category_counts": {
+      "base": 27,
+      "official_dlc": 19,
+      "base_special": 1
+    },
+    "batch_counts": {
+      "static_base": 7,
+      "static_system": 8,
+      "skeletal_swp3": 5,
+      "skeletal_complex": 10,
+      "static_intro": 6,
+      "static_dlc": 8,
+      "reference": 3
+    },
+    "verified": [
+      "原版PAK索引的机体身份",
+      "Pawn直接父类",
+      "逐Config字段继承与真实武器class",
+      "三个SWP组件类及网格引用",
+      "所选Pawn加密/解码副本SHA256"
+    ],
+    "not_verified": [
+      "PlayerPlaneConfig正文与购买限制",
+      "多数新机挂点坐标与网格拆分粒度",
+      "动画通道与动态净空",
+      "运行时模型池与发射/补装行为",
+      "新机布局与持续效果能力"
+    ],
+    "runtime_verified": false,
+    "notes": [
+      "MaxWeaponCount等字段保留原生覆写值，包括-1；不是运行时实际库存或装填窗口",
+      "网格与兵装包路径为Pawn引用，不代表所有被引用资源正文已解析",
+      "TLS/ECM/IEWS不因持续效果预设与其他SP互斥；正式运行代码的能力范围另核对",
+      "既有三机布局已有正式基线反馈；本目录生成过程没有复测任何机型"
+    ]
+  },
+  "aircraft": [
+    {
+      "code": "a10a",
+      "display_name_en": "A-10C Thunderbolt II",
+      "display_name_zh": "a10a",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_ugb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ugb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_rkt_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_rkt_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_rkt_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_rkt_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "a10a_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/a10a/a10a_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "a10a_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/a10a/a10a_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "a10a_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/a10a/a10a_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_a10a.uasset",
+        "encrypted_sha256": "86dac80587adeb7f135aa2c4c3e97fba550fe8e0e039732ee1df6d58387d9714",
+        "decoded_sha256": "8913041eb88c3f1dc0640e24956e154b3e2322bb987c3e917b86f0a2756d7f27"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_a10a",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "adf11f",
+      "display_name_en": "ADF-11F Raven",
+      "display_name_zh": "adf11f",
+      "category": "official_dlc",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_tls_x3_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_tls_x3_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+          "class_source": "base_pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "base_pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_WeaponUAV_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_WeaponUAV_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "adf11f_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/adf11f/adf11f_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "adf11f_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/adf11f/adf11f_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "adf11f_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/adf11f/adf11f_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_adf11f.uasset",
+        "encrypted_sha256": "a499a91e01be9c447eb8aee3cb2cedad4ff70000a0b3c27dddb03e7482279fc1",
+        "decoded_sha256": "7b48ee332e5a6e880ce66ba664c6985c827b503715e7467a761d31f1861db23f"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_adf11f",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "asfx",
+      "display_name_en": "ASF-X Shinden II",
+      "display_name_zh": "asfx",
+      "category": "official_dlc",
+      "batch": "skeletal_swp3",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_6aam_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_j0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_rkt_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_rkt_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_j0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lasm_x1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_x1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_x1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_x1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "asfx_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/asfx/asfx_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "asfx_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/asfx/asfx_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "asfx_SWP3",
+            "package": "/Game/Vehicles/Aircraft/asfx/asfx_SWP3"
+          },
+          "AnimClass": {
+            "object": "asfx_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/asfx_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_asfx.uasset",
+        "encrypted_sha256": "b6aeef1efda2905184ad772d6fe48ba167e9ebd9fc9b1777d1055a2494e6a064",
+        "decoded_sha256": "70453c6d1e14e862d73538346b64714eb3d2e45bd314048e59b349f7de24915c"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_asfx",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "dark",
+      "display_name_en": "DarkStar",
+      "display_name_zh": "dark",
+      "category": "official_dlc",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_xsdb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_xsdb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_plsl_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_plsl_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "dark_SWP1",
+            "package": "/Game/Vehicles/Aircraft/dark/dark_SWP1"
+          },
+          "AnimClass": {
+            "object": "dark_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/dark_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "dark_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/dark/dark_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "dark_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/dark/dark_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dark.uasset",
+        "encrypted_sha256": "281ed4b5325a0882ceb788c511f856825cfa4b37a011ffc07a79bae871a59de7",
+        "decoded_sha256": "f95bcf1f8a7361ef694b626ba46bcf1c2c8837c3db1bfaef24cbd2d853b6b69e"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_dark",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f02a",
+      "display_name_en": "F-2A",
+      "display_name_zh": "f02a",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_lasm_j1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_j1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_j1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_j1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_hvaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hvaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_rkt_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_rkt_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_j0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02a_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f02a/f02a_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02a_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f02a/f02a_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02a_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f02a/f02a_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f02a.uasset",
+        "encrypted_sha256": "0ba79310fc64580bef2acd4e4df3726de19d58266dba3c8ecdbe3964326a8e96",
+        "decoded_sha256": "c229a0489889fb4bba88697ee20e58c671dbacb690034aacf1cfd080f542d9b6"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f02a",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f02x",
+      "display_name_en": "F-2A Super Kai",
+      "display_name_zh": "f02x",
+      "category": "official_dlc",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_lasm_j2_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_j2",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_j2_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_j2"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_6aam_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_j0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_ecmp_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ecmp_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_j0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02x_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f02x/f02x_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02x_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f02x/f02x_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f02x_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f02x/f02x_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f02x.uasset",
+        "encrypted_sha256": "5e9637d46f99563b12c163be20eb49a9f7c88f133b1137a4940a1d5c1c0366e6",
+        "decoded_sha256": "22d39e61b03d173bc520f8161bd89855e967040465161e23a5bc7f2de010ec07"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f02x",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f04e",
+      "display_name_en": "F-4E Phantom II",
+      "display_name_zh": "f04e",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_ugb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ugb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lagm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lagm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_sasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f04e_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f04e/f04e_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f04e_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f04e/f04e_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f04e_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f04e/f04e_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f04e.uasset",
+        "encrypted_sha256": "f9cc23535a911275c60567ab8b9c9c68fe4415749b0f89641f61baaf2848db21",
+        "decoded_sha256": "35a2a66725bb569bc32ba8d9ac214dfc85e9357245a37e65b6ab65321dfeebe2"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f04e",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f104",
+      "display_name_en": "F-104C",
+      "display_name_zh": "f104",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_saam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_grkt_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_grkt_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_grkt_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_grkt_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_hpaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f104_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f104/f104_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f104_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f104/f104_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f104_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f104/f104_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f104.uasset",
+        "encrypted_sha256": "a91bccd689c7d9fc25d8103842f9f697b148492084a6b7badd9089850c37379c",
+        "decoded_sha256": "b742189dd0d30a0a7d4be9c48d4acafb821014687805c04884de27a791e8aafe"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f104",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f14a",
+      "display_name_en": "F-14A",
+      "display_name_zh": "f14a",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_saam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_sffs_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sffs_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14a_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f14a/f14a_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14a_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f14a/f14a_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14a_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f14a/f14a_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14a.uasset",
+        "encrypted_sha256": "1ba6842ccbefa4f661aed97ce6ad86ba46b903be6c102db705015d2dff060404",
+        "decoded_sha256": "2010feb20e3022d41f6b779526dfefde383d3519225a8d08f142937656c5b08e"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14a",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f14atg",
+      "display_name_en": "F-14A Top Gun",
+      "display_name_zh": "f14atg",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_saam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_hpaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14atg_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f14atg/f14atg_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14atg_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f14atg/f14atg_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14atg_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f14atg/f14atg_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14atg.uasset",
+        "encrypted_sha256": "b9c8ae16f5436b643627e124ba15666e59fb3732ce61aea579516190faedc01d",
+        "decoded_sha256": "721ae3d050235c6b435c0d1df85142ecc610ca325a9a8c9c18d8a64a837514d1"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14atg",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f14d",
+      "display_name_en": "F-14D Super Tomcat",
+      "display_name_zh": "f14d",
+      "category": "base",
+      "batch": "skeletal_swp3",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_laam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_gpb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_gpb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_8aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_8aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_8aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_8aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14d_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f14d/f14d_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f14d_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f14d/f14d_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f14d_SWP3",
+            "package": "/Game/Vehicles/Aircraft/f14d/f14d_SWP3"
+          },
+          "AnimClass": {
+            "object": "f14d_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f14d_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14d.uasset",
+        "encrypted_sha256": "aa6247ad54e308523a1f418d9be374f82a533d879514cbb5deb07d83bd6e0510",
+        "decoded_sha256": "d7eeb4065d7ac0487bd00b11b696401bed576832d3ec5eec8b92b768646f0361"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14d",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f15c",
+      "display_name_en": "F-15C Eagle",
+      "display_name_zh": "f15c",
+      "category": "base",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_plsl_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_plsl_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15c_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f15c/f15c_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15c_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f15c/f15c_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15c_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f15c/f15c_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15c.uasset",
+        "encrypted_sha256": "95ad09db8eefccf1411183a8a0b92eaa6afc893092fa83e85064f30d5aa00593",
+        "decoded_sha256": "8bc32bd178a35e487f56d82e05e9f9ad9f0c96127d6b1f31f8553a3df742e79a"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f15c",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f15e",
+      "display_name_en": "F-15E Strike Eagle",
+      "display_name_zh": "f15e",
+      "category": "base",
+      "batch": "reference",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_6aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_sffs_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sffs_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_tls_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_tls_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15e_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f15e/f15e_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15e_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f15e/f15e_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15e_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f15e/f15e_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15e.uasset",
+        "encrypted_sha256": "3a5b94ecfd482f1d90e938741992ef7734aef063d1b4ed602af192ebec989bc9",
+        "decoded_sha256": "f7e80b98b817e34c5df3cac6cc937c2a4080d6d774215fed0fc955809e48029c"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f15e",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": true
+    },
+    {
+      "code": "f15j",
+      "display_name_en": "F-15J",
+      "display_name_zh": "f15j",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hcaa_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_j0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_saam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_saam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_qaam_j0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_j0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_j0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_j0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15j_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f15j/f15j_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15j_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f15j/f15j_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15j_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f15j/f15j_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15j.uasset",
+        "encrypted_sha256": "f38b6203264dde56f7ba5bab4f761450637b13dbc137e64c5816e9f4f662b4cf",
+        "decoded_sha256": "64e170b2dfbe912817525a1dc8ef23790afda10a8cc555f05da1e2d7d259203a"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f15j",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f15m",
+      "display_name_en": "F-15 S/MTD",
+      "display_name_zh": "f15m",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hpaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hpaa_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_faeb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_faeb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_faeb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_faeb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_hvaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hvaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15m_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f15m/f15m_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15m_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f15m/f15m_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f15m_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f15m/f15m_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15m.uasset",
+        "encrypted_sha256": "a8fbb0c637e60917b24b6b250e90695d19282579ee1c67ac566fa218aa2f694c",
+        "decoded_sha256": "ec65de6730af1aa4dcec40e1f0e8d2c3a09d52925740850a4f6cb39fd6467d22"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f15m",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f16c",
+      "display_name_en": "F-16C Fighting Falcon",
+      "display_name_zh": "f16c",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_gpb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_gpb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_sasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16c_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f16c/f16c_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16c_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f16c/f16c_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16c_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f16c/f16c_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f16c.uasset",
+        "encrypted_sha256": "40a90e93c42fbc7daab0c7065f226c8148136191d1e7b95a16b5cdf7f0898b56",
+        "decoded_sha256": "2e28d561b411612e892104e2b52ee27696aeb5297e12a9253199942acfcd353f"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f16c",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f16x",
+      "display_name_en": "F-16XL",
+      "display_name_zh": "f16x",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_ugb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ugb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16x_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f16x/f16x_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16x_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f16x/f16x_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f16x_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f16x/f16x_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f16x.uasset",
+        "encrypted_sha256": "f9f548dfe26a8fedb00aa5946b8a103a09b617923b3a1f3896dd030639de4fe2",
+        "decoded_sha256": "79cc41914df3f82d3fcf411b09657d7bd2f4d6a11aa5e79df7e7433f5a221965"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f16x",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f18e",
+      "display_name_en": "F/A-18E",
+      "display_name_zh": "f18e",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hcaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0"
+            },
+            "MaxWeaponCount": 8,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4agm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lagm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lagm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18e_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f18e/f18e_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18e_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f18e/f18e_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18e_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f18e/f18e_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18e.uasset",
+        "encrypted_sha256": "030d9e25558dd285557f53b17344dd2f9416e6936ac07d08c5095d0c09859460",
+        "decoded_sha256": "d14dcf18e16a2841b6fa9223c40826e55c24e701d3322246349ef7393c7a7f9e"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f18e",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f18etg",
+      "display_name_en": "F/A-18E Top Gun",
+      "display_name_zh": "f18etg",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hcaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0"
+            },
+            "MaxWeaponCount": 8,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_hvaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hvaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_gpb_a1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_a1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_gpb_a1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_a1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18etg_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f18etg/f18etg_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18etg_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f18etg/f18etg_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18etg_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f18etg/f18etg_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18etg.uasset",
+        "encrypted_sha256": "71745569f440f775aa19dc7b87cf2770723b8b6d20b5165367a667223d488c3b",
+        "decoded_sha256": "7db42d9884eb5ee76becbef45dad51a353797610e3a77ccd807a8604a46e1eea"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f18etg",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f18f",
+      "display_name_en": "F/A-18F Super Hornet",
+      "display_name_zh": "f18f",
+      "category": "base",
+      "batch": "skeletal_swp3",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_qaam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+          "class_source": "base_pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0"
+            },
+            "MaxWeaponCount": 8,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "base_pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_lasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_lasm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_eml_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_eml_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_eml_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_eml_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18f_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f18f/f18f_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18f_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f18f/f18f_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f18f_SWP3",
+            "package": "/Game/Vehicles/Aircraft/f18f/f18f_SWP3"
+          },
+          "AnimClass": {
+            "object": "f18f_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f18f_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18f.uasset",
+        "encrypted_sha256": "00da946e41de1e146f1cbe4cdc613cc4c939e70898808ef06fce2521dd28d10b",
+        "decoded_sha256": "6e1131a408fb93899acbd02fa3e0b8d2e943b45e9c5e29e4921311029e0ce8b8"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f18f",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f18x",
+      "display_name_en": "F/A-18F Block III",
+      "display_name_zh": "f18x",
+      "category": "official_dlc",
+      "batch": "skeletal_swp3",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_lacm_a1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_a1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lacm_a1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_a1"
+            },
+            "MaxWeaponCount": 8,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_8agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_8agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18x_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f18x/f18x_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f18x_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/f18x/f18x_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f18x_SWP3",
+            "package": "/Game/Vehicles/Aircraft/f18x/f18x_SWP3"
+          },
+          "AnimClass": {
+            "object": "f18x_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f18x_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18x.uasset",
+        "encrypted_sha256": "985db1d3f69cc3ff642f0e5c440c5d25881913d19c1e5206376b29995f310320",
+        "decoded_sha256": "5c7a6607ccc26cbc09766b8d593fd1caac32b117ae4139e99f76539eac7282d5"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f18x",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f22a",
+      "display_name_en": "F-22A Raptor",
+      "display_name_zh": "f22a",
+      "category": "base",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_qaam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+          "class_source": "base_pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "base_pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_xsdb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_xsdb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_8aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_8aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_8aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_8aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f22a_SWP1",
+            "package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP1"
+          },
+          "AnimClass": {
+            "object": "f22a_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f22a_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f22a_SWP2",
+            "package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP2"
+          },
+          "AnimClass": {
+            "object": "f22a_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f22a_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f22a_SWP3",
+            "package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP3"
+          },
+          "AnimClass": {
+            "object": "f22a_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f22a_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f22a.uasset",
+        "encrypted_sha256": "098c35e3893bf00b5d1ad9349e6e460514154e8975b1d61c293ad5de6235ffb0",
+        "decoded_sha256": "7a31aac98183054bf50bf3228fcc06748fa309b5a8e60ed773d89e73c022c987"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f22a",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "f35c",
+      "display_name_en": "F-35C Lightning II",
+      "display_name_zh": "f35c",
+      "category": "base",
+      "batch": "reference",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sod_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sod_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sod_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sod_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_8agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_8agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f35c_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/f35c/f35c_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "f35c_SWP2",
+            "package": "/Game/Vehicles/Aircraft/f35c/f35c_SWP2"
+          },
+          "AnimClass": {
+            "object": "f35c_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/f35c_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "f35c_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/f35c/f35c_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f35c.uasset",
+        "encrypted_sha256": "ad07bbb9679fda8ed0744d6ab8daec125d7c1904634c190650eabe1244f939e8",
+        "decoded_sha256": "8e4aa9bbd5982ff0b0e141e1d6e2852abf7aa2b4041af8d7ed98b828da6441e3"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f35c",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": true
+    },
+    {
+      "code": "fa27",
+      "display_name_en": "XFA-27",
+      "display_name_zh": "fa27",
+      "category": "official_dlc",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sod_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sod_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sod_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sod_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_mstm_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_mstm_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_mstm_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_mstm_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_ecmp_x2_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ecmp_x2_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "fa27_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/fa27/fa27_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "fa27_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/fa27/fa27_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "fa27_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/fa27/fa27_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa27.uasset",
+        "encrypted_sha256": "231ecaa8f71e871d9813df9719c738041f1885e596fb904d93d59d17e327c0bc",
+        "decoded_sha256": "3daab9619d7c4f25b962d6136dedb201c91338782e41e65b05d65215b6714c08"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_fa27",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "fa44",
+      "display_name_en": "CFA-44 Nosferatu",
+      "display_name_zh": "fa44",
+      "category": "official_dlc",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_admm_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_admm_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_admm_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_admm_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1",
+            "CoverOpeningSound": -3,
+            "CoverClosingSound": -2
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn",
+            "CoverOpeningSound": "pawn",
+            "CoverClosingSound": "pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_eml_x2_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x2",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_eml_x2_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x2"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2",
+            "CoverOpeningSound": -5,
+            "CoverClosingSound": -4
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn",
+            "CoverOpeningSound": "pawn",
+            "CoverClosingSound": "pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_ecmp_x1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ecmp_x1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3",
+            "CoverOpeningSound": -3,
+            "CoverClosingSound": -2
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn",
+            "CoverOpeningSound": "pawn",
+            "CoverClosingSound": "pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fa44_SWP1",
+            "package": "/Game/Vehicles/Aircraft/fa44/fa44_SWP1"
+          },
+          "AnimClass": {
+            "object": "fa44_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fa44_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fa44_SWP2",
+            "package": "/Game/Vehicles/Aircraft/fa44/fa44_SWP2"
+          },
+          "AnimClass": {
+            "object": "fa44_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fa44_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fa44_SWP3",
+            "package": "/Game/Vehicles/Aircraft/fa44/fa44_SWP3"
+          },
+          "AnimClass": {
+            "object": "fa44_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fa44_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa44.uasset",
+        "encrypted_sha256": "ae7f864de6d2b97eede8904a568b6ac3886110f97ee5f58413de33b64f1c7be5",
+        "decoded_sha256": "49fd6ddbe7b017573a741699f2a1d06b2c5b5e9003b763f4f72d5fbd75681f15"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_fa44",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "fb22",
+      "display_name_en": "FB-22",
+      "display_name_zh": "fb22",
+      "category": "official_dlc",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_xsdb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_xsdb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_laam_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_sffs_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sffs_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sffs_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fb22_SWP1",
+            "package": "/Game/Vehicles/Aircraft/fb22/fb22_SWP1"
+          },
+          "AnimClass": {
+            "object": "fb22_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fb22_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fb22_SWP2",
+            "package": "/Game/Vehicles/Aircraft/fb22/fb22_SWP2"
+          },
+          "AnimClass": {
+            "object": "fb22_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fb22_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "fb22_SWP3",
+            "package": "/Game/Vehicles/Aircraft/fb22/fb22_SWP3"
+          },
+          "AnimClass": {
+            "object": "fb22_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/fb22_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fb22.uasset",
+        "encrypted_sha256": "880f58186d26d6b0dd19b68e0215c83d6ce05f3d551b54998329107e51ae406d",
+        "decoded_sha256": "2e674c9312368e518af812813ae0d33d97408cd2baaedd251ce5628c74c54549"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_fb22",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "j39e",
+      "display_name_en": "Gripen E",
+      "display_name_zh": "j39e",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sasm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sasm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_6aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lacm_e0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_e0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lacm_e0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_e0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "j39e_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/j39e/j39e_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "j39e_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/j39e/j39e_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "j39e_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/j39e/j39e_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_j39e.uasset",
+        "encrypted_sha256": "760a68a2d4db963bb4b25de1bb06f848e6e0df32fdaa9b329346a4f40763d9fa",
+        "decoded_sha256": "34fae947d86928f6a5988156c1071dc50b79bcc789a039a87da926ba80b492ef"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_j39e",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "m21b",
+      "display_name_en": "MiG-21bis",
+      "display_name_zh": "m21b",
+      "category": "base",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_mgp_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_mgp_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_r0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_rkt_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_rkt_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_rkt_r0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_saam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m21b_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/m21b/m21b_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m21b_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/m21b/m21b_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m21b_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/m21b/m21b_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_m21b.uasset",
+        "encrypted_sha256": "dfb8928e7a9435a2d13244a80eb80fda7dbae7e37d1593a7b3329e2f44c39de2",
+        "decoded_sha256": "da5781447880131c1dd3383f849300943ea7669606c0d4207011c7eb34103e55"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_m21b",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "m29a",
+      "display_name_en": "MiG-29A",
+      "display_name_zh": "m29a",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hpaa_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lagm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lagm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lagm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lagm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m29a_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/m29a/m29a_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m29a_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/m29a/m29a_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m29a_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/m29a/m29a_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_m29a.uasset",
+        "encrypted_sha256": "f0b6ce7cdbec297cc08bb6400f2ed6a5347ecacf78bfd36f0d21d2dd3bcecc61",
+        "decoded_sha256": "5c4b990c902064eb0894cddf2f27daef977f2ecb618bed7f95f6b78e3d9cb603"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_m29a",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "m31b",
+      "display_name_en": "MiG-31B",
+      "display_name_zh": "m31b",
+      "category": "base",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_saam_r1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_r1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_plsl_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_plsl_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m31b_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/m31b/m31b_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m31b_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/m31b/m31b_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m31b_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/m31b/m31b_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_m31b.uasset",
+        "encrypted_sha256": "64982fa901ac59f4e39a594599a45f0043fdfbd27097ea5a41b17872178c9059",
+        "decoded_sha256": "147dcbe198cdbd1c6d7f63139afd710bafdc1ee4f0de3aba3fabeb212a7d1d90"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_m31b",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "m35d",
+      "display_name_en": "MiG-35D",
+      "display_name_zh": "m35d",
+      "category": "official_dlc",
+      "batch": "static_dlc",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_saam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_6aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4agm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m35d_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/m35d/m35d_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m35d_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/m35d/m35d_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "m35d_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/m35d/m35d_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_m35d.uasset",
+        "encrypted_sha256": "bb2d9045aff7fd6b2b48d74718fa2367ab6657c955607e8ca1830fe49e3beab0",
+        "decoded_sha256": "2421d28e02faa86a707f74d288a891ab43dace110ad05f885a682447b585dcd7"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_m35d",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "mr2k",
+      "display_name_en": "Mirage 2000-5",
+      "display_name_zh": "mr2k",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_gpb_f0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_f0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_gpb_f0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_f0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_f0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_f0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_f0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_f0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lasm_f0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_f0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_f0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_f0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mr2k_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/mr2k/mr2k_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mr2k_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/mr2k/mr2k_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mr2k_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/mr2k/mr2k_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_mr2k.uasset",
+        "encrypted_sha256": "c043d4e8a7248fcc65a14dc7b9cba305e365ea70d3eecf6dd044f5ac20185808",
+        "decoded_sha256": "d306af8111ab39785f99df7179f98286a14f77abd7d433ada0dce7d5eb01bf3f"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_mr2k",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "mrgn",
+      "display_name_en": "ADFX-01 Morgan",
+      "display_name_zh": "mrgn",
+      "category": "official_dlc",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_tls_x1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_tls_x1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_mpbm_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_mpbm_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_mpbm_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_mpbm_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_esm_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_esm_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mrgn_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/mrgn/mrgn_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mrgn_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/mrgn/mrgn_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "mrgn_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/mrgn/mrgn_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_mrgn.uasset",
+        "encrypted_sha256": "597130ae6db063ccae780139494df896fde1a63089d86e3c2d509fb654101090",
+        "decoded_sha256": "ef928139eb41402688fff415f22c83251506315f6adec4babe6f712ead6778e0"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_mrgn",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "pkfa",
+      "display_name_en": "Su-57",
+      "display_name_zh": "pkfa",
+      "category": "base",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_4aam_r1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_r1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_gpb_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_gpb_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_plsl_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_plsl_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "pkfa_SWP1",
+            "package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP1"
+          },
+          "AnimClass": {
+            "object": "pkfa_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/pkfa_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "pkfa_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "pkfa_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_pkfa.uasset",
+        "encrypted_sha256": "ceff6b599b6e996b5f21dd62966d80f803e64b0878e8252acf5f0d2e3f758a62",
+        "decoded_sha256": "27d4d17c75ba2cfa73f9af6ad8dc11982b46ebb9cacefa101dc01f029f9b0051"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_pkfa",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "rflm",
+      "display_name_en": "Rafale M",
+      "display_name_zh": "rflm",
+      "category": "base",
+      "batch": "static_intro",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hcaa_f0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_f0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_f0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_f0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lacm_f0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_lacm_f0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lacm_f0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_lacm_f0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_laam_e0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_e0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_e0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_e0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "rflm_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/rflm/rflm_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "rflm_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/rflm/rflm_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "rflm_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/rflm/rflm_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_rflm.uasset",
+        "encrypted_sha256": "10948fad7559b88a8df115fd6e4829ecf70a65f0d4d53e4c76982f201d1d6617",
+        "decoded_sha256": "a0ee61065487cc718007280825148bcf95d53b7efdbaff776a21fa32ea550e28"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_rflm",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su30",
+      "display_name_en": "Su-30M2",
+      "display_name_zh": "su30",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hpaa_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4agm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su30/su30_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su30/su30_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su30/su30_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30.uasset",
+        "encrypted_sha256": "136fb96b254c2404e109ed6059d681f9a3a0baecf9a6f10aeee3ab10361d77af",
+        "decoded_sha256": "55cdee553e40a9ea806dd83a40c7e8531ca4b152689f29c7b95506caaf140120"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su30",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su30sm",
+      "display_name_en": "Su-30SM",
+      "display_name_zh": "su30sm",
+      "category": "base",
+      "batch": "reference",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_6aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_qaam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lagm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lagm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lagm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lagm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30sm_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su30sm/su30sm_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30sm_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su30sm/su30sm_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su30sm_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su30sm/su30sm_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30sm.uasset",
+        "encrypted_sha256": "c8d422cbdaa60eae67cf97f723aa430b33d2dd535efaebab39124487c1a32ed3",
+        "decoded_sha256": "8caec86f95214dc6543aabcd0de729a9c1f4c82ae3866a713cc95834353f37b0"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su30sm",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": true
+    },
+    {
+      "code": "su33",
+      "display_name_en": "Su-33",
+      "display_name_zh": "su33",
+      "category": "base",
+      "batch": "skeletal_swp3",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hvaa_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hvaa_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hvaa_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hvaa_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lasm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_eml_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_eml_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_eml_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_eml_x0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su33_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su33/su33_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su33_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su33/su33_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su33_SWP3",
+            "package": "/Game/Vehicles/Aircraft/su33/su33_SWP3"
+          },
+          "AnimClass": {
+            "object": "su33_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su33_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su33.uasset",
+        "encrypted_sha256": "3583431f50e0e8157adb8f521d8d615088060b8307147e337c421bc081d373e0",
+        "decoded_sha256": "7f0e34b0c071a6a2a12a91bd3c0815ce2b162cd99bce180d85a65a177f8f78a1"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su33",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su34",
+      "display_name_en": "Su-34",
+      "display_name_zh": "su34",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_sffs_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_sffs_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_sffs_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_sffs_r0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_hcaa_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_4agm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4agm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4agm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su34_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su34/su34_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su34_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su34/su34_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su34_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su34/su34_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su34.uasset",
+        "encrypted_sha256": "ecea638802b5a99beb461b30436791bf60aec3658750f4ae88e1292f939563bc",
+        "decoded_sha256": "06e4c2be602822ef8bd46cf1a92d249d5076ff95debd3ac7f2d066f18d078860"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su34",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su35",
+      "display_name_en": "Su-35S",
+      "display_name_zh": "su35",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_r1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_r1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_r1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_r1"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_6aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_6aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_6aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lasm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su35_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su35/su35_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su35_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su35/su35_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su35_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su35/su35_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su35.uasset",
+        "encrypted_sha256": "867296918e3045bbbe5fc0d93ff5cbfcf85f9aa399ef18fdaac590fdd239045a",
+        "decoded_sha256": "72672e206a8b930e75d6820e548176a2cd9c388473fc31f2997b454a602ee417"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su35",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su37",
+      "display_name_en": "Su-37",
+      "display_name_zh": "su37",
+      "category": "base",
+      "batch": "static_system",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hpaa_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hpaa_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hpaa_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_tls_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_tls_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su37_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/su37/su37_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su37_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/su37/su37_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su37_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su37/su37_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su37.uasset",
+        "encrypted_sha256": "33396e0dfebaf3fdb1672df4f115b4baded73d2f52c44b7ec0123c2fd5177072",
+        "decoded_sha256": "a55b7b632f4d035fd0704ec715616daa8556a4f3a060953813acebb88438ba9f"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su37",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su47",
+      "display_name_en": "Su-47",
+      "display_name_zh": "su47",
+      "category": "base",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_saam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_saam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_ugb_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ugb_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ugb_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ugb_r0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_qaam_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_qaam_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su47_SWP1",
+            "package": "/Game/Vehicles/Aircraft/su47/su47_SWP1"
+          },
+          "AnimClass": {
+            "object": "su47_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su47_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su47_SWP2",
+            "package": "/Game/Vehicles/Aircraft/su47/su47_SWP2"
+          },
+          "AnimClass": {
+            "object": "su47_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su47_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su47_SWP3",
+            "package": "/Game/Vehicles/Aircraft/su47/su47_SWP3"
+          },
+          "AnimClass": {
+            "object": "su47_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su47_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su47.uasset",
+        "encrypted_sha256": "5beef902f351abdf2b1e6aab53b9df455cfc2734fc2ded4b52d9eefeb54fcf6f",
+        "decoded_sha256": "ea2a61551a881dc7fd28caebcfec90ab35dd0f51b8cde72736dd769152907a31"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su47",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "su57tg",
+      "display_name_en": "Su-57 Top Gun",
+      "display_name_zh": "su57tg",
+      "category": "official_dlc",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_4aam_r1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_r1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_hcaa_r1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_r1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r1"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_lacm_r0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lacm_r0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su57tg_SWP1",
+            "package": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP1"
+          },
+          "AnimClass": {
+            "object": "su57tg_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su57tg_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "su57tg_SWP2",
+            "package": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP2"
+          },
+          "AnimClass": {
+            "object": "su57tg_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/su57tg_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "su57tg_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su57tg.uasset",
+        "encrypted_sha256": "6dd34df3e7aca8235848584d72d32aeca2e2dd1113a37bea2498b7a476295c49",
+        "decoded_sha256": "387a9ee400a4d84d67e31533556593026529c686ab75680cae4311af03640a3d"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_su57tg",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "typn",
+      "display_name_en": "Typhoon",
+      "display_name_zh": "typn",
+      "category": "base",
+      "batch": "static_base",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_laam_e0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_e0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_laam_e0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_e0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_8agm_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_8agm_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_hcaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hcaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hcaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "typn_SWP1_SM",
+            "package": "/Game/Vehicles/Aircraft/typn/typn_SWP1_SM"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "typn_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/typn/typn_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "typn_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/typn/typn_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_typn.uasset",
+        "encrypted_sha256": "3f51706b367a08c02cf28ec0f7dd6bb30bd318b187e99d8853eff3395bfe0536",
+        "decoded_sha256": "79fe48e696f59a34028cf5f5d182fc7eefeaa6a480ba6fc27d5883aed484befd"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_typn",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "x02s",
+      "display_name_en": "X-02S Strike Wyvern",
+      "display_name_zh": "x02s",
+      "category": "base_special",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_4aam_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_lasm_x0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_x0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_lasm_x0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_lasm_x0"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_eml_x1_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x1",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_eml_x1_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x1"
+            },
+            "MaxWeaponCount": -1,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "x02s_SWP1",
+            "package": "/Game/Vehicles/Aircraft/x02s/x02s_SWP1"
+          },
+          "AnimClass": {
+            "object": "x02s_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/x02s_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "x02s_SWP2",
+            "package": "/Game/Vehicles/Aircraft/x02s/x02s_SWP2"
+          },
+          "AnimClass": {
+            "object": "x02s_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/x02s_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "x02s_SWP3",
+            "package": "/Game/Vehicles/Aircraft/x02s/x02s_SWP3"
+          },
+          "AnimClass": {
+            "object": "x02s_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/x02s_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_x02s.uasset",
+        "encrypted_sha256": "c5e8c1babf172a9446e8622c9e2087c3981ee8c104ef08da1fe02a878ba89359",
+        "decoded_sha256": "4feda9ac6a88dc16c267740f35571a61d9cd35b10ee15758dce9c779392cc2eb"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_x02s",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "yf23",
+      "display_name_en": "YF-23",
+      "display_name_zh": "yf23",
+      "category": "base",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_hvaa_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_hvaa_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_hvaa_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_ugb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_ugb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "yf23_SWP1",
+            "package": "/Game/Vehicles/Aircraft/yf23/yf23_SWP1"
+          },
+          "AnimClass": {
+            "object": "yf23_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/yf23_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "yf23_SWP2",
+            "package": "/Game/Vehicles/Aircraft/yf23/yf23_SWP2"
+          },
+          "AnimClass": {
+            "object": "yf23_SWP2_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/yf23_SWP2_AnimBP"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "yf23_SWP3",
+            "package": "/Game/Vehicles/Aircraft/yf23/yf23_SWP3"
+          },
+          "AnimClass": {
+            "object": "yf23_SWP3_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/yf23_SWP3_AnimBP"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_yf23.uasset",
+        "encrypted_sha256": "0072f8914450afa933cc94276458be6dfb5b356a6b714c6da34f7aad3e6710d5",
+        "decoded_sha256": "ff017abeb0b259efc375d0176bdcf1d9453e22b3ac43e6cd56cd9ca7102c0588"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_yf23",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    },
+    {
+      "code": "zoef",
+      "display_name_en": "ADF-01 FALKEN",
+      "display_name_zh": "zoef",
+      "category": "official_dlc",
+      "batch": "skeletal_complex",
+      "weapons": [
+        {
+          "config": "SpecialWeaponConfig1",
+          "class": "plwp_tls_x2_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_tls_x2_C",
+              "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1",
+            "CoverOpeningSound": -3,
+            "CoverClosingSound": -2
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn",
+            "CoverOpeningSound": "pawn",
+            "CoverClosingSound": "pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig2",
+          "class": "plwp_4aam_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_4aam_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        },
+        {
+          "config": "SpecialWeaponConfig3",
+          "class": "plwp_faeb_a0_C",
+          "class_package": "/Game/Blueprint/Weapons/Player/Base/plwp_faeb_a0",
+          "class_source": "pawn",
+          "effective_fields": {
+            "WeaponClass": {
+              "object": "plwp_faeb_a0_C",
+              "package": "/Game/Blueprint/Weapons/Player/Base/plwp_faeb_a0"
+            },
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          },
+          "field_sources": {
+            "WeaponClass": "pawn",
+            "MaxWeaponCount": "base_pawn",
+            "WeaponPylonMeshName": "base_pawn"
+          }
+        }
+      ],
+      "swp_components": [
+        {
+          "group": "SWP1",
+          "component": "SWP1_GEN_VARIABLE",
+          "class": "SkeletalMeshComponent",
+          "SkeletalMesh": {
+            "object": "zoef_SWP1",
+            "package": "/Game/Vehicles/Aircraft/zoef/zoef_SWP1"
+          },
+          "AnimClass": {
+            "object": "zoef_SWP1_AnimBP_C",
+            "package": "/Game/Blueprint/Player/Body/zoef_SWP1_AnimBP"
+          }
+        },
+        {
+          "group": "SWP2",
+          "component": "SWP2_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "zoef_SWP2_SM",
+            "package": "/Game/Vehicles/Aircraft/zoef/zoef_SWP2_SM"
+          }
+        },
+        {
+          "group": "SWP3",
+          "component": "SWP3_GEN_VARIABLE",
+          "class": "StaticMeshComponent",
+          "StaticMesh": {
+            "object": "zoef_SWP3_SM",
+            "package": "/Game/Vehicles/Aircraft/zoef/zoef_SWP3_SM"
+          }
+        }
+      ],
+      "pawn_source": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_zoef.uasset",
+        "encrypted_sha256": "71a3afdd4bdf5c5a4be525370e8a6dae182af8a5982287a5511d08a425bdfed6",
+        "decoded_sha256": "ead06cd48e72ab02981e41bb9562944dd912ec42c5d0478c0302583e3d735ef1"
+      },
+      "plane_config_reference": "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_zoef",
+      "runtime_verified_by_this_catalog": false,
+      "existing_layout_reference": false
+    }
+  ]
+}

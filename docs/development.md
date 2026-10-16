@@ -6,6 +6,8 @@
 
 ## 有效入口
 
+原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
+
 | 工作 | 工具 |
 |---|---|
 | 完整构建 | src/build.py，成套构建核心/UI，输出全新 Temp 子目录 |
