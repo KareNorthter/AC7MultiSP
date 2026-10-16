@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-16",
+  "purpose": "维护性、唯一开发基线与 AI 按需检索",
+  "baseline": "d2f2221bf06b3f0bd5d7c4c5d8466162ff4085eb",
+  "main_workspace": "E:/AC7_MultiSP",
+  "snapshot_commit": "0637abc2ad4973031d864ffdae22b63064886cce",
+  "archived_refs": {
+    "codex/aircraft-mount-survey": {
+      "commit": "5006e05ea621f12e6cfc2af01e7144970c93994b",
+      "archive_tag": "archive/20261016/aircraft-mount-survey"
+    },
+    "codex/experience-polish": {
+      "commit": "839eb8006fb994517908105bee9ebb1f52f3c961",
+      "archive_tag": "archive/20261016/experience-polish"
+    },
+    "codex/hud-merged-candidate": {
+      "commit": "6381ccdf9bd2e8fa330d407f41ff39cc51cf977f",
+      "archive_tag": "archive/20261016/hud-merged-candidate"
+    },
+    "codex/native-resupply": {
+      "commit": "6381ccdf9bd2e8fa330d407f41ff39cc51cf977f",
+      "archive_tag": "archive/20261016/native-resupply"
+    },
+    "codex/persistent-sp-research": {
+      "commit": "b0f4acc528bde83169cdd4bb6d978cf53806a03f",
+      "archive_tag": "archive/20261016/persistent-sp-research"
+    },
+    "codex/release-1-0-2-f6": {
+      "commit": "b6b697941055e79da6c874b05e3aab0773a6fbc5",
+      "archive_tag": "archive/20261016/release-1-0-2-f6"
+    },
+    "codex/resupply-native-flow": {
+      "commit": "2ded362b4deec44c74bf19f551e8e3fcc68b28fb",
+      "archive_tag": "archive/20261016/resupply-native-flow"
+    },
+    "codex/static-mount-batch": {
+      "commit": "d2f2221bf06b3f0bd5d7c4c5d8466162ff4085eb",
+      "archive_tag": "archive/20261016/static-mount-batch"
+    },
+    "codex/su30sm-dual-mount-research": {
+      "commit": "c44e3b9ae19a2dded4a40389d839fa76e56a9119",
+      "archive_tag": "archive/20261016/su30sm-dual-mount-research"
+    },
+    "codex/su30sm-fixed-mount-prototype": {
+      "commit": "c378de2443752b3ad2833d798b2920064b3abd3d",
+      "archive_tag": "archive/20261016/su30sm-fixed-mount-prototype"
+    },
+    "codex/su30sm-three-sp-fixed-mount": {
+      "commit": "be58c83546547df07d159c233c2fa82d83ed45d2",
+      "archive_tag": "archive/20261016/su30sm-three-sp-fixed-mount"
+    },
+    "codex/three-sp-research": {
+      "commit": "0637abc2ad4973031d864ffdae22b63064886cce",
+      "archive_tag": "archive/20261016/three-sp-research"
+    },
+    "codex/three-sp-switch-hud-fix": {
+      "commit": "495fafe7e19de9200ff949cffad612c5fe0b9282",
+      "archive_tag": "archive/20261016/three-sp-switch-hud-fix"
+    },
+    "codex/three-sp-ui-polish": {
+      "commit": "7b8ce4c8d4d2f72ff7bafd79101e87de89ab55af",
+      "archive_tag": "archive/20261016/three-sp-ui-polish"
+    },
+    "codex/ui-headings-hud-fixed": {
+      "commit": "7e2fe4a2c7d45ef154d64831dd8565fd4b0f1573",
+      "archive_tag": "archive/20261016/ui-headings-hud-fixed"
+    },
+    "main": {
+      "commit": "6381ccdf9bd2e8fa330d407f41ff39cc51cf977f",
+      "archive_tag": "archive/20261016/main"
+    }
+  },
+  "archived_worktrees": [
+    {
+      "path": "C:/Users/83717/.codex/worktrees/release-1-0-2-f6/AC7_MultiSP",
+      "old_branch": "codex/release-1-0-2-f6",
+      "commit": "b6b697941055e79da6c874b05e3aab0773a6fbc5",
+      "archive_tag": "archive/20261016/release-1-0-2-f6",
+      "local_notice_sha256": "fd2e9271694a40986dbd9f4372b91c2739a25b8e39befbcddccb2426fdf4e507"
+    },
+    {
+      "path": "C:/Users/83717/.codex/worktrees/three-sp-ui-polish/AC7_MultiSP",
+      "old_branch": "codex/ui-headings-hud-fixed",
+      "commit": "7e2fe4a2c7d45ef154d64831dd8565fd4b0f1573",
+      "archive_tag": "archive/20261016/ui-headings-hud-fixed",
+      "local_notice_sha256": "b27fb9286e7a5eec35ae18d6fa6e5a3845fe0bdee5181a2fc866f8b36ab9d035"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/persistent-sp-research",
+      "old_branch": "codex/persistent-sp-research",
+      "commit": "b0f4acc528bde83169cdd4bb6d978cf53806a03f",
+      "archive_tag": "archive/20261016/persistent-sp-research",
+      "local_notice_sha256": "854e69c71118f5e3936ffd148db6ed8be31df5212275f2086022ca8b1a6619a2"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/su30sm-dual-mount-research",
+      "old_branch": "codex/su30sm-dual-mount-research",
+      "commit": "c44e3b9ae19a2dded4a40389d839fa76e56a9119",
+      "archive_tag": "archive/20261016/su30sm-dual-mount-research",
+      "local_notice_sha256": "82366717c3d0f678a9354c801cdd7559fe33e95b0d7d6f042e0032edd28ab6d6"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype",
+      "old_branch": "codex/static-mount-batch",
+      "commit": "d2f2221bf06b3f0bd5d7c4c5d8466162ff4085eb",
+      "archive_tag": "archive/20261016/static-mount-batch",
+      "local_notice_sha256": "94e0d4073973855a7d92e449ae0844a80c0e98a4c580f0b5aee5ceb8a00d772c"
+    }
+  ],
+  "pending_branch": "codex/pending-ui-polish",
+  "release_copy": {
+    "path": "Release/AC7DualSP-1.1.0.zip",
+    "sha256": "8764d8c4381784782b463cb5de974a5dadb9d4891628f2bedc004b760a52a187"
+  },
+  "game_accessed": false,
+  "functional_changes": false,
+  "active_branches": [
+    "codex/pending-ui-polish",
+    "main"
+  ],
+  "uncommitted_files_preserved": 36,
+  "backup_directory": "backup/maintenance-20261016",
+  "bundle_verified_before_switch": true,
+  "historical_documents_archived": 55,
+  "current_documents": [
+    "docs/AC7DualSP-安装说明.txt",
+    "docs/architecture.md",
+    "docs/development.md",
+    "docs/maintenance.md",
+    "docs/mod-management.md",
+    "docs/mount-guide.md",
+    "docs/release-1.1.0.txt",
+    "docs/status.md"
+  ],
+  "local_document_links_checked": 619,
+  "broken_local_document_links": [],
+  "historical_evidence_unchanged": true,
+  "functional_files_equal_to_v1_1_0": true,
+  "build_receipt_sources_verified": 15,
+  "core_and_ui_hashes_verified": true,
+  "default_search_excludes_history": true,
+  "build_executed": false,
+  "test_modules_run": false,
+  "release_repacked": false,
+  "limitations": [
+    "构建来源摘要仍未覆盖全部依赖，本轮不改工具代码",
+    "旧工作区保留本地产物，仅 AGENTS.md 有本地封存提示",
+    "包内说明维持原发布快照，源码文档整理不改现有 ZIP"
+  ]
+}

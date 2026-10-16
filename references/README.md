@@ -1,6 +1,8 @@
+> 历史参考资料：仅供按需追溯，当前功能与限制见[项目状态](../docs/status.md)。
+
 # 参考资料
 
-2026-10-15 [用户提供的 6AAM 装填剪影异常](su30sm-fixed-mount/hud-silhouette-6aam.png)：当前选择 6AAM，侧边却呈现两枚大导弹剪影。用户确认实体挂载、切换和发射正常；截图只用于[问题登记](../docs/research/hud-reload-silhouette-issue.md)，按要求本次不调查或修复。
+2026-10-15 [用户提供的 6AAM 装填剪影异常](su30sm-fixed-mount/hud-silhouette-6aam.png)：当前选择 6AAM，侧边却呈现两枚大导弹剪影。用户确认实体挂载、切换和发射正常；截图只用于[问题登记](../docs/archive/research/hud-reload-silhouette-issue.md)，按要求本次不调查或修复。
 
 2026-10-14 新增[候选 6 用户反馈](候选6用户反馈/)：准备页图标/全名重叠、PART 单 SP 和补给说明排版四张用户截图，作为候选 7 修订依据。
 
@@ -19,6 +21,6 @@
 - [中途补给选择 SP2](AC8/任务中补给/选择SP2.jpg)
 - [中途补给起飞 YES/NO](AC8/任务中补给/起飞.jpg)
 
-补给对照及修改见[AC8 补给对照](../docs/resupply-ac8-comparison.md)，仅凭静态截图不能确认实际返回路径、配弹比例或事件时序。
+补给对照及修改见[AC8 补给对照](../docs/archive/resupply-ac8-comparison.md)，仅凭静态截图不能确认实际返回路径、配弹比例或事件时序。
 
-当前[原生准备页](../docs/native-loadout.md)按顺序双选和空 SP2 的逻辑参考这些图片，不宣称已经复刻全部动画、预览和载弹规则。双实体挂载的不同目标见[模型研究](../docs/research/weapon-models.md)。
+当前[原生准备页](../docs/archive/native-loadout.md)按顺序双选和空 SP2 的逻辑参考这些图片，不宣称已经复刻全部动画、预览和载弹规则。双实体挂载的不同目标见[模型研究](../docs/archive/research/weapon-models.md)。

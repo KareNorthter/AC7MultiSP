@@ -1,0 +1,266 @@
+> 历史归档：保留当时结论，不是当前操作指引。当前基线见[项目状态](../../status.md)。
+
+AC7DualSP 第三方模组兼容测试安排
+日期：2026-10-15
+基线：正式 1.0.1。第一批兼容候选仅修改 Lua；飞控批次为管理快捷键重编译 UI。
+武器核心和正式发布 ZIP 保持原样。
+
+最终整理与后续反馈
+视觉原则补充：正常加载和交接尽量不露出原生单 SP 界面；真正失败/超时可恢复原生并明确报错。
+等待展示已在源码遮蔽单 SP 内容并保留双 SP 占位；不隐藏整个页面根节点。该视觉修订仍待部署实测。
+用户确认 J-20 正常，日志记录 181 号双选和槽 0+2 出击；Adler B 也有槽 0+1 出击与切换记录。
+仓库整理为 1.0.2，简要成果见 docs/version-1.0.2.txt，当前游戏保持运行，不部署或打包。
+整理期间用户补充偶发单 SP、重选恢复，日志记录 X-02S/Su-57 选择与旧 J-20/Su-47 预览模型不一致。
+这类异步未就绪不应直接锁定为接入错误。源码现增加显式等待、选装说明和输入隔离，10 秒超时报错；
+页面/机体/世界变化时结束等待。其他组件错误仍停用并记录。仅语法核验，待下次退出游戏后部署与复测。
+不能将用户先前的“正常”扩大为该新增时序修订已通过。验证与源码状态分别见 evidence/1.0.2-*.json。
+
+最新反馈与 J-20 修订（2026-10-15 15:34）
+用户通过：Adler A 双 SP 选择、使用与补给；Hex 锁定准星；LV2 弹药部件生效；F-15E 红色 TLS 使用和结束。
+日志对应 Adler A（165）100% 配弹、槽 0+1 出击，补给改成 1+2；F-15E（102）槽 2+1 出击。
+不将上述反馈扩大为 Adler B、50% 配弹部件组合或 J-20 飞行已通过。
+J-20 模型/涂装正常，但用户未能双选，未出击。运行 catalogue 为 50 条，181 号 supported=true。
+两次选装错误均为 main.lua 218 行“当前机体蓝图类未加载：j20a”，属于本项目的类查找失败。
+上一轮假定拼接的小写路径可直接找到实际 J20A 类，实机结果否定了这个假定，原修订不能记为解决。
+当前改为直接沿实例类与父类读取完整路径，统一小写后精确比较所选机体身份；不再二次全局查找类。
+世界和兵装组件检查保留，不对未知类放行、不修改 J-20 外部包。GetSuperStruct 接口依据：
+https://docs.ue4ss.com/lua-api/classes/ustruct.html，本机加载器也包含该接口。
+语法与安装核验通过，已停止游戏并仅更新 main.lua，没有重启、编译核心/UI 或运行测试模块。
+备份：backup/compatibility-j20-identity-20261015-153340；回执：evidence/compatibility-j20-identity-fix-installed.json。
+反馈记录：evidence/compatibility-nexus-samples-user-validation.json。
+下一步只需优先重测 J-20 默认涂装双 SP→STANDBY 换机→出击→一次补给，通过后再测 Spare/Strider。
+本批日志另见一次 Su-57 TGM 预览身份不符，随后同机体成功提交选装；保留记录，不据此扩大修订范围。
+
+当前安装与测试入口（2026-10-15 15:00，取代下文旧批次的安装状态）
+四个新下载文件均已核对并安装，本次游戏未启动，实玩待用户；历史通过范围不扩大到本批。
+新增机体为 Adler A/B 和独立 J-20A 1.1，原版机体不替换；PW-MKI 仍保存在此前批次备份。
+其他新增样本为 All Part In CampaignMode 1.3.2、Lock-on Crosshair Release-1 的 Hex 样式、
+TlsDamageAndRangeMod 3.0（基础 TLS、Raven/Falken/Morgan 变体和半径曲线，共五个 PAK）。
+仍保留 FOV+S、比例制导和鼠标飞控；DualSP 管理 F6、飞控开关 F8。AC7Weapons 不安装。
+三个小样本与当前第三方 PAK 没有同路径资源重叠，但这不等于游戏内行为已经兼容。
+外部作者 PAK 不改字节。新包共 16 个，哈希与备份见 evidence/compatibility-nexus-samples-installed.json。
+本次备份：backup/compatibility-nexus-samples-20261015-145958，包含旧 J-20 镜像、DualSP、日志和存档。
+
+本地机库合装方式
+J-20 独立模块与 Adler 原配整表不能直接叠加。使用作者共用 PWDT、名称/展示表、NON-ASS 皮肤表，
+另用 src/build_local_compatibility.py 从作者 PPDT 按明确安装清单生成本地目录包，覆盖整机体表。
+该包只保留 47 条原版战役记录和 Adler A/B（165/166）、J-20A（181），共 50 条。
+没有安装完整的 195 条 PPDT，不再把未安装机体都列入机库；原版 DLC 购买条件保持不变。
+50 条是资源表行数，不代表用户拥有或能选择 50 架。作者共用表未包含原 52 条中的四条 VR 与 Avril 记录，
+本批沿用其战役范围，不能称为全部原始表逐项不变或 VR 兼容。
+基础 J-20A 独立版不需要 FB-22；R-40 Mk.I/Mk.II 和额外 Airshow 涂装需要该 DLC，未添加 R-40 目录，
+不解锁 DLC；不装 FB-22 替换模块、EG/飞行参数补丁或 Hunter Mode 等可选模块。
+旧作者镜像已替换为用户下载的 Nexus 1.1；包内版本记录包含座舱动画蓝图修复。
+
+本项目本轮修订
+静态解析确认 J-20 的类名为 AcePlayerPawn_J20A_C，部分涂装为其派生类。
+旧 Lua 直接比较 AcePlayerPawn_j20a_C 字符串会误判。15:00 曾改成查找已加载类再用 IsA，
+随后实机仍在查找类时失败，已由顶部 15:34 的实例继承链识别替代；世界、组件和实际 WeaponID 核对继续保留。
+只部署 main.lua，语法编译通过，不执行脚本测试、不重编译核心/UI。运行效果待用户确认。
+名称和基础载量仍来自表；不能承诺 Spare/Strider 换兵装后的菜单简称自动变化。
+
+本轮用户测试（可在任务 6 分两次出击，避免逐个模组单独启动游戏）
+1. 先检查原版机体与 Adler A/B、J-20A 的模型和名称；应只新增这三架。
+   从 STANDBY 在原版机体、Adler、J-20A 之间换机，确认 UI、SP1/SP2 和 F6 正常。
+2. J-20A 先用默认涂装，选择 LAAM＋4AAM，观察 Hex 锁定框、鼠标飞控、双 SP、弹数与冷却。
+   完成一次补给并把一个槽换成 XSDB；检查起飞后切换和弹药。随后有余力再测 Spare/Strider：
+   作者会将 4AAM 换为 MSTM，Strider 另将 LAAM 换为 LAGM；记录菜单名称与实际行为是否一致。
+3. Adler A/B 各选一次吊舱与另一 SP 的组合，至少用其中一架出击；观察持续发射停止、切换和普通导弹。
+   此项与 PW-MKI 不同，PW 的通过记录不能替代。
+4. 已购买适用的高级 SP 增弹/冷却部件时，以 50% 配弹核对装卸前后载量，并完成补给或检查点重来。
+   此模组使部件可用于战役，不自动购买/解锁。没有适用部件时记为未覆盖。
+5. 另用原版 F-15E 的 TLS＋另一 SP 做一次短测，确认光束模组效果及结束发射/切换后的光束、弹数、冷却正常。
+   J-20A 与 Adler 均不能代替这一项。TLS 仍遵循切换离开后结束光束的本模组规则。
+不要求逐个重复已通过的飞控/FOV/制导测试；本批观察它们与新模组合装时是否回归即可。
+以下保留研究和历史批次，不作为当前安装清单。
+
+下载检查
+F:\下载\AC7MOD 中已取得 Adler Standalone、PW-MKI Standalone/Base/Module/Skins、
+统一 PPDT/PWDT、名称/展示表、ASS 与 NON-ASS 皮肤表、FOV、比例制导。
+AC7-Integrated 0.6.0-beta.1 已在 Temp/compatibility-20261015 下载并核对作者哈希。
+当前计划无需更多文件；测试所需 DLC 仍服从游戏授权，不绕过购买记录。
+
+第一批：原版槽位替换及自定义武器
+选择 CFA-44 槽位的 PW-MKI 替换版：Base + Module + Monarch 第 1 皮肤 + 对应 Module 发光模块。
+FOV 只选 +S；比例制导只选一个 PAK。飞控与 AC7Weapons 本批不安装。
+不同时安装新增机体、2274 或 2154，防止统一 PWDT 把替换版整表内容覆盖。
+外部包保持原字节和文件名，只选择作者提供的配套模块。
+恢复清单与备份位置记录在 evidence/compatibility-batch1-installed.json。
+
+本项目的兼容修改
+1. 原生名称表替代硬编码原版全名名单；缺名称明确报告。
+2. 实际武器类 WeaponID 决定部件预览、UAV/ECM 限制和 TLS 收尾。
+   例如替换版原 ECM 槽可装其他武器，不能仅凭菜单代码屏蔽它。
+3. 不放宽 C++ 原生编号和内存范围保护，不一律解锁未购买兵装，不改第三方文件。
+4. 本轮仅 Lua 语法编译检查，不新增或运行自动测试模块，不重编译核心/UI。
+
+用户第一批测试
+1. 先选一架原版机体，检查选装、SP1/SP2 切换、弹药与 F8。
+2. 选择 CFA-44 槽位，核对出现 PW-MKI 模型；先使用第 1 皮肤。
+3. 依次覆盖三种武器的两两组合，包括原第三槽。菜单简称由外部表决定，
+   替换版仍可能显示 ADMM/EML/ECM；必须结合实际武器行为判断模块是否生效。
+4. 观察连续发射途中切换、冷却独立、普通导弹、弹药耗尽。
+5. 分别用 50% 和 100% 配弹，比较准备页、起飞后与中途补给弹数；加入适用增弹部件再对照。
+6. 覆盖中途补给重新选择、SP2 NO WEAPON、检查点重来。
+以上是覆盖清单，已通过范围以末尾用户反馈为准，未逐项反馈的内容仍待验证。用户进入任务及发射，代理仅准备和启动。
+
+第一批用户反馈与修正
+用户确认 F8 可打开，ADF-11F 的 TLS/QAAM 可以组合；UAV 只能单挂属于既有设计。
+用户从 STANDBY 更换到无已存方案的 Su-57（TGM），机体显示但菜单消失。
+现场确认进程有响应、Lua 仍调度、无脚本异常；Review 页面 Visibility=4，根节点 Visibility=1（Collapsed）。
+根因是本项目旧有的页面归还条件依赖“再次接入双 SP”，无方案机体不会触发。
+第一次修正尝试在 STANDBY/PART 原生重新激活事件归还根节点，见
+evidence/compatibility-standby-fix-installed.json。用户再次测试 Su-57（TGM）双选→STANDBY→F-14A，
+仍失去全部 UI；现场同为 Review 页面 Visibility=4、根节点 Visibility=1，且没有根节点恢复事件日志。
+因此撤销上述补救钩子：STANDBY/PART 清理只还原本模组修改的兵装控件，完全不接管整页根节点显隐。
+选装页原生确认交接保持原样。新增只读页脱离日志，便于确认换机时旧双栏已清理。
+第二次修订回执为 evidence/compatibility-standby-fix2-installed.json；第三方 PAK 保持不变。
+复测先覆盖 Su-57（TGM）→STANDBY→F-14A，再换回已有方案的 Su-57（TGM），
+同时检查部件页进出、双栏与弹数。菜单切换和飞行是不同验证项，均不得提前标为通过。
+
+第一批实测结果（第二次换机修订后）
+用户确认换机 UI 正常，PW-MKI 替换版出击、双 SP、降落补给和切换正常。
+日志确认 ms06、机体 140、100% 配弹，出击槽 0+1（ADMM+EML），
+补给改为槽 2+1（ECM+EML），原生分别保存两槽弹药；本轮会话无 Lua 错误。
+菜单 UI 消失问题按用户复测记为解决；其他未覆盖边界不自动记为通过。
+记录见 evidence/compatibility-batch1-user-validation.json。
+
+名称与实际武器分开：槽 0 的类为 plwp_admm_x0_C，槽 1 为 plwp_railgun_x0_C，
+槽 2 为 plwp_eufm_x0_C。当前 Base/Module/Glow PAK 不提供本地化或机体表替换，
+所以沿用 ADMM/EML/ECM，不代表武器模块没生效。用户观察到多重发射、电磁炮新特效和大型导弹。
+本轮不按外观臆造正式名称，也不全局改写 ECM/EML/ADMM；名称差异单列为展示限制。
+后续重点补测 ADMM+ECM、50% 配弹、增弹部件、检查点及耗尽/连续发射切换边界。
+
+第一批补测反馈
+用户随后确认“已测试，没问题”，对应上一轮建议的 ADMM+ECM、50% 配弹并装增弹部件、检查点重来。
+这三项记为用户通过，非代理实玩；耗尽/连续发射边界及长时间多次补给仍不扩大结论。
+
+飞控批次：按用户要求提前测试 FOV、飞控与比例制导
+保留第一批全部 6 个 PAK（含 PW-MKI 替换版），新增原样 AC7MouseAim 0.6.0-beta.1。
+AC7Weapons 不安装，避免与独立比例制导包同时修改导弹制导。
+飞控固定 F8 开关；本机 DualSP 管理入口改为 F6，默认配置仍支持 F8，手柄 Back+Y 不变。
+保留作者默认 WAR、拉远机位、GPU 准星。游戏操纵类型应为专家，W/S/A/D/Q/E 须与飞控手动接管键一致。
+共享加载器原样复用，不运行会覆盖 mods.txt 的外部安装器。备份与哈希见
+evidence/compatibility-flight-batch-installed.json。
+
+本轮集中测试顺序（用户操作出击/发射）
+1. 先用原版机体：F6 管理开关/暂停/鼠标正常；F8 只切飞控，不打开 DualSP。
+2. 专家操纵下鼠标转向、键盘接管及恢复，F4 切 WAR/PEACE；F9 回中。
+3. 检查第一人称、座舱、第三人称 FOV；F3 切原生/拉远机位，C 自由观察、C+右键放大。
+   F3 改机位距离，不是独立 FOV 包开关；FOV 包没有热切换键。
+4. 普通导弹锁定横向移动目标后发射，观察转弯与提前量，再交替切 SP1/SP2，确认发射与弹数正常。
+   比例制导包只修改普通导弹基类前置参数，不把任何 SP 的华丽特效当作制导生效证据。
+5. 暂停恢复、检查点或一次返航补给后，检查鼠标飞控、镜头与双 SP 都恢复；再用 PW-MKI 对照。
+FOV/PAK 已校验加载位置，制导命中率变化及镜头/飞控共存由本轮实测确认，不宣称必然提高命中率。
+
+飞控批次反馈
+用户确认 DarkStar 上鼠标飞控、比例制导、FOV 均正常；本轮会话无 Lua 错误。
+日志确认 DarkStar（132）在 ms06 出击，曾切换 WAR/PEACE。
+只将明确反馈的三项标为通过，不扩大为所有机体、每种镜头和所有任务边界均已验证。
+记录见 evidence/compatibility-flight-user-validation.json。
+
+历史：多新增机体批次（已撤回，当前清单见下文）
+已安装 Adler Standalone、PW-MKI Standalone、统一 PPDT/PWDT、公共名称/展示表、NON-ASS 皮肤表。
+保留 FOV+S、比例制导、AC7MouseAim 和 AC7DualSP；AC7Weapons 仍未安装。
+原 PW-MKI 替换版 Base/Module/皮肤/发光模块共 4 包移动至备份，CFA-44 恢复原版。
+原 CFA-44（140）已保存方案来自替换版，备份后仅清除此项；其他机体方案及管理参数保留。
+备份与精确文件清单见 evidence/compatibility-addons-prepared.json。没有修改外部 PAK，也未新增功能代码。
+静态核对统一表 195 架机体、98 条武器记录，未发现无法解析的兵装代码引用。
+20 条同名资源为 PW-MKI 自带旧公共表/本地化与作者统一包的有意覆盖；实际优先级仍待游戏加载核验。
+
+晚些启动后的测试顺序
+1. 先确认原版机体仍可正常换机，再选独立 PW-MKI（192）。它现在是新增机体，不再占用 CFA-44。
+   核对模型、三个兵装名称、双 SP 与 NO WEAPON；三种兵装两两组合，可利用一次补给更换组合。
+2. Adler A（165）：重点检查 SDBM、HGP、MSTM。持续/多发武器发射后松开，再切 SP，
+   观察已发射弹体、音效、独立弹药和冷却；不要只以模型和特效正常判定通过。
+3. Adler B（166）：重点检查 MPBM、MGP、4AGM，尤其机炮吊舱的持续发射与切换。
+4. 在至少一架新增机体完成降落补给、50% 配弹/增弹部件、检查点重来，检查飞控和双 SP 同时恢复。
+   如只有某一架失败，再单独缩小范围，不把三架的结果相互替代。
+管理入口仍为 F6，飞控开关仍为 F8。飞控、FOV 的基础操作已在 DarkStar 验证，本批主要观察新增机体上的差异。
+只选择已安装的 PW-MKI、Adler A/B；统一表列出的其他新增机体没有模型资源，不应试选。
+长期连续切换、弹药耗尽、任务切换仍是后续稳定性覆盖项；AC7Weapons 属替代制导方案，非当前必测依赖。
+
+当前小批次：仅 PW-MKI 独立版，2026-10-15 13:51 已准备、未启动
+用户实际看到 PW-MKI、Adler A/B 模型和 SP 名称/模型正常，其他大量新增项空模型，DualSP 功能失效。
+195 条机体来自 2154 的统一 PPDT，2274 提供名称/展示和皮肤，并不提供这些飞机模型。
+上轮一次引入过多目录项，不适合作为小范围兼容验证；已把 Adler 和 4 个公共 PAK 移到备份。
+当前 PAK 只有 PWMKI_Add-On_P.pak、FOV +S_P.pak、proportional guided missile_P.pak。
+飞控保持启用，AC7Weapons 不安装。PW 自带机体/名称/皮肤表生效，不修改外部文件。
+静态对比：机体表 53 条，比原 52 条仅新增 pw01（148），原机体编号身份未变，兵装代码均为已知原生代码。
+此包的 PW-MKI 使用 admm/eml/mpbm 菜单代码，不能再套用统一表的 192、bmlu/rg/mpbm；自定义武器类保持存在。
+
+DualSP 自身问题与修订
+两轮日志分别为 zx01 蓝图未加载及 su47 默认兵装组件缺失；选装页错误持续到换机后，导致后续有效机体也无法双选。
+原先假定机体 CDO 必有完整 PlayerWeaponActivator，这个假设不可靠。
+现场确认 GameInstance.HangarManager.LoadedPlayerPlane 是当前机库展示的实例，具有实际兵装组件；预览的 PlaneTypeID=-1，不能用它校验机体编号。
+现在菜单从该实例读取、任务从玩家实例读取；校验实际蓝图类和 World，仍用兵装类的 WeaponID 作部件/行为判定。
+不猜别名、不生成第二架飞机，不在找不到组件时改用菜单编号。
+旧机体的页面错误在用户换机后写日志并结束；同一失败机体上下文保持错误，不循环重试或吞错。
+同时恢复选装页临时隐藏根的 owner 字段，保证原有重进身份判断有效；STANDBY/PART 仍不接管整页显隐。
+安装备份及校验见 evidence/compatibility-small-addon-prepared.json。仅检查 Lua 语法，未编译、未运行测试模块、未启动游戏。
+
+下一次最小复测
+1. 先选 Su-47，确认能进入 SP1/SP2 两步选择；从 STANDBY 更换到独立 PW-MKI，再换回原版机体。
+2. PW-MKI 确认三种 SP 可选、双 SP/NO WEAPON，出击后切换并完成一次补给。
+3. 本小批通过后再单独换 Adler 包测试；两个单独包都使用 148 号，必须隔离批次并处理旧方案，不能直接叠加。
+管理入口 F6、飞控开关 F8；公共多机体兼容表暂不重装。
+
+小批次最终反馈
+用户确认 Su-47 和独立 PW-MKI 的双 SP、换机、出击、补给正常。
+运行目录实际为 53 条；日志确认 PW-MKI（148）出击槽 1+0，补给后槽 2+0，100% 配弹；本轮无 Lua 错误。
+记录见 evidence/compatibility-small-addon-user-validation.json。实例兵装读取修订在上述用户测试范围内通过。
+用户倾向跳过 Adler，因此不再执行上文的 Adler 下一批安排；Adler 保持未安装、未验证。
+Adler 同属新增机体，但其 SDBM、HGP/MGP、MSTM 等兵装与 PW-MKI 不同，不能从 PW-MKI 结果推出全面兼容。
+当前验证已覆盖原版机体、替换机体、独立新增机体，以及 DarkStar 上的飞控/FOV/比例制导；保持现有组合即可结束本轮代表性兼容测试。
+长期使用和未覆盖的兵装边界仍按实际反馈处理，不宣称所有第三方模组均兼容。
+
+当前安排：Adler 与热门小模组抽样，2026-10-15 14:10
+用户重新要求 Adler 与其他不同类型模组一并测试，取代上文跳过 Adler 的决定。
+已停止游戏并备份，换下 PW-MKI 独立包，安装 Adler 主包及原配本地化/数据表。
+静态表核对为原 52 架加 Adler A/B（148/149），没有改动原机体编号身份；不恢复 2154/2274 全局表。
+PW 与 Adler A 共用 148 号，已将 PW 的双 SP 方案保存到备份并从当前配置移除，其余方案不变。
+保留 FOV+S、比例制导、飞控，管理入口 F6、飞控开关 F8 不变。
+准备回执：evidence/compatibility-adler-samples-prepared.json。
+本轮没有修改或编译 DualSP，没有启动游戏；旧 catalogue.json 是上轮运行产物，不能当成新包已加载证据。
+
+候选来自 Nexus 高赞列表与作者说明（2026-10-15 查询，热度数值会变化）
+https://www.nexusmods.com/acecombat7skiesunknown/mods/topalltime?adult=2
+1. All Part In CampaignMode（623）：榜单约 2.8k 推荐，战役部件类别。
+   文件 AllPartInCampaignMode2025，1.3.2，304KB。
+   https://www.nexusmods.com/acecombat7skiesunknown/mods/623?tab=files
+   价值：检验多人部件进入单人后，双 SP 的载量、冷却及部件判定。
+   允许战役装备不等于自动取得尚未购买/解锁的部件。本轮不顺带装免费解锁器；到文件后先查覆盖资源。
+2. Lock-On Crosshair UI（649）：榜单约 1.5k 推荐，锁定准星界面类别。
+   文件 Lock-on Crosshair，Release-1，6.1MB；先只选一种设计，不叠加多个变体。
+   https://www.nexusmods.com/acecombat7skiesunknown/mods/649?tab=files
+   价值：检验普通导弹/多目标 SP 的锁定显示与 DualSP、飞控准星并存。
+   Optional 的 Release-2 是 Colored HUD 兼容版；本轮不安装 Colored HUD，不需要此可选包。
+3. TLS Damage and Range increase Mod（190）：榜单约 1.3k 推荐，光束武器参数类别。
+   文件 TlsDamageAndRangeMod 3.0，92KB；页面总版本仍写 2.0，应以 Files 中主文件 3.0 为准。
+   https://www.nexusmods.com/acecombat7skiesunknown/mods/190?tab=files
+   价值：检验修改 TLS 参数后双 SP 的结束光束、冷却和补给；Adler 没有 TLS，必须另用一架原版 TLS 载机抽样。
+   文件较旧，只有取得文件并核对实际覆盖资源后才能决定合装，不能把高赞当成当前兼容保证。
+
+三个文件目前均未下载或安装。浏览器创建下载页后读取持续超时，需用户下载到 F:\下载\AC7MOD。
+不通过非作者镜像替代。取得后检查 PAK 路径重叠、部件表与 Adler 兵装适配、TLS 覆盖范围再部署。
+本轮另查了 Colored HUD（1420）、Skies Restored 和 Enhanced Gunplay/Playmore 等候选。
+Colored HUD 同为 UI 样本，与准星存在作者专用兼容包，这次不同时引入。
+大型玩法/任务重制改动面广，与当前小批次不符，留到有明确需求时单独评估。
+
+整批安装完成后的用户测试顺序（当前尚不要按“全部就绪”理解）
+1. 机库只多 Adler A/B，两架均应有模型；先从原版机体进入 STANDBY，再换到 Adler A/B，检查双 SP。
+2. Adler A/B 各选一次机炮吊舱搭配另一 SP，松开发射后切换；观察弹数、冷却、准星和音效。
+   Adler 独立表仍用 mpbm/mgp/mstm 或 mpbm/mgp/4agm 菜单代码，不能强行套用统一表的自定义简称。
+3. 有可装备的高级 SP 增弹/冷却部件时，以 50% 配弹比较装卸部件前后数量，完成一次补给和检查点重来。
+   如果部件未解锁或不适用于该武器，该项记未覆盖，不能按正常通过。
+4. 原版 F-15E 的 TLS 搭配另一 SP 做短测：发射、松开、切换、恢复，再确认没有残留光束和错误扣弹。
+   检查 TLS 模组确实生效；“都不报错”不能证明一个被覆盖的模组兼容。
+5. 右下兵装提示、中央提示和外部锁定准星均应正常。故障先按现象缩小范围，不同时调整多个功能。
+AC7Weapons 属替代制导方案，仍不与比例制导并装；完整武器修改另列批次。
+
+资料入口
+https://www.nexusmods.com/acecombat7skiesunknown/mods/1565
+https://www.nexusmods.com/acecombat7skiesunknown/mods/1770
+https://www.nexusmods.com/acecombat7skiesunknown/mods/2154
+https://www.nexusmods.com/acecombat7skiesunknown/mods/2274
+https://github.com/CreeperUX/AC7-Integrated-Mod/releases/tag/v0.6.0-beta.1
