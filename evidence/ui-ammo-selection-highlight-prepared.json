@@ -2,6 +2,7 @@
   "date": "2026-10-16",
   "branch": "codex/ui-headings-hud-fixed",
   "base_commit": "f800518ad1df29ea37c2e031a7ba9628fa80c598",
+  "clarification_after_commit": "07c81c0：按用户澄清，非当前两行 Alpha 改为 0.5，当前行仍为 1；此前全部不透明是理解错误",
   "status": "选装页弹药联动高亮源码完成，未安装，实机待验证",
   "runtime_source_changed": "dist/DualSP/Scripts/native_loadout.lua",
   "source_findings": [
@@ -24,7 +25,7 @@
     "focus": "flow.stage 的 sp1/sp2/sp3 对应当前逻辑槽",
     "preview": "继续使用 flow:preview() 更新名称及数量，NO WEAPON 同样联动",
     "focused_color": [1, 1, 1, 1],
-    "other_color": [0.401978, 0.651406, 1, 1],
+    "other_color": [0.401978, 0.651406, 1, 0.5],
     "cache": "焦点缓存独立于数值/内容缓存，先更新颜色再处理内容短路",
     "unaffected": ["弹药均分", "武器核心", "PART 黄字预览", "STANDBY", "降落补给", "管理协议"]
   },

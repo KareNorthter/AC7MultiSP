@@ -1,6 +1,6 @@
 # AC7DualSP 项目入口
 
-2026-10-16 UI 后续源码：SP 选装页右下弹药改为独立三行，当前编辑槽的名称/数量随光标预览一起高亮，其余正常蓝色且全部 Alpha=1；隔离原生武器行的颜色状态。仅修改 native_loadout.lua，不安装、不构建 DLL，实机待集成线程验证。见[高亮修订与验收](docs/research/ui-ammo-selection-highlight.txt)。
+2026-10-16 UI 后续源码（按用户澄清修订）：SP 选装页右下弹药改为独立三行，当前编辑槽的名称/数量随光标预览一起高亮（Alpha=1），其余两行蓝色半透明（Alpha=0.5）；隔离原生武器行的颜色状态。仅修改 native_loadout.lua，不安装、不构建 DLL，实机待集成线程验证。见[高亮修订与验收](docs/research/ui-ammo-selection-highlight.txt)。
 
 2026-10-16 独立 UI 源码交付：`codex/ui-headings-hud-fixed` 基于 `9fa7550`，三个页面类型的 SP 标题统一 24 号；中央简称固定开启、上移半个标称字高。管理协议/参数升至 4，需配套新 UI DLL，源码包含旧配置备份迁移。仅供其他线程审查合并，不安装、不操作游戏；本分支旧 DLL 与 VERSION 不代表已包含该 UI。大幅上移与方框继续保留候选。合并边界、配置及安装器协调见[本批交接](docs/research/ui-headings-hud-fixed.txt)。
 

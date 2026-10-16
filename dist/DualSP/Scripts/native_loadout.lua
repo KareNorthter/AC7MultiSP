@@ -605,7 +605,8 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             if c.ammo and not supply and not standby then
                 local focused=i==focusedSlot -- 槽位变更也要重画颜色，即使简称和弹数恰好相同。
                 if column.ammoFocused~=focused then
-                    local tint=focused and color(1,1,1,1)or c.tint -- 当前槽白色高亮，其余标准蓝；全部 Alpha=1。
+                    local base=c.tint.SpecifiedColor -- 非当前槽保留信息蓝，仅调整透明度。
+                    local tint=focused and color(1,1,1,1)or color(base.R,base.G,base.B,.5) -- 当前槽完全高亮，其余两行半透明。
                     c.ammo[i].name:SetColorAndOpacity(tint);c.ammo[i].count:SetColorAndOpacity(tint)
                     column.ammoFocused=focused
                 end
