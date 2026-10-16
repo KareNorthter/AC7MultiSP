@@ -4,6 +4,9 @@ SP 标题与中央 HUD 固定显示：独立 UI 交接
 基线：9fa7550711ed5ae8a8474df5b1394649b6951a21（集中候选 .9 的已提交状态）
 工作区：C:/Users/83717/.codex/worktrees/three-sp-ui-polish/AC7_MultiSP
 
+后续修订：本分支另有 SP 选装页弹药高亮联动提交，见 ui-ammo-selection-highlight.txt。
+上一批 f800518 已合入主线时，只继续合入该后续增量，避免重复合并协议迁移。
+
 一、交付边界
 
 只修改 UI 源码和说明，不安装，不操作游戏，不构建 DLL、不运行测试模块。

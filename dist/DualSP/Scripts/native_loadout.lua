@@ -464,6 +464,30 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         panel:SetVisibility(VISIBLE)
         return panel
     end
+    -- 选装弹药行与原生武器索引脱钩：复制几何到同级干净 Canvas，不继承原生行的选中颜色。
+    local function preparationAmmoRow(c,source)
+        assert(valid(source)and valid(source.WidgetTree),"准备页弹药行缺失")
+        local root=source.WidgetTree.RootWidget -- 名称/数量即使有 Overlay 包装，外层定位仍须属于此 Canvas。
+        assert(valid(root)and root:IsA(canvasPanelClass),"准备页弹药行根布局已变化")
+        local rowSlot=canvasSlot(source) -- 行在弹药总表中的位置，保留原生缩放、锚点和行距。
+        local rowLayout=readLayout(rowSlot,source)
+        local panel=infoCanvas(c,rowSlot.Parent,rowLayout.position,rowLayout.size) -- 自有容器不受原生逐行高亮驱动。
+        applyLayout(panel.Slot,rowLayout,panel,10)
+        local widgets=controls(source) -- 仅用源叶控件的字体和几何，不复制颜色状态或动画。
+        local result={} -- 同时持有名称和数量，后续一起更新高亮。
+        for field,name in pairs({name="WeaponsName",count="WeaponsAmmo"})do
+            local template=assert(widgets[name],"准备页弹药文字缺失："..name)
+            local leafSlot=canvasSlot(template) -- 运行时文字包装层的外侧 Canvas 槽。
+            assert(leafSlot.Parent:GetAddress()==root:GetAddress(),"准备页弹药文字定位层级已变化")
+            local leafLayout=readLayout(leafSlot,template) -- 克隆到新 Canvas 后仍使用相同的局部坐标。
+            local text=infoWidget(c,template,panel,leafLayout.position,leafLayout.size,false)
+            applyLayout(text.Slot,leafLayout,text,10)
+            text:SetFont(template.Font) -- 弹药保持原生 20 号，不沿用性能信息的 18 号限制。
+            result[field]=text
+        end
+        mask(c,source) -- 原生仍可更新原行，但其颜色只影响保留在折叠容器内的源对象。
+        return result
+    end
     -- 复用原生基础条与三条细边框；空白部分保持透明，不铺满宽度的底色。
     local function performanceBar(c,source,parent,position,width)
         assert(valid(source)and valid(source.BarA),"原生性能基础条缺失")
@@ -564,6 +588,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
     -- SP1 阶段尚未选择 SP2，始终显示 EMPTY；SP2 阶段才展示其当前候选。
     local function paintColumns(c)
         local flow=c.flow;local stage=flow.stage;local row=flow:rows()[flow.cursor]
+        local focusedSlot=tonumber(stage:match("^sp([123])$")) -- 列表光标预览的是当前逻辑槽，不是原生武器序号。
         local preview=flow:preview() -- 当前光标与已经确认的前置槽组成展示方案。
         local count=Profile.count(preview) -- 候选变化后立即重算所有可见载量。
         local a,b=preview.a,preview.b
@@ -577,6 +602,14 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local affects=entry and entry.affects or false -- 不能用“整数变大”替代原生候选影响标记。
             local ammoText=option and not pending and tostring(amount)or "---" -- EMPTY 与未就绪均不展示猜测数量。
             local ammoSignature=ammoText..":"..tostring(affects)..":"..tostring(pending) -- 数字相同也能立即切换黄色。
+            if c.ammo and not supply and not standby then
+                local focused=i==focusedSlot -- 槽位变更也要重画颜色，即使简称和弹数恰好相同。
+                if column.ammoFocused~=focused then
+                    local tint=focused and color(1,1,1,1)or c.tint -- 当前槽白色高亮，其余标准蓝；全部 Alpha=1。
+                    c.ammo[i].name:SetColorAndOpacity(tint);c.ammo[i].count:SetColorAndOpacity(tint)
+                    column.ammoFocused=focused
+                end
+            end
             if column.lastAmmo~=ammoSignature then
                 if column.ammo then
                     setText(c,column.ammo,ammoText)
@@ -609,7 +642,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
                 bar.fill.Slot:SetSize({X=bar.width*math.max(0,math.min(1,percent/100)),Y=bar.height})
                 bar.fill:SetVisibility(percent>0 and VISIBLE or COLLAPSED) -- EMPTY 保留边框，不留下零宽度亮线。
             end
-            -- 准备页普通弹药汇总中的两个 SP 格与上方三栏保持一致。
+            -- 准备页弹药汇总的三个逻辑槽与上方三栏保持一致。
             if c.ammo then
                 setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
             end
@@ -661,8 +694,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
              ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",gap)
         c.ammo={}
         for i=1,3 do
-            local widgets=controls(ammo["WeaponsSP"..i])
-            c.ammo[i]={name=clone(c,assert(widgets.WeaponsName),false),count=clone(c,assert(widgets.WeaponsAmmo),false)}
+            c.ammo[i]=preparationAmmoRow(c,ammo["WeaponsSP"..i])
         end
         mask(c,wrapper);mask(c,info.HangarAircraftWeaponNameLong)
         mask(c,info.HangarAircraftWeaponProperties);mask(c,info.HangarAircraftWeaponType)

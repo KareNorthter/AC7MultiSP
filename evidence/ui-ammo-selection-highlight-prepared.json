@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-16",
+  "branch": "codex/ui-headings-hud-fixed",
+  "base_commit": "f800518ad1df29ea37c2e031a7ba9628fa80c598",
+  "status": "选装页弹药联动高亮源码完成，未安装，实机待验证",
+  "runtime_source_changed": "dist/DualSP/Scripts/native_loadout.lua",
+  "source_findings": [
+    "旧克隆挂在原生 WeaponsSP1/2/3 的内部父容器下，并复制源文字当时的 RGB",
+    "旧 paintColumns 只更新名称和数量，没有随 flow.stage 更新弹药高亮",
+    "原生武器序号与模组逻辑槽序号不同，不应共用原生行的显示状态"
+  ],
+  "offline_asset": {
+    "name": "HangarAircraftAllWeaponsAmmo",
+    "source": "已有 Temp/loadout-slot-json/HangarAircraftAllWeaponsAmmo.json，只读摘要，不提交原始资源",
+    "row_parent": "CanvasPanel_1",
+    "row_positions": [[220, 25], [220, 59], [220, 93]],
+    "text_parent": "CanvasPanel_2",
+    "text_font_size": 20,
+    "text_alpha": 1,
+    "runtime_rule": "运行时复制真实 Canvas 槽；不硬编码资源中的坐标，支持既有 Overlay 包装查找"
+  },
+  "implementation": {
+    "row_ownership": "干净同级 Canvas 隔离原生逐行颜色；原行用既有 mask/retain 保存和归还",
+    "focus": "flow.stage 的 sp1/sp2/sp3 对应当前逻辑槽",
+    "preview": "继续使用 flow:preview() 更新名称及数量，NO WEAPON 同样联动",
+    "focused_color": [1, 1, 1, 1],
+    "other_color": [0.401978, 0.651406, 1, 1],
+    "cache": "焦点缓存独立于数值/内容缓存，先更新颜色再处理内容短路",
+    "unaffected": ["弹药均分", "武器核心", "PART 黄字预览", "STANDBY", "降落补给", "管理协议"]
+  },
+  "checks": {
+    "lua54_load_only": "通过，未执行脚本",
+    "diff_whitespace": "git diff --check 通过",
+    "manual_source_review": "已核对 SP1/2/3、返回、EMPTY、相同数值、控件恢复和其他页面隔离"
+  },
+  "native_runtime_color_channel_sampled": false,
+  "dll_built": false,
+  "installed": false,
+  "game_operated": false,
+  "test_modules_added_or_run": false,
+  "gameplay_verified": false,
+  "handoff": "docs/research/ui-ammo-selection-highlight.txt"
+}
