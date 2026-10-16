@@ -3,7 +3,8 @@
   "candidate": "1.0.2-su30sm-three-sp.10",
   "user_reports": [
     "管理界面起初无法勾选 SP，随后游戏画面静止但 BGM 继续，进程仍在",
-    "再次 F6 后可操作管理界面并应用 SP；关闭管理界面后画面仍静止，无菜单"
+    "再次 F6 后可操作管理界面并应用 SP；关闭管理界面后画面仍静止，无菜单",
+    "用户明确确认：游戏自行退出，没有手动关闭。"
   ],
   "live_pid": 28144,
   "observations": [
@@ -18,7 +19,7 @@
     "delegate_bound": false,
     "memory_read_only": true
   },
-  "interpretation": "当前画面静止存在未释放的原生暂停；不能据 BGM 或静止画面判定死锁。首次暂停是谁写入缺少日志，根因尚未闭环。",
+  "interpretation": "现场阶段存在原生暂停未释放，Lua 与渲染仍运行；用户随后确认自行退出。不能将完整故障归结为单纯暂停，也不能仅凭自行退出认定某一模块崩溃。首次暂停和后续退出的关联待定位。",
   "separate_issue": ".9 发射后 crash 并自动退出仍未定位，此次暂停修订不是其修复证据。",
   "capture_gap": "旧监控只跟踪启动引导 PID 37812，退出码 0x54 后停止，未跟随实际 PID 28144。",
   "live_dump": {
@@ -40,7 +41,15 @@
     "game_running": false,
     "old_monitor_running": false,
     "new_fatal_dump_found": false,
-    "cause": "退出方式待用户确认；不能写成正常退出或已证实自动崩溃"
+    "cause": "用户确认游戏自行退出；底层退出原因未定位，不等于已取得致命异常证据。",
+    "user_confirmed_automatic_exit": true,
+    "followup_checked_at": "2026-10-16T09:39:47.211834+08:00",
+    "followup_findings": [
+      "09:05 至 09:38 的 Application 1000/1001/1002 事件未找到匹配项",
+      "本机 CrashDumps、游戏用户目录及 WER 归档/队列未找到此时段的新崩溃转储",
+      "旧采集目录仍只有工具启动日志，没有本次退出转储；主动现场 mini 转储已保留",
+      "09:39 CIM 核对新采集工作进程 34804 仍在等待"
+    ]
   },
   "capture_rearmed": {
     "worker_pid": 34804,
