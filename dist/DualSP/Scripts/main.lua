@@ -1,4 +1,4 @@
--- AC7DualSP 1.0.2-su30sm-three-sp.9：按实际武器类识别行为，读取模组提供的原生名称。
+-- AC7DualSP 1.0.2-su30sm-three-sp.10：显式任务调试换装与键盘管理。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -49,7 +49,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.9") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.10") -- 与三 SP 协议 3 核心及 UI 成套安装。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -63,6 +63,8 @@ local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 -- 管理版 Lua 必须搭配新版界面，防止旧 F8 再次提交兵装配置。
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
+local debugLoadoutProtocol=loadExport("dualsp_debug_loadout_supported","DualSPUI.dll") -- 调试扩展须与界面成套安装。
+local debugLoadoutReady=loadExport("dualsp_debug_loadout_ready") -- 重建前只读检查正在飞行的武器。
 local preparationNavigation=loadExport("dualsp_preparation_navigation","DualSPUI.dll") -- 原生页面的只读键盘导航。
 local config=readJson(root.."profiles.json")or {schema=2,management_revision=3,profiles={},language="auto",central_hint=true,keyboard_keys={49,50,51,52},management_key=117}
 local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，比例统一重算。
@@ -151,6 +153,12 @@ local hudSamplingError=nil
 local settingsError=nil
 local settingsAck=0
 local settingsResponse=0 -- 成功或失败均回复请求编号，界面不提前宣称已保存。
+local debugSession=0 -- 玩家实例换代后递增，拒绝上一任务排队的调试请求。
+local debugResponse=0 -- 已处理请求编号，包含正常拒绝。
+local debugAck=0 -- 仅完成核心与 HUD 交接后确认成功。
+local debugError=nil -- 调试请求错误单独展示，不把输入拒绝当成控制器故障。
+local debugProfileActive=false -- 调试方案只属于本次任务，检查点恢复也不能写入个人配置。
+local checkpointDebugProfile=false -- 真实检查点是否捕获了调试方案。
 local inputNotice=nil
 local publishSequence=0
 local checkpointPending=false
@@ -196,7 +204,7 @@ local function native(op,target)
     bridge();local result=assert(readJson(root.."native-status.json"))
     assert(result.request==nativeRequest,"Native response does not match the current request")
     assert(result.ok,result.error)
-    if op=="setup"or op=="resupply_setup"or op=="switch"or op=="checkpoint_restore"or op=="resupply"then
+    if op=="setup"or op=="resupply_setup"or op=="debug_setup"or op=="switch"or op=="checkpoint_restore"or op=="resupply"then
         weaponRevision=weaponRevision+1
     end
     result.weapon_revision=weaponRevision
@@ -441,12 +449,19 @@ local function primeFlightHUD(profile,options,prewarm)
     nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
     weaponPresentation:update(plane,profile,options,seed,visible and config.central_hint,os.clock())
 end
--- 正常出击建立检查点；补给重建只替换当前兵装，保留任务检查点。
-local function configureFlight(profile,resupply)
+-- 正常出击建立检查点；补给和显式调试重建保留任务检查点。
+local function configureFlight(profile,reason)
+    local resupply=reason=="resupply" -- 原生补给必须先完成成功事务。
+    local debugLoadout=reason=="debug" -- 调试不伪造补给事务，不保存个人方案。
     -- 补给在原生成功事件返回后即可重建；等待飞控输入开放会把旧挂载多留在起飞画面约一秒。
     assert((resupply and supplySession and supplySession.success and valid(plane)and valid(activator))or ready(),
         "武器初始化需要已开放的出击控制，或已经成功返回的补给事务")
-    assert(not configured or resupply,"Loadout is locked for this sortie")
+    assert(not configured or resupply or debugLoadout,"Loadout is locked for this sortie")
+    if debugLoadout then
+        assert(panelOpen and configured and not supplySession and game:IsGamePaused(plane),"调试换装需要当前任务在管理界面暂停")
+        local allowed,err=debugLoadoutReady(plane:GetAddress(),activator:GetAddress()) -- 最后一次只读核对。
+        assert(allowed,err)
+    end
     -- 在触碰武器前检查候选协议；正式 0.1.7 核心不能冒充支持补给重选。
     if resupply and profile.b>=0 then
         local supported=package.loadlib(root.."bin/DualSP.dll","dualsp_resupply_supported")
@@ -465,12 +480,13 @@ local function configureFlight(profile,resupply)
     assert(mountOK,mountError)
     -- 第一槽也由核心同步原生编号后初始化；Lua 不再另建一条单挂初始化路径。
     -- 释放发射按键只负责输入收尾；锁定参数由完整原生初始化/切换流程更新。
-    releaseWeaponInput(resupply and "resupply_loadout"or "mission_loadout")
+    releaseWeaponInput(debugLoadout and "debug_loadout"or resupply and "resupply_loadout"or "mission_loadout")
     -- 单挂也进入核心快照，保证补给后在 1/2/3 槽之间切换仍能恢复旧检查点。
-    native(resupply and "resupply_setup"or "setup",0)
-    if not resupply then native("checkpoint_save",0)end
+    native(debugLoadout and "debug_setup"or resupply and "resupply_setup"or "setup",0)
+    if not resupply and not debugLoadout then native("checkpoint_save",0)end
     configured=true;active=0;lastArmed=plane:IsSpecialWeaponArmed();note("LOADOUT "..planeId.." "..json.encode(profile))
-    if not resupply then checkpointProfile=copyProfile(profile)end
+    debugProfileActive=debugLoadout
+    if not resupply and not debugLoadout then checkpointProfile=copyProfile(profile);checkpointDebugProfile=false end
     if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
@@ -485,7 +501,7 @@ local function completeSupplyHandoff()
     assert(supplySession.confirmed,"原生补给成功，但未收到多 SP 的起飞确认")
     instance:SetPlaneAndSWP(planeId,profile.a)
     assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
-    configureFlight(profile,true)
+    configureFlight(profile,"resupply")
     config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
     nativeSupply:reset(false,false);ownSupplyInput(false);supplySession=nil;lastUIKey=nil
     refreshHUD(os.clock())
@@ -580,12 +596,44 @@ local function observeOriginalSwitch()
         lastArmed=armed
     end
 end
+-- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
+local function canDebugLoadout()
+    return runtimeAllowed and isFlight and configured and panelOpen and not supplySession
+        and not internal and not errorText and not restorePending and not checkpointPending
+        and valid(instance)and valid(plane)and valid(activator)and ready()and game:IsGamePaused(plane)
+end
+-- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
+local function applyDebugLoadout(action)
+    local profile=nil -- 校验完成前不替换当前方案。
+    local ok,err=xpcall(function()
+        assert(type(action.request)=="number"and action.request%1==0 and action.request>debugResponse,"调试请求编号过期或无效")
+        assert(action.debug_protocol==1,"调试界面协议不匹配，请成套安装")
+        assert(canDebugLoadout(),"当前不能调试换装：请在可操控的单人飞行中直接打开管理界面")
+        assert(action.session==debugSession and action.revision==weaponRevision,"任务或兵装已改变，请重新打开调试页")
+        assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,
+            "当前任务机体身份已经改变")
+        profile=copyProfile(assert(action.profile,"缺少调试方案"))
+        Profile.validate(profile,optionsFor(planeId)) -- 再次核对真实购买记录和单挂限制。
+        local allowed,why=debugLoadoutReady(plane:GetAddress(),activator:GetAddress()) -- 有活动武器时明确拒绝，不排队偷换。
+        assert(allowed,why)
+    end,debug.traceback)
+    if type(action.request)=="number"and action.request%1==0 and action.request>debugResponse then debugResponse=action.request end
+    lastUIKey=nil
+    if not ok then debugError=tostring(err);note("DEBUG_LOADOUT_REJECTED "..debugError);return end
+    debugError=nil
+    note("DEBUG_LOADOUT_BEGIN request="..action.request.." session="..debugSession.." from="..json.encode(currentProfile).." to="..json.encode(profile))
+    -- 此后错误进入既有控制器故障处理，不能显示成功或继续使用半完成的新状态。
+    configureFlight(profile,"debug")
+    debugAck=action.request
+    note("DEBUG_LOADOUT_APPLIED request="..debugAck.." profile="..json.encode(profile))
+end
 local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then directSelect(action.target)
+    elseif action.type=="debug_loadout"then applyDebugLoadout(action)
     elseif action.type=="settings"then
-        -- 管理界面没有选兵装的权限；构造完整新设置后验证并保存。
+        -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
             local nextConfig=json.decode(json.encode(config))
@@ -621,7 +669,7 @@ end
 local function publishState()
     publishSequence=publishSequence+1
     local info=catalogue and catalogue[tostring(planeId)]
-    -- 仅发布管理参数和只读状态，不给界面提供兵装编辑事务。
+    -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=3,language=config.language,game_language=runtimeContext.language,central_hint=config.central_hint,
@@ -630,6 +678,8 @@ local function publishState()
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
         and ready()and not game:IsGamePaused(plane)
+    state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=canDebugLoadout()and true or false,
+        response=debugResponse,ack=debugAck,error=debugError,profile=configured and currentProfile or nil,options=flightOptions}
     state.sequence=publishSequence
     state.native_hud=nativeHud.status
     state.weapon_presentation=weaponPresentation.status
@@ -736,6 +786,7 @@ local function tick()
     local found,world=cachedPlane,cachedWorld
     local address=found and found:GetAddress()or nil
     if address~=planeAddress then
+        debugSession=debugSession+1;debugError=nil -- 新实例即新调试上下文，旧请求不再有效。
         -- No stale actor pointers or cached loadout cross a world transition.
         local mountOK,mountError=updateFixedMount(0,0) -- 新世界不能继续持有旧模型身份。
         assert(mountOK,mountError)
@@ -752,7 +803,10 @@ local function tick()
         flightOptions=nil;lastUIKey=nil;lastHUD=-1;previewOptions=nil;lastPreviewHUD=-1
         isFlight=found~=nil;currentWorld=world;currentProfile=nil;lastSelected=-1
         -- 补给可能暂时移走玩家机体；保留确认事务和检查点，等待原生成功事件。
-        if not supplySession then checkpointPending=false;restorePending=false;checkpointProfile=nil end
+        if not supplySession then
+            checkpointPending=false;restorePending=false;checkpointProfile=nil
+            debugProfileActive=false;checkpointDebugProfile=false
+        end
         note("WORLD_CHANGED "..world)
     end
     local selected=instance:GetSelectedPlaneID()
@@ -811,7 +865,8 @@ local function tick()
             selectionAudio(0,0) -- 恢复前先隔离原生初始化提示。
             native("checkpoint_restore") -- 恢复快照自己的槽数、映射、弹药和冷却。
             instance:SetPlaneAndSWP(planeId,currentProfile.a)
-            config.profiles[tostring(planeId)]=copyProfile(currentProfile);saveConfig()
+            debugProfileActive=checkpointDebugProfile
+            if not debugProfileActive then config.profiles[tostring(planeId)]=copyProfile(currentProfile);saveConfig()end
             lastArmed=plane:IsSpecialWeaponArmed()
             selectionAudio(0,lastArmed and active+1 or 0)
             note("CHECKPOINT_RESTORED")
@@ -819,7 +874,7 @@ local function tick()
         if checkpointPending then
             checkpointPending=false
             native("checkpoint_save")
-            checkpointProfile=copyProfile(currentProfile);note("CHECKPOINT_CAPTURED")
+            checkpointProfile=copyProfile(currentProfile);checkpointDebugProfile=debugProfileActive;note("CHECKPOINT_CAPTURED")
         end
         observeOriginalSwitch()
         local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 三种 SP 统一更新，单挂由核心明确解绑。
@@ -979,7 +1034,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.9 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.10 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

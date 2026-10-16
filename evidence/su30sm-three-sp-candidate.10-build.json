@@ -1,0 +1,68 @@
+{
+  "candidate": "1.0.2-su30sm-three-sp.10",
+  "candidate_sha256": "142d3993e3fd0289146792938dd43d33237929af696fe26d07b2d643fd0a116a",
+  "ui_sha256": "40e6d510aefa41910eb54878b98bfda512559948b4d0138029ffe6f880f297c3",
+  "required_ui_exports_verified": [
+    "dualsp_debug_loadout_supported",
+    "dualsp_drain_actions",
+    "dualsp_management_supported",
+    "dualsp_overlay_start",
+    "dualsp_preparation_navigation",
+    "dualsp_publish",
+    "dualsp_runtime_gate",
+    "dualsp_three_sp_supported"
+  ],
+  "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+  "compiled": true,
+  "lua_syntax_only": true,
+  "required_exports_verified": [
+    "dualsp_catalogue",
+    "dualsp_custom_audio_update",
+    "dualsp_debug_loadout_ready",
+    "dualsp_finish_tls",
+    "dualsp_fixed_mount_update",
+    "dualsp_hud_readiness",
+    "dualsp_loadout_ammo",
+    "dualsp_menu_confirm",
+    "dualsp_parts_ammo_preview",
+    "dualsp_preparation_action",
+    "dualsp_prepare_weapon_rebuild",
+    "dualsp_refresh_weapon_icons",
+    "dualsp_resupply_control",
+    "dualsp_resupply_takeoff",
+    "dualsp_runtime_gate",
+    "dualsp_selection_audio",
+    "dualsp_take_empty_switch",
+    "dualsp_three_sp_supported",
+    "dualsp_weapon_icon",
+    "lab_native_execute"
+  ],
+  "game_installed": true,
+  "game_validated": false,
+  "test_modules_run": false,
+  "installation_blockers": [],
+  "native_research_evidence": "evidence/su30sm-fixed-mount-stage4.json",
+  "protected_files": {
+    "dist/DualSP/bin/DualSP.dll": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "dist/DualSP/cores/1.0.1/DualSP.dll": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+  },
+  "lua_sources": {
+    "dist/DualSP/Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "dist/DualSP/Scripts/loadout_flow.lua": "5a91ffccf18cefbbf54b05d0f9f425573055dffac462e760fbe051e4ea0d219a",
+    "dist/DualSP/Scripts/loadout_profile.lua": "efca67a4d9613da25b289aa217bd9ab72d85f58b75cab25c05101e66271cd2c4",
+    "dist/DualSP/Scripts/main.lua": "002389bb71c3e4df32d5f352d9a5592c2e6386bc93915f1ff6b6b939b2f83949",
+    "dist/DualSP/Scripts/native_hud.lua": "cc30120f651af8e09e25da68cb931b25202e48e6f7f9de2b79da00cebabbd1eb",
+    "dist/DualSP/Scripts/native_loadout.lua": "cdf6f0f6151cc3431e3b30ab76a260384e96121c9dfad6a272ecd0f2835206e9",
+    "dist/DualSP/Scripts/runtime_context.lua": "1eed3d9f5f34e288c5d24d504232f12243a5e56955801fde32598386f1e6c9a6",
+    "dist/DualSP/Scripts/weapon_cycle.lua": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+    "dist/DualSP/Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "dist/DualSP/Scripts/weapon_presentation.lua": "27dcd7c0209ebde35237ae9bc845afbd9ab5df5d9ac89c466b137842ce80d266"
+  },
+  "cpp_sources": {
+    "src/weapon_bridge.cpp": "9b5281e8d7667517274deb25b399cf5694cad83d557562d1a98df676590b74f3",
+    "src/su30sm_fixed_mount.hpp": "d811077de8407fb904ede268b6898d1be129ec5979b8d413514c289a385b961b",
+    "src/overlay.cpp": "f8479472f8165d31cf56111832496060ff2e764ced3fc71f34168019bc6a3319"
+  },
+  "scope": "任务内显式 SP 调试换装、纯键盘管理；不是 .9 崩溃修复",
+  "installation_receipt": "evidence/su30sm-three-sp-candidate.10-installed.json"
+}

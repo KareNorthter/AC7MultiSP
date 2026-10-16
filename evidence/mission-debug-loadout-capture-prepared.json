@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-10-16T08:56:56.859335+08:00",
+  "user_crash_update": "用户未手动结束进程；crash 后画面冻结、BGM 继续，约十秒后自动退出。",
+  "tool": "Microsoft Sysinternals ProcDump 12.01",
+  "source": "https://learn.microsoft.com/en-us/sysinternals/downloads/procdump",
+  "tool_sha256": "D1FC99AE304BD1D2BF28ABEB62531DA959E2431916194981B88C958FD713A8E6",
+  "signature_verified": "Valid / Microsoft Corporation",
+  "monitor_pid_at_start": 38352,
+  "arguments": [
+    "-accepteula",
+    "-mm",
+    "-e",
+    "1",
+    "-f",
+    "C0000005,C0000409,C0000374,C00000FD,C000001D",
+    "-h",
+    "-t",
+    "-n",
+    "6",
+    "-s",
+    "1",
+    "-w",
+    "Ace7Game.exe",
+    "\"E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\crash-capture-20261016-084752-096\""
+  ],
+  "observed_stdout": "Waiting for process named Ace7Game.exe...",
+  "dump_captured": false,
+  "crash_root_cause_known": false,
+  "game_started_by_agent": false,
+  "forced_crash": false,
+  "global_debugger_installed": false,
+  "runtime_files_rechecked": 13,
+  "validation_boundary": "Lua 语法、C++ 构建、导出接口及部署摘要核对通过；无测试模块或新功能实玩。",
+  "active_weapons_guard_basis": [
+    "docs/research/su30sm-dual-mount.md：未发射快照的 ActiveWeapons 为零",
+    "docs/research/continuous-sp-effects.txt：原生重建会清空 ActiveWeapons，限制只检查当前原生登记，不保证追踪此前切换脱离登记的弹体"
+  ]
+}

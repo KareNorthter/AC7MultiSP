@@ -581,12 +581,26 @@ void scaleAmmo(Addr activator,int count) {
     }
     nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"native",before},{"scaled",after}}.dump());
 }
+// 调试换装只能重建当前会话；发射体还在活动数组时要求先恢复游戏等待结束。
+void requireDebugLoadoutReady(Addr plane,Addr activator) {
+    require(session.plane==plane && session.activator==activator,"调试换装的玩家会话已经改变");
+    require(read<Addr>(plane+0x11a8)==activator,"调试换装的武器组件不属于当前机体");
+    const int count=read<int>(activator+0x340),capacity=read<int>(activator+0x344); // 原生 ActiveWeapons 有效数量。
+    require(count>=0 && count<=capacity,"调试换装的活动武器数组无效");
+    require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
+}
 void execute(const Command& command) {
     verifyVersion();
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
     // 补给重选需要重建当前组合，同时保留任务已经捕获的检查点。
     // 此新命令只存在于源码候选；正式 DLL 保持不变，不能直接混装。
-    if(command.op=="setup" || command.op=="resupply_setup") {
+    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup") {
+        const bool debugLoadout=command.op=="debug_setup"; // 调试仅补满新的 SP，保留普通兵装与任务检查点。
+        Group previousMain; // 初始化前保存普通导弹弹药和装填进度。
+        if(debugLoadout) {
+            requireDebugLoadoutReady(command.plane,command.activator);
+            previousMain=capture(command.activator,false,command.time);
+        }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         fixedMountRelease(); // 新组合不沿用上一组合的视觉状态。
 #endif
@@ -594,8 +608,8 @@ void execute(const Command& command) {
         session.count=command.count;session.configs=command.configs;
         if(command.op=="setup")checkpointValid=false;
         // 第一槽与其余槽走同一初始化入口，包含单挂；重建次数与原 Lua 路径相同。
-        initialize(command,session.configs[0],false);
-        session.main=capture(command.activator,false,command.time);
+        initialize(command,session.configs[0],debugLoadout);
+        session.main=debugLoadout?previousMain:capture(command.activator,false,command.time);
         scaleAmmo(command.activator,session.count);
         session.special[0]=capture(command.activator,true,command.time);
         session.maximum[0]=scalarInt(session.special[0],0);
@@ -826,6 +840,22 @@ extern "C" __declspec(dllexport) int dualsp_take_empty_switch(void* luaState) {
         api->boolean(luaState,true);api->boolean(luaState,requested);return 2;
     }catch(const std::exception& error) {
         emptySwitchRequested=false;nativeLog(std::string("SWITCH_REQUEST_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 调试提交前只读核对；Lua 在触碰 HUD、方案和武器之前调用，拒绝不影响原会话。
+extern "C" __declspec(dllexport) int dualsp_debug_loadout_ready(void* luaState) {
+    const dualsp::LuaApi* api=nullptr; // 返回明确拒绝原因，不自动延后或重试换装。
+    try {
+        static const dualsp::LuaApi bound;api=&bound; // 使用专用加载器 ABI。
+        require(runtimeEnabled,"Mod disabled outside single-player");
+        require(api->top(luaState)==2,"调试换装接口参数数量无效");verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家身份。
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 本次武器组件身份。
+        requireDebugLoadoutReady(plane,activator);api->boolean(luaState,true);return 1;
+    }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
     }

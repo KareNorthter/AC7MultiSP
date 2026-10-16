@@ -502,9 +502,9 @@ void fixedMountCommit(const Command& command) {
     }
     fixedMount.weaponKinds=kinds;
     for(int index=0;index<session.count;++index)fixedMount.weaponClasses[index]=session.special[index].weaponClass;
-    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="resupply")fixedMount.order={0,1,2,3,4,5,6,7,8,9,10,11};
+    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup" || command.op=="resupply")fixedMount.order={0,1,2,3,4,5,6,7,8,9,10,11};
     if(aircraft==MountAircraft::F35c && (kindsMask&4) &&
-       (command.op=="setup" || command.op=="resupply_setup" || command.op=="resupply" ||
+       (command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup" || command.op=="resupply" ||
         command.op=="switch" || command.op=="checkpoint_restore")) {
         // 原生初始化暂停非当前挂架并关闭 Tick；持久显示的 SWP2 必须继续读取 Swcc，才能随腹舱收回。
         const Addr rack=read<Addr>(command.plane+0x1b90); // 已在绑定时核对骨架类型和资源。
