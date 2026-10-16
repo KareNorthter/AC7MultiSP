@@ -919,6 +919,34 @@ extern "C" __declspec(dllexport) int dualsp_debug_loadout_ready(void* luaState) 
     }
 }
 
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 调试即时切换只重绑模型，保留实际弹药、冷却、当前SP和检查点。
+extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==4 && runtimeEnabled,"即时挂载开关需要单人任务与四个参数");
+        require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"即时挂载开关必须在游戏线程调用");
+        verifyVersion();
+        Command command;command.op="debug_mount";
+        command.plane=static_cast<Addr>(api->readInteger(luaState,1));
+        command.activator=static_cast<Addr>(api->readInteger(luaState,2));command.time=api->readNumber(luaState,3);
+        const auto enabled=api->readInteger(luaState,4);
+        require((enabled==0 || enabled==1) && std::isfinite(command.time) && command.time>=0,"即时挂载参数无效");
+        requireDebugLoadoutReady(command.plane,command.activator);
+        fixedMountEnabled=enabled!=0;
+        if(fixedMountRelease()) {
+            fixedMountFailed=false;fixedMountWarning.clear();
+            if(fixedMountEnabled)try { fixedMountCommit(command);bindF35Cover(command.plane); }
+                catch(const std::exception& error) { fixedMountFail(error.what()); }
+        }
+        api->boolean(luaState,true);api->string(luaState,fixedMountWarning.data(),fixedMountWarning.size());return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+#endif
 // 必须在保存旧槽冷却之前结束 TLS，以记录原生收尾产生的最终武器状态。
 extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 出错就停止本次选择，不继续重建武器。

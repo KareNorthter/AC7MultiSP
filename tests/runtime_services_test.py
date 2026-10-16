@@ -434,4 +434,37 @@ assert(locate()==nil and scans==1 and env.lastPlaneScan==1.5)
 world.GetFullName=function()return 'World /Game/Maps/Menu/Hangar.Hangar' end
 assert(locate()==nil and scans==1,'菜单不查找任务玩家')
 ''')
-print('配置/协议/页面接口、场景预览与补给交接、开场定位、失败隔离及弹药行归还通过')
+lua.globals().hotkey_source = main_source[main_source.index('local function applyDebugHotkey('):main_source.index('local function applyAction(')]
+lua.execute(r'''
+-- 执行真实调试快捷操作：拒绝过期/忙碌请求；模型开关不能调用补弹换装。
+local json=dofile(script_dir..'/json.lua')
+local Profile=dofile(script_dir..'/loadout_profile.lua')
+local world={GetAddress=function()return 900 end}
+local options={{owned=true,available=true,code='a'},{owned=true,available=true,code='b'},{owned=true,available=true,code='c'}}
+local configured,toggled,saved=0,0,0
+local env=setmetatable({hotkeyResponse=0,runtimeModEnabled=true,debugSession=1,weaponRevision=5,
+    config={fixed_mount_enabled=true,ammo_percent_two=50,ammo_percent_three=33},runtimeFixedMountEnabled=true,
+    currentProfile={a=0,b=-1,c=-1},Profile=Profile,json=json,planeId=128,flightOptions=options,
+    instance={GetWorld=function()return world end,GetSelectedPlaneID=function()return 128 end},
+    plane={GetAddress=function()return 200 end,GetWorld=function()return world end},activator={GetAddress=function()return 201 end},
+    game={GetTimeSeconds=function()return 123 end},canDebugLoadout=function(hotkey)assert(hotkey);return true end,
+    debugLoadoutReady=function()return true end,optionsFor=function()return options end,note=function()end,
+    tr=function(zh)return zh end,saveConfig=function()saved=saved+1 end,
+    debugFixedMount=function(p,a,t,enabled)assert(p==200 and a==201 and t==123);toggled=toggled+1;return true,'' end}, {__index=_G})
+env.configureFlight=function(profile,reason)assert(reason=='debug_hotkey');configured=configured+1;env.currentProfile=profile end
+local apply=assert(load(hotkey_source..'return applyDebugHotkey','调试快捷操作','t',env))()
+local function action(request,command,revision)return {request=request,command=command,revision=revision or 5,session=1,hotkey_protocol=1}end
+apply(action(1,'cycle'));assert(configured==1 and env.currentProfile.a==1 and toggled==0)
+apply(action(1,'cycle'));assert(configured==1,'同一请求不能补弹两次')
+apply(action(2,'cycle',4));assert(configured==1,'旧兵装请求必须拒绝')
+env.canDebugLoadout=function()return false,'正在补给' end
+apply(action(3,'mount'));assert(toggled==0 and saved==0)
+env.canDebugLoadout=function()return true end
+apply(action(4,'mount'));assert(toggled==1 and saved==1 and not env.runtimeFixedMountEnabled and not env.config.fixed_mount_enabled)
+assert(configured==1,'模型开关不得调用补弹或改组合')
+env.saveConfig=function()error('模拟保存失败')end
+apply(action(5,'mount'));assert(toggled==1 and not env.runtimeFixedMountEnabled and not env.config.fixed_mount_enabled)
+env.debugLoadoutReady=function()return false,'有在途武器' end
+apply(action(6,'cycle'));assert(configured==1 and env.hotkeyNotice:find('有在途武器',1,true))
+''')
+print('配置/协议/页面、场景预览、开场定位、调试快捷操作及失败隔离检查通过')

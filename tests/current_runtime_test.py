@@ -37,6 +37,20 @@ for count=1,3 do
 end
 assert(snapshot.ratio==.82) -- 新管理设置不能改写已有快照。
 local options={{owned=true,available=true,code='A'},{owned=true,available=true,code='B'},{owned=true,available=true,code='C'}}
+-- 七种集合各访问一次后回到起点；已有SP次序不产生重复组合。
+local combo={a=0,b=-1,c=-1}
+local expected={{1,-1,-1},{2,-1,-1},{0,1,-1},{0,2,-1},{1,2,-1},{0,1,2},{0,-1,-1}}
+for _,values in ipairs(expected)do
+    combo=assert(Profile.nextCombination(combo,options,settings))
+    assert(combo.a==values[1] and combo.b==values[2] and combo.c==values[3])
+    assert(combo.ratio==({1,.75,.66})[Profile.count(combo)])
+end
+assert(Profile.nextCombination({a=1,b=0,c=-1},options,settings).b==2)
+local restricted={{owned=true,available=true},{owned=false,available=true},{owned=true,available=false}}
+combo=Profile.nextCombination({a=0,b=-1,c=-1},restricted,settings)
+assert(combo.a==2 and combo.b==-1)
+combo=Profile.nextCombination(combo,restricted,settings);assert(combo.a==0 and combo.b==-1)
+restricted[3].owned=false;assert(Profile.nextCombination(combo,restricted,settings)==nil)
 local tr=function(zh,en)return en end
 for count=1,3 do
     for _,mode in ipairs({'preparation','resupply'})do

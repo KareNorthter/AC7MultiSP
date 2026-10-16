@@ -60,6 +60,10 @@ std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟�
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
+int hotkeyRequest=0,hotkeyResponse=0;
+std::array<bool,2> consumedDebugKeys{};
+std::string hotkeyToast;
+ULONGLONG hotkeyToastUntil{};
 int managementTab=0,requestedTab=-1; // Ctrl+Tab 在四个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到语言选择，不依赖鼠标点击。
 // 日志只在页面打开或手动刷新时读取。
@@ -122,7 +126,24 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;captureSlot=-1;}
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;captureSlot=-1;consumedDebugKeys={};}
+    const bool keyDown=msg==WM_KEYDOWN || msg==WM_SYSKEYDOWN;
+    const bool keyUp=msg==WM_KEYUP || msg==WM_SYSKEYUP;
+    if((keyDown || keyUp) && (w==VK_F6 || w==VK_F7)) {
+        const int index=w==VK_F6?0:1;
+        if(consumedDebugKeys[index]) { if(keyUp)consumedDebugKeys[index]=false;return 0; }
+        if(keyDown && !(l&(1LL<<30)) && gameFocused() && (GetKeyState(VK_CONTROL)&0x8000) && (GetKeyState(VK_MENU)&0x8000)) {
+            consumedDebugKeys[index]=true; // 优先于普通F6，连发与释放也消费，不误开管理页。
+            if(captureSlot>=0)return 0;
+            if(state.contains("debug_hotkey") && state["debug_hotkey"].value("protocol",0)==1 && state.contains("debug_loadout")) {
+                const auto& debug=state["debug_loadout"];
+                enqueue({{"type","debug_hotkey"},{"hotkey_protocol",1},{"request",++hotkeyRequest},
+                    {"session",debug.value("session",-1)},{"revision",debug.value("revision",-1)},
+                    {"command",index==0?"cycle":"mount"}});
+            }
+            return 0;
+        }
+    }
     if((msg==WM_KEYDOWN||msg==WM_KEYUP)&&suppressedCaptureKey==static_cast<int>(w)) {
         if(msg==WM_KEYUP)suppressedCaptureKey=0;
         return 0;
@@ -318,6 +339,7 @@ void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
     ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),state.value("plane_name",std::string()).c_str());
     ImGui::TextWrapped("%s",tr("调试：任务内重配 SP。按勾选顺序（从上到下）分配 SP1 / SP2 / SP3。","Debug: rebuild SP loadout in this mission. Checked weapons become SP1 / SP2 / SP3 from top to bottom."));
+    ImGui::TextWrapped("%s",tr("快捷测试：Ctrl+Alt+F6 轮切7种SP组合；Ctrl+Alt+F7 即时开关多SP模型（不补弹）。未购买或仅限单挂的组合自动跳过。","Quick test: Ctrl+Alt+F6 cycles SP combinations; Ctrl+Alt+F7 toggles models without refilling. Unavailable combinations are skipped."));
     ImGui::TextWrapped("%s",tr("应用后 SP 按已保存的管理比例配弹并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills SP ammunition using saved management percentages, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
     const bool available=debug.value("available",false)&&pendingDebug==0; // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
@@ -403,7 +425,7 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.2.2 管理###DualSPManagement","AC7MultiSP 2.2.2 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.3.0 管理###DualSPManagement","AC7MultiSP 2.3.0 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
@@ -566,6 +588,13 @@ void refreshState() {
                 tr("换装未完成，请查看错误说明。","Loadout was not applied. See the error details.");
             pendingDebug=0;
         }
+        const auto& hotkey=state.at("debug_hotkey");
+        hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
+        if(hotkey.at("response").get<int>()!=hotkeyResponse) {
+            hotkeyResponse=hotkey.at("response").get<int>();hotkeyToast=hotkey.value("notice",std::string());
+            hotkeyToastUntil=GetTickCount64()+4500;
+            draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+        }
     }catch(const std::exception& error) {
         managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());
     }
@@ -627,7 +656,15 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     io.AddMousePosEvent(pointer.x,pointer.y);
                 }
                 ImGui::GetIO().MouseDrawCursor=panel&&foreground;ImGui::NewFrame();
-                try {if(panel)drawPanel();}catch(const Json::exception& e){notice=e.what();nativeLog(std::string("UI_ERROR ")+e.what());}
+                try {
+                    if(panel)drawPanel();
+                    if(foreground && !hotkeyToast.empty() && GetTickCount64()<hotkeyToastUntil) {
+                        ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,72},ImGuiCond_Always,{.5f,0});
+                        ImGui::SetNextWindowBgAlpha(.8f);
+                        ImGui::Begin("##DebugHotkeyNotice",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings);
+                        ImGui::TextUnformatted(hotkeyToast.c_str());ImGui::End();
+                    }
+                }catch(const Json::exception& e){notice=e.what();nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight))togglePanel(false);
                 ImGui::Render();
                 ID3D11RenderTargetView* oldTarget{};ID3D11DepthStencilView* oldDepth{};context->OMGetRenderTargets(1,&oldTarget,&oldDepth);

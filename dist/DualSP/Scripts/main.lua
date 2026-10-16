@@ -1,4 +1,4 @@
--- AC7MultiSP 2.2.2：机库和补给使用独立动态挂载预览。
+-- AC7MultiSP 2.3.0：机库和补给使用独立动态挂载预览。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -70,6 +70,9 @@ local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
 local debugLoadoutProtocol=loadExport("dualsp_debug_loadout_supported","DualSPUI.dll") -- 调试扩展须与界面成套安装。
 local debugLoadoutReady=loadExport("dualsp_debug_loadout_ready") -- 重建前只读检查正在飞行的武器。
+local debugFixedMount=loadExport("dualsp_debug_fixed_mount")
+local hotkeyResponse=0
+local hotkeyNotice=nil
 local preparationNavigation=loadExport("dualsp_preparation_navigation","DualSPUI.dll") -- 原生页面的只读键盘导航。
 local configStore=ConfigStore.new{
     root=root,note=note,json=json,profile=Profile,readJson=readJson}
@@ -607,13 +610,14 @@ end
 local function configureFlight(profile,reason)
     releaseMountPreview(0) -- 已确认补给预览维持到此处，紧接原有兵装重建交接。
     local resupply=reason=="resupply" -- 原生补给必须先完成成功事务。
-    local debugLoadout=reason=="debug" -- 调试不伪造补给事务，不保存个人方案。
+    local debugLoadout=reason=="debug"or reason=="debug_hotkey" -- 调试不伪造补给事务，不保存个人方案。
     -- 补给在原生成功事件返回后即可重建；等待飞控输入开放会把旧挂载多留在起飞画面约一秒。
     assert((resupply and supplySession and supplySession.success and valid(plane)and valid(activator))or ready(),
         "武器初始化需要已开放的出击控制，或已经成功返回的补给事务")
     assert(not configured or resupply or debugLoadout,"Loadout is locked for this sortie")
     if debugLoadout then
-        assert(panelOpen and configured and not supplySession and game:IsGamePaused(plane),"调试换装需要当前任务在管理界面暂停")
+        assert(configured and not supplySession and ((panelOpen and game:IsGamePaused(plane))or
+            (reason=="debug_hotkey"and not panelOpen and not game:IsGamePaused(plane))),"调试换装的飞行或管理暂停状态不符")
         local allowed,err=debugLoadoutReady(plane:GetAddress(),activator:GetAddress()) -- 最后一次只读核对。
         assert(allowed,err)
     end
@@ -753,12 +757,14 @@ local function observeOriginalSwitch()
     end
 end
 -- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
-local function canDebugLoadout()
+local function canDebugLoadout(hotkey)
     if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
     if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
     if supplySession or internal or restorePending or checkpointPending then return false,tr("正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress.")end
     if not valid(instance)or not valid(plane)or not valid(activator)or not ready()then return false,tr("当前飞行控制尚未开放。","Flight controls are not ready.")end
-    if not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
+    if hotkey and not panelOpen then
+        if game:IsGamePaused(plane)then return false,tr("请先退出游戏暂停菜单。","Close the pause menu first.")end
+    elseif not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
     return true
 end
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
@@ -786,11 +792,46 @@ local function applyDebugLoadout(action)
     debugAck=action.request
     note("DEBUG_LOADOUT_APPLIED request="..debugAck.." profile="..json.encode(profile))
 end
+local function applyDebugHotkey(action)
+    if type(action.request)~="number"or action.request%1~=0 or action.request<=hotkeyResponse then return end
+    hotkeyResponse=action.request;lastUIKey=nil
+    local profile=nil
+    local accepted,why=pcall(function()
+        assert(runtimeModEnabled,"本模组已关闭")
+        assert(action.hotkey_protocol==1 and action.session==debugSession and action.revision==weaponRevision,"任务或兵装已改变，请重新按键")
+        local allowed,reason=canDebugLoadout(true);assert(allowed,reason)
+        assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,"当前任务机体身份已改变")
+        local safe,reason=debugLoadoutReady(plane:GetAddress(),activator:GetAddress());assert(safe,reason)
+        if action.command=="cycle"then
+            profile=Profile.nextCombination(currentProfile,optionsFor(planeId),config)
+            assert(profile,"没有其他可用 SP 组合")
+        else assert(action.command=="mount","未知调试快捷操作")end
+    end)
+    if not accepted then hotkeyNotice=tostring(why);note("DEBUG_HOTKEY_REJECTED "..hotkeyNotice);return end
+    if profile then
+        configureFlight(profile,"debug_hotkey") -- 同一游戏线程完整重建，错误交给既有故障清理。
+        local names={}
+        for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=flightOptions[profile[field]+1].code:upper()end end
+        hotkeyNotice="SP："..table.concat(names," + ")..tr("（已补满）"," (refilled)")
+    else
+        local nextConfig=json.decode(json.encode(config));nextConfig.fixed_mount_enabled=not runtimeFixedMountEnabled
+        local saved,err=pcall(saveConfig,nextConfig)
+        if not saved then hotkeyNotice=tostring(err);note("DEBUG_HOTKEY_REJECTED "..hotkeyNotice);return end
+        config=nextConfig
+        local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.fixed_mount_enabled and 1 or 0)
+        assert(ok,warning)
+        runtimeFixedMountEnabled=config.fixed_mount_enabled;mountOptionsApplied=true
+        previewMountWarning=nil;mountWarning=warning and warning~=""and warning or nil
+        hotkeyNotice=mountWarning or (runtimeFixedMountEnabled and tr("多 SP 模型：开启","Multi-SP models: ON")or tr("多 SP 模型：关闭","Multi-SP models: OFF"))
+    end
+    note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
+end
 local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
+    elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
@@ -845,6 +886,7 @@ local function publishState()
     local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,profile=configured and currentProfile or nil,options=flightOptions}
+    state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
     state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
         error=managementPauseError,
         existing=managementPause and managementPause.existing or false,
@@ -1227,7 +1269,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.2.2 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.3.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

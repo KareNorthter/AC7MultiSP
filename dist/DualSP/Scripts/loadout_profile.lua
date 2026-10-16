@@ -47,6 +47,23 @@ function Profile.validate(profile,options)
     return count
 end
 -- 部件先计入完整载量；整数百分数向上取整，避免浮点误差多出一发。
+-- 调试按集合轮切，不将ABC的不同排列视为新组合；跳过未购买及仅单挂限制。
+function Profile.nextCombination(current,options,settings)
+    local masks={1,2,4,3,5,6,7}
+    local currentMask=0
+    for _,field in ipairs(Profile.fields)do if current[field]>=0 then currentMask=currentMask | (1 << current[field])end end
+    local start=0
+    for index,mask in ipairs(masks)do if mask==currentMask then start=index;break end end
+    for step=1,#masks do
+        local mask=masks[(start+step-1)%#masks+1]
+        if mask~=currentMask then
+            local candidate={a=-1,b=-1,c=-1};local slot=1
+            for index=0,2 do if mask & (1 << index)~=0 then candidate[Profile.fields[slot]]=index;slot=slot+1 end end
+            if pcall(Profile.validate,candidate,options)then return Profile.withSettings(candidate,settings)end
+        end
+    end
+    return nil
+end
 function Profile.ammo(full,count,ratio)
     assert(type(full)=="number"and full>=0 and full%1==0,"完整载量无效")
     assert(count>=1 and count<=3,"SP 数量无效")
