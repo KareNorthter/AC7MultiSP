@@ -761,12 +761,12 @@ extern "C" __declspec(dllexport) int dualsp_mount_preview(void* luaState) {
             // 补给页已关闭时，仅刷新原先验证过的同一玩家预览，不能创建新绑定。
             if(!runtimeEnabled || !fixedMountEnabled)mountPreviewRelease(0,false);
             else {
-                require(mountPreview.active && mountPreview.mode==2 && mountPreview.layout.plane.address==plane &&
+                require(mountPreview.active && (mountPreview.mode==2 || mountPreview.mode==5) && mountPreview.layout.plane.address==plane &&
                     mountPreview.activator.address==activator,"补给过渡预览身份不匹配");
                 if(GetTickCount64()-mountPreview.lastApply>=100)mountPreviewApply(); // 失败时只重试归还，不恢复接管。
             }
         } else {
-            require(mode==1 || mode==2 || mode==3,"模型预览模式无效");
+            require(mode==1 || mode==2 || mode==3 || mode==5,"模型预览模式无效");
             mountPreviewUpdate(owner,plane,activator,static_cast<int>(mode),configs,ammo);
         }
         const auto& warning=mountPreview.warning;
@@ -933,7 +933,9 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
         command.activator=static_cast<Addr>(api->readInteger(luaState,2));command.time=api->readNumber(luaState,3);
         const auto enabled=api->readInteger(luaState,4);
         require((enabled==0 || enabled==1) && std::isfinite(command.time) && command.time>=0,"即时挂载参数无效");
-        requireDebugLoadoutReady(command.plane,command.activator);
+        // 只切外观，不重建武器或触碰活动发射体，因此不要求输入开放、解除暂停或清空在途武器。
+        require(session.plane==command.plane && session.activator==command.activator,"即时挂载的玩家会话已经改变");
+        require(read<Addr>(command.plane+0x11a8)==command.activator,"即时挂载的武器组件不属于当前机体");
         fixedMountEnabled=enabled!=0;
         if(fixedMountRelease()) {
             fixedMountFailed=false;fixedMountWarning.clear();

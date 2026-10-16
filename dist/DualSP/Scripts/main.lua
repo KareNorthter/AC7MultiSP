@@ -1,4 +1,4 @@
--- AC7MultiSP 2.3.0：机库和补给使用独立动态挂载预览。
+-- AC7MultiSP 2.3.1：机库和补给使用独立动态挂载预览。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -278,6 +278,7 @@ local scenePreviewOptions=nil
 local scenePreviewPlane=nil
 local scenePreviewTime=-1
 local supplyPreviewActive=false
+local lastMountPreviewContext=nil -- 开关重启预览时复用最后候选，原生接口仍须重新核对身份。
 local function releaseMountPreview(ownerAddress)
     if not ownerAddress or ownerAddress==0 then
         scenePreviewOptions=nil;scenePreviewPlane=nil;supplyPreviewActive=false
@@ -293,7 +294,8 @@ end
 local function mountPreview(context)
     -- 视觉失败只返回警告，不能冒泡为页面或兵装事务错误。
     local called,ok,warning=pcall(function()
-        local supply=context.mode=="resupply"
+        lastMountPreviewContext=context
+        local supply=context.mode=="resupply"or context.mode=="resupply_transition"
         local flight=context.mode=="flight"
         if not supply and not flight then scenePreviewRequested=true end
         local owner=supply and context.owner or context.instance
@@ -324,7 +326,7 @@ local function mountPreview(context)
             amounts[i]=option and Profile.ammo(option.max,count,profile.ratio)or 0
         end
         local accepted,message=nativeMountPreview(owner:GetAddress(),sourcePlane:GetAddress(),sourceActivator:GetAddress(),
-            supply and 2 or flight and 3 or 1,profile.a,profile.b,profile.c,amounts[1],amounts[2],amounts[3])
+            context.mode=="resupply_transition"and 5 or supply and 2 or flight and 3 or 1,profile.a,profile.b,profile.c,amounts[1],amounts[2],amounts[3])
         if supply then supplyPreviewActive=true end
         return accepted,message
     end)
@@ -358,8 +360,15 @@ local function maintainScenePreview()
     if not called then releaseMountPreview(0);previewWarning(err)end
 end
 local function maintainSupplyPreview()
-    if not supplyPreviewActive or not valid(plane)or not valid(activator)then return end
+    if not valid(plane)or not valid(activator)then return end
     if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)then releaseMountPreview(0);return end
+    if not supplyPreviewActive then
+        if supplySession and supplySession.menuClosed and supplySession.preview then
+            mountPreview{owner=plane,instance=instance,planeId=planeId,mode="resupply_transition",
+                profile=supplySession.preview,options=supplySession.options}
+        end
+        return
+    end
     local called,ok,warning=pcall(nativeMountPreview,0,plane:GetAddress(),activator:GetAddress(),4,0,0,0,0,0,0)
     if not called then previewWarning(ok)
     elseif warning and warning~=""then previewWarning(warning)end
@@ -797,8 +806,10 @@ local function applyDebugHotkey(action)
     hotkeyResponse=action.request;lastUIKey=nil
     local profile=nil
     local accepted,why=pcall(function()
+        assert(action.hotkey_protocol==1,"快捷键协议不匹配")
+        if action.command=="mount"then return end -- 全局外观设置不依赖飞行、暂停、旧兵装版本或活动武器。
         assert(runtimeModEnabled,"本模组已关闭")
-        assert(action.hotkey_protocol==1 and action.session==debugSession and action.revision==weaponRevision,"任务或兵装已改变，请重新按键")
+        assert(action.session==debugSession and action.revision==weaponRevision,"任务或兵装已改变，请重新按键")
         local allowed,reason=canDebugLoadout(true);assert(allowed,reason)
         assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,"当前任务机体身份已改变")
         local safe,reason=debugLoadoutReady(plane:GetAddress(),activator:GetAddress());assert(safe,reason)
@@ -814,15 +825,33 @@ local function applyDebugHotkey(action)
         for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=flightOptions[profile[field]+1].code:upper()end end
         hotkeyNotice="SP："..table.concat(names," + ")..tr("（已补满）"," (refilled)")
     else
-        local nextConfig=json.decode(json.encode(config));nextConfig.fixed_mount_enabled=not runtimeFixedMountEnabled
+        local nextConfig=json.decode(json.encode(config));nextConfig.fixed_mount_enabled=not config.fixed_mount_enabled
         local saved,err=pcall(saveConfig,nextConfig)
         if not saved then hotkeyNotice=tostring(err);note("DEBUG_HOTKEY_REJECTED "..hotkeyNotice);return end
         config=nextConfig
-        local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.fixed_mount_enabled and 1 or 0)
-        assert(ok,warning)
-        runtimeFixedMountEnabled=config.fixed_mount_enabled;mountOptionsApplied=true
-        previewMountWarning=nil;mountWarning=warning and warning~=""and warning or nil
-        hotkeyNotice=mountWarning or (runtimeFixedMountEnabled and tr("多 SP 模型：开启","Multi-SP models: ON")or tr("多 SP 模型：关闭","Multi-SP models: OFF"))
+        -- 任务中直接重绑；机库/补给由预览接管，构造/检查点阶段沿既有重建边界应用。
+        local applied,err=pcall(function()
+            if runtimeAllowed and runtimeModEnabled and isFlight and configured and not supplySession
+                and not internal and not restorePending and not errorText
+                and valid(plane)and valid(activator)and valid(instance)
+                and instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()then
+                local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.fixed_mount_enabled and 1 or 0)
+                assert(ok,warning)
+                runtimeFixedMountEnabled=config.fixed_mount_enabled;mountOptionsApplied=true
+                mountWarning=warning and warning~=""and warning or nil
+            else applyFixedMountSetting()end
+            previewMountWarning=nil;supplyPreviewActive=false
+            if runtimeFixedMountEnabled and lastMountPreviewContext and not isFlight then mountPreview(lastMountPreviewContext)end
+            if supplySession and supplySession.menuClosed then maintainSupplyPreview()end
+        end)
+        if not applied then
+            -- 外观接口失败独立回退，不把错误升级为兵装控制器故障。
+            pcall(setFixedMountEnabled,0)
+            runtimeFixedMountEnabled=false;mountOptionsApplied=true
+            mountWarning="多 SP 挂载已回退为原生单 SP："..tostring(err)
+        end
+        hotkeyNotice=mountWarning or (config.fixed_mount_enabled and tr("多 SP 模型：开启","Multi-SP models: ON")or tr("多 SP 模型：关闭","Multi-SP models: OFF"))
+        if not runtimeModEnabled then hotkeyNotice=hotkeyNotice..tr("（总开关关闭，仅保存设置）"," (saved; mod disabled)")end
     end
     note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
 end
@@ -1118,7 +1147,7 @@ local function tick()
             checkpointProfile=copyProfile(currentProfile);checkpointDebugProfile=debugProfileActive;note("CHECKPOINT_CAPTURED")
         end
         observeOriginalSwitch()
-        local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 三种 SP 统一更新，单挂由核心明确解绑。
+        local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 统一更新；单 QAAM 保留四处库存模型，其他单挂归还原生。
         assert(mountOK,mountError)
         mountWarning=mountError~=""and mountError or nil -- 模型失败独立降级，不中断弹药、冷却或切换。
     end
@@ -1269,7 +1298,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.3.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.3.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

@@ -1,0 +1,271 @@
+{
+  "date": "2026-10-16",
+  "branch": "codex/mount-layout-research",
+  "base": {
+    "created_from": "main",
+    "main_commit": "4e626e3",
+    "source_baseline_original_commit": "7da1080",
+    "source_baseline_version": "2.2.2",
+    "uncommitted_2_3_0_changes_imported": false
+  },
+  "scope": "独立源码研究，不合入main，不安装；保留原生逻辑队列、装填窗口、锁定/齐射数量和冷却",
+  "compiled": false,
+  "test_modules_run": false,
+  "test_modules_added": false,
+  "existing_test_expectations_updated": true,
+  "installed": false,
+  "game_process_access": false,
+  "game_assets_modified": false,
+  "f15e": {
+    "user_choice": "保留较外侧sp21–26，优先给六处6AAM腾位置",
+    "combined_6aam": [
+      "sp11",
+      "sp12",
+      "sp13",
+      "sp14",
+      "sp15",
+      "sp16"
+    ],
+    "combined_sffs": [
+      "sp21",
+      "sp22",
+      "sp23",
+      "sp24",
+      "sp25",
+      "sp26"
+    ],
+    "sffs_without_6aam_positions": 12,
+    "logical_counts": [
+      6,
+      12,
+      1
+    ],
+    "geometry": {
+      "selected_outer": {
+        "sffs_sockets": [
+          "sp21",
+          "sp22",
+          "sp23",
+          "sp24",
+          "sp25",
+          "sp26"
+        ],
+        "reference_aabb_overlaps": [
+          {
+            "6aam": "sp13",
+            "sffs": "sp23",
+            "overlap_xyz": [
+              1.04958,
+              0.039,
+              2.70657
+            ]
+          },
+          {
+            "6aam": "sp14",
+            "sffs": "sp24",
+            "overlap_xyz": [
+              1.04958,
+              0.0391,
+              2.70667
+            ]
+          },
+          {
+            "6aam": "sp15",
+            "sffs": "sp23",
+            "overlap_xyz": [
+              20.08793,
+              0.11677,
+              4.4156
+            ]
+          },
+          {
+            "6aam": "sp15",
+            "sffs": "sp25",
+            "overlap_xyz": [
+              13.98776,
+              0.44176,
+              4.12538
+            ]
+          },
+          {
+            "6aam": "sp16",
+            "sffs": "sp24",
+            "overlap_xyz": [
+              20.08793,
+              0.11681,
+              4.4156
+            ]
+          },
+          {
+            "6aam": "sp16",
+            "sffs": "sp26",
+            "overlap_xyz": [
+              13.98806,
+              0.44146,
+              4.12569
+            ]
+          }
+        ]
+      },
+      "rejected_inner": {
+        "sffs_sockets": [
+          "sp27",
+          "sp28",
+          "sp29",
+          "sp30",
+          "sp31",
+          "sp32"
+        ],
+        "reference_aabb_overlaps": [
+          {
+            "6aam": "sp13",
+            "sffs": "sp27",
+            "overlap_xyz": [
+              23.53321,
+              3.49309,
+              3.15734
+            ]
+          },
+          {
+            "6aam": "sp13",
+            "sffs": "sp29",
+            "overlap_xyz": [
+              6.00249,
+              3.49309,
+              3.31066
+            ]
+          },
+          {
+            "6aam": "sp14",
+            "sffs": "sp28",
+            "overlap_xyz": [
+              23.53321,
+              3.49309,
+              3.15734
+            ]
+          },
+          {
+            "6aam": "sp14",
+            "sffs": "sp30",
+            "overlap_xyz": [
+              6.00249,
+              3.49309,
+              3.31066
+            ]
+          },
+          {
+            "6aam": "sp15",
+            "sffs": "sp29",
+            "overlap_xyz": [
+              15.14905,
+              3.77142,
+              2.3515
+            ]
+          },
+          {
+            "6aam": "sp15",
+            "sffs": "sp31",
+            "overlap_xyz": [
+              19.65734,
+              3.77142,
+              3.62084
+            ]
+          },
+          {
+            "6aam": "sp16",
+            "sffs": "sp30",
+            "overlap_xyz": [
+              15.14905,
+              3.77129,
+              2.3515
+            ]
+          },
+          {
+            "6aam": "sp16",
+            "sffs": "sp32",
+            "overlap_xyz": [
+              19.65734,
+              3.77129,
+              3.62084
+            ]
+          }
+        ]
+      }
+    },
+    "boundary": "只比较参考姿态LOD0包围盒；较外侧方案仍有小范围相交，不证明实际无穿插"
+  },
+  "f35c": {
+    "8agm_visual_positions": 12,
+    "8agm_loaded_window": 8,
+    "sod_4aam_positions": [
+      "sp21",
+      "sp22",
+      "sp25",
+      "sp26"
+    ],
+    "4aam_logical_count": 6,
+    "4aam_loaded_window": 4,
+    "assignment": "按当前窗口顺序优先保留剩余弹体的位置；仅冲突的新入窗槽分配空位；一次原生齐射中不重排",
+    "existing_open_pose_aabb_overlaps": [
+      {
+        "4aam": "sp21",
+        "sod": "sp11",
+        "overlap_xyz": [
+          36.7978365303979,
+          3.361567043634187,
+          2.1606188317381196
+        ],
+        "overlaps": true
+      },
+      {
+        "4aam": "sp22",
+        "sod": "sp12",
+        "overlap_xyz": [
+          36.79782970222814,
+          3.3639436127707683,
+          2.1609096915978068
+        ],
+        "overlaps": true
+      }
+    ],
+    "boundary": "旧采样的sp21/22与SOD包围盒相交；未核对全动画或新源码实玩效果"
+  },
+  "su30sm": {
+    "single_qaam_positions": [
+      "sp21",
+      "sp22",
+      "sp23",
+      "sp24"
+    ],
+    "multi_qaam_positions": [
+      "sp21",
+      "sp22"
+    ],
+    "qaam_6aam_positions": {
+      "qaam": 2,
+      "6aam": 6
+    },
+    "triple_positions": {
+      "qaam": 2,
+      "6aam": 4,
+      "lagm": 2
+    },
+    "qaam_rack_lod0_vertex_bands": {
+      "abs_y_40_to_55": 572,
+      "abs_y_55_to_80": 572
+    },
+    "rack_boundary": "外侧导轨属于SWP2整体网格；多挂仍用SWP3避免整套叠加，外侧导轨呈现尚未解决"
+  },
+  "reserve_models": "按库存显示备用弹；由补装窗口回溯已发射位置并扣除空位，真正就绪弹优先，不增加可发射数量",
+  "source_sha256": {
+    "f15e-mount-asset-summary.json": "530d86242389c588c5de1ce0e25656754ea450c62d7097fe39ded47aec57dee9",
+    "su30sm_SWP2_SM.json": "00f2aa0b339abb646a82b864787c97025491496556e04f5d0fcd0d741ae74c68",
+    "evidence/static-mount-batch8-research.json": "2fce4b18fa81f86d467c2550d8fdff43bb1b4f7f0f8289f6338d545e9642e51e"
+  },
+  "pending": [
+    "F-15E六加六的真实贴合与两套挂架呈现",
+    "F-35C四活动点的全动画净空、部分齐射和连续齐射",
+    "Su-30SM外侧QAAM导轨呈现方案",
+    "各机型低库存、备用弹补装空位、切换、补给、检查点及预览一致性"
+  ]
+}

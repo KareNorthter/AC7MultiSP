@@ -16,7 +16,7 @@ struct MountSpecification {
 // 共用身份检查，布局映射仍按机型明确处理。
 const MountSpecification& mountSpecification(MountAircraft aircraft) {
     static const MountSpecification su30{"su30sm",{"plwp_6aam_r0_C","plwp_lagm_r0_C","plwp_qaam_r0_C"},
-        {6,6,4},{6,4,6},{0x1ba0,0x1b98,0x1b90},{"w_4aam_r0_SM","w_qaam_r0_SM","w_lasm_r0_SM"},6,{6,2,2}}; // 原型机。
+        {6,6,4},{6,4,6},{0x1ba0,0x1b98,0x1b90},{"w_4aam_r0_SM","w_qaam_r0_SM","w_lasm_r0_SM"},8,{6,2,2}}; // 六处主挂位加两处外侧 QAAM，逻辑队列不变。
     static const MountSpecification f35{"f35c",{"plwp_sod_a0_C","plwp_8agm_a0_C","plwp_4aam_a0_C"},
         {2,12,6},{2,6,12},{0x1ba0,0x1b90,0x1b98},{"w_sod_a0_closed_SM","w_4aam_a0_SM","w_8agm_a0_SM"},20,{2,8,4}}; // SWP2 保留骨架动画和原生挂点。
     static const MountSpecification f15{"f15e",{"plwp_6aam_a0_C","plwp_sffs_a0_C","plwp_tls_x0_C"},
@@ -45,7 +45,8 @@ struct FixedMountState {
     std::array<int,3> logicalCounts{6,6,4}; // 原生队列长度，F-35C 使用 2/12/6；不改变装填窗口。
     unsigned kindsMask{}; // 每种真实武器占一位，组合变化时重新绑定布局。
     std::array<int,12> order{0,1,2,3,4,5,6,7,8,9,10,11}; // 当前原生槽对应的持久挂点序号。
-    std::array<Addr,20> physical{}; // 最大为 F-35C 两处 SOD、十二处 8AGM 和六处随舱门移动的 4AAM。
+    std::array<Addr,20> physical{}; // 最大为 F-35C 两处 SOD、十二处 8AGM 和六处 4AAM 候选位置。
+    std::array<int,6> f35AamPositions{14,15,18,19,14,15}; // 六槽共用四处活动点，窗口内保持唯一且尽量不移动剩余弹体。
     int physicalCount{6}; // 只遍历本机布局，不把空余容量视为有效位置。
     unsigned rackMask{4}; // 明确选择挂架，固定炮体不按待发弹药显隐。
     std::vector<MountVisual> visuals; // 已核对的武器及挂架显隐；活动骨架保留原父链、动画和 Socket。
@@ -174,7 +175,7 @@ float fixedMountElapsed(int index,float duration,float elapsed) {
     fixedMount.pendingReadyMask&=~bit; // 原生已完成装填或发射，后续完全使用实际计时。
     return elapsed;
 }
-// 所有可视组件均保留原父链；只使用一个挂架网格，避免重复几何。
+// 所有可视组件均保留原父链；挂架网格按机型和组合独立选择。
 bool mountDesired(const FixedMountState& state,const MountVisual& visual) {
     const bool master=read<unsigned char>(state.meshManager.address+0x120)!=0; // 原生总显隐。
     const bool planeHidden=(read<unsigned char>(state.plane.address+0x84)&1)!=0; // 实拍 bHidden 元数据掩码为 1，整机隐藏不能被预览反向覆盖。
@@ -328,21 +329,25 @@ int mountPhysical(const FixedMountState& state,int kind,int ordinal) {
     require(ordinal>=0 && ordinal<count,"固定挂载：持久挂点序号无效");
     if(state.aircraft==MountAircraft::Su30sm && (state.kindsMask==1 || state.kindsMask==2 || state.kindsMask==4))return ordinal; // 单选保留自己的原生池。
     if(state.aircraft==MountAircraft::F35c) {
-        // 同选 SOD 时只使用最内侧两个活动点 sp25/26，开舱姿态与 SOD 的模型范围分离。
-        // 六逻辑槽和四发窗口保持原样，多枚弹可依序从同一物理位置离架；收拢过程仍须实玩观察。
-        if(kind==2 && (state.kindsMask&1))return 18+ordinal%2;
+        if(kind==2 && (state.kindsMask&1)) {
+            // SOD 共存时使用 sp21/22/25/26；按当前窗口分配，保证四发齐射有四处来源。
+            // 六槽固定取模四会在部分轮转起点重复位置，任务刷新时只为冲突的新入窗槽重新分配。
+            const int position=state.f35AamPositions[ordinal];
+            require(position==14 || position==15 || position==18 || position==19,"固定挂载：活动弹位映射无效");
+            return position;
+        }
         return (kind==0?0:kind==1?2:14)+ordinal; // 其余组合保留自己的原生位置和父链。
     }
     if(state.aircraft==MountAircraft::F15e) {
         if(kind==2)return 18; // 固定激光发射点保持原位。
-        if(kind==1)return 6+ordinal; // SFFS 保留十二个原生位置。
-        return (state.kindsMask&2)?ordinal%2:ordinal; // 同选 SFFS 时只用两处外侧导弹位，避开内侧炸弹。
+        if(kind==1)return 6+((state.kindsMask&1)?ordinal%6:ordinal); // 同选 6AAM 时 SFFS 只用较外侧 sp21–26。
+        return ordinal; // 六处原生 6AAM 全部保留，减少炸弹模型位置而非导弹位置。
     }
     if(kind==1)return state.kindsMask==6?2+(ordinal<4?ordinal:ordinal-2):4+ordinal%2;
-    if(kind==2)return ordinal%2;
+    if(kind==2)return 6+ordinal%2; // 多挂 QAAM 改用更外侧 sp21/22。
     require(kind==0,"固定挂载：未知武器种类");
-    if(state.kindsMask==5)return 2+(ordinal<4?ordinal:ordinal-2); // QAAM＋6AAM 利用内翼及机腹四处。
-    return (state.kindsMask&4)?2+ordinal%2:(ordinal<4?ordinal:ordinal-2); // 三挂两处；原四加二保持原样。
+    if(state.kindsMask==5)return ordinal; // QAAM＋6AAM 使用六处导弹位，QAAM 在独立外侧位置。
+    return ordinal<4?ordinal:ordinal-2; // 含 LAGM 时保留外翼、内翼四处 6AAM，机腹留给 LAGM。
 }
 int mountPhysical(int kind,int ordinal) { return mountPhysical(fixedMount,kind,ordinal); }
 // 逻辑槽映射物理位置，不修改原生隐藏/恢复索引，也不改变六发数量。
@@ -434,16 +439,16 @@ void mountInstallHooks() {
 }
 unsigned mountRackMask(MountAircraft aircraft,unsigned kindsMask) {
     if(aircraft==MountAircraft::F35c)return (kindsMask&1)|((kindsMask&2)<<1)|((kindsMask&4)>>1);
-    if(aircraft==MountAircraft::F15e)return (kindsMask&2)?(kindsMask&~1u):kindsMask;
+    if(aircraft==MountAircraft::F15e)return kindsMask; // 六处 6AAM 恢复后保留对应挂架，SFFS 独立缩减弹体。
     if(kindsMask==1 || kindsMask==2 || kindsMask==4)return (kindsMask&1)|((kindsMask&2)<<1)|((kindsMask&4)>>1);
     return 4; // Su-30SM 多挂共用 SWP3 挂架。
 }
 bool mountShowReserve(MountAircraft aircraft,unsigned kindsMask,int kind) {
-    return (aircraft==MountAircraft::Su30sm && kindsMask==6 && kind==1) || (aircraft==MountAircraft::F15e && kind==1);
+    return (aircraft==MountAircraft::Su30sm && ((kindsMask==6 && kind==1) || (kindsMask==4 && kind==2))) ||
+        (aircraft==MountAircraft::F15e && kind==1) || (aircraft==MountAircraft::F35c && kind==1);
 }
 void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
     const auto aircraft=state.aircraft;const auto kindsMask=state.kindsMask;
-    const bool hasQaam=aircraft==MountAircraft::Su30sm && (kindsMask&4)!=0;
     const auto& specification=mountSpecification(aircraft);
     const bool single=aircraft==MountAircraft::Su30sm && (kindsMask==1 || kindsMask==2 || kindsMask==4);
     if(single)state.physicalCount=specification.logicalCounts[kindsMask==1?0:kindsMask==2?1:2];
@@ -487,9 +492,9 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
             else if(single) {
                 if(pool==(kindsMask==1?0:kindsMask==2?2:1))state.physical[index]=component;
             } else {
-                if(pool==0 && ((kindsMask==5 && index>=2) || (kindsMask!=5 && index<4 && (!hasQaam || index>=2))))state.physical[index]=component;
-                if(hasQaam && pool==1 && index>=2)state.physical[index-2]=component; // QAAM 的 sp23/24 为原生外翼位置。
-                if(pool==2 && kindsMask!=5 && (index>=4 || (kindsMask==6 && index>=2)))state.physical[index]=component;
+                if(pool==0)state.physical[index]=component; // 前六处以完整 6AAM 布局为基础。
+                if(pool==1 && index<2)state.physical[6+index]=component; // sp21/22 的更外侧 QAAM 独立于六处主挂位。
+                if(pool==2 && (kindsMask==6 || ((kindsMask&2) && index>=4)))state.physical[index]=component;
             }
         }
     }
@@ -502,7 +507,29 @@ void fixedMountRestoreOrder(const Group& saved,int next) {
     if(count!=1 && count!=2 && count!=4 && count!=6 && count!=12)return; // 固定 TLS 也保留自己的单槽身份。
     for(int index=0;index<count;++index)fixedMount.order[index]=saved.slots[(next+index)%count].mountOrdinal;
 }
-// 根据真实弹药和允许装填的窗口聚合六处显示；未激活 SP 使用游戏时间推进。
+// 先保留窗口前部尚未发射的弹体位置，再把新入窗槽放到空位；一次原生齐射中不重排。
+void mountPrepareWindow(FixedMountState& state,int kind,const Group& group,int cursor,int window) {
+    if(state.aircraft!=MountAircraft::F35c || kind!=2 || !(state.kindsMask&1))return;
+    constexpr std::array<int,4> positions{14,15,18,19};
+    require(window<=static_cast<int>(positions.size()),"固定挂载：4AAM 装填窗口超出活动位置");
+    unsigned occupied=0;
+    const int count=state.logicalCounts[kind];
+    for(int distance=0;distance<window;++distance) {
+        const int ordinal=group.slots[(cursor+distance)%count].mountOrdinal;
+        require(ordinal>=0 && ordinal<count,"固定挂载：活动弹位序号无效");
+        int& position=state.f35AamPositions[ordinal];
+        auto found=std::find(positions.begin(),positions.end(),position);
+        require(found!=positions.end(),"固定挂载：活动弹位映射无效");
+        int index=static_cast<int>(found-positions.begin());
+        if(occupied&(1u<<index)) {
+            for(index=0;index<static_cast<int>(positions.size()) && (occupied&(1u<<index));++index){}
+            require(index<static_cast<int>(positions.size()),"固定挂载：活动弹位不足");
+            position=positions[index];
+        }
+        occupied|=1u<<index;
+    }
+}
+// 根据真实弹药、装填窗口和备用弹占位聚合显示；未激活 SP 使用游戏时间推进。
 void fixedMountRefresh(double time) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(!fixedMount.bound || mountPreviewOwnsTask())return;
@@ -514,6 +541,7 @@ void fixedMountRefresh(double time) {
         const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
         const int count=fixedMount.logicalCounts[fixedMount.weaponKinds[weapon]]; // 槽数与模型池一一核对。
         require(group.slots.size()==static_cast<size_t>(count) && ammo>=-1 && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
+        mountPrepareWindow(fixedMount,fixedMount.weaponKinds[weapon],group,cursor,window);
         require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
         const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
         const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 显示实际库存中的备用弹，不表示同时可发射。
@@ -523,13 +551,14 @@ void fixedMountRefresh(double time) {
         for(int distance=0;distance<available;++distance) {
             const Slot& slot=group.slots[(cursor+distance)%count]; // 窗口中的一个逻辑弹位。
             require(slot.mountOrdinal>=0 && slot.mountOrdinal<count,"固定挂载：缓存挂点序号无效");
-            if(distance<window && dualsp::advanceReload(slot.duration,slot.elapsed,delta,true)<slot.duration)continue; // 待发窗口按真实冷却，备用槽仅表示库存。
+            const bool ready=distance<window && dualsp::advanceReload(slot.duration,slot.elapsed,delta,true)>=slot.duration;
+            if(!showReserve && !ready)continue; // 备用弹按库存占位，已发射空位在下方按真实补装单独扣除。
             const int physical=mountPhysical(fixedMount.weaponKinds[weapon],slot.mountOrdinal); // 与离架路径一致。
             weaponMask|=1u<<physical;
-            if(distance<window)readyWindow|=1u<<physical;
+            if(ready)readyWindow|=1u<<physical;
         }
-        if(fixedMount.aircraft==MountAircraft::Su30sm && fixedMount.kindsMask==6 && fixedMount.weaponKinds[weapon]==1) {
-            // LAGM 发射后，原生把装填计时交给窗口尾部的新槽；不能把窗口外的旧槽立即当作满载备用弹。
+        if(showReserve) {
+            // 原生把装填计时交给窗口尾部的新槽；不能把窗口外的旧槽立即当作满载备用弹。
             // 冷却槽向前回溯一个装填窗口，得到它替代的已发射槽；该处保持空位直到真实补装完成。
             for(int distance=0;distance<std::min(window,available);++distance) {
                 const Slot& loading=group.slots[(cursor+distance)%count]; // 新进入待发窗口的槽。
@@ -548,7 +577,7 @@ void fixedMountRefresh(double time) {
 void fixedMountCommit(const Command& command) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(command.op=="checkpoint_save" || command.op=="snapshot") { fixedMountRefresh(command.time);return; }
-    if(session.count<2) { fixedMountRelease();return; }
+    if(session.count<1) { fixedMountRelease();return; }
     const MountAircraft aircraft=mountAircraft(command.plane); // 未登记机体继续使用原生当前 SP 模型。
     if(aircraft==MountAircraft::Unsupported) { fixedMountRelease();return; }
     const MountSpecification& specification=mountSpecification(aircraft); // 原版类、布局和资源必须成套匹配。
@@ -564,7 +593,10 @@ void fixedMountCommit(const Command& command) {
         require(!(kindsMask&(1u<<kinds[index])),"固定挂载：武器类重复");
         kindsMask|=1u<<kinds[index];
     }
-    require((session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
+    // 单 QAAM 也接管显隐，保留原生四处库存外观；其他单挂仍由原生管理。
+    const bool singleQaam=session.count==1 && aircraft==MountAircraft::Su30sm && kindsMask==4;
+    if(session.count==1 && !singleQaam) { fixedMountRelease();return; }
+    require(singleQaam || (session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
         (session.count==3 && kindsMask==7),"固定挂载：已识别兵装组合与槽数不符");
         if(!fixedMount.bound || fixedMount.plane.address!=command.plane || fixedMount.aircraft!=aircraft || fixedMount.kindsMask!=kindsMask) {
         const auto order=fixedMount.order; // restore 可能已为检查点的新实例重建顺序。
@@ -587,7 +619,7 @@ void fixedMountCommit(const Command& command) {
     if(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup" || command.op=="resupply")fixedMount.order={0,1,2,3,4,5,6,7,8,9,10,11};
     if(aircraft==MountAircraft::F35c && (kindsMask&4) &&
        (command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup" || command.op=="resupply" ||
-        command.op=="switch" || command.op=="checkpoint_restore")) {
+        command.op=="switch" || command.op=="checkpoint_restore" || command.op=="debug_mount")) {
         // 原生初始化暂停非当前挂架并关闭 Tick；持久显示的 SWP2 必须继续读取 Swcc，才能随腹舱收回。
         const Addr rack=read<Addr>(command.plane+0x1b90); // 已在绑定时核对骨架类型和资源。
         fixedMount.animatedRack=mountIdentity(rack);

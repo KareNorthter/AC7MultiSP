@@ -441,16 +441,18 @@ local json=dofile(script_dir..'/json.lua')
 local Profile=dofile(script_dir..'/loadout_profile.lua')
 local world={GetAddress=function()return 900 end}
 local options={{owned=true,available=true,code='a'},{owned=true,available=true,code='b'},{owned=true,available=true,code='c'}}
-local configured,toggled,saved=0,0,0
-local env=setmetatable({hotkeyResponse=0,runtimeModEnabled=true,debugSession=1,weaponRevision=5,
+local configured,toggled,saved,globalSetting=0,0,0,0
+local env=setmetatable({hotkeyResponse=0,runtimeAllowed=true,runtimeModEnabled=true,isFlight=true,configured=true,debugSession=1,weaponRevision=5,
     config={fixed_mount_enabled=true,ammo_percent_two=50,ammo_percent_three=33},runtimeFixedMountEnabled=true,
     currentProfile={a=0,b=-1,c=-1},Profile=Profile,json=json,planeId=128,flightOptions=options,
     instance={GetWorld=function()return world end,GetSelectedPlaneID=function()return 128 end},
     plane={GetAddress=function()return 200 end,GetWorld=function()return world end},activator={GetAddress=function()return 201 end},
     game={GetTimeSeconds=function()return 123 end},canDebugLoadout=function(hotkey)assert(hotkey);return true end,
     debugLoadoutReady=function()return true end,optionsFor=function()return options end,note=function()end,
-    tr=function(zh)return zh end,saveConfig=function()saved=saved+1 end,
+    tr=function(zh)return zh end,saveConfig=function()saved=saved+1 end,valid=function(o)return o~=nil end,
+    setFixedMountEnabled=function()return true end,
     debugFixedMount=function(p,a,t,enabled)assert(p==200 and a==201 and t==123);toggled=toggled+1;return true,'' end}, {__index=_G})
+env.applyFixedMountSetting=function()globalSetting=globalSetting+1;env.runtimeFixedMountEnabled=env.config.fixed_mount_enabled end
 env.configureFlight=function(profile,reason)assert(reason=='debug_hotkey');configured=configured+1;env.currentProfile=profile end
 local apply=assert(load(hotkey_source..'return applyDebugHotkey','调试快捷操作','t',env))()
 local function action(request,command,revision)return {request=request,command=command,revision=revision or 5,session=1,hotkey_protocol=1}end
@@ -458,7 +460,7 @@ apply(action(1,'cycle'));assert(configured==1 and env.currentProfile.a==1 and to
 apply(action(1,'cycle'));assert(configured==1,'同一请求不能补弹两次')
 apply(action(2,'cycle',4));assert(configured==1,'旧兵装请求必须拒绝')
 env.canDebugLoadout=function()return false,'正在补给' end
-apply(action(3,'mount'));assert(toggled==0 and saved==0)
+apply(action(3,'cycle'));assert(toggled==0 and saved==0)
 env.canDebugLoadout=function()return true end
 apply(action(4,'mount'));assert(toggled==1 and saved==1 and not env.runtimeFixedMountEnabled and not env.config.fixed_mount_enabled)
 assert(configured==1,'模型开关不得调用补弹或改组合')
@@ -466,5 +468,22 @@ env.saveConfig=function()error('模拟保存失败')end
 apply(action(5,'mount'));assert(toggled==1 and not env.runtimeFixedMountEnabled and not env.config.fixed_mount_enabled)
 env.debugLoadoutReady=function()return false,'有在途武器' end
 apply(action(6,'cycle'));assert(configured==1 and env.hotkeyNotice:find('有在途武器',1,true))
+env.saveConfig=function()saved=saved+1 end
+env.canDebugLoadout=function()error('模型开关不得调用飞行/暂停/换装守卫')end
+apply(action(7,'mount',0));assert(toggled==2 and env.runtimeFixedMountEnabled,'模型开关允许暂停、在途武器和兵装版本变化')
+env.isFlight=false;env.plane=nil;env.activator=nil
+env.lastMountPreviewContext={mode='scene'}
+local previewed=0;env.mountPreview=function(c)assert(c==env.lastMountPreviewContext);previewed=previewed+1 end
+apply(action(8,'mount'));assert(globalSetting==1 and not env.runtimeFixedMountEnabled)
+apply(action(9,'mount'));assert(globalSetting==2 and previewed==1 and env.runtimeFixedMountEnabled,'机库立即重建最后候选')
+env.isFlight=true;env.supplySession={menuClosed=true}
+local supplied=0;env.maintainSupplyPreview=function()supplied=supplied+1 end
+apply(action(10,'mount'));assert(globalSetting==3 and supplied==1,'补给过渡不依赖已销毁页面')
+env.runtimeModEnabled=false
+apply(action(11,'mount'));assert(globalSetting==4 and env.config.fixed_mount_enabled and env.hotkeyNotice:find('仅保存设置',1,true))
+env.runtimeModEnabled=true;env.supplySession=nil;env.isFlight=false
+env.applyFixedMountSetting=function()error('模拟外观绑定失败')end
+apply(action(12,'mount'));assert(not env.runtimeFixedMountEnabled and env.mountWarning:find('回退',1,true))
+assert(configured==1,'任何外观开关操作均不得补弹或改组合')
 ''')
 print('配置/协议/页面、场景预览、开场定位、调试快捷操作及失败隔离检查通过')

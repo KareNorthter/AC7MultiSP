@@ -204,7 +204,7 @@ void mountPreviewApply() {
     if(mountPreview.failed) { mountPreviewRetryRestore();return; }
     if(mountPreview.pending || !mountPreview.layout.bound)return;
     require(mountAlive(mountPreview.layout.plane) && mountAlive(mountPreview.activator) && mountAlive(mountPreview.world),"模型预览：展示实例或世界失效");
-    if(mountPreview.mode==2) {
+    if(mountPreview.mode==2 || mountPreview.mode==5) {
         // 补给页只在接入时证明身份；页面销毁后由同一任务玩家持有预览直到补给成功。
         require(session.plane==mountPreview.layout.plane.address && session.activator==mountPreview.activator.address,
             "模型预览：补给任务玩家改变");
@@ -292,14 +292,18 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             if(GetTickCount64()-mountPreview.lastApply>=100)mountPreviewApply();
             return; // 稳定候选每100ms巡检；原生显隐钩子仍立即响应，不逐帧遍历全部池。
         }
-        require(mode==1 || mode==2 || mode==3,"模型预览：未知场景模式");
+        require(mode==1 || mode==2 || mode==3 || mode==5,"模型预览：未知场景模式");
         verifyVersion();mountInstallHooks();
         require(read<Addr>(plane+0x11a8)==activator,"模型预览：飞机与激活器不匹配");
         const Addr world=mountOuterWorld(plane);
         if(mountPreview.world.address)require(mountSameIdentity(mountPreview.world,mountIdentity(world)),"模型预览：世界改变");
         else mountPreview.world=mountIdentity(world);
         const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
-        if(mode==2) {
+        if(mode==5) {
+            // 补给确认后页面可能销毁；只接受Lua保存的确认方案，且拥有者必须为当前任务玩家本身。
+            require(owner==plane && session.plane==plane && session.activator==activator,
+                "模型预览：补给过渡不是当前任务玩家");
+        } else if(mode==2) {
             const Addr table=read<Addr>(owner);
             require(read<Addr>(table+0x408)==base+0x6fa1f0 && read<Addr>(table+0x420)==base+0x6fc6d0,"模型预览：补给页面类型不匹配");
             require(read<Addr>(owner+0x5c0)==plane && read<Addr>(owner+0x5c8)==activator &&
