@@ -1,4 +1,4 @@
--- AC7DualSP 1.0.2-su30sm-three-sp.10：显式任务调试换装与键盘管理。
+-- AC7DualSP 1.0.2-su30sm-three-sp.11：管理暂停所有权与明确交接。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -49,7 +49,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.10") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.11") -- 与三 SP 协议 3 核心及 UI 成套安装。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -139,7 +139,8 @@ local lastArmed=nil
 local active=0
 local internal=false
 local panelOpen=false
-local pausedBefore=false
+local managementPause=nil -- 只保存当前面板实际取得的暂停，不把临时的 IsGamePaused 状态当作恢复目标。
+local managementPauseError=nil -- 暂停交接失败单独展示；禁止继续调试换装，允许用户明确重试关闭。
 local gatedWidgets={}
 local cursorController=nil
 local previousShowCursor=nil
@@ -347,14 +348,66 @@ end,"resupply",preparationNavigation,function(owner)
     local ok,err=nativeTakeoff(owner:GetAddress(),plane:GetAddress(),activator:GetAddress()) -- 原生负责关闭页面并通知任务。
     assert(ok,err or "原生补给 YES 接口未返回成功状态")
 end,nil,menuConfirm,nil,tr)
+-- 按当前任务世界定位原生暂停拥有者；只在开关管理页时读取，不参与每帧扫描。
+local function acquireManagementPause()
+    if not isFlight or not valid(plane)then return end
+    local world=plane:GetWorld() -- 暂停属于世界，不能沿用另一任务的记录。
+    assert(valid(world),"当前任务世界未就绪")
+    local settings=nil -- 当前世界唯一的 WorldSettings。
+    for _,candidate in ipairs(FindAllOf("WorldSettings")or{})do
+        local candidateWorld=valid(candidate)and candidate:GetWorld()or nil -- 排除模板及已离开世界的对象。
+        if valid(candidateWorld)and candidateWorld:GetAddress()==world:GetAddress()then
+            assert(not settings,"当前世界出现多个 WorldSettings，停止管理暂停")
+            settings=candidate
+        end
+    end
+    assert(valid(settings),"当前世界的暂停状态未就绪")
+    local pauser=settings.Pauser -- 反射现场核对：WorldSettings.Pauser 是当前真实暂停拥有者。
+    managementPause={world=world:GetAddress(),settings=settings,owned=false,
+        effective_before=game:IsGamePaused(plane),existing=valid(pauser)}
+    note("MANAGEMENT_PAUSE_BEGIN effective="..tostring(managementPause.effective_before).." existing="..tostring(managementPause.existing))
+    if not managementPause.existing then
+        local accepted=game:SetGamePaused(plane,true) -- 即使临时有效暂停已生效，也明确取得自己可归还的原生暂停。
+        pauser=settings.Pauser
+        managementPause.owned=valid(pauser) -- 发生部分成功时保留实际所有权，不能丢掉暂停记录。
+        managementPause.pauser=valid(pauser)and pauser:GetAddress()or nil
+        assert(accepted==true and managementPause.owned,"管理界面未能取得原生暂停")
+    end
+    note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
+end
+-- 只释放本面板创建且仍属于同一世界/拥有者的暂停；其他暂停不重写、不强制清零。
+local function releaseManagementPause()
+    if not managementPause then return end
+    local lease=managementPause -- 完成核验前保留会话，失败由控制器明确报告。
+    if not valid(lease.settings)then
+        note("MANAGEMENT_PAUSE_WORLD_DESTROYED") -- 世界已销毁，无须向新世界发送解除请求。
+        managementPause=nil;return
+    end
+    if lease.owned then
+        local world=lease.settings:GetWorld() -- 退出任务时旧玩家可能先销毁，使用暂停所属世界作为上下文。
+        assert(valid(world)and world:GetAddress()==lease.world,
+            "管理暂停的任务世界已经改变")
+        local pauser=lease.settings.Pauser -- 其他系统若已经解除暂停，不重复调用解除接口。
+        if valid(pauser)then
+            assert(pauser:GetAddress()==lease.pauser,"暂停拥有者已经改变，不能代替其他系统解除")
+            local accepted=game:SetGamePaused(lease.settings,false) -- 走游戏原生解除流程，不写 Pauser 字段。
+            assert(accepted==true and not valid(lease.settings.Pauser),"管理暂停未能释放，请查看暂停日志")
+        end
+    end
+    note("MANAGEMENT_PAUSE_RELEASED owned="..tostring(lease.owned).." remaining="..tostring(valid(lease.settings)and valid(lease.settings.Pauser)))
+    managementPause=nil
+end
 local function setPanel(open)
     if open and not runtimeAllowed then return end
     if panelOpen==open then return end
     if open and nativeLoadout:isPreparationHandoffPending()then
         note("MANAGEMENT_WAITING_FOR_PREPARATION_CLOSE");return
     end
-    panelOpen=open
     if open then
+        local ok,err=pcall(acquireManagementPause) -- 暂停失败必须在面板可见，不能变成无菜单的静止画面。
+        managementPauseError=not ok and tostring(err)or nil
+        if not ok then note("MANAGEMENT_PAUSE_ERROR "..managementPauseError)end
+        panelOpen=true
         -- Restore the original menu before F8 takes its normal input gate.
         -- Closing F8 restarts preparation from its newly saved profile.
         nativeLoadout:reset(false)
@@ -365,7 +418,6 @@ local function setPanel(open)
             previousShowCursor=cursorController.bShowMouseCursor
             cursorController.bShowMouseCursor=false
         end
-        if isFlight and valid(plane)then pausedBefore=game:IsGamePaused(plane);game:SetGamePaused(plane,true)end
         gatedWidgets={}
         for _,widget in ipairs(FindAllOf("MenuBaseWidget")or{})do
             local name=widget:GetFullName()
@@ -374,12 +426,20 @@ local function setPanel(open)
             end
         end
     else
+        local ok,err=pcall(releaseManagementPause) -- 保持输入仍被面板接管，先完成原生暂停交接。
+        if not ok then
+            managementPauseError=tostring(err);note("MANAGEMENT_PAUSE_ERROR "..managementPauseError)
+            requestOpen=requestOpen+1;lastUIKey=nil -- 明确显示失败并保留所有权，不自动重试或强制清零。
+            return
+        end
+        managementPauseError=nil
         if valid(cursorController)then cursorController.bShowMouseCursor=previousShowCursor end
         cursorController=nil;previousShowCursor=nil
         for _,widget in ipairs(gatedWidgets)do if valid(widget)then widget:SetIsEnableControl(true)end end
         gatedWidgets={}
-        if isFlight and valid(plane)then game:SetGamePaused(plane,pausedBefore)end
+        panelOpen=false
     end
+    lastUIKey=nil;note("MANAGEMENT_PANEL "..(open and "open"or "closed"))
 end
 local function ready()return valid(plane) and plane.bEnableWeaponInput and not plane:IsWeaponSystemDisabled()end
 
@@ -598,9 +658,12 @@ local function observeOriginalSwitch()
 end
 -- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
 local function canDebugLoadout()
-    return runtimeAllowed and isFlight and configured and panelOpen and not supplySession
-        and not internal and not errorText and not restorePending and not checkpointPending
-        and valid(instance)and valid(plane)and valid(activator)and ready()and game:IsGamePaused(plane)
+    if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
+    if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
+    if supplySession or internal or restorePending or checkpointPending then return false,tr("正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress.")end
+    if not valid(instance)or not valid(plane)or not valid(activator)or not ready()then return false,tr("当前飞行控制尚未开放。","Flight controls are not ready.")end
+    if not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
+    return true
 end
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
 local function applyDebugLoadout(action)
@@ -678,8 +741,14 @@ local function publishState()
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
         and ready()and not game:IsGamePaused(plane)
-    state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=canDebugLoadout()and true or false,
+    local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
+    state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,profile=configured and currentProfile or nil,options=flightOptions}
+    state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
+        error=managementPauseError,
+        existing=managementPause and managementPause.existing or false,
+        effective=isFlight and valid(plane)and game:IsGamePaused(plane)or false,
+        weapon_input=isFlight and ready()and true or false} -- 明确区分面板、原生暂停与武器输入，便于复核不可选原因。
     state.sequence=publishSequence
     state.native_hud=nativeHud.status
     state.weapon_presentation=weaponPresentation.status
@@ -1034,7 +1103,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.10 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 1.0.2-su30sm-three-sp.11 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

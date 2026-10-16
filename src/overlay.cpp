@@ -334,7 +334,8 @@ void drawDebugLoadout(bool focus) {
             valid=valid&&options.at(index).at("owned").get<bool>()&&(selected==1||options.at(index).at("available").get<bool>());
         if(!valid)ImGui::TextWrapped("%s",tr("请选择 1 至 3 种已购买 SP；标注仅限单挂的兵装不能组合。","Choose 1–3 purchased SP weapons. Single-only weapons cannot be combined."));
     }
-    if(!debug.value("available",false))ImGui::TextWrapped("%s",tr("请在可操控的单人任务中打开管理界面；补给、过场、检查点交接或控制器错误时不可换装。","Open management during controllable single-player flight. Resupply, cutscenes, checkpoint transitions and controller errors block loadout changes."));
+    if(!debug.value("available",false)&&debug.contains("reason"))
+        ImGui::TextWrapped("%s",debug.at("reason").get<std::string>().c_str());
     ImGui::TextWrapped("%s",tr("若提示仍有活动武器，请关闭面板、等待已发射武器结束后重试。任务内换飞机尚未开放。","If active weapons are reported, close this panel and wait for them to finish before retrying. In-mission aircraft replacement is not available yet."));
     ImGui::BeginDisabled(!available||!valid);
     if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),{300,36})) {
@@ -392,13 +393,20 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.10 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.10 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.11 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.11 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=3||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
         ImGui::End();return;
+    }
+    // 暂停归属来自游戏线程回执；渲染线程不推断原生任务状态。
+    if(state.contains("management_pause")) {
+        const auto& pause=state.at("management_pause"); // 关闭失败会重新打开面板并显示具体错误。
+        if(pause.contains("error"))ImGui::TextWrapped("%s",pause.at("error").get<std::string>().c_str());
+        else if(pause.value("owned",false))ImGui::TextWrapped("%s",tr("管理界面已暂停任务；关闭本界面后继续飞行。","Management paused the mission; close this panel to resume."));
+        else if(pause.value("existing",false))ImGui::TextWrapped("%s",tr("打开前已有原生暂停；关闭本界面后仍保留，请从游戏暂停菜单继续。","The mission was already paused; resume from the game's pause menu after closing."));
     }
     // 语言切换只影响界面草稿，点击保存后持久化；稳定 ID 保留当前页和焦点。
     int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;

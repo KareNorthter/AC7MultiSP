@@ -1,0 +1,56 @@
+{
+  "recorded_at": "2026-10-16T09:33:32.382479+08:00",
+  "candidate": "1.0.2-su30sm-three-sp.10",
+  "user_reports": [
+    "管理界面起初无法勾选 SP，随后游戏画面静止但 BGM 继续，进程仍在",
+    "再次 F6 后可操作管理界面并应用 SP；关闭管理界面后画面仍静止，无菜单"
+  ],
+  "live_pid": 28144,
+  "observations": [
+    "Windows 进程有响应；Lua 周期日志与渲染仍更新",
+    "首次卡住时未出现 DEBUG_LOADOUT_BEGIN",
+    "09:15:38 成功执行调试请求 1，三挂变单挂 4AAM，回执已应用",
+    "关闭 F6 后 WorldSettings.Pauser 仍指向 NimbusPlayerState，时间缩放为 1；原生暂停菜单不显示"
+  ],
+  "pause_evidence": {
+    "world_settings_pauser_offset": "0x4e8",
+    "game_mode_pause_delegate_count": 1,
+    "delegate_bound": false,
+    "memory_read_only": true
+  },
+  "interpretation": "当前画面静止存在未释放的原生暂停；不能据 BGM 或静止画面判定死锁。首次暂停是谁写入缺少日志，根因尚未闭环。",
+  "separate_issue": ".9 发射后 crash 并自动退出仍未定位，此次暂停修订不是其修复证据。",
+  "capture_gap": "旧监控只跟踪启动引导 PID 37812，退出码 0x54 后停止，未跟随实际 PID 28144。",
+  "live_dump": {
+    "path": "Temp/f35-debug-freeze-20261016-091432/current-freeze.dmp",
+    "sha256": "d41d3bf1c2621c9f9cc1551a7f4345177eb19317c7fc8f2af680ab8c68f528e9",
+    "kind": "主动 mini 现场转储，不是致命异常转储"
+  },
+  "raw_evidence_directory": "Temp/f35-debug-freeze-20261016-091432",
+  "changes_prepared": [
+    "管理暂停按原生 Pauser 记录实际所有权，关闭只解除本次取得的暂停",
+    "解除失败可见报错并保留面板；调试不可用显示具体原因",
+    "采集按实际进程分会话，启动交接后继续等待，最多四次"
+  ],
+  "gameplay_validated": false,
+  "test_modules_run": false,
+  "process_end": {
+    "observed_at": "2026-10-16T09:36:34+08:00",
+    "agent_requested_exit": false,
+    "game_running": false,
+    "old_monitor_running": false,
+    "new_fatal_dump_found": false,
+    "cause": "退出方式待用户确认；不能写成正常退出或已证实自动崩溃"
+  },
+  "capture_rearmed": {
+    "worker_pid": 34804,
+    "output": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\crash-capture-20261016-093709-335",
+    "status": {
+      "deadline": "2026-10-16T11:37:09.7153910+08:00",
+      "sessions": 0,
+      "state": "waiting"
+    },
+    "captures_verified": false
+  },
+  "installed_at": "2026-10-16T09:36:59.451034+08:00"
+}
