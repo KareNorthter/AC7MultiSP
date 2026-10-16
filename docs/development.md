@@ -8,6 +8,8 @@
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
 
+第一批六机、第二批十五机均按每机七组合交付资料。用户已要求拆架、拆巢及新增站工作后置：首批研究提交中的二十条拆架和一条新站建议现已标为`disposition=deferred`，不接入本阶段模型。第二批沿用该规则；`native_single`只是原生单挂参考，`candidate_existing_assets`才是可继续做运行接入的多挂候选，仍需现场确认模型池、原生槽及发射动作。
+
 | 工作 | 工具 |
 |---|---|
 | 完整构建 | src/build.py，成套构建核心/UI，输出全新 Temp 子目录 |

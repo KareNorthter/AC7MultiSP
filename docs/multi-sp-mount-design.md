@@ -184,6 +184,23 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 分组依据是实际组件和武器结构，不代表每组难度完全一致。F-104C 的三挂在首轮发现原生站数不足，将该组合移到特殊方案研究；CFA-44 仍留最后。F-14D、F/A-18F、Su-33 等虽然主要在外面挂弹，部分 SWP 也是骨架组件，不能直接套静态方案。
 
+### 整块挂架限制与暂缓范围
+
+2026-10-17 用户要求：凡需要拆分挂架、火箭巢或新增承载站的组合，统一暂缓，之后单独研究资源拆分。本批只保留现成整块资源能够构成的候选；数据中的 `disposition=deferred` 优先于旧提交中的布局建议，不应接入当前新模型适配。
+
+这与 Su-30SM 遇到的是同类限制：弹体组件可以分别隐藏，导轨却可能属于一整块网格。只减弹体会留下空架，叠加两块会重复支架，挪弹体又可能脱离导轨；火箭巢还要避免“管口能用、巢体却藏掉”的情况。
+
+| 首批机体 | 具体阻碍 |
+|---|---|
+| F-16C | 导弹整架含内外四处导轨；GPB 内侧使用不同炸弹挂架，保留整架会留下重复的内侧空导轨 |
+| F-2A | 四个火箭巢及支架分在两个 section，但每个 section 都跨多个挂位；无法直接仅保留外侧两巢 |
+| F-104C | 三种武器共用两处承载站；双挂需拆左右半架，三挂还缺第三处站位 |
+| Mirage | GPB 整块带前腹固定结构，与 4AAM 前腹区域冲突；GPB/LASM 的翼下架也不能整块叠加 |
+| Gripen | 含 LACM 时，其他弹种内翼导轨可能成为空架；腹部三点的支撑仍未确认 |
+| Rafale | 三套整架都有翼下结构，只隐藏弹体不能去掉重复的翼下支架，需按翼下/腹侧分开 |
+
+暂缓涉及第一批二十种拆架组合和 F-104C 三挂。原有三组可用整架的双挂候选保留；未制作任何拆分资产，也不将这些外观依赖写成 SP 功能互斥。
+
 ### 首批方案如何阅读
 
 每架列三单、三双、一组三挂，共 42 条。表中单挂列的是原生候选位置，实际显示仍服从原生库存和装填，不能据此把全部候选都画满。负 Y 与正 Y 表示固定的机体两侧，避免随观察镜头改变“左右”含义；编号必须连同所属 SWP 解释。
@@ -191,8 +208,8 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | 条件 | 含义 |
 |---|---|
 | 原架复用 | 可使用现成整块资源构成候选；多挂仍需接入显示、真实离架和装填管理 |
-| 先拆挂架 | 弹体位置已选定，但需要先生成分区挂架资源并接入加载、替换与归还，不能叠加整块凑效果 |
-| 新站待研究 | 缺少独立原生承载站，尚无可交付的三类同时可见布局，不指定猜测坐标 |
+| 暂缓（需拆架） | 弹体位置建议保留备查；用户已要求暂缓，等后续单独研究分区资源及加载归还，当前不接入 |
+| 暂缓（缺新站） | 缺少独立原生承载站，当前暂缓；不指定猜测坐标 |
 
 本批不替换弹体网格，优先保留各弹种原生 Socket 和配套导轨。多数三挂接受一侧一种武器、另一侧另一种武器，部分武器只有一个物理位置，少于其装填窗口；原生锁定、齐射和冷却均保留。这会影响齐射模型消失和共用离架的观感，是候选的明确取舍，仍需实测评价。
 
@@ -205,10 +222,10 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | 4AAM | 4AAM `SWP1.sp11–14` | 原架复用 |
 | GPB | GPB `SWP2.sp21/sp22` | 原架复用 |
 | SASM | SASM `SWP3.sp31–34` | 原架复用 |
-| 4AAM + GPB | 4AAM `SWP1.sp11/sp12`；GPB `SWP2.sp21/sp22` | 先拆挂架 |
+| 4AAM + GPB | 4AAM `SWP1.sp11/sp12`；GPB `SWP2.sp21/sp22` | 暂缓（需拆架） |
 | 4AAM + SASM | 4AAM `SWP1.sp13/sp14`；SASM `SWP3.sp31/sp32` | 原架复用 |
-| GPB + SASM | GPB `SWP2.sp21/sp22`；SASM `SWP3.sp31/sp32` | 先拆挂架 |
-| 4AAM + GPB + SASM | 4AAM `SWP1.sp11`；GPB `SWP2.sp21/sp22`；SASM `SWP3.sp32` | 先拆挂架 |
+| GPB + SASM | GPB `SWP2.sp21/sp22`；SASM `SWP3.sp31/sp32` | 暂缓（需拆架） |
+| 4AAM + GPB + SASM | 4AAM `SWP1.sp11`；GPB `SWP2.sp21/sp22`；SASM `SWP3.sp32` | 暂缓（需拆架） |
 
 ### F-2A 首批候选
 
@@ -219,10 +236,10 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | LASM | LASM `SWP1.sp11–14` | 原架复用 |
 | HVAA | HVAA `SWP2.sp21–24` | 原架复用 |
 | RKT | RKT 原生四巢 76 口 | 原架复用 |
-| LASM + HVAA | LASM `SWP1.sp11/sp12`；HVAA `SWP2.sp23/sp24` | 先拆挂架 |
-| LASM + RKT | LASM `SWP1.sp13/sp14`；RKT 外侧两巢 38 口 | 先拆挂架 |
-| HVAA + RKT | HVAA `SWP2.sp23/sp24`；RKT 外侧两巢 38 口 | 先拆挂架 |
-| LASM + HVAA + RKT | LASM `SWP1.sp13`；HVAA `SWP2.sp24`；RKT 外侧两巢 38 口 | 先拆挂架 |
+| LASM + HVAA | LASM `SWP1.sp11/sp12`；HVAA `SWP2.sp23/sp24` | 暂缓（需拆架） |
+| LASM + RKT | LASM `SWP1.sp13/sp14`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
+| HVAA + RKT | HVAA `SWP2.sp23/sp24`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
+| LASM + HVAA + RKT | LASM `SWP1.sp13`；HVAA `SWP2.sp24`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
 
 ### F-104C 首批候选
 
@@ -233,10 +250,10 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | SAAM | SAAM `SWP1.sp11/sp12` | 原架复用 |
 | GRKT | GRKT `SWP2.sp21–34` | 原架复用 |
 | HPAA | HPAA `SWP3.sp31/sp32` | 原架复用 |
-| SAAM + GRKT | SAAM `SWP1.sp11`；GRKT `SWP2.sp22/sp24/sp26/sp28/sp30/sp32/sp34` | 先拆挂架 |
-| SAAM + HPAA | SAAM `SWP1.sp11`；HPAA `SWP3.sp32` | 先拆挂架 |
-| GRKT + HPAA | GRKT `SWP2.sp22/sp24/sp26/sp28/sp30/sp32/sp34`；HPAA `SWP3.sp31` | 先拆挂架 |
-| SAAM + GRKT + HPAA | 无独立第三站，暂不分配 | 新站待研究 |
+| SAAM + GRKT | SAAM `SWP1.sp11`；GRKT `SWP2.sp22/sp24/sp26/sp28/sp30/sp32/sp34` | 暂缓（需拆架） |
+| SAAM + HPAA | SAAM `SWP1.sp11`；HPAA `SWP3.sp32` | 暂缓（需拆架） |
+| GRKT + HPAA | GRKT `SWP2.sp22/sp24/sp26/sp28/sp30/sp32/sp34`；HPAA `SWP3.sp31` | 暂缓（需拆架） |
+| SAAM + GRKT + HPAA | 无独立第三站，暂不分配 | 暂缓（缺新站） |
 
 ### Mirage 2000-5 首批候选
 
@@ -247,10 +264,10 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | GPB | GPB `SWP1.sp11/sp12` | 原架复用 |
 | 4AAM | 4AAM `SWP2.sp21–24` | 原架复用 |
 | LASM | LASM `SWP3.sp31/sp32` | 原架复用 |
-| GPB + 4AAM | GPB `SWP1.sp11/sp12`；4AAM `SWP2.sp23/sp24` | 先拆挂架 |
-| GPB + LASM | GPB `SWP1.sp11`；LASM `SWP3.sp32` | 先拆挂架 |
+| GPB + 4AAM | GPB `SWP1.sp11/sp12`；4AAM `SWP2.sp23/sp24` | 暂缓（需拆架） |
+| GPB + LASM | GPB `SWP1.sp11`；LASM `SWP3.sp32` | 暂缓（需拆架） |
 | 4AAM + LASM | 4AAM `SWP2.sp21–24`；LASM `SWP3.sp31/sp32` | 原架复用 |
-| GPB + 4AAM + LASM | GPB `SWP1.sp11`；4AAM `SWP2.sp23/sp24`；LASM `SWP3.sp32` | 先拆挂架 |
+| GPB + 4AAM + LASM | GPB `SWP1.sp11`；4AAM `SWP2.sp23/sp24`；LASM `SWP3.sp32` | 暂缓（需拆架） |
 
 ### Gripen E 首批候选
 
@@ -262,9 +279,9 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | 6AAM | 6AAM `SWP2.sp21–27` | 原架复用 |
 | LACM | LACM `SWP3.sp31/sp32` | 原架复用 |
 | SASM + 6AAM | SASM `SWP1.sp11/sp12`；6AAM `SWP2.sp23/sp24` | 原架复用 |
-| SASM + LACM | SASM `SWP1.sp11/sp12`；LACM `SWP3.sp31/sp32` | 先拆挂架 |
-| 6AAM + LACM | 6AAM `SWP2.sp21/sp22`；LACM `SWP3.sp31/sp32` | 先拆挂架 |
-| SASM + 6AAM + LACM | SASM `SWP1.sp11`；6AAM `SWP2.sp22`；LACM `SWP3.sp31/sp32` | 先拆挂架 |
+| SASM + LACM | SASM `SWP1.sp11/sp12`；LACM `SWP3.sp31/sp32` | 暂缓（需拆架） |
+| 6AAM + LACM | 6AAM `SWP2.sp21/sp22`；LACM `SWP3.sp31/sp32` | 暂缓（需拆架） |
+| SASM + 6AAM + LACM | SASM `SWP1.sp11`；6AAM `SWP2.sp22`；LACM `SWP3.sp31/sp32` | 暂缓（需拆架） |
 
 ### Rafale M 首批候选
 
@@ -275,14 +292,14 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | HCAA | HCAA `SWP1.sp11–14` | 原架复用 |
 | LACM | LACM `SWP2.sp21/sp22` | 原架复用 |
 | LAAM | LAAM `SWP3.sp31–34` | 原架复用 |
-| HCAA + LACM | HCAA `SWP1.sp13/sp14`；LACM `SWP2.sp21/sp22` | 先拆挂架 |
-| HCAA + LAAM | HCAA `SWP1.sp11/sp12`；LAAM `SWP3.sp33/sp34` | 先拆挂架 |
-| LACM + LAAM | LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp33/sp34` | 先拆挂架 |
-| HCAA + LACM + LAAM | HCAA `SWP1.sp13`；LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp34` | 先拆挂架 |
+| HCAA + LACM | HCAA `SWP1.sp13/sp14`；LACM `SWP2.sp21/sp22` | 暂缓（需拆架） |
+| HCAA + LAAM | HCAA `SWP1.sp11/sp12`；LAAM `SWP3.sp33/sp34` | 暂缓（需拆架） |
+| LACM + LAAM | LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp33/sp34` | 暂缓（需拆架） |
+| HCAA + LACM + LAAM | HCAA `SWP1.sp13`；LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp34` | 暂缓（需拆架） |
 
 ### 交给整合线程的要求
 
-首批能先用现成整架推进的多挂候选有三组：F-16C 的 4AAM + SASM、Mirage 的 4AAM + LASM、Gripen 的 SASM + 6AAM。其余多挂中，二十组需要分区挂架资源，F-104C 三挂还缺新承载站；不能仅把本文件的 Socket 表抄入正式规格就声称适配完成。
+首批能先用现成整架推进的多挂候选有三组：F-16C 的 4AAM + SASM、Mirage 的 4AAM + LASM、Gripen 的 SASM + 6AAM。其余二十组拆架组合和 F-104C 三挂已按用户要求暂缓，后续资源专题解决前不进入接入候选。不能仅把本文件的 Socket 表抄入正式规格就声称适配完成。
 
 1. **先核对运行对象。** 用真实类、字段反射、对象身份和模型池逐项登记。不照搬三架旧机的字段偏移、数组长度或池顺序。特别是 Gripen 七个资源 Socket、F-104C GRKT 十四个管口、F-2A RKT 七十六个管口，均不能直接当成逻辑队列长度。原资源 Sockets 顺序也不能代替运行时组件顺序。
 2. **扩展容量与角色。** 当前实现有十二槽顺序表、二十处物理表、整型显隐掩码和限定槽数恢复逻辑；未核对真实需要前，不能靠扩大一个常量解决。普通弹体、固定巢体和逐管发射位置应分别管理，火箭巢不随单发消耗或库存耗尽被整座隐藏。
@@ -293,3 +310,251 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 研究数据中的 `physical_count_unit` 区分普通站位与火箭管口；火箭另列 `launcher_body_count` 和 `muzzle_count`，不能按管口数量创建同等数量的可见巢体。运行逻辑槽数和模型池容量尚未核对的字段均留空。
 
 可复用工具为 [catalog_native_mounts.py](../src/research/catalog_native_mounts.py) 和 [build_external_mount_plan.py](../src/research/build_external_mount_plan.py)。前者从原版索引及提取清单生成机体目录并核对来源；后者读取显式 manifest，合并人工几何评审，检查七组合覆盖与 Socket 引用后生成研究数据。已交付批次 JSON 本身也可作为后者的 `--decisions` 输入，重新提取后不依赖临时评审文件。输出须选择新文件。临时解码资源留在研究工作区 Temp，不放入 Git 或交付包。它们属于离线资料工具，不是测试模块或安装入口。
+
+### 第二批十五机结论
+
+2026-10-17 按“只用现成整块资源，拆分工作后置”扩大到十五架，共 105 条：45 条原生单挂参考、22 条无需拆架的多挂候选、38 条暂缓多挂。详细位置、真实武器类、窗口来源、旋转后的弹体范围、整架保留/隐藏方案与哈希见[第二批数据](../evidence/mount-expansion-batch2.json)。
+
+可继续推进的是九架机体中的二十二种多挂，F-15J、Typhoon、F-15 S/MTD 的四种多挂均有现成资源候选；MiG-29A、Su-30M2、Su-34、两种 F-14A、MiG-35D 的多挂全部暂缓。这里的候选只解决离线布局条件，没有完成运行接入或动态实测。
+
+本批与首批合计已形成新增二十一架的离线资料，另二十三架尚待调研。第一批的拆架/新站建议已同步标为暂缓；这个进度不表示新增机体已经适配完成。
+
+| 机型 | 可继续的多挂候选 | 暂缓多挂 |
+|---|---:|---:|
+| A-10C | 1 | 3 |
+| F-4E | 2 | 2 |
+| F-15J | 4 | 0 |
+| MiG-29A | 0 | 4 |
+| Su-30M2 | 0 | 4 |
+| Su-34 | 0 | 4 |
+| Typhoon | 4 | 0 |
+| F-14A | 0 | 4 |
+| F-14A TGM | 0 | 4 |
+| F-15 S/MTD | 4 | 0 |
+| F-16XL | 2 | 2 |
+| F/A-18E | 2 | 2 |
+| F/A-18E TGM | 2 | 2 |
+| MiG-35D | 0 | 4 |
+| Su-35S | 1 | 3 |
+
+以下数量仍是可选的原生物理位置范围，实际可见数量服从库存、装填和原生备用弹规则。两侧分配固定于机体，不随选装顺序或镜头改变。保留已知原生窗口；FAEB 未知窗口留空，不猜成两发。
+
+### A-10C 第二批候选
+
+装填窗口：UGB 2、RKT 8、4AGM 4。UGB 最外侧两点不依赖 SWP1 的附加三联架，可隐藏 SWP1 网格并保留原生外侧两弹，配合完整 SWP3 的八处 4AGM 候选。RKT 是六个固定巢、共 42 管口；含火箭的多挂需要处理整块支架与巢体，暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| UGB | UGB `SWP1.sp11–24` | 原生单挂参考 |
+| RKT | RKT 6巢/42管口 | 原生单挂参考 |
+| 4AGM | 4AGM `SWP3.sp31–38` | 原生单挂参考 |
+| UGB + RKT | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| UGB + 4AGM | UGB `SWP1.sp11/sp12`；4AGM `SWP3.sp31–38` | 候选（无需拆架） |
+| RKT + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| UGB + RKT + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F-4E 第二批候选
+
+装填窗口：UGB 2、LAGM 2、SASM 2。SASM 原生内侧两点与 UGB/LAGM 外侧分区，SWP3 只是微小占位网格，可保留原生关系。UGB 与 LAGM 同占外侧，二者共存及三挂均需拆架，暂缓。UGB 的 SWP1 挂点延伸到 sp22，编号不能套固定十进制分组规则。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| UGB | UGB `SWP1.sp11–22` | 原生单挂参考 |
+| LAGM | LAGM `SWP2.sp21/sp22` | 原生单挂参考 |
+| SASM | SASM `SWP3.sp31/sp32` | 原生单挂参考 |
+| UGB + LAGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| UGB + SASM | UGB `SWP1.sp11–22`；SASM `SWP3.sp31/sp32` | 候选（无需拆架） |
+| LAGM + SASM | LAGM `SWP2.sp21/sp22`；SASM `SWP3.sp31/sp32` | 候选（无需拆架） |
+| UGB + LAGM + SASM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F-15J 第二批候选
+
+装填窗口：HCAA 2、SAAM 2、QAAM 2。三组 SWP 均为微小占位网格。HCAA 与 SAAM 的原生前后四点变换一致，共存时分别使用前对、后对；QAAM 保留独立两点。三挂每类各两处，达到已知窗口，仍需观察前后导弹离架和机体支撑。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HCAA | HCAA `SWP1.sp11–14` | 原生单挂参考 |
+| SAAM | SAAM `SWP2.sp21–24` | 原生单挂参考 |
+| QAAM | QAAM `SWP3.sp31/sp32` | 原生单挂参考 |
+| HCAA + SAAM | HCAA `SWP1.sp11/sp12`；SAAM `SWP2.sp23/sp24` | 候选（无需拆架） |
+| HCAA + QAAM | HCAA `SWP1.sp11–14`；QAAM `SWP3.sp31/sp32` | 候选（无需拆架） |
+| SAAM + QAAM | SAAM `SWP2.sp21–24`；QAAM `SWP3.sp31/sp32` | 候选（无需拆架） |
+| HCAA + SAAM + QAAM | HCAA `SWP1.sp11/sp12`；SAAM `SWP2.sp23/sp24`；QAAM `SWP3.sp31/sp32` | 候选（无需拆架） |
+
+### MiG-29A 第二批候选
+
+装填窗口：HPAA 2、LAGM 2、4AAM 4。三套单 section 整架均覆盖同四站，几何和导轨不同，没有取得可共用一整块的依据。四种多挂均暂缓；不能因为 LAGM 弹体网格名含 LASM 就把真实武器类认错。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HPAA | HPAA `SWP1.sp11–14` | 原生单挂参考 |
+| LAGM | LAGM `SWP2.sp21–24` | 原生单挂参考 |
+| 4AAM | 4AAM `SWP3.sp31–34` | 原生单挂参考 |
+| HPAA + LAGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HPAA + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAGM + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HPAA + LAGM + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### Su-30M2 第二批候选
+
+装填窗口：HPAA 2、4AGM 4、4AAM 4。这是 Su-30M2，不能照搬 Su-30SM。三套架的导轨不同且互相占位；HPAA 支架还延伸至翼尖，无法照 A-10C 的方法隐藏整架后保留最外弹体。四种多挂均暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HPAA | HPAA `SWP1.sp11–14` | 原生单挂参考 |
+| 4AGM | 4AGM `SWP2.sp21–26` | 原生单挂参考 |
+| 4AAM | 4AAM `SWP3.sp31–36` | 原生单挂参考 |
+| HPAA + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HPAA + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| 4AGM + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HPAA + 4AGM + 4AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### Su-34 第二批候选
+
+装填窗口：SFFS 2、HCAA 2、4AGM 4。SFFS、HCAA、4AGM 的三块架都覆盖外翼、内翼和腹部六站，但形状与纵向长度不同，没有取得可互换的依据。减少弹体仍会留下重复或空架，四种多挂均暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| SFFS | SFFS `SWP1.sp11–16` | 原生单挂参考 |
+| HCAA | HCAA `SWP2.sp21–26` | 原生单挂参考 |
+| 4AGM | 4AGM `SWP3.sp31–36` | 原生单挂参考 |
+| SFFS + HCAA | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SFFS + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HCAA + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SFFS + HCAA + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### Typhoon 第二批候选
+
+装填窗口：LAAM 2、8AGM 8、HCAA 2。LAAM 与 HCAA 共存可共用 SWP3 整架；含 8AGM 时，只保留 SWP2 整块，用原生后腹 LAAM 和前腹 HCAA 分区。8AGM 保留十八个资源候选，不把八个窗口当模型上限，也不声称运行池或逻辑槽已经确认为十八。三挂参考间隙较小，离架净空需重点观察。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| LAAM | LAAM `SWP1.sp11–16` | 原生单挂参考 |
+| 8AGM | 8AGM `SWP2.sp21–38` | 原生单挂参考 |
+| HCAA | HCAA `SWP3.sp31–38` | 原生单挂参考 |
+| LAAM + 8AGM | LAAM `SWP1.sp15/sp16`；8AGM `SWP2.sp21–38` | 候选（无需拆架） |
+| LAAM + HCAA | LAAM `SWP1.sp11/sp12`；HCAA `SWP3.sp33/sp34` | 候选（无需拆架） |
+| 8AGM + HCAA | 8AGM `SWP2.sp21–38`；HCAA `SWP3.sp37/sp38` | 候选（无需拆架） |
+| LAAM + 8AGM + HCAA | LAAM `SWP1.sp15/sp16`；8AGM `SWP2.sp21–38`；HCAA `SWP3.sp35/sp36` | 候选（无需拆架） |
+
+### F-14A 第二批候选
+
+装填窗口：LAAM 2、SAAM 2、SFFS 2。LAAM 整架含翼下与机腹结构；SAAM 与 SFFS 资源也带同翼位基座或附加结构。只隐藏弹体不能消除整块翼下重叠，四种多挂均暂缓；SFFS 架上的附加结构用途未确认，不当作无用部分删掉。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| LAAM | LAAM `SWP1.sp11–16` | 原生单挂参考 |
+| SAAM | SAAM `SWP2.sp21/sp22` | 原生单挂参考 |
+| SFFS | SFFS `SWP3.sp31–34` | 原生单挂参考 |
+| LAAM + SAAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAAM + SFFS | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SAAM + SFFS | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAAM + SAAM + SFFS | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F-14A TGM 第二批候选
+
+装填窗口：LAAM 2、SAAM 2、HPAA 2。与普通 F-14A 分开解析：第三类为 HPAA，三种整架仍在相同翼位存在不同基座和导轨。四种多挂均暂缓，不能凭普通型资源或大致位置相近宣称可共架。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| LAAM | LAAM `SWP1.sp11–16` | 原生单挂参考 |
+| SAAM | SAAM `SWP2.sp21/sp22` | 原生单挂参考 |
+| HPAA | HPAA `SWP3.sp31/sp32` | 原生单挂参考 |
+| LAAM + SAAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAAM + HPAA | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SAAM + HPAA | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAAM + SAAM + HPAA | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F-15 S/MTD 第二批候选
+
+装填窗口：HPAA 2、FAEB 未知、HVAA 2。三组整架均为微小占位网格，不需要拆分。HPAA 与 FAEB 共存时各用一侧，避免 FAEB 尚未充分离架就展开的范围与同侧 HPAA 重合；HPAA 一处少于两窗口。FAEB 窗口继承原生 Bomb_BaseClass，本轮未知；不修改空爆、下落或展开参数。SWP2 的 FAEB 也叫 sp31/32，必须与 SWP3 同名点区分。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HPAA | HPAA `SWP1.sp11/sp12` | 原生单挂参考 |
+| FAEB | FAEB `SWP2.sp31/sp32` | 原生单挂参考 |
+| HVAA | HVAA `SWP3.sp31–34` | 原生单挂参考 |
+| HPAA + FAEB | HPAA `SWP1.sp11`；FAEB `SWP2.sp32` | 候选（无需拆架） |
+| HPAA + HVAA | HPAA `SWP1.sp11/sp12`；HVAA `SWP3.sp31–34` | 候选（无需拆架） |
+| FAEB + HVAA | FAEB `SWP2.sp31/sp32`；HVAA `SWP3.sp31–34` | 候选（无需拆架） |
+| HPAA + FAEB + HVAA | HPAA `SWP1.sp11`；FAEB `SWP2.sp32`；HVAA `SWP3.sp31–34` | 候选（无需拆架） |
+
+### F-16XL 第二批候选
+
+装填窗口：UGB 2、4AAM 4、4AGM 4。UGB 与 4AAM 原生分区，参考静态余量较窄，需重点观察投放。4AAM + 4AGM 改为只用后侧两处 4AAM、保留六处原生 4AGM 候选：接受 4AAM 少于四窗口，避免固定留下两处空架；弃用四处 4AAM 加四处 4AGM 的旧草案。UGB + 4AGM 及三挂仍需拆架，暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| UGB | UGB `SWP1.sp11–22` | 原生单挂参考 |
+| 4AAM | 4AAM `SWP2.sp21–24` | 原生单挂参考 |
+| 4AGM | 4AGM `SWP3.sp31–36` | 原生单挂参考 |
+| UGB + 4AAM | UGB `SWP1.sp11–22`；4AAM `SWP2.sp21–24` | 候选（无需拆架） |
+| UGB + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| 4AAM + 4AGM | 4AAM `SWP2.sp23/sp24`；4AGM `SWP3.sp31–36` | 候选（无需拆架） |
+| UGB + 4AAM + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F/A-18E 第二批候选
+
+装填窗口：HCAA 2、4AGM 4、LAGM 2。HCAA 的原生腹部 sp17/18 不依赖其翼下整架。配 LAGM 时保留腹部一对；配带负 Y 腹部吊舱的 4AGM 整架时只用正 Y sp18，接受一位置少于两窗口，避开吊舱。4AGM 与 LAGM 共存及三挂仍需拆架，暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HCAA | HCAA `SWP1.sp11–18` | 原生单挂参考 |
+| 4AGM | 4AGM `SWP2.sp21–24` | 原生单挂参考 |
+| LAGM | LAGM `SWP3.sp31–34` | 原生单挂参考 |
+| HCAA + 4AGM | HCAA `SWP1.sp18`；4AGM `SWP2.sp21–24` | 候选（无需拆架） |
+| HCAA + LAGM | HCAA `SWP1.sp17/sp18`；LAGM `SWP3.sp31–34` | 候选（无需拆架） |
+| 4AGM + LAGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HCAA + 4AGM + LAGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### F/A-18E TGM 第二批候选
+
+装填窗口：HCAA 2、HVAA 2、GPB 2。HCAA 腹部一对可配 HVAA 原翼下两处，只显示 SWP2 整架。不能反过来强留 HCAA 整架，其额外翼下导轨会进入 HVAA 参考范围。配 GPB 时保留 GPB 整架及负 Y 吊舱，HCAA 只用正 Y 腹部一处。HVAA + GPB 及三挂暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| HCAA | HCAA `SWP1.sp11–18` | 原生单挂参考 |
+| HVAA | HVAA `SWP2.sp21/sp22` | 原生单挂参考 |
+| GPB | GPB `SWP3.sp31/sp32` | 原生单挂参考 |
+| HCAA + HVAA | HCAA `SWP1.sp17/sp18`；HVAA `SWP2.sp21/sp22` | 候选（无需拆架） |
+| HCAA + GPB | HCAA `SWP1.sp18`；GPB `SWP3.sp31/sp32` | 候选（无需拆架） |
+| HVAA + GPB | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| HCAA + HVAA + GPB | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### MiG-35D 第二批候选
+
+装填窗口：SAAM 2、6AAM 6、4AGM 4。三块架覆盖相同内侧/中间站，未找到可共用一整块的依据；SAAM、6AAM、4AGM 的四种多挂均暂缓。原生单挂参考和明确的二/六/四窗口保留，不因放不下而改变武器功能。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| SAAM | SAAM `SWP1.sp11/sp12` | 原生单挂参考 |
+| 6AAM | 6AAM `SWP2.sp21–26` | 原生单挂参考 |
+| 4AGM | 4AGM `SWP3.sp31–34` | 原生单挂参考 |
+| SAAM + 6AAM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SAAM + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| 6AAM + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| SAAM + 6AAM + 4AGM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### Su-35S 第二批候选
+
+装填窗口：LAAM 2、6AAM 6、LASM 2。SWP1/2 的 LOD0 位置顶点多重集合相同，可只显示一套完整六导轨：LAAM 用最外一对，6AAM 用中、内四处。6AAM 四位置少于六窗口，是明确取舍。涉及 LASM 的三种多挂仍需拆架，暂缓。
+
+| 组合 | 当前方案 | 状态 |
+|---|---|---|
+| LAAM | LAAM `SWP1.sp11–16` | 原生单挂参考 |
+| 6AAM | 6AAM `SWP2.sp21–26` | 原生单挂参考 |
+| LASM | LASM `SWP3.sp31–34` | 原生单挂参考 |
+| LAAM + 6AAM | LAAM `SWP1.sp11/sp12`；6AAM `SWP2.sp23–26` | 候选（无需拆架） |
+| LAAM + LASM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| 6AAM + LASM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+| LAAM + 6AAM + LASM | 保留研究建议，当前不接入；需分区处理原生整架 | 暂缓（需拆架） |
+
+### 第二批接入时特别注意
+
+优先按数据的 `disposition` 过滤：`native_single` 是基线参考，`candidate_existing_assets` 可继续做运行绑定，`deferred` 只供后续资源专题查阅。暂缓只影响这轮新模型接入，不增加 SP 功能互斥。
+
+原生 Socket 不遵循统一的逐组顺序编号：例如 F-4E 的 SWP1 可到 sp22，F-15 S/MTD 的 SWP2 使用 sp31/32，火箭还会使用三位数管口名。当前三机实现的顺序命名检查、固定容量和限定槽数恢复，均不能直接外推。Typhoon 的十八个 8AGM 候选加两类腹部点还会超过现有二十处物理表，须先核对实际运行池与队列，再确定接入结构。
+
+表中“隐藏整架”是隐藏其网格外观，保留组件、原父链和 Socket 取位；不能销毁组件、停止必要更新或连带隐藏仍需显示的子弹体。微小占位网格也不等于机体本身的支撑已经检查完毕。应与对应原生单挂画面对照确认导轨和机体净空。
+
+静态闭合间距不能替代动作观察。重点包括 F-15J 前后导弹、F-16XL 窄间距 UGB、Typhoon 前腹 HCAA 与内侧 8AGM，以及 FAEB 展开。FAEB 已同时读取闭合与展开网格，保守分侧没有改动原生投放或空爆参数；实际时序仍待游戏验证。原生备用模型数量、低库存、装填空位、补给和检查点也没有在本轮验证。

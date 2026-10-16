@@ -860,7 +860,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -891,7 +892,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -924,7 +926,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -973,7 +976,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -1019,7 +1024,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "candidate_existing_assets"
           },
           {
             "weapons": [
@@ -1068,7 +1074,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -1130,7 +1138,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "conclusions": [
@@ -4849,7 +4859,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -4882,7 +4893,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -4989,7 +5001,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -5038,7 +5051,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -5125,7 +5140,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -5212,7 +5229,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -5313,7 +5332,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "conclusions": [
@@ -6482,7 +6503,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -6527,7 +6549,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -6558,7 +6581,8 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "native_single"
           },
           {
             "weapons": [
@@ -6613,7 +6637,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -6660,7 +6686,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -6715,7 +6743,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "weapons": [
@@ -6733,7 +6763,9 @@
             "mesh_replacement": false,
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
-            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。"
+            "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "conclusions": [
@@ -7406,7 +7438,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP1"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "4AAM",
@@ -7520,7 +7553,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "LASM",
@@ -7600,7 +7634,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "GPB + 4AAM",
@@ -7743,7 +7778,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "GPB + LASM",
@@ -7852,7 +7889,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "4AAM + LASM",
@@ -8029,7 +8068,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "candidate_existing_assets"
           },
           {
             "combination": "GPB + 4AAM + LASM",
@@ -8201,7 +8241,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "rejected": [
@@ -9038,7 +9080,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP1"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "6AAM",
@@ -9179,7 +9222,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "LACM",
@@ -9247,7 +9291,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "SASM + 6AAM",
@@ -9366,7 +9411,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "candidate_existing_assets"
           },
           {
             "combination": "SASM + LACM",
@@ -9485,7 +9531,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "6AAM + LACM",
@@ -9604,7 +9652,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "SASM + 6AAM + LACM",
@@ -9753,7 +9803,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "rejected": [
@@ -10611,7 +10663,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP1"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "LACM",
@@ -10691,7 +10744,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "LAAM",
@@ -10805,7 +10859,8 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "native_single"
           },
           {
             "combination": "HCAA + LACM",
@@ -10948,7 +11003,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP2"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "HCAA + LAAM",
@@ -11091,7 +11148,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "LACM + LAAM",
@@ -11234,7 +11293,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           },
           {
             "combination": "HCAA + LACM + LAAM",
@@ -11407,7 +11468,9 @@
                 "native_visibility_restore_required": true,
                 "group": "SWP3"
               }
-            ]
+            ],
+            "disposition": "deferred",
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
           }
         ],
         "rejected": [
@@ -12249,5 +12312,11 @@
     "蓝图父类未覆写的原生默认值不猜测",
     "弹体网格引用不代替持久模型池身份核对",
     "布局研究不预设TLS或ECM/IEWS与其他SP互斥；持续效果接入按实际类核对"
-  ]
+  ],
+  "research_policy": {
+    "existing_whole_assets_only": true,
+    "defer_resource_splitting": true,
+    "defer_new_stations": true,
+    "runtime_integration_performed": false
+  }
 }

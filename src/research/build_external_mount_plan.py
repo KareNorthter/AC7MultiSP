@@ -97,6 +97,8 @@ def main():
         review = json.loads(path.read_text(encoding='utf-8'))
         if 'geometry_reviews' in review:
             reviews.extend(review['geometry_reviews'])
+            if review.get('sources'):
+                reviews.append({'review_sources':review['sources']})
         else:
             reviews.append({key:item for key,item in review.items() if key not in ('aircraft', 'supporting_geometry_summary')})
         for record in review['aircraft']:
@@ -120,27 +122,56 @@ def main():
             decision = decisions[sample['code']]
             native = {group['group']: group for group in sample['groups']}
             for combo in decision['combinations']:
+                status = combo['status']
+                if status not in ('native_reuse', 'requires_rack_asset', 'requires_new_station', 'deferred'):
+                    raise ValueError('未知的布局研究状态：' + status)
+                # 用户已要求新资源工作后置；保留技术依赖，另记是否允许继续接入。
+                if status != 'native_reuse':
+                    combo['disposition'] = 'deferred'
+                    combo.setdefault('deferred_reason', '需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究')
+                else:
+                    combo['disposition'] = 'native_single' if len(combo['weapons']) == 1 else 'candidate_existing_assets'
+                    if {part['weapon'] for part in combo['assignments']} != set(combo['weapons']):
+                        raise ValueError('现成资源候选未给每种SP分配位置：' + sample['code'])
                 for assignment in combo['assignments']:
                     group = native[assignment['group']]
+                    weapon_id = group['weapon']['defaults'].get('WeaponID', {}).get('value')
+                    if weapon_id and weapon_id.startswith('EWeaponID::WID_'):
+                        expected_label = weapon_id.removeprefix('EWeaponID::WID_').casefold()
+                        if assignment['weapon'].casefold() != expected_label:
+                            raise ValueError('候选弹种与真实兵装配置不一致：' + sample['code'])
                     sockets = {socket['name'] for socket in group['sockets']}
                     if not set(assignment['sockets']).issubset(sockets):
                         raise ValueError('候选引用了原生资源中不存在的Socket：' + sample['code'])
-                    # 首批人工几何已确认的巢体数量，不将管口数混为外挂数量。
+                    if len(set(assignment['sockets'])) != len(assignment['sockets']):
+                        raise ValueError('候选位置重复；轮转映射应另行记录')
+                    window = group['weapon']['defaults'].get('MaxLoadedCount', {}).get('value')
+                    if assignment.get('loaded_window') is not None and assignment['loaded_window'] != window:
+                        raise ValueError('候选装填窗口与兵装继承资料不一致：' + sample['code'])
+                    assignment['loaded_window'] = window
+                    assignment['below_window'] = len(assignment['sockets']) < window if window is not None else None
+                    # 所有火箭均按管口记数；只有明确确认过的机型才填写巢体数量。
                     role = (sample['code'], assignment.get('weapon'))
-                    if role in (('f02a', 'RKT'), ('f104', 'GRKT')):
-                        mouths_per_body = 19 if role[0] == 'f02a' else 7
+                    if assignment.get('weapon') in ('RKT', 'GRKT'):
                         count = len(assignment['sockets'])
-                        if count % mouths_per_body:
-                            raise ValueError('管口数量与本批已确认的巢体不符')
                         assignment.update(position_role='launcher_muzzle', physical_count_unit='muzzle',
-                                          muzzle_count=count, launcher_body_count=count // mouths_per_body)
+                                          muzzle_count=count)
+                        mouths_per_body = {('f02a', 'RKT'):19, ('f104', 'GRKT'):7, ('a10a', 'RKT'):7}.get(role)
+                        if mouths_per_body:
+                            if count % mouths_per_body:
+                                raise ValueError('管口数量与本批已确认的巢体不符')
+                            assignment['launcher_body_count'] = count // mouths_per_body
+                        else:
+                            assignment.setdefault('launcher_body_count', None)
                     else:
                         assignment.update(position_role='ordnance_station_candidate', physical_count_unit='station')
             sample['proposal'] = decision
     # 网格和机体 JSON 的摘要保留在来源表；数据文件不带本机临时绝对路径。
     result = {'schema':1, 'baseline':'v2.4.0', 'steam_build':9855922,
               'status':'offline_layout_candidate' if decisions else 'offline_resource_dossier', 'game_process_access':False,
-              'compiled':False, 'tests_run':False, 'installed':False,
+              'compiled':False, 'tests_run':False, 'installed':False, 'assets_generated':False,
+              'research_policy':{'existing_whole_assets_only':True, 'defer_resource_splitting':True,
+                                 'defer_new_stations':True, 'runtime_integration_performed':False},
               'aircraft':samples, 'sources':survey.used, 'geometry_reviews':reviews,
               'limits':['挂点数量不是已验证的运行模型池或逻辑队列长度',
                         '静态参考坐标不证明动态净空，省略的变换字段保留为未知',
