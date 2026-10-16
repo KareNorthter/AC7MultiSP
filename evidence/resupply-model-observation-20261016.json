@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-16",
+  "installed_version": "2.1.1",
+  "scene": "ms06/F-15E 补给 SP1 选择",
+  "access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ",
+  "process_write": false,
+  "game_functions_called": false,
+  "product_changed": false,
+  "identity_stable": true,
+  "snapshot": "Temp/resupply-f15e-20261016-150119.json",
+  "snapshot_sha256": "3b8495f7959d90f593e05185d60bcec0cbbaebb7e6c702040fae7c14e87dc154",
+  "captured": "2026-10-16T15:01:19.722251+08:00",
+  "findings": [
+    "补给页面目标、控制器Pawn和摄像机ViewTarget均为同一任务F-15E；扫描未发现展示替身，F-15E现场网格归属均一致。",
+    "SP1草稿仅6AAM；任务活动类仍为6AAM，SWP1挂架隐藏，sp11/12导弹可见；SWP2挂架及十二个SFFS可见；SWP3挂架可见，sp31武器网格为空。",
+    "组件显隐与入场前最后FIXED_MOUNT_MASK=0x3ffc3一致；TLS炮体由挂架承载，不在该弹体掩码中。",
+    "源码确认补给停止周期挂载刷新，但保留fixedMount.bound；显隐钩子继续应用旧布局。paintSupply没有模型更新接口。"
+  ],
+  "limits": [
+    "组件可见标志不等于镜头中无遮挡。",
+    "本次结论限F-15E、ms06及此补给实例。",
+    "未实现动态预览、未验证起飞交接或其他机型动画。",
+    "未直接读取全部库存/冷却私有数据；命令与状态文件未变化不能替代完整库存检查。"
+  ],
+  "implementation": [
+    "抽取共用纯布局规则，预览单独持有候选种类、模型身份及显隐状态。",
+    "在现有显隐钩子中仲裁任务与预览所有权，始终服从原生整机显隐。",
+    "Flow.preview驱动候选/EMPTY/返回/review，库存冷却及发射映射不变。",
+    "YES后保持已确认预览到成功重建交接；异常、检查点、离场和禁用释放。"
+  ],
+  "selection_comparison": {
+    "before_candidate": "6AAM",
+    "after_candidate": "SFFS",
+    "after_ui_ammo": 46,
+    "after_snapshot": "Temp/resupply-f15e-20261016-150817.json",
+    "after_snapshot_sha256": "e13559cc87c07b2b9c5062ca129b71aa506538aa5bd2ed60d55696d71cf3cf22",
+    "after_captured": "2026-10-16T15:08:17.909773+08:00",
+    "checked_components": 22,
+    "rack_count": 3,
+    "weapon_component_count": 19,
+    "identities_unchanged": true,
+    "parents_sockets_meshes_relative_transforms_unchanged": true,
+    "visible_hidden_flags_unchanged": true,
+    "active_weapon_class": "plwp_6aam_a0_C",
+    "active_mesh": "SWP1",
+    "native_command_unchanged": true,
+    "native_status_unchanged": true,
+    "stage_log": "2026-10-16T07:07:42Z NATIVE_RESUPPLY_STAGE sp1:2:0:1:2:nil:1.0",
+    "conclusion": "候选已改变，模型和实际活动武器未跟随改变；本次候选切换没有替换组件或发出兵装重建命令。"
+  }
+}

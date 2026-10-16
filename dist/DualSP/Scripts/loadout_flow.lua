@@ -1,10 +1,12 @@
 -- 出击与补给共用的多槽选择草稿规则。草稿不直接改配置、实体挂载或任务武器状态。
 local Flow={}
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
-local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 共用连续槽与均分规则。
-local copy=Profile.copy
+local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 共用连续槽与百分比配弹规则。
 -- 出击与补给共用多槽选择规则，最终确认文字由原生页面用途决定。
-function Flow.new(profile,options,reviewLabel,mode,translate)
+function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
+    -- 未确认草稿读取最新管理比例；profile() 返回独立快照，之后交接不再变化。
+    local settings=ammoSettings or {ammo_percent_two=50,ammo_percent_three=33}
+    local copy=function(value)return Profile.withSettings(value,type(settings)=="function"and settings()or settings)end
     local tr=assert(translate,"缺少多槽选择草稿语言提供器") -- 不改变草稿协议，只提供用户文字。
     assert(#options==3,"Native loadout requires the aircraft's three SP options")
     local self={stage="sp1",cursor=1,draft=copy(profile),options=options,message=nil,lastStage=2}

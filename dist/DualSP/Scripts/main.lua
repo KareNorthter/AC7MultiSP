@@ -1,10 +1,10 @@
--- AC7MultiSP 2.0.0：管理暂停所有权与明确交接。
+-- AC7MultiSP 2.2.2：机库和补给使用独立动态挂载预览。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
 local json=dofile(root.."Scripts/json.lua")
 local ConfigStore=dofile(root.."Scripts/config_store.lua")
-local Profile=dofile(root.."Scripts/loadout_profile.lua") -- 三槽结构、购买校验和均分规则。
+local Profile=dofile(root.."Scripts/loadout_profile.lua") -- 三槽结构、购买校验和百分比配弹。
 local weaponCycle=dofile(root.."Scripts/weapon_cycle.lua")
 local runtimeContext=dofile(root.."Scripts/runtime_context.lua") -- 模式与游戏文本语言共用只读来源。
 local tr=runtimeContext.text -- 原生页面文字跟随游戏，不跟随 F8 手动语言。
@@ -37,6 +37,10 @@ end
 -- The validated weapon core and the rebuilt menu renderer are separate modules.
 local bridge=loadExport("lab_native_execute")
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
+loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
+loadExport("dualsp_management_options_supported","DualSPUI.dll")
+local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
+local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
@@ -50,7 +54,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 2.0.0") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=5") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -70,6 +74,24 @@ local preparationNavigation=loadExport("dualsp_preparation_navigation","DualSPUI
 local configStore=ConfigStore.new{
     root=root,note=note,json=json,profile=Profile,readJson=readJson}
 local config=configStore:load()
+-- 总开关固定到本次启动；模型开关在原有武器重建边界应用，不因保存而补弹。
+local runtimeModEnabled=config.mod_enabled
+local runtimeFixedMountEnabled=config.fixed_mount_enabled
+local mountOptionsApplied=false
+local mountWarning=nil
+local previewMountWarning=nil -- 预览警告独立保存，任务周期刷新不能覆盖。
+local function applyFixedMountSetting()
+    if mountOptionsApplied and runtimeFixedMountEnabled==config.fixed_mount_enabled then return end
+    local ok,err=setFixedMountEnabled(runtimeModEnabled and config.fixed_mount_enabled and 1 or 0)
+    assert(ok,err)
+    runtimeFixedMountEnabled=config.fixed_mount_enabled
+    mountOptionsApplied=true
+    mountWarning=err and err~=""and err or nil
+    note("FIXED_MOUNT_SETTING_APPLIED "..tostring(runtimeFixedMountEnabled))
+end
+local function ammoSettings()
+    return {ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three}
+end
 local function saveConfig(nextConfig)configStore:save(nextConfig or config)end
 local catalogue=nil
 local game=nil
@@ -93,7 +115,7 @@ local requestOpen=0
 local requestClose=0
 local errorText=nil
 local nativeState=nil
--- HUD 采样错误独立于中央文字，关闭一个功能不影响另一项。
+-- HUD 采样错误由两处提示分别展示，不改变兵装状态。
 local hudSamplingError=nil
 -- 管理设置及直接选择的反馈交付 F8，设置错误不冻结任务兵装。
 local settingsError=nil
@@ -235,12 +257,110 @@ local function optionsFor(id)
 end
 local function profileFor(id)
     local saved=config.profiles[tostring(id)]
-    if saved then return Profile.copy(saved)end
+    if saved then return Profile.withSettings(saved,config)end
     local selected=valid(instance) and instance:GetSelectedPlaneSWP()or 0
     return {a=math.max(0,math.min(2,selected)),b=-1,c=-1,ratio=1}
 end
 -- 复制小配置，避免补给草稿与检查点引用同一张可修改的表。
 local copyProfile=Profile.copy -- 检查点、补给和预览使用同一复制规则。
+local function previewWarning(warning)
+    warning=warning and warning~=""and tostring(warning)or nil
+    if warning~=previewMountWarning then
+        previewMountWarning=warning;lastUIKey=nil
+        if warning then note("MOUNT_PREVIEW_WARNING "..warning)end
+    end
+end
+local scenePreviewRequested=false
+local scenePreviewOptions=nil
+local scenePreviewPlane=nil
+local scenePreviewTime=-1
+local supplyPreviewActive=false
+local function releaseMountPreview(ownerAddress)
+    if not ownerAddress or ownerAddress==0 then
+        scenePreviewOptions=nil;scenePreviewPlane=nil;supplyPreviewActive=false
+    end
+    -- 机库由游戏实例持有，旧页面的归还请求不会拆掉整个机库的显示。
+    local called,ok,warning=pcall(nativeMountPreview,ownerAddress or 0,0,0,0,0,0,0,0,0,0)
+    if not called then previewWarning(ok);return false,tostring(ok)end
+    if not ok or warning and warning~=""then
+        previewWarning(warning and warning~=""and warning or "挂载预览归还失败")
+    end
+    return ok,not ok and previewMountWarning or warning
+end
+local function mountPreview(context)
+    -- 视觉失败只返回警告，不能冒泡为页面或兵装事务错误。
+    local called,ok,warning=pcall(function()
+        local supply=context.mode=="resupply"
+        local flight=context.mode=="flight"
+        if not supply and not flight then scenePreviewRequested=true end
+        local owner=supply and context.owner or context.instance
+        if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)or errorText then
+            return releaseMountPreview(0)
+        end
+        if not valid(owner)or not valid(context.instance)then return false,""end
+        local sourcePlane=plane
+        if not supply and not flight then
+            local hangar=context.instance.HangarManager
+            sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
+        end
+        local info=catalogue and catalogue[tostring(context.planeId)]
+        if info and info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"then return releaseMountPreview(0)end
+        -- 异步换机属于等待：先归还上一展示对象，下次 pump 再核对完整身份。
+        if not valid(sourcePlane)or not info or not isSelectedPlane(sourcePlane,info.code)
+            or context.instance:GetSelectedPlaneID()~=context.planeId then
+            releaseMountPreview(owner:GetAddress());return false,""
+        end
+        local sourceActivator=sourcePlane.PlayerWeaponActivator
+        if not valid(sourceActivator)then releaseMountPreview(owner:GetAddress());return false,""end
+        assert(valid(sourcePlane:GetWorld())and valid(owner:GetWorld())
+            and sourcePlane:GetWorld():GetAddress()==owner:GetWorld():GetAddress()
+            and sourcePlane:GetWorld():GetAddress()==context.instance:GetWorld():GetAddress(),"预览页面、机体或世界已变化")
+        local profile=context.profile;local count=Profile.count(profile);local amounts={}
+        for i,field in ipairs(Profile.fields)do
+            local weapon=profile[field];local option=weapon>=0 and context.options[weapon+1]or nil
+            amounts[i]=option and Profile.ammo(option.max,count,profile.ratio)or 0
+        end
+        local accepted,message=nativeMountPreview(owner:GetAddress(),sourcePlane:GetAddress(),sourceActivator:GetAddress(),
+            supply and 2 or flight and 3 or 1,profile.a,profile.b,profile.c,amounts[1],amounts[2],amounts[3])
+        if supply then supplyPreviewActive=true end
+        return accepted,message
+    end)
+    if not called then
+        if type(context.ownerAddress)=="number"then releaseMountPreview(context.ownerAddress)end
+        previewWarning(ok);return false
+    end
+    if warning and warning~=""then previewWarning(warning)
+    elseif ok then previewWarning(nil)end
+    return ok,warning
+end
+-- 所有机库页面共用这一层；武器页当轮提供草稿时优先，其他页面展示已保存方案。
+local function maintainScenePreview()
+    if scenePreviewRequested or isFlight or supplySession or panelOpen or errorText then return end
+    if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)then return end
+    local called,err=pcall(function()
+        local hangar=valid(instance)and instance.HangarManager or nil
+        local model=valid(hangar)and hangar.LoadedPlayerPlane or nil
+        if not valid(model)then releaseMountPreview(0);return end
+        local info=catalogue and catalogue[tostring(planeId)]
+        if not info or info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"then return end
+        local address=model:GetAddress()
+        if address~=scenePreviewPlane or os.clock()-scenePreviewTime>=.5 then
+            local options,waiting=optionsFor(planeId)
+            if waiting then releaseMountPreview(0);return end
+            scenePreviewOptions=options;scenePreviewPlane=address;scenePreviewTime=os.clock()
+        end
+        mountPreview{owner=instance,instance=instance,planeId=planeId,mode="scene",
+            profile=profileFor(planeId),options=scenePreviewOptions}
+    end)
+    if not called then releaseMountPreview(0);previewWarning(err)end
+end
+local function maintainSupplyPreview()
+    if not supplyPreviewActive or not valid(plane)or not valid(activator)then return end
+    if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)then releaseMountPreview(0);return end
+    local called,ok,warning=pcall(nativeMountPreview,0,plane:GetAddress(),activator:GetAddress(),4,0,0,0,0,0,0)
+    if not called then previewWarning(ok)
+    elseif warning and warning~=""then previewWarning(warning)end
+end
 -- 补给开始先接管原生输入，不能等到页面轮询发现后才禁用；解绑不解引用旧机体。
 local function ownSupplyInput(enabled)
     assert(IsInGameThread(),"补给输入所有权必须在游戏线程修改")
@@ -263,8 +383,9 @@ nativeLoadout=NativeLoadout.new{note=note,mode="preparation",commit=function(id,
     currentProfile=profile;config.profiles[tostring(id)]=profile;saveConfig()
     lastUIKey=nil;note("PROFILE_SAVED_NATIVE "..id)
 end,keyboardNavigation=preparationNavigation,preparationAction=nativePreparationAction,
-    confirmSound=menuConfirm,weaponIcon=nativeWeaponIcon,translate=tr}
-nativeStandby=NativeLoadout.new{note=note,mode="standby",keyboardNavigation=preparationNavigation,translate=tr}
+    confirmSound=menuConfirm,weaponIcon=nativeWeaponIcon,translate=tr,ammoSettings=ammoSettings,mountPreview=mountPreview,releaseMountPreview=releaseMountPreview}
+nativeStandby=NativeLoadout.new{note=note,mode="standby",keyboardNavigation=preparationNavigation,translate=tr,ammoSettings=ammoSettings,
+    mountPreview=mountPreview,releaseMountPreview=releaseMountPreview}
 -- 候选只进入展示快照，不改 optionsFor 的已装结果或保存的方案。
 local function partsAmmoPreview(owner,selectedInstance,id,options)
     assert(IsInGameThread()and valid(owner)and valid(selectedInstance),"PART 预览需要当前游戏线程及有效页面")
@@ -288,7 +409,8 @@ local function partsAmmoPreview(owner,selectedInstance,id,options)
     end
     return result
 end
-nativeParts=NativeLoadout.new{note=note,mode="parts",keyboardNavigation=preparationNavigation,translate=tr,partsAmmoPreview=partsAmmoPreview}
+nativeParts=NativeLoadout.new{note=note,mode="parts",keyboardNavigation=preparationNavigation,translate=tr,partsAmmoPreview=partsAmmoPreview,ammoSettings=ammoSettings,
+    mountPreview=mountPreview,releaseMountPreview=releaseMountPreview}
 -- 原生补给菜单确认只暂存方案；此时不改武器，也不保存到配置文件。
 nativeSupply=NativeLoadout.new{note=note,mode="resupply",commit=function(id,profile)
     assert(supplySession and id==supplySession.planeId,"补给确认期间机体已变化")
@@ -301,7 +423,7 @@ end,keyboardNavigation=preparationNavigation,takeoff=function(owner)
     assert(owner:GetWorld():GetAddress()==plane:GetWorld():GetAddress(),"补给页面与玩家不在同一世界")
     local ok,err=nativeTakeoff(owner:GetAddress(),plane:GetAddress(),activator:GetAddress()) -- 原生负责关闭页面并通知任务。
     assert(ok,err or "原生补给 YES 接口未返回成功状态")
-end,confirmSound=menuConfirm,translate=tr}
+end,confirmSound=menuConfirm,translate=tr,ammoSettings=ammoSettings,mountPreview=mountPreview,releaseMountPreview=releaseMountPreview}
 local function pageContext(context)
     context.instance=instance
     if context.mode=="resupply"then
@@ -313,7 +435,7 @@ local function pageContext(context)
         context.planeId=planeId
         context.getProfile=function()
             if context.mode=="preparation"then return profileFor(planeId)end
-            local saved=config.profiles[tostring(planeId)];return saved and copyProfile(saved)or nil
+            local saved=config.profiles[tostring(planeId)];return saved and Profile.withSettings(saved,config)or nil
         end
         context.getOptions=function()return optionsFor(planeId)end
     end
@@ -430,6 +552,7 @@ local function selectionAudio(op,target)
 end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
 local function releaseRuntimeOwnership()
+    releaseMountPreview(0)
     local ok,err=pcall(function()selectionAudio(2)end)
     if not ok then note("SELECTION_AUDIO_RELEASE_ERROR "..tostring(err))end
     -- 发生任何控制器错误后已停止视觉调度，必须同时释放固定模型的所有权。
@@ -458,10 +581,10 @@ refreshHUD=function(now)
     nativeState.armed=plane:IsSpecialWeaponArmed()
     -- 单 SP 出击也处理名称就绪状态，但保持原生面板高度。
     nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now)
-    if enabled and config.central_hint and hudSamplingError then
+    if enabled and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
-        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled and config.central_hint,now)
+        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled,now)
     end
 end
 -- 由出击初始化和飞行切换共同使用的输入释放接口，在 configureFlight
@@ -478,10 +601,11 @@ local function primeFlightHUD(profile,options,prewarm)
     local visible=plane:GetNimbusHUDEnabled()
     -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
     nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
-    weaponPresentation:update(plane,profile,options,seed,visible and config.central_hint,os.clock())
+    weaponPresentation:update(plane,profile,options,seed,visible,os.clock())
 end
 -- 正常出击建立检查点；补给和显式调试重建保留任务检查点。
 local function configureFlight(profile,reason)
+    releaseMountPreview(0) -- 已确认补给预览维持到此处，紧接原有兵装重建交接。
     local resupply=reason=="resupply" -- 原生补给必须先完成成功事务。
     local debugLoadout=reason=="debug" -- 调试不伪造补给事务，不保存个人方案。
     -- 补给在原生成功事件返回后即可重建；等待飞控输入开放会把旧挂载多留在起飞画面约一秒。
@@ -509,6 +633,7 @@ local function configureFlight(profile,reason)
     assert(audioReady,audioError or "原生锁定音收尾未完成")
     local mountOK,mountError=updateFixedMount(0,0) -- 原生重建之前释放上一组合，涵盖补给转单挂。
     assert(mountOK,mountError)
+    applyFixedMountSetting()
     -- 第一槽也由核心同步原生编号后初始化；Lua 不再另建一条单挂初始化路径。
     -- 释放发射按键只负责输入收尾；锁定参数由完整原生初始化/切换流程更新。
     releaseWeaponInput(debugLoadout and "debug_loadout"or resupply and "resupply_loadout"or "mission_loadout")
@@ -646,7 +771,7 @@ local function applyDebugLoadout(action)
         assert(action.session==debugSession and action.revision==weaponRevision,"任务或兵装已改变，请重新打开调试页")
         assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,
             "当前任务机体身份已经改变")
-        profile=copyProfile(assert(action.profile,"缺少调试方案"))
+        profile=Profile.withSettings(assert(action.profile,"缺少调试方案"),config)
         Profile.validate(profile,optionsFor(planeId)) -- 再次核对真实购买记录和单挂限制。
         local allowed,why=debugLoadoutReady(plane:GetAddress(),activator:GetAddress()) -- 有活动武器时明确拒绝，不排队偷换。
         assert(allowed,why)
@@ -664,12 +789,13 @@ end
 local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
-    elseif action.type=="select_weapon"then directSelect(action.target)
-    elseif action.type=="debug_loadout"then applyDebugLoadout(action)
+    elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
+    elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             config=configStore:applySettings(config,action)
+            if not isFlight and not supplySession then applyFixedMountSetting()end
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED "..settingsAck)
         end,debug.traceback)
@@ -682,6 +808,12 @@ local function locatePlane()
     if not valid(worldContext)then return nil,""end
     local contextName=worldContext:GetFullName() -- 菜单和简报世界无需反复扫描玩家飞机。
     if not contextName:find("/Game/Maps/Mission/",1,true)and not contextName:find("/Game/Maps/FreeFlight/",1,true)then return nil,""end
+    -- 开场、重启和新世界先沿原生玩家指针取得实例，避免等全局对象扫描周期。
+    local player=game:GetPlayerPawn(instance,0)
+    if valid(player)and player:IsA(StaticFindObject("/Script/Nimbus.PlayerPlane"))
+        and player:GetWorld():GetAddress()==worldContext:GetAddress()then return player,contextName end
+    if os.clock()-lastPlaneScan<=.25 then return nil,contextName end
+    lastPlaneScan=os.clock() -- 仅未被控制器持有的构造阶段需要低频全局搜索。
     for _,candidate in ipairs(FindAllOf("PlayerPlane")or{})do
         local name=candidate:GetFullName()
         if name:find(":PersistentLevel.AcePlayerPawn_",1,true) then
@@ -700,8 +832,12 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=3,language=config.language,game_language=runtimeContext.language,central_hint=config.central_hint,
-        keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="equal_share",
+        management_protocol=5,language=config.language,game_language=runtimeContext.language,
+        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
+        runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
+        ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
+        keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="percentage",
+        mount_warning=previewMountWarning and (mountWarning and mountWarning.." / "..previewMountWarning or previewMountWarning)or mountWarning,
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
@@ -741,6 +877,7 @@ local function checkRuntime(activatedWidget)
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
     if not allowed then
+        releaseMountPreview(0)
         local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
         assert(coreOK,coreErr)
         if panelOpen then setPanel(false)end
@@ -754,7 +891,7 @@ local function checkRuntime(activatedWidget)
         local stale=io.open(root.."ui-actions.json","r")
         if stale then stale:close();assert(os.remove(root.."ui-actions.json"),"Cannot discard stale UI actions")end
     else
-        local coreOK,coreErr=nativeRuntimeGate(1)
+        local coreOK,coreErr=nativeRuntimeGate(runtimeModEnabled and 1 or 0)
         assert(coreOK,coreErr);errorText=nil;lastUIKey=nil
     end
     note("RUNTIME_MODE "..(allowed and "enabled "or "disabled ")..reason.." "..runtimeContext.describe(instance))
@@ -767,6 +904,7 @@ syncRuntime=function(activatedWidget)
     local ok,result=xpcall(function()return checkRuntime(activatedWidget)end,debug.traceback)
     if ok then return result end
     runtimeFailed=true;runtimeAllowed=false;runtimeChanging=true
+    releaseMountPreview(0)
     errorText=tostring(result);note("RUNTIME_CONTEXT_ERROR "..errorText)
     local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
     if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
@@ -785,10 +923,35 @@ syncRuntime=function(activatedWidget)
 end
 local function tick()
     if not valid(instance)then instance=FindFirstOf("NimbusGameInstance")end
+    if not mountOptionsApplied then applyFixedMountSetting()end
     if not syncRuntime()then return end
     if runtimeContext.updateLanguage(os.clock())then
         lastUIKey=nil;note("GAME_TEXT_CULTURE "..runtimeContext.culture)
         nativeLoadout:languageChanged();nativeSupply:languageChanged()
+    end
+    if not runtimeModEnabled then
+        releaseMountPreview(0)
+        -- 停用时只留下重新启用所需的管理入口，不接入页面、武器、HUD 或模型。
+        if not game then game=StaticFindObject("/Script/Engine.Default__GameplayStatics")end
+        local now=os.clock()
+        if now-lastPlaneScan>.25 then
+            local found,world=locatePlane();lastPlaneScan=now
+            if (found and found:GetAddress()or nil)~=planeAddress and panelOpen then setPanel(false)end
+            plane=found;planeAddress=found and found:GetAddress()or nil
+            activator=found and found.PlayerWeaponActivator or nil;isFlight=found~=nil;currentWorld=world
+        end
+        if now-lastActions>=.05 then
+            lastActions=now;drain()
+            local batch=readJson(root.."ui-actions.json")
+            if batch then
+                assert(os.remove(root.."ui-actions.json"),"Cannot acknowledge UI actions")
+                for _,action in ipairs(batch)do applyAction(action)end
+            end
+        end
+        if not lastUIKey or now-lastPublish>=(panelOpen and .1 or 1)then
+            lastPublish=now;lastUIKey="disabled";publishState()
+        end
+        return
     end
     -- 返回主菜单明确结束本轮补给，防止旧事务阻止下一次任务配置。
     if supplySession then
@@ -812,12 +975,13 @@ local function tick()
         local worldContext=instance:GetWorld()
         if not valid(cachedPlane)or not valid(worldContext)or cachedPlane:GetWorld():GetAddress()~=worldContext:GetAddress()then cachedPlane=nil;lastPlaneScan=-1 end
     end
-    if not cachedPlane and os.clock()-lastPlaneScan>.25 then
-        cachedPlane,cachedWorld=locatePlane();lastPlaneScan=os.clock()
+    if not cachedPlane then
+        cachedPlane,cachedWorld=locatePlane()
     end
     local found,world=cachedPlane,cachedWorld
     local address=found and found:GetAddress()or nil
     if address~=planeAddress then
+        releaseMountPreview(0)
         debugSession=debugSession+1;debugError=nil -- 新实例即新调试上下文，旧请求不再有效。
         -- No stale actor pointers or cached loadout cross a world transition.
         local mountOK,mountError=updateFixedMount(0,0) -- 新世界不能继续持有旧模型身份。
@@ -841,6 +1005,7 @@ local function tick()
     end
     local selected=instance:GetSelectedPlaneID()
     if selected~=lastSelected then
+        releaseMountPreview(0)
         local previousPlaneId=planeId -- 页面错误属于引发错误的机体，换机后重新建立适配上下文。
         planeId=selected;lastSelected=selected;currentProfile=profileFor(planeId);previewOptions=nil
         if not isFlight and not supplySession then
@@ -859,12 +1024,15 @@ local function tick()
         local saved=config.profiles[tostring(planeId)] -- 只展示已保存方案，开场期间不推导新的配弹比例。
         if saved then
             previewOptions=previewOptions or optionsFor(planeId)
-            primeFlightHUD(copyProfile(saved),previewOptions)
+            primeFlightHUD(Profile.withSettings(saved,config),previewOptions)
+            mountPreview{owner=instance,instance=instance,planeId=planeId,mode="flight",
+                profile=Profile.withSettings(saved,config),options=previewOptions}
         end
     end
     -- 起飞过场即可预建已确认的显示，不等玩家武器输入重新开放。
     if supplySession and supplySession.menuClosed and supplySession.preview and isFlight and valid(activator)and not errorText then
         primeFlightHUD(supplySession.preview,supplySession.options,true)
+        maintainSupplyPreview()
     end
     -- 若任务成功事件到达时玩家尚未回到世界，沿现有身份发现流程等待实例；不再等待武器输入开关。
     if supplySession and supplySession.success and not errorText then completeSupplyHandoff()end
@@ -893,6 +1061,7 @@ local function tick()
             nativeHud:reset()
             weaponPresentation:reset()
             selectionAudio(0,0) -- 恢复前先隔离原生初始化提示。
+            applyFixedMountSetting()
             native("checkpoint_restore") -- 恢复快照自己的槽数、映射、弹药和冷却。
             instance:SetPlaneAndSWP(planeId,currentProfile.a)
             debugProfileActive=checkpointDebugProfile
@@ -909,6 +1078,7 @@ local function tick()
         observeOriginalSwitch()
         local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 三种 SP 统一更新，单挂由核心明确解绑。
         assert(mountOK,mountError)
+        mountWarning=mountError~=""and mountError or nil -- 模型失败独立降级，不中断弹药、冷却或切换。
     end
     if now-lastHUD>=.1 then
         lastHUD=now
@@ -928,6 +1098,7 @@ local function tick()
             refreshHUD(now)
         end
     end
+    scenePreviewRequested=false -- 先让活动页面提供候选，随后统一补齐 SKIN、EMBLEM 等没有多SP控件的页面。
     if supplySession and supplySession.menuActive and not supplySession.menuClosed and not errorText then
         -- 只在实际补给菜单打开期间扫描控件，不在正常飞行中扫描补给页。
         nativeSupply:pump(pageContext{mode="resupply",now=now,inFlight=isFlight,panelOpen=panelOpen})
@@ -937,18 +1108,21 @@ local function tick()
     end
     nativeStandby:pump(pageContext{mode="saved",now=now,inFlight=isFlight or supplySession~=nil,panelOpen=panelOpen})
     nativeParts:pump(pageContext{mode="saved",now=now,inFlight=isFlight or supplySession~=nil,panelOpen=panelOpen})
+    maintainScenePreview()
     local uiKey=tostring(panelOpen)..":"..requestOpen..":"..requestClose..":"..planeId..":"..tostring(configured)..":"..tostring(errorText)..":"..nativeHud.status..":"..weaponPresentation.status..":"..nativeLoadout.status..":"..nativeSupply.status..":"..tostring(internal)..":"..tostring(inputNotice)
     if uiKey~=lastUIKey or now-lastPublish>=(panelOpen and .1 or 1)then
         lastPublish=now;lastUIKey=uiKey;publishState()
     end
 end
 RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,selectedPlane,selectedWeapon)
+    if not runtimeModEnabled then return end
     if not syncRuntime()then return end
     nativeLoadout:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
     nativeSupply:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
 end,function()end)
 -- 原生页面可能复用同一对象；真实输入激活事件作为新一轮准备的边界。
 RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,function(ctx,enabled)
+    if not runtimeModEnabled then return end
     if runtimeChanging then return end
     if not syncRuntime(enabled:get()and ctx:get()or nil)then return end
     nativeLoadout:onControlChanged(ctx,enabled)
@@ -958,7 +1132,8 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
     local ok,err=xpcall(function()
         assert(IsInGameThread(),"菜单接入事件不在游戏线程")
         if instance:GetSelectedPlaneID()~=planeId then return end -- 机体改变交给主循环先更新身份。
-        local owner=ctx:get() -- 只接入已核对的三个页面，不枚举其他菜单。
+        scenePreviewRequested=false
+        local owner=ctx:get() -- 控件仍只接入登记页面；场景预览覆盖同一机库的其他页面。
         if not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarWeaponWidget"))then
             nativeLoadout:activate(owner,pageContext{mode="preparation",now=os.clock(),inFlight=false,panelOpen=false})
         elseif not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarReviewWidget"))then
@@ -969,18 +1144,22 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
             and owner:IsA(StaticFindObject("/Script/Nimbus.MissionResupplyWidget"))then
             nativeSupply:activate(owner,pageContext{mode="resupply",now=os.clock(),inFlight=isFlight,panelOpen=false})
         end
+        maintainScenePreview() -- 页面激活事件内完成兜底，避免SKIN/EMBLEM先绘制一帧原生状态。
     end,debug.traceback)
     if not ok then errorText=tostring(err);note("NATIVE_MENU_ACTIVATION_ERROR "..errorText);releaseRuntimeOwnership()end
 end)
 -- These reflected entry points cover normal dynamic mission events. Their
 -- checkpoint/resupply coverage remains experimental and is logged explicitly.
 RegisterHook("/Script/Nimbus.Mission:OnStartNextPhaseHandler",function()end,function()
+    if not runtimeModEnabled then return end
     if not syncRuntime()then return end
     if configured then checkpointPending=true end
 end)
 RegisterHook("/Script/Nimbus.PlayerPlane:RestoreWeaponFromCheckpoint",function()end,function(ctx)
+    if not runtimeModEnabled then return end
     if not syncRuntime()then return end
     if configured and valid(plane)and ctx:get():GetAddress()==plane:GetAddress()then
+        releaseMountPreview(0) -- 重试不能继承补给候选的视觉上下文。
         -- 检查点重试中止尚未完成的返航草稿，恢复已捕获方案。
         if supplySession then nativeSupply:reset{clearError=false,releaseInput=false};ownSupplyInput(false);supplySession=nil;note("RESUPPLY_CANCELLED_CHECKPOINT")end
         restorePending=true
@@ -989,7 +1168,7 @@ end)
 -- 生命周期失败明确停用武器修改；不能忽略异常后继续应用旧方案。
 local function supplyHook(callback)
     return function(...)
-        if runtimeChanging or errorText then return end
+        if not runtimeModEnabled or runtimeChanging or errorText then return end
         local args={...}
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"补给事件不在游戏线程")
@@ -1048,7 +1227,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.0.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.2.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
@@ -1092,6 +1271,7 @@ LoopInGameThreadWithDelay(20,function()
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);note("ERROR "..errorText)
+            releaseMountPreview(0)
             if runtimeChanging or not runtimeAllowed then
                 -- 模式识别/清理失败只保留诊断，绝不沿用上次单人许可。
                 runtimeAllowed=false;runtimeChanging=false;runtimeReason="context_error"

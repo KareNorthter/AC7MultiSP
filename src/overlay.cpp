@@ -51,7 +51,9 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
+constexpr int managementProtocol=5; // 新管理参数必须与游戏线程成套安装。
+bool draftModEnabled=true,draftFixedMountEnabled=true;
+int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
 int managementKey=VK_F6; // 默认 F6；已校验状态会提供用户显式保存的管理键。
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
@@ -109,7 +111,7 @@ void togglePanel(bool open) {
     enqueue({{"type",open?"open":"close"}});
     if(open) {
         notice.clear();captureSlot=-1;managementError.clear();focusManagement=true;
-        if(state.value("management_protocol",0)==3) {
+        if(state.value("management_protocol",0)==managementProtocol) {
             try {loadManagementDraft();}
             catch(const std::exception& error){managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());}
         }
@@ -261,7 +263,7 @@ bool bindingsValid() {
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
-    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==3
+    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
         &&state.value("direct_selection_available",false);
 }
 
@@ -278,9 +280,16 @@ void captureKeyboardKey(int key) {
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
-    centralHint=state.at("central_hint").get<bool>();
-    if(state.at("ammo_mode").get<std::string>()!="equal_share")
-        throw std::runtime_error("三 SP 仅支持按数量均分弹药");
+    draftModEnabled=state.at("mod_enabled").get<bool>();
+    draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
+        throw std::runtime_error("SP 弹药百分比必须为整数");
+    draftAmmoPercentTwo=state.at("ammo_percent_two").get<int>();
+    draftAmmoPercentThree=state.at("ammo_percent_three").get<int>();
+    if(draftAmmoPercentTwo<50||draftAmmoPercentTwo>100||draftAmmoPercentThree<33||draftAmmoPercentThree>100)
+        throw std::runtime_error("SP 弹药百分比超出范围");
+    state.at("runtime_mod_enabled").get<bool>();
+    state.at("runtime_fixed_mount_enabled").get<bool>();
     const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
     if(keys.size()!=4)throw std::runtime_error("Management keyboard binding data is invalid");
     for(int slot=0;slot<4;++slot)draftKeys[slot]=keys.at(slot).get<int>();
@@ -309,7 +318,7 @@ void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
     ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),state.value("plane_name",std::string()).c_str());
     ImGui::TextWrapped("%s",tr("调试：任务内重配 SP。按勾选顺序（从上到下）分配 SP1 / SP2 / SP3。","Debug: rebuild SP loadout in this mission. Checked weapons become SP1 / SP2 / SP3 from top to bottom."));
-    ImGui::TextWrapped("%s",tr("应用后 SP 按所选数量均分并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills and equally divides SP ammunition, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
+    ImGui::TextWrapped("%s",tr("应用后 SP 按已保存的管理比例配弹并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills SP ammunition using saved management percentages, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
     const bool available=debug.value("available",false)&&pendingDebug==0; // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
     const int count=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true)); // 实际选择数量。
@@ -377,8 +386,9 @@ void refreshLogs() {
 // 保存按钮只提交完整参数；收到游戏线程的请求回执后才显示保存成功。
 void saveManagementSettings() {
     pendingSave=++saveRequest;
-    enqueue({{"type","settings"},{"management_protocol",3},{"request",pendingSave},{"language",draftLanguage},
-        {"central_hint",centralHint},{"keyboard_keys",draftKeys}});
+    enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
+        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
+        {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys}});
     notice=tr("正在保存…","Saving...");
 }
 
@@ -393,9 +403,9 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.0.0 管理###DualSPManagement","AC7MultiSP 2.0.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.2.2 管理###DualSPManagement","AC7MultiSP 2.2.2 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(state.value("management_protocol",0)!=3||!managementError.empty()) {
+    if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
@@ -419,10 +429,22 @@ void drawPanel() {
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
             if(requestedTab==0)ImGui::SetKeyboardFocusHere();
-            ImGui::Checkbox(tr("中央提示：常驻当前武器简称###Central","Persistent current weapon abbreviation###Central"),&centralHint);
-            ImGui::TextWrapped("%s",tr("关闭中央常驻提示后，恢复游戏原本的短暂武器切换提示。","Disabling the persistent hint restores the game's temporary weapon switch message."));
-            ImGui::TextWrapped("%s",tr("原游戏循环切换键继续可用。常规兵装选择使用原生出击或补给页，任务测试可使用独立的调试页。","The original cycling key remains available. Use departure or resupply for regular loadouts, or the separate Debug page for mission testing."));
-            ImGui::TextWrapped("%s",tr("自动均分：单挂完整载量，双挂各 1/2，三挂各 1/3。先计入部件，再向下取整；正载量至少一发。","Automatic allocation: full stock for one SP, 1/2 each for two, 1/3 each for three. Parts apply first; round down, with at least one round for positive stock."));
+            ImGui::Checkbox(tr("启用 AC7MultiSP###ModEnabled","Enable AC7MultiSP###ModEnabled"),&draftModEnabled);
+            ImGui::TextWrapped("%s",tr("总开关保存后重启游戏生效。关闭后恢复原生兵装流程，仍可打开管理页重新启用。","Save and restart the game to apply the master switch. When disabled, native loadouts are restored; management remains available to enable the mod again."));
+            ImGui::SetNextItemWidth(300);
+            ImGui::SliderInt(tr("双 SP 各自弹药量###AmmoTwo","Ammo per SP with two SPs###AmmoTwo"),&draftAmmoPercentTwo,50,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
+            ImGui::SetNextItemWidth(300);
+            ImGui::SliderInt(tr("三 SP 各自弹药量###AmmoThree","Ammo per SP with three SPs###AmmoThree"),&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
+            ImGui::TextWrapped("%s",tr("默认双 SP 各 50%、三 SP 各 33%；单 SP 为 100%。先计入部件，再按百分比向上取整。保存后于下一次出击、补给确认或调试应用时配弹。","Defaults: 50% per SP with two SPs, 33% with three, 100% with one. Parts apply first, then the percentage is rounded up. Saved values apply at the next departure, resupply confirmation or debug loadout application."));
+            ImGui::Checkbox(tr("多 SP 武器模型同时挂载（实验性）###FixedMount","Simultaneous multi-SP weapon models (experimental)###FixedMount"),&draftFixedMountEnabled);
+            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。仅适配原版 F-15E、F-35C、Su-30SM；关闭或挂载失败时回退到原生单 SP 模型。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Supports the original F-15E, F-35C and Su-30SM. Disabled or failed mounting falls back to native single-SP models."));
+            ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
+            ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
+            if(state.contains("mount_warning"))ImGui::TextWrapped("%s",state.at("mount_warning").get<std::string>().c_str());
+            if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
+                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，请重启游戏。","Master switch saved. Restart the game to apply."));
+            if(state.at("fixed_mount_enabled").get<bool>()!=state.at("runtime_fixed_mount_enabled").get<bool>())
+                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("模型开关已保存，等待重新出击、任务/检查点重试、补给确认或调试换装。","Model switch saved. Awaiting a sortie, mission/checkpoint retry, confirmed resupply or debug loadout."));
             ImGui::EndTabItem();
         }
         if(beginManagementTab(tr("按键###Bindings","Bindings###Bindings"),1)) {
@@ -478,7 +500,7 @@ void drawPanel() {
     if(ImGui::Button(tr("保存设置","Save settings"),{180,36}))saveManagementSettings();
     ImGui::EndDisabled();ImGui::SameLine();
     if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
-    ImGui::TextWrapped("%s",tr("开关和键位保存后生效。弹药由所选 SP 数量决定；当前任务不会因管理设置变化而重新配弹。关闭会丢弃未保存修改。","Saved switches and keys take effect after saving. Ammunition follows the selected SP count; management changes do not refill the current mission. Closing discards unsaved changes."));
+    ImGui::TextWrapped("%s",tr("语言和键位保存后生效；总开关需重启游戏，模型开关在下次武器重建时生效。修改比例不会立即补充当前弹药。关闭会丢弃未保存修改。","Language and bindings apply after saving; the master switch requires a game restart, and the model switch applies at the next weapon rebuild. Percentage changes do not immediately refill ammunition. Closing discards unsaved changes."));
     ImGui::TextWrapped(tr("%s 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","%s or controller Back + Y opens/closes management. Opening during a mission pauses the game."),keyLabel(managementKey).c_str());
     // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
     const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
@@ -500,13 +522,13 @@ void refreshState() {
     static uint64_t consumedGeneration{}; // 一份状态只消费一次，不在每帧重复复制。
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
-        const bool wasManagement=state.value("management_protocol",0)==3;
+        const bool wasManagement=state.value("management_protocol",0)==managementProtocol;
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
         }
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
-        if(state.value("management_protocol",0)==3) {
+        if(state.value("management_protocol",0)==managementProtocol) {
             const auto& hotkey=state.at("management_key"); // Lua/UI 成套部署；缺少新字段明确报告。
             if(!hotkey.is_number_integer())throw std::runtime_error("Management hotkey is not an integer");
             const int checkedManagementKey=hotkey.get<int>(); // 完整校验后才替换窗口消息使用的键。
@@ -530,7 +552,7 @@ void refreshState() {
         const int request=state.value("request_open",0),close=state.value("request_close",0);
         if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
-        if(!wasManagement&&panel&&state.value("management_protocol",0)==3)loadManagementDraft();
+        if(!wasManagement&&panel&&state.value("management_protocol",0)==managementProtocol)loadManagementDraft();
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
@@ -675,10 +697,12 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     }
 }
 
-// 四键与均分协议的具名握手，阻止旧 UI 与新 Lua 混装。
+// 保留已有具名握手；新控制器同时要求第 5 版参数能力。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
-// 独立能力标记，旧管理协议和用户配置不迁移；Lua 要求此扩展存在。
+// 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
+extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
+// 调试换装保留独立能力标记；Lua 要求此扩展存在。
 extern "C" __declspec(dllexport) int dualsp_debug_loadout_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {

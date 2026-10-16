@@ -37,14 +37,36 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-config.profiles['10']={a=2,b=1,c=0,ratio=1/3};currentStore:save(config)
+assert(config.management_revision==5 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
+config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=3,language='en',central_hint=false,keyboard_keys={49,50,51,52}}
+local action={request=1,management_protocol=5,language='en',mod_enabled=false,fixed_mount_enabled=false,
+    ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52}}
 local nextConfig=currentStore:applySettings(config,action)
 assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
+assert(not nextConfig.mod_enabled and not nextConfig.fixed_mount_enabled and nextConfig.central_hint==nil)
+assert(nextConfig.ammo_percent_two==75 and nextConfig.ammo_percent_three==66 and nextConfig.profiles['10'].ratio==.82)
 assert(readText(fixture..'current-profiles.previous.json')==original)
-action.keyboard_keys={49,49,51,52}
 local saved=readText(fixture..'current-profiles.json')
+-- 无效协议、废弃字段和百分比不能部分写盘，也不能改写当前配置。
+for _,bad in ipairs({{'management_protocol',3},{'central_hint',false},{'mod_enabled',1},
+    {'fixed_mount_enabled',1},{'ammo_percent_two',49},{'ammo_percent_two',101},
+    {'ammo_percent_three',32},{'ammo_percent_three',101},{'ammo_percent_three',33.5}})do
+    local previous=action[bad[1]];action[bad[1]]=bad[2]
+    rejects(function()currentStore:applySettings(nextConfig,action)end)
+    assert(readText(fixture..'current-profiles.json')==saved and nextConfig.profiles['10'].ratio==.82)
+    action[bad[1]]=previous
+end
+for _,values in ipairs({{50,33},{100,100}})do
+    action.ammo_percent_two=values[1];action.ammo_percent_three=values[2]
+    nextConfig=currentStore:applySettings(nextConfig,action)
+    assert(nextConfig.ammo_percent_two==values[1] and nextConfig.ammo_percent_three==values[2])
+    assert(nextConfig.profiles['10'].ratio==.82)
+end
+action.ammo_percent_two=75;action.ammo_percent_three=66
+saved=readText(fixture..'current-profiles.json')
+action.keyboard_keys={49,49,51,52}
 rejects(function()currentStore:applySettings(nextConfig,action)end,'不能重复')
 assert(readText(fixture..'current-profiles.json')==saved)
 action.keyboard_keys={49,50,51,52};action.language='zh';writeFail=true
@@ -86,21 +108,39 @@ local migrated=store('migration-'):load()
 assert(migrated.schema==2 and migrated.profiles['9'].c==-1 and migrated.profiles['9'].ratio==.5)
 assert(migrated.management_key==119 and migrated.keyboard_keys[4]==52)
 assert(readText(fixture..'migration-profiles.before-three-sp.json')==oldBytes)
+assert(readText(fixture..'migration-profiles.before-management-options.json')==oldBytes)
+-- 管理第 3/4 版的旧三挂比例迁移为 33%，分别保留原始字节。
+for _,revision in ipairs({3,4})do
+    local prefix='revision'..revision..'-'
+    local legacy={schema=2,management_revision=revision,profiles={['10']={a=2,b=0,c=1,ratio=1/3}},
+        language='en',central_hint=false,keyboard_keys={49,50,51,52},management_key=117}
+    writeJson(fixture..prefix..'profiles.json',legacy)
+    local bytes=readText(fixture..prefix..'profiles.json')
+    local upgraded=store(prefix):load()
+    assert(upgraded.management_revision==5 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
+    assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
+    assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
+    assert(not readText(fixture..prefix..'profiles.before-three-sp.json'))
+    assert(store(prefix):load().profiles['10'].ratio==.33) -- 再加载不重复迁移或覆盖永久备份。
+    assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
+end
 old.keyboard_keys={49,50,52};writeJson(fixture..'conflict-profiles.json',old)
 local conflict=readText(fixture..'conflict-profiles.json')
 rejects(function()store('conflict-'):load()end,'旧键位已占用 4')
 assert(readText(fixture..'conflict-profiles.json')==conflict)
 assert(not readText(fixture..'conflict-profiles.before-three-sp.json'))
+assert(not readText(fixture..'conflict-profiles.before-management-options.json'))
 -- 旧响应、原生拒绝均不能被当作成功；失败后请求号继续递增。
 local replyMode='ok';local requestCount=0
 local client=Bridge.new{root=fixture,profile=Profile,readJson=readJson,execute=function()
     requestCount=requestCount+1
     local command=readText(fixture..'native-command.txt')
-    assert(command=='switch 10 20 1 1.250000000 3 3 2 0 1 '..requestCount,command)
+    assert(command=='switch 10 20 1 1.250000000 4 3 2 0 1 '..requestCount..' 0.67',command)
     writeJson(fixture..'native-status.json',{request=replyMode=='stale' and 0 or requestCount,
         ok=replyMode~='rejected',error='原生拒绝',active=1})
 end}
-local command={op='switch',plane=16,activator=32,target=1,time=1.25,profile={a=2,b=0,c=1}}
+local command={op='switch',plane=16,activator=32,target=1,time=1.25,profile={a=2,b=0,c=1,ratio=.67}}
 assert(client:request(command).active==1)
 replyMode='stale';rejects(function()client:request(command)end,'does not match')
 replyMode='rejected';rejects(function()client:request(command)end,'原生拒绝')
@@ -109,7 +149,8 @@ replyMode='ok';assert(client:request(command).request==4)
 local function deps(mode)
     return {mode=mode,note=function()end,translate=function(zh)return zh end,keyboardNavigation=function()end,
         commit=function()end,takeoff=function()end,preparationAction=function()end,
-        confirmSound=function()end,weaponIcon=function()end,partsAmmoPreview=function()end}
+        confirmSound=function()end,weaponIcon=function()end,partsAmmoPreview=function()end,
+        ammoSettings=function()return {ammo_percent_two=50,ammo_percent_three=33}end}
 end
 for _,mode in ipairs({'preparation','resupply','standby','parts'})do
     local page=Page.new(deps(mode))
@@ -124,5 +165,273 @@ missing=deps('parts');missing.partsAmmoPreview=nil
 rejects(function()Page.new(missing)end,'缺少只读弹药')
 missing=deps('preparation');missing.mode='unknown'
 rejects(function()Page.new(missing)end,'未知原生页面模式')
+missing=deps('preparation');missing.ammoSettings=nil
+rejects(function()Page.new(missing)end,'缺少弹药比例设置接口')
+-- 只构造原生 YES 已交接的缓存，检查页面生命周期；不模拟起飞成功或引擎挂载。
+local Flow=dofile(script_dir..'/loadout_flow.lua')
+local options={{code='6aam',owned=true,available=true,max=30},
+    {code='sffs',owned=true,available=true,max=47},{code='tls',owned=true,available=true,max=11}}
+local settings={ammo_percent_two=50,ammo_percent_three=33}
+local confirmed={a=2,b=0,c=1,ratio=.33}
+local world={IsValid=function()return true end,GetAddress=function()return 900 end}
+local instance={IsValid=function()return true end,GetWorld=function()return world end}
+local owner={enabled=false,visible=false,IsValid=function()return true end,GetAddress=function()return 321 end,
+    IsVisible=function(self)return self.visible end,IsEnableControl=function(self)return self.enabled end}
+local releases,previews,committed={}, {}, {}
+local previewFails,releaseFails=false,false
+local function previewDeps(mode)
+    local result=deps(mode)
+    result.ammoSettings=function()return settings end
+    result.commit=function(plane,profile)committed[#committed+1]={plane=plane,profile=profile}end
+    result.mountPreview=function(context)
+        assert(context.owner==owner and context.instance==instance and context.planeId==10 and context.mode==mode)
+        assert(context.ownerAddress==321,'预览回调必须携带可供异常/禁用归还的 owner 地址')
+        assert(context.options==options)
+        previews[#previews+1]=Profile.copy(context.profile)
+        if previewFails then error('模拟模型预览失败')end
+    end
+    result.releaseMountPreview=function(address)
+        releases[#releases+1]=address
+        assert(address==321,'页面只能释放自己取得的预览，不能全局释放其他页面')
+        if releaseFails then error('模拟模型归还失败')end
+    end
+    return result
+end
+local function previewCache()
+    local flow=Flow.new(confirmed,options,nil,'resupply',function(zh)return zh end,function()return settings end)
+    flow.stage='review';flow.cursor=1
+    return {owner=owner,instance=instance,planeId=10,world=900,flow=flow,mountOwner=321,
+        handedOff=true,moved={},masked={},added={},texts={}}
+end
+local context={instance=instance,planeId=10,getProfile=function()return confirmed end,
+    getOptions=function()return options end,now=1,inFlight=true,panelOpen=false}
+local supplyPage=Page.new(previewDeps('resupply'))
+local supplyCache=previewCache();supplyPage.cache=supplyCache
+local transaction={planeId=10,profile=Profile.copy(confirmed),phase=901,finished=true}
+supplyPage.transaction=transaction
+-- 确认后的比例冻结；隐藏页面和之后修改管理设置均不能闪回旧任务方案。
+settings.ammo_percent_three=66
+supplyPage:pump(context)
+assert(supplyPage.status=='awaiting_success'and supplyPage.cache==supplyCache and supplyPage.transaction==transaction)
+assert(#previews==1 and previews[1].ratio==.33 and #releases==0 and #committed==0)
+local hudPreview=supplyPage:previewSupply();hudPreview.a=0
+assert(supplyPage.transaction.profile.a==2 and #committed==0)
+-- 单独的模型错误只归还模型；文字/输入/补给确认事务继续等待真实成功事件。
+previewFails=true;supplyPage:pump(context)
+assert(not supplyPage.error and supplyPage.status=='awaiting_success'and supplyPage.transaction==transaction)
+assert(supplyPage.cache==supplyCache and #releases==1 and #committed==0)
+previewFails=false;supplyPage:pump(context)
+assert(#previews==3 and supplyCache.mountOwner==321)
+local releaseCount=#releases
+local final=supplyPage:completeSupply()
+assert(final.a==2 and final.b==0 and final.c==1 and final.ratio==.33)
+assert(#committed==1 and committed[1].plane==10 and committed[1].profile.ratio==.33)
+assert(not supplyPage.cache and not supplyPage.transaction and supplyPage.status=='committed')
+assert(#releases==releaseCount,'成功交接后的模型应保留到 main 即将重建兵装时释放')
+-- reset 即使归还接口失败，也必须清空页面缓存与事务，并保持 owner 限定。
+supplyPage.cache=previewCache();supplyPage.transaction=transaction;releaseFails=true
+supplyPage:reset{clearError=false,releaseInput=false}
+assert(not supplyPage.cache and not supplyPage.transaction and supplyPage.status=='waiting')
+assert(#releases==releaseCount+1 and releases[#releases]==321)
+releaseFails=false;settings.ammo_percent_three=33
+-- 只读页停用时归还本页，F6 暂借输入时继续保留，避免覆盖当前活动的选装页。
+for _,mode in ipairs({'standby','parts'})do
+    local readonly=Page.new(previewDeps(mode));local c=previewCache()
+    c.handedOff=false;c.controlEnabled=false;owner.visible=true;readonly.cache=c
+    context.inFlight=false;context.panelOpen=true
+    local beforeRelease=#releases;local beforePreview=#previews
+    readonly:pump(context)
+    assert(#releases==beforeRelease and #previews==beforePreview and readonly.cache==c)
+    context.panelOpen=false;readonly:pump(context)
+    assert(not readonly.error and readonly.cache==c and #releases==beforeRelease+1 and #previews==beforePreview)
+    readonly:reset{releaseInput=false}
+end
+-- 弹药行真实层级：根 Canvas -> 内 Canvas -> HorizontalBox -> Overlay -> 文字。
+-- 只提取实际页面的内部构建/归还函数，不增加产品接口，也不模拟整场原生选择流程。
+local function closure(fn,target,seen)
+    seen=seen or {};if seen[fn]then return end;seen[fn]=true
+    for i=1,100 do
+        local name,value=debug.getupvalue(fn,i);if not name then break end
+        if name==target then return value end
+        if type(value)=='function' then local found=closure(value,target,seen);if found then return found end end
+    end
+end
+local function copy(value)
+    if type(value)~='table' then return value end
+    local result={};for key,item in pairs(value)do result[key]=copy(item)end;return result
+end
+local classes={}
+local function class(name)
+    if not classes[name]then classes[name]={name=name,IsValid=function()return true end,
+        GetFullName=function(self)return 'Class /Script/UMG.'..self.name end}end
+    return classes[name]
+end
+StaticFindObject=function(path)return class(path:match('%.([^.:]+)$')or path)end
+FName=function(value)return value end
+local serial=0
+local function widget(kind,name)
+    serial=serial+1
+    local result={kind=kind,name=name,address=serial,visibility=0,Slots={items={}},
+        Font={Size=20,FontObject=class('Font')},Text=name,bAutoWrapText=false,WrapTextAt=0,
+        Justification=0,LineHeightPercentage=1,GlowColor={},bUseGlobalGlowColor=false}
+    function result:IsValid()return true end
+    function result:GetAddress()return self.address end
+    function result:GetClass()return class(self.kind)end
+    function result:GetFullName()return self.kind..' '..self.name end
+    function result:GetFName()return {ToString=function()return self.name end}end
+    function result:IsA(expected)
+        return expected.name==self.kind or expected.name=='PanelWidget'and
+            (self.kind=='CanvasPanel'or self.kind=='HorizontalBox'or self.kind=='Overlay')
+    end
+    function result.Slots:ForEach(callback)
+        for index,slot in ipairs(self.items)do callback(index,{get=function()return slot end})end
+    end
+    function result:AddChild(child)
+        local slot={Parent=self,Content=child,position={X=0,Y=0},size={X=100,Y=32},
+            anchors={Minimum={X=0,Y=0},Maximum={X=0,Y=0}},alignment={X=0,Y=0},z=0,bAutoSize=false,
+            Padding={Left=0,Top=0,Right=0,Bottom=0},HorizontalAlignment=0,VerticalAlignment=0,
+            Size={Value=1,SizeRule=0}}
+        function slot:IsValid()return true end
+        function slot:GetClass()return class(self.Parent.kind=='CanvasPanel'and 'CanvasPanelSlot'or self.Parent.kind..'Slot')end
+        function slot:GetFullName()return self:GetClass():GetFullName()end
+        for _,field in ipairs({'Position','Size','Anchors','Alignment','ZOrder','AutoSize'})do
+            local stored=({Position='position',Size='size',Anchors='anchors',Alignment='alignment',ZOrder='z',AutoSize='bAutoSize'})[field]
+            slot['Get'..field]=function(self)return copy(self[stored])end
+            slot['Set'..field]=function(self,value)self[stored]=copy(value)end
+        end
+        child.Slot=slot;self.Slots.items[#self.Slots.items+1]=slot;return slot
+    end
+    function result:RemoveChild(child)
+        for index,slot in ipairs(self.Slots.items)do
+            if slot.Content==child then table.remove(self.Slots.items,index);child.Slot=nil;return true end
+        end
+        return false
+    end
+    function result:SetVisibility(value)self.visibility=value end
+    function result:GetVisibility()return self.visibility end
+    function result:SetFont(value)self.Font=copy(value)end
+    function result:SetGlowColor(value)self.GlowColor=value end
+    function result:SetUseGlobalGlowColor(value)self.bUseGlobalGlowColor=value end
+    function result:SetText(value)self.Text=value end
+    function result:SetColorAndOpacity(value)self.ColorAndOpacity=value end
+    return result
+end
+StaticConstructObject=function(kind,tree,name)return widget(kind.name,name)end
+local page=Page.new(deps('preparation'))
+assert(closure(page.pump,'api'))()
+local buildRow=assert(closure(page.pump,'preparationAmmoRow'))
+local restoreVisual=assert(closure(page.reset,'restoreVisual'))
+local outside=widget('CanvasPanel','AmmoTable')
+local source=widget('UserWidget','WeaponsSP1')
+local root=widget('CanvasPanel','CanvasPanel_0')
+source.WidgetTree={RootWidget=root,IsValid=function()return true end}
+local nativeInner=widget('CanvasPanel','CanvasPanel_2')
+root:AddChild(nativeInner):SetSize({X=158.258255,Y=38})
+local originals={}
+for _,name in ipairs({'WeaponsName','WeaponsAmmo'})do
+    local horizontal=widget('HorizontalBox',name..'Horizontal')
+    local outerSlot=nativeInner:AddChild(horizontal)
+    outerSlot:SetPosition({X=name=='WeaponsName'and 0 or 58,Y=0})
+    local overlay=widget('Overlay',name..'Overlay');horizontal:AddChild(overlay)
+    local text=widget('TextBlock',name);overlay:AddChild(text);originals[name]=text
+end
+local originalSlot=outside:AddChild(source)
+originalSlot:SetPosition({X=217,Y=60});originalSlot:SetSize({X=164,Y=38})
+local function context()
+    return {owner={WidgetTree={RootWidget=outside}},added={},moved={},masked={},texts={},
+        tint={SpecifiedColor={R=.4,G=.65,B=1,A=1},ColorUseRule=0}}
+end
+local c=context();local row=buildRow(c,source)
+local inner=row.name.Slot.Parent;local panel=inner.Slot.Parent
+assert(inner==row.count.Slot.Parent and inner~=nativeInner,'名称/数量必须共用独立的内层 Canvas')
+assert(inner.Slot:GetSize().X==158.258255 and inner.Slot:GetSize().Y==38)
+assert(panel.Slot.Parent==outside and panel.Slot:GetPosition().X==217 and panel.Slot:GetPosition().Y==60)
+assert(row.name.Slot:GetPosition().X==0 and row.count.Slot:GetPosition().X==58)
+assert(row.name.Slot:GetSize().X==100 and row.count.Slot:GetSize().Y==32 and not row.name.Slot.bAutoSize)
+assert(row.name.Font.Size==20 and row.count.Font.Size==20,'弹药行保留原生字号')
+assert(source.Slot.Parent~=outside and source.Slot.Parent.visibility==1,'原行须隔离原生高亮')
+assert(originals.WeaponsName.Slot.Parent.kind=='Overlay','不能移动文字模板或破坏包装层')
+restoreVisual(c)
+assert(source.Slot.Parent==outside and source.Slot:GetPosition().Y==60 and #outside.Slots.items==1)
+-- 无关 Canvas 不能冒充行根；失败后同样归还已创建控件。
+local savedParent=nativeInner.Slot.Parent;nativeInner.Slot.Parent=outside
+c=context();rejects(function()buildRow(c,source)end,'不属于行根')
+restoreVisual(c);nativeInner.Slot.Parent=savedParent
+assert(source.Slot.Parent==outside and #outside.Slots.items==1)
 ''')
-print('配置保存/迁移/失败隔离、协议请求匹配、四页面具名接口通过')
+main_source = (ROOT / 'dist/DualSP/Scripts/main.lua').read_text(encoding='utf-8')
+lua.globals().scene_preview_source = main_source[main_source.index('local scenePreviewRequested='):main_source.index('-- 补给开始先接管原生输入')]
+lua.execute(r'''
+-- 执行 main 的真实场景协调代码，复现页面退出、SKIN 无适配器以及补给页销毁。
+local Profile=dofile(script_dir..'/loadout_profile.lua')
+local function object(address)
+    return {IsValid=function()return true end,GetAddress=function()return address end}
+end
+local world=object(900)
+local function inWorld(address)local result=object(address);result.GetWorld=function()return world end;return result end
+local model=inWorld(200);model.PlayerWeaponActivator=object(201)
+local instance=inWorld(100);instance.HangarManager=object(101);instance.HangarManager.LoadedPlayerPlane=model
+instance.GetSelectedPlaneID=function()return 128 end
+local page=inWorld(321)
+local options={{max=30},{max=47},{max=11}}
+local profile={a=0,b=1,c=-1,ratio=.5}
+local calls,lease,fail={},nil,false
+local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
+    instance=instance,planeId=128,plane=model,activator=model.PlayerWeaponActivator,catalogue={['128']={code='su30sm'}},Profile=Profile,
+    valid=function(o)return o and o:IsValid()end,isSelectedPlane=function()return true end,
+    profileFor=function()return profile end,optionsFor=function()return options end,
+    previewWarning=function()end,nativeMountPreview=function(owner,plane,activator,mode,a,b,c,aa,ab,ac)
+        if fail then error('模拟模型失败')end
+        calls[#calls+1]={owner=owner,plane=plane,mode=mode,a=a,aa=aa,ab=ab}
+        if mode==0 then if owner==0 or owner==lease then lease=nil end
+        elseif mode~=4 then lease=owner end
+        return true,''
+    end}, {__index=_G})
+local coordinator=assert(load(scene_preview_source..[[
+return {preview=mountPreview,release=releaseMountPreview,scene=maintainScenePreview,supply=maintainSupplyPreview,
+beginTick=function()scenePreviewRequested=false end}
+]],'场景预览回归','t',env))()
+coordinator.preview{owner=page,ownerAddress=321,instance=instance,planeId=128,mode='preparation',profile=profile,options=options}
+assert(lease==100 and calls[#calls].aa==15 and calls[#calls].ab==24)
+coordinator.release(321);assert(lease==100,'退出页面不能释放机库展示机')
+local before=#calls
+coordinator.scene();assert(#calls==before,'本轮活动页候选必须优先')
+coordinator.beginTick();coordinator.scene()
+assert(lease==100 and calls[#calls].mode==1,'SKIN等无页面适配器时仍显示已存方案')
+-- 换涂装生成新展示机时使用当前LoadedPlayerPlane，不能沿用旧地址。
+local nextModel=inWorld(202);nextModel.PlayerWeaponActivator=object(203)
+instance.HangarManager.LoadedPlayerPlane=nextModel
+coordinator.beginTick();coordinator.scene();assert(calls[#calls].plane==202)
+coordinator.preview{owner=page,instance=instance,planeId=128,mode='resupply',profile=profile,options=options}
+page.IsValid=function()return false end
+coordinator.supply();assert(calls[#calls].mode==4 and calls[#calls].owner==0 and calls[#calls].plane==200,
+    '起飞过渡只能刷新已校验的任务实例，不再解引用补给页')
+coordinator.release(0);before=#calls;coordinator.supply();assert(#calls==before,'重建后不能继续刷新旧预览')
+coordinator.preview{instance=instance,planeId=128,mode='flight',profile=profile,options=options}
+assert(calls[#calls].mode==3 and calls[#calls].plane==200,'开场只提供视觉方案')
+fail=true;coordinator.beginTick();coordinator.scene();assert(not env.errorText,'视觉异常不能变为兵装错误')
+fail=false;env.runtimeFixedMountEnabled=false
+coordinator.preview{instance=instance,planeId=128,mode='flight',profile=profile,options=options}
+assert(not lease and calls[#calls].mode==0,'禁用必须归还整个场景')
+''')
+lua.globals().locate_plane_source = main_source[main_source.index('local function locatePlane()'):main_source.index('local function publishState()')]
+lua.execute(r'''
+-- 玩家已生成时不再等待250ms全局扫描；未持有玩家时仍限制扫描频率。
+local scans=0
+local world={IsValid=function()return true end,GetAddress=function()return 900 end,
+    GetFullName=function()return 'World /Game/Maps/Mission/ms06.ms06' end}
+local player={IsValid=function()return true end,IsA=function()return true end,GetWorld=function()return world end}
+local env=setmetatable({instance={GetWorld=function()return world end},lastPlaneScan=1,
+    valid=function(o)return o and o:IsValid()end,game={GetPlayerPawn=function()return player end},
+    StaticFindObject=function()return {}end,FindAllOf=function()scans=scans+1;return {}end,
+    os={clock=function()return 1.01 end}}, {__index=_G})
+local locate=assert(load(locate_plane_source..'return locatePlane','开场玩家定位','t',env))()
+assert(locate()==player and scans==0,'直接玩家路径不受全局扫描节流限制')
+env.game.GetPlayerPawn=function()return nil end
+assert(locate()==nil and scans==0,'构造阶段不能每帧全局扫描')
+env.os.clock=function()return 1.5 end
+assert(locate()==nil and scans==1 and env.lastPlaneScan==1.5)
+world.GetFullName=function()return 'World /Game/Maps/Menu/Hangar.Hangar' end
+assert(locate()==nil and scans==1,'菜单不查找任务玩家')
+''')
+print('配置/协议/页面接口、场景预览与补给交接、开场定位、失败隔离及弹药行归还通过')

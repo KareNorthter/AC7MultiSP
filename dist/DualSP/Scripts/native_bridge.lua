@@ -1,4 +1,4 @@
--- 原生命令协议 3；只负责请求/应答，不决定游戏线程、玩家身份或 HUD 时序。
+-- 原生命令协议 4；末尾携带方案比例，检查点使用自己的快照。
 local Bridge={}
 function Bridge.new(options)
     local root,execute,readJson,Profile=options.root,options.execute,options.readJson,options.profile
@@ -7,9 +7,9 @@ function Bridge.new(options)
     function self:request(command)
         local profile=command.profile
         requestId=requestId+1
-        local text=string.format("%s %X %X %d %.9f 3 %d %d %d %d %d",
+        local text=string.format("%s %X %X %d %.9f 4 %d %d %d %d %d %.2f",
             command.op,command.plane,command.activator,command.target,command.time,
-            Profile.count(profile),profile.a,profile.b,profile.c,requestId)
+            Profile.count(profile),profile.a,profile.b,profile.c,requestId,Profile.copy(profile).ratio)
         local file=assert(io.open(root.."native-command.txt","w"))
         local written,writeError=file:write(text)
         local closed,closeError=file:close()
