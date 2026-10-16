@@ -33,7 +33,8 @@ struct Command {
     Addr plane{}, activator{}; // 当前玩家及其兵装组件身份。
     int target{}; // 目标逻辑槽，取值 0 至 count-1。
     double time{}; // 游戏时间，用于冷却推进与检查点时间重定位。
-    int count{1}; // 实际搭载数量，同时决定均分分母。
+    int count{1}; // 实际搭载数量。
+    double ratio{1}; // 单种 SP 配弹比例，由协议 4 显式提供。
     std::array<int,3> configs{0,-1,-1}; // 原生配置，未使用槽必须为 -1。
     uint64_t request{}; // 请求序号，防止旧响应被重复消费。
 };
@@ -55,6 +56,7 @@ struct Session {
     Addr plane{}, activator{};
     int active{};
     int count{1}; // 有效逻辑槽数量；空槽不初始化。
+    double ratio{1}; // 会话建立时的配弹比例；检查点恢复沿用其原始比例。
     std::array<int,3> configs{0,-1,-1}; // 各逻辑槽映射到机体原生配置。
     int gun{}, flares{};
     std::array<int,3> maximum{}; // 每个逻辑槽独立的配弹上限。
@@ -531,11 +533,14 @@ Command readCommand() {
     Command command;
     file>>command.op>>std::hex>>command.plane>>command.activator>>std::dec>>command.target>>command.time;
     require(static_cast<bool>(file),"Malformed command");
-    // 协议 3 显式携带槽数和三个配置；旧命令在修改游戏前即被拒绝。
+    // 协议 4 显式携带配弹比例；旧核心与新 Lua 不能混装。
     int protocol{}; // 独立于管理 UI 协议的核心命令标记。
-    file>>protocol>>command.count>>command.configs[0]>>command.configs[1]>>command.configs[2]>>command.request;
-    require(static_cast<bool>(file) && protocol==3,"需要三 SP 核心命令协议 3");
+    file>>protocol>>command.count>>command.configs[0]>>command.configs[1]>>command.configs[2]>>command.request>>command.ratio;
+    require(static_cast<bool>(file) && protocol==4,"需要配弹比例核心命令协议 4");
     require(command.count>=1 && command.count<=3,"SP 数量必须为 1 至 3");
+    const double minimum=command.count==1?1:command.count==2?.5:.33;
+    require(std::isfinite(command.ratio) && command.ratio>=minimum && command.ratio<=1,"SP 配弹比例越界");
+    require(std::abs(command.ratio*100-std::round(command.ratio*100))<.000001,"SP 配弹比例必须为整数百分比");
     require(command.target>=0 && command.target<command.count,"目标 SP 不在已选槽范围内");
     for(int index=0;index<3;++index) {
         const int config=command.configs[index]; // 只允许连续、不同的原生兵装配置。
@@ -548,18 +553,22 @@ Command readCommand() {
     return command;
 }
 // 在原生部件计算之后缩减当前/最大弹药；记录输入输出，便于增弹部件的对照验证。
-void scaleAmmo(Addr activator,int count) {
+void scaleAmmo(Addr activator,int count,double ratio) {
     require(count>=1 && count<=3,"配弹槽数无效");
+    const double minimum=count==1?1:count==2?.5:.33;
+    require(std::isfinite(ratio) && ratio>=minimum && ratio<=1,"SP 配弹比例越界");
+    const int percent=static_cast<int>(std::round(ratio*100)); // 界面按整数百分比调节。
+    require(std::abs(ratio*100-percent)<.000001,"SP 配弹比例必须为整数百分比");
     const auto group=groupOf(activator,true);
-    std::array<int,2> before{},after{}; // 当前弹数与最大弹数，各自按同一比例向下取整。
+    std::array<int,2> before{},after{}; // 当前弹数与最大弹数，各自按同一比例向上取整。
     size_t index=0; // 对应两个弹药字段，而不是两个逻辑 SP。
     for(auto offset:{8,12}) {
         const int ammo=read<int>(group+offset);
         require(ammo>=0 && ammo<=100000,"Invalid SP ammunition");
-        before[index]=ammo;after[index]=ammo==0 ? 0 : std::max(1,ammo/count); // 整数除法避免三等分浮点误差。
+        before[index]=ammo;after[index]=(ammo*percent+99)/100; // 整数运算避免 33% 等比例的浮点误差，零仍为零。
         write<int>(group+offset,after[index]);++index;
     }
-    nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"native",before},{"scaled",after}}.dump());
+    nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"percent",percent},{"native",before},{"scaled",after}}.dump());
 }
 // 调试换装只能重建当前会话；发射体还在活动数组时要求先恢复游戏等待结束。
 void requireDebugLoadoutReady(Addr plane,Addr activator) {
@@ -585,19 +594,19 @@ void execute(const Command& command) {
         fixedMountRelease(); // 新组合不沿用上一组合的视觉状态。
 #endif
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
-        session.count=command.count;session.configs=command.configs;
+        session.count=command.count;session.configs=command.configs;session.ratio=command.ratio;
         if(command.op=="setup")checkpointValid=false;
         // 第一槽与其余槽走同一初始化入口，包含单挂；重建次数与原 Lua 路径相同。
         initialize(command,session.configs[0],debugLoadout);
         session.main=debugLoadout?previousMain:capture(command.activator,false,command.time);
-        scaleAmmo(command.activator,session.count);
+        scaleAmmo(command.activator,session.count,session.ratio);
         session.special[0]=capture(command.activator,true,command.time);
         session.maximum[0]=scalarInt(session.special[0],0);
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
         // 单挂不重建第二份；多挂依次捕获每个实际配置，再回到 SP1。
         for(int index=1;index<session.count;++index) {
             initialize(command,session.configs[index]);
-            scaleAmmo(command.activator,session.count);
+            scaleAmmo(command.activator,session.count,session.ratio);
             session.special[index]=capture(command.activator,true,command.time);
             session.maximum[index]=scalarInt(session.special[index],0);
         }
@@ -650,7 +659,7 @@ void execute(const Command& command) {
         // 原生补给不重选时，也只补充当前实际配置的槽。
         for(int index=0;index<session.count;++index) {
             initialize(command,session.configs[index],false);
-            scaleAmmo(command.activator,session.count);
+            scaleAmmo(command.activator,session.count,session.ratio);
             session.special[index]=capture(command.activator,true,command.time);
             session.maximum[index]=scalarInt(session.special[index],0);
         }
@@ -663,8 +672,10 @@ void execute(const Command& command) {
         require(command.op=="snapshot","Unknown command");
     }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-    fixedMountCommit(command); // 同一游戏线程内完成重建后的布局，原型只处理严格匹配的组合。
-    bindF35Cover(command.plane); // 舱门输出跟飞机生命周期绑定，包含补给转单挂。
+    try {
+        fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
+        bindF35Cover(command.plane);
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
 #endif
 }
 }
@@ -681,6 +692,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+            mountPreviewRelease(0,false);
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
@@ -697,11 +709,76 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
 }
 
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 与其他具名接口一致，Lua 以整数 0/1 传开关；关闭也执行完整的原生外观归还。
+extern "C" __declspec(dllexport) int dualsp_set_fixed_mount_enabled(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1,"固定挂载开关需要一个参数");
+        const auto enabled=api->readInteger(luaState,1);
+        require(enabled==0 || enabled==1,"固定挂载开关必须为 0 或 1");
+        require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"固定挂载开关必须在游戏线程调用");
+        const bool changed=fixedMountEnabled!=(enabled!=0);
+        fixedMountEnabled=enabled!=0;
+        if(!fixedMountEnabled || changed) {
+            mountPreviewRelease(0,false);
+            if(fixedMountRelease()) { fixedMountFailed=false;fixedMountWarning.clear(); }
+        }
+        const std::string warning=mountPreview.warning.empty()?fixedMountWarning:mountPreview.warning;
+        api->boolean(luaState,true);api->string(luaState,warning.data(),warning.size());return 2;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("FIXED_MOUNT_SETTING_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 仅更新经过校验的展示模型；警告与兵装事务独立。
+extern "C" __declspec(dllexport) int dualsp_mount_preview(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==10,"模型预览需要十个整数参数");
+        require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"模型预览必须在游戏线程调用");
+        const Addr owner=static_cast<Addr>(api->readInteger(luaState,1));
+        const Addr plane=static_cast<Addr>(api->readInteger(luaState,2));
+        const Addr activator=static_cast<Addr>(api->readInteger(luaState,3));
+        const auto mode=api->readInteger(luaState,4);
+        std::array<int,3> configs{},ammo{};
+        for(int slot=0;slot<3;++slot) {
+            const auto config=api->readInteger(luaState,5+slot),amount=api->readInteger(luaState,8+slot);
+            require(config>=-1 && config<=2 && amount>=0 && amount<=100000,"模型预览配置或弹药参数越界");
+            configs[slot]=static_cast<int>(config);ammo[slot]=static_cast<int>(amount);
+        }
+        if(mode==0)mountPreviewRelease(owner);
+        else if(mode==4) {
+            // 补给页已关闭时，仅刷新原先验证过的同一玩家预览，不能创建新绑定。
+            if(!runtimeEnabled || !fixedMountEnabled)mountPreviewRelease(0,false);
+            else {
+                require(mountPreview.active && mountPreview.mode==2 && mountPreview.layout.plane.address==plane &&
+                    mountPreview.activator.address==activator,"补给过渡预览身份不匹配");
+                if(GetTickCount64()-mountPreview.lastApply>=100)mountPreviewApply(); // 失败时只重试归还，不恢复接管。
+            }
+        } else {
+            require(mode==1 || mode==2 || mode==3,"模型预览模式无效");
+            mountPreviewUpdate(owner,plane,activator,static_cast<int>(mode),configs,ammo);
+        }
+        const auto& warning=mountPreview.warning;
+        api->boolean(luaState,warning.empty() && !mountPreview.pending);api->string(luaState,warning.data(),warning.size());return 2;
+    }catch(const std::exception& error) {
+        if(mountPreview.active)mountPreviewFail(error.what());
+        const std::string warning=mountPreview.warning.empty()?std::string("模型预览：")+error.what():mountPreview.warning;
+        if(api) { api->boolean(luaState,false);api->string(luaState,warning.data(),warning.size());return 2; }
+        return 0;
+    }
+}
+
 // 独立原型的视觉调度，使用游戏时间；不把有副作用的更新塞进只读 HUD 接口。
 extern "C" __declspec(dllexport) int dualsp_fixed_mount_update(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 错误回执由既有 Lua 控制器显示。
@@ -710,13 +787,18 @@ extern "C" __declspec(dllexport) int dualsp_fixed_mount_update(void* luaState) {
         require(api->top(luaState)==2,"固定挂载更新需要玩家地址和游戏时间");
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1)); // 零表示离开本次玩家实例。
         const double time=api->readNumber(luaState,2); // 暂停时不推进。
-        if(!plane)fixedMountRelease();
+        if(!plane) {
+            mountPreviewRelease(0,false);
+            if(fixedMountRelease()) { fixedMountFailed=false;fixedMountWarning.clear(); }
+        }
         else {
             require(runtimeEnabled,"固定挂载只允许单人任务");
             require(std::isfinite(time) && time>=0,"固定挂载游戏时间无效");
-            fixedMountUpdate(plane,session.plane,time);
+            try { fixedMountUpdate(plane,session.plane,time); }
+            catch(const std::exception& error) { fixedMountFail(error.what()); }
         }
-        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+        const std::string warning=mountPreview.warning.empty()?fixedMountWarning:mountPreview.warning;
+        api->boolean(luaState,true);api->string(luaState,warning.data(),warning.size());return 2;
     }catch(const std::exception& error) {
         fixedMountFail(error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
@@ -1294,6 +1376,10 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         execute(command);
         Json state=Json::parse("{"+snapshotJson(command)+"}");
         state["count"]=session.count;state["configs"]=session.configs;state["ok"]=true;state["request"]=request;state["maximum"]=session.maximum;
+        state["ratio"]=session.ratio;
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        state["fixed_mount_warning"]=fixedMountWarning; // 降级提示不伪装成兵装事务失败。
+#endif
         state["slots"]=Json::array();
         for(int index=0;index<session.count;++index) {
             const auto g=index==session.active?capture(command.activator,true,command.time):session.special[index];

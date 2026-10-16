@@ -34,7 +34,7 @@ def main():
     required={'bin/DualSP.dll', 'bin/DualSPUI.dll', 'VERSION'} | base_scripts
     if set(expected_old)!=required or 'Scripts/main.lua' not in base_scripts:
         raise ValueError('升级基线必须包含完整运行文件，不能使用局部回执')
-    if not {'dualsp_fixed_mount_update', 'dualsp_three_sp_supported', 'dualsp_refresh_weapon_icons'} <= set(receipt['required_exports_verified']):
+    if not {'dualsp_fixed_mount_update', 'dualsp_mount_preview', 'dualsp_three_sp_supported', 'dualsp_refresh_weapon_icons'} <= set(receipt['required_exports_verified']):
         raise ValueError('核心缺少当前必需接口')
     result_path = root / 'evidence' / (version + '-installed.json')
     if args.apply and result_path.exists():
@@ -52,13 +52,13 @@ def main():
         if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
     settings = read_json(mod / 'profiles.json')
-    if settings.get('schema') != 2 or settings.get('management_revision') != 3:
-        raise ValueError('本机升级要求已有 schema 2 / management_revision 3，不自动执行历史迁移')
+    if settings.get('schema') != 2 or settings.get('management_revision') != 5:
+        raise ValueError('本机升级要求已有 schema 2 / management_revision 5，请先核对上一版启动后的配置')
     sources = {'Scripts/' + name: root / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
     plan = {'candidate': version, 'base': previous['candidate'], 'runtime_files': hashes,
-            'name': info['name'], 'configuration_migration': '保留 schema 2，不迁移',
+            'name': info['name'], 'configuration_migration': '安装保留管理参数 5 的个人配置原字节，无需迁移',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}
@@ -98,7 +98,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
     install = json.loads((staging / 'install-receipt.json').read_text(encoding='utf-8-sig'))
-    install.update(Name=info['name'], Version=version, Candidate=False, InstalledAt=now.isoformat(),
+    install.update(Name=info['name'], Version=version, Candidate=info.get('candidate', False), InstalledAt=now.isoformat(),
                    CandidateCoreSHA256=receipt['candidate_sha256'], BackupPath=str(backup), GameStartedByAgent=False)
     (staging / 'install-receipt.json').write_text(json.dumps(install, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     expected = inventory(staging)

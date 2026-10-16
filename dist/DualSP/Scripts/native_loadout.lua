@@ -2,7 +2,7 @@
 -- 不创建外部窗口、不模拟按键；页面跳转继续交给 AC7 原生菜单。
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Flow=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_flow.lua")
-local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 预览与核心共用均分规则。
+local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 预览与核心共用百分比及向上取整规则。
 local NativeLoadout={}
 local TRANSIENT,VISIBLE,COLLAPSED=0x40,0,1
 local function valid(o)return o and o:IsValid()end
@@ -23,6 +23,8 @@ function NativeLoadout.new(dependencies)
     local keyboardNavigation,takeoff=dependencies.keyboardNavigation,dependencies.takeoff
     local preparationAction,confirmSound=dependencies.preparationAction,dependencies.confirmSound
     local weaponIcon,translate,partsAmmoPreview=dependencies.weaponIcon,dependencies.translate,dependencies.partsAmmoPreview
+    local ammoSettings=assert(dependencies.ammoSettings,"缺少弹药比例设置接口")
+    local mountPreview,releaseMountPreview=dependencies.mountPreview,dependencies.releaseMountPreview
     assert(mode=="preparation"or mode=="resupply"or mode=="standby"or mode=="parts","未知原生页面模式")
     if mode=="preparation"or mode=="resupply"then assert(type(commit)=="function","交互页面缺少提交接口")end
     local tr=assert(translate,"缺少原生页面语言提供器") -- 页面语言由游戏文本文化决定。
@@ -38,6 +40,35 @@ function NativeLoadout.new(dependencies)
     if not standby then assert(type(confirmSound)=="function","缺少原生菜单确认音接口")end
     local self={cache=nil,status="waiting",error=nil,lastScan=-1,ignored=nil,ignoredReason=nil,controlDepth=0,serial=0,transaction=nil,phase=nil,phaseObject=nil,
         phaseWorld=nil,owners={},ownerWorld=nil,lastDiscovery=-1} -- 页面候选与阶段身份分别缓存。
+    local function releasePreview(c)
+        if not c or not c.mountOwner then return end
+        local ownerAddress=c.mountOwner;c.mountOwner=nil
+        if releaseMountPreview then
+            local ok,err=pcall(releaseMountPreview,ownerAddress)
+            if not ok then note("NATIVE_MOUNT_PREVIEW_RELEASE_WARNING "..tostring(err))end
+        end
+    end
+    local function refreshPreview(context)
+        local c=self.cache
+        if not c or not mountPreview then return end
+        if context.panelOpen then return end -- 管理页暂借控制，不视为页面退出。
+        -- 两个只读页面可能同时可见，只有当前开放控制的一页可以取得预览。
+        -- YES 后原生隐藏页面属于起飞过渡，仍保留已经确认的模型。
+        local held=supply and c.handedOff
+        local called,err=pcall(function()
+            if not held and (not valid(c.owner)or not c.owner:IsVisible()
+                or standby and not c.owner:IsEnableControl())then releasePreview(c);return end
+            c.mountOwner=c.owner:GetAddress()
+            mountPreview{owner=c.owner,ownerAddress=c.mountOwner,instance=c.instance,planeId=c.planeId,mode=mode,
+                profile=held and self.transaction and copyProfile(self.transaction.profile)or c.flow:preview(),options=c.flow.options}
+        end)
+        if not called then
+            releasePreview(c)
+            local warning=tostring(err)
+            if warning~=self.mountWarning then note("NATIVE_MOUNT_PREVIEW_WARNING "..warning)end
+            self.mountWarning=warning -- 不进入页面 fail；原生文字、输入和提交继续运行。
+        else self.mountWarning=nil end
+    end
     -- 对象发现与可见性检查分开：平时只检查少量页面，不每 50 ms 扫描全局对象表。
     local function owners(instance,now)
         local world=instance:GetWorld():GetAddress() -- 换世界后立即重新发现，不能复用旧页面。
@@ -365,13 +396,15 @@ function NativeLoadout.new(dependencies)
     local function measuredAttach(create,owner,instance,planeId,profile,choices)
         local started=os.clock() -- 与既有 PERF_TICK 相同的 Lua 时钟，仅代表同步调用范围。
         local c=create(owner,instance,planeId,profile,choices) -- 保留原接入顺序与错误传播。
+        c.mountOwner=owner:GetAddress()
         note(string.format("NATIVE_UI_ATTACH_COST mode=%s plane=%d options_ms=%.3f build_ms=%.3f",mode or "preparation",
             planeId,self.optionsCost or 0,(os.clock()-started)*1000))
         return c
     end
-    local function restore(releaseInput)
+    local function restore(releaseInput,keepPreview)
         clearModelWait(releaseInput)
         local c=self.cache;if not c then return end
+        if not keepPreview then releasePreview(c)end
         if c.actionQueued then
             local ok,_,err=preparationAction(c.actionWidget,0,-1)
             assert(ok,err);c.actionQueued=false
@@ -451,6 +484,13 @@ function NativeLoadout.new(dependencies)
         end
         return widget
     end
+    -- 三类页面共用较大的槽位标题；向上留出字高，避免挤压原有的全名或第一行性能。
+    local function informationTitle(c,source,parent,width)
+        local title=infoWidget(c,source,parent,{X=0,Y=-8},{X=width,Y=38},false) -- 底边仍为 30，正文位置不变。
+        local font=title.Font -- 保留原生字体、颜色及泛光，只把标题从最多 18 放大到 24。
+        font.Size=24;title:SetFont(font)
+        return title
+    end
     -- 两种页面分别计算位置，缩放继续由各自的原生 UMG 容器管理。
     local function infoCanvas(c,parent,position,size)
         self.serial=self.serial+1
@@ -462,6 +502,46 @@ function NativeLoadout.new(dependencies)
         slot:SetPosition(position);slot:SetSize(size);slot:SetAutoSize(false);slot:SetZOrder(10)
         panel:SetVisibility(VISIBLE)
         return panel
+    end
+    -- 选装弹药行与原生武器索引脱钩：复制几何到同级干净 Canvas，不继承原生行的选中颜色。
+    local function preparationAmmoRow(c,source)
+        assert(valid(source)and valid(source.WidgetTree),"准备页弹药行缺失")
+        local root=source.WidgetTree.RootWidget -- 原生行根 Canvas 内还有承载名称/数量的 CanvasPanel_2。
+        assert(valid(root)and root:IsA(canvasPanelClass),"准备页弹药行根布局已变化")
+        local rowSlot=canvasSlot(source) -- 行在弹药总表中的位置，保留原生缩放、锚点和行距。
+        local rowLayout=readLayout(rowSlot,source)
+        local panel=infoCanvas(c,rowSlot.Parent,rowLayout.position,rowLayout.size) -- 自有容器不受原生逐行高亮驱动。
+        applyLayout(panel.Slot,rowLayout,panel,10)
+        local panels={[root:GetAddress()]=panel} -- 两个文字共用原生内层 Canvas，不能把局部坐标直接当行根坐标。
+        local function parentCanvas(original,depth)
+            assert(valid(original)and depth<=16,"准备页弹药文字父层级无效或过深")
+            local address=original:GetAddress()
+            if panels[address]then return panels[address]end
+            assert(original:IsA(canvasPanelClass),"准备页弹药文字中间容器不是 Canvas："..original:GetFullName())
+            local slot=original.Slot
+            assert(valid(slot)and valid(slot.Parent),"准备页弹药文字不属于行根："..original:GetFullName())
+            assert(slotKind(slot,original)=="canvas","准备页弹药文字中间 Canvas 定位已变化")
+            local parent=parentCanvas(slot.Parent,depth+1) -- 先确认能追溯到本行根，再重建空容器。
+            local layout=readLayout(slot,original)
+            local copy=infoCanvas(c,parent,layout.position,layout.size)
+            applyLayout(copy.Slot,layout,copy)
+            panels[address]=copy
+            return copy
+        end
+        local widgets=controls(source) -- 仅用源叶控件的字体和几何，不复制颜色状态或动画。
+        local result={} -- 同时持有名称和数量，后续一起更新高亮。
+        for field,name in pairs({name="WeaponsName",count="WeaponsAmmo"})do
+            local template=assert(widgets[name],"准备页弹药文字缺失："..name)
+            local leafSlot=canvasSlot(template) -- 运行时文字包装层的外侧 Canvas 槽。
+            local parent=parentCanvas(leafSlot.Parent,1) -- 沿实际中间 Canvas 保留各层布局。
+            local leafLayout=readLayout(leafSlot,template) -- 克隆到新 Canvas 后仍使用相同的局部坐标。
+            local text=infoWidget(c,template,parent,leafLayout.position,leafLayout.size,false)
+            applyLayout(text.Slot,leafLayout,text,10)
+            text:SetFont(template.Font) -- 弹药保持原生 20 号，不沿用性能信息的 18 号限制。
+            result[field]=text
+        end
+        mask(c,source) -- 原生仍可更新原行，但其颜色只影响保留在折叠容器内的源对象。
+        return result
     end
     -- 复用原生基础条与三条细边框；空白部分保持透明，不铺满宽度的底色。
     local function performanceBar(c,source,parent,position,width)
@@ -503,7 +583,7 @@ function NativeLoadout.new(dependencies)
             local panel=infoCanvas(c,parent,{X=origin.X+(index-1)*(width+gap),Y=origin.Y},{X=width,Y=height})
             local column={bars={},barWidth=width*.40}
             c.columns[index]=column
-            column.name=infoWidget(c,templates.name,panel,{X=0,Y=0},{X=width,Y=30},false)
+            column.name=informationTitle(c,templates.name,panel,width)
             local inset=templates.icon and 36 or 0 -- 只有机库使用彩色类别图标，补给仍全绿色。
             column.fullName=infoWidget(c,templates.fullName or templates.type,panel,{X=inset,Y=pitch},{X=width-inset,Y=3*pitch},false,true)
             if templates.icon then
@@ -563,6 +643,7 @@ function NativeLoadout.new(dependencies)
     -- SP1 阶段尚未选择 SP2，始终显示 EMPTY；SP2 阶段才展示其当前候选。
     local function paintColumns(c)
         local flow=c.flow;local stage=flow.stage;local row=flow:rows()[flow.cursor]
+        local focusedSlot=tonumber(stage:match("^sp([123])$")) -- 列表光标预览的是当前逻辑槽，不是原生武器序号。
         local preview=flow:preview() -- 当前光标与已经确认的前置槽组成展示方案。
         local count=Profile.count(preview) -- 候选变化后立即重算所有可见载量。
         local a,b=preview.a,preview.b
@@ -572,10 +653,19 @@ function NativeLoadout.new(dependencies)
             local option=weapon>=0 and flow.options[weapon+1]or nil -- 空栏不借用历史兵装的性能或弹药。
             local pending=parts and c.partsPreview.pending -- 等待只清空模组数字，不阻止原生 PART 导航。
             local entry=parts and option and not pending and c.partsPreview.amounts[weapon+1]or nil -- 当前实际 WeaponID 对应结果。
-            local amount=option and not pending and Profile.ammo(entry and entry.preview or option.max,count)or 0
+            local amount=option and not pending and Profile.ammo(entry and entry.preview or option.max,count,preview.ratio)or 0
             local affects=entry and entry.affects or false -- 不能用“整数变大”替代原生候选影响标记。
             local ammoText=option and not pending and tostring(amount)or "---" -- EMPTY 与未就绪均不展示猜测数量。
             local ammoSignature=ammoText..":"..tostring(affects)..":"..tostring(pending) -- 数字相同也能立即切换黄色。
+            if c.ammo and not supply and not standby then
+                local focused=i==focusedSlot -- 槽位变更也要重画颜色，即使简称和弹数恰好相同。
+                if column.ammoFocused~=focused then
+                    local base=c.tint.SpecifiedColor -- 非当前槽保留信息蓝，仅调整透明度。
+                    local tint=focused and color(1,1,1,1)or color(base.R,base.G,base.B,.5) -- 当前槽完全高亮，其余两行半透明。
+                    c.ammo[i].name:SetColorAndOpacity(tint);c.ammo[i].count:SetColorAndOpacity(tint)
+                    column.ammoFocused=focused
+                end
+            end
             if column.lastAmmo~=ammoSignature then
                 if column.ammo then
                     setText(c,column.ammo,ammoText)
@@ -608,7 +698,7 @@ function NativeLoadout.new(dependencies)
                 bar.fill.Slot:SetSize({X=bar.width*math.max(0,math.min(1,percent/100)),Y=bar.height})
                 bar.fill:SetVisibility(percent>0 and VISIBLE or COLLAPSED) -- EMPTY 保留边框，不留下零宽度亮线。
             end
-            -- 准备页普通弹药汇总中的两个 SP 格与上方三栏保持一致。
+            -- 准备页弹药汇总的三个逻辑槽与上方三栏保持一致。
             if c.ammo then
                 setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
             end
@@ -618,7 +708,7 @@ function NativeLoadout.new(dependencies)
         return a,b,preview.c
     end
     local function attach(owner,instance,planeId,profile,options)
-        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,originalControl=owner:IsEnableControl(),originalWeapon=instance:GetSelectedPlaneSWP(),flow=Flow.new(profile,options,nil,nil,tr)}
+        local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},lastPaint=nil,originalControl=owner:IsEnableControl(),originalWeapon=instance:GetSelectedPlaneSWP(),flow=Flow.new(profile,options,nil,nil,tr,ammoSettings)}
         self.cache=c
         c.controller=owner:GetOwningPlayer();assert(valid(c.controller),"准备页所属输入控制器缺失")
         c.world=instance:GetWorld():GetAddress();bindings(c)
@@ -660,8 +750,7 @@ function NativeLoadout.new(dependencies)
              ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",gap)
         c.ammo={}
         for i=1,3 do
-            local widgets=controls(ammo["WeaponsSP"..i])
-            c.ammo[i]={name=clone(c,assert(widgets.WeaponsName),false),count=clone(c,assert(widgets.WeaponsAmmo),false)}
+            c.ammo[i]=preparationAmmoRow(c,ammo["WeaponsSP"..i])
         end
         mask(c,wrapper);mask(c,info.HangarAircraftWeaponNameLong)
         mask(c,info.HangarAircraftWeaponProperties);mask(c,info.HangarAircraftWeaponType)
@@ -715,7 +804,7 @@ function NativeLoadout.new(dependencies)
             added={},masked={},moved={},texts={},repositioned={},tint=color(.401978,.651406,1,1),columns={},ammo={},
             controlEnabled=owner:IsEnableControl()} -- 页面复用时用控制重新开放识别返回。
         self.cache=c
-        c.flow=Flow.new(profile,options,nil,nil,tr);c.flow.stage="review" -- 只读快照复用同一套名称、性能和配弹算法。
+        c.flow=Flow.new(profile,options,nil,nil,tr,ammoSettings);c.flow.stage="review" -- 只读快照复用同一套名称、性能和配弹算法。
         local info -- 两套资源共用已核对的右栏结构，字段缺失时明确报错。
         if parts then info=owner.AircraftWeaponInformation else info=owner.ReviewInformation end
         assert(valid(info)and valid(info.WidgetTree),"只读兵装信息区缺失："..mode)
@@ -749,7 +838,7 @@ function NativeLoadout.new(dependencies)
         for index=1,3 do
             local panel=infoCanvas(c,root,{X=cardX,Y=origin.Y+(index-1)*cardPitch},{X=width,Y=cardHeight})
             local column={bars={},barWidth=width*.40};c.columns[index]=column
-            column.name=infoWidget(c,assert(weaponTemplate.WeaponsName),panel,{X=0,Y=0},{X=width,Y=30},false)
+            column.name=informationTitle(c,assert(weaponTemplate.WeaponsName),panel,width)
             for stat=1,6 do
                 local item=group["SpecItem"..stat] -- 性能名称和画刷取自原生右侧兵装组。
                 assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar.BarA),"STANDBY 性能模板缺失")
@@ -758,7 +847,7 @@ function NativeLoadout.new(dependencies)
                 column.bars[stat]=performanceBar(c,item.SpecBar,panel,{X=width*.60,Y=y+4},column.barWidth)
             end
             column.type=infoWidget(c,assert(typeTemplate.WeaponTypeText),panel,{X=0,Y=194},{X=width,Y=46},false,true)
-            -- 部件加成及均分后的载量统一放在左下弹药区，不占用右侧卡片。
+            -- 部件加成及比例配弹后的载量统一放在左下弹药区，不占用右侧卡片。
             local ammoParent=ammo.WeaponsSP1.Slot.Parent
             c.ammo[index]={name=infoWidget(c,weaponTemplate.WeaponsName,ammoParent,{X=217,Y=26+(index-1)*34},{X=108,Y=32},false),
                 count=infoWidget(c,assert(weaponTemplate.WeaponsAmmo),ammoParent,{X=325,Y=26+(index-1)*34},{X=56,Y=32},false)}
@@ -779,7 +868,8 @@ function NativeLoadout.new(dependencies)
     end
     -- 待命页只在有效方案、同一机体/世界和原生页面激活时展示；重进重新读取已保存配置。
     local function pumpStandby(instance,planeId,profile,options,now,inFlight,panelOpen)
-        local saved=profile() -- 调用方必须提供已保存比例，不能使用下一份草稿的全局配弹设置。
+        if panelOpen then return end -- F6 只暂停刷新，不能把临时输入门当成离页。
+        local saved=profile() -- 调用方按下一次出击设置计算只读载量，不改当前任务快照。
         local c=self.cache
         if c and (inFlight or not saved or not valid(c.owner)or not c.owner:IsVisible()
             or c.planeId~=planeId or c.world~=instance:GetWorld():GetAddress()
@@ -861,7 +951,7 @@ function NativeLoadout.new(dependencies)
     local function attachSupply(owner,instance,planeId,profile,options)
         assert(self.phase and valid(self.phaseObject),"补给菜单缺少原生阶段绑定")
         local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},repositioned={},lastPaint=nil,
-            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr),phase=self.phase,phaseWorld=self.phaseWorld,
+            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr,ammoSettings),phase=self.phase,phaseWorld=self.phaseWorld,
             takeoffPending=false,visualRestored=false}
         self.cache=c
         c.controller=owner:GetOwningPlayer();assert(valid(c.controller),"补给页所属输入控制器缺失")
@@ -956,6 +1046,7 @@ function NativeLoadout.new(dependencies)
     local function paintSupply(c)
         local flow=c.flow;local rows=flow:rows();local stage=flow.stage
         local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..flow.draft.c..":"..tostring(flow.message)
+        signature=signature..":"..flow:preview().ratio
         if signature==c.lastPaint then return end
         c.lastPaint=signature
         setText(c,c.title,stage=="sp1"and "[SELECT SP WEAPON 1]"or stage=="sp2"and "[SELECT SP WEAPON 2]"or stage=="sp3"and "[SELECT SP WEAPON 3]"or "[TAKE OFF]")
@@ -981,13 +1072,14 @@ function NativeLoadout.new(dependencies)
         if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description)
         setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选的 1 至 3 个 SP 重新起飞。","Take off with the selected one to three SP weapons."))
-            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载当前及后续槽，按已选数量均分弹药。","Leave this and later slots empty. Ammunition is divided by the selected count."))
+            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载当前及后续槽，按管理页比例配弹。","Leave this and later slots empty. Ammunition follows management percentages."))
         self.status=stage;note("NATIVE_RESUPPLY_STAGE "..signature)
     end
 
     local function paint(c)
         local flow=c.flow;local rows=flow:rows();local stage=flow.stage
         local signature=stage..":"..flow.cursor..":"..flow.draft.a..":"..flow.draft.b..":"..flow.draft.c..":"..tostring(flow.message)..":"..tostring(c.continueRequested)..":"..tostring(c.exitRequested)..":"..tostring(c.handedOff)
+        signature=signature..":"..flow:preview().ratio
         if signature==c.lastPaint then return end
         c.lastPaint=signature
         local blue=color(.401978,.651406,1,1);local selected=color(1,1,1,1)
@@ -1015,7 +1107,7 @@ function NativeLoadout.new(dependencies)
         end
         paintColumns(c)
         local description=stage=="sp1"and tr("请选择第一种特殊兵装。","Select your first special weapon.")
-            or tr("请选择当前槽兵装；无兵装结束选装。弹药按已选数量均分。","Select this SP, or NO WEAPON to finish. Ammunition is divided by the selected count.")
+            or tr("请选择当前槽兵装；无兵装结束选装。弹药按管理页比例向上取整。","Select this SP, or NO WEAPON to finish. Ammunition follows management percentages, rounded up.")
         if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description);c.description:SetColorAndOpacity(blue)
         self.status=stage
@@ -1160,6 +1252,7 @@ function NativeLoadout.new(dependencies)
                 clearModelWait(not context.inFlight)
             end
             (standby and pumpStandby or pump)(context.instance,context.planeId,context.getProfile,context.getOptions,context.now,context.inFlight,context.panelOpen)
+            refreshPreview(context) -- 每轮核对模型身份和设置，不能被文字绘制签名短路。
         end,debug.traceback)
         if not ok then fail(err)end
     end
@@ -1290,7 +1383,7 @@ function NativeLoadout.new(dependencies)
         local profile=copyProfile(transaction.profile)
         commit(transaction.planeId,profile)
         if valid(c.owner)then self.ignored=c.owner:GetAddress()end
-        restore(false);self.status="committed"
+        restore(false,true);self.status="committed" -- 已确认模型由 main 在 configureFlight 开始时归还。
         note("NATIVE_RESUPPLY_CONFIRMED "..transaction.planeId)
         return profile
     end

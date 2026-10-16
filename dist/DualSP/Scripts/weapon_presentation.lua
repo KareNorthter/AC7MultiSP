@@ -179,6 +179,9 @@ function Presentation.new(note)
             c.label:SetFont(c.sourceText.Font)
             local font=c.label.Font -- 原生 18 放大为 22，比此前 20 略大；随原生字号保持相同比例。
             font.Size=math.floor(c.fontSize*11/9+.5);c.label:SetFont(font)
+            -- 相对接入时保存的原位置上移半个标称字高；反复刷新或字号变化不会累计偏移。
+            local origin=c.sourceLayout.position -- 只挪本模块文字，保留原提示的布局供退出时恢复。
+            c.label.Slot:SetPosition({X=origin.X,Y=origin.Y-font.Size*.5})
         end
         self.status="native"
     end

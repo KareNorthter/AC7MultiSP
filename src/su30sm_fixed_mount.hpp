@@ -11,15 +11,16 @@ struct MountSpecification {
     std::array<size_t,3> rackOffsets; // 各机型现场反射确认的字段位置。
     std::array<const char*,3> meshes; // 空模型仅用于已登记的固定 TLS 发射点。
     int physicalCount; // 可用于取位的全部候选位置数。
+    std::array<int,3> loadedCounts; // 原版待发窗口；预览不能把备用队列全画成待发弹。
 };
 // 共用身份检查，布局映射仍按机型明确处理。
 const MountSpecification& mountSpecification(MountAircraft aircraft) {
     static const MountSpecification su30{"su30sm",{"plwp_6aam_r0_C","plwp_lagm_r0_C","plwp_qaam_r0_C"},
-        {6,6,4},{6,4,6},{0x1ba0,0x1b98,0x1b90},{"w_4aam_r0_SM","w_qaam_r0_SM","w_lasm_r0_SM"},6}; // 原型机。
+        {6,6,4},{6,4,6},{0x1ba0,0x1b98,0x1b90},{"w_4aam_r0_SM","w_qaam_r0_SM","w_lasm_r0_SM"},6,{6,2,2}}; // 原型机。
     static const MountSpecification f35{"f35c",{"plwp_sod_a0_C","plwp_8agm_a0_C","plwp_4aam_a0_C"},
-        {2,12,6},{2,6,12},{0x1ba0,0x1b90,0x1b98},{"w_sod_a0_closed_SM","w_4aam_a0_SM","w_8agm_a0_SM"},20}; // SWP2 保留骨架动画和原生挂点。
+        {2,12,6},{2,6,12},{0x1ba0,0x1b90,0x1b98},{"w_sod_a0_closed_SM","w_4aam_a0_SM","w_8agm_a0_SM"},20,{2,8,4}}; // SWP2 保留骨架动画和原生挂点。
     static const MountSpecification f15{"f15e",{"plwp_6aam_a0_C","plwp_sffs_a0_C","plwp_tls_x0_C"},
-        {6,12,1},{6,12,1},{0x1ba0,0x1b98,0x1b90},{"w_4aam_a0_SM","w_sffs_a0_closed_SM",nullptr},19}; // TLS 炮体在挂架内。
+        {6,12,1},{6,12,1},{0x1ba0,0x1b98,0x1b90},{"w_4aam_a0_SM","w_sffs_a0_closed_SM",nullptr},19,{6,2,1}}; // TLS 炮体在挂架内。
     switch(aircraft) {
         case MountAircraft::Su30sm:return su30;
         case MountAircraft::F35c:return f35;
@@ -36,6 +37,7 @@ struct FixedMountState {
     bool bound{},rebuilding{}; // 重建期间仅固定外观，不改变原生临时武器池取位。
     MountIdentity plane,manager,meshManager; // 限定当前玩家，其他飞机全部直通。
     MountIdentity root,weaponBase; // 现场确认的共同祖先：RootComponent → WeaponMeshBase → SWP。
+    bool rootVisible{true},rootHidden{}; // 根组件总显隐独立于武器根，避免两类请求互相覆盖。
     bool ancestorVisible{true},ancestorHidden{}; // 祖先最近一次向下传播的整组显示请求。
     std::array<Addr,3> weaponClasses{}; // 会话最多三个选择槽的真实武器类。
     MountAircraft aircraft{MountAircraft::Unsupported}; // 同一会话只接入一个已匹配的机体。
@@ -53,6 +55,27 @@ struct FixedMountState {
     unsigned pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
 } fixedMount;
+bool fixedMountEnabled=false; // Lua 启动时明确启用；默认完全使用原生单 SP 外观。
+bool fixedMountFailed=false; // 实验接入失败后，本次玩家会话保持原生回退。
+std::string fixedMountWarning; // 回退提示独立于兵装事务错误。
+
+struct MountPreviewState {
+    bool active{},nativeOnly{},failed{},pending{}; // 单选/失败仍持有视觉所有权，阻止旧任务布局覆盖原生。
+    int mode{};
+    bool planCached{},restorePending{};
+    std::array<int,3> configs{-1,-1,-1},ammo{};
+    ULONGLONG restoreAttempt{},lastApply{};
+    MountIdentity owner,activator,world,source; // 机库管理器/玩家控制器或任务会话持有模型，页面只提供候选。
+    size_t sourcePlaneOffset{};
+    FixedMountState layout; // 独立模型上下文；绝不借用 session 或发射映射。
+    std::string warning;
+} mountPreview;
+bool mountPreviewRelease(Addr owner=0,bool resumeTask=true);
+void mountPreviewApply();
+bool mountPreviewMatchesManager(Addr manager);
+void mountPreviewFail(const char* message) noexcept;
+bool mountPreviewFilter(void* object,bool requested,unsigned char propagation,bool hidden);
+bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
 struct F35CoverState {
     MountIdentity plane; // 动画通道跟随机体实例，不跟随当前武器池。
@@ -152,48 +175,76 @@ float fixedMountElapsed(int index,float duration,float elapsed) {
     return elapsed;
 }
 // 所有可视组件均保留原父链；只使用一个挂架网格，避免重复几何。
-bool mountDesired(const MountVisual& visual) {
-    const bool master=read<unsigned char>(fixedMount.meshManager.address+0x120)!=0; // 原生总显隐。
-    if(!master || !fixedMount.ancestorVisible || fixedMount.ancestorHidden)return false;
-    if(visual.index<0)return (fixedMount.rackMask&(1u<<visual.pool))!=0; // 按已核对的挂架组合显示。
-    if(fixedMount.aircraft==MountAircraft::F15e && visual.pool==2)return (fixedMount.kindsMask&4)!=0; // 空 TLS 发射组件与炮体同寿命。
-    for(int position=0;position<fixedMount.physicalCount;++position) // 物理位置表同时用于模型显隐和离架变换。
-        if(fixedMount.physical[position]==visual.identity.address)return (fixedMount.readyMask&(1u<<position))!=0;
+bool mountDesired(const FixedMountState& state,const MountVisual& visual) {
+    const bool master=read<unsigned char>(state.meshManager.address+0x120)!=0; // 原生总显隐。
+    const bool planeHidden=(read<unsigned char>(state.plane.address+0x84)&1)!=0; // 实拍 bHidden 元数据掩码为 1，整机隐藏不能被预览反向覆盖。
+    if(!master || planeHidden || !state.rootVisible || state.rootHidden || !state.ancestorVisible || state.ancestorHidden)return false;
+    if(visual.index<0)return (state.rackMask&(1u<<visual.pool))!=0; // 按已核对的挂架组合显示。
+    if(state.aircraft==MountAircraft::F15e && visual.pool==2)return (state.kindsMask&4)!=0; // 空 TLS 发射组件与炮体同寿命。
+    for(int position=0;position<state.physicalCount;++position) // 物理位置表同时用于模型显隐和离架变换。
+        if(state.physical[position]==visual.identity.address)return (state.readyMask&(1u<<position))!=0;
     return false;
 }
 // 只在状态发生变化时调用引擎更新；不逐帧强制反隐藏。
-void mountApply() {
-    for(const auto& visual:fixedMount.visuals) {
+void mountApplyVisuals(const FixedMountState& state) {
+    for(const auto& visual:state.visuals) {
         require(mountAlive(visual.identity),"固定挂载：组件已销毁");
         const Addr object=visual.identity.address; // 已验证的当前组件。
         const auto flags=read<unsigned char>(object+0x1bc); // 两个反射确认的显隐位。
-        const bool desired=mountDesired(visual); // 聚合结果和原生总显隐共同决定。
+        const bool desired=mountDesired(state,visual); // 聚合结果和原生总显隐共同决定。
         if(flags&0x20)mountOriginalHidden(reinterpret_cast<void*>(object),false,0);
         if(bool(flags&0x10)!=desired)mountOriginalVisibility(reinterpret_cast<void*>(object),desired,0);
     }
 }
-// 退出固定挂载时归还原生最后请求的显示；失效对象不再解引用。
-void fixedMountRelease() {
+void mountApply() { if(!mountPreviewOwnsTask())mountApplyVisuals(fixedMount); }
+bool mountDesired(const MountVisual& visual) { return mountDesired(fixedMount,visual); }
+// 每项独立归还；一项失败不能留下其他多挂模型，待归还项保留身份供后续更新处理。
+bool fixedMountRelease() {
+    const bool previewReleased=mountPreviewRelease(0,false); // 预览归还失败也必须撤销任务显隐接管；待归还身份仍保存在预览上下文。
+    const bool hadPending=!fixedMount.error.empty();
     f35Cover={}; // 生命周期结束或重建后由当前飞机重新绑定动画状态。
     fixedMount.bound=false; // 先直通，避免归还显示的调用再次被过滤。
-    if(mountAlive(fixedMount.animatedRack))
-        mountSetRackAnimation(fixedMount.animatedRack.address,fixedMount.nativeRackPaused,fixedMount.nativeRackTick);
-    for(const auto& visual:fixedMount.visuals)if(mountAlive(visual.identity)) {
-        mountOriginalHidden(reinterpret_cast<void*>(visual.identity.address),visual.nativeHidden,0);
-        mountOriginalVisibility(reinterpret_cast<void*>(visual.identity.address),visual.nativeVisible,0);
+    FixedMountState pending; // 只保留未完成恢复的对象，不重新启用显隐或取位接管。
+    auto failure=[&](const std::exception& error) {
+        if(!pending.error.empty())pending.error+="；";
+        pending.error+=error.what();
+    };
+    try {
+        if(mountAlive(fixedMount.animatedRack))
+            mountSetRackAnimation(fixedMount.animatedRack.address,fixedMount.nativeRackPaused,fixedMount.nativeRackTick);
+    }catch(const std::exception& error) {
+        pending.animatedRack=fixedMount.animatedRack;
+        pending.nativeRackPaused=fixedMount.nativeRackPaused;pending.nativeRackTick=fixedMount.nativeRackTick;
+        failure(error);
     }
-    fixedMount={};
+    for(const auto& visual:fixedMount.visuals)try {
+        if(mountAlive(visual.identity)) {
+            mountOriginalHidden(reinterpret_cast<void*>(visual.identity.address),visual.nativeHidden,0);
+            mountOriginalVisibility(reinterpret_cast<void*>(visual.identity.address),visual.nativeVisible,0);
+        }
+    }catch(const std::exception& error) { pending.visuals.push_back(visual);failure(error); }
+    fixedMount=std::move(pending);
+    if(!fixedMount.error.empty()) {
+        fixedMountFailed=true;
+        fixedMountWarning="多 SP 挂载已回退，部分原生显示仍待恢复："+fixedMount.error;
+        return false;
+    }
+    if(!previewReleased) { fixedMountWarning=mountPreview.warning;return false; }
+    if(hadPending)fixedMountWarning="多 SP 挂载已回退为原生单 SP，原生显示已恢复";
+    return true;
 }
-// 明确记录错误并停止原型；下次 Lua 更新继续上报，不能伪装为成功。
+// 外观错误只停实验接管；弹药、切换和其他功能继续使用已完成的原生事务。
 void fixedMountFail(const char* message) noexcept {
     const std::string failure=message; // 清理会销毁状态字符串，先取得独立副本。
+    fixedMountFailed=true;fixedMountWarning="多 SP 挂载已回退为原生单 SP："+failure;
     try {
         nativeLog(std::string("FIXED_MOUNT_ERROR ")+failure);
-        fixedMountRelease();fixedMount.error=failure;
+        fixedMountRelease();
     }catch(const std::exception& cleanup) {
         fixedMount.bound=false;
-        fixedMount.error=failure+"；归还显示失败："+cleanup.what();
-        nativeLog(std::string("FIXED_MOUNT_RELEASE_ERROR ")+fixedMount.error);
+        f35Cover={};
+        fixedMountWarning=failure+"；归还显示失败："+cleanup.what();
+        nativeLog(std::string("FIXED_MOUNT_RELEASE_ERROR ")+fixedMountWarning);
     }
 }
 // 原生仅把公共 SP 进度写给当前通道，切换配置后旧通道会冻结；在同一动画更新中补齐各舱的连续状态。
@@ -242,11 +293,15 @@ void mountPartsUpdate(void* object,float delta,void* input) {
 // 原生显隐请求仍记账，但固定布局的组件由聚合状态决定；挂架请求不传播到武器。
 void mountFilterVisibility(void* object,bool requested,unsigned char propagation,bool hidden) {
     const auto original=hidden?mountOriginalHidden:mountOriginalVisibility; // 两种引擎接口分别处理。
-    if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound)try {
+    if(GetCurrentThreadId()==mountGameThread.load() && mountPreview.active) {
+        try { if(mountPreviewFilter(object,requested,propagation,hidden))return; }
+        catch(const std::exception& error) { mountPreviewFail(error.what());original(object,requested,propagation);return; }
+    }
+    if(GetCurrentThreadId()==mountGameThread.load() && (fixedMount.bound || !fixedMount.visuals.empty()))try {
         const Addr address=reinterpret_cast<Addr>(object); // 先处理整架飞机/整组挂载的传播请求。
         if(propagation==2 && (address==fixedMount.root.address || address==fixedMount.weaponBase.address)) {
             require(mountAlive(fixedMount.root) && mountAlive(fixedMount.weaponBase),"固定挂载：祖先组件身份失效");
-            (hidden?fixedMount.ancestorHidden:fixedMount.ancestorVisible)=requested;
+            (address==fixedMount.root.address?(hidden?fixedMount.rootHidden:fixedMount.rootVisible):(hidden?fixedMount.ancestorHidden:fixedMount.ancestorVisible))=requested;
             // 原生随后遍历后代并以参数 0 回调同一入口，固定模型将服从这次整组请求。
         }
         for(auto& visual:fixedMount.visuals)if(visual.identity.address==reinterpret_cast<Addr>(object)) {
@@ -255,6 +310,7 @@ void mountFilterVisibility(void* object,bool requested,unsigned char propagation
             // 原生挂架传播语义保留在归还记录中，固定显示期间不覆盖子模型。
             if(visual.index<0 && propagation==2)for(auto& child:fixedMount.visuals)
                 if(child.pool==visual.pool && child.index>=0)(hidden?child.nativeHidden:child.nativeVisible)=requested;
+            if(!fixedMount.bound) { original(object,requested,propagation);return; } // 待归还期间跟踪新的原生请求，避免稍后恢复旧快照。
             original(object,hidden?false:mountDesired(visual),0);
             return;
         }
@@ -266,27 +322,29 @@ void mountVisibility(void* object,bool visible,unsigned char propagation) { moun
 void mountHidden(void* object,bool hidden,unsigned char propagation) { mountFilterVisibility(object,hidden,propagation,true); }
 
 // 同一个映射同时用于显示和发射；QAAM 四槽、6AAM/LAGM 六槽均按原生顺序轮转。
-int mountPhysical(int kind,int ordinal) {
+int mountPhysical(const FixedMountState& state,int kind,int ordinal) {
     require(kind>=0 && kind<3,"固定挂载：未知武器种类");
-    const int count=fixedMount.logicalCounts[kind]; // 逻辑数量不因物理位置减少而改变。
+    const int count=state.logicalCounts[kind]; // 逻辑数量不因物理位置减少而改变。
     require(ordinal>=0 && ordinal<count,"固定挂载：持久挂点序号无效");
-    if(fixedMount.aircraft==MountAircraft::F35c) {
+    if(state.aircraft==MountAircraft::Su30sm && (state.kindsMask==1 || state.kindsMask==2 || state.kindsMask==4))return ordinal; // 单选保留自己的原生池。
+    if(state.aircraft==MountAircraft::F35c) {
         // 同选 SOD 时只使用最内侧两个活动点 sp25/26，开舱姿态与 SOD 的模型范围分离。
         // 六逻辑槽和四发窗口保持原样，多枚弹可依序从同一物理位置离架；收拢过程仍须实玩观察。
-        if(kind==2 && (fixedMount.kindsMask&1))return 18+ordinal%2;
+        if(kind==2 && (state.kindsMask&1))return 18+ordinal%2;
         return (kind==0?0:kind==1?2:14)+ordinal; // 其余组合保留自己的原生位置和父链。
     }
-    if(fixedMount.aircraft==MountAircraft::F15e) {
+    if(state.aircraft==MountAircraft::F15e) {
         if(kind==2)return 18; // 固定激光发射点保持原位。
         if(kind==1)return 6+ordinal; // SFFS 保留十二个原生位置。
-        return (fixedMount.kindsMask&2)?ordinal%2:ordinal; // 同选 SFFS 时只用两处外侧导弹位，避开内侧炸弹。
+        return (state.kindsMask&2)?ordinal%2:ordinal; // 同选 SFFS 时只用两处外侧导弹位，避开内侧炸弹。
     }
-    if(kind==1)return fixedMount.kindsMask==6?2+(ordinal<4?ordinal:ordinal-2):4+ordinal%2;
+    if(kind==1)return state.kindsMask==6?2+(ordinal<4?ordinal:ordinal-2):4+ordinal%2;
     if(kind==2)return ordinal%2;
     require(kind==0,"固定挂载：未知武器种类");
-    if(fixedMount.kindsMask==5)return 2+(ordinal<4?ordinal:ordinal-2); // QAAM＋6AAM 利用内翼及机腹四处。
-    return (fixedMount.kindsMask&4)?2+ordinal%2:(ordinal<4?ordinal:ordinal-2); // 三挂两处；原四加二保持原样。
+    if(state.kindsMask==5)return 2+(ordinal<4?ordinal:ordinal-2); // QAAM＋6AAM 利用内翼及机腹四处。
+    return (state.kindsMask&4)?2+ordinal%2:(ordinal<4?ordinal:ordinal-2); // 三挂两处；原四加二保持原样。
 }
+int mountPhysical(int kind,int ordinal) { return mountPhysical(fixedMount,kind,ordinal); }
 // 逻辑槽映射物理位置，不修改原生隐藏/恢复索引，也不改变六发数量。
 void mountCopyTransform(void* output,int slot) {
     const int count=fixedMount.logicalCounts[fixedMount.weaponKinds[session.active]]; // 当前武器自己的逻辑槽数。
@@ -325,6 +383,9 @@ void mountSelection(void* manager,unsigned char group,void* output,int* selected
 // 原生总显隐只遍历当前路由；补充更新未激活 SP 的固定模型。
 void mountMaster(void* manager,bool visible,bool force) {
     mountOriginalMaster(manager,visible,force);
+    if(GetCurrentThreadId()==mountGameThread.load() && mountPreview.active)try {
+        if(mountPreviewMatchesManager(reinterpret_cast<Addr>(manager))) { mountPreviewApply();return; }
+    }catch(const std::exception& error) { mountPreviewFail(error.what());return; }
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try { mountApply(); }
     catch(const std::exception& error) { fixedMountFail(error.what()); }
 }
@@ -371,6 +432,70 @@ void mountInstallHooks() {
     }
     mountHooksReady=true;nativeLog("FIXED_MOUNT_HOOKS_READY");
 }
+unsigned mountRackMask(MountAircraft aircraft,unsigned kindsMask) {
+    if(aircraft==MountAircraft::F35c)return (kindsMask&1)|((kindsMask&2)<<1)|((kindsMask&4)>>1);
+    if(aircraft==MountAircraft::F15e)return (kindsMask&2)?(kindsMask&~1u):kindsMask;
+    if(kindsMask==1 || kindsMask==2 || kindsMask==4)return (kindsMask&1)|((kindsMask&2)<<1)|((kindsMask&4)>>1);
+    return 4; // Su-30SM 多挂共用 SWP3 挂架。
+}
+bool mountShowReserve(MountAircraft aircraft,unsigned kindsMask,int kind) {
+    return (aircraft==MountAircraft::Su30sm && kindsMask==6 && kind==1) || (aircraft==MountAircraft::F15e && kind==1);
+}
+void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
+    const auto aircraft=state.aircraft;const auto kindsMask=state.kindsMask;
+    const bool hasQaam=aircraft==MountAircraft::Su30sm && (kindsMask&4)!=0;
+    const auto& specification=mountSpecification(aircraft);
+    const bool single=aircraft==MountAircraft::Su30sm && (kindsMask==1 || kindsMask==2 || kindsMask==4);
+    if(single)state.physicalCount=specification.logicalCounts[kindsMask==1?0:kindsMask==2?1:2];
+    state.plane=mountIdentity(plane);
+    state.manager=mountIdentity(read<Addr>(activator+0x260));
+    state.meshManager=mountIdentity(read<Addr>(state.manager.address+0x150));
+    state.root=mountIdentity(read<Addr>(plane+0x160));
+    state.weaponBase=mountIdentity(read<Addr>(plane+0x1ae0));
+    require(read<Addr>(state.weaponBase.address+0x100)==state.root.address &&
+        read<Addr>(state.root.address+0x100)==0,"固定挂载：共同祖先链不匹配");
+    const auto rootFlags=read<unsigned char>(state.root.address+0x1bc);
+    state.rootVisible=bool(rootFlags&0x10);state.rootHidden=bool(rootFlags&0x20);
+    const auto ancestorFlags=read<unsigned char>(state.weaponBase.address+0x1bc); // 初始总组状态来自共同挂载父级。
+    state.ancestorVisible=bool(ancestorFlags&0x10);state.ancestorHidden=bool(ancestorFlags&0x20);
+    for(int pool=0;pool<3;++pool) {
+        if(specification.poolCounts[pool]==0)continue; // 未登记活动弹仓不进入静态显隐过滤。
+        const Addr rack=read<Addr>(plane+specification.rackOffsets[pool]); // 原生挂架父组件。
+        mountIdentity(rack); // 读组件布局前先确认当前对象表身份。
+        const bool skeletal=aircraft==MountAircraft::F35c && pool==1; // 仅现场核对的 F-35C SWP2 是活动骨架。
+        require(mountName(read<Addr>(rack+0x10))==(skeletal?"SkeletalMeshComponent":"StaticMeshComponent"),"固定挂载：挂架类型不符");
+        require(read<Addr>(rack+0x100)==state.weaponBase.address,"固定挂载：挂架共同父级不匹配");
+        const std::string expected=std::string(specification.code)+"_SWP"+std::to_string(pool+1)+(skeletal?"":"_SM"); // 精确资源名。
+        require(mountName(read<Addr>(rack+(skeletal?0x718:0x728)))==expected,"固定挂载：挂架资源被替换");
+        const auto flags=read<unsigned char>(rack+0x1bc); // 退出原型时归还的原生状态。
+        state.visuals.push_back({mountIdentity(rack),pool,-1,bool(flags&0x10),bool(flags&0x20)});
+        const Addr array=state.meshManager.address+0x150+pool*16; // 三套持久模型池。
+        const int count=read<int>(array+8),expectedCount=specification.poolCounts[pool]; // 原生持久模型池数量。
+        require(count==expectedCount && read<int>(array+12)>=count,"固定挂载：模型池数量不匹配");
+        for(int index=0;index<count;++index) {
+            const Addr component=read<Addr>(read<Addr>(array)+index*8); // 数组顺序须与 Socket 一致。
+            require(mountName(read<Addr>(mountIdentity(component).address+0x10))=="StaticMeshComponent","固定挂载：武器组件类型不符");
+            std::string socket=mountNameIndex(read<unsigned>(component+0x108)); // 资源混用 SP/sp 大小写。
+            for(char& character:socket)if(character>='A' && character<='Z')character+=32;
+            require(socket=="sp"+std::to_string((pool+1)*10+index+1) && read<Addr>(component+0x100)==rack,"固定挂载：Socket 或父链不匹配");
+            const Addr mesh=read<Addr>(component+0x728); // TLS 空模型是明确采样结果，不是缺失资源的容错。
+            require(specification.meshes[pool]?mesh && mountName(mesh)==specification.meshes[pool]:mesh==0,"固定挂载：武器模型被替换");
+            const auto flags=read<unsigned char>(component+0x1bc); // 原生显隐快照。
+            state.visuals.push_back({mountIdentity(component),pool,index,bool(flags&0x10),bool(flags&0x20)});
+            if(aircraft==MountAircraft::F35c)state.physical[(pool==0?0:pool==1?14:2)+index]=component; // 每种兵装保持自己的原生组件和父链。
+            else if(aircraft==MountAircraft::F15e)state.physical[(pool==0?0:pool==1?6:18)+index]=component; // 原生池与物理表固定对应。
+            else if(single) {
+                if(pool==(kindsMask==1?0:kindsMask==2?2:1))state.physical[index]=component;
+            } else {
+                if(pool==0 && ((kindsMask==5 && index>=2) || (kindsMask!=5 && index<4 && (!hasQaam || index>=2))))state.physical[index]=component;
+                if(hasQaam && pool==1 && index>=2)state.physical[index-2]=component; // QAAM 的 sp23/24 为原生外翼位置。
+                if(pool==2 && kindsMask!=5 && (index>=4 || (kindsMask==6 && index>=2)))state.physical[index]=component;
+            }
+        }
+    }
+    require(std::all_of(state.physical.begin(),state.physical.begin()+state.physicalCount,[](Addr component){return component!=0;}),"固定挂载：预期物理模型未齐备");
+}
+#include "mount_preview.hpp"
 // 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。
 void fixedMountRestoreOrder(const Group& saved,int next) {
     const int count=static_cast<int>(saved.slots.size()); // QAAM 必须保留自己的四槽旋转。
@@ -379,8 +504,8 @@ void fixedMountRestoreOrder(const Group& saved,int next) {
 }
 // 根据真实弹药和允许装填的窗口聚合六处显示；未激活 SP 使用游戏时间推进。
 void fixedMountRefresh(double time) {
-    require(fixedMount.error.empty(),fixedMount.error.c_str());
-    if(!fixedMount.bound)return;
+    if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
+    if(!fixedMount.bound || mountPreviewOwnsTask())return;
     require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：更新时身份失效");
     unsigned mask=0; // 本次所有物理位置的完整结果。
     for(int weapon=0;weapon<session.count;++weapon) {
@@ -391,8 +516,7 @@ void fixedMountRefresh(double time) {
         require(group.slots.size()==static_cast<size_t>(count) && ammo>=-1 && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
         require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
         const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
-        const bool showReserve=(fixedMount.aircraft==MountAircraft::Su30sm && fixedMount.kindsMask==6 && fixedMount.weaponKinds[weapon]==1) ||
-            (fixedMount.aircraft==MountAircraft::F15e && fixedMount.weaponKinds[weapon]==1); // 显示实际库存中的备用弹，不表示同时可发射。
+        const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 显示实际库存中的备用弹，不表示同时可发射。
         const int visualLimit=showReserve?count:window; // 显示范围不改变原生装填窗口。
         const int available=ammo<0?visualLimit:std::min(visualLimit,ammo); // 最后一发仍只分配一个物理位置。
         unsigned weaponMask=0,readyWindow=0,vacancies=0; // 备用库存、实际待发弹和刚发射空位分别聚合。
@@ -422,7 +546,7 @@ void fixedMountRefresh(double time) {
 }
 // 在完整兵装事务后绑定；静态组合先匹配真实类，再检查各机体现场核对的布局。
 void fixedMountCommit(const Command& command) {
-    require(fixedMount.error.empty(),fixedMount.error.c_str());
+    if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(command.op=="checkpoint_save" || command.op=="snapshot") { fixedMountRefresh(command.time);return; }
     if(session.count<2) { fixedMountRelease();return; }
     const MountAircraft aircraft=mountAircraft(command.plane); // 未登记机体继续使用原生当前 SP 模型。
@@ -442,60 +566,18 @@ void fixedMountCommit(const Command& command) {
     }
     require((session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
         (session.count==3 && kindsMask==7),"固定挂载：已识别兵装组合与槽数不符");
-    const bool hasQaam=aircraft==MountAircraft::Su30sm && (kindsMask&4)!=0; // 仅 Su-30SM 的第三种武器是 QAAM。
-    if(!fixedMount.bound || fixedMount.plane.address!=command.plane || fixedMount.aircraft!=aircraft || fixedMount.kindsMask!=kindsMask) {
+        if(!fixedMount.bound || fixedMount.plane.address!=command.plane || fixedMount.aircraft!=aircraft || fixedMount.kindsMask!=kindsMask) {
         const auto order=fixedMount.order; // restore 可能已为检查点的新实例重建顺序。
         const unsigned pending=fixedMount.pendingReadyMask; // 同时保留新池一次性装填完成事件。
-        fixedMountRelease();fixedMount.order=order;fixedMount.pendingReadyMask=pending;
+        if(!fixedMountRelease())return; // 未全部归还时不能覆盖待恢复对象或重新接管。
+        fixedMount.order=order;fixedMount.pendingReadyMask=pending;
         fixedMount.kindsMask=kindsMask;
         fixedMount.aircraft=aircraft;
         fixedMount.logicalCounts=specification.logicalCounts;
         fixedMount.physicalCount=specification.physicalCount;
-        fixedMount.rackMask=4;
-        if(aircraft==MountAircraft::F35c)fixedMount.rackMask=(kindsMask&1)|((kindsMask&2)<<1)|((kindsMask&4)>>1); // 武器种类次序与原生挂架次序分开。
-        if(aircraft==MountAircraft::F15e)fixedMount.rackMask=(kindsMask&2)?(kindsMask&~1u):kindsMask; // 同选 SFFS 时不用只承载内侧 6AAM 的 SWP1 网格。
+        fixedMount.rackMask=mountRackMask(aircraft,kindsMask);
         mountInstallHooks();
-        fixedMount.plane=mountIdentity(command.plane);
-        fixedMount.manager=mountIdentity(read<Addr>(command.activator+0x260));
-        fixedMount.meshManager=mountIdentity(read<Addr>(fixedMount.manager.address+0x150));
-        fixedMount.root=mountIdentity(read<Addr>(command.plane+0x160));
-        fixedMount.weaponBase=mountIdentity(read<Addr>(command.plane+0x1ae0));
-        require(read<Addr>(fixedMount.weaponBase.address+0x100)==fixedMount.root.address &&
-            read<Addr>(fixedMount.root.address+0x100)==0,"固定挂载：共同祖先链不匹配");
-        const auto ancestorFlags=read<unsigned char>(fixedMount.weaponBase.address+0x1bc); // 初始总组状态来自共同挂载父级。
-        fixedMount.ancestorVisible=bool(ancestorFlags&0x10);fixedMount.ancestorHidden=bool(ancestorFlags&0x20);
-        for(int pool=0;pool<3;++pool) {
-            if(specification.poolCounts[pool]==0)continue; // 未登记活动弹仓不进入静态显隐过滤。
-            const Addr rack=read<Addr>(command.plane+specification.rackOffsets[pool]); // 原生挂架父组件。
-            const bool skeletal=aircraft==MountAircraft::F35c && pool==1; // 仅现场核对的 F-35C SWP2 是活动骨架。
-            require(mountName(read<Addr>(rack+0x10))==(skeletal?"SkeletalMeshComponent":"StaticMeshComponent"),"固定挂载：挂架类型不符");
-            require(read<Addr>(rack+0x100)==fixedMount.weaponBase.address,"固定挂载：挂架共同父级不匹配");
-            const std::string expected=std::string(specification.code)+"_SWP"+std::to_string(pool+1)+(skeletal?"":"_SM"); // 精确资源名。
-            require(mountName(read<Addr>(rack+(skeletal?0x718:0x728)))==expected,"固定挂载：挂架资源被替换");
-            const auto flags=read<unsigned char>(rack+0x1bc); // 退出原型时归还的原生状态。
-            fixedMount.visuals.push_back({mountIdentity(rack),pool,-1,bool(flags&0x10),bool(flags&0x20)});
-            const Addr array=fixedMount.meshManager.address+0x150+pool*16; // 三套持久模型池。
-            const int count=read<int>(array+8),expectedCount=specification.poolCounts[pool]; // 原生持久模型池数量。
-            require(count==expectedCount && read<int>(array+12)>=count,"固定挂载：模型池数量不匹配");
-            for(int index=0;index<count;++index) {
-                const Addr component=read<Addr>(read<Addr>(array)+index*8); // 数组顺序须与 Socket 一致。
-                std::string socket=mountNameIndex(read<unsigned>(component+0x108)); // 资源混用 SP/sp 大小写。
-                for(char& character:socket)if(character>='A' && character<='Z')character+=32;
-                require(socket=="sp"+std::to_string((pool+1)*10+index+1) && read<Addr>(component+0x100)==rack,"固定挂载：Socket 或父链不匹配");
-                const Addr mesh=read<Addr>(component+0x728); // TLS 空模型是明确采样结果，不是缺失资源的容错。
-                require(specification.meshes[pool]?mesh && mountName(mesh)==specification.meshes[pool]:mesh==0,"固定挂载：武器模型被替换");
-                const auto flags=read<unsigned char>(component+0x1bc); // 原生显隐快照。
-                fixedMount.visuals.push_back({mountIdentity(component),pool,index,bool(flags&0x10),bool(flags&0x20)});
-                if(aircraft==MountAircraft::F35c)fixedMount.physical[(pool==0?0:pool==1?14:2)+index]=component; // 每种兵装保持自己的原生组件和父链。
-                else if(aircraft==MountAircraft::F15e)fixedMount.physical[(pool==0?0:pool==1?6:18)+index]=component; // 原生池与物理表固定对应。
-                else {
-                    if(pool==0 && ((kindsMask==5 && index>=2) || (kindsMask!=5 && index<4 && (!hasQaam || index>=2))))fixedMount.physical[index]=component;
-                    if(hasQaam && pool==1 && index>=2)fixedMount.physical[index-2]=component; // QAAM 的 sp23/24 为原生外翼位置。
-                    if(pool==2 && kindsMask!=5 && (index>=4 || (kindsMask==6 && index>=2)))fixedMount.physical[index]=component;
-                }
-            }
-        }
-        require(std::all_of(fixedMount.physical.begin(),fixedMount.physical.begin()+fixedMount.physicalCount,[](Addr component){return component!=0;}),"固定挂载：预期物理模型未齐备");
+        mountBindVisuals(fixedMount,command.plane,command.activator);
         fixedMount.bound=true;
         nativeLog(Json{{"event","FIXED_MOUNT_BOUND"},{"aircraft",specification.code},{"kinds_mask",kindsMask},
             {"rack_mask",fixedMount.rackMask},{"physical_positions",fixedMount.physicalCount}}.dump()); // 位置数不冒充可发射弹数。
@@ -518,6 +600,7 @@ void fixedMountCommit(const Command& command) {
 }
 // 动画状态独立于是否选择多挂；补给转单挂后也应正常关闭上一组舱门。
 void bindF35Cover(Addr plane) {
+    if(!fixedMountEnabled || fixedMountFailed) { f35Cover={};return; }
     if(mountAircraft(plane)!=MountAircraft::F35c) { f35Cover={};return; }
     const Addr parts=read<Addr>(plane+0x1410)+0xf90; // 已核对原生包装器与 PartsAnimation 的地址关系。
     if(f35Cover.plane.address==plane && f35Cover.parts==parts)return;
@@ -539,34 +622,40 @@ struct MountRebuildSnapshot {
 };
 MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeConfig,const Session& current) {
     MountRebuildSnapshot saved;
-    const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
-        current.configs[current.active]<2 && nativeConfig<2;
-    saved.cover=sameBay?f35Cover.parts:0;
-    if(sameBay) {
-        require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==saved.cover,"同舱切换：飞机或动画实例改变");
-        saved.request=read<int>(saved.cover+0x58);saved.state=read<int>(saved.cover+0x274);
-        require(saved.request>=0 && saved.request<=3 && saved.state>=0 && saved.state<=3,"同舱切换：舱门状态无效");
-        for(int i=0;i<7;++i) {
-            saved.progress[i]=read<float>(saved.cover+0x17c+i*4);
-            require(std::isfinite(saved.progress[i]) && saved.progress[i]>=-1 && saved.progress[i]<=1,"同舱切换：动画进度无效");
+    mountPreviewRelease(0,false); // 任何真实兵装重建都先结束只控制外观的预览。
+    if(!fixedMountEnabled || fixedMountFailed)return saved;
+    try {
+        const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
+            current.configs[current.active]<2 && nativeConfig<2;
+        saved.cover=sameBay?f35Cover.parts:0;
+        if(sameBay) {
+            require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==saved.cover,"同舱切换：飞机或动画实例改变");
+            saved.request=read<int>(saved.cover+0x58);saved.state=read<int>(saved.cover+0x274);
+            require(saved.request>=0 && saved.request<=3 && saved.state>=0 && saved.state<=3,"同舱切换：舱门状态无效");
+            for(int i=0;i<7;++i) {
+                saved.progress[i]=read<float>(saved.cover+0x17c+i*4);
+                require(std::isfinite(saved.progress[i]) && saved.progress[i]>=-1 && saved.progress[i]<=1,"同舱切换：动画进度无效");
+            }
         }
-    }
-    fixedMount.rebuilding=true;
-    fixedMount.pendingReadyMask=0;
-    return saved;
+        fixedMount.rebuilding=true;
+        fixedMount.pendingReadyMask=0;
+        return saved;
+    }catch(const std::exception& error) { fixedMountFail(error.what());return {}; }
 }
 void fixedMountAfterRebuild(const MountRebuildSnapshot& saved) {
-    if(!saved.cover)return;
-    // 原生初始化后、keepArmed 前恢复，保留原有交接顺序。
-    write<int>(saved.cover+0x58,saved.request);write<int>(saved.cover+0x274,saved.state);
-    for(int i=0;i<7;++i)write<float>(saved.cover+0x17c+i*4,saved.progress[i]);
+    if(!saved.cover || !fixedMountEnabled || fixedMountFailed)return;
+    try {
+        // 原生初始化后、keepArmed 前恢复，保留原有交接顺序。
+        write<int>(saved.cover+0x58,saved.request);write<int>(saved.cover+0x274,saved.state);
+        for(int i=0;i<7;++i)write<float>(saved.cover+0x17c+i*4,saved.progress[i]);
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
 }
 void fixedMountRecordReload(bool special,int slot,float logicalElapsed,float elapsed,float duration) {
     if(special && slot<static_cast<int>(fixedMount.order.size()) && logicalElapsed>=duration && elapsed<duration)
         fixedMount.pendingReadyMask|=1u<<slot;
 }
 void fixedMountUpdate(Addr plane,Addr sessionPlane,double time) {
-    require(fixedMount.error.empty(),fixedMount.error.c_str());
+    if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(fixedMount.bound) {
         require(fixedMount.plane.address==plane && sessionPlane==plane,"固定挂载玩家会话不一致");
         fixedMountRefresh(time);
