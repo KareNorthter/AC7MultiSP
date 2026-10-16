@@ -443,8 +443,7 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
 #endif
         elapsed=dualsp::rebuildReload(slot.duration,elapsed,rebuiltElapsed);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        if(special && i<static_cast<int>(fixedMount.order.size()) && logicalElapsed>=slot.duration && elapsed<slot.duration)
-            fixedMount.pendingReadyMask|=1u<<i; // 仅标记这次 restore 明确降到门槛下的槽。
+        fixedMountRecordReload(special,i,logicalElapsed,elapsed,slot.duration);
 #endif
         write<float>(slotData+i*0x60+0x4c,elapsed);
     }
@@ -472,23 +471,8 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #endif
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-    // 仅普通 SP 切换保留同一内置弹舱；补给、出击和检查点必须服从各自的新状态。
-    const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
-        session.configs[session.active]<2 && index<2;
-    const Addr cover=sameBay?f35Cover.parts:0; // 只有已绑定且身份有效的 F-35C 才读取通道。
-    std::array<float,7> coverProgress{}; // 公共、独立及组合通道在重建期间没有经过一帧。
-    int coverRequest{},coverState{}; // 原生初始化会强制关舱，恢复请求须早于 keepArmed。
-    if(sameBay) {
-        require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==cover,"同舱切换：飞机或动画实例改变");
-        coverRequest=read<int>(cover+0x58);coverState=read<int>(cover+0x274);
-        require(coverRequest>=0 && coverRequest<=3 && coverState>=0 && coverState<=3,"同舱切换：舱门状态无效");
-        for(int i=0;i<7;++i) {
-            coverProgress[i]=read<float>(cover+0x17c+i*4);
-            require(std::isfinite(coverProgress[i]) && coverProgress[i]>=-1 && coverProgress[i]<=1,"同舱切换：动画进度无效");
-        }
-    }
-    fixedMount.rebuilding=true; // 原生临时武器池按原规则建立，最终事务再提交固定出弹映射。
-    fixedMount.pendingReadyMask=0; // 每次重建重新记录，不把上一武器的完成事件带过来。
+    // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
+    const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
 #endif
     finishSeekerAudio(command.plane,command.activator); // 先释放旧槽音效，再重建锁定槽和武器池。
     const int gun=read<int>(stateOf(command.activator)+8);
@@ -501,11 +485,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #endif
     reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-    if(sameBay) {
-        // 两种内置兵装共用实际腹舱；接续原有开/闭过程，避免重建后重新请求开舱。
-        write<int>(cover+0x58,coverRequest);write<int>(cover+0x274,coverState);
-        for(int i=0;i<7;++i)write<float>(cover+0x17c+i*4,coverProgress[i]);
-    }
+    fixedMountAfterRebuild(mountRebuild);
 #endif
     // A loadout rebuild also resets the machine gun. Preserve its ammunition,
     // plus flare count, during an SP change; a deliberate resupply uses defaults.
@@ -734,11 +714,7 @@ extern "C" __declspec(dllexport) int dualsp_fixed_mount_update(void* luaState) {
         else {
             require(runtimeEnabled,"固定挂载只允许单人任务");
             require(std::isfinite(time) && time>=0,"固定挂载游戏时间无效");
-            require(fixedMount.error.empty(),fixedMount.error.c_str());
-            if(fixedMount.bound) {
-                require(fixedMount.plane.address==plane && session.plane==plane,"固定挂载玩家会话不一致");
-                fixedMountRefresh(time);
-            }
+            fixedMountUpdate(plane,session.plane,time);
         }
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     }catch(const std::exception& error) {

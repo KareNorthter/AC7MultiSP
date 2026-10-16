@@ -38,7 +38,7 @@ def main():
             raise RuntimeError(f'{name} 失败：{result.stdout}{result.stderr}')
         checks.append(name)
         print(name + ': 通过', flush=True)
-    for name in ('release_pipeline_test', 'current_runtime_test'):
+    for name in ('release_pipeline_test', 'current_runtime_test', 'runtime_services_test'):
         run(name, [sys.executable, '-X', 'utf8', ROOT / 'tests' / (name + '.py')])
     compiler = compiler_root / 'bin/clang++.exe'
     for name in ('reload_timer_test', 'panel_pointer_test', 'weapon_group_test'):

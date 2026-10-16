@@ -30,9 +30,10 @@ def main():
     base_path = contained(args.base_receipt or root / info['upgrade_receipt'], root / 'evidence')
     previous = read_json(base_path)
     expected_old = previous['runtime_files']
-    required = {'bin/DualSP.dll', 'bin/DualSPUI.dll', 'VERSION'} | {'Scripts/' + n for n in info['scripts']}
-    if set(expected_old) != required:
-        raise ValueError('升级基线必须包含完整运行文件，不能使用旧的局部安装回执')
+    base_scripts={name for name in expected_old if name.startswith('Scripts/') and name.endswith('.lua')}
+    required={'bin/DualSP.dll', 'bin/DualSPUI.dll', 'VERSION'} | base_scripts
+    if set(expected_old)!=required or 'Scripts/main.lua' not in base_scripts:
+        raise ValueError('升级基线必须包含完整运行文件，不能使用局部回执')
     if not {'dualsp_fixed_mount_update', 'dualsp_three_sp_supported', 'dualsp_refresh_weapon_icons'} <= set(receipt['required_exports_verified']):
         raise ValueError('核心缺少当前必需接口')
     result_path = root / 'evidence' / (version + '-installed.json')
@@ -42,8 +43,13 @@ def main():
     mod = game / 'ue4ss/Mods/DualSP'  # 不操作其他模组和发布包。
     if mod.is_symlink() or mod.is_junction() or not mod.resolve(strict=True).is_relative_to(game.resolve(strict=True)):
         raise ValueError('安装目标路径无效')
+    actual_scripts={'Scripts/' + path.relative_to(mod / 'Scripts').as_posix() for path in (mod / 'Scripts').rglob('*.lua')}
+    if actual_scripts!=base_scripts:
+        raise ValueError('现有 Lua 集合与基线不一致，不能遗漏未登记文件')
+    if not base_scripts <= {'Scripts/' + name for name in info['scripts']}:
+        raise ValueError('移除旧 Lua 需要明确迁移安排，不能静默遗留或删除')
     for name, expected in expected_old.items():
-        if digest(mod / name) != expected.lower():
+        if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
     settings = read_json(mod / 'profiles.json')
     if settings.get('schema') != 2 or settings.get('management_revision') != 3:

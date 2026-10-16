@@ -11,13 +11,13 @@
 | 本机升级 | src/install.py，默认预检，显式 --apply 安装，不启动游戏 |
 | 本地打包 | src/package-release.py，使用当前产品清单与完整构建回执，已有 ZIP 不覆盖 |
 
-获授权后，在根目录依次执行：
+2.0.0已在 Temp/build-2.0.0 完整构建、检查并安装，用户实测通过，主线基线标签为 v2.0.0。下列为操作顺序示例，现有目录和安装回执已存在，勿重复执行；后续新构建须使用全新目录并核对当时安装基线：
 
 ```powershell
-python -X utf8 src/build.py --output-dir Temp/build-2.0-verified
-python -X utf8 tests/run.py --build-dir Temp/build-2.0-verified
-python -X utf8 src/install.py --build-dir Temp/build-2.0-verified
-python -X utf8 src/install.py --build-dir Temp/build-2.0-verified --apply
+python -X utf8 src/build.py --output-dir Temp/build-2.0.0
+python -X utf8 tests/run.py --build-dir Temp/build-2.0.0
+python -X utf8 src/install.py --build-dir Temp/build-2.0.0
+python -X utf8 src/install.py --build-dir Temp/build-2.0.0 --apply
 ```
 
 构建输出必须是全新目录；默认工具根为 tools，可指定 --tools-root。每次完整编译，不再接受旧 --reuse-core-build。自动检查不等于实玩。
@@ -26,20 +26,21 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 
 ## 来源与交付
 
-产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十个脚本；当前核心 dist/DualSP/cores/2.0/DualSP.dll，UI dist/DualSP/bin/DualSPUI.dll；旧 bin/DualSP.dll 仅作保护基线。
+产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十二个脚本。当前核心 dist/DualSP/cores/2.0.0/DualSP.dll 与 UI dist/DualSP/bin/DualSPUI.dll 为本轮完整构建，与游戏安装及源码一致；cores/2.0 保留旧核心，旧 bin/DualSP.dll 仅作保护基线。
 加载器/许可从 payload 显式取用；[工具清单](../tools/README.md)、音频、运行库、ZIP 是本地依赖，不入 Git。
 
 构建回执包含 src 产品 C++/头文件、vendor 全树、所有 Lua、正式工具与参数，以及编译命令和工具链全树指纹；构建前后核对一致。安装/打包再次核对整个来源集合，不能只比对清单中少数文件。旧格式回执不接受。
 
-本机升级基线由 product.json 的 upgrade_receipt 指定，本轮为三SP .11；也可显式 --base-receipt 指定 evidence 中完整 runtime_files 回执。要求现有 schema 2 配置，不自动执行历史迁移，不读取无关的1.0.2/.2回执。
+本机升级基线由 product.json 的 upgrade_receipt 指定，保留本轮2.0→2.0.0的构建来源。现在本机已为2.0.0；未来升级须在构建前选择相应基线，也可显式 --base-receipt 指定 evidence 中完整 runtime_files 回执。要求现有 schema 2 配置，不自动执行历史迁移，不读取无关历史回执；现有脚本须与旧基线完整匹配，新模块必须登记清单，不能静默删除旧模块。
 安装必须有匹配构建和测试源码的通过回执。退出游戏后整套暂存、核对、备份模组和存档，再交换目录；保留个人配置、其他模组及外部 PAK。第二步交换失败会尝试归还原目录，不启动游戏。
 
-当前构建、测试凭据保存 evidence/2.0-build.json、2.0-tests.json；安装记录为 evidence/2.0-installed.json，已完整备份并安装，未重新启动游戏。验证通过后，当前构建 DLL 原样保存到上述 dist 路径，回执从构建目录原样保留。后续打包读取同版本构建回执，核对来源、DLL、签名与 ZIP 成员；本轮未制作2.0 ZIP。[现有1.1.0包](../Release/README.md)保持原字节。
+[2.0构建](../evidence/2.0-build.json)、[检查](../evidence/2.0-tests.json)、[安装](../evidence/2.0-installed.json)、[用户实测](../evidence/2.0-user-validation.json)均保留原记录，对应旧基线3c00f3e。
+2.0.0的[构建](../evidence/2.0.0-build.json)、[检查](../evidence/2.0.0-tests.json)、[安装](../evidence/2.0.0-installed.json)回执已保存，完整产物原样存入 dist。原模组与存档备份在 backup/AC7MultiSP-20261016-120724-927183；个人配置、存档、其他模组核验未变。安装时正常关闭游戏且未自动重启；用户随后确认[实测正常](../evidence/2.0.0-user-validation.json)，授权提交2.0.0并合入main。标签 v2.0.0 固定后续功能基线；现存1.1.0 ZIP不变。
 
-## 待处理的工程问题
+## 本轮整理范围
 
-- tests/run.py 运行来源拒绝检查、当前三SP纯规则、冷却、指针和缓存恢复及DLL加载核对；旧双SP控制器/HUD/选装模拟不适用，未纳入当前通过范围。
-- 核心、主调度、页面适配器职责集中，后续渐进拆分，本轮不改功能。
+- tests/run.py 运行来源拒绝检查、三SP纯规则、配置迁移/保存失败、协议应答、页面具名接口、冷却、指针、缓存恢复/挂载边界及DLL加载核对；旧双SP控制器/HUD/选装模拟不适用，未纳入当前通过范围。
+- 本轮只处理高风险边界：配置和协议独立、状态清理具名、页面入口具名、核心不直接改挂载内部状态。较小的UI重复、页面内部布局、武器算法和纯规则模块保持原样；不再安排一系列低收益重构批次。
 
 ## 未合入成果和恢复
 

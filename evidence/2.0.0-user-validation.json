@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "date": "2026-10-16",
+  "source": "用户在本会话反馈",
+  "user_report": "测试没问题，可以提交了",
+  "conclusion": "用户确认本次实测正常，授权提交并作为后续开发基础。",
+  "scope_note": "用户未提供逐机型、任务和检查点明细，不扩写为所有边界或长期稳定性均已覆盖。",
+  "baseline_tag": "v2.0.0",
+  "installation_receipt": "evidence/2.0.0-installed.json",
+  "installation_receipt_sha256": "15fb4751d33e5dfd593a8512538f6b73ea4fbcea479a4168e2637cc6413baaff",
+  "verified": "提交前已核对源码、既有自动检查回执、仓库产物与已安装运行文件一致；本次未重新构建、运行测试或操作游戏。"
+}

@@ -37,5 +37,26 @@ int main() {
     try{restore(act,true,cooling,105);assert(false);}catch(const std::runtime_error&){}
     write<float>(pool+0x48,10);
     try{restore(act,true,cooling,99);assert(false);}catch(const std::runtime_error&){}
-    std::cout<<"weapon_group: empty ammo, zero load window, queue rotation, cooldown and validation passed\n";
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    // 挂载边界只操作合成内存；不调用引擎或验证真实动画。
+    Command command;command.op="setup";
+    Session noSelection;noSelection.active=100; // setup 必须短路，不读取不存在的当前槽。
+    fixedMount.pendingReadyMask=7;
+    const auto emptyMount=fixedMountBeforeRebuild(command,0,noSelection);
+    assert(!emptyMount.cover && fixedMount.rebuilding && fixedMount.pendingReadyMask==0);
+    fixedMountAfterRebuild(emptyMount);
+    std::vector<unsigned char> coverMemory(0x300);
+    MountRebuildSnapshot mount;
+    mount.cover=reinterpret_cast<Addr>(coverMemory.data());mount.request=2;mount.state=3;
+    for(int i=0;i<7;++i)mount.progress[i]=float(i)/10;
+    fixedMountAfterRebuild(mount);
+    assert(read<int>(mount.cover+0x58)==2 && read<int>(mount.cover+0x274)==3);
+    for(int i=0;i<7;++i)assert(read<float>(mount.cover+0x17c+i*4)==mount.progress[i]);
+    fixedMountRecordReload(false,0,10,9,10);assert(fixedMount.pendingReadyMask==0);
+    fixedMountRecordReload(true,1,9,9,10);assert(fixedMount.pendingReadyMask==0);
+    fixedMountRecordReload(true,2,10,9,10);assert(fixedMount.pendingReadyMask==4);
+    fixedMountRecordReload(true,3,10,10,10);assert(fixedMount.pendingReadyMask==4);
+    fixedMount={};
+#endif
+    std::cout<<"weapon_group: cache restore, reload and mount boundary checks passed\n";
 }

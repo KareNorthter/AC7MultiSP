@@ -1,4 +1,4 @@
-// Su-30SM / F-35C / F-15E 固定挂载研究原型；仅由独立候选构建启用。
+// Su-30SM / F-35C / F-15E 固定挂载；由正式构建显式启用。
 // 包含位置在核心私有命名空间中，复用已有内存校验、弹药缓存和日志。
 #pragma once
 
@@ -529,4 +529,46 @@ void bindF35Cover(Addr plane) {
         "F-35C 舱门：原生配置不再是独立 SP1/SP2 舱门"); // 已采样的模型与动画选项必须同时匹配。
     f35Cover={mountIdentity(plane),parts,read<int>(parts+0x178),seconds,closed};
     nativeLog("F35_COVER_CHANNELS_BOUND");
+}
+
+// 核心只传递重建上下文，不直接改写挂载/舱门内部状态。
+struct MountRebuildSnapshot {
+    Addr cover{};
+    std::array<float,7> progress{};
+    int request{},state{};
+};
+MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeConfig,const Session& current) {
+    MountRebuildSnapshot saved;
+    const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
+        current.configs[current.active]<2 && nativeConfig<2;
+    saved.cover=sameBay?f35Cover.parts:0;
+    if(sameBay) {
+        require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==saved.cover,"同舱切换：飞机或动画实例改变");
+        saved.request=read<int>(saved.cover+0x58);saved.state=read<int>(saved.cover+0x274);
+        require(saved.request>=0 && saved.request<=3 && saved.state>=0 && saved.state<=3,"同舱切换：舱门状态无效");
+        for(int i=0;i<7;++i) {
+            saved.progress[i]=read<float>(saved.cover+0x17c+i*4);
+            require(std::isfinite(saved.progress[i]) && saved.progress[i]>=-1 && saved.progress[i]<=1,"同舱切换：动画进度无效");
+        }
+    }
+    fixedMount.rebuilding=true;
+    fixedMount.pendingReadyMask=0;
+    return saved;
+}
+void fixedMountAfterRebuild(const MountRebuildSnapshot& saved) {
+    if(!saved.cover)return;
+    // 原生初始化后、keepArmed 前恢复，保留原有交接顺序。
+    write<int>(saved.cover+0x58,saved.request);write<int>(saved.cover+0x274,saved.state);
+    for(int i=0;i<7;++i)write<float>(saved.cover+0x17c+i*4,saved.progress[i]);
+}
+void fixedMountRecordReload(bool special,int slot,float logicalElapsed,float elapsed,float duration) {
+    if(special && slot<static_cast<int>(fixedMount.order.size()) && logicalElapsed>=duration && elapsed<duration)
+        fixedMount.pendingReadyMask|=1u<<slot;
+}
+void fixedMountUpdate(Addr plane,Addr sessionPlane,double time) {
+    require(fixedMount.error.empty(),fixedMount.error.c_str());
+    if(fixedMount.bound) {
+        require(fixedMount.plane.address==plane && sessionPlane==plane,"固定挂载玩家会话不一致");
+        fixedMountRefresh(time);
+    }
 }

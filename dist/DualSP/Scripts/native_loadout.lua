@@ -18,7 +18,13 @@ local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOC
     Rocket="ROCKET",Bomb="BOMB",Laser="LASER",Other="OTHER"}
 
 -- 补给适配器复用原生控件操作和输入读取，保持两种页面各自的布局。
-function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparationAction,confirmSound,weaponIcon,translate,partsAmmoPreview)
+function NativeLoadout.new(dependencies)
+    local note,commit,mode=dependencies.note,dependencies.commit,dependencies.mode
+    local keyboardNavigation,takeoff=dependencies.keyboardNavigation,dependencies.takeoff
+    local preparationAction,confirmSound=dependencies.preparationAction,dependencies.confirmSound
+    local weaponIcon,translate,partsAmmoPreview=dependencies.weaponIcon,dependencies.translate,dependencies.partsAmmoPreview
+    assert(mode=="preparation"or mode=="resupply"or mode=="standby"or mode=="parts","未知原生页面模式")
+    if mode=="preparation"or mode=="resupply"then assert(type(commit)=="function","交互页面缺少提交接口")end
     local tr=assert(translate,"缺少原生页面语言提供器") -- 页面语言由游戏文本文化决定。
     -- 每个适配器独立保存草稿、控件与原生确认事务。
     local supply=mode=="resupply"
@@ -1143,24 +1149,26 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         c.previous=input
         if not c.continueRequested and not c.exitRequested then paint(c)end
     end
-    function self:pump(...)
-        local args={...};local ok,err=xpcall(function()
+    function self:pump(context)
+        local ok,err=xpcall(function()
+            assert(type(context)=="table"and type(context.getProfile)=="function"and type(context.getOptions)=="function","页面更新缺少具名上下文")
+            assert(type(context.inFlight)=="boolean"and type(context.panelOpen)=="boolean","页面更新缺少飞行/管理状态")
             local pending=self.modelWait -- 换机、换世界、离页或打开管理界面时结束本次等待，不能遗留输入锁。
-            if pending and (not valid(pending.owner)or not pending.owner:IsVisible()or args[2]~=pending.planeId
-                or args[1]:GetWorld():GetAddress()~=pending.world or args[6]or args[7])then
+            if pending and (not valid(pending.owner)or not pending.owner:IsVisible()or context.planeId~=pending.planeId
+                or context.instance:GetWorld():GetAddress()~=pending.world or context.inFlight or context.panelOpen)then
                 note("NATIVE_MODEL_WAIT_CANCELLED plane="..pending.planeId)
-                clearModelWait(not args[6])
+                clearModelWait(not context.inFlight)
             end
-            (standby and pumpStandby or pump)(table.unpack(args))
+            (standby and pumpStandby or pump)(context.instance,context.planeId,context.getProfile,context.getOptions,context.now,context.inFlight,context.panelOpen)
         end,debug.traceback)
         if not ok then fail(err)end
     end
     -- 页面激活或补给打开事件中同步接入，不再等待 250 ms 的常规扫描。
-    function self:refreshNow(...)
-        self.lastScan=-1;self:pump(...)
+    function self:refreshNow(context)
+        self.lastScan=-1;self:pump(context)
     end
     -- 直接接入原生激活事件的页面；下一次轮询仍按世界和可见性核对生命周期。
-    function self:activate(owner,...)
+    function self:activate(owner,context)
         if self.modelWait and (not valid(self.modelWait.owner)or self.modelWait.owner:GetAddress()~=owner:GetAddress())then
             note("NATIVE_MODEL_WAIT_CANCELLED reason=page_replaced")
             clearModelWait(true) -- 新页面代次不能继续使用旧页面的等待身份或输入锁。
@@ -1168,7 +1176,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         -- 保留原生激活事件给出的准确页面，后续无需立即全局发现一次相同对象。
         self.owners={owner};self.ownerWorld=owner:GetWorld():GetAddress();self.lastDiscovery=os.clock()
         self.eventOwner=owner
-        self:refreshNow(...)
+        self:refreshNow(context)
         self.eventOwner=nil
     end
     -- F8 不能打断已经交给原生处理的一步决定，避免保存事务丢失。
@@ -1176,7 +1184,9 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         local c=self.cache
         return not supply and not standby and c and (c.continueRequested or c.exitRequested)or false
     end
-    function self:reset(clearError,releaseInput)
+    function self:reset(options)
+        options=options or {}
+        local clearError,releaseInput=options.clearError,options.releaseInput
         local ok,err=pcall(function()restore(releaseInput);releaseClosedRoot()end)
         if not ok then
             note((supply and "NATIVE_RESUPPLY_RESTORE_ERROR "or "NATIVE_LOADOUT_RESTORE_ERROR ")..tostring(err))

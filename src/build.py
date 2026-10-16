@@ -30,7 +30,7 @@ def main():
             raise FileNotFoundError(compiler / name)
     toolchain_before = tree_fingerprint(compiler.parent)
     protected = {name: digest(root / name) for name in (
-        "dist/DualSP/bin/DualSP.dll", "dist/DualSP/cores/1.0.1/DualSP.dll", "dist/DualSP/cores/1.1.0/DualSP.dll")}
+        "dist/DualSP/bin/DualSP.dll", "dist/DualSP/cores/1.0.1/DualSP.dll", "dist/DualSP/cores/1.1.0/DualSP.dll", "dist/DualSP/cores/2.0/DualSP.dll")}
     if protected["dist/DualSP/bin/DualSP.dll"].upper() != "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339":
         raise ValueError("旧核心保护哈希不符")
     sys.path[:0] = [str(args.tools_root.resolve() / "test-python"), str(args.tools_root.resolve())]
@@ -104,7 +104,7 @@ def main():
               "core_recompiled": True, "core_reused_from": None,
               "lua_syntax_only": True, "required_exports_verified": sorted(required),
               "game_installed": False, "game_validated": False, "test_modules_run": False,
-              "installation_blockers": [], 
+              "installation_blockers": [],
               "protected_files": protected, "lua_sources": scripts,
               "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/overlay.cpp")}}
     (output / "build-receipt.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
