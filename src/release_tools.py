@@ -1,0 +1,117 @@
+"""正式构建、安装和打包共用的来源与路径校验；导入不操作游戏。"""
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+
+ROOT = Path(__file__).resolve().parents[1]
+PWSH = r"C:\Program Files\PowerShell\7\pwsh.exe"
+OLD_CORE_HASH = "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+
+
+def digest(path):
+    with Path(path).open('rb') as stream:
+        return hashlib.file_digest(stream, 'sha256').hexdigest()
+
+
+def read_json(path):
+    return json.loads(Path(path).read_text(encoding='utf-8-sig'))
+
+
+def write_json(path, value):
+    Path(path).write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+
+
+def contained(path, parent):
+    """拒绝越界及路径任一级链接；移动前也必须调用。"""
+    path, parent = Path(path).absolute(), Path(parent).resolve(strict=True)
+    if path == parent or not path.resolve().is_relative_to(parent):
+        raise ValueError('目标路径越界：' + str(path))
+    for item in (path, *path.parents):
+        if item.is_symlink() or item.is_junction():
+            raise ValueError('路径包含链接：' + str(item))
+        if item == parent:
+            break
+    return path
+
+
+def inventory(directory):
+    directory = Path(directory)
+    if directory.is_symlink() or directory.is_junction():
+        raise ValueError('目录不能是链接：' + str(directory))
+    directory = directory.resolve(strict=True)
+    result = {}
+    # 每个目录项检查一次；不对每个文件反复解析全部父级。
+    for current, folders, files in os.walk(directory, followlinks=False):
+        for name in folders + files:
+            path = Path(current) / name
+            if path.is_symlink() or path.is_junction():
+                raise ValueError('目录含链接：' + str(path))
+        for name in files:
+            path = Path(current) / name
+            result[path.relative_to(directory).as_posix()] = digest(path)
+    return result
+
+
+def product(root=ROOT):
+    value = read_json(root / 'src/product.json')
+    value['version'] = (root / 'VERSION').read_text(encoding='utf-8').strip()
+    if not value['version'] or any(c not in '0123456789.' for c in value['version']):
+        raise ValueError('VERSION 必须是点分数字版本')
+    expected = value['scripts']
+    script_dir = root / 'dist/DualSP/Scripts'
+    actual = sorted(p.relative_to(script_dir).as_posix() for p in script_dir.rglob('*.lua'))
+    if len(set(expected)) != len(expected) or sorted(expected) != actual:
+        raise ValueError('Lua 文件与产品清单不一致；新增模块须登记后整套交付')
+    return value
+
+
+def source_snapshot(root=ROOT):
+    """冻结全部产品 C++/头文件、第三方树、Lua 和正式工具；检测增删改。"""
+    info = product(root)
+    paths = {root / 'VERSION', root / 'src/product.json'}
+    paths.update((root / 'src').rglob('*.hpp'))
+    paths.update((root / 'src').rglob('*.cpp'))
+    paths.update(p for p in (root / 'vendor').rglob('*') if p.is_file())
+    paths.update(root / 'dist/DualSP/Scripts' / name for name in info['scripts'])
+    paths.update(root / 'src' / name for name in (
+        'build.py', 'release_tools.py', 'install.py', 'package-release.py',
+        'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
+    return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
+
+
+def tree_fingerprint(directory):
+    files = inventory(directory)
+    data = json.dumps(files, sort_keys=True, separators=(',', ':')).encode('utf-8')
+    return {'sha256': hashlib.sha256(data).hexdigest(), 'file_count': len(files)}
+
+
+def verify_build(receipt, build_dir=None, root=ROOT):
+    """旧版不完整回执不能作为当前构建来源证明。"""
+    info = product(root)
+    if receipt.get('receipt_schema') != 2 or receipt.get('name') != info['name'] or receipt.get('version') != info['version']:
+        raise ValueError('构建回执格式、名称或版本不符；请使用正式入口完整构建')
+    if receipt.get('source_files') != source_snapshot(root):
+        raise ValueError('构建来源已增删或修改，须重新完整构建')
+    if receipt.get('build_define') != info['core_define']:
+        raise ValueError('核心编译条件不匹配')
+    for name, value in receipt['protected_files'].items():
+        if digest(root / name) != value:
+            raise ValueError('受保护文件改变：' + name)
+    if build_dir:
+        for name, expected in receipt['objects'].items():
+            if digest(contained(Path(build_dir) / name, build_dir)) != expected:
+                raise ValueError('构建中间文件改变：' + name)
+        for name, field in [('DualSP.dll', 'candidate_sha256'), ('DualSPUI.dll', 'ui_sha256')]:
+            if digest(Path(build_dir) / name) != receipt[field]:
+                raise ValueError('构建产物摘要不符：' + name)
+    return info
+
+
+def require_stopped():
+    result = subprocess.run([PWSH, '-NoProfile', '-NonInteractive', '-Command',
+                             '@(Get-Process -Name Ace7Game -ErrorAction SilentlyContinue).Count'],
+                            check=True, capture_output=True, text=True, encoding='utf-8')
+    if int(result.stdout.strip()):
+        raise RuntimeError('游戏仍在运行，未安装；请先正常退出')

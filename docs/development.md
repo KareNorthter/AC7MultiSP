@@ -1,32 +1,44 @@
 # 开发与恢复
 
-在 E:/AC7_MultiSP 的 main 开发；授权、版本与待办以 [AGENTS](../AGENTS.md) 为准。本轮不执行以下构建/安装命令。
+主工作区 E:/AC7_MultiSP，开发分支从 main 创建；授权、版本与待办以 [AGENTS](../AGENTS.md) 为准。
 
 ## 有效入口
 
 | 工作 | 工具 |
 |---|---|
-| 完整候选构建 | src/research/build_su30sm_candidate.py，包含固定挂载宏，输出全新 Temp 子目录 |
-| 本机相邻版本升级 | src/research/install_su30sm_three_sp.py，默认预检，显式 --apply 安装 |
-| 1.1.0 打包 | src/package-release.py，绑定正式来源摘要/回执，已有 ZIP 不覆盖 |
+| 完整构建 | src/build.py，成套构建核心/UI，输出全新 Temp 子目录 |
+| 自动检查 | tests/run.py --build-dir 指向上述目录，失败不会写通过回执 |
+| 本机升级 | src/install.py，默认预检，显式 --apply 安装，不启动游戏 |
+| 本地打包 | src/package-release.py，使用当前产品清单与完整构建回执，已有 ZIP 不覆盖 |
 
-构建示例：`python -X utf8 src/research/build_su30sm_candidate.py --tools-root E:/AC7_MultiSP/tools --output-dir Temp/build-next`。语法/导出/文件核对不等于实玩。
+获授权后，在根目录依次执行：
 
-普通 build.cmd/build-core-portable.cmd 缺少正式挂载条件，旧 install-resupply-candidate.py --experience 选择旧核心，都不是当前完整交付入口。
-工具保留研究名称；单机型安装器也仍被当前安装器导入，不能按名字直接删文件。
+```powershell
+python -X utf8 src/build.py --output-dir Temp/build-2.0-verified
+python -X utf8 tests/run.py --build-dir Temp/build-2.0-verified
+python -X utf8 src/install.py --build-dir Temp/build-2.0-verified
+python -X utf8 src/install.py --build-dir Temp/build-2.0-verified --apply
+```
+
+构建输出必须是全新目录；默认工具根为 tools，可指定 --tools-root。每次完整编译，不再接受旧 --reuse-core-build。自动检查不等于实玩。
+
+build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发 build.py，全部构建成套产物，不直接覆盖 dist。旧三SP安装入口只转发 install.py；单机型安装入口明确拒绝执行，原实现可从 Git 恢复。其余历史研究/补给安装器不用于当前版本。
 
 ## 来源与交付
 
-Lua 唯一源 dist/DualSP/Scripts，共十个脚本；核心 dist/DualSP/cores/1.1.0/DualSP.dll，UI dist/DualSP/bin/DualSPUI.dll；旧 bin/DualSP.dll 仅作保护基线。
+产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十个脚本；当前核心 dist/DualSP/cores/2.0/DualSP.dll，UI dist/DualSP/bin/DualSPUI.dll；旧 bin/DualSP.dll 仅作保护基线。
 加载器/许可从 payload 显式取用；[工具清单](../tools/README.md)、音频、运行库、ZIP 是本地依赖，不入 Git。
 
-打包器读取[构建回执](../evidence/1.1.0-build.json)并核对来源、DLL、签名与 ZIP 成员。[现有包](../Release/README.md)保持[发布回执](../evidence/1.1.0-release.json)的原字节，文档编辑不会自动重打包。
-安装器仍读取 1.0.2、固定挂载候选.2、三SP候选.11 等回执；保留路径和字节。部署任务获授权后须重新核对实际进程/安装版本，再完整备份、暂存、校验；不从旧 PID 或发布号推断现场。
+构建回执包含 src 产品 C++/头文件、vendor 全树、所有 Lua、正式工具与参数，以及编译命令和工具链全树指纹；构建前后核对一致。安装/打包再次核对整个来源集合，不能只比对清单中少数文件。旧格式回执不接受。
+
+本机升级基线由 product.json 的 upgrade_receipt 指定，本轮为三SP .11；也可显式 --base-receipt 指定 evidence 中完整 runtime_files 回执。要求现有 schema 2 配置，不自动执行历史迁移，不读取无关的1.0.2/.2回执。
+安装必须有匹配构建和测试源码的通过回执。退出游戏后整套暂存、核对、备份模组和存档，再交换目录；保留个人配置、其他模组及外部 PAK。第二步交换失败会尝试归还原目录，不启动游戏。
+
+当前构建、测试凭据保存 evidence/2.0-build.json、2.0-tests.json；安装记录为 evidence/2.0-installed.json，已完整备份并安装，未重新启动游戏。验证通过后，当前构建 DLL 原样保存到上述 dist 路径，回执从构建目录原样保留。后续打包读取同版本构建回执，核对来源、DLL、签名与 ZIP 成员；本轮未制作2.0 ZIP。[现有1.1.0包](../Release/README.md)保持原字节。
 
 ## 待处理的工程问题
 
-- 核心复用只核对两个文件，来源摘要缺部分头文件/第三方源/编译条件，不能证明完整依赖未变；功能变动后在有授权时完整构建。
-- 正式/研究工具入口待统一；旧 tests 主要对应双SP，不能宣称覆盖1.1.0，未经要求不新增或运行。
+- tests/run.py 运行来源拒绝检查、当前三SP纯规则、冷却、指针和缓存恢复及DLL加载核对；旧双SP控制器/HUD/选装模拟不适用，未纳入当前通过范围。
 - 核心、主调度、页面适配器职责集中，后续渐进拆分，本轮不改功能。
 
 ## 未合入成果和恢复

@@ -1,8 +1,5 @@
 @echo off
 setlocal
-call "%~dp0build-ui.cmd"
-if errorlevel 1 exit /b 1
-call "%~dp0build-core-portable.cmd"
-if errorlevel 1 exit /b 1
-echo Built UI release DLL and a separate core candidate. The tested dist core is preserved.
+rem Compatibility entry: always build the complete product into Temp.
+python -X utf8 "%~dp0build.py" %*
 exit /b %errorlevel%

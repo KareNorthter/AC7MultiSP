@@ -18,3 +18,5 @@ dist/DualSP/Scripts/*.lua -text
 # 加载器和第三方依赖按原分发内容保留，不改动许可证与配置行尾。
 payload/** -text
 vendor/** -text
+# 机器回执互相引用文件摘要，Git 恢复必须保留原始字节与行尾。
+evidence/*.json -text

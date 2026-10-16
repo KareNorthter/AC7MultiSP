@@ -1,4 +1,4 @@
-"""按显式载荷清单生成 AC7DualSP 手动安装包，不打包个人状态或旧模组副本。"""
+"""按显式载荷清单生成 AC7MultiSP 手动安装包，不打包个人状态或旧模组副本。"""
 import argparse
 import hashlib
 import json
@@ -6,17 +6,17 @@ import subprocess
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
+from release_tools import product, verify_build
 
 # 当前成品复用已实测核心；旧正式核心和原音频分别核对固定值。
 ROOT = Path(__file__).resolve().parents[1]
-VERSION = "1.1.0"
-NAME = "AC7DualSP"
-CORE_HASH = "DA449197F3C2EE7A375589AB9475D454D6DA72D4419B652C1464D3CE388FA597"
+PRODUCT = product()
+VERSION = PRODUCT['version']
+NAME = PRODUCT['name']
 OLD_CORE_HASH = "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339"
 WAVE_HASH = "278B8F8815823522ED5F121711A1A12EDA2AE8E89991F8522D1FFF22832D9640"
 PWSH = r"C:\Program Files\PowerShell\7\pwsh.exe"
-SCRIPTS = ("main.lua", "json.lua", "weapon_cycle.lua", "native_hud.lua", "loadout_flow.lua",
-           "native_loadout.lua", "weapon_names.lua", "weapon_presentation.lua", "runtime_context.lua", "loadout_profile.lua")
+SCRIPTS = PRODUCT['scripts']
 LICENSES = ("UE4SS.txt", "DearImGui.txt", "MinHook.txt", "nlohmann-json.txt")
 
 
@@ -57,14 +57,13 @@ def main():
     if f"{NAME} {VERSION} 管理".encode("utf-8") not in ui.read_bytes():
         raise RuntimeError("UI DLL 未包含当前正式标题，请先构建")
     build = json.loads((ROOT / f"evidence/{VERSION}-build.json").read_text(encoding="utf-8"))  # 只打包本轮冻结来源。
-    for name, expected in (build["lua_sources"] | build["cpp_sources"] | build["protected_files"]).items():
-        if digest((ROOT / name).read_bytes()) != expected.upper():
-            raise RuntimeError("构建后来源已改变：" + name)
+    verify_build(build)
+    CORE_HASH = build['candidate_sha256'].upper()
     if digest(ui.read_bytes()) != build["ui_sha256"].upper() or CORE_HASH != build["candidate_sha256"].upper():
         raise RuntimeError("发布 DLL 与构建回执不一致")
 
     # 只选择当前所需文件，明确绕开 payload 中的旧 Lua 与武器核心。
-    core = ROOT / "dist/DualSP/cores/1.1.0/DualSP.dll"  # 原样沿用用户已验证的 .11 核心。
+    core = ROOT / "dist/DualSP/cores" / VERSION / "DualSP.dll"  # 使用当前完整构建核心。
     wave = ROOT / "dist/DualSP/Audio/SP2.wav"
     for path, expected in ((core, CORE_HASH), (ROOT / "dist/DualSP/bin/DualSP.dll", OLD_CORE_HASH), (wave, WAVE_HASH)):
         if digest(path.read_bytes()) != expected:
@@ -78,8 +77,8 @@ def main():
         mod_prefix + "bin/DualSPUI.dll": ui,
         mod_prefix + "Audio/SP2.wav": wave,
         mod_prefix + "VERSION": ROOT / "VERSION",
-        "安装说明.txt": ROOT / "docs/AC7DualSP-安装说明.txt",
-        "版本说明.txt": ROOT / "docs/release-1.1.0.txt",
+        "安装说明.txt": ROOT / "docs/安装说明.txt",
+        "版本说明.txt": ROOT / "docs/release.txt",
     }
     sources.update({mod_prefix + "Scripts/" + name: ROOT / "dist/DualSP/Scripts" / name for name in SCRIPTS})
     sources.update({mod_prefix + "licenses/" + name: ROOT / "payload/ue4ss/Mods/DualSP/licenses" / name for name in LICENSES})

@@ -1,0 +1,8 @@
+{
+  "name": "AC7MultiSP",
+  "internal_name": "DualSP",
+  "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
+  "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+  "upgrade_receipt": "evidence/su30sm-three-sp-candidate.11-installed.json",
+  "scripts": ["json.lua", "loadout_flow.lua", "loadout_profile.lua", "main.lua", "native_hud.lua", "native_loadout.lua", "runtime_context.lua", "weapon_cycle.lua", "weapon_names.lua", "weapon_presentation.lua"]
+}
