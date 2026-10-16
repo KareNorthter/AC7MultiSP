@@ -4,7 +4,7 @@
 
 - [F-15E补给模型观察](resupply-model-observation-20261016.json)：ms06补给展示任务玩家本体，保留入场前多挂状态；只读采样及实现约束，不代表动态预览已实现。
 
-- 2.4.0整合开发版：[构建](2.4.0-build.json)、[检查](2.4.0-tests.json)、[安装](2.4.0-installed.json)；三个可配置快捷键及两支线最新候选，完整编译、检查和安装核验通过，比例引导PAK按用户要求移入备份禁用，新功能待实测。
+- 2.4.0正式版（main/v2.4.0）：[构建](2.4.0-build.json)、[检查](2.4.0-tests.json)、[安装](2.4.0-installed.json)；三个可配置快捷键及两支线最新候选，完整编译、检查和安装核验通过，比例引导PAK按用户要求移入备份禁用；三机型布局获用户认可，反馈范围见[挂载设计经验](../docs/multi-sp-mount-design.md#当前结论和验证范围)，用户随后确认全部改动及两支线成果正常，授权正式提交main，见[用户验证](2.4.0-user-validation.json)。
 - [挂载最新修订](mount-layout-research-latest.json)、[ECM/TLS研究](ecm-tls-persistence-research.json)：2.4.0吸收的原研究证据；其中未编译/未安装状态描述属于研究当时，不可当作整合后的实时状态。
 - 2.3.1整合候选：[构建](2.3.1-build.json)、[检查](2.3.1-tests.json)、[安装](2.3.1-installed.json)；扩展F7到机库/补给/暂停，合入挂载支线布局。完整构建、检查及安装核验通过；用户确认游戏已关闭后安装，未自动启动游戏，新场景和布局待实测。
 - [挂载布局研究](mount-layout-research.json)：独立支线的原始研究记录，未编译/未安装描述属于采集当时；2.3.1按差异吸收候选，不能引用旧版回执当作新布局实测。
@@ -14,7 +14,7 @@
 - 2.2.0开发测试版：[构建](2.2.0-build.json)、[检查](2.2.0-tests.json)、[安装](2.2.0-installed.json)；用户确认候选变化可见，但PART切页闪回、SKIN及起飞漏接；原回执保留。
 - 2.1.1开发测试版：[构建](2.1.1-build.json)、[检查](2.1.1-tests.json)、[安装](2.1.1-installed.json)；完整编译、自动检查和安装核验通过，未自动启动游戏，实玩待用户验证。
 - 2.1.0：[构建](2.1.0-build.json)、[检查](2.1.0-tests.json)、[安装](2.1.0-installed.json)；现场发现准备页弹药行层级误判，已在2.1.1修复，旧回执保留。
-- 已验证2.0.0：[构建](2.0.0-build.json)、[检查](2.0.0-tests.json)、[安装](2.0.0-installed.json)；用户已确认[实测正常](2.0.0-user-validation.json)，为main已验证基线。
+- 已验证2.0.0：[构建](2.0.0-build.json)、[检查](2.0.0-tests.json)、[安装](2.0.0-installed.json)；用户已确认[实测正常](2.0.0-user-validation.json)，为历史已验证基线；当前main正式基线为v2.4.0。
 - 已验证2.0：[构建](2.0-build.json)、[检查](2.0-tests.json)、[安装](2.0-installed.json)；用户已确认[实测正常](2.0-user-validation.json)，已合入主线。
 - [1.1.0 用户验证](1.1.0-user-validation.json)：实测反馈与稳定性边界。
 - [1.1.0 构建](1.1.0-build.json)：来源/DLL/导出/语法核对，不代表实玩。

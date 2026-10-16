@@ -2,7 +2,7 @@
 
 主工作区 E:/AC7_MultiSP，开发分支从 main 创建；授权、版本与待办以 [AGENTS](../AGENTS.md) 为准。
 
-当前整合分支为`codex/management-mount-options`。2.4.0已完整编译、通过适用检查并安装，产物Temp/build-2.4.0；支持三个快捷键自定义单键/组合键，合入三机型挂载反馈修订和ADFX-01持续效果实验。2.3.1快捷键已获用户实测正常反馈；2.4.0新绑定、网格换位和持续效果待用户实测，未合入main或发布。
+当前main正式基线为2.4.0，标签v2.4.0。用户已确认全部改动及两条研究支线成果正常，授权提交正式版；可配置快捷键、三机型挂载修订及ADFX-01持续效果已统一纳入。正式核心在dist/DualSP/cores/2.4.0/DualSP.dll，UI在dist/DualSP/bin/DualSPUI.dll，均从Temp/build-2.4.0按原字节归档，未重新构建或安装。有效布局及扩机型方法见[挂载设计经验](multi-sp-mount-design.md)。
 
 ## 有效入口
 
@@ -13,7 +13,7 @@
 | 本机升级 | src/install.py，默认预检，显式 --apply 安装，不启动游戏 |
 | 本地打包 | src/package-release.py，使用当前产品清单与完整构建回执，已有 ZIP 不覆盖 |
 
-2.0.0已在 Temp/build-2.0.0 完整构建、检查并安装，用户实测通过，主线基线标签为 v2.0.0。下列为操作顺序示例，现有目录和安装回执已存在，勿重复执行；后续新构建须使用全新目录并核对当时安装基线：
+2.0.0已在 Temp/build-2.0.0 完整构建、检查并安装，用户实测通过，历史基线标签为v2.0.0。下列为操作顺序示例，现有目录和安装回执已存在，勿重复执行；后续新构建须使用全新目录并核对当时安装基线：
 
 ```powershell
 python -X utf8 src/build.py --output-dir Temp/build-2.0.0
@@ -28,13 +28,15 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 
 ## 来源与交付
 
-产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十二个脚本。2.4.0成套核心/UI位于Temp/build-2.4.0，与游戏当前安装及源码一致；dist/DualSP/cores/2.0.0/DualSP.dll 和 dist/DualSP/bin/DualSPUI.dll 仍保留v2.0.0原件，不与当前开发Lua配套。旧 bin/DualSP.dll 仅作保护基线。
+产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十二个脚本。2.4.0正式核心位于dist/DualSP/cores/2.4.0/DualSP.dll，UI位于dist/DualSP/bin/DualSPUI.dll，构建副本在Temp/build-2.4.0，与已实测安装及源码一致；旧2.0.0核心保留，旧UI从v2.0.0标签恢复，仅与当时源码配套。旧 bin/DualSP.dll 仅作保护基线。
 加载器/许可从 payload 显式取用；[工具清单](../tools/README.md)、音频、运行库、ZIP 是本地依赖，不入 Git。
 
 构建回执包含 src 产品 C++/头文件、vendor 全树、所有 Lua、正式工具与参数，以及编译命令和工具链全树指纹；构建前后核对一致。安装/打包再次核对整个来源集合，不能只比对清单中少数文件。旧格式回执不接受。
 
-本机升级基线由 product.json 的 upgrade_receipt 指定，本次为2.3.1→2.4.0，candidate=true。已核对游戏退出后安装2.4.0。不能重跑旧安装覆盖历史回执。未来升级须选择新的完整runtime_files基线。安装器接受schema 2/管理参数5或6并保留个人配置原字节；2.4.0首次启动先独立备份，再将快捷键迁至管理参数6。现有脚本须与基线完整匹配，新模块必须登记，不能静默删除旧模块。
+本机升级基线由 product.json 的 upgrade_receipt 指定，本次为2.3.1→2.4.0，candidate=true为冻结构建时的候选标记；正式状态以main、v2.4.0和用户验证记录为准，保留来源及历史安装回执字节。已核对游戏退出后安装2.4.0。不能重跑旧安装覆盖历史回执。未来升级须选择新的完整runtime_files基线。安装器接受schema 2/管理参数5或6并保留个人配置原字节；2.4.0首次启动先独立备份，再将快捷键迁至管理参数6。现有脚本须与基线完整匹配，新模块必须登记，不能静默删除旧模块。
 安装必须有匹配构建和测试源码的通过回执。退出游戏后整套暂存、核对、备份模组和存档，再交换目录；保留个人配置、其他模组及外部 PAK。第二步交换失败会尝试归还原目录，不启动游戏。
+
+[2.4.0用户验证](../evidence/2.4.0-user-validation.json)记录正式化授权、范围及回执摘要；正式DLL与用户测试构建逐字节相同。源码清单保留原candidate字段以维持构建来源校验，未改动运行逻辑、构建或旧回执；正式版状态由Git标签与用户通过记录确定。本轮不制作ZIP、不推送、不操作游戏。
 
 2.4.0的[构建](../evidence/2.4.0-build.json)、[检查](../evidence/2.4.0-tests.json)、[安装](../evidence/2.4.0-installed.json)已归档；备份backup/AC7MultiSP-20261016-231446-459750，113项受保护文件核验通过。真实配置安装时保留原字节，首次启动迁移；临时副本迁移已核对方案、旧管理键与其余字段不变。未自动启动游戏。
 
@@ -45,12 +47,12 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 2.3.0的[构建](../evidence/2.3.0-build.json)、[检查](../evidence/2.3.0-tests.json)、[安装](../evidence/2.3.0-installed.json)已留存；备份为backup/AC7MultiSP-20261016-194543-836550，安装后108项受保护文件核验通过，个人配置及完整模组/存档备份核验通过。未启动游戏，自动检查不证明真实挂点、动画或补给效果。
 
 [2.0构建](../evidence/2.0-build.json)、[检查](../evidence/2.0-tests.json)、[安装](../evidence/2.0-installed.json)、[用户实测](../evidence/2.0-user-validation.json)均保留原记录，对应旧基线3c00f3e。
-2.0.0的[构建](../evidence/2.0.0-build.json)、[检查](../evidence/2.0.0-tests.json)、[安装](../evidence/2.0.0-installed.json)回执已保存，完整产物原样存入 dist。原模组与存档备份在 backup/AC7MultiSP-20261016-120724-927183；个人配置、存档、其他模组核验未变。安装时正常关闭游戏且未自动重启；用户随后确认[实测正常](../evidence/2.0.0-user-validation.json)，授权提交2.0.0并合入main。标签 v2.0.0 固定后续功能基线；现存1.1.0 ZIP不变。
+2.0.0的[构建](../evidence/2.0.0-build.json)、[检查](../evidence/2.0.0-tests.json)、[安装](../evidence/2.0.0-installed.json)回执已保存，完整产物原样存入 dist。原模组与存档备份在 backup/AC7MultiSP-20261016-120724-927183；个人配置、存档、其他模组核验未变。安装时正常关闭游戏且未自动重启；用户随后确认[实测正常](../evidence/2.0.0-user-validation.json)，授权提交2.0.0并合入main。标签v2.0.0保留历史基线，后续从当前main/v2.4.0开发；现存1.1.0 ZIP不变。
 
 ## 本轮整理范围
 
 - tests/run.py 运行来源拒绝检查、三SP纯规则、配置迁移/保存失败、协议应答、页面具名接口、冷却、指针、缓存恢复/挂载边界及DLL加载核对；旧双SP控制器/HUD/选装模拟不适用，未纳入当前通过范围。
-- 2.2.2补齐页面激活、机库组件重建与开场定位；只向相同身份组件继承原生请求，空池等待，真实异常回退，保持既有兵装事务；检查覆盖21种组合、配弹边界、单多切换、失败隔离和补给交接，不能代替引擎模型与动画实测。
+- 2.2.2补齐页面激活、机库组件重建与开场定位；只向相同身份组件继承原生请求，空池等待，真实异常回退，保持既有兵装事务；检查覆盖21种组合、配弹边界、单多切换、失败隔离和补给交接，不能替代未列出的引擎和故障注入场景；2.4.0已获用户统一实测通过反馈。
 
 ## 支线整合与恢复
 
@@ -74,4 +76,4 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 ## 文档分工
 
 AGENTS 只维护状态/规则；architecture 维护模块和实现约束；本页维护工具/恢复；两个 TXT 供用户及打包器。
-不再独立维护状态页、管理专题、挂载专题或整理流水账。必要回执按[证据索引](../evidence/README.md)读取，禁止每次改动再复制一套交接说明。
+按用户要求，独立的[挂载设计经验](multi-sp-mount-design.md)统一维护数量概念、三机型七组合、取舍依据及扩机型流程，吸收原架构中的布局说明。后续机体结论在同一文档扩展，不再另建相似挂载专题、状态页或交接流水账。docs/research/three-sp-candidate.txt仅保留旧工具所需的退役指路，不作为有效设计说明。必要回执按[证据索引](../evidence/README.md)读取。

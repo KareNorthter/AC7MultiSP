@@ -1,0 +1,23 @@
+{
+  "version": "2.4.0",
+  "date": "2026-10-16",
+  "source": "用户在本会话反馈",
+  "user_report": "这些改动一切正常，两个支线的成果也都验证无误。现在全都提交到main，作为正式版",
+  "conclusion": "用户确认当前整合功能及两条支线实测正常，授权全部提交main作为2.4.0正式版。",
+  "scope_note": "包含自定义单键/组合快捷键、三机型挂载修订及ADFX-01原生IEWS/TLS持续效果；未提供逐任务、机型、检查点和故障注入清单。机库转镜头卡顿继续记录为待排查，不由本次通过反馈推断根因。",
+  "baseline_tag": "v2.4.0",
+  "source_commit": "5ac5751",
+  "source_manifest_preserved": true,
+  "promotion_note": "候选构建原样转正式，src/product.json中的candidate及旧安装元数据属于构建/安装当时标记；正式状态以main、v2.4.0及本记录为准，不改写历史回执。",
+  "build_receipt": "evidence/2.4.0-build.json",
+  "build_receipt_sha256": "4b41e93580a6d8e192a6e0cd7fa8b8ac45ec3480dc208db00b3230d0a29cdc75",
+  "test_receipt": "evidence/2.4.0-tests.json",
+  "test_receipt_sha256": "bfb5e525d2e5c9b55474a510235ec669c8ae576d3e92bca37e5da08003edd9ac",
+  "installation_receipt": "evidence/2.4.0-installed.json",
+  "installation_receipt_sha256": "3713323fe8396ab8487e339d46a41e7848b6b03606c1a9d0128b1f0a06a0e8b5",
+  "formal_artifacts": {
+    "dist/DualSP/cores/2.4.0/DualSP.dll": "7449d7b705810dfd77f3ed577225e3fb2e5e1c998c564d10c9e4c0bfdd911bbb",
+    "dist/DualSP/bin/DualSPUI.dll": "c01a0f484226ad93a912d58efeb9918053fe833e0eb7f86fb7c9e6fb7ab9407c"
+  },
+  "verified": "已核对冻结源码、既有通过检查回执、构建及安装运行文件；正式归档DLL与已实测安装字节一致。本次未重编译、运行测试、操作游戏或制作ZIP。"
+}
