@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-16",
+  "branch": "codex/mount-layout-research",
+  "base": {
+    "created_from": "main",
+    "main_commit": "4e626e3",
+    "source_baseline_original_commit": "7da1080",
+    "source_baseline_version": "2.2.2",
+    "later_development_changes_imported": false
+  },
+  "scope": "按用户动态穿插反馈修订的独立源码研究；不合入main、不安装，保留原生逻辑队列、窗口、锁定/齐射数量和冷却",
+  "compiled": false,
+  "test_modules_run": false,
+  "test_modules_added": false,
+  "existing_test_expectations_updated": true,
+  "installed": false,
+  "game_process_access": false,
+  "game_assets_modified": false,
+  "f15e": {
+    "6aam_positions": [
+      "SWP1.sp11",
+      "SWP1.sp12",
+      "SWP2.sp21",
+      "SWP2.sp22",
+      "SWP2.sp25",
+      "SWP2.sp26"
+    ],
+    "sffs_positions": [
+      "SWP2.sp27",
+      "SWP2.sp28",
+      "SWP2.sp29",
+      "SWP2.sp30",
+      "SWP2.sp31",
+      "SWP2.sp32"
+    ],
+    "mechanism": "在四个现成外排SFFS组件中用原生SetStaticMesh换成导弹网格，并同时让6AAM物理表指向这四个组件；原机腹四枚隐藏；SFFS使用原生内侧六个组件",
+    "lifecycle": "记录组件/原网格/导弹网格对象身份；切换候选、单多切换、组件重建、失败、退出时独立归还；归还失败保留身份重试；恢复任务时重新应用其布局",
+    "logical_counts": [
+      6,
+      12,
+      1
+    ],
+    "sffs_without_6aam_positions": 12,
+    "reference_aabb_overlaps": [
+      {
+        "6aam_position": "outer_sp21",
+        "sffs": "sp27",
+        "overlap_xyz": [
+          23.53321,
+          0.37371,
+          2.62504
+        ]
+      },
+      {
+        "6aam_position": "outer_sp21",
+        "sffs": "sp29",
+        "overlap_xyz": [
+          10.3542,
+          0.37371,
+          2.77836
+        ]
+      },
+      {
+        "6aam_position": "outer_sp22",
+        "sffs": "sp28",
+        "overlap_xyz": [
+          23.53321,
+          0.37374,
+          2.62515
+        ]
+      },
+      {
+        "6aam_position": "outer_sp22",
+        "sffs": "sp30",
+        "overlap_xyz": [
+          10.3542,
+          0.37374,
+          2.77847
+        ]
+      },
+      {
+        "6aam_position": "outer_sp25",
+        "sffs": "sp31",
+        "overlap_xyz": [
+          23.59555,
+          0.74234,
+          2.71972
+        ]
+      },
+      {
+        "6aam_position": "outer_sp26",
+        "sffs": "sp32",
+        "overlap_xyz": [
+          23.59555,
+          0.74216,
+          2.72
+        ]
+      }
+    ],
+    "boundary": "按现成Socket位置和朝向核对LOD0包围盒，仍有少量相交；没有推测下落距离或模拟飞行，不证明动态穿插消失"
+  },
+  "f35c": {
+    "8agm_visual_positions": 12,
+    "8agm_loaded_window": 8,
+    "sod_4aam_positions": [
+      "sp25",
+      "sp26"
+    ],
+    "4aam_logical_count": 6,
+    "4aam_loaded_window": 4,
+    "assignment": "恢复两处交替映射，移除四活动点分配逻辑；按用户选择接受共用离架位置",
+    "boundary": "保留原生动画，仍待用户验证本轮源码"
+  },
+  "su30sm": {
+    "single_qaam_positions": [
+      "sp21",
+      "sp22",
+      "sp23",
+      "sp24"
+    ],
+    "multi_qaam_positions": [
+      "sp23",
+      "sp24"
+    ],
+    "qaam_6aam_positions": {
+      "qaam": 2,
+      "6aam": 4
+    },
+    "triple_positions": {
+      "qaam": 2,
+      "6aam": 2,
+      "lagm": 2
+    },
+    "qaam_lagm_positions": {
+      "qaam": 2,
+      "lagm": 4
+    },
+    "rack_policy": "恢复SWP3原生六处共用支架，QAAM+LAGM填满六处；不拆分资源、不叠加整套SWP2",
+    "boundary": "按用户选择退回原生有导轨的位置；保留单QAAM四枚库存外观，实际贴合待验证"
+  },
+  "reserve_models": "按库存显示备用弹；由补装窗口回溯已发射位置并扣除空位，真正就绪弹优先，不增加可发射数量",
+  "source_sha256": {
+    "f15e-mount-asset-summary.json": "530d86242389c588c5de1ce0e25656754ea450c62d7097fe39ded47aec57dee9",
+    "su30sm_SWP2_SM.json": "00f2aa0b339abb646a82b864787c97025491496556e04f5d0fcd0d741ae74c68",
+    "evidence/static-mount-batch8-research.json": "2fce4b18fa81f86d467c2550d8fdff43bb1b4f7f0f8289f6338d545e9642e51e"
+  },
+  "pending": [
+    "F-15E导弹下落段和SFFS投放段的动态净空",
+    "F-15E SetStaticMesh调用、材料/边界更新、预览与任务相互接管、单多切换及失败归还",
+    "Su-30SM原生导轨位置与空架消除的实际呈现",
+    "各机型低库存、备用弹补装空位、切换、补给、检查点及预览一致性"
+  ],
+  "installed_version_observed_read_only": "2.3.1",
+  "user_feedback": {
+    "f15e": "机腹6AAM下落段与SFFS穿插，要求交换四枚导弹和六枚炸弹的位置",
+    "f35c": "十二处8AGM反馈良好，新增sp21/22的4AAM与发射中的SOD穿插，要求恢复两处",
+    "su30sm": "外侧QAAM缺导轨，QAAM+LAGM出现中间空挂架；用户明确选择退回原生已有导轨的位置",
+    "scope": "反馈作为设计输入，未声称本分支新源码已实测"
+  },
+  "mesh_setter_offline_evidence": {
+    "exports": {
+      "?ProcessEvent@UObject@Unreal@RC@@QEAAXPEAVUFunction@23@PEAX@Z": "0x34a6e0",
+      "?GetParmsSize@UFunction@Unreal@RC@@QEBAAEBGXZ": "0x38f7c0",
+      "?GetNumParms@UFunction@Unreal@RC@@QEBAAEBEXZ": "0x38f280",
+      "?IsProcessEventAvailable@UE4SSRuntime@RC@@SA_NXZ": "0x324c00"
+    },
+    "loader_sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd",
+    "dll_loaded_by_agent": false,
+    "game_function_called_by_agent": false,
+    "runtime_parameter_validation": "原生函数所属类/包、两个参数的名称、类型、大小、偏移、返回值及最终网格均在将来的运行时核对；本轮未验证该调用实际成功"
+  }
+}

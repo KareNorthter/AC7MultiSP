@@ -69,6 +69,9 @@ void mountPreviewRememberTask(const MountVisual& source) {
 }
 void mountPreviewRestoreVisuals() {
     std::string error;
+    for(const auto& item:mountPreview.layout.meshOverrides)try {
+        mountApplyMesh(item,false);
+    }catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
     for(const auto& visual:mountPreview.layout.visuals)try {
         if(!mountAlive(visual.identity))continue;
         mountOriginalHidden(reinterpret_cast<void*>(visual.identity.address),visual.nativeHidden,0);
@@ -185,6 +188,7 @@ bool mountPreviewRebindHangar() {
     next.rackMask=mountRackMask(next.aircraft,next.kindsMask);next.readyMask=prior.readyMask;
     mountBindVisuals(next,prior.plane.address,mountPreview.activator.address); // 全量校验成功前不写新组件。
     mountPreviewInheritNative(next,prior);
+    mountRestoreUnusedMeshes(prior,next);
     // 只归还已脱离本轮模型池的旧组件，复用组件不经过单挂状态。
     for(const auto& old:prior.visuals) {
         const bool reused=std::any_of(next.visuals.begin(),next.visuals.end(),[&](const MountVisual& item){return mountSameIdentity(item.identity,old.identity);});
@@ -368,6 +372,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             mountBindVisuals(next,plane,activator); // 所有池/挂架/资源/Socket 完整验证后才允许写显示。
             if(mountPreviewOwnsTask())mountPreviewInheritNative(next,fixedMount);
             mountPreviewInheritNative(next,mountPreview.layout);
+            mountRestoreUnusedMeshes(mountPreview.layout,next);
             next.bound=true;mountPreview.layout=std::move(next);
         }
         auto& state=mountPreview.layout;

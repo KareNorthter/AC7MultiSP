@@ -2,7 +2,7 @@
 
 主工作区 E:/AC7_MultiSP，开发分支从 main 创建；授权、版本与待办以 [AGENTS](../AGENTS.md) 为准。
 
-当前开发分支为 `codex/management-mount-options`，新增管理参数、向上取整配弹、模型开关/回退并吸收截至7e2fe4a的UI改动。2.1.1修复准备页弹药行Canvas祖先误判，并将模型开关改为随原有武器重建边界应用。2.2.0实现的预览经用户测试仍漏接SKIN/起飞，并在PART切页闪回；2.2.1改为场景所有权；2.2.2进一步在菜单激活/原生显隐事件中刷新，完整重绑同一机库机体的新组件，并直接定位开场玩家；补给失败归还继续重试。开发测试版已获准完整编译、通过安装所需检查并安装，当前成套产物位于Temp/build-2.3.1-final；2.3.0新增组合轮切和即时模型开关快捷键，任务内已获用户实测正常反馈并提交57b7b4b；2.3.1扩展F7到机库/补给/暂停，合入挂载研究候选，当前已完整构建、通过全部适用检查并按用户指示安装，整合提交5182f5f，待实测；用户于2026-10-16实测2.2.2反馈“基本没看到问题”，已提交为7da1080，保存在当前开发分支，未合入main或发布。现有三个规则/服务/缓存测试模块已按管理5、核心4、比例配弹和禁用挂载边界更新；服务检查覆盖实际嵌套弹药行布局、原生源隔离及失败归还，未新增测试模块。
+当前整合分支为`codex/management-mount-options`。2.4.0已完整编译、通过适用检查并安装，产物Temp/build-2.4.0；支持三个快捷键自定义单键/组合键，合入三机型挂载反馈修订和ADFX-01持续效果实验。2.3.1快捷键已获用户实测正常反馈；2.4.0新绑定、网格换位和持续效果待用户实测，未合入main或发布。
 
 ## 有效入口
 
@@ -28,13 +28,17 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 
 ## 来源与交付
 
-产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十二个脚本。2.3.1成套核心/UI位于Temp/build-2.3.1-final，与游戏当前安装及源码一致；dist/DualSP/cores/2.0.0/DualSP.dll 和 dist/DualSP/bin/DualSPUI.dll 仍保留v2.0.0原件，不与当前开发Lua配套。旧 bin/DualSP.dll 仅作保护基线。
+产品名称与 Lua 清单在 src/product.json；版本在 VERSION。Lua 唯一源 dist/DualSP/Scripts，共十二个脚本。2.4.0成套核心/UI位于Temp/build-2.4.0，与游戏当前安装及源码一致；dist/DualSP/cores/2.0.0/DualSP.dll 和 dist/DualSP/bin/DualSPUI.dll 仍保留v2.0.0原件，不与当前开发Lua配套。旧 bin/DualSP.dll 仅作保护基线。
 加载器/许可从 payload 显式取用；[工具清单](../tools/README.md)、音频、运行库、ZIP 是本地依赖，不入 Git。
 
 构建回执包含 src 产品 C++/头文件、vendor 全树、所有 Lua、正式工具与参数，以及编译命令和工具链全树指纹；构建前后核对一致。安装/打包再次核对整个来源集合，不能只比对清单中少数文件。旧格式回执不接受。
 
-本机升级基线由 product.json 的 upgrade_receipt 指定，本次为2.3.0→2.3.1，candidate=true。用户确认游戏已关闭后，已安装2.3.1。不能重跑旧安装覆盖历史回执。未来升级须选择新的完整runtime_files基线。本次来源配置已完成管理参数5迁移，安装器限定schema 2/管理参数5并保留个人配置原字节，无需再迁移。现有脚本须与基线完整匹配，新模块必须登记，不能静默删除旧模块。
+本机升级基线由 product.json 的 upgrade_receipt 指定，本次为2.3.1→2.4.0，candidate=true。已核对游戏退出后安装2.4.0。不能重跑旧安装覆盖历史回执。未来升级须选择新的完整runtime_files基线。安装器接受schema 2/管理参数5或6并保留个人配置原字节；2.4.0首次启动先独立备份，再将快捷键迁至管理参数6。现有脚本须与基线完整匹配，新模块必须登记，不能静默删除旧模块。
 安装必须有匹配构建和测试源码的通过回执。退出游戏后整套暂存、核对、备份模组和存档，再交换目录；保留个人配置、其他模组及外部 PAK。第二步交换失败会尝试归还原目录，不启动游戏。
+
+2.4.0的[构建](../evidence/2.4.0-build.json)、[检查](../evidence/2.4.0-tests.json)、[安装](../evidence/2.4.0-installed.json)已归档；备份backup/AC7MultiSP-20261016-231446-459750，113项受保护文件核验通过。真实配置安装时保留原字节，首次启动迁移；临时副本迁移已核对方案、旧管理键与其余字段不变。未自动启动游戏。
+
+比例引导mod按用户要求禁用：原Game/Content/Paks/~mods/proportional guided missile_P.pak移到backup/disabled-guidance-20261016-231440，SHA256为41b49ad83d60509795db910a02fd24c159ab39c324b5d1b745906f4a95a094e5，其中disable-receipt.json记录恢复位置；需恢复时退出游戏再原样移回。未删除或改写PAK，其他模组由安装器核验。
 
 2.3.1的[构建](../evidence/2.3.1-build.json)、[检查](../evidence/2.3.1-tests.json)已归档，已安装，见[安装回执](../evidence/2.3.1-installed.json)；最终产物Temp/build-2.3.1-final。完整模组/存档备份位于backup/AC7MultiSP-20261016-223134-297074，个人配置和其他模组保留，111项受保护文件核验通过，未自动启动游戏。先前Temp/build-2.3.1因构建期间源码收尾变更被来源校验拒绝，不能交付。
 
@@ -50,7 +54,11 @@ build.cmd/build-core-portable.cmd/build-ui.cmd 和旧研究构建入口只转发
 
 ## 支线整合与恢复
 
-本对话负责核心功能整合。codex/mount-layout-research从main带入2.2.2后留有未提交候选；2.3.1按源码/既有检查差异吸收，未改写研究工作区，几何依据原样保存在evidence/mount-layout-research.json。包括F-15E六加六、F-35C十二处8AGM与四活动点4AAM、Su-30SM外侧QAAM及增补6AAM。新布局仍需实测，导轨和穿插边界见架构；没有合入其他支线。
+2.4.0按差异整合两工作区的最新未提交候选。挂载研究保留原分支最新网格替换头、纯布局和恢复处理，并保留核心整合分支的全场景F7模式5；持续效果研究带入continuous_sp.hpp和核心接入，保留核心协议4比例配弹。原工作区不写入、不提交、不清理；研究记录分别见evidence/mount-layout-research-latest.json、evidence/ecm-tls-persistence-research.json。已完整编译、通过适用检查并安装，产物Temp/build-2.4.0。
+
+三个快捷键配置在shortcuts中保存；UI/设置协议升6，原管理键整数只保留主键镜像。检查使用既有模块扩展，覆盖全修饰键匹配、冲突、旧配置备份迁移，以及持续引用数组的定向移除；不把合成检查当真实效果验收。
+
+2.3.1的早期候选布局已由2.4.0按用户反馈修订；旧研究记录保留原字节，不能作为当前布局说明。
 
 待专项测试：用户在2.3.0报告机库预览转镜头明显卡顿，实验挂载开启和关闭均出现；记录为性能疑点，未证明根因。后续在同机型/涂装/分辨率/镜头路径下对照完全禁用mod、mod开启但模型关闭、模型开启的帧时间，分离页面扫描、文件发布及模型巡检耗时；本轮不改变性能策略。
 

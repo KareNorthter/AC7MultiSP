@@ -17,6 +17,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <string>
+#include <utility>
 #include <vector>
 #include "MinHook.h"
 #include <map>
@@ -471,7 +472,10 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
     nativeLog(Json{{"event","PLANE_SWP_SYNCHRONIZED"},{"old_plane",oldPlane},{"old_engine",oldEngine},{"target",index}}.dump());
 }
 #endif
+#include "continuous_sp.hpp"
+
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
+    ContinuousRebuild continuous(command); // 仅逻辑换槽保留已核对的 Morgan 持续发射体。
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
     const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
@@ -485,6 +489,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     syncPlaneWeaponSelection(command.plane,index); // 保持原生选择编号与本次真实配置一致，舱门继续由原生更新。
 #endif
+    continuousRebuildStarted=true;
     reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);
@@ -495,6 +500,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         write<int>(stateOf(command.activator)+8,gun);
         write<int>(read<Addr>(command.activator+0x260)+0x10c,flares);
     }
+    continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
 }
 void keepArmed(const Command& command,bool armed) {
     if(armed) {
@@ -574,13 +580,28 @@ void scaleAmmo(Addr activator,int count,double ratio) {
 void requireDebugLoadoutReady(Addr plane,Addr activator) {
     require(session.plane==plane && session.activator==activator,"调试换装的玩家会话已经改变");
     require(read<Addr>(plane+0x11a8)==activator,"调试换装的武器组件不属于当前机体");
+    continuousSweep();
+    require(std::none_of(continuousEffects.begin(),continuousEffects.end(),[plane,activator](const auto& e){
+        return e.plane.address==plane && e.activator.address==activator;}),"持续效果或 TLS 尾迹尚未退场，请等待后再调试换装");
     const int count=read<int>(activator+0x340),capacity=read<int>(activator+0x344); // 原生 ActiveWeapons 有效数量。
     require(count>=0 && count<=capacity,"调试换装的活动武器数组无效");
     require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
+    if(continuousMorgan(plane)) {
+        const auto spawned=continuousArray(activator+0x2e8);
+        for(int i=0;i<spawned.count;++i) {
+            const Addr weapon=read<Addr>(spawned.data+i*sizeof(Addr));
+            require(!weapon || !read<unsigned char>(weapon+0x368) || !continuousSupported(weapon),
+                "持续效果或 TLS 尾迹尚未退场，请等待后再调试换装");
+        }
+    }
 }
 void execute(const Command& command) {
     verifyVersion();
+    require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
+    continuousSweep();
+    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="checkpoint_restore" || command.op=="resupply")
+        continuousDrain(command.plane,command.activator); // 活动效果不进入弹药/检查点快照。
     // 补给重选需要重建当前组合，同时保留任务已经捕获的检查点。
     // 此新命令只存在于源码候选；正式 DLL 保持不变，不能直接混装。
     if(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup") {
@@ -710,6 +731,24 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
+// 菜单用实际 CDO 核对实验可选性；新 Lua 因此也会拒绝旧核心混装。
+extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(runtimeEnabled,"Mod disabled outside single-player");
+        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
+        require(api->top(luaState)==2,"持续兵装：选装检查参数无效");verifyVersion();
+        const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const Addr cdo=static_cast<Addr>(api->readInteger(luaState,2));
+        continuousIdentity(cdo);
+        const bool supported=continuousMorgan(plane) && continuousSupported(cdo);
+        api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
 extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
     return 0;
 }
@@ -949,16 +988,21 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
     }
 }
 #endif
-// 必须在保存旧槽冷却之前结束 TLS，以记录原生收尾产生的最终武器状态。
+// 在保存冷却前选择 TLS 策略；研究机型交给后续保有事务，其余沿用原生结束。
 extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 出错就停止本次选择，不继续重建武器。
     try {
         static const dualsp::LuaApi bound;api=&bound; // 与已安装 UE4SS 共享参数接口。
         require(runtimeEnabled,"Mod disabled outside single-player");
+        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
         require(api->top(luaState)==2,"TLS 收尾接口参数数量无效");verifyVersion();
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
-        finishPlayerTLS(plane,activator);api->boolean(luaState,true);return 1;
+        require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
+        // Morgan 的已核对 TLS 交由换槽事务保留；其他机型仍走既有结束策略。
+        if(!(continuousMorgan(plane) && continuousSupported(read<Addr>(groupOf(activator,true)+0x40))))
+            finishPlayerTLS(plane,activator);
+        api->boolean(luaState,true);return 1;
     }catch(const std::exception& error) {
         nativeLog(std::string("TLS_END_ERROR ")+error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
@@ -1361,6 +1405,8 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         api=&bound;
         std::lock_guard<std::mutex> guard(nativeExecutionMutex);
         require(runtimeEnabled,"Mod disabled outside single-player");
+        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
+        continuousSweep();
         require(api->top(luaState)==4,"HUD 内存接口参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
@@ -1395,6 +1441,7 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
 
 extern "C" __declspec(dllexport) int lab_native_execute(void*) {
     std::lock_guard<std::mutex> guard(nativeExecutionMutex);
+    continuousRebuildStarted=false;
     uint64_t request=0;
     std::string result;
     try {
@@ -1429,6 +1476,7 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_DONE"},{"op",command.op},{"request",request},
             {"active",session.active},{"main_ammo",state["main_ammo"]},{"sp",state["cached_sp"]}}.dump());
     } catch(const std::exception& error) {
+        if(runtimeEnabled && continuousRebuildStarted)continuousAbortRetained(); // 已重建后失败才清理；前置拒绝不结束正在工作的效果。
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         fixedMountFail(error.what()); // 原型错误写日志并归还原生显示，既有错误回执继续向用户报告。
 #endif

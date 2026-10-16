@@ -37,12 +37,12 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==5 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.management_revision==6 and config.mod_enabled and config.fixed_mount_enabled)
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=5,language='en',mod_enabled=false,fixed_mount_enabled=false,
-    ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52}}
+local action={request=1,management_protocol=6,language='en',mod_enabled=false,fixed_mount_enabled=false,
+    ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
 assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
 assert(not nextConfig.mod_enabled and not nextConfig.fixed_mount_enabled and nextConfig.central_hint==nil)
@@ -101,6 +101,33 @@ for _,failure in ipairs({'write','close'})do
     io.open=realOpen
 end
 assert(readText(fixture..'current-profiles.json')==saved)
+-- 三个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
+local oldShortcuts=nextConfig.shortcuts
+local candidate=json.decode(json.encode(action))
+candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7}}
+local custom=currentStore:applySettings(nextConfig,candidate)
+assert(custom.management_key==120 and custom.shortcuts.management.mods==5)
+assert(custom.shortcuts.cycle.key==121 and custom.shortcuts.mount.mods==7)
+for _,bad in ipairs({
+    {management={key=117,mods=0},cycle={key=117,mods=0},mount={key=118,mods=3}},
+    {management={key=49,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}},
+    {management={key=27,mods=1},cycle={key=117,mods=3},mount={key=118,mods=3}},
+    {management={key=117,mods=8},cycle={key=117,mods=3},mount={key=118,mods=3}},
+    {management={key=115,mods=2},cycle={key=117,mods=3},mount={key=118,mods=3}}
+})do
+    candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
+    rejects(function()currentStore:applySettings(custom,candidate)end)
+    assert(readText(fixture..'current-profiles.json')==bytes)
+end
+local legacy5=json.decode(json.encode(config));legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.management_key=119
+writeJson(fixture..'shortcuts-profiles.json',legacy5)
+local legacyBytes=readText(fixture..'shortcuts-profiles.json')
+local shortcutConfig=store('shortcuts-'):load()
+assert(shortcutConfig.management_revision==6 and shortcutConfig.shortcuts.management.key==119)
+assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
+assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
+assert(store('shortcuts-'):load().shortcuts.management.key==119)
+assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 local old={schema=1,profiles={['9']={a=0,b=1,ratio=.75}},keyboard_keys={49,50,51},management_key=119}
 writeJson(fixture..'migration-profiles.json',old)
 local oldBytes=readText(fixture..'migration-profiles.json')
@@ -117,7 +144,7 @@ for _,revision in ipairs({3,4})do
     writeJson(fixture..prefix..'profiles.json',legacy)
     local bytes=readText(fixture..prefix..'profiles.json')
     local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==5 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.management_revision==6 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
     assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
     assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
     assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)

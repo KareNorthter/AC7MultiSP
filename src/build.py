@@ -106,7 +106,7 @@ def main():
               "game_installed": False, "game_validated": False, "test_modules_run": False,
               "installation_blockers": [],
               "protected_files": protected, "lua_sources": scripts,
-              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/overlay.cpp")}}
+              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/mount_mesh_override.hpp", "src/continuous_sp.hpp", "src/keyboard_shortcuts.hpp", "src/overlay.cpp")}}
     (output / "build-receipt.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"candidate": str(candidate), "sha256": report["candidate_sha256"],
                       "status": "已构建；安装前须核对本阶段证据和正式安装文件"}, ensure_ascii=False))

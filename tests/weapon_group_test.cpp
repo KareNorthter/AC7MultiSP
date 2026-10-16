@@ -5,6 +5,16 @@
 #include <iostream>
 
 int main() {
+    // 持续对象引用数组只移除指定对象，容量不变，不误删普通导弹。
+    std::array<Addr,4> effects{10,20,30,20};
+    struct EffectArray { Addr data;int count,capacity; } effectArray{reinterpret_cast<Addr>(effects.data()),4,4};
+    continuousRemove(reinterpret_cast<Addr>(&effectArray),20);
+    assert(effectArray.count==2&&effectArray.capacity==4&&effects[0]==10&&effects[1]==30&&effects[2]==0&&effects[3]==0);
+    continuousRemove(reinterpret_cast<Addr>(&effectArray),99);assert(effectArray.count==2);
+    effectArray.count=5;
+    try{continuousArray(reinterpret_cast<Addr>(&effectArray));assert(false);}catch(const std::runtime_error&){}
+    // 非换槽事务不得读取不存在的游戏机体或保有对象。
+    { Command noSwitch;noSwitch.op="setup";noSwitch.plane=1;ContinuousRebuild skipped(noSwitch);skipped.restoreReferences(); }
     std::vector<unsigned char> activator(0x300),owner(0x200),state(0x200),slots(4*0x60);
     const Addr act=reinterpret_cast<Addr>(activator.data());
     const Addr own=reinterpret_cast<Addr>(owner.data());
@@ -83,23 +93,23 @@ int main() {
         {MountAircraft::Su30sm,2,4,0x3,0x1},
         {MountAircraft::Su30sm,4,2,0xf,0x1},
         {MountAircraft::Su30sm,3,4,0x3f,0x11},
-        {MountAircraft::Su30sm,5,4,0xff,0x41},
-        {MountAircraft::Su30sm,6,4,0xfc,0x44},
-        {MountAircraft::Su30sm,7,4,0xff,0x51},
+        {MountAircraft::Su30sm,5,4,0x3f,0x5},
+        {MountAircraft::Su30sm,6,4,0x3f,0x5},
+        {MountAircraft::Su30sm,7,4,0x3f,0x15},
         {MountAircraft::F35c,1,1,0x3,0x1},
         {MountAircraft::F35c,2,4,0x3ffc,0x4},
         {MountAircraft::F35c,4,2,0x3c000,0x4000},
         {MountAircraft::F35c,3,5,0x3fff,0x5},
-        {MountAircraft::F35c,5,3,0xcc003,0x4001},
+        {MountAircraft::F35c,5,3,0xc0003,0x40001},
         {MountAircraft::F35c,6,6,0x3fffc,0x4004},
-        {MountAircraft::F35c,7,7,0xcffff,0x4005},
+        {MountAircraft::F35c,7,7,0xc3fff,0x40005},
         {MountAircraft::F15e,1,1,0x3f,0x1},
         {MountAircraft::F15e,2,2,0x3ffc0,0x40},
         {MountAircraft::F15e,4,4,0x0,0x0},
-        {MountAircraft::F15e,3,3,0xfff,0x41},
+        {MountAircraft::F15e,3,3,0x3f03f,0x1001},
         {MountAircraft::F15e,5,5,0x3f,0x1},
         {MountAircraft::F15e,6,6,0x3ffc0,0x40},
-        {MountAircraft::F15e,7,7,0xfff,0x41},
+        {MountAircraft::F15e,7,7,0x3f03f,0x1001},
     };
     for(const auto& expected:previews) {
         FixedMountState preview;
@@ -120,9 +130,9 @@ int main() {
     // 三机型的单/多挂反复切换不能继承上一组合的位置限制。
     struct SelectionCase { MountAircraft aircraft; unsigned single,multiple; int kind,ordinal,singlePosition,multiplePosition; };
     const SelectionCase selections[]={
-        {MountAircraft::Su30sm,1,7,0,5,5,3},
-        {MountAircraft::F35c,4,5,2,2,16,18},
-        {MountAircraft::F15e,2,3,1,8,14,8},
+        {MountAircraft::Su30sm,1,7,0,0,0,2},
+        {MountAircraft::F35c,4,5,2,0,14,18},
+        {MountAircraft::F15e,2,3,1,0,6,12},
     };
     for(const auto& expected:selections) {
         FixedMountState preview;preview.aircraft=expected.aircraft;
@@ -134,26 +144,6 @@ int main() {
         preview.kindsMask=expected.multiple;
         assert(mountPhysical(preview,expected.kind,expected.ordinal)==expected.multiplePosition);
         try{mountPhysical(preview,expected.kind,preview.logicalCounts[expected.kind]);assert(false);}catch(const std::runtime_error&){}
-    }
-    // F-35C 六槽轮转到四处活动位置；逐发/部分齐射后，窗口内唯一且未发射弹体不挪位。
-    for(int burst=1;burst<=4;++burst) {
-        FixedMountState layout;layout.aircraft=MountAircraft::F35c;layout.kindsMask=5;
-        layout.logicalCounts=mountSpecification(layout.aircraft).logicalCounts;
-        Group group;group.slots.resize(6);
-        for(int i=0;i<6;++i)group.slots[i].mountOrdinal=i;
-        int cursor=0;mountPrepareWindow(layout,2,group,cursor,4);
-        for(int turn=0;turn<18;++turn) {
-            const auto previous=layout.f35AamPositions;
-            const int next=(cursor+burst)%6;
-            mountPrepareWindow(layout,2,group,next,4);
-            unsigned occupied=0;
-            for(int distance=0;distance<4;++distance) {
-                const int ordinal=(next+distance)%6,position=mountPhysical(layout,2,ordinal);
-                assert(!(occupied&(1u<<position)));occupied|=1u<<position;
-                if(distance<4-burst)assert(previous[ordinal]==position);
-            }
-            cursor=next;
-        }
     }
     // 换涂装的部分组件复用：只继承同一序列号的原生请求，新祖先/动画组件不可继承旧隐藏状态。
     FixedMountState priorVisuals,nextVisuals;

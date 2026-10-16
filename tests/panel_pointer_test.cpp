@@ -1,8 +1,23 @@
 #include "../src/panel_pointer.hpp"
+#include "../src/keyboard_shortcuts.hpp"
 #include <cassert>
 #include <iostream>
 
 int main() {
+    // 同一主键的单键/组合键区分，三个动作重复和无效修饰键不能通过保存。
+    std::array<dualsp::Shortcut,3> chords{{{117,0},{117,3},{118,3}}};
+    const std::array<int,4> direct{49,50,51,52};
+    assert(dualsp::validShortcuts(chords,direct));
+    for(int mods=0;mods<8;++mods) {
+        assert(dualsp::shortcutMatches(chords[0],117,mods)==(mods==0));
+        assert(dualsp::shortcutMatches(chords[1],117,mods)==(mods==3));
+        assert(dualsp::validShortcut({120,mods}));
+    }
+    chords[2]=chords[1];assert(!dualsp::validShortcuts(chords,direct));
+    chords[2]={49,0};assert(!dualsp::validShortcuts(chords,direct));
+    chords[2]={49,4};assert(dualsp::validShortcuts(chords,direct));
+    assert(!dualsp::validShortcut({117,8})&&!dualsp::validShortcut({27,0}));
+    assert(!dualsp::validShortcut({115,2})&&!dualsp::validShortcut({46,3}));
     dualsp::PanelPointer p;
     p.center(1920,1080);assert(p.x==960 && p.y==540);
     p.relative(120,-40);assert(p.x==1080 && p.y==500);

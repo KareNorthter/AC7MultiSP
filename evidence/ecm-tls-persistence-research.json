@@ -1,0 +1,828 @@
+{
+  "recorded_date": "2026-10-16",
+  "branch": "codex/ecm-tls-persistence",
+  "source_base": "4e626e347556b8e7502e2b940a65505e2486a6d4",
+  "runtime_baseline": "main / 2.0.0",
+  "observed_installation": "主工作区安装的2.3.0；当前有效武器参数可能受既有PAK影响，未更改PAK",
+  "scope": "只读研究、用户手动飞行与暂停，未进行跨SP重建实验",
+  "process_write": false,
+  "game_functions_called": false,
+  "runtime_code_modified": false,
+  "compiled": false,
+  "tests_added_or_run": false,
+  "installed": false,
+  "user_observation": "CFA-44 ECM雷达范围为圆形并跟随机体移动；随后换Morgan发射TLS，完成MSL转弯暂停对照。",
+  "stages": [
+    {
+      "stage": "ecm-active-paused",
+      "source": "Temp/ecm-active-paused/snapshot.json",
+      "sha256": "9f5454831e173e1525fcfdedd8078d15a77bee8999241567c09e7fbce1fea601",
+      "captured_local": "2026-10-16T22:09:30.133139+08:00",
+      "aircraft": "AcePlayerPawn_fa44_s05_C",
+      "weapon_class": "plwp_ecmp_x1_C",
+      "class_chain": [
+        "plwp_ecmp_x1_C",
+        "plwp_esm_x0_C",
+        "ElectronicSupportMeasures",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 192031,
+        "serial": 68969
+      },
+      "effect_age": 2.0865259170532227,
+      "native_flags": {
+        "active": 1,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 0,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 30.0,
+        "LoadTime": 42.0,
+        "SupportTimeCampaign": 26.0,
+        "JammingTimeCampaign": 26.0,
+        "EffectRangeMeter": 3200.0,
+        "EffectHitCylinder": "00"
+      },
+      "activator_counts": {
+        "ActiveWeapons": 1,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 42.0,
+          "elapsed": 2.0865259170532227
+        }
+      ],
+      "player_support": "this_effect"
+    },
+    {
+      "stage": "ecm-msl-paused",
+      "source": "Temp/ecm-msl-paused/snapshot.json",
+      "sha256": "7c7b2179a6735e116cb775c8a01467186f6a6191baae44f3f612f03c204d2536",
+      "captured_local": "2026-10-16T22:12:07.414851+08:00",
+      "aircraft": "AcePlayerPawn_fa44_s05_C",
+      "weapon_class": "plwp_ecmp_x1_C",
+      "class_chain": [
+        "plwp_ecmp_x1_C",
+        "plwp_esm_x0_C",
+        "ElectronicSupportMeasures",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 192031,
+        "serial": 68969
+      },
+      "effect_age": 7.0709686279296875,
+      "native_flags": {
+        "active": 1,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 0,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 30.0,
+        "LoadTime": 42.0,
+        "SupportTimeCampaign": 26.0,
+        "JammingTimeCampaign": 26.0,
+        "EffectRangeMeter": 3200.0,
+        "EffectHitCylinder": "00"
+      },
+      "activator_counts": {
+        "ActiveWeapons": 1,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 42.0,
+          "elapsed": 7.0709686279296875
+        }
+      ],
+      "player_support": "this_effect",
+      "effect_center_equals_player_root": true,
+      "temporary_component_classes": [
+        [
+          "ParticleSystemComponent",
+          "ParticleSystemComponent"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "stage": "ecm-ended-paused",
+      "source": "Temp/ecm-ended-paused/snapshot.json",
+      "sha256": "db514db287eaadf0d035d2896f8dffd2b3ce93ecb260516fedda25a90e0e3ac4",
+      "captured_local": "2026-10-16T22:14:04.964508+08:00",
+      "aircraft": "AcePlayerPawn_fa44_s05_C",
+      "weapon_class": "plwp_ecmp_x1_C",
+      "class_chain": [
+        "plwp_ecmp_x1_C",
+        "plwp_esm_x0_C",
+        "ElectronicSupportMeasures",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 192031,
+        "serial": 68969
+      },
+      "effect_age": 27.107786178588867,
+      "native_flags": {
+        "active": 1,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 0,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 30.0,
+        "LoadTime": 42.0,
+        "SupportTimeCampaign": 26.0,
+        "JammingTimeCampaign": 26.0,
+        "EffectRangeMeter": 3200.0,
+        "EffectHitCylinder": "00"
+      },
+      "activator_counts": {
+        "ActiveWeapons": 1,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 42.0,
+          "elapsed": 27.107786178588867
+        }
+      ],
+      "player_support": "none",
+      "effect_center_equals_player_root": true,
+      "temporary_component_classes": [
+        [
+          "ParticleSystemComponent",
+          "ParticleSystemComponent"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "stage": "ecm-retired-paused",
+      "source": "Temp/ecm-retired-paused/snapshot.json",
+      "sha256": "4b2874c6ce6ba70a6b67487889da2e206fe02465bc746ceb5528a1a62e61e55a",
+      "captured_local": "2026-10-16T22:16:27.078660+08:00",
+      "aircraft": "AcePlayerPawn_fa44_s05_C",
+      "weapon_class": "plwp_ecmp_x1_C",
+      "class_chain": [
+        "plwp_ecmp_x1_C",
+        "plwp_esm_x0_C",
+        "ElectronicSupportMeasures",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 192031,
+        "serial": 68969
+      },
+      "effect_age": 30.002626419067383,
+      "native_flags": {
+        "active": 0,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 0,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 30.0,
+        "LoadTime": 42.0,
+        "SupportTimeCampaign": 26.0,
+        "JammingTimeCampaign": 26.0,
+        "EffectRangeMeter": 3200.0,
+        "EffectHitCylinder": "00"
+      },
+      "activator_counts": {
+        "ActiveWeapons": 0,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 42.0,
+          "elapsed": 32.08930206298828
+        }
+      ],
+      "player_support": "none",
+      "effect_center_equals_player_root": false,
+      "temporary_component_classes": [
+        [
+          "ParticleSystemComponent",
+          "ParticleSystemComponent"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "stage": "tls-active-paused",
+      "source": "Temp/tls-active-paused/snapshot.json",
+      "sha256": "371cc04eeb26de8ef4ede74ddba1b41ccf21d5598d9b875bb0790e2b589aab59",
+      "captured_local": "2026-10-16T22:20:16.576004+08:00",
+      "aircraft": "AcePlayerPawn_mrgn_C",
+      "weapon_class": "plwp_tls_x1_C",
+      "class_chain": [
+        "plwp_tls_x1_C",
+        "AttachedInstantWeapon",
+        "AttachedWeapon",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 178731,
+        "serial": 97708
+      },
+      "effect_age": 1.224144697189331,
+      "native_flags": {
+        "active": 1,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 1,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 8.0,
+        "LoadTime": 10.0
+      },
+      "activator_counts": {
+        "ActiveWeapons": 1,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 10.0,
+          "elapsed": 1.224144697189331
+        }
+      ],
+      "player_support": "none",
+      "effect_center_equals_player_root": false,
+      "attached_socket": "sp11（由后续同FName快照解码）",
+      "attachment_chain": [
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "index": 178730,
+          "serial": 97707
+        },
+        {
+          "name": "SWP1",
+          "class": "StaticMeshComponent",
+          "index": 95737,
+          "serial": 91817
+        },
+        {
+          "name": "WeaponMeshBase",
+          "class": "SceneComponent",
+          "index": 95742,
+          "serial": 91843
+        },
+        {
+          "name": "RootComponent",
+          "class": "SceneComponent",
+          "index": 96171,
+          "serial": 91836
+        }
+      ],
+      "temporary_component_classes": [
+        [
+          "ParticleSystemComponent"
+        ],
+        [],
+        []
+      ]
+    },
+    {
+      "stage": "tls-msl-paused",
+      "source": "Temp/tls-msl-paused/snapshot.json",
+      "sha256": "ba2b023241bad33e42c4014d3d35fcd0cec11718ceab95a615ce364841e42ee4",
+      "captured_local": "2026-10-16T22:21:36.117797+08:00",
+      "aircraft": "AcePlayerPawn_mrgn_C",
+      "weapon_class": "plwp_tls_x1_C",
+      "class_chain": [
+        "plwp_tls_x1_C",
+        "AttachedInstantWeapon",
+        "AttachedWeapon",
+        "WeaponBase",
+        "NimbusObjectPoolItem",
+        "Actor",
+        "Object"
+      ],
+      "weapon_identity": {
+        "index": 178731,
+        "serial": 97708
+      },
+      "effect_age": 3.181156873703003,
+      "native_flags": {
+        "active": 1,
+        "reload_on_fire": 1,
+        "reload_after_all_fired": 0,
+        "switch_on_last_destroyed": 1,
+        "ending": 0
+      },
+      "end_reload_owner_is_null": true,
+      "parameters": {
+        "LifeTime": 8.0,
+        "LoadTime": 10.0
+      },
+      "activator_counts": {
+        "ActiveWeapons": 1,
+        "SpawnedWeapons": 1
+      },
+      "reload_slots": [
+        {
+          "duration": 10.0,
+          "elapsed": 3.181156873703003
+        }
+      ],
+      "player_support": "none",
+      "effect_center_equals_player_root": false,
+      "attached_socket": "sp11",
+      "attachment_chain": [
+        {
+          "name": "Static Mesh",
+          "class": "StaticMeshComponent",
+          "index": 178730,
+          "serial": 97707
+        },
+        {
+          "name": "SWP1",
+          "class": "StaticMeshComponent",
+          "index": 95737,
+          "serial": 91817
+        },
+        {
+          "name": "WeaponMeshBase",
+          "class": "SceneComponent",
+          "index": 95742,
+          "serial": 91843
+        },
+        {
+          "name": "RootComponent",
+          "class": "SceneComponent",
+          "index": 96171,
+          "serial": 91836
+        }
+      ],
+      "temporary_component_classes": [
+        [
+          "ParticleSystemComponent"
+        ],
+        [],
+        []
+      ]
+    }
+  ],
+  "native_sources": [
+    {
+      "bytes": 52,
+      "sha256": "bcc731d1d4644e2e490ffcde131c9a3d244a6feb4dbc7406f46bd3c8eacf0732",
+      "sources": [
+        "Temp/ecm-active-native/native-85df10.bin",
+        "Temp/ecm-registry-native/native-85df10.bin",
+        "Temp/ecm-ended-paused/native-85df10.bin",
+        "Temp/tls-active-paused/native-85df10.bin"
+      ]
+    },
+    {
+      "bytes": 311,
+      "sha256": "7e8f12437d367e815c85952f9f25c94197f205738a34df7011c4fb23ca24c7ab",
+      "sources": [
+        "Temp/ecm-active-native/native-85df50.bin",
+        "Temp/ecm-registry-native/native-85df50.bin",
+        "Temp/ecm-ended-paused/native-85df50.bin",
+        "Temp/tls-active-paused/native-85df50.bin"
+      ]
+    },
+    {
+      "bytes": 39,
+      "sha256": "ee6bec38f2309df3c930a6f02f9899778ffa15d9771ef5ee5bdac279225a9da0",
+      "sources": [
+        "Temp/ecm-active-native/native-85f1c0.bin",
+        "Temp/ecm-registry-native/native-85f1c0.bin",
+        "Temp/ecm-ended-paused/native-85f1c0.bin",
+        "Temp/tls-active-paused/native-85f1c0.bin"
+      ]
+    },
+    {
+      "bytes": 152,
+      "sha256": "a2b60f2d1feff71247ad9d402fbdbbd2abf2c5935c6632458a3ec8eb009128f9",
+      "sources": [
+        "Temp/ecm-active-native/native-85f340.bin",
+        "Temp/ecm-registry-native/native-85f340.bin",
+        "Temp/ecm-ended-paused/native-85f340.bin",
+        "Temp/tls-active-paused/native-85f340.bin"
+      ]
+    },
+    {
+      "bytes": 121,
+      "sha256": "ec052d1544fced3f439d13e225e99f58f5c5e8aaee5c4a63292d97eb250120b5",
+      "sources": [
+        "Temp/ecm-active-native/native-85f470.bin",
+        "Temp/ecm-registry-native/native-85f470.bin",
+        "Temp/ecm-ended-paused/native-85f470.bin",
+        "Temp/tls-active-paused/native-85f470.bin"
+      ]
+    },
+    {
+      "bytes": 107,
+      "sha256": "f08b01aadfc649122fa34a6ad982cc51095cc7d704e0ea442491fbd25a79ec16",
+      "sources": [
+        "Temp/ecm-active-native/native-861390.bin",
+        "Temp/ecm-registry-native/native-861390.bin",
+        "Temp/ecm-ended-paused/native-861390.bin",
+        "Temp/tls-active-paused/native-861390.bin"
+      ]
+    },
+    {
+      "bytes": 43,
+      "sha256": "36c29e69d931c259aed6f715b3a4b4bf2a9930adafc67f14cfcdbd6160f42104",
+      "sources": [
+        "Temp/ecm-active-native/native-861490.bin",
+        "Temp/ecm-registry-native/native-861490.bin",
+        "Temp/ecm-ended-paused/native-861490.bin",
+        "Temp/tls-active-paused/native-861490.bin"
+      ]
+    },
+    {
+      "bytes": 115,
+      "sha256": "bf910c80846e6d43e36209264ef1b36aa90db79e0495d77fa4a152844bd89eba",
+      "sources": [
+        "Temp/ecm-active-native/native-8614c0.bin",
+        "Temp/ecm-registry-native/native-8614c0.bin",
+        "Temp/ecm-ended-paused/native-8614c0.bin",
+        "Temp/tls-active-paused/native-8614c0.bin"
+      ]
+    },
+    {
+      "bytes": 52,
+      "sha256": "fc2b16eee1380d4c6da62868dfb4216ba26b89da42006745a52411b4b7394318",
+      "sources": [
+        "Temp/ecm-active-native/native-86b410.bin",
+        "Temp/ecm-registry-native/native-86b410.bin",
+        "Temp/ecm-ended-paused/native-86b410.bin",
+        "Temp/tls-active-paused/native-86b410.bin"
+      ]
+    },
+    {
+      "bytes": 424,
+      "sha256": "2db014591c83c0c816bddfdb130fadf9f1ee53ede1b91d560560ca690e121e4d",
+      "sources": [
+        "Temp/ecm-active-native/native-86bde0.bin",
+        "Temp/ecm-registry-native/native-86bde0.bin",
+        "Temp/ecm-ended-paused/native-86bde0.bin",
+        "Temp/tls-active-paused/native-86bde0.bin"
+      ]
+    },
+    {
+      "bytes": 133,
+      "sha256": "4ce58854394952121642969a670ebf73edca0bf004889b05115b39ae389fded5",
+      "sources": [
+        "Temp/ecm-active-native/native-86bf90.bin",
+        "Temp/ecm-registry-native/native-86bf90.bin",
+        "Temp/ecm-ended-paused/native-86bf90.bin",
+        "Temp/tls-active-paused/native-86bf90.bin"
+      ]
+    },
+    {
+      "bytes": 306,
+      "sha256": "b8dd8f291a11c6138e97adfc53d0a4ba0c3dd9db6dcf2898ba0a94e1e73318f1",
+      "sources": [
+        "Temp/ecm-active-native/native-86c020.bin",
+        "Temp/ecm-registry-native/native-86c020.bin",
+        "Temp/ecm-ended-paused/native-86c020.bin",
+        "Temp/tls-active-paused/native-86c020.bin"
+      ]
+    },
+    {
+      "bytes": 812,
+      "sha256": "e5ed064d9e95ecad96281602decdee6cd0f6a0efbfab10907f418d3426ed3b62",
+      "sources": [
+        "Temp/ecm-active-native/native-884f10.bin",
+        "Temp/ecm-registry-native/native-884f10.bin",
+        "Temp/ecm-ended-paused/native-884f10.bin",
+        "Temp/tls-active-paused/native-884f10.bin"
+      ]
+    },
+    {
+      "bytes": 40,
+      "sha256": "ca6b493055b698bf4fc1356b384e2644f1881c1f9f8bb76f8353463fd7ef6abb",
+      "sources": [
+        "Temp/ecm-active-native/native-885240.bin",
+        "Temp/ecm-registry-native/native-885240.bin",
+        "Temp/ecm-ended-paused/native-885240.bin",
+        "Temp/tls-active-paused/native-885240.bin"
+      ]
+    },
+    {
+      "bytes": 453,
+      "sha256": "afaf2c4a304854cd27159523a1971b9e174193afa174135659dc598edb60676b",
+      "sources": [
+        "Temp/ecm-active-native/native-8943e0.bin",
+        "Temp/ecm-registry-native/native-8943e0.bin",
+        "Temp/ecm-ended-paused/native-8943e0.bin",
+        "Temp/tls-active-paused/native-8943e0.bin"
+      ]
+    },
+    {
+      "bytes": 33,
+      "sha256": "adad0b8dafd7c673bf11a1a5496be9479681cfe99b023adff14163620bdd9015",
+      "sources": [
+        "Temp/ecm-active-native/native-894740.bin",
+        "Temp/ecm-registry-native/native-894740.bin",
+        "Temp/ecm-ended-paused/native-894740.bin",
+        "Temp/tls-active-paused/native-894740.bin"
+      ]
+    },
+    {
+      "bytes": 172,
+      "sha256": "a9975d54719f9a3f7920d4f449e0798146c67aef0993285bc1fa94416a2b9682",
+      "sources": [
+        "Temp/ecm-active-native/native-894850.bin",
+        "Temp/ecm-registry-native/native-894850.bin",
+        "Temp/ecm-ended-paused/native-894850.bin",
+        "Temp/tls-active-paused/native-894850.bin"
+      ]
+    },
+    {
+      "bytes": 271,
+      "sha256": "0c04092cad9df1c3c391de260afa8a98cd543ea2d9e485ca22eb87df55a1bbaf",
+      "sources": [
+        "Temp/ecm-active-native/native-895bb0.bin",
+        "Temp/ecm-registry-native/native-895bb0.bin",
+        "Temp/ecm-ended-paused/native-895bb0.bin",
+        "Temp/tls-active-paused/native-895bb0.bin"
+      ]
+    },
+    {
+      "bytes": 626,
+      "sha256": "84bf78599a206d6046dc0db11ce46aaca47f89e07ff1af8b49866d27997ce0b5",
+      "sources": [
+        "Temp/ecm-active-native/native-896b00.bin",
+        "Temp/ecm-registry-native/native-896b00.bin",
+        "Temp/ecm-ended-paused/native-896b00.bin",
+        "Temp/tls-active-paused/native-896b00.bin"
+      ]
+    },
+    {
+      "bytes": 76,
+      "sha256": "07e68f0d6256497b236adbd913e5794ebfd63679648ecd1b19b324738449469d",
+      "sources": [
+        "Temp/ecm-active-native/native-896f10.bin",
+        "Temp/ecm-registry-native/native-896f10.bin",
+        "Temp/ecm-ended-paused/native-896f10.bin",
+        "Temp/tls-active-paused/native-896f10.bin"
+      ]
+    },
+    {
+      "bytes": 405,
+      "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50",
+      "sources": [
+        "Temp/ecm-active-native/native-897010.bin",
+        "Temp/ecm-registry-native/native-897010.bin",
+        "Temp/ecm-ended-paused/native-897010.bin",
+        "Temp/tls-active-paused/native-897010.bin"
+      ]
+    },
+    {
+      "bytes": 183,
+      "sha256": "89c5e78c869fdcadf8d17b58602dce02ede097a36aa6835b75665824861e9729",
+      "sources": [
+        "Temp/ecm-active-native/native-897740.bin",
+        "Temp/ecm-registry-native/native-897740.bin",
+        "Temp/ecm-ended-paused/native-897740.bin",
+        "Temp/tls-active-paused/native-897740.bin"
+      ]
+    },
+    {
+      "bytes": 36,
+      "sha256": "cd6da4a707efc1870b2b63024ad8f17cb6c8f4b9e0d86c3416d0560054666339",
+      "sources": [
+        "Temp/ecm-active-native/native-8980e0.bin",
+        "Temp/ecm-registry-native/native-8980e0.bin",
+        "Temp/ecm-ended-paused/native-8980e0.bin",
+        "Temp/tls-active-paused/native-8980e0.bin"
+      ]
+    },
+    {
+      "bytes": 1562,
+      "sha256": "ba80ba1a82b8d68a8b2ad33028d58554e3b2971c9058208a499f3af5dffba486",
+      "sources": [
+        "Temp/ecm-active-native/native-89da40.bin",
+        "Temp/ecm-registry-native/native-89da40.bin",
+        "Temp/ecm-ended-paused/native-89da40.bin",
+        "Temp/tls-active-paused/native-89da40.bin"
+      ]
+    },
+    {
+      "bytes": 114,
+      "sha256": "fbccdeb1cb4ff4b2481f691cd3fb8864ab3a6a8c634bbffda5fda719b516cc24",
+      "sources": [
+        "Temp/ecm-active-native/native-89e3c0.bin",
+        "Temp/ecm-registry-native/native-89e3c0.bin",
+        "Temp/ecm-ended-paused/native-89e3c0.bin",
+        "Temp/tls-active-paused/native-89e3c0.bin"
+      ]
+    },
+    {
+      "bytes": 128,
+      "sha256": "ef584be44be15c03c6e334b643d9391b88e7bd1d70aa303b4e13992db6a12df2",
+      "sources": [
+        "Temp/ecm-active-native/range-3d2290-80.bin"
+      ]
+    },
+    {
+      "bytes": 6272,
+      "sha256": "d9d8c4a9651a533b2cb9087ec37d603f06d72301cfb09f6beb3e086b32d0f1fa",
+      "sources": [
+        "Temp/ecm-active-native/range-85e090-1880.bin"
+      ]
+    },
+    {
+      "bytes": 8192,
+      "sha256": "a59454bfcde2728dbb9b3bd6f5ef54ae62dcc871dbf730107bb84dd595671592",
+      "sources": [
+        "Temp/ecm-active-native/range-86b450-2000.bin"
+      ]
+    },
+    {
+      "bytes": 720,
+      "sha256": "a9a9cdcb796dceaba39456c4a97dfc074e344b13920f084a3bc9e3ba7044b3ee",
+      "sources": [
+        "Temp/ecm-active-native/range-885240-2d0.bin"
+      ]
+    },
+    {
+      "bytes": 320,
+      "sha256": "313fd2a2b6b3663dca75ed58db2809391009091699e33282efa53c4de4611281",
+      "sources": [
+        "Temp/ecm-active-native/range-89e3c0-140.bin"
+      ]
+    },
+    {
+      "bytes": 96,
+      "sha256": "559df3d80a0d88fa93149665005e034da408d223cf45a8cb0007bcbf18608f44",
+      "sources": [
+        "Temp/ecm-registry-native/range-1233f20-60.bin"
+      ]
+    },
+    {
+      "bytes": 920,
+      "sha256": "19e61da810bcc2d3f2a1d183d3604ed0b8d7757b94eb2f9763590c9e686211d2",
+      "sources": [
+        "Temp/ecm-registry-native/range-4e3be0-398.bin"
+      ]
+    },
+    {
+      "bytes": 832,
+      "sha256": "f6d03b0c45b2483b5016a2e38ffa103a4374313b9d3866b6a3042868f2a2b1a0",
+      "sources": [
+        "Temp/ecm-registry-native/range-7fe240-340.bin"
+      ]
+    },
+    {
+      "bytes": 64,
+      "sha256": "e88ca30745eabf6291968ce52edd3caab47136cbf482f40416286e3ebd0be091",
+      "sources": [
+        "Temp/ecm-registry-native/range-885ec0-40.bin"
+      ]
+    },
+    {
+      "bytes": 309,
+      "sha256": "c1af00ef18787da4fd56545450cdeae33b875ec23491702de30a0822fa63da47",
+      "sources": [
+        "Temp/ecm-registry-native/range-89e920-135.bin"
+      ]
+    },
+    {
+      "bytes": 64,
+      "sha256": "63834353dc1c4b605d8548a43f121b94cce91b092f91ee0211dd4ad91bfd8015",
+      "sources": [
+        "Temp/ecm-registry-native/range-968640-40.bin"
+      ]
+    },
+    {
+      "bytes": 1152,
+      "sha256": "8a7a8722fce8a9ffdccb47cd1fe45e048a68273a8305e99e7cfef30826501e50",
+      "sources": [
+        "Temp/ecm-ended-paused/range-895270-480.bin"
+      ]
+    },
+    {
+      "bytes": 768,
+      "sha256": "ef8f7d1e668928ee523833bb9abccfabf685476f9ee40ba32d2111fd9245a780",
+      "sources": [
+        "Temp/tls-review-code/range-16e3e80-300.bin"
+      ]
+    },
+    {
+      "bytes": 576,
+      "sha256": "fb3ad434e902ab6d545fca1182422686e4d2c2e4cc046d7a84c77337388da29b",
+      "sources": [
+        "Temp/tls-review-code/range-3dca60-240.bin"
+      ]
+    },
+    {
+      "bytes": 128,
+      "sha256": "ab52830ca52da6723d7c14aaeaaa98cd8f65faf5753fbed226530aeecbaee35a",
+      "sources": [
+        "Temp/tls-review-code/range-968640-80.bin"
+      ]
+    },
+    {
+      "bytes": 640,
+      "sha256": "3c0d404b7dfd4f17856c0e8ee449c1456cb88ba940fa60bff0723b0716d8cda1",
+      "sources": [
+        "Temp/tls-review-code-v2/range-16e4180-280.bin"
+      ]
+    },
+    {
+      "bytes": 128,
+      "sha256": "c536503442bf3418f7f68ff1bb6b449f9151b2eaf0dfc9b0db09ae7b68dbe5ea",
+      "sources": [
+        "Temp/tls-review-code-v2/range-3dcf70-80.bin"
+      ]
+    },
+    {
+      "bytes": 640,
+      "sha256": "ca4cbe849f12e1474e58c5cf0f3698cc468f5de3d8aa11c30de8b063c91a6734",
+      "sources": [
+        "Temp/tls-review-code-v2/range-5dec00-280.bin"
+      ]
+    },
+    {
+      "bytes": 896,
+      "sha256": "dd95fc2fc161f387dc86ac0a9e4fd722d073f3fbda81e4d64329e20dc8c275c7",
+      "sources": [
+        "Temp/tls-review-code-v3/range-167c7f0-380.bin"
+      ]
+    },
+    {
+      "bytes": 768,
+      "sha256": "6cff49fe85b60d13e2fac70a892a7dbf3b9d56bf7fd034b000dde4ae068b67c8",
+      "sources": [
+        "Temp/tls-review-code-v3/range-5df640-300.bin"
+      ]
+    },
+    {
+      "bytes": 1280,
+      "sha256": "c11dc8d667dda6dbf0d65763a7666c933f5f2d3c52b6deb6dfd4cfc1fde8c2f1",
+      "sources": [
+        "Temp/tls-review-mesh-code/range-7f5e00-500.bin"
+      ]
+    },
+    {
+      "bytes": 128,
+      "sha256": "fd360c1d00efe4dcb2b35cc13bafecc490e01e6e4fee990a5c38e2f4d8d084c0",
+      "sources": [
+        "Temp/tls-review-mesh-code/range-882dc0-80.bin"
+      ]
+    }
+  ],
+  "findings": {
+    "ecm": "同一ECM从2.087秒经MSL至7.071秒继续活动；27.108秒玩家支援引用已清但对象活动；30.003秒对象退场，冷却继续至32.089/42秒。",
+    "tls": "Morgan x1同一对象及SWP1/sp11附着从1.224秒连续至3.181秒；发射即开始10秒冷却，寿命8秒，最后一发结束切换标志开启。",
+    "shared_candidate": "保留原生持续对象与源槽登记，隔离非当前源槽结束时操作当前SP的政策；保留原生寿命和效果更新，不重复激活。",
+    "current_sp_callback": "0x885240在检查结束对象的最后一发标志之前就读取当前SP的bAutoFireOnHold并可能调用0x8860f0，因此ECM也需要结束归属隔离。",
+    "type_corrections": "owner+0x158为嵌套组件数组，SP组+0x48为WeaponParameters；二者均不是已证明的活动Actor对象池。Morgan TLS附着不在该组件清理池。",
+    "ecm_world_query": "0x4e3be0筛选类相关集合中的活动效果，0x7fe240调用链按0x86bc00/0x86bc90重算目标干扰/支援；0x86c020随所属飞机更新效果位置。"
+  },
+  "unverified": [
+    "跨另一SP重建后Actor保有/重用与有效登记",
+    "敌方锁定/导弹干扰与友方增益的完整实战效果",
+    "非当前源槽自然结束是否不干扰当前SP",
+    "TLS跨SP根组件/父链/Socket变换及真实伤害",
+    "最后一发、快速切回、补给、死亡、重启、检查点、其他TLS/ECM变体"
+  ],
+  "data_notes": [
+    "原始地址、字节、全文只在Temp；本记录保存摘要及哈希。",
+    "早期采样字段sp_object_pool已由现场类型纠正为WeaponParameters；不采用该误命名作类型依据。",
+    "ecm-active-native早期owner_pool按错误外层步长读取，未用于结论；采用ecm-msl-paused之后的嵌套数组采样。",
+    "PE异常展开记录可能只是函数片段；连续range片段也不代表函数边界。",
+    "采样工具逐步补充字段，最终版本不是所有早期快照的原始脚本快照。"
+  ]
+}

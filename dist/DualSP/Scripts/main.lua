@@ -1,4 +1,4 @@
--- AC7MultiSP 2.3.1：机库和补给使用独立动态挂载预览。
+-- AC7MultiSP 2.4.0：机库和补给使用独立动态挂载预览。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -54,9 +54,10 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=5") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=6") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
-local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
+local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 仅核对ADFX-01原生持续武器。
+local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却前核对持续策略，Morgan原生TLS交给保有事务。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
 local nativeLoadoutAmmo=loadExport("dualsp_loadout_ammo") -- 三页统一读取部件加成后的完整载量。
 local nativePartsAmmo=loadExport("dualsp_parts_ammo_preview") -- PART 只读候选快照；旧核心缺少接口时明确拒绝混装。
@@ -68,6 +69,7 @@ local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 -- 管理版 Lua 必须搭配新版界面，防止旧 F8 再次提交兵装配置。
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
+local shortcutProtocol=loadExport("dualsp_shortcuts_supported","DualSPUI.dll") -- 可配置组合键须搭配新UI。
 local debugLoadoutProtocol=loadExport("dualsp_debug_loadout_supported","DualSPUI.dll") -- 调试扩展须与界面成套安装。
 local debugLoadoutReady=loadExport("dualsp_debug_loadout_ready") -- 重建前只读检查正在飞行的武器。
 local debugFixedMount=loadExport("dualsp_debug_fixed_mount")
@@ -236,6 +238,7 @@ local function optionsFor(id)
     if isFlight then assert(isSelectedPlane(sourcePlane,info.code),"任务机体与当前选择不符："..info.code)end
     local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
+    local continuousOptions={}
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     for i=1,3 do
         local weaponClass=sourceActivator["SpecialWeaponConfig"..i].WeaponClass -- 每槽可被替换模组独立改写。
@@ -244,6 +247,10 @@ local function optionsFor(id)
         assert(valid(weaponDefault),"当前机体兵装默认对象缺失："..info.code.."/"..i)
         weaponIds[i]=weaponDefault.WeaponID
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
+        if info.code=="mrgn"and weaponIds[i]==31 then
+            local ok,supported=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
+            assert(ok,supported);continuousOptions[i]=supported
+        end
     end
     local w=info.weapons -- 原生部件先作用于完整载量；草稿随后仍使用原配弹比例。
     local ok,encoded=nativeLoadoutAmmo(instance:GetAddress(),id,weaponIds[1],w[1].max,weaponIds[2],w[2].max,weaponIds[3],w[3].max)
@@ -254,7 +261,7 @@ local function optionsFor(id)
         options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
             stats=item.stats,description=descriptions[item.code]or item.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
-            available=not unsupportedDual[weaponIds[i]]}
+            available=not unsupportedDual[weaponIds[i]]or continuousOptions[i]==true}
     end
     return options
 end
@@ -902,7 +909,7 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=5,language=config.language,game_language=runtimeContext.language,
+        management_protocol=6,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
         runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
         ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
@@ -1298,7 +1305,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.3.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.4.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
