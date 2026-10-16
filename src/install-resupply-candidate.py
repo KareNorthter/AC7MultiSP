@@ -19,6 +19,7 @@ MOD = GAME / "ue4ss/Mods/DualSP"
 CORE = ROOT / "build-core/DualSP.dll"
 FORMAL = ROOT / "dist/DualSP/bin/DualSP.dll"
 VERSION = "0.1.7-resupply-candidate.1"
+THREE_SP_VERSION = "1.0.2-three-sp-candidate.1"  # 独立研究版，不覆盖正式快照。
 # 默认保留原补给安装记录；合并候选通过明确参数使用单独记录。
 EVIDENCE = ROOT / "evidence/resupply-candidate-installed.json"
 PWSH = Path(r"C:\Program Files\PowerShell\7\pwsh.exe")
@@ -97,11 +98,13 @@ def check_core(management):
     if management:
         # 输入隔离与音效收尾是本轮必需协议，不能与候选 5 核心混装。
         required.update({"dualsp_resupply_takeoff", "dualsp_resupply_control", "dualsp_prepare_weapon_rebuild"})
-    if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or VERSION.startswith("0.1.9-experience-candidate."):
+    if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or VERSION.startswith("0.1.9-experience-candidate."):
         required.update({"dualsp_preparation_action", "dualsp_selection_audio", "dualsp_menu_confirm", "dualsp_custom_audio_update",
                          "dualsp_loadout_ammo", "dualsp_weapon_icon", "dualsp_finish_tls", "dualsp_take_empty_switch"})
-    if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
+    if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1"):
         required.add("dualsp_runtime_gate")  # 多人禁用不能只依赖 Lua 或旧核心。
+    if VERSION == THREE_SP_VERSION:
+        required.add("dualsp_three_sp_supported")
     if not required.issubset(exports):
         raise RuntimeError("候选核心缺少补给协议或已有接口")
 
@@ -114,8 +117,10 @@ def check_management_ui():
     with pefile.PE(str(path)) as library:
         exports = {entry.name.decode("ascii") for entry in library.DIRECTORY_ENTRY_EXPORT.symbols if entry.name}
         required = {"dualsp_management_supported", "dualsp_preparation_navigation"}
-        if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
+        if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1"):
             required.add("dualsp_runtime_gate")  # 窗口消息、F8 和手柄均需同步禁用。
+        if VERSION == THREE_SP_VERSION:
+            required.add("dualsp_three_sp_supported")
         if library.FILE_HEADER.Machine != 0x8664 or not required <= exports:
             raise RuntimeError("F8 管理界面尚未构建或版本不符；请先按项目规则明确要求构建新版 UI，再统一安装")
 
@@ -181,7 +186,12 @@ def main():
     arguments.add_argument("--merged-hud", action="store_true", help="成套安装补给重选与两个 HUD 新功能")
     arguments.add_argument("--management", action="store_true", help="成套安装原生兵装入口、直接选择和中英文 F8 管理界面")
     arguments.add_argument("--experience", action="store_true", help="按 VERSION 安装独立版本核心及配套 Lua，不覆盖旧版核心")
+    arguments.add_argument("--three-sp", action="store_true", help="明确安装 1 至 3 SP 研究候选，要求已生成候选清单")
     options = arguments.parse_args()
+    if options.three_sp:
+        if options.experience or options.management or options.merged_hud:
+            raise RuntimeError("--three-sp 必须单独使用")
+        options.experience = True
     # 管理源码只能通过管理模式安装；旧候选的记录绝不覆盖。
     controller = (ROOT / "dist/DualSP/Scripts/main.lua").read_text(encoding="utf-8")  # 版本协议来自即将安装的调度器。
     management_source = "dualsp_management_supported" in controller
@@ -192,19 +202,34 @@ def main():
         options.management = True
         options.merged_hud = True
         VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
-        if VERSION not in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or f'DUALSP_LOADED {VERSION} MANAGEMENT_UI' not in controller:
+        if VERSION not in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9", "0.1.9-performance-candidate.1") or f'DUALSP_LOADED {VERSION} MANAGEMENT_UI' not in controller:
             raise RuntimeError("版本文件与已核对的控制器不匹配")
+        if (VERSION == THREE_SP_VERSION) != options.three_sp:
+            raise RuntimeError("三 SP 候选须显式使用 --three-sp；正式源码不能使用该入口")
         # 版本快照从 Git 保留核心安装，不依赖可能被后续研究覆盖的构建目录。
         core_version = VERSION if VERSION in ("1.0.1", "1.0.1-candidate.1") else "0.1.9"  # 正式快照与候选分别保留。
         if VERSION == "1.0.2":
             core_version = "1.0.1"  # 兼容修订只改 Lua/UI，明确复用已实测核心，不另复制同一 DLL。
+        if VERSION == THREE_SP_VERSION:
+            core_version = VERSION
         CORE = ROOT / "dist/DualSP/cores" / core_version / "DualSP.dll"
         core_hash = ("EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF"
-                     if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1") else "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1")
+                     if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1") else "46731AE6AD519E0BD145E0EA03C32A2662947C8B03B56C524D7CDF46CA8096E1")
+        if VERSION == THREE_SP_VERSION:
+            manifest = json.loads((ROOT / "evidence/three-sp-candidate-build.json").read_text(encoding="utf-8"))
+            if manifest["version"] != VERSION:
+                raise RuntimeError("三 SP 候选清单版本不符")
+            core_hash = manifest["runtime_files"]["bin/DualSP.dll"]
+            # 每个载荷都必须等于已核对的候选，不能混入后来修改的 Lua/UI。
+            for name, expected in manifest["runtime_files"].items():
+                source = CORE if name == "bin/DualSP.dll" else ROOT / "VERSION" if name == "VERSION" else ROOT / "dist/DualSP" / name
+                if digest(source) != expected:
+                    raise RuntimeError("三 SP 候选载荷已变化，请重新准备：" + name)
+            FILES += ("Scripts/loadout_profile.lua",)
         if digest(CORE) != core_hash:
             raise RuntimeError("所选核心与版本快照不一致")
         FILES += ("Scripts/weapon_names.lua", "Scripts/weapon_presentation.lua", "Audio/SP2.wav")
-        if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
+        if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1"):
             FILES += ("Scripts/runtime_context.lua",)
         EVIDENCE = ROOT / f"evidence/{VERSION}-installed.json"
         # 用户提供的提取音频只在本机保存；缺失或不符时停止，不改用旧音色。
@@ -333,10 +358,10 @@ def main():
         result["features"] += ["准备双栏性能/类型及右下弹药汇总", "原生页面重新激活接入"]
         # 体验候选取消额外确认页，回执不再宣称保留旧版两次交接流程。
         if options.experience:
-            if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9-performance-candidate.1"):
+            if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1", "1.0.0", "0.1.9-performance-candidate.1"):
                 result["features"] += ["中央简称字号放大约 11% 与独立绿色样式", "菜单对象发现缓存与激活对象直连",
                                        "静态性能栏与弹药颜色按变化更新", "补给接管不等待原生控制开放", "15 秒调度耗时汇总"]
-            if VERSION in ("1.0.2", "1.0.1", "1.0.1-candidate.1"):
+            if VERSION in (THREE_SP_VERSION, "1.0.2", "1.0.1", "1.0.1-candidate.1"):
                 result["features"] += ["多人网络/大厅/菜单禁用与核心/UI 双重许可", "原生操作提示跟随游戏文本语言",
                                        "F8 支持跟随游戏及保留手动语言", "英文说明换行保留单词间空格", "补给起飞 HUD 预建与同回调提交"]
                 result["multiplayer_gameplay_verified"] = False
@@ -364,6 +389,12 @@ def main():
         result["preparation_navigation_export_verified"] = True
         result["f9_cycle_removed"] = True
         result["f8_loadout_editor_removed"] = True
+    if VERSION == THREE_SP_VERSION:
+        result["features"] = ["原生页面连续选择 1 至 3 个 SP", "部件后按槽数均分弹药", "四键和四方向直接选择",
+                              "三 SP 独立弹药和冷却", "补给重选与跨槽数检查点恢复", "三槽等待占位与 HUD"]
+        result["management_protocol"] = 3
+        result["management_settings_revision"] = 3
+        result["profile_migration_on_first_start"] = "备份旧配置；schema 1 转 2；旧方案补空 c；按数量重算比例；新增 SP3 默认键 4；保留语言与管理键"
     EVIDENCE.write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

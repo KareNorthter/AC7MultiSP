@@ -1,0 +1,33 @@
+{
+  "recorded_at": "2026-10-15T19:53:07.610590+08:00",
+  "branch": "codex/three-sp-research",
+  "user_feedback": "选择三个 SP 的界面，右侧 SP 信息略显拥挤，请横向扩展一些；沿用之前暂不安装要求。",
+  "scope": "机库 SELECT SP WEAPON 页",
+  "layout_reference": "1920×1080 原生逻辑坐标；根据用户截图和既有原生布局记录计算，非实玩测量结果",
+  "layout": {
+    "column_width_before": 224,
+    "column_width_after": 320,
+    "gap_before": 76,
+    "gap_after": 36,
+    "column_x_after": [
+      784,
+      1140,
+      1496
+    ],
+    "right_edge": 1816,
+    "full_name_width_after": 284,
+    "stat_label_width_after": 185.6,
+    "stat_bar_width_after": 128,
+    "vertical_layout_unchanged": true,
+    "supply_layout_unchanged": true
+  },
+  "source_sha256": "9120D7AD2E8DA4017B0C9371BD4A81FB9C7376FED5C410D1FB063CEA8835F65C",
+  "lua_syntax_compiled_without_execution": true,
+  "core_or_ui_built": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_state_changed": false,
+  "layout_verified_in_game": false,
+  "candidate_directory_regenerated": false,
+  "previous_build_receipt": "three-sp-candidate-build.json；旧目录和清单不含两轮布局调整，安装前需重新整理。"
+}

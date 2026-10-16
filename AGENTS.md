@@ -1,8 +1,20 @@
 # AC7DualSP 项目入口
 
+> 研究分支：`codex/three-sp-research` 的当前候选为 **1.0.2-three-sp-candidate.1**，支持选择 1 至 3 个 SP、按数量均分。核心/UI 已构建，Lua 与载荷已核验；未部署、未实玩，当前游戏仍用正式 1.0.2。正式版本与候选须分别理解，见[研究、安装与复测说明](docs/research/three-sp-candidate.txt)和[构建回执](evidence/three-sp-candidate-build.json)。
+
 正式名称 **AC7DualSP**，当前正式版本 **1.0.2**。面向 Steam 版《皇牌空战 7》build **9855922**：保留普通导弹，同时选择和切换两种特殊兵装，分别保存弹药与冷却。本地发布包为 `Release/AC7DualSP-1.0.2.zip`，旧 ZIP 保留。
 
 ## 当前状态
+
+2026-10-15 三 SP 补给布局：原生面板居中扩至 1680×680，背景和边框同步调整；每栏约 199→320、间隔 40，全名三行，性能行距 34。退出沿用布局还原，不改补给事务。Lua 语法通过，继续暂不安装，未编译、运行测试或启停游戏；候选目录仍为旧快照。新排版待实玩，见[补给布局回执](evidence/three-sp-resupply-layout-prepared.json)。
+
+2026-10-15 三 SP 性能条视觉：只读研究原生控件与部件图表，源码已复用透明细边框、基础条画刷/透明度/泛光，覆盖选装、STANDBY/PART、补给。绿色部件增量与黄色光标预览尚未接入，不能宣称完整三段效果。Lua 语法通过，暂不安装，不编译或运行测试，未启停游戏。候选目录仍为旧快照。见[研究说明](docs/research/sp-stat-style.txt)及[回执](evidence/three-sp-stat-style-prepared.json)。
+
+2026-10-15 三 SP 选装页加宽：每栏 224→320，间隔 76→36，保持右边界并向左展开，名称与性能条同步加宽。保留上一轮 STANDBY/PART 调整，补给布局不变。Lua 语法核对通过，继续暂不安装；候选目录仍是两轮调整前快照，未操作游戏，新布局未实玩。见[选装加宽回执](evidence/three-sp-preparation-width-prepared.json)。
+
+2026-10-15 三 SP 布局优化：用户反馈 UI 基本正常，要求弹药块左移至机体性能/部件列下方、右侧三个 SP 放宽排列。已修改 STANDBY/PART 共用 Lua，扩大卡片与性能行距；语法核对通过。按用户要求暂不安装，未改变游戏运行状态；旧候选目录/构建清单仍为改动前快照，后续安装前需重新整理。新布局未实玩，见[布局回执](evidence/three-sp-standby-layout-prepared.json)。
+
+2026-10-15，1.0.2 发布修订：用户要求版本不变、默认管理键改 F6，并在包内列举 1.0.0/1.0.1/1.0.2 的功能变化。Lua 缺省值与 UI 初始值统一为 F6；已有显式管理键保留。仅重建 UI，不改武器核心与选装逻辑；旧 ZIP 备份后重新打包，初次发布回执保留为 evidence/1.0.2-release-initial.json。本轮不部署或操作游戏。包内版本说明已补齐逐版历史，语法/构建/包校验与实玩结论分开记录。
 
 2026-10-15 17:19：用户确认“测试没问题”，要求提供发布包。日志确认 1.0.2 加载、Su-30SM/J-20 等待后恢复、J-20 出击和补给换装；本轮 mod.log 无错误。已用与安装回执完全一致的 Lua/UI/核心制作 1.0.2 ZIP，182 个成员回读校验通过，含专用加载器、音频、微软离线运行库及中文说明；不含第三方模组、机库 PAK 或个人状态。不更改游戏状态、不重新编译功能、不推送或公开上传。见[最终复测记录](evidence/1.0.2-final-user-validation.json)、[发布回执](evidence/1.0.2-release.json)。以下“未测试、未打包”是历史阶段状态。
 
@@ -58,7 +70,7 @@
 
 准备页依次选择 SP1、SP2，每步确认一次后进入 STANDBY。SP2 可选 NO WEAPON。中途补给双选后进入 YES/NO，默认 NO；NO 从 SP1 重选，返回回 SP2，YES 确认起飞。补给成功后才保存和应用。
 
-键盘默认 1/2/3、手柄十字键左/上/右直接选择普通导弹/SP1/SP2。原切换键循环三者并跳过耗尽 SP。F8（手柄 Back + Y）只管理功能、语言、键位、比例和日志，修改后点击保存。任务中打开 F8 会暂停。
+键盘默认 1/2/3、手柄十字键左/上/右直接选择普通导弹/SP1/SP2。原切换键循环三者并跳过耗尽 SP。默认 F6（手柄 Back + Y）只管理功能、语言、键位、比例和日志，修改后点击保存。已有显式管理键保留，任务中打开管理界面会暂停。
 
 双 SP 默认各用完整载量的 50%，先计入已装部件；SP2 为空时 SP1 使用完整载量。当前候选滑块允许 50% 至 100%、5% 一档。比例只作用于下一份新草稿，不重算当前任务弹药。名称未就绪时亮度为正常的 35%；中央简称固定绿色、字号略放大且可关闭；右下 HUD 固定启用，两者服从全局显隐。
 
@@ -83,7 +95,7 @@
 | 1.0.0 发布与验证范围 | [版本说明](docs/version-1.0.0.md) |
 | 模块、数据流与生命周期 | [架构](docs/architecture.md) |
 | 构建、部署、打包与 Git | [开发](docs/development.md) |
-| F8 与直接选择 | [管理说明](docs/mod-management.md) |
+| 管理键与直接选择 | [管理说明](docs/mod-management.md) |
 | 性能、中央颜色与补给接入 | [性能修订](docs/performance-polish.md) |
 | 旧版本导航及本轮清理 | [历史与踩坑索引](docs/history-1.0.0.md) |
 | 武器、载量、模型、HUD、音效研究 | [核心研究](docs/research/core-findings.md)、[弹药](docs/research/sp-ammunition.md)、[模型](docs/research/weapon-models.md)、[中央 HUD](docs/research/persistent-weapon-message.md)、[音效](docs/research/weapon-switch-audio.md) |

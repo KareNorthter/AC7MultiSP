@@ -1,0 +1,53 @@
+{
+  "recorded_at": "2026-10-15T20:13:30.610732+08:00",
+  "branch": "codex/three-sp-research",
+  "user_feedback": "任务途中补给界面 SP 信息拥挤，希望扩大框或采用更好的布局；沿用暂不安装要求。",
+  "evidence": "用户 1920×1080 截图，以及本地已解析 MissionResupply 原生资源的 MainPanel_3、Background_Left/Right、Border_TOP/BTM/Left/Right 槽位",
+  "layout": {
+    "units": "原生逻辑坐标，离线计算而非新版本实测",
+    "original_panel": [
+      314,
+      256,
+      1290,
+      568
+    ],
+    "new_panel": [
+      119,
+      200,
+      1680,
+      680
+    ],
+    "column_width_before": 199.3703715,
+    "column_width_after": 320,
+    "column_gap": 40,
+    "column_origins": [
+      [
+        679,
+        248
+      ],
+      [
+        1039,
+        248
+      ],
+      [
+        1399,
+        248
+      ]
+    ],
+    "full_name_lines": 3,
+    "stat_pitch": 34,
+    "ammo_bottom_reference": 807,
+    "description_width": 458,
+    "font_sizes_unchanged": true,
+    "restore_on_exit": true
+  },
+  "changes": "扩大主容器、左右背景及四条外边框；重排三栏并增加全名留白；弹药随类型区下移；既有性能条样式保留。",
+  "source_sha256": "6355EAECA460DC9740DECA76FF30997CE90CCBD560E89A2A4CB9C28BBD23D3AA",
+  "lua_syntax_compiled_without_execution": true,
+  "core_or_ui_built": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_started_or_stopped": false,
+  "layout_verified_in_game": false,
+  "candidate_directory_regenerated": false
+}

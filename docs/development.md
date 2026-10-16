@@ -1,10 +1,14 @@
 # 开发与发布
 
+> 三 SP 研究候选入口：先运行独立核心/UI 构建，再运行 `python -X utf8 src/prepare-three-sp-candidate.py` 整理增量目录；明确安装使用 `python -X utf8 src/install-resupply-candidate.py --three-sp`。该入口要求游戏关闭、全部载荷匹配构建清单，整目录备份后安装。核心保存在 `cores/1.0.2-three-sp-candidate.1/`，不能复用 1.0.1 核心。当前仅构建和准备，未安装、未实玩；见[候选说明](research/three-sp-candidate.txt)。
+
 > 当前正式版本为 [1.0.2](version-1.0.2.txt)。--experience 明确复用 cores/1.0.1 核心，要求核心/UI 的 dualsp_runtime_gate 导出及 runtime_context.lua。用户复测正常，已制作本地 ZIP；打包器已更新为 1.0.2，包含 runtime_context.lua 与版本说明。
 
 返回[项目入口](../AGENTS.md)。当前版本是 **AC7DualSP 1.0.2**，本轮验证见[兼容摘要](version-1.0.2.txt)，更早记录见[历史索引](history-1.0.0.md)。
 
 ## 当前组成
+
+1.0.2 同版本发布修订：默认管理键为 F6，已有配置的显式管理键保留；Lua/UI 同步调整，UI 重新构建。旧发布 ZIP 移至 backup 留存，初始回执保留为 evidence/1.0.2-release-initial.json，最新包仍名 AC7DualSP-1.0.2.zip。本轮不重新部署游戏，安装回执和最终实玩记录描述修订前的已测载荷；新包校验单独记录。
 
 1.0.2 使用 `dist/DualSP/cores/1.0.1/DualSP.dll`，SHA256 为 `EA3C9C17456EAE89289621E40225F7D4CC2F192AE051E97725FEBFDDB9BA27AF`。兼容修订在 Lua/UI，武器核心不变；1.0.2 整理因标题变化重编译仓库 UI。异步换机等待及视觉连续性修改已部署，用户复测正常，日志确认等待分支触发并恢复。0.1.9 核心保留供 1.0.0 历史版本使用。
 

@@ -1,5 +1,9 @@
 # 精选证据索引
 
+> 三 SP 研究候选：[构建与载荷回执](three-sp-candidate-build.json)记录独立核心、UI、Lua 和可复制目录。仅构建、语法及文件核验通过；未部署、未实玩，不扩大原 1.0.2 的用户验证范围。
+
+- 三 SP 后续 UI 源码调整（均暂未安装、待实玩）：[待命布局](three-sp-standby-layout-prepared.json)、[选装加宽](three-sp-preparation-width-prepared.json)、[性能条样式](three-sp-stat-style-prepared.json)、[补给扩展](three-sp-resupply-layout-prepared.json)。旧候选目录和构建清单不包含这些修改。
+
 ## 当前仓库 1.0.2
 
 - [最终复测](1.0.2-final-user-validation.json)：用户反馈测试正常，日志确认等待后恢复及 J-20 补给，发布载荷与实测安装一致。

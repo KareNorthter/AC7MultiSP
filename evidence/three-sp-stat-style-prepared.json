@@ -1,0 +1,85 @@
+{
+  "recorded_at": "2026-10-15T20:03:02.040351+08:00",
+  "branch": "codex/three-sp-research",
+  "request": "研究原生透明边框、蓝色基础值、绿色部件增量及黄色闪烁预览，尽量用于 SP 性能条；继续暂不安装。",
+  "evidence_source": "本机原生 PAK 的 HangarSpecBar、HangarResupplySpecBar、HangarSpecItem、HangarSpecGroup 与 PartsDataTable，只读提取至 Temp；未修改游戏资源。",
+  "native_structure": {
+    "background": "没有满宽底色；BaseImage1/2/3 分别为底、左、右细边框",
+    "hangar": {
+      "bar_a_tint": [
+        0.401978,
+        0.651406,
+        1,
+        0.5
+      ],
+      "fill_height": 17,
+      "frame_height": 18,
+      "frame_thickness": 1,
+      "frame_alpha": 0.7
+    },
+    "resupply": {
+      "fill_height": 16,
+      "frame_height": 18,
+      "frame_thickness": 2,
+      "base_tint": "保留原生补给绿色"
+    },
+    "bar_b": "独立绿色画刷及局部泛光，表示部件图表增量",
+    "bar_c": "独立黄色画刷及局部泛光；BlinkBarC 动画绑定此控件",
+    "blink": {
+      "period_seconds": 1,
+      "alpha_keys": [
+        [
+          0,
+          1
+        ],
+        [
+          0.5,
+          0
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "interpolation": "RCIM_Cubic",
+      "construct": "PlayAnimation，NumLoopsToPlay=0，PlaybackSpeed=1"
+    },
+    "parts_graph_fields": [
+      "GraphAirToAirWeapon",
+      "GraphAirToGroundWeapon",
+      "GraphHoming",
+      "GraphLongRange",
+      "GraphDamageRange",
+      "GraphReload"
+    ],
+    "parts_example": {
+      "id": 107,
+      "graph_air_to_air_weapon": 5,
+      "graph_air_to_ground_weapon": 5,
+      "actual_payload_offset": 8,
+      "meaning": "图表增量与真实参数不是同一单位，不能把载量倍率直接当作条形增幅。"
+    }
+  },
+  "implemented": [
+    "选装、STANDBY/PART、补给共用原生边框绘制",
+    "取消满宽半透明背景",
+    "保留原生画刷、颜色透明度和局部泛光",
+    "边框线宽不随栏宽拉伸；沿用原生条高",
+    "空槽/零值隐藏填充，仅留透明边框"
+  ],
+  "not_implemented": [
+    "绿色部件增量",
+    "黄色部件光标预览及闪烁"
+  ],
+  "reason": "当前选项仅携带基础性能与已装部件后的载量；尚未核实各兵装的图表增量适用/叠加规则、PART 光标候选与替换槽接口。不能复制单 SP 的增量给三个不同兵装，也不能用装饰闪烁冒充实际收益。",
+  "source_sha256": "D4DEE000518A994A072C24490BAD33D0D2E55723DD08DD3E094BB4BA726EFB53",
+  "lua_syntax_compiled_without_execution": true,
+  "protected_old_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+  "core_or_ui_built": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_started_or_stopped": false,
+  "game_resources_modified": false,
+  "layout_verified_in_game": false,
+  "candidate_directory_regenerated": false
+}

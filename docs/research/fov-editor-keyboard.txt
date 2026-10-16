@@ -1,0 +1,48 @@
+FOV editor 1.1 键盘兼容安装（2026-10-15）
+
+状态：本次准备安装；运行效果待用户出击验证。静态分析或语法通过不等于游戏内通过。
+
+来源：https://www.nexusmods.com/acecombat7skiesunknown/mods/2408
+用户下载：F:\下载\FOV editor-2408-1-1-1756016648.zip
+原作者的 FOVEditor.pak 保持原样，不随 AC7DualSP 发布包分发。
+
+操作
+进入单人任务、可以驾驶后，先切换到需要调整的视角：
+  Ctrl + PageUp：当前视角 FOV 增加 1 度，视野变宽。
+  Ctrl + PageDown：当前视角 FOV 减少 1 度，画面放大。
+  Ctrl + Home：恢复当前视角的作者默认值。
+  Ctrl + End：显示当前视角数值。
+第一人称无座舱、座舱、第三人称分别保存；作者默认值依次为 74、74、63。
+适配脚本将可调范围限制在 30–120 度。按键在正常飞行视角下有效，暂停/过场不调节。
+设置沿用作者的 Mods/FOVEditor/Settings 保存槽，不改主存档内容。
+笔记本需要 Fn 才能输入 PageUp/PageDown 时，按键组合也需要 Fn。
+
+兼容方式
+旧 FOV +S_P.pak 移出游戏 Paks 到项目备份目录，可恢复。
+FOVEditor.pak 安装在 Game/Content/Paks/LogicMods。
+新增独立 UE4SS 模组 AC7FOVKeyboard，源码位于 src/compatibility/AC7FOVKeyboard。
+当前安装没有 BPModLoaderMod，因此由本脚本只加载 FOV editor 的 ModActor，
+等真实玩家飞机就绪后创建，换机或任务重载后重新绑定。
+不要同时另装会自动创建同一 ModActor 的加载器，否则会出现重复实例。
+
+作者原按键使用游戏的无线电上/下/取消及雷达动作，键盘和手柄共用。
+本适配在创建前把 bAllowInGameInput 设为 false，再关闭该 Actor 的输入和按键 Tick，
+改由独立键盘组合调用相机 FOV、原有设置对象和数值提示。
+这不会改写原 PAK，也不修改游戏全局按键、DualSP 或 AC7MouseAim 文件。
+不替换 UE4SS，不用本仓库源码覆盖游戏中其他会话安装的三 SP 候选。
+F6 管理、F8 飞控开关以及 F3/F4/F9/F10 等飞控键保留。
+调节不依赖飞控启用状态；飞控的自由观察临时缩放仍可能在按住缩放键时改变画面。
+
+验证顺序（待用户实测）
+1. 单人任务中按 F8 停用飞控，分别调第一人称和第三人称，观察提示和视野变化。
+2. 来回切换视角，确认各自数值保留；需要时再测座舱视角。
+3. 开启飞控，确认鼠标控制和 FOV 均正常；确认 F6 管理及 SP 切换不受影响。
+4. 使用手柄方向键/雷达，确认不会再改变 FOV；普通无线电功能应保留。
+5. 结束并重进任务，检查保存；检查点重来、补给后检查 FOV 和 SP。
+
+错误处理与卸载
+适配错误会记录 [AC7FOVKeyboard] ERROR STOPPED 到 ue4ss/UE4SS.log，停止本适配。
+可用时显示屏幕错误，不以单独硬编码 FOV 的备用流程掩盖加载失败。
+卸载时退出游戏，把 mods.txt 中 AC7FOVKeyboard 改成 0，移出 FOVEditor.pak；
+若要恢复旧方案，再把备份的 FOV +S_P.pak 放回 ~mods。两种 FOV 方案不要同时启用。
+本次不修改版本、不提交 Git、不制作发布包、不自动启动游戏。

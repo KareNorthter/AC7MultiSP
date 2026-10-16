@@ -12,6 +12,6 @@ end
 -- 只根据最终的武器选择显示；MSL 状态下的 SP 预载入不改变中央简称。
 function WeaponNames.current(profile,options,state)
     if not state.armed then return "MSL"end
-    return WeaponNames.special(options,state.active==0 and profile.a or profile.b)
+    return WeaponNames.special(options,profile[({"a","b","c"})[state.active+1]])
 end
 return WeaponNames

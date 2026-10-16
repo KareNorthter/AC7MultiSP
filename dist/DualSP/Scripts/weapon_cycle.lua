@@ -1,14 +1,9 @@
--- Logical selections: 0 = MSL, 1 = SP1, 2 = SP2. The native game rejects
--- arming an empty SP, so skip it before asking the original input route to arm.
-local cycle={}
-function cycle.next(current,ammoA,ammoB)
-    assert(current>=0 and current<=2,"Invalid logical weapon selection")
-    if current==0 then
-        if ammoA>0 then return 1 end
-        if ammoB>0 then return 2 end
-        return 0
-    end
-    if current==1 and ammoB>0 then return 2 end
+-- 逻辑选择 0=MSL、1/2/3=SP1/SP2/SP3；真实按键才跳过耗尽槽。
+local Cycle={}
+-- 从当前槽向后选择有弹药的 SP，末尾回到普通导弹。
+function Cycle.next(current,ammo)
+    assert(current>=0 and current<=#ammo and #ammo>=1 and #ammo<=3,"逻辑武器选择无效")
+    for slot=current+1,#ammo do if ammo[slot]>0 then return slot end end
     return 0
 end
-return cycle
+return Cycle
