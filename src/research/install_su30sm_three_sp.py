@@ -36,8 +36,10 @@ def main():
         '1.0.2-su30sm-three-sp.9': 'su30sm-three-sp-candidate.8-installed.json',
         '1.0.2-su30sm-three-sp.10': 'su30sm-three-sp-candidate.9-installed.json',
         '1.0.2-su30sm-three-sp.11': 'su30sm-three-sp-candidate.10-installed.json',
+        '1.1.0': 'su30sm-three-sp-candidate.11-installed.json',
     }
     revision = version in previous_receipts  # 修订保留已迁移的 schema 2。
+    formal_release = version == '1.1.0'  # 已验证研究候选晋升正式版，安装回执不能继续标为候选。
     if version != '1.0.2-su30sm-three-sp.1' and not revision:
         raise ValueError('安装器未定义此候选的升级来源')
     if receipt['candidate'] != version or (root / 'VERSION').read_text(encoding='utf-8').strip() != version:
@@ -106,7 +108,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(source, target)
     install = json.loads((staging / 'install-receipt.json').read_text(encoding='utf-8-sig'))
-    install.update(Name='AC7DualSP', Version=version, Candidate=True, InstalledAt=now.isoformat(),
+    install.update(Name='AC7DualSP', Version=version, Candidate=not formal_release, InstalledAt=now.isoformat(),
                    CandidateCoreSHA256=receipt['candidate_sha256'], BackupPath=str(backup), GameStartedByAgent=False)
     (staging / 'install-receipt.json').write_text(json.dumps(install, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     expected = inventory(staging)
@@ -131,7 +133,7 @@ def main():
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
               'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,
               'other_mod_files_preserved': True, 'protected_files_verified': len(protected), 'main_worktree_modified': False}
-    receipt_name = 'su30sm-three-sp-candidate.' + version.rsplit('.', 1)[1] + '-installed.json' if revision else 'su30sm-three-sp-installed.json'  # 不覆盖历史安装证据。
+    receipt_name = (version + '-installed.json') if formal_release else ('su30sm-three-sp-candidate.' + version.rsplit('.', 1)[1] + '-installed.json' if revision else 'su30sm-three-sp-installed.json')  # 正式版独立回执，不覆盖候选历史。
     with (root / 'evidence' / receipt_name).open('x', encoding='utf-8') as stream:
         json.dump(result, stream, ensure_ascii=False, indent=2)
         stream.write('\n')

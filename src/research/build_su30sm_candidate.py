@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
 import subprocess
 import sys
 
@@ -20,6 +21,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tools-root", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
+    parser.add_argument("--reuse-core-build", type=Path, help="仅版本整理：复用来源和摘要均一致的已验证核心，只重建 UI")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[2]  # 只构建当前研究工作区。
     output = args.output_dir.resolve()  # 不覆盖此前候选或正式 DLL。
@@ -52,11 +54,22 @@ def main():
     subprocess.run([str(compiler / "clang.exe"), "-O2", "-c", "-I", str(minhook / "include"),
                     *map(str, sources)], cwd=output, env=environment, check=True)
     candidate = output / "DualSP.dll"  # DLL 只留在独立构建目录，不写 dist/bin。
-    subprocess.run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-shared", "-static",
-                    "-DDUALSP_SU30SM_MOUNT_PROTOTYPE", "-I", str(root / "vendor"),
-                    "-I", str(minhook / "include"), str(root / "src/weapon_bridge.cpp"),
-                    "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-lole32", "-o", str(candidate)],
-                   cwd=output, env=environment, check=True)
+    reused = None  # 复用必须有明确来源，不能因编译失败回退旧核心。
+    if args.reuse_core_build:
+        source = args.reuse_core_build.resolve(strict=True)  # 已验证构建目录。
+        reused = json.loads((source / "build-receipt.json").read_text(encoding="utf-8"))
+        for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp"):
+            if digest(root / name) != reused["cpp_sources"][name]:
+                raise ValueError("核心源码已改变，不能复用：" + name)
+        if digest(source / "DualSP.dll") != reused["candidate_sha256"]:
+            raise ValueError("待复用核心与原构建回执不符")
+        shutil.copy2(source / "DualSP.dll", candidate)
+    else:
+        subprocess.run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-shared", "-static",
+                        "-DDUALSP_SU30SM_MOUNT_PROTOTYPE", "-I", str(root / "vendor"),
+                        "-I", str(minhook / "include"), str(root / "src/weapon_bridge.cpp"),
+                        "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-lole32", "-o", str(candidate)],
+                       cwd=output, env=environment, check=True)
     # 三 SP 管理协议与核心成套构建；所有中间文件仍在独立 Temp。
     imgui = root / "vendor/imgui-1.92.9b"
     ui_sources = [root / "src/overlay.cpp"] + [imgui / name for name in (
@@ -91,6 +104,7 @@ def main():
     report = {"candidate": (root / "VERSION").read_text(encoding="utf-8").strip(), "candidate_sha256": digest(candidate),
               "ui_sha256": digest(ui), "required_ui_exports_verified": sorted(ui_required),
               "build_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE", "compiled": True,
+              "core_recompiled": reused is None, "core_reused_from": reused["candidate"] if reused else None,
               "lua_syntax_only": True, "required_exports_verified": sorted(required),
               "game_installed": False, "game_validated": False, "test_modules_run": False,
               "installation_blockers": [], "native_research_evidence": "evidence/su30sm-fixed-mount-stage4.json",

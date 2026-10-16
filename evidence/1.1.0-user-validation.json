@@ -1,0 +1,42 @@
+{
+  "version": "1.1.0",
+  "validated_runtime": "1.0.2-su30sm-three-sp.11",
+  "recorded_at": "2026-10-16T10:02:44.657338+08:00",
+  "user_statement": "目前一切正常了。暂停、管理界面、实时切换sp这些都正常了，F35的各个SP组合测试都正常，动画也没有问题。暂时没有遇到崩溃。",
+  "user_confirmed": [
+    "管理暂停及恢复",
+    "管理界面",
+    "任务内实时 SP 换装",
+    "F-35C 各 SP 组合与动画"
+  ],
+  "scope_limits": [
+    "组合结论来自用户报告，日志并非逐项七组合自动验收",
+    "单挂/多挂原生补给、检查点、全部机体及长期稳定性不能据此全部标为通过",
+    "此前 .9/.10 崩溃或自行退出根因仍未查明；本轮暂未复现不等于根因已修复"
+  ],
+  "steam_launch_report": {
+    "code": 84,
+    "user_statement": "一次 Steam 无法启动，重启游戏后成功进入",
+    "cause": "未定位，不能直接归因于模组、网络或 Steam；与任务内退出分开记录"
+  },
+  "log_evidence": [
+    "2026-10-16T01:50:38Z MANAGEMENT_PAUSE_BEGIN effective=true existing=true",
+    "2026-10-16T01:50:38Z MANAGEMENT_PAUSE_ACQUIRED owned=false effective=true",
+    "2026-10-16T01:50:50Z DEBUG_LOADOUT_APPLIED request=1 profile={\"b\":2,\"a\":1,\"ratio\":0.5,\"c\":-1}",
+    "2026-10-16T01:50:52Z MANAGEMENT_PAUSE_RELEASED owned=false remaining=true",
+    "2026-10-16T01:51:55Z MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+    "2026-10-16T01:51:55Z MANAGEMENT_PAUSE_ACQUIRED owned=true effective=true",
+    "2026-10-16T01:52:08Z DEBUG_LOADOUT_APPLIED request=2 profile={\"b\":2,\"a\":0,\"ratio\":0.5,\"c\":-1}",
+    "2026-10-16T01:52:09Z MANAGEMENT_PAUSE_RELEASED owned=true remaining=false"
+  ],
+  "current_lua_error_lines": [],
+  "capture": {
+    "directory": "Temp/crash-capture-20261016-093709-335/session-1-pid-12308",
+    "observed_game_pid": 12308,
+    "loading_hung_window_dumps": 2,
+    "fatal_crash_inferred": false
+  },
+  "raw_logs": "Temp/release-1.1.0-validation",
+  "game_stopped_by_agent": false,
+  "test_modules_run": false
+}

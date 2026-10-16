@@ -1,12 +1,9 @@
 # 发布资产
 
-当前交付包为 **AC7DualSP-1.0.2.zip**，内含 GameFiles、微软离线运行库、TXT 安装/版本说明及文件校验清单。用户按手动复制步骤安装，不需要命令行。不包含外部机体、武器、飞控、机库 PAK 或个人配置。
+当前本地交付 **AC7DualSP-1.1.0.zip**，包含成套核心/UI/十个 Lua、专用加载器、SP2 音频、微软离线运行库、安装/版本 TXT 和文件清单。不含个人配置/日志/存档、第三方模组或研究采集工具。
 
-当前同版本修订默认管理键为 F6，已有显式配置保留；包内版本说明按 1.0.0、1.0.1、1.0.2 列出变化。首次 1.0.2 ZIP 已留存于 backup，其[原始回执](../evidence/1.0.2-release-initial.json)保持可追溯，当前下载使用本目录 ZIP。
+1.1.0 基于用户通过的 .11，核心原样复用；只改版本标识、UI 标题并整理交付。[用户验证](../evidence/1.1.0-user-validation.json)、[构建](../evidence/1.1.0-build.json)、[发布回执](../evidence/1.1.0-release.json)分别记录，未重新宣称正式包全量实玩。当前运行仍为 .11，发布未覆盖运行目录。
 
-包由 `src/package-release.py` 生成；[发布回执](../evidence/1.0.2-release.json)记录文件及 ZIP 哈希。[版本说明](../docs/version-1.0.2.txt)区分用户实测和离线核验。旧 AC7DualSP-1.0.0.zip 保持原样。
+旧 1.0.2/1.0.0 包在主工作区原路径保留，本工作区只生成新包。ZIP 不入 Git、不自动上传或推送。原 SP2.wav 不入 Git，从源码重建需要本机授权副本。
 
-ZIP 是本地产物，不入 Git，也未上传或公开发布。Git 保存当前源码、必要 DLL、加载器、许可证与核验记录。原始 SP2 音频不入 Git，从源码重建时需另行准备。
-
-旧 `DualSP-0.1.7.zip` 与 [baseline](baseline-0.1.7.json)仅用于历史恢复，不是当前版本。其字节保持不变；旧包内文档按当时快照理解。根目录旧安装入口已退役，避免误装。
-当前独立研究分支为 `codex/su30sm-three-sp-fixed-mount`，安装候选 `1.0.2-su30sm-three-sp.1`，未制作发布包。正式 ZIP 未修改。三 SP 固定挂载需成套核心/UI/Lua，不能使用正式打包入口从本分支生成 1.0.2 包；详见[集成说明](../docs/research/su30sm-three-sp-fixed-mount.txt)。
+打包入口 `src/package-release.py`，不运行旧双 SP 打包/安装脚本。旧 DualSP-0.1.7.zip 和 baseline 只作历史恢复。

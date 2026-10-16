@@ -1,3 +1,18 @@
+# 1.1.0 开发与本地发布
+
+当前工作区/边界见 [AGENTS](../AGENTS.md)，后续任务见[交接](research/NEXT-STAGE-HANDOFF.txt)。下方旧开发正文保留历史，不能照旧选用 1.0.1 核心。
+
+- 构建：`python -X utf8 src/research/build_su30sm_candidate.py --tools-root E:/AC7_MultiSP/tools --output-dir Temp/<全新目录>`。固定挂载宏 `DUALSP_SU30SM_MOUNT_PROTOTYPE` 仍必须启用；不新增/运行测试模块。
+- 版本整理：加 `--reuse-core-build Temp/static-mount-batch11-final-build`，先核对核心源码与旧回执，再原样复用核心，只重建 UI；核心源码变动会拒绝复用。
+- 当前发布核心 `dist/DualSP/cores/1.1.0/DualSP.dll`、UI `dist/DualSP/bin/DualSPUI.dll`，十个 Lua 源包含 `loadout_profile.lua`。UI 和 Lua 的版本标识统一 1.1.0；保护旧 bin/DualSP.dll 不变。
+- 打包：`python -X utf8 src/package-release.py --redist-root Temp/release-1.1.0-redist`，先核对 evidence/1.1.0-build.json 冻结来源和 DLL，再核对音频/签名，生成新 ZIP 并逐成员回读。指定目录是从核验过的 1.0.2 包恢复的原 Steam 离线运行库，不是重新下载或拼凑系统 DLL。
+- 受控部署：`python -X utf8 src/research/install_su30sm_three_sp.py --build-dir Temp/release-1.1.0-build` 默认只预检；关闭游戏后显式 `--apply` 才安装，完整备份 .11、配置、存档，正式回执 evidence/1.1.0-installed.json。本轮未部署，游戏仍 .11。
+- 旧 `install-resupply-candidate.py --experience` 不支持本正式核心，禁止用于 1.1.0。用户手动安装依照包内 TXT，不需要开发工具。
+
+源码与必要 DLL/回执入 Git；本地 ZIP、旧包、原始音频/游戏资源、个人状态不入 Git。旧包不覆盖，不自动推送或公开上传。
+
+以下为 1.0.2 及更早历史：
+
 # 开发与发布
 
 当前独立研究分支安装的是 `1.0.2-su30sm-three-sp.1`，未发布。使用 `src/research/build_su30sm_candidate.py` 构建核心和协议 3 UI，使用 `src/research/install_su30sm_three_sp.py` 成套核对、备份和安装；核心快照在 `dist/DualSP/cores/1.0.2-su30sm-three-sp.1/`。禁止用下文正式打包器或原三 SP 候选安装入口处理本集成版本。旧 `bin/DualSP.dll` 仍受保护。来源、安装和回退见[集成说明](research/su30sm-three-sp-fixed-mount.txt)；仅构建、语法和文件核验通过，三挂未实玩。下文为正式 1.0.2 的历史开发说明。
