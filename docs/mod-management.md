@@ -1,6 +1,10 @@
 # 管理界面与直接选择武器
 
-当前独立三 SP 候选使用 schema 2、管理协议/参数第 3 版。新增键盘 4／十字键下选择 SP3；默认 1/2/3/4 对应 MSL/SP1/SP2/SP3。管理入口默认 F6，保留既有键位；配弹滑块移除，按实际搭载数量自动均分。首次启动保留旧配置备份、补空第三槽；不提前改变旧机体选择。迁移规则与完整候选范围见[集成说明](research/su30sm-three-sp-fixed-mount.txt)。下文是正式 1.0.2 管理版的历史说明，不能套用其比例滑块和旧协议到本候选。
+2026-10-16 独立 UI 源码使用 schema 2、管理协议/参数第 4 版：中央武器简称固定启用，删除复选框，不接受 `central_hint` 设置请求；仍服从游戏 HUD 显隐和单人许可。正常 Alpha 0.7，未就绪为 0.245；原生 18 号对应 22 号，上移半个标称字高（通常 11 个 UI 逻辑像素）。尚未构建或安装，详见[UI 交接](research/ui-headings-hud-fixed.txt)。
+
+原第 3 版配置首次启动时备份为 `profiles.before-fixed-central-hint.json`，移除 `central_hint` 并升级 `management_revision=4`；原值 true/false 均固定开启，机体方案、语言、四键和管理键不变。正式版 schema 1 仍先按既有三 SP 规则迁移，再直接保存为第 4 版；保留 `profiles.before-three-sp.json`。备份已存在时明确停止，请人工核对，不覆盖备份。新 UI 提供 `dualsp_fixed_central_hint_supported`，Lua 在迁移前核对，避免与旧 DLL 混装。
+
+三 SP 继续使用键盘 1/2/3/4／十字键左/上/右/下选择 MSL/SP1/SP2/SP3。管理入口默认 F6，保留既有键位；配弹按实际搭载数量自动均分。旧机体方案迁移规则见[集成说明](research/su30sm-three-sp-fixed-mount.txt)。下文是正式 1.0.2 管理版的历史说明，其中央开关、比例滑块及旧协议不适用于本 UI 源码。
 
 2026-10-15，1.0.2 发布修订将 `profiles.json` 的 `management_key` 缺省值改为 117（F6），允许 112–135（F1–F24），关闭游戏后修改，重启生效。新配置与缺失字段使用 F6；已有显式设置（包括旧 F8=119）不重置。界面帮助和武器改键排除项跟随此设置；保存其他设置时保留该字段。手柄 Back + Y 不变。Lua/UI 成套更新，武器核心不变。
 

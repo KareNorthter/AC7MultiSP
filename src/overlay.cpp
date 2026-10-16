@@ -51,7 +51,7 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 管理草稿与保存回执；不再维护或提交 SP1/SP2 兵装选择。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-bool centralHint=true; // 唯一可关闭的 HUD 功能，右下列表和直接选择固定启用。
+constexpr int managementProtocol=4; // 固定中央简称的新协议，拒绝仍携带独立开关的旧控制器。
 std::array<int,4> draftKeys{49,50,51,52};
 int managementKey=VK_F6; // 默认 F6；已校验状态会提供用户显式保存的管理键。
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
@@ -103,7 +103,7 @@ void togglePanel(bool open) {
     enqueue({{"type",open?"open":"close"}});
     if(open) {
         notice.clear();captureSlot=-1;managementError.clear();
-        if(state.value("management_protocol",0)==3) {
+        if(state.value("management_protocol",0)==managementProtocol) {
             try {loadManagementDraft();}
             catch(const std::exception& error){managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());}
         }
@@ -249,7 +249,7 @@ bool bindingsValid() {
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
-    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==3
+    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
         &&state.value("direct_selection_available",false);
 }
 
@@ -266,7 +266,6 @@ void captureKeyboardKey(int key) {
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
-    centralHint=state.at("central_hint").get<bool>();
     if(state.at("ammo_mode").get<std::string>()!="equal_share")
         throw std::runtime_error("三 SP 仅支持按数量均分弹药");
     const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
@@ -303,8 +302,8 @@ void refreshLogs() {
 // 保存按钮只提交完整参数；收到游戏线程的请求回执后才显示保存成功。
 void saveManagementSettings() {
     pendingSave=++saveRequest;
-    enqueue({{"type","settings"},{"management_protocol",3},{"request",pendingSave},{"language",draftLanguage},
-        {"central_hint",centralHint},{"keyboard_keys",draftKeys}});
+    enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
+        {"keyboard_keys",draftKeys}});
     notice=tr("正在保存…","Saving...");
 }
 
@@ -315,7 +314,7 @@ void drawPanel() {
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin(tr("AC7DualSP 1.0.2-su30sm-three-sp.9 管理###DualSPManagement","AC7DualSP 1.0.2-su30sm-three-sp.9 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(state.value("management_protocol",0)!=3||!managementError.empty()) {
+    if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
@@ -329,8 +328,7 @@ void drawPanel() {
     ImGui::Separator();
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(ImGui::BeginTabItem(tr("功能与参数###Features","Features & Parameters###Features"))) {
-            ImGui::Checkbox(tr("中央提示：常驻当前武器简称###Central","Persistent current weapon abbreviation###Central"),&centralHint);
-            ImGui::TextWrapped("%s",tr("关闭中央常驻提示后，恢复游戏原本的短暂武器切换提示。","Disabling the persistent hint restores the game's temporary weapon switch message."));
+            ImGui::TextWrapped("%s",tr("中央当前武器简称与右下兵装信息固定启用，跟随游戏 HUD 显隐。","The current weapon abbreviation and lower-right weapon information are always enabled and follow game HUD visibility."));
             ImGui::TextWrapped("%s",tr("原游戏循环切换键继续可用。兵装选择只能通过原生出击或补给页面完成。","The original cycling key remains available. Choose loadouts through the game's departure or resupply page."));
             ImGui::TextWrapped("%s",tr("自动均分：单挂完整载量，双挂各 1/2，三挂各 1/3。先计入部件，再向下取整；正载量至少一发。只能在出击或补给确认时应用。","Automatic allocation: full stock for one SP, 1/2 each for two, 1/3 each for three. Parts apply first; round down, with at least one round for positive stock. Applied only on departure or resupply confirmation."));
             ImGui::EndTabItem();
@@ -402,13 +400,13 @@ void refreshState() {
     static uint64_t consumedGeneration{}; // 一份状态只消费一次，不在每帧重复复制。
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
-        const bool wasManagement=state.value("management_protocol",0)==3;
+        const bool wasManagement=state.value("management_protocol",0)==managementProtocol;
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
         }
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
-        if(state.value("management_protocol",0)==3) {
+        if(state.value("management_protocol",0)==managementProtocol) {
             const auto& hotkey=state.at("management_key"); // Lua/UI 成套部署；缺少新字段明确报告。
             if(!hotkey.is_number_integer())throw std::runtime_error("Management hotkey is not an integer");
             const int checkedManagementKey=hotkey.get<int>(); // 完整校验后才替换窗口消息使用的键。
@@ -432,7 +430,7 @@ void refreshState() {
         const int request=state.value("request_open",0),close=state.value("request_close",0);
         if(request!=lastRequest){lastRequest=request;if(request>0)togglePanel(true);}
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
-        if(!wasManagement&&panel&&state.value("management_protocol",0)==3)loadManagementDraft();
+        if(!wasManagement&&panel&&state.value("management_protocol",0)==managementProtocol)loadManagementDraft();
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
@@ -573,6 +571,8 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 // 四键与均分协议的具名握手，阻止旧 UI 与新 Lua 混装。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
+// 配置迁移前的能力检查；旧 UI 不含此入口，Lua 会明确拒绝混装。
+extern "C" __declspec(dllexport) int dualsp_fixed_central_hint_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
     try {

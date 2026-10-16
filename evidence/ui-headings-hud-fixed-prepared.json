@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-16",
+  "status": "独立 UI 源码完成；等待集成线程审查合并",
+  "branch": "codex/ui-headings-hud-fixed",
+  "base_commit": "9fa7550711ed5ae8a8474df5b1394649b6951a21",
+  "title_font_size": 24,
+  "title_slot": {"y": -8, "height": 38, "bottom": 30},
+  "title_pages": ["选装", "STANDBY", "PART", "降落补给"],
+  "central_hint": {
+    "independent_toggle_removed": true,
+    "follows_global_hud_visibility": true,
+    "normal_alpha_unchanged": 0.7,
+    "not_ready_alpha_unchanged": 0.245,
+    "font_ratio_unchanged": "11/9",
+    "upward_offset": "最终字号 × 0.5，原生 18 对应字号 22、上移 11 个 UMG 逻辑单位",
+    "origin": "不可变的 sourceLayout.position；不累计偏移",
+    "large_move_and_border": "仅保留候选需求，未实现"
+  },
+  "management_protocol": 4,
+  "management_revision": 4,
+  "configuration_schema_unchanged": 2,
+  "weapon_command_protocol_unchanged": 3,
+  "ui_capability_export": "dualsp_fixed_central_hint_supported",
+  "checks": {
+    "lua54_load_only": ["main.lua", "native_loadout.lua", "weapon_presentation.lua"],
+    "lua_syntax": "通过；未执行脚本",
+    "cpp_syntax": "overlay.cpp 经 clang++ -fsyntax-only 通过；未生成目标文件或 DLL",
+    "diff_whitespace": "git diff --check 通过",
+    "static_review": "已核对标题共用入口、显示条件、旧字段迁移、管理状态与请求协议及原布局还原路径",
+    "protected_old_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339"
+  },
+  "dll_built": false,
+  "installed": false,
+  "test_modules_added_or_run": false,
+  "game_operated": false,
+  "runtime_migration_verified": false,
+  "visual_gameplay_verified": false,
+  "handoff": "docs/research/ui-headings-hud-fixed.txt",
+  "integration_required": [
+    "增量合并，保留主线最新版本及调试/键盘导航改动",
+    "删除旧中央复选框的键盘焦点逻辑",
+    "协调下一版本安装器对管理参数 3/4 的明确升级路径及回执",
+    "重建 UI，与 Lua 成套部署并按交接清单实机验收"
+  ]
+}

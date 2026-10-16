@@ -49,7 +49,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.9") -- 与三 SP 协议 3 核心及 UI 成套安装。
+note("FIXED_MOUNT_CANDIDATE 1.0.2-su30sm-three-sp.9") -- 核心三 SP 命令协议 3，管理 UI 协议 4，须成套安装。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却和更换挂载之前结束当前激光。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
@@ -63,8 +63,9 @@ local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 -- 管理版 Lua 必须搭配新版界面，防止旧 F8 再次提交兵装配置。
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
+loadExport("dualsp_fixed_central_hint_supported","DualSPUI.dll") -- 修改配置前确认 UI 已移除独立中央开关。
 local preparationNavigation=loadExport("dualsp_preparation_navigation","DualSPUI.dll") -- 原生页面的只读键盘导航。
-local config=readJson(root.."profiles.json")or {schema=2,management_revision=3,profiles={},language="auto",central_hint=true,keyboard_keys={49,50,51,52},management_key=117}
+local config=readJson(root.."profiles.json")or {schema=2,management_revision=4,profiles={},language="auto",keyboard_keys={49,50,51,52},management_key=117}
 local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，比例统一重算。
 assert(type(config.profiles)=="table"and (migrateSettings or config.schema==2),"不支持的配置版本")
 if migrateSettings then
@@ -84,7 +85,13 @@ if migrateSettings then
     config.hud=nil;config.direct_select=nil;config.ignore_unlocks=nil;config.hud_scale=nil;config.native_loadout=nil
     note("THREE_SP_MIGRATION schema=2 management=3 ammo=equal_share")
 end
-assert(config.management_revision==3,"三 SP 需要管理参数第 3 版")
+local migrateCentral=config.management_revision==3 -- 第 4 版取消中央开关，旧 false 也迁移为固定开启。
+if migrateCentral then
+    assert(type(config.central_hint)=="boolean","旧中央简称开关必须为布尔值")
+    config.central_hint=nil;config.management_revision=4
+    note("FIXED_CENTRAL_HINT_MIGRATION management=3->4 central=always_on")
+end
+assert(config.management_revision==4,"固定中央简称需要管理参数第 4 版")
 for _,saved in pairs(config.profiles)do Profile.count(saved)end
 -- 键位只接受单个普通键，管理快捷键和 Esc 不可用于武器选择。
 local function supportedKey(key,managementKey)
@@ -98,7 +105,7 @@ local function validateSettings(settings)
     local managementKey=settings.management_key -- 管理入口仅支持功能键，关闭游戏后修改配置。
     assert(type(managementKey)=="number"and managementKey%1==0 and managementKey>=112 and managementKey<=135,"管理快捷键须为 F1 至 F24 的整数键码")
     assert(settings.language=="auto"or settings.language=="zh"or settings.language=="en","Language must be auto, zh or en")
-    assert(type(settings.central_hint)=="boolean","中央简称开关必须为布尔值")
+    assert(settings.central_hint==nil,"中央简称已固定开启，不接受旧开关")
     assert(settings.hud==nil and settings.direct_select==nil and settings.ignore_unlocks==nil,"旧功能开关已移除")
     assert(type(settings.keyboard_keys)=="table"and #settings.keyboard_keys==4,"需要 MSL/SP1/SP2/SP3 四个键位")
     local used={}
@@ -116,13 +123,14 @@ local function saveConfig(nextConfig)
     if old then local text=old:read("*a");old:close();local backup=assert(io.open(root.."profiles.previous.json","w"));backup:write(text);backup:close()end
     writeJson(root.."profiles.json",nextConfig or config)
 end
-if migrateSettings then
-    -- 迁移前保存永久副本，避免后续普通保存覆盖可回退的 1.0.2 配置。
+if migrateSettings or migrateCentral then
+    -- 首次迁移保留原文件；后续普通保存不能覆盖本次协议升级的回退副本。
+    local backupPath=root..(migrateSettings and "profiles.before-three-sp.json"or"profiles.before-fixed-central-hint.json") -- 按来源版本分开备份。
     local original=assert(io.open(root.."profiles.json","r"));local bytes=original:read("*a");original:close()
-    local existing=io.open(root.."profiles.before-three-sp.json","r")
-    if existing then existing:close();error("三 SP 迁移备份已存在，请核对上次迁移状态")end
-    local backup=assert(io.open(root.."profiles.before-three-sp.json","w"));backup:write(bytes);backup:close()
-    saveConfig();note("MANAGEMENT_MIGRATION_SAVED revision=3")
+    local existing=io.open(backupPath,"r")
+    if existing then existing:close();error("配置迁移备份已存在，请核对上次迁移状态："..backupPath)end
+    local backup=assert(io.open(backupPath,"w"));backup:write(bytes);backup:close()
+    saveConfig();note("MANAGEMENT_MIGRATION_SAVED revision=4")
 end
 local catalogue=nil
 local game=nil
@@ -419,10 +427,10 @@ refreshHUD=function(now)
     nativeState.armed=plane:IsSpecialWeaponArmed()
     -- 单 SP 出击也处理名称就绪状态，但保持原生面板高度。
     nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now)
-    if enabled and config.central_hint and hudSamplingError then
+    if enabled and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
-        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled and config.central_hint,now)
+        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled,now)
     end
 end
 -- 由出击初始化和飞行切换共同使用的输入释放接口，在 configureFlight
@@ -439,7 +447,7 @@ local function primeFlightHUD(profile,options,prewarm)
     local visible=plane:GetNimbusHUDEnabled()
     -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
     nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
-    weaponPresentation:update(plane,profile,options,seed,visible and config.central_hint,os.clock())
+    weaponPresentation:update(plane,profile,options,seed,visible,os.clock())
 end
 -- 正常出击建立检查点；补给重建只替换当前兵装，保留任务检查点。
 local function configureFlight(profile,resupply)
@@ -589,8 +597,9 @@ local function applyAction(action)
         local ok,err=xpcall(function()
             assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
             local nextConfig=json.decode(json.encode(config))
-            assert(action.management_protocol==3,"管理界面协议不匹配，请成套安装")
-            for _,field in ipairs({"language","central_hint","keyboard_keys"})do
+            assert(action.management_protocol==4,"管理界面协议不匹配，请成套安装")
+            assert(action.central_hint==nil,"中央简称已固定开启，不接受旧开关")
+            for _,field in ipairs({"language","keyboard_keys"})do
                 assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
             end
             validateSettings(nextConfig);saveConfig(nextConfig);config=nextConfig
@@ -624,7 +633,7 @@ local function publishState()
     -- 仅发布管理参数和只读状态，不给界面提供兵装编辑事务。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=3,language=config.language,game_language=runtimeContext.language,central_hint=config.central_hint,
+        management_protocol=4,language=config.language,game_language=runtimeContext.language,
         keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="equal_share",
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText

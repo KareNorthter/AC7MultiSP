@@ -445,6 +445,13 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         end
         return widget
     end
+    -- 三类页面共用较大的槽位标题；向上留出字高，避免挤压原有的全名或第一行性能。
+    local function informationTitle(c,source,parent,width)
+        local title=infoWidget(c,source,parent,{X=0,Y=-8},{X=width,Y=38},false) -- 底边仍为 30，正文位置不变。
+        local font=title.Font -- 保留原生字体、颜色及泛光，只把标题从最多 18 放大到 24。
+        font.Size=24;title:SetFont(font)
+        return title
+    end
     -- 两种页面分别计算位置，缩放继续由各自的原生 UMG 容器管理。
     local function infoCanvas(c,parent,position,size)
         self.serial=self.serial+1
@@ -497,7 +504,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
             local panel=infoCanvas(c,parent,{X=origin.X+(index-1)*(width+gap),Y=origin.Y},{X=width,Y=height})
             local column={bars={},barWidth=width*.40}
             c.columns[index]=column
-            column.name=infoWidget(c,templates.name,panel,{X=0,Y=0},{X=width,Y=30},false)
+            column.name=informationTitle(c,templates.name,panel,width)
             local inset=templates.icon and 36 or 0 -- 只有机库使用彩色类别图标，补给仍全绿色。
             column.fullName=infoWidget(c,templates.fullName or templates.type,panel,{X=inset,Y=pitch},{X=width-inset,Y=3*pitch},false,true)
             if templates.icon then
@@ -743,7 +750,7 @@ function NativeLoadout.new(note,commit,mode,keyboardNavigation,takeoff,preparati
         for index=1,3 do
             local panel=infoCanvas(c,root,{X=cardX,Y=origin.Y+(index-1)*cardPitch},{X=width,Y=cardHeight})
             local column={bars={},barWidth=width*.40};c.columns[index]=column
-            column.name=infoWidget(c,assert(weaponTemplate.WeaponsName),panel,{X=0,Y=0},{X=width,Y=30},false)
+            column.name=informationTitle(c,assert(weaponTemplate.WeaponsName),panel,width)
             for stat=1,6 do
                 local item=group["SpecItem"..stat] -- 性能名称和画刷取自原生右侧兵装组。
                 assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar.BarA),"STANDBY 性能模板缺失")

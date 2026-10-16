@@ -2,6 +2,8 @@
 
 # 架构与关键约束
 
+2026-10-16 UI 源码增量：`native_loadout.lua` 共用 `informationTitle` 绘制选装、STANDBY/PART、补给的 24 号 SP 标题。`weapon_presentation.lua` 在不可变的原布局上移半个标称字高，不累计偏移，退出仍恢复原布局；保留正常 Alpha 0.7、原生字号 11/9 和未就绪系数 35%。`main.lua` 固定启用中央简称，管理协议/配置参数升至 4，UI 删除独立开关；三 SP 原生命令协议和机体方案 schema 仍为 3/2。新 UI 能力导出在配置迁移前阻止旧 DLL 混装。此批只交付源码，未构建安装，见[合并说明](research/ui-headings-hud-fixed.txt)。下文旧版开关和字号仅作历史基线。
+
 本研究分支当前为 `1.0.2-su30sm-three-sp.1`，下文正式版说明作为基线。集成新增 `loadout_profile.lua` 统一 1–3 槽与自动均分，核心 Session/检查点保存实际 count、三个配置及各槽弹药冷却；命令、管理和就绪接口使用三 SP 协议。`su30sm_fixed_mount.hpp` 将 Su-30SM 逻辑槽映射到六处固定模型，显隐和发射共用映射，重建前解绑，QAAM 四槽独立轮转。其他机体沿用原生活动模型。完整设计及未验证范围见[三 SP 固定挂载](research/su30sm-three-sp-fixed-mount.txt)。
 
 > 1.0.1 候选增量：runtime_context.lua 只读核对网络模式、GameMode、当前菜单页面与文本文化；Lua、核心及 UI 均以单人许可控制功能。模式切换清空旧事务，延迟回调绑定模式代次。补给 HUD 保留并在 YES 交接后预建，只在成功初始化后提交真实数据；详见[候选说明](version-1.0.1-candidate.1.md)。下文为 1.0.0 基线。
