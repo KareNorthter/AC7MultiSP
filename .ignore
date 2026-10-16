@@ -1,6 +1,4 @@
-# 仅控制 rg/fd 的默认检索，不影响 Git、构建或文件保存。
-# 历史与第三方资料按当前文档索引定向读取；需要搜索时使用 rg --no-ignore。
-/docs/archive/
+# 只影响默认检索，不影响 Git 保存；需要时用 rg --no-ignore 定向读取。
 /evidence/
 /references/
 /vendor/

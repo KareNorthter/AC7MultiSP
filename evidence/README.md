@@ -1,27 +1,12 @@
-# 证据入口
+# 按需证据
 
-当前事实见[项目状态](../docs/status.md)。此目录保留不可随意改写的历史回执，不要求新任务全量阅读。
+日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
-## 当前 1.1.0
+- [1.1.0 用户验证](1.1.0-user-validation.json)：实测反馈与稳定性边界。
+- [1.1.0 构建](1.1.0-build.json)：来源/DLL/导出/语法核对，不代表实玩。
+- [1.1.0 发布](1.1.0-release.json)：原 ZIP 摘要与成员。
+- [仓库整理](repository-consolidation-20261016.json)：旧分支/工作区恢复映射；文档数量与路径是上一轮快照。
 
-| 记录 | 能证明什么 |
-|---|---|
-| [用户验证](1.1.0-user-validation.json) | 用户反馈及本轮稳定性边界 |
-| [构建](1.1.0-build.json) | 来源、DLL、导出和语法核对；不等于实玩 |
-| [发布](1.1.0-release.json) | 原发布 ZIP 摘要、成员和交付范围 |
-| [仓库整理](repository-consolidation-20261016.json) | 主工作区迁移、分支保留、文档归档和功能文件不变核对 |
-
-本轮没有部署 1.1.0；不要由发布回执推断游戏当前运行版本。
-
-## 不能直接清理的依赖
-
-当前安装器仍读取 [1.0.2 安装](1.0.2-installed.json)、[固定挂载候选 .2 安装](su30sm-fixed-mount-candidate.2-installed.json)和[三 SP 候选 .11 安装](su30sm-three-sp-candidate.11-installed.json)。
-历史版本映射还引用其他候选安装回执。打包器读取当前构建回执，研究工具/旧测试也引用部分结构和模型证据。
-因此本轮保留所有证据文件的路径和字节，仅替换索引。后续调整工具依赖后才能迁移或精简。
-旧回执中记录的 docs 路径按当时快照理解；已归档的说明可在 docs/archive 下按原相对路径找到，原始字节还可从发布标签读取。
-
-## 按需查历史
-
-旧完整索引已保存到 [docs/archive/evidence-index.md](../docs/archive/evidence-index.md)；发布标签也保留原文。
-默认 rg 检索排除此目录，需要时按具体文件读取，或使用 `rg --no-ignore <关键词> evidence`。
-时间线中的“当前”“待验证”只指当时；引用时必须核对版本、来源及后续更正。
+安装器仍读取 [1.0.2](1.0.2-installed.json)、[固定挂载.2](su30sm-fixed-mount-candidate.2-installed.json)、[三SP.11](su30sm-three-sp-candidate.11-installed.json)等旧回执，研究工具也引用结构数据。它们是机器记录/依赖，本轮不改内容或位置。
+旧回执提及的说明可从 Git 历史读取，方法见[开发说明](../docs/development.md)。旧“当前”、PID、安装状态不能当作实时事实。
+默认检索排除此目录，需要时按文件读或用 rg --no-ignore 定向查找。
