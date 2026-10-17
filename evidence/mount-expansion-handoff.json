@@ -30,10 +30,10 @@
       "P2": 29,
       "P1": 11
     },
-    "animated_complete_layout_aircraft": 4,
-    "animated_complete_combination_cases": 28,
-    "distinct_complete_layout_aircraft": 14,
-    "deferred_after_animation_overlay": 30
+    "animated_complete_layout_aircraft": 3,
+    "animated_complete_combination_cases": 21,
+    "distinct_complete_layout_aircraft": 13,
+    "deferred_after_animation_overlay": 31
   },
   "source_files": [
     {
@@ -16343,16 +16343,11 @@
   ],
   "animated_design_overlay": {
     "record": "evidence/mount-expansion-animated.json",
-    "sha256": "36e4d0c983ddc5965665712f9ac72c6188da2a6484a235c1e1cbc161b13d98de",
+    "sha256": "96840fc67f88c11d5a7b413a9e45f6e0a8357ffddb1be63e928247fa528fb5a4",
     "aircraft": [
       {
         "code": "f22a",
         "name": "F-22A",
-        "combination_count": 7
-      },
-      {
-        "code": "su47",
-        "name": "Su-47",
         "combination_count": 7
       },
       {
@@ -16367,6 +16362,16 @@
       }
     ],
     "runtime_enabled": false,
-    "policy": "本层替代对应机体旧批次的布局暂缓结论；仍须专用动画Host/provider接入，不进入旧静态数组，不自动启用运行白名单"
+    "policy": "本层替代对应机体旧批次的布局暂缓结论；仍须专用动画Host/provider接入，不进入旧静态数组，不自动启用运行白名单",
+    "deferred_aircraft": [
+      {
+        "code": "su47",
+        "name": "Su-47",
+        "combination_design_count": 7,
+        "reason": "含SAAM整架等高向前离架扫架，须SWP1左半与SWP2/3右半骨架Mesh副本；未编码/加载，整机不注册",
+        "record": "evidence/mount-expansion-animated.json",
+        "layout_policy": "su47_native_owner_left_partition_v2"
+      }
+    ]
   }
 }

@@ -158,7 +158,9 @@ def sampled_vector(properties_by_name,name):
 
 def supplement_endpoints(result,assets,endpoint_files):
     """只消费主管已采文件；只用当时选中、未停止更新的provider证明对应端点。"""
-    plane=next(p for p in result['planes'] if p['code']=='su47')
+    plane=next(p for p in [*result['planes'],*result.get('deferred_designs',[])] if p['code']=='su47')
+    if plane.get('layout_policy')=='su47_native_owner_left_partition_v2':
+        raise ValueError('新版Su47原生左右分区不使用旧严格端点；请去掉--endpoint-state/--endpoint-review')
     verified=set()
     for path in endpoint_files:
         capture=json.loads(path.read_text(encoding='utf-8'))
@@ -332,6 +334,9 @@ def end_poses(assets,group):
 def apply_native_geometry_reference(result,path,overlay_path):
     """仅吸收已完成静态几何的严格参照；当帧调度/身份等运行资格仍由宿主完成。"""
     report=json.loads(path.read_text(encoding='utf-8'))
+    if any(p['code']=='su47' and p.get('layout_policy')=='su47_native_owner_left_partition_v2'
+           for p in [*result['planes'],*result.get('deferred_designs',[])]):
+        raise ValueError('新版Su47不沿用旧严格Body参照，请去掉--endpoint-review')
     if report['code']!='su47' or not report['geometry_passed_at_reference'] or report['runtime_gate_ready'] or \
        report['sources']['overlay_sha256']!=digest(overlay_path):
         raise ValueError('真实端点参照未通过几何或与当前方案来源不同')
@@ -396,10 +401,13 @@ def apply_native_geometry_reference(result,path,overlay_path):
 def build(overlay,batch,assets):
     candidates={a['code']:a for a in overlay['aircraft']}
     samples={a['code']:a for a in batch['aircraft']}
-    planes=[]
+    planes=[];deferred_designs=[]
     for code in CODES:
         candidate=candidates[code];sample=samples[code]
-        if not candidate['layout_candidate_complete_seven']:raise ValueError('整机布局未获评审')
+        partition=code=='su47' and candidate.get('layout_policy')=='su47_native_owner_left_partition_v2'
+        if not candidate['layout_candidate_complete_seven'] and not (
+            partition and candidate.get('seven_case_design_complete') and candidate.get('integration_deferred')):
+            raise ValueError('整机布局未获评审')
         combinations=candidate['combinations']
         if len(combinations)!=7:raise ValueError('整机七组合缺失')
         singles={c['weapons'][0]:c for c in combinations if len(c['weapons'])==1}
@@ -444,7 +452,7 @@ def build(overlay,batch,assets):
             groups[-1]['packages']={k:groups[-1].get(k+'_path').rsplit('.',1)[0] if groups[-1].get(k+'_path') else None
                                     for k in ('class','rack','mesh','skeleton','animclass')}
         endpoints={}
-        if code=='su47':
+        if code=='su47' and not partition:
             needed={g for c in combinations if len(c['weapons'])>1 for g in c['required_animation_groups']}
             endpoints={name:end_poses(assets,sample['groups'][group_index(name)]) for name in sorted(needed)}
         plans=[None]*8
@@ -475,7 +483,14 @@ def build(overlay,batch,assets):
             if code=='su47' and not native:
                 original=deepcopy(combo['internal_ammo_visibility'])
                 original.pop('offline_sample_review',None)
-                plan['gate']={'mode':'native_fully_open_and_current_end_pose_only','require_native_fully_open':True,
+                if partition:
+                    plan['gate']={'mode':'native_common_bay_state_only','require_native_fully_open':True,
+                        'require_current_provider_end_pose':False,'require_body38_exact':False,
+                        'require_current_provider_publish':True,
+                        'native_state':original['native_state'],'groups':combo['required_animation_groups'],
+                        'runtime_gate_ready':False,'original_policy':original,
+                        'missing':'宿主核对公共舱/原生provider更新和实际池映射并实测；不要求旧严格端点/Body38骨参照'}
+                else:plan['gate']={'mode':'native_fully_open_and_current_end_pose_only','require_native_fully_open':True,
                               'require_current_provider_end_pose':True,'runtime_gate_ready':False,
                               'groups':[g for g in combo['required_animation_groups']],
                               'original_policy':original,
@@ -485,11 +500,19 @@ def build(overlay,batch,assets):
             plans[mask]=plan
         if any(p is None for p in plans[1:]):raise ValueError('必须同时生成全部七组合')
         body['packages']={k:body[k+'_path'].rsplit('.',1)[0] for k in ('mesh','skeleton','animclass')}
-        planes.append({'code':code,'pawn_path':pawn_path,'body':deepcopy(body),'body_driver':body,
+        destination=deferred_designs if candidate.get('integration_deferred') else planes
+        destination.append({'code':code,'pawn_path':pawn_path,'body':deepcopy(body),'body_driver':body,
                        'groups':groups,'plans':plans,'endpoints':endpoints,'runtime_enabled':False})
-        if code=='su47':
+        if partition:
+            destination[-1]['layout_policy']=candidate['layout_policy']
+            destination[-1]['minor_contact_boundary']=candidate['geometry_boundary']
+            destination[-1]['integration_deferred']=candidate.get('integration_deferred',False)
+            destination[-1]['required_resource_recipes']=candidate.get('required_resource_recipes',[])
+            if candidate.get('integration_deferred'):
+                destination[-1]['presentation_resource_status']='native_meshes_are_geometry_sources_only_do_not_register_whole_racks'
+        if code=='su47' and not partition:
             planes[-1]['exact_body_pose']=exact_pose_contract(assets,body['mesh'],body['skeleton'],body['sequence'])
-    return {'schema':1,'purpose':'三机21组合产品接入数据候选；不自动注册或授权启用','planes':planes,
+    return {'schema':1,'purpose':'动画机体七组合产品接入候选；暂缓设计单列，不能注册','planes':planes,'deferred_designs':deferred_designs,
             'numbering':'groups/providers使用原生SWP1/2/3的零基索引；plans[mask]使用原生配置位，不是用户逻辑SP槽顺序',
             'logical_count_policy':'从每类武器原生capture动态取得队列Num/窗口/游标及持久mountOrdinal；从不把Socket数写为队列长度',
             'pool_policy':'实际持久组件池按owner、类、网格、父链和Socket完整集合逐项双射；provider取位与弹体显示/真实离架共用映射',
@@ -533,7 +556,9 @@ def main():
     args.output.parent.mkdir(parents=True,exist_ok=True)
     args.output.write_bytes(header.encode('utf-8'))
     missing=sorted({m for plane in result['planes'] for endpoint in plane['endpoints'].values() for m in endpoint['missing']})
-    print(json.dumps({'planes':list(CODES),'cases':21,'su47_runtime_gate_ready':False,
+    print(json.dumps({'planes':[p['code'] for p in result['planes']],
+                      'cases':len(result['planes'])*7,'deferred_designs':[p['code'] for p in result['deferred_designs']],
+                      'su47_runtime_gate_ready':False,
                       'missing':missing,'output':str(args.output)},ensure_ascii=False))
 
 

@@ -10,7 +10,7 @@
 
 引用线程`01a14787-e328-72b3-9b0e-1bfa7d81cc52`的`analyze_sp_switch_animations.py`、`sp_switch_animation_policies.json`与`sp-switch-animation-research.json`，并从其提交`00bd24c`按原字节吸收`common_bay_animation.hpp`、`native_common_bay_parts.hpp`、`owned_bone_refresh.hpp`、`inspect_common_bay_control.py`与`sp-common-bay-control.json`。三个控制头没有自动注册／新钩子，不改变产品运行代码。几何准入来自本分支覆盖层，YF-23虽有控制profile仍被几何排除。
 
-产品接入必须补齐：安全访问与反射Host；完整原生实例／场景身份校验；同步切换快照与原生Parts更新顺序；骨骼更新／动画暂停／Tick及刷新模式最新原生请求观察和逐组件归还；provider当帧组件空间／世界空间Socket取位；Su-47的严格全开＋端点姿态见证。Parts原生引擎不是UObject；指纹／owner／配置必须通过，写入部分失败及归还失败不得误报成功。TG第三组静态不读骨架字段，第三原生配置的NativeTransition保留原生流程。姿态容差、坐标换算和运行池数量需有真实依据，不能填经验值或直接等于Socket数。
+产品接入必须补齐：安全访问与反射Host；完整原生实例／场景身份校验；同步切换快照与原生Parts更新顺序；骨骼更新／动画暂停／Tick及刷新模式最新原生请求观察和逐组件归还；provider当帧组件空间／世界空间Socket取位；Su-47的原生公共舱全开显隐与实际provider更新后取位（新版不要求全38Body骨精确匹配）。Parts原生引擎不是UObject；指纹／owner／配置必须通过，写入部分失败及归还失败不得误报成功。TG第三组静态不读骨架字段，第三原生配置的NativeTransition保留原生流程。姿态容差、坐标换算和运行池数量需有真实依据，不能填经验值或直接等于Socket数。
 
 | 离线入口 | 作用 |
 |---|---|
@@ -55,33 +55,26 @@ python -X utf8 src/research/build_animated_mount_candidates.py --previous eviden
 
 ### 上一批三机的独立接入数据
 
-`src/research/build_animated_runtime_data.py`只为F-22A／Su-47／Su-57TG生成`src/animated_mount_data.hpp`，入口为`animatedMountData()`，需要宿主已有Json类型；没有改旧静态生成器／主核心／Lua或自动注册机体。数据包含三机21组合：`groups`的真实class／rack／自身mesh／Skeleton／AnimClass／组件种类／完整Socket顺序／窗口，`plans[1..7]`的native旁路、按owner索引的selected／providers、racks呈现mask、required骨架mask及Su-47端点门槛。组和provider是原生配置0–2，mask不是用户逻辑SP槽顺序；selected索引属于provider的资源Socket表，必须先按名字双射到真实池，不能直接作为运行组件下标。F-22A SWP3资源顺序不连续，生成器保留每方案指定的Socket次序，不按set重新排序。
+`src/research/build_animated_runtime_data.py`只为F-22A／Su-47／Su-57TG生成`src/animated_mount_data.hpp`，入口为`animatedMountData()`，需要宿主已有Json类型；没有改旧静态生成器／主核心／Lua或自动注册机体。研究保留三机21组合设计：当前`planes`仅F-22A/TG两机14条，Su-47七条在`deferred_designs`，不能注册。数据包含`groups`的真实class／rack／自身mesh／Skeleton／AnimClass／组件种类／完整Socket顺序／窗口，`plans[1..7]`的native旁路、按owner索引的selected／providers、racks呈现mask、required骨架mask及Su-47公共舱状态门槛。组和provider是原生配置0–2，mask不是用户逻辑SP槽顺序；selected索引属于provider的资源Socket表，必须先按名字双射到真实池，不能直接作为运行组件下标。F-22A SWP3资源顺序不连续，生成器保留每方案指定的Socket次序，不按set重新排序。
 
 每架另有`body.mesh/body.skeleton/body.animclass`与`body.packages`，同时保留`body_driver`绑定详情；每组也有`packages`和带对象名的`*_path`。包来自实际PAK记录转/Game，Pawn→组件SkeletalMesh/AnimClass→mesh.Skeleton→实际AnimBP的Sequence/BoneConfig沿FPackageIndex外层链逐项核对，不按code猜Body资产。Body与挂架的SP通道从实际网格骨名和所绑配置表解析；资源只含spwc不等于运行资源身份已验证，`runtime_identity_and_channel_qualification`仍false。F-22A采样中的PlaneBodyMesh字段0xef8只记录为本次观察，不给其他机体硬编码同一偏移。
 
 逻辑长度／持久池数仍为null，由真实原生capture和Socket完整集合双射核对。可选读取主管已取得的F-22A单8AAM暂停采样：逻辑Num14、window8，持久池6／6／14仅作该场景观察，不设为全部机体固定规格，也不证明另两类SP队列长度。
 
-Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间端点。主管新增两次单挂全开只读采样后，分别只使用当前配置1的SWP2／配置2的SWP3（animation_flags=0），没有用另外停更组的缓存证明全开。实际Socket.RelativeScale与真实Default__SkeletalMeshSocket CDO均为(1,1,1)；发布骨骼按实际mesh参考骨架六骨双射，骨＋Socket组合的平移／旋转与资源端点float32分量逐项相等，缩放和1:1组件单位映射因此有了该组实证。数据保留来源SHA、实际局部属性、已发布骨骼、原生部件状态与发布帧，未调用GetSocketTransform或任何游戏函数。该观察不等于多挂调度已经通过。
+Su-47当前设计为`su47_native_owner_left_partition_v2`，因半侧骨架资源未生成/编码/加载核对而整机暂缓，不能直接注册整架。以[七组合表](multi-sp-mount-design.md#su-47-第三批方案)和覆盖层`latest_review_by_aircraft.su47`为准。SAAM移回自身SWP1.sp11；所有兵装owner=provider。含SAAM时显示SWP1加唯一四列架，三挂的required mask=7、racks mask=5；其余两架映射不变。窗口和逻辑队列不缩减，三单完全原生。最新评审的`future_skeletal_half_resources`列出SWP1左半、SWP2/3右半的完整原面ID配方；三份各一LOD，保持各原Skeleton/AnimClass和全部骨/Socket。
 
-三类tolerance仍为null，不提供非零误差预算。当前另有已重核静态几何的严格实采参照路线；严格模式逐有效float32位型匹配，不依赖这些容差。runtime_gate_ready仍false，产品须核对真实资源、父链、当帧发布及离架重验，不能用骨缓存getter冒充。旧研究字符串中的request=2只是历史文字，运行全开使用当前已核对Host的request=1／phase=2／公共进度=1语义。
+新版Su-47门控为`native_common_bay_state_only`：只核已确认的原生公共舱全开状态及实际组件／池映射，显示和离架共同取实时原生Socket；关闭时隐藏受管舱内ammo，原生发射门控不改。它明确不要求Body38骨或资源端点逐位精确匹配，不进行逐帧几何检查，也不能在每枚弹的取位路径重复驱动整架骨骼。这只是后续半侧资源完成后的低成本门控设计；当前不进`planes`，保留在`deferred_designs`。三挂比旧方案新增一个需要原生更新的SWP1组件；性能收益没有本研究实测，主线热路径修复另行负责。
 
-原资源101键几何报告仍在`evidence/mount-expansion-animated.json → reviews[1].report.aircraft[0]`（code=su47）；显隐依据在`aircraft[code=su47].combinations[].internal_ammo_visibility.offline_sample_review`。它们不提供非零容差。真实SWP2／3各有三根非Socket骨与资源第100键有约7.45e-9至1.64e-7的四元数分量差，故新增[真实端点几何证据](../evidence/su47-native-endpoint-geometry.json)，用实际发布姿态重新蒙皮，没有把差值当作epsilon。
+旧借位方案的严格实采证据仍保留在`evidence/su47-native-endpoint-geometry.json`，仅说明旧布局在那一Body姿态的静态结论，不能用于新分区准入。新版生成器不输出`su47_native_reference`或Su-47端点数据，也拒绝组合使用旧`--endpoint-state/--endpoint-review`参数；旧生成格式可从d3c2eef及此前提交恢复。当前不再依赖这些特定暂停采样或全部Body骨的位型；也不以翻转runtime_gate_ready代替资源前提。
 
-`review_su47_native_endpoints.py`核对全部Body四个LOD、两套挂架各一个LOD及各类弹体的三个LOD。四种多挂的弹体—Body、弹体—弹体表面接触均为0；弹体—架体接触与同武器同位置原生布局完全相同，UGB的跨呈现架基线另证SWP2／3全部蒙皮顶点及逐面索引相同。原架—Body接触另保留原生附着基线，各组合全部LOD对合计276对，不称所有Body相关接触为0。SAAM借位直接要求零接触，不用未采的SWP1原生全开缓存豁免。原生UGB布局是在同一实采Body姿态中离线重放，明确不是同次运行采样。
+新几何核对范围为源LOD0完整蒙皮101个同步键、七组合弹体对、原生支撑、双整架小边唇及全开离架的离散方向假设。静止全开无新增跨架弹体接触，闭合/过渡有新增跨架接触，故仍保留低成本公共舱显隐。等高向前的SAAM和QAAM可能扫过新增架体，不能称已经证明仅轻微；原生先下落还是前移、实际观感和任务性能需用户实测。资源参数与几何距离不转换成未经核对的时间/轨迹，单位不擅自换算为厘米。
 
-传`--endpoint-review`后，`endpoints[group].exact_pose`是各六根实际mesh骨的实采严格参照，`exact_body_pose`是实采Body38骨；原资源期望另存`resource_exact_pose/resource_exact_body_pose`，不混淆来源。每骨列名字、mesh/Skeleton索引、父索引及四元数xyzw／位置xyz／缩放xyz共十项有效float32；`uint32`保留正负零，不比较padding，不翻四元数符号或归一化。每Socket的`exact_match`包含依附骨索引和位置xyz／Pitch、Yaw、Roll角度／缩放xyz九项局部期望。`position/rotation/scale`可直接读取，旋转为xyzw。
-
-产品可直接读取`animatedMountData().su47_native_reference`：仅承载`body/providers/socket_expectations/relative_components/geometry_passed_at_reference`、schema/code、运行资格及limits，另列`review_sha256`和`zero_deviation`比较规则。完整接触基线、面号和几何清单留在证据JSON，不嵌入头文件。它不借用旧端点tolerance放行；顶层参照的`runtime_gate_ready=false`同样表示尚无运行验证，由宿主逐项核对实际条件。
-
-严格参照还要求`native_endpoint_geometry.relative_components`所列Body→Root、WeaponMeshBase→Root、SWP→WeaponMeshBase单位相对变换与None附着Socket。活动Body与SWP3的发布帧均197715，当前两者／Root／WeaponMeshBase世界变换相同；采样窗口渲染帧299604→299669，只称暂停发布数据稳定，不称同渲染帧。SWP2使用先前原生UGB活动端点179122，未用本次停更缓存，组合是明确离线场景。
-
-**飞控限制：本次几何只对所记录的Body全部38骨姿态成立。** 升降舵、方向舵、襟翼、进气道、减速板等其他通道不能忽略；这些有效分量变化时严格参照失配，必须隐藏受管弹体，不能仅凭spwc全开放行。要放宽需另做这些骨的几何隔离／扫掠依据。没有连续运动、发射轨迹或运行性能证明，静态零表面接触也不独立证明封闭体包含及挂耳贴合。
-
-生成命令只整理数据，输出必须新路径；审阅后按字节更新头文件，不编译或运行游戏：
+复现时先保留d3c2eef的旧覆盖层为`Temp/animated-before-su47-partition.json`。以下只输出研究数据，不编译；审阅后按字节更新覆盖层与头文件，并同步handoff中的覆盖层SHA：
 
 ```powershell
-python -X utf8 src/research/review_su47_native_endpoints.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --overlay evidence/mount-expansion-animated.json --full-state E:/AC7_MultiSP/Temp/su47-qaam-full-geometry-endpoint-20261017.json --ugb-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --output Temp/new-su47-native-endpoint-geometry.json
-python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --endpoint-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --endpoint-state E:/AC7_MultiSP/Temp/su47-qaam-endpoint-20261017.json --endpoint-review evidence/su47-native-endpoint-geometry.json --output Temp/new-animated-runtime-data.hpp
+python -X utf8 src/research/review_su47_native_partition.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --output Temp/new-su47-partition-review.json
+python -X utf8 src/research/build_su47_partition_candidate.py --previous Temp/animated-before-su47-partition.json --batch evidence/mount-expansion-batch3.json --review Temp/new-su47-partition-review.json --output Temp/new-animated-left-partition.json
+python -X utf8 src/research/build_animated_runtime_data.py --overlay Temp/new-animated-left-partition.json --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --output Temp/new-animated-runtime-data.hpp
 ```
 
 头文件记录覆盖层／第三批／分析器和资源来源摘要；可选采样只保留摘要与紧凑观察，不提交原始内存。三单native=true；任何运行前提不满足仍须按整机七组合门槛回退，不能只开启Su-47其中几条。此次仅生成并核对数据，未编译、运行测试、安装或操作游戏。
@@ -90,7 +83,7 @@ python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
 
-三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。吸收技术线程7ae97b6的静态分区依据，新增F-16C、F-2A、Mirage、Rafale四机28条。旧静态路线十机70条（30单挂＋40多挂）。动画覆盖层新增F-22A、Su-47、Su-57TG三机21条，新增CFA-44左右骨支路方案后，合计14机98条完整布局，其余30机整机暂缓；动画四机尚需专用动画Host/provider接入，不是已运行适配。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
+三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。吸收技术线程7ae97b6的静态分区依据，新增F-16C、F-2A、Mirage、Rafale四机28条。旧静态路线十机70条（30单挂＋40多挂）。动画覆盖层新增F-22A、Su-47、Su-57TG三机21条，新增CFA-44左右骨支路方案后，Su-47新方案因半侧骨架资源暂缓后，当前为13机91条可继续接入布局，其余31机整机暂缓；动画四机尚需专用动画Host/provider接入，不是已运行适配。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
 
 各批新增`integration_gate.eligible`与逐项`integration_allowed`；先按整机门槛筛选，再看资源状态`disposition`。十机40条多挂包括26条原资源复用与14条`candidate_split_assets`。后者的`split_evidence`绑定回执和配方指纹，`rack_plan.carriers`给出每组原架／副本／仅隐藏自身的规则；P1/P2不能绕过整机门槛。其他未核对的拆架、拆巢、新站和动画／同舱支撑未明继续后置，不把研究完成写成已适配。固定炮、火箭／ADMM管口、UAV部署点与ECM/IEWS效果源按独立角色管理；不把资源点数抄成逻辑长度，不新增TLS或ECM/IEWS功能互斥。研究工具仅扩展离线资料，未改运行时注册或容量。A-10C的42个RKT管口为三对横向簇，实体巢数仍待完整几何确认。
 
