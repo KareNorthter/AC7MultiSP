@@ -1,4 +1,4 @@
-AC7MultiSP 2.18.0 Test Candidate
+AC7MultiSP 2.19.0 Test Candidate
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -40,7 +40,7 @@ Controls
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
 Known issues and planned improvements
-• CFA-44: the user accepted ECM model hiding in 2.17, but switching still hitched. This candidate reduces switching overhead further and uses native models outside missions, while retaining Multi-SP models in missions and resupply. Performance improvements await gameplay verification.
+• CFA-44: the user accepted ECM model hiding in 2.17, but switching still hitched. Switching still hitched in 2.18. This candidate uses address-based muzzle lookup to reduce repeated checks. Native models outside missions and Multi-SP models in missions and resupply are retained. Performance improvements await gameplay verification.
 • ADF-01: leaving TLS stops the beam immediately, but the first stop causes a noticeable hitch; later stops may cause smaller hitches.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
 • F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
