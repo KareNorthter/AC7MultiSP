@@ -1,0 +1,433 @@
+{
+  "scope": "三机产品访问适配研究；原件由主管只读采集，本线程仅离线分析",
+  "runtime_ready": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "process_access_by_this_work": false,
+  "game_functions_called_by_this_work": false,
+  "sources": [
+    {
+      "path": "Temp/f22a-8aam-paused-20261017-1144.json",
+      "sha256": "2f1e178b7e308e3955b127059004a8c2c167441e64a470b41f8ba6daa4d6d0db"
+    },
+    {
+      "path": "Temp/f22a-reflection-details-20261017-1144.json",
+      "sha256": "3a4c6e621ed767cf31f758334973d61857093d2ed14d4dc5c1a32f1f314dbb55"
+    },
+    {
+      "path": "Temp/f22a-enum-entries-20261017-1144.json",
+      "sha256": "13eb3cb42024837601e418352507e66e90b2d5073932d387b1de3ad196fdf625"
+    },
+    {
+      "path": "Temp/f22a-vtable-native-extended-20261017-1144/16e5de0-bc.bin",
+      "rva": "0x16e5de0",
+      "bytes": 188,
+      "sha256": "0471bb87a50594b0d7dd769b5bea9e7d7903462f2ed97ac6677e54c6de83cb3e",
+      "finding": "完整发布入口，0xbc字节，自然ret"
+    },
+    {
+      "path": "Temp/f22a-vtable-native-extended-20261017-1144/16fa010-bf.bin",
+      "rva": "0x16fa010",
+      "bytes": 191,
+      "sha256": "8da8e001f3e18b6106a43ef3f0184c3635327f1cc0e62208edcf6b0e6ad48a8c",
+      "finding": "当帧比较、Pause4、NoSkeleton2"
+    },
+    {
+      "path": "Temp/f22a-rack-control-native-20261017-1144/mount-16e79d0-600.bin",
+      "rva": "0x16e79d0",
+      "bytes": 1536,
+      "sha256": "a13840ac0f4ba772fad8161531900fa78f3ecf5653aca68d7d517d2a41d5d7da",
+      "finding": "已发布骨骼缓冲索引+0x74c读取"
+    },
+    {
+      "path": "Temp/f22a-rack-control-native-20261017-1144/mount-7f0000-1000.bin",
+      "rva": "0x7f0000",
+      "bytes": 4096,
+      "sha256": "9d9890159ce33745a17a6f0d93a3915a1de50a8e885aac737441115751e433c4",
+      "finding": "禁用入口及两处分支直接置NoSkeletonUpdate"
+    },
+    {
+      "path": "Temp/f22a-pose-publish-native-20261017-1144/mount-16fb660-220.bin",
+      "rva": "0x16fb660",
+      "bytes": 544,
+      "sha256": "cd34f376b850eaa6e4febdee2dae3f9a18f6e2078e175cd2d08b9df21adae990",
+      "finding": "全局原生帧写入组件+0xd24；不是完整逻辑函数"
+    },
+    {
+      "path": "Temp/f22a-native-20261017-1144/mount-1ce6d70-1900.bin",
+      "rva": "0x1ce6d70",
+      "bytes": 6400,
+      "sha256": "f53276f6cfe93cf32cb2c0785ed9e2334d312c08d19ce317fba00d43d251660c",
+      "finding": "request1推进进度，phase端点2"
+    },
+    {
+      "path": "Temp/f22a-native-pose-sequence-20261017-1144.jsonl",
+      "sha256": "ef850f4eb789b0ce8b8ff7f3e4aca2d662db7e3dc80f4571cd98636937999ef3"
+    },
+    {
+      "path": "Temp/su30sm-fixed-mount-prototype/Temp/three-sp-failure/object-index.json",
+      "sha256": "26d88ed1f7df0aa93c6198a3fc49e946767257e4ac790283aeb4b3d4979652a3"
+    }
+  ],
+  "bool_metadata": [
+    {
+      "name": "bNoSkeletonUpdate",
+      "kind": "BoolProperty",
+      "offset": "0x9b0",
+      "field_size": 1,
+      "byte_offset": 0,
+      "byte_mask": 2,
+      "field_mask": 2,
+      "metadata_serial": 0
+    },
+    {
+      "name": "bPauseAnims",
+      "kind": "BoolProperty",
+      "offset": "0x9b0",
+      "field_size": 1,
+      "byte_offset": 0,
+      "byte_mask": 4,
+      "field_mask": 4,
+      "metadata_serial": 0
+    }
+  ],
+  "enums": [
+    {
+      "name": "EMeshComponentUpdateFlag",
+      "entries": [
+        {
+          "name": "EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones",
+          "value": 0
+        },
+        {
+          "name": "EMeshComponentUpdateFlag::AlwaysTickPose",
+          "value": 1
+        },
+        {
+          "name": "EMeshComponentUpdateFlag::OnlyTickMontagesWhenNotRendered",
+          "value": 2
+        },
+        {
+          "name": "EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered",
+          "value": 3
+        },
+        {
+          "name": "EMeshComponentUpdateFlag::EMeshComponentUpdateFlag_MAX",
+          "value": 4
+        }
+      ]
+    },
+    {
+      "name": "ERelativeTransformSpace",
+      "entries": [
+        {
+          "name": "RTS_World",
+          "value": 0
+        },
+        {
+          "name": "RTS_Actor",
+          "value": 1
+        },
+        {
+          "name": "RTS_Component",
+          "value": 2
+        },
+        {
+          "name": "RTS_ParentBoneSpace",
+          "value": 3
+        },
+        {
+          "name": "RTS_MAX",
+          "value": 4
+        }
+      ]
+    }
+  ],
+  "racks": [
+    {
+      "name": "SWP3",
+      "serial": 13803,
+      "flags_9b0": "00",
+      "refresh_mode": "00",
+      "get_socket_transform_rva": "0x16eafd0"
+    },
+    {
+      "name": "SWP2",
+      "serial": 13802,
+      "flags_9b0": "02",
+      "refresh_mode": "00",
+      "get_socket_transform_rva": "0x16eafd0"
+    },
+    {
+      "name": "SWP1",
+      "serial": 13801,
+      "flags_9b0": "02",
+      "refresh_mode": "00",
+      "get_socket_transform_rva": "0x16eafd0"
+    }
+  ],
+  "tracker_declared_code_signatures": [
+    {
+      "rva": "0x16fb6d6",
+      "hex": "8b05449e3c028986240d0000",
+      "source": "Temp/f22a-vtable-native-extended-20261017-1144/16fb660-f1.bin"
+    },
+    {
+      "rva": "0x16fa02b",
+      "hex": "8b81240d0000483905e8b43c02",
+      "source": "Temp/f22a-vtable-native-extended-20261017-1144/16fa010-bf.bin"
+    },
+    {
+      "rva": "0x16e7f75",
+      "hex": "4863974c070000",
+      "source": "Temp/f22a-rack-control-native-20261017-1144/mount-16e79d0-600.bin"
+    },
+    {
+      "rva": "0x16eb137",
+      "hex": "e894c8ffff",
+      "source": "Temp/f22a-socket-native-20261017-1144/mount-16eafd0-1200.bin"
+    }
+  ],
+  "implementation_sha256": {
+    "mount_animation_reflection_adapter.hpp": "f50aece12f82861f87819d46ae6345513e29a0b4e1ace7f52d8879c8dff5f725",
+    "mount_animation_product_access.hpp": "4cab24b6c7426fbcf52cf04fb9578183f05a73f264941a60c97dcd29af41754d",
+    "mount_animation_publication_tracker.hpp": "f1fdc69d25516d4698b5cccec80ff70f2f73585dbb938865b9ac26aaba595e84"
+  },
+  "methods": [
+    {
+      "name": "GetSocketTransform",
+      "declaring_class": "SceneComponent",
+      "rva": "0x1c28630",
+      "parameters": [
+        {
+          "name": "InSocketName",
+          "kind": "NameProperty",
+          "size": 8,
+          "offset": "0x0"
+        },
+        {
+          "name": "TransformSpace",
+          "kind": "ByteProperty",
+          "size": 1,
+          "offset": "0x8"
+        },
+        {
+          "name": "ReturnValue",
+          "kind": "StructProperty",
+          "size": 48,
+          "offset": "0x10"
+        }
+      ]
+    },
+    {
+      "name": "SetComponentTickEnabled",
+      "declaring_class": "ActorComponent",
+      "rva": "0x1b2ae70",
+      "parameters": [
+        {
+          "name": "bEnabled",
+          "kind": "BoolProperty",
+          "size": 1,
+          "offset": "0x0"
+        }
+      ]
+    }
+  ],
+  "continuous_polling": {
+    "samples": 4500,
+    "racks": [
+      {
+        "name": "SWP1",
+        "animation_flag_values": [
+          2
+        ],
+        "raw_3f_values_not_tick_enabled": [
+          1
+        ],
+        "buffer_changes": 0,
+        "coincident_native_frame_samples": 0,
+        "animation_frame_values_count": 1
+      },
+      {
+        "name": "SWP2",
+        "animation_flag_values": [
+          2
+        ],
+        "raw_3f_values_not_tick_enabled": [
+          1
+        ],
+        "buffer_changes": 0,
+        "coincident_native_frame_samples": 0,
+        "animation_frame_values_count": 1
+      },
+      {
+        "name": "SWP3",
+        "animation_flag_values": [
+          0
+        ],
+        "raw_3f_values_not_tick_enabled": [
+          1
+        ],
+        "buffer_changes": 788,
+        "coincident_native_frame_samples": 173,
+        "animation_frame_values_count": 1402
+      }
+    ],
+    "request_phase_transitions": [
+      {
+        "seconds": 0.0014793000009376556,
+        "request_phase": [
+          1,
+          2
+        ],
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 33.47003890000633,
+        "request_phase": [
+          3,
+          2
+        ],
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 33.48004419999779,
+        "request_phase": [
+          3,
+          3
+        ],
+        "public_progress": 0.9826387763023376
+      },
+      {
+        "seconds": 33.88019290000375,
+        "request_phase": [
+          3,
+          0
+        ],
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 36.12020659999689,
+        "request_phase": [
+          1,
+          0
+        ],
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 36.13020780000079,
+        "request_phase": [
+          1,
+          1
+        ],
+        "public_progress": 0.007361248135566711
+      },
+      {
+        "seconds": 36.530380099997274,
+        "request_phase": [
+          1,
+          2
+        ],
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 39.31009569999878,
+        "request_phase": [
+          3,
+          3
+        ],
+        "public_progress": 0.9826387763023376
+      },
+      {
+        "seconds": 39.71053080000274,
+        "request_phase": [
+          3,
+          0
+        ],
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 42.61033429999952,
+        "request_phase": [
+          1,
+          0
+        ],
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 42.62028649999411,
+        "request_phase": [
+          1,
+          1
+        ],
+        "public_progress": 0.007361501455307007
+      },
+      {
+        "seconds": 43.02009730000282,
+        "request_phase": [
+          1,
+          2
+        ],
+        "public_progress": 1.0
+      }
+    ],
+    "boundary": "轮询不证明函数调用或全部调度顺序；没有生成发布见证"
+  },
+  "historical_bone_visibility_methods": [
+    {
+      "name": "HideBoneByName",
+      "owner": "SkinnedMeshComponent",
+      "parameters_qualified": false,
+      "current_instance_identity": false
+    },
+    {
+      "name": "IsBoneHiddenByName",
+      "owner": "SkinnedMeshComponent",
+      "parameters_qualified": false,
+      "current_instance_identity": false
+    },
+    {
+      "name": "UnHideBoneByName",
+      "owner": "SkinnedMeshComponent",
+      "parameters_qualified": false,
+      "current_instance_identity": false
+    }
+  ],
+  "parts": {
+    "request": 1,
+    "phase": 2,
+    "native_config": 2,
+    "progress": [
+      1.0,
+      0.0,
+      0.0,
+      1.0,
+      1.0,
+      1.0,
+      0.0
+    ]
+  },
+  "qualified_candidate": {
+    "publication_rva": "0x16e5de0",
+    "publication_vtable_slot": "0x890",
+    "native_frame_rva": "0x3ac5520",
+    "component_animation_frame_offset": "0xd24",
+    "published_bone_buffer_offset": "0x74c",
+    "publication_pending_offset": "0x828",
+    "token": "真实原生帧+1，仅当前发布钩子尾部同步消费"
+  },
+  "supersedes_old_contract": [
+    "mask2为NoSkeletonUpdate，mask4才是Pause；旧两字段RackRequest不足",
+    "旧不碰NoSkeletonUpdate约定阻断非当前provider更新，必须修订",
+    "request1可已达到打开端点，旧request==2门槛过严"
+  ],
+  "remaining": [
+    "四项独立租约、完整原生请求观察及独占登记",
+    "几何注册与真实Host接线",
+    "原生发布钩子及同步显示/发射消费",
+    "嵌套Transform元数据实机反射匹配及实际调用验证",
+    "MasterPose弱属性元数据与四份资源引用的运行绑定核对",
+    "隐藏provider每帧真实发布与稳定性/性能实测"
+  ]
+}
