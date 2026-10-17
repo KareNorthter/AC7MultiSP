@@ -123,7 +123,8 @@ inline CoverWriteStatus writeCover(Access& api, Aircraft aircraft, const Binding
 
 // 这是原生状态门槛，不能单独证明当前帧的provider骨骼/世界变换已求值，更不能证明扫掠净空。
 inline bool nativeFullyOpen(const PartsSample& sample) {
-    return ::dualsp::common_bay::valid(sample.cover) && sample.cover.request == 2 && sample.cover.phase == 2 &&
+    // 1ce7f69分支：请求1推进打开，到达端点后phase变2，请求仍可保持1；请求2直接保持全开。
+    return ::dualsp::common_bay::valid(sample.cover) && (sample.cover.request == 1 || sample.cover.request == 2) && sample.cover.phase == 2 &&
            sample.cover.progress[0] == 1.f;
 }
 

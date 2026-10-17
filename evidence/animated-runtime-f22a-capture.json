@@ -1,0 +1,233 @@
+{
+  "schema": 1,
+  "steam_build": 9855922,
+  "capture_time": "2026-10-17T11:47:14.623440+08:00",
+  "authorization": "用户明确以F-22A单SP8AAM进入任务、切换8AAM并暂停，允许只读采样；连续采样另请求用户原生切换配合",
+  "installed_version": "2.7.1",
+  "source_version": "2.7.2",
+  "compiled": false,
+  "installed": false,
+  "process_write": false,
+  "game_functions_called": false,
+  "debugger_attached": false,
+  "aircraft": "f22a",
+  "active_weapon": "plwp_8aam_a0_C",
+  "active_logical_count": 14,
+  "active_load_window": 8,
+  "persistent_mesh_pool_counts": {
+    "MSL": 2,
+    "SWP1": 6,
+    "SWP2": 6,
+    "SWP3": 14
+  },
+  "logical_count_boundary": "仅8AAM实际逻辑长度14获本次采样；QAAM/XSDB的6个持久模型不表示各自逻辑长度已验证",
+  "reflection": {
+    "socket_transform_parameters": [
+      {
+        "name": "InSocketName",
+        "kind": "NameProperty",
+        "offset": "0x0",
+        "size": 8
+      },
+      {
+        "name": "TransformSpace",
+        "kind": "ByteProperty",
+        "offset": "0x8",
+        "size": 1
+      },
+      {
+        "name": "ReturnValue",
+        "kind": "StructProperty",
+        "offset": "0x10",
+        "size": 48
+      }
+    ],
+    "enum_entries": {
+      "EMeshComponentUpdateFlag": {
+        "EMeshComponentUpdateFlag::AlwaysTickPoseAndRefreshBones": 0,
+        "EMeshComponentUpdateFlag::AlwaysTickPose": 1,
+        "EMeshComponentUpdateFlag::OnlyTickMontagesWhenNotRendered": 2,
+        "EMeshComponentUpdateFlag::OnlyTickPoseWhenRendered": 3,
+        "EMeshComponentUpdateFlag::EMeshComponentUpdateFlag_MAX": 4
+      },
+      "ERelativeTransformSpace": {
+        "RTS_World": 0,
+        "RTS_Actor": 1,
+        "RTS_Component": 2,
+        "RTS_ParentBoneSpace": 3,
+        "RTS_MAX": 4
+      }
+    },
+    "bNoSkeletonUpdate": {
+      "offset": "0x9b0",
+      "byte_mask": 2,
+      "field_mask": 2
+    },
+    "bPauseAnims": {
+      "offset": "0x9b0",
+      "byte_mask": 4,
+      "field_mask": 4
+    },
+    "MeshComponentUpdateFlag": {
+      "offset": "0x804",
+      "size": 1,
+      "observed_value": 0
+    }
+  },
+  "corrections": [
+    "旧代码将mask2标作Pause，现场元数据和原生16fa010分别检查mask4/mask2证明两者不同；不能将旧变量名当作字段依据",
+    "原生7f0210在关闭Tick后直接设置NoSkeletonUpdate(mask2)，还包含7f02ae第二条写入分支；仅拦Tick不足以维持骨骼更新",
+    "现有F-35C代码清mask2的行为实际启用骨骼更新，不能仅将mask改4而宣称修复",
+    "本次Parts request=1/phase=2/public progress=1；1ce7f69分支证明request1为打开推进，request2为保持全开，原生全开不能只接受request2"
+  ],
+  "pose_publish_candidates": {
+    "native_vtable_slot_0x890": "0x16e5de0",
+    "observed_effect": "发布双缓冲索引后调用16e1fb0及动画实例通知",
+    "pose_update_slot_0x878": "0x16fb660",
+    "pose_tick_field_candidate": "0xd24",
+    "frame_counter_rva": "0x3ac5520",
+    "boundary": "这些是静态原生代码与暂停态字段依据；.pdata覆盖区段不保证完整逻辑函数边界；尚非全部运行调度顺序证明"
+  },
+  "raw_local_sources": {
+    "Temp/f22a-8aam-paused-20261017-1144.json": {
+      "sha256": "2f1e178b7e308e3955b127059004a8c2c167441e64a470b41f8ba6daa4d6d0db"
+    },
+    "Temp/f22a-reflection-details-20261017-1144.json": {
+      "sha256": "3a4c6e621ed767cf31f758334973d61857093d2ed14d4dc5c1a32f1f314dbb55"
+    },
+    "Temp/f22a-enum-entries-20261017-1144.json": {
+      "sha256": "13eb3cb42024837601e418352507e66e90b2d5073932d387b1de3ad196fdf625"
+    },
+    "Temp/f22a-native-20261017-1144/manifest.json": {
+      "sha256": "51264ae09afac01a75c39f175275d89865dc9b2c5c4968d9badecce73b7101fc"
+    },
+    "Temp/f22a-socket-native-20261017-1144/manifest.json": {
+      "sha256": "bcc56ea2a269a41228228a7cb2d019a85d5ff4ab09c1a571d83296ab3cfb5a5d"
+    },
+    "Temp/f22a-rack-control-native-20261017-1144/manifest.json": {
+      "sha256": "7e836a1a55015ddbda09abb91ad04cf3a946d822b0848e2ff766bec445d20e68"
+    },
+    "Temp/f22a-pose-publish-native-20261017-1144/manifest.json": {
+      "sha256": "5a8c552944355bebef4d02f17a32b43f3027a8815b7213752998842dc47bbee3"
+    },
+    "Temp/f22a-vtable-native-extended-20261017-1144/manifest.json": {
+      "sha256": "15eb29784ac481768bebecb3b6f767a18f90b05bcbb8b3a70854ef34f8000a1c"
+    },
+    "Temp/f22a-native-pose-sequence-20261017-1144.jsonl": {
+      "sha256": "ef850f4eb789b0ce8b8ff7f3e4aca2d662db7e3dc80f4571cd98636937999ef3"
+    }
+  },
+  "runtime_admission": false,
+  "remaining": "三机产品接线、三字段最新原生请求归还、骨骼发布与发射/显隐时序、Su-47全开端点及容差仍需落实",
+  "continuous_read_only_capture": {
+    "samples": 4500,
+    "duration_seconds": 45.00014689999807,
+    "frequency_hz": 100,
+    "completed": true,
+    "user_actions": "用户确认完成MSL与8AAM切换并再次暂停；窗口中捕获两次完整收拢/打开",
+    "state_transitions": [
+      {
+        "seconds": 0.001,
+        "request": 1,
+        "phase": 2,
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 33.47,
+        "request": 3,
+        "phase": 2,
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 33.48,
+        "request": 3,
+        "phase": 3,
+        "public_progress": 0.9826387763023376
+      },
+      {
+        "seconds": 33.88,
+        "request": 3,
+        "phase": 0,
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 36.12,
+        "request": 1,
+        "phase": 0,
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 36.13,
+        "request": 1,
+        "phase": 1,
+        "public_progress": 0.007361248135566711
+      },
+      {
+        "seconds": 36.53,
+        "request": 1,
+        "phase": 2,
+        "public_progress": 1.0
+      },
+      {
+        "seconds": 39.31,
+        "request": 3,
+        "phase": 3,
+        "public_progress": 0.9826387763023376
+      },
+      {
+        "seconds": 39.711,
+        "request": 3,
+        "phase": 0,
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 42.61,
+        "request": 1,
+        "phase": 0,
+        "public_progress": -0.009999999776482582
+      },
+      {
+        "seconds": 42.62,
+        "request": 1,
+        "phase": 1,
+        "public_progress": 0.007361501455307007
+      },
+      {
+        "seconds": 43.02,
+        "request": 1,
+        "phase": 2,
+        "public_progress": 1.0
+      }
+    ],
+    "per_rack": {
+      "SWP1": {
+        "bone_buffer_changes": 0,
+        "coherent_current_pose_stamp_samples": 0,
+        "observed_animation_flags": [
+          2
+        ]
+      },
+      "SWP2": {
+        "bone_buffer_changes": 0,
+        "coherent_current_pose_stamp_samples": 0,
+        "observed_animation_flags": [
+          2
+        ]
+      },
+      "SWP3": {
+        "bone_buffer_changes": 788,
+        "coherent_current_pose_stamp_samples": 173,
+        "observed_animation_flags": [
+          0
+        ]
+      }
+    },
+    "coherent_frame_samples": 4359,
+    "ammo_world_changes": 1402,
+    "limits": [
+      "100Hz轮询不是函数入口跟踪，不能由此声称证明全部调度顺序",
+      "旧+0x3f字节始终1，不作为真实TickEnabled证明；产品使用实际反射IsComponentTickEnabled",
+      "未选择QAAM/XSDB，未证明其逻辑槽数；未启用多挂或改变骨骼更新字段"
+    ]
+  }
+}
