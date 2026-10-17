@@ -8,7 +8,7 @@
 
 独立分支 `codex/sp-switch-animation-research` 从main／v2.4.0建立；工作区 `E:/AC7_MultiSP/Temp/sp-switch-animation-research`。基于挂载总研究线程 `01a1441b-45a7-7d91-80f2-cf03b98647b1`，不修改其工作区或当前主工作区未提交成果。逐机结论及完整边界见[挂载设计经验](multi-sp-mount-design.md#sp-切换动画的静态研究)。
 
-可取用三个文件：`src/research/analyze_sp_switch_animations.py`是离线分析入口；同目录`sp_switch_animation_policies.json`是16架机体的域划分、交接规则及未解条件；`evidence/sp-switch-animation-research.json`记录47架筛查、29个活动SWP、49份不同序列，以及15架新增机体的105条七组合关联。策略是研究数据，`runtime_enabled=false`，不能作为运行准入表。没有新增编译、测试模块、运行测试或安装。
+可取用的静态资料为：`src/research/analyze_sp_switch_animations.py`分析入口、同目录`sp_switch_animation_policies.json`逐机策略、`evidence/sp-switch-animation-research.json`的47架筛查及105条组合关联。控制器为`src/common_bay_animation.hpp`，YF-23／Su-47／F-22A为全骨架profile，Su-57TG为前两组骨架、第三组静态profile；`src/native_common_bay_parts.hpp`给出带九处代码指纹／owner回指的Parts解析、访问、失败归还及全开姿态候选，`src/owned_bone_refresh.hpp`提供具名反射更新模式租约。宿主契约和旧代码依据见`evidence/sp-common-bay-control.json`，复现入口为`src/research/inspect_common_bay_control.py`。这些文件可按需取用，完整产品Host尚未实现；没有新增编译、测试模块、运行测试或安装。
 
 复现时显式提供原挂载线程的官方资源清单、目录和第三批方案；分析器按实际Pawn参数引用读取，校验资源摘要，拒绝其他压缩格式，输出文件必须不存在。需要本地原件，不下载依赖、不读取游戏进程。参数示意如下，路径须指向本机对应原件，输出仅放Temp：
 
@@ -24,7 +24,17 @@ python -X utf8 src/research/analyze_sp_switch_animations.py `
   --output Temp/sp-animation-review.json
 ```
 
-`Temp/input-manifests.json`列出参考线程的`Temp/batch3-manifests.json`实际输入清单，前三个本工作区提取批次补齐47架参数表、仅标志机体的Body和F-35C Body序列。原件均留本机Temp。上游目录与批次的SHA256、每个实际使用资源对的摘要写入回执；本轮回执不依赖上游尚未合并代码。接入线程可按需取此分支的三个文件；设计章节与证据索引按差异整合，避免覆盖其后续文档。
+`Temp/input-manifests.json`列出参考线程的`Temp/batch3-manifests.json`实际输入清单，前三个本工作区提取批次补齐47架参数表、仅标志机体的Body和F-35C Body序列。原件均留本机Temp。上游目录与批次的SHA256、每个实际使用资源对的摘要写入回执；本轮回执不依赖上游尚未合并代码。接入线程可按需取此分支文件；设计章节与证据索引按差异整合，避免覆盖其后续文档。
+
+独立共舱控制器不包含产品注册或新钩子；Parts访问头的偏移来自同一通用原生包装链，不能省略指纹和owner检查。Host的`nativeStateAccessQualified`、`allSevenLayoutQualified`及隐藏provider刷新资格必须逐项获得真实依据，不能因位于白名单便填true。武器mask与requiredRackMask分开；静态TG第三组不进入骨架租约。非同舱的`NativeTransition`是正常原生旁路；`native_parts::writeCover`只将`CoverWriteStatus::Applied`视作成功，部分写入、已恢复、恢复不完整和身份变化都需准确记录并回退视觉，不回滚弹药。模式租约须全prepare后再取得，原生字段请求与自身写入分开；退出逐组件归还，恢复失败阻止新绑定。首版保留原网格/Skeleton/AnimClass；资源替换不在这几个头的授权／身份契约内。YF-23当前几何仍受固定隔框／支撑阻塞，白名单不表示整机放行。
+
+共舱原生依据回执可独立复现，不生成或执行测试模块：
+
+```powershell
+python -X utf8 src/research/inspect_common_bay_control.py `
+  --capture-root E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype/Temp `
+  --tools-root E:/AC7_MultiSP/tools --output Temp/common-bay-review.json
+```
 
 ## 有效入口
 

@@ -200,6 +200,49 @@ F-22A的SWP1／SWP2参考骨架完全相同，但15根同名骨骼轨不完全�
 
 复核旧F-35C只读采样的完整区段摘要和函数入口后，确认 `0x1ce6d70` 中公共进度按原生选择编号仅写相应分通道：0→`180/194/190`，1→`184/18c/194`，2→`188/18c/190`，其他分通道没有在这里自动收拢。它提供“为何需要非当前通道维护”的代码依据，不提供其他机体／展示实例的运行地址证明。磁盘EXE该位置仍为加壳字节，本轮分析使用已核对摘要的旧采样，没有访问游戏进程。
 
+### 共舱控制代码与宿主契约
+
+可取用的独立源码为[共舱控制器](../src/common_bay_animation.hpp)、[原生Parts访问候选](../src/native_common_bay_parts.hpp)及[骨骼刷新模式租约](../src/owned_bone_refresh.hpp)，接口／旧代码依据见[控制回执](../evidence/sp-common-bay-control.json)。控制器不含进程偏移；Parts访问候选使用经旧明文逐段核对的本build包装链。尚未实现完整产品Host、注册新钩子或修改2.7模型层，新机体不能据此称为可安装。
+
+首版控制白名单限定YF-23、Su-47、Su-57 Top Gun、F-22A。YF-23／Su-47的三组都用公共spwc，不必先实现逐节点输出改值：保留完整原生Parts更新和各自原生AnimGraph，保存同舱换槽前的连续状态，并维持真正被使用的骨架组件。F-22A同样保留各组原生曲线；若几何方案全部借SWP3，传`requiredRackMask=100`即可，不要求源SWP1／2的曲线与SWP3相同。Su-57TG另有明确混合profile：骨架组掩码`011`，静态组掩码`100`；SWP3静态资源没有Skeleton或AnimClass，不读写其暂停／骨架Tick字段。仅原生配置0／1互切继承同舱快照，出入LACM配置2返回正常`NativeTransition`并沿原生切换；没有承诺LACM出入舱也继承开门进度。
+
+**武器集合与物理provider必须分开。** `bind`分别接收真实选装的`equipped`和`requiredRackMask`；后者严格等于经布局核对的`providerMask | presentationMask`。控制对象为`requiredRackMask & animatedMask`，包含被借用的未选SP骨架，不反向修改选装编号、弹药或武器集合。例如布局线程提出YF-23的HVAA＋4AAM：HVAA借SWP3点、4AAM用SWP2、只显SWP2完整架，则`equipped=011`而`requiredRackMask=110`。不能因未选UGB便停止SWP3；这是接口示例，具体七组合选位与扫掠由几何线程核对。
+
+| 调用位置 | 源码接口及要求 |
+|---|---|
+| 初次完整绑定 | `bind(host, aircraft, binding, equipped, requiredRackMask)`；先读完全部资源、实例资格与原生基线，再进行第一笔控制写入；七组合、当次provider／呈现架证明缺项均拒绝 |
+| 原生暂停／Tick请求 | `nativeRequest(..., changedFields)`；位0只记录Pause、位1只记录Tick，返回控制期间的有效请求；模组自己的写入用重入标记绕过，避免污染原生意图 |
+| 真正的SP→SP同步重建前 | `captureSwitch`；只接受同一绑定、组合内不同配置和递增事务号；TG出入配置2按`NativeTransition`正常旁路，不调用恢复 |
+| InitializeWeaponSystem后、keepArmed前 | `restoreSwitch`；快照只能使用一次，核对新原生配置后恢复请求／phase／七个进度，回读一致；不写原生选择编号；随后立即`maintain` |
+| 原生模型重建后 | 观察原生直接Pause写入，随后立即`maintain`；定时巡检只兜底，不替代同步处理 |
+| 失败、退出、重建、关闭 | `release`逐组件归还最新原生请求；已失效对象丢弃；一个恢复失败不妨碍其他组件，待恢复项保留，`RestorePending`期间拒绝新绑定 |
+
+Host须沿`SkeletalMeshComponent`／`StaticMeshComponent`反射父链识别组件，接受合法派生类；不能把现模型层的精确`StaticMeshComponent`检查直接换成另一短类名，也不能把静态网格字段偏移用于骨架网格。实际网格／Skeleton／AnimClass完整包路径、父链、骨骼Socket及原生池对应由Host确认；头文件的短名检查是第二道核对。Body与SWP仍保持各自原父链和原AnimClass，不把所有SP叠成多套门体，不因隐藏支架网格而递归隐藏武器。
+
+**隐藏provider开Tick不等于骨骼已刷新。** `owned_bone_refresh.hpp`给出可执行的独立模式租约：Host沿真实反射父链解析`MeshComponentUpdateFlag`或`VisibilityBasedAnimTickOption`及对应Engine枚举，恰有一项可用且能唯一解析`AlwaysTickPoseAndRefreshBones`才准备；不猜偏移、枚举数字或原生底层宽度。全部所需骨架先`prepare`读取描述符和原生值，再`acquireOrMaintain`取得模式；控制器随后才强制必要Pause／Tick。`nativeRequest`记最新原生模式，自身写入用重入标记绕过；`release`先归还Pause／Tick再归还模式，失败保留重试，死亡对象不再写入。模式字段由Host按组件索引／序列号及属性代次排他持有，不碰bNoSkeletonUpdate，不强制显示组件。实际字段／枚举不可得、描述符改变或原生写入意图无法可靠观察时仍须拒绝绑定，不能把Tick=true当作通过。`hiddenProviderPoseRefreshQualified`表示这条元数据和所有权路径已准备合格，实际取得及回读由`Host.acquirePoseRefresh`保证。
+
+#### 具体Parts访问候选
+
+`native_common_bay_parts.hpp`不再把全部存储细节留给抽象Host。旧明文已串起通用原生链：`PlayerPlane+1408`包装器，包装器`+8`指向原生实例；`1cd3150`将`PlayerPlane+b40`接口记录在实例`+1268`，实例`+f90`构造同一Parts类型；`1cd55e1→1ce93a0→1ce6d70`沿这份Parts推进，原生输入为`Parts+c`。参数不是从F-35C名称外推。旧反射字段清单没有暴露一个可直接按名字读取的FlightEngine属性，因此没有虚构反射字段名；这里使用原生链指纹与owner回指作交叉约束。
+
+候选`resolve/read/writeCover`核对九处原始代码片段、`/Script/Nimbus.PlayerPlane`继承及规范机型包、包装器实例、owner回指、原生vtable、盖板flag、PlaneSWP与引擎编号、四态／进度范围。engine与Parts是原生C++对象／子对象，不调用UObject序列号接口；生命周期仍锚定世界、玩家、激活器和Host的generation。若相关入口已由本产品钩住，只能使用自身已核对的原始字节／跳板归属，不接受任意跳转。
+
+`writeCover`先预检request、phase及完整七进度写区；每笔前重新核对身份，写后回读配置和字段。部分写入或回读不符时，同一绑定仍有效才逐区尽力恢复写前cover，一个区恢复失败继续尝试其他区；配置编号始终不写。返回值区分`Applied`、`RejectedBeforeWrite`、`FailedRolledBack`、`FailedRollbackIncomplete`、`IdentityChanged`，Host只将Applied转换为成功，其余记录准确结果并独立回退视觉。身份变化后不再访问旧engine／Parts，也不回滚弹药事务。
+
+#### 内部弹体的保守全开显示
+
+旧求值文本和本build磁盘常量支持“目标时间参数＝`(节点缓存的channel_output+1)*0.5*序列对象+0x88处float`”。该float按序列接口候选解释为SequenceLength，但旧采样未保存其属性元数据／对象内容，不能把这条解释当成新机全开资源帧正式映射证明。channel_output也不是已经证明与Parts公共progress相等的量；Parts到Body的完整转换、端点／覆盖序列分支仍未全部核对。因此不把0.87当Parts阈值，也不把Parts的-0.01直接换成49.5资源帧。
+
+较小范围候选是`nativeFullyOpen`检查原生request／phase均为2且公共进度恰为1，再通过实际provider的组件空间Socket姿态确认端点。`matchesComponentEndPose`已提供位置、四元数（兼容q／-q）和缩放比较，容差由几何注册给出，不设猜测默认值；`mayShowInternalAmmo`还要求同一绑定代次、同一帧和provider，以及已完成骨骼／世界变换更新的见证。宿主getter须实际反射核对`GetSocketTransform`参数／返回结构及`RTS_Component`具名枚举值；旧采样没有这组完整元数据，本轮没有猜参数偏移或RTS数字，也没有调用游戏取位。
+
+该门控仅控制方案标记的内部ammo组件，关闭状态一开始便隐藏，门体／导轨／机体仍按原生动画显示；不改变原生发射门控。必须每帧在正确动画／取位时点使用，不能靠低频巡检；显示和实际离架使用同一provider及同一映射。它不证明全程实体净空，不能掩盖固定隔框碰撞或缺少支撑。YF-23虽保留控制profile，几何线程最新结论为借位撞固定隔框或失去支撑，故整机继续暂缓。
+
+旧采样中`0x7f0210`路径在`0x7f0297`调用Tick关闭后，`0x7f029d`仍直接写Pause位；本次已核对原采集manifest和代码摘要。所以只拦Tick会漏掉后写的Pause，接口需要分别记账、在直接Pause写入后同步恢复必要更新。`0x3f83b0`逐节点缓存路径目前只有旧反汇编文本线索，47MB小转储不含所查主映像代码页；没有据此安装新钩子，也没有附加游戏取新字节。YF-23／Su-47首版保留原生求值，不依赖这个未核对入口。
+
+首批真实阻塞已收窄为：把Parts候选及模式租约接到产品安全访问／反射层，核对新机运行实例和正确动画调度，接入原生请求观察、原生Socket组件空间取位及同帧见证，以及取得几何线程的完整七组合公共架证明。F-22A可按唯一SWP3 provider路线整合接口；FB-22仍保留spwc／swcc协调研究。普通Su-57的Body读swcc、SWP1读spwc，离开0／1后分通道收拢与聚合不能直接套TG profile，后置。
+
+ADF-01最小方案先沿现有`finishPlayerTLS`结束x2，再做兵装切换；既有源码会核对玩家归属、TLS编号和真实end／release／detach，不要求把持续保有扩展到x2。鼻门的Body swc1与SWP1 spwc仍需独立源域：不能把4AAM／FAEB的公共请求写给旧TLS炮体，也不能把TLS已结束当作所有门体已收拢。源域的收拢及SWP1路由没有纳入这个共舱头，不阻塞首批三机控制接口交付。
+
 ### 七组合交付边界
 
 回执的 `layout_overlay` 将15架新增活动机体的七组合逐项关联到上述动画设计，共105条；F-35C另作为既有参考。保留上游选位、所属组及阻塞类别，不把条件选位改写成已解决布局。新增运行准入仍为零：共用导轨、骨架网格呈现粒度、弹体／盖板扫掠、固定武器生命周期及运行身份条件尚未全部满足。遵守参考线程“整机七组合齐全才接入”，不单独启用其中某条组合。

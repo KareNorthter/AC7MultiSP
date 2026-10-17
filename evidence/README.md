@@ -2,7 +2,7 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
-- [SP切换动画静态研究](sp-switch-animation-research.json)：47架实际参数引用筛查、16架29个活动SWP、49份不同序列；逐轨摘要、Socket原点取样、同名轨比较、旧原生分通道代码摘要，以及15架105条七组合关联。只落地动画设计，新增整机准入为零；未编译、运行测试、安装或操作游戏。方案正文见[挂载设计经验](../docs/multi-sp-mount-design.md#sp-切换动画的静态研究)。
+- [SP切换动画静态研究](sp-switch-animation-research.json)：47架筛查、16架29个活动SWP、49份不同序列及105条组合关联。[限定共舱控制](sp-common-bay-control.json)绑定控制器、原生Parts访问候选和反射刷新模式租约指纹，覆盖YF-23／Su-47／Su-57TG／F-22A；含包装链、owner、九处原始代码签名、部分写入失败归还和全开端点姿态候选。静态第三组、未选SP的provider及最新原生请求分别管理；完整产品Host和实际实例／调度／取位未验证，YF-23几何受阻，新增整机准入仍为零。未编译、运行测试、安装或操作游戏。正文见[挂载设计经验](../docs/multi-sp-mount-design.md#sp-切换动画的静态研究)。
 
 - [F-15E补给模型观察](resupply-model-observation-20261016.json)：ms06补给展示任务玩家本体，保留入场前多挂状态；只读采样及实现约束，不代表动态预览已实现。
 

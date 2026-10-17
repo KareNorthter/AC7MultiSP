@@ -15,7 +15,7 @@
 - 用户要求禁用`proportional guided missile_P.pak`，已移至backup/disabled-guidance-20261016-231440，原PAK哈希和恢复路径见其中disable-receipt.json；其他模组保留。
 - 2.4.0已作为本地正式版提交main并标记v2.4.0，未制作ZIP或远端发布；2.0/2.0.0均未制作ZIP；本地旧包 `Release/AC7DualSP-1.1.0.zip` 保持原发布字节。验证凭据按需查[证据索引](evidence/README.md)。
 
-- 本支线`codex/sp-switch-animation-research`仅做SP切换动画静态研究：47架按实际Pawn参数引用筛查，16架29个活动SWP，另核对6架仅配置标志机体；解码49份不同序列，给出16架动画交接设计及15架105条七组合关联。没有新增运行准入，不编译、运行测试、安装或操作游戏；逐机设计与未解条件见挂载设计经验的“SP切换动画的静态研究”，数据见evidence/sp-switch-animation-research.json。取用方法见开发说明，当前主工作区其他线程成果不在本支线改动范围。
+- 本支线`codex/sp-switch-animation-research`做SP动画静态研究：47架筛查、16架29个活动SWP、49份序列及15架105条组合关联。独立控制头`src/common_bay_animation.hpp`限定YF-23／Su-47／Su-57TG／F-22A，武器集合与provider／呈现架mask分开，TG静态第三组不读骨架字段；`native_common_bay_parts.hpp`给出原生包装链指纹、owner约束、Parts访问与部分写入失败归还；`owned_bone_refresh.hpp`给出具名反射刷新模式租约。完整产品Host、实际实例／动画调度、Socket反射取位及七组合几何仍待核对，未新增运行准入；YF-23当前几何仍受阻，不能因白名单便放行。回执为evidence/sp-switch-animation-research.json和sp-common-bay-control.json，说明见挂载设计经验／开发说明。不编译、运行测试、安装或操作游戏，不修改主工作区与用户正在测试的分支。
 
 ## 工作规则
 
