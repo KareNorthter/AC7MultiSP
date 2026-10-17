@@ -3,7 +3,8 @@
 
 struct MountAnimationExactPose {
     struct Component {
-        MountIdentity object,mesh,skeleton,animClass,animInstance;
+        MountIdentity object,componentClass,mesh,skeleton,animClass,animInstance;
+        MountAnimationReflection::Field masterPose;
         size_t meshOffset{},skeletonOffset{},classOffset{},instanceOffset{},meshSocketsOffset{};
         std::vector<std::array<unsigned,10>> bones;
     };
@@ -45,8 +46,11 @@ struct MountAnimationExactPose {
         return true;
     }
     void clear() { *this={}; }
-    void bindComponent(unsigned slot,Addr object,const Json& reference) {
+    void bindComponent(unsigned slot,Addr object,const Json& reference,MountAnimationReflection& reflection) {
         auto& c=components.at(slot);c.object=mountIdentity(object);
+        c.componentClass=mountIdentity(read<Addr>(object+0x10));
+        c.masterPose=reflection.field(c.componentClass.address,"MasterPoseComponent","WeakObjectProperty",8,
+                                      reflection.typeSize(c.componentClass.address),true);
         c.meshOffset=mountProperty(object,"SkeletalMesh","ObjectProperty",8);
         c.classOffset=mountProperty(object,"AnimClass","ClassProperty",8);
         c.instanceOffset=mountProperty(object,"AnimScriptInstance","ObjectProperty",8);
@@ -108,10 +112,10 @@ struct MountAnimationExactPose {
         require(reference.at("geometry_passed_at_reference").get<bool>(),"Su-47：真实端点几何未通过");
         required=(state.animationDescription.providerMask|state.animationDescription.presentationMask)|8u;
         const Addr body=read<Addr>(state.plane.address+mountProperty(state.plane.address,"PlaneBodyMesh","ObjectProperty",8));
-        bindComponent(3,body,reference.at("body"));
+        bindComponent(3,body,reference.at("body"),host.access.reflection);
         for(unsigned i=0;i<3;++i)if(required&(1u<<i)) {
             const auto key="SWP"+std::to_string(i+1);
-            bindComponent(i,state.animationRacks[i].address,reference.at("providers").at(key));
+            bindComponent(i,state.animationRacks[i].address,reference.at("providers").at(key),host.access.reflection);
             bindSockets(i,reference.at("socket_expectations").at(key));
         }
         const auto& r=reference.at("relative_components");
@@ -120,7 +124,8 @@ struct MountAnimationExactPose {
         generation=host.binding.generation;prepared=true;
     }
     bool resourcesCurrent(const Component& c) const {
-        return mountAlive(c.object) && mountAlive(c.mesh) && mountAlive(c.skeleton) && mountAlive(c.animClass) && mountAlive(c.animInstance) &&
+        return mountAlive(c.object) && mountAlive(c.componentClass) && read<Addr>(c.object.address+0x10)==c.componentClass.address &&
+            mountAlive(c.mesh) && mountAlive(c.skeleton) && mountAlive(c.animClass) && mountAlive(c.animInstance) &&
             read<Addr>(c.object.address+c.meshOffset)==c.mesh.address && read<Addr>(c.object.address+c.classOffset)==c.animClass.address &&
             read<Addr>(c.object.address+c.instanceOffset)==c.animInstance.address && read<Addr>(c.mesh.address+c.skeletonOffset)==c.skeleton.address &&
             read<int>(c.mesh.address+c.meshSocketsOffset+8)==0;

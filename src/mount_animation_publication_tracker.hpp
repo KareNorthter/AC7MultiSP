@@ -82,7 +82,8 @@ struct MountAnimationPublicationTracker {
         int writeIndex{},readIndex{};
         std::array<unsigned char,48> componentToWorld{};
     };
-    static Snapshot snapshot(MountAnimationProductAccess& api,Identity provider) {
+    static Snapshot snapshot(MountAnimationProductAccess& api,Identity provider,
+                             const MountAnimationReflection::Field* boundMaster=nullptr) {
         MountAnimationReflection::thread();
         require(api.alive(provider),"动画发布：组件身份失效");
         const Addr p=provider.address;
@@ -93,10 +94,16 @@ struct MountAnimationPublicationTracker {
         s.doubleBuffered=mountAnimationRead<unsigned char>(p+0x750);
         s.writeIndex=mountAnimationRead<int>(p+0x748);s.readIndex=mountAnimationRead<int>(p+0x74c);
         // 原生取位先尝试MasterPose，再走自己的+74c；本版本仅接受没有MasterPose的原版独立挂架。
-        auto& r=api.reflection;
-        r.bindSdk();
-        const Addr cls=mountAnimationRead<Addr>(p+0x10);
-        const auto master=r.field(cls,"MasterPoseComponent","WeakObjectProperty",8,r.typeSize(cls),true);
+        MountAnimationReflection::Field master;
+        if(boundMaster) {
+            master=*boundMaster;MountAnimationReflection::alive(master.identity);
+            require(mountAnimationRead<int>(master.identity.address+0x44)==master.offset &&
+                    mountAnimationRead<int>(master.identity.address+0x34)==8,"动画发布：已绑定MasterPose字段布局改变");
+        } else {
+            auto& r=api.reflection;r.bindSdk();
+            const Addr cls=mountAnimationRead<Addr>(p+0x10);
+            master=r.field(cls,"MasterPoseComponent","WeakObjectProperty",8,r.typeSize(cls),true);
+        }
         require(master.offset==0x720 && mountAnimationRead<int>(p+master.offset+4)==0 &&
                 (mountAnimationRead<int>(p+master.offset)==0 || mountAnimationRead<int>(p+master.offset)==-1),
                 "动画发布：MasterPose挂架不能使用独立缓冲见证");

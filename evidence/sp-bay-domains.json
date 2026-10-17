@@ -1,0 +1,2379 @@
+{
+  "steam_build": 9855922,
+  "game_process_access": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "runtime_ready": false,
+  "f22a": {
+    "body_abdominal_spwc": [
+      {
+        "name": "SWPCover_15",
+        "parent": 0,
+        "reference_component": [
+          66.46096801757812,
+          -7.247285842895508,
+          -6.444076538085941
+        ]
+      },
+      {
+        "name": "SWPCover_14",
+        "parent": 0,
+        "reference_component": [
+          66.46096801757812,
+          7.235494613647461,
+          -6.444076538085941
+        ]
+      },
+      {
+        "name": "SWPCover_13",
+        "parent": 0,
+        "reference_component": [
+          64.65471649169922,
+          2.0305305898607635e-14,
+          -6.89877557754517
+        ]
+      },
+      {
+        "name": "SWPCover_12",
+        "parent": 0,
+        "reference_component": [
+          47.750003814697266,
+          -9.920000076293945,
+          -8.644475936889652
+        ]
+      },
+      {
+        "name": "SWPCover_04",
+        "parent": 44,
+        "reference_component": [
+          47.75000381469727,
+          -3.6851277351379395,
+          -8.717635795474056
+        ]
+      },
+      {
+        "name": "SWPCover_02",
+        "parent": 45,
+        "reference_component": [
+          66.46197319030762,
+          -0.9064137935638428,
+          -8.214955613017086
+        ]
+      },
+      {
+        "name": "SWPCover_11",
+        "parent": 0,
+        "reference_component": [
+          47.750003814697266,
+          9.92026424407959,
+          -8.644475936889652
+        ]
+      },
+      {
+        "name": "SWPCover_03",
+        "parent": 47,
+        "reference_component": [
+          47.75000381469726,
+          3.685391902923584,
+          -8.717635795474056
+        ]
+      },
+      {
+        "name": "SWPCover_01",
+        "parent": 48,
+        "reference_component": [
+          66.46197319030762,
+          0.9066779613494873,
+          -8.214955613017086
+        ]
+      }
+    ],
+    "body_native_msl_lateral_misc": [
+      {
+        "name": "Missile_Cover_10",
+        "parent": 0,
+        "reference_component": [
+          48.12192153930664,
+          13.25104808807373,
+          -7.284712791442875
+        ]
+      },
+      {
+        "name": "Missile_Cover_09",
+        "parent": 0,
+        "reference_component": [
+          48.12194061279297,
+          16.79112434387207,
+          -2.133914470672611
+        ]
+      },
+      {
+        "name": "Missile_Cover_06",
+        "parent": 0,
+        "reference_component": [
+          52.079139709472656,
+          10.090229988098145,
+          -1.3263306617736852
+        ]
+      },
+      {
+        "name": "Missile_Cover_07",
+        "parent": 22,
+        "reference_component": [
+          45.079163562900895,
+          11.903532807443343,
+          -2.5724523028409356
+        ]
+      },
+      {
+        "name": "Missile_Cover_08",
+        "parent": 22,
+        "reference_component": [
+          32.579019779327034,
+          12.92552143672986,
+          -3.2747849170029895
+        ]
+      },
+      {
+        "name": "Missile_Cover_05",
+        "parent": 0,
+        "reference_component": [
+          48.12192153930664,
+          -13.25,
+          -7.284712791442875
+        ]
+      },
+      {
+        "name": "Missile_Cover_04",
+        "parent": 0,
+        "reference_component": [
+          48.12194061279297,
+          -16.790000915527344,
+          -2.133914470672611
+        ]
+      },
+      {
+        "name": "Missile_Cover_01",
+        "parent": 0,
+        "reference_component": [
+          52.079139709472656,
+          -10.090229988098145,
+          -1.3263306617736852
+        ]
+      },
+      {
+        "name": "Missile_Cover_02",
+        "parent": 27,
+        "reference_component": [
+          45.079161572228045,
+          -11.903533004414607,
+          -2.572453075521918
+        ]
+      },
+      {
+        "name": "Missile_Cover_03",
+        "parent": 27,
+        "reference_component": [
+          32.579019346621095,
+          -12.92552026305588,
+          -3.2747856193393003
+        ]
+      }
+    ],
+    "swp3_abdominal_spwc": [
+      {
+        "name": "SWPCover_24",
+        "parent": 0,
+        "reference_component": [
+          45.32828903198242,
+          7.734975337982178,
+          -5.373363018035889
+        ]
+      },
+      {
+        "name": "SWPCover_10",
+        "parent": 15,
+        "reference_component": [
+          47.40170383453369,
+          7.734975337982177,
+          -4.982112109661102
+        ]
+      },
+      {
+        "name": "SWPCover_09",
+        "parent": 15,
+        "reference_component": [
+          43.558698534965515,
+          7.734975337982179,
+          -5.257657542824745
+        ]
+      },
+      {
+        "name": "SWPCover_23",
+        "parent": 0,
+        "reference_component": [
+          47.08116912841797,
+          7.734975337982178,
+          -4.170907020568848
+        ]
+      },
+      {
+        "name": "SWPCover_22",
+        "parent": 0,
+        "reference_component": [
+          43.5567741394043,
+          7.734975337982178,
+          -4.122028827667236
+        ]
+      },
+      {
+        "name": "SWPCover_21",
+        "parent": 0,
+        "reference_component": [
+          48.90742874145508,
+          4.968006134033203,
+          -5.373363018035889
+        ]
+      },
+      {
+        "name": "SWPCover_08",
+        "parent": 20,
+        "reference_component": [
+          50.98084354400635,
+          4.968006134033202,
+          -4.982112109661102
+        ]
+      },
+      {
+        "name": "SWPCover_07",
+        "parent": 20,
+        "reference_component": [
+          47.13783824443817,
+          4.968006134033203,
+          -5.257657542824745
+        ]
+      },
+      {
+        "name": "SWPCover_20",
+        "parent": 0,
+        "reference_component": [
+          50.66177749633789,
+          4.968006134033203,
+          -4.15228271484375
+        ]
+      },
+      {
+        "name": "SWPCover_19",
+        "parent": 0,
+        "reference_component": [
+          47.13738250732422,
+          4.968006134033203,
+          -4.140653133392334
+        ]
+      },
+      {
+        "name": "SWPCover_18",
+        "parent": 0,
+        "reference_component": [
+          45.32828903198242,
+          2.1197516918182373,
+          -5.373363018035889
+        ]
+      },
+      {
+        "name": "SWPCover_06",
+        "parent": 25,
+        "reference_component": [
+          47.40170383453369,
+          2.1197516918182466,
+          -4.982112109661102
+        ]
+      },
+      {
+        "name": "SWPCover_05",
+        "parent": 25,
+        "reference_component": [
+          43.558698534965515,
+          2.1197516918182377,
+          -5.257657542824745
+        ]
+      },
+      {
+        "name": "SWPCover_17",
+        "parent": 0,
+        "reference_component": [
+          43.5567741394043,
+          2.119764566421509,
+          -4.122028827667236
+        ]
+      },
+      {
+        "name": "SWPCover_16",
+        "parent": 0,
+        "reference_component": [
+          47.08116912841797,
+          2.1197516918182373,
+          -4.170907020568848
+        ]
+      }
+    ],
+    "swp3_8aam_lateral_spwc": [
+      {
+        "name": "SWPCover_38",
+        "parent": 0,
+        "reference_component": [
+          25.281370162963867,
+          -36.61800003051758,
+          -4.536243915557861
+        ]
+      },
+      {
+        "name": "SWPCover_37",
+        "parent": 0,
+        "reference_component": [
+          21.756973266601562,
+          -36.61800003051758,
+          -4.536243915557861
+        ]
+      },
+      {
+        "name": "SWPCover_36",
+        "parent": 0,
+        "reference_component": [
+          25.281370162963867,
+          36.61800003051758,
+          -4.5362420082092285
+        ]
+      },
+      {
+        "name": "SWPCover_35",
+        "parent": 0,
+        "reference_component": [
+          21.756973266601562,
+          36.61800003051758,
+          -4.5362420082092285
+        ]
+      },
+      {
+        "name": "SWPCover_34",
+        "parent": 0,
+        "reference_component": [
+          23.52656364440918,
+          36.61800003051758,
+          -5.8631591796875
+        ]
+      },
+      {
+        "name": "SWPCover_28",
+        "parent": 5,
+        "reference_component": [
+          25.59997844696045,
+          36.61800003051757,
+          -5.471908271312714
+        ]
+      },
+      {
+        "name": "SWPCover_27",
+        "parent": 5,
+        "reference_component": [
+          21.756973147392273,
+          36.61800003051758,
+          -5.7474537044763565
+        ]
+      },
+      {
+        "name": "SWPCover_33",
+        "parent": 0,
+        "reference_component": [
+          23.52656364440918,
+          -36.61800003051758,
+          -5.8631591796875
+        ]
+      },
+      {
+        "name": "SWPCover_26",
+        "parent": 8,
+        "reference_component": [
+          25.59997844696045,
+          -36.618000030517585,
+          -5.471908271312714
+        ]
+      },
+      {
+        "name": "SWPCover_25",
+        "parent": 8,
+        "reference_component": [
+          21.756973147392273,
+          -36.61800003051758,
+          -5.7474537044763565
+        ]
+      },
+      {
+        "name": "SWPCover_32",
+        "parent": 0,
+        "reference_component": [
+          22.5,
+          29.850557327270508,
+          -7.5
+        ]
+      },
+      {
+        "name": "SWPCover_31",
+        "parent": 0,
+        "reference_component": [
+          22.5,
+          39.385440826416016,
+          -7.5
+        ]
+      },
+      {
+        "name": "SWPCover_30",
+        "parent": 0,
+        "reference_component": [
+          22.5,
+          -29.850557327270508,
+          -7.5
+        ]
+      },
+      {
+        "name": "SWPCover_29",
+        "parent": 0,
+        "reference_component": [
+          22.513450622558594,
+          -39.385440826416016,
+          -7.5
+        ]
+      }
+    ],
+    "reference_y_partition_gap": [
+      7.734975337982179,
+      29.850557327270508
+    ],
+    "current_8aam_slots": {
+      "5": [
+        "sp31",
+        "sp32",
+        "sp33",
+        "sp34",
+        "sp35",
+        "sp36",
+        "sp37",
+        "sp38"
+      ],
+      "6": [
+        "sp31",
+        "sp32",
+        "sp33",
+        "sp34",
+        "sp35",
+        "sp36",
+        "sp37",
+        "sp38"
+      ],
+      "7": [
+        "sp31",
+        "sp32",
+        "sp33",
+        "sp34",
+        "sp35",
+        "sp36",
+        "sp37",
+        "sp38"
+      ]
+    },
+    "swp3_sockets": [
+      {
+        "name": "sp31",
+        "bone": "SWPCover_29",
+        "local_position": [
+          -2.028291702270508,
+          2.2210159301757812,
+          4.849999904632568
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp32",
+        "bone": "SWPCover_31",
+        "local_position": [
+          2.028291702270508,
+          2.2210159301757812,
+          4.849999904632568
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp37",
+        "bone": "SWPCover_30",
+        "local_position": [
+          2.028291702270508,
+          2.2210159301757812,
+          4.849999904632568
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp38",
+        "bone": "SWPCover_32",
+        "local_position": [
+          -2.028291702270508,
+          2.2210159301757812,
+          4.849999904632568
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp42",
+        "bone": "SWPCover_21",
+        "local_position": [
+          -0.0172137264162302,
+          1.3993825912475586,
+          0.15012948215007782
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp41",
+        "bone": "SWPCover_21",
+        "local_position": [
+          9.905620574951172,
+          1.3993825912475586,
+          0.15012948215007782
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp34",
+        "bone": "SWPCover_34",
+        "local_position": [
+          -2.1315372578101233e-08,
+          1.3366813659667969,
+          0.07343640923500061
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp36",
+        "bone": "SWPCover_34",
+        "local_position": [
+          4.0,
+          1.3366813659667969,
+          0.07343640923500061
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp33",
+        "bone": "SWPCover_33",
+        "local_position": [
+          1.9999994549380062e-08,
+          1.3366813659667969,
+          0.0729999989271164
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp35",
+        "bone": "SWPCover_33",
+        "local_position": [
+          -4.0,
+          1.3366813659667969,
+          0.0729999989271164
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp40",
+        "bone": "SWPCover_24",
+        "local_position": [
+          -0.009086191654205322,
+          1.3993825912475586,
+          0.2355058789253235
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp39",
+        "bone": "SWPCover_24",
+        "local_position": [
+          15.589542388916016,
+          1.3993825912475586,
+          0.2355058789253235
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp44",
+        "bone": "SWPCover_18",
+        "local_position": [
+          1.3322676295501878e-15,
+          1.3994160890579224,
+          0.2355058789253235
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      },
+      {
+        "name": "sp43",
+        "bone": "SWPCover_18",
+        "local_position": [
+          4.247039794921875,
+          1.3993825912475586,
+          0.2355058789253235
+        ],
+        "rotation_serialized": true,
+        "scale_serialized": false
+      }
+    ],
+    "parts_flags": {
+      "bOptionsAnimAbkLcover": false,
+      "bOptionsAnimWpCover": false,
+      "bPartsExistsPartsGuncoverExist": true,
+      "bPartsExistsPartsMsslcoverExist": true,
+      "bPartsExistsPartsSpwccoverExist": true,
+      "bPartsExistsPartsSpw1coverExist": false,
+      "bPartsExistsPartsSpw2coverExist": false,
+      "bPartsExistsPartsSpw3coverExist": false
+    },
+    "conclusion": "Body普通MSL侧门misc不是当前sp31..38所在8AAM侧部机构；SWP3腹侧两组同读spwc，逐组件单一通道覆盖也不能拆开它们",
+    "resource_route": {
+      "clone_table": "PlaneBodyConfig → F22专用表，不修改全局原表",
+      "rebind_existing_blueprint_clones": [
+        "f22a_AnimBP",
+        "f22a_SWP3_AnimBP"
+      ],
+      "bone_remaps": [
+        {
+          "bone": "SWPCover_15",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_14",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_13",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_12",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_04",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_02",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_11",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_03",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_01",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_24",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_10",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_09",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_23",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_22",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_21",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_08",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_07",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_20",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_19",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_18",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_06",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_05",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_17",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_16",
+          "from": "spwc",
+          "to": "swcc"
+        },
+        {
+          "bone": "SWPCover_38",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_37",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_36",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_35",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_34",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_28",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_27",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_33",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_26",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_25",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_32",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_31",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_30",
+          "from": "spwc",
+          "to": "swc3"
+        },
+        {
+          "bone": "SWPCover_29",
+          "from": "spwc",
+          "to": "swc3"
+        }
+      ],
+      "unchanged": "原Mesh/Skeleton/AnimSequence/Socket选位及所有非目标骨行；misc/gunc原生",
+      "native_anim_instance_new_variables_required_by_routing": false,
+      "independent_visual_output_writer_qualified": false,
+      "reason": "原生表已实际使用swcc/swc3，但改表本身不提供独立域收尾与新写端资格；不把两个现有名字当新机输出写端已经完成"
+    },
+    "unqualified": "未证明可安全写的第二独立视觉输出字段/逐骨节点参数入口；不猜Parts偏移，不改原生发射门控所需public状态"
+  },
+  "su57tg": {
+    "first_two_tracks_equal": true,
+    "parts_flags": {
+      "bOptionsAnimAbkLcover": false,
+      "bOptionsAnimWpCover": false,
+      "bPartsExistsPartsGuncoverExist": true,
+      "bPartsExistsPartsMsslcoverExist": true,
+      "bPartsExistsPartsSpwccoverExist": true,
+      "bPartsExistsPartsSpw1coverExist": false,
+      "bPartsExistsPartsSpw2coverExist": false,
+      "bPartsExistsPartsSpw3coverExist": false
+    },
+    "animated_rack_mask": 3,
+    "snapshot_domain_mask_candidate": 7,
+    "static_third": {
+      "sockets": [
+        {
+          "name": "sp31",
+          "bone": null,
+          "local_position": [
+            10.899999618530273,
+            -2.700000047683716,
+            -1.600000023841858
+          ],
+          "rotation_serialized": false,
+          "scale_serialized": false
+        },
+        {
+          "name": "sp32",
+          "bone": null,
+          "local_position": [
+            10.899999618530273,
+            2.700000047683716,
+            -1.600000023841858
+          ],
+          "rotation_serialized": false,
+          "scale_serialized": false
+        },
+        {
+          "name": "sp33",
+          "bone": null,
+          "local_position": [
+            -42.420127868652344,
+            -2.700000047683716,
+            -1.600000023841858
+          ],
+          "rotation_serialized": false,
+          "scale_serialized": false
+        },
+        {
+          "name": "sp34",
+          "bone": null,
+          "local_position": [
+            -42.420127868652344,
+            2.700000047683716,
+            -1.600000023841858
+          ],
+          "rotation_serialized": false,
+          "scale_serialized": false
+        }
+      ],
+      "body_spwc_bones": [
+        {
+          "name": "SWPCover_19",
+          "parent": 0,
+          "reference_component": [
+            -63.87554168701172,
+            1.7604912519454956,
+            3.737451076507565
+          ]
+        },
+        {
+          "name": "SWPCover_20",
+          "parent": 1,
+          "reference_component": [
+            -63.95473724557689,
+            2.872701345401859,
+            1.993428084621582
+          ]
+        },
+        {
+          "name": "SWPCover_17",
+          "parent": 0,
+          "reference_component": [
+            -20.611421585083008,
+            1.7604912519454956,
+            1.7728388309478724
+          ]
+        },
+        {
+          "name": "SWPCover_18",
+          "parent": 3,
+          "reference_component": [
+            -20.690617143648275,
+            2.8727013454018504,
+            0.02881583906188867
+          ]
+        },
+        {
+          "name": "SWPCover_15",
+          "parent": 0,
+          "reference_component": [
+            -63.87554168701172,
+            -1.7604912519454956,
+            3.737451076507565
+          ]
+        },
+        {
+          "name": "SWPCover_16",
+          "parent": 5,
+          "reference_component": [
+            -63.954737245576986,
+            -2.87270134540185,
+            1.9934280846215804
+          ]
+        },
+        {
+          "name": "SWPCover_13",
+          "parent": 0,
+          "reference_component": [
+            -20.611421585083008,
+            -1.7604912519454956,
+            1.7728388309478724
+          ]
+        },
+        {
+          "name": "SWPCover_14",
+          "parent": 7,
+          "reference_component": [
+            -20.69061714364828,
+            -2.872701345401857,
+            0.02881583906189311
+          ]
+        },
+        {
+          "name": "SWPCover_11",
+          "parent": 0,
+          "reference_component": [
+            -10.706427574157715,
+            1.7974822521209717,
+            1.4057790040969813
+          ]
+        },
+        {
+          "name": "SWPCover_12",
+          "parent": 9,
+          "reference_component": [
+            -10.76126506414297,
+            2.9096923603934495,
+            -0.3391797376107384
+          ]
+        },
+        {
+          "name": "SWPCover_09",
+          "parent": 0,
+          "reference_component": [
+            32.57823181152344,
+            1.8163107633590698,
+            -0.11088780313730595
+          ]
+        },
+        {
+          "name": "SWPCover_10",
+          "parent": 11,
+          "reference_component": [
+            32.52339432153818,
+            2.928520871631556,
+            -1.8558465448450203
+          ]
+        },
+        {
+          "name": "SWPCover_07",
+          "parent": 0,
+          "reference_component": [
+            -10.706427574157715,
+            -1.7974822521209717,
+            1.4057790040969813
+          ]
+        },
+        {
+          "name": "SWPCover_08",
+          "parent": 13,
+          "reference_component": [
+            -10.76126506414297,
+            -2.9096923603934575,
+            -0.33917973761073306
+          ]
+        },
+        {
+          "name": "SWPCover_05",
+          "parent": 0,
+          "reference_component": [
+            32.57823181152344,
+            -1.8163107633590698,
+            -0.11088780313730595
+          ]
+        },
+        {
+          "name": "SWPCover_06",
+          "parent": 15,
+          "reference_component": [
+            32.52339432153818,
+            -2.928520871631556,
+            -1.85584654484502
+          ]
+        },
+        {
+          "name": "SWPCover_02",
+          "parent": 0,
+          "reference_component": [
+            -12.267403602600098,
+            5.599125385284424,
+            -4.729026317596439
+          ]
+        },
+        {
+          "name": "SWPCover_01",
+          "parent": 0,
+          "reference_component": [
+            -12.297987937927246,
+            -5.599124908447266,
+            -4.730274677276615
+          ]
+        },
+        {
+          "name": "SWPCover_04",
+          "parent": 0,
+          "reference_component": [
+            -65.87371826171875,
+            5.599125385284424,
+            -4.66842603683472
+          ]
+        },
+        {
+          "name": "SWPCover_03",
+          "parent": 0,
+          "reference_component": [
+            -65.81570434570312,
+            -5.599125385284424,
+            -4.669912815093998
+          ]
+        }
+      ],
+      "lods": [
+        {
+          "lod": 0,
+          "cover_triangles": 1040,
+          "samples": [
+            {
+              "resource_spwc_key": 0,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.831305453318808,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.8298627850677236,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.8327154039566067,
+                      "surface_hit_count": 3
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.8094875044294483,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.8077320648978024,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.8107885032356483,
+                      "surface_hit_count": 3
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.996990859386662,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.9954638076786537,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 2.9984832891273068,
+                      "surface_hit_count": 3
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 3.038552799559733,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 3.0339525431937675,
+                      "surface_hit_count": 3
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": 3.0422540000170346,
+                      "surface_hit_count": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "resource_spwc_key": 100,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "lod": 1,
+          "cover_triangles": 0,
+          "samples": [
+            {
+              "resource_spwc_key": 0,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "resource_spwc_key": 100,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "lod": 2,
+          "cover_triangles": 0,
+          "samples": [
+            {
+              "resource_spwc_key": 0,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "resource_spwc_key": 100,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "lod": 3,
+          "cover_triangles": 0,
+          "samples": [
+            {
+              "resource_spwc_key": 0,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "resource_spwc_key": 100,
+              "sites": [
+                {
+                  "socket": "sp31",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp32",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp33",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                },
+                {
+                  "socket": "sp34",
+                  "rays": [
+                    {
+                      "direction": [
+                        0.0,
+                        0.0,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        0.013,
+                        0.007,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    },
+                    {
+                      "direction": [
+                        -0.011,
+                        -0.005,
+                        -1.0
+                      ],
+                      "nearest_spwc_cover_below": null,
+                      "surface_hit_count": 0
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "boundary": "只证明资源姿态下从静态挂点向下是否被SPWC门体遮挡；不是实机世界坐标、全封闭体积或完整武器扫掠证明"
+    },
+    "conclusion": "静态第三组的四个实际点在LOD0共舱盖板上方，不能仅按StaticMesh或LACM名字排除同舱快照；三配置共享Body舱域，第三组仍无骨架租约"
+  },
+  "f35_contrast": {
+    "source_fragment_sha256": "4b05abaf499d52d3df194c50c191cee458e3768c622c1054b82d308d865eb676",
+    "native_profile": "F35为独立SP1/SP2的6模式；本批F22/TG为公共1模式",
+    "per_frame_repair": "每帧保存三独立通道；切配置时用旧0/1最大进度补公共值，原生只执行一次，非当前通道按原生delta/seconds/speed收拢，再补合成输出",
+    "meaning": "F35不是只靠一次初始化前后快照；公共域候选不能据其before-keepArmed位置成功便推断同样时序安全",
+    "not_proven": "本轮没有精确追到SetSpecialWeaponArmed直接重置公共1模式的最终写指令；不把相关性写成该setter已定因"
+  },
+  "post_armed_position": {
+    "operation": "switch",
+    "after": "keepArmed(command,armed); 的完整返回（包含Pressed/Released和实际armed确认）",
+    "source_line_after_call": 691,
+    "before": "ravenRestoreReload/fixedMountCommit；不是initialize内fixedMountAfterRebuild",
+    "scope": "同一request/Binding/generation、重建前已armed的同舱SP互切；一次消费；setup/resupply/checkpoint及跨域不套旧快照"
+  },
+  "sources": {
+    "f22a_animbp": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f22a_AnimBP.uasset",
+      "encrypted_sha256": "413f51346352b82a48d490978e37572bba304e71d7382f28c1432ab1760c7b5b",
+      "decoded_sha256": "b459601b963526a8cf5e51d362723a5d02c2bd100a293667eef0abe535dc06e7",
+      "encrypted_uexp_sha256": "db353e56829ea3821fc12cbd04ce5f294deae654e8c345526c4f824d495421a6",
+      "decoded_uexp_sha256": "2afd4cd35b6e6d13172e06a4b39052d156fe8ca9d19f02eae8bbe45baf43dd55",
+      "parsed_json_sha256": "9606b4b87b1f34348dd1f8af1c780e6bad68f126546c5ac872a0401503fd22e4"
+    },
+    "planebodyconfig": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PlaneBodyConfig.uasset",
+      "encrypted_sha256": "39d6dd695d63756d06b1db5adbc9e97c6ae5520dd1e2ad1ac5502464fa5eb505",
+      "decoded_sha256": "e6a8fa0136bb35faba8f0331113e57087be9108ffdf5e1c630b747a4b6c104cd",
+      "encrypted_uexp_sha256": "e99fd42d1565f3bb0f41629f508fb0564b5395cb37436475da32bfe8414d3278",
+      "decoded_uexp_sha256": "6e69c79a8cef9eda4dc40eccbe7845b4c419f0d01a7a325e29ffe05e279dbacb",
+      "parsed_json_sha256": "ff68e3930bc645609feb918402ce2b3b70df9e1c605dd0f19ba440a6e4b423e2"
+    },
+    "f22a_skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_Skeleton.uasset",
+      "encrypted_sha256": "7b2bd4d079aa6624127a4f4c2d6585a2c45612a5bd09e514363e04bbaf8c8c72",
+      "decoded_sha256": "777981213217213b4c471bc996fef5593419a98fb463b9756fd8d7a9eb6e76fe",
+      "encrypted_uexp_sha256": "8134ee3185b0e737540831964c645f20d4c2a9bf1d58d128c1dd39ab6cf4d014",
+      "decoded_uexp_sha256": "453bc35131ed4530bcfc033a20f82bd7b1cf16fe371dd388ad0446ef706e089e",
+      "parsed_json_sha256": "0c7585ad3750baaa2ccb16cea36a93a2b94646e4f85f51d76f079910a4246ac5"
+    },
+    "f22a_swp3_animbp": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/f22a_SWP3_AnimBP.uasset",
+      "encrypted_sha256": "1caabcd47537163317cf987fd852a0ba4b6ce6cfd6b94a1917f274e75c2276ea",
+      "decoded_sha256": "86e24274d1792df59bf3e9e9bb33e4be259849d93b4d61618c61bc3bc0bcd745",
+      "encrypted_uexp_sha256": "d3ebb0b169e76f5ddbd5d1a782ccd18bc2f42ab3800b6624a24f3f27c6a4ed34",
+      "decoded_uexp_sha256": "a03dbdaa505016e615f3981236360b07854cbb1e5810df095e1b1e65c76c0237",
+      "parsed_json_sha256": "67e96767f08b932f2e795ca2cccf38690328ad693c6667419f4a9a46c2423134"
+    },
+    "f22a_swp3_skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/f22a/f22a_SWP3_Skeleton.uasset",
+      "encrypted_sha256": "8c479bceca1a1b8cb1013a21928ef1f26851a47e03bd66a4b5e6b0d527bf457d",
+      "decoded_sha256": "2787633f7a7f268d565c01ddbd75106020a4feb37309d530ea648cb5a289979c",
+      "encrypted_uexp_sha256": "2102f88e8be89de13291d74fd9d4012c05fc23ce578f676382885faf2b1b822a",
+      "decoded_uexp_sha256": "e31c19bda535b2b1a87848c4e852a04660de3f3a0d7c968a922510084994992a",
+      "parsed_json_sha256": "9cec1b9520f122c7a77a105818b1666a236b473709a8440728eca58a46e37ff8"
+    },
+    "su57tg_swp1_animbp": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/su57tg_SWP1_AnimBP.uasset",
+      "encrypted_sha256": "af47f19d030b9f03d27cbffd60f4cc6a91be4edbf82167748e110bd63fd57f99",
+      "decoded_sha256": "94d47236da6f420735fe084cb7a4fbc61227dd2f94e35c5e91e57478f00c4401",
+      "encrypted_uexp_sha256": "a7875221d2ebefe81490201e63f317f3955c7e0be31bb07070e700b5ecae2e34",
+      "decoded_uexp_sha256": "d00b8f79bccc14877e27ddd0b801e9d82ba0b38a8f6807eefa027a5119dbedca",
+      "parsed_json_sha256": "f79c3a6b88ad26d6068fb71b3fda07bfe015935bd6bed5cc7c46a2ffebb200a2"
+    },
+    "su57tg_swp2_animbp": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/su57tg_SWP2_AnimBP.uasset",
+      "encrypted_sha256": "d1f5f7cb7d7cba74bb3ad3ce040032c44548911e687a48529f1e6df2c8984604",
+      "decoded_sha256": "eb8bd9af6d1b77bc937aaaba113727aef84784dc5ec96be38dd05b29a1f23087",
+      "encrypted_uexp_sha256": "5c6e7a812ef90a5726cffc64ecd4bc5dae314525e97b391508feb15fa7a307e8",
+      "decoded_uexp_sha256": "d00b8f79bccc14877e27ddd0b801e9d82ba0b38a8f6807eefa027a5119dbedca",
+      "parsed_json_sha256": "257a564f901a5158452b7fc175e1ea7dbfdf4a6cb3d501f10dcf21c029ce9e5b"
+    },
+    "su57tg_swp1_skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP1_Skeleton.uasset",
+      "encrypted_sha256": "43cebed6f28d2b2e822a963a0053f81323067cbd6eaebb4d95d160e446d02179",
+      "decoded_sha256": "6c79d1d9422ff10c9929825a57a31851c952fa471242b756622eb779730c188a",
+      "encrypted_uexp_sha256": "c97bef90c63b6b89feeb59c68949c14a26077cbe25c05405a1315c77c999c281",
+      "decoded_uexp_sha256": "8afed5b1fa6cdc64d5f216a4396fb48bc32a6c96957084513682b04bc820aff5",
+      "parsed_json_sha256": "750f1e4f43bf3e0ef07c9cb820d72a9a4228d1358db8f9f35093d7f696f5aefb"
+    },
+    "su57tg_swp1_anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP1_Anim.uasset",
+      "encrypted_sha256": "506c13abc3a7f73b37e85df05e5795db1c31decd23c78d534ae2d05267b98761",
+      "decoded_sha256": "bb2e42a1b14ec5ad5a34d906d4cc48e8c1aad4e9f1f7e8b62c49bec0f1074e6d",
+      "encrypted_uexp_sha256": "fef9c909217c0d5a0eed6c3c29cd0b7aa89b353648186d3dcd0b1b8708bafc1f",
+      "decoded_uexp_sha256": "fe3e1414b9f0a402f81db80a3befd3ea5915ea9501a465b0b6b92376430495a3",
+      "parsed_json_sha256": "6a1ed58047a788109ae190c5153a5a86e193687752e6a9c2c401d7134c25b407"
+    },
+    "su57tg_swp2_skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP2_Skeleton.uasset",
+      "encrypted_sha256": "0d37eece5c9e737c6023075aed40e4e3335f9b0c032decedc25bc2fc9383702a",
+      "decoded_sha256": "ab4f1acd612d4b20597a2e8db43c0fd0bd2b11100a2b9bbbc72c2a90e418f984",
+      "encrypted_uexp_sha256": "d42e543d218e48807f4505842e8a8d83dc5d7e0801f8ab2e9d522e12b672784e",
+      "decoded_uexp_sha256": "51d35124e503d0f918fce5fb9dea8529ef3422bee952366d8256fbd9cb90d044",
+      "parsed_json_sha256": "1c60ec6eac7801dd284948cf327fbc0ed19ce546adaaab4aa0fab671914d6a53"
+    },
+    "su57tg_swp2_anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP2_Anim.uasset",
+      "encrypted_sha256": "11e899897d5b66dc77fe80e805bbed88820ce46cb11bd14b52eb6ee52438cd91",
+      "decoded_sha256": "8c2b436cd6363a7b21014e79ac22b1423487e329b569635967e4b0ec31ed641d",
+      "encrypted_uexp_sha256": "64813dfbef633e1ba0cfffc1ba0383364ba2b8d7487ccbcf7728d8963d4ff408",
+      "decoded_uexp_sha256": "2685f3f5bb2f0122a1d390cd474bf401834addfbf7254fcf23be12e7f592276a",
+      "parsed_json_sha256": "0e9b9a798c9cbf551e7065cbe1c7d4a48d47a9bba8294f7c710299e7589ecb90"
+    },
+    "partsanimationconfig_f22a": {
+      "pak": "pakchunk0-WindowsNoEditor.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_f22a.uasset",
+      "encrypted_sha256": "0265fcc6e8d3973d36926d4ce1c7d45948294343eb34e6359196d5d0a148561e",
+      "decoded_sha256": "900b5fae8bbcdd8e1ce14b109266f0604fd1bc2e4255c408c38fb2d685833204",
+      "encrypted_uexp_sha256": "f6e0a0735fc05e728c103cfaf8b3b549b254ab47f43d31476a6abf7a123fac2d",
+      "decoded_uexp_sha256": "bd703f5d75bf2440d0b30b2c26eb09e92f06de980f5e8d4d007e5b42d66dc52b",
+      "parsed_json_sha256": "9276e89918fdf596d5445a33f96a70f49908bc3813903e1720179b6228a84217"
+    },
+    "partsanimationconfig_su57tg": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Parts/PartsAnimationConfig_su57tg.uasset",
+      "encrypted_sha256": "c30f10afb1ecfe8a2fe566e2822450cf6e1cd30d4bca710f7960f90e99de032b",
+      "decoded_sha256": "018de5298d7e3c19bc1ccda71575a79775f42105ef803fda9fde6ec4a8c8c020",
+      "encrypted_uexp_sha256": "8268a69d811f8dfe6c4205e225193c6f3f8c73b77bde8dbea10521b296a2015f",
+      "decoded_uexp_sha256": "d2421e239ff5dc8f37c2837aa8309b605a842628f7bd31811c7607575fc6c7ae",
+      "parsed_json_sha256": "d31d7e2ba1a5628d5998994869c24bfcda2330200f5e2a28498025ff207f2141"
+    },
+    "su57tg_animbp": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Blueprint/Player/Body/su57tg_AnimBP.uasset",
+      "encrypted_sha256": "92be49d794deed57bee379563b8a77ead67d42126fd032f76ebe4b9b031be625",
+      "decoded_sha256": "ee6e483d1cd36d58657115718a11e68c9efe7f4deafdeb157c3435c66a64b143",
+      "encrypted_uexp_sha256": "620de036b3313ab205c6de81b7716a1952e006748abc94faa2d2f145447a84ac",
+      "decoded_uexp_sha256": "df92a7441ee956eccdffe31f6ce29f47371ca70f017c00f25f99588a533d7fd3",
+      "parsed_json_sha256": "8d3fb9b7531f8514e55f4592e1702f3c61573f5ba19218ab5018ce09756c323a"
+    },
+    "su57tg_skeleton": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_Skeleton.uasset",
+      "encrypted_sha256": "42a0421033b9cee56c412a368e4325a3030a72dd21df464f1707867ff30ac7aa",
+      "decoded_sha256": "b8e1807fe2d60b94d62162448f72c9dbc4ad514119e3ce453d5aae11d8e38df0",
+      "encrypted_uexp_sha256": "54a03ab94d0a0c7c07892ff4c1286fbdd8ea4a09e0706cebabc738fec34ff667",
+      "decoded_uexp_sha256": "b5c80310c7e2955fac988c066d17c600b219094e77ddd354fe2a0f52986bb7f9",
+      "parsed_json_sha256": "93b86d5d9a770287c504fc37f684b84924c190f9390684b9d0384b8a7fa46c40"
+    },
+    "su57tg_anim": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_Anim.uasset",
+      "encrypted_sha256": "ab2408e866188f7da76a2bdbe6a234006366f118a8f15b99f572e62176d23146",
+      "decoded_sha256": "7881e7875f51f47f8ab744ca5147bb1d3cb1f2f0a601d68d6ae50b44033c5ed4",
+      "encrypted_uexp_sha256": "790af3e7d7cafa0c43626011f3c526db1c10ccf802f0aa725f2ded5ad9fe8df7",
+      "decoded_uexp_sha256": "1152a4bf61415eafbbc174a02e86a769f65eab9d6ed005e12a36c700fa9f3c63",
+      "parsed_json_sha256": "5d2a35018bff78ef2ce148e26809a2a8971d90879c6c4c5e5f62f6fa7b422759"
+    },
+    "su57tg": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg.uasset",
+      "encrypted_sha256": "e05df1ac75364f81dd52a77cc598f6f11b2d58202585d8ca3a352d638ed37d12",
+      "decoded_sha256": "6c0aecc71dcbc6526763aed6f47aa173afd8b96b44bafcd8b40c944569290f14",
+      "encrypted_uexp_sha256": "db5b27af322817c8766dd15f3c31bb35b462339a72829ce83f3a280436562fff",
+      "decoded_uexp_sha256": "d04f57b577db73e1e01185432443869703115731a3fe9069f8e3eba48fd4a62a",
+      "parsed_json_sha256": "96d95adff69d2ac977be3db2054cda7a14424fd5c3dee0ecf07ff03394bdd26f"
+    },
+    "su57tg_swp3_sm": {
+      "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+      "asset": "Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP3_SM.uasset",
+      "encrypted_sha256": "85fea95354dce7c133963853ee35a13ff9b06c4b99d909c1919197745f1e269f",
+      "decoded_sha256": "c99053ee1b49be37a0158421efc6b8c303182101a62cdb5b32366856c0f1700e",
+      "encrypted_uexp_sha256": "dc342275268fa729bcf35a275978f529ed5d4d42d7e17f2ffefff62c88bdc388",
+      "decoded_uexp_sha256": "07a8cd9fa0e8043613f147bfd66b6813dfd9a4ab3543aa6b1862a1784fe8b3bc",
+      "parsed_json_sha256": "63f1eed3160a20b45c7ce03626edee45644095f7b5222460594bf00675ec1d0b"
+    }
+  },
+  "inputs": {
+    "runtime_header_sha256": "977d5359f939349ad6d11c3108ed09d121872e78999a9aafc375bfaa59881e68",
+    "geometry_reader_sha256": "f7c705b1d603bbcf6fc7cad815fbfab295deb4a71abdae06da18e9edbc7500b4",
+    "analyzer_sha256": "1379b51f172c782706fd8a66ee37ef38c0867c77f34bf82dfb4ed917ffc2b2fc",
+    "core_source_sha256": "9f9aa4e1604d6920dabce25cc9f7f8462dbd8bbeb70534104dca651c1c5c9fc9",
+    "bridge_source_sha256": "e1ee3addd02205d20fa1c4e102354702c0dc543cf3b8f798d971bad83ca1ff5a"
+  }
+}

@@ -13,6 +13,13 @@ struct MountAnimationProductAccess final : ::dualsp::common_bay::native_parts::A
     Binding owner{};
     bool ownerRegistered{};
     std::array<size_t,3> rackOffsets{};
+    struct OuterLink { MountIdentity object,objectClass; Addr outer{}; };
+    struct ClassLink { MountIdentity object,package; Addr parent{};std::uint64_t name{},packageName{}; };
+    std::vector<OuterLink> worldLinks;
+    std::vector<ClassLink> planeClasses;
+    MountIdentity planeClass;
+    bool nativePlaneQualified{},canonicalQualified{};
+    Aircraft canonicalKind{};
     std::uint64_t metadataGeneration{};
     struct Descriptor { Setting setting; MountIdentity field,enumeration,cls; };
     std::vector<Descriptor> descriptors;
@@ -92,9 +99,12 @@ struct MountAnimationProductAccess final : ::dualsp::common_bay::native_parts::A
                mountAnimationRead<Addr>(b.plane.address+0x1ae0)!=b.weaponBase.address ||
                mountAnimationRead<Addr>(b.weaponBase.address+0x100)!=b.root.address ||
                mountAnimationRead<Addr>(b.root.address+0x100)!=0)return false;
-            if(mountOuterWorld(b.plane.address)!=b.world.address ||
-               mountOuterWorld(b.root.address)!=b.world.address || mountOuterWorld(b.weaponBase.address)!=b.world.address)return false;
-            for(auto rack:b.racks)if(!alive(rack) || mountOuterWorld(rack.address)!=b.world.address ||
+            // 完整世界路径在绑定时取证；热路径复核同一批对象序列号和每条Outer边，不反复遍历类型/名称。
+            if(worldLinks.empty())return false;
+            for(const auto& link:worldLinks)if(!mountAlive(link.object) || !mountAlive(link.objectClass) ||
+                mountAnimationRead<Addr>(link.object.address+0x10)!=link.objectClass.address ||
+                mountAnimationRead<Addr>(link.object.address+0x20)!=link.outer)return false;
+            for(auto rack:b.racks)if(!alive(rack) ||
                 mountAnimationRead<Addr>(rack.address+0x100)!=b.weaponBase.address)return false;
             for(unsigned i=0;i<3;++i)if(!rackOffsets[i] || rackOffsets[i]>=0x10000 ||
                 mountAnimationRead<Addr>(b.plane.address+rackOffsets[i])!=b.racks[i].address)return false;
@@ -105,15 +115,58 @@ struct MountAnimationProductAccess final : ::dualsp::common_bay::native_parts::A
     bool registerOwner(const Binding& b) {
         if(!onGameThread() || ownerRegistered || !::dualsp::common_bay::valid(b))return false;
         owner=b; ownerRegistered=true;
-        if(ownerAlive(b))return true;
-        owner={};ownerRegistered=false;return false;
+        try {
+            require(mountClassIs(b.world.address,"World","/Script/Engine"),"动画访问：世界类型不符");
+            worldLinks.clear();planeClasses.clear();nativePlaneQualified=canonicalQualified=false;
+            for(auto start:{b.plane,b.root,b.weaponBase,b.racks[0],b.racks[1],b.racks[2]}) {
+                Addr current=start.address;bool reached=false;
+                for(unsigned depth=0;current && depth<24;++depth) {
+                    const auto id=mountIdentity(current);const Addr outer=mountAnimationRead<Addr>(current+0x20);
+                    if(std::none_of(worldLinks.begin(),worldLinks.end(),[&](const OuterLink& l){return l.object.address==current;}))
+                        worldLinks.push_back({id,mountIdentity(mountAnimationRead<Addr>(current+0x10)),outer});
+                    if(current==b.world.address) { reached=true;break; }
+                    current=outer;
+                }
+                require(reached,"动画访问：组件不属于绑定世界");
+            }
+            Addr cls=mountAnimationRead<Addr>(b.plane.address+0x10);planeClass=mountIdentity(cls);
+            for(unsigned depth=0;cls && depth<32;++depth) {
+                const Addr parent=mountAnimationRead<Addr>(cls+0x30);
+                const Addr package=mountAnimationRead<Addr>(cls+0x20);
+                planeClasses.push_back({mountIdentity(cls),mountIdentity(package),parent,
+                    mountAnimationRead<std::uint64_t>(cls+0x18),mountAnimationRead<std::uint64_t>(package+0x18)});cls=parent;
+            }
+            require(!cls,"动画访问：机体类继承链过长");
+            if(ownerAlive(b))return true;
+        }catch(...) { }
+        owner={};ownerRegistered=false;worldLinks.clear();planeClasses.clear();return false;
     }
-    void forgetOwner() { MountAnimationReflection::thread();owner={};ownerRegistered=false;descriptors.clear(); }
+    void forgetOwner() {
+        MountAnimationReflection::thread();owner={};ownerRegistered=false;descriptors.clear();
+        worldLinks.clear();planeClasses.clear();planeClass={};nativePlaneQualified=canonicalQualified=false;
+    }
+    bool planeClassCurrent(Identity plane) {
+        if(!ownerRegistered || !::dualsp::common_bay::same(plane,owner.plane) || !alive(plane) ||
+            mountAnimationRead<Addr>(plane.address+0x10)!=planeClass.address || planeClasses.empty())return false;
+        for(const auto& link:planeClasses)if(!mountAlive(link.object) || !mountAlive(link.package) ||
+            mountAnimationRead<Addr>(link.object.address+0x20)!=link.package.address ||
+            mountAnimationRead<Addr>(link.object.address+0x30)!=link.parent ||
+            mountAnimationRead<std::uint64_t>(link.object.address+0x18)!=link.name ||
+            mountAnimationRead<std::uint64_t>(link.package.address+0x18)!=link.packageName)return false;
+        return true;
+    }
     bool inheritsNativePlayerPlane(Identity plane) override {
-        try { return alive(plane) && mountClassIs(plane.address,"PlayerPlane","/Script/Nimbus"); }
+        try {
+            if(!planeClassCurrent(plane))return false;
+            if(!nativePlaneQualified)nativePlaneQualified=mountClassIs(plane.address,"PlayerPlane","/Script/Nimbus");
+            return nativePlaneQualified;
+        }
         catch(...) { return false; }
     }
     bool canonicalAircraft(Identity plane,Aircraft aircraft) override {
+        try { if(!planeClassCurrent(plane))return false;
+            if(canonicalQualified)return canonicalKind==aircraft;
+        }catch(...) { return false; }
         const char* name{};const char* package{};
         switch(aircraft) {
         case Aircraft::F22a:name="AcePlayerPawn_f22a_C";package="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f22a";break;
@@ -121,7 +174,10 @@ struct MountAnimationProductAccess final : ::dualsp::common_bay::native_parts::A
         case Aircraft::Su57TopGun:name="AcePlayerPawn_su57tg_C";package="/Game/Blueprint/Player/Pawn/AcePlayerPawn_su57tg";break;
         default:return false; // 本轮产品接线仅限定主管正在整合的三架；YF-23未自动开放。
         }
-        try { return alive(plane) && mountClassIs(plane.address,name,package); } catch(...) { return false; }
+        try {
+            canonicalQualified=mountClassIs(plane.address,name,package);canonicalKind=aircraft;
+            return canonicalQualified;
+        }catch(...) { return false; }
     }
     bool originalCodeMatches(std::uint32_t rva,std::string_view expected) override {
         if(!onGameThread())return false;

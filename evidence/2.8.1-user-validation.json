@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "candidate": "2.8.1",
+  "date": "2026-10-17",
+  "source": "本会话用户在2.8.1交付后的反馈；帧数为用户观察，非程序分段计时或严格同场景基准",
+  "gameplay_accepted": false,
+  "aircraft": {
+    "su57tg": {"mission_fps_approx": [2, 3], "unable_to_test": true},
+    "f22a": {
+      "native_fps_approx": 140,
+      "multi_sp_models_usual_fps_approx": 120,
+      "occasional_fps_approx": [80, 30],
+      "sp_switch_hitch": true,
+      "sp_switch_repeated_bay_cycle": true
+    },
+    "su47": {
+      "mission_fps_approx": [6, 7],
+      "sp_switch_empty_racks_no_missile_models": true,
+      "sp_switch_repeated_bay_cycle": true
+    },
+    "f35c": {
+      "native_fps_approx": 140,
+      "multi_sp_models_fps_approx": 120,
+      "sp_switch_hitch": false
+    }
+  },
+  "direction": {
+    "purpose": "优先自然和谐的外观与稳定帧率；舱内模型允许随当前SP原生切换，接受不明显的动画瑕疵",
+    "f22a": "含8AAM的多SP组合优先保留侧部8AAM外观；QAAM/XSDB舱内走当前SP原生呈现，不强求分舱和消除重复开舱",
+    "su47_and_su57tg": "暂缓多SP外观共存，保留兵装多SP功能和当前SP原生模型/动画",
+    "su57_normal": "4AAM/GPB舱内原生切换；选有PLSL时翼下吊舱跨SP保留，普通Su57与TGM区分",
+    "x02s": "退出多SP外观适配计划，保留多SP兵装和当前SP原生外观",
+    "cfa44": "后续继续左ADMM、右EML、隐藏ECM/IEWS外观，效果与弹药/冷却另按原生契约保留",
+    "f35c": "沿用已认可的实现，作为外观和切换流畅度参考"
+  },
+  "assessment": {
+    "feasible_in_principle": true,
+    "su57_plsl_resource_basis": "现有batch3的pkfa.SWP3为StaticMeshComponent，静态pkfa_SWP3_SM，无活动骨架",
+    "f22_resource_boundary": "现方案8AAM侧部sp31..38与腹部位置同属活动SWP3；只保留组件显隐不保证原生停更后的侧架姿态，需要最低必要更新及组合显隐规则，不能直接叠整架",
+    "cfa44_resource_basis": "研究分支已有左SWP1.SWPCover_01、右SWP2.SWPCover_10骨支路及发射点分工，运行宿主仍未接入",
+    "persistent_visual_meaning": "按已选武器集合跨SP保留；消耗弹仍依实际库存/发射/补装变化，固定PLSL炮舱不按导弹耗尽隐藏",
+    "seven_combinations": "为每种选择集合明确外部保留/内部原生/整机原生策略，不再以三类模型必须全部共存作为准入条件",
+    "performance_gain_not_proven": true
+  },
+  "assessment_only": true,
+  "runtime_code_changed_this_turn": false,
+  "compiled_this_turn": false,
+  "tests_run_this_turn": false,
+  "installed_this_turn": false,
+  "game_operated_this_turn": false
+}

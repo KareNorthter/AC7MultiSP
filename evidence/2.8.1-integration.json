@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "candidate": "2.8.1",
+  "base_installed": "2.8.0",
+  "authorization": "用户已关闭游戏并要求安装最新Mod供进一步测试；同时允许肉眼难辨的轻微动画瑕疵，后续按观感设计",
+  "source_base_commit": "de08722ee17ef1c0658c7a5f42c68ba611c507b6",
+  "source_state": "基线后的工作区源码修订；完整来源摘要冻结在构建回执，不声明已提交main",
+  "inputs": {
+    "user_feedback": "evidence/2.8.0-user-validation.json",
+    "bay_domains_commit": "66d4f3d",
+    "bay_domains": "evidence/sp-bay-domains.json",
+    "su47_partition_research": "9cefa43，设计保留研究分支，半侧资源未生成，未整体吸收或启用"
+  },
+  "changes": [
+    "绑定时解析完整世界/类路径与反射元数据，运行核绑定身份和关系，减少重复遍历",
+    "Controller维护统一收集Pause、校验模式并按需写；原生NoSkeleton/Tick/Init入口即时记账，100ms兜底",
+    "取消Parts前后重复整组维护，F22/TG不逐帧重放整套显隐；Su47所需组件本帧全部发布后统一核对",
+    "同舱快照排队至Initialize、弹药恢复、session.active及keepArmed完整切换完成后一次消费",
+    "TG三配置共享Body舱门连续进度，静态第三组不取得骨架租约",
+    "增加每约2秒ANIMATED_WORK_COST汇总本模块回调计时，原生发布原函数不计入，不是总帧时间"
+  ],
+  "limits": {
+    "fps_gain_verified": false,
+    "bay_cycle_fixed_in_game": false,
+    "f22_independent_bays_implemented": false,
+    "su47_left_right_layout_implemented": false,
+    "su47_current_gate": "旧布局仍核全部38根Body骨及所需6骨挂架严格全开参照；此为本版限制，不作为后续必须追求逐位精确的产品要求",
+    "f35_existing_path_preserved": true,
+    "other_aircraft_added": false,
+    "f2_performance_fixed": false
+  },
+  "build_dir": "Temp/build-2.8.1",
+  "build_receipt_sha256": "1c52da79d3a5f378b97be21eaeb212abb3e873a93b02215580e21ca90384cbe9",
+  "test_receipt_sha256": "6de92d24fe5758b86222813bc327f702ba1397289d0d0f45bd50390935bca254",
+  "install_receipt_sha256": "5d27a7c89e6084d78db312f14ee0b4dc827743a0aa17847410fdf5b146cdd871",
+  "compiled": true,
+  "tests_passed": true,
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed": true,
+  "runtime_files_verified": 16,
+  "mount_members_verified": 32,
+  "mount_pak_same_as_2_8_0": true,
+  "protected_files_verified": 138,
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-131914-403446",
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pushed": false,
+  "published": false,
+  "manual_test_focus": [
+    "F22/TG双三SP任务帧率与同舱切换是否反复开合",
+    "Su47相同三SP组合帧率，注意旧布局仍有姿态门槛",
+    "开关多SP模型、发射补装、检查点和场景归还；保留机型组合/提示/时间"
+  ],
+  "public_research_read_only": [
+    {
+      "url": "https://www.moddb.com/games/ace-combat-7/addons/j-20-overhaul-project",
+      "finding": "作者列出模型/动画/Pawn基础包，致谢Modding Wiki、Kosnag Master Files及动画骨扩展工具"
+    },
+    {
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/2392",
+      "finding": "公开列出扩展SP舱盖骨命名及Body父骨约束；不证明本项目所需独立输出写端或多SP共存机制"
+    }
+  ],
+  "third_party_assets_downloaded_or_installed": false,
+  "mod_authors_contacted": false
+}

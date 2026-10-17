@@ -204,7 +204,9 @@ public:
         binding_=binding;
         equipped_=equipped;
         animatedMask_=animatedMask;
-        snapshotDomainMask_=animatedMask;
+        // 舱域按实际空间与盖板关系划分，不由组件是否带骨架推断。
+        // TG第三组虽是静态组件，其LACM挂点仍在Body共用弹舱内；只是不取得骨架租约。
+        snapshotDomainMask_=7u;
         leases_=pending;
         for (unsigned i=0;i<3;++i) if ((requiredRackMask & animatedMask_) & (1u << i)) {
             // 先登记恢复所有权，再调用可能只完成部分操作的原生接口。
@@ -261,11 +263,17 @@ public:
         if (!host.onGameThread()) return Error::WrongThread;
         if (!active_) return hasLeases() ? Error::RestorePending : Error::InvalidBinding;
         if (!host.bindingAlive(binding_)) { stopControl(host); return Error::InvalidBinding; }
-        if (!controlWritesAllowed(host)) { stopControl(host); return Error::NativeAccess; }
-        for (auto& lease: leases_) if (lease.owned) {
-            RackRequest actual;
-            if (!host.rackAlive(lease.rack) || !host.acquirePoseRefresh(lease.rack) || !host.readRack(lease.rack,actual) ||
-                (!same(actual,{false,true}) && (!controlWritesAllowed(host) || !host.applyRack(lease.rack,{false,true})))) {
+        // 同次维护只读取一份整组快照；先收齐所有Pause意图再写，不能为了省读取而漏记其他组。
+        std::array<RackRequest,3> actual{};bool allowed=true;
+        for (unsigned i=0;i<3;++i)if(leases_[i].owned) {
+            if(!host.rackAlive(leases_[i].rack) || !host.readRack(leases_[i].rack,actual[i])) { allowed=false;continue; }
+            if(actual[i].paused) { leases_[i].latestNative.paused=true;allowed=false; }
+        }
+        if(!allowed) { stopControl(host);return Error::NativeAccess; }
+        for (unsigned i=0;i<3;++i)if(leases_[i].owned) {
+            auto& lease=leases_[i];
+            if (!host.acquirePoseRefresh(lease.rack) ||
+                (!same(actual[i],{false,true}) && (!controlWritesAllowed(host) || !host.applyRack(lease.rack,{false,true})))) {
                 stopControl(host);
                 return Error::NativeAccess;
             }
@@ -281,7 +289,7 @@ public:
         if (!active_ || !same(current,binding_) || !host.bindingAlive(binding_)) return Error::InvalidBinding;
         if (!transaction || fromConfig == toConfig || !selected(fromConfig) || !selected(toConfig))
             return Error::InvalidSelection;
-        // TG的LACM是静态外置组：仅0/1互切继承同舱状态；出入配置2不继承旧开门请求。
+        // 当前公共通道方案中的同舱配置继承连续状态；独立舱域须完成逐骨路由后另行划分。
         if (!(snapshotDomainMask_ & (1u << fromConfig)) || !(snapshotDomainMask_ & (1u << toConfig)))
             return Error::NativeTransition;
         if (pendingTransaction_ || transaction <= lastTransaction_) return Error::StaleTransaction;
@@ -293,7 +301,8 @@ public:
         return Error::None;
     }
 
-    // 同步InitializeWeaponSystem之后、keepArmed之前调用。快照一次使用；不写当前配置编号。
+    // 实际Initialize、弹药恢复及keepArmed完整Pressed/Released结束后调用。
+    // 快照保留到完整原生切换结束且只消费一次；不写当前配置编号。
     Error restoreSwitch(Host& host, const Binding& current, std::uint64_t transaction, Snapshot& saved) {
         if (!host.onGameThread()) return Error::WrongThread;
         const Snapshot copy=saved;

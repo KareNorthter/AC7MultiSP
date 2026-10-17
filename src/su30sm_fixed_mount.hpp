@@ -94,6 +94,7 @@ struct FixedMountState {
     MountIdentity animatedRack; // 已选择并需要持续播放的 F-35C SWP2；显隐接管也必须接管动画生命周期。
     bool nativeRackPaused{},nativeRackTick{}; // 最近一次原生重建请求，解除固定挂载时归还。
     uint64_t readyMask{}; // 实际物理位置的聚合就绪状态。
+    ULONGLONG animatedVisualAudit{}; // 新三机无状态变化时只周期核对显隐，骨骼/附着位置仍由原生逐帧更新。
     std::bitset<256> pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
 } fixedMount;
@@ -123,7 +124,6 @@ bool mountAnimationRelease(Addr plane=0,unsigned scene=0);
 void mountAnimationEnsure(FixedMountState& state,unsigned scene);
 bool mountAnimationShow(const FixedMountState& state,const MountVisual& visual);
 bool mountAnimationCopyTransform(void* output,const FixedMountState& state,int position);
-void mountAnimationPartsBefore(void* parts);
 void mountAnimationPartsAfter(void* parts);
 void mountAnimationBeforePartsHook();
 void mountAnimationAfterPartsHook();
@@ -352,7 +352,6 @@ void fixedMountFail(const char* message) noexcept {
 }
 // 原生仅把公共 SP 进度写给当前通道，切换配置后旧通道会冻结；在同一动画更新中补齐各舱的连续状态。
 void mountPartsUpdate(void* object,float delta,void* input) {
-    if(GetCurrentThreadId()==mountGameThread.load())mountAnimationPartsBefore(object);
     if(GetCurrentThreadId()!=mountGameThread.load() || !f35Cover.parts ||
        reinterpret_cast<Addr>(object)!=f35Cover.parts || !input) {
         mountOriginalPartsUpdate(object,delta,input);
@@ -685,8 +684,13 @@ void fixedMountRefresh(double time) {
         }
         mask|=weaponMask;
     }
-    if(mask!=fixedMount.readyMask)nativeLog(Json{{"event","FIXED_MOUNT_MASK"},{"before",fixedMount.readyMask},{"after",mask},{"game_time",time}}.dump());
-    fixedMount.readyMask=mask;mountApply();
+    const bool changed=mask!=fixedMount.readyMask;
+    if(changed)nativeLog(Json{{"event","FIXED_MOUNT_MASK"},{"before",fixedMount.readyMask},{"after",mask},{"game_time",time}}.dump());
+    fixedMount.readyMask=mask;
+    const auto now=GetTickCount64();
+    if(!mountAnimated(fixedMount.aircraft) || changed || now-fixedMount.animatedVisualAudit>=100) {
+        mountApply();fixedMount.animatedVisualAudit=now;
+    }
 }
 // 在完整兵装事务后绑定；静态组合先匹配真实类，再检查各机体现场核对的布局。
 void fixedMountCommit(const Command& command) {
@@ -781,6 +785,7 @@ MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeCo
     mountPreviewRelease(0,false); // 任何真实兵装重建都先结束只控制外观的预览。
     if(!fixedMountEnabled || fixedMountFailed)return saved;
     try {
+        require(!mountAnimationPendingSwitch.valid,"动画挂载：上一切换尚未完成，拒绝覆盖快照");
         if(mountAnimationHost.controller.active() && mountAnimationHost.binding.scene==1 &&
            mountAnimationHost.binding.plane.address==command.plane) {
             if(command.op=="switch" && read<unsigned char>(command.activator+0x2a1)!=0) {
@@ -811,9 +816,8 @@ void fixedMountAfterRebuild(const MountRebuildSnapshot& saved) {
     if(!fixedMountEnabled || fixedMountFailed)return;
     try {
         if(saved.common.valid) {
-            auto copy=saved.common;
-            require(mountAnimationHost.controller.restoreSwitch(mountAnimationHost,mountAnimationHost.binding,
-                copy.transaction,copy)==::dualsp::common_bay::Error::None,"动画挂载：同步切换恢复失败");
+            // Init完成并不代表原生SP已恢复；keepArmed仍要执行完整切换，等它结束后再还快照。
+            mountAnimationQueueSwitch(saved.common);
         } else if(mountAnimationHost.controller.active())require(mountAnimationHost.maintain(),"动画挂载：重建后维持失败");
         if(!saved.cover)return;
         // 原生初始化后、keepArmed 前恢复，保留原有交接顺序。

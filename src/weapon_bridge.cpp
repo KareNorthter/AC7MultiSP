@@ -523,6 +523,9 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
 }
 void keepArmed(const Command& command,bool armed) {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    MountAnimationArmedCompletion animationCompletion(command);
+#endif
     if(armed) {
         // 重建后必须经过飞机完整切换流程。仅 ToggleSpecial 会留下 MSL
         // 的锁定组件参数；原生飞机入口还会重绑 seeker 并应用 PART 修正。
@@ -537,6 +540,10 @@ void keepArmed(const Command& command,bool armed) {
         reinterpret_cast<Switch>(base+0x8238e0)(reinterpret_cast<void*>(command.plane));
         require(read<unsigned char>(command.activator+0x2a1)!=0,"重建后无法恢复原生 SP 类别");
     }
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    mountAnimationAfterArmed(command,armed);
+    animationCompletion.completed=true;
+#endif
 }
 std::string snapshotJson(const Command& command) {
     const auto main=capture(command.activator,false,command.time);

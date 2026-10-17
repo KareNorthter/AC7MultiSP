@@ -81,7 +81,7 @@ struct MountAnimationHost final : ::dualsp::common_bay::Host {
             unsigned actual{};
             // 本版不写刷新模式：原生已是AlwaysTickPoseAndRefreshBones才接入，变化即失败归还。
             // 因为没有接管该字段，退出也不把旧值写回，避免丢失未知原生直接写入的意图。
-            return rack && access.descriptorCurrent(rack->mode) && access.read(rack->mode,actual) &&
+            return rack && access.read(rack->mode,actual) &&
                    actual==rack->mode.alwaysValue;
         } catch(...) { return false; }
     }
@@ -136,17 +136,7 @@ struct MountAnimationHost final : ::dualsp::common_bay::Host {
     }
     bool maintain() {
         if(!controller.active())return false;
-        // 未主动强制原生Pause；发现真正的Pause请求先记账再回退，不清除暂停意图。
-        for(auto& rack:racks)if(rack.prepared) {
-            Request state;
-            if(!readRack(rack.identity,state)) { release();return false; }
-            if(state.paused) {
-                controller.nativeRequest(*this,rack.identity,state,1u);
-                release();
-                return false;
-            }
-            if(!acquirePoseRefresh(rack.identity)) { release();return false; }
-        }
+        // Controller已统一收集真实Pause及模式校验，不在Host外层重复整组读取。
         return controller.maintain(*this)==Error::None;
     }
 };

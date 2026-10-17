@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "candidate": "2.8.0",
+  "date": "2026-10-17",
+  "source": "本会话用户反馈；帧数为用户观察，非程序计时",
+  "gameplay_accepted": false,
+  "aircraft": {
+    "f35c_reference": {
+      "multi_sp_layout_normal": true,
+      "bay_animation_normal": true,
+      "performance_normal": true,
+      "scope": "用户本轮明确反馈；未提供逐组合、任务及帧时间明细"
+    },
+    "su47": {
+      "loadout": "三SP",
+      "mission_fps_approx": 1,
+      "hangar_normal": true,
+      "disable_multi_sp_models_restores_fps": true,
+      "layout_proposal": "SAAM占左半舱，UGB和QAAM占右半舱",
+      "proposal_is_implemented": false
+    },
+    "f22a": {
+      "layout_satisfactory": true,
+      "mission_fps_approx": 7,
+      "multi_sp_models_enabled": true,
+      "sp_switch_repeated_bay_cycle": true,
+      "requested_bays": "8AAM只开侧舱；QAAM/XSDB只开腹舱；按实际Socket和骨骼核对后实现"
+    },
+    "su57tg": {
+      "layout_satisfactory": true,
+      "mission_fps_approx": 7,
+      "multi_sp_models_enabled": true,
+      "sp_switch_repeated_bay_cycle": true
+    }
+  },
+  "preference": "可接受挂载或离架时轻微且不明显影响观感的不同SP穿模；不等同于接受明显重叠、悬空或错误发射位置",
+  "source_investigation": [
+    "任务Parts回调前后重复Controller维护与整组显隐应用，TG静态provider也走此路径",
+    "ownerAlive每次重复世界Outer/类名遍历；同一维护中重复读三字段及模式",
+    "Su47发布前后每次反射搜索MasterPose字段；每个所需组件发布都整组刷新显隐",
+    "以上为源码确认的重复工作，尚无占比测量，不能据此宣称完整根因或帧率已修复"
+  ],
+  "research_followup": {
+    "su47": {
+      "commit": "9cefa43",
+      "branch": "codex/mount-expansion",
+      "working_tree": "C:/Users/83717/.codex/worktrees/mount-expansion/AC7_MultiSP",
+      "triple_layout": "左SAAM使用自身SWP1.sp11，右内UGB使用自身SWP2.sp24，右外QAAM使用自身SWP3.sp32",
+      "all_seven_designs_present": true,
+      "required_meshes": ["SWP1左半", "SWP2右半", "SWP3右半"],
+      "lods_per_mesh": 1,
+      "assets_generated": false,
+      "runtime_admitted": false,
+      "reason": "未裁整架有离架扫过空导轨的风险；半侧面集只是离线配方，尚无编码及加载依据。主树保留已安装旧布局与严格门控，不能只去掉旧门槛"
+    }
+  },
+  "followup_source_only": true,
+  "followup_compiled": false,
+  "followup_tests_run": false,
+  "followup_installed": false
+}

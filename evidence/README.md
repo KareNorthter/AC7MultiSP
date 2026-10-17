@@ -1,13 +1,20 @@
 # 按需证据
 
+- [2.8.1用户实测与方向调整](2.8.1-user-validation.json)：TG/Su-47仍严重掉帧，F-22A偶发低帧及切换卡顿/重复开舱；改为机外连续、舱内原生。普通Su-57 PLSL与F-22A侧8AAM优先，CFA-44专项，X-02S退出外观路线。只评估未实施。
+
+- 2.8.1性能/同舱切换候选：[范围与限制](2.8.1-integration.json)、[构建](2.8.1-build.json)、[检查](2.8.1-tests.json)、[安装](2.8.1-installed.json)。已安装，16运行文件、32成员PAK、138保护文件核验；帧率和舱门效果待实测。F-22A分舱、Su-47左右新布局未完成。
+
 - [Su-47真实全开端点几何](su47-native-endpoint-geometry.json)：全LOD静态复核及严格零偏差参照，仅覆盖记录的全部38根Body骨姿态，不证明全姿态或运行调度。
 - [产品反射与发布依据](sp-animation-product-access.json)：Tick、Socket反射、原生发布与加载器导出依据；具体产品改动以源码及交付回执为准。
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [2.8.0用户实测](2.8.0-user-validation.json)：三机任务1/7fps，F-22A/TG切SP反复开合；Su-47左右分区建议及轻微穿模偏好。记录观察范围，不称完整根因或修复通过。
+- [F-22A/TG舱域与F-35C对照](sp-bay-domains.json)：66d4f3d的逐骨通道、TG静态点共舱及完整切换补还边界；F-22A专用表路由仍缺独立输出写端与资源，不能当作已分舱。
+
 - [三机接入的F-22A运行采样](animated-runtime-f22a-capture.json)：用户配合单SP8AAM暂停态与45秒只读连续采样，记录实际14槽／8窗口、三组持久池、反射参数及骨骼更新字段。修正NoSkeletonUpdate／Pause位和全开请求语义；原始内存与函数片段仅在Temp；三机接线与本轮交付见2.8.0回执。
 
-- 2.8.0保守测试候选：[来源/限制](2.8.0-integration.json)、[构建](2.8.0-build.json)、[检查](2.8.0-tests.json)、[安装](2.8.0-installed.json)。已安装，未启动游戏，新三机待用户实测；Su-47仅精确已核全开姿态可视。
+- 2.8.0保守测试候选：[来源/限制](2.8.0-integration.json)、[构建](2.8.0-build.json)、[检查](2.8.0-tests.json)、[安装](2.8.0-installed.json)。已安装，交付时未自动启动游戏；用户随后反馈新三机任务严重掉帧，见上方用户实测；Su-47旧方案仅精确已核全开姿态可视。
 - [2.7.2布局源码修订](2.7.2-layout.json)：F-2A LASM内侧/HVAA外侧，新增挂架三LOD编码往返；该记录保留源码准备时状态；修订已随2.8.0成套安装，主管接手见开发说明。
 - [2.7.1用户实测](2.7.1-user-validation.json)：切换/发射、Rafale/Typhoon与ADF-11F反馈正常；F-2A所有多挂外观组合仍卡，关闭模型恢复，待专门研究。
 - 2.7.1两线修复：[来源/范围](2.7.1-integration.json)、[构建](2.7.1-build.json)、[检查](2.7.1-tests.json)、[安装](2.7.1-installed.json)。F-2A切换/重复巡检、Rafale名称匹配、Typhoon双挂及UAV引用扩容已安装，用户反馈见上条，不能外推全部场景通过。

@@ -3,10 +3,43 @@
 
 MountAnimationHost mountAnimationHost;
 MountAnimationExactPose mountAnimationExact;
+::dualsp::common_bay::Snapshot mountAnimationPendingSwitch;
 std::uint64_t mountAnimationGeneration{};
 bool mountAnimationHooksReady{},mountAnimationCleaning{};
 std::string mountAnimationHookFailure;
 unsigned mountAnimationNativeDepth{};
+bool mountAnimationClosedVisualsApplied{};
+ULONGLONG mountAnimationLastMaintenance{};
+struct MountAnimationProfile {
+    struct Sample { std::uint64_t calls{},ticks{},peak{}; };
+    std::array<Sample,3> samples{};
+    std::uint64_t generation{};ULONGLONG last{};std::string aircraft;
+    static std::uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
+    void reset(std::uint64_t value,const char* code) { samples={};generation=value;aircraft=code;last=GetTickCount64(); }
+    void record(unsigned kind,std::uint64_t ticks) noexcept {
+        if(!generation)return;
+        auto& s=samples[kind];++s.calls;s.ticks+=ticks;s.peak=std::max(s.peak,ticks);
+        if(GetTickCount64()-last<2000)return;
+        try {
+            LARGE_INTEGER frequency{};QueryPerformanceFrequency(&frequency);
+            Json values=Json::array();
+            for(const auto& row:samples)values.push_back({{"calls",row.calls},
+                {"mean_us",row.calls?double(row.ticks)*1000000.0/double(frequency.QuadPart)/row.calls:0.0},
+                {"peak_us",double(row.peak)*1000000.0/double(frequency.QuadPart)}});
+            nativeLog(Json{{"event","ANIMATED_WORK_COST"},{"aircraft",aircraft},{"generation",generation},
+                {"order",{"parts_after","publication","ensure"}},{"samples",values},
+                {"scope","本模块回调自耗时；发布原函数已排除，不是总帧时间"}}.dump());
+        }catch(...) { }
+        samples={};last=GetTickCount64();
+    }
+} mountAnimationProfile;
+struct MountAnimationWorkTimer {
+    unsigned kind{};std::uint64_t start{},total{};bool running{true};
+    explicit MountAnimationWorkTimer(unsigned value):kind(value),start(MountAnimationProfile::now()){}
+    void pause() { if(running) { total+=MountAnimationProfile::now()-start;running=false; } }
+    void resume() { start=MountAnimationProfile::now();running=true; }
+    ~MountAnimationWorkTimer() { pause();mountAnimationProfile.record(kind,total); }
+};
 using MountAnimationDisable=void(*)(void*,void*);
 using MountAnimationTick=void(*)(void*,bool);
 MountAnimationDisable mountAnimationOriginalDisable{};
@@ -39,10 +72,15 @@ void mountAnimationFail(const char* message) noexcept {
     mountAnimationCleaning=false;
 }
 bool mountAnimationRelease(Addr plane,unsigned scene) {
-    if(!mountAnimationHost.access.ownerRegistered && !mountAnimationHost.controller.restoring())return true;
+    if(!mountAnimationHost.access.ownerRegistered && !mountAnimationHost.controller.restoring()) {
+        mountAnimationPendingSwitch={};return true;
+    }
     if((plane && plane!=mountAnimationHost.binding.plane.address) ||
        (scene && scene!=mountAnimationHost.binding.scene))return true;
     mountAnimationExact.clear();
+    mountAnimationPendingSwitch={};
+    mountAnimationClosedVisualsApplied=false;
+    mountAnimationLastMaintenance=0;
     return mountAnimationHost.release();
 }
 void mountAnimationBeforePartsHook() {
@@ -89,6 +127,7 @@ void mountAnimationPublish(void* component) {
     for(unsigned i=0;i<4;++i)if((mountAnimationExact.required&(1u<<i)) &&
         mountAnimationExact.components[i].object.address==reinterpret_cast<Addr>(component)) { slot=static_cast<int>(i);break; }
     if(slot<0) { mountAnimationOriginalPublish(component);return; }
+    MountAnimationWorkTimer work(1);
     auto& stamp=mountAnimationExact.published[slot];stamp={};
     MountAnimationPublicationTracker::Snapshot before;
     ::dualsp::common_bay::PartsSample prior;
@@ -98,15 +137,17 @@ void mountAnimationPublish(void* component) {
         admitted=host.bindingAlive(host.binding) && mountAnimationExact.resourcesCurrent(mountAnimationExact.components[slot]) &&
             MountAnimationPublicationTracker::codeQualified(host.access,id,mountAnimationOriginalPublish);
         if(admitted) {
-            before=MountAnimationPublicationTracker::snapshot(host.access,id);
+            before=MountAnimationPublicationTracker::snapshot(host.access,id,&mountAnimationExact.components[slot].masterPose);
             admitted=before.pending==1 && before.animationFrame==static_cast<unsigned>(before.frame) &&
                 host.readParts(host.binding,prior) && MountAnimationPublicationTracker::nativeOpen(prior);
         }
     }catch(...) { admitted=false; }
+    work.pause();
     mountAnimationOriginalPublish(component); // 所有分支恰调用一次完整原生发布，不主动补帧。
+    work.resume();
     try {
         if(admitted && host.bindingAlive(host.binding)) {
-            const auto after=MountAnimationPublicationTracker::snapshot(host.access,id);
+            const auto after=MountAnimationPublicationTracker::snapshot(host.access,id,&mountAnimationExact.components[slot].masterPose);
             ::dualsp::common_bay::PartsSample native;
             if(after.frame==before.frame && after.animationFrame==before.animationFrame && !after.pending &&
                after.doubleBuffered==before.doubleBuffered && after.readIndex==(before.doubleBuffered?before.writeIndex:0) &&
@@ -115,7 +156,12 @@ void mountAnimationPublish(void* component) {
                 stamp={after.frame,after.readIndex,true};
         }
         // 保存的是发布事实；显示/发射仍重新核对当帧、缓冲、全部有效骨骼、Socket与相对变换。
-        if(auto* state=mountAnimationLayout())mountApplyVisuals(*state);
+        bool complete=true;
+        const auto frame=read<std::uint64_t>(host.access.moduleBase()+0x3ac5520);
+        for(unsigned i=0;i<4;++i)if((mountAnimationExact.required&(1u<<i)) &&
+            (!mountAnimationExact.published[i].valid || mountAnimationExact.published[i].frame!=frame))complete=false;
+        // 等本帧所需组件全部发布后统一应用一次，避免每个组件发布时整组先隐藏、再重复显示。
+        if(complete)if(auto* state=mountAnimationLayout())mountApplyVisuals(*state);
     }catch(const std::exception& error) { mountAnimationFail(error.what()); }
 }
 void mountAnimationInstallHooks() {
@@ -154,11 +200,16 @@ void mountAnimationPrepareEndpoints(const FixedMountState& state) {
 }
 void mountAnimationEnsure(FixedMountState& state,unsigned scene) {
     if(!mountAnimated(state.aircraft))return;
+    MountAnimationWorkTimer work(2);
     require(!mountAnimationNativeDepth,"动画挂载：原生初始化期间不允许新接管");
     const auto aircraft=mountAnimationAircraft(state.aircraft);
     if(mountAnimationHost.controller.active() && mountAnimationHost.binding.plane.address==state.plane.address &&
        mountAnimationHost.binding.scene==scene && mountAnimationHost.description.planEquippedMask==state.kindsMask) {
-        require(mountAnimationHost.maintain(),"动画挂载：维持原生骨架更新失败");return;
+        const auto now=GetTickCount64();
+        if(now-mountAnimationLastMaintenance>=100) {
+            require(mountAnimationHost.maintain(),"动画挂载：维持原生骨架更新失败");mountAnimationLastMaintenance=now;
+        }
+        return; // 原生入口、Init尾部与发射前仍即时维护；这里仅周期兜底，不逐帧重复。
     }
     require(mountAnimationRelease(),"动画挂载：旧场景控制仍待归还");
     mountAnimationInstallHooks();
@@ -174,6 +225,9 @@ void mountAnimationEnsure(FixedMountState& state,unsigned scene) {
     require(mountAnimationHost.prepare(aircraft,binding,state.animationDescription),"动画挂载：宿主预检或接管失败");
     try { mountAnimationPrepareEndpoints(state); }
     catch(...) { mountAnimationRelease();throw; }
+    mountAnimationProfile.reset(binding.generation,mountSpecification(state.aircraft).code);
+    mountAnimationClosedVisualsApplied=false;
+    mountAnimationLastMaintenance=GetTickCount64();
     nativeLog(Json{{"event","ANIMATED_MOUNT_BOUND"},{"aircraft",mountSpecification(state.aircraft).code},
         {"scene",scene},{"generation",binding.generation},{"mask",state.kindsMask}}.dump());
 }
@@ -181,6 +235,30 @@ bool mountAnimationShow(const FixedMountState& state,const MountVisual&) {
     if(state.aircraft!=MountAircraft::Su47)return true;
     return mountAnimationHost.binding.plane.address==state.plane.address && mountAnimationExact.matches(mountAnimationHost);
 }
+void mountAnimationQueueSwitch(const ::dualsp::common_bay::Snapshot& saved) {
+    require(saved.valid && !mountAnimationPendingSwitch.valid && mountAnimationHost.controller.active() &&
+        ::dualsp::common_bay::same(saved.binding,mountAnimationHost.binding),"动画挂载：切换快照排队身份不符");
+    mountAnimationPendingSwitch=saved;
+}
+void mountAnimationAfterArmed(const Command& command,bool armed) noexcept {
+    if(!mountAnimationPendingSwitch.valid)return;
+    auto saved=mountAnimationPendingSwitch;mountAnimationPendingSwitch={};
+    try {
+        require(command.op=="switch" && armed && command.request==saved.transaction &&
+            session.plane==command.plane && session.activator==command.activator &&
+            session.configs[session.active]==saved.targetConfig,"动画挂载：原生SP恢复与切换快照不匹配");
+        require(mountAnimationHost.controller.restoreSwitch(mountAnimationHost,mountAnimationHost.binding,
+            command.request,saved)==::dualsp::common_bay::Error::None,"动画挂载：完整原生SP恢复后归还舱门状态失败");
+    }catch(const std::exception& error) { mountAnimationFail(error.what()); }
+}
+struct MountAnimationArmedCompletion {
+    const Command& command;bool completed{};
+    explicit MountAnimationArmedCompletion(const Command& value):command(value){}
+    ~MountAnimationArmedCompletion() {
+        if(!completed && mountAnimationPendingSwitch.valid && mountAnimationPendingSwitch.transaction==command.request)
+            mountAnimationFail("动画挂载：原生SP恢复中断，取消旧舱门快照");
+    }
+};
 bool mountAnimationCopyTransform(void* output,const FixedMountState& state,int position) {
     require(position>=0 && position<state.physicalCount,"动画挂载：物理位置越界");
     auto& host=mountAnimationHost;
@@ -210,16 +288,19 @@ bool mountAnimationCopyTransform(void* output,const FixedMountState& state,int p
     checkMemory(reinterpret_cast<Addr>(output),48);std::memcpy(output,transform.data(),48);
     return true;
 }
-void mountAnimationPartsBefore(void* parts) {
-    if(mountAnimationNativeDepth || !mountAnimationHost.controller.active() || mountAnimationHost.binding.parts!=reinterpret_cast<Addr>(parts))return;
-    try { require(mountAnimationHost.maintain(),"动画挂载：帧更新前维持失败"); }
-    catch(const std::exception& error) { mountAnimationFail(error.what()); }
-}
 void mountAnimationPartsAfter(void* parts) {
     if(mountAnimationNativeDepth || !mountAnimationHost.controller.active() || mountAnimationHost.binding.parts!=reinterpret_cast<Addr>(parts))return;
+    if(mountAnimationHost.aircraft!=::dualsp::common_bay::Aircraft::Su47)return;
+    MountAnimationWorkTimer work(0);
     try {
-        require(mountAnimationHost.maintain(),"动画挂载：原生Parts更新后维持失败");
-        if(auto* state=mountAnimationLayout())mountApplyVisuals(*state);
+        ::dualsp::common_bay::PartsSample native;
+        require(mountAnimationHost.readParts(mountAnimationHost.binding,native),"动画挂载：Parts更新后实例改变");
+        // 收拢立即隐藏内部弹体；全开显示由最后一次所需骨骼发布统一决定。
+        if(!MountAnimationPublicationTracker::nativeOpen(native)) {
+            if(!mountAnimationClosedVisualsApplied)if(auto* state=mountAnimationLayout()) {
+                mountApplyVisuals(*state);mountAnimationClosedVisualsApplied=true;
+            }
+        } else mountAnimationClosedVisualsApplied=false;
     }catch(const std::exception& error) { mountAnimationFail(error.what()); }
 }
 // 整次原生Initialize期间不反复强制字段；原生最后的条件赋值全部完成后才观察三项真实请求。
