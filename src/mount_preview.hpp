@@ -72,6 +72,8 @@ void mountPreviewRestoreVisuals() {
     std::string error;
     try { mountExteriorRelease(mountPreview.layout); }
     catch(const std::exception& item) { error=item.what(); }
+    try { mountLightRelease(mountPreview.layout); }
+    catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
     if(!mountAnimationRelease(mountPreview.layout.plane.address,2))error="多 SP 动画控制仍待归还";
     for(const auto& item:mountPreview.layout.meshOverrides)try {
         mountApplyMesh(item,false);
@@ -94,6 +96,7 @@ bool mountPreviewRelease(Addr owner,bool resumeTask) {
         const bool resume=resumeTask && mountPreviewOwnsTask() && fixedMount.bound && mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager);
         mountPreview={};
         if(resume) {
+            if(mountLight(fixedMount.aircraft))mountLightMaintain(fixedMount);
             if(mountExterior(fixedMount.aircraft))mountExteriorMaintain(fixedMount);
             if(fixedMount.animatedRack.address && mountAlive(fixedMount.animatedRack))mountSetRackAnimation(fixedMount.animatedRack.address,false,true);
             mountApply();
@@ -122,6 +125,7 @@ void mountPreviewRetryRestore() {
 void mountPreviewAnimate() {
     auto& state=mountPreview.layout;
     const Addr plane=state.plane.address;const unsigned mask=state.kindsMask;
+    if(mountLight(state.aircraft)) { mountLightMaintain(state);return; }
     if(mountExterior(state.aircraft)) { mountExteriorMaintain(state);return; }
     if(mountAnimated(state.aircraft)) { mountAnimationEnsure(state,2);return; }
     if(state.aircraft==MountAircraft::F35c) {
@@ -143,6 +147,7 @@ void mountPreviewAnimate() {
 }
 // 组件复用时只能继承记录过的原生请求；新组件必须保留自己的初始状态。
 void mountPreviewInheritNative(FixedMountState& next,const FixedMountState& prior) {
+    mountLightInherit(next,prior);
     mountExteriorInherit(next,prior);
     for(auto& visual:next.visuals)for(const auto& old:prior.visuals)if(mountSameIdentity(visual.identity,old.identity)) {
         visual.nativeVisible=old.nativeVisible;visual.nativeHidden=old.nativeHidden;break;
@@ -169,6 +174,7 @@ bool mountPreviewLayoutChanged() {
     if(read<Addr>(state.manager.address+0x150)!=state.meshManager.address || !mountAlive(state.meshManager))return true;
     if(read<Addr>(state.plane.address+0x160)!=state.root.address || !mountAlive(state.root) ||
        read<Addr>(state.plane.address+0x1ae0)!=state.weaponBase.address || !mountAlive(state.weaponBase))return true;
+    if(mountLight(state.aircraft))return mountLightLayoutChanged(state);
     if(mountExterior(state.aircraft)) {
         if(!mountAlive(state.exteriorRack) || read<Addr>(state.plane.address+state.rackOffsets[2])!=state.exteriorRack.address)return true;
         if(state.aircraft==MountAircraft::Pkfa)return false;
@@ -203,6 +209,7 @@ bool mountPreviewRebindHangar() {
     mountIdentity(meshManager);
     // 原生可能先清空旧池、再填新池；不把明确的加载空窗永久锁成失败。
     for(int pool=0;pool<3;++pool)if((!mountExterior(prior.aircraft) || (prior.aircraft==MountAircraft::F22a && pool==2)) &&
+        (!mountLight(prior.aircraft) || mountLightOwnsPool(prior.aircraft,pool)) &&
         read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(prior.aircraft,pool))return false;
     FixedMountState next;
     next.aircraft=prior.aircraft;next.kindsMask=prior.kindsMask;
@@ -210,6 +217,7 @@ bool mountPreviewRebindHangar() {
     next.logicalCounts=specification.logicalCounts;next.physicalCount=specification.physicalCount;
     next.rackMask=mountRackMask(next.aircraft,next.kindsMask);next.readyMask=prior.readyMask;
     mountBindVisuals(next,prior.plane.address,mountPreview.activator.address); // 全量校验成功前不写新组件。
+    if(mountLight(prior.aircraft) && mountLightLayoutChanged(prior))mountLightRelease(prior);
     mountPreviewInheritNative(next,prior);
     mountRestoreUnusedMeshes(prior,next);
     // 只归还已脱离本轮模型池的旧组件，复用组件不经过单挂状态。
@@ -366,6 +374,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         if(meshManager) {
             mountIdentity(meshManager);
             for(int pool=0;pool<3;++pool)if((!mountExterior(aircraft) || (aircraft==MountAircraft::F22a && pool==2)) &&
+                (!mountLight(aircraft) || mountLightOwnsPool(aircraft,pool)) &&
                 read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(aircraft,pool))pending=true;
         }
         if(pending) {
@@ -387,18 +396,21 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
             const auto actual=mountName(package);
             const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
+            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }
         require(count>0,"模型预览：没有有效兵装");
-        if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft)) && count==1) ||
+        if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && count==1) ||
+           (mountLight(aircraft) && mountLightNative(aircraft,mask)) ||
            (mountExterior(aircraft) && !(mask&4u))) {
             mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
             mountPreview.layout={};mountPreview.layout.plane=planeIdentity;mountPreview.layout.kindsMask=mask;
             mountPreview.configs=configs;mountPreview.ammo=ammo;mountPreview.planCached=true;return;
         }
         if(!mountPreview.layout.bound || mountPreview.layout.kindsMask!=mask) {
+            if(mountLight(aircraft) && mountPreview.layout.bound)mountPreviewRestoreVisuals();
+            if(mountLight(aircraft) && mountPreviewOwnsTask() && fixedMount.kindsMask!=mask)mountLightRelease(fixedMount);
             FixedMountState next;
             next.plane=planeIdentity;next.aircraft=aircraft;next.kindsMask=mask;
             next.logicalCounts=specification.logicalCounts;next.physicalCount=specification.physicalCount;next.rackMask=mountRackMask(aircraft,mask);

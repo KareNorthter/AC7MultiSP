@@ -97,6 +97,30 @@ int main() {
     write<float>(pool+0x48,10);
     try{restore(act,true,cooling,99);assert(false);}catch(const std::runtime_error&){}
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    // 四机轻量路径：内部/效果源不能误入消耗弹映射，减位不改变逻辑窗口。
+    for(auto aircraft:{MountAircraft::Dark,MountAircraft::Zoef,MountAircraft::Adf11f,MountAircraft::Fa44}) {
+        assert(mountLight(aircraft));
+        for(unsigned selection:{1u,2u,4u})assert(mountLightNative(aircraft,selection));
+        for(unsigned selection:{5u,6u,7u})assert(!mountLightNative(aircraft,selection));
+    }
+    assert(mountLightNative(MountAircraft::Dark,3));
+    FixedMountState light;light.aircraft=MountAircraft::Zoef;light.kindsMask=7;
+    light.logicalCounts=mountSpecification(light.aircraft).logicalCounts;
+    light.expansionPositions[1]={0,1};light.expansionPositions[2]={2,3};
+    assert(!mountNeedsMappedTransform(light,0) && mountNeedsMappedTransform(light,1));
+    assert(mountPreviewReadyMask(light,{0,1,2},{99,99,99},3)==15);
+    assert(mountPreviewReadyMask(light,{0,1,2},{99,0,1},3)==4);
+    light.aircraft=MountAircraft::Adf11f;light.expansionPositions[2]={2};
+    assert(mountPreviewReadyMask(light,{0,1,2},{99,99,99},3)==7);
+    assert(mountPhysical(light,2,0)==mountPhysical(light,2,1));
+    assert(mountSpecification(light.aircraft).loadedCounts[2]==2);
+    light.aircraft=MountAircraft::Fa44;light.logicalCounts=mountSpecification(light.aircraft).logicalCounts;
+    assert(mountNeedsMappedTransform(light,0) && mountNeedsMappedTransform(light,1) && !mountNeedsMappedTransform(light,2));
+    assert(mountFixedEmitter(light.aircraft,1) && mountFixedEmitter(light.aircraft,2));
+    assert(mountSpecification(light.aircraft).loadedCounts[0]==12 && light.logicalCounts[0]==126);
+    assert(mountLightRackMask(MountAircraft::Zoef,6)==2 && mountLightRackMask(MountAircraft::Fa44,7)==3);
+    light.aircraft=MountAircraft::Dark;light.kindsMask=7;
+    assert(mountPreviewReadyMask(light,{0,1,2},{99,99,99},3)==0);
     // 机外保留路线不能误入旧共舱发射映射；舱内原生旁路与固定吊舱分别核对。
     assert(mountNativeOnly(MountAircraft::Su47) && mountNativeOnly(MountAircraft::Su57tg));
     assert(!mountNativeOnly(MountAircraft::F35c));

@@ -85,7 +85,10 @@ bool continuousRavenLoadout(Addr activator) {
 bool continuousXfa27(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_fa27_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa27");
 }
-bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane);}
+bool continuousCfa44(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_fa44_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44");
+}
+bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) || continuousCfa44(plane);}
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
 bool continuousSupported(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
@@ -94,7 +97,8 @@ bool continuousSupported(Addr plane,Addr weapon) {
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
         (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")));
     const bool ecm=id==31 && ((morgan && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0")) ||
-        (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")));
+        (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")) ||
+        (!raven && continuousCfa44(plane) && continuousClass(cls,"plwp_ecmp_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1")));
     const bool uav=raven && id==26 && continuousClass(cls,"plwp_WeaponUAV_C","/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV");
     if(!(tls || ecm || uav) || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return false;
     if(uav)return !read<unsigned char>(weapon+0x45d) && read<float>(weapon+0x518)==0 && read<Addr>(table+0x618)==base+0x8a6bf0 &&

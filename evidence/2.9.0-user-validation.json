@@ -1,0 +1,12 @@
+{
+  "version": "2.9.0",
+  "date": "2026-10-17",
+  "source": "用户本轮实测反馈",
+  "observations": {
+    "f22a": "多SP侧部8AAM模型正常；只要组合含8AAM，切SP轻微卡顿；QAAM+XSDB切换不卡顿",
+    "pkfa": "普通Su-57一切正常",
+    "su47": "正常"
+  },
+  "limits": "未逐项列出七组合、全部任务及检查点；未提供统一场景帧时间，不能推定具体CPU/GPU根因；本轮未反馈Su-57 TGM",
+  "next_authorized_work": "优化F22性能，实施ADF-01、DarkStar、ADF-11F、CFA-44方案，完成后编译安装，由用户一起测试"
+}

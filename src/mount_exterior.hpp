@@ -76,7 +76,12 @@ void mountExteriorRelease(FixedMountState& state) {
     if(state.exteriorBones)try { state.exteriorBones->release();state.exteriorBones.reset(); }
     catch(const std::exception& error) { failure=error.what(); }
     if(state.exteriorAnimationOwned)try {
-        if(mountAlive(state.exteriorRack))mountSetRackAnimation(state.exteriorRack.address,state.exteriorNativeNoSkeleton,state.exteriorNativeTick);
+        if(mountAlive(state.exteriorRack)) {
+            const Addr rack=state.exteriorRack.address;
+            const bool noSkeleton=(read<unsigned char>(rack+0x9b0)&2)!=0,tick=read<unsigned char>(rack+0x3f)!=0;
+            if(noSkeleton!=state.exteriorNativeNoSkeleton || tick!=state.exteriorNativeTick)
+                mountSetRackAnimation(rack,state.exteriorNativeNoSkeleton,state.exteriorNativeTick);
+        }
         state.exteriorAnimationOwned=false;
     }catch(const std::exception& error) { if(!failure.empty())failure+="；";failure+=error.what(); }
     require(failure.empty(),failure.c_str());
@@ -108,8 +113,7 @@ void mountExteriorMaintain(FixedMountState& state) {
     } else {
         if(!state.exteriorBones || !state.exteriorBones->active()) {
             if(!state.exteriorBones)state.exteriorBones=std::make_shared<MountExteriorBones>();
-            state.exteriorBones->bind(state.exteriorRack.address);
-            state.exteriorBones->setAbdomenHidden(true); // 只在取得该次租约时调用，不在周期巡检中反复反射/写骨。
+            state.exteriorBones->bind(state.exteriorRack.address,true); // 同栈完成基线采样和隐藏，逐根仍回读；周期巡检不重复查骨。
         }
     }
     const Addr rack=state.exteriorRack.address;const auto flags=read<unsigned char>(rack+0x9b0);

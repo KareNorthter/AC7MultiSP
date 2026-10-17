@@ -1,11 +1,15 @@
 # AC7MultiSP
 
-主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码与游戏安装均为2.9.0机外保留测试候选，实机效果待用户验证，二者必须区分。
+主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码和游戏均为2.10.0四机轻量候选，二者必须区分，交付以回执为准。
 按需读[架构](docs/architecture.md)或[开发说明](docs/development.md)；研究机体挂载先读[挂载设计经验](docs/multi-sp-mount-design.md)，无需通读证据和历史。用户操作见[安装说明](docs/安装说明.txt)，交付范围见[版本说明](docs/release.txt)。
 
 新主管先读[主管接手入口](docs/development.md#主管接手入口)，任务分工、已验证范围与尚未整合的支线均在该节；不另建重复交接文档。
 
 ## 当前事实
+
+- 2.10.0已完整编译、通过适用检查并安装：16运行文件、32成员PAK与144保护文件核验，配置/存档/其他Mod保留，备份backup/AC7MultiSP-20261017-143340-537534，未启动游戏。见evidence/2.10.0-integration.json；新四机和F22性能改善仍待实测。后续构建升级基线使用evidence/2.10.0-installed.json。
+
+- 用户已测2.9.0：普通Su-57、Su-47正常，F22侧8AAM正常但含8AAM组合切SP轻微卡顿，QAAM+XSDB不卡；未反馈TGM，详见evidence/2.9.0-user-validation.json。已授权优化F22并完成ADF-01、DarkStar、ADF-11F、CFA-44后编译安装。新增四机按轻量路线：TLS机鼻/内部舱门原生，CFA左ADMM右EML隐藏IEWS，ADF11左UAV右QAAM允许窄导轨局部穿入。用户睡前追加：当前批安装后继续其余未做机体方案，排除RKT/GRKT、挂点极少、仅内置弹舱、特殊动画及其他难机，困难项留待醒后讨论；不需要等待回复，可继续授权工作。第二阶段先核Su35/Su37静态分区，完整筛选结论写现有设计正文，不另建交接文档。
 
 - 2.9.0已按用户新方案完整构建、通过适用检查并安装，16运行文件、32成员PAK、141保护文件核验，配置/存档/其他Mod保留；产物Temp/build-2.9.0，备份backup/AC7MultiSP-20261017-135954-441251。Su-47/TGM任务与预览原生；普通Su-57仅保已选PLSL静态舱，F-22A仅保已选侧8AAM，舱内/发射原生，不写共舱进度或启用旧严格门槛。F-35C原有动画/映射保持；CFA-44后置、X-02S不做。本版未启动游戏，效果待测；见evidence/2.9.0-integration.json。完整方案已在archive/full-bay-mount-2.8.1（57fd5d3）和Temp/build-2.8.1留档，用户确认布局思路可行，后续再研究性能。
 
@@ -42,7 +46,7 @@
 1. 中文交流。遇到资料或环境阻塞及时报告。
 2. 2.4.0已获用户完整功能及两支线实测通过反馈，授权作为正式版提交main。默认不自动编译、新增或运行测试、安装、操作游戏；开发阶段的构建安装须在用户授权范围内。正式化沿用已实测字节，不重新构建；不自动推送或上传。
 3. 新分支从 main 创建，前缀 `codex/`；旧工作区仅供恢复，不继续开发。未合入成果的定位见开发说明。
-4. Lua唯一源`dist/DualSP/Scripts/`，当前源码及安装为2.9.0，成套产物Temp/build-2.9.0；完整旧方案Temp/build-2.8.1及archive/full-bay-mount-2.8.1保留；旧Temp/build-2.8.0-final只用于2.8.0恢复（Temp/build-2.8.0已作废，不可安装）。2.7.2新资源输入为Temp/mount-assets-2.7.2/source，仍16副本，名称/PAK已随2.8.0成套升级，2.9.0安装基线为evidence/2.8.1-installed.json。下个版本升级前须改用evidence/2.9.0-installed.json为基线；不要把本候选Lua与dist保留的正式旧UI混装。2.4.0正式核心为`dist/DualSP/cores/2.4.0/DualSP.dll`，UI为`dist/DualSP/bin/DualSPUI.dll`，与Temp/build-2.4.0及已实测安装一致。2.0.0旧核心保留，仅与v2.0.0源码和当时UI配套，旧UI从Git标签恢复。旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
+4. Lua唯一源`dist/DualSP/Scripts/`，当前源码及安装为2.10.0，成套产物Temp/build-2.10.0；完整旧方案Temp/build-2.8.1及archive/full-bay-mount-2.8.1保留；旧Temp/build-2.8.0-final只用于2.8.0恢复（Temp/build-2.8.0已作废，不可安装）。2.7.2新资源输入为Temp/mount-assets-2.7.2/source，仍16副本，名称/PAK已随2.8.0成套升级，2.10.0安装基线为evidence/2.9.0-installed.json。下个版本升级前须改用evidence/2.10.0-installed.json为基线；不要把本候选Lua与dist保留的正式旧UI混装。2.4.0正式核心为`dist/DualSP/cores/2.4.0/DualSP.dll`，UI为`dist/DualSP/bin/DualSPUI.dll`，与Temp/build-2.4.0及已实测安装一致。2.0.0旧核心保留，仅与v2.0.0源码和当时UI配套，旧UI从Git标签恢复。旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
 5. 功能变化更新对应正文，不追加流水账或另建重复交接文档。默认只维护本入口、架构、开发、用户安装及版本说明；确有独立用途才新增文档。
 6. pwsh7 优先，复杂文件处理用 Python；UTF-8，Windows 启动脚本沿用 BOM。临时文件 Temp，备份 backup；无 Git 文件修改前备份，清理送回收站。
 7. 不提交个人状态、游戏资源、音频、第三方 PAK、工具、转储及 ZIP；遵守同一范围与文件所有权。

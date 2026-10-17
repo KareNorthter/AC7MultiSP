@@ -1,19 +1,19 @@
-AC7MultiSP：源码及游戏安装为2.9.0机外保留测试候选
+AC7MultiSP：2.10.0四机轻量挂载候选，安装状态以回执为准
 《皇牌空战 7》多特殊兵装 Mod
-2.9.0已完整构建、通过适用检查并安装。Su-47/TGM原生外观，普通Su-57保PLSL、F-22A保侧8AAM；舱内与发射走原生，F-35C保持。效果和帧率待用户验证。
-配置、存档和其他Mod保留，未启动游戏；备份backup/AC7MultiSP-20261017-135954-441251，交付见evidence/2.9.0-integration.json。旧完整方案在archive/full-bay-mount-2.8.1及Temp/build-2.8.1留档，CFA-44后置。
+本批减少F22含8AAM切换重复查询，新增ADF01翼下共架、DarkStar PLSL常驻、ADF11左UAV右QAAM、CFA44左ADMM右EML/隐藏IEWS。TLS机鼻和内部舱门原生；F35、普通Su57、Su47/TGM既有路径保持，实际观感和性能待测。
+保留配置、存档、其他Mod，不启动游戏；交付见evidence/2.10.0-integration.json。旧完整方案仍在archive/full-bay-mount-2.8.1及Temp/build-2.8.1留档。
 
 本轮重点复测
-Su-47、Su-57 Top Gun：已恢复当前SP原生模型/动画，请看任务帧率、切换及发射补装。
-普通Su-57：含PLSL双/三挂切换后，翼下静态吊舱保留，4AAM/GPB舱内随当前SP原生切换。
-F-22A：含8AAM双/三挂的侧部模型保留；QAAM/XSDB舱内原生，当前8AAM保留原生14槽发射。看帧率、切换卡顿、逐发消耗与补装；重复开舱暂可接受。
-F-35C保持原实现作为对照；再看单挂、无PLSL/8AAM组合、关闭模型及机库/补给/检查点归还。
-修复失败仍保留原有降级保护，请记录机型、组合、场景、提示和时间，保留日志。
+F22：对比含8AAM组合与QAAM+XSDB的切换卡顿；侧部消耗/补装及14个原生发射点。
+ADF01：翼下组合、FAEB投放和TLS机鼻开合；DarkStar：PLSL常驻、内部原生切换。
+ADF11：右QAAM、左UAV发射/补装，两UAV持续/回收；左UAV背部窄导轨局部穿入需观察。
+CFA44：左ADMM、右EML开合/发射，IEWS外观隐藏但功能保留；实际契约不符继续限制单挂。
+F35保持对照，检查机库/补给/检查点、单挂、关闭模型及原生归还。异常请记机体、组合、场景、提示和时间并保留日志。
 
 范围与资源
-共13架静态多挂：F-15E、F-35C、Su-30SM，以及F-2A、F-15C、F-15J、F-15 S/MTD、F-16C、XFA-27、Mirage 2000-5、ADFX-01、Rafale M、Typhoon。单挂仍由原生控制，新修订尚待复测。
-ADF-11F的TLS/QAAM/UAV同选与跨SP持续须通过原生机体/兵装契约；其外观仍为当前SP原生模型。2.9.0改为上述机外保留及舱内原生策略；不能把安装视为实机验证通过。
-Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak只新增独立路径。2.9.0沿用2.8.1的16资源/32成员PAK原字节，未新增模型或动画；恢复时按备份回执同时恢复程序和对应资源，不要单拷Lua。
+原13机静态方案保持：F15E、F35C、Su30SM、F2A、F15C/J/S-MTD、F16C、XFA27、Mirage2000-5、ADFX01、RafaleM、Typhoon；无DLC未实测机体边界保留。
+ADF11的TLS/QAAM/UAV及CFA44的IEWS同选/持续须通过原生契约；安装不代表实机验证通过。
+Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak只新增独立路径。本批沿用16资源/32成员PAK；恢复按回执同时恢复程序与资源，不要单拷Lua。
 管理与顶部提示为26号字体；三个快捷键均可自定义。比例引导和锁定图标PAK继续禁用。
 评分页轨迹回退感与偶发退出尚待定位，继续使用下面的取证入口。
 

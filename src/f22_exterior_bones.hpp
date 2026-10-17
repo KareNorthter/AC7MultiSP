@@ -104,10 +104,11 @@ private:
         putName(params.data(),hiddenName,name);
         reflection.invoke(component,isHidden,params.data());return Reflection::getBool(params.data(),hiddenResult);
     }
-    void setOne(Root& root,bool wanted) {
+    void setOne(Root& root,bool wanted,const bool* observed=nullptr) {
         // 完整元数据/骨表在批处理开始核对；逐根仅核组件和缓存的实际函数身份。
         componentCurrent();
-        if(hidden(root.bone.name)==wanted)return;
+        // observed只接受本次同栈事务的只读预采样；跨Init/帧的缓存不能代替原生读取。
+        if((observed?*observed:hidden(root.bone.name))==wanted)return;
         // ProcessEvent可能先改变状态再报失败，必须在第一笔写前保留归还责任。
         root.restoreNeeded=true;
         require(!reflection.ownWrite,"F22骨显隐：重入写入");
@@ -224,12 +225,22 @@ public:
     MountExteriorBones(MountExteriorBones&&)=delete;
     MountExteriorBones& operator=(MountExteriorBones&&)=delete;
 
-    void bind(Addr swp3) {
+    void bind(Addr swp3,bool hideAbdomen=false) {
+        bool acquired=false;
         try {
             Reflection::thread();
             require(!bound_ && !operating_,"F22骨显隐：旧租约尚未归还");
             operating_=true;
             struct Reset { bool& flag;~Reset(){flag=false;} } reset{operating_};
+            auto finish=[&] {
+                bound_=true;applied_=lastHidden_=restorePending_=false;acquired=true;
+                if(hideAbdomen) {
+                    // 元数据、Body和九根基线已在本次绑定中读完；不再重复同一批查询。
+                    for(auto& root:roots)setOne(root,true,&root.nativeHidden);
+                    applied_=lastHidden_=true;
+                }
+                error_.clear();
+            };
             if(component.address==swp3 && mountAlive(component)) {
                 bool reusable=false;
                 try { current();reusable=count()==static_cast<int>(expectedBones.size()); } catch(...) { reusable=false; }
@@ -239,7 +250,7 @@ public:
                     for(size_t i=0;i<roots.size();++i)baseline[i]=hidden(roots[i].bone.name);
                     componentCurrent();
                     for(size_t i=0;i<roots.size();++i) { roots[i].nativeHidden=baseline[i];roots[i].restoreNeeded=false; }
-                    bound_=true;applied_=lastHidden_=restorePending_=false;error_.clear();return;
+                    finish();return;
                 }
             }
             MountExteriorBones next;next.prepare(swp3);
@@ -251,9 +262,16 @@ public:
             nameResult=next.nameResult;parentInput=next.parentInput;parentResult=next.parentResult;hideName=next.hideName;
             hidePhysics=next.hidePhysics;unhideName=next.unhideName;hiddenName=next.hiddenName;hiddenResult=next.hiddenResult;
             reflection=next.reflection;roots=next.roots;body=next.body;pboNone=next.pboNone;
-            bound_=true;applied_=lastHidden_=restorePending_=false;error_.clear();
-        } catch(const std::exception& error) { error_=error.what();throw; }
-        catch(...) { error_="F22骨显隐：绑定访问失败";throw std::runtime_error(error_); }
+            finish();return;
+        } catch(const std::exception& error) { error_=error.what(); }
+        catch(...) { error_="F22骨显隐：绑定访问失败"; }
+        // 合并取得租约与隐藏后也必须承担部分写入的归还责任。
+        if(acquired && bound_ && !operating_) {
+            operating_=true;
+            struct Reset { bool& flag;~Reset(){flag=false;} } reset{operating_};
+            if(!restoreAll())error_+="；部分腹根仍待归还";
+        }
+        throw std::runtime_error(error_);
     }
     void setAbdomenHidden(bool hide) {
         bool mayRollback=false;
@@ -268,10 +286,12 @@ public:
             current();
             require(!hidden(body.name),"F22骨显隐：Body骨被隐藏，停止腹根接管");
             // 写前预读全部根，读取失败时第一笔也不写。
-            for(const auto& root:roots)hidden(root.bone.name);
-            for(auto& root:roots) {
+            std::array<bool,9> observed{};
+            for(size_t i=0;i<roots.size();++i)observed[i]=hidden(roots[i].bone.name);
+            for(size_t i=0;i<roots.size();++i) {
+                auto& root=roots[i];
                 const bool wanted=hide || root.nativeHidden; // false归还基线，不强行显示原生已隐藏的根。
-                setOne(root,wanted);root.restoreNeeded=wanted!=root.nativeHidden;
+                setOne(root,wanted,&observed[i]);root.restoreNeeded=wanted!=root.nativeHidden;
             }
             applied_=true;lastHidden_=hide;error_.clear();return;
         } catch(const std::exception& error) { error_=error.what(); }

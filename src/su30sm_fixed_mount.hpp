@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa }; // 旧三机索引保留供完整方案研究。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44 }; // 旧三机索引保留供完整方案研究。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -18,8 +18,10 @@ struct MountSpecification {
 bool mountExpanded(MountAircraft aircraft) {return aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn;}
 bool mountAnimated(MountAircraft aircraft) {return aircraft>=MountAircraft::F22a && aircraft<=MountAircraft::Su57tg;}
 bool mountExterior(MountAircraft aircraft) { return aircraft==MountAircraft::F22a || aircraft==MountAircraft::Pkfa; }
+bool mountLight(MountAircraft aircraft) { return aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44; }
 bool mountNativeOnly(MountAircraft aircraft) { return aircraft==MountAircraft::Su47 || aircraft==MountAircraft::Su57tg; }
 const MountSpecification& mountAnimatedSpecification(MountAircraft aircraft);
+const MountSpecification& mountLightSpecification(MountAircraft aircraft);
 const Json& mountAnimatedPlan(MountAircraft aircraft,unsigned mask);
 const Json& mountExpansionDefinition(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型不在白名单");
@@ -61,7 +63,7 @@ const MountSpecification& mountSpecification(MountAircraft aircraft) {
         case MountAircraft::F15e:return f15;
         case MountAircraft::F22a:return f22;
         case MountAircraft::Pkfa:return pkfa;
-        default:if(mountAnimated(aircraft))return mountAnimatedSpecification(aircraft);if(mountExpanded(aircraft))return mountExpansionSpecification(aircraft);throw std::runtime_error("固定挂载：机型未登记");
+        default:if(mountLight(aircraft))return mountLightSpecification(aircraft);if(mountAnimated(aircraft))return mountAnimatedSpecification(aircraft);if(mountExpanded(aircraft))return mountExpansionSpecification(aircraft);throw std::runtime_error("固定挂载：机型未登记");
     }
 }
 struct MountVisual {
@@ -75,6 +77,7 @@ struct MountMeshOverride {
     MountIdentity component,original,replacement; // 只替换现成组件的弹体网格，保留原生挂点和父链。
 };
 struct MountExteriorBones;
+struct LightMountOwnership;
 struct FixedMountState {
     bool bound{},rebuilding{}; // 重建期间仅固定外观，不改变原生临时武器池取位。
     MountIdentity plane,manager,meshManager; // 限定当前玩家，其他飞机全部直通。
@@ -110,6 +113,7 @@ struct FixedMountState {
     bool exteriorAnimationOwned{},exteriorNativeNoSkeleton{},exteriorNativeTick{};
     int exteriorConfig{-1};
     std::shared_ptr<MountExteriorBones> exteriorBones; // 任务/补给共享同组件时共用一份骨显隐恢复记录。
+    std::shared_ptr<LightMountOwnership> light; // 四机独立轻量外观账本，绝不接管完整公共弹舱。
     std::bitset<256> pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
 } fixedMount;
@@ -152,6 +156,17 @@ void mountExteriorBeforeRebuild(FixedMountState&);
 void mountExteriorObserveInit(FixedMountState&);
 void mountExteriorRefresh(double);
 uint64_t mountExteriorPreviewMask(const FixedMountState&,const std::array<int,3>&,const std::array<int,3>&,int);
+bool mountLightOwnsPool(MountAircraft,int);
+bool mountLightNative(MountAircraft,unsigned);
+bool mountLightMapped(MountAircraft,int);
+unsigned mountLightRackMask(MountAircraft,unsigned);
+void mountBindLightVisuals(FixedMountState&,Addr);
+bool mountLightDesired(const FixedMountState&,const MountVisual&,bool);
+void mountLightMaintain(FixedMountState&);
+void mountLightRelease(FixedMountState&);
+void mountLightInherit(FixedMountState&,const FixedMountState&);
+bool mountLightLayoutChanged(const FixedMountState&);
+bool mountLightCopyTransform(void*,const FixedMountState&,int);
 bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
 struct F35CoverState {
@@ -239,6 +254,11 @@ MountAircraft mountAircraft(Addr plane) {
         if(name=="AcePlayerPawn_f35c_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c")return MountAircraft::F35c;
         if(name=="AcePlayerPawn_f15e_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15e")return MountAircraft::F15e;
         if(name=="AcePlayerPawn_pkfa_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_pkfa")return MountAircraft::Pkfa;
+        for(int i=0;i<4;++i) {
+            const auto aircraft=static_cast<MountAircraft>(static_cast<int>(MountAircraft::Dark)+i);
+            const std::string code=mountLightSpecification(aircraft).code;
+            if(name=="AcePlayerPawn_"+code+"_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_"+code)return aircraft;
+        }
         for(size_t i=0;i<animatedMountData().at("planes").size();++i) {
             const auto code=animatedMountData().at("planes").at(i).at("code").get<std::string>();
             if(name=="AcePlayerPawn_"+code+"_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_"+code)
@@ -288,6 +308,7 @@ bool mountGroupVisible(const FixedMountState& state) {
 }
 // 所有可视组件均保留原父链；挂架网格按机型和组合独立选择。
 bool mountDesired(const FixedMountState& state,const MountVisual& visual,bool groupVisible,int animationGate=-1) {
+    if(mountLight(state.aircraft))return mountLightDesired(state,visual,groupVisible);
     if(mountExterior(state.aircraft))return mountExteriorDesired(state,visual,groupVisible);
     if(!groupVisible)return false;
     if(visual.index<0)return (state.rackMask&(1u<<visual.pool))!=0; // 按已核对的挂架组合显示。
@@ -342,6 +363,8 @@ bool fixedMountRelease() {
         pending.exteriorNativeNoSkeleton=fixedMount.exteriorNativeNoSkeleton;pending.exteriorNativeTick=fixedMount.exteriorNativeTick;
         pending.exteriorBones=fixedMount.exteriorBones;failure(error);
     }
+    try { mountLightRelease(fixedMount); }
+    catch(const std::exception& error) { pending.aircraft=fixedMount.aircraft;pending.light=fixedMount.light;failure(error); }
     for(const auto& item:fixedMount.meshOverrides)try {
         mountApplyMesh(item,false);
     }catch(const std::exception& error) { pending.meshOverrides.push_back(item);failure(error); }
@@ -463,7 +486,7 @@ void mountHidden(void* object,bool hidden,unsigned char propagation) { mountFilt
 // 同一个映射同时用于显示和发射；QAAM 四槽、6AAM/LAGM 六槽均按原生顺序轮转。
 int mountPhysical(const FixedMountState& state,int kind,int ordinal) {
     require(kind>=0 && kind<3,"固定挂载：未知武器种类");
-    if(mountExpanded(state.aircraft) || mountAnimated(state.aircraft)) {
+    if(mountExpanded(state.aircraft) || mountAnimated(state.aircraft) || mountLight(state.aircraft)) {
         require(ordinal>=0 && ordinal<(mountAnimated(state.aircraft)?256:state.logicalCounts[kind]),"扩展挂载：持久序号越界");
         const auto& positions=state.expansionPositions[kind];
         require(!positions.empty(),"扩展挂载：未登记发射位置");
@@ -496,6 +519,7 @@ bool mountCopyTransform(void* output,int slot) {
     const int ordinal=fixedMount.order[slot],kind=fixedMount.weaponKinds[session.active]; // 已重排的持久序号。
     require(ordinal>=0 && ordinal<count,"固定挂载：持久挂点序号无效");
     const int physical=mountPhysical(kind,ordinal); // 与显隐聚合共用映射。
+    if(mountLight(fixedMount.aircraft))return mountLightCopyTransform(output,fixedMount,physical);
     if(mountAnimated(fixedMount.aircraft))return mountAnimationCopyTransform(output,fixedMount,physical);
     const Addr component=fixedMount.physical[physical]; // 与可见模型一致的世界变换来源。
     const auto visual=std::find_if(fixedMount.visuals.begin(),fixedMount.visuals.end(),[&](const MountVisual& item){return item.identity.address==component;}); // 验证目的模型仍属于本次出击。
@@ -581,6 +605,7 @@ void mountInstallHooks() {
     mountHooksReady=true;nativeLog("FIXED_MOUNT_HOOKS_READY");
 }
 unsigned mountRackMask(MountAircraft aircraft,unsigned kindsMask) {
+    if(mountLight(aircraft))return mountLightRackMask(aircraft,kindsMask);
     if(mountExterior(aircraft))return kindsMask&4u;
     if(mountAnimated(aircraft))return mountAnimatedPlan(aircraft,kindsMask).at("racks").get<unsigned>();
     if(mountExpanded(aircraft))return mountExpansionPlan(aircraft,kindsMask).at("racks").get<unsigned>();
@@ -612,6 +637,7 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
     state.rootVisible=bool(rootFlags&0x10);state.rootHidden=bool(rootFlags&0x20);
     const auto ancestorFlags=read<unsigned char>(state.weaponBase.address+0x1bc); // 初始总组状态来自共同挂载父级。
     state.ancestorVisible=bool(ancestorFlags&0x10);state.ancestorHidden=bool(ancestorFlags&0x20);
+    if(mountLight(aircraft)) { mountBindLightVisuals(state,plane);mountBindVisualPositions(state);return; }
     if(mountExterior(aircraft)) { mountBindExteriorVisuals(state,plane);mountBindVisualPositions(state);return; }
     if(mountExpanded(aircraft)) {mountBindExpansionVisuals(state,plane);mountBindVisualPositions(state);return;}
     if(mountAnimated(aircraft)) {mountBindAnimatedVisuals(state,plane);mountBindVisualPositions(state);return;}
@@ -667,6 +693,7 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
 }
 #include "mount_preview.hpp"
 #include "mount_animation_reflection_adapter.hpp"
+#include "light_mount.hpp"
 #include "f22_exterior_bones.hpp"
 #include "mount_exterior.hpp"
 template<class T> T mountAnimationRead(Addr address) { return read<T>(address); }
@@ -686,10 +713,15 @@ void fixedMountRefresh(double time) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(!fixedMount.bound || mountPreviewOwnsTask())return;
     if(mountExterior(fixedMount.aircraft)) { mountExteriorRefresh(time);return; }
+    if(mountLight(fixedMount.aircraft)) {
+        if(GetTickCount64()-fixedMount.animatedVisualAudit<100)return;
+        mountLightMaintain(fixedMount);
+    }
     require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：更新时身份失效");
     if(mountAnimated(fixedMount.aircraft))mountAnimationEnsure(fixedMount,1);
     uint64_t mask=0; // 本次所有物理位置的完整结果。
     for(int weapon=0;weapon<session.count;++weapon) {
+        if(mountLight(fixedMount.aircraft) && !mountLightMapped(fixedMount.aircraft,fixedMount.weaponKinds[weapon]))continue;
         if((fixedMount.aircraft==MountAircraft::F15e && fixedMount.weaponKinds[weapon]==2) || mountFixedEmitter(fixedMount.aircraft,fixedMount.weaponKinds[weapon]))continue; // 固定炮体常驻，不把效果寿命当作导弹冷却。
         const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon]; // 当前或缓存队列。
         const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
@@ -758,6 +790,7 @@ void fixedMountCommit(const Command& command) {
     const bool singleQaam=session.count==1 && aircraft==MountAircraft::Su30sm && kindsMask==4;
     if(session.count==1 && !singleQaam) { fixedMountRelease();return; }
     if(mountExterior(aircraft) && !(kindsMask&4u)) { fixedMountRelease();return; } // 无8AAM/PLSL的组合完全原生。
+    if(mountLight(aircraft) && mountLightNative(aircraft,kindsMask)) { fixedMountRelease();return; }
     require(singleQaam || (session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
         (session.count==3 && kindsMask==7),"固定挂载：已识别兵装组合与槽数不符");
         if(!fixedMount.bound || fixedMount.plane.address!=command.plane || fixedMount.aircraft!=aircraft || fixedMount.kindsMask!=kindsMask) {
@@ -776,7 +809,7 @@ void fixedMountCommit(const Command& command) {
         nativeLog(Json{{"event","FIXED_MOUNT_BOUND"},{"aircraft",specification.code},{"kinds_mask",kindsMask},
             {"rack_mask",fixedMount.rackMask},{"physical_positions",fixedMount.physicalCount}}.dump()); // 位置数不冒充可发射弹数。
     }
-    if(mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft))for(int slot=0;slot<session.count;++slot) {
+    if(mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft))for(int slot=0;slot<session.count;++slot) {
         const auto count=session.special[slot].slots.size();
         require(count>0 && count<=fixedMount.order.size(),"扩展挂载：原生队列长度超出保护边界");
         fixedMount.logicalCounts[kinds[slot]]=static_cast<int>(count); // 使用已捕获的真实队列长度，绝不把Socket数写回游戏。
@@ -795,7 +828,7 @@ void fixedMountCommit(const Command& command) {
         mountSetRackAnimation(rack,false,true);
     }
     fixedMount.rebuilding=false;
-    if(mountExterior(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
+    if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
     fixedMountRefresh(command.time);
 }
 // 动画状态独立于是否选择多挂；补给转单挂后也应正常关闭上一组舱门。
@@ -827,6 +860,7 @@ MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeCo
     if(!fixedMountEnabled || fixedMountFailed)return saved;
     try {
         if(mountExterior(fixedMount.aircraft))mountExteriorBeforeRebuild(fixedMount);
+        if(mountLight(fixedMount.aircraft))mountLightRelease(fixedMount); // Init前逐项归还，结束后再读取原生请求。
         require(!mountAnimationPendingSwitch.valid,"动画挂载：上一切换尚未完成，拒绝覆盖快照");
         if(mountAnimationHost.controller.active() && mountAnimationHost.binding.scene==1 &&
            mountAnimationHost.binding.plane.address==command.plane) {
