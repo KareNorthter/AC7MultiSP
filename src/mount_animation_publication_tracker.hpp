@@ -22,6 +22,7 @@ struct MountAnimationPublicationTracker {
         Aircraft aircraft{};
         Identity provider;
         MountIdentity mesh,skeleton,animationClass,animationInstance;
+        MountAnimationReflection::TickReader tickReader; // 产品绑定时反射核对一次，逐帧不再ProcessEvent读Tick。
         SocketName socket;
         Pose expectedComponent;
         Tolerance tolerance;
@@ -132,7 +133,9 @@ struct MountAnimationPublicationTracker {
                      resourcesCurrent(api,e) && codeQualified(api,e.provider,original);
             if(admitted) {
                 before=snapshot(api,e.provider);
-                const auto state=api.reflection.rackState(MountAnimationProductAccess::productIdentity(e.provider));
+                require(MountAnimationProductAccess::equal(e.tickReader.component,MountAnimationProductAccess::productIdentity(e.provider)),
+                        "动画发布：Tick读取器不属于当前provider");
+                const auto state=api.reflection.rackState(e.tickReader,e.binding.generation);
                 ::dualsp::common_bay::bone_refresh::Setting mode;
                 unsigned actualMode{};
                 admitted=before.pending==1 && before.frame!=~std::uint64_t{0} &&

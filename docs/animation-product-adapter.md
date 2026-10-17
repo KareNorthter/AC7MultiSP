@@ -4,7 +4,7 @@
 
 ## 本轮可直接复用的部分
 
-- `mount_animation_reflection_adapter.hpp`：复用产品真实对象表身份、安全读写、类与世界校验、UE4SS导出，按反射解析 GetSocketTransform、DoesSocketExist、SetComponentTickEnabled、IsComponentTickEnabled。组件/世界空间来自真实具名枚举，返回结构按 Transform→Quat/Vector 的真实子字段解析。未知布局抛出错误，不退回猜测偏移。每次调用重新校验，当前实现尚未做元数据缓存优化。
+- `mount_animation_reflection_adapter.hpp`：复用产品真实对象表身份、安全读写、类与世界校验、UE4SS导出，按反射解析 GetSocketTransform、DoesSocketExist、SetComponentTickEnabled、IsComponentTickEnabled。组件/世界空间来自真实具名枚举，返回结构按 Transform→Quat/Vector 的真实子字段解析。未知布局抛出错误，不退回猜测偏移。Tick支持绑定后快速读取；其他字段/取位仍反射核对，尚未完成全部元数据缓存优化。
 - `mount_animation_product_access.hpp`：具体实现旧 Parts Access 与骨骼刷新 Access；含 PlayerPlane 父类和规范Pawn包检查、完整写区权限、代码回执、真实刷新模式枚举。仅限定 F-22A、Su-47、Su-57 Top Gun。静态元数据允许序列号0，但仍复核对象表；动态 Binding 沿用非零序列号要求。
 - `mount_animation_publication_tracker.hpp`：给出了真实骨骼发布入口的包裹实现，原生跳板恰好执行一次。只在原生本帧实际发布之后，同步获取组件/世界挂点变换、检查几何端点并生成见证；不主动刷新动画、不另造动画时钟。
 
@@ -25,7 +25,11 @@
 
 原生 `0x1ce7f69` 读取 input+0x4c，即 Parts+0x58；request1推进公共进度，达到1时phase写2，request仍可为1。因此新 tracker 的端点门槛接受request1或2且phase2/进度1，拒绝request3收拢中的旧端点。
 
-主管后续4500条只读连续轮询覆盖两次原生关闭/打开：request3→phase3→phase0，request1→phase1→phase2。SWP1/2始终NoSkeletonUpdate=2、骨骼缓冲不变、动画帧0；SWP3持续变化。这支持“当前provider更新、非当前provider停更”的判断；不证明回调调用顺序，也没有由轮询生成当帧见证。三组+0x3f原始字节始终1，不能直接称为TickEnabled；适配器以真实 IsComponentTickEnabled 回读。
+主管后续4500条只读连续轮询覆盖两次原生关闭/打开：request3→phase3→phase0，request1→phase1→phase2。SWP1/2始终NoSkeletonUpdate=2、骨骼缓冲不变、动画帧0；SWP3持续变化。这支持“当前provider更新、非当前provider停更”的判断；不证明回调调用顺序，也没有由轮询生成当帧见证。
+
+三组+0x3f始终1。后补原生代码已确认 IsComponentTickEnabled 的wrapper在 `0x1b2ab4e` 调 `0x16840d0`，该getter完整8字节为 `80793f000f95c0c3`，语义就是 `byte[component+0x3f]!=0`。因此旧原型读取该字节的行为正确；**Tick=true不足以证明骨骼求值**，不能把非当前挂架停更归因于Tick读取错误。
+
+`bindTickReader(component,generation)` 在绑定时反射检查函数所属类、返回布局和真实原生入口，核对完整0x2b字节wrapper及8字节getter，再做一次反射返回值交叉核对。`tickFast(reader,generation)` 逐次核对对象/类/函数/参数身份、绑定代次和原生代码后直接读+0x3f，不遍历反射链、不调用ProcessEvent、不执行getter。Endpoint的tickReader由该绑定接口生成；Tracker已改用此路径。它只消除读取Tick的重复开销，其余骨架布尔字段和挂点反射仍需后续缓存优化。
 
 **00bd24c的旧三个头不可直接原样接入产品。** 当时的 `RackRequest{paused,tick}` 无法表达 NoSkeletonUpdate，`Host::applyRack` 的“不碰NoSkeletonUpdate”约定与原生非当前挂架行为冲突，`nativeFullyOpen(request==2)` 过严。主管已报告在主工作区追加了第三字段及request1/2门槛修订；整合时以该修订版为准。本轮按主管要求只新增文件，没有覆盖研究树的旧头。旧骨骼刷新 Lease 只管理模式字段这一点可以保留，但不能代替另外三个字段的所有权与归还。
 
@@ -33,7 +37,9 @@
 
 原生禁用入口 `0x7f0210` 在 `0x7f0297` 调 Tick 后，`0x7f029d` 直接置 NoSkeletonUpdate；另一分支 `0x7f02ae` 也置位。只拦截 Tick 无法维持骨骼更新。
 
-产品应把 `{noSkeletonUpdate,pauseAnims,tickEnabled,refreshMode}` 分别记录为最新原生请求，先准备全部provider，再取得控制权；保持时才分别清除NoSkeletonUpdate、清除Pause、启用Tick、维持具名刷新模式。所有本模块写入须通过 `reflection.ownWrite` 绕过原生观察。归还时逐项还原最新原生请求，不以当前强制值覆写原生意图；死亡对象丢弃，失败项保留重试。
+产品分别核对 `{noSkeletonUpdate,pauseAnims,tickEnabled,refreshMode}`，先准备全部provider。当前限定三机优先采用较小接管范围：原生刷新模式已经是具名 AlwaysTickPoseAndRefreshBones，**只监视、不接管、不写该模式**；若原生改成其他模式立即视觉回退。原生Pause本轮始终false；遇到真实Pause=true请求则退出接管并归还，不能强行清除原生暂停。
+
+NoSkeletonUpdate与Tick按需要接管；Pause仍保留独立状态和三字段归还合同，避免旧结构混用位掩码。所有本模块写入通过 `reflection.ownWrite` 绕过原生观察，归还逐项采用最新原生请求，不以当前强制值覆写原生意图；死亡对象丢弃，失败项保留重试。刷新模式未取得写所有权，因此退出时也不写回一个旧快照；不需要为“原生重复写同一模式”的不可观察意图造回执。旧模式Lease可供后续有完整观察能力的方案使用，当前三机无需调用其 acquireOrMaintain。
 
 `aroundNativePublication` 不修改以上字段，也不负责维持租约。`rackState()` 可读三项真实状态；`writeComponentBool()` 分别写两个真实反射位并保留同字节其他位；`setTick()` 经过原生反射接口。原生禁用入口可用于完成后重维持，但必须在产品侧补齐观察与独占登记；本轮没有证明“所有外部直接字段写入均已被观察”，尤其是原生重复写入同一强制值的意图不能靠轮询还原。
 
@@ -59,7 +65,7 @@ Parts已经被产品钩住的 `0x1ce6d70` 也需要安装前/后的自身回执�
 
 ## 仍需整合线程完成
 
-- 修订旧控制合同，接入四项独立租约和原生观察；不能只把Pause的数字改成4。
+- 接入三字段独立归还及原生观察，刷新模式仅监视；真实Pause请求触发退出，不能只把Pause的数字改成4。
 - 将几何全7组合注册、具体挂点端点/容差、body/架子资源身份接入真实Host。
 - 接入发布钩子和同步显示/发射消费；完成之后才有可提交用户实测的三机候选。
 - 按授权编译和实机检查。此分支仅静态分析、源码与文档，不能代替这些结果。

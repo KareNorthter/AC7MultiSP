@@ -127,7 +127,7 @@ def build(captures: Path, workspace: Path) -> dict:
         sequence_racks.append({
             "name": name,
             "animation_flag_values": sorted({r["animation_flags"] for r in states}),
-            "raw_3f_values_not_tick_enabled": sorted({r["tick"] for r in states}),
+            "native_tick_enabled_values": sorted({r["tick"] != 0 for r in states}),
             "buffer_changes": sum(a["buffers"] != b["buffers"] for a, b in zip(states, states[1:])),
             "coincident_native_frame_samples": sum(row["frame_before"] == row["frame_after"] == state["pose_tick_frame_candidate"]
                                                    for row, state in zip(samples, states)),
@@ -149,12 +149,34 @@ def build(captures: Path, workspace: Path) -> dict:
             bone_functions.append({"name": row["name"], "owner": owner.get("name"),
                                    "parameters_qualified": False, "current_instance_identity": False})
     receipts.append({"path": "Temp/" + index_path.relative_to(captures).as_posix(), "sha256": digest(index_path)})
+    reflection_path = workspace / "src/mount_animation_reflection_adapter.hpp"
+    reflection_source = reflection_path.read_text(encoding="utf-8")
+    tick_rows = []
+    for label, rva, path in (
+        ("Wrapper", "0x1b2ab30", captures / "f22a-tick-getter-native-20261017-1144/mount-1b2ab30-b0.bin"),
+        ("Getter", "0x16840d0", captures / "f22a-tick-state-native-20261017-1144/mount-16840d0-40.bin"),
+    ):
+        declared = re.search(rf'tick{label}Code="([0-9a-f]+)"', reflection_source).group(1)
+        array = re.search(rf'{label.lower()}\[\]=\{{([^}}]+)\}}', reflection_source).group(1)
+        array_bytes = bytes(int(value, 16) for value in re.findall(r'0x([0-9a-f]+)', array))
+        expected = bytes.fromhex(declared)
+        if array_bytes != expected or path.read_bytes()[:len(expected)] != expected:
+            raise ValueError(f"Tick {label} 声明、实际读取签名或原件不一致")
+        tick_rows.append({"name": label, "rva": rva, "complete_function_bytes": len(expected), "hex": declared})
+        receipts.append({"path": "Temp/" + path.relative_to(captures).as_posix(), "sha256": digest(path)})
     return {
         "scope": "三机产品访问适配研究；原件由主管只读采集，本线程仅离线分析",
         "runtime_ready": False, "compiled": False, "tests_run": False, "installed": False,
         "process_access_by_this_work": False, "game_functions_called_by_this_work": False,
         "sources": receipts, "bool_metadata": bools, "enums": enum_rows, "racks": racks,
         "tracker_declared_code_signatures": signature_rows,
+        "tick_reader": {"signatures": tick_rows, "meaning": "byte[component+0x3f]!=0",
+                        "binding": "真实反射入口/返回布局/一次ProcessEvent交叉核对",
+                        "steady_read": "核身份/代次/完整代码后只读，不执行游戏函数",
+                        "boundary": "Tick=true不足以证明骨骼更新或本帧发布"},
+        "preferred_three_aircraft_policy": {"refresh_mode": "原生AlwaysTickPoseAndRefreshBones只监视不写；变化则回退",
+                                            "native_pause": "真正Pause=true请求触发退出并归还，不能强行清除",
+                                            "restore_contract": "NoSkeletonUpdate/Pause/Tick分开，归还最新原生请求"},
         "implementation_sha256": {name: digest(workspace / "src" / name) for name in (
             "mount_animation_reflection_adapter.hpp", "mount_animation_product_access.hpp",
             "mount_animation_publication_tracker.hpp")},
@@ -179,7 +201,7 @@ def build(captures: Path, workspace: Path) -> dict:
             "request1可已达到打开端点，旧request==2门槛过严",
         ],
         "remaining": [
-            "四项独立租约、完整原生请求观察及独占登记",
+            "三字段独立归还、完整原生请求观察及独占登记；刷新模式仅监视",
             "几何注册与真实Host接线",
             "原生发布钩子及同步显示/发射消费",
             "嵌套Transform元数据实机反射匹配及实际调用验证",

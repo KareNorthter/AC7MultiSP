@@ -200,6 +200,48 @@ struct MountAnimationReflection {
         alignas(16) std::array<unsigned char,256> params{};
         invoke(object,f,params.data()); return getBool(params.data(),b);
     }
+    // 原生wrapper完整0x2b字节和getter完整8字节均已由本轮只读采样核对。
+    static constexpr const char* tickWrapperCode="40534883ec20488b42204533c94885c0498bd8410f95c14c03c84c894a20e87d95b5ff88034883c4205bc3";
+    static constexpr const char* tickGetterCode="80793f000f95c0c3";
+    static void tickCodeCurrent() {
+        verifyVersion();
+        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        constexpr unsigned char wrapper[]={0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x8b,0x42,0x20,0x45,0x33,0xc9,
+            0x48,0x85,0xc0,0x49,0x8b,0xd8,0x41,0x0f,0x95,0xc1,0x4c,0x03,0xc8,0x4c,0x89,0x4a,0x20,
+            0xe8,0x7d,0x95,0xb5,0xff,0x88,0x03,0x48,0x83,0xc4,0x20,0x5b,0xc3};
+        constexpr unsigned char getter[]={0x80,0x79,0x3f,0x00,0x0f,0x95,0xc0,0xc3};
+        checkMemory(base+0x1b2ab30,sizeof(wrapper));checkMemory(base+0x16840d0,sizeof(getter));
+        require(std::memcmp(reinterpret_cast<void*>(base+0x1b2ab30),wrapper,sizeof(wrapper))==0 &&
+                std::memcmp(reinterpret_cast<void*>(base+0x16840d0),getter,sizeof(getter))==0,
+                "动画访问：Tick原生wrapper或getter代码改变");
+    }
+    struct TickReader {
+        MountIdentity component,cls,function,resultProperty;
+        std::uint64_t bindingGeneration{};
+    };
+    TickReader bindTickReader(MountIdentity object,std::uint64_t generation) {
+        bindSdk();alive(object);require(generation!=0,"动画访问：缺少Tick绑定代次");
+        tickCodeCurrent();
+        const auto f=function(object.address,"IsComponentTickEnabled","ActorComponent",1);
+        const auto b=boolean(f.identity.address,"ReturnValue",f.size);
+        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        require(read<Addr>(f.identity.address+0xb0)==base+0x1b2ab30 && b.field.offset==0 &&
+                b.byteMask==1 && b.fieldMask==255,"动画访问：Tick反射入口或返回布尔布局改变");
+        // 绑定时只做一次真实反射交叉核对；之后读取严格复用上述原生getter语义。
+        require(tick(object)==(read<unsigned char>(object.address+0x3f)!=0),"动画访问：Tick反射与原生getter不一致");
+        return {object,mountIdentity(read<Addr>(object.address+0x10)),f.identity,b.field.identity,generation};
+    }
+    bool tickFast(const TickReader& reader,std::uint64_t generation) {
+        thread();
+        require(generation && generation==reader.bindingGeneration,"动画访问：Tick绑定代次失效");
+        alive(reader.component);alive(reader.cls);alive(reader.function);alive(reader.resultProperty);
+        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        require(read<Addr>(reader.component.address+0x10)==reader.cls.address &&
+                read<Addr>(reader.function.address+0xb0)==base+0x1b2ab30,
+                "动画访问：Tick对象类或原生入口改变");
+        tickCodeCurrent();
+        return read<unsigned char>(reader.component.address+0x3f)!=0; // cmp byte[rcx+3f],0/setne。
+    }
     void setTick(MountIdentity object,bool enabled) {
         require(!ownWrite,"动画访问：递归设置Tick");
         const auto f=function(object.address,"SetComponentTickEnabled","ActorComponent",1);
@@ -214,6 +256,10 @@ struct MountAnimationReflection {
     struct RackState { bool noSkeletonUpdate{},pauseAnims{},tickEnabled{}; };
     RackState rackState(MountIdentity object) {
         return {readComponentBool(object,"bNoSkeletonUpdate"),readComponentBool(object,"bPauseAnims"),tick(object)};
+    }
+    RackState rackState(const TickReader& reader,std::uint64_t generation) {
+        return {readComponentBool(reader.component,"bNoSkeletonUpdate"),readComponentBool(reader.component,"bPauseAnims"),
+                tickFast(reader,generation)};
     }
     struct SocketName { unsigned index{},number{}; }; // 必须来自已校验的原生挂点映射，不按字符串猜FName。
     bool socketExists(MountIdentity object,SocketName name) {

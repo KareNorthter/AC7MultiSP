@@ -68,6 +68,14 @@
     {
       "path": "Temp/su30sm-fixed-mount-prototype/Temp/three-sp-failure/object-index.json",
       "sha256": "26d88ed1f7df0aa93c6198a3fc49e946767257e4ac790283aeb4b3d4979652a3"
+    },
+    {
+      "path": "Temp/f22a-tick-getter-native-20261017-1144/mount-1b2ab30-b0.bin",
+      "sha256": "bdea01c5f19ed98b9133f4af93ff13bead2b2627bbec219cfa12677d04d6400d"
+    },
+    {
+      "path": "Temp/f22a-tick-state-native-20261017-1144/mount-16840d0-40.bin",
+      "sha256": "cd9d993be79449e2e63721a8d824e88c0fc1864350c5c595e8d37b62e77947b5"
     }
   ],
   "bool_metadata": [
@@ -189,10 +197,35 @@
       "source": "Temp/f22a-socket-native-20261017-1144/mount-16eafd0-1200.bin"
     }
   ],
+  "tick_reader": {
+    "signatures": [
+      {
+        "name": "Wrapper",
+        "rva": "0x1b2ab30",
+        "complete_function_bytes": 43,
+        "hex": "40534883ec20488b42204533c94885c0498bd8410f95c14c03c84c894a20e87d95b5ff88034883c4205bc3"
+      },
+      {
+        "name": "Getter",
+        "rva": "0x16840d0",
+        "complete_function_bytes": 8,
+        "hex": "80793f000f95c0c3"
+      }
+    ],
+    "meaning": "byte[component+0x3f]!=0",
+    "binding": "真实反射入口/返回布局/一次ProcessEvent交叉核对",
+    "steady_read": "核身份/代次/完整代码后只读，不执行游戏函数",
+    "boundary": "Tick=true不足以证明骨骼更新或本帧发布"
+  },
+  "preferred_three_aircraft_policy": {
+    "refresh_mode": "原生AlwaysTickPoseAndRefreshBones只监视不写；变化则回退",
+    "native_pause": "真正Pause=true请求触发退出并归还，不能强行清除",
+    "restore_contract": "NoSkeletonUpdate/Pause/Tick分开，归还最新原生请求"
+  },
   "implementation_sha256": {
-    "mount_animation_reflection_adapter.hpp": "f50aece12f82861f87819d46ae6345513e29a0b4e1ace7f52d8879c8dff5f725",
+    "mount_animation_reflection_adapter.hpp": "8e0eee828a19188fe5aa18fa9fefba2605143fcc9b3b15c47d837a15ae497074",
     "mount_animation_product_access.hpp": "4cab24b6c7426fbcf52cf04fb9578183f05a73f264941a60c97dcd29af41754d",
-    "mount_animation_publication_tracker.hpp": "f1fdc69d25516d4698b5cccec80ff70f2f73585dbb938865b9ac26aaba595e84"
+    "mount_animation_publication_tracker.hpp": "570f65b1d5f74ad11a2a60d5f0cb25e40554d60aad2c9b0e2eb6606ff5d8356a"
   },
   "methods": [
     {
@@ -242,8 +275,8 @@
         "animation_flag_values": [
           2
         ],
-        "raw_3f_values_not_tick_enabled": [
-          1
+        "native_tick_enabled_values": [
+          true
         ],
         "buffer_changes": 0,
         "coincident_native_frame_samples": 0,
@@ -254,8 +287,8 @@
         "animation_flag_values": [
           2
         ],
-        "raw_3f_values_not_tick_enabled": [
-          1
+        "native_tick_enabled_values": [
+          true
         ],
         "buffer_changes": 0,
         "coincident_native_frame_samples": 0,
@@ -266,8 +299,8 @@
         "animation_flag_values": [
           0
         ],
-        "raw_3f_values_not_tick_enabled": [
-          1
+        "native_tick_enabled_values": [
+          true
         ],
         "buffer_changes": 788,
         "coincident_native_frame_samples": 173,
@@ -423,7 +456,7 @@
     "request1可已达到打开端点，旧request==2门槛过严"
   ],
   "remaining": [
-    "四项独立租约、完整原生请求观察及独占登记",
+    "三字段独立归还、完整原生请求观察及独占登记；刷新模式仅监视",
     "几何注册与真实Host接线",
     "原生发布钩子及同步显示/发射消费",
     "嵌套Transform元数据实机反射匹配及实际调用验证",
