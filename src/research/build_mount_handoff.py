@@ -13,6 +13,8 @@ def priority(combo):
         return 'deferred', ['保留条件方案，不进入本轮接入']
     if disposition == 'native_single':
         return 'native_reference', ['原生单挂参考']
+    if disposition == 'candidate_split_assets':
+        return 'P2', ['已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还']
     suggested = str(combo.get('suggested_priority', combo.get('priority','')))
     assignments = combo['assignments']
     if any(x.get('position_role') == 'uav_deployment_reference' for x in assignments) or suggested.startswith('P3'):
@@ -34,6 +36,42 @@ def priority(combo):
     return ('P2', reasons) if reasons else ('P1', ['现成资源与普通弹体分区可先接入'])
 
 
+def validate_split_evidence(combo):
+    """只核对既有离线回执与配方，不生成资产或试运行游戏。"""
+    root = Path(__file__).resolve().parents[2]
+    proof = combo['split_evidence']
+    loaded = {}
+    for key in ('receipt','recipes'):
+        relative = Path(proof[key])
+        if relative.is_absolute() or '..' in relative.parts:
+            raise ValueError('分区证据必须是仓库内的相对路径')
+        raw = (root/relative).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != proof[key+'_sha256']:
+            raise ValueError('分区证据指纹变化：'+str(relative))
+        loaded[key] = json.loads(raw.decode('utf-8'))
+    receipt, recipes = loaded['receipt'], loaded['recipes']
+    if receipt['recipes_sha256'] != proof['recipes_sha256']:
+        raise ValueError('实验与配方不配套')
+    variants = {v['recipe']['name']:v for v in receipt['variants']}
+    recipe_map = {v['name']:v for v in recipes['variants']}
+    carriers = [c for c in combo['rack_plan']['carriers'] if c['mode']=='split_variant']
+    if not carriers or {c['variant'] for c in carriers} != set(proof['variants']):
+        raise ValueError('分区载体与证明清单不一致')
+    for carrier in carriers:
+        name = carrier['variant']
+        result = variants[name]
+        if result['recipe'] != recipe_map[name] or result['source'] != carrier['original_mesh']:
+            raise ValueError('分区副本原组身份不一致：'+name)
+        if carrier['package'] != result['package']:
+            raise ValueError('副本包路径变化，须按新路径重生成：'+name)
+        for field in ('asset_roundtrip','renamed_ac7_roundtrip','sockets_and_materials_preserved',
+                      'non_index_bytes_preserved','byte_length_preserved','all_exports_payload_preserved'):
+            if result.get(field) is not True:
+                raise ValueError('分区副本缺少必要的离线依据：'+name+'/'+field)
+        if not result['per_lod'] or {x['lod'] for x in result['per_lod']} != {x['lod'] for x in result['structure']['lods']}:
+            raise ValueError('副本缺少完整LOD：'+name)
+
+
 def aircraft_gate(combos):
     """用户要求整机七组合齐全才接入；部分可复用不放行整机。"""
     blocked = []
@@ -49,7 +87,9 @@ def aircraft_gate(combos):
     return {'policy':'all_seven_required', 'eligible':eligible,
             'status':'complete_seven_candidate' if eligible else 'defer_whole_aircraft',
             'combination_count':len(combos), 'blocked_combinations':blocked,
-            'reason':'七组合均有现成资源方案，可整机接入并逐项验证前提' if eligible
+            'reason':('七组合均有离线方案，含已核对分区副本；可整机接入，未证明游戏加载和动作'
+                      if any(c['disposition']=='candidate_split_assets' for c in combos)
+                      else '七组合均有现成资源方案，可整机接入并逐项验证前提') if eligible
                      else '有组合尚未解决；按用户要求整机暂缓，不做部分组合'}
 
 
@@ -79,7 +119,13 @@ def main():
                 raise ValueError('整机七组合准入与批次记录不一致：' + code)
             overview = []
             for combo in combos:
-                if combo['status'] != 'native_reuse' and combo['disposition'] != 'deferred':
+                if combo['status']=='split_asset_candidate' and combo['disposition']=='candidate_split_assets':
+                    validate_split_evidence(combo)
+                elif combo['status']=='native_reuse':
+                    expected = 'native_single' if len(combo['weapons'])==1 else 'candidate_existing_assets'
+                    if combo['disposition'] != expected:
+                        raise ValueError('原资源状态与处理类型不一致：'+code)
+                elif combo['status'] != 'native_reuse' and combo['disposition'] != 'deferred':
                     raise ValueError('未解决的组合没有暂缓：' + code)
                 level, reasons = priority(combo)
                 row = {'weapons':combo['weapons'], 'research_status':combo['status'], 'disposition':combo['disposition'],
@@ -93,6 +139,7 @@ def main():
                 if gate['eligible'] and level in ('P1','P2'):
                     candidates.append({'code':code,'name':names[code], 'record':'evidence/'+path.name, **row,
                                        'assignments':combo['assignments'], 'rack_plan':combo.get('rack_plan'),
+                                       'split_evidence':combo.get('split_evidence'),
                                        'layout_notes':combo.get('reason',combo.get('notes',[]))})
             aircraft.append({'code':code, 'name':names[code], 'record':'evidence/'+path.name,
                              'baseline':False, 'combination_count':7, 'integration_gate':gate, 'combinations':overview})
@@ -129,7 +176,7 @@ def main():
               'notes':['所有新增布局均为离线研究；机体、真实离架、装填及场景交接仍须接入和实测',
                        '旧逐组合可复用状态只保留研究事实；整机integration_gate.eligible为最终接入门槛',
                        '持续效果可跨SP不等于已登记所有机型/类；本研究不预设TLS与ECM/IEWS互斥',
-                       '拆架/拆巢/新增站工作继续后置；不安装或发布任何产物']}
+                       '只接受附完整离线证据的静态分区方案；其余拆架/拆巢/新站继续后置，不安装或发布产物']}
     with args.output.open('x',encoding='utf-8',newline='\n') as stream:
         json.dump(report,stream,ensure_ascii=False,indent=2)
         stream.write('\n')

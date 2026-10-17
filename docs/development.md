@@ -8,9 +8,13 @@
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
 
-三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。当前仅F-15C、F-15J、F-15 S/MTD、Typhoon、XFA-27、ADFX-01六机可进入完整适配接入，共42条（18单挂＋24多挂）；其余38机整机暂缓。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
+三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。吸收技术线程7ae97b6的静态分区依据，新增F-16C、F-2A、Mirage、Rafale四机28条。当前十机70条可进入完整适配接入（30单挂＋40多挂），其余34机整机暂缓。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
 
-各批新增`integration_gate.eligible`与逐项`integration_allowed`；先按整机门槛筛选，再看资源状态`disposition`。原47条逐组合资源候选只有上述六机24条进入本轮接入，其他只作研究参考；P1/P2也不能绕过整机门槛。拆架、拆巢、新站和动画／同舱支撑未明继续后置，不把研究完成写成已适配。固定炮、火箭／ADMM管口、UAV部署点与ECM/IEWS效果源按独立角色管理；不把资源点数抄成逻辑长度，不新增TLS或ECM/IEWS功能互斥。研究工具仅扩展离线资料，未改运行时注册或容量。A-10C的42个RKT管口为三对横向簇，实体巢数仍待完整几何确认。
+各批新增`integration_gate.eligible`与逐项`integration_allowed`；先按整机门槛筛选，再看资源状态`disposition`。十机40条多挂包括26条原资源复用与14条`candidate_split_assets`。后者的`split_evidence`绑定回执和配方指纹，`rack_plan.carriers`给出每组原架／副本／仅隐藏自身的规则；P1/P2不能绕过整机门槛。其他未核对的拆架、拆巢、新站和动画／同舱支撑未明继续后置，不把研究完成写成已适配。固定炮、火箭／ADMM管口、UAV部署点与ECM/IEWS效果源按独立角色管理；不把资源点数抄成逻辑长度，不新增TLS或ECM/IEWS功能互斥。研究工具仅扩展离线资料，未改运行时注册或容量。A-10C的42个RKT管口为三对横向簇，实体巢数仍待完整几何确认。
+
+静态分区成果从`codex/sp-combination-technology`的`7ae97b6`按原字节引入四个文件：分区工具、实验入口、配方和往返回执，未带入该分支AGENTS或覆盖其文档正文。工具及配方指纹与回执一致。`build_static_split_mount_plan.py`将已有载体落实到首批四机七组合，验证来源及所属组，仅输出方案数据；本轮未重新生成游戏资产、运行实验入口、编译、测试、打包或安装。游戏资产仍在技术工作区Temp，索引不依赖本机绝对路径。
+
+整合时先读设计说明中的“已核对静态分区的接入约定”：独立路径加载、引擎引用、同组网格替换与归还、NoCollision及烘焙依赖检查都是尚未完成的运行工作。上游回执`integration_allowed=false`不改写；本研究`integration_gate.eligible`只表示方案可继续接入，不等于副本可直接安装。
 
 | 工作 | 工具 |
 |---|---|

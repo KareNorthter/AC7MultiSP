@@ -1,0 +1,6343 @@
+{
+  "schema": 1,
+  "baseline": "v2.4.0",
+  "steam_build": 9855922,
+  "status": "offline_asset_roundtrip_only",
+  "method": "degenerate_indices_all_lods",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "installable_package": false,
+  "integration_allowed": false,
+  "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+  "variant_count": 22,
+  "local_artifacts_relative": "Temp/static-mount-split-20261017-091706-220456",
+  "variants": [
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f16c_SWP1_SM",
+      "json_sha256": "fd0bee9239c012300b353af84dd767500b1f1463d52c0938f9a58b54fa7759c9",
+      "extras_sha256": "823f62db391468fb44a4cd289517a849a10cefe77868fcf2128c4ca07b078e1e",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 908,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 704,
+                "min": 0,
+                "max": 907,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.35975456237793
+              ],
+              [
+                -40.687522888183594,
+                40.687522888183594
+              ],
+              [
+                -3.884269952774048,
+                0.6092656850814819
+              ]
+            ],
+            "buffers": {
+              "main": 704,
+              "reversed": 0,
+              "depth": 704,
+              "reversed_depth": 0,
+              "adjacency": 704
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 812,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 600,
+                "min": 0,
+                "max": 811,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.35975456237793
+              ],
+              [
+                -40.66407775878906,
+                40.66407775878906
+              ],
+              [
+                -3.8842687606811523,
+                0.6092650890350342
+              ]
+            ],
+            "buffers": {
+              "main": 600,
+              "reversed": 0,
+              "depth": 600,
+              "reversed_depth": 0,
+              "adjacency": 600
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 184,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 120,
+                "min": 0,
+                "max": 183,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.34207534790039
+              ],
+              [
+                -40.33042907714844,
+                40.33043670654297
+              ],
+              [
+                -3.685209274291992,
+                0.6092650890350342
+              ]
+            ],
+            "buffers": {
+              "main": 120,
+              "reversed": 0,
+              "depth": 120,
+              "reversed_depth": 0,
+              "adjacency": 120
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f16c_missile_outer",
+        "aircraft": "f16c",
+        "source_asset": "f16c_SWP1_SM",
+        "source_extras_sha256": "823f62db391468fb44a4cd289517a849a10cefe77868fcf2128c4ca07b078e1e",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -35,
+            1000
+          ],
+          [
+            -1000,
+            35,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "保留外翼双导轨；GPB 使用原 SWP2 内翼架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f16c_missile_outer",
+      "candidate_extras_sha256": "2278c75466fdbfde037a746da057567b159c4332b857f7abe4260bcc376c8144",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 352,
+              "degenerated": 352
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 352,
+              "degenerated": 352
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 352,
+              "degenerated": 352
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 296,
+              "degenerated": 304
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 296,
+              "degenerated": 304
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 296,
+              "degenerated": 304
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 60,
+              "degenerated": 60
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 60,
+              "degenerated": 60
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 60,
+              "degenerated": 60
+            }
+          }
+        }
+      ],
+      "changed_bytes": 10544,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "894aa0c7974e2e2134e3a134bad6999c5ec2b9a5dd8a9012f9a14659e055a7c8",
+        ".uexp": "e8b815bed016fbabc7efaf5d57097fd5e391bb0e079d651a5e8945ecd0ff1889"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "e996b6c4c224aa2ae29d385f3c53aae8fdfb64c65857e3f7f3956cf6d1532c6d",
+        ".uexp": "9d5e07f10e4ed1f530cf3b511e0b095967c94e2cb3528dbea7bab8d8ca559751"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f16c/f16c_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "516d8a828a3c867d5d9811bd51c03ad0e6441f5a951a43f846f97a92dc9482a5",
+      "source_decoded_uasset_sha256": "6897172e702d78009dc7e1b38bcadc05470156d0e0523c9afaaf27afa26fd797",
+      "source_decoded_uexp_sha256": "cdfa578d4acfdb7b0f20b69cdebde5120293d7fedcf3c8c91a0dd2660250bb79"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP1_SM",
+      "json_sha256": "83a73224393daccfcbb49107be1398227fc7c07dd9c0e8d50271a9f0d987e9b7",
+      "extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          9.5367431640625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1744,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1584,
+                "min": 0,
+                "max": 1743,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.332455635070801,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1584,
+              "reversed": 0,
+              "depth": 1584,
+              "reversed_depth": 0,
+              "adjacency": 1584
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 864,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 728,
+                "min": 0,
+                "max": 863,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.266022682189941,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 728,
+              "reversed": 0,
+              "depth": 728,
+              "reversed_depth": 0,
+              "adjacency": 728
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 512,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 304,
+                "min": 0,
+                "max": 511,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.195145130157471,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 304,
+              "reversed": 0,
+              "depth": 304,
+              "reversed_depth": 0,
+              "adjacency": 304
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_lasm_outer",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP1_SM",
+        "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -35,
+            1000
+          ],
+          [
+            -1000,
+            35,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "LASM 外翼双架，与内翼 HVAA 共存"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_outer",
+      "candidate_extras_sha256": "dc937de002ed6389da14b79529fab5324f30a06f405effa359e6c272043ff2d6",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 792,
+              "degenerated": 792
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 792,
+              "degenerated": 792
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 792,
+              "degenerated": 792
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 364,
+              "degenerated": 364
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 364,
+              "degenerated": 364
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 364,
+              "degenerated": 364
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 152,
+              "degenerated": 152
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 152,
+              "degenerated": 152
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 152,
+              "degenerated": 152
+            }
+          }
+        }
+      ],
+      "changed_bytes": 18446,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "750960d17ae1d9b4af1007d50e9d5cd5d65e6345010b6f16bbab440acf0c6eba",
+        ".uexp": "a7c2e27f325bf4f0001155a0995a2fecb186c27eab04dac360a867149ba3bb48"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "129e31204d5e5b51f7676329ee6bcfe2372e53f32c7117baf276ce7be71995d1",
+        ".uexp": "e11c0bc0c1165aa41c80d948b708e22108d223888980fa1f9f24e1a7a32011dc"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "e5fb506c7a38bae65d0b436ae079808b994ea71e7bdcea39d01d8aee4332a66d",
+      "source_decoded_uasset_sha256": "3476ef57d9e2a2efa90b6e73956f7cf2ebc9def5740b7e67dd507e9d17bad453",
+      "source_decoded_uexp_sha256": "87b8a2cfb37fb3ab8bfaf91f0f5c2257c173670fbb166523532c52ee58dec3e2"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP1_SM",
+      "json_sha256": "83a73224393daccfcbb49107be1398227fc7c07dd9c0e8d50271a9f0d987e9b7",
+      "extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          9.5367431640625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1744,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1584,
+                "min": 0,
+                "max": 1743,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.332455635070801,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1584,
+              "reversed": 0,
+              "depth": 1584,
+              "reversed_depth": 0,
+              "adjacency": 1584
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 864,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 728,
+                "min": 0,
+                "max": 863,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.266022682189941,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 728,
+              "reversed": 0,
+              "depth": 728,
+              "reversed_depth": 0,
+              "adjacency": 728
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 512,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 304,
+                "min": 0,
+                "max": 511,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.195145130157471,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 304,
+              "reversed": 0,
+              "depth": 304,
+              "reversed_depth": 0,
+              "adjacency": 304
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_lasm_inner",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP1_SM",
+        "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+        "keep_boxes": [
+          [
+            -1000,
+            -35,
+            -1000,
+            1000,
+            0,
+            1000
+          ],
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            35,
+            1000
+          ]
+        ],
+        "purpose": "LASM 内翼双架，与外翼 RKT 共存"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_inner",
+      "candidate_extras_sha256": "b6941f3285829a60b94baf41dc4159324856ea3b901f6be0a54ad5b61f260d62",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 792,
+              "degenerated": 792
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 792,
+              "degenerated": 792
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 792,
+              "degenerated": 792
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 364,
+              "degenerated": 364
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 364,
+              "degenerated": 364
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 364,
+              "degenerated": 364
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 152,
+              "degenerated": 152
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 152,
+              "degenerated": 152
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 152,
+              "degenerated": 152
+            }
+          }
+        }
+      ],
+      "changed_bytes": 18249,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "7dd7e737cf3422780b612e6318fc803cdb09a4c7a3296b3c557946b402486197",
+        ".uexp": "2a0b1d585d34b2b24c312bca7da9edb720bc230cd67888d24ca82603f0ffd8e1"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "ff350ae05248c7fd932ecfda79f49239e8c599a1f44732f35af771a448c1835c",
+        ".uexp": "582fbd8bf80ada73bcc17a891620cae0695c410d83d26599770a3729a60d9c17"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "e5fb506c7a38bae65d0b436ae079808b994ea71e7bdcea39d01d8aee4332a66d",
+      "source_decoded_uasset_sha256": "3476ef57d9e2a2efa90b6e73956f7cf2ebc9def5740b7e67dd507e9d17bad453",
+      "source_decoded_uexp_sha256": "87b8a2cfb37fb3ab8bfaf91f0f5c2257c173670fbb166523532c52ee58dec3e2"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP1_SM",
+      "json_sha256": "83a73224393daccfcbb49107be1398227fc7c07dd9c0e8d50271a9f0d987e9b7",
+      "extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          9.5367431640625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1744,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1584,
+                "min": 0,
+                "max": 1743,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.332455635070801,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1584,
+              "reversed": 0,
+              "depth": 1584,
+              "reversed_depth": 0,
+              "adjacency": 1584
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 864,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 728,
+                "min": 0,
+                "max": 863,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.266022682189941,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 728,
+              "reversed": 0,
+              "depth": 728,
+              "reversed_depth": 0,
+              "adjacency": 728
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 512,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 304,
+                "min": 0,
+                "max": 511,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -4.195145130157471,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 304,
+              "reversed": 0,
+              "depth": 304,
+              "reversed_depth": 0,
+              "adjacency": 304
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_lasm_inner_neg",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP1_SM",
+        "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+        "keep_boxes": [
+          [
+            -1000,
+            -35,
+            -1000,
+            1000,
+            0,
+            1000
+          ]
+        ],
+        "purpose": "三挂 LASM 内翼负 Y 单架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_inner_neg",
+      "candidate_extras_sha256": "fa9a2807bc0508497145f71dabf9e6cfaaaffa85bd931903bf9872530d5c8165",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 396,
+              "degenerated": 1188
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 396,
+              "degenerated": 1188
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 396,
+              "degenerated": 1188
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 182,
+              "degenerated": 546
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 182,
+              "degenerated": 546
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 182,
+              "degenerated": 546
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 76,
+              "degenerated": 228
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 76,
+              "degenerated": 228
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 76,
+              "degenerated": 228
+            }
+          }
+        }
+      ],
+      "changed_bytes": 27603,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "44421080262fc4032a54afa5436faba8e1e12cb5ed9953da137593fd26a540e5",
+        ".uexp": "5d415ec60693a50821a58b2d1d489dd2f40fd74d4c8deba2815916299c3bc1c3"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "256bdcb7faff3eb57c50c1379fa600a7eb51a0e6409a233da32884a76f9e4aa5",
+        ".uexp": "c8e9586d5e5d4ddd9e0aaadcbd8ce55fb5f874150ac08fc3b04701fa43d95563"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "e5fb506c7a38bae65d0b436ae079808b994ea71e7bdcea39d01d8aee4332a66d",
+      "source_decoded_uasset_sha256": "3476ef57d9e2a2efa90b6e73956f7cf2ebc9def5740b7e67dd507e9d17bad453",
+      "source_decoded_uexp_sha256": "87b8a2cfb37fb3ab8bfaf91f0f5c2257c173670fbb166523532c52ee58dec3e2"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP2_SM",
+      "json_sha256": "7620937b9f471ce69d920108c6002770d125fbc93cdaaf17047a401059368d7f",
+      "extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          1.7881393432617188e-07,
+          1.7881393432617188e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2204,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1952,
+                "min": 0,
+                "max": 2203,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.804458618164062
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1952,
+              "reversed": 0,
+              "depth": 1952,
+              "reversed_depth": 0,
+              "adjacency": 1952
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 948,
+                "min": 0,
+                "max": 1207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 948,
+              "reversed": 0,
+              "depth": 948,
+              "reversed_depth": 0,
+              "adjacency": 948
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 740,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 428,
+                "min": 0,
+                "max": 739,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 428,
+              "reversed": 0,
+              "depth": 428,
+              "reversed_depth": 0,
+              "adjacency": 428
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_hvaa_inner",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP2_SM",
+        "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+        "keep_boxes": [
+          [
+            -1000,
+            -35,
+            -1000,
+            1000,
+            0,
+            1000
+          ],
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            35,
+            1000
+          ]
+        ],
+        "purpose": "HVAA 内翼双架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner",
+      "candidate_extras_sha256": "3cc74e221119e7995e12a7e102f68a0425e42c890d07112237cb3dd1ec2fd97e",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 976,
+              "degenerated": 976
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 976,
+              "degenerated": 976
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 976,
+              "degenerated": 976
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 474,
+              "degenerated": 474
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 474,
+              "degenerated": 474
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 474,
+              "degenerated": 474
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 214,
+              "degenerated": 214
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 214,
+              "degenerated": 214
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 214,
+              "degenerated": 214
+            }
+          }
+        }
+      ],
+      "changed_bytes": 23867,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "49da47909d5156129707728f533fcd987e5c35dc7e042c5f0ff9352ea7e358e5",
+        ".uexp": "f30317f830ba4c2e7ae7d5d87109db242520142b994e5768bf73dccaa7aef05d"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "8b2e64638d5f3e1ac578f0cb625ba7235162e2eda9745718195176f0ca505762",
+        ".uexp": "89049ae298b3e3d28e44e5d13a7969bd39bc3ee16cb819276c8e8fae81a0bc45"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "4a2a4c52921d9c63f541ccbc39546a731d684394de29cbf01c37f473e079f213",
+      "source_decoded_uasset_sha256": "71dc1cd82278f26ec9ec91015dd5b5a2bed2bd136e8780d5920c0285a28e8628",
+      "source_decoded_uexp_sha256": "9207580b25607eb63f188417460718574328528c4d54dfadb39b621f2a680e62"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP2_SM",
+      "json_sha256": "7620937b9f471ce69d920108c6002770d125fbc93cdaaf17047a401059368d7f",
+      "extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          1.7881393432617188e-07,
+          1.7881393432617188e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2204,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1952,
+                "min": 0,
+                "max": 2203,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.804458618164062
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1952,
+              "reversed": 0,
+              "depth": 1952,
+              "reversed_depth": 0,
+              "adjacency": 1952
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 948,
+                "min": 0,
+                "max": 1207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 948,
+              "reversed": 0,
+              "depth": 948,
+              "reversed_depth": 0,
+              "adjacency": 948
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 740,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 428,
+                "min": 0,
+                "max": 739,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 428,
+              "reversed": 0,
+              "depth": 428,
+              "reversed_depth": 0,
+              "adjacency": 428
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_hvaa_inner_pos",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP2_SM",
+        "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+        "keep_boxes": [
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            35,
+            1000
+          ]
+        ],
+        "purpose": "三挂 HVAA 内翼正 Y 单架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner_pos",
+      "candidate_extras_sha256": "5ecbef8e4fe990f99fd6d37b3784522c290ef18e52201afe982498de04e978f9",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 488,
+              "degenerated": 1464
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 488,
+              "degenerated": 1464
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 488,
+              "degenerated": 1464
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 237,
+              "degenerated": 711
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 237,
+              "degenerated": 711
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 237,
+              "degenerated": 711
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 107,
+              "degenerated": 321
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 107,
+              "degenerated": 321
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 107,
+              "degenerated": 321
+            }
+          }
+        }
+      ],
+      "changed_bytes": 35777,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "38328971c2d06d5c39d173c6b21f352730a14e2d2bd96014753ffbeb7e3ba2c8",
+        ".uexp": "798a2406b9347974e79be165ceff82d6759d7dcc7a9fcb9b6d9a67e331580fa4"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "abad233bb1ae09fbf552bbf363199c8888fb13d4c0ae0ea56b942908c80ccb47",
+        ".uexp": "24d89cfde2353820fbf998cae8ff3b0f4447f1e30cae063029d777f45e473752"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "4a2a4c52921d9c63f541ccbc39546a731d684394de29cbf01c37f473e079f213",
+      "source_decoded_uasset_sha256": "71dc1cd82278f26ec9ec91015dd5b5a2bed2bd136e8780d5920c0285a28e8628",
+      "source_decoded_uexp_sha256": "9207580b25607eb63f188417460718574328528c4d54dfadb39b621f2a680e62"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP3_SM",
+      "json_sha256": "c519dc2efbac893a95171488d24b2e6e083ccd7d3e5d92da7325cd7a3b1f6a00",
+      "extras_sha256": "3aecd516c3ffa60b8dc970dd12e2962ee1b4f3f88421ab68dd2054e8ce86d934",
+      "structure": {
+        "socket_count": 76,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          0.0005178451538085938,
+          0.0069732666015625
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 9788,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 7248,
+                "min": 0,
+                "max": 8043,
+                "collision": 1,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 21744,
+                "triangles": 1584,
+                "min": 8044,
+                "max": 9787,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -8.717863082885742,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 8832,
+              "reversed": 0,
+              "depth": 8832,
+              "reversed_depth": 0,
+              "adjacency": 8832
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 2796,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1816,
+                "min": 0,
+                "max": 1931,
+                "collision": 0,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 5448,
+                "triangles": 728,
+                "min": 1932,
+                "max": 2795,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -8.71838092803955,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 2544,
+              "reversed": 0,
+              "depth": 2544,
+              "reversed_depth": 0,
+              "adjacency": 2544
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 1040,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 408,
+                "min": 0,
+                "max": 527,
+                "collision": 0,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 1224,
+                "triangles": 304,
+                "min": 528,
+                "max": 1039,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                23.8018798828125
+              ],
+              [
+                -41.92694091796875,
+                41.91996765136719
+              ],
+              [
+                -8.662253379821777,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 712,
+              "reversed": 0,
+              "depth": 712,
+              "reversed_depth": 0,
+              "adjacency": 712
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_rocket_outer",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP3_SM",
+        "source_extras_sha256": "3aecd516c3ffa60b8dc970dd12e2962ee1b4f3f88421ab68dd2054e8ce86d934",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -35,
+            1000
+          ],
+          [
+            -1000,
+            35,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "保留外翼两巢及两 section 的对应支架；38 管口另行映射"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_rocket_outer",
+      "candidate_extras_sha256": "b5f64b7c0180b8687c8c408d07f681265cbe27fe49c0be43b982b7d1e98628e9",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 4416,
+              "degenerated": 4416
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 4416,
+              "degenerated": 4416
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 4416,
+              "degenerated": 4416
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 1272,
+              "degenerated": 1272
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1272,
+              "degenerated": 1272
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1272,
+              "degenerated": 1272
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 356,
+              "degenerated": 356
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 356,
+              "degenerated": 356
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 356,
+              "degenerated": 356
+            }
+          }
+        }
+      ],
+      "changed_bytes": 99383,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "777cfca1a810e6c8e467374906d565b7fdcd19e5b1d191565ab37f0960eda576",
+        ".uexp": "e1d1c6f79639160e131896715a3ce07b61b244cce54396849531bfbaff3b6c2e"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "5dc7b4901d7423cc34cb3c0d465586577a799af4ab8a571c5e96546a78bd2f9d",
+        ".uexp": "abb5b5035cc18c6675430d3efb1194b5707fa5f848a1c49b17ce40cf096c471e"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "e77be02718ce998bf77d61fabf57340c85021a3669da1d0456ce33aa5593f976",
+      "source_decoded_uasset_sha256": "6b0cc719a434074370a6137d88e52bb2c62f7202459eddc4fa025edb6625859c",
+      "source_decoded_uexp_sha256": "ad2b86ca991c9130a69b3d2336f6870923748832ed19174097948fc94e401f4c"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f104_SWP1_SM",
+      "json_sha256": "e5ff85f4a42262407b57581a718e55b88268c2db661e9394e19836e0422e3e43",
+      "extras_sha256": "06d28f8ac8a9f5a808c8433947d2ad09ef3f6309754f96a6d12d70d35f370549",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          2.384185791015625e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1268,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1116,
+                "min": 0,
+                "max": 1267,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.899893760681152,
+                7.476203918457031
+              ],
+              [
+                -20.944740295410156,
+                20.944740295410156
+              ],
+              [
+                -8.132087707519531,
+                -3.3964486122131348
+              ]
+            ],
+            "buffers": {
+              "main": 1116,
+              "reversed": 0,
+              "depth": 1116,
+              "reversed_depth": 0,
+              "adjacency": 1116
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 848,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 776,
+                "min": 0,
+                "max": 847,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.899893760681152,
+                7.476203918457031
+              ],
+              [
+                -20.944740295410156,
+                20.944740295410156
+              ],
+              [
+                -8.132087707519531,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 776,
+              "reversed": 0,
+              "depth": 776,
+              "reversed_depth": 0,
+              "adjacency": 776
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 218,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 162,
+                "min": 0,
+                "max": 217,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.899893760681152,
+                7.476203918457031
+              ],
+              [
+                -20.15752410888672,
+                20.15752410888672
+              ],
+              [
+                -8.044374465942383,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 162,
+              "reversed": 0,
+              "depth": 162,
+              "reversed_depth": 0,
+              "adjacency": 162
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f104_saam_neg",
+        "aircraft": "f104",
+        "source_asset": "f104_SWP1_SM",
+        "source_extras_sha256": "06d28f8ac8a9f5a808c8433947d2ad09ef3f6309754f96a6d12d70d35f370549",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            0,
+            1000
+          ]
+        ],
+        "purpose": "双挂 SAAM 负 Y 半架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f104_saam_neg",
+      "candidate_extras_sha256": "3227da011ac38d863a81dde530775c9ac17b730d66207d52ae1b3f75fbaaee8e",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 558,
+              "degenerated": 558
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 558,
+              "degenerated": 558
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 558,
+              "degenerated": 558
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 388,
+              "degenerated": 388
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 388,
+              "degenerated": 388
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 388,
+              "degenerated": 388
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 81,
+              "degenerated": 81
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 81,
+              "degenerated": 81
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 81,
+              "degenerated": 81
+            }
+          }
+        }
+      ],
+      "changed_bytes": 15032,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "e9752835c315ca194b0ccaae5eee9eb944d2d28ee685176498e489d248686db7",
+        ".uexp": "68d8746b725a6d9fe51803fda8ee9ca3add83eab6a8541e6fc8888fdb7b6ec83"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "a02e0b4f37f528ee7d143f66f378234239f04425716894b0b483330f3b7ee4d2",
+        ".uexp": "49e06b3d8531d928daa95bd185d6ccbdef5e60576e2a35232bb747af73ca1c8c"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f104/f104_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "6b630c1091b36dcd16493621723733a2cc57143ca30aaadf1028366b5ff7df6a",
+      "source_decoded_uasset_sha256": "aea2e870562694862813a2abfaca480d99e8eda95933d2fc4b3f3b9a157bfcb6",
+      "source_decoded_uexp_sha256": "7db3c3d124add668e8296e0a0f794255038cb9888ccc51cc15d89c26564ffa67"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f104_SWP2_SM",
+      "json_sha256": "ced2a9b721e46eb469c121b961b4b5c895ecf4bc428ca1285b2f839406889fbe",
+      "extras_sha256": "7ff38b3a230d060fcfedffb315fe963fccdd1bca35b28668a898053d9ff8b833",
+      "structure": {
+        "socket_count": 14,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          0.00028586387634277344,
+          0.1453876495361328
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 4588,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 888,
+                "min": 0,
+                "max": 971,
+                "collision": 1,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 2664,
+                "triangles": 3212,
+                "min": 972,
+                "max": 4587,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.870156288146973,
+                3.9484827518463135
+              ],
+              [
+                -20.951892852783203,
+                20.951892852783203
+              ],
+              [
+                -9.37834644317627,
+                -3.3964486122131348
+              ]
+            ],
+            "buffers": {
+              "main": 4100,
+              "reversed": 0,
+              "depth": 4100,
+              "reversed_depth": 0,
+              "adjacency": 4100
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1896,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 588,
+                "min": 0,
+                "max": 591,
+                "collision": 0,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 1764,
+                "triangles": 1024,
+                "min": 592,
+                "max": 1895,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.870369911193848,
+                3.948435068130493
+              ],
+              [
+                -20.95189094543457,
+                20.95189094543457
+              ],
+              [
+                -9.378632545471191,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 1612,
+              "reversed": 0,
+              "depth": 1612,
+              "reversed_depth": 0,
+              "adjacency": 1612
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 394,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 92,
+                "min": 0,
+                "max": 129,
+                "collision": 0,
+                "shadow": 1
+              },
+              {
+                "material": 1,
+                "first": 276,
+                "triangles": 204,
+                "min": 130,
+                "max": 393,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -12.870369911193848,
+                3.948638677597046
+              ],
+              [
+                -21.097280502319336,
+                21.097280502319336
+              ],
+              [
+                -9.336729049682617,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 296,
+              "reversed": 0,
+              "depth": 296,
+              "reversed_depth": 0,
+              "adjacency": 296
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f104_grkt_pos",
+        "aircraft": "f104",
+        "source_asset": "f104_SWP2_SM",
+        "source_extras_sha256": "7ff38b3a230d060fcfedffb315fe963fccdd1bca35b28668a898053d9ff8b833",
+        "keep_boxes": [
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "双挂 GRKT 正 Y 单巢及支架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f104_grkt_pos",
+      "candidate_extras_sha256": "75df3948189fdac14946d30af250e660e7559cd4e265f937268b60424d254303",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 2050,
+              "degenerated": 2050
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 2050,
+              "degenerated": 2050
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 2050,
+              "degenerated": 2050
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 806,
+              "degenerated": 806
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 806,
+              "degenerated": 806
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 806,
+              "degenerated": 806
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 148,
+              "degenerated": 148
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 148,
+              "degenerated": 148
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 148,
+              "degenerated": 148
+            }
+          }
+        }
+      ],
+      "changed_bytes": 47101,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "0425fea03df4d2e146dc5e46d8e63985a13dbf0a97c45245afc74700e3f6ef86",
+        ".uexp": "a984fc9c6a6f9f07691dba784e297b2f1274965267a76d160fe3fad848e5be4e"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "6ff0a39e5333985f3563d1cd90a498d0b8d7e644e2f0a679194069467e58aaf9",
+        ".uexp": "1d30275cd124587f2783ee5b57eae61802798eec87f9ce85600e2582647c1d2d"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f104/f104_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "9652e63bf6788bbd1a4454527faa82397df0f84222fed4530c638d9a9e822583",
+      "source_decoded_uasset_sha256": "354c4d9b0e53255263da729d6cad5de18afb1b91efcb0d715dcb221e11f78ed4",
+      "source_decoded_uexp_sha256": "532e0982ab5a0c68a8b64e65ffd552f9c54379cdcb8eaf5417a295a678043d85"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f104_SWP3_SM",
+      "json_sha256": "8782be062e0703a6d6a4a606497e3f9f874b471e523249236f353f154073dcdb",
+      "extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          2.384185791015625e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 510,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 418,
+                "min": 0,
+                "max": 509,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.779772758483887
+              ],
+              [
+                -20.17176628112793,
+                20.17176628112793
+              ],
+              [
+                -9.540811538696289,
+                -3.3964486122131348
+              ]
+            ],
+            "buffers": {
+              "main": 418,
+              "reversed": 0,
+              "depth": 418,
+              "reversed_depth": 0,
+              "adjacency": 418
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 466,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 370,
+                "min": 0,
+                "max": 465,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.779772758483887
+              ],
+              [
+                -20.15752410888672,
+                20.15752410888672
+              ],
+              [
+                -9.540811538696289,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 370,
+              "reversed": 0,
+              "depth": 370,
+              "reversed_depth": 0,
+              "adjacency": 370
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 344,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 246,
+                "min": 0,
+                "max": 343,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.770611763000488
+              ],
+              [
+                -20.15752410888672,
+                20.15752410888672
+              ],
+              [
+                -9.377263069152832,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 246,
+              "reversed": 0,
+              "depth": 246,
+              "reversed_depth": 0,
+              "adjacency": 246
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f104_hpaa_neg",
+        "aircraft": "f104",
+        "source_asset": "f104_SWP3_SM",
+        "source_extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            0,
+            1000
+          ]
+        ],
+        "purpose": "GRKT 共存时 HPAA 负 Y 半架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f104_hpaa_neg",
+      "candidate_extras_sha256": "197f916511eaecd7dcc4423928eb1171806e3d81418b41793f6a769d3d37f982",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 209,
+              "degenerated": 209
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 209,
+              "degenerated": 209
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 209,
+              "degenerated": 209
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 185,
+              "degenerated": 185
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 185,
+              "degenerated": 185
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 185,
+              "degenerated": 185
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 123,
+              "degenerated": 123
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 123,
+              "degenerated": 123
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 123,
+              "degenerated": 123
+            }
+          }
+        }
+      ],
+      "changed_bytes": 7488,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "daf6039e2f730842dec0390ae689efbeb30e80559b413a789d36fe75507d772b",
+        ".uexp": "1f4c2bc6a3b59a99fdf99b2d7c21fc8aae34f9d114a701a1e12a0ff4eee1290f"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "eef9a5bf2234bae5f1a1d42b1e1377aaa6b6e77bf9dbc70590f681d86f1c89af",
+        ".uexp": "05c46e2a194383824132f080fc453dc043fecde0b3b030dcde60e0daf28314b5"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f104/f104_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "c84ad9adc855a67f801c8f62e11fd3b1d9faf6918372b4b1e4dd30cd49c63cd2",
+      "source_decoded_uasset_sha256": "c9dfcf2b5785272ee5aee75758a92e080ef544929df162e2a743b180e47bd0c9",
+      "source_decoded_uexp_sha256": "4f5d26e586db45385f842c98596ce47456ca58b81667ecabf609a0ccbfbca807"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f104_SWP3_SM",
+      "json_sha256": "8782be062e0703a6d6a4a606497e3f9f874b471e523249236f353f154073dcdb",
+      "extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          2.384185791015625e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 510,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 418,
+                "min": 0,
+                "max": 509,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.779772758483887
+              ],
+              [
+                -20.17176628112793,
+                20.17176628112793
+              ],
+              [
+                -9.540811538696289,
+                -3.3964486122131348
+              ]
+            ],
+            "buffers": {
+              "main": 418,
+              "reversed": 0,
+              "depth": 418,
+              "reversed_depth": 0,
+              "adjacency": 418
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 466,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 370,
+                "min": 0,
+                "max": 465,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.779772758483887
+              ],
+              [
+                -20.15752410888672,
+                20.15752410888672
+              ],
+              [
+                -9.540811538696289,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 370,
+              "reversed": 0,
+              "depth": 370,
+              "reversed_depth": 0,
+              "adjacency": 370
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 344,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 246,
+                "min": 0,
+                "max": 343,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -15.058281898498535,
+                9.770611763000488
+              ],
+              [
+                -20.15752410888672,
+                20.15752410888672
+              ],
+              [
+                -9.377263069152832,
+                -3.4005086421966553
+              ]
+            ],
+            "buffers": {
+              "main": 246,
+              "reversed": 0,
+              "depth": 246,
+              "reversed_depth": 0,
+              "adjacency": 246
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f104_hpaa_pos",
+        "aircraft": "f104",
+        "source_asset": "f104_SWP3_SM",
+        "source_extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+        "keep_boxes": [
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "SAAM 共存时 HPAA 正 Y 半架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f104_hpaa_pos",
+      "candidate_extras_sha256": "bc670876eea572b03639e48508b47e9ba14807798db957f65696873fc8762932",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 209,
+              "degenerated": 209
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 209,
+              "degenerated": 209
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 209,
+              "degenerated": 209
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 185,
+              "degenerated": 185
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 185,
+              "degenerated": 185
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 185,
+              "degenerated": 185
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 123,
+              "degenerated": 123
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 123,
+              "degenerated": 123
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 123,
+              "degenerated": 123
+            }
+          }
+        }
+      ],
+      "changed_bytes": 7474,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "7df1f91c078c2ecdab58341125f66ccc405d243c26395156480d91053cde3556",
+        ".uexp": "226e960bd61bf48df6fad4e89ea9e811f539cc1511393d3a7d8909856148a846"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "0abfc0e10b4d0c6dbaafa394e2e794e6e52e5c9950cbb0895542d2998d945686",
+        ".uexp": "aa6ae43210d36cafaa940bbb46178a93ad47728e8d1a772d9184239870079f64"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f104/f104_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "c84ad9adc855a67f801c8f62e11fd3b1d9faf6918372b4b1e4dd30cd49c63cd2",
+      "source_decoded_uasset_sha256": "c9dfcf2b5785272ee5aee75758a92e080ef544929df162e2a743b180e47bd0c9",
+      "source_decoded_uexp_sha256": "4f5d26e586db45385f842c98596ce47456ca58b81667ecabf609a0ccbfbca807"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "mr2k_SWP1_SM",
+      "json_sha256": "5d6b4ac8ae6b664d4191ab137e3a538bdc7322940c6ee3f933d88759b971c430",
+      "extras_sha256": "d8c969bf4d8cb5d3267ee322b73ab6a6cc15aea22ba25e9be364d8c12c08c700",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          1.7881393432617188e-07,
+          1.7881393432617188e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1441,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1566,
+                "min": 0,
+                "max": 1440,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -2.0214109420776367,
+                60.290409088134766
+              ],
+              [
+                -23.790006637573242,
+                23.790006637573242
+              ],
+              [
+                -8.039116859436035,
+                -0.8260992169380188
+              ]
+            ],
+            "buffers": {
+              "main": 1566,
+              "reversed": 0,
+              "depth": 1566,
+              "reversed_depth": 0,
+              "adjacency": 1566
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 603,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 526,
+                "min": 0,
+                "max": 602,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -2.0214109420776367,
+                60.171302795410156
+              ],
+              [
+                -23.79000473022461,
+                23.79000473022461
+              ],
+              [
+                -8.029995918273926,
+                -0.8260992169380188
+              ]
+            ],
+            "buffers": {
+              "main": 526,
+              "reversed": 0,
+              "depth": 526,
+              "reversed_depth": 0,
+              "adjacency": 526
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 325,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 256,
+                "min": 0,
+                "max": 324,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -1.5756951570510864,
+                60.280494689941406
+              ],
+              [
+                -23.79000473022461,
+                23.79000473022461
+              ],
+              [
+                -8.029995918273926,
+                -0.8372830748558044
+              ]
+            ],
+            "buffers": {
+              "main": 256,
+              "reversed": 0,
+              "depth": 256,
+              "reversed_depth": 0,
+              "adjacency": 256
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_mr2k_gpb_neg_aux",
+        "aircraft": "mr2k",
+        "source_asset": "mr2k_SWP1_SM",
+        "source_extras_sha256": "d8c969bf4d8cb5d3267ee322b73ab6a6cc15aea22ba25e9be364d8c12c08c700",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            15,
+            1000
+          ]
+        ],
+        "purpose": "GPB 负 Y 翼下架，保留原前腹未知固定结构，避免误删"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_mr2k_gpb_neg_aux",
+      "candidate_extras_sha256": "fe59982be63b0d557e5dd48785fd634e1bc07917a2423c7124b0361fa7f2df5b",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 1433,
+              "degenerated": 133
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1433,
+              "degenerated": 133
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1433,
+              "degenerated": 133
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 463,
+              "degenerated": 63
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 463,
+              "degenerated": 63
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 463,
+              "degenerated": 63
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 239,
+              "degenerated": 17
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 239,
+              "degenerated": 17
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 239,
+              "degenerated": 17
+            }
+          }
+        }
+      ],
+      "changed_bytes": 3201,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "d2c0d54a019162ce72c76db7a4e08f99fe64f62ad09cc1517ea367bec8ebf7f2",
+        ".uexp": "ab1684b6c28e6d7422f813f555d0cb2b28be6e7a461c10096c0cbf8d043e3953"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "3beae47c1a0dd0e93062741f1ef74f037fd7c9c581eac215032e32416c60697e",
+        ".uexp": "425319ac7364d051a8748589f176d2e52907e06b1e949b7ab49825e052cb7d31"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/mr2k/mr2k_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "0e74e45ad729b2e9077ac6cf4f4fbe159a4a46e3a524026f3f67b6bbd88011c4",
+      "source_decoded_uasset_sha256": "78e9cbbc9f965f4af5dfac7ba6a394663371f6a0dff18f8ac25ac2b9b3068921",
+      "source_decoded_uexp_sha256": "82fe3d312d4c0619adedb1cbc32b739a3a5e324dd205b2c31e772167de6ba514"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "mr2k_SWP2_SM",
+      "json_sha256": "a033d8eecba7dc0d9b8bdcd6fd2ff93588405bd972607fa61f511ffa63711f88",
+      "extras_sha256": "e2e8586d9673ab4973e85f1e28a3a9f480e999175ef34d0995f1ab18083c8c60",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          9.5367431640625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 368,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 348,
+                "min": 0,
+                "max": 367,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.878829002380371,
+                52.923030853271484
+              ],
+              [
+                -8.968588829040527,
+                8.968588829040527
+              ],
+              [
+                -4.684020519256592,
+                -0.7190353870391846
+              ]
+            ],
+            "buffers": {
+              "main": 348,
+              "reversed": 0,
+              "depth": 348,
+              "reversed_depth": 0,
+              "adjacency": 348
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 240,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 176,
+                "min": 0,
+                "max": 239,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.878829002380371,
+                52.91337966918945
+              ],
+              [
+                -8.968588829040527,
+                8.968588829040527
+              ],
+              [
+                -4.684020519256592,
+                -0.7190353870391846
+              ]
+            ],
+            "buffers": {
+              "main": 176,
+              "reversed": 0,
+              "depth": 176,
+              "reversed_depth": 0,
+              "adjacency": 176
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 140,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 96,
+                "min": 0,
+                "max": 139,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.878829002380371,
+                52.91337966918945
+              ],
+              [
+                -8.968588829040527,
+                8.968588829040527
+              ],
+              [
+                -4.684020519256592,
+                -0.7190353870391846
+              ]
+            ],
+            "buffers": {
+              "main": 96,
+              "reversed": 0,
+              "depth": 96,
+              "reversed_depth": 0,
+              "adjacency": 96
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_mr2k_aam_rear",
+        "aircraft": "mr2k",
+        "source_asset": "mr2k_SWP2_SM",
+        "source_extras_sha256": "e2e8586d9673ab4973e85f1e28a3a9f480e999175ef34d0995f1ab18083c8c60",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            20,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "4AAM 仅后腹双架；原前腹未知结构不动"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_mr2k_aam_rear",
+      "candidate_extras_sha256": "313d4ab7ebc8c28f2649bc7a1232c5a40220429fd3050a814c33895da94253d1",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 172,
+              "degenerated": 176
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 172,
+              "degenerated": 176
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 172,
+              "degenerated": 176
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 100,
+              "degenerated": 76
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 100,
+              "degenerated": 76
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 100,
+              "degenerated": 76
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 52,
+              "degenerated": 44
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 52,
+              "degenerated": 44
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 52,
+              "degenerated": 44
+            }
+          }
+        }
+      ],
+      "changed_bytes": 3978,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "9a8a999b3d3d8e785ed755fd49ebe6e19359420d0e4fe7a31380aba91acbd5ad",
+        ".uexp": "58b34865b4600aaa6aee804b3c86f5b050812d0f9ff3ec44f655d88b518192d4"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "9dcc2f63acb1606474179af4e730f8c7889b2b52e3bfacc3c2f69621baaab177",
+        ".uexp": "0266213085fd1e0d25452f6f756886dbc5bae6c50a81271264eaafd738e79eb2"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/mr2k/mr2k_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "b044d9ca651a5daa98138f50f72ce1041ba130415c613fa8be2b47b4ebb31629",
+      "source_decoded_uasset_sha256": "4230723ae2719cec654a5e43edb1185b24e5481990e15e35f6a33a6b3f845e11",
+      "source_decoded_uexp_sha256": "aa428bdd1829d4810a1c790ff5f51780518ad3ff23e8c891bdfc5e897eeae613"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "mr2k_SWP3_SM",
+      "json_sha256": "f7921551150d7d6ee7ee7581bf09ae6b9104001e5a30433f7e71b3467baac976",
+      "extras_sha256": "163bac0d5f96b7ab4975f9197d3665f4bd02713142070b63c3930c37438ab588",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          0.0013322830200195312,
+          1.7881393432617188e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 420,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 290,
+                "min": 0,
+                "max": 419,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -3.766901969909668,
+                27.55307960510254
+              ],
+              [
+                -24.586395263671875,
+                24.586395263671875
+              ],
+              [
+                -4.9871320724487305,
+                -0.8365805745124817
+              ]
+            ],
+            "buffers": {
+              "main": 290,
+              "reversed": 0,
+              "depth": 290,
+              "reversed_depth": 0,
+              "adjacency": 290
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 266,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 182,
+                "min": 0,
+                "max": 265,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -3.766901969909668,
+                27.554410934448242
+              ],
+              [
+                -24.56037139892578,
+                24.56037139892578
+              ],
+              [
+                -4.9871320724487305,
+                -0.8365805745124817
+              ]
+            ],
+            "buffers": {
+              "main": 182,
+              "reversed": 0,
+              "depth": 182,
+              "reversed_depth": 0,
+              "adjacency": 182
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 122,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 82,
+                "min": 0,
+                "max": 121,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -3.73415470123291,
+                27.54608154296875
+              ],
+              [
+                -24.030902862548828,
+                24.030902862548828
+              ],
+              [
+                -4.9688615798950195,
+                -0.8365805745124817
+              ]
+            ],
+            "buffers": {
+              "main": 82,
+              "reversed": 0,
+              "depth": 82,
+              "reversed_depth": 0,
+              "adjacency": 82
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_mr2k_lasm_pos",
+        "aircraft": "mr2k",
+        "source_asset": "mr2k_SWP3_SM",
+        "source_extras_sha256": "163bac0d5f96b7ab4975f9197d3665f4bd02713142070b63c3930c37438ab588",
+        "keep_boxes": [
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "LASM 正 Y 翼下半架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_mr2k_lasm_pos",
+      "candidate_extras_sha256": "562511b11c905cd69fe3bc6081b4e5b12accae5d72f03f1fda6e933b1948f4d2",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 145,
+              "degenerated": 145
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 145,
+              "degenerated": 145
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 145,
+              "degenerated": 145
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 91,
+              "degenerated": 91
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 91,
+              "degenerated": 91
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 91,
+              "degenerated": 91
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 41,
+              "degenerated": 41
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 41,
+              "degenerated": 41
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 41,
+              "degenerated": 41
+            }
+          }
+        }
+      ],
+      "changed_bytes": 4018,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "8d97a0fc4c19ab9edff69423c8ddab50105f5e8615224765d81b247575b275af",
+        ".uexp": "5143dfe591c36069b49476bbc44190fee31c98ef69ca0153adca0a48e58a587c"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "41b137cbf99a5ed45727632aaa451b875718d11c7f3ff425e0f2bf3480602ba1",
+        ".uexp": "fab5650a4b8543b7047680fdb0986d53a0bd18e327937d733a54c4f3b44ea3aa"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/mr2k/mr2k_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "6ce1c8a6128d8f3c0afb28c9d351c4411031fef4b5e72413070d1d466e217851",
+      "source_decoded_uasset_sha256": "aaeb71fad2c9251f08e549ceb19dfcf9dc09a4c42ebb6c8a00a083502b58dcec",
+      "source_decoded_uexp_sha256": "0260a584f0e13e89d1b66fedc5c5873bc429fe2789bcc16cdce0715fbb5904f9"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "j39e_SWP1_SM",
+      "json_sha256": "d06e289dd9223e82a16ae904634002c7b1c379a4e843fffaa87590cff752f8a5",
+      "extras_sha256": "e64575e3a88c7471dd5fd2b5755e5e86dd426d24df61357d0e27bb353e6c43d1",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          1.9073486328125e-06,
+          0.00067138671875,
+          0.010686397552490234
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 424,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 432,
+                "min": 0,
+                "max": 423,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.159584045410156,
+                30.15959930419922
+              ],
+              [
+                -7.1509857177734375,
+                -5.4500274658203125
+              ]
+            ],
+            "buffers": {
+              "main": 432,
+              "reversed": 0,
+              "depth": 432,
+              "reversed_depth": 0,
+              "adjacency": 432
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 128,
+                "min": 0,
+                "max": 207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.160255432128906,
+                30.15959930419922
+              ],
+              [
+                -7.1509857177734375,
+                -5.4500274658203125
+              ]
+            ],
+            "buffers": {
+              "main": 128,
+              "reversed": 0,
+              "depth": 128,
+              "reversed_depth": 0,
+              "adjacency": 128
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 80,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 40,
+                "min": 0,
+                "max": 79,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.159584045410156,
+                30.15959930419922
+              ],
+              [
+                -7.161672115325928,
+                -5.666614055633545
+              ]
+            ],
+            "buffers": {
+              "main": 40,
+              "reversed": 0,
+              "depth": 40,
+              "reversed_depth": 0,
+              "adjacency": 40
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_j39e_missile_outer",
+        "aircraft": "j39e",
+        "source_asset": "j39e_SWP1_SM",
+        "source_extras_sha256": "e64575e3a88c7471dd5fd2b5755e5e86dd426d24df61357d0e27bb353e6c43d1",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -25,
+            1000
+          ],
+          [
+            -1000,
+            25,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "外翼双导轨的几何分离；LACM 内翼支撑仍待原生画面确认"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_j39e_missile_outer",
+      "candidate_extras_sha256": "9567da90c7f902ed83cb2b9462e7a69b104c5ade086e96f3c1e0718a895b247a",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 216,
+              "degenerated": 216
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 216,
+              "degenerated": 216
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 216,
+              "degenerated": 216
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 64,
+              "degenerated": 64
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 64,
+              "degenerated": 64
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 64,
+              "degenerated": 64
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 20,
+              "degenerated": 20
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 20,
+              "degenerated": 20
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 20,
+              "degenerated": 20
+            }
+          }
+        }
+      ],
+      "changed_bytes": 4232,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "63be549599f42166b9a2bd7fbe21c3758fef08335196b5aa0fcced81155782f8",
+        ".uexp": "35de3062997dd629fceea2c22e4f35daa3f3c68fdf630b4bc3eb23814ebc8d3f"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "ce575b478ed3506f1ffb5e1a389fb854282f6c324f6413ff03d4d069f48fdb5b",
+        ".uexp": "50112afe8162912cdc96cf3d121ad05b350f3a255b8fb818778348394c34b9c8"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/j39e/j39e_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "cfde7a24d0215417987f5bdbce61be171ac645f19396ccdd0a7102f3f10f693b",
+      "source_decoded_uasset_sha256": "03dd8be277920e2513241d3ab2a7adcd4121f628efaf115740fe2a39596f9250",
+      "source_decoded_uexp_sha256": "2d5f54ac4cfc340ccf6475d3ec6c49739909daeb2e05edee154d59f7651be7a7"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "rflm_SWP1_SM",
+      "json_sha256": "6e09eb00b359ed7d96ef77650c229df8593423a1268156466f356579396a4908",
+      "extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          0,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1248,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1064,
+                "min": 0,
+                "max": 1247,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.214580535888672
+              ],
+              [
+                -34.63069534301758,
+                34.63069534301758
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 1064,
+              "reversed": 0,
+              "depth": 1064,
+              "reversed_depth": 0,
+              "adjacency": 1064
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 924,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 692,
+                "min": 0,
+                "max": 923,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 692,
+              "reversed": 0,
+              "depth": 692,
+              "reversed_depth": 0,
+              "adjacency": 692
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 508,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 296,
+                "min": 0,
+                "max": 507,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -5.871547222137451,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 296,
+              "reversed": 0,
+              "depth": 296,
+              "reversed_depth": 0,
+              "adjacency": 296
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_rflm_hcaa_belly",
+        "aircraft": "rflm",
+        "source_asset": "rflm_SWP1_SM",
+        "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+        "keep_boxes": [
+          [
+            -1000,
+            -20,
+            -1000,
+            1000,
+            20,
+            1000
+          ]
+        ],
+        "purpose": "HCAA 腹侧双导轨，与 LACM 翼下共存"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_belly",
+      "candidate_extras_sha256": "88656a03d0640de38b7682128e3a280cab027af3c26557168d929a0473d20ef8",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 304,
+              "degenerated": 760
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 304,
+              "degenerated": 760
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 304,
+              "degenerated": 760
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 212,
+              "degenerated": 480
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 212,
+              "degenerated": 480
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 212,
+              "degenerated": 480
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 156,
+              "degenerated": 140
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 156,
+              "degenerated": 140
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 156,
+              "degenerated": 140
+            }
+          }
+        }
+      ],
+      "changed_bytes": 20917,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "9acdf34775b3ad7abbbc4910b044205b104b6084b9c53191f7b179b7d65bdab4",
+        ".uexp": "44e901b324cd1dc7a51bda5051dca091f122ee23704a018b37efe8d69bd21cec"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "5bf8ef22490b92cb140649df2e50f0c8ca370368a9707984d460915eb484731d",
+        ".uexp": "7b2ddc3846a34a07e113599e8f4f5b4a9020e3732990686f84897ac202621c6a"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/rflm/rflm_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "5bb7a2ee29bb4f99f910acd272566caba8e8133289409059a13c34d7a26f6427",
+      "source_decoded_uasset_sha256": "39a471655e547fc3c762b335d51f77b83fa75ee125d998a4f94cd45df1732d28",
+      "source_decoded_uexp_sha256": "989cf7cf285a2fc94c38d981dd9dbe45dd5568b713d2c2f08290c71baab75362"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "rflm_SWP1_SM",
+      "json_sha256": "6e09eb00b359ed7d96ef77650c229df8593423a1268156466f356579396a4908",
+      "extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          0,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1248,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1064,
+                "min": 0,
+                "max": 1247,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.214580535888672
+              ],
+              [
+                -34.63069534301758,
+                34.63069534301758
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 1064,
+              "reversed": 0,
+              "depth": 1064,
+              "reversed_depth": 0,
+              "adjacency": 1064
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 924,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 692,
+                "min": 0,
+                "max": 923,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 692,
+              "reversed": 0,
+              "depth": 692,
+              "reversed_depth": 0,
+              "adjacency": 692
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 508,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 296,
+                "min": 0,
+                "max": 507,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -5.871547222137451,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 296,
+              "reversed": 0,
+              "depth": 296,
+              "reversed_depth": 0,
+              "adjacency": 296
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_rflm_hcaa_belly_neg",
+        "aircraft": "rflm",
+        "source_asset": "rflm_SWP1_SM",
+        "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+        "keep_boxes": [
+          [
+            -1000,
+            -20,
+            -1000,
+            1000,
+            0,
+            1000
+          ]
+        ],
+        "purpose": "三挂 HCAA 负 Y 腹侧单轨"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_belly_neg",
+      "candidate_extras_sha256": "d5015d8b1e1cd4355d827ecdd16146c0ce7d274ef6f3c3d60ef6280d8c2364f2",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 152,
+              "degenerated": 912
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 152,
+              "degenerated": 912
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 152,
+              "degenerated": 912
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 106,
+              "degenerated": 586
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 106,
+              "degenerated": 586
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 106,
+              "degenerated": 586
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 78,
+              "degenerated": 218
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 78,
+              "degenerated": 218
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 78,
+              "degenerated": 218
+            }
+          }
+        }
+      ],
+      "changed_bytes": 25674,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "39d1121f77536432b5f18d6b77bf9bb2772fdf2993db6bd2b6a2fc11bed4b7f5",
+        ".uexp": "13538476a90a39bad57fbf55fb2b721b326818e504d7b63169fc26c3a7b3e4df"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "750ebb9fc8f0ec7546e726ecebec85980197865548763d2c24862423cd4a19bc",
+        ".uexp": "cae090979e65485fb310c2afbf84c99430699fd3f0f232122ffa7604617ece43"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/rflm/rflm_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "5bb7a2ee29bb4f99f910acd272566caba8e8133289409059a13c34d7a26f6427",
+      "source_decoded_uasset_sha256": "39a471655e547fc3c762b335d51f77b83fa75ee125d998a4f94cd45df1732d28",
+      "source_decoded_uexp_sha256": "989cf7cf285a2fc94c38d981dd9dbe45dd5568b713d2c2f08290c71baab75362"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "rflm_SWP1_SM",
+      "json_sha256": "6e09eb00b359ed7d96ef77650c229df8593423a1268156466f356579396a4908",
+      "extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          0,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1248,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1064,
+                "min": 0,
+                "max": 1247,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.214580535888672
+              ],
+              [
+                -34.63069534301758,
+                34.63069534301758
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 1064,
+              "reversed": 0,
+              "depth": 1064,
+              "reversed_depth": 0,
+              "adjacency": 1064
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 924,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 692,
+                "min": 0,
+                "max": 923,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -6.016453266143799,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 692,
+              "reversed": 0,
+              "depth": 692,
+              "reversed_depth": 0,
+              "adjacency": 692
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 508,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 296,
+                "min": 0,
+                "max": 507,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -18.42234230041504,
+                20.186351776123047
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -5.871547222137451,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 296,
+              "reversed": 0,
+              "depth": 296,
+              "reversed_depth": 0,
+              "adjacency": 296
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_rflm_hcaa_outer",
+        "aircraft": "rflm",
+        "source_asset": "rflm_SWP1_SM",
+        "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -20,
+            1000
+          ],
+          [
+            -1000,
+            20,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "HCAA 翼下双架，与 LAAM 腹侧共存"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_outer",
+      "candidate_extras_sha256": "2364284efda991fa5960dbf53d372d03894f59038c2cba89dbe0ce350ce7f60d",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 760,
+              "degenerated": 304
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 760,
+              "degenerated": 304
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 760,
+              "degenerated": 304
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 480,
+              "degenerated": 212
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 480,
+              "degenerated": 212
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 480,
+              "degenerated": 212
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 140,
+              "degenerated": 156
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 140,
+              "degenerated": 156
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 140,
+              "degenerated": 156
+            }
+          }
+        }
+      ],
+      "changed_bytes": 9581,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "b522f96115b60e221c0b6e98713db19ffe61de5ac63329ffb5b223d523004923",
+        ".uexp": "aa86eb2704f03877f5909f90b5a287437fe69373c7dfb8133707031961994f02"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "09ae4c1f0e7ddef36da78c6f0673f59bd0ba41878656ae24e2dabf79117ed0d7",
+        ".uexp": "98690d20bf4a74f8d44f15a512fb59c9158ffa58ddea8c9b96844590e71fe578"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/rflm/rflm_SWP1_SM.uasset",
+      "source_encrypted_uasset_sha256": "5bb7a2ee29bb4f99f910acd272566caba8e8133289409059a13c34d7a26f6427",
+      "source_decoded_uasset_sha256": "39a471655e547fc3c762b335d51f77b83fa75ee125d998a4f94cd45df1732d28",
+      "source_decoded_uexp_sha256": "989cf7cf285a2fc94c38d981dd9dbe45dd5568b713d2c2f08290c71baab75362"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "rflm_SWP3_SM",
+      "json_sha256": "67304036ad8dd7061a3422e1de3d5450cf151d2632bbb0e38b625fcd522da788",
+      "extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          3.814697265625e-06,
+          3.814697265625e-06
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2782,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 2096,
+                "min": 0,
+                "max": 2781,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799491882324219,
+                21.7869815826416
+              ],
+              [
+                -34.63069534301758,
+                34.63069534301758
+              ],
+              [
+                -6.135078430175781,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 2096,
+              "reversed": 0,
+              "depth": 2096,
+              "reversed_depth": 0,
+              "adjacency": 2096
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1786,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1142,
+                "min": 0,
+                "max": 1785,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799495697021484,
+                21.7869815826416
+              ],
+              [
+                -34.62968444824219,
+                34.62968826293945
+              ],
+              [
+                -6.080832481384277,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 1142,
+              "reversed": 0,
+              "depth": 1142,
+              "reversed_depth": 0,
+              "adjacency": 1142
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 316,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 184,
+                "min": 0,
+                "max": 315,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799495697021484,
+                21.650440216064453
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -5.724283695220947,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 184,
+              "reversed": 0,
+              "depth": 184,
+              "reversed_depth": 0,
+              "adjacency": 184
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_rflm_laam_belly",
+        "aircraft": "rflm",
+        "source_asset": "rflm_SWP3_SM",
+        "source_extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+        "keep_boxes": [
+          [
+            -1000,
+            -20,
+            -1000,
+            1000,
+            20,
+            1000
+          ]
+        ],
+        "purpose": "LAAM 腹侧双导轨"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_rflm_laam_belly",
+      "candidate_extras_sha256": "1fa40e7af0a4cd360b70bdd30e1337c7c73daa794f9804ab1b823d4a0c4f1f88",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 184,
+              "degenerated": 1912
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 184,
+              "degenerated": 1912
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 184,
+              "degenerated": 1912
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 184,
+              "degenerated": 958
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 184,
+              "degenerated": 958
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 184,
+              "degenerated": 958
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 32,
+              "degenerated": 152
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 32,
+              "degenerated": 152
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 32,
+              "degenerated": 152
+            }
+          }
+        }
+      ],
+      "changed_bytes": 47179,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "c6cc4812116cea1311544077119377079be33b6b8f07814ecf327f2fb90775f0",
+        ".uexp": "14e59dd2c1d9f3c0dad7690fdbb9e1f1669fc1da4907e58efe7789edb546f0b2"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "ea7c2b0e4edf7325e06f065542ce90bf752879b90e0505550d0c9fb850315501",
+        ".uexp": "8cf85ebc5966f3879876ad9ed78b0dcc197daffcf0d3bf56e2b1c5aa3d1e2af7"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/rflm/rflm_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "634f83d0fe2d0ff36038f718bc133f0275ecaf7e33a8573118663b0faff59515",
+      "source_decoded_uasset_sha256": "3de48127c487fe015e947918e42b581557408779821de3b29f461de90fba0c08",
+      "source_decoded_uexp_sha256": "95997330b92463352163faca8ada5f0f9c29b23f2fb3f26a9e5655fff118f0e7"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "rflm_SWP3_SM",
+      "json_sha256": "67304036ad8dd7061a3422e1de3d5450cf151d2632bbb0e38b625fcd522da788",
+      "extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          2.384185791015625e-07,
+          3.814697265625e-06,
+          3.814697265625e-06
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2782,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 2096,
+                "min": 0,
+                "max": 2781,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799491882324219,
+                21.7869815826416
+              ],
+              [
+                -34.63069534301758,
+                34.63069534301758
+              ],
+              [
+                -6.135078430175781,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 2096,
+              "reversed": 0,
+              "depth": 2096,
+              "reversed_depth": 0,
+              "adjacency": 2096
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1786,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1142,
+                "min": 0,
+                "max": 1785,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799495697021484,
+                21.7869815826416
+              ],
+              [
+                -34.62968444824219,
+                34.62968826293945
+              ],
+              [
+                -6.080832481384277,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 1142,
+              "reversed": 0,
+              "depth": 1142,
+              "reversed_depth": 0,
+              "adjacency": 1142
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 316,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 184,
+                "min": 0,
+                "max": 315,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.799495697021484,
+                21.650440216064453
+              ],
+              [
+                -34.62968826293945,
+                34.62968826293945
+              ],
+              [
+                -5.724283695220947,
+                -1.2064597606658936
+              ]
+            ],
+            "buffers": {
+              "main": 184,
+              "reversed": 0,
+              "depth": 184,
+              "reversed_depth": 0,
+              "adjacency": 184
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_rflm_laam_belly_pos",
+        "aircraft": "rflm",
+        "source_asset": "rflm_SWP3_SM",
+        "source_extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+        "keep_boxes": [
+          [
+            -1000,
+            0,
+            -1000,
+            1000,
+            20,
+            1000
+          ]
+        ],
+        "purpose": "三挂 LAAM 正 Y 腹侧单轨"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_rflm_laam_belly_pos",
+      "candidate_extras_sha256": "840a10bf071be963c7989f82d18e326195eac902a572674db812b3fa6461c814",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 92,
+              "degenerated": 2004
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 92,
+              "degenerated": 2004
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 92,
+              "degenerated": 2004
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 92,
+              "degenerated": 1050
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 92,
+              "degenerated": 1050
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 92,
+              "degenerated": 1050
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 16,
+              "degenerated": 168
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 16,
+              "degenerated": 168
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 16,
+              "degenerated": 168
+            }
+          }
+        }
+      ],
+      "changed_bytes": 50134,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "7e071481dd7e76b33a87612019b6d82741ce072f0ee75fe312753f8f08bfe570",
+        ".uexp": "8da1c2224ba9d7421f7254c3607a9f50ffbe08f9e67641104039b1aca4000d29"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "853c853f16f786c09bd800d37a8fcd4be8ca6546600c42c2299b5e6e1243e13a",
+        ".uexp": "c249f169db79386864a559194c82a3f645b3532ed9453a5aec808375e0394b36"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/rflm/rflm_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "634f83d0fe2d0ff36038f718bc133f0275ecaf7e33a8573118663b0faff59515",
+      "source_decoded_uasset_sha256": "3de48127c487fe015e947918e42b581557408779821de3b29f461de90fba0c08",
+      "source_decoded_uexp_sha256": "95997330b92463352163faca8ada5f0f9c29b23f2fb3f26a9e5655fff118f0e7"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f16c_SWP3_SM",
+      "json_sha256": "870df5769a5316c932732cb69d933eadaaede1fa60a0d937543cea789ab4ae97",
+      "extras_sha256": "70cd6811f62ea247a5bad52540cbba65631760966fe18a0507f8bd37fa01ed18",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          9.5367431640625e-07,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 908,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 704,
+                "min": 0,
+                "max": 907,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.35975456237793
+              ],
+              [
+                -40.687522888183594,
+                40.687522888183594
+              ],
+              [
+                -3.884269952774048,
+                0.6092656850814819
+              ]
+            ],
+            "buffers": {
+              "main": 704,
+              "reversed": 0,
+              "depth": 704,
+              "reversed_depth": 0,
+              "adjacency": 704
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 812,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 600,
+                "min": 0,
+                "max": 811,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.35975456237793
+              ],
+              [
+                -40.66408157348633,
+                40.66407775878906
+              ],
+              [
+                -3.8842687606811523,
+                0.6092650890350342
+              ]
+            ],
+            "buffers": {
+              "main": 600,
+              "reversed": 0,
+              "depth": 600,
+              "reversed_depth": 0,
+              "adjacency": 600
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 184,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 120,
+                "min": 0,
+                "max": 183,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -9.077910423278809,
+                23.34207534790039
+              ],
+              [
+                -40.33042907714844,
+                40.33043670654297
+              ],
+              [
+                -3.685209274291992,
+                0.6092650890350342
+              ]
+            ],
+            "buffers": {
+              "main": 120,
+              "reversed": 0,
+              "depth": 120,
+              "reversed_depth": 0,
+              "adjacency": 120
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f16c_sasm_outer",
+        "aircraft": "f16c",
+        "source_asset": "f16c_SWP3_SM",
+        "source_extras_sha256": "70cd6811f62ea247a5bad52540cbba65631760966fe18a0507f8bd37fa01ed18",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -35,
+            1000
+          ],
+          [
+            -1000,
+            35,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "保留该SP自身外翼导轨及原Socket，不能因几何相同而跨组替换Socket元数据"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f16c_sasm_outer",
+      "candidate_extras_sha256": "bde43caea76a9c0782cbe4cac40b993efaefa02bb7c2ec9b4dd90c3fe23f2f08",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 352,
+              "degenerated": 352
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 352,
+              "degenerated": 352
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 352,
+              "degenerated": 352
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 296,
+              "degenerated": 304
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 296,
+              "degenerated": 304
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 296,
+              "degenerated": 304
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 60,
+              "degenerated": 60
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 60,
+              "degenerated": 60
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 60,
+              "degenerated": 60
+            }
+          }
+        }
+      ],
+      "changed_bytes": 10809,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "47aed47cdd475e95752a2e31cb8d4830c25d6a1a69943f02f0b64e6a6437087f",
+        ".uexp": "a17d487bdbae45120615b799c7536628b2a9c690b7e3202d45aeea85349fff5e"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "5fca134d741522a88943a0d281ec5c905cd63f847b3219e6c1134ca26cbe1b2e",
+        ".uexp": "f2889972675a3ebc31e404ea4782b12b6def33d4c83531e3bf495f5a2f2b849b"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f16c/f16c_SWP3_SM.uasset",
+      "source_encrypted_uasset_sha256": "7d0da0c1e5ce438d02b9461733f4adad7e393b4c227c021f47b1e3c42d55199f",
+      "source_decoded_uasset_sha256": "283cccfdc8c4f0a500bb1465f2148a0842df96588314d90e7583a27556bd71a1",
+      "source_decoded_uexp_sha256": "e9239db0c34fd89fd55da33e13834229f3893d1072d384d28e80854d8c6559f6"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "j39e_SWP2_SM",
+      "json_sha256": "7366557148346b272f4e5495222ec8eefd1f933af4c5ead17d2f018d4a62ee16",
+      "extras_sha256": "515b3f24925307915448ab8e9ce6f0e963638011ccde70a6a07b02338f5a2cc7",
+      "structure": {
+        "socket_count": 7,
+        "original_lod_bounds_overflow": [
+          1.9073486328125e-06,
+          0.00067138671875,
+          1.9073486328125e-06
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 424,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 432,
+                "min": 0,
+                "max": 423,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.159584045410156,
+                30.15959930419922
+              ],
+              [
+                -7.1509857177734375,
+                -5.4500274658203125
+              ]
+            ],
+            "buffers": {
+              "main": 432,
+              "reversed": 0,
+              "depth": 432,
+              "reversed_depth": 0,
+              "adjacency": 432
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 128,
+                "min": 0,
+                "max": 207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.160255432128906,
+                30.15959930419922
+              ],
+              [
+                -7.1509857177734375,
+                -5.4500274658203125
+              ]
+            ],
+            "buffers": {
+              "main": 128,
+              "reversed": 0,
+              "depth": 128,
+              "reversed_depth": 0,
+              "adjacency": 128
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 80,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 40,
+                "min": 0,
+                "max": 79,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -4.180149078369141,
+                28.42030906677246
+              ],
+              [
+                -30.159584045410156,
+                30.15959930419922
+              ],
+              [
+                -6.945085525512695,
+                -5.4500274658203125
+              ]
+            ],
+            "buffers": {
+              "main": 40,
+              "reversed": 0,
+              "depth": 40,
+              "reversed_depth": 0,
+              "adjacency": 40
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_j39e_aam_outer",
+        "aircraft": "j39e",
+        "source_asset": "j39e_SWP2_SM",
+        "source_extras_sha256": "515b3f24925307915448ab8e9ce6f0e963638011ccde70a6a07b02338f5a2cc7",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -25,
+            1000
+          ],
+          [
+            -1000,
+            25,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "保留该SP自身外翼导轨及原Socket，不能因几何相同而跨组替换Socket元数据"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_j39e_aam_outer",
+      "candidate_extras_sha256": "fc62f37f52e57ee9932c3490c914610ad2134c903a747e14ea8fb3c77a84e971",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 216,
+              "degenerated": 216
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 216,
+              "degenerated": 216
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 216,
+              "degenerated": 216
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 64,
+              "degenerated": 64
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 64,
+              "degenerated": 64
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 64,
+              "degenerated": 64
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 20,
+              "degenerated": 20
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 20,
+              "degenerated": 20
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 20,
+              "degenerated": 20
+            }
+          }
+        }
+      ],
+      "changed_bytes": 4235,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "e6a670a9bd43c97ef10aa4bf22cab767054f1bdc4b5960a94c44218584ce33f1",
+        ".uexp": "9600a0e8aeeffc2b2729a89fe10e001ebdb32da0fd5aac17f6d79d67d4270691"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "4de66a00b06836c6efae5771480eb9fd1b9b10e7bd64fd2e5b64e50a93da4993",
+        ".uexp": "c97018251d42d17c71cbee4d40c41289f1f18da4374b2382d3bbd0cf31423ef6"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/j39e/j39e_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "18f9367416da25349a879de3d971f7eef790a1c12dc78dffb6a7e99e94b7ed12",
+      "source_decoded_uasset_sha256": "2e9d5d7e1bcdc7cf630d4efea9501ba8f8b1bfe47126bc6a876c8c16d863f83a",
+      "source_decoded_uexp_sha256": "462e40e2c9f451251b987fb41adc4c4c6ffae444ab32fa35927061561b6bc276"
+    }
+  ],
+  "reference_research": {
+    "thread_id": "01a1441b-45a7-7d91-80f2-cf03b98647b1",
+    "branch": "codex/mount-expansion",
+    "commit": "2a74e1c8ffa83810f6b11cb3f116a1e6cee4f16d",
+    "record": "evidence/mount-expansion-handoff.json",
+    "sha256": "b8e91b9fa9ce3e70df51e014453534a99a2afc72eb3ed5bc8043f790fc1fb304",
+    "policy": "all_seven_required",
+    "relationship": "supplement_only_do_not_replace_source_gates"
+  },
+  "source_inventory": {
+    "static_assets_parsed": 109,
+    "scope": "显式提供的既有manifest内静态SWP网格，不宣称覆盖全部游戏资产",
+    "assets": [
+      {
+        "asset": "a10a_SWP1_SM",
+        "lods": 3,
+        "socket_count": 14,
+        "status": "parsed"
+      },
+      {
+        "asset": "a10a_SWP2_SM",
+        "lods": 3,
+        "socket_count": 42,
+        "status": "parsed"
+      },
+      {
+        "asset": "a10a_SWP3_SM",
+        "lods": 3,
+        "socket_count": 8,
+        "status": "parsed"
+      },
+      {
+        "asset": "adf11f_SWP1_SM",
+        "lods": 1,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "adf11f_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "adf11f_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "asfx_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "asfx_SWP2_SM",
+        "lods": 3,
+        "socket_count": 76,
+        "status": "parsed"
+      },
+      {
+        "asset": "dark_SWP2_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "dark_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02a_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02a_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02a_SWP3_SM",
+        "lods": 3,
+        "socket_count": 76,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02x_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02x_SWP2_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f02x_SWP3_SM",
+        "lods": 3,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "f04e_SWP1_SM",
+        "lods": 3,
+        "socket_count": 12,
+        "status": "parsed"
+      },
+      {
+        "asset": "f04e_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f04e_SWP3_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f104_SWP1_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f104_SWP2_SM",
+        "lods": 3,
+        "socket_count": 14,
+        "status": "parsed"
+      },
+      {
+        "asset": "f104_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14a_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14a_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14a_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14atg_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14atg_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14atg_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14d_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f14d_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15c_SWP1_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15c_SWP2_SM",
+        "lods": 1,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15c_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15e_SWP1_SM",
+        "lods": 2,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15e_SWP2_SM",
+        "lods": 2,
+        "socket_count": 12,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15e_SWP3_SM",
+        "lods": 3,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15j_SWP1_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15j_SWP2_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15j_SWP3_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15m_SWP1_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15m_SWP2_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f15m_SWP3_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16c_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16c_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16c_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16x_SWP1_SM",
+        "lods": 3,
+        "socket_count": 12,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16x_SWP2_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f16x_SWP3_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18e_SWP1_SM",
+        "lods": 3,
+        "socket_count": 8,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18e_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18e_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18etg_SWP1_SM",
+        "lods": 3,
+        "socket_count": 8,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18etg_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18etg_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18f_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18f_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18x_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "f18x_SWP2_SM",
+        "lods": 3,
+        "socket_count": 18,
+        "status": "parsed"
+      },
+      {
+        "asset": "f35c_SWP1_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "f35c_SWP3_SM",
+        "lods": 3,
+        "socket_count": 12,
+        "status": "parsed"
+      },
+      {
+        "asset": "fa27_SWP1_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "fa27_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "fa27_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "j39e_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "j39e_SWP2_SM",
+        "lods": 3,
+        "socket_count": 7,
+        "status": "parsed"
+      },
+      {
+        "asset": "j39e_SWP3_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m21b_SWP1_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m21b_SWP2_SM",
+        "lods": 3,
+        "socket_count": 32,
+        "status": "parsed"
+      },
+      {
+        "asset": "m21b_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m29a_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "m29a_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "m29a_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "m31b_SWP1_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "m31b_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m31b_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m35d_SWP1_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "m35d_SWP2_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "m35d_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "mr2k_SWP1_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "mr2k_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "mr2k_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "mrgn_SWP1_SM",
+        "lods": 3,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "mrgn_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "mrgn_SWP3_SM",
+        "lods": 1,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "pkfa_SWP2_SM",
+        "lods": 1,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "pkfa_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "rflm_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "rflm_SWP2_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      },
+      {
+        "asset": "rflm_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su30_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su30_SWP2_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su30_SWP3_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su33_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su33_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su34_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su34_SWP2_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su34_SWP3_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su35_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su35_SWP2_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "su35_SWP3_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su37_SWP1_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su37_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "su37_SWP3_SM",
+        "lods": 3,
+        "socket_count": 1,
+        "status": "parsed"
+      },
+      {
+        "asset": "su57tg_SWP3_SM",
+        "lods": 1,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "typn_SWP1_SM",
+        "lods": 3,
+        "socket_count": 6,
+        "status": "parsed"
+      },
+      {
+        "asset": "typn_SWP2_SM",
+        "lods": 3,
+        "socket_count": 18,
+        "status": "parsed"
+      },
+      {
+        "asset": "typn_SWP3_SM",
+        "lods": 3,
+        "socket_count": 8,
+        "status": "parsed"
+      },
+      {
+        "asset": "zoef_SWP2_SM",
+        "lods": 3,
+        "socket_count": 4,
+        "status": "parsed"
+      },
+      {
+        "asset": "zoef_SWP3_SM",
+        "lods": 3,
+        "socket_count": 2,
+        "status": "parsed"
+      }
+    ]
+  },
+  "upstream_blockers": [
+    {
+      "kind": "animation_and_shared_rack_geometry",
+      "deferred_combinations": 12,
+      "aircraft": [
+        "f14d",
+        "f22a",
+        "pkfa",
+        "su47"
+      ]
+    },
+    {
+      "kind": "animation_control",
+      "deferred_combinations": 26,
+      "aircraft": [
+        "asfx",
+        "dark",
+        "f18f",
+        "f18x",
+        "fa44",
+        "fb22",
+        "pkfa",
+        "su33",
+        "su57tg",
+        "x02s",
+        "yf23",
+        "zoef"
+      ]
+    },
+    {
+      "kind": "launcher_model_and_animation",
+      "deferred_combinations": 1,
+      "aircraft": [
+        "asfx"
+      ]
+    },
+    {
+      "kind": "new_station",
+      "deferred_combinations": 2,
+      "aircraft": [
+        "f104",
+        "m21b"
+      ]
+    },
+    {
+      "kind": "rack_asset",
+      "deferred_combinations": 5,
+      "aircraft": [
+        "asfx",
+        "f14d",
+        "f18f",
+        "f18x",
+        "su33"
+      ]
+    },
+    {
+      "kind": "rack_asset_and_animation",
+      "deferred_combinations": 5,
+      "aircraft": [
+        "asfx",
+        "f14d",
+        "f18f",
+        "f18x",
+        "su33"
+      ]
+    },
+    {
+      "kind": "resource_split",
+      "deferred_combinations": 68,
+      "aircraft": [
+        "a10a",
+        "f02a",
+        "f02x",
+        "f04e",
+        "f104",
+        "f14a",
+        "f14atg",
+        "f16c",
+        "f16x",
+        "f18e",
+        "f18etg",
+        "j39e",
+        "m21b",
+        "m29a",
+        "m31b",
+        "m35d",
+        "mr2k",
+        "rflm",
+        "su30",
+        "su34",
+        "su35",
+        "su37"
+      ]
+    },
+    {
+      "kind": "unknown_support",
+      "deferred_combinations": 10,
+      "aircraft": [
+        "adf11f",
+        "dark",
+        "fa44",
+        "fb22"
+      ]
+    }
+  ],
+  "runtime_integration_review_order": [
+    "f16c",
+    "f02a",
+    "mr2k",
+    "rflm"
+  ],
+  "remaining_specific_blockers": {
+    "f104": "双挂几何可分，三挂仍缺第三承载站，整机暂缓",
+    "j39e": "外翼导轨可分，LACM dummy组原生支撑仍未知，整机暂缓",
+    "skeletal_aircraft": "本工具拒绝SkeletalMesh；通道所有权、骨架更新与必要蒙皮分离均未验证"
+  },
+  "executed_tool_sources": {
+    "src/research/split_static_mount_asset.py": "be4234c5ea0e8256b82e140868b597a033e0bfc2f29a94046a3f051c32db718c",
+    "src/research/run_static_mount_split_experiment.py": "61b848e069f92ff0efdf04b75591ce42b0401bf3e202c5682460c051c92f538e",
+    "src/research/inspect_mount_assets.py": "86d76bdb14d1654b271212454cae3c0bde1024ed32c70cbdbf1c42af072c5c88"
+  },
+  "local_dependency_hashes": {
+    "UAssetGUI.exe": "b7d75c0893f1a60e565853ae638bc21f2416cd12c2d9d854e297abb87ceb3263"
+  },
+  "format_source": {
+    "url": "https://raw.githubusercontent.com/gildor2/UEViewer/master/Unreal/UnrealMesh/UnMesh4.cpp",
+    "download_sha256": "92859a531fdb6554500cf25c57f19b18a00e53307c599d98b9e191cabd05c1a5"
+  },
+  "limits": [
+    "退化面不减少绘制数、顶点或显存；不是性能优化",
+    "BodySetup、NavCollision、LightingGuid未重建；需确认外观组件NoCollision及无静态烘焙依赖",
+    "未打PAK、未验证本机PM-UE4SS LoadAsset、挂载、对象GC引用、渲染、阴影、碰撞或真实离架",
+    "不修改上游整机门槛；22副本是六机的几何研究，不能当作22机适配",
+    "资源字节、原始JSON、密钥、几何预览仅保留Temp，不进Git"
+  ],
+  "local_geometry_preview": {
+    "relative_path": "Temp/static-mount-split-20261017-091706-220456/挂架分区实验.png",
+    "sha256": "0a596c7981cb9e86c2610f3c2839b8e19f224a1556ee146728d9072e399294d8",
+    "scope": "LOD0几何俯视对照，非游戏截图"
+  }
+}

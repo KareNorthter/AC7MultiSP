@@ -6,7 +6,7 @@ from pathlib import Path
 
 from survey_aircraft_mounts import Survey, reference_bones, rotate, vector
 from summarize_mount_assets import properties, resolve
-from build_mount_handoff import aircraft_gate
+from build_mount_handoff import aircraft_gate, validate_split_evidence
 
 
 def pawn_config(survey, code):
@@ -240,10 +240,13 @@ def main():
             native = {group['group']: group for group in sample['groups']}
             for combo in decision['combinations']:
                 status = combo['status']
-                if status not in ('native_reuse', 'requires_rack_asset', 'requires_new_station', 'deferred'):
+                if status not in ('native_reuse', 'split_asset_candidate', 'requires_rack_asset', 'requires_new_station', 'deferred'):
                     raise ValueError('未知的布局研究状态：' + status)
-                # 用户已要求新资源工作后置；保留技术依赖，另记是否允许继续接入。
-                if status != 'native_reuse':
+                # 未核对的新资源继续后置；完整分区依据仅允许继续做整机运行接入。
+                if status == 'split_asset_candidate':
+                    combo['disposition'] = 'candidate_split_assets'
+                    validate_split_evidence(combo)
+                elif status != 'native_reuse':
                     combo['disposition'] = 'deferred'
                     combo.setdefault('blocker_kind', {'requires_rack_asset':'resource_split',
                                                      'requires_new_station':'new_station'}.get(status,'unknown_support'))
@@ -251,8 +254,9 @@ def main():
                     combo.setdefault('deferred_reason', '；'.join(blockers) or combo.get('reason') or '依赖尚未核实，暂缓接入')
                 else:
                     combo['disposition'] = 'native_single' if len(combo['weapons']) == 1 else 'candidate_existing_assets'
+                if status in ('native_reuse','split_asset_candidate'):
                     if {part['weapon'] for part in combo['assignments']} != set(combo['weapons']):
-                        raise ValueError('现成资源候选未给每种SP分配位置：' + sample['code'])
+                        raise ValueError('资源候选未给每种SP分配位置：' + sample['code'])
                 for assignment in combo['assignments']:
                     group = native[assignment['group']]
                     weapon_id = group['weapon']['defaults'].get('WeaponID', {}).get('value')
@@ -306,10 +310,12 @@ def main():
             for combo in decision['combinations']:
                 combo['integration_allowed'] = sample['integration_gate']['eligible']
     # 网格和机体 JSON 的摘要保留在来源表；数据文件不带本机临时绝对路径。
+    has_splits = any(c['status']=='split_asset_candidate' for a in samples if 'proposal' in a for c in a['proposal']['combinations'])
     result = {'schema':1, 'baseline':'v2.4.0', 'steam_build':9855922,
               'status':'offline_layout_candidate' if decisions else 'offline_resource_dossier', 'game_process_access':False,
               'compiled':False, 'tests_run':False, 'installed':False, 'assets_generated':False,
-              'research_policy':{'existing_whole_assets_only':True, 'defer_resource_splitting':True,
+              'research_policy':{'existing_whole_assets_only':not has_splits, 'defer_resource_splitting':not has_splits,
+                                 'defer_unvalidated_resource_splitting':True,
                                  'defer_new_stations':True, 'require_all_seven_combinations':True,
                                  'runtime_integration_performed':False},
               'aircraft':samples, 'sources':survey.used, 'geometry_reviews':reviews,

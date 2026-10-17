@@ -15,26 +15,26 @@
     "researched_new_aircraft": 44,
     "total_combination_cases": 329,
     "new_combination_cases": 308,
-    "eligible_aircraft": 6,
-    "eligible_combination_cases": 42,
-    "eligible_multi_combinations": 24,
-    "deferred_whole_aircraft": 38,
+    "eligible_aircraft": 10,
+    "eligible_combination_cases": 70,
+    "eligible_multi_combinations": 40,
+    "deferred_whole_aircraft": 34,
     "research_priority_counts": {
       "native_reference": 132,
-      "deferred": 129,
-      "P2": 28,
-      "P1": 18,
+      "P2": 41,
+      "deferred": 115,
+      "P1": 19,
       "P3": 1
     },
     "integration_priority_counts": {
-      "P1": 10,
-      "P2": 14
+      "P2": 29,
+      "P1": 11
     }
   },
   "source_files": [
     {
       "record": "evidence/mount-expansion-batch1.json",
-      "sha256": "3328123959393bdf20739d91fd0f34caf5ca3c5b2e59a22ca4b757e5d495603b"
+      "sha256": "af65ede5dd1dad515f55ebf641a22ca3755b251d95a8947018c641edde987e35"
     },
     {
       "record": "evidence/mount-expansion-batch2.json",
@@ -54,6 +54,12 @@
   },
   "eligible_aircraft": [
     {
+      "code": "f02a",
+      "name": "F-2A",
+      "record": "evidence/mount-expansion-batch1.json",
+      "combination_count": 7
+    },
+    {
       "code": "f15c",
       "name": "F-15C Eagle",
       "record": "evidence/mount-expansion-batch3.json",
@@ -72,15 +78,33 @@
       "combination_count": 7
     },
     {
+      "code": "f16c",
+      "name": "F-16C Fighting Falcon",
+      "record": "evidence/mount-expansion-batch1.json",
+      "combination_count": 7
+    },
+    {
       "code": "fa27",
       "name": "XFA-27",
       "record": "evidence/mount-expansion-batch3.json",
       "combination_count": 7
     },
     {
+      "code": "mr2k",
+      "name": "Mirage 2000-5",
+      "record": "evidence/mount-expansion-batch1.json",
+      "combination_count": 7
+    },
+    {
       "code": "mrgn",
       "name": "ADFX-01 Morgan",
       "record": "evidence/mount-expansion-batch3.json",
+      "combination_count": 7
+    },
+    {
+      "code": "rflm",
+      "name": "Rafale M",
+      "record": "evidence/mount-expansion-batch1.json",
       "combination_count": 7
     },
     {
@@ -822,49 +846,11 @@
       "combination_count": 7,
       "integration_gate": {
         "policy": "all_seven_required",
-        "eligible": false,
-        "status": "defer_whole_aircraft",
+        "eligible": true,
+        "status": "complete_seven_candidate",
         "combination_count": 7,
-        "blocked_combinations": [
-          {
-            "weapons": [
-              "LASM",
-              "HVAA"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "LASM",
-              "RKT"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "HVAA",
-              "RKT"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "LASM",
-              "HVAA",
-              "RKT"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          }
-        ],
-        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
+        "blocked_combinations": [],
+        "reason": "七组合均有离线方案，含已核对分区副本；可整机接入，未证明游戏加载和动作"
       },
       "combinations": [
         {
@@ -877,7 +863,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -892,7 +878,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -907,7 +893,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -917,48 +903,74 @@
             "LASM",
             "HVAA"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
             "LASM",
             "RKT"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
             "HVAA",
             "RKT"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
@@ -966,16 +978,26 @@
             "HVAA",
             "RKT"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         }
       ]
     },
@@ -2409,40 +2431,11 @@
       "combination_count": 7,
       "integration_gate": {
         "policy": "all_seven_required",
-        "eligible": false,
-        "status": "defer_whole_aircraft",
+        "eligible": true,
+        "status": "complete_seven_candidate",
         "combination_count": 7,
-        "blocked_combinations": [
-          {
-            "weapons": [
-              "4AAM",
-              "GPB"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "GPB",
-              "SASM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "4AAM",
-              "GPB",
-              "SASM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          }
-        ],
-        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
+        "blocked_combinations": [],
+        "reason": "七组合均有离线方案，含已核对分区副本；可整机接入，未证明游戏加载和动作"
       },
       "combinations": [
         {
@@ -2455,7 +2448,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -2470,7 +2463,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -2485,7 +2478,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -2495,16 +2488,25 @@
             "4AAM",
             "GPB"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
@@ -2517,9 +2519,18 @@
           "priority_reasons": [
             "部分物理位置少于原生装填窗口"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
-          "runtime_prerequisites": [],
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
           "deferred_reason": null
         },
         {
@@ -2527,16 +2538,24 @@
             "GPB",
             "SASM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
@@ -2544,16 +2563,25 @@
             "GPB",
             "SASM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         }
       ]
     },
@@ -4993,40 +5021,11 @@
       "combination_count": 7,
       "integration_gate": {
         "policy": "all_seven_required",
-        "eligible": false,
-        "status": "defer_whole_aircraft",
+        "eligible": true,
+        "status": "complete_seven_candidate",
         "combination_count": 7,
-        "blocked_combinations": [
-          {
-            "weapons": [
-              "GPB",
-              "4AAM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "GPB",
-              "LASM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "GPB",
-              "4AAM",
-              "LASM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          }
-        ],
-        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
+        "blocked_combinations": [],
+        "reason": "七组合均有离线方案，含已核对分区副本；可整机接入，未证明游戏加载和动作"
       },
       "combinations": [
         {
@@ -5039,7 +5038,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5054,7 +5053,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5069,7 +5068,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5079,32 +5078,50 @@
             "GPB",
             "4AAM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
             "GPB",
             "LASM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
@@ -5113,13 +5130,21 @@
           ],
           "research_status": "native_reuse",
           "disposition": "candidate_existing_assets",
-          "priority": "P2",
+          "priority": "P1",
           "priority_reasons": [
-            "部分原生窗口未解析，不能按固定数量接管"
+            "现成资源与普通弹体分区可先接入"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
-          "runtime_prerequisites": [],
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
           "deferred_reason": null
         },
         {
@@ -5128,16 +5153,25 @@
             "4AAM",
             "LASM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         }
       ]
     },
@@ -5491,49 +5525,11 @@
       "combination_count": 7,
       "integration_gate": {
         "policy": "all_seven_required",
-        "eligible": false,
-        "status": "defer_whole_aircraft",
+        "eligible": true,
+        "status": "complete_seven_candidate",
         "combination_count": 7,
-        "blocked_combinations": [
-          {
-            "weapons": [
-              "HCAA",
-              "LACM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "HCAA",
-              "LAAM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "LACM",
-              "LAAM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          },
-          {
-            "weapons": [
-              "HCAA",
-              "LACM",
-              "LAAM"
-            ],
-            "research_priority": "deferred",
-            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
-            "blocker_kind": "resource_split"
-          }
-        ],
-        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
+        "blocked_combinations": [],
+        "reason": "七组合均有离线方案，含已核对分区副本；可整机接入，未证明游戏加载和动作"
       },
       "combinations": [
         {
@@ -5546,7 +5542,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5561,7 +5557,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5576,7 +5572,7 @@
           "priority_reasons": [
             "原生单挂参考"
           ],
-          "integration_allowed": false,
+          "integration_allowed": true,
           "blocker_kind": null,
           "runtime_prerequisites": [],
           "deferred_reason": null
@@ -5586,48 +5582,72 @@
             "HCAA",
             "LACM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
             "HCAA",
             "LAAM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
             "LACM",
             "LAAM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+          ],
+          "deferred_reason": null
         },
         {
           "weapons": [
@@ -5635,16 +5655,25 @@
             "LACM",
             "LAAM"
           ],
-          "research_status": "requires_rack_asset",
-          "disposition": "deferred",
-          "priority": "deferred",
+          "research_status": "split_asset_candidate",
+          "disposition": "candidate_split_assets",
+          "priority": "P2",
           "priority_reasons": [
-            "保留条件方案，不进入本轮接入"
+            "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
           ],
-          "integration_allowed": false,
-          "blocker_kind": "resource_split",
-          "runtime_prerequisites": [],
-          "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+          "integration_allowed": true,
+          "blocker_kind": null,
+          "runtime_prerequisites": [
+            "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+            "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+            "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+            "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+            "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+            "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+            "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+            "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+          ],
+          "deferred_reason": null
         }
       ]
     },
@@ -7881,6 +7910,7 @@
       "rack_plan": [
         "SWP1/2原生占位面保留"
       ],
+      "split_evidence": null,
       "layout_notes": "SASM原侧面一对，4AAM仅机腹前后四处达到窗口4；避开与SASM同侧的sp21/22。"
     },
     {
@@ -8104,6 +8134,7 @@
       "rack_plan": [
         "SWP1与SWP3原生占位网格保留"
       ],
+      "split_evidence": null,
       "layout_notes": "HCAA前后四候选原位，QAAM独立Y±25两处；两组实挂位置分区。"
     },
     {
@@ -8271,6 +8302,7 @@
       "rack_plan": [
         "保留f15j_SWP1_SM和SWP2_SM原生占位网格，无实体导轨叠加"
       ],
+      "split_evidence": null,
       "layout_notes": "HCAA只用前对，SAAM只用后对；两类Socket逐位置旋转完全一致，属于各自原生可用位置。各两处均达到窗口2。"
     },
     {
@@ -8494,6 +8526,7 @@
       "rack_plan": [
         "SWP2与SWP3原生占位网格保留"
       ],
+      "split_evidence": null,
       "layout_notes": "SAAM前后四候选原位，QAAM独立Y±25两处；保留原生朝向。"
     },
     {
@@ -8733,6 +8766,7 @@
       "rack_plan": [
         "三组原生微小占位网格保留，无可见支架几何重叠"
       ],
+      "split_evidence": null,
       "layout_notes": "HCAA前对、SAAM后对、QAAM侧面一对；三类均两处达到窗口2，不用换网格、不拆资产。"
     },
     {
@@ -8957,9 +8991,215 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "二/四资源候选均≥二窗口；固定使用各武器原生位置，无网格替换。"
       ]
+    },
+    {
+      "code": "mr2k",
+      "name": "Mirage 2000-5",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "4AAM",
+        "LASM"
+      ],
+      "research_status": "native_reuse",
+      "disposition": "candidate_existing_assets",
+      "priority": "P1",
+      "priority_reasons": [
+        "现成资源与普通弹体分区可先接入"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "4AAM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp21",
+              "location": {
+                "X": 45.5992546081543,
+                "Y": -7.735864639282227,
+                "Z": -5.378226280212402
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": "-0",
+                  "Yaw": "-0",
+                  "Roll": 10.0
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp22",
+              "location": {
+                "X": 45.5992546081543,
+                "Y": 7.735864639282227,
+                "Z": -5.378226280212402
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": "-0",
+                  "Yaw": "-0",
+                  "Roll": -10.0
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp23",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": -8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": -0.6956892013549805,
+                  "Roll": 10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp24",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": 8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": 0.6956892013549805,
+                  "Roll": -10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 4,
+          "loaded_window_from_blueprint": 4,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 4,
+          "below_window": false
+        },
+        {
+          "weapon": "LASM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp31",
+            "sp32"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp31",
+              "location": {
+                "X": 21.5860538482666,
+                "Y": -23.420000076293945,
+                "Z": -6.377062797546387
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -1.7625387907028198,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp32",
+              "location": {
+                "X": 21.5860538482666,
+                "Y": 23.419998168945312,
+                "Z": -6.377062797546387
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -1.7625387907028198,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lasm_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "mr2k_SWP1_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "mr2k_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "mr2k_SWP3_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": null,
+      "layout_notes": []
     },
     {
       "code": "typn",
@@ -9505,6 +9745,7 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "HCAA后腹二处达到二窗口，远离最内8AGM；18只是资源候选。"
       ]
@@ -10053,6 +10294,7 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "LAAM后二处=二窗口，避开前腹与内侧8AGM距离较近区域；8AGM实际显隐取库存/装填。"
       ]
@@ -10233,6 +10475,7 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "二/二处各达到二窗口；保持各自原Socket变换，不换弹体网格。"
       ]
@@ -10859,10 +11102,569 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "二/十八/二候选分别不低于明确二/八/二窗口；没有据此核实运行模型或逻辑槽。",
         "前腹HCAA与最内8AGM静态横向筛选余量约0.6资源单位，必须核对发射、下落、补装及本体净空。"
       ]
+    },
+    {
+      "code": "f02a",
+      "name": "F-2A",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "HVAA",
+        "RKT"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp23",
+            "sp24"
+          ],
+          "weapon": "HVAA",
+          "mesh": "w_saam_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp307",
+            "sp308",
+            "sp309",
+            "sp310",
+            "sp311",
+            "sp312",
+            "sp313",
+            "sp314",
+            "sp315",
+            "sp316",
+            "sp317",
+            "sp318",
+            "sp319",
+            "sp320",
+            "sp321",
+            "sp322",
+            "sp323",
+            "sp324",
+            "sp325",
+            "sp326",
+            "sp327",
+            "sp328",
+            "sp329",
+            "sp330",
+            "sp331",
+            "sp332",
+            "sp301",
+            "sp302",
+            "sp303",
+            "sp365",
+            "sp366",
+            "sp304",
+            "sp369",
+            "sp370",
+            "sp373",
+            "sp374",
+            "sp305",
+            "sp306"
+          ],
+          "weapon": "RKT",
+          "mesh": "w_rkt_a0_closed_SM",
+          "physical_count": 38,
+          "loaded_window": 8,
+          "below_window": false,
+          "position_role": "launcher_muzzle",
+          "physical_count_unit": "muzzle",
+          "muzzle_count": 38,
+          "launcher_body_count": 2
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f02a_SWP1_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f02a_SWP2_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_hvaa_inner",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner"
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f02a_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_rocket_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_rocket_outer"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f02a_hvaa_inner",
+          "MSP_f02a_rocket_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "RKT外侧两巢、HVAA内侧一对。发射巢与导弹不能在同站叠整块。"
+    },
+    {
+      "code": "f02a",
+      "name": "F-2A",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "LASM",
+        "HVAA"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "weapon": "LASM",
+          "mesh": "w_lasm_j1_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp23",
+            "sp24"
+          ],
+          "weapon": "HVAA",
+          "mesh": "w_saam_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f02a_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_lasm_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_outer"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f02a_SWP2_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_hvaa_inner",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner"
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f02a_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f02a_lasm_outer",
+          "MSP_f02a_hvaa_inner"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "LASM外侧、HVAA内侧各两处达到各自窗口2；两套整架均占内外四站，直接叠会重复。"
+    },
+    {
+      "code": "f02a",
+      "name": "F-2A",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "LASM",
+        "RKT"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp13",
+            "sp14"
+          ],
+          "weapon": "LASM",
+          "mesh": "w_lasm_j1_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp307",
+            "sp308",
+            "sp309",
+            "sp310",
+            "sp311",
+            "sp312",
+            "sp313",
+            "sp314",
+            "sp315",
+            "sp316",
+            "sp317",
+            "sp318",
+            "sp319",
+            "sp320",
+            "sp321",
+            "sp322",
+            "sp323",
+            "sp324",
+            "sp325",
+            "sp326",
+            "sp327",
+            "sp328",
+            "sp329",
+            "sp330",
+            "sp331",
+            "sp332",
+            "sp301",
+            "sp302",
+            "sp303",
+            "sp365",
+            "sp366",
+            "sp304",
+            "sp369",
+            "sp370",
+            "sp373",
+            "sp374",
+            "sp305",
+            "sp306"
+          ],
+          "weapon": "RKT",
+          "mesh": "w_rkt_a0_closed_SM",
+          "physical_count": 38,
+          "loaded_window": 8,
+          "below_window": false,
+          "position_role": "launcher_muzzle",
+          "physical_count_unit": "muzzle",
+          "muzzle_count": 38,
+          "launcher_body_count": 2
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f02a_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_lasm_inner",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_inner"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f02a_SWP2_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f02a_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_rocket_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_rocket_outer"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f02a_lasm_inner",
+          "MSP_f02a_rocket_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "RKT只使用外侧两巢38个原生管口，LASM内侧一对；RKT窗口8保持，减少物理管口不改连射规则。"
+    },
+    {
+      "code": "f02a",
+      "name": "F-2A",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "LASM",
+        "HVAA",
+        "RKT"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "外翼38口只是两巢发射口；副本仍有全部76个Socket，显式排除内翼口；巢体耗尽不隐藏",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp13"
+          ],
+          "weapon": "LASM",
+          "mesh": "w_lasm_j1_SM",
+          "physical_count": 1,
+          "loaded_window": 2,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp24"
+          ],
+          "weapon": "HVAA",
+          "mesh": "w_saam_a0_SM",
+          "physical_count": 1,
+          "loaded_window": 2,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp307",
+            "sp308",
+            "sp309",
+            "sp310",
+            "sp311",
+            "sp312",
+            "sp313",
+            "sp314",
+            "sp315",
+            "sp316",
+            "sp317",
+            "sp318",
+            "sp319",
+            "sp320",
+            "sp321",
+            "sp322",
+            "sp323",
+            "sp324",
+            "sp325",
+            "sp326",
+            "sp327",
+            "sp328",
+            "sp329",
+            "sp330",
+            "sp331",
+            "sp332",
+            "sp301",
+            "sp302",
+            "sp303",
+            "sp365",
+            "sp366",
+            "sp304",
+            "sp369",
+            "sp370",
+            "sp373",
+            "sp374",
+            "sp305",
+            "sp306"
+          ],
+          "weapon": "RKT",
+          "mesh": "w_rkt_a0_closed_SM",
+          "physical_count": 38,
+          "loaded_window": 8,
+          "below_window": false,
+          "position_role": "launcher_muzzle",
+          "physical_count_unit": "muzzle",
+          "muzzle_count": 38,
+          "launcher_body_count": 2
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f02a_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_lasm_inner_neg",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_inner_neg"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f02a_SWP2_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_hvaa_inner_pos",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner_pos"
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f02a_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f02a_rocket_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_rocket_outer"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f02a_lasm_inner_neg",
+          "MSP_f02a_hvaa_inner_pos",
+          "MSP_f02a_rocket_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "接受内侧不对称：LASM固定Y负一处、HVAA固定Y正一处，各少于窗口2；RKT保留外侧38管口与窗口8。"
     },
     {
       "code": "f15c",
@@ -11166,6 +11968,7 @@
         "SWP2原占位面",
         "SWP3完整双炮体"
       ],
+      "split_evidence": null,
       "layout_notes": "4AAM原六候选与PLSL原位；侧弹最低Z约-2.710高于PLSL最高Z=-2.947，机腹弹另在内侧区域。"
     },
     {
@@ -11334,6 +12137,7 @@
         "SWP1原占位面",
         "SWP3完整双炮体"
       ],
+      "split_evidence": null,
       "layout_notes": "SASM原位与PLSL原位保留；SASM最低LOD0 Z约-2.562高于PLSL整块最高Z=-2.947，参考姿态分离。"
     },
     {
@@ -11657,6 +12461,7 @@
         "SWP1/2原占位面",
         "SWP3完整双炮体"
       ],
+      "split_evidence": null,
       "layout_notes": "SASM侧面、4AAM机腹四处、PLSL双炮体；各弹类位置达到窗口，不拆架。"
     },
     {
@@ -11881,6 +12686,7 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "FAEB二候选、窗口未知；HVAA四候选≥二窗口。",
         "闭合与展开模型均须最终核对发射路径；原生空爆参数保持不变。"
@@ -12017,6 +12823,7 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "HPAA负Y一处<二窗口，FAEB正Y一处且窗口未知；跨侧映射须与真实离架和显隐一致。",
         "原生双侧各二候选仅保留为动态时序待核实的备选，本组合当前不采用。"
@@ -12277,10 +13084,425 @@
           "mesh_override_restore_required": false
         }
       ],
+      "split_evidence": null,
       "layout_notes": [
         "HPAA负Y一处<二窗口、FAEB正Y一处/窗口未知、HVAA原生四候选≥二窗口。",
         "以分侧避开FAEB最不利早展与同侧HPAA重合，不修改原生飞行/下落/空爆参数。"
       ]
+    },
+    {
+      "code": "f16c",
+      "name": "F-16C Fighting Falcon",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "4AAM",
+        "GPB"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "weapon": "4AAM",
+          "mesh": "w_4aam_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 4,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "weapon": "GPB",
+          "mesh": "w_gpb_a0_closed_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f16c_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f16c_missile_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f16c_missile_outer"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f16c_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f16c_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f16c_missile_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "导弹与炸弹分配不同横向站；四处4AAM资源点减为两处，少于窗口4。现成SWP1含内侧空导轨，整块叠SWP2会重叠支架。"
+    },
+    {
+      "code": "f16c",
+      "name": "F-16C Fighting Falcon",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "4AAM",
+        "SASM"
+      ],
+      "research_status": "native_reuse",
+      "disposition": "candidate_existing_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "部分物理位置少于原生装填窗口"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp13",
+            "sp14"
+          ],
+          "weapon": "4AAM",
+          "mesh": "w_4aam_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 4,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp31",
+            "sp32"
+          ],
+          "weapon": "SASM",
+          "mesh": "w_sasm_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f16c_SWP1_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f16c_SWP2_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f16c_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": null,
+      "layout_notes": "SWP1与SWP3的LOD0顶点集合完全相同，四条导轨各有一枚，不出现新增空架；4AAM内侧两处、SASM外侧两处，4AAM少于窗口4。弹体仍使用各自原Socket。"
+    },
+    {
+      "code": "f16c",
+      "name": "F-16C Fighting Falcon",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "GPB",
+        "SASM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "weapon": "GPB",
+          "mesh": "w_gpb_a0_closed_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp31",
+            "sp32"
+          ],
+          "weapon": "SASM",
+          "mesh": "w_sasm_a0_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f16c_SWP1_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f16c_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f16c_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f16c_sasm_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f16c_sasm_outer"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f16c_sasm_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "SASM外侧与GPB内侧分站；不能叠SWP3整块而留下内侧重复空导轨。"
+    },
+    {
+      "code": "f16c",
+      "name": "F-16C Fighting Falcon",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "4AAM",
+        "GPB",
+        "SASM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "group": "SWP1",
+          "sockets": [
+            "sp11"
+          ],
+          "weapon": "4AAM",
+          "mesh": "w_4aam_a0_SM",
+          "physical_count": 1,
+          "loaded_window": 4,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "weapon": "GPB",
+          "mesh": "w_gpb_a0_closed_SM",
+          "physical_count": 2,
+          "loaded_window": 2,
+          "below_window": false,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        },
+        {
+          "group": "SWP3",
+          "sockets": [
+            "sp32"
+          ],
+          "weapon": "SASM",
+          "mesh": "w_sasm_a0_SM",
+          "physical_count": 1,
+          "loaded_window": 2,
+          "below_window": true,
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station"
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "f16c_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_f16c_missile_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f16c_missile_outer"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "f16c_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "f16c_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_f16c_missile_outer"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": "明确接受不对称：4AAM固定Y负外侧、SASM固定Y正外侧；GPB保留内侧一对。4AAM一处少于窗口4，SASM一处少于窗口2；同集合不随选装顺序换侧。"
     },
     {
       "code": "fa27",
@@ -12487,6 +13709,7 @@
         "隐藏SWP2整块，保留侧面sp23/24弹体",
         "SWP3完整负侧ECM吊舱"
       ],
+      "split_evidence": null,
       "layout_notes": "MSTM只用原内侧一对，少于窗口4；SWP2实网格仅在底部26.37一对，侧面22.09475原位不依赖这块附加架。负侧ECM与侧弹横向LOD0 AABB间隙约0.926。"
     },
     {
@@ -12676,6 +13899,7 @@
         "SWP1占位面",
         "SWP3完整负侧ECM吊舱"
       ],
+      "split_evidence": null,
       "layout_notes": "ECM只在负侧|Y|≈26.37，SOD固定正侧sp12一处少于窗口2；保留原生区域并接受不对称。"
     },
     {
@@ -12824,6 +14048,7 @@
         "SWP1占位面保留",
         "隐藏SWP2整块，保留其sp23弹体原父链"
       ],
+      "split_evidence": null,
       "layout_notes": "SOD仅Y正一处少于窗口2；MSTM仅Y负内侧sp23一处少于窗口4。SWP2全部332顶点在|Y|24–30，不在sp23的Y=-22.09475支持区域。左右分配同时避开SOD展开翼幅。"
     },
     {
@@ -13067,7 +14292,563 @@
         "隐藏SWP2附加架，只留负侧sp23弹体",
         "SWP3完整负侧ECM"
       ],
+      "split_evidence": null,
       "layout_notes": "正侧SOD一处、负侧内侧MSTM一处、负侧底部ECM；SOD展开变体也按左右分区隔离，不把闭合净空当全程结论。"
+    },
+    {
+      "code": "mr2k",
+      "name": "Mirage 2000-5",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "GPB",
+        "4AAM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "GPB",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp11",
+              "location": {
+                "X": 22.467140197753906,
+                "Y": -23.420000076293945,
+                "Z": -6.964641094207764
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.0,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp12",
+              "location": {
+                "X": 22.467140197753906,
+                "Y": 23.420000076293945,
+                "Z": -6.964641094207764
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.0,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_gpb_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        },
+        {
+          "weapon": "4AAM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp23",
+            "sp24"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp23",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": -8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": -0.6956892013549805,
+                  "Roll": 10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp24",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": 8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": 0.6956892013549805,
+                  "Roll": -10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 4,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 4,
+          "below_window": true
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "mr2k_SWP1_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "mr2k_SWP2_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_aam_rear",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_aam_rear"
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "mr2k_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_mr2k_aam_rear"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
+    },
+    {
+      "code": "mr2k",
+      "name": "Mirage 2000-5",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "GPB",
+        "LASM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "GPB",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp11"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp11",
+              "location": {
+                "X": 22.467140197753906,
+                "Y": -23.420000076293945,
+                "Z": -6.964641094207764
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.0,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_gpb_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        },
+        {
+          "weapon": "LASM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp32"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp32",
+              "location": {
+                "X": 21.5860538482666,
+                "Y": 23.419998168945312,
+                "Z": -6.377062797546387
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -1.7625387907028198,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lasm_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "mr2k_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_gpb_neg_aux",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_gpb_neg_aux"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "mr2k_SWP2_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "mr2k_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_lasm_pos",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_lasm_pos"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_mr2k_gpb_neg_aux",
+          "MSP_mr2k_lasm_pos"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
+    },
+    {
+      "code": "mr2k",
+      "name": "Mirage 2000-5",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "GPB",
+        "4AAM",
+        "LASM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "GPB",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp11"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp11",
+              "location": {
+                "X": 22.467140197753906,
+                "Y": -23.420000076293945,
+                "Z": -6.964641094207764
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.0,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_gpb_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        },
+        {
+          "weapon": "4AAM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp23",
+            "sp24"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp23",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": -8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": -0.6956892013549805,
+                  "Roll": 10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp24",
+              "location": {
+                "X": 2.509403944015503,
+                "Y": 8.508931159973145,
+                "Z": -4.770122051239014
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -3.939134359359741,
+                  "Yaw": 0.6956892013549805,
+                  "Roll": -10.023923873901367
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 4,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 4,
+          "below_window": true
+        },
+        {
+          "weapon": "LASM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp32"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp32",
+              "location": {
+                "X": 21.5860538482666,
+                "Y": 23.419998168945312,
+                "Z": -6.377062797546387
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -1.7625387907028198,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lasm_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "mr2k_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_gpb_neg_aux",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_gpb_neg_aux"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "mr2k_SWP2_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_aam_rear",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_aam_rear"
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "mr2k_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_mr2k_lasm_pos",
+            "package": "/Game/AC7MultiSP/Research/MSP_mr2k_lasm_pos"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_mr2k_gpb_neg_aux",
+          "MSP_mr2k_aam_rear",
+          "MSP_mr2k_lasm_pos"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
     },
     {
       "code": "mrgn",
@@ -13200,6 +14981,7 @@
         "SWP2完整MPBM架",
         "SWP3占位面"
       ],
+      "split_evidence": null,
       "layout_notes": "MPBM翼下原位，IEWS原系统点，不需新增或拆资源。"
     },
     {
@@ -13290,6 +15072,7 @@
         "SWP1完整TLS",
         "SWP3原生占位面"
       ],
+      "split_evidence": null,
       "layout_notes": "IEWS无实体外挂网格，TLS保持背部；两类原生持续效果已有正式特定接入基础。"
     },
     {
@@ -13424,6 +15207,7 @@
         "SWP1完整背部TLS炮体",
         "SWP2完整翼下MPBM架"
       ],
+      "split_evidence": null,
       "layout_notes": "背部TLS与翼下MPBM分离，MPBM两原点不改。"
     },
     {
@@ -13588,13 +15372,783 @@
       "rack_plan": [
         "三组原生整块保持，固定炮体/IEWS占位点按系统角色持有"
       ],
+      "split_evidence": null,
       "layout_notes": "TLS背部、MPBM翼下、IEWS无实体外挂，模型分区清楚；持续代码已限定到本机原生类，模型适配仍需登记。"
+    },
+    {
+      "code": "rflm",
+      "name": "Rafale M",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "HCAA",
+        "LAAM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "HCAA",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp11",
+            "sp12"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp11",
+              "location": {
+                "X": 8.408546447753906,
+                "Y": -33.62626266479492,
+                "Z": -6.764326095581055
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.36554503440856934,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp12",
+              "location": {
+                "X": 8.408546447753906,
+                "Y": 33.62626266479492,
+                "Z": -6.764334678649902
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.3659999966621399,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        },
+        {
+          "weapon": "LAAM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp33",
+            "sp34"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp33",
+              "location": {
+                "X": 3.5081002712249756,
+                "Y": -13.542637825012207,
+                "Z": -5.801600456237793
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": -3.2028896808624268,
+                  "Roll": 36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp34",
+              "location": {
+                "X": 3.5081002712249756,
+                "Y": 13.542637825012207,
+                "Z": -5.801600456237793
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": 3.2028896808624268,
+                  "Roll": -36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_laam_e0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "rflm_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_hcaa_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_outer"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "rflm_SWP2_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "rflm_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_laam_belly",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_laam_belly"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_rflm_hcaa_outer",
+          "MSP_rflm_laam_belly"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
+    },
+    {
+      "code": "rflm",
+      "name": "Rafale M",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "HCAA",
+        "LACM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "HCAA",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp13",
+            "sp14"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp13",
+              "location": {
+                "X": 0.4145912826061249,
+                "Y": -13.369527816772461,
+                "Z": -5.647771835327148
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": -3.2028896808624268,
+                  "Roll": 36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp14",
+              "location": {
+                "X": 0.4145912826061249,
+                "Y": 13.369527816772461,
+                "Z": -5.647771835327148
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": 3.2028896808624268,
+                  "Roll": -36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        },
+        {
+          "weapon": "LACM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp21",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": -33.62626266479492,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp22",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": 33.625999450683594,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lacm_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "rflm_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_hcaa_belly",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_belly"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "rflm_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "rflm_SWP3_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_rflm_hcaa_belly"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
+    },
+    {
+      "code": "rflm",
+      "name": "Rafale M",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "LACM",
+        "LAAM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "LACM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp21",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": -33.62626266479492,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp22",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": 33.625999450683594,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lacm_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        },
+        {
+          "weapon": "LAAM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp33",
+            "sp34"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp33",
+              "location": {
+                "X": 3.5081002712249756,
+                "Y": -13.542637825012207,
+                "Z": -5.801600456237793
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": -3.2028896808624268,
+                  "Roll": 36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp34",
+              "location": {
+                "X": 3.5081002712249756,
+                "Y": 13.542637825012207,
+                "Z": -5.801600456237793
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": 3.2028896808624268,
+                  "Roll": -36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_laam_e0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "rflm_SWP1_SM",
+            "mode": "hidden_self",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "rflm_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "rflm_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_laam_belly",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_laam_belly"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_rflm_laam_belly"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
+    },
+    {
+      "code": "rflm",
+      "name": "Rafale M",
+      "record": "evidence/mount-expansion-batch1.json",
+      "weapons": [
+        "HCAA",
+        "LACM",
+        "LAAM"
+      ],
+      "research_status": "split_asset_candidate",
+      "disposition": "candidate_split_assets",
+      "priority": "P2",
+      "priority_reasons": [
+        "已核对分区副本的全部LOD与编码往返，先接入独立加载、引用及原网格归还"
+      ],
+      "integration_allowed": true,
+      "blocker_kind": null,
+      "runtime_prerequisites": [
+        "逐机确认原生运行池、逻辑槽身份与真实轮转；保持库存、装填窗口、锁定、齐射、冷却及飞行参数",
+        "按独立包路径在游戏线程预加载，核对StaticMesh身份并保留引擎管理引用；本轮未核对本机加载接口",
+        "仅在绑定或组合边界换网格；副本只用于原所属SWP，保留父链、Socket与子弹体，不跨组换元数据",
+        "隐藏挂架自身不递归隐藏子组件；真实离架与弹体显隐共用映射，取动画和世界变换更新后的Socket",
+        "退化面未处理BodySetup、NavCollision或烘焙数据；确认外观组为NoCollision且无相关烘焙依赖，否则停止接入",
+        "改单挂、关闭模型、换机、重建、补给、检查点、失败及退出时归还原网格与最近原生显隐，再释放引用",
+        "整机七组合一起交付；验证导轨贴合、下落/点火、低库存、补装空位、LOD/阴影/材质及场景交接",
+        "明确接受部分位置少于装填窗口；保留原队列身份，不缩短队列或按排序编号简单取余"
+      ],
+      "deferred_reason": null,
+      "assignments": [
+        {
+          "weapon": "HCAA",
+          "source_group": "SWP1",
+          "sockets": [
+            "sp13"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp13",
+              "location": {
+                "X": 0.4145912826061249,
+                "Y": -13.369527816772461,
+                "Z": -5.647771835327148
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": -3.2028896808624268,
+                  "Roll": 36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_4aam_f0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP1",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        },
+        {
+          "weapon": "LACM",
+          "source_group": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp21",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": -33.62626266479492,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            },
+            {
+              "socket": "sp22",
+              "location": {
+                "X": 5.405684947967529,
+                "Y": 33.625999450683594,
+                "Z": -6.5474443435668945
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": 0.36554500460624695,
+                  "Yaw": "-0",
+                  "Roll": "+0"
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 2,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": false,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_lacm_f0_closed_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP2",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": false
+        },
+        {
+          "weapon": "LAAM",
+          "source_group": "SWP3",
+          "sockets": [
+            "sp34"
+          ],
+          "socket_details": [
+            {
+              "socket": "sp34",
+              "location": {
+                "X": 3.5081002712249756,
+                "Y": 13.542637825012207,
+                "Z": -5.801600456237793
+              },
+              "rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.8423216342926025,
+                  "Yaw": 3.2028896808624268,
+                  "Roll": -36.70954513549805
+                }
+              },
+              "rotation_omitted_means": null
+            }
+          ],
+          "physical_candidate_count": 1,
+          "loaded_window_from_blueprint": 2,
+          "fewer_physical_positions_than_window": true,
+          "single_native_policy": false,
+          "weapon_mesh_replacement": false,
+          "weapon_mesh": "w_laam_e0_SM",
+          "display_rule": "按真实库存、装填及就绪聚合显示，保留发射空位；真实离架使用相同映射",
+          "logical_mapping": "运行槽身份未读取，实施前按现场原始身份制定同侧映射；不可把资源数组序号当逻辑序号",
+          "group": "SWP3",
+          "position_role": "ordnance_station_candidate",
+          "physical_count_unit": "station",
+          "loaded_window": 2,
+          "below_window": true
+        }
+      ],
+      "rack_plan": {
+        "selection_policy": "fixed_by_weapon_set",
+        "carriers": [
+          {
+            "group": "SWP1",
+            "original_mesh": "rflm_SWP1_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_hcaa_belly_neg",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_hcaa_belly_neg"
+          },
+          {
+            "group": "SWP2",
+            "original_mesh": "rflm_SWP2_SM",
+            "mode": "native",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true
+          },
+          {
+            "group": "SWP3",
+            "original_mesh": "rflm_SWP3_SM",
+            "mode": "split_variant",
+            "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
+            "hide_children": false,
+            "restore_native_mesh_required": true,
+            "variant": "MSP_rflm_laam_belly_pos",
+            "package": "/Game/AC7MultiSP/Research/MSP_rflm_laam_belly_pos"
+          }
+        ],
+        "visibility_policy": "仅隐藏架自身，不递归隐藏弹体；原Socket持续更新"
+      },
+      "split_evidence": {
+        "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
+        "upstream_commit": "7ae97b6",
+        "receipt": "evidence/sp-combination-static-split-experiment.json",
+        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "recipes": "src/research/static_mount_split_recipes.json",
+        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "variants": [
+          "MSP_rflm_hcaa_belly_neg",
+          "MSP_rflm_laam_belly_pos"
+        ],
+        "runtime_asset_loading_verified": false,
+        "game_verified": false
+      },
+      "layout_notes": []
     }
   ],
   "notes": [
     "所有新增布局均为离线研究；机体、真实离架、装填及场景交接仍须接入和实测",
     "旧逐组合可复用状态只保留研究事实；整机integration_gate.eligible为最终接入门槛",
     "持续效果可跨SP不等于已登记所有机型/类；本研究不预设TLS与ECM/IEWS互斥",
-    "拆架/拆巢/新增站工作继续后置；不安装或发布任何产物"
+    "只接受附完整离线证据的静态分区方案；其余拆架/拆巢/新站继续后置，不安装或发布产物"
   ]
 }

@@ -3,11 +3,13 @@
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
 - [原版挂载扩展目录](mount-expansion-catalog.json)：47架有武装原版机型的真实代码、三SP类、组件/网格引用、来源与分批建议；排除无武装f104av和第三方机体。仅资源核对，不代表全部适配。
-- [首批挂载方案](mount-expansion-batch1.json)：六机七组合，原生挂点/朝向、装填窗口、挂架几何与资源依赖。用户2026-10-17要求拆架/拆巢/新增站后置，二十条拆架及F-104C三挂均已明确暂缓，首批六机目前按七组合门槛全部整机暂缓。
+- [首批挂载方案](mount-expansion-batch1.json)：六机各七组合；吸收7ae97b6的静态分区依据后，F-16C、F-2A、Mirage、Rafale四机有完整七组合及精确载体表，共28条，含14条分区候选。F-104C缺第三站、Gripen的LACM支撑未明，继续整机暂缓。
 - [第二批挂载方案](mount-expansion-batch2.json)：十五机各七组合；区分原生单挂参考、现成整架复用研究候选和暂缓组合，保留净空/支撑依据与不足窗口取舍。三批均为离线研究，未编译、运行测试或安装；可读表及整合要求统一见[挂载设计经验](../docs/multi-sp-mount-design.md#其他原版机体的分批研究)。
 
 - [第三批挂载方案](mount-expansion-batch3.json)：剩余二十三机各七组合；69条单挂参考、22条现成资源候选、70条暂缓。保留静态／骨架挂点、原生通道、固定发射器／效果源／UAV角色和逐项动画／资源／支撑阻塞，包含CFA-44；仅F-15C、XFA-27、ADFX-01三机七组合齐全，其余整机暂缓。
-- [全机型交接索引](mount-expansion-handoff.json)：47架研究覆盖（3正式参考＋44离线），329种情况；按用户最新“整机七组合齐全”门槛，仅六机42条进入本轮完整适配候选，其余38机整体暂缓。`eligible_aircraft`是整机清单，`integration_candidates`仅含六机24条多挂及精确分配／整架计划／前提。各批同步`integration_gate.eligible`与`integration_allowed`，不按旧逐组合状态单独接入。未编译、测试、安装，无安装包。
+- [全机型交接索引](mount-expansion-handoff.json)：47机研究覆盖；当前十机70条完整方案可继续接入，其余34机整机暂缓。`integration_candidates`含40条多挂（26原资源＋14已核对静态分区），附精确分配、载体及前提。整机七组合门槛不变，未编译、测试或安装，无安装包。
+
+- [静态分区往返依据](sp-combination-static-split-experiment.json)：技术线程7ae97b6的原字节回执，22副本／66个LOD完成资源及改名编码往返，未验证游戏加载、渲染或动作；本轮四机选用其中16副本／48个LOD。实验`integration_allowed=false`保持原样，不能直接安装。
 
 - [F-15E补给模型观察](resupply-model-observation-20261016.json)：ms06补给展示任务玩家本体，保留入场前多挂状态；只读采样及实现约束，不代表动态预览已实现。
 

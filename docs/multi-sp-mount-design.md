@@ -172,24 +172,30 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ### 全机型接入总表
 
-**整机七组合齐全才接入。** 用户要求：只要其中一种方案还有问题，整架飞机先不做，不能只做能用的双挂。所有批次已按这个门槛重新筛选；`integration_gate.eligible` 是最终接入条件，逐组合的 `disposition` 只描述资源研究结论。整机暂缓不改变原生游戏选装或武器功能。
+**整机七组合齐全才接入。** 只要其中一种方案仍受阻，整架飞机暂缓，不能只做能用的双挂。`integration_gate.eligible`是方案进入运行接入的门槛，不表示资源已在游戏中加载或动作已通过；逐组合的`disposition`只描述技术路线。
 
-全部 47 架有武装原版／官方 DLC 机体已完成分类：3 架沿用正式布局，44 架离线研究，共 329 种情况。目前新增仅 **6 架**具备完整七组合现成资源方案，形成 **42 条整机方案**；其余 **38 架整机暂缓**。可接入六机含18条原生单挂和24条多挂，后者为P1 10条、P2 14条。
+全部47架有武装原版／官方DLC机体已完成分类：3架正式参考、44架离线研究，共329种情况。吸收技术线程`01a14764-4328-7923-a865-22b7efba4d8e`的`7ae97b6`成果后，新增F-16C、F-2A、Mirage 2000-5、Rafale M四架完整七组合，共28条。当前合计**10架、70条整机方案**可继续接入；其余**34架整机暂缓**。
 
-| 本轮可整机接入 | 三种原生单挂 | 三种双挂与三挂 | 接入重点 |
+| 可整机接入 | 三种原生单挂 | 三种双挂与三挂 | 资源路线 |
 |---|---|---|---|
-| F-15C Eagle | SASM、4AAM、PLSL | SASM＋4AAM；SASM＋PLSL；4AAM＋PLSL；SASM＋4AAM＋PLSL | SASM侧面、4AAM腹部；PLSL双炮体独立管理 |
-| F-15J | HCAA、SAAM、QAAM | HCAA＋SAAM；HCAA＋QAAM；SAAM＋QAAM；HCAA＋SAAM＋QAAM | HCAA／SAAM前后分区，QAAM独立一对 |
-| F-15 S/MTD | HPAA、FAEB、HVAA | HPAA＋FAEB；HPAA＋HVAA；FAEB＋HVAA；HPAA＋FAEB＋HVAA | HPAA与FAEB共存时分侧；展开范围与未知原生窗口 |
-| XFA-27 | SOD、MSTM、ECM | SOD＋MSTM；SOD＋ECM；MSTM＋ECM；SOD＋MSTM＋ECM | SOD正侧、MSTM负侧／内侧、ECM吊舱；接受较少位置 |
-| ADFX-01 Morgan | TLS、MPBM、IEWS | TLS＋MPBM；TLS＋IEWS；MPBM＋IEWS；TLS＋MPBM＋IEWS | TLS背部、MPBM翼下、IEWS系统点；具体类与归还 |
-| Typhoon | LAAM、8AGM、HCAA | LAAM＋8AGM；LAAM＋HCAA；8AGM＋HCAA；LAAM＋8AGM＋HCAA | 共用整架、前后腹部分区；容量与离架净空 |
+| F-2A | LASM、HVAA、RKT | LASM＋HVAA；LASM＋RKT；HVAA＋RKT；LASM＋HVAA＋RKT | 原生单挂＋原架共用／已核对静态分区 |
+| F-15C Eagle | SASM、4AAM、PLSL | SASM＋4AAM；SASM＋PLSL；4AAM＋PLSL；SASM＋4AAM＋PLSL | 现成原资源分区／共架 |
+| F-15J | HCAA、SAAM、QAAM | HCAA＋SAAM；HCAA＋QAAM；SAAM＋QAAM；HCAA＋SAAM＋QAAM | 现成原资源分区／共架 |
+| F-15 S/MTD | HPAA、FAEB、HVAA | HPAA＋FAEB；HPAA＋HVAA；FAEB＋HVAA；HPAA＋FAEB＋HVAA | 现成原资源分区／共架 |
+| F-16C Fighting Falcon | 4AAM、GPB、SASM | 4AAM＋GPB；4AAM＋SASM；GPB＋SASM；4AAM＋GPB＋SASM | 原生单挂＋原架共用／已核对静态分区 |
+| XFA-27 | SOD、MSTM、ECM | SOD＋MSTM；SOD＋ECM；MSTM＋ECM；SOD＋MSTM＋ECM | 现成原资源分区／共架 |
+| Mirage 2000-5 | GPB、4AAM、LASM | GPB＋4AAM；GPB＋LASM；4AAM＋LASM；GPB＋4AAM＋LASM | 原生单挂＋原架共用／已核对静态分区 |
+| ADFX-01 Morgan | TLS、MPBM、IEWS | TLS＋MPBM；TLS＋IEWS；MPBM＋IEWS；TLS＋MPBM＋IEWS | 现成原资源分区／共架 |
+| Rafale M | HCAA、LACM、LAAM | HCAA＋LACM；HCAA＋LAAM；LACM＋LAAM；HCAA＋LACM＋LAAM | 原生单挂＋原架共用／已核对静态分区 |
+| Typhoon | LAAM、8AGM、HCAA | LAAM＋8AGM；LAAM＋HCAA；8AGM＋HCAA；LAAM＋8AGM＋HCAA | 现成原资源分区／共架 |
 
-六机都是完整七组合的离线候选；仍须逐机接入原生槽、模型池、显示与真实离架，再交付整机测试。P1／P2只安排六机内部的实现顺序，不许可拆开交付部分组合。P2包括固定发射器、持续效果、数量取舍或窄净空等明确前提。新增方案均未编译、未测试、未安装，也没有安装包。
+十机包括30条原生单挂参考、40条多挂候选；多挂中26条复用现成原资源、14条依赖已核对的静态分区。P1有11条、P2有29条，只安排整机内部实现顺序，不允许半套交付。所有新增方案仍需原生槽、模型池、显隐、真实离架与场景归还接入，再交整机实测；本研究没有编译、运行测试模块、生成新游戏资产或安装。
 
-全目录原本有47条逐组合资源候选，分布在22机，其中23条来自本次整机暂缓的飞机（含一条P3 UAV方案），现在仅留研究参考。可整机接入的精确清单见 [mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json) 的 `eligible_aircraft`，其 `integration_candidates` 只包含上述六机的24条多挂；所有批次均同步增加整机门槛及逐项 `integration_allowed`。不能单看 `candidate_existing_assets` 放行。
+精确整机清单见[mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`；`integration_candidates`只包含十机40条多挂。各批的`integration_allowed`同步整机门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`放行。其余资源候选仅作研究参考，ADF-11F的UAV部署返回方案仍不接入。
 
-生成总索引使用 [build_mount_handoff.py](../src/research/build_mount_handoff.py)，它核对全部47架覆盖及整机门槛、记录各批数据哈希，不读取游戏进程或写安装目录。资源读取支持静态与骨架Socket，但没有扩展运行时规格、容量或菜单能力。现有十二槽顺序数组、二十处物理表和顺序命名校验不能直接承接全部机体；运行池数量及槽身份逐机确认。
+分区来源为[配方](../src/research/static_mount_split_recipes.json)与[上游往返回执](../evidence/sp-combination-static-split-experiment.json)，已按`7ae97b6`原字节引入。本轮四机用其中16副本，覆盖48个LOD；回执的22副本／66个LOD还包含F-104C及Gripen的部分解法，不能据此放行那两机。回执自身的`integration_allowed=false`保持不变：它说明实验副本未获游戏加载验证，与本表“可继续做运行接入”含义不同。
+
+[build_mount_handoff.py](../src/research/build_mount_handoff.py)核对全目录、整机门槛、分区证据指纹并生成索引；[build_static_split_mount_plan.py](../src/research/build_static_split_mount_plan.py)只将既有往返成果落实成载体表，不生成资源或安装包。运行代码的十二槽顺序数组、二十处物理表和顺序命名校验仍未扩展，不能照资源数量直接写入规格。
 
 ### 分批顺序
 
@@ -207,11 +213,11 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ### 整块挂架限制与暂缓范围
 
-2026-10-17 用户要求：凡需要拆分挂架、火箭巢或新增承载站的组合，统一暂缓，之后单独研究资源拆分。本批只保留现成整块资源能够构成的候选；数据中的 `disposition=deferred` 优先于旧提交中的布局建议，不应接入当前新模型适配。即使某个子组合可复用原架，只要该机七组合未齐，也整机后置。
+用户此前要求拆架、拆巢及新站工作后置；本轮明确授权依据静态分区技术成果继续研究，故仅对已有完整往返依据的四机解除“没有分区载体”这一阻塞。其他未经核对的分区、活动架、新站和未知支撑继续暂缓。整机七组合门槛不变，不能因单个副本成功放行半架飞机。
 
 这与 Su-30SM 遇到的是同类限制：弹体组件可以分别隐藏，导轨却可能属于一整块网格。只减弹体会留下空架，叠加两块会重复支架，挪弹体又可能脱离导轨；火箭巢还要避免“管口能用、巢体却藏掉”的情况。
 
-| 首批机体 | 具体阻碍 |
+| 首批机体 | 原问题及当前进度 |
 |---|---|
 | F-16C | 导弹整架含内外四处导轨；GPB 内侧使用不同炸弹挂架，保留整架会留下重复的内侧空导轨 |
 | F-2A | 四个火箭巢及支架分在两个 section，但每个 section 都跨多个挂位；无法直接仅保留外侧两巢 |
@@ -220,7 +226,7 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 | Gripen | 含 LACM 时，其他弹种内翼导轨可能成为空架；腹部三点的支撑仍未确认 |
 | Rafale | 三套整架都有翼下结构，只隐藏弹体不能去掉重复的翼下支架，需按翼下/腹侧分开 |
 
-暂缓涉及第一批二十种拆架组合和 F-104C 三挂。原有三组可用整架的双挂候选保留；未制作任何拆分资产，也不将这些外观依赖写成 SP 功能互斥。
+第一批原有二十种拆架组合，其中十四种现已有逐副本依据，补齐四架整机。其余六种拆架组合与F-104C三挂仍受阻；F-104C缺第三承载站、Gripen的LACM内翼支撑未确认，两机整体后置。拆分依据来自技术线程，本轮没有重新生成资产，不增加SP功能互斥。
 
 ### 首批方案如何阅读
 
@@ -228,7 +234,8 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 | 条件 | 含义 |
 |---|---|
-| 原架复用 | 可使用现成整块资源构成候选；多挂仍需接入显示、真实离架和装填管理 |
+| 原架复用 | 使用现成整块资源；整机门槛通过后再接入显示、真实离架和装填 |
+| 已核对分区 | 有全部LOD及资源往返依据的同组副本；仍需加载、引用、碰撞条件及网格归还 |
 | 暂缓（需拆架） | 弹体位置建议保留备查；用户已要求暂缓，等后续单独研究分区资源及加载归还，当前不接入 |
 | 暂缓（缺新站） | 缺少独立原生承载站，当前暂缓；不指定猜测坐标 |
 
@@ -236,35 +243,41 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ### F-16C 首批候选
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。
+接入结论：七组合齐全，可整机继续接入。分区副本仅已完成离线几何与编码往返，加载、渲染、碰撞及发射动作未验证。
 
-装填窗口为 4AAM 四、GPB 二、SASM 二。SWP1 与 SWP3 的 LOD0 位置顶点集合相同，可共用一套四处导轨。GPB 使用不同的内侧炸弹挂架；含 GPB 时应拆出导弹外侧导轨，再保留 SWP2 内侧两支，避免重复内侧空架。三挂固定 4AAM 负 Y 外侧、SASM 正 Y 外侧。
+装填窗口为4AAM四、GPB二、SASM二。单挂都恢复原网格。4AAM＋SASM仍共用原SWP1整架；含GPB时改用已核对的外翼副本，原SWP2负责内翼炸弹。三挂固定4AAM负Y外侧、SASM正Y外侧，GPB内翼一对，位置数1／2／1；接受少于4／2／2窗口，不缩短队列。SWP3在共架时保持原网格，只隐藏架自身，继续提供sp3x和弹体父链。
 
-| 组合 | 候选位置 | 资源条件 |
-|---|---|---|
-| 4AAM | 4AAM `SWP1.sp11–14` | 原生单挂参考 |
-| GPB | GPB `SWP2.sp21/sp22` | 原生单挂参考 |
-| SASM | SASM `SWP3.sp31–34` | 原生单挂参考 |
-| 4AAM + GPB | 4AAM `SWP1.sp11/sp12`；GPB `SWP2.sp21/sp22` | 暂缓（需拆架） |
-| 4AAM + SASM | 4AAM `SWP1.sp13/sp14`；SASM `SWP3.sp31/sp32` | 资源可复用／整机暂缓 |
-| GPB + SASM | GPB `SWP2.sp21/sp22`；SASM `SWP3.sp31/sp32` | 暂缓（需拆架） |
-| 4AAM + GPB + SASM | 4AAM `SWP1.sp11`；GPB `SWP2.sp21/sp22`；SASM `SWP3.sp32` | 暂缓（需拆架） |
+表中副本名省略`MSP_f16c_`前缀。未列组只隐藏挂架自身；回到单挂先归还所有原网格，再由原生流程控制。
+
+| 组合 | 弹体／发射位置 | 可见挂架载体 | 状态 |
+|---|---|---|---|
+| 4AAM | 4AAM `SWP1.sp11/sp12/sp13/sp14` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| GPB | GPB `SWP2.sp21/sp22` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| SASM | SASM `SWP3.sp31/sp32/sp33/sp34` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| 4AAM + GPB | 4AAM `SWP1.sp11/sp12`；GPB `SWP2.sp21/sp22` | SWP1→`missile_outer`；SWP2→原架 | 已核对分区候选 |
+| 4AAM + SASM | 4AAM `SWP1.sp13/sp14`；SASM `SWP3.sp31/sp32` | SWP1→原架 | 原架复用候选 |
+| GPB + SASM | GPB `SWP2.sp21/sp22`；SASM `SWP3.sp31/sp32` | SWP2→原架；SWP3→`sasm_outer` | 已核对分区候选 |
+| 4AAM + GPB + SASM | 4AAM `SWP1.sp11`；GPB `SWP2.sp21/sp22`；SASM `SWP3.sp32` | SWP1→`missile_outer`；SWP2→原架 | 已核对分区候选 |
 
 ### F-2A 首批候选
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。
+接入结论：七组合齐全，可整机继续接入。分区副本仅已完成离线几何与编码往返，加载、渲染、碰撞及发射动作未验证。
 
-装填窗口为 LASM 二、HVAA 二、RKT 八。RKT 的 76 个 Socket 是四巢共 76 个管口，不是 76 支挂架，也不是已确认的逻辑槽或模型池容量。含 RKT 的多挂保留外侧两巢 38 口，移除内侧两巢及配套支架；三挂把内侧两站分别给 LASM 与 HVAA。SWP3 的巢体和支架分属两个 section，但仍需按空间拆分，不能仅关掉整个 section。
+装填窗口为LASM二、HVAA二、RKT八。两个导弹组按内／外翼分区，火箭只保留外翼两巢及对应支架；三挂为LASM负Y内翼一处、HVAA正Y内翼一处、RKT外翼两巢38口。rocket_outer已覆盖巢体与支架两个材质section和全部LOD；副本仍保留76个Socket，必须显式禁止被隐藏内翼口参与发射。固定巢体不随单发或库存耗尽隐藏。
 
-| 组合 | 候选位置 | 资源条件 |
-|---|---|---|
-| LASM | LASM `SWP1.sp11–14` | 原生单挂参考 |
-| HVAA | HVAA `SWP2.sp21–24` | 原生单挂参考 |
-| RKT | RKT 原生四巢 76 口 | 原生单挂参考 |
-| LASM + HVAA | LASM `SWP1.sp11/sp12`；HVAA `SWP2.sp23/sp24` | 暂缓（需拆架） |
-| LASM + RKT | LASM `SWP1.sp13/sp14`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
-| HVAA + RKT | HVAA `SWP2.sp23/sp24`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
-| LASM + HVAA + RKT | LASM `SWP1.sp13`；HVAA `SWP2.sp24`；RKT 外侧两巢 38 口 | 暂缓（需拆架） |
+表中副本名省略`MSP_f02a_`前缀。未列组只隐藏挂架自身；回到单挂先归还所有原网格，再由原生流程控制。
+
+| 组合 | 弹体／发射位置 | 可见挂架载体 | 状态 |
+|---|---|---|---|
+| LASM | LASM `SWP1.sp11/sp12/sp13/sp14` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| HVAA | HVAA `SWP2.sp21/sp22/sp23/sp24` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| RKT | RKT `SWP3`原生四巢76口 | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| LASM + HVAA | LASM `SWP1.sp11/sp12`；HVAA `SWP2.sp23/sp24` | SWP1→`lasm_outer`；SWP2→`hvaa_inner` | 已核对分区候选 |
+| LASM + RKT | LASM `SWP1.sp13/sp14`；RKT `SWP3`外翼两巢38口 | SWP1→`lasm_inner`；SWP3→`rocket_outer` | 已核对分区候选 |
+| HVAA + RKT | HVAA `SWP2.sp23/sp24`；RKT `SWP3`外翼两巢38口 | SWP2→`hvaa_inner`；SWP3→`rocket_outer` | 已核对分区候选 |
+| LASM + HVAA + RKT | LASM `SWP1.sp13`；HVAA `SWP2.sp24`；RKT `SWP3`外翼两巢38口 | SWP1→`lasm_inner_neg`；SWP2→`hvaa_inner_pos`；SWP3→`rocket_outer` | 已核对分区候选 |
+
+外翼负Y一巢：`sp301–331`奇数加`sp365/369/373`；外翼正Y一巢：`sp302–332`偶数加`sp366/370/374`，各19口。精确38口集合保留在数据中；不按编号排序推断原生轮转，更不能把38口当38座巢体或逻辑槽。
 
 ### F-104C 首批候选
 
@@ -284,19 +297,21 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ### Mirage 2000-5 首批候选
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。
+接入结论：七组合齐全，可整机继续接入。分区副本仅已完成离线几何与编码往返，加载、渲染、碰撞及发射动作未验证。
 
-装填窗口为 GPB 二、4AAM 四、LASM 二。GPB 整块挂架还带一处前腹正 Y 固定结构，功能名称未确认；它占据 4AAM 前正 Y 位置附近，不能只隐藏弹体而保留整块前腹导轨。含 GPB 的多挂仅保留 4AAM 后腹 sp23/24；GPB 与 LASM 共存则分别占两侧翼下各一站。
+装填窗口为GPB二、4AAM四、LASM二。GPB共存时4AAM只用后腹sp23/24，配套aam_rear副本排除前腹导轨；GPB与LASM固定分两侧。gpb_neg_aux保留负Y翼架及原前腹未知固定结构，未把未知结构当作废件删除。三挂位置数1／2／1，保留原2／4／2窗口及真实队列；三种副本均装回各自原组。
 
-| 组合 | 候选位置 | 资源条件 |
-|---|---|---|
-| GPB | GPB `SWP1.sp11/sp12` | 原生单挂参考 |
-| 4AAM | 4AAM `SWP2.sp21–24` | 原生单挂参考 |
-| LASM | LASM `SWP3.sp31/sp32` | 原生单挂参考 |
-| GPB + 4AAM | GPB `SWP1.sp11/sp12`；4AAM `SWP2.sp23/sp24` | 暂缓（需拆架） |
-| GPB + LASM | GPB `SWP1.sp11`；LASM `SWP3.sp32` | 暂缓（需拆架） |
-| 4AAM + LASM | 4AAM `SWP2.sp21–24`；LASM `SWP3.sp31/sp32` | 资源可复用／整机暂缓 |
-| GPB + 4AAM + LASM | GPB `SWP1.sp11`；4AAM `SWP2.sp23/sp24`；LASM `SWP3.sp32` | 暂缓（需拆架） |
+表中副本名省略`MSP_mr2k_`前缀。未列组只隐藏挂架自身；回到单挂先归还所有原网格，再由原生流程控制。
+
+| 组合 | 弹体／发射位置 | 可见挂架载体 | 状态 |
+|---|---|---|---|
+| GPB | GPB `SWP1.sp11/sp12` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| 4AAM | 4AAM `SWP2.sp21/sp22/sp23/sp24` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| LASM | LASM `SWP3.sp31/sp32` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| GPB + 4AAM | GPB `SWP1.sp11/sp12`；4AAM `SWP2.sp23/sp24` | SWP1→原架；SWP2→`aam_rear` | 已核对分区候选 |
+| GPB + LASM | GPB `SWP1.sp11`；LASM `SWP3.sp32` | SWP1→`gpb_neg_aux`；SWP3→`lasm_pos` | 已核对分区候选 |
+| 4AAM + LASM | 4AAM `SWP2.sp21/sp22/sp23/sp24`；LASM `SWP3.sp31/sp32` | SWP2→原架；SWP3→原架 | 原架复用候选 |
+| GPB + 4AAM + LASM | GPB `SWP1.sp11`；4AAM `SWP2.sp23/sp24`；LASM `SWP3.sp32` | SWP1→`gpb_neg_aux`；SWP2→`aam_rear`；SWP3→`lasm_pos` | 已核对分区候选 |
 
 ### Gripen E 首批候选
 
@@ -316,33 +331,48 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ### Rafale M 首批候选
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。
+接入结论：七组合齐全，可整机继续接入。分区副本仅已完成离线几何与编码往返，加载、渲染、碰撞及发射动作未验证。
 
-装填窗口为 HCAA 二、LACM 二、LAAM 二。三块架都含同一横向区域的翼下结构，SWP1/3 还各含腹侧导轨，不能整块叠加。按所选弹种拆出其原有翼下或腹侧导轨；三挂为翼下 LACM 一对、负 Y 腹侧 HCAA 一处、正 Y 腹侧 LAAM 一处。
+三类窗口均为二。三组都含翼下结构，故按原组分别保留翼下或腹侧导轨，避免整块叠加。三挂为负Y腹侧HCAA一处、原翼下LACM一对、正Y腹侧LAAM一处，位置数1／2／1；HCAA及LAAM接受少于窗口。五种分区副本全部LOD已核对，仍需实测导轨贴合、下落或点火过程。
 
-| 组合 | 候选位置 | 资源条件 |
-|---|---|---|
-| HCAA | HCAA `SWP1.sp11–14` | 原生单挂参考 |
-| LACM | LACM `SWP2.sp21/sp22` | 原生单挂参考 |
-| LAAM | LAAM `SWP3.sp31–34` | 原生单挂参考 |
-| HCAA + LACM | HCAA `SWP1.sp13/sp14`；LACM `SWP2.sp21/sp22` | 暂缓（需拆架） |
-| HCAA + LAAM | HCAA `SWP1.sp11/sp12`；LAAM `SWP3.sp33/sp34` | 暂缓（需拆架） |
-| LACM + LAAM | LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp33/sp34` | 暂缓（需拆架） |
-| HCAA + LACM + LAAM | HCAA `SWP1.sp13`；LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp34` | 暂缓（需拆架） |
+表中副本名省略`MSP_rflm_`前缀。未列组只隐藏挂架自身；回到单挂先归还所有原网格，再由原生流程控制。
+
+| 组合 | 弹体／发射位置 | 可见挂架载体 | 状态 |
+|---|---|---|---|
+| HCAA | HCAA `SWP1.sp11/sp12/sp13/sp14` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| LACM | LACM `SWP2.sp21/sp22` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| LAAM | LAAM `SWP3.sp31/sp32/sp33/sp34` | 恢复三组原网格，保持原生单挂 | 原生参考 |
+| HCAA + LACM | HCAA `SWP1.sp13/sp14`；LACM `SWP2.sp21/sp22` | SWP1→`hcaa_belly`；SWP2→原架 | 已核对分区候选 |
+| HCAA + LAAM | HCAA `SWP1.sp11/sp12`；LAAM `SWP3.sp33/sp34` | SWP1→`hcaa_outer`；SWP3→`laam_belly` | 已核对分区候选 |
+| LACM + LAAM | LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp33/sp34` | SWP2→原架；SWP3→`laam_belly` | 已核对分区候选 |
+| HCAA + LACM + LAAM | HCAA `SWP1.sp13`；LACM `SWP2.sp21/sp22`；LAAM `SWP3.sp34` | SWP1→`hcaa_belly_neg`；SWP2→原架；SWP3→`laam_belly_pos` | 已核对分区候选 |
 
 ### 交给整合线程的要求
 
-首批有三组原资源复用研究参考：F-16C 的 4AAM + SASM、Mirage 的 4AAM + LASM、Gripen 的 SASM + 6AAM。但这六架均有其他组合受阻，按最新七组合门槛全部整机暂缓；这三组也不单独接入。二十组拆架组合和 F-104C 三挂仍待后续资源专题。不能仅把本文件的 Socket 表抄入正式规格就声称适配完成。
+首批现有F-16C、F-2A、Mirage、Rafale四机完整七组合，共28条。整合线程应同时读取位置和`rack_plan.carriers`，不能只抄Socket或只装副本。F-104C与Gripen保持整机暂缓，已有的部分分区解法也不单独启用。
 
 1. **先核对运行对象。** 用真实类、字段反射、对象身份和模型池逐项登记。不照搬三架旧机的字段偏移、数组长度或池顺序。特别是 Gripen 七个资源 Socket、F-104C GRKT 十四个管口、F-2A RKT 七十六个管口，均不能直接当成逻辑队列长度。原资源 Sockets 顺序也不能代替运行时组件顺序。
 2. **扩展容量与角色。** 当前实现有十二槽顺序表、二十处物理表、整型显隐掩码和限定槽数恢复逻辑；未核对真实需要前，不能靠扩大一个常量解决。普通弹体、固定巢体和逐管发射位置应分别管理，火箭巢不随单发消耗或库存耗尽被整座隐藏。
 3. **按完整几何拆架。** JSON 中给出应保留的区域和 Socket，不包含生成后的游戏资产。拆分需核对三角面索引、所有 LOD、材质与边界，保留原挂点元数据；不能仅按顶点 Y 值删点，或把单 section 误当成单支挂架。登记新旧网格身份，用引擎接口替换，候选变化、单多切换、关闭模型和失败时归还。
 4. **再确定逻辑映射。** 保留原生槽身份及冷却，按最终物理位置定义映射并核对所有轮转游标；不能直接根据表中少数位置推导已验证的一一齐射方案。预览、模型显隐、真实离架共用同一规则，低库存与装填空位单独观察。
-5. **整机交付实测。** 先确认一机七组合均有方案，再实现并交付整机；内部可依次核对单挂、双挂、三挂，但不能交付半套适配。需要拆架或其他组合受阻的飞机整体后置，不把视觉依赖写成 SP 功能互斥。全部动作观察仍按前文场景清单执行。
+5. **整机交付实测。** 先确认一机七组合均有方案，再实现并交付整机；内部可依次核对单挂、双挂、三挂，但不能交付半套适配。没有分区依据或仍有其他组合受阻的飞机整体后置，不把视觉依赖写成 SP 功能互斥。全部动作观察仍按前文场景清单执行。
 
 研究数据中的 `physical_count_unit` 区分普通站位与火箭管口；火箭另列 `launcher_body_count` 和 `muzzle_count`，不能按管口数量创建同等数量的可见巢体。运行逻辑槽数和模型池容量尚未核对的字段均留空。
 
 可复用工具为 [catalog_native_mounts.py](../src/research/catalog_native_mounts.py) 和 [build_external_mount_plan.py](../src/research/build_external_mount_plan.py)。前者从原版索引及提取清单生成机体目录并核对来源；后者读取显式 manifest，合并人工几何评审，检查七组合覆盖与 Socket 引用后生成研究数据。已交付批次 JSON 本身也可作为后者的 `--decisions` 输入，重新提取后不依赖临时评审文件。输出须选择新文件。临时解码资源留在研究工作区 Temp，不放入 Git 或交付包。它们属于离线资料工具，不是测试模块或安装入口。
+
+
+### 已核对静态分区的接入约定
+
+本轮复用技术线程的静态退化索引法：保留区域三角面不动，排除区域变成零面积面；覆盖主索引、反向、深度、反向深度与邻接缓冲的全部LOD。它保留顶点、材质、Socket及原包围范围，不能视为减顶点或性能优化；只证明离线结构能写出和回读。
+
+使用独立`/Game/AC7MultiSP/Research/MSP_...`包路径，不覆盖原版资源。加载须在确认的游戏线程边界完成，核对StaticMesh身份并持有引擎管理引用；路径变化后按新文件名重新编码并生成新回执。当前工作区没有复制技术线程Temp中的游戏资产，也没有打PAK。
+
+副本只能装到其原所属组；同几何不等于同Socket元数据。共用可见挂架时，另一组保留原网格和取位组件，仅隐藏架自身，不能递归隐藏子弹体。资源替换只在绑定或集合变化时进行，稳定帧不重复加载或换网格；单挂、关闭、失败及场景交接归还原网格和最新原生显隐后再释放引用。
+
+退化面不会自动改碰撞、导航或烘焙光照。原BodySetup、NavCollision和LightingGuid仍在，接入前必须确认外观挂架为NoCollision且无相应烘焙依赖；条件不符就停止该机接入，另做资源处理。火箭巢还有独立装置生命周期，不能套普通弹体逐发显隐。十四条分区候选的`runtime_prerequisites`均记录这些前提；原生逻辑长度与物理映射仍须按真实槽身份完成。
+
+资源实验工具[split_static_mount_asset.py](../src/research/split_static_mount_asset.py)、[批量实验入口](../src/research/run_static_mount_split_experiment.py)与回执一起原样引入，供后续专用资源工作复现；本轮未运行它们。方案生成使用[build_static_split_mount_plan.py](../src/research/build_static_split_mount_plan.py)，核对副本来源、所属组、保留区域、配方哈希及全部LOD往返依据；它只输出JSON方案。
 
 ### 第二批十五机结论
 
@@ -998,7 +1028,7 @@ HPAA＋TLS、4AAM＋TLS 均保持弹类原位与机腹中央 TLS 炮体，属于
 
 ### 后续动画与资源专题的顺序
 
-当前先做完整七组合的六机。以下仅为暂缓飞机的后续研究顺序，必须解决其全部组合后才整机接入。若专门扩展动画，可优先查看 F/A-18F 的 QAAM／LASM＋EML、Su-33 的 HVAA／LASM＋EML、ASF-X 的 6AAM＋LASM、F/A-18F Block III 的 LACM／8AGM＋4AAM，以及普通 Su-57 的 4AAM＋PLSL。这八种在本批 B 组主要受动画控制阻塞，数据含 `required_animation_work`；不是已证实要拆架，也不是本轮可直接接入的候选。DarkStar 的 SASM＋PLSL、FALKEN 的 TLS＋翼下武器也可随后研究独立活动组。
+当前先做完整七组合的十机。以下仅为暂缓飞机的后续研究顺序，必须解决其全部组合后才整机接入。若专门扩展动画，可优先查看 F/A-18F 的 QAAM／LASM＋EML、Su-33 的 HVAA／LASM＋EML、ASF-X 的 6AAM＋LASM、F/A-18F Block III 的 LACM／8AGM＋4AAM，以及普通 Su-57 的 4AAM＋PLSL。这八种在本批 B 组主要受动画控制阻塞，数据含 `required_animation_work`；不是已证实要拆架，也不是本轮可直接接入的候选。DarkStar 的 SASM＋PLSL、FALKEN 的 TLS＋翼下武器也可随后研究独立活动组。
 
 F-22A、Su-47 等还需先核对公共支架几何。YF-23、FB-22、Su-57 TGM 与 X-02S 有同舱、共位、不同骨架或不同动画的复合问题；CFA-44 最后处理阵列、双炮与效果源。不能仅因骨名和参考姿态一致，就叠加整套活动呈现，或把一机的 spwc 修补直接套给另一机。
 
