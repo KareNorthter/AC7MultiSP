@@ -55,7 +55,7 @@
       "关闭总开关",
       "控制器报错或停止调度"
     ],
-    "mission12": "镜头许可独立于多SP许可，可在第12关使用；不恢复多SP兵装接管。",
+    "mission13": "镜头许可独立于多SP许可，可在第13关使用；不恢复多SP兵装接管。",
     "fallback": "不匹配、Hook失败或两秒未观察到原生读取时仅停用本功能，日志与中英界面明确提示，重新保存可重试。"
   },
   "source_hashes": {
@@ -69,6 +69,8 @@
   "test_modules_created": false,
   "tests_run": false,
   "installed": false,
-  "mod_toggle_gameplay_verified": false,
-  "validation_boundary": "已确认原生输入拆分、按住1/松开0与输入组件布局；新切换功能仅完成源码，不能据此宣称已在游戏中运行通过。"
+  "mod_toggle_gameplay_verified": true,
+  "verification_basis": "用户反馈注视功能正常；未细分手柄/键盘、视角、清理场景或运行版本，不扩大验收。",
+  "settings_location": "第二个按键标签页，集中放置手柄X替换和键盘注视键；本次移页尚未构建安装。",
+  "validation_boundary": "原生只读确认输入拆分、按住1/松开0与组件布局；用户另反馈注视功能正常，具体运行字节未核对。本工作区未执行编译、测试或安装；第13关更正与选项移页未实测。"
 }

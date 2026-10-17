@@ -110,7 +110,7 @@ void bindTargetGaze(Addr plane) {
     targetGaze.axis=axis;targetGaze.component=input.address;targetGaze.thread=GetCurrentThreadId();
 }
 
-// 允许状态独立于多SP会话，第12关可只用镜头功能；关闭核心兵装时仍须由Lua单独归还。
+// 允许状态独立于多SP会话，第13关可只用镜头功能；关闭核心兵装时仍须由Lua单独归还。
 int targetGazeLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
