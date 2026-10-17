@@ -88,14 +88,11 @@ bool continuousXfa27(Addr plane) {
 bool continuousCfa44(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_fa44_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44");
 }
-bool continuousFalken(Addr plane) {
-    return continuousPlaneClass(plane,"AcePlayerPawn_zoef_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_zoef");
-}
 bool continuousSu37(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_su37_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_su37");
 }
 bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) ||
-    continuousCfa44(plane) || continuousFalken(plane) || continuousSu37(plane);}
+    continuousCfa44(plane) || continuousSu37(plane);}
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
 bool continuousSupported(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
@@ -103,7 +100,6 @@ bool continuousSupported(Addr plane,Addr weapon) {
     const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
         (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")) ||
-        (continuousFalken(plane) && continuousClass(cls,"plwp_tls_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2")) ||
         (continuousSu37(plane) && continuousClass(cls,"plwp_tls_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0")));
     const bool ecm=id==31 && ((morgan && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0")) ||
         (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")) ||
@@ -184,20 +180,6 @@ bool continuousSameShot(const ContinuousEffect& e) {
     return read<Addr>(e.plane.address+0x20)==e.level.address && read<Addr>(e.plane.address+0x11a8)==e.activator.address &&
         read<Addr>(w+0x3b8)==e.plane.address && read<Addr>(w+0x10)==e.weaponClass &&
         read<uint64_t>(w+0x370)==e.retirement && read<float>(w+0x610)>=e.age && read<unsigned char>(w+0x368)!=0;
-}
-// 只读判断仍在工作的激光；重建短暂清空原生数组时，先看已登记的发射代次。
-bool continuousHasActiveTls(Addr plane) {
-    for(const auto& e:continuousEffects)
-        if(e.plane.address==plane && !e.finalNotified && continuousSameShot(e) && read<unsigned char>(e.actor.address+0x3b0)==25)return true;
-    const Addr activator=read<Addr>(plane+0x11a8);
-    if(!activator)return false;
-    const auto active=continuousArray(activator+0x338);
-    for(int i=0;i<active.count;++i) {
-        const Addr actor=read<Addr>(active.data+i*sizeof(Addr));
-        if(actor && read<unsigned char>(actor+0x368) && read<Addr>(actor+0x3b8)==plane &&
-           read<unsigned char>(actor+0x3b0)==25)return true;
-    }
-    return false;
 }
 void continuousSweep() {
     continuousEffects.erase(std::remove_if(continuousEffects.begin(),continuousEffects.end(),

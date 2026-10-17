@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, X02s }; // 既有索引保持，X-02S仅保EML原架。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d }; // 既有索引保持，X-02S不接管外观。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -31,7 +31,7 @@ MountAircraft mountExpansionAircraft(size_t index) {
 }
 bool mountAnimated(MountAircraft aircraft) {return aircraft>=MountAircraft::F22a && aircraft<=MountAircraft::Su57tg;}
 bool mountExterior(MountAircraft aircraft) { return aircraft==MountAircraft::F22a || aircraft==MountAircraft::Pkfa; }
-bool mountLight(MountAircraft aircraft) { return (aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44) || aircraft==MountAircraft::X02s; }
+bool mountLight(MountAircraft aircraft) { return aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44; }
 bool mountNativeOnly(MountAircraft aircraft) { return aircraft==MountAircraft::Su47 || aircraft==MountAircraft::Su57tg; }
 const MountSpecification& mountAnimatedSpecification(MountAircraft aircraft);
 const MountSpecification& mountLightSpecification(MountAircraft aircraft);
@@ -106,7 +106,7 @@ struct FixedMountState {
     std::array<Addr,64> physical{};
     std::array<size_t,3> rackOffsets{};
     std::array<int,3> poolCounts{};
-    std::array<std::vector<int>,3> expansionPositions,expansionSockets; // 选位表与原生Socket序号成对保存。 // 最大为 F-35C 两处 SOD、十二处 8AGM 和六处 4AAM 候选位置。
+    std::array<std::vector<int>,3> expansionPositions,expansionSockets,expansionPools; // 逻辑兵装、物理位置和原生供位池分别记录；借位不改变父链。
     std::array<MountIdentity,3> animationRacks{};
     MountIdentity animationActivator;
     ::dualsp::common_bay::ResourceDescription animationDescription;
@@ -180,13 +180,10 @@ void mountLightRelease(FixedMountState&);
 void mountLightInherit(FixedMountState&,const FixedMountState&);
 bool mountLightLayoutChanged(const FixedMountState&);
 bool mountLightCopyTransform(void*,const FixedMountState&,int);
-bool continuousHasActiveTls(Addr plane);
 bool mountLightAnimationParts(void*,float,void*);
 void mountLightAnimationRelease();
 void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
-void mountLightPoseBeforeParts(void*) noexcept;
-void mountLightPoseBeforeFire(Addr,bool,int) noexcept;
 bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
 struct F35CoverState {
@@ -274,7 +271,6 @@ MountAircraft mountAircraft(Addr plane) {
         if(name=="AcePlayerPawn_f35c_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c")return MountAircraft::F35c;
         if(name=="AcePlayerPawn_f15e_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15e")return MountAircraft::F15e;
         if(name=="AcePlayerPawn_pkfa_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_pkfa")return MountAircraft::Pkfa;
-        if(name=="AcePlayerPawn_x02s_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_x02s")return MountAircraft::X02s;
         for(int i=0;i<4;++i) {
             const auto aircraft=static_cast<MountAircraft>(static_cast<int>(MountAircraft::Dark)+i);
             const std::string code=mountLightSpecification(aircraft).code;
@@ -431,7 +427,6 @@ void fixedMountFail(const char* message) noexcept {
 }
 // 原生仅把公共 SP 进度写给当前通道，切换配置后旧通道会冻结；在同一动画更新中补齐各舱的连续状态。
 void mountPartsUpdate(void* object,float delta,void* input) {
-    mountLightPoseBeforeParts(object);
     if(GetCurrentThreadId()==mountGameThread.load() && mountLightAnimationParts(object,delta,input))return;
     if(GetCurrentThreadId()!=mountGameThread.load() || !f35Cover.parts ||
        reinterpret_cast<Addr>(object)!=f35Cover.parts || !input) {
@@ -554,7 +549,6 @@ bool mountCopyTransform(void* output,int slot) {
 }
 // 直接发射路径使用逻辑槽取位；普通导弹、其他飞机及重建过程保持原生。
 bool mountTransform(void* manager,void* output,int group,int slot) {
-    mountLightPoseBeforeFire(reinterpret_cast<Addr>(manager),true,group);
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && mountNeedsMappedTransform(fixedMount,fixedMount.weaponKinds[session.active]) && group==2 &&
        reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try {
         require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：发射身份失效");
@@ -564,7 +558,6 @@ bool mountTransform(void* manager,void* output,int group,int slot) {
 }
 // 先由原生选出就绪槽，再替换结果，覆盖原生使用缓存变换的另一条发射路径。
 void mountSelection(void* manager,unsigned char group,void* output,int* selected) {
-    mountLightPoseBeforeFire(reinterpret_cast<Addr>(manager),false,group);
     mountOriginalSelection(manager,group,output,selected);
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && mountNeedsMappedTransform(fixedMount,fixedMount.weaponKinds[session.active]) && group==2 && *selected>=0 &&
        reinterpret_cast<Addr>(manager)==fixedMount.manager.address)try {

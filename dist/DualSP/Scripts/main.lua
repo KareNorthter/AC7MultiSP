@@ -1,4 +1,4 @@
--- AC7MultiSP 2.12.0：按实测修订机外挂载、持续TLS及轻量机构动画。
+-- AC7MultiSP 2.13.0：按实测修订机外挂载、持续TLS及轻量机构动画。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -42,7 +42,7 @@ loadExport("dualsp_management_options_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
-local lightMountAircraft={f22a=true,pkfa=true,dark=true,zoef=true,adf11f=true,fa44=true,x02s=true}
+local lightMountAircraft={f22a=true,pkfa=true,dark=true,zoef=true,adf11f=true,fa44=true}
 local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
@@ -826,9 +826,10 @@ local function selectLogicalWeapon(desired,retry)
     assert(ok,reason or "原生切换状态读取失败")
     if not canSwitch then weaponSwitch.defer(desired,reason);return false end
     internal=true
-    -- 仅在更换 SP、即将销毁旧池前收尾 TLS。切到 MSL 保留当前 SP 池，让光束按原生寿命结束。
+    -- 更换SP前收尾未登记持续的TLS；Falken切MSL也立即停光，避免鼻口关闭后仍射光。
     -- 原生循环可能先经过 MSL，仍按最终逻辑目标和当前挂载判断，不能依据中间 armed 状态。
-    if desired>0 and desired~=active+1 and flightOptions and flightOptions[currentProfile[Profile.fields[active+1]]+1].runtime_weapon_id==25 then
+    local falkenToMsl=desired==0 and catalogue and catalogue[tostring(planeId)]and catalogue[tostring(planeId)].code=="zoef"
+    if ((desired>0 and desired~=active+1)or falkenToMsl)and flightOptions and flightOptions[currentProfile[Profile.fields[active+1]]+1].runtime_weapon_id==25 then
         local ended,err=finishTLS(plane:GetAddress(),activator:GetAddress())
         assert(ended,err or "TLS 原生收尾未完成")
     end
@@ -1502,7 +1503,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.12.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.13.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

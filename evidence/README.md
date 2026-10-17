@@ -1,5 +1,7 @@
 # 按需证据
 
+- [2.12用户实测](2.12.0-user-validation.json)：F22无肉眼卡顿，ADF01停光取舍、三机布局与X02撤销要求；[2.13源码布局](static-expansion-2.13.0.json)仅源码/资源候选，未编译、测试或安装，游戏仍2.12。
+
 - [2.12.0交付](2.12.0-integration.json)：本轮反馈修订、Gripen原生腹挂及X02S EML保留，完整编译/检查/安装；[本轮用户反馈](2.11.0-user-validation.json)、[静态覆盖源](static-expansion-2.12.0.json)。CFA首发双侧蓝效仍待专项，实机待复测。
 
 - [2.11.0交付](2.11.0-integration.json)：新增十机静态70组合，完整构建/检查/安装通过，39资源/78成员；[源数据与47机分类](static-expansion-2.11.0.json)保留23资源回读及16项后置，实机待测。

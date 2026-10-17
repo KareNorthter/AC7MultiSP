@@ -121,12 +121,8 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
         const float speed=(options&0x40)?read<float>(reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x257beec):1.f;
         require(std::isfinite(speed) && speed>0,"轻量动画：原生速率无效");
         auto close=[&](float value) {return std::max(state.closed,value-delta/state.seconds*speed);};
-        const bool retainTls=state.aircraft==MountAircraft::Zoef && config!=0 && before[1]>state.closed &&
-            continuousHasActiveTls(state.plane.address);
-        for(int channel=0;channel<3;++channel)if(channel!=config) {
-            // swc1只在真实TLS仍活动时保持；不因库存或选装永久开鼻门。
-            after[1+channel]=(channel==0 && retainTls)?before[1]:close(before[1+channel]);
-        }
+        // 非当前通道按原速收回；Falken离开TLS时已由兵装层立即结束光束。
+        for(int channel=0;channel<3;++channel)if(channel!=config)after[1+channel]=close(before[1+channel]);
         if(state.aircraft==MountAircraft::Fa44 && config==2) {
             // IEWS效果和请求不变；仅将可见ADMM/EML共用机构按原速收回。
             after[0]=close(before[0]);for(int i=1;i<4;++i)after[i]=close(before[i]);

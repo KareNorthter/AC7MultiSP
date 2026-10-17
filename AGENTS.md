@@ -1,13 +1,13 @@
 # AC7MultiSP
 
-主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码和游戏均为2.12.0修订候选，二者必须区分，交付以回执为准。
+主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码2.13.0未构建、游戏2.12.0，二者必须区分，交付以回执为准。
 按需读[架构](docs/architecture.md)或[开发说明](docs/development.md)；研究机体挂载先读[挂载设计经验](docs/multi-sp-mount-design.md)，无需通读证据和历史。用户操作见[安装说明](docs/安装说明.txt)，交付范围见[版本说明](docs/release.txt)。
 
 新主管先读[主管接手入口](docs/development.md#主管接手入口)，任务分工、已验证范围与尚未整合的支线均在该节；不另建重复交接文档。
 
 ## 当前事实
 
-- 当前源码及游戏均为2.12.0修订候选，已按本轮用户授权正常关闭游戏、完整编译、通过适用检查并安装。16运行文件、46资源/92成员PAK、150保护文件核验，个人配置、存档及其他Mod保留，未重新启动游戏。产物Temp/build-2.12.0-final，备份backup/AC7MultiSP-20261017-170637-986096，交付evidence/2.12.0-integration.json；构建升级基线为2.11.0-installed。实际效果仍待用户复测。F22骨路径撤回，允许腹内空架；Falken/Su37 TLS及Dark/Zoef/CFA动画修订、Raven数量修订、五机布局/F14TG加载与Gripen腹挂、X02S原EML常驻纳入。CFA首发双侧蓝效仍待专项，X02非当前EML/MSL保持原展开末姿态；详见设计和本轮回执。
+- 当前源码为2.13.0未构建候选，游戏仍为2.12.0。用户本轮明确只改源码/布局并总结经验，不编译、不运行测试、不安装或操作游戏。2.12本轮F22已无肉眼卡顿，Su30M2/Su34/F14A TGM明确正常，其余未提按用户总体正常范围记录；不扩大为全47机逐组合验收。2.13源码：ADF01切走TLS（含MSL）立即停光；Su35 LAAM+6AAM借原LASM腹点补两枚6AAM；用户已确认原文Su37实际指Su30M2，改4AGM腹2/4AAM翼4；MiG29大LAGM内侧成对、小弹外侧，三挂外左HPAA1/右4AAM1；X02撤全部外观接管，保持原生。旧46资源字节/编号不改，新4副本至50/100成员候选输入，不打PAK。F22/F35及未点名方案保持。本轮实测evidence/2.12.0-user-validation.json，布局源evidence/static-expansion-2.13.0.json，经验与逐机摘要见挂载设计正文；已装2.12.0回执/产物Temp/build-2.12.0-final及backup/AC7MultiSP-20261017-170637-986096完整保留。
 
 - 2.10.0已完整编译、通过适用检查并安装：16运行文件、32成员PAK与144保护文件核验，配置/存档/其他Mod保留，备份backup/AC7MultiSP-20261017-143340-537534，未启动游戏。见evidence/2.10.0-integration.json；新四机和F22性能改善仍待实测。后续构建升级基线使用evidence/2.10.0-installed.json。
 
@@ -48,7 +48,7 @@
 1. 中文交流。遇到资料或环境阻塞及时报告。
 2. 2.4.0已获用户完整功能及两支线实测通过反馈，授权作为正式版提交main。默认不自动编译、新增或运行测试、安装、操作游戏；开发阶段的构建安装须在用户授权范围内。正式化沿用已实测字节，不重新构建；不自动推送或上传。
 3. 新分支从 main 创建，前缀 `codex/`；旧工作区仅供恢复，不继续开发。未合入成果的定位见开发说明。
-4. Lua唯一源`dist/DualSP/Scripts/`，当前源码及安装2.12.0，产物Temp/build-2.12.0-final；Temp/build-2.11.0因资源同名核验停止、不可安装。资源输入Temp/mount-assets-2.12.0/source，46副本/92成员；核心表与Lua资源清单由同源生成，禁止混装。本轮构建安装基线evidence/2.11.0-installed.json；下版构建前改用evidence/2.12.0-installed.json，不在本版构建后修改来源。旧完整方案Temp/build-2.8.1和archive/full-bay-mount-2.8.1保留。2.4.0正式核心/UI与main/v2.4.0保持；旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
+4. Lua唯一源`dist/DualSP/Scripts/`，当前源码2.13.0未构建、安装2.12.0（产物Temp/build-2.12.0-final）；Temp/build-2.11.0因资源同名核验停止、不可安装。源码资源输入Temp/mount-assets-2.13.0/source，50副本/100成员；已装仍46副本/92成员；核心表与Lua资源清单由同源生成，禁止混装。2.13源码已预设evidence/2.12.0-installed.json为下次获授权构建的升级基线；本轮禁止构建安装。旧完整方案Temp/build-2.8.1和archive/full-bay-mount-2.8.1保留。2.4.0正式核心/UI与main/v2.4.0保持；旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
 5. 功能变化更新对应正文，不追加流水账或另建重复交接文档。默认只维护本入口、架构、开发、用户安装及版本说明；确有独立用途才新增文档。
 6. pwsh7 优先，复杂文件处理用 Python；UTF-8，Windows 启动脚本沿用 BOM。临时文件 Temp，备份 backup；无 Git 文件修改前备份，清理送回收站。
 7. 不提交个人状态、游戏资源、音频、第三方 PAK、工具、转储及 ZIP；遵守同一范围与文件所有权。

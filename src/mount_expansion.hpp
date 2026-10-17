@@ -1,4 +1,4 @@
-// 十机共用静态挂载接入；保留原生组件、父链和兵装队列。
+// 常规挂载接入；保留原生组件、父链和兵装队列，借位只替换弹体网格。
 #pragma once
 
 size_t mountProperty(Addr object,const char* name,const char* kind,int size);
@@ -22,15 +22,31 @@ bool mountNeedsMappedTransform(const FixedMountState& state,int kind) {
 }
 // 根据登记Socket列表建立周期表；逻辑槽保留原序号，登记序号不等于运行池下标。
 void mountExpansionPositions(FixedMountState& state) {
-    const auto& selected=mountExpansionPlan(state.aircraft,state.kindsMask).at("selected");
+    const auto& plan=mountExpansionPlan(state.aircraft,state.kindsMask);
+    const auto& selected=plan.at("selected");
     state.physicalCount=0;
     for(int kind=0;kind<3;++kind) {
-        state.expansionPositions[kind].clear();state.expansionSockets[kind].clear();
+        state.expansionPositions[kind].clear();state.expansionSockets[kind].clear();state.expansionPools[kind].clear();
         for(const auto& socket:selected.at(kind)) {
             require(state.physicalCount<64,"扩展挂载：物理位置超过显隐容量");
             state.expansionPositions[kind].push_back(state.physicalCount++);
             state.expansionSockets[kind].push_back(socket.get<int>());
+            state.expansionPools[kind].push_back(kind);
         }
+    }
+    if(plan.contains("borrowed_positions"))for(const auto& borrowed:plan.at("borrowed_positions")) {
+        const int kind=borrowed.at("kind").get<int>(),pool=borrowed.at("pool").get<int>(),socket=borrowed.at("socket").get<int>();
+        require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)) &&
+            !(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty(),"扩展借位：只能借用未选兵装的原生位置");
+        const auto& provider=mountExpansionDefinition(state.aircraft).at("groups").at(pool);
+        require(!provider.at("fixed").get<bool>() && !mountExpansionDefinition(state.aircraft).at("groups").at(kind).at("fixed").get<bool>() &&
+            socket>=0 && socket<static_cast<int>(provider.at("sockets").size()),
+            "扩展借位：供位池或原生Socket无效");
+        for(int prior=0;prior<3;++prior)for(size_t i=0;i<state.expansionSockets[prior].size();++i)
+            require(state.expansionPools[prior][i]!=pool || state.expansionSockets[prior][i]!=socket,"扩展借位：同一原生位置被重复分配");
+        require(state.physicalCount<64,"扩展借位：物理位置超过显隐容量");
+        state.expansionPositions[kind].push_back(state.physicalCount++);
+        state.expansionSockets[kind].push_back(socket);state.expansionPools[kind].push_back(pool);
     }
 }
 // 新飞机字段逐项反射验证，不套用三架参考飞机的派生类偏移。
@@ -94,14 +110,28 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
             const auto componentFlags=read<unsigned char>(component+0x1bc);
             // 生命周期校验仍使用原生池下标，不能改成登记Socket序号。
             state.visuals.push_back({identity,pool,index,bool(componentFlags&0x10),bool(componentFlags&0x20)});
-            const auto& sockets=state.expansionSockets[pool];
-            for(size_t selected=0;selected<sockets.size();++selected)if(sockets[selected]==ordinal)
-                state.physical[state.expansionPositions[pool][selected]]=component;
+            for(int kind=0;kind<3;++kind)for(size_t selected=0;selected<state.expansionSockets[kind].size();++selected)
+                if(state.expansionPools[kind][selected]==pool && state.expansionSockets[kind][selected]==ordinal)
+                    state.physical[state.expansionPositions[kind][selected]]=component;
         }
         if(count>0)for(int ordinal=0;ordinal<expected;++ordinal)
             require(socketSeen[ordinal],("扩展挂载：原生Socket缺失"+context+", expected="+
                 group.at("sockets").at(ordinal).get<std::string>()).c_str());
-        if((state.kindsMask&(1u<<pool)) && !group.at("fixed").get<bool>())
-            for(int physical:state.expansionPositions[pool])require(state.physical[physical]!=0,("扩展挂载：预期发射组件缺失"+context).c_str());
+    }
+    // 全部原生池核对完成后才处理跨池位置，不能在供位池尚未遍历时误判缺件。
+    for(int kind=0;kind<3;++kind)if((state.kindsMask&(1u<<kind)) && !groups.at(kind).at("fixed").get<bool>())
+        for(int physical:state.expansionPositions[kind])require(state.physical[physical]!=0,"扩展挂载：预期发射组件缺失");
+    for(int kind=0;kind<3;++kind)for(size_t index=0;index<state.expansionPositions[kind].size();++index) {
+        if(state.expansionPools[kind][index]==kind)continue;
+        const Addr target=state.physical[state.expansionPositions[kind][index]];
+        const auto identity=mountIdentity(target);
+        mountRequireNoCollision(target); // 只读守卫；不改借用组件的碰撞设置。
+        const Addr source=state.physical[state.expansionPositions[kind].front()];
+        require(state.expansionPools[kind].front()==kind,"扩展借位：缺少本兵装原生弹体作为网格来源");
+        const auto replacement=mountIdentity(mountBaselineMesh(mountIdentity(source),read<Addr>(source+0x728)));
+        const auto original=mountIdentity(mountBaselineMesh(identity,read<Addr>(target+0x728)));
+        require(!groups.at(kind).at("mesh").is_null() && mountName(replacement.address)==groups.at(kind).at("mesh").get<std::string>(),
+            "扩展借位：弹体网格与已核兵装不符");
+        state.meshOverrides.push_back({identity,original,replacement}); // 与F-15E相同账本，关闭/换组/失败逐项归还。
     }
 }

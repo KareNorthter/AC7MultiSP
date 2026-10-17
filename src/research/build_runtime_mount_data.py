@@ -14,9 +14,12 @@ def build():
     # 新批次独立留证，不改旧资源/工具执行回执的历史含义。
     for sample in json.loads((ROOT/'evidence/static-expansion-2.11.0.json').read_text(encoding='utf-8'))['aircraft']:
         samples[sample['code']] = sample
-    feedback = json.loads((ROOT/'evidence/static-expansion-2.12.0.json').read_text(encoding='utf-8'))
-    for sample in feedback['aircraft']:
-        samples[sample['code']] = sample
+    native_overrides = []
+    for name in ('static-expansion-2.12.0.json', 'static-expansion-2.13.0.json'):
+        feedback = json.loads((ROOT/'evidence'/name).read_text(encoding='utf-8'))
+        for sample in feedback['aircraft']:
+            samples[sample['code']] = sample
+        native_overrides.extend(feedback.get('native_carrier_overrides', []))
     # 旧资源即使本版不再加载，也保留原编号与成套字节；只在末尾增加本轮副本。
     assets = list(feedback['baseline_assets'])
     appended = feedback['appended_assets']
@@ -25,7 +28,7 @@ def build():
     if set(appended) != {r['recipe']['name'] for r in feedback['resource_reports']}:
         raise ValueError('新增资源清单与逐资源回执不符')
     allowed_assets = set(assets + appended)
-    for override in feedback.get('native_carrier_overrides', []):
+    for override in native_overrides:
         sample = samples[override['code']]
         singles = [c for c in sample['proposal']['combinations'] if len(c['weapons']) == 1]
         weapons = [c['weapons'][0] for c in singles]
@@ -95,7 +98,26 @@ def build():
                         variants[pool] = assets.index(name)
             elif code=='typn' and mask in (3,5,6,7):
                 racks = {3:2,5:4,6:2,7:2}[mask]
-            plans[mask] = {'selected':selected,'racks':racks,'variants':variants}
+            plan = {'selected':selected,'racks':racks,'variants':variants}
+            # 可选借位只使用已登记原生池/Socket；旧方案没有此字段，仍走原路径。
+            borrowed = combo.get('borrowed_positions', [])
+            if borrowed:
+                seen = set()
+                for item in borrowed:
+                    if set(item) != {'kind', 'pool', 'socket'} or any(type(v) is not int for v in item.values()):
+                        raise ValueError('借位必须明确逻辑kind、原生pool及Socket序号')
+                    kind, pool, socket = item['kind'], item['pool'], item['socket']
+                    if not (0 <= kind < 3 and 0 <= pool < 3 and kind != pool and
+                            0 <= socket < len(groups[pool]['sockets'])):
+                        raise ValueError('借位原生池或Socket越界')
+                    if not selected[kind] or selected[pool] or not (racks & (1 << pool)):
+                        raise ValueError('借位要求逻辑兵装已选、提供池未选且挂架可见')
+                    key = (pool, socket)
+                    if key in seen:
+                        raise ValueError('借位不能重复使用同一原生Socket')
+                    seen.add(key)
+                plan['borrowed_positions'] = borrowed
+            plans[mask] = plan
         if any(p is None for p in plans[1:]):
             raise ValueError('必须同时生成整机七组合')
         plane={'code':code,'groups':groups,'plans':plans}

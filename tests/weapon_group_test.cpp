@@ -98,15 +98,12 @@ int main() {
     try{restore(act,true,cooling,99);assert(false);}catch(const std::runtime_error&){}
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 四机轻量路径：内部/效果源不能误入消耗弹映射，减位不改变逻辑窗口。
-    for(auto aircraft:{MountAircraft::Dark,MountAircraft::Zoef,MountAircraft::Adf11f,MountAircraft::Fa44,MountAircraft::X02s}) {
+    for(auto aircraft:{MountAircraft::Dark,MountAircraft::Zoef,MountAircraft::Adf11f,MountAircraft::Fa44}) {
         assert(mountLight(aircraft));
         for(unsigned selection:{1u,2u,4u})assert(mountLightNative(aircraft,selection));
         for(unsigned selection:{5u,6u,7u})assert(!mountLightNative(aircraft,selection));
     }
     assert(!mountLightNative(MountAircraft::Dark,3)); // 双挂也补齐退出旧弹舱后的关闭通道。
-    assert(mountLightNative(MountAircraft::X02s,3));
-    assert(!mountExpanded(MountAircraft::X02s) && !mountLightMapped(MountAircraft::X02s,2));
-    assert(mountLightRackMask(MountAircraft::X02s,7)==4);
     FixedMountState light;light.aircraft=MountAircraft::Zoef;light.kindsMask=7;
     light.logicalCounts=mountSpecification(light.aircraft).logicalCounts;
     light.expansionPositions[1]={0,1};light.expansionPositions[2]={2,3};
@@ -302,7 +299,7 @@ int main() {
         }
     }
     // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==46);
+    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==50);
     int multiCases=0;
     for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
         const auto type=mountExpansionAircraft(aircraft);
