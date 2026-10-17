@@ -218,14 +218,30 @@ bool selectionAudioReady=false; // 挂钩后不再次读取已被改写的入口
 constexpr const wchar_t* selectionEvents[]={L"HUD_WEAPON_SELECT_NORMAL",L"HUD_WEAPON_SELECT_SPECIAL"};
 dualsp::SelectionWave selectionWave; // 游戏线程持有，在解绑或音效错误时明确关闭。
 using ToggleWeapon=bool(*)(void*); // 原生完整飞机入口调用的类别切换，保留其返回值与所有行为。
-ToggleWeapon originalToggleWeapon=nullptr; // 只监听耗尽 SP 的切换请求，不改原生键位。
+ToggleWeapon originalToggleWeapon=nullptr; // 原生类别切换；多SP用户请求由逻辑选择统一处理。
 bool emptySwitchRequested=false; // 当前挂载耗尽，原生无法产生 armed 变化时的单次请求。
 bool switchInputAllowed=false; // 使用既有任务、暂停和补给状态，在不可操作时清空请求。
+bool cycleSwitchRequested=false; // 多SP循环先交给逻辑选择，不让原生MSL中间态进入HUD。
+bool controlledWeaponSwitch=false; // 模组自己的完整飞机切换不再被当成用户循环。
+struct ControlledWeaponSwitch {
+    bool previous{controlledWeaponSwitch};
+    ControlledWeaponSwitch(){controlledWeaponSwitch=true;}
+    ~ControlledWeaponSwitch(){controlledWeaponSwitch=previous;}
+};
 
-// 记录真实切换动作后仍执行原生逻辑；MSL 待机时不再主动重建 SP1。
+// 只拦截完整飞机输入入口的调用；原生耗尽/回收回调继续执行自己的类别逻辑。
 bool observeEmptyWeaponSwitch(void* object) {
     const auto activator=reinterpret_cast<Addr>(object); // 仅监听已绑定的当前玩家。
-    if(runtimeEnabled && switchInputAllowed && activator==selectionAudio.activator &&
+    const auto caller=reinterpret_cast<Addr>(__builtin_return_address(0));
+    const auto inputCaller=reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x823999;
+    if(runtimeEnabled && switchInputAllowed && !controlledWeaponSwitch &&
+        caller==inputCaller &&
+        activator==selectionAudio.activator && session.activator==activator &&
+        session.plane==selectionAudio.plane && session.count>1) {
+        cycleSwitchRequested=true;
+        return false; // 类别尚未改变，飞机入口也不应按一次成功切换重绑锁定组件。
+    }
+    if(runtimeEnabled && switchInputAllowed && !controlledWeaponSwitch && activator==selectionAudio.activator &&
         read<unsigned char>(activator+0x2a1)==0 && read<int>(groupOf(activator,true)+8)==0)
         emptySwitchRequested=true;
     return originalToggleWeapon(object);
@@ -259,7 +275,9 @@ void installSelectionAudio() {
         std::memcmp(reinterpret_cast<void*>(base+0x3e4f40),copy,sizeof(copy))==0 &&
         std::memcmp(reinterpret_cast<void*>(base+0x99af20),release,sizeof(release))==0,"选择音效或字符串接口不匹配");
     constexpr unsigned char toggle[]={0x48,0x8b,0xc4,0x55,0x53,0x48,0x8b,0xec,0x48,0x83,0xec,0x68}; // 现场核对的 ToggleSpecial 前导。
-    require(std::memcmp(reinterpret_cast<void*>(base+0x886c50),toggle,sizeof(toggle))==0,"原生切换请求入口不匹配");
+    constexpr unsigned char inputCall[]={0xe8,0xb7,0x32,0x06,0}; // 0x823994→0x886c50；回址0x823999。
+    require(std::memcmp(reinterpret_cast<void*>(base+0x886c50),toggle,sizeof(toggle))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x823994),inputCall,sizeof(inputCall))==0,"原生切换请求入口不匹配");
     freeAudioString=reinterpret_cast<FreeAudioString>(base+0x99af20);
     const auto status=MH_Initialize(); // 与输入钩子使用同一实例。
     require(status==MH_OK || status==MH_ERROR_ALREADY_INITIALIZED,"无法初始化选择音效钩子");
@@ -489,6 +507,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "raven_sp.hpp"
 
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
+    ControlledWeaponSwitch controlled;
     ravenBeforeRebuild(command);
     ContinuousRebuild continuous(command); // 保留已登记机型/真实类的持续发射体。
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -528,6 +547,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
 }
 void keepArmed(const Command& command,bool armed) {
+    ControlledWeaponSwitch controlled;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     MountAnimationArmedCompletion animationCompletion(command);
 #endif
@@ -765,7 +785,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
-            selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;selectionWave.close();
+            selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
             session={};checkpoint={};checkpointValid=false;checkpointTime=0;ravenVisual={};
         }
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
@@ -940,11 +960,12 @@ extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
         const int op=static_cast<int>(api->readInteger(luaState,3)); // 绑定、提交或解绑。
         const int target=static_cast<int>(api->readInteger(luaState,4)); // MSL/SP1/SP2 分别为 0/1/2。
         require(op>=0 && op<=2 && target>=0 && target<=3,"选择音效动作无效");
-        if(op==2){selectionAudio={};selectionWave.close();switchInputAllowed=false;emptySwitchRequested=false;} // 世界销毁时不读取旧玩家对象。
+        if(op==2){selectionAudio={};selectionWave.close();switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;} // 世界销毁时不读取旧玩家对象。
         else {
             require(runtimeEnabled,"Mod disabled outside single-player");
             verifyVersion();
             require(plane && activator && read<Addr>(plane+0x11a8)==activator,"选择音效玩家身份不匹配");
+            emptySwitchRequested=false;cycleSwitchRequested=false; // 最终选择覆盖此前尚未领取的旧输入。
             if(op==0) {
                 selectionWave.open(modRoot()/"Audio/SP2.wav");
                 installSelectionAudio();selectionAudio={plane,activator,target};emptySwitchRequested=false;
@@ -963,7 +984,7 @@ extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     }catch(const std::exception& error) {
         selectionAudio={};
-        switchInputAllowed=false;emptySwitchRequested=false;
+        switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;
         selectionWave.close();
         nativeLog(std::string("SELECTION_AUDIO_ERROR ")+error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
@@ -1041,7 +1062,7 @@ extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) 
         require(allowed==0 || allowed==1,"自定义选择音播放状态无效");
         require(runtimeEnabled || allowed==0,"Mod disabled outside single-player");
         switchInputAllowed=runtimeEnabled && allowed!=0 && selectionAudio.plane!=0;
-        if(!switchInputAllowed)emptySwitchRequested=false;
+        if(!switchInputAllowed){emptySwitchRequested=false;cycleSwitchRequested=false;}
         if(selectionAudio.plane) {
             float volume=0; // 禁止播放时无需解引用任务或设置对象。
             if(allowed) {
@@ -1058,7 +1079,7 @@ extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) 
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     } catch(const std::exception& error) {
         selectionWave.close();selectionAudio={};
-        switchInputAllowed=false;emptySwitchRequested=false;
+        switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;
         nativeLog(std::string("CUSTOM_AUDIO_ERROR ")+error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
@@ -1078,6 +1099,49 @@ extern "C" __declspec(dllexport) int dualsp_take_empty_switch(void* luaState) {
         api->boolean(luaState,true);api->boolean(luaState,requested);return 2;
     }catch(const std::exception& error) {
         emptySwitchRequested=false;nativeLog(std::string("SWITCH_REQUEST_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
+// 多SP真实循环请求只消费一次；最终目标及耗尽跳过仍由Lua统一计算。
+extern "C" __declspec(dllexport) int dualsp_take_cycle_switch(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1 && runtimeEnabled,"循环切换请求需要单人任务和玩家身份");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
+        require(plane && plane==selectionAudio.plane && plane==session.plane,"循环切换玩家会话不符");
+        const bool requested=cycleSwitchRequested;cycleSwitchRequested=false;
+        api->boolean(luaState,true);api->boolean(luaState,requested);return 2;
+    }catch(const std::exception& error) {
+        cycleSwitchRequested=false;nativeLog(std::string("CYCLE_SWITCH_ERROR ")+error.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+// 直接选择与循环选择共同使用完整飞机入口；作用域内不重复拦截自己的调用。
+extern "C" __declspec(dllexport) int dualsp_controlled_weapon_switch(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==2 && runtimeEnabled,"类别切换需要单人任务和玩家身份");verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
+        require(session.plane==plane && session.activator==activator && read<Addr>(plane+0x11a8)==activator,
+            "类别切换玩家会话不符");
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        constexpr unsigned char pressed[]={0x33,0xd2,0xe9};
+        constexpr unsigned char released[]={0xc6,0x81,0x51,0x1a,0,0,0,0xc3};
+        require(std::memcmp(reinterpret_cast<void*>(base+0x8238d0),pressed,sizeof(pressed))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x8238e0),released,sizeof(released))==0,"原生飞机切换入口不匹配");
+        ControlledWeaponSwitch controlled;
+        using Switch=void(*)(void*);
+        reinterpret_cast<Switch>(base+0x8238d0)(reinterpret_cast<void*>(plane));
+        reinterpret_cast<Switch>(base+0x8238e0)(reinterpret_cast<void*>(plane));
+        api->boolean(luaState,true);return 1;
+    }catch(const std::exception& error) {
+        nativeLog(std::string("CONTROLLED_SWITCH_ERROR ")+error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
     }
@@ -1366,7 +1430,12 @@ extern "C" __declspec(dllexport) int dualsp_preparation_action(void* luaState) {
         } else if(action==0) {
             require(runtimeEnabled,"Mod disabled outside single-player");
             require(preparationAction.widget==widget,"机库动作请求已经丢失");
-            require(!preparationAction.rejected,"原生机库拒绝了决定/返回；已停止交接");
+            if(preparationAction.rejected) {
+                // 动画或快速返回时原生可以忽略本次边沿；不等于兵装或结构损坏。
+                nativeLog("PREPARATION_ACTION_IGNORED");preparationAction={};
+                api->boolean(luaState,true);api->boolean(luaState,false);
+                api->string(luaState,"native_ignored",14);return 3;
+            }
             accepted=preparationAction.accepted; // 领取同一原生帧记录的结果，不读取已关闭页面。
             if(accepted)preparationAction={};
         } else {

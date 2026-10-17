@@ -1,6 +1,6 @@
 # 按需证据
 
-当前2.16仅源码修订，依据[2.15用户实测](2.15.0-user-validation.json)及[性能/机构调查](2.16.0-performance-investigation.json)；未编译测试安装，游戏仍2.15。
+当前2.16已合并并成套安装，见[整合记录](2.16.0-integration.json)与[安装回执](2.16.0-installed.json)；[2.15用户实测](2.15.0-user-validation.json)及[性能/机构调查](2.16.0-performance-investigation.json)保留源码阶段事实，真实性能与新增流程待测。
 
 2.15已成套安装，见[整合记录](2.15.0-integration.json)和[安装回执](2.15.0-installed.json)。性能与预览修订依据见[调查摘要](2.15.0-performance-investigation.json)：日志为2.13会话，安装前为2.14；不把离线检查当实机性能通过。
 

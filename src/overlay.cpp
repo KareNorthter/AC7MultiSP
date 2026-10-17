@@ -17,6 +17,7 @@
 #include "panel_pointer.hpp"
 #include "keyboard_shortcuts.hpp"
 #include "ue4ss_lua_api.hpp"
+#include "ui_messages.hpp"
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"xinput.lib")
@@ -74,18 +75,12 @@ std::string hotkeyToast;
 ULONGLONG hotkeyToastUntil{};
 bool toastIsError=false;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
+const char* tr(const char* zh,const char* en);
+std::string uiMessage(const std::string& message,
+    const char* zh="操作未完成，请在日志页查看详细原因。",
+    const char* en="The operation could not be completed. See Logs for details.");
 void showToast(std::string message,bool error=false) {
-    const auto newline=message.find_first_of("\r\n");
-    if(newline!=std::string::npos)message.resize(newline);
-    const auto source=message.find(".lua:");
-    if(source!=std::string::npos) {
-        size_t end=source+5;
-        while(end<message.size()&&message[end]>='0'&&message[end]<='9')++end;
-        if(end<message.size()&&message[end]==':') {
-            ++end;while(end<message.size()&&message[end]==' ')++end;
-            message.erase(0,end); // 悬浮窗省略源码路径和行号，完整信息仍保留在日志和管理页。
-        }
-    }
+    message=uiMessage(message);
     // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
     if(message.size()>240) {
         size_t end=240;
@@ -102,7 +97,6 @@ bool focusManagement=false; // 每次打开把键盘焦点放到语言选择，�
 bool logsLoaded=false;
 std::string modLogText,nativeLogText,logError;
 // 输入函数声明供窗口消息使用；实现与管理页集中在后文。
-const char* tr(const char* zh,const char* en);
 void loadManagementDraft();
 void loadDebugDraft();
 void loadDebugAircraftDraft() noexcept;
@@ -295,6 +289,9 @@ const char* tr(const char* zh,const char* en) {
     const auto language=draftLanguage=="auto"?state.value("game_language",std::string("en")):draftLanguage;
     return language=="zh"?zh:en;
 }
+std::string uiMessage(const std::string& message,const char* zh,const char* en) {
+    return dualsp::localizedUiMessage(message,std::string(tr("zh","en"))=="zh",tr(zh,en));
+}
 
 // 单键绑定支持常用键盘键；当前管理入口和 Esc 不能绑定为武器选择。
 bool supportedKey(int key) { return dualsp::supportedShortcutKey(key); }
@@ -464,13 +461,13 @@ void drawDebugAircraft() {
     const bool busy=debugAircraftBusy();
     const bool available=aircraftSupported&&aircraftAvailable&&!busy&&pendingDebug==0;
     const auto selected=std::find_if(debugAircraftOptions.begin(),debugAircraftOptions.end(),[](const auto& option){return option.planeId==aircraftTarget;});
-    const char* preview=selected!=debugAircraftOptions.end()?selected->name.c_str():tr("暂无可用机体","No available aircraft");
+    const std::string preview=selected!=debugAircraftOptions.end()?uiMessage(selected->name):tr("暂无可用机体","No available aircraft");
     ImGui::BeginDisabled(!available);ImGui::SetNextItemWidth(380);
-    if(ImGui::BeginCombo(tr("目标机体###DebugAircraftTarget","Target aircraft###DebugAircraftTarget"),preview)) {
+    if(ImGui::BeginCombo(tr("目标机体###DebugAircraftTarget","Target aircraft###DebugAircraftTarget"),preview.c_str())) {
         for(const auto& option:debugAircraftOptions) {
             const bool chosen=option.planeId==aircraftTarget;
             ImGui::PushID(option.planeId);
-            if(ImGui::Selectable(option.name.c_str(),chosen))aircraftTarget=option.planeId;
+            if(ImGui::Selectable(uiMessage(option.name).c_str(),chosen))aircraftTarget=option.planeId;
             if(chosen)ImGui::SetItemDefaultFocus();
             ImGui::PopID();
         }
@@ -479,28 +476,29 @@ void drawDebugAircraft() {
     ImGui::EndDisabled();
     const bool same=aircraftTarget==state.value("plane_id",-1);
     if(same&&selected!=debugAircraftOptions.end())ImGui::TextDisabled("%s",tr("这是当前机体，请选择其他机体。","This is the current aircraft; choose another."));
-    if(!aircraftSupported)ImGui::TextWrapped("%s",aircraftDataError.empty()?tr("当前控制器未提供任务换机。","The controller does not provide mission aircraft changes."):aircraftDataError.c_str());
-    else if(!aircraftAvailable&&!aircraftReason.empty())ImGui::TextWrapped("%s",aircraftReason.c_str());
+    if(!aircraftSupported)ImGui::TextWrapped("%s",aircraftDataError.empty()?tr("当前控制器未提供任务换机。","The controller does not provide mission aircraft changes."):uiMessage(aircraftDataError,"换机资料不可用，请查看日志。","Aircraft information is unavailable. See Logs for details.").c_str());
+    else if(!aircraftAvailable&&!aircraftReason.empty())ImGui::TextWrapped("%s",uiMessage(aircraftReason,"当前无法换机，请查看日志。","Aircraft change is unavailable. See Logs for details.").c_str());
     if(pendingDebug>0)ImGui::TextWrapped("%s",tr("正在应用SP方案，请等待完成。","An SP loadout is being applied; wait for it to finish."));
     ImGui::BeginDisabled(!available||same||selected==debugAircraftOptions.end());
     if(ImGui::Button(aircraftMode=="next_restart"?
         tr("选择机体，等待重开任务###ApplyAircraft","Select aircraft for next restart###ApplyAircraft"):
-        tr("换机并重开任务###ApplyAircraft","Change aircraft and restart mission###ApplyAircraft"),{350,36})) {
+        tr("换机并重开任务###ApplyAircraft","Change aircraft and restart mission###ApplyAircraft"),
+        {std::min(ImGui::GetContentRegionAvail().x,520.f),36})) {
         pendingAircraft=++aircraftRequest;
         enqueue({{"type","debug_aircraft"},{"debug_aircraft_protocol",1},{"request",pendingAircraft},
             {"session",aircraftSession},{"revision",aircraftRevision},{"target_plane_id",aircraftTarget}});
         aircraftNotice=tr("已提交换机请求，等待游戏线程确认…","Aircraft change submitted; waiting for the game thread...");
     }
     ImGui::EndDisabled();
-    if(!aircraftNotice.empty())ImGui::TextWrapped("%s",aircraftNotice.c_str());
+    if(!aircraftNotice.empty())ImGui::TextWrapped("%s",uiMessage(aircraftNotice,"换机未完成，请查看日志。","Aircraft change was not completed. See Logs for details.").c_str());
     if(state.contains("debug_aircraft")&&state.at("debug_aircraft").contains("error")&&state.at("debug_aircraft").at("error").is_string())
-        ImGui::TextWrapped("%s",state.at("debug_aircraft").at("error").get<std::string>().c_str());
+        ImGui::TextWrapped("%s",uiMessage(state.at("debug_aircraft").at("error").get<std::string>(),"换机未完成，请查看日志。","Aircraft change failed. See Logs for details.").c_str());
 }
 
 // 调试仅发送完整方案与任务版本，游戏线程重新校验身份、购买与活动武器。
 void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
-    ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),state.value("plane_name",std::string()).c_str());
+    ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),uiMessage(state.value("plane_name",std::string())).c_str());
     ImGui::TextWrapped("%s",tr("调试：任务内重配 SP。按勾选顺序（从上到下）分配 SP1 / SP2 / SP3。","Debug: rebuild SP loadout in this mission. Checked weapons become SP1 / SP2 / SP3 from top to bottom."));
     ImGui::TextWrapped(tr("快捷测试：%s 轮切SP组合；%s 即时开关模型。按键页可自定义。","Quick test: %s cycles SP combinations; %s toggles models. Customize in Bindings."),shortcutLabel(shortcuts[1]).c_str(),shortcutLabel(shortcuts[2]).c_str());
     ImGui::TextWrapped("%s",tr("应用后 SP 按已保存的管理比例配弹并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills SP ammunition using saved management percentages, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
@@ -513,7 +511,7 @@ void drawDebugLoadout(bool focus) {
             const auto& option=options.at(index); // 原生配置项包含购买和多挂许可。
             const bool owned=option.at("owned").get<bool>();
             const bool multiple=option.at("available").get<bool>();
-            const auto label=option.at("code").get<std::string>()+" / "+option.at("description").get<std::string>()+"###DebugSP"+std::to_string(index);
+            const auto label=option.at("code").get<std::string>()+" / "+uiMessage(option.at("description").get<std::string>(),"特殊兵装","Special weapon")+"###DebugSP"+std::to_string(index);
             const bool selectable=owned||debug.value("allow_unowned",false);
             ImGui::BeginDisabled(!available||!selectable);
             if(focus&&available&&selectable){ImGui::SetKeyboardFocusHere();focus=false;}
@@ -530,10 +528,11 @@ void drawDebugLoadout(bool focus) {
         if(!valid)ImGui::TextWrapped("%s",tr("请选择 1 至 3 种 SP；标注仅限单挂的兵装不能组合。","Choose 1–3 SP weapons. Single-only weapons cannot be combined."));
     }
     if(!debug.value("available",false)&&debug.contains("reason"))
-        ImGui::TextWrapped("%s",debug.at("reason").get<std::string>().c_str());
+        ImGui::TextWrapped("%s",uiMessage(debug.at("reason").get<std::string>(),"当前无法调试兵装，请查看日志。","Loadout debugging is unavailable. See Logs for details.").c_str());
     ImGui::TextWrapped("%s",tr("若提示仍有活动武器，请关闭面板、等待已发射武器结束后重试。换机入口见下方。","If active weapons are reported, close this panel and wait for them to finish before retrying. Aircraft changes are available below."));
     ImGui::BeginDisabled(!available||!valid);
-    if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),{300,36})) {
+    if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),
+        {std::min(ImGui::GetContentRegionAvail().x,430.f),36})) {
         std::array<int,3> configs{-1,-1,-1};int slot=0; // 只在点击时形成连续逻辑槽。
         for(int index=0;index<3;++index)if(debugSelected[index])configs[slot++]=index;
         pendingDebug=++debugRequest;
@@ -542,8 +541,8 @@ void drawDebugLoadout(bool focus) {
         debugNotice=tr("正在应用，等待游戏线程确认…","Applying; waiting for the game thread...");
     }
     ImGui::EndDisabled();
-    if(!debugNotice.empty())ImGui::TextWrapped("%s",debugNotice.c_str());
-    if(debug.contains("error"))ImGui::TextWrapped("%s",debug.at("error").get<std::string>().c_str());
+    if(!debugNotice.empty())ImGui::TextWrapped("%s",uiMessage(debugNotice,"调试换装未完成，请查看日志。","The debug loadout was not applied. See Logs for details.").c_str());
+    if(debug.contains("error"))ImGui::TextWrapped("%s",uiMessage(debug.at("error").get<std::string>(),"调试换装未完成，请查看日志。","The debug loadout failed. See Logs for details.").c_str());
 }
 
 // 最多读取每份日志最后 64 KiB；超出时丢掉截断首行，不在飞行中读日志。
@@ -593,14 +592,14 @@ void drawPanel() {
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
-        if(!managementError.empty())ImGui::TextWrapped("%s",managementError.c_str());
+        if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError,"管理状态异常，请查看日志。","Management data could not be read. See Logs for details.").c_str());
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
         ImGui::End();return;
     }
     // 暂停归属来自游戏线程回执；渲染线程不推断原生任务状态。
     if(state.contains("management_pause")) {
         const auto& pause=state.at("management_pause"); // 关闭失败会重新打开面板并显示具体错误。
-        if(pause.contains("error"))ImGui::TextWrapped("%s",pause.at("error").get<std::string>().c_str());
+        if(pause.contains("error"))ImGui::TextWrapped("%s",uiMessage(pause.at("error").get<std::string>(),"暂停交接未完成，请查看日志。","Pause handoff failed. See Logs for details.").c_str());
         else if(pause.value("owned",false))ImGui::TextWrapped("%s",tr("管理界面已暂停任务；关闭本界面后继续飞行。","Management paused the mission; close this panel to resume."));
         else if(pause.value("existing",false))ImGui::TextWrapped("%s",tr("打开前已有原生暂停；关闭本界面后仍保留，请从游戏暂停菜单继续。","The mission was already paused; resume from the game's pause menu after closing."));
     }
@@ -608,10 +607,14 @@ void drawPanel() {
     int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
     ImGui::SetNextItemWidth(210);
     if(focusManagement){ImGui::SetKeyboardFocusHere();focusManagement=false;}
-    if(ImGui::Combo("语言选择/Select Language###Language",&language,"Game Language\0中文 / Chinese\0English\0"))
+    if(ImGui::Combo(tr("语言选择###Language","Language###Language"),&language,
+        tr("跟随游戏\0中文\0English\0","Game language\0Chinese\0English\0")))
         draftLanguage=language==0?"auto":language==1?"zh":"en";
     ImGui::TextWrapped("%s",tr("键盘：Tab / Shift+Tab 移动，方向键选择，Enter / 空格操作；Ctrl+Tab 切页，Esc 返回或关闭。","Keyboard: Tab / Shift+Tab to move, arrows to select, Enter / Space to act; Ctrl+Tab changes pages, Esc goes back or closes."));
     ImGui::Separator();
+    if(state.value("mission_fixed_sp",false))ImGui::TextWrapped("%s",tr(
+        "第14关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
+        "Mission 14 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
             if(requestedTab==0)ImGui::SetKeyboardFocusHere();
@@ -626,11 +629,11 @@ void drawPanel() {
             ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
             ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
-            if(state.contains("mount_warning"))ImGui::TextWrapped("%s",state.at("mount_warning").get<std::string>().c_str());
+            if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
             if(state.contains("master_switch")&&state.at("master_switch").contains("error"))
-                ImGui::TextWrapped("%s",state.at("master_switch").at("error").get<std::string>().c_str());
+                ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>(),"总开关应用失败，请查看日志。","The master switch could not be applied. See Logs for details.").c_str());
             if(state.at("fixed_mount_enabled").get<bool>()!=state.at("runtime_fixed_mount_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("模型开关已保存，等待重新出击、任务/检查点重试、补给确认或调试换装。","Model switch saved. Awaiting a sortie, mission/checkpoint retry, confirmed resupply or debug loadout."));
             ImGui::EndTabItem();
@@ -677,7 +680,7 @@ void drawPanel() {
             if(requestedTab==2)ImGui::SetKeyboardFocusHere();
             if(ImGui::Button(tr("刷新日志","Refresh logs")))refreshLogs();
             ImGui::SameLine();ImGui::TextDisabled("%s",tr("每份最多显示末尾 64 KiB，点击刷新更新。","Last 64 KiB per log; refresh to update."));
-            if(!logError.empty())ImGui::TextWrapped("%s",logError.c_str());
+            if(!logError.empty())ImGui::TextWrapped("%s",uiMessage(logError,"日志读取失败。","The log could not be read.").c_str());
             if(ImGui::BeginTabBar("LogFiles")) {
                 const char* files[]={"mod.log","native.log"}; // 日志文件固定，不开放任意路径访问。
                 const std::string* text[]={&modLogText,&nativeLogText};
@@ -708,14 +711,14 @@ void drawPanel() {
     const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
     for(const char* field:errorFields)if(state.contains(field)) {
         ImGui::TextColored({1,.55f,.35f,1},"%s",tr("功能或保存错误（详见日志）","Feature or save error (see logs)"));
-        ImGui::TextWrapped("%s",state.at(field).get<std::string>().c_str());
+        ImGui::TextWrapped("%s",uiMessage(state.at(field).get<std::string>(),"功能或保存操作未完成，请查看日志。","A feature or save operation failed. See Logs for details.").c_str());
     }
     if(state.contains("input_notice")) {
         const auto reason=state.at("input_notice").get<std::string>(); // 拒绝直接选择的原因显示在管理页。
         ImGui::TextWrapped("%s",reason=="empty_sp"?tr("此 SP 未配置，保持当前武器。","This SP is empty; selection unchanged."):
             tr("目标 SP 弹药耗尽，保持当前武器。","Target SP is depleted; selection unchanged."));
     }
-    if(!notice.empty())ImGui::TextWrapped("%s",notice.c_str());
+    if(!notice.empty())ImGui::TextWrapped("%s",uiMessage(notice,"操作未完成，请查看日志。","The operation could not be completed. See Logs for details.").c_str());
     ImGui::End();
 }
 
@@ -787,7 +790,11 @@ void refreshState() {
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {
             if(!reportedToastErrors.contains(item.key())||reportedToastErrors.at(item.key())!=item.value()) {
-                showToast(std::string(tr("Mod提示：","Mod: "))+item.value().get<std::string>(),true);break;
+                const bool visual=item.key()=="mount_warning";
+                const auto detail=visual?uiMessage(item.value().get<std::string>(),"多挂外观已回退原生，请查看日志。",
+                    "Multi-SP models reverted to native visuals. See Logs for details."):
+                    uiMessage(item.value().get<std::string>());
+                showToast(std::string(tr("Mod提示：","Mod: "))+detail,true);break;
             }
         }
         reportedToastErrors=std::move(errors);
@@ -856,6 +863,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 try {
                     if(panel)drawPanel();
                     if(toastVisible) {
+                        ImGui::PushFont(nullptr,32.f); // 通知独立加大，不挤压管理面板。
                         ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,72},ImGuiCond_Always,{.5f,0});
                         ImGui::SetNextWindowBgAlpha(.8f);
                         ImGui::Begin("##DebugHotkeyNotice",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
@@ -863,7 +871,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         if(toastIsError)ImGui::PushStyleColor(ImGuiCol_Text,{1,.65f,.4f,1});
                         ImGui::TextUnformatted(hotkeyToast.c_str());
                         if(toastIsError)ImGui::PopStyleColor();
-                        ImGui::PopTextWrapPos();ImGui::End();
+                        ImGui::PopTextWrapPos();ImGui::End();ImGui::PopFont();
                     }
                 }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),true);nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight))togglePanel(false);

@@ -16,6 +16,7 @@ local function initialize()
     if system then return end
     for _,path in ipairs({"/Script/Engine.KismetSystemLibrary:IsStandalone",
         "/Script/Engine.GameplayStatics:GetGameMode","/Script/Nimbus.UIManagerActor:GetCurrentUIManagerActor",
+        "/Script/Nimbus.NimbusGameInstance:GetMissionID",
         "/Script/Nimbus.LocalizationManager:GetCulture"})do
         assert(valid(StaticFindObject(path)),"Runtime context API missing: "..path)
     end
@@ -113,6 +114,12 @@ function Context.allowed(instance)
     if multiplayerMenuWorld then
         if not singleEntry then return false,"multiplayer_menu_transition"end
         multiplayerMenuWorld=nil
+    end
+    -- 自有MissionDataTable：ms14=114；214是同地图自由飞行，不属于固定SP任务。
+    -- 只在已确认的任务世界或机库生效；保留管理入口，不改个人总开关和保存方案。
+    if ((valid(mode)and name:find("/Game/Maps/Mission/",1,true))or
+        (sharedMenu and currentManager and Context.hangarVisible))and instance:GetMissionID()==114 then
+        return true,"mission14_fixed_sp"
     end
     if name:find("/Game/Maps/Mission/",1,true)or name:find("/Game/Maps/FreeFlight/",1,true)then
         return valid(mode),valid(mode)and "singleplayer"or "waiting_mode"

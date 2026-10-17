@@ -525,6 +525,37 @@ print('配置/协议/页面、场景预览、开场定位、调试快捷操作�
 
 # 执行实际安全菜单判定和总开关交接函数，覆盖管理面板借走输入、任务拒绝及清理失败。
 context_source = (ROOT / 'dist/DualSP/Scripts/runtime_context.lua').read_text(encoding='utf-8')
+lua.globals().mission_gate_source = context_source[context_source.index('function Context.allowed('):context_source.index('-- 管理面板暂借了原生输入')]
+lua.execute(r'''
+-- 执行真实许可判断：仅114任务/机库旁路，残留ID、214自由飞行及多人边界不能混淆。
+local state={id=114,name='World /Game/Maps/Mission/ms14.ms14',shared=false,network=false,multi=false,kind='hangar'}
+local function valid(o)return o and o:IsValid()end
+local world={IsValid=function()return true end,GetAddress=function()return 900 end,GetFullName=function()return state.name end}
+local mode={IsValid=function()return true end,IsA=function(_,class)return class=='ui'and state.shared or class=='multi'and(state.shared or state.multi)end}
+local widget={IsValid=function()return true end,GetWorld=function()return world end,IsVisible=function()return true end,
+    IsEnableControl=function()return true end,IsA=function(_,class)return class=='base'or class==state.kind end,
+    GetClass=function()return {GetFullName=function()return state.kind=='hangar'and'/Game/UI/Menu/Hangar/Weapon'or'/Game/UI/Menu/MainMenu'end}end}
+local manager={IsValid=function()return true end,GetWorld=function()return world end,
+    MenuWidgetArray={ForEach=function(_,fn)fn(nil,{get=function()return widget end})end}}
+local context={isMultiplayerWidget=function()return state.multiWidget end}
+local env=setmetatable({Context=context,valid=valid,initialize=function()end,
+    system={IsStandalone=function()return not state.network end},game={GetGameMode=function()return mode end},
+    ui={GetCurrentUIManagerActor=function()return manager end},modeClasses={UIGameMode='ui',MultiPlayerGameMode='multi'},
+    menuBaseClass='base',singleEntryClasses={'main'},lastHangarTime=-1},{__index=_G})
+local allowed=assert(load(mission_gate_source..'return Context.allowed','第14关上下文旁路','t',env))()
+local instance={IsValid=function()return true end,GetWorld=function()return world end,GetMissionID=function()return state.id end}
+local ok,reason=allowed(instance);assert(ok and reason=='mission14_fixed_sp')
+state.id=113;ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
+state.id=214;state.name='World /Game/Maps/FreeFlight/ms14.ms14';ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
+state.id=114;state.shared=true;state.name='World /Game/UI/Menu/Menu.Menu';ok,reason=allowed(instance);assert(ok and reason=='mission14_fixed_sp')
+state.kind='main';ok,reason=allowed(instance);assert(ok and reason=='singleplayer_menu','主菜单不能因残留114编号停用')
+state.kind='hangar';state.network=true;ok,reason=allowed(instance);assert(not ok and reason=='network_world')
+state.network=false;state.shared=false;state.multi=true;state.name='World /Game/Maps/Mission/ms14.ms14'
+ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_mode')
+state.shared=true;state.multi=false;state.multiWidget=true;state.name='World /Game/UI/Menu/Menu.Menu'
+ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_menu')
+''')
+print('第14关114旁路、214自由飞行/离关恢复、主菜单残留ID及多人优先边界检查通过')
 lua.globals().master_menu_source = context_source[context_source.index('function Context.canToggleMaster('):context_source.index('-- 仅在许可变化时记录上下文')]
 lua.globals().master_apply_source = main_source[main_source.index('tryApplyMasterSwitch=function(force)'):main_source.index('local function tick()')]
 lua.execute(r"""
@@ -578,7 +609,7 @@ print('总开关安全入口、同世界/输入所有权、禁止任务内切换
 
 lua.globals().mount_asset_source = main_source[main_source.index('local mountAssetStatus={}'):main_source.index('local function mountPreview(context)')]
 lua.execute(r'''
--- 执行真实加载修复：保留LoadAsset三返回值，新PAK未登记时走完整AssetData工厂。
+-- 执行真实加载修复：精确路径优先，保留原LoadAsset后备和工厂元数据。
 local function object(address)
     return {IsValid=function()return true end,GetAddress=function()return address end}
 end
@@ -602,7 +633,8 @@ local function loader(mode)
         assert(data.ObjectPath=='/Game/AC7MultiSP/Research/MSP_case.MSP_case')
         assert(data.PackageName=='/Game/AC7MultiSP/Research/MSP_case' and data.AssetName=='MSP_case')
         assert(data.PackagePath=='/Game/AC7MultiSP/Research' and data.AssetClass=='StaticMesh')
-        if mode~='failed' then return loaded end
+        if mode=='path_error' then error('模拟精确路径临时不可用')end
+        if mode~='failed' and mode~='returned' then return loaded end
     end
     local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
         expandedMountAssets={f16c={{0,'MSP_case',1}}},planeId=1,catalogue={['1']={code='f16c'}},plane=plane,
@@ -616,19 +648,21 @@ local function loader(mode)
         end,
         LoadAsset=function(path)
             calls.load=calls.load+1
-            if mode=='returned' then return loaded,false,true end
+            if mode=='returned' or mode=='path_error' then return loaded,false,true end
             return nil,false,false
         end,
         registerMountAsset=function(id,address)assert(id==0 and address==84);calls.register=calls.register+1;return true,'' end}, {__index=_G})
     return assert(load(mount_asset_source..'return ensureMountAssets','挂架加载入口','t',env))(),calls,env,loaded
 end
 local load,calls=loader('returned')
-assert(load() and calls.load==1 and calls.factory==0 and calls.register==1,'不得丢弃LoadAsset已返回的对象')
+assert(load() and calls.load==1 and calls.factory==1 and calls.register==1,'精确路径未就绪时不得丢弃LoadAsset后备返回的对象')
 assert(load() and calls.load==1,'成功资源不重复加载')
 load,calls=loader('unregistered')
-assert(load() and calls.load==1 and calls.factory==1 and calls.register==1)
-assert(calls.logs[1]:find('registered=false') and calls.logs[1]:find('loaded=false'))
-assert(calls.logs[2]:find('valid=true'))
+assert(load() and calls.load==0 and calls.factory==1 and calls.register==1,'精确路径成功不应再触发登记表搜索')
+assert(calls.logs[1]:find('valid=true'))
+load,calls=loader('path_error')
+assert(load()and calls.load==1 and calls.register==1,'精确路径异常仍允许后备加载')
+assert(calls.logs[1]:find('MOUNT_ASSET_PATH_ERROR')and calls.logs[3]:find('registered=false'))
 local env,loaded
 load,calls,env,loaded=loader('failed')
 assert(not load() and calls.warnings==1 and calls.register==0)
@@ -644,11 +678,11 @@ env.currentProfile={a=0,b=-1,c=-1}
 assert(load()and calls.load==0 and calls.register==0,'原生单挂不得为其他组合加载派生资源')
 env.expandedMountAssets.f16c={{0,'MSP_case',1,1 << 3},{1,'MSP_unused',3,1 << 5}}
 env.currentProfile={a=0,b=1,c=-1}
-assert(load()and calls.load==1 and calls.register==1,'仅加载当前选择集合真正使用的资源')
+assert(load()and calls.load==0 and calls.factory==1 and calls.register==1,'仅加载当前选择集合真正使用的资源')
 env.currentProfile={a=0,b=2,c=-1}
-assert(not load()and calls.load==1,'新方案需要替换的碰撞组件仍须拒绝')
+assert(not load()and calls.load==0,'新方案需要替换的碰撞组件仍须拒绝')
 env.currentProfile={a=0,b=1,c=-1}
-assert(load()and calls.load==1,'另一组合的资源失败不能锁死已正常加载的组合')
+assert(load()and calls.load==0,'另一组合的资源失败不能锁死已正常加载的组合')
 ''')
 print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
 
@@ -662,7 +696,8 @@ local function switchCase()
         OnWeaponSwitchPressed=function()calls.pressed=calls.pressed+1;if state.allowPress then state.armed=not state.armed end end,
         OnWeaponSwitchReleased=function()calls.released=calls.released+1 end}
     local activator={GetAddress=function()return 200 end,GetSpecialWeaponCount=function()return 20 end}
-    local env=setmetatable({weaponSwitch={read=function()return true,not state.busy,'native_busy' end},
+    local env=setmetatable({weaponSwitch={read=function()return true,not state.busy,'native_busy' end,
+        press=function(p,a)assert(p==100 and a==200);plane:OnWeaponSwitchPressed();plane:OnWeaponSwitchReleased();return true end},
         plane=plane,activator=activator,currentWorld={},weaponRevision=1,active=0,configured=true,isFlight=true,
         nativeState={cached_sp={20,20,20}},
         game={GetTimeSeconds=function()return state.time end,IsGamePaused=function()return state.paused end},

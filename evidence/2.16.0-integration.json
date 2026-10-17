@@ -1,0 +1,58 @@
+{
+  "schema": 1,
+  "candidate": "2.16.0",
+  "base_installed": "2.15.0",
+  "authorization": "用户明确要求合并codex://threads/01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1的改动后编译安装。",
+  "sources": {
+    "performance_and_mount": "8413328",
+    "hud_mission14_localization": "a07dfe6",
+    "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+    "branch": "codex/2.15-hud-mission14-localization"
+  },
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "build_dir": "Temp/build-2.16.0-final",
+  "summary": "合并循环切SP无MSL中间态、第14关114任务旁路/214自由飞行保留、英文动态状态及32号通知、原生忽略返回静默恢复；同时交付CFA恢复原生机构、ECM双挂整架、炮口缓存、ADF停光缓存及共用加载/预览优化。",
+  "prior_source_investigation": "evidence/2.16.0-performance-investigation.json",
+  "prior_user_feedback": "evidence/2.15.0-user-validation.json",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "test_adjustments": "更新既有加载顺序/后备/异常和受控切换模拟，补114/214、主菜单残留编号、多人与离关许可边界；未新增测试模块。",
+  "runtime_files_verified": 17,
+  "mount_variants": 50,
+  "mount_members": 100,
+  "mount_pak_unchanged": true,
+  "all_previous_resource_members_preserved": true,
+  "protected_files_verified": 166,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-222046-932756",
+  "profiles_preserved": true,
+  "saves_preserved": true,
+  "other_mod_files_preserved": true,
+  "game_was_closed_before_install": true,
+  "game_closed_by_agent_this_turn": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "deferred": [
+    "CFA/F22 SP2-SP3光标专项",
+    "F2专项性能"
+  ],
+  "validation_boundary": "编译和适用自动检查、安装核验通过；HUD闪图、114关卡原生流程、英文布局、机库返回以及性能/动画/ECM/左右挂载仍待用户实测。首次资源和反射冷解析仍可能停顿。",
+  "runtime_hashes": {
+    "core": "607d8e0a87e6ffdb79885d86482b5c99d52f58e5ff6167356054b7fe521b451b",
+    "ui": "a16010b23489d879eef6347f9701d98427824fdd151667558a22405a251f5946",
+    "mount_pak": "4c8f44c34ffe76fa6d57a04f3cb2644bd92418f8d1930b3bbd43ad768e85fc50"
+  },
+  "created_at": "2026-10-17T14:21:25.879606+00:00"
+}

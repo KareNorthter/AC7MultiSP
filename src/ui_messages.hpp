@@ -1,0 +1,163 @@
+#pragma once
+#include <string>
+#include <utility>
+
+// 管理与通知的中英资源；先替换完整长句，再处理组合状态的前后缀。
+// 原生日志保留原文，不能以显示翻译改写错误证据。
+namespace dualsp {
+inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"请选择当前槽兵装；无兵装结束选装。弹药按管理页比例向上取整。","Select this SP, or NO WEAPON to finish. Ammunition follows management percentages, rounded up."},
+    {"任务仍生成原机体；当前任务不支持此重开入口，请返回机库换机。","This mission kept the original aircraft. Change aircraft in the hangar."},
+    {"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试","Close management and wait for fired weapons to finish before retrying."},
+    {"请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically."},
+    {"决定：选择当前 SP，或无兵装结束。返回：修改上一槽。","Confirm this SP, or NO WEAPON to finish. Back: edit the previous slot."},
+    {"持续效果或 TLS 尾迹尚未退场，请等待后再调试换装","Wait for active effects and TLS trails to finish before rebuilding the loadout."},
+    {"第14关使用任务指定SP，多SP功能暂时停用。","Mission 14 uses its assigned SP. Multi-SP is temporarily disabled."},
+    {"请先退出游戏暂停菜单，再直接打开管理界面换机。","Close the game's pause menu, then open management directly to change aircraft."},
+    {"决定：按本次方案起飞。返回：修改最后一个选择。","Confirm: take off. Back: edit the last choice."},
+    {"仍有已发射的活动武器，请等待结束后再调试换装","Wait for fired weapons to finish before rebuilding the loadout."},
+    {"按已选的 1 至 3 个 SP 重新起飞。","Take off with the selected one to three SP weapons."},
+    {"等待重开超时；未重复重开，请返回机库换机。","Mission restart timed out. Return to the hangar to change aircraft."},
+    {"原生重开未生成新玩家机体，请返回机库换机。","The restart did not create a new player aircraft. Return to the hangar."},
+    {"第14关使用任务指定SP，已取消调试换机","Aircraft debugging cancelled because Mission 14 uses its assigned SP."},
+    {"正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress."},
+    {"控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above."},
+    {"决定：返回 SP1，重新选择特殊兵装。","Confirm: reselect special weapons from SP1."},
+    {"不搭载当前及后续槽，按管理页比例配弹。","Leave this and later slots empty. Ammunition follows management percentages."},
+    {"多 SP 挂载已回退为原生单 SP：","Multi-SP models reverted to native visuals: "},
+    {"原生机库未接收决定/返回，已停止交接","The hangar did not receive the action. Reopen the weapon selection page."},
+    {"管理界面暂停没有归还，未发出重开请求","The management pause was not released. The restart was not sent."},
+    {"任务或兵装已变化，请重新打开调试页","The mission or loadout changed. Reopen Debug."},
+    {"重开期间原生机体选择被其他流程改变","Another game action changed the selected aircraft during restart."},
+    {"原生任务仍在暂停，请先退出暂停菜单","Close the native pause menu before changing aircraft."},
+    {"仍有活动武器，请等待后再调试换装","Wait for fired weapons to finish before rebuilding the loadout."},
+    {"请完成所需 SP 选择后确认起飞","Finish selecting your SP loadout before confirming takeoff"},
+    {"原生连射尚未结束，暂不能重建SP","Wait for the current weapon burst to finish before changing SP."},
+    {"请先进入已配置兵装的单人任务。","Enter a configured single-player mission first."},
+    {"当前不是已启用Mod的单人任务","Aircraft debugging requires an enabled single-player mission."},
+    {"游戏实例已改变，请重新选择机体","The game session changed. Select an aircraft again."},
+    {"已离开单人任务，换机请求已取消","Aircraft change cancelled after leaving single-player."},
+    {"进入了其他任务，换机请求已取消","Aircraft change cancelled after entering another mission."},
+    {"任务或兵装已改变，请重新按键","The mission or loadout changed. Press the shortcut again."},
+    {"正在重开任务并等待目标机体。","Restarting the mission and waiting for the selected aircraft."},
+    {"调试换装的玩家会话已经改变","The player session changed. Reopen Debug."},
+    {"正在重开任务换机，请稍候。","Restarting with another aircraft; please wait."},
+    {"正在等待管理界面暂停任务。","Waiting for management to pause the mission."},
+    {"（总开关关闭，仅保存设置）"," (saved; mod disabled)"},
+    {"种SP；可继续调试组合）。"," SP weapons; loadout debugging is available)."},
+    {"已返回菜单，换机请求已取消","Aircraft change cancelled after returning to the menu."},
+    {"SP 弹药百分比必须为整数","SP ammunition percentages must be whole numbers."},
+    {"换机候选编号重复或名称为空","The aircraft list contains duplicate identifiers or missing names."},
+    {"没有其他可用 SP 组合","No other SP combination is available."},
+    {"正在加载兵装，请稍候……","Loading weapons. Please wait..."},
+    {"SP 弹药百分比超出范围","SP ammunition percentages are out of range."},
+    {"当前飞行控制尚未开放。","Flight controls are not ready."},
+    {"请先退出游戏暂停菜单。","Close the pause menu first."},
+    {"请选择第一种特殊兵装。","Select your first special weapon."},
+    {"多 SP 模型：开启","Multi-SP models: ON"},
+    {"多 SP 模型：关闭","Multi-SP models: OFF"},
+    {"决定：选择 SP1。","Confirm: select SP1."},
+    {"正在重开任务，等待 ","Restarting the mission; waiting for "},
+    {"当前玩家机体尚未就绪","The player aircraft is not ready."},
+    {"Mod总开关：开启","Mod: enabled"},
+    {"Mod总开关：关闭","Mod: disabled"},
+    {"（DLC许可未知）"," (DLC ownership unknown)"},
+    {"半主动雷达制导导弹","Semi-Active Air-to-Air Missile"},
+    {"调试换装协议不匹配","The debug loadout interface does not match the controller."},
+    {"（无DLC许可）"," (DLC not owned)"},
+    {"（许可资料未知）"," (Ownership data unavailable)"},
+    {"高机动空对空导弹","Quick Maneuver Air-to-Air Missile"},
+    {"高容量空对空导弹","High-Capacity Air-to-Air Missile"},
+    {"高威力空对空导弹","High-Power Air-to-Air Missile"},
+    {"四目标空对空导弹","4-Target Air-to-Air Missile"},
+    {"六目标空对空导弹","6-Target Air-to-Air Missile"},
+    {"八目标空对空导弹","8-Target Air-to-Air Missile"},
+    {"四目标空对地导弹","4-Target Air-to-Ground Missile"},
+    {"八目标空对地导弹","8-Target Air-to-Ground Missile"},
+    {"游戏实例尚未就绪","The game is still loading."},
+    {"快捷键有重复绑定","Shortcut bindings must be distinct."},
+    {"调试方案编号无效","The debug loadout contains an invalid weapon slot."},
+    {"换机生效方式无效","The aircraft change mode is invalid."},
+    {"换机候选列表无效","The aircraft list is invalid."},
+    {"换机候选编号无效","An aircraft identifier is invalid."},
+    {"管理状态错误：","Management state error: "},
+    {"换机状态错误：","Aircraft state error: "},
+    {"多用途爆炸导弹","Multi-Purpose Burst Missile"},
+    {"全向多用途导弹","All-Directional Multi-Purpose Missile"},
+    {"该兵装尚未购买","This weapon has not been purchased"},
+    {"变更特殊兵装。","Change special weapons."},
+    {"高速空对空导弹","High-Velocity Air-to-Air Missile"},
+    {"远程空对空导弹","Long-Range Air-to-Air Missile"},
+    {"远程空对地导弹","Long-Range Air-to-Ground Missile"},
+    {"自锻破片子母弹","Self-Forging Fragment Submunitions"},
+    {"请选择其他机体","Select a different aircraft."},
+    {"快捷键格式无效","Shortcut data is invalid."},
+    {"换机协议不匹配","The aircraft interface does not match the controller."},
+    {"本模组已关闭","The mod is disabled."},
+    {"战术激光系统","Tactical Laser System"},
+    {"换机未完成：","Aircraft change failed: "},
+    {"换机已生效：","Aircraft change applied: "},
+    {" 实际生成。"," to spawn."},
+    {"Mod提示：","Mod: "},
+    {"小型空爆导弹","Short-Range Aerial Suppression Missile"},
+    {"远程反舰导弹","Long-Range Anti-Ship Missile"},
+    {"远程巡航导弹","Land Attack Cruise Missile"},
+    {"精确制导炸弹","Guided Penetration Bomb"},
+    {"远距撒布弹药","Stand-Off Dispenser"},
+    {"燃料空气炸弹","Fuel-Air Explosive Bomb"},
+    {"快捷键不可用","This shortcut is unavailable."},
+    {"换机状态无效","The aircraft change state is invalid."},
+    {"界面错误：","UI error: "},
+    {"请选择机体","Select an aircraft"},
+    {"电磁轨道炮","Electromagnetic Launcher"},
+    {"脉冲激光炮","Pulse Laser System"},
+    {"多目标导弹","Multiple-Launch Standard Missile"},
+    {"（已补满）"," (refilled)"},
+    {"（未购买）"," (Not purchased)"},
+    {"无制导炸弹","Unguided Bomb"},
+    {"小直径炸弹","Small Diameter Bomb"},
+    {"制导火箭弹","Guided Rocket Launcher"},
+    {"机炮吊舱","Machine Gun Pod"},
+    {"战术激光","Tactical Laser System"},
+    {"脉冲激光","Pulse Laser System"},
+    {"电子干扰","Integrated Electronic Warfare System"},
+    {"无兵装","NO WEAPON"},
+    {"SP：","SP: "},
+    {"火箭弹","Rocket Launcher"},
+    {"电磁炮","Electromagnetic Launcher"},
+    {"无人机","Unmanned Aerial Vehicle"},
+    {"是","YES"},
+    {"否","NO"},
+    {"（"," ("},
+    {"）",")"},
+};
+inline bool containsHan(const std::string& text) {
+    for(size_t i=0;i+2<text.size();++i) {
+        const auto a=static_cast<unsigned char>(text[i]),b=static_cast<unsigned char>(text[i+1]),c=static_cast<unsigned char>(text[i+2]);
+        if((a&0xf0)==0xe0 && (b&0xc0)==0x80 && (c&0xc0)==0x80) {
+            const unsigned code=((a&15)<<12)|((b&63)<<6)|(c&63);
+            if((code>=0x3400 && code<=0x9fff)||(code>=0xf900 && code<=0xfaff))return true;
+        }
+    }
+    return false;
+}
+inline std::string localizedUiMessage(std::string text,bool chinese,const char* fallback) {
+    // 面板和通知都去掉Lua文件位置与堆栈；完整原文仍在日志页。
+    const auto newline=text.find_first_of("\r\n");if(newline!=std::string::npos)text.resize(newline);
+    const auto source=text.find(".lua:");
+    if(source!=std::string::npos) {
+        size_t end=source+5;while(end<text.size() && text[end]>='0' && text[end]<='9')++end;
+        if(end<text.size() && text[end]==':') {++end;while(end<text.size() && text[end]==' ')++end;text.erase(0,end);}
+    }
+    if(text.empty())return text;
+    for(const auto& entry:uiMessages) {
+        const std::string from=chinese?entry.second:entry.first,to=chinese?entry.first:entry.second;
+        // 英文回译仅限整句，避免把英文机体简称、兵装代号或括号改成中文。
+        if(chinese) {if(text==from)return to;continue;}
+        size_t at=0;while((at=text.find(from,at))!=std::string::npos){text.replace(at,from.size(),to);at+=to.size();}
+    }
+    // 未登记的底层异常使用对应功能的英文摘要；不在英文页泄漏中文堆栈。
+    if(!chinese && containsHan(text))return fallback;
+    return text;
+}
+}
