@@ -22,7 +22,7 @@ LAYOUTS = {
         ('4AAM','GPB','SASM'): {'SWP1':'MSP_f16c_missile_outer','SWP2':'native'},
     },
     'f02a': {
-        ('LASM','HVAA'): {'SWP1':'MSP_f02a_lasm_outer','SWP2':'MSP_f02a_hvaa_inner'},
+        ('LASM','HVAA'): {'SWP1':'MSP_f02a_lasm_inner','SWP2':'MSP_f02a_hvaa_outer'},
         ('LASM','RKT'): {'SWP1':'MSP_f02a_lasm_inner','SWP3':'MSP_f02a_rocket_outer'},
         ('HVAA','RKT'): {'SWP2':'MSP_f02a_hvaa_inner','SWP3':'MSP_f02a_rocket_outer'},
         ('LASM','HVAA','RKT'): {'SWP1':'MSP_f02a_lasm_inner_neg','SWP2':'MSP_f02a_hvaa_inner_pos',
@@ -62,9 +62,9 @@ CONCLUSIONS = {
     ],
     'f02a':[
         '四巢共76原生管口，每巢19；多挂保留外翼两巢38口，窗口仍为8，不据资源管口数量确定运行逻辑长度。',
-        '已核对六种全部LOD分区副本；rocket_outer同时保留两种材质的巢体及支架，不能只关一个section。',
+        '已核对七种全部LOD分区副本；LASM+HVAA双挂按用户要求大LASM内侧、小HVAA外侧；rocket_outer同时保留两种材质的巢体及支架。',
         '三挂内翼负Y为LASM、正Y为HVAA，各一处少于两窗口；显式排除内翼火箭口，固定巢体不按单发耗尽隐藏。',
-        'LASM/HVAA静态间隙约1.367且HVAA有InitialDropSpeed；真实下落净空与发射器映射仍待接入。',
+        '旧双挂约1.367的静态间隙不适用于反向内外侧布局；新选位及HVAA原生下落须重新观察，不能继承旧净空结论。',
     ],
     'mr2k':[
         'GPB前腹正Y固定结构用途未明，已核对的gpb_neg_aux仍保留该结构；GPB共存时4AAM用后腹sp23/24。',
@@ -98,6 +98,8 @@ def build(source):
     proof_reference = {'upstream_thread':UPSTREAM_THREAD, 'upstream_commit':UPSTREAM_COMMIT,
                        'receipt':RECEIPT, 'receipt_sha256':digest(ROOT/RECEIPT),
                        'recipes':RECIPES, 'recipes_sha256':digest(ROOT/RECIPES)}
+    if receipt.get('local_revision'):
+        proof_reference['local_revision'] = receipt['local_revision']
     found = set()
     for sample in result['aircraft']:
         code = sample['code']

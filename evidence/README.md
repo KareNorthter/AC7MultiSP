@@ -2,6 +2,7 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [2.7.2布局源码修订](2.7.2-layout.json)：F-2A LASM内侧/HVAA外侧，新增挂架三LOD编码往返；未构建安装，当前游戏2.7.1；主管接手见开发说明。
 - [2.7.1用户实测](2.7.1-user-validation.json)：切换/发射、Rafale/Typhoon与ADF-11F反馈正常；F-2A所有多挂外观组合仍卡，关闭模型恢复，待专门研究。
 - 2.7.1两线修复：[来源/范围](2.7.1-integration.json)、[构建](2.7.1-build.json)、[检查](2.7.1-tests.json)、[安装](2.7.1-installed.json)。F-2A切换/重复巡检、Rafale名称匹配、Typhoon双挂及UAV引用扩容已安装，用户反馈见上条，不能外推全部场景通过。
 - [2.7.0挂载实测与源码修订](2.7.0-mount-feedback-repair.json)：F-2A忙时等待及性能候选、Rafale名称绑定、Typhoon双挂补位；该回执保留研究时状态，最新成套安装见2.7.1回执。

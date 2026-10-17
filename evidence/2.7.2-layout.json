@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "source_version": "2.7.2",
+  "installed_version": "2.7.1",
+  "user_validation": "evidence/2.7.1-user-validation.json",
+  "validated_source_commit": "dc4c2c1",
+  "changes": {
+    "aircraft": "f02a",
+    "combination": [
+      "LASM",
+      "HVAA"
+    ],
+    "LASM": {
+      "group": "SWP1",
+      "sockets": [
+        "sp13",
+        "sp14"
+      ],
+      "rack": "MSP_f02a_lasm_inner"
+    },
+    "HVAA": {
+      "group": "SWP2",
+      "sockets": [
+        "sp21",
+        "sp22"
+      ],
+      "rack": "MSP_f02a_hvaa_outer"
+    }
+  },
+  "all_other_aircraft_and_combination_positions_unchanged": true,
+  "ammo_and_cooldowns_unchanged": true,
+  "new_asset_offline_roundtrip": true,
+  "new_asset_lods": 3,
+  "local_asset_input": "Temp/mount-assets-2.7.2/source",
+  "asset_variants": 16,
+  "asset_pair_members": 32,
+  "asset_names_and_package_will_change": true,
+  "core_lua_and_pak_must_upgrade_together": true,
+  "recipe_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+  "proof_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
+  "generated_header_sha256": "4095a8e22bc9722c3d8c89a2dae18b7be2598e4c408f95999555deebfa7f0f35",
+  "compiled": false,
+  "test_modules_added": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_operated": false,
+  "limits": [
+    "新内外侧布局未实测；静态/动态净空需重新观察",
+    "F-2A所有多挂组合性能问题仅记录，未试改",
+    "三挂外侧被RKT占用，仍为LASM/HVAA分侧内翼，不机械重叠外侧导轨"
+  ]
+}

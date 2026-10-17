@@ -10,8 +10,8 @@
   "game_process_access": false,
   "installable_package": false,
   "integration_allowed": false,
-  "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
-  "variant_count": 22,
+  "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+  "variant_count": 23,
   "local_artifacts_relative": "Temp/static-mount-split-20261017-091706-220456",
   "variants": [
     {
@@ -5529,6 +5529,259 @@
       "source_encrypted_uasset_sha256": "18f9367416da25349a879de3d971f7eef790a1c12dc78dffb6a7e99e94b7ed12",
       "source_decoded_uasset_sha256": "2e9d5d7e1bcdc7cf630d4efea9501ba8f8b1bfe47126bc6a876c8c16d863f83a",
       "source_decoded_uexp_sha256": "462e40e2c9f451251b987fb41adc4c4c6ffae444ab32fa35927061561b6bc276"
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f02a_SWP2_SM",
+      "json_sha256": "7620937b9f471ce69d920108c6002770d125fbc93cdaaf17047a401059368d7f",
+      "extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          9.5367431640625e-07,
+          1.7881393432617188e-07,
+          1.7881393432617188e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2204,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1952,
+                "min": 0,
+                "max": 2203,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.804458618164062
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 1952,
+              "reversed": 0,
+              "depth": 1952,
+              "reversed_depth": 0,
+              "adjacency": 1952
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 948,
+                "min": 0,
+                "max": 1207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 948,
+              "reversed": 0,
+              "depth": 948,
+              "reversed_depth": 0,
+              "adjacency": 948
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 740,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 428,
+                "min": 0,
+                "max": 739,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -6.418259620666504,
+                27.7818603515625
+              ],
+              [
+                -41.91996765136719,
+                41.91996765136719
+              ],
+              [
+                -5.861913204193115,
+                0.5938960909843445
+              ]
+            ],
+            "buffers": {
+              "main": 428,
+              "reversed": 0,
+              "depth": 428,
+              "reversed_depth": 0,
+              "adjacency": 428
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f02a_hvaa_outer",
+        "aircraft": "f02a",
+        "source_asset": "f02a_SWP2_SM",
+        "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -35,
+            1000
+          ],
+          [
+            -1000,
+            35,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "purpose": "2.7.2用户要求：LASM+HVAA双挂时较小HVAA用外翼双架，大LASM用内翼双架"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_outer",
+      "candidate_extras_sha256": "6f0d44436bcfdca562c193295e955298b8fb80526a90f7a21b0bce964bc8fb52",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 976,
+              "degenerated": 976
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 976,
+              "degenerated": 976
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 976,
+              "degenerated": 976
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 474,
+              "degenerated": 474
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 474,
+              "degenerated": 474
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 474,
+              "degenerated": 474
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 214,
+              "degenerated": 214
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 214,
+              "degenerated": 214
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 214,
+              "degenerated": 214
+            }
+          }
+        }
+      ],
+      "changed_bytes": 24086,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "cf56855bf06e217469f287f31a2ee210d7b1de030982efd0cb9ea9e76c9e0b3b",
+        ".uexp": "c2f1b6cdefb6c7c98071b1fffd830b194f079f020fb3e13475d953f6eefb0e6b"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "eb4ecb258f6be230c95d6c7801454c101e2366eddc383945c5472c6cbd90f6fb",
+        ".uexp": "add67a6d9a7e7f154f4ec23ed8f27b2ef4bbe165eda784c7f8aaa4404fc91d0c"
+      },
+      "source_pak": "pakchunk0-WindowsNoEditor.pak",
+      "source_pak_asset": "Nimbus/Content/Vehicles/Aircraft/f02a/f02a_SWP2_SM.uasset",
+      "source_encrypted_uasset_sha256": "4a2a4c52921d9c63f541ccbc39546a731d684394de29cbf01c37f473e079f213",
+      "source_decoded_uasset_sha256": "71dc1cd82278f26ec9ec91015dd5b5a2bed2bd136e8780d5920c0285a28e8628",
+      "source_decoded_uexp_sha256": "9207580b25607eb63f188417460718574328528c4d54dfadb39b621f2a680e62"
     }
   ],
   "reference_research": {
@@ -6339,5 +6592,17 @@
     "relative_path": "Temp/static-mount-split-20261017-091706-220456/挂架分区实验.png",
     "sha256": "0a596c7981cb9e86c2610f3c2839b8e19f224a1556ee146728d9072e399294d8",
     "scope": "LOD0几何俯视对照，非游戏截图"
+  },
+  "local_revision": {
+    "version": "2.7.2",
+    "source": "用户要求LASM内侧、HVAA外侧",
+    "prior_receipt_commit": "dc4c2c1",
+    "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+    "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+    "added_variants": [
+      "MSP_f02a_hvaa_outer"
+    ],
+    "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+    "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
   }
 }

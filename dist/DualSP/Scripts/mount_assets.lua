@@ -1,6 +1,6 @@
 -- 独立挂架资源清单；由同一份七组合数据生成。
 return {
-    f02a={{0,"MSP_f02a_lasm_outer"},{1,"MSP_f02a_hvaa_inner"},{2,"MSP_f02a_lasm_inner"},{3,"MSP_f02a_rocket_outer"},{4,"MSP_f02a_lasm_inner_neg"},{5,"MSP_f02a_hvaa_inner_pos"}},
+    f02a={{0,"MSP_f02a_lasm_inner"},{1,"MSP_f02a_hvaa_outer"},{2,"MSP_f02a_rocket_outer"},{3,"MSP_f02a_hvaa_inner"},{4,"MSP_f02a_lasm_inner_neg"},{5,"MSP_f02a_hvaa_inner_pos"}},
     f15c={},
     f15j={},
     f15m={},

@@ -451,6 +451,31 @@
         ]
       ],
       "purpose": "保留该SP自身外翼导轨及原Socket，不能因几何相同而跨组替换Socket元数据"
+    },
+    {
+      "name": "MSP_f02a_hvaa_outer",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP2_SM",
+      "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -35,
+          1000
+        ],
+        [
+          -1000,
+          35,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "2.7.2用户要求：LASM+HVAA双挂时较小HVAA用外翼双架，大LASM用内翼双架"
     }
   ]
 }

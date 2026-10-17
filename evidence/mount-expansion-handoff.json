@@ -34,7 +34,7 @@
   "source_files": [
     {
       "record": "evidence/mount-expansion-batch1.json",
-      "sha256": "af65ede5dd1dad515f55ebf641a22ca3755b251d95a8947018c641edde987e35"
+      "sha256": "2981e4b0451ae7a262c4485c05e96cd961dcaf1dd28b00335682e788e9ae0d54"
     },
     {
       "record": "evidence/mount-expansion-batch2.json",
@@ -11427,9 +11427,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f02a_hvaa_inner",
           "MSP_f02a_rocket_outer"
@@ -11469,8 +11481,8 @@
         {
           "group": "SWP1",
           "sockets": [
-            "sp11",
-            "sp12"
+            "sp13",
+            "sp14"
           ],
           "weapon": "LASM",
           "mesh": "w_lasm_j1_SM",
@@ -11483,8 +11495,8 @@
         {
           "group": "SWP2",
           "sockets": [
-            "sp23",
-            "sp24"
+            "sp21",
+            "sp22"
           ],
           "weapon": "HVAA",
           "mesh": "w_saam_a0_SM",
@@ -11505,8 +11517,8 @@
             "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
             "hide_children": false,
             "restore_native_mesh_required": true,
-            "variant": "MSP_f02a_lasm_outer",
-            "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_outer"
+            "variant": "MSP_f02a_lasm_inner",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_lasm_inner"
           },
           {
             "group": "SWP2",
@@ -11515,8 +11527,8 @@
             "socket_metadata_policy": "保留本组原生Socket与父链；同组副本元数据已原样保持",
             "hide_children": false,
             "restore_native_mesh_required": true,
-            "variant": "MSP_f02a_hvaa_inner",
-            "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_inner"
+            "variant": "MSP_f02a_hvaa_outer",
+            "package": "/Game/AC7MultiSP/Research/MSP_f02a_hvaa_outer"
           },
           {
             "group": "SWP3",
@@ -11533,17 +11545,29 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
-          "MSP_f02a_lasm_outer",
-          "MSP_f02a_hvaa_inner"
+          "MSP_f02a_lasm_inner",
+          "MSP_f02a_hvaa_outer"
         ],
         "runtime_asset_loading_verified": false,
         "game_verified": false
       },
-      "layout_notes": "LASM外侧、HVAA内侧各两处达到各自窗口2；两套整架均占内外四站，直接叠会重复。"
+      "layout_notes": "用户要求大LASM在内侧sp13/sp14、小HVAA在外侧sp21/sp22；使用各原组对应分区副本，窗口仍各2。"
     },
     {
       "code": "f02a",
@@ -11678,9 +11702,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f02a_lasm_inner",
           "MSP_f02a_rocket_outer"
@@ -11839,9 +11875,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f02a_lasm_inner_neg",
           "MSP_f02a_hvaa_inner_pos",
@@ -13369,9 +13417,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f16c_missile_outer"
         ],
@@ -13562,9 +13622,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f16c_sasm_outer"
         ],
@@ -13679,9 +13751,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_f16c_missile_outer"
         ],
@@ -14656,9 +14740,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_mr2k_aam_rear"
         ],
@@ -14810,9 +14906,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_mr2k_gpb_neg_aux",
           "MSP_mr2k_lasm_pos"
@@ -15023,9 +15131,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_mr2k_gpb_neg_aux",
           "MSP_mr2k_aam_rear",
@@ -15737,9 +15857,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_rflm_hcaa_outer",
           "MSP_rflm_laam_belly"
@@ -15923,9 +16055,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_rflm_hcaa_belly"
         ],
@@ -16108,9 +16252,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_rflm_laam_belly"
         ],
@@ -16318,9 +16474,21 @@
         "upstream_thread": "01a14764-4328-7923-a865-22b7efba4d8e",
         "upstream_commit": "7ae97b6",
         "receipt": "evidence/sp-combination-static-split-experiment.json",
-        "receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+        "receipt_sha256": "5c2e78eba359f44cc6937cacd824c104f81fcc6c5adaa124a13b3fe7e73ea8a3",
         "recipes": "src/research/static_mount_split_recipes.json",
-        "recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+        "recipes_sha256": "91c76b009dc772baf6f91880d6ba5fffccdba464819acc14b7885317c6660718",
+        "local_revision": {
+          "version": "2.7.2",
+          "source": "用户要求LASM内侧、HVAA外侧",
+          "prior_receipt_commit": "dc4c2c1",
+          "prior_receipt_sha256": "e768c25e3d7dbc19b4be5a9f4409a08b719c1a79608c9f5c500e1f0a0332db93",
+          "prior_recipes_sha256": "4410f3b5bd9de981aca093f38e41d5008dd949441624cb86507eefaaa63e9da8",
+          "added_variants": [
+            "MSP_f02a_hvaa_outer"
+          ],
+          "local_artifacts_relative": "Temp/f02a-hvaa-outer-2.7.2",
+          "inherited_reports": "原22项离线报告原样保留，未重新转换；新增1项三LOD/原生编码往返，未编译、测试模块或安装"
+        },
         "variants": [
           "MSP_rflm_hcaa_belly_neg",
           "MSP_rflm_laam_belly_pos"
