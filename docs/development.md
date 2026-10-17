@@ -57,14 +57,20 @@ python -X utf8 src/research/build_animated_mount_candidates.py --previous eviden
 
 `src/research/build_animated_runtime_data.py`只为F-22A／Su-47／Su-57TG生成`src/animated_mount_data.hpp`，入口为`animatedMountData()`，需要宿主已有Json类型；没有改旧静态生成器／主核心／Lua或自动注册机体。数据包含三机21组合：`groups`的真实class／rack／自身mesh／Skeleton／AnimClass／组件种类／完整Socket顺序／窗口，`plans[1..7]`的native旁路、按owner索引的selected／providers、racks呈现mask、required骨架mask及Su-47端点门槛。组和provider是原生配置0–2，mask不是用户逻辑SP槽顺序；selected索引属于provider的资源Socket表，必须先按名字双射到真实池，不能直接作为运行组件下标。F-22A SWP3资源顺序不连续，生成器保留每方案指定的Socket次序，不按set重新排序。
 
+每架另有`body.mesh/body.skeleton/body.animclass`与`body.packages`，同时保留`body_driver`绑定详情；每组也有`packages`和带对象名的`*_path`。包来自实际PAK记录转/Game，Pawn→组件SkeletalMesh/AnimClass→mesh.Skeleton→实际AnimBP的Sequence/BoneConfig沿FPackageIndex外层链逐项核对，不按code猜Body资产。Body与挂架的SP通道从实际网格骨名和所绑配置表解析；资源只含spwc不等于运行资源身份已验证，`runtime_identity_and_channel_qualification`仍false。F-22A采样中的PlaneBodyMesh字段0xef8只记录为本次观察，不给其他机体硬编码同一偏移。
+
 逻辑长度／持久池数仍为null，由真实原生capture和Socket完整集合双射核对。可选读取主管已取得的F-22A单8AAM暂停采样：逻辑Num14、window8，持久池6／6／14仅作该场景观察，不设为全部机体固定规格，也不证明另两类SP队列长度。
 
-Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间平移和显式旋转；所有Socket.RelativeScale均未序列化，运行组件单位／缩放没有该机实证，原有接触面分析也没有给出可用的距离／角度／缩放容差。因此scale与三类tolerance保留null，runtime_gate_ready=false；缺这些条件禁止可视接管，不用1／0／0.87等经验值填空。骨参考缩放为单位不等于Socket缩放已证。补齐至少需要Su-47真实全开时的provider变换／缩放／单位证据、同帧求值见证及有净空依据的容差。原门控语义及来源保留；旧研究字符串中的request=2只是历史文字，运行全开必须使用当前已核对原生Host语义，不把这个旧数字写入产品判据。
+Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间端点。主管新增两次单挂全开只读采样后，分别只使用当前配置1的SWP2／配置2的SWP3（animation_flags=0），没有用另外停更组的缓存证明全开。实际Socket.RelativeScale与真实Default__SkeletalMeshSocket CDO均为(1,1,1)；发布骨骼按实际mesh参考骨架六骨双射，骨＋Socket组合的平移／旋转与资源端点float32分量逐项相等，缩放和1:1组件单位映射因此有了该组实证。数据保留来源SHA、实际局部属性、已发布骨骼、原生部件状态与发布帧，未调用GetSocketTransform或任何游戏函数。该观察不等于多挂调度已经通过。
+
+三类tolerance仍为null，runtime_gate_ready=false：现有资料给的是接触面／离散采样结论，没有对实际全开Body、挂架允许接触基线及邻弹给出可支撑距离／角度／缩放误差预算的最近距离下界；约3.6e-15的离线组合差值仅是数值观察，不是几何容差。还需多挂所需隐藏provider的当帧发布／取位见证，不能用骨缓存getter冒充。原门控语义及来源保留；旧研究字符串中的request=2只是历史文字，运行全开必须使用当前已核对原生Host语义，不把这个旧数字写入产品判据。
+
+现有几何报告定位为`evidence/mount-expansion-animated.json → reviews[1].report.aircraft[0]`（code=su47、分析来源animated-sukhoi-review.json），重点看`combinations`、`native_surface_contact_baselines`及`whole_rack_comparisons`；高层显隐依据在`aircraft[code=su47].combinations[].internal_ammo_visibility.offline_sample_review`。这些报告只统计离散键接触，不能反推出最近距离。最小补充是为四种多挂在全开状态建立明确允许接触面集，再求其余Body／架体／邻弹面的保守净空下界，并用各弹体相对Socket最大半径把平移、转角、缩放的共同扰动限制在该下界内；没有这个预算就不交付经验容差。端点`position/rotation/scale`供绑定器直接读取，`position/rotation`分别与原`translation/rotation_xyzw`同义，旋转顺序为xyzw。
 
 生成命令只整理数据，输出必须新路径；审阅后按字节更新头文件，不编译或运行游戏：
 
 ```powershell
-python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --output Temp/new-animated-runtime-data.hpp
+python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --endpoint-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --endpoint-state E:/AC7_MultiSP/Temp/su47-qaam-endpoint-20261017.json --output Temp/new-animated-runtime-data.hpp
 ```
 
 头文件记录覆盖层／第三批／分析器和资源来源摘要；可选采样只保留摘要与紧凑观察，不提交原始内存。三单native=true；任何运行前提不满足仍须按整机七组合门槛回退，不能只开启Su-47其中几条。此次仅生成并核对数据，未编译、运行测试、安装或操作游戏。
