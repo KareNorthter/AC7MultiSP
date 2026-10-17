@@ -10,9 +10,11 @@ const Json& mountExpansionPlan(MountAircraft aircraft,unsigned mask) {
     return mountExpansionDefinition(aircraft).at("plans").at(mask);
 }
 bool mountFixedEmitter(MountAircraft aircraft,int kind) {
+    if(mountExterior(aircraft))return aircraft==MountAircraft::Pkfa && kind==2;
     return mountExpanded(aircraft) && mountExpansionDefinition(aircraft).at("groups").at(kind).at("fixed").get<bool>();
 }
 bool mountNeedsMappedTransform(const FixedMountState& state,int kind) {
+    if(mountExterior(state.aircraft))return false; // 机外外观保留不换原生发射点。
     return !mountFixedEmitter(state.aircraft,kind);
 }
 // 根据登记Socket列表建立周期表；逻辑槽保留原序号，登记序号不等于运行池下标。

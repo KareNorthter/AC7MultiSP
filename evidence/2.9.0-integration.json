@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "candidate": "2.9.0",
+  "base_installed": "2.8.1",
+  "authorization": "用户批准机外保留路线，要求留档旧完整方案并完成后编译安装；已明确回复游戏退出",
+  "archive": {
+    "tag": "archive/full-bay-mount-2.8.1",
+    "commit": "57fd5d396d050e29a6b63e3017c056ee30b646de",
+    "build_dir": "Temp/build-2.8.1",
+    "research_refs": [
+      "9cefa43",
+      "66d4f3d"
+    ],
+    "scope": "F22A/Su47/Su57系列完整挂载布局、原21组合、普通Su57旧研究、严格端点及运行源码/交付回执均留档",
+    "user_assessment": "用户认可现有多SP挂载布局可行，当前因性能与运行表现转向轻量路线，后续可继续研究；不将暂缓误写为所有几何方案不可行"
+  },
+  "bone_helper_commit": "8c83e00",
+  "bone_helper_sha256": "9abb661123560f4cdd9245122287e3fb87f83e847a688a1642e0489ef6c0e67d",
+  "runtime_policy": {
+    "su47": "任务/机库/补给直接当前SP原生模型与动画，多SP兵装保留，不启用旧完整绑定和精确姿态门槛",
+    "su57tg": "任务/机库/补给直接当前SP原生模型与动画，多SP兵装保留，不启用旧完整绑定",
+    "pkfa": "含PLSL的双/三挂仅保留原生静态SWP3吊舱，4AAM/GPB、激光效果源、发射及冷却原生",
+    "f22a": "含8AAM的双/三挂保留侧sp31..38，QAAM/XSDB和当前8AAM内部原生呈现；当前8AAM原生14槽/取位保留",
+    "native_masks_for_exterior_aircraft": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "retained_masks_for_exterior_aircraft": [
+      5,
+      6,
+      7
+    ],
+    "f22_bone_visibility": "只在native config不是2时隐藏SWP3腹部根SWPCover_16..24；根名称、30骨父链、反射参数、PBO_None均运行预检。Init前和当前8AAM时归还，不碰侧25..38",
+    "f22_animation": "仅必要NoSkeleton/Tick维持与100ms兜底；不写Parts、开合请求/进度或BoneTransform；原生Pause不清除",
+    "external_ammo": "8AAM按原生池下标、库存和补装保留，当前已armed的8AAM逐发显隐仍原生；PLSL固定舱不按导弹消耗隐藏",
+    "native_launch_transforms": true,
+    "new_meshes_or_animations": false,
+    "cfa44_added": false,
+    "x02s_visuals_added": false
+  },
+  "f35_reference_functions": {
+    "mountPartsUpdate": {
+      "same_source_as_archive": true,
+      "source_sha256": "5987945b74ac59214d9aaf75911624d8783f67771d410d57604c0277edd20231"
+    },
+    "bindF35Cover": {
+      "same_source_as_archive": true,
+      "source_sha256": "eb14f19887cb7ac4187f19543a5563215409f58e95d602d2af827eedc36cd97b"
+    }
+  },
+  "existing_static_rules_changed": false,
+  "failure_and_cleanup": "视觉错误独立回退；骨租约/侧架更新/显隐逐项归还，归还失败保留待重试，死亡对象丢弃；任务预览同组件共享账本",
+  "build_dir": "Temp/build-2.9.0",
+  "build_receipt_sha256": "196889f50ece6fa2b1c5f61764b68a831248dae0c5a22adee7244aa16b2541f2",
+  "test_receipt_sha256": "a54b5065ec42d0bea838ac4d8b345c003678e6ccd3592ac166a2614585ac27e7",
+  "install_receipt_sha256": "e3a577ba3d039ec86d9b8c9c15ddb3702b1e20d6e0f20048f9ef04231d2f425c",
+  "compiled": true,
+  "tests_passed": true,
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "targeted_checks": "扩展既有weapon_group_test，核对Su47/TGM旁路分类、PLSL固定舱、F22外部库存显隐与旧姿态门槛旁路、新两机原生发射取位边界；未新增测试模块",
+  "installed": true,
+  "runtime_files_verified": 16,
+  "mount_members_verified": 32,
+  "mount_pak_same_as_2_8_1": true,
+  "protected_files_verified": 141,
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-135954-441251",
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "fps_gain_verified": false,
+  "pushed": false,
+  "published": false,
+  "manual_test_focus": [
+    "Su47/TGM原生当前SP模型、切换和任务帧率",
+    "普通Su57含PLSL的双/三挂跨SP保留吊舱、发射与机库补给",
+    "F22含8AAM双/三挂侧部保留、8AAM逐发消耗/补装、QAAM/XSDB原生腹部、任务帧率及切换卡顿",
+    "关闭模型、单挂/无目标外装组合和场景退出的原生归还；F35回归对照"
+  ]
+}

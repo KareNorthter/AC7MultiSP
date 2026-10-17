@@ -199,7 +199,7 @@ void mountAnimationPrepareEndpoints(const FixedMountState& state) {
     if(state.aircraft==MountAircraft::Su47)mountAnimationExact.prepare(state,mountAnimationHost);
 }
 void mountAnimationEnsure(FixedMountState& state,unsigned scene) {
-    if(!mountAnimated(state.aircraft))return;
+    if(!mountAnimated(state.aircraft) || mountExterior(state.aircraft) || mountNativeOnly(state.aircraft))return; // 完整弹舱方案留档，产品不再取得共舱控制。
     MountAnimationWorkTimer work(2);
     require(!mountAnimationNativeDepth,"动画挂载：原生初始化期间不允许新接管");
     const auto aircraft=mountAnimationAircraft(state.aircraft);

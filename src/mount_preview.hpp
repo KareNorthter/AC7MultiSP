@@ -49,6 +49,7 @@ bool mountOuterContains(Addr object,Addr expected) {
 // 按任务满载规则聚合，限于实际持久位置；没有创建额外弹体。
 uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
     require(count>=1 && count<=3,"模型预览：槽数无效");
+    if(mountExterior(state.aircraft))return mountExteriorPreviewMask(state,kinds,ammo,count);
     const auto& specification=mountSpecification(state.aircraft);
     uint64_t result=0;
     for(int slot=0;slot<count;++slot) {
@@ -69,6 +70,8 @@ void mountPreviewRememberTask(const MountVisual& source) {
 }
 void mountPreviewRestoreVisuals() {
     std::string error;
+    try { mountExteriorRelease(mountPreview.layout); }
+    catch(const std::exception& item) { error=item.what(); }
     if(!mountAnimationRelease(mountPreview.layout.plane.address,2))error="多 SP 动画控制仍待归还";
     for(const auto& item:mountPreview.layout.meshOverrides)try {
         mountApplyMesh(item,false);
@@ -91,6 +94,7 @@ bool mountPreviewRelease(Addr owner,bool resumeTask) {
         const bool resume=resumeTask && mountPreviewOwnsTask() && fixedMount.bound && mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager);
         mountPreview={};
         if(resume) {
+            if(mountExterior(fixedMount.aircraft))mountExteriorMaintain(fixedMount);
             if(fixedMount.animatedRack.address && mountAlive(fixedMount.animatedRack))mountSetRackAnimation(fixedMount.animatedRack.address,false,true);
             mountApply();
         } // 恢复本次仍有效任务的实际模型，不覆盖任何弹药缓存。
@@ -118,6 +122,7 @@ void mountPreviewRetryRestore() {
 void mountPreviewAnimate() {
     auto& state=mountPreview.layout;
     const Addr plane=state.plane.address;const unsigned mask=state.kindsMask;
+    if(mountExterior(state.aircraft)) { mountExteriorMaintain(state);return; }
     if(mountAnimated(state.aircraft)) { mountAnimationEnsure(state,2);return; }
     if(state.aircraft==MountAircraft::F35c) {
         const Addr rack=read<Addr>(plane+0x1b90);
@@ -138,6 +143,7 @@ void mountPreviewAnimate() {
 }
 // 组件复用时只能继承记录过的原生请求；新组件必须保留自己的初始状态。
 void mountPreviewInheritNative(FixedMountState& next,const FixedMountState& prior) {
+    mountExteriorInherit(next,prior);
     for(auto& visual:next.visuals)for(const auto& old:prior.visuals)if(mountSameIdentity(visual.identity,old.identity)) {
         visual.nativeVisible=old.nativeVisible;visual.nativeHidden=old.nativeHidden;break;
     }
@@ -163,6 +169,16 @@ bool mountPreviewLayoutChanged() {
     if(read<Addr>(state.manager.address+0x150)!=state.meshManager.address || !mountAlive(state.meshManager))return true;
     if(read<Addr>(state.plane.address+0x160)!=state.root.address || !mountAlive(state.root) ||
        read<Addr>(state.plane.address+0x1ae0)!=state.weaponBase.address || !mountAlive(state.weaponBase))return true;
+    if(mountExterior(state.aircraft)) {
+        if(!mountAlive(state.exteriorRack) || read<Addr>(state.plane.address+state.rackOffsets[2])!=state.exteriorRack.address)return true;
+        if(state.aircraft==MountAircraft::Pkfa)return false;
+        const Addr array=state.meshManager.address+0x170;
+        if(read<int>(array+8)!=state.poolCounts[2])return true;
+        const Addr data=read<Addr>(array);
+        for(const auto& visual:state.visuals)if(!mountAlive(visual.identity) ||
+            (visual.index<0?state.exteriorRack.address:read<Addr>(data+visual.index*8))!=visual.identity.address)return true;
+        return false;
+    }
     std::array<Addr,3> arrays{},racks{};
     for(int pool=0;pool<3;++pool) {
         const Addr array=state.meshManager.address+0x150+pool*16;
@@ -186,7 +202,8 @@ bool mountPreviewRebindHangar() {
     if(!meshManager)return false;
     mountIdentity(meshManager);
     // 原生可能先清空旧池、再填新池；不把明确的加载空窗永久锁成失败。
-    for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(prior.aircraft,pool))return false;
+    for(int pool=0;pool<3;++pool)if((!mountExterior(prior.aircraft) || (prior.aircraft==MountAircraft::F22a && pool==2)) &&
+        read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(prior.aircraft,pool))return false;
     FixedMountState next;
     next.aircraft=prior.aircraft;next.kindsMask=prior.kindsMask;
     const auto& specification=mountSpecification(next.aircraft);
@@ -205,6 +222,7 @@ bool mountPreviewRebindHangar() {
     }
     if(prior.animatedRack.address && !mountSameIdentity(prior.animatedRack,next.animatedRack) && mountAlive(prior.animatedRack))
         mountSetRackAnimation(prior.animatedRack.address,prior.nativeRackPaused,prior.nativeRackTick);
+    if(mountExterior(prior.aircraft) && !mountSameIdentity(prior.exteriorRack,next.exteriorRack))mountExteriorRelease(prior);
     next.bound=true;prior=std::move(next);
     nativeLog("MOUNT_PREVIEW_HANGAR_COMPONENTS_REBOUND");
     return true;
@@ -334,6 +352,11 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         }
         const auto aircraft=mountAircraft(plane);
         require(aircraft!=MountAircraft::Unsupported,"模型预览：机型未适配");
+        if(mountNativeOnly(aircraft)) {
+            mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
+            mountPreview.layout={};mountPreview.layout.plane=planeIdentity;mountPreview.layout.aircraft=aircraft;
+            mountPreview.configs=configs;mountPreview.ammo=ammo;mountPreview.planCached=true;mountPreview.pending=false;return;
+        }
         const auto& specification=mountSpecification(aircraft);
         // 异步换机可能先出现 Pawn、后填充模型池；空池属于等待，不锁死该身份。
         const Addr manager=read<Addr>(activator+0x260);
@@ -342,7 +365,8 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         bool pending=!meshManager;
         if(meshManager) {
             mountIdentity(meshManager);
-            for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(aircraft,pool))pending=true;
+            for(int pool=0;pool<3;++pool)if((!mountExterior(aircraft) || (aircraft==MountAircraft::F22a && pool==2)) &&
+                read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(aircraft,pool))pending=true;
         }
         if(pending) {
             mountPreview.pending=true;mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();return;
@@ -363,15 +387,15 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
             const auto actual=mountName(package);
             const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
+            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }
         require(count>0,"模型预览：没有有效兵装");
-        if((mountExpanded(aircraft) || mountAnimated(aircraft)) && count==1) {
+        if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft)) && count==1) ||
+           (mountExterior(aircraft) && !(mask&4u))) {
             mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
-            mountPreview.layout.meshOverrides.clear();mountPreview.layout.bound=false;
-            mountPreview.layout.plane=planeIdentity;mountPreview.layout.kindsMask=mask;
+            mountPreview.layout={};mountPreview.layout.plane=planeIdentity;mountPreview.layout.kindsMask=mask;
             mountPreview.configs=configs;mountPreview.ammo=ammo;mountPreview.planCached=true;return;
         }
         if(!mountPreview.layout.bound || mountPreview.layout.kindsMask!=mask) {

@@ -22,6 +22,7 @@
 #include <vector>
 #include "MinHook.h"
 #include <map>
+#include <memory>
 #include <set>
 #include "common.hpp"
 #include "reload_timer.hpp"

@@ -97,6 +97,22 @@ int main() {
     write<float>(pool+0x48,10);
     try{restore(act,true,cooling,99);assert(false);}catch(const std::runtime_error&){}
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    // 机外保留路线不能误入旧共舱发射映射；舱内原生旁路与固定吊舱分别核对。
+    assert(mountNativeOnly(MountAircraft::Su47) && mountNativeOnly(MountAircraft::Su57tg));
+    assert(!mountNativeOnly(MountAircraft::F35c));
+    FixedMountState exterior;exterior.aircraft=MountAircraft::Pkfa;exterior.kindsMask=7;
+    MountVisual pod;pod.pool=2;pod.index=-1;
+    assert(mountDesired(exterior,pod,true) && !mountDesired(exterior,pod,false));
+    assert(!mountNeedsMappedTransform(exterior,0) && !mountNeedsMappedTransform(exterior,2));
+    exterior.kindsMask=3;assert(!mountDesired(exterior,pod,true));
+    exterior.aircraft=MountAircraft::F22a;exterior.kindsMask=7;exterior.exteriorConfig=0;
+    MountVisual lateral;lateral.pool=2;lateral.index=8;lateral.physicalBit=uint64_t{1}<<8;
+    exterior.readyMask=lateral.physicalBit;
+    assert(mountDesired(exterior,lateral,true,0)); // 不依赖旧共舱/精确姿态门槛。
+    exterior.readyMask=0;assert(!mountDesired(exterior,lateral,true));
+    assert(!mountNeedsMappedTransform(exterior,0) && !mountNeedsMappedTransform(exterior,2));
+    assert(mountExteriorPreviewMask(exterior,{0,2,1},{20,6,12},3)==63);
+    assert(mountExteriorPreviewMask(exterior,{0,1,2},{20,12,0},3)==0);
     // 反向表保留首个同址映射和高位；未映射模型不凭旧位置显示。
     FixedMountState reverseMap;reverseMap.aircraft=MountAircraft::Su30sm;reverseMap.physicalCount=41;
     reverseMap.physical[0]=123;reverseMap.physical[1]=123;reverseMap.physical[40]=456;
