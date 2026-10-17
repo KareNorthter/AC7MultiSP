@@ -4,7 +4,7 @@
 
 当前正式版：**2.16.0**，已由用户测试并授权合入 main。该版已知的 CFA-44 切换短卡/ECM模型露出、ADF-01停光卡顿随版记录，不代表全机全组合无问题。
 
-当前已安装整合候选 **2.17.0**：接收CFA切换及ECM修订、单键持续目标注视，并将固定SP限制更正为第12关。用户反馈CFA切换仍卡，ECM模型隐藏已可接受。当前 `codex/cfa44-switch-performance` 基于该候选继续减少切换开销，并让CFA机库等任务外场景仅用原生模型；本轮源码尚未构建或安装，正式包仍为2.16。实现和验证边界见[挂载设计](docs/multi-sp-mount-design.md)。
+当前已安装整合候选 **2.18.0** 位于`codex/integration-2.18.0`：继续接收CFA切换减负，机库等任务外仅用原生模型；固定SP限制更正为第13关，手柄X注视选项移到第二个“按键”页。成套构建、现有检查及安装核验通过。2.17用户已反馈注视正常、ECM隐藏可接受，切换仍卡；本轮改善待实测，正式包仍为2.16。实现和验证边界见[挂载设计](docs/multi-sp-mount-design.md)。
 
 - [下载本地发布包](Release/AC7MultiSP-2.16.0.zip)
 - [中文 ReadMe](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)

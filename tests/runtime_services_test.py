@@ -529,8 +529,8 @@ print('配置/协议/页面、场景预览、开场定位、调试快捷操作�
 context_source = (ROOT / 'dist/DualSP/Scripts/runtime_context.lua').read_text(encoding='utf-8')
 lua.globals().mission_gate_source = context_source[context_source.index('function Context.allowed('):context_source.index('-- 管理面板暂借了原生输入')]
 lua.execute(r'''
--- 执行真实许可判断：仅112任务/机库旁路，残留ID、212自由飞行及多人边界不能混淆。
-local state={id=112,name='World /Game/Maps/Mission/ms12.ms12',shared=false,network=false,multi=false,kind='hangar'}
+-- 执行真实许可判断：仅113任务/机库旁路，残留ID、213自由飞行及多人边界不能混淆。
+local state={id=113,name='World /Game/Maps/Mission/ms13.ms13',shared=false,network=false,multi=false,kind='hangar'}
 local function valid(o)return o and o:IsValid()end
 local world={IsValid=function()return true end,GetAddress=function()return 900 end,GetFullName=function()return state.name end}
 local mode={IsValid=function()return true end,IsA=function(_,class)return class=='ui'and state.shared or class=='multi'and(state.shared or state.multi)end}
@@ -544,20 +544,20 @@ local env=setmetatable({Context=context,valid=valid,initialize=function()end,
     system={IsStandalone=function()return not state.network end},game={GetGameMode=function()return mode end},
     ui={GetCurrentUIManagerActor=function()return manager end},modeClasses={UIGameMode='ui',MultiPlayerGameMode='multi'},
     menuBaseClass='base',singleEntryClasses={'main'},lastHangarTime=-1},{__index=_G})
-local allowed=assert(load(mission_gate_source..'return Context.allowed','第12关上下文旁路','t',env))()
+local allowed=assert(load(mission_gate_source..'return Context.allowed','第13关上下文旁路','t',env))()
 local instance={IsValid=function()return true end,GetWorld=function()return world end,GetMissionID=function()return state.id end}
-local ok,reason=allowed(instance);assert(ok and reason=='mission12_fixed_sp')
-state.id=113;ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
-state.id=212;state.name='World /Game/Maps/FreeFlight/ms12.ms12';ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
-state.id=112;state.shared=true;state.name='World /Game/UI/Menu/Menu.Menu';ok,reason=allowed(instance);assert(ok and reason=='mission12_fixed_sp')
-state.kind='main';ok,reason=allowed(instance);assert(ok and reason=='singleplayer_menu','主菜单不能因残留112编号停用')
+local ok,reason=allowed(instance);assert(ok and reason=='mission13_fixed_sp')
+state.id=114;ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
+state.id=213;state.name='World /Game/Maps/FreeFlight/ms13.ms13';ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
+state.id=113;state.shared=true;state.name='World /Game/UI/Menu/Menu.Menu';ok,reason=allowed(instance);assert(ok and reason=='mission13_fixed_sp')
+state.kind='main';ok,reason=allowed(instance);assert(ok and reason=='singleplayer_menu','主菜单不能因残留113编号停用')
 state.kind='hangar';state.network=true;ok,reason=allowed(instance);assert(not ok and reason=='network_world')
-state.network=false;state.shared=false;state.multi=true;state.name='World /Game/Maps/Mission/ms12.ms12'
+state.network=false;state.shared=false;state.multi=true;state.name='World /Game/Maps/Mission/ms13.ms13'
 ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_mode')
 state.shared=true;state.multi=false;state.multiWidget=true;state.name='World /Game/UI/Menu/Menu.Menu'
 ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_menu')
 ''')
-print('第12关112旁路、212自由飞行/离关恢复、主菜单残留ID及多人优先边界检查通过')
+print('第13关113旁路、213自由飞行/离关恢复、主菜单残留ID及多人优先边界检查通过')
 lua.globals().master_menu_source = context_source[context_source.index('function Context.canToggleMaster('):context_source.index('-- 仅在许可变化时记录上下文')]
 lua.globals().master_apply_source = main_source[main_source.index('tryApplyMasterSwitch=function(force)'):main_source.index('local function tick()')]
 lua.execute(r"""
