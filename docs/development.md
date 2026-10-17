@@ -63,18 +63,23 @@ python -X utf8 src/research/build_animated_mount_candidates.py --previous eviden
 
 Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间端点。主管新增两次单挂全开只读采样后，分别只使用当前配置1的SWP2／配置2的SWP3（animation_flags=0），没有用另外停更组的缓存证明全开。实际Socket.RelativeScale与真实Default__SkeletalMeshSocket CDO均为(1,1,1)；发布骨骼按实际mesh参考骨架六骨双射，骨＋Socket组合的平移／旋转与资源端点float32分量逐项相等，缩放和1:1组件单位映射因此有了该组实证。数据保留来源SHA、实际局部属性、已发布骨骼、原生部件状态与发布帧，未调用GetSocketTransform或任何游戏函数。该观察不等于多挂调度已经通过。
 
-三类tolerance仍为null，runtime_gate_ready=false：现有资料给的是接触面／离散采样结论，没有对实际全开Body、挂架允许接触基线及邻弹给出可支撑距离／角度／缩放误差预算的最近距离下界；约3.6e-15的离线组合差值仅是数值观察，不是几何容差。还需多挂所需隐藏provider的当帧发布／取位见证，不能用骨缓存getter冒充。原门控语义及来源保留；旧研究字符串中的request=2只是历史文字，运行全开必须使用当前已核对原生Host语义，不把这个旧数字写入产品判据。
+三类tolerance仍为null，不提供非零误差预算。当前另有已重核静态几何的严格实采参照路线；严格模式逐有效float32位型匹配，不依赖这些容差。runtime_gate_ready仍false，产品须核对真实资源、父链、当帧发布及离架重验，不能用骨缓存getter冒充。旧研究字符串中的request=2只是历史文字，运行全开使用当前已核对Host的request=1／phase=2／公共进度=1语义。
 
-现有几何报告定位为`evidence/mount-expansion-animated.json → reviews[1].report.aircraft[0]`（code=su47、分析来源animated-sukhoi-review.json），重点看`combinations`、`native_surface_contact_baselines`及`whole_rack_comparisons`；高层显隐依据在`aircraft[code=su47].combinations[].internal_ammo_visibility.offline_sample_review`。这些报告只统计离散键接触，不能反推出最近距离。最小补充是为四种多挂在全开状态建立明确允许接触面集，再求其余Body／架体／邻弹面的保守净空下界，并用各弹体相对Socket最大半径把平移、转角、缩放的共同扰动限制在该下界内；没有这个预算就不交付经验容差。端点`position/rotation/scale`供绑定器直接读取，`position/rotation`分别与原`translation/rotation_xyzw`同义，旋转顺序为xyzw。
+原资源101键几何报告仍在`evidence/mount-expansion-animated.json → reviews[1].report.aircraft[0]`（code=su47）；显隐依据在`aircraft[code=su47].combinations[].internal_ammo_visibility.offline_sample_review`。它们不提供非零容差。真实SWP2／3各有三根非Socket骨与资源第100键有约7.45e-9至1.64e-7的四元数分量差，故新增[真实端点几何证据](../evidence/su47-native-endpoint-geometry.json)，用实际发布姿态重新蒙皮，没有把差值当作epsilon。
 
-另有不接受非零误差的条件路线：全部几何相关姿态与已核几何参照的有效float32分量逐位相等时，可以不设非零扰动预算。它必须覆盖实际Socket局部属性、取位骨、呈现架的全部蒙皮骨、Body及共同坐标中的相对父链变换；只比较八处Socket骨不能证明其他门体/架体同姿态。`endpoints[group].exact_pose`给出六根mesh骨的名字、mesh/Skeleton索引、父索引、第100键期望与实采有效分量；`exact_body_pose`给出Body实际38骨的资源期望，未认证Body运行观察。每骨顺序为四元数xyzw、位置xyz、缩放xyz，另列FTransform字节偏移；`uint32`比较保留正负零，不比较padding，不翻四元数符号或归一化。每Socket的`exact_match`另列依附骨索引和九个局部期望分量（位置xyz、Pitch/Yaw/Roll角度、缩放xyz）。
+`review_su47_native_endpoints.py`核对全部Body四个LOD、两套挂架各一个LOD及各类弹体的三个LOD。四种多挂的弹体—Body、弹体—弹体表面接触均为0；弹体—架体接触与同武器同位置原生布局完全相同，UGB的跨呈现架基线另证SWP2／3全部蒙皮顶点及逐面索引相同。原架—Body接触另保留原生附着基线，各组合全部LOD对合计276对，不称所有Body相关接触为0。SAAM借位直接要求零接触，不用未采的SWP1原生全开缓存豁免。原生UGB布局是在同一实采Body姿态中离线重放，明确不是同次运行采样。
 
-现有SWP2／SWP3采样各有SWPCover_02、03、04一项四元数分量不同：绝对差分别约7.450580596923828e-9、7.450580596923828e-9、1.6391277313232422e-7，不是q/-q，符合浮点求值路径差异；全六骨严格相等因此未通过。数据保留实采十个有效分量及来源摘要，`native_capture_geometry_reaudited=false`，不能直接改成认证参照。可用这些真实姿态重蒙皮并重核对全开四多挂及原生接触基线，再把通过后的真实姿态作为精确参照；SWP2／3已有数据，还需同帧Body发布骨骼、Body/WeaponMeshBase/挂架相对变换及身份，若要完整原生SAAM基线还需该配置的有效SWP1姿态。该路线只需全开静态分析，不重跑101键；仍由产品Host取得同帧发布见证并在离架前重验，当前`runtime_gate_ready`不变。
+传`--endpoint-review`后，`endpoints[group].exact_pose`是各六根实际mesh骨的实采严格参照，`exact_body_pose`是实采Body38骨；原资源期望另存`resource_exact_pose/resource_exact_body_pose`，不混淆来源。每骨列名字、mesh/Skeleton索引、父索引及四元数xyzw／位置xyz／缩放xyz共十项有效float32；`uint32`保留正负零，不比较padding，不翻四元数符号或归一化。每Socket的`exact_match`包含依附骨索引和位置xyz／Pitch、Yaw、Roll角度／缩放xyz九项局部期望。`position/rotation/scale`可直接读取，旋转为xyzw。
+
+严格参照还要求`native_endpoint_geometry.relative_components`所列Body→Root、WeaponMeshBase→Root、SWP→WeaponMeshBase单位相对变换与None附着Socket。活动Body与SWP3的发布帧均197715，当前两者／Root／WeaponMeshBase世界变换相同；采样窗口渲染帧299604→299669，只称暂停发布数据稳定，不称同渲染帧。SWP2使用先前原生UGB活动端点179122，未用本次停更缓存，组合是明确离线场景。
+
+**飞控限制：本次几何只对所记录的Body全部38骨姿态成立。** 升降舵、方向舵、襟翼、进气道、减速板等其他通道不能忽略；这些有效分量变化时严格参照失配，必须隐藏受管弹体，不能仅凭spwc全开放行。要放宽需另做这些骨的几何隔离／扫掠依据。没有连续运动、发射轨迹或运行性能证明，静态零表面接触也不独立证明封闭体包含及挂耳贴合。
 
 生成命令只整理数据，输出必须新路径；审阅后按字节更新头文件，不编译或运行游戏：
 
 ```powershell
-python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --endpoint-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --endpoint-state E:/AC7_MultiSP/Temp/su47-qaam-endpoint-20261017.json --output Temp/new-animated-runtime-data.hpp
+python -X utf8 src/research/review_su47_native_endpoints.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --overlay evidence/mount-expansion-animated.json --full-state E:/AC7_MultiSP/Temp/su47-qaam-full-geometry-endpoint-20261017.json --ugb-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --output Temp/new-su47-native-endpoint-geometry.json
+python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --manifest Temp/mount-assets-20261017-110451-897434/manifest.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --endpoint-state E:/AC7_MultiSP/Temp/su47-ugb-endpoint-20261017.json --endpoint-state E:/AC7_MultiSP/Temp/su47-qaam-endpoint-20261017.json --endpoint-review evidence/su47-native-endpoint-geometry.json --output Temp/new-animated-runtime-data.hpp
 ```
 
 头文件记录覆盖层／第三批／分析器和资源来源摘要；可选采样只保留摘要与紧凑观察，不提交原始内存。三单native=true；任何运行前提不满足仍须按整机七组合门槛回退，不能只开启Su-47其中几条。此次仅生成并核对数据，未编译、运行测试、安装或操作游戏。

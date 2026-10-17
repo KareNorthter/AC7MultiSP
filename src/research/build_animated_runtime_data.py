@@ -329,6 +329,61 @@ def end_poses(assets,group):
             'sources':deepcopy(assets.used)}
 
 
+def apply_native_geometry_reference(result,path,overlay_path):
+    """仅吸收已完成静态几何的严格参照；当帧调度/身份等运行资格仍由宿主完成。"""
+    report=json.loads(path.read_text(encoding='utf-8'))
+    if report['code']!='su47' or not report['geometry_passed_at_reference'] or report['runtime_gate_ready'] or \
+       report['sources']['overlay_sha256']!=digest(overlay_path):
+        raise ValueError('真实端点参照未通过几何或与当前方案来源不同')
+    if report['sources']['helpers']['build_animated_runtime_data.py']!=digest(Path(__file__)) or \
+       report['sources']['analyzer_sha256']!=digest(Path(__file__).with_name('review_su47_native_endpoints.py')):
+        raise ValueError('端点几何报告与当前生成器/分析器来源不同，须重新生成报告')
+    if len(report['combinations'])!=4 or not all(c['geometry_passed_at_reference'] for c in report['combinations']):
+        raise ValueError('必须全部四种多挂同时通过原生端点几何')
+    plane=next(p for p in result['planes'] if p['code']=='su47')
+    if len(report['body']['bones'])!=38 or set(report['providers'])!={'SWP2','SWP3'}:
+        raise ValueError('不符合当前真实Body和provider完整骨架')
+    plane['resource_exact_body_pose']=plane['exact_body_pose']
+    plane['exact_body_pose']=deepcopy(report['body'])
+    plane['native_endpoint_geometry']={'record':path.name,'sha256':digest(path),'geometry_passed_at_reference':True,
+        'runtime_gate_ready':False,'relative_components':deepcopy(report['relative_components']),
+        'observations':deepcopy(report['observations']),'limits':deepcopy(report['limits'])}
+    for name,endpoint in plane['endpoints'].items():
+        native=report['providers'][name];sockets=report['socket_expectations'][name]
+        if len(native['bones'])!=6 or set(sockets)!={s['socket'] for s in endpoint['sockets']}:
+            raise ValueError('真实provider骨骼或Socket集合不完整')
+        endpoint['resource_exact_pose']=endpoint['exact_pose']
+        endpoint['exact_pose']=deepcopy(native)
+        endpoint['pose_gate_mode']='native_observed_geometry_checked_exact_uint32'
+        endpoint['tolerance_mode']='unused_in_strict_uint32_mode'
+        endpoint['native_static_geometry_reviewed']=True
+        endpoint['units']='native_component_common_identity_relative_space'
+        endpoint['missing']=['宿主仍须完整资源/父链身份、Body与所有所需provider当帧发布见证及离架前重验；磁盘采样不证明运行调度',
+            '严格匹配实采Body全部38骨及组件单位相对变换；其他飞控姿态不得继承本次几何结论']
+        by_bone={b['name']:b for b in native['bones']}
+        for socket in endpoint['sockets']:
+            actual=sockets[socket['socket']];bone=by_bone[actual['bone']]
+            socket['exact_match']={'reference_kind':'native_observed_geometry_checked',
+                'mesh_bone_index':bone['mesh_bone_index'],'skeleton_bone_index':bone['skeleton_bone_index'],
+                'component':deepcopy(bone['component']),'socket_local_order':actual['local_order'],
+                'socket_local':deepcopy(actual['local']),'cdo_scale':deepcopy(actual['cdo_scale']),
+                'geometry_review_sha256':digest(path),'runtime_gate_ready':False}
+            socket.update(position=actual['position'],translation=actual['position'],rotation=actual['rotation'],
+                          rotation_xyzw=actual['rotation'],scale=actual['scale'],
+                          coordinate_space='实采组件空间，已核对单位相对父链和同一共同坐标；不是资源第100键姿态',
+                          runtime_units_verified=True,complete_runtime_transform=True)
+    for plan in plane['plans'][1:]:
+        if plan['gate']:
+            plan['gate']['pose_comparison_mode']='native_observed_geometry_checked_exact_uint32'
+            alternative=plan['gate'].setdefault('exact_match_alternative',{
+                'mode':'all_geometry_relevant_components_exact_f32_only','epsilon':None,'runtime_gate_ready':False,
+                'require_current_frame_and_release_recheck':True,'body_pose':'plane.exact_body_pose',
+                'provider_pose':'plane.endpoints[group].exact_pose'})
+            alternative.update(native_static_geometry_checked=True,
+                geometry_review_sha256=digest(path),relative_components='plane.native_endpoint_geometry.relative_components')
+            plan['gate']['missing']='；'.join(plane['endpoints']['SWP2']['missing'])
+
+
 def build(overlay,batch,assets):
     candidates={a['code']:a for a in overlay['aircraft']}
     samples={a['code']:a for a in batch['aircraft']}
@@ -439,12 +494,14 @@ def main():
     parser.add_argument('--manifest',type=Path,action='append',required=True)
     parser.add_argument('--native-state',type=Path,help='只读已有F22A单8AAM采样，仅作为特定场景观察，不填组的固定长度')
     parser.add_argument('--endpoint-state',type=Path,action='append',default=[],help='主管已有Su47单UGB/QAAM全开端点文件，可重复；不访问进程')
+    parser.add_argument('--endpoint-review',type=Path,help='四多挂全部通过的真实端点静态几何报告；只吸收严格参照，不开放运行门槛')
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     if args.output.exists():raise ValueError('输出必须是新路径')
     assets=Assets(args.manifest)
     result=build(json.loads(args.overlay.read_text(encoding='utf-8')),json.loads(args.batch.read_text(encoding='utf-8')),assets)
     if args.endpoint_state:supplement_endpoints(result,assets,args.endpoint_state)
+    if args.endpoint_review:apply_native_geometry_reference(result,args.endpoint_review,args.overlay)
     result['sources']={'overlay_sha256':digest(args.overlay),'batch_sha256':digest(args.batch),'generator_sha256':digest(Path(__file__)),
                        'manifests':[{'record':p.name,'sha256':digest(p)} for p in args.manifest]}
     result['sources']['actual_resource_bindings']=deepcopy(assets.used)
