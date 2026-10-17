@@ -19,7 +19,7 @@
 
 ## 工作规则
 
-挂载方案研究位于`codex/mount-expansion`，从main/v2.4.0（8f600e4）创建。三批44机七组合的离线研究完成，连同正式三机共47机；不编译、运行测试或安装。用户最新要求整机七组合齐全才做，否则整机后置，不能只做部分组合。依据静态分区技术成果7ae97b6新增F-16C、F-2A、Mirage、Rafale四机；现共十机70条完整七组合候选，其余34机整体暂缓。交接入口`evidence/mount-expansion-handoff.json`的`eligible_aircraft`；各批`integration_gate.eligible`是最终门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`。仅接受有全部LOD与编码往返依据的静态副本，未核对分区、新站及动画/支撑未明继续后置，资料不表示已适配或实测。ECM/IEWS与TLS不因持续效果预设互斥，具体类接入与布局分别核对。
+挂载方案研究位于`codex/mount-expansion`，从main/v2.4.0（8f600e4）创建。三批44机七组合的离线研究完成，连同正式三机共47机；不编译、运行测试或安装。用户最新要求整机七组合齐全才做，否则整机后置，不能只做部分组合。依据静态分区技术成果7ae97b6新增F-16C、F-2A、Mirage、Rafale四机；原静态路线十机70条；新增动画覆盖层F-22A／Su-47／Su-57TG三机21条完整布局候选，合计13机91条，其余31机整体暂缓。动画方案须专用Host/provider接入，Su-47必须采用真实全开与当帧端点姿态见证的舱内弹体显隐，不自动加入旧静态数组或运行白名单。新入口为evidence/mount-expansion-animated.json及handoff的animated_design_overlay；控制源码及完整边界见挂载设计经验。交接入口`evidence/mount-expansion-handoff.json`的`eligible_aircraft`；各批`integration_gate.eligible`是最终门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`。仅接受有全部LOD与编码往返依据的静态副本，未核对分区、新站及动画/支撑未明继续后置，资料不表示已适配或实测。ECM/IEWS与TLS不因持续效果预设互斥，具体类接入与布局分别核对。
 
 1. 中文交流。遇到资料或环境阻塞及时报告。
 2. 2.4.0已获用户完整功能及两支线实测通过反馈，授权作为正式版提交main。默认不自动编译、新增或运行测试、安装、操作游戏；开发阶段的构建安装须在用户授权范围内。正式化沿用已实测字节，不重新构建；不自动推送或上传。

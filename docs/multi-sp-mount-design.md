@@ -154,6 +154,40 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 新机体记录可直接使用以下字段，在本页增加对应机型小节：原生武器与数量、模型池与挂架、七组合映射、动画和持续效果、舍弃方案及原因、已确认反馈、仍待核对的边界。F-22A 等机型必须重新取证，不能套用 F-35C 的偏移、骨架或动画通道。
 
+## 带动画机体的完整七组合候选
+
+本批深入核对 YF-23、Su-47、普通 Su-57、Su-57 Top Gun、F-22A、FB-22、DarkStar、ADF-01，共8架。**F-22A、Su-47、Su-57 Top Gun形成三架21种完整离线方案**，三种单挂均直通原生；各机七行表替换下方第三批同机型旧表。其余五架整机后置。机器数据以[mount-expansion-animated.json](../evidence/mount-expansion-animated.json)为动画覆盖层，优先于旧第三批对应机体的布局暂缓记录。旧批次仍保留原始依据，不直接改成已运行适配。
+
+吸收动画线程`01a14787-e328-72b3-9b0e-1bfa7d81cc52`的序列解析与限定共舱控制源码（控制提交`00bd24c`，序列资料`e519d02`），新增完整骨架几何读取及逐机蒙皮核对。实际读取25份机体／挂架网格、49个LOD、326096个顶点；各活动序列取101个开合采样键。骨骼按名字及父链绑定，不能按数组序号硬对。三角面穿入与原生同一武器的接触面作比较；包围盒重叠只是筛查，零穿入也不能单独证明导轨支撑、飞行净空或运行性能。
+
+### 接入时必须区分三种身份
+
+`owner_group`是武器原本所属组，保留它的真实类、弹体、队列、库存、窗口和持续效果；`provider_group`是借用的真实Socket组件；`rendered_rack_groups`是唯一实际显示的完整挂架。它们可能不同。显示模型与真实发射都必须读取同一个provider在当帧动画更新后的世界变换。借位只改物理映射，不能拿另一种武器较小的模型冒充，也不能新造Socket、改父链或猜未序列化的旋转／缩放。
+
+需要更新的骨架集合取“provider与呈现架的并集”，再筛出实际骨架组件，与选中的SP集合分开。例如F-22A只选QAAM＋XSDB也要更新SWP3；Su-47显示SWP3时仍可能取隐藏SWP2的Socket；Su-57TG的SWP3是静态组件，不读骨架字段。只隐藏组件自身，避免递归隐藏借位弹体。
+
+### 动画控制与安全归还
+
+[共舱控制头](../src/common_bay_animation.hpp)按机体真实网格、Skeleton、AnimClass与场景身份限定接入；切换前保存原生舱门请求、状态及连续进度，原生重建后在`keepArmed`前恢复，原生选装编号仍指新武器。原生Parts每帧完整更新一次，不永久开舱、不冻结骨骼、不替换原生曲线。TG切入第三原生配置走`NativeTransition`旁路，此时Body舱门仍需按原生流程及固定provider方案核对，不能把“无需活动挂架”写成“无需舱门”。
+
+[native_common_bay_parts.hpp](../src/native_common_bay_parts.hpp)从PlayerPlane包装链定位原生引擎与Parts，以Steam build 9855922的九处原始代码指纹、owner回指、配置和实例身份限制访问。引擎／Parts不是UObject，不能套UObject索引校验。写入先预检，部分失败在同一身份下尽力归还并准确报告；不改配置编号、不回滚弹药事务。[owned_bone_refresh.hpp](../src/owned_bone_refresh.hpp)从实际反射元数据解析具名的骨骼刷新模式，保存并归还最新原生请求；隐藏／屏外provider不能只开Tick而不刷新骨骼。
+
+Su-47的借位SAAM在收舱段仍与Body接触，因此只将**受管舱内弹体**设为“真实原生全开且当帧Socket匹配资源全开端点后才显示”；一开始关闭、旧帧或校验失败即隐藏。门、导轨和机体照常显示，原生发射门控不变。资源第87／100键不是Parts进度0.87，不能拿自造计时器代替。全开判据与当帧端点姿态见证必须同时成立；这是明确的可视取舍，不代表闭舱时弹体实体全程无接触。
+
+控制头是供后续线程接入的源码候选，完整产品Host、反射Socket取位、实际实例与调度仍待实现／核对，不能把资格布尔值直接填true。包含YF-23的控制profile也不代表该机几何获准。新增布局没有编译、运行测试、安装、资源生成或操作游戏；不会自动扩展运行白名单。
+
+### 本批后置机体的具体依据
+
+| 机体 | 本轮结论与下一步 |
+|---|---|
+| YF-23 | SWP2/3完整架几何及动画相同；HVAA借四列高点撞架，借较低UGB点虽避架却进入固定前隔框。内侧点仍有固定Body接触，不能靠隐藏舱门解决。需要新站／架变体或拆分研究，整机暂缓。 |
+| DarkStar | SASM活动整架与XSDB原生整架在101个采样键均有真实三角面相交，每键200–966对；全开仍有固定支撑干涉。XSDB翼展展开也须核对真实投放时序，整机暂缓。 |
+| FB-22 | SWP1/2完整架与101键相同，但SFFS借其六处点产生新增Body接触，包含固定Body；全开虽清空Body，挂架接触仍多于原生且未证明均为正常连接，整机暂缓。 |
+| 普通Su-57 | 中央GPB架借位几何较好，但Body用swcc、活动SWP1用spwc；不能照搬TG共舱profile，且小弹体与原架的连接距离尚待确认，整机暂缓。 |
+| ADF-01 | 4AAM＋FAEB可只显示SWP2整架，FAEB架三个LOD均为其面子集；TLS仍保留原生机鼻。TLS切换可原生结束不等于机鼻动画已管理，Body.swc1与SWP1.spwc须独立接入，整机暂缓。 |
+
+上述五机的条件布局、拒绝点、原生接触基线、资源指纹和分析器来源统一留在动画覆盖层`reviews`，不再另建相似报告。
+
 ## 当前结论和验证范围
 
 用户本轮认可当前挂载成果：F-15E 的 6AAM 下落段与 SFFS 穿插几乎不再出现；F-35C 和 Su-30SM 恢复原有布局更合理；F-35C 的十二处 8AGM 值得保留。这是后续研究采用的三机型参考方案。
@@ -174,7 +208,7 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 **整机七组合齐全才接入。** 只要其中一种方案仍受阻，整架飞机暂缓，不能只做能用的双挂。`integration_gate.eligible`是方案进入运行接入的门槛，不表示资源已在游戏中加载或动作已通过；逐组合的`disposition`只描述技术路线。
 
-全部47架有武装原版／官方DLC机体已完成分类：3架正式参考、44架离线研究，共329种情况。吸收技术线程`01a14764-4328-7923-a865-22b7efba4d8e`的`7ae97b6`成果后，新增F-16C、F-2A、Mirage 2000-5、Rafale M四架完整七组合，共28条。当前合计**10架、70条整机方案**可继续接入；其余**34架整机暂缓**。
+全部47架有武装原版／官方DLC机体已完成分类：3架正式参考、44架离线研究，共329种情况。吸收技术线程`01a14764-4328-7923-a865-22b7efba4d8e`的`7ae97b6`成果后，新增F-16C、F-2A、Mirage 2000-5、Rafale M四架完整七组合，共28条。原静态路线合计**10架、70条整机方案**；叠加本批动画路线三架21条，现有**13架、91条完整布局候选**，其余**31架整机暂缓**。动画三机需专用Host/provider接入，不能加入旧静态数组；详见[动画候选](#带动画机体的完整七组合候选)。
 
 | 可整机接入 | 三种原生单挂 | 三种双挂与三挂 | 资源路线 |
 |---|---|---|---|
@@ -191,7 +225,7 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 十机包括30条原生单挂参考、40条多挂候选；多挂中26条复用现成原资源、14条依赖已核对的静态分区。P1有11条、P2有29条，只安排整机内部实现顺序，不允许半套交付。所有新增方案仍需原生槽、模型池、显隐、真实离架与场景归还接入，再交整机实测；本研究没有编译、运行测试模块、生成新游戏资产或安装。
 
-精确整机清单见[mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`；`integration_candidates`只包含十机40条多挂。各批的`integration_allowed`同步整机门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`放行。其余资源候选仅作研究参考，ADF-11F的UAV部署返回方案仍不接入。
+精确整机清单见[mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`；`integration_candidates`只包含原静态路线十机40条多挂；`animated_design_overlay`另指向三架21条动画候选及其接入前提。各批的`integration_allowed`同步整机门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`放行。其余资源候选仅作研究参考，ADF-11F的UAV部署返回方案仍不接入。
 
 分区来源为[配方](../src/research/static_mount_split_recipes.json)与[上游往返回执](../evidence/sp-combination-static-split-experiment.json)，已按`7ae97b6`原字节引入。本轮四机用其中16副本，覆盖48个LOD；回执的22副本／66个LOD还包含F-104C及Gripen的部分解法，不能据此放行那两机。回执自身的`integration_allowed=false`保持不变：它说明实验副本未获游戏加载验证，与本表“可继续做运行接入”含义不同。
 
@@ -658,7 +692,7 @@ F-35C 的原生动画同时涉及舱门通道和挂架骨骼。游戏按当前 S
 
 ## 第三批：剩余二十三机全覆盖
 
-本批23架、161条：69条原生单挂参考、22条逐组合现成资源候选、70条受阻多挂。按整机七组合门槛，仅F-15C、XFA-27、ADFX-01可继续，交付三机共21条完整方案；其余20架整机暂缓。ADF-11F的TLS＋UAV虽有资源方向，仍有部署返回前提，不放行整机。各机均完成三单、三双、一组三挂；复杂机体也给出条件选位或明确的缺站结论，没有遗漏。详见[第三批数据](../evidence/mount-expansion-batch3.json)。
+原第三批记录23架、161条：69条原生单挂参考、22条逐组合现成资源候选、70条受阻多挂。按整机七组合门槛，仅F-15C、XFA-27、ADFX-01可继续，交付三机共21条完整方案；其余20架整机暂缓。ADF-11F的TLS＋UAV虽有资源方向，仍有部署返回前提，不放行整机。各机均完成三单、三双、一组三挂；复杂机体也给出条件选位或明确的缺站结论，没有遗漏。详见[第三批数据](../evidence/mount-expansion-batch3.json)。新增动画覆盖层再提供F-22A、Su-47、Su-57TG三机21条；本节这三机的可读表已更新，机器取用以覆盖层优先。
 
 以下表格中，“条件选位”只保留研究方向。整机暂缓时，连同资源可复用的子组合也不得单独启用。Socket 以所属 SWP 为命名空间；表中数值是资源位置数量，既不是新增弹药，也不是已确认的逻辑槽／运行模型池容量。单挂保持原生显示规则。固定炮、火箭管口、UAV 和效果源另按其角色计量。
 
@@ -792,19 +826,21 @@ LACM＋8AGM 的同翼整架需拆分；单一翼下武器＋内舱 4AAM 则给�
 
 ### F-22A Raptor 第三批方案
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。 原生装填窗口：QAAM 2、XSDB 4、8AAM 8。固定装置的窗口不等于炮体／巢体数。
+完整七组合布局候选，未运行接入。原生窗口为QAAM 2、XSDB 4、8AAM 8。多挂统一显示原生SWP3整架；QAAM借SWP3.sp43/44，XSDB借sp39–42，8AAM用sp31–38。需要更新的活动架只有SWP3，与是否选中8AAM无关。三种武器各用自身原生弹体。
 
-QAAM／XSDB 参考骨架一致，但尚未证明网格、轨道或公共导轨可互换。8AAM 有十四处资源候选，条件多挂只用外置八处 sp31–38，内置 sp39–44 不占同舱空间。QAAM＋XSDB 可尝试内侧两处 QAAM、其余四处 XSDB；所有多挂仍需公共支架几何与同 spwc 舱门进度核对，暂缓接入。
+QAAM／XSDB六处借位，对照各自原生位置在四个机体LOD及101键的接触面，24条站位／LOD比较均未增加机体接触面。XSDB与QAAM的最小包围盒分离量仅约0.18538资源单位，属于窄间隔，不能扩大成实飞保证。XSDB的实际展开序列有25键，按SavedPlayRate=0.25播放，约0.8秒开始展开、约1.6秒全展；这些仅是资源播放推导，真实离架、下落、滚转投放和展开后邻弹关系仍需游戏核对。RollAnimationDelay不是翼面展开延时，不得直接代入。
 
-| 组合 | 原生位置／候选选位 | 状态 |
+| 组合 | 弹体使用的实际组件与Socket | 显示整架／需更新活动架 |
 |---|---|---|
-| QAAM | QAAM `SWP1.sp11–sp16` | 原生单挂参考 |
-| XSDB | XSDB `SWP2.sp21–sp26` | 原生单挂参考 |
-| 8AAM | 8AAM `SWP3.sp31–sp44` | 原生单挂参考 |
-| QAAM + XSDB | 条件选位：QAAM `SWP1.sp15/sp16`；XSDB `SWP2.sp21–sp24` | 暂缓（动画＋共架未明） |
-| QAAM + 8AAM | 条件选位：QAAM `SWP1.sp11–sp16`；8AAM `SWP3.sp31–sp38` | 暂缓（动画＋共架未明） |
-| XSDB + 8AAM | 条件选位：XSDB `SWP2.sp21–sp26`；8AAM `SWP3.sp31–sp38` | 暂缓（动画＋共架未明） |
-| QAAM + XSDB + 8AAM | 条件选位：QAAM `SWP1.sp15/sp16`；XSDB `SWP2.sp21–sp24`；8AAM `SWP3.sp31–sp38` | 暂缓（动画＋共架未明） |
+| QAAM | QAAM `SWP1.sp11/sp12/sp13/sp14/sp15/sp16` | 原生单挂直通 |
+| XSDB | XSDB `SWP2.sp21/sp22/sp23/sp24/sp25/sp26` | 原生单挂直通 |
+| 8AAM | 8AAM `SWP3.sp31/sp32/sp37/sp38/sp42/sp41/sp34/sp36/sp33/sp35/sp40/sp39/sp44/sp43` | 原生单挂直通 |
+| QAAM＋XSDB | QAAM `SWP3.sp43/sp44`；XSDB `SWP3.sp39/sp40/sp41/sp42` | SWP3／SWP3 |
+| QAAM＋8AAM | QAAM `SWP3.sp43/sp44`；8AAM `SWP3.sp31/sp32/sp33/sp34/sp35/sp36/sp37/sp38` | SWP3／SWP3 |
+| XSDB＋8AAM | XSDB `SWP3.sp39/sp40/sp41/sp42`；8AAM `SWP3.sp31/sp32/sp33/sp34/sp35/sp36/sp37/sp38` | SWP3／SWP3 |
+| QAAM＋XSDB＋8AAM | QAAM `SWP3.sp43/sp44`；XSDB `SWP3.sp39/sp40/sp41/sp42`；8AAM `SWP3.sp31/sp32/sp33/sp34/sp35/sp36/sp37/sp38` | SWP3／SWP3 |
+
+精确顺序、原生弹体、owner/provider、装填窗口及七组合前提见[动画数据](../evidence/mount-expansion-animated.json)。
 
 ### XFA-27 第三批方案
 
@@ -952,35 +988,39 @@ HPAA＋TLS、4AAM＋TLS 均保持弹类原位与机腹中央 TLS 炮体，属于
 
 ### Su-47 第三批方案
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。 原生装填窗口：SAAM 2、UGB 2、QAAM 2。固定装置的窗口不等于炮体／巢体数。
+完整七组合**可视方案**候选，未运行接入。SAAM／UGB／QAAM原生窗口均2。SWP2与SWP3的完整网格、索引、权重、分区、材质及101键姿态均相同，显示一整架即可；需要的隐藏provider仍保持原生骨架更新。SAAM借SWP2较低UGB点，三挂保留1＋1＋1处，接受少于窗口的视觉位置，逻辑队列不缩减。
 
-三组同参考骨架，Socket 都沿 SWPCover_01 经 spwc 运动，不能据同骨架或同包围盒宣称同网格。条件方案可把 UGB／QAAM 分到外／内一对；SAAM 参与时分侧，三挂各留一处。公共活动支撑及同舱控制均未确认，全部多挂暂缓。
+借位SAAM在采样0–85键存在新增Body接触，86–100键无接触；原生SAAM本来也有闭舱接触，但两者不能混同。本方案采用上文“原生全开＋当帧端点姿态见证”的内部ammo显隐规则，门体、导轨和发射门控保持原生。若接入线程不实现这个门槛，应将整机继续暂缓，不能启用其中几组。
 
-| 组合 | 原生位置／候选选位 | 状态 |
+| 组合 | 弹体使用的实际组件与Socket | 显示整架／需更新活动架 |
 |---|---|---|
-| SAAM | SAAM `SWP1.sp11/sp12` | 原生单挂参考 |
-| UGB | UGB `SWP2.sp21–sp24` | 原生单挂参考 |
-| QAAM | QAAM `SWP3.sp31–sp34` | 原生单挂参考 |
-| SAAM + UGB | 条件选位：SAAM `SWP1.sp11`；UGB `SWP2.sp22` | 暂缓（动画＋共架未明） |
-| SAAM + QAAM | 条件选位：SAAM `SWP1.sp11`；QAAM `SWP3.sp32` | 暂缓（动画＋共架未明） |
-| UGB + QAAM | 条件选位：UGB `SWP2.sp21/sp22`；QAAM `SWP3.sp33/sp34` | 暂缓（动画＋共架未明） |
-| SAAM + UGB + QAAM | 条件选位：SAAM `SWP1.sp11`；UGB `SWP2.sp22`；QAAM `SWP3.sp34` | 暂缓（动画＋共架未明） |
+| SAAM | SAAM `SWP1.sp11/sp12` | 原生单挂直通 |
+| UGB | UGB `SWP2.sp21/sp22/sp23/sp24` | 原生单挂直通 |
+| QAAM | QAAM `SWP3.sp31/sp32/sp33/sp34` | 原生单挂直通 |
+| SAAM＋UGB | SAAM `SWP2.sp21`；UGB `SWP2.sp24/sp22` | SWP2／SWP2 |
+| SAAM＋QAAM | SAAM `SWP2.sp21`；QAAM `SWP3.sp34/sp32` | SWP3／SWP2/SWP3 |
+| UGB＋QAAM | UGB `SWP2.sp21/sp23`；QAAM `SWP3.sp34/sp32` | SWP3／SWP2/SWP3 |
+| SAAM＋UGB＋QAAM | SAAM `SWP2.sp21`；UGB `SWP2.sp24`；QAAM `SWP3.sp32` | SWP3／SWP2/SWP3 |
+
+精确顺序、原生弹体、owner/provider、装填窗口及七组合前提见[动画数据](../evidence/mount-expansion-animated.json)。
 
 ### Su-57 Top Gun 第三批方案
 
-接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。 原生装填窗口：4AAM 4、HCAA 2、LACM 2。固定装置的窗口不等于炮体／巢体数。
+完整七组合布局候选，未运行接入。原生窗口4AAM 4、HCAA 2、LACM 2。多挂只用原生LACM固定组件SWP3的四处Socket：双挂前后各两处，三挂4AAM前两处、HCAA／LACM后排各一处。Body仍使用原生spwc舱门；SWP1/2活动架仅隐藏自身，保持原父链，SWP3不进入骨架Tick／Pause管理。
 
-4AAM 与 HCAA 两组参考骨架及四列位置近乎重合，分前后只作条件方案。LACM 虽是静态占位组件，其实际位置仍在机体 spwc 弹舱范围内；静态组件不等于无需舱门。三类全组合已列，但动画、共位和导轨前提未解，全部多挂暂缓。
+4AAM与HCAA蓝图实际都引用w_4aam_r1_SM；LACM保留自己的w_lacm_r0_closed_SM。借入的两类导弹在101键未增加Body接触。SWP3是原生LACM用的三顶点占位网格，复用其内部安装点，不凭空制造可见导轨；零相交不等于已经确认连接观感。静态Socket未序列化的旋转／缩放必须取运行时原生值，不能填猜测默认值；四处点也不能冒充四个逻辑槽。
 
-| 组合 | 原生位置／候选选位 | 状态 |
+| 组合 | 弹体使用的实际组件与Socket | 显示整架／需更新活动架 |
 |---|---|---|
-| 4AAM | 4AAM `SWP1.sp11–sp14` | 原生单挂参考 |
-| HCAA | HCAA `SWP2.sp21–sp24` | 原生单挂参考 |
-| LACM | LACM `SWP3.sp31–sp34` | 原生单挂参考 |
-| 4AAM + HCAA | 条件选位：4AAM `SWP1.sp13/sp14`；HCAA `SWP2.sp21/sp22` | 暂缓（动画控制） |
-| 4AAM + LACM | 条件选位：4AAM `SWP1.sp11/sp12`；LACM `SWP3.sp33/sp34` | 暂缓（动画控制） |
-| HCAA + LACM | 条件选位：HCAA `SWP2.sp21/sp22`；LACM `SWP3.sp33/sp34` | 暂缓（动画控制） |
-| 4AAM + HCAA + LACM | 条件选位：4AAM `SWP1.sp13/sp14`；HCAA `SWP2.sp21`；LACM `SWP3.sp32` | 暂缓（动画控制） |
+| 4AAM | 4AAM `SWP1.sp13/sp14/sp11/sp12` | 原生单挂直通 |
+| HCAA | HCAA `SWP2.sp23/sp24/sp21/sp22` | 原生单挂直通 |
+| LACM | LACM `SWP3.sp31/sp32/sp33/sp34` | 原生单挂直通 |
+| 4AAM＋HCAA | 4AAM `SWP3.sp31/sp32`；HCAA `SWP3.sp33/sp34` | SWP3／无活动挂架，Body照常 |
+| 4AAM＋LACM | 4AAM `SWP3.sp31/sp32`；LACM `SWP3.sp33/sp34` | SWP3／无活动挂架，Body照常 |
+| HCAA＋LACM | HCAA `SWP3.sp31/sp32`；LACM `SWP3.sp33/sp34` | SWP3／无活动挂架，Body照常 |
+| 4AAM＋HCAA＋LACM | 4AAM `SWP3.sp31/sp32`；HCAA `SWP3.sp33`；LACM `SWP3.sp34` | SWP3／无活动挂架，Body照常 |
+
+精确顺序、原生弹体、owner/provider、装填窗口及七组合前提见[动画数据](../evidence/mount-expansion-animated.json)。
 
 ### X-02S Strike Wyvern 第三批方案
 
@@ -1018,7 +1058,7 @@ HPAA＋TLS、4AAM＋TLS 均保持弹类原位与机腹中央 TLS 炮体，属于
 
 接入结论：整机暂缓；尚有组合受阻，已找到原资源布局的子组合也不单独接入。 原生装填窗口：TLS 未知、4AAM 4、FAEB 未知。固定装置的窗口不等于炮体／巢体数。
 
-4AAM＋FAEB 仅显示完整 SWP2 原架：4AAM 外侧 sp21/22，FAEB 内侧 sp31/32；SWP3 内侧架的唯一顶点均包含于 SWP2，隐藏重复 SWP3 网格而保留其 Socket。接受 4AAM 两位置少于四窗口。FAEB 闭合与展开外形均已查，但原生窗口未知、实际投放仍需观察。TLS 的鼻部活动炮体与门控另属 spwc，含 TLS 组合先暂缓。
+4AAM＋FAEB 仅显示完整 SWP2 原架：4AAM 外侧 sp21/22，FAEB 内侧 sp31/32；本轮进一步确认SWP3内侧架三个LOD全部三角面均包含于SWP2，隐藏重复 SWP3 网格而保留其 Socket。接受 4AAM 两位置少于四窗口。FAEB 闭合与展开外形均已查，但原生窗口未知、实际投放仍需观察。TLS 的机鼻活动机构涉及Body.swc1与SWP1.spwc，含TLS组合先暂缓；切换可原生结束TLS也不代表机鼻动画已接入。
 
 | 组合 | 原生位置／候选选位 | 状态 |
 |---|---|---|
@@ -1032,8 +1072,8 @@ HPAA＋TLS、4AAM＋TLS 均保持弹类原位与机腹中央 TLS 炮体，属于
 
 ### 后续动画与资源专题的顺序
 
-当前先做完整七组合的十机。以下仅为暂缓飞机的后续研究顺序，必须解决其全部组合后才整机接入。若专门扩展动画，可优先查看 F/A-18F 的 QAAM／LASM＋EML、Su-33 的 HVAA／LASM＋EML、ASF-X 的 6AAM＋LASM、F/A-18F Block III 的 LACM／8AGM＋4AAM，以及普通 Su-57 的 4AAM＋PLSL。这八种在本批 B 组主要受动画控制阻塞，数据含 `required_animation_work`；不是已证实要拆架，也不是本轮可直接接入的候选。DarkStar 的 SASM＋PLSL、FALKEN 的 TLS＋翼下武器也可随后研究独立活动组。
+当前已有十机静态路线及三机动画路线完整七组合。以下仅为暂缓飞机的后续研究顺序，必须解决其全部组合后才整机接入。若专门扩展动画，可优先查看 F/A-18F 的 QAAM／LASM＋EML、Su-33 的 HVAA／LASM＋EML、ASF-X 的 6AAM＋LASM、F/A-18F Block III 的 LACM／8AGM＋4AAM，以及普通 Su-57 的 4AAM＋PLSL。这八种在本批 B 组主要受动画控制阻塞，数据含 `required_animation_work`；不是已证实要拆架，也不是本轮可直接接入的候选。DarkStar 的 SASM＋PLSL、FALKEN 的 TLS＋翼下武器也可随后研究独立活动组。
 
-F-22A、Su-47 等还需先核对公共支架几何。YF-23、FB-22、Su-57 TGM 与 X-02S 有同舱、共位、不同骨架或不同动画的复合问题；CFA-44 最后处理阵列、双炮与效果源。不能仅因骨名和参考姿态一致，就叠加整套活动呈现，或把一机的 spwc 修补直接套给另一机。
+F-22A、Su-47、Su-57TG本轮已有整架／Body依据与七组合设计，接下来由产品线程接入并实玩。YF-23、FB-22、普通Su-57、DarkStar与ADF-01按上文具体阻塞后置；X-02S另有同舱、共位和独立EML机构问题；CFA-44 最后处理阵列、双炮与效果源。不能仅因骨名和参考姿态一致，就叠加整套活动呈现，或把一机的 spwc 修补直接套给另一机。
 
 数据保存显式的 Socket 位置／朝向、骨骼父链、Body 与 SWP 各自 AnimBP、原生通道与序列信息；缺省字段为未知。参考姿态不代表停挂姿态，序列采样长度不代表游戏开门耗时，动画压缩数据不同也不等于每条曲线必然不同。真实释放路径、低库存、补装、切 SP 途中收拢、补给／检查点／组件重建仍须接入后观察。

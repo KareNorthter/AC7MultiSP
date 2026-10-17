@@ -1,0 +1,139 @@
+{
+  "schema": 1,
+  "steam_build": 9855922,
+  "purpose": "供静态研究和后续接入评审使用的动画设计，不是运行开关或完整挂载准入表",
+  "runtime_enabled": false,
+  "configuration_numbering": "configs为原生SpecialWeaponConfig1/2/3对应的0/1/2，和用户SP槽顺序无关",
+  "shared_contract": {
+    "binding": "任务、机库和补给独立绑定世界/机体/激活器/组件索引序列号；先解析真实父链、AnimClass与原生选择编号，不复用其他场景地址",
+    "same_domain_switch": "兵装重建前保存同舱请求、开合状态、进度和域身份；同步重建后身份仍一致才在keepArmed前归还连续状态，不重播开门或重建动画实例",
+    "different_domain_switch": "新域执行原生请求，旧域沿原生速度完成收拢；持久效果/蓄能尚未结束时先按该真实类生命周期决定能否收拢，不无条件复制公共进度",
+    "component_update": "原生完整PartsAnimation每帧只执行一次；保留的非当前骨架继续必要Tick及更新，不修改bNoSkeletonUpdate。不同域的同名spwc须在已核对的逐组件求值层路由，不能全局同写",
+    "launch": "先完成该帧动画和组件世界变换更新，再从相同映射读取Socket位置与旋转；缺省变换不猜零，资源轨迹不代替真实世界变换",
+    "release": "关闭、失败、补给/检查点重建、换机或世界改变时释放旧域，归还最新原生显隐/网格/动画请求；身份已失效不访问旧地址",
+    "failure": "没有已核对的逐组件输出入口或运行身份时保持整机暂缓；视觉失败独立回退，不把成功的兵装事务改报失败",
+    "acceptance_cases": ["关闭中同域换槽不归零", "打开中同域换槽沿原进度继续", "全开同域换槽不重播", "不同域旧机构收拢而新机构独立动作", "MSL/gun保持原生misc/gunc通道", "最后一发/耗尽不隐藏固定炮体", "暂停、补给、检查点及组件重建不复用旧身份"]
+  },
+  "policies": {
+    "asfx": {
+      "mode": "dedicated_group",
+      "domains": [{"configs": [2], "body_channels": ["swc3"], "rack_channels": {"SWP3": ["spwc"]}}],
+      "switch_rule": "LASM自身保留连续进度；切往6AAM/RKT时按原生速率完成LASM收拢，不能把新SP的公共spwc请求直接喂给旧LASM挂架",
+      "remaining_layout_work": ["6AAM/RKT重复支架分区", "火箭巢的固定模型与管口队列"],
+      "special_case": "本体独立swc3与SWP3公共spwc必须读同一个LASM域状态"
+    },
+    "dark": {
+      "mode": "shared_body_distinct_rack",
+      "domains": [{"configs": [0, 1], "body_channels": ["swcc"], "rack_channels": {"SWP1": ["spwc"]}}],
+      "switch_rule": "SASM/XSDB共用本体开合连续性，但SASM活动架必须有自身的打开/收拢状态；切到PLSL不能重新驱动SASM挂架",
+      "remaining_layout_work": ["中央SASM与XSDB支撑及扫掠净空"],
+      "special_case": "body swcc不能直接写回全部挂架的spwc"
+    },
+    "f14d": {
+      "mode": "dedicated_group",
+      "domains": [{"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}}],
+      "switch_rule": "8AAM活动架有独立进度，离开8AAM后继续收拢；不迁移LAAM/GPB的静态架或复制它们的状态",
+      "remaining_layout_work": ["三组公共支架几何与分区", "变后掠翼vwgn下的净空"],
+      "special_case": "sp01/02/07/08的父骨骼旋转约90度；不能只复制位置"
+    },
+    "f18f": {
+      "mode": "dedicated_fixed_emitter",
+      "domains": [{"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}}],
+      "switch_rule": "EML炮体按自身原生打开、蓄能、射击和收拢状态推进，切到导弹后继续必要收尾；QAAM/LASM不驱动炮体重开",
+      "remaining_layout_work": ["两套静态导弹架分区", "EML蓄能/声音及离开SP后的收尾"],
+      "special_case": "sp01位于Body，轨迹固定；另一根spwc骨骼仍运动。固定射点不代表炮体可停更"
+    },
+    "f18x": {
+      "mode": "dedicated_group",
+      "domains": [{"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}}],
+      "switch_rule": "4AAM活动架保留自身连续进度，切到LACM/8AGM后独立收拢，保留所有原生Socket与动画",
+      "remaining_layout_work": ["LACM/8AGM静态架分区", "活动sp31/32与固定sp33/34的弹体净空"],
+      "special_case": "sp31/32约80度转动，sp33/34固定；四个位置不能套用统一变换"
+    },
+    "f22a": {
+      "mode": "common_bay",
+      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"], "SWP3": ["spwc"]}}],
+      "switch_rule": "三个SP换槽保留同一个弹仓控制进度与开合方向；每个组件继续使用各自原生序列，不换AnimClass，不重建动画实例",
+      "remaining_layout_work": ["七组合支撑和弹体扫掠", "单一门体呈现与各组导轨粒度"],
+      "special_case": "SWP1/2参考骨架一致但15根同名骨骼曲线有差异；SWP2/3共有的15根曲线一致，SWP3另有机构。共享进度不等于替换为同一曲线或网格"
+    },
+    "f35c": {
+      "mode": "existing_reference",
+      "domains": [{"configs": [0, 1], "body_channels": ["swcc"], "rack_channels": {"SWP2": ["swcc"]}}],
+      "switch_rule": "沿用2.4.0已实测的SOD/4AAM同舱交接与非当前通道收拢；8AGM不加入同舱域",
+      "remaining_layout_work": [],
+      "special_case": "本报告不修改既有实现，也不把其偏移或检查条件外推到其他机体"
+    },
+    "fa44": {
+      "mode": "distinct_mechanisms",
+      "domains": [
+        {"configs": [0], "body_channels": ["spwc", "swc1"], "rack_channels": {"SWP1": ["spwc"]}},
+        {"configs": [1], "body_channels": ["spwc"], "rack_channels": {"SWP2": ["spwc"]}},
+        {"configs": [2], "body_channels": ["spwc"], "rack_channels": {"SWP3": ["spwc"]}}
+      ],
+      "switch_rule": "ADMM、EML、IEWS按机构分别保存状态，切换时旧机构收尾、新机构执行自身原生请求；禁止仅按共同spwc名称复制全套骨骼或门体",
+      "remaining_layout_work": ["三机构共同呈现、盖板与支撑分区", "ADMM阵列/EML/IEWS的独立生命周期"],
+      "special_case": "body spwc是多机构公共输出，实际分区须先关联蒙皮；此domains是设计意图，不能据此直接写body通道"
+    },
+    "fb22": {
+      "mode": "common_bay",
+      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc", "swcc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"], "SWP3": ["spwc"]}}],
+      "switch_rule": "同一公共弹仓跨SP保留控制进度，三组继续各用原生曲线；本体swcc保留原生分通道关系，不能直接等同spwc",
+      "remaining_layout_work": ["SFFS舱架与XSDB/LAAM弹体支撑", "舱门单一呈现与三挂净空"],
+      "special_case": "SWP1/2的15根同名曲线一致，SWP3五根共有曲线不同，不能整组互换"
+    },
+    "pkfa": {
+      "mode": "shared_body_distinct_rack",
+      "domains": [{"configs": [0, 1], "body_channels": ["swcc"], "rack_channels": {"SWP1": ["spwc"]}}],
+      "switch_rule": "4AAM/GPB共享本体swcc连续性；4AAM活动架spwc按自身状态更新/收拢，切到PLSL不延用它的开门请求",
+      "remaining_layout_work": ["4AAM/GPB同舱支撑及扫掠", "固定PLSL炮体与效果源绑定"],
+      "special_case": "不能照搬F-35C：本机挂架读spwc，本体读swcc"
+    },
+    "su33": {
+      "mode": "dedicated_fixed_emitter",
+      "domains": [{"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}}],
+      "switch_rule": "EML只推进自身原生炮体动作与收尾，切到HVAA/LASM仍允许炮体收拢，不由导弹的公共请求重新打开",
+      "remaining_layout_work": ["两组导弹架分区", "折翼fdwg和EML蓄能/收尾"],
+      "special_case": "sp01在Body且固定，炮体spwc骨骼仍运动；固定发射器不按弹药/冷却隐藏"
+    },
+    "su47": {
+      "mode": "common_bay",
+      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"], "SWP3": ["spwc"]}}],
+      "switch_rule": "三个SP使用同一个弹仓状态并跨换槽保留进度；各组原生骨架继续更新，公共支架选定前不叠加三套呈现",
+      "remaining_layout_work": ["公共导轨与整架粒度", "三挂UGB/QAAM较窄净空及齐射映射"],
+      "special_case": "三组五根spwc骨骼局部曲线逐键一致；这只解决动画曲线依据，不解决支撑"
+    },
+    "su57tg": {
+      "mode": "common_bay",
+      "domains": [{"configs": [0, 1], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"]}}],
+      "switch_rule": "HCAA/4AAM同舱保留公共进度，LACM外置组不延用同舱请求；原生曲线和发射点各自保留",
+      "remaining_layout_work": ["两类空空弹的同舱支撑", "三挂LACM与活动舱体净空"],
+      "special_case": "两个活动SWP十根同名曲线一致；本体读spwc，区别于原版Su-57的swcc"
+    },
+    "x02s": {
+      "mode": "distinct_mechanisms",
+      "domains": [
+        {"configs": [0], "body_channels": [], "rack_channels": {"SWP1": ["spwc"]}},
+        {"configs": [1], "body_channels": [], "rack_channels": {"SWP2": ["spwc"]}},
+        {"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}}
+      ],
+      "switch_rule": "LASM、4AAM、EML保留各自机构状态和原生曲线；切走后旧机构收拢，不能给所有SWP同写当前spwc",
+      "remaining_layout_work": ["腹舱与EML盖板/结构共存", "固定炮体、收翼和其他机构的扫掠"],
+      "special_case": "SWP1/2发射点固定但四根盖板骨骼在动，EML发射点sp本身移动；不能按Socket是否移动决定是否更新组件"
+    },
+    "yf23": {
+      "mode": "common_bay",
+      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"], "SWP3": ["spwc"]}}],
+      "switch_rule": "三个SP在共同弹仓内共享连续控制进度，所有保留的原生发射点父链照常更新；先确定唯一公共支撑呈现",
+      "remaining_layout_work": ["单一公共支撑架与三个武器种类的导轨对应", "分侧少于窗口的发射/补装映射及体积净空"],
+      "special_case": "三个SWP唯一spwc骨骼曲线逐键一致；SWP2/3网格Extras相等只是额外线索，未解析材质索引和蒙皮前不称完整资源等价"
+    },
+    "zoef": {
+      "mode": "dedicated_fixed_emitter",
+      "domains": [{"configs": [0], "body_channels": ["swc1"], "rack_channels": {"SWP1": ["spwc"]}}],
+      "switch_rule": "TLS头部与炮体使用独立域，活动TLS及尾迹结束条件由其真实类决定；切往4AAM/FAEB不直接归零头部动作，也不能仅因还有库存而永久开头",
+      "remaining_layout_work": ["TLS真实类的跨SP保留/结束和附着方向", "4AAM/FAEB架位及展开净空", "缺失的两根头部动画轨在引擎中的处理"],
+      "special_case": "Body的SWPCover1_12/13没有序列轨，报告只用局部参考姿态占位；sp11固定不代表头部静止"
+    }
+  }
+}

@@ -69,6 +69,7 @@ def main():
     parser.add_argument("--paks-root", type=Path, default=PAKS)
     parser.add_argument("--pattern", default=PATTERN)
     parser.add_argument("--asset", action="append", default=[])
+    parser.add_argument("--asset-path", action="append", default=[], help="PAK中的完整uasset路径，用于区分同名UI与模型资源")
     parser.add_argument("--decode-only", action="store_true", help="仅提取与解码副本，不调用 JSON 解析器")
     args = parser.parse_args()
     tools_root = args.tools_root.resolve(strict=True)
@@ -86,32 +87,43 @@ def main():
     run_root.mkdir(parents=True, exist_ok=False)
     pattern = re.compile(args.pattern, re.IGNORECASE)
     selected_stems = set(args.asset)
+    selected_paths = {name.replace('\\','/') for name in args.asset_path}
+    if any(not name.endswith('.uasset') or name.startswith('/') or '..' in name.split('/') for name in selected_paths):
+        raise ValueError('完整资源路径须为PAK内的相对uasset路径')
+    explicit = bool(selected_stems or selected_paths)
+    def selected(name):
+        # 仅按完整包路径消歧，不放宽扁平输出目录的重名拒绝规则。
+        return Path(name).stem in selected_stems or name.rsplit('.',1)[0]+'.uasset' in selected_paths
     reports = []
     for pak_name in PAK_NAMES:
         # 索引读取只访问 PAK 目录；提取时仅匹配明确指定的资源名称。
         pak_path = args.paks_root / pak_name
         selector = lambda name: name.endswith(".uasset") and (
-            Path(name).stem in selected_stems if selected_stems else bool(pattern.search(name))
+            selected(name) if explicit else bool(pattern.search(name))
         )
         index = inspect(pak_path, selector, index_only=True)
         reports.append(index)
         for asset in index["assets"]:
-            if not selected_stems or Path(asset["name"]).stem in selected_stems:
+            if not explicit or selected(asset["name"]):
                 print(f"{pak_name}\t{asset['bytes']}\t{asset['name']}")
     (run_root / "index.json").write_text(json.dumps(reports, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    if selected_stems:
+    if explicit:
         # 核对名称唯一性，避免已有提取器的扁平目录覆盖同名文件。
         present_stems = set()
+        present_paths = set()
         for report in reports:
-            found = [item for item in report["assets"] if Path(item["name"]).stem in selected_stems]
+            found = [item for item in report["assets"] if selected(item["name"])]
             stems = [Path(item["name"]).stem for item in found]
             if len(stems) != len(set(stems)):
                 raise ValueError(f"同一 PAK 中资源名称重复：{report['pak']}")
             present_stems.update(stems)
+            present_paths.update(item['name'] for item in found)
         missing = selected_stems - present_stems
         if missing:
             raise ValueError(f"索引中缺少指定资源：{sorted(missing)}")
+        if selected_paths-present_paths:
+            raise ValueError(f"索引中缺少完整资源路径：{sorted(selected_paths-present_paths)}")
 
         # 依赖已存在于本机，不下载新工具；只调用无界面的 JSON 导出入口。
         key = (tools_root / "assets" / "AC7Key.bin").read_bytes()
@@ -126,7 +138,7 @@ def main():
         manifest = []
         for pak_name in PAK_NAMES:
             # 资源对的提取和转换顺序执行，任何错误都显式停止。
-            selector = lambda name: name.endswith((".uasset", ".uexp")) and Path(name).stem in selected_stems
+            selector = lambda name: name.endswith((".uasset", ".uexp")) and selected(name)
             report = inspect(args.paks_root / pak_name, selector, run_root / "assets")
             for asset in report["assets"]:
                 if not asset["name"].endswith(".uasset"):

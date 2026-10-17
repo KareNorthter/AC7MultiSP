@@ -4,11 +4,42 @@
 
 当前main正式基线为2.4.0，标签v2.4.0。用户已确认全部改动及两条研究支线成果正常，授权提交正式版；可配置快捷键、三机型挂载修订及ADFX-01持续效果已统一纳入。正式核心在dist/DualSP/cores/2.4.0/DualSP.dll，UI在dist/DualSP/bin/DualSPUI.dll，均从Temp/build-2.4.0按原字节归档，未重新构建或安装。有效布局及扩机型方法见[挂载设计经验](multi-sp-mount-design.md)。
 
+## 动画布局覆盖层的取用
+
+本分支以`evidence/mount-expansion-animated.json`记录八机深入评审与三机完整七组合，统一正文见[动画候选](multi-sp-mount-design.md#带动画机体的完整七组合候选)。`mount-expansion-handoff.json`的`animated_design_overlay`单独绑定这份数据；旧`eligible_aircraft`／`integration_candidates`仍只服务十机静态路线，旧三批记录不当作最新动画布局。不要直接把三机代码追加到旧运行生成器：本层显式区分owner/provider/呈现架、隐藏provider刷新与内部ammo门控，旧数据格式没有这些保证。
+
+引用线程`01a14787-e328-72b3-9b0e-1bfa7d81cc52`的`analyze_sp_switch_animations.py`、`sp_switch_animation_policies.json`与`sp-switch-animation-research.json`，并从其提交`00bd24c`按原字节吸收`common_bay_animation.hpp`、`native_common_bay_parts.hpp`、`owned_bone_refresh.hpp`、`inspect_common_bay_control.py`与`sp-common-bay-control.json`。三个控制头没有自动注册／新钩子，不改变产品运行代码。几何准入来自本分支覆盖层，YF-23虽有控制profile仍被几何排除。
+
+产品接入必须补齐：安全访问与反射Host；完整原生实例／场景身份校验；同步切换快照与原生Parts更新顺序；Pause/Tick及刷新模式最新原生请求观察和逐组件归还；provider当帧组件空间／世界空间Socket取位；Su-47的严格全开＋端点姿态见证。Parts原生引擎不是UObject；指纹／owner／配置必须通过，写入部分失败及归还失败不得误报成功。TG第三组静态不读骨架字段，第三原生配置的NativeTransition保留原生流程。姿态容差、坐标换算和运行池数量需有真实依据，不能填经验值或直接等于Socket数。
+
+| 离线入口 | 作用 |
+|---|---|
+| `inspect_mount_assets.py --asset-path` | 可重复指定精确PAK相对.uasset路径；提取同名HUD图与真实模型时避免歧义，仍保留原basename重复保护，不改原游戏包 |
+| `read_cooked_skeletal_mount.py` | 严格解析本版本骨架网格Extras、全部LOD/分区/权重/索引与参考骨架；不扫描偏移猜顶点，不支持的布局直接拒绝。格式参考UEViewer的UE4原始序列化实现 |
+| `audit_animated_mount_geometry.py` | 核对25份机体／挂架、49LOD的完整读取与参考姿态蒙皮回构，仅输出摘要 |
+| `review_animated_us_bays.py` | F-22A／YF-23及FB-22旧参考；真实Socket、骨架、原生接触基线及XSDB展开序列 |
+| `review_animated_sukhoi.py` | Su-47／普通Su-57／Su-57TG七组合、完整架、Body及原生弹体核对 |
+| `review_animated_dark_falken.py`、`review_animated_fb22.py` | DarkStar／ADF-01／FB-22整架与固定Body干涉，保留拒绝依据 |
+| `build_animated_mount_candidates.py` | 只接收人工评审的整机七组合，校验真实owner类／自身弹体／provider点与更新集合，生成独立覆盖层；不启用机型 |
+| `build_mount_handoff.py --animated-batch` | 校验覆盖层七组合完整性和来源指纹，将静态路线与动画路线分开索引 |
+
+分析器只读显式manifest与资源，原始提取物／完整大采样在Temp；提交的证据保留摘要、少量接触见证和哈希，不带游戏资源、PAK或原始顶点数组。NumPy仅用于离线几何，未下载新依赖。数据整理与资源分析不属于游戏编译或运行测试，本轮均未执行后者。
+
+复现须提供本机原生资源manifest（包含Pawn／三组SWP／参数表／Body／各序列与武器模型；F-22还需真实XSDB骨架、Skeleton及展开序列），分析器参数见各入口。所有输出必须新路径并放Temp，例如：
+
+```powershell
+python -X utf8 src/research/audit_animated_mount_geometry.py --manifest Temp/batch3-manifests.json --manifest Temp/body-manifest.json --batch evidence/mount-expansion-batch3.json --aircraft f22a --aircraft su47 --aircraft su57tg --output Temp/new-geometry-review.json
+python -X utf8 src/research/build_animated_mount_candidates.py --batch evidence/mount-expansion-batch3.json --review Temp/animated-us-bays-review.json --review Temp/animated-sukhoi-review.json --review Temp/animated-dark-falken-review.json --review Temp/animated-fb22-review.json --geometry-audit Temp/animated-mount-geometry-audit-final.json --control-source src/common_bay_animation.hpp --control-source src/native_common_bay_parts.hpp --control-source src/owned_bone_refresh.hpp --admit f22a --admit su47 --admit su57tg --output Temp/new-animated-candidates.json
+python -X utf8 src/research/build_mount_handoff.py --catalog evidence/mount-expansion-catalog.json --batch evidence/mount-expansion-batch1.json --batch evidence/mount-expansion-batch2.json --batch evidence/mount-expansion-batch3.json --animated-batch evidence/mount-expansion-animated.json --output Temp/new-mount-handoff.json
+```
+
+覆盖层中`reviews`的完整分析指纹、`analysis_sources`及`control_sources`限定取用版本；US／Sukhoi分析器入库仅统一行尾及末尾空行，原分析指纹保留，入库源码指纹另列，没有重新运行几何。后续修改控制头、解析器或资源需重核对相应依据。XSDB展开播放推导不能替代实际释放运动，Su-47显隐也不能证明闭舱实体净空。全部新增机体待产品接入和用户实玩，不编译、不安装、不操作当前游戏。
+
 ## 有效入口
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
 
-三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。吸收技术线程7ae97b6的静态分区依据，新增F-16C、F-2A、Mirage、Rafale四机28条。当前十机70条可进入完整适配接入（30单挂＋40多挂），其余34机整机暂缓。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
+三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。吸收技术线程7ae97b6的静态分区依据，新增F-16C、F-2A、Mirage、Rafale四机28条。旧静态路线十机70条（30单挂＋40多挂）。动画覆盖层新增F-22A、Su-47、Su-57TG三机21条，合计13机91条完整布局，其余31机整机暂缓；三机尚需专用动画Host/provider接入，不是已运行适配。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
 
 各批新增`integration_gate.eligible`与逐项`integration_allowed`；先按整机门槛筛选，再看资源状态`disposition`。十机40条多挂包括26条原资源复用与14条`candidate_split_assets`。后者的`split_evidence`绑定回执和配方指纹，`rack_plan.carriers`给出每组原架／副本／仅隐藏自身的规则；P1/P2不能绕过整机门槛。其他未核对的拆架、拆巢、新站和动画／同舱支撑未明继续后置，不把研究完成写成已适配。固定炮、火箭／ADMM管口、UAV部署点与ECM/IEWS效果源按独立角色管理；不把资源点数抄成逻辑长度，不新增TLS或ECM/IEWS功能互斥。研究工具仅扩展离线资料，未改运行时注册或容量。A-10C的42个RKT管口为三对横向簇，实体巢数仍待完整几何确认。
 

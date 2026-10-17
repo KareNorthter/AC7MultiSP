@@ -2,6 +2,9 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [动画机体布局覆盖层](mount-expansion-animated.json)：深入核对8机，F-22A／Su-47／Su-57TG三机各七组合，共21条完整离线布局。Su-47采用严格全开端点ammo显隐，其余五机保留整机暂缓依据。含25份骨架网格49个LOD的结构核对、101键几何摘要与源指纹；不启用运行白名单。
+- [原生SP动画研究](sp-switch-animation-research.json)、[限定共舱控制依据](sp-common-bay-control.json)：引用动画线程的原字节数据与三个控制头；控制profile不代替整机几何准入，产品Host及运行调度待接入。
+
 - [2.7.0挂载反馈与修订](mount-expansion-feedback-20261017.json)：记录正常范围、F-2A/Rafale故障依据及Typhoon双挂补位的窄静态间隔；本分支仅更新研究布局，运行源码候选在主工作区，尚未构建或安装。
 
 - [原版挂载扩展目录](mount-expansion-catalog.json)：47架有武装原版机型的真实代码、三SP类、组件/网格引用、来源与分批建议；排除无武装f104av和第三方机体。仅资源核对，不代表全部适配。
@@ -9,7 +12,7 @@
 - [第二批挂载方案](mount-expansion-batch2.json)：十五机各七组合；区分原生单挂参考、现成整架复用研究候选和暂缓组合，保留净空/支撑依据与不足窗口取舍。三批均为离线研究，未编译、运行测试或安装；可读表及整合要求统一见[挂载设计经验](../docs/multi-sp-mount-design.md#其他原版机体的分批研究)。
 
 - [第三批挂载方案](mount-expansion-batch3.json)：剩余二十三机各七组合；69条单挂参考、22条现成资源候选、70条暂缓。保留静态／骨架挂点、原生通道、固定发射器／效果源／UAV角色和逐项动画／资源／支撑阻塞，包含CFA-44；仅F-15C、XFA-27、ADFX-01三机七组合齐全，其余整机暂缓。
-- [全机型交接索引](mount-expansion-handoff.json)：47机研究覆盖；当前十机70条完整方案可继续接入，其余34机整机暂缓。`integration_candidates`含40条多挂（26原资源＋14已核对静态分区），附精确分配、载体及前提。整机七组合门槛不变，未编译、测试或安装，无安装包。
+- [全机型交接索引](mount-expansion-handoff.json)：47机研究覆盖；旧静态路线十机70条；animated_design_overlay另列三机21条动画布局，合计13机91条完整候选，其余31机暂缓。`integration_candidates`含40条多挂（26原资源＋14已核对静态分区），附精确分配、载体及前提。整机七组合门槛不变，未编译、测试或安装，无安装包。
 
 - [静态分区往返依据](sp-combination-static-split-experiment.json)：技术线程7ae97b6的原字节回执，22副本／66个LOD完成资源及改名编码往返，未验证游戏加载、渲染或动作；本轮四机选用其中16副本／48个LOD。实验`integration_allowed=false`保持原样，不能直接安装。
 
