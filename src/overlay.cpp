@@ -631,8 +631,8 @@ void drawPanel() {
     ImGui::TextWrapped("%s",tr("键盘：Tab / Shift+Tab 移动，方向键选择，Enter / 空格操作；Ctrl+Tab 切页，Esc 返回或关闭。","Keyboard: Tab / Shift+Tab to move, arrows to select, Enter / Space to act; Ctrl+Tab changes pages, Esc goes back or closes."));
     ImGui::Separator();
     if(state.value("mission_fixed_sp",false))ImGui::TextWrapped("%s",tr(
-        "第14关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
-        "Mission 14 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
+        "第12关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
+        "Mission 12 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
             if(requestedTab==0)ImGui::SetKeyboardFocusHere();
@@ -650,7 +650,7 @@ void drawPanel() {
             ImGui::SeparatorText(tr("目标注视","Target tracking"));
             ImGui::Checkbox(tr("手柄X改为按一下切换目标注视###TargetGazePadX","Use controller X to toggle target tracking###TargetGazePadX"),&draftTargetGazePadX);
             ImGui::TextWrapped("%s",tr("默认关闭。开启后X不再循环切换武器：按一下持续注视当前目标，再按一下停止。Y切换目标和原生长按注视保留；切武器可用十字键或原生键盘键。","Off by default. When enabled, X toggles sustained tracking of the current target instead of cycling weapons. Y target selection and native hold-to-track remain available. Use the D-pad or native keyboard binding for weapons."));
-            ImGui::TextWrapped("%s",tr("键盘注视键在按键页独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第14关可单独使用。","Set an independent keyboard tracking key in Bindings; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 14."));
+            ImGui::TextWrapped("%s",tr("键盘注视键在按键页独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第12关可单独使用。","Set an independent keyboard tracking key in Bindings; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 12."));
             if(state.contains("target_gaze"))ImGui::TextWrapped("%s",state.at("target_gaze").value("active",false)?tr("当前目标注视：开启","Current target tracking: ON"):tr("当前目标注视：关闭","Current target tracking: OFF"));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
