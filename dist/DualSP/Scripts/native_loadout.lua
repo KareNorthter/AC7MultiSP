@@ -1131,6 +1131,19 @@ function NativeLoadout.new(dependencies)
             assert(c.planeId==planeId and instance:GetWorld():GetAddress()==c.world,"机库交接期间机体或世界已变化")
             local ok,accepted,err=preparationAction(c.actionWidget,0,0) -- 回执不依赖旧页面继续存活。
             assert(ok,err)
+            if err=="native_ignored"then
+                -- 原生没有接收这次边沿：不保存草稿、不报错，等待用户重新操作。
+                c.actionQueued=false;c.handedOff=false;c.continueRequested=nil;c.exitRequested=nil
+                if c.flow.stage=="review"then c.flow:back()end -- 准备页review没有可绘制的选项行。
+                c.lastPaint=nil;c.previous=inputs(c)
+                note("NATIVE_LOADOUT_ACTION_IGNORED plane="..c.planeId)
+                if valid(c.owner)and c.owner:IsVisible()and c.owner:IsEnableControl()then
+                    setControl(c.owner,false);paint(c)
+                else
+                    self.ignored=c.actionWidget;self.ignoredReason="closed";restore(false)
+                end
+                return
+            end
             if accepted then
                 c.actionQueued=false;c.actionAccepted=true
                 if not c.exitRequested then
