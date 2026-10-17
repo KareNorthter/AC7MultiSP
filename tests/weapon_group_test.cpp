@@ -293,11 +293,12 @@ int main() {
             assert(actual.slots[slot].mountOrdinal==prior.slots[slot].mountOrdinal);
         }
     }
-    // 十机方案完整性、不同武器共用位置隔离，以及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==10 && mountExpansionData().at("assets").size()==16);
+    // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
+    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==39);
     int multiCases=0;
-    for(int aircraft=static_cast<int>(MountAircraft::F02a);aircraft<=static_cast<int>(MountAircraft::Typn);++aircraft) {
-        const auto type=static_cast<MountAircraft>(aircraft);
+    for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
+        const auto type=mountExpansionAircraft(aircraft);
+        assert(mountExpanded(type) && mountExpansionIndex(type)==static_cast<int>(aircraft));
         const auto& definition=mountExpansionDefinition(type);
         assert(definition.at("plans").size()==8);
         for(unsigned selection=1;selection<=7;++selection) {
@@ -334,7 +335,7 @@ int main() {
             ++multiCases;
         }
     }
-    assert(multiCases==40);
+    assert(multiCases==static_cast<int>(mountExpansionData().at("planes").size())*4);
     // 大于旧12槽和64位范围时仍保存原生序号；重建后的数组下标不能冒充原挂点。
     Group rocketQueue;rocketQueue.slots.resize(76);
     for(int i=0;i<76;++i)rocketQueue.slots[i].mountOrdinal=i;

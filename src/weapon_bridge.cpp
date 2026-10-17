@@ -821,7 +821,7 @@ extern "C" __declspec(dllexport) int dualsp_mount_asset(void* luaState) {
         const auto found=mountAssets.find(index);
         if(found!=mountAssets.end())require(mountMeshIdentityEqual(found->second.identity,identity),"扩展挂载：已保有资源身份改变");
         else {
-            // 与持续兵装短期保有使用同一已核对的FUObjectItem内部RootSet位；这些网格只占固定16项。
+            // 只保有当前白名单内纯网格；沿用已核对的FUObjectItem内部RootSet位，不引用世界或玩家。
             const LONG previous=InterlockedOr(reinterpret_cast<volatile LONG*>(entry+8),0x40000000L);
             mountAssets.emplace(index,MountAssetReference{identity,(previous&0x40000000L)==0});
             nativeLog("MOUNT_ASSET_READY "+name);

@@ -1,15 +1,17 @@
 # AC7MultiSP
 
-主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码和游戏均为2.10.0四机轻量候选，二者必须区分，交付以回执为准。
+主工作区 `E:/AC7_MultiSP`；主线正式基线为用户实测通过的 **AC7MultiSP 2.4.0**，定位标签 `v2.4.0`。后续功能从 main 新建分支开发。开工先看 Git 状态。当前整合分支为`codex/menu-diagnostics-controls`；源码和游戏均为2.11.0静态扩展候选，二者必须区分，交付以回执为准。
 按需读[架构](docs/architecture.md)或[开发说明](docs/development.md)；研究机体挂载先读[挂载设计经验](docs/multi-sp-mount-design.md)，无需通读证据和历史。用户操作见[安装说明](docs/安装说明.txt)，交付范围见[版本说明](docs/release.txt)。
 
 新主管先读[主管接手入口](docs/development.md#主管接手入口)，任务分工、已验证范围与尚未整合的支线均在该节；不另建重复交接文档。
 
 ## 当前事实
 
+- 2.11.0已完整构建、通过适用检查并安装：新增Su-35S、Su-37、F-4E、F-14A TGM、Gripen E、Su-30M2、Su-34、MiG-29A、F-16XL、MiG-35D共10机70组合，静态路径共23机；原十机数据与原16资源编号/编码不变。39资源/78成员PAK、16运行文件、144保护文件核验，个人配置/存档/其他Mod保留，未启动游戏。备份backup/AC7MultiSP-20261017-145334-546827，产物Temp/build-2.11.0-final，回执evidence/2.11.0-integration.json。首次Temp/build-2.11.0仅在资源同名校验停止、不可安装。47架分类为23静态+6机外保留+2原生旁路+16特殊后置，正文与机器源evidence/static-expansion-2.11.0.json完整留档；新功能/帧率待用户实测，不把离线或安装通过称实机通过。下个版本构建前改用2.11.0-installed作为升级基线。
+
 - 2.10.0已完整编译、通过适用检查并安装：16运行文件、32成员PAK与144保护文件核验，配置/存档/其他Mod保留，备份backup/AC7MultiSP-20261017-143340-537534，未启动游戏。见evidence/2.10.0-integration.json；新四机和F22性能改善仍待实测。后续构建升级基线使用evidence/2.10.0-installed.json。
 
-- 用户已测2.9.0：普通Su-57、Su-47正常，F22侧8AAM正常但含8AAM组合切SP轻微卡顿，QAAM+XSDB不卡；未反馈TGM，详见evidence/2.9.0-user-validation.json。已授权优化F22并完成ADF-01、DarkStar、ADF-11F、CFA-44后编译安装。新增四机按轻量路线：TLS机鼻/内部舱门原生，CFA左ADMM右EML隐藏IEWS，ADF11左UAV右QAAM允许窄导轨局部穿入。用户睡前追加：当前批安装后继续其余未做机体方案，排除RKT/GRKT、挂点极少、仅内置弹舱、特殊动画及其他难机，困难项留待醒后讨论；不需要等待回复，可继续授权工作。第二阶段先核Su35/Su37静态分区，完整筛选结论写现有设计正文，不另建交接文档。
+- 用户已测2.9.0：普通Su-57、Su-47正常，F22侧8AAM正常但含8AAM组合切SP轻微卡顿，QAAM+XSDB不卡；未反馈TGM，详见evidence/2.9.0-user-validation.json。已授权优化F22并完成ADF-01、DarkStar、ADF-11F、CFA-44后编译安装。新增四机按轻量路线：TLS机鼻/内部舱门原生，CFA左ADMM右EML隐藏IEWS，ADF11左UAV右QAAM允许窄导轨局部穿入。用户睡前追加：当前批安装后继续其余未做机体方案，排除RKT/GRKT、挂点极少、仅内置弹舱、特殊动画及其他难机，困难项留待醒后讨论；不需要等待回复，可继续授权工作。第二阶段已完成十机静态分区及47机总筛选，16项实际后置原因写现有设计正文，不另建交接文档。
 
 - 2.9.0已按用户新方案完整构建、通过适用检查并安装，16运行文件、32成员PAK、141保护文件核验，配置/存档/其他Mod保留；产物Temp/build-2.9.0，备份backup/AC7MultiSP-20261017-135954-441251。Su-47/TGM任务与预览原生；普通Su-57仅保已选PLSL静态舱，F-22A仅保已选侧8AAM，舱内/发射原生，不写共舱进度或启用旧严格门槛。F-35C原有动画/映射保持；CFA-44后置、X-02S不做。本版未启动游戏，效果待测；见evidence/2.9.0-integration.json。完整方案已在archive/full-bay-mount-2.8.1（57fd5d3）和Temp/build-2.8.1留档，用户确认布局思路可行，后续再研究性能。
 
@@ -20,7 +22,7 @@
 - 2.8.0用户本轮反馈性能不合格：Su-47三SP任务约1fps，关闭多挂模型恢复、机库正常；F-22A和Su-57 Top Gun布局满意，但任务开多挂仅约7fps，两机切SP都反复开合弹舱。F-22A要求8AAM仅侧舱、QAAM/XSDB仅腹舱，须按实际Socket/骨骼核对。Su-47建议SAAM左半舱、UGB+QAAM右半舱，允许不明显影响观感的轻微穿模。共用热路径及切换时序修订已随2.8.1安装；左右分区仍待资源。反馈见evidence/2.8.0-user-validation.json，不能把2.8.0称为性能或运行验收通过。
 
 - Steam build 9855922，单人战役/自由任务；main正式基线v2.4.0。当前2.8.0保守测试候选已成套安装，产物Temp/build-2.8.0-final，16项运行文件、32成员PAK与136项保护文件核验通过，配置/存档保留，未启动游戏。备份backup/AC7MultiSP-20261017-123525-791486，详见evidence/2.8.0-integration.json。以下为2.7.1既有用户反馈：F-2A切换/发射正常，Rafale M、Typhoon正常，ADF-11F反馈正常；未逐项列举全部场景。详见evidence/2.7.1-user-validation.json。
-- 静态多挂共13机：原Su-30SM、F-35C、F-15E，以及F-2A、F-15C、F-15J、F-15 S/MTD、F-16C、XFA-27、Mirage 2000-5、ADFX-01、Rafale M、Typhoon。F-15 S/MTD、XFA-27因用户无DLC未测；不能宣称每机七组合全部实测。ADF-11F只增加TLS/QAAM/UAV功能共存，仍显示当前SP原生模型。0c13178的F-22A、Su-47、Su-57 Top Gun共21种动画布局与三个控制头已合入源码；2.8.0已补产品Host、原生更新/发布观察、动态Socket取位与场景归还，已成套构建、现有检查通过并安装，回执`evidence/2.8.0-integration.json`；用户已反馈新三机任务严重掉帧，不能称通过。Su-47仅在已核对的全部38根Body骨及所需6骨挂架精确匹配全开参照时显示内部弹体，其他姿态隐藏并走原生发射；这不是全姿态适配完成。用户已授权本轮整合并安装测试，但研究提交本身不能直接生成这三机的可玩适配。
+- 静态多挂现23机：原Su-30SM/F-35C/F-15E、原扩展十机和本版新增十机。早期用户反馈只按各自版本实测范围保留；F-15 S/MTD、XFA-27因无DLC未测，新十机待测。ADF-11F已从仅功能共存扩为2.10.0左UAV右QAAM外观候选，持续/回收机制保留。F22/PKFA/ADF01/DarkStar/ADF11/CFA44共6机轻量路线，Su47/TGM为原生外观旁路；旧完整动画方案留在archive/full-bay-mount-2.8.1，不作为当前运行准入。
 - 本轮用户已用F-22A单SP8AAM配合暂停态及45秒连续只读采样，摘要`evidence/animated-runtime-f22a-capture.json`。实际8AAM为14逻辑槽／8窗口、SWP1／2／3持久池6／6／14；不得外推QAAM/XSDB逻辑长度。现场反射证明NoSkeletonUpdate=mask2、PauseAnims=mask4，旧“mask2为Pause”注释不可靠；共舱请求已分别保存三项状态，原生全开判据接受request1或2、phase2、progress1。产品反射适配与时序已差异接入，Su-47真实全骨端点复核覆盖全部LOD。候选已安装，仍待用户实测；原始内存只留Temp。
 - F-2A性能未解决：用户2.7.1反馈机库、过场动画卡；任务单SP不掉帧，全部双/三SP掉帧，关闭多SP模型后不卡。可定位到多挂外观路径，尚不能认定仅由RKT或某一具体CPU/GPU环节引起。本轮只记录，之后专门研究。2.7.2源码已将LASM+HVAA双挂改为大LASM内侧、小HVAA外侧，并补齐HVAA外侧资源配方及三LOD编码往返；该修订已随2.8.0成套编译、现有检查并安装，新布局尚待用户实测。三挂外侧留给RKT，保留分侧内翼。后续同类方案优先遵循大弹内侧、小弹外侧，并核对支撑和离架净空。
 - 用户确认 2.0“实测各个功能都没问题”，已合入 main。2.0.0完成配置/协议分离、页面具名接口、状态清理、挂载边界及文件写入失败检查；2026-10-16用户确认“测试没问题，可以提交了”，标签v2.0.0保留历史基线，当前正式基线为v2.4.0。
@@ -46,7 +48,7 @@
 1. 中文交流。遇到资料或环境阻塞及时报告。
 2. 2.4.0已获用户完整功能及两支线实测通过反馈，授权作为正式版提交main。默认不自动编译、新增或运行测试、安装、操作游戏；开发阶段的构建安装须在用户授权范围内。正式化沿用已实测字节，不重新构建；不自动推送或上传。
 3. 新分支从 main 创建，前缀 `codex/`；旧工作区仅供恢复，不继续开发。未合入成果的定位见开发说明。
-4. Lua唯一源`dist/DualSP/Scripts/`，当前源码及安装为2.10.0，成套产物Temp/build-2.10.0；完整旧方案Temp/build-2.8.1及archive/full-bay-mount-2.8.1保留；旧Temp/build-2.8.0-final只用于2.8.0恢复（Temp/build-2.8.0已作废，不可安装）。2.7.2新资源输入为Temp/mount-assets-2.7.2/source，仍16副本，名称/PAK已随2.8.0成套升级，2.10.0安装基线为evidence/2.9.0-installed.json。下个版本升级前须改用evidence/2.10.0-installed.json为基线；不要把本候选Lua与dist保留的正式旧UI混装。2.4.0正式核心为`dist/DualSP/cores/2.4.0/DualSP.dll`，UI为`dist/DualSP/bin/DualSPUI.dll`，与Temp/build-2.4.0及已实测安装一致。2.0.0旧核心保留，仅与v2.0.0源码和当时UI配套，旧UI从Git标签恢复。旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
+4. Lua唯一源`dist/DualSP/Scripts/`，当前源码及安装2.11.0，产物Temp/build-2.11.0-final；Temp/build-2.11.0因资源同名核验停止、不可安装。资源输入Temp/mount-assets-2.11.0/source，39副本/78成员；核心表与Lua资源清单由同源生成，禁止混装。当前构建安装基线evidence/2.10.0-installed.json；下个版本须在构建前改用evidence/2.11.0-installed.json，不在本版构建后修改来源。旧完整方案Temp/build-2.8.1和archive/full-bay-mount-2.8.1保留。2.4.0正式核心/UI与main/v2.4.0保持；旧`dist/DualSP/bin/DualSP.dll`不得改，SHA256为`D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339`。
 5. 功能变化更新对应正文，不追加流水账或另建重复交接文档。默认只维护本入口、架构、开发、用户安装及版本说明；确有独立用途才新增文档。
 6. pwsh7 优先，复杂文件处理用 Python；UTF-8，Windows 启动脚本沿用 BOM。临时文件 Temp，备份 backup；无 Git 文件修改前备份，清理送回收站。
 7. 不提交个人状态、游戏资源、音频、第三方 PAK、工具、转储及 ZIP；遵守同一范围与文件所有权。

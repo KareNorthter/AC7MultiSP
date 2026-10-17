@@ -3,7 +3,7 @@
   "internal_name": "DualSP",
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
-  "upgrade_receipt": "evidence/2.9.0-installed.json",
+  "upgrade_receipt": "evidence/2.10.0-installed.json",
   "candidate": true,
   "scripts": [
     "config_store.lua",

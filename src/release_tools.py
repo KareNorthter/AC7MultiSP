@@ -83,6 +83,7 @@ def source_snapshot(root=ROOT):
         'src/research/summarize_animation_product_access.py','evidence/mount-expansion-animated.json',
         'evidence/su47-native-endpoint-geometry.json','evidence/sp-animation-product-access.json',
         'evidence/mount-expansion-batch1.json','evidence/mount-expansion-batch2.json','evidence/mount-expansion-batch3.json',
+        'evidence/static-expansion-2.11.0.json',
         'evidence/sp-combination-static-split-experiment.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
@@ -91,6 +92,17 @@ def tree_fingerprint(directory):
     files = inventory(directory)
     data = json.dumps(files, sort_keys=True, separators=(',', ':')).encode('utf-8')
     return {'sha256': hashlib.sha256(data).hexdigest(), 'file_count': len(files)}
+
+
+def verify_mount_manifest(assets, expected_variants):
+    """按生成白名单验证可变数量资源，不能仅信回执自报数量。"""
+    expected_members = {'Nimbus/Content/AC7MultiSP/Research/' + name + suffix
+                        for name in expected_variants for suffix in ('.uasset', '.uexp')}
+    if (assets.get('file') != 'AC7MultiSP_Mounts_P.pak' or not expected_variants or
+            assets.get('variants') != expected_variants or len(set(expected_variants)) != len(expected_variants) or
+            assets.get('file_count') != len(expected_members) or
+            set(assets.get('members', {})) != expected_members or assets.get('independent_readback') is not True):
+        raise ValueError('缺少完整挂架资源构建回执')
 
 
 def verify_build(receipt, build_dir=None, root=ROOT):
@@ -107,8 +119,9 @@ def verify_build(receipt, build_dir=None, root=ROOT):
             raise ValueError('受保护文件改变：' + name)
     if build_dir:
         assets = receipt.get('mount_assets',{})
-        if assets.get('file')!='AC7MultiSP_Mounts_P.pak' or assets.get('file_count')!=32 or assets.get('independent_readback') is not True:
-            raise ValueError('缺少完整挂架资源构建回执')
+        from research.build_runtime_mount_data import build as runtime_mount_data
+        expected_variants = runtime_mount_data()['assets']
+        verify_mount_manifest(assets, expected_variants)
         if digest(contained(Path(build_dir)/assets['file'],build_dir))!=assets['sha256']:
             raise ValueError('挂架资源包与构建回执不符')
         for name, expected in receipt['objects'].items():

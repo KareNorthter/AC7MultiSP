@@ -2,8 +2,9 @@
 #pragma once
 
 size_t mountProperty(Addr object,const char* name,const char* kind,int size);
+void mountRequireNoCollision(Addr component);
 struct MountAssetReference { MountIdentity identity;bool rooted{}; };
-std::map<int,MountAssetReference> mountAssets; // 最多16个纯网格，进程内保有；不引用世界或玩家。
+std::map<int,MountAssetReference> mountAssets; // 只保有生成白名单内的纯网格，不引用世界或玩家。
 
 const Json& mountExpansionPlan(MountAircraft aircraft,unsigned mask) {
     require(mask>=1 && mask<=7,"扩展挂载：组合无效");
@@ -53,6 +54,7 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         state.visuals.push_back({rackIdentity,pool,-1,bool(flags&0x10),bool(flags&0x20)});
         const int variant=plan.at("variants").at(pool).get<int>();
         if(variant>=0) {
+            if(definition.value("requires_no_collision",false))mountRequireNoCollision(rack);
             const auto asset=mountAssets.find(variant);
             require(asset!=mountAssets.end() && mountAlive(asset->second.identity),("扩展挂载：独立挂架未加载或已失效"+context+", variant="+std::to_string(variant)).c_str());
             state.meshOverrides.push_back({rackIdentity,mountIdentity(original),asset->second.identity});

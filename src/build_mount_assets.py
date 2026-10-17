@@ -1,4 +1,4 @@
-"""只打包白名单中的16份自有游戏派生挂架；原始/生成资源不进入Git。"""
+"""只打包生成白名单中的自有游戏派生挂架；原始/生成资源不进入Git。"""
 import hashlib
 import io
 import json
@@ -15,6 +15,17 @@ def build(source, output):
     names = runtime_data()['assets']
     proof = json.loads((ROOT/'evidence/sp-combination-static-split-experiment.json').read_text(encoding='utf-8'))
     reports = {v['recipe']['name']:v for v in proof['variants']}
+    extra = json.loads((ROOT/'evidence/static-expansion-2.11.0.json').read_text(encoding='utf-8'))
+    for report in extra['resource_reports']:
+        name = report['recipe']['name']
+        if name in reports:
+            previous = reports[name]
+            # 曾离线研究但未安装的同名副本，只有配方关键来源和实际编码字节全相同才复用。
+            if (previous.get('encoded_hashes') != report.get('encoded_hashes') or any(
+                    previous['recipe'].get(key) != report['recipe'].get(key)
+                    for key in ('source_asset', 'source_extras_sha256', 'keep_boxes'))):
+                raise ValueError('同名历史副本与本轮资源来源或字节不符：' + name)
+        reports[name] = report
     files = {}
     for name in names:
         report = reports[name]
@@ -45,7 +56,7 @@ def build(source, output):
     target = output/PAK_NAME
     with target.open('xb') as stream:
         stream.write(archive.getvalue())
-    # 用项目已有的独立读取器逐字节回读全部32个成员，不以写入成功替代核对。
+    # 用项目已有的独立读取器逐字节回读全部成员，不以写入成功替代核对。
     from inspect_hud_assets import inspect
     extracted = inspect(target,lambda name:True,output/'mount-pak-check')
     if extracted['mount']!='../../../' or {x['name']:x['sha256'] for x in extracted['assets']} != {

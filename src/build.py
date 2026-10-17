@@ -15,8 +15,8 @@ def main():
     """整套构建，全部产物放在主工作区的新 Temp 子目录。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tools-root", type=Path, default=ROOT / "tools")
-    parser.add_argument("--mount-assets-dir", type=Path, default=ROOT / "Temp/mount-assets-2.7.2/source",
-                        help="按研究回执核对的16份AC7编码资源对，仅使用本地自有资源")
+    parser.add_argument("--mount-assets-dir", type=Path, default=ROOT / "Temp/mount-assets-2.11.0/source",
+                        help="按研究回执核对的AC7编码资源对，仅使用本地自有资源")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "Temp" / ("build-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")))
     args = parser.parse_args()
     root = ROOT

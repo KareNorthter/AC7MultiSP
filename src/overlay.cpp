@@ -480,7 +480,7 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(1180.f,display.x-40),height=std::min(920.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.10.0 管理###DualSPManagement","AC7MultiSP 2.10.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.11.0 管理###DualSPManagement","AC7MultiSP 2.11.0 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
@@ -514,7 +514,7 @@ void drawPanel() {
             ImGui::SliderInt(tr("三 SP 各自弹药量###AmmoThree","Ammo per SP with three SPs###AmmoThree"),&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
             ImGui::TextWrapped("%s",tr("默认双 SP 各 50%、三 SP 各 33%；单 SP 为 100%。先计入部件，再按百分比向上取整。保存后于下一次出击、补给确认或调试应用时配弹。","Defaults: 50% per SP with two SPs, 33% with three, 100% with one. Parts apply first, then the percentage is rounded up. Saved values apply at the next departure, resupply confirmation or debug loadout application."));
             ImGui::Checkbox(tr("多 SP 武器模型同时挂载（实验性）###FixedMount","Simultaneous multi-SP weapon models (experimental)###FixedMount"),&draftFixedMountEnabled);
-            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。适配原有三机与新增十机（详见安装说明）；关闭或挂载失败时回退到原生单 SP 模型。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Supports the original three aircraft and ten new aircraft; see installation notes. Disabled or failed mounting falls back to native single-SP models."));
+            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
             ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",state.at("mount_warning").get<std::string>().c_str());

@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "candidate": "2.11.0",
+  "base_installed": "2.10.0",
+  "authorization": "用户要求先完成F22与四机优化安装，再在睡前授权继续其余简单飞机方案；排除火箭/缺站/内部舱/特殊动画及实际困难项",
+  "build_dir": "Temp/build-2.11.0-final",
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "new_static_aircraft": [
+    "su35",
+    "su37",
+    "f04e",
+    "f14atg",
+    "j39e",
+    "su30",
+    "su34",
+    "m29a",
+    "f16x",
+    "m35d"
+  ],
+  "new_complete_combinations": 70,
+  "static_expansion_array_aircraft": 20,
+  "total_static_with_original_three": 23,
+  "catalog_review": {
+    "catalog_total": 47,
+    "previously_covered_codes": [
+      "adf11f",
+      "dark",
+      "f02a",
+      "f15c",
+      "f15e",
+      "f15j",
+      "f15m",
+      "f16c",
+      "f22a",
+      "f35c",
+      "fa27",
+      "fa44",
+      "mr2k",
+      "mrgn",
+      "pkfa",
+      "rflm",
+      "su30sm",
+      "su47",
+      "su57tg",
+      "typn",
+      "zoef"
+    ],
+    "new_codes": [
+      "su35",
+      "su37",
+      "f04e",
+      "f14atg",
+      "j39e",
+      "su30",
+      "su34",
+      "m29a",
+      "f16x",
+      "m35d"
+    ],
+    "deferred": [
+      {
+        "code": "a10a",
+        "name": "A-10C",
+        "reason": "含RKT，按用户要求本轮不新增适配",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch2.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "asfx",
+        "name": "ASF-X",
+        "reason": "含RKT及LASM活动骨架，按用户要求后置",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f02x",
+        "name": "F-2A Super Kai",
+        "reason": "ECM具体类尚未通过精确持续生命周期准入，另有LASM/6AAM异架，不只解除菜单限制",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f104",
+        "name": "F-104C",
+        "reason": "含GRKT且三挂缺第三原生承载站",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch1.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f14a",
+        "name": "F-14A",
+        "reason": "SFFS额外翼下支撑结构用途未明，需单独几何专题；不因变后掠翼直接排除",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch2.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f14d",
+        "name": "F-14D",
+        "reason": "8AAM实际活动骨架，需特殊动画/共架处理",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f18e",
+        "name": "F/A-18E",
+        "reason": "负侧机腹传感器吊舱归属与双层导轨适配器须单独核，不能只按Y分区",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch2.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f18etg",
+        "name": "F/A-18E TGM",
+        "reason": "传感器吊舱及HCAA负腹口冲突，须专项布置",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch2.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f18f",
+        "name": "F/A-18F",
+        "reason": "EML实际活动骨架，按特殊动画后置",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "f18x",
+        "name": "F/A-18F Block III",
+        "reason": "4AAM实际活动骨架，另有8AGM阵列和LACM分区",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "fb22",
+        "name": "FB-22",
+        "reason": "均在内部且多套活动骨架，不扩完整共舱",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "m21b",
+        "name": "MiG-21bis",
+        "reason": "含RKT且三挂缺第三承载站",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "m31b",
+        "name": "MiG-31B",
+        "reason": "SAAM与双PLSL共翼站，改单侧固定双炮需专项发射契约，保现有限制待讨论",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "su33",
+        "name": "Su-33",
+        "reason": "EML实际活动骨架，按特殊动画后置",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "x02s",
+        "name": "X-02S Strike Wyvern",
+        "reason": "既有用户明确退出多挂外观，EML与腹舱冲突",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      },
+      {
+        "code": "yf23",
+        "name": "YF-23",
+        "reason": "仅内置活动弹舱，按用户要求后置",
+        "source_record": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\evidence\\mount-expansion-batch3.json",
+        "policy": "本轮不新增外观接管；保留已有兵装功能/限制，等待用户醒后讨论"
+      }
+    ],
+    "excluded_existing_aircraft_changed": false,
+    "covered_or_native_count": 31,
+    "deferred_count": 16
+  },
+  "runtime_files_verified": 16,
+  "resource_variants": 39,
+  "resource_members_verified": 78,
+  "new_runtime_variants": 23,
+  "original_16_variants_and_32_encoded_members_unchanged": true,
+  "old_ten_plane_data_unchanged": true,
+  "protected_files_verified": 144,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-145334-546827",
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "fps_gain_verified": false,
+  "pushed": false,
+  "published": false,
+  "core_sha256": "6ff7e2a3156ba2270676d6672a74407e067d48bf57470f2c19ebcca2174795df",
+  "ui_sha256": "aacfcbf9e909df6dbbb5156203ed37adbfde31ba46a4a24cb1dbbb5dc682f3d0",
+  "pak_sha256": "8a6f54b3a1348cfda1296a5ce0a91f3dadc3bfc42430ae00c17236b0e06d94b0",
+  "source_data_sha256": "e696fca116cd7dacb86b9cb8b18189cd89104d04ba4cda82c7f5d20853f7752e",
+  "build_receipt_sha256": "3577d10da8798486c3f15bfa18d993ca86b919b20c05d930c0e73394095293b9",
+  "test_receipt_sha256": "cd8f18274bdf7c1abbc4df455d91da9bea320dd9e90a0b139a477090d4c7b5a4",
+  "install_receipt_sha256": "13166505c6698ae7d1ec2e1a0a7d9fe7ea1fab93a8f709e873c7b609c1dcafac",
+  "first_batch_modules_unchanged_from_installed_2_10": [
+    "src/mount_exterior.hpp",
+    "src/f22_exterior_bones.hpp",
+    "src/light_mount.hpp",
+    "src/raven_sp.hpp",
+    "src/continuous_sp.hpp"
+  ],
+  "runtime_policy": "新10机单挂原生，多挂同原组原生Socket静态分区；不减库存/窗口/冷却，显示和发射同点。分区换网格前只读核实际NoCollision，不写碰撞；失败仅外观回退",
+  "asset_validation": "新23运行副本全LOD主/深度/邻接零跨分界、编码原字节复原/改名独立解码/导出payload及Socket材质保留；真实离架和观感仍待实测",
+  "pipeline_changes": "资源白名单/成员集合动态核验及实际数量安装回执；测试覆盖新增枚举分段映射、20机80多挂边界、同源header/Lua和资源缺件/额外/重复/伪计数拒绝，未新增测试模块",
+  "resolved_build_attempt": {
+    "not_installable": "Temp/build-2.11.0",
+    "reason": "打包阶段拒绝Gripen两份历史离线同名资源，未产核心。核编码摘要、source_asset、extras摘要与keep_boxes完全相同后允许严格复用，旧工具执行记录不改写；重新在全新final目录完整构建通过"
+  },
+  "manual_focus": [
+    "F22含8AAM的切SP卡顿和库存外观",
+    "ADF01/DarkStar/ADF11/CFA44四机模型、动画、发射、效果持续与回收",
+    "新增10机各组合/不同选择顺序、发射补装、FPS与离架；F14TG原生翼后掠、M29/F16XL/M35窄间隙观感",
+    "模型关闭、机库/补给/检查点、失败归还；F35及普通Su57/Su47正常对照"
+  ],
+  "unchanged_archive": "archive/full-bay-mount-2.8.1 / Temp/build-2.8.1保留，当前因性能留待研究，不否定原布局可行"
+}

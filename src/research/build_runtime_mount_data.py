@@ -1,9 +1,9 @@
-"""将十机完整七组合离线方案编译为运行白名单；不操作游戏。"""
+"""将完整七组合离线方案编译为静态运行白名单；不操作游戏。"""
 import json
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn']
+CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn','su35','su37','f04e','f14atg','j39e','su30','su34','m29a','f16x','m35d']
 
 
 def build():
@@ -11,6 +11,9 @@ def build():
     for batch in range(1,4):
         for sample in json.loads((ROOT/f'evidence/mount-expansion-batch{batch}.json').read_text(encoding='utf-8'))['aircraft']:
             samples[sample['code']] = sample
+    # 新批次独立留证，不改旧资源/工具执行回执的历史含义。
+    for sample in json.loads((ROOT/'evidence/static-expansion-2.11.0.json').read_text(encoding='utf-8'))['aircraft']:
+        samples[sample['code']] = sample
     planes, assets = [], []
     for code in CODES:
         sample = samples[code]
@@ -58,7 +61,10 @@ def build():
             plans[mask] = {'selected':selected,'racks':racks,'variants':variants}
         if any(p is None for p in plans[1:]):
             raise ValueError('必须同时生成整机七组合')
-        planes.append({'code':code,'groups':groups,'plans':plans})
+        plane={'code':code,'groups':groups,'plans':plans}
+        if sample.get('requires_no_collision'):
+            plane['requires_no_collision']=True
+        planes.append(plane)
     return {'planes':planes,'assets':assets}
 
 
@@ -74,4 +80,4 @@ if __name__=='__main__':
         lua += '    '+plane['code']+'={' + ','.join('{'+str(i)+',"'+data['assets'][i]+'"}' for i in ids) + '},\n'
     lua += '}\n'
     (ROOT/'dist/DualSP/Scripts/mount_assets.lua').write_bytes(lua.encode('utf-8'))
-    print('已生成十机70种组合，独立挂架资源',len(data['assets']))
+    print('已生成静态机体',len(data['planes']),'完整组合',len(data['planes'])*7,'独立挂架资源',len(data['assets']))

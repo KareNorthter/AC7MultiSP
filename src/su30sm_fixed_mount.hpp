@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44 }; // 旧三机索引保留供完整方案研究。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d }; // 既有索引保持，新静态机型追加。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -15,7 +15,20 @@ struct MountSpecification {
 };
 #include "mount_expansion_data.hpp"
 #include "animated_mount_data.hpp"
-bool mountExpanded(MountAircraft aircraft) {return aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn;}
+bool mountExpanded(MountAircraft aircraft) {
+    return (aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn) ||
+        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::M35d);
+}
+int mountExpansionIndex(MountAircraft aircraft) {
+    require(mountExpanded(aircraft),"扩展挂载：机型未登记");
+    return aircraft<=MountAircraft::Typn?static_cast<int>(aircraft)-static_cast<int>(MountAircraft::F02a):
+        10+static_cast<int>(aircraft)-static_cast<int>(MountAircraft::Su35);
+}
+MountAircraft mountExpansionAircraft(size_t index) {
+    require(index<mountExpansionData().at("planes").size(),"扩展挂载：机型索引越界");
+    return static_cast<MountAircraft>(index<10?static_cast<int>(MountAircraft::F02a)+index:
+        static_cast<int>(MountAircraft::Su35)+index-10);
+}
 bool mountAnimated(MountAircraft aircraft) {return aircraft>=MountAircraft::F22a && aircraft<=MountAircraft::Su57tg;}
 bool mountExterior(MountAircraft aircraft) { return aircraft==MountAircraft::F22a || aircraft==MountAircraft::Pkfa; }
 bool mountLight(MountAircraft aircraft) { return aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44; }
@@ -25,7 +38,7 @@ const MountSpecification& mountLightSpecification(MountAircraft aircraft);
 const Json& mountAnimatedPlan(MountAircraft aircraft,unsigned mask);
 const Json& mountExpansionDefinition(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型不在白名单");
-    return mountExpansionData().at("planes").at(static_cast<int>(aircraft)-static_cast<int>(MountAircraft::F02a));
+    return mountExpansionData().at("planes").at(mountExpansionIndex(aircraft));
 }
 const MountSpecification& mountExpansionSpecification(MountAircraft aircraft) {
     static const auto specifications=[] {
@@ -43,7 +56,7 @@ const MountSpecification& mountExpansionSpecification(MountAircraft aircraft) {
         }
         return result;
     }();
-    return specifications.at(static_cast<int>(aircraft)-static_cast<int>(MountAircraft::F02a));
+    return specifications.at(mountExpansionIndex(aircraft));
 }
 // 共用身份检查，布局映射仍按机型明确处理。
 const MountSpecification& mountSpecification(MountAircraft aircraft) {
@@ -248,7 +261,7 @@ MountAircraft mountAircraft(Addr plane) {
         for(size_t i=0;i<mountExpansionData().at("planes").size();++i) {
             const auto code=mountExpansionData().at("planes").at(i).at("code").get<std::string>();
             if(name=="AcePlayerPawn_"+code+"_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_"+code)
-                return static_cast<MountAircraft>(static_cast<int>(MountAircraft::F02a)+static_cast<int>(i));
+                return mountExpansionAircraft(i);
         } // 只有已知类名才进一步检查所属资源包。
         if(name=="AcePlayerPawn_su30sm_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_su30sm")return MountAircraft::Su30sm;
         if(name=="AcePlayerPawn_f35c_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c")return MountAircraft::F35c;
@@ -693,6 +706,7 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
 }
 #include "mount_preview.hpp"
 #include "mount_animation_reflection_adapter.hpp"
+#include "static_mount_collision.hpp"
 #include "light_mount.hpp"
 #include "f22_exterior_bones.hpp"
 #include "mount_exterior.hpp"

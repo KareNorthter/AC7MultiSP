@@ -68,7 +68,9 @@ def main():
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
     plan = {'candidate': version, 'base': previous['candidate'], 'runtime_files': hashes,
-            'mount_assets': {'path':asset_relative,'sha256':asset_hash,'variant_count':16,'file_count':32},
+            'mount_assets': {'path':asset_relative,'sha256':asset_hash,
+                             'variant_count':len(receipt['mount_assets']['variants']),
+                             'file_count':receipt['mount_assets']['file_count']},
             'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动备份后迁移管理参数6的快捷键',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),

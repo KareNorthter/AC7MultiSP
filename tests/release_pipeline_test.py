@@ -1,12 +1,13 @@
 """验证来源增删改、旧回执及越界拒绝；只改 Temp 内的复制件。"""
 from pathlib import Path
+import json
 import shutil
 import sys
 import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / 'src'))
-from release_tools import source_snapshot, product, verify_build, contained
+from release_tools import source_snapshot, product, verify_build, contained, verify_mount_manifest
 
 
 def rejected(action):
@@ -18,6 +19,32 @@ def rejected(action):
 
 
 def main():
+    # 同一来源必须生成完全一致的核心表与Lua加载清单，防止只改其中一份。
+    from research.build_runtime_mount_data import build as mount_data
+    data = mount_data()
+    header = (ROOT / 'src/mount_expansion_data.hpp').read_text(encoding='utf-8')
+    assert json.loads(header.split('R"MSP(', 1)[1].split(')MSP"', 1)[0]) == data
+    loader = '-- 独立挂架资源清单；由同一份七组合数据生成。\nreturn {\n'
+    for plane in data['planes']:
+        ids = sorted({i for plan in plane['plans'][1:] for i in plan['variants'] if i >= 0})
+        loader += '    ' + plane['code'] + '={' + ','.join('{' + str(i) + ',"' + data['assets'][i] + '"}' for i in ids) + '},\n'
+    loader += '}\n'
+    assert loader == (ROOT / 'dist/DualSP/Scripts/mount_assets.lua').read_text(encoding='utf-8')
+    # 成套资源数量增长时必须逐成员对应；缺件、多件、重复名或伪造数量均拒绝。
+    for amount in (2, 18, 39):
+        variants = ['MSP_fixture_' + str(i) for i in range(amount)]
+        members = {'Nimbus/Content/AC7MultiSP/Research/' + name + suffix: 'a' * 64
+                   for name in variants for suffix in ('.uasset', '.uexp')}
+        assets = dict(file='AC7MultiSP_Mounts_P.pak', variants=variants, members=members,
+                      file_count=len(members), independent_readback=True)
+        verify_mount_manifest(assets, variants)
+        rejected(lambda: verify_mount_manifest(dict(assets, file_count=32), variants))
+        missing = dict(members);missing.pop(next(iter(missing)))
+        rejected(lambda: verify_mount_manifest(dict(assets, members=missing), variants))
+        extra = dict(members);extra['unexpected.uasset'] = 'a' * 64
+        rejected(lambda: verify_mount_manifest(dict(assets, members=extra), variants))
+        rejected(lambda: verify_mount_manifest(dict(assets, variants=list(reversed(variants))), variants))
+        rejected(lambda: verify_mount_manifest(assets, variants + [variants[0]]))
     fixture = Path(tempfile.mkdtemp(prefix='source-check-', dir=ROOT / 'Temp'))
     for name in source_snapshot():
         target = fixture / name
