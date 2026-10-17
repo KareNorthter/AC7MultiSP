@@ -89,6 +89,24 @@ void checkMemory(Addr address, size_t size) {
 }
 template<class T> T read(Addr address) { checkMemory(address,sizeof(T)); T value; std::memcpy(&value,reinterpret_cast<void*>(address),sizeof(T)); return value; }
 template<class T> void write(Addr address, T value) { checkMemory(address,sizeof(T)); std::memcpy(reinterpret_cast<void*>(address),&value,sizeof(T)); }
+// 名称读取按可读区分块校验，不为每个字符重复调用VirtualQuery；不缓存跨调用的页或对象。
+std::string readBoundedName(Addr address,const char* error) {
+    std::string value;
+    while(value.size()<240) {
+        MEMORY_BASIC_INFORMATION region{};
+        require(address && VirtualQuery(reinterpret_cast<void*>(address),&region,sizeof(region)) &&
+            region.State==MEM_COMMIT && !(region.Protect&(PAGE_GUARD|PAGE_NOACCESS)),error);
+        const auto base=reinterpret_cast<Addr>(region.BaseAddress);
+        require(address>=base && address-base<region.RegionSize,error);
+        const size_t count=std::min(size_t{240}-value.size(),region.RegionSize-static_cast<size_t>(address-base));
+        const auto* data=reinterpret_cast<const char*>(address);
+        const auto* end=static_cast<const char*>(std::memchr(data,0,count));
+        value.append(data,end?static_cast<size_t>(end-data):count);
+        if(end)return value;
+        require(address+count>address,error);address+=count;
+    }
+    throw std::runtime_error(error);
+}
 Addr stateOf(Addr activator) {
     const auto owner=read<Addr>(activator+0x260);
     return read<Addr>(owner+0xf0);
@@ -455,7 +473,17 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
     require(loadedCount>=0 && loadedCount<=num && nextSlot>=0 && nextSlot<num,"Invalid cached launch cursor");
     require(time+0.001>=saved.capturedTime,"Game time rewound; checkpoint restoration required");
     const double dt=std::max(0.0,time-saved.capturedTime);
-    for(int i=0;i<num;++i)require(std::abs(read<float>(slotData+i*0x60+0x48)-saved.slots[(nextSlot+i)%num].duration)<0.001f,"Reload configuration changed");
+    // 完整数组已核可读范围；本同步批次不调用引擎，集中读取和计算，全部成功后才写回。
+    // ADMM有126槽，避免每槽重复查询同一页、重复核对同一装填时长。
+    std::vector<std::array<float,2>> reloads;reloads.reserve(num);
+    for(int i=0;i<num;++i) {
+        const auto& slot=saved.slots[(nextSlot+i)%num];
+        std::array<float,2> native{};
+        std::memcpy(native.data(),reinterpret_cast<const void*>(slotData+static_cast<size_t>(i)*0x60+0x48),sizeof(native));
+        require(std::abs(native[0]-slot.duration)<0.001f,"Reload configuration changed");
+        const float logical=dualsp::advanceReload(slot.duration,slot.elapsed,dt,i<loadedCount);
+        reloads.push_back({logical,dualsp::rebuildReload(slot.duration,logical,native[1])});
+    }
     // Only the current load window progresses. Advancing every physical hardpoint
     // would create extra ready missiles and violate the native loaded-count cap.
     checkMemory(address+8,saved.scalars.size());
@@ -465,22 +493,12 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
     // restoring a cursor whose old projectile instances no longer exist.
     write<int>(address+0x14,0);
     for(int i=0;i<num;++i) {
-        const auto& slot=saved.slots[(nextSlot+i)%num];
-        require(std::abs(read<float>(slotData+i*0x60+0x48)-slot.duration)<0.001f,"Reload configuration changed");
-        const int distance=i;
-        float elapsed=dualsp::advanceReload(slot.duration,slot.elapsed,dt,distance<loadedCount);
-        // A newly rebuilt hardpoint may not yet own a loaded projectile. Writing
-        // a completed timer skips the native reload-completion event. Let the next
-        // game tick cross the threshold and perform the actual native reload.
-        const float rebuiltElapsed=read<float>(slotData+i*0x60+0x4c);
+        // 保留原生下一帧跨过装填门槛的行为，不提前将新建槽冒充为已生成弹体。
+        const float elapsed=reloads[i][1];
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        const float logicalElapsed=elapsed; // 保留原装填结果，原型不能把重建门槛当成新冷却。
+        fixedMountRecordReload(special,i,reloads[i][0],elapsed,saved.slots[(nextSlot+i)%num].duration);
 #endif
-        elapsed=dualsp::rebuildReload(slot.duration,elapsed,rebuiltElapsed);
-#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        fixedMountRecordReload(special,i,logicalElapsed,elapsed,slot.duration);
-#endif
-        write<float>(slotData+i*0x60+0x4c,elapsed);
+        std::memcpy(reinterpret_cast<void*>(slotData+static_cast<size_t>(i)*0x60+0x4c),&elapsed,sizeof(elapsed));
     }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     if(special)fixedMountRestoreOrder(saved,nextSlot); // 与冷却队列使用完全相同的旋转。
@@ -508,14 +526,45 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
 
+// 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
+struct CfaSwitchCost {
+    bool active{};uint64_t start{},last{};
+    std::array<uint64_t,9> ticks{};
+    std::array<bool,9> reached{};
+    static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
+    void begin(bool enabled) { *this={};active=enabled;if(active)start=last=now(); }
+    void mark(unsigned stage) {
+        if(!active)return;
+        const auto time=now();ticks.at(stage)=time-last;reached.at(stage)=true;last=time;
+    }
+    void finish(uint64_t request,bool ok) noexcept {
+        if(!active)return;
+        const auto end=now();active=false;
+        try {
+            LARGE_INTEGER frequency{};QueryPerformanceFrequency(&frequency);
+            if(frequency.QuadPart<=0)return;
+            const double ms=1000.0/double(frequency.QuadPart);
+            const char* names[]={"capture","retain_effects","mount_before","audio_selection","native_init",
+                "restore_effects","reload_armed","mount_commit","response_publish"};
+            Json stages=Json::object();
+            for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
+            nativeLog(Json{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
+                {"total_ms",double(end-start)*ms},{"stages_ms",stages}}.dump());
+        }catch(...) { } // 计时记录失败不影响已经完成的兵装事务。
+    }
+} cfaSwitchCost;
+
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
+    cfaSwitchCost.mark(0);
     ControlledWeaponSwitch controlled;
     ravenBeforeRebuild(command);
     ContinuousRebuild continuous(command); // 保留已登记机型/真实类的持续发射体。
+    cfaSwitchCost.mark(1);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
     const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
 #endif
+    cfaSwitchCost.mark(2);
     finishSeekerAudio(command.plane,command.activator); // 先释放旧槽音效，再重建锁定槽和武器池。
     const int gun=read<int>(stateOf(command.activator)+8);
     const auto owner=read<Addr>(command.activator+0x260);
@@ -527,6 +576,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #endif
     continuousRebuildStarted=true;
     continuous.rebuilding=true;
+    cfaSwitchCost.mark(3);
     {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         MountAnimationNativeRebuild animationRebuild(command.plane);
@@ -536,6 +586,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         animationRebuild.returned=true;
 #endif
     }
+    cfaSwitchCost.mark(4);
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);
@@ -547,6 +598,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         write<int>(read<Addr>(command.activator+0x260)+0x10c,flares);
     }
     continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
+    cfaSwitchCost.mark(5);
 }
 void keepArmed(const Command& command,bool armed) {
     ControlledWeaponSwitch controlled;
@@ -716,6 +768,7 @@ void execute(const Command& command) {
         restore(command.activator,true,session.special[command.target],command.time);
         session.active=command.target;
         keepArmed(command,armed);
+        cfaSwitchCost.mark(6);
     } else if(command.op=="checkpoint_save") {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
         session.main=capture(command.activator,false,command.time);
@@ -768,6 +821,7 @@ void execute(const Command& command) {
         bindF35Cover(command.plane);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
 #endif
+    cfaSwitchCost.mark(7);
 }
 }
 
@@ -1673,12 +1727,19 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
 extern "C" __declspec(dllexport) int lab_native_execute(void*) {
     std::lock_guard<std::mutex> guard(nativeExecutionMutex);
     continuousRebuildStarted=false;
+    cfaSwitchCost.begin(false);
     uint64_t request=0;
+    bool transientSwitch=false,completed=false;
     std::string result;
     try {
         const auto command=readCommand();
         request=command.request;
         require(runtimeEnabled,"Mod disabled outside single-player");
+        transientSwitch=command.op=="switch";
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        cfaSwitchCost.begin(transientSwitch && fixedMount.bound && fixedMount.aircraft==MountAircraft::Fa44 &&
+            fixedMount.plane.address==command.plane);
+#endif
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
             {"target",command.target},{"configs",command.configs},{"count",command.count},{"thread",GetCurrentThreadId()}}.dump());
         execute(command);
@@ -1704,9 +1765,11 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
             state["slots"].push_back(bars);
         }
         result=state.dump();
+        completed=true;
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_DONE"},{"op",command.op},{"request",request},
             {"active",session.active},{"main_ammo",state["main_ammo"]},{"sp",state["cached_sp"]}}.dump());
     } catch(const std::exception& error) {
+        completed=false;
         if(runtimeEnabled && continuousRebuildStarted) {
             continuousAbortRetained();ravenAbortRebuild(); // 已重建后失败才清理，前置拒绝不结束在途效果。
         }
@@ -1717,8 +1780,10 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
     }
     // A reader must see an entire response. Include the request ID so an I/O
     // failure cannot cause the controller to accept a previous successful reply.
-    try {atomicJson(modRoot()/"native-status.json",Json::parse(result));}
-    catch(const std::exception& e){nativeLog(std::string("NATIVE_RESPONSE_WRITE_ERROR ")+e.what());}
+    // 切换回执是同进程即时交接，不需要断电持久化；仍原子替换，并由Lua核对请求编号。
+    try {atomicJson(modRoot()/"native-status.json",Json::parse(result),!transientSwitch);}
+    catch(const std::exception& e){completed=false;nativeLog(std::string("NATIVE_RESPONSE_WRITE_ERROR ")+e.what());}
+    cfaSwitchCost.mark(8);cfaSwitchCost.finish(request,completed);
     return 0;
 }
 

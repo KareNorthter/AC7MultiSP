@@ -52,9 +52,7 @@ std::string continuousName(Addr object) {
     const Addr chunk=read<Addr>(names+(index/0x4000)*8);
     const Addr entry=read<Addr>(chunk+(index%0x4000)*8);
     require(!(read<unsigned char>(entry)&1),"持续兵装：资源名编码不符");
-    std::string name;
-    for(int i=0;i<240;++i){const char c=read<char>(entry+16+i);if(!c)return name;name+=c;}
-    throw std::runtime_error("持续兵装：资源名过长");
+    return readBoundedName(entry+16,"持续兵装：资源名不可读或过长");
 }
 bool continuousClass(Addr cls,const char* name,const char* package) {
     return continuousName(cls)==name && continuousName(read<Addr>(cls+0x20))==package;

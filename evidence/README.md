@@ -4,7 +4,9 @@
 
 ## 当前候选
 
-2.17.0按用户指定接收CFA修订、目标注视及第12关更正，来源和安装见`2.17.0-integration.json`与`2.17.0-installed.json`。候选待用户实测；原始研究证据`target-gaze-research.json`保留，不能把原生轴采样当作新功能实测。
+2.17.0按用户指定接收CFA修订、目标注视及第12关更正，来源和安装见`2.17.0-integration.json`与`2.17.0-installed.json`。用户反馈CFA仍卡、ECM外观可接受；原始研究证据`target-gaze-research.json`保留，不能把原生轴采样当作新功能实测。
+
+[CFA后续调查](cfa44-switch-2.17-followup.json)：用户反馈、日志快照及切换耗时；名称/装填/回执开销优化和任务外原生模型旁路仅完成源码，尚未构建或实测。
 
 ## 当前交付
 

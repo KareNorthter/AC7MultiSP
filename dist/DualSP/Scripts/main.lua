@@ -437,6 +437,10 @@ local function mountPreview(context)
             sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
         end
         local info=catalogue and catalogue[tostring(context.planeId)]
+        -- CFA任务外仅用当前原生模型；在资源加载、反射绑定和多挂维护之前退出。
+        if info and info.code=="fa44"and not supply and not flight then
+            return releaseMountPreview(0)
+        end
         if info and info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"and not expandedMountAssets[info.code]and not lightMountAircraft[info.code]then return releaseMountPreview(0)end
         -- 异步换机属于等待：先归还上一展示对象，下次 pump 再核对完整身份。
         if not valid(sourcePlane)or not info or not isSelectedPlane(sourcePlane,info.code)
@@ -484,6 +488,7 @@ local function maintainScenePreview()
         local model=valid(hangar)and hangar.LoadedPlayerPlane or nil
         if not valid(model)then releaseMountPreview(0);return end
         local info=catalogue and catalogue[tostring(planeId)]
+        if info and info.code=="fa44"then releaseMountPreview(0);return end
         if not info or info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"and not expandedMountAssets[info.code]then return end
         local address=model:GetAddress()
         if address~=scenePreviewPlane or os.clock()-scenePreviewTime>=.5 then

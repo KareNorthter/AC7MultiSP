@@ -1,0 +1,182 @@
+{
+  "base_commit": "fcccc0a",
+  "installed_receipt": "evidence/2.17.0-installed.json",
+  "installed_runtime_hashes_match": true,
+  "user_feedback": "CFA仍切换卡顿；ECM模型不再显示，ADMM/EML展开可以接受；要求任务外只用原生模型。",
+  "log_snapshot": "Temp/cfa44-switch-feedback-20261017-235055",
+  "log_hashes": {
+    "native.log": {
+      "bytes": 1831866,
+      "sha256": "25f479dc30f464b5ddf037aab97ab5a508c82816a1405511e201f8613c12c62d"
+    },
+    "mod.log": {
+      "bytes": 5136793,
+      "sha256": "2a04ead607a6fc5a9cea62bb34e27c8090d04757fa726d92c434f78658698b0b"
+    }
+  },
+  "native_begin_done_samples": [
+    {
+      "request": 3,
+      "target": 1,
+      "start_tick": 127168375,
+      "elapsed_ms": 812
+    },
+    {
+      "request": 4,
+      "target": 2,
+      "start_tick": 127172234,
+      "elapsed_ms": 125
+    },
+    {
+      "request": 5,
+      "target": 0,
+      "start_tick": 127177890,
+      "elapsed_ms": 125
+    },
+    {
+      "request": 6,
+      "target": 1,
+      "start_tick": 127178515,
+      "elapsed_ms": 141
+    },
+    {
+      "request": 7,
+      "target": 2,
+      "start_tick": 127179187,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 8,
+      "target": 0,
+      "start_tick": 127184812,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 9,
+      "target": 1,
+      "start_tick": 127185656,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 10,
+      "target": 2,
+      "start_tick": 127186984,
+      "elapsed_ms": 266
+    },
+    {
+      "request": 11,
+      "target": 0,
+      "start_tick": 127195609,
+      "elapsed_ms": 266
+    },
+    {
+      "request": 12,
+      "target": 1,
+      "start_tick": 127201312,
+      "elapsed_ms": 94
+    },
+    {
+      "request": 13,
+      "target": 2,
+      "start_tick": 127205031,
+      "elapsed_ms": 156
+    },
+    {
+      "request": 14,
+      "target": 0,
+      "start_tick": 127206078,
+      "elapsed_ms": 140
+    },
+    {
+      "request": 15,
+      "target": 1,
+      "start_tick": 127206703,
+      "elapsed_ms": 156
+    },
+    {
+      "request": 16,
+      "target": 2,
+      "start_tick": 127207187,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 17,
+      "target": 0,
+      "start_tick": 127208734,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 18,
+      "target": 1,
+      "start_tick": 127209718,
+      "elapsed_ms": 203
+    },
+    {
+      "request": 19,
+      "target": 2,
+      "start_tick": 127210234,
+      "elapsed_ms": 266
+    },
+    {
+      "request": 20,
+      "target": 0,
+      "start_tick": 127218625,
+      "elapsed_ms": 265
+    },
+    {
+      "request": 21,
+      "target": 1,
+      "start_tick": 127219421,
+      "elapsed_ms": 282
+    },
+    {
+      "request": 22,
+      "target": 2,
+      "start_tick": 127223937,
+      "elapsed_ms": 313
+    },
+    {
+      "request": 23,
+      "target": 0,
+      "start_tick": 127317921,
+      "elapsed_ms": 79
+    },
+    {
+      "request": 24,
+      "target": 1,
+      "start_tick": 127319281,
+      "elapsed_ms": 94
+    },
+    {
+      "request": 25,
+      "target": 2,
+      "start_tick": 127324859,
+      "elapsed_ms": 141
+    },
+    {
+      "request": 3,
+      "target": 1,
+      "start_tick": 127614203,
+      "elapsed_ms": 812
+    },
+    {
+      "request": 4,
+      "target": 2,
+      "start_tick": 127615765,
+      "elapsed_ms": 141
+    }
+  ],
+  "timing_limit": "原日志GetTickCount64约16ms粒度，NATIVE_DONE早于回执落盘；不能从这些总耗时单独归因骨骼或原生初始化。 日志跨多次进程运行，按最后一轮CFA的起始行截取，不按系统tick全局过滤。",
+  "source_changes": [
+    "任务外CFA在Lua资源准备前旁路，核心mode1保持原生",
+    "名称按可读区分块读取，不缓存页面",
+    "冷却恢复在已校验数组内集中计算与写回，避免每槽重复查页",
+    "switch临时回执保原子替换，取消强制落盘",
+    "CFA_SWITCH_COST分段计时，覆盖回执发布"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "log_segment_start_line": 21193
+}

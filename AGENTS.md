@@ -8,7 +8,7 @@
 
 - Steam build 9855922，Windows 10/11 x64，单人战役/自由任务。2.17更正为第12关任务ID112使用原生指定SP，离开后恢复，212自由飞行不受影响；第14关恢复多SP；多人功能停用。
 - 用户已测2.16：其他功能基本正常，授权合入main和制作发布包；不代表全机全组合全面验收。
-- 2.16实测：CFA-44三SP切换短卡后恢复正常，ECM模型仍显示/展开；ADF-01首次停光明显卡、后续轻卡。CFA修订已接收至`codex/integration-2.17.0`，效果待用户实测，main及2.16实测结论不变。ADF、CFA/F22 SP2/SP3光标卡顿、F2性能、偶发机库退出仍在待办。
+- 2.17用户反馈：CFA切换仍卡，ECM模型不再显示；切ECM时ADMM/EML仍展开可以接受。当前`codex/cfa44-switch-performance`基于已安装候选`fcccc0a`继续优化，并在机库等任务外禁用CFA多挂预览；仅改源码，未构建、测试或安装。调查见`evidence/cfa44-switch-2.17-followup.json`。ADF停光、F22光标卡顿、F2性能、偶发机库退出仍在待办。
 - 运行源码唯一位置`dist/DualSP/Scripts/`；17运行文件、50资源/100成员PAK。冻结构建`Temp/build-2.16.0-final`，安装/整合/实测/发布回执在`evidence/2.16.0-*.json`；不重新编译已实测字节来正式化。
 - 2.17候选成套构建与现有安装所需检查通过，已安装但未启动游戏，见`evidence/2.17.0-integration.json`和`2.17.0-installed.json`；构建`Temp/build-2.17.0-candidate`，后续升级以实际已安装回执为基线。2.16冻结构建和发布包继续保留。
 - 模型输入`Temp/mount-assets-2.14.0/source`保原位；核心表和Lua清单同源生成，禁止混装。研究脚本和被引用证据不得因整理而改名或格式化。

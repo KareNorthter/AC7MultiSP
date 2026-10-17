@@ -219,13 +219,7 @@ std::string mountNameIndex(unsigned index) {
     const Addr chunk=read<Addr>(names+(index/0x4000)*8); // 每块 16384 项。
     const Addr entry=read<Addr>(chunk+(index%0x4000)*8); // 名称条目含 16 字节头。
     require((read<unsigned char>(entry)&1)==0,"固定挂载：预期的资源名不是 ASCII");
-    std::string name; // 最长读取 240 字节，不跨越未知名称空间。
-    for(int offset=0;offset<240;++offset) {
-        const char value=read<char>(entry+16+offset); // 单字节读取同时检查页边界。
-        if(!value)return name;
-        name.push_back(value);
-    }
-    throw std::runtime_error("固定挂载：资源名没有终止符");
+    return readBoundedName(entry+16,"固定挂载：资源名不可读或没有终止符");
 }
 // 资源身份使用对象本名，不依赖用户配置的机体编号。
 std::string mountName(Addr object) { return mountNameIndex(read<unsigned>(object+0x18)); }

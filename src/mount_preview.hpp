@@ -419,7 +419,8 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         }
         const auto aircraft=mountAircraft(plane);
         require(aircraft!=MountAircraft::Unsupported,"模型预览：机型未适配");
-        if(mountNativeOnly(aircraft)) {
+        // mode1覆盖机库、准备与其他任务外展示；补给和实际任务玩家保持任务内策略。
+        if(mountNativeOnly(aircraft) || (aircraft==MountAircraft::Fa44 && mode==1)) {
             mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
             mountPreview.layout={};mountPreview.layout.plane=planeIdentity;mountPreview.layout.aircraft=aircraft;
             mountPreview.configs=configs;mountPreview.ammo=ammo;mountPreview.planCached=true;mountPreview.pending=false;return;
