@@ -85,6 +85,43 @@ Pause保护最初提交ca5a420基于旧两字段Controller；后续新增纯记�
 
 主管已确认本机C runtime的全局 `::read` 会遮住产品匿名命名空间模板；主工作区使用独立 `mountAnimationRead<T>` 包装解决。合入适配器时保留该编译兼容修订，不用研究树旧的 `::read<T>` 调用覆盖它；本轮未自动回拷主核心或运行编译。
 
+## F-22A分舱与TG切换连续性
+
+本节对应 `evidence/sp-bay-domains.json` 和离线分析器 `src/research/analyze_bay_domains.py`。保留用户认可的当前Socket选位；小幅穿插偏好不改变舱域识别，也不要求为了维持旧零偏差门槛增加逐帧遍历。本轮只交候选源码/资源配方，没有生成资源、编译、测试或安装。
+
+### F-22A的实际分区
+
+两套当前AnimBP均用原生FlightEngineBlend和同一PlaneBodyConfig；原表没有把本机腹/侧SP机构分开。
+
+| 实际机构 | 骨名与数量 | 当前通道 | 专用表建议通道 |
+|---|---|---|---|
+| Body腹舱 | SWPCover_01–04、11–15，共9骨 | spwc | swcc |
+| SWP3腹部导轨 | SWPCover_05–10、16–24，共15骨 | spwc | swcc |
+| SWP3的8AAM侧部机构 | SWPCover_25–38，共14骨 | spwc | swc3 |
+| Body普通MSL侧门 | Missile_Cover_01–10，共10骨 | misc | 保留原生misc |
+
+现有多挂方案的8AAM选位确为SWP3的 `sp31..sp38`，QAAM/XSDB使用同一SWP3中的腹部位置。原骨架参考姿态中，侧部14骨的横向绝对值最低约29.85，腹部15骨最高约7.73，中间存在明确间隔；分区同时以实际Socket绑定骨名/父链核对，未按武器名猜分组。Body的misc侧门位于另一组位置，不能用它代替sp31..38机构，也不更改用户满意的选位。
+
+最小资源方案是**一个专用DataTable副本，加两个现有AnimBP副本改BoneConfig引用**：复制PlaneBodyConfig，仅将SWPCover_01–24改读swcc、25–38改读swc3；让F22 Body和SWP3对应AnimBP副本引用该表。保留原Mesh、Skeleton、全部AnimSequence骨轨/飞控轨、Socket及其他配置行，原版全局PlaneBodyConfig不动；无需因这个路由新增NativeAnimInstance变量或另建动画状态机。逐骨完整改表配方已在回执中列出38行。
+
+但**只复制改表还不能交付独立开合**：原生公共1模式只按当前配置向输出槽分派公共进度，不能凭名字假定非当前swcc/swc3会自动收拢。仍需给两条既有通道接入经过核对的独立视觉输出与收尾；主公共request/phase/发射门控继续原生，不全局写1。本轮未证明新的F22输出写端/缓存提交入口，没有猜Parts偏移，也没有生成上述三份资源。原类/包身份白名单须在资源真正生成核对后同步更新，不能把副本冒充原版AnimClass。
+
+本次Controller只先限定F22同域快照mask=3：QAAM/XSDB共享腹域，出入8AAM返回NativeTransition；它是分舱目标下的保守控制候选，**单独改mask不会把现有spwc资源变成独立两舱**。
+
+### TG静态第三组仍属于共舱
+
+当前四组合都使用静态SWP3的sp31..34，坐标为X约10.90/-42.42、Y=±2.70、Z=-1.60。Body LOD0的SPWC盖板在资源闭合姿态下挡住四点向下的射线，最近距离分别约2.8313、2.8095、2.9970、3.0386个资源单位；全开姿态下三条略不同方向的射线均不再命中这组盖板。前两组4AAM/HCAA的十根骨轨也逐键相同。
+
+因此不能以“StaticMesh/LACM”推断第三配置外置并排除连续性。Controller候选将TG snapshotDomainMask改为7，三配置都保留Body共舱状态；animatedMask仍为3，静态第三组不读Pause/NoSkeletonUpdate、不取得Tick或骨架刷新租约。LOD1–3在按SPWC权重筛选后没有盖板三角面，回执中的无命中不能写成这些LOD舱门开放或完整无遮挡；本轮没有扩成全武器动态扫掠结论。
+
+### 补还位置与F-35C对照
+
+同舱快照必须保留到**实际initialize、弹药缓存恢复、session.active切换，以及keepArmed内完整SwitchPressed/Released和armed确认全部结束之后**，在ravenRestoreReload/fixedMountCommit前一次消费；也可放在keepArmed内部末尾、上述原生调用和确认之后。原先initialize内fixedMountAfterRebuild的早期位置只适合观察原生请求，不能先消费同一快照。主线程已实现的同request/Binding/generation排队沿用，本候选不重复主glue。setup、补给/检查点重建和未armed的普通换槽不套旧同舱快照。
+
+F-35C并非只依靠一次“keepArmed前补还”：既有6模式每帧先保存独立通道，切换0/1时用旧最大进度衔接；原生Parts仅执行一次，再按真实delta/seconds/speed让非当前通道收拢并补合成输出。其Body swcc与挂架通道的连续性由这套逐帧小范围修正维持，公共1模式没有这层等价补偿。保留F35既有路径，不把其偏移、6模式或成功的早期补还位置硬套给F22/TG。
+
+已有源码与原生片段只能明确确认“早期补还之后又执行完整原生类别切换”；本轮尚未追到SetSpecialWeaponArmed重置公共1模式的最终写指令，不能把它写成已定因。后移补还是准确的事务边界修正，不能以此宣称已独立证明所有重复开合只由该setter引起。
+
 ## 同帧发布的具体接线
 
 已核对SWP三组真实虚表：slot0x890→`0x16e5de0`，slot0x3d0→`0x16eafd0`。前者0xbc字节有自然ret，不把 `.pdata` 的unwind片段当完整函数。

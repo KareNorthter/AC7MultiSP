@@ -203,7 +203,9 @@ public:
         binding_=binding;
         equipped_=equipped;
         animatedMask_=animatedMask;
-        snapshotDomainMask_=animatedMask;
+        // 舱域不能由组件是否为骨架推断：TG静态LACM点仍在Body共舱盖板内。
+        // F22只允许QAAM/XSDB共享腹域；8AAM侧部机构须另做逐骨通道路由，不继承腹域请求。
+        snapshotDomainMask_=aircraft == Aircraft::F22a ? 3u : 7u;
         leases_=pending;
         for (unsigned i=0;i<3;++i) if ((requiredRackMask & animatedMask_) & (1u << i)) {
             // 先登记恢复所有权，再调用可能只完成部分操作的原生接口。
@@ -282,7 +284,7 @@ public:
         if (!active_ || !same(current,binding_) || !host.bindingAlive(binding_)) return Error::InvalidBinding;
         if (!transaction || fromConfig == toConfig || !selected(fromConfig) || !selected(toConfig))
             return Error::InvalidSelection;
-        // TG的LACM是静态外置组：仅0/1互切继承同舱状态；出入配置2不继承旧开门请求。
+        // F22的8AAM侧部域与QAAM/XSDB腹域分开；TG三配置均在Body共舱，静态第三组仍不取得骨架租约。
         if (!(snapshotDomainMask_ & (1u << fromConfig)) || !(snapshotDomainMask_ & (1u << toConfig)))
             return Error::NativeTransition;
         if (pendingTransaction_ || transaction <= lastTransaction_) return Error::StaleTransaction;
@@ -294,7 +296,8 @@ public:
         return Error::None;
     }
 
-    // 同步InitializeWeaponSystem之后、keepArmed之前调用。快照一次使用；不写当前配置编号。
+    // 实际initialize、弹药恢复及keepArmed完整Pressed/Released均结束后调用。
+    // 快照必须保留到该位置且只消费一次；不能在fixedMountAfterRebuild的早期位置先消费。
     Error restoreSwitch(Host& host, const Binding& current, std::uint64_t transaction, Snapshot& saved) {
         if (!host.onGameThread()) return Error::WrongThread;
         const Snapshot copy=saved;

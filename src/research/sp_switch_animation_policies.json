@@ -6,9 +6,9 @@
   "configuration_numbering": "configs为原生SpecialWeaponConfig1/2/3对应的0/1/2，和用户SP槽顺序无关",
   "shared_contract": {
     "binding": "任务、机库和补给独立绑定世界/机体/激活器/组件索引序列号；先解析真实父链、AnimClass与原生选择编号，不复用其他场景地址",
-    "same_domain_switch": "兵装重建前保存同舱请求、开合状态、进度和域身份；同步重建后身份仍一致才在keepArmed前归还连续状态，不重播开门或重建动画实例",
+    "same_domain_switch": "兵装重建前保存同舱请求、开合状态、进度和域身份；实际初始化、弹药恢复及keepArmed完整Pressed/Released结束后，按同request/Binding/generation一次归还，不在初始化早期消费",
     "different_domain_switch": "新域执行原生请求，旧域沿原生速度完成收拢；持久效果/蓄能尚未结束时先按该真实类生命周期决定能否收拢，不无条件复制公共进度",
-    "component_update": "原生完整PartsAnimation每帧只执行一次；保留的非当前骨架继续必要Tick及更新，不修改bNoSkeletonUpdate。不同域的同名spwc须在已核对的逐组件求值层路由，不能全局同写",
+    "component_update": "原生完整PartsAnimation每帧只执行一次；仅所需骨架按已核对的三字段合同保持必要更新，静态provider不取得骨架租约。不同域同名spwc须明确逐骨路由，不能全局同写或全锁1",
     "launch": "先完成该帧动画和组件世界变换更新，再从相同映射读取Socket位置与旋转；缺省变换不猜零，资源轨迹不代替真实世界变换",
     "release": "关闭、失败、补给/检查点重建、换机或世界改变时释放旧域，归还最新原生显隐/网格/动画请求；身份已失效不访问旧地址",
     "failure": "没有已核对的逐组件输出入口或运行身份时保持整机暂缓；视觉失败独立回退，不把成功的兵装事务改报失败",
@@ -51,11 +51,11 @@
       "special_case": "sp31/32约80度转动，sp33/34固定；四个位置不能套用统一变换"
     },
     "f22a": {
-      "mode": "common_bay",
-      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"], "SWP3": ["spwc"]}}],
-      "switch_rule": "三个SP换槽保留同一个弹仓控制进度与开合方向；每个组件继续使用各自原生序列，不换AnimClass，不重建动画实例",
-      "remaining_layout_work": ["七组合支撑和弹体扫掠", "单一门体呈现与各组导轨粒度"],
-      "special_case": "SWP1/2参考骨架一致但15根同名骨骼曲线有差异；SWP2/3共有的15根曲线一致，SWP3另有机构。共享进度不等于替换为同一曲线或网格"
+      "mode": "split_visual_bays_requires_resource_route",
+      "domains": [{"configs": [0, 1], "body_channels": ["spwc"], "rack_channels": {"SWP3": ["spwc"]}, "proposed_alias_after_resource_rebind": "swcc"}, {"configs": [2], "body_channels": [], "rack_channels": {"SWP3": ["spwc"]}, "proposed_alias_after_resource_rebind": "swc3"}],
+      "switch_rule": "QAAM/XSDB同腹域仅在keepArmed之后补还；8AAM保留现有sp31..38选位，侧部机构另域，不将腹域公共进度锁1",
+      "remaining_layout_work": ["复制专用BoneConfig并给现Body/SWP3 AnimBP副本改表引用", "独立swcc/swc3视觉输出的安全写端及旧域按原生速率收尾"],
+      "special_case": "Body腹9骨与SWP3腹15骨、侧14骨现都spwc；Body普通MSL侧门misc是另一机构。仅逐组件覆盖SWP3不能分舱；最小资源配方不改Mesh/Skeleton/Sequence/Socket，但资源路由尚未生成或放行"
     },
     "f35c": {
       "mode": "existing_reference",
@@ -105,10 +105,10 @@
     },
     "su57tg": {
       "mode": "common_bay",
-      "domains": [{"configs": [0, 1], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"]}}],
-      "switch_rule": "HCAA/4AAM同舱保留公共进度，LACM外置组不延用同舱请求；原生曲线和发射点各自保留",
+      "domains": [{"configs": [0, 1, 2], "body_channels": ["spwc"], "rack_channels": {"SWP1": ["spwc"], "SWP2": ["spwc"]}}],
+      "switch_rule": "三配置的Body共舱状态在keepArmed之后补还；静态LACM点位于同舱盖板上方，不能因组件静态便排除，第三组仍不做骨架维护",
       "remaining_layout_work": ["两类空空弹的同舱支撑", "三挂LACM与活动舱体净空"],
-      "special_case": "两个活动SWP十根同名曲线一致；本体读spwc，区别于原版Su-57的swcc"
+      "special_case": "前两组十根同名曲线一致；当前所有弹体借LACM静态sp31..34，LOD0关闭盖板在其下方2.81–3.04资源单位，全开消除遮挡。snapshot域mask7和骨架mask3必须分开"
     },
     "x02s": {
       "mode": "distinct_mechanisms",
