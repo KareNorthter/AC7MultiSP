@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "candidate": "2.15.0",
+  "base_installed": "2.14.0",
+  "authorization": "用户要求研究三项问题，查明原因直接修复并安装；CFA优先，F2专项可暂缓。",
+  "build_dir": "Temp/build-2.15.0-final",
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "summary": "按当前SP组合加载派生资源，单SP跳过；CFA复用反射接口、同批组件类资格和无租约骨元数据，保留逐实例/挂点/池头检查；等待页与正式页统一阶段标题；明确实例换代先安全归还再等待新入口，真实结构和归还错误仍回退。",
+  "investigation": "evidence/2.15.0-performance-investigation.json",
+  "previous_integration": "evidence/2.14.0-integration.json",
+  "resource_source": "Temp/mount-assets-2.14.0/source",
+  "runtime_files_verified": 17,
+  "mount_variants": 50,
+  "mount_members": 100,
+  "all_previous_resource_members_preserved": true,
+  "mount_pak_unchanged": true,
+  "protected_files_verified": 164,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-211723-960129",
+  "profiles_preserved": true,
+  "saves_preserved": true,
+  "other_mod_files_preserved": true,
+  "game_was_closed_before_install": true,
+  "game_closed_by_agent_this_turn": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "deferred": [
+    "F2专项性能分析",
+    "必需资源首次同步加载的剩余开销与真实引擎性能复测"
+  ],
+  "validation_boundary": "现有适用自动检查和安装核验通过；没有游戏内新采样，不宣称FPS、加载时长或切换卡顿已实测修复。",
+  "runtime_hashes": {
+    "core": "6c392044f955a09d92668e16ba343beeddb79135e39ab92f1c64079965bf4955",
+    "ui": "43f74a56e7c3df8e6169dfc4529aa0a6cdb976e8b1941795082caf9f570caa5c",
+    "mount_pak": "4c8f44c34ffe76fa6d57a04f3cb2644bd92418f8d1930b3bbd43ad768e85fc50"
+  },
+  "created_at": "2026-10-17T13:19:36.660485+00:00"
+}

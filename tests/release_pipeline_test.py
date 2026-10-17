@@ -27,7 +27,12 @@ def main():
     loader = '-- 独立挂架资源清单；由同一份七组合数据生成。\nreturn {\n'
     for plane in data['planes']:
         entries = sorted({(i,pool+1) for plan in plane['plans'][1:] for pool,i in enumerate(plan['variants']) if i >= 0})
-        loader += '    ' + plane['code'] + '={' + ','.join('{' + str(i) + ',"' + data['assets'][i] + '",' + str(pool) + '}' for i,pool in entries) + '},\n'
+        rendered = []
+        for i, pool in entries:
+            masks = sum(1 << mask for mask, plan in enumerate(plane['plans'])
+                        if mask and plan['variants'][pool-1] == i)
+            rendered.append('{' + str(i) + ',"' + data['assets'][i] + '",' + str(pool) + ',' + str(masks) + '}')
+        loader += '    ' + plane['code'] + '={' + ','.join(rendered) + '},\n'
     loader += '}\n'
     assert loader == (ROOT / 'dist/DualSP/Scripts/mount_assets.lua').read_text(encoding='utf-8')
     # 成套资源数量增长时必须逐成员对应；缺件、多件、重复名或伪造数量均拒绝。

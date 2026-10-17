@@ -139,8 +139,12 @@ if __name__=='__main__':
     for plane in data['planes']:
         entries = sorted({(i, pool + 1) for p in plane['plans'][1:]
                           for pool, i in enumerate(p['variants']) if i >= 0})
-        lua += '    '+plane['code']+'={' + ','.join(
-            '{'+str(i)+',"'+data['assets'][i]+'",'+str(pool)+'}' for i, pool in entries) + '},\n'
+        def entry(i, pool):
+            # 第四项按组合mask登记使用范围，单挂无需加载派生资源。
+            masks = sum(1 << mask for mask, plan in enumerate(plane['plans'])
+                        if mask and plan['variants'][pool-1] == i)
+            return '{'+str(i)+',"'+data['assets'][i]+'",'+str(pool)+','+str(masks)+'}'
+        lua += '    '+plane['code']+'={' + ','.join(entry(i, pool) for i, pool in entries) + '},\n'
     lua += '}\n'
     (ROOT/'dist/DualSP/Scripts/mount_assets.lua').write_bytes(lua.encode('utf-8'))
     print('已生成静态机体',len(data['planes']),'完整组合',len(data['planes'])*7,'独立挂架资源',len(data['assets']))

@@ -221,8 +221,11 @@ function NativeLoadout.new(dependencies)
         local retained=holder:AddChild(widget);assert(valid(retained),"无法保留准备页源控件")
         applyLayout(retained,layout,widget)
     end
+    local function preparationTitle(stage)
+        return "SELECT SP WEAPON "..assert(stage:match("^sp([123])$"),"准备页兵装标题阶段无效")
+    end
     -- 原生文字模板含隐藏动画的内部状态，新增文字从干净对象初始化，只复制显示样式。
-    local function initializeLeaf(widget,source,isImage)
+    local function initializeLeaf(widget,source,isImage,initialText)
         -- AC7 自定义的局部泛光不能只靠字体颜色继承。
         widget:SetGlowColor(source.GlowColor);widget:SetUseGlobalGlowColor(source.bUseGlobalGlowColor)
         if isImage then
@@ -237,10 +240,10 @@ function NativeLoadout.new(dependencies)
             widget.bAutoWrapText=source.bAutoWrapText;widget.WrapTextAt=source.WrapTextAt
             widget.Justification=source.Justification
             widget.LineHeightPercentage=source.LineHeightPercentage
-            widget:SetText(source.Text)
+            widget:SetText(initialText~=nil and FText(initialText)or source.Text)
         end
     end
-    local function clone(c,source,isImage,retainSource,wrapWidth)
+    local function clone(c,source,isImage,retainSource,wrapWidth,initialText)
         assert(valid(source)and valid(source.Slot),"Native preparation source is missing")
         local oldSlot=source.Slot;local parent=oldSlot.Parent
         local layout=readLayout(oldSlot,source)
@@ -249,7 +252,8 @@ function NativeLoadout.new(dependencies)
         assert(valid(widget),"Cannot construct native preparation control")
         widget.Slot=nil
         c.added[#c.added+1]=widget -- Rollback also owns a partially attached clone.
-        initializeLeaf(widget,source,isImage)
+        initializeLeaf(widget,source,isImage,initialText)
+        if not isImage and initialText~=nil then c.texts[widget:GetAddress()]=initialText end
         if wrapWidth then
             -- 必须在首次 AddChild 构建 Slate 前写入换行宽度，单改已挂载控件字段不会同步。
             widget.bAutoWrapText=true;widget.WrapTextAt=wrapWidth;widget.Justification=0
@@ -334,7 +338,8 @@ function NativeLoadout.new(dependencies)
         local base=pending.owner.LightMenuBaseWidget -- 列表标题、说明与三条原生兵装行。
         assert(valid(base),"等待中的原生兵装列表缺失")
         local list=controls(base)
-        setText(view,clone(view,assert(list.TitleText),false),tr("特殊兵装 1 / 2 / 3","SP WEAPON 1 / 2 / 3"))
+        -- 等待与正式选装使用同一个SP1标题，挂入页面前就写好，不额外显示三槽占位标题。
+        clone(view,assert(list.TitleText),false,nil,nil,preparationTitle("sp1"))
         setText(view,clone(view,assert(list.DescriptionText),false),tr("正在加载兵装，请稍候……","Loading weapons. Please wait..."))
         for index=0,2 do mask(view,assert(list["ItemText"..index]))end
         info=pending.owner.WeaponInformation
@@ -716,7 +721,7 @@ function NativeLoadout.new(dependencies)
         local list=controls(base)
         for _,name in ipairs({"TitleText","DescriptionText","ItemText0","ItemText1","ItemText2"})do assert(valid(list[name]),"Native list control is missing: "..name)end
         -- Preserve the game's own footer glyphs and device-dependent labels.
-        c.title=clone(c,list.TitleText,false);c.description=clone(c,list.DescriptionText,false)
+        c.title=clone(c,list.TitleText,false,nil,nil,preparationTitle(c.flow.stage));c.description=clone(c,list.DescriptionText,false)
         c.rows={};for i=1,3 do c.rows[i]=clone(c,list["ItemText"..(i-1)],false)end
         -- 采用资源核对的机库信息蓝；列表第一项可能已被原生高亮改成深色。
         c.tint=color(.401978,.651406,1,1)
@@ -1090,7 +1095,7 @@ function NativeLoadout.new(dependencies)
             local ok,_,err=preparationAction(c.owner:GetAddress(),preview,3)
             assert(ok,err);c.previewWeapon=preview
         end
-        setText(c,c.title,"SELECT SP WEAPON "..assert(stage:match("sp([123])")))
+        setText(c,c.title,preparationTitle(stage))
         for i=1,3 do
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)

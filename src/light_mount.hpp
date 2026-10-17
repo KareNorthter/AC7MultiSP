@@ -48,12 +48,14 @@ struct LightMountBones {
     Reflection reflection;
     MountIdentity component,componentClass,mesh,skeleton,physicsEnum;
     Field meshField,skeletonField;
-    Function hide,unhide,isHidden;
-    Field hideName,hidePhysics,unhideName,hiddenName;
+    Function numBones,hide,unhide,isHidden;
+    Field countResult,hideName,hidePhysics,unhideName,hiddenName;
     Reflection::BoolField hiddenResult;
     std::vector<Root> roots;
     Name body{};
     unsigned pboNone{};
+    int qualifiedPool{-1};
+    std::vector<Name> qualifiedSockets;
     bool prepared{},applied{},qualified{};
 
     static bool same(Name a,Name b) {return a.index==b.index && a.number==b.number;}
@@ -67,12 +69,12 @@ struct LightMountBones {
     }
     void current() {
         componentCurrent();Reflection::alive(meshField.identity);Reflection::alive(skeletonField.identity);Reflection::alive(physicsEnum);
-        for(const auto& fn:{hide,unhide,isHidden}) {
+        for(const auto& fn:{numBones,hide,unhide,isHidden}) {
             Reflection::alive(fn.identity);
             require(Reflection::refValue<unsigned short>(reflection.parms,fn.identity.address)==fn.size,
                 "轻量骨显隐：缓存函数参数尺寸改变");
         }
-        for(const auto& field:{meshField,skeletonField,hideName,hidePhysics,unhideName,hiddenName,hiddenResult.field}) {
+        for(const auto& field:{meshField,skeletonField,countResult,hideName,hidePhysics,unhideName,hiddenName,hiddenResult.field}) {
             Reflection::alive(field.identity);
             require(read<int>(field.identity.address+0x44)==field.offset && read<int>(field.identity.address+0x34)==field.size,
                 "轻量骨显隐：缓存字段布局改变");
@@ -82,6 +84,16 @@ struct LightMountBones {
         alignas(16) std::array<unsigned char,256> params{};
         std::memcpy(params.data()+hiddenName.offset,&name,8);
         reflection.invoke(component,isHidden,params.data());return Reflection::getBool(params.data(),hiddenResult);
+    }
+    int count() {
+        alignas(16) std::array<unsigned char,256> params{};
+        reflection.invoke(component,numBones,params.data());int value{};
+        std::memcpy(&value,params.data()+countResult.offset,4);return value;
+    }
+    static bool sameSockets(const std::vector<Name>& a,const std::vector<Name>& b) {
+        if(a.size()!=b.size())return false;
+        for(size_t i=0;i<a.size();++i)if(!same(a[i],b[i]))return false;
+        return true;
     }
     void set(Root& root,bool wanted) {
         componentCurrent();if(hidden(root.name)==wanted)return;
@@ -95,8 +107,17 @@ struct LightMountBones {
     }
     void prepare(MountIdentity rack,int pool,const std::vector<Name>& visibleSockets) {
         require(!prepared,"轻量骨显隐：旧租约未归还");
-        if(qualified && mountMeshIdentityEqual(component,rack)) {
-            bool reusable=false;try {current();reusable=true;}catch(...) {}
+        require(pool==0 || pool==1,"轻量骨显隐：未登记挂架");
+        // 只缓存不可变资源资格和实际FName；绝不将native/owned或旧组件隐藏租约带进新绑定。
+        static std::array<LightMountBones,2> metadata;
+        const auto& cached=metadata[pool];
+        if(!qualified && cached.qualified && cached.qualifiedPool==pool && sameSockets(cached.qualifiedSockets,visibleSockets) &&
+           mountAlive(cached.componentClass) && read<Addr>(rack.address+0x10)==cached.componentClass.address) {
+            *this=cached;component=rack;
+        }
+        if(qualified && qualifiedPool==pool && mountMeshIdentityEqual(component,rack) && sameSockets(qualifiedSockets,visibleSockets)) {
+            bool reusable=false;
+            try {current();reusable=count()==(pool==0?8:19);}catch(...) {}
             if(reusable) {
                 require(!hidden(body),"轻量骨显隐：Body已隐藏，不能重绑租约");
                 std::vector<bool> baseline;for(const auto& root:roots)baseline.push_back(hidden(root.name));
@@ -116,8 +137,8 @@ struct LightMountBones {
             reflection.typeSize(read<Addr>(mesh.address+0x10)),true);
         skeleton=mountIdentity(read<Addr>(mesh.address+skeletonField.offset));
         Reflection::named(skeleton.address,(expected+"_Skeleton").c_str(),("/Game/Vehicles/Aircraft/fa44/"+expected+"_Skeleton").c_str());
-        const auto num=reflection.function(rack.address,"GetNumBones","SkinnedMeshComponent",1);
-        const auto numResult=reflection.field(num.identity.address,"ReturnValue","IntProperty",4,num.size);
+        numBones=reflection.function(rack.address,"GetNumBones","SkinnedMeshComponent",1);
+        countResult=reflection.field(numBones.identity.address,"ReturnValue","IntProperty",4,numBones.size);
         const auto get=reflection.function(rack.address,"GetBoneName","SkinnedMeshComponent",2);
         const auto index=reflection.field(get.identity.address,"BoneIndex","IntProperty",4,get.size);
         const auto result=reflection.field(get.identity.address,"ReturnValue","NameProperty",8,get.size);
@@ -139,10 +160,10 @@ struct LightMountBones {
         hiddenResult=reflection.boolean(isHidden.identity.address,"ReturnValue",isHidden.size);
         Reflection::separate(hiddenName,hiddenResult.field);
         alignas(16) std::array<unsigned char,256> params{};
-        reflection.invoke(component,num,params.data());int count{};std::memcpy(&count,params.data()+numResult.offset,4);
-        require(count>0 && count<=256,"轻量骨显隐：原生骨数越界");
+        const int boneCount=count();
+        require(boneCount>0 && boneCount<=256,"轻量骨显隐：原生骨数越界");
         std::map<std::string,Name> names;
-        for(int i=0;i<count;++i) {
+        for(int i=0;i<boneCount;++i) {
             params={};std::memcpy(params.data()+index.offset,&i,4);reflection.invoke(component,get,params.data());
             Name name{};std::memcpy(&name,params.data()+result.offset,8);
             require(names.emplace(label(name),name).second,"轻量骨显隐：骨名重复");
@@ -151,8 +172,8 @@ struct LightMountBones {
         const std::vector<int> parents=pool==0?std::vector<int>{-1,0,1,1,0,4,4,0}:
             std::vector<int>{-1,0,1,2,3,4,5,3,7,8,0,10,11,12,13,14,12,16,17};
         auto boneLabel=[](int i) {return i==0?std::string("Body"):"SWPCover_"+std::string(i<10?"0":"")+std::to_string(i);};
-        require(count==static_cast<int>(parents.size()),"轻量骨显隐：原生骨数与资源证据不同");
-        for(int i=0;i<count;++i) {
+        require(boneCount==static_cast<int>(parents.size()),"轻量骨显隐：原生骨数与资源证据不同");
+        for(int i=0;i<boneCount;++i) {
             const auto expected=boneLabel(i);require(names.count(expected),"轻量骨显隐：原版骨名缺失");
             params={};const auto name=names.at(expected);std::memcpy(params.data()+parentInput.offset,&name,8);
             reflection.invoke(component,parent,params.data());Name actual{};std::memcpy(&actual,params.data()+parentResult.offset,8);
@@ -183,6 +204,9 @@ struct LightMountBones {
             roots.push_back({name,rule.second,hidden(name),false});
         }
         current();qualified=prepared=true; // 所有读取完成后，才允许第一笔显隐写入。
+        qualifiedPool=pool;qualifiedSockets=visibleSockets;
+        auto& saved=metadata[pool];saved=*this;saved.prepared=saved.applied=false;
+        for(auto& root:saved.roots) {root.native=false;root.owned=false;}
     }
     void maintain() {
         if(applied)return;
@@ -205,8 +229,9 @@ struct LightMountBones {
 // 发射时只调用已解析的GetSocketTransform，参数、枚举与嵌套变换布局仅在绑定时解析。
 struct LightMountSocketReader {
     using Reflection=MountAnimationReflection;
-    Reflection::Function function;
-    Reflection::Field input,space,result;
+    Reflection::Function function,existsFunction;
+    Reflection::Field input,space,result,existsInput;
+    Reflection::BoolField existsResult;
     std::array<int,4> rotation{};
     std::array<int,3> translation{},scale{};
     unsigned world{};
@@ -235,7 +260,26 @@ struct LightMountSocketReader {
                 for(size_t j=0;j<i;++j)require(offsets[i]!=offsets[j],"轻量取位：向量参数重叠");
             }
         };
-        fields(r,"Quat",rotation);fields(p,"Vector",translation);fields(s,"Vector",scale);prepared=true;
+        fields(r,"Quat",rotation);fields(p,"Vector",translation);fields(s,"Vector",scale);
+        existsFunction=api.function(rack.address,"DoesSocketExist","SceneComponent",2);
+        existsInput=api.field(existsFunction.identity.address,"InSocketName","NameProperty",8,existsFunction.size);
+        existsResult=api.boolean(existsFunction.identity.address,"ReturnValue",existsFunction.size);
+        Reflection::separate(existsInput,existsResult.field);prepared=true;
+    }
+    bool exists(Reflection& api,MountIdentity rack,Reflection::SocketName socket) const {
+        require(prepared && socket.index,"轻量取位：挂点资格尚未绑定");
+        Reflection::alive(existsFunction.identity);
+        require(Reflection::refValue<unsigned short>(api.parms,existsFunction.identity.address)==existsFunction.size,
+            "轻量取位：挂点查询参数尺寸改变");
+        for(const auto& field:{existsInput,existsResult.field}) {
+            Reflection::alive(field.identity);
+            require(read<int>(field.identity.address+0x44)==field.offset && read<int>(field.identity.address+0x34)==field.size,
+                "轻量取位：挂点查询字段布局改变");
+        }
+        // FName已在同一绑定批次从原生组件读取并核对完整Socket集合；此处仍逐口调用原生查询。
+        alignas(16) std::array<unsigned char,256> params{};
+        std::memcpy(params.data()+existsInput.offset,&socket,8);api.invoke(rack,existsFunction,params.data());
+        return Reflection::getBool(params.data(),existsResult);
     }
     void copy(Reflection& api,MountIdentity rack,Reflection::SocketName socket,void* output) const {
         require(prepared,"轻量取位：尚未绑定接口");
@@ -274,6 +318,7 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
     state.light=std::make_shared<LightMountOwnership>();state.physicalCount=0;
     std::array<std::map<std::string,Addr>,3> components;
     std::map<Addr,LightMountOwnership::Point> points;
+    std::map<Addr,MountIdentity> componentClasses; // 仅同栈绑定批次复用类资格，不缓存组件、父链或原生显隐。
     for(int pool=0;pool<3;++pool) {
         const bool owned=state.aircraft==MountAircraft::Dark?(pool==2 && (state.kindsMask&4)):
             mountLightOwnsPool(state.aircraft,pool);
@@ -309,11 +354,19 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
         const int expectedCount=state.aircraft==MountAircraft::Fa44?(pool==0?126:pool==1?2:1):(pool==1?4:2);
         require(count==expectedCount || (state.aircraft==MountAircraft::Fa44 && pool==2 && count==0),
             "轻量挂载：原生持久池与已核资源Socket集合不符");
+        const Addr data=read<Addr>(array);
+        if(count)checkMemory(data,static_cast<size_t>(count)*sizeof(Addr));
         for(int index=0;index<count;++index) {
-            const Addr component=read<Addr>(read<Addr>(array)+static_cast<Addr>(index)*8);
+            const Addr component=read<Addr>(data+static_cast<Addr>(index)*8);
             const auto identity=mountIdentity(component);
-            require(mountClassIs(component,"StaticMeshComponent","/Script/Engine") && read<Addr>(component+0x100)==rack,
-                "轻量挂载：原生弹体组件或父链改变");
+            const Addr cls=read<Addr>(component+0x10);
+            auto known=componentClasses.find(cls);
+            if(known==componentClasses.end()) {
+                require(mountClassIs(component,"StaticMeshComponent","/Script/Engine"),"轻量挂载：原生弹体组件类型改变");
+                known=componentClasses.emplace(cls,mountIdentity(cls)).first;
+            }
+            require(mountAlive(known->second) && read<Addr>(component+0x100)==rack,
+                "轻量挂载：原生弹体组件类或父链改变");
             const MountAnimationReflection::SocketName socketName{read<unsigned>(component+0x108),read<unsigned>(component+0x10c)};
             std::string socket=LightMountBones::label(socketName);
             for(auto& c:socket)if(c>='A' && c<='Z')c+=32;
@@ -328,6 +381,8 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
                 state.visuals.push_back({identity,pool,index,bool(componentFlags&0x10),bool(componentFlags&0x20)});
             } // CFA的空发射组件不参与显隐，保留原生效果源行为。
         }
+        require(read<Addr>(array)==data && read<int>(array+8)==count && read<int>(array+12)==capacity,
+            "轻量挂载：绑定期间原生持久池改变");
         // 不依赖数组枚举顺序，逐个验证全部原版Socket均存在。
         for(int i=0;i<expectedCount && count;++i) {
             std::string socket;
@@ -344,7 +399,8 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
         state.light->positions[position]=points.at(state.physical[position]);
         const auto& point=state.light->positions[position];
         state.light->socketReader.prepare(state.light->reflection,state.light->racks[kind].component);
-        require(state.light->reflection.socketExists(state.light->racks[kind].component,point.socket),"轻量挂载：原生发射Socket不存在");
+        require(state.light->socketReader.exists(state.light->reflection,state.light->racks[kind].component,point.socket),
+            "轻量挂载：原生发射Socket不存在");
     };
     if(state.aircraft==MountAircraft::Zoef) {
         if(state.kindsMask&2)for(int i=21;i<=((state.kindsMask&4)?22:24);++i)select(1,"sp"+std::to_string(i));

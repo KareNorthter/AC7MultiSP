@@ -1,6 +1,8 @@
 # 按需证据
 
-- [2.13最新实测](2.13.0-user-validation.json)：换机正常，默认三SP/未购SP与Su30M2三挂、Falken尾束、CFA动画/左炮口新要求；CFA卡顿后置。2.14源码和[三挂覆盖源](static-expansion-2.14.0.json)已改，未编译测试安装，游戏仍2.13。
+2.15已成套安装，见[整合记录](2.15.0-integration.json)和[安装回执](2.15.0-installed.json)。性能与预览修订依据见[调查摘要](2.15.0-performance-investigation.json)：日志为2.13会话，安装前为2.14；不把离线检查当实机性能通过。
+
+- [2.13最新实测](2.13.0-user-validation.json)：换机正常，默认三SP/未购SP与Su30M2三挂、Falken尾束、CFA动画/左炮口新要求；CFA卡顿后置。2.14与[三挂覆盖源](static-expansion-2.14.0.json)已成套构建安装，见[整合记录](2.14.0-integration.json)及[安装回执](2.14.0-installed.json)，新增效果待测。
 
 - [2.12用户实测](2.12.0-user-validation.json)：F22无肉眼卡顿，ADF01停光取舍、三机布局与X02撤销要求；[2.13布局](static-expansion-2.13.0.json)已获追加任务重开换机及编译安装授权，已成套安装，见[本版整合](2.13.0-integration.json)和[安装回执](2.13.0-installed.json)，真实效果待用户实测。
 

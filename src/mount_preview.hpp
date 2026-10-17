@@ -1,6 +1,7 @@
 // 机库与补给只接管持久模型；不读写任务弹药、冷却、发射顺序。
 #pragma once
 
+bool mountPreviewRestoring=false; // 仅覆盖同步归还调用栈；待重试状态仍继续记录原生显隐请求。
 bool mountSameIdentity(const MountIdentity& a,const MountIdentity& b) {
     return a.address==b.address && a.index==b.index && a.serial==b.serial;
 }
@@ -69,6 +70,9 @@ void mountPreviewRememberTask(const MountVisual& source) {
     }
 }
 void mountPreviewRestoreVisuals() {
+    const bool priorRestoring=mountPreviewRestoring;
+    mountPreviewRestoring=true;
+    struct RestoreScope { bool prior; ~RestoreScope() { mountPreviewRestoring=prior; } } restoreScope{priorRestoring};
     std::string error;
     try { mountExteriorRelease(mountPreview.layout); }
     catch(const std::exception& item) { error=item.what(); }
@@ -107,6 +111,16 @@ bool mountPreviewRelease(Addr owner,bool resumeTask) {
         mountPreview.warning=std::string("多 SP 模型预览已回退，原生显示仍待恢复：")+error.what();
         return false;
     }
+}
+// 换皮肤、离开机库和开场载入会正常换代；先归还旧身份，由下一次真实入口重新绑定。
+// 归还失败仍保留原来的失败状态，不能用生命周期等待掩盖网格接管或资源校验错误。
+void mountPreviewWaitGeneration(const char* reason) {
+    if(!mountPreview.active)return;
+    const int mode=mountPreview.mode;
+    if(!mountPreviewRelease(0,false))return;
+    mountPreview.pending=true;
+    mountPreview.lastApply=GetTickCount64();
+    nativeLog(std::string("MOUNT_PREVIEW_WAIT_GENERATION mode=")+std::to_string(mode)+" "+reason);
 }
 void mountPreviewFail(const char* message) noexcept {
     if(mountPreview.failed)return;
@@ -159,10 +173,13 @@ void mountPreviewInheritNative(FixedMountState& next,const FixedMountState& prio
     }
 }
 bool mountPreviewMatchesManager(Addr manager) {
+    if(mountPreviewRestoring)return false;
     if(manager==mountPreview.layout.meshManager.address)return true;
     if(mountPreview.mode!=1 || mountPreview.failed || !mountPreview.layout.bound)return false;
     // 换涂装可能连模型管理器一起重建；从已持有的激活器验证新入口，不扫描其他飞机。
-    require(mountAlive(mountPreview.activator),"模型预览：机库激活器失效");
+    if(!mountAlive(mountPreview.activator)) {
+        mountPreviewWaitGeneration("机库激活器换代");return false;
+    }
     const Addr current=read<Addr>(mountPreview.activator.address+0x260);
     if(!current)return false;
     mountIdentity(current);
@@ -238,23 +255,35 @@ bool mountPreviewRebindHangar() {
 void mountPreviewApply() {
     if(!mountPreview.active)return;
     if(mountPreview.failed) { mountPreviewRetryRestore();return; }
-    if(mountPreview.pending || !mountPreview.layout.bound)return;
-    require(mountAlive(mountPreview.layout.plane) && mountAlive(mountPreview.activator) && mountAlive(mountPreview.world),"模型预览：展示实例或世界失效");
+    if(mountPreviewRestoring || mountPreview.pending || !mountPreview.layout.bound)return;
+    if(!mountAlive(mountPreview.layout.plane) || !mountAlive(mountPreview.activator) || !mountAlive(mountPreview.world)) {
+        mountPreviewWaitGeneration("展示实例或世界换代");return;
+    }
     if(mountPreview.mode==2 || mountPreview.mode==5) {
         // 补给页只在接入时证明身份；页面销毁后由同一任务玩家持有预览直到补给成功。
-        require(session.plane==mountPreview.layout.plane.address && session.activator==mountPreview.activator.address,
-            "模型预览：补给任务玩家改变");
+        if(session.plane!=mountPreview.layout.plane.address || session.activator!=mountPreview.activator.address) {
+            mountPreviewWaitGeneration("补给任务玩家换代");return;
+        }
     } else {
-        require(mountAlive(mountPreview.owner) && mountAlive(mountPreview.source) &&
-            read<Addr>(mountPreview.source.address+mountPreview.sourcePlaneOffset)==mountPreview.layout.plane.address,
-            "模型预览：机库或玩家展示对象改变");
+        if(!mountAlive(mountPreview.owner) || !mountAlive(mountPreview.source) ||
+           read<Addr>(mountPreview.source.address+mountPreview.sourcePlaneOffset)!=mountPreview.layout.plane.address) {
+            mountPreviewWaitGeneration("机库或玩家展示对象换代");return;
+        }
     }
-    require(read<Addr>(mountPreview.layout.plane.address+0x11a8)==mountPreview.activator.address,"模型预览：飞机激活器已改变");
+    if(read<Addr>(mountPreview.layout.plane.address+0x11a8)!=mountPreview.activator.address) {
+        mountPreviewWaitGeneration("飞机激活器换代");return;
+    }
     // 同一轮只核对一次完整池；机库确实重建后再核对新池。
     if(mountPreviewLayoutChanged()) {
-        if(mountPreview.mode!=1)require(false,"模型预览：持久池实例或管理器被替换");
-        if(!mountPreviewRebindHangar())return;
-        require(!mountPreviewLayoutChanged(),"模型预览：重建后的持久池实例改变");
+        if(mountPreview.mode!=1) {
+            mountPreviewWaitGeneration("持久池实例或管理器换代");return;
+        }
+        if(!mountPreviewRebindHangar()) {
+            mountPreviewWaitGeneration("机库新模型池仍在载入");return;
+        }
+        if(mountPreviewLayoutChanged()) {
+            mountPreviewWaitGeneration("机库模型池继续换代");return;
+        }
     }
     require(mountAlive(mountPreview.layout.manager) && mountAlive(mountPreview.layout.meshManager) &&
         mountAlive(mountPreview.layout.root) && mountAlive(mountPreview.layout.weaponBase),"模型预览：模型管理器或祖先失效");
@@ -270,8 +299,11 @@ bool mountPreviewFilter(void* object,bool requested,unsigned char propagation,bo
     const Addr address=reinterpret_cast<Addr>(object);
     auto& state=mountPreview.layout;
     const auto original=hidden?mountOriginalHidden:mountOriginalVisibility;
+    if(mountPreviewRestoring) { original(object,requested,propagation);return true; }
     if(address==state.root.address || address==state.weaponBase.address) {
-        require(mountAlive(state.root) && mountAlive(state.weaponBase),"模型预览：祖先身份失效");
+        if(!mountAlive(state.root) || !mountAlive(state.weaponBase)) {
+            mountPreviewWaitGeneration("展示祖先换代");original(object,requested,propagation);return true;
+        }
         (address==state.root.address?(hidden?state.rootHidden:state.rootVisible):(hidden?state.ancestorHidden:state.ancestorVisible))=requested;
         if(mountPreviewOwnsTask()) {
             fixedMount.rootVisible=state.rootVisible;fixedMount.rootHidden=state.rootHidden;
@@ -282,7 +314,9 @@ bool mountPreviewFilter(void* object,bool requested,unsigned char propagation,bo
         return true;
     }
     for(auto& visual:state.visuals)if(visual.identity.address==address) {
-        require(mountAlive(visual.identity),"模型预览：组件身份失效");
+        if(!mountAlive(visual.identity)) {
+            mountPreviewWaitGeneration("展示组件换代");original(object,requested,propagation);return true;
+        }
         (hidden?visual.nativeHidden:visual.nativeVisible)=requested;
         mountPreviewRememberTask(visual);
         if(visual.index<0 && propagation==2)for(auto& child:state.visuals)if(child.pool==visual.pool && child.index>=0) {
@@ -319,7 +353,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         return; // 仅重试归还，绝不重新绑定或接管本次失败身份。
     }
     try {
-        if(same && mountPreview.planCached && mountPreview.configs==configs && mountPreview.ammo==ammo) {
+        if(same && mountPreview.planCached && !mountPreview.pending && mountPreview.configs==configs && mountPreview.ammo==ammo) {
             if(GetTickCount64()-mountPreview.lastApply>=100)mountPreviewApply();
             return; // 稳定候选每100ms巡检；原生显隐钩子仍立即响应，不逐帧遍历全部池。
         }
@@ -327,7 +361,9 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         verifyVersion();mountInstallHooks();
         require(read<Addr>(plane+0x11a8)==activator,"模型预览：飞机与激活器不匹配");
         const Addr world=mountOuterWorld(plane);
-        if(mountPreview.world.address)require(mountSameIdentity(mountPreview.world,mountIdentity(world)),"模型预览：世界改变");
+        if(mountPreview.world.address && !mountSameIdentity(mountPreview.world,mountIdentity(world))) {
+            mountPreviewWaitGeneration("入口世界换代");return;
+        }
         else mountPreview.world=mountIdentity(world);
         const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
         if(mode==5) {
@@ -346,7 +382,9 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
                 const Addr hangar=read<Addr>(instance+mountProperty(instance,"HangarManager","ObjectProperty",8));
                 mountPreview.source=mountIdentity(hangar);
                 mountPreview.sourcePlaneOffset=mountProperty(hangar,"LoadedPlayerPlane","ObjectProperty",8);
-                require(read<Addr>(hangar+mountPreview.sourcePlaneOffset)==plane && mountOuterWorld(hangar)==world,"模型预览：机库实际展示对象改变");
+                if(read<Addr>(hangar+mountPreview.sourcePlaneOffset)!=plane || mountOuterWorld(hangar)!=world) {
+                    mountPreviewWaitGeneration("机库实际展示对象换代");return;
+                }
             } else {
                 // 开场只接入已被玩家控制器持有的实际飞机；不猜测或接管演出替身。
                 const Addr controller=read<Addr>(plane+mountProperty(plane,"Controller","ObjectProperty",8));
@@ -354,8 +392,9 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
                 require(mountClassIs(controller,"PlayerController","/Script/Engine"),"模型预览：开场飞机没有玩家控制器");
                 mountPreview.source=mountIdentity(controller);
                 mountPreview.sourcePlaneOffset=mountProperty(controller,"Pawn","ObjectProperty",8);
-                require(read<Addr>(controller+mountPreview.sourcePlaneOffset)==plane && mountOuterWorld(controller)==world,
-                    "模型预览：开场玩家归属不匹配");
+                if(read<Addr>(controller+mountPreview.sourcePlaneOffset)!=plane || mountOuterWorld(controller)!=world) {
+                    mountPreviewWaitGeneration("开场玩家换代");return;
+                }
             }
         }
         const auto aircraft=mountAircraft(plane);

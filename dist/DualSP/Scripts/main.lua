@@ -1,4 +1,4 @@
--- AC7MultiSP 2.14.0：默认多SP调试及Su30M2、Falken和CFA外观修订。
+-- AC7MultiSP 2.15.0：减少预览/选装重复开销，等待正常模型换代，统一阶段标题。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -198,7 +198,7 @@ local function valid(object)return object and object:IsValid()end
 local nativeClient=dofile(root.."Scripts/native_bridge.lua").new{
     root=root,execute=bridge,readJson=readJson,profile=Profile}
 local function native(op,target)
-    if ensureMountAssets and runtimeFixedMountEnabled then ensureMountAssets()end
+    if ensureMountAssets and runtimeFixedMountEnabled then ensureMountAssets(nil,nil,false,currentProfile)end
     assert(IsInGameThread(),"Native weapon access requires the game thread")
     assert(valid(plane) and valid(activator),"Player plane is unavailable")
     local time=game:GetTimeSeconds(plane)
@@ -326,15 +326,31 @@ local function releaseMountPreview(ownerAddress)
     end
     return ok,not ok and previewMountWarning or warning
 end
-local mountAssetStatus={} -- 已加载资源由核心保有；失败不每帧重复触发加载。
-ensureMountAssets=function(code,sourcePlane,retry)
+local mountAssetStatus={} -- 按实际资源记成功/失败；组合变化只加载新方案需要的副本。
+ensureMountAssets=function(code,sourcePlane,retry,profile)
     if not(runtimeAllowed and runtimeModEnabled and (runtimeFixedMountEnabled or retry))then return true end
     local info=catalogue and catalogue[tostring(planeId)]
     code=code or info and info.code
     local entries=code and expandedMountAssets[code]
     if not entries or #entries==0 then return true end
-    if retry and mountAssetStatus[code]~=true then mountAssetStatus[code]=nil end
-    if mountAssetStatus[code]~=nil then return mountAssetStatus[code]==true end
+    profile=profile or currentProfile
+    local mask=nil
+    if profile then
+        mask=0
+        for _,field in ipairs({"a","b","c"})do if profile[field]>=0 then mask=mask | (1 << profile[field])end end
+        if mask&(mask-1)==0 then return true end -- 原生单挂不替换派生网格，也不预加载其他组合。
+    end
+    local status=mountAssetStatus[code]or {};mountAssetStatus[code]=status
+    local needed={}
+    for _,entry in ipairs(entries)do
+        if not mask or not entry[4]or entry[4]&(1 << mask)~=0 then
+            if retry and status[entry[1]]~=true then status[entry[1]]=nil end
+            if status[entry[1]]~=nil and status[entry[1]]~=true then return false end
+            if status[entry[1]]~=true then needed[#needed+1]=entry end
+        end
+    end
+    if #needed==0 then return true end
+    local loadingIndex=needed[1][1]
     local ok,err=pcall(function()
         assert(IsInGameThread(),"扩展挂架只能在游戏线程加载")
         assert(type(LoadAsset)=="function","当前加载器没有独立挂架加载接口")
@@ -344,13 +360,16 @@ ensureMountAssets=function(code,sourcePlane,retry)
             sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
         end
         assert(valid(sourcePlane)and isSelectedPlane(sourcePlane,code),"扩展挂架缺少当前机体")
-        for _,entry in ipairs(entries)do
+        for _,entry in ipairs(needed)do
+            loadingIndex=entry[1]
             local pool=entry[3]
             assert(type(pool)=="number"and pool>=1 and pool<=3,"扩展挂架缺少目标组件编号")
             local rack=sourcePlane["SWP"..pool]
             assert(valid(rack)and rack:GetCollisionEnabled()==0,"扩展挂架要求原生组件关闭碰撞")
         end
-        for _,entry in ipairs(entries)do
+        for _,entry in ipairs(needed)do
+            loadingIndex=entry[1]
+            local started=os.clock()
             local package="/Game/AC7MultiSP/Research/"..entry[2]
             local objectPath=package.."."..entry[2]
             local object=StaticFindObject(objectPath)
@@ -380,9 +399,11 @@ ensureMountAssets=function(code,sourcePlane,retry)
             assert(valid(object),"独立挂架加载失败："..entry[2])
             local accepted,message=registerMountAsset(entry[1],object:GetAddress())
             assert(accepted,message)
+            status[entry[1]]=true
+            note(string.format("MOUNT_ASSET_LOAD_COST asset=%s elapsed_ms=%.3f",entry[2],(os.clock()-started)*1000))
         end
     end)
-    mountAssetStatus[code]=ok or tostring(err)
+    if not ok then status[loadingIndex]=tostring(err)end
     if not ok then previewWarning("多 SP 挂载已回退："..tostring(err));note("MOUNT_ASSET_ERROR "..tostring(err))end
     return ok
 end
@@ -410,7 +431,9 @@ local function mountPreview(context)
             or context.instance:GetSelectedPlaneID()~=context.planeId then
             releaseMountPreview(owner:GetAddress());return false,""
         end
-        ensureMountAssets(info.code,sourcePlane)
+        if not ensureMountAssets(info.code,sourcePlane,false,context.profile)then
+            releaseMountPreview(owner:GetAddress());return false,previewMountWarning or "多 SP 挂架资源未就绪"
+        end
         local sourceActivator=sourcePlane.PlayerWeaponActivator
         if not valid(sourceActivator)then releaseMountPreview(owner:GetAddress());return false,""end
         assert(valid(sourcePlane:GetWorld())and valid(owner:GetWorld())
@@ -1020,7 +1043,7 @@ local function applyDebugHotkey(action)
                 and not internal and not restorePending and not errorText
                 and valid(plane)and valid(activator)and valid(instance)
                 and instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()then
-                if config.fixed_mount_enabled and ensureMountAssets then ensureMountAssets(nil,plane,true)end
+                if config.fixed_mount_enabled and ensureMountAssets then ensureMountAssets(nil,plane,true,currentProfile)end
                 local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.fixed_mount_enabled and 1 or 0)
                 assert(ok,warning)
                 runtimeFixedMountEnabled=config.fixed_mount_enabled;mountOptionsApplied=true
@@ -1557,7 +1580,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.14.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.15.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

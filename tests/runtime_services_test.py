@@ -639,6 +639,16 @@ load,calls=loader('collision')
 assert(not load() and calls.load==0 and calls.factory==0 and calls.register==0,'启用碰撞的原挂架不能替换为分区网格')
 load,calls=loader('unused_collision')
 assert(load() and calls.register==1,'未替换的原生架保原生碰撞，不能阻断其他池加载')
+load,calls,env=loader('unused_collision')
+env.currentProfile={a=0,b=-1,c=-1}
+assert(load()and calls.load==0 and calls.register==0,'原生单挂不得为其他组合加载派生资源')
+env.expandedMountAssets.f16c={{0,'MSP_case',1,1 << 3},{1,'MSP_unused',3,1 << 5}}
+env.currentProfile={a=0,b=1,c=-1}
+assert(load()and calls.load==1 and calls.register==1,'仅加载当前选择集合真正使用的资源')
+env.currentProfile={a=0,b=2,c=-1}
+assert(not load()and calls.load==1,'新方案需要替换的碰撞组件仍须拒绝')
+env.currentProfile={a=0,b=1,c=-1}
+assert(load()and calls.load==1,'另一组合的资源失败不能锁死已正常加载的组合')
 ''')
 print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
 

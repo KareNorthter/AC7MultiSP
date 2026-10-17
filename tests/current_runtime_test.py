@@ -51,6 +51,19 @@ combo=Profile.nextCombination({a=0,b=-1,c=-1},restricted,settings)
 assert(combo.a==2 and combo.b==-1)
 combo=Profile.nextCombination(combo,restricted,settings);assert(combo.a==0 and combo.b==-1)
 restricted[3].owned=false;assert(Profile.nextCombination(combo,restricted,settings)==nil)
+-- 未购买只在显式任务调试放行，不能扩大为普通出击/补给购买权限。
+local unpurchased={{owned=true,available=true},{owned=false,available=true},{owned=false,available=true}}
+rejects(function()Profile.validate({a=0,b=1,c=2},unpurchased)end)
+assert(Profile.validate({a=0,b=1,c=2},unpurchased,true)==3)
+local debugDefault=Profile.debugDefault(unpurchased,settings)
+assert(debugDefault.a==0 and debugDefault.b==1 and debugDefault.c==2 and debugDefault.ratio==.66)
+assert(Profile.nextCombination({a=0,b=-1,c=-1},unpurchased,settings,true).a==1)
+unpurchased[2].available=false
+rejects(function()Profile.validate({a=0,b=1,c=2},unpurchased,true)end)
+debugDefault=Profile.debugDefault(unpurchased,settings)
+assert(debugDefault.a==0 and debugDefault.b==2 and debugDefault.c==-1 and debugDefault.ratio==.75)
+unpurchased[3].available=false
+assert(Profile.count(Profile.debugDefault(unpurchased,settings))==1)
 local tr=function(zh,en)return en end
 for count=1,3 do
     for _,mode in ipairs({'preparation','resupply'})do

@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "candidate": "2.14.0",
+  "base_installed": "2.13.0",
+  "authorization": "用户明确要求安装当前源码",
+  "build_dir": "Temp/build-2.14.0-final",
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "summary": "换机优先默认三SP；任务调试/组合轮切允许未购买SP，正常出击/补给及多挂资格仍校验。Su30M2三挂腹4AGM2、内翼4AAM4、外翼HPAA2。Falken原生End后隐藏主束。CFA补临时MSL/re-arm姿态交接并停止误收swc1；仅抑制左sp21的EML炮口PSC并归还原生可见请求。",
+  "deferred_by_user": [
+    "CFA44切换卡顿"
+  ],
+  "static_source": "evidence/static-expansion-2.14.0.json",
+  "prior_feedback": "evidence/2.13.0-user-validation.json",
+  "runtime_files_verified": 17,
+  "mount_variants": 50,
+  "mount_members": 100,
+  "all_previous_resource_members_preserved": true,
+  "protected_files_verified": 164,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-204021-003893",
+  "profiles_preserved": true,
+  "saves_preserved": true,
+  "other_mod_files_preserved": true,
+  "game_was_closed_before_install": true,
+  "game_closed_by_agent_this_turn": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "validation_boundary": "编译/现有适用检查与安装核验通过；真实原生动画、炮口显隐、TLS观感和全部新组合仍待用户实测。未测试游戏帧率，不宣称解决CFA卡顿。",
+  "runtime_hashes": {
+    "core": "081725a850966273c651d409da61246544f30efb7a376409c77935e4e02fc5dd",
+    "ui": "aae836503155b2fc3bca7f7d38faf94e25ea0a00aba7615afc49e91c8e9ce56f",
+    "mount_pak": "4c8f44c34ffe76fa6d57a04f3cb2644bd92418f8d1930b3bbd43ad768e85fc50"
+  },
+  "created_at": "2026-10-17T12:56:59.084797+00:00"
+}
