@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "version": "2.16.0",
+  "release_source": "92690a7",
+  "user_authorized_main_release": true,
+  "runtime_source_unchanged": true,
+  "runtime_files": 17,
+  "mount_pak_unchanged": true,
+  "recompiled": false,
+  "tests_run": false,
+  "release": "Release/AC7MultiSP-2.16.0.zip",
+  "release_sha256": "5381a990515fcca8662505d1538384fa640ce3ea3108477da745be63dc18183a",
+  "known_issues_recorded_only": true,
+  "feedback": "evidence/2.16.0-user-validation.json",
+  "archived_branch_count": 13,
+  "preserved_worktrees": 12,
+  "dirty_worktree_snapshots": 8,
+  "active_research_preserved": "codex/2.15-hud-mission14-localization",
+  "git_bundle_sha256": "7e6fe9f5eb429afaff140642ee6858e3df924d588a42d8eecb898bcb19747203",
+  "compressed_archives": [
+    {
+      "archive": "backup/project-archive-20261017/historical-evidence-and-references.zip",
+      "sha256": "d917fd1e2b301132735d2e0d2b5b648af9f393245c300d6747554ad8701c9d82",
+      "files": 103,
+      "before_bytes": 6864828,
+      "after_bytes": 6512842
+    },
+    {
+      "archive": "backup/project-archive-20261017/historical-builds.zip",
+      "sha256": "0d3952a94f31a811d171c13782ce1ce64e891deaa7a06e31a00449a0411962ce",
+      "files": 1230,
+      "before_bytes": 379085767,
+      "after_bytes": 206409074
+    }
+  ],
+  "recycled_targets": 105,
+  "no_worktree_or_personal_backup_removed": true,
+  "all_product_source_paths_and_bytes_preserved": true,
+  "document_links_verified": true,
+  "archive_index": "docs/archive/README.md",
+  "remote_push_or_upload": false
+}

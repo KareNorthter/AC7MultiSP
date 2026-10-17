@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "version": "2.16.0",
+  "source": "用户本轮实测反馈",
+  "recorded_at": "2026-10-17T15:18:35.575435+00:00",
+  "overall": "用户确认其他功能基本正常，授权将当前改动合入main并发布；点名问题只记录，暂不修复。",
+  "known_issues": [
+    {
+      "aircraft": "CFA-44",
+      "issue": "三个SP切换会短暂卡顿，之后帧数恢复正常",
+      "status": "待优化；先前EML持续4fps不再作为当前已复现现象"
+    },
+    {
+      "aircraft": "CFA-44",
+      "issue": "切ECM时模型仍显示并展开，不符合隐藏目标",
+      "status": "待修复，本次仅记录"
+    },
+    {
+      "aircraft": "ADF-01",
+      "issue": "首次停光明显卡顿，后续停光轻微卡顿",
+      "status": "待优化，本次仅记录"
+    }
+  ],
+  "scope": "其他功能基本正常是用户总体反馈，不扩大为全47机、所有组合、任务、第三方Mod及故障恢复逐项验收。",
+  "runtime_changed": false,
+  "recompiled": false
+}

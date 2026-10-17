@@ -1,9 +1,0 @@
-main_fire	true	98 -> 97
-qaam_fire	true	10 -> 9
-eml_fire	true	22 -> 21
-eml_cooldown_blocks_fire	true	Switching did not permit an early shot
-qaam_cooldown_blocks_fire	true	Both ready rounds consumed; third shot blocked
-20_switches_preserve_ammo	true	Main=97, QAAM=8, EML=21
-qaam_inactive_reload_completes	true	Elapsed gameplay time restored; actual shot consumed ammo
-eml_inactive_reload_completes	true	Actual shot consumed ammo
-main_fire_after_switches	true	98 -> 96

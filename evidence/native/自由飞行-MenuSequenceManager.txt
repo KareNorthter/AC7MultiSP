@@ -1,6 +1,0 @@
-CLASS /Script/Nimbus.MenuSequenceManager
-PROPERTY ObjectProperty /Script/Nimbus.MenuSequenceManager:SequenceMenuDataTable
-PROPERTY ObjectProperty /Script/Nimbus.MenuSequenceManager:SequenceLinkDataTable
-PROPERTY ObjectProperty /Script/Nimbus.MenuSequenceManager:SequenceMenuItemDataTable
-PROPERTY ObjectProperty /Script/Nimbus.MenuSequenceManager:SequenceDataUpdate02
-PROPERTY ObjectProperty /Script/Nimbus.MenuSequenceManager:GameInstance

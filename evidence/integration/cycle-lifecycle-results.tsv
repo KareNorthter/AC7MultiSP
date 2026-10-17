@@ -1,8 +1,0 @@
-native_input_cycle_1	true	phase=1 active=0 main=96 gun=-1 SP=7
-native_input_cycle_2	true	phase=2 active=1 main=96 gun=-1 SP=22
-native_input_cycle_3	true	phase=0 active=1 main=96 gun=-1 SP=22
-native_input_cycle_4	true	phase=1 active=0 main=96 gun=-1 SP=7
-native_input_cycle_5	true	phase=2 active=1 main=96 gun=-1 SP=22
-native_input_cycle_6	true	phase=0 active=1 main=96 gun=-1 SP=22
-two_sp_resupply	true	MSL=98 QAAM=10 EML=22
-two_sp_checkpoint_restore	true	MSL=96 gun=-1 QAAM=7 EML=22

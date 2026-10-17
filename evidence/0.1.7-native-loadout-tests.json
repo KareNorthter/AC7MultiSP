@@ -1,7 +1,0 @@
-{
-  "native_preparation_scenarios": 25,
-  "legal_pair_matrix": 9,
-  "native_confirmation_handoff": "requires_release_then_real_confirmation",
-  "game_started": false,
-  "rendering_verified_in_game": false
-}

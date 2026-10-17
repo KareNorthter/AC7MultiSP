@@ -1,5 +1,0 @@
-pair_setup	true	A=2 B=1 ammo=14/10
-msl_fire	true	70 -> 69
-sp_a_fire	true	14 -> 13
-sp_b_fire	true	10 -> 9
-20_switches	true	ammo preserved for both native configs

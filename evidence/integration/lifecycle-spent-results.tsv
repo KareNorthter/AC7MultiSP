@@ -1,4 +1,0 @@
-capture_both_sp_spent	true	{"ok":true,"active":1,"main_ammo":97,"special_ammo":21,"reload":[[8,0.0625008941]],"gun_ammo":-1,"flares":4,"armed":true,"cached_sp":[8,21]}
-resupply_both_sp_spent	true	97/8/21 -> 98/10/22
-checkpoint_eml_cooldown_rebased	true	10s later rewind still blocks the early EML shot
-checkpoint_both_ammo_and_cooldown	true	MSL=97 QAAM=8 EML=21; both SPs remain cooling
