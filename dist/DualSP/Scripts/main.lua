@@ -1,4 +1,4 @@
--- AC7MultiSP 2.13.0：按实测修订挂载，并提供单人任务重开换机。
+-- AC7MultiSP 2.14.0：默认多SP调试及Su30M2、Falken和CFA外观修订。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -741,7 +741,7 @@ local function configureFlight(profile,reason)
         assert(supported,"补给重选需要支持 resupply_setup 的独立候选核心，当前正式 DLL 不支持")
     end
     local options=optionsFor(planeId)
-    Profile.validate(profile,options)
+    Profile.validate(profile,options,debugLoadout or debugAircraft)
     currentProfile=profile
     flightOptions=options
     selectionAudio(0,0) -- 重建前先隔离中间态选择音，不影响锁定音收尾。
@@ -932,6 +932,7 @@ local function canDebugLoadout(hotkey)
 end
 aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     json=json,copy=copyProfile,names=names,note=note,
+    defaultProfile=function(options)return Profile.debugDefault(options,config)end,
     owned=loadExport("dualsp_debug_owned_aircraft"),
     changed=function()lastUIKey=nil end,
     game=function()return game end,catalogue=function()return catalogue end,
@@ -970,7 +971,7 @@ local function applyDebugLoadout(action)
         assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,
             "当前任务机体身份已经改变")
         profile=Profile.withSettings(assert(action.profile,"缺少调试方案"),config)
-        Profile.validate(profile,optionsFor(planeId)) -- 再次核对真实购买记录和单挂限制。
+        Profile.validate(profile,optionsFor(planeId),true) -- 任务调试允许未购买SP，仍核对实际类及多挂资格。
         local allowed,why=debugLoadoutReady(plane:GetAddress(),activator:GetAddress()) -- 有活动武器时明确拒绝，不排队偷换。
         assert(allowed,why)
     end,debug.traceback)
@@ -998,7 +999,7 @@ local function applyDebugHotkey(action)
         assert(instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()and instance:GetSelectedPlaneID()==planeId,"当前任务机体身份已改变")
         local safe,reason=debugLoadoutReady(plane:GetAddress(),activator:GetAddress());assert(safe,reason)
         if action.command=="cycle"then
-            profile=Profile.nextCombination(currentProfile,optionsFor(planeId),config)
+            profile=Profile.nextCombination(currentProfile,optionsFor(planeId),config,true)
             assert(profile,"没有其他可用 SP 组合")
         else assert(action.command=="mount","未知调试快捷操作")end
     end)
@@ -1104,7 +1105,7 @@ local function publishState()
         and ready()and not game:IsGamePaused(plane)
     local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
-        response=debugResponse,ack=debugAck,error=debugError,profile=configured and currentProfile or nil,options=flightOptions}
+        response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
@@ -1337,6 +1338,7 @@ local function tick()
         local saved=aircraftDebug:profile(planeId)or config.profiles[tostring(planeId)] -- 换机只展示当前任务临时方案。
         if saved then
             previewOptions=previewOptions or optionsFor(planeId)
+            saved=aircraftDebug:resolveProfile(planeId,previewOptions)or saved
             primeFlightHUD(Profile.withSettings(saved,config),previewOptions)
             mountPreview{owner=instance,instance=instance,planeId=planeId,mode="flight",
                 profile=Profile.withSettings(saved,config),options=previewOptions}
@@ -1350,10 +1352,10 @@ local function tick()
     -- 若任务成功事件到达时玩家尚未回到世界，沿现有身份发现流程等待实例；不再等待武器输入开关。
     if supplySession and supplySession.success and not errorText then completeSupplyHandoff()end
     if isFlight and ready()and not configured and not supplySession and not errorText then
-        local temporary=aircraftDebug:profile(planeId)
-        local saved=temporary or config.profiles[tostring(planeId)]
         local options=optionsFor(planeId)
-        local canUse=saved and Profile.validate(saved,options)
+        local temporary=aircraftDebug:resolveProfile(planeId,options)
+        local saved=temporary or config.profiles[tostring(planeId)]
+        local canUse=saved and Profile.validate(saved,options,temporary~=nil)
         assert(canUse,"没有已确认且可用的原生多 SP 配置，请返回机库通过原生兵装页确认后出击；管理界面不提供兵装选择")
         configureFlight(profileFor(planeId),temporary and "debug_aircraft"or nil)
     end
@@ -1555,7 +1557,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.13.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.14.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

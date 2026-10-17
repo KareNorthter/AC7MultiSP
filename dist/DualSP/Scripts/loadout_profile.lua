@@ -35,20 +35,20 @@ function Profile.withSettings(profile,settings)
     local percent=count==1 and 100 or count==2 and settings.ammo_percent_two or settings.ammo_percent_three
     return Profile.copy{a=profile.a,b=profile.b,c=profile.c,ratio=percent/100}
 end
--- 每个已选项均须购买；UAV/ECM 等限制仅在多挂时生效。
-function Profile.validate(profile,options)
+-- 普通出击仍校验购买；仅任务调试的显式调用允许未购买兵装，保留多挂资格。
+function Profile.validate(profile,options,allowUnowned)
     local count=Profile.count(profile) -- 单挂不限制武器类别。
     assert(#options==3,"当前机体必须有三个原生兵装选项")
     for index=1,count do
         local option=options[profile[Profile.fields[index]]+1] -- 按实际配置核对。
-        assert(option and option.owned,"所选兵装尚未购买")
+        assert(option and (option.owned or allowUnowned==true),"所选兵装尚未购买")
         assert(count==1 or option.available,"当前兵装只支持单挂")
     end
     return count
 end
 -- 部件先计入完整载量；整数百分数向上取整，避免浮点误差多出一发。
--- 调试按集合轮切，不将ABC的不同排列视为新组合；跳过未购买及仅单挂限制。
-function Profile.nextCombination(current,options,settings)
+-- 按集合轮切，不将ABC的不同排列视为新组合；任务调试可跳过购买校验，多挂资格仍生效。
+function Profile.nextCombination(current,options,settings,allowUnowned)
     local masks={1,2,4,3,5,6,7}
     local currentMask=0
     for _,field in ipairs(Profile.fields)do if current[field]>=0 then currentMask=currentMask | (1 << current[field])end end
@@ -59,10 +59,21 @@ function Profile.nextCombination(current,options,settings)
         if mask~=currentMask then
             local candidate={a=-1,b=-1,c=-1};local slot=1
             for index=0,2 do if mask & (1 << index)~=0 then candidate[Profile.fields[slot]]=index;slot=slot+1 end end
-            if pcall(Profile.validate,candidate,options)then return Profile.withSettings(candidate,settings)end
+            if pcall(Profile.validate,candidate,options,allowUnowned)then return Profile.withSettings(candidate,settings)end
         end
     end
     return nil
+end
+-- 换机调试优先三SP；未登记持续效果的ECM/UAV仍不能强行组合，选择可组合的最多种。
+function Profile.debugDefault(options,settings)
+    assert(#options==3,"调试默认方案需要三个原生SP选项")
+    local candidate={a=-1,b=-1,c=-1};local count=0
+    for index,option in ipairs(options)do
+        if option.available then count=count+1;candidate[Profile.fields[count]]=index-1 end
+    end
+    if count<2 then candidate={a=0,b=-1,c=-1}end
+    Profile.validate(candidate,options,true)
+    return Profile.withSettings(candidate,settings)
 end
 function Profile.ammo(full,count,ratio)
     assert(type(full)=="number"and full>=0 and full%1==0,"完整载量无效")

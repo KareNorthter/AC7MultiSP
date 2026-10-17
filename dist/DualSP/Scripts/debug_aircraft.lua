@@ -57,6 +57,12 @@ function Module.new(deps)
     function self:profile(id)
         if self.flight and self.flight.id==id then return deps.copy(self.flight.profile)end
     end
+    function self:resolveProfile(id,options)
+        if self.flight and self.flight.id==id and self.flight.initial then
+            self.flight.profile=deps.defaultProfile(options);self.flight.initial=false
+        end
+        return self:profile(id)
+    end
     function self:refreshOptions(force)
         if not force and os.clock()-self.lastOptions<1 then return end
         self.lastOptions=os.clock();self.options={};self.optionsError=nil
@@ -204,7 +210,9 @@ function Module.new(deps)
         local held=pcall(controller,context,pawn)
         if not held then return true end
         -- 在主循环完成新Pawn身份绑定后才允许兵装初始化。
-        self.flight={id=pending.target,profile={a=0,b=-1,c=-1,ratio=1},instance=pending.instance,map=pending.map}
+        if not self.flight or self.flight.id~=pending.target then
+            self.flight={id=pending.target,profile={a=0,b=-1,c=-1,ratio=1},initial=true,instance=pending.instance,map=pending.map}
+        end
         deps.bind(pawn,pending.map)
         return false
     end
@@ -212,8 +220,9 @@ function Module.new(deps)
         if self.flight and self.flight.id==id then self.flight.profile=deps.copy(profile)end
         if self.pending and self.pending.target==id then
             local name=self.pending.name
+            local count=1+(profile.b>=0 and 1 or 0)+(profile.c>=0 and 1 or 0)
             self.pending=nil;self.status="applied";self.error=nil
-            self.notice="换机已生效："..name.."（默认单SP，可继续调试组合）。"
+            self.notice="换机已生效："..name.."（"..count.."种SP；可继续调试组合）。"
             deps.note("DEBUG_AIRCRAFT_APPLIED plane="..id.." request="..self.ack);changed()
         end
     end

@@ -514,19 +514,20 @@ void drawDebugLoadout(bool focus) {
             const bool owned=option.at("owned").get<bool>();
             const bool multiple=option.at("available").get<bool>();
             const auto label=option.at("code").get<std::string>()+" / "+option.at("description").get<std::string>()+"###DebugSP"+std::to_string(index);
-            ImGui::BeginDisabled(!available||!owned);
-            if(focus&&available&&owned){ImGui::SetKeyboardFocusHere();focus=false;}
+            const bool selectable=owned||debug.value("allow_unowned",false);
+            ImGui::BeginDisabled(!available||!selectable);
+            if(focus&&available&&selectable){ImGui::SetKeyboardFocusHere();focus=false;}
             ImGui::Checkbox(label.c_str(),&debugSelected[index]);
             ImGui::EndDisabled();
-            if(!owned){ImGui::SameLine();ImGui::TextDisabled("%s",tr("未购买","Not purchased"));}
-            else if(!multiple){ImGui::SameLine();ImGui::TextDisabled("%s",tr("仅限单挂","Single SP only"));}
+            if(!owned){ImGui::SameLine();ImGui::TextDisabled("%s",tr("未购买（任务调试可用）","Not purchased (mission debug allowed)"));}
+            if(!multiple){ImGui::SameLine();ImGui::TextDisabled("%s",tr("仅限单挂","Single SP only"));}
         }
         // 同帧勾选后重新计算，不能沿用绘制前的数量判定或配弹预览。
         const int selected=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true));
         valid=selected>0;
         for(int index=0;index<3;++index)if(debugSelected[index])
-            valid=valid&&options.at(index).at("owned").get<bool>()&&(selected==1||options.at(index).at("available").get<bool>());
-        if(!valid)ImGui::TextWrapped("%s",tr("请选择 1 至 3 种已购买 SP；标注仅限单挂的兵装不能组合。","Choose 1–3 purchased SP weapons. Single-only weapons cannot be combined."));
+            valid=valid&&(options.at(index).at("owned").get<bool>()||debug.value("allow_unowned",false))&&(selected==1||options.at(index).at("available").get<bool>());
+        if(!valid)ImGui::TextWrapped("%s",tr("请选择 1 至 3 种 SP；标注仅限单挂的兵装不能组合。","Choose 1–3 SP weapons. Single-only weapons cannot be combined."));
     }
     if(!debug.value("available",false)&&debug.contains("reason"))
         ImGui::TextWrapped("%s",debug.at("reason").get<std::string>().c_str());
@@ -588,7 +589,7 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(1180.f,display.x-40),height=std::min(920.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.13.0 管理###DualSPManagement","AC7MultiSP 2.13.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.14.0 管理###DualSPManagement","AC7MultiSP 2.14.0 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));

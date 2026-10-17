@@ -184,6 +184,9 @@ bool mountLightAnimationParts(void*,float,void*);
 void mountLightAnimationRelease();
 void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
+bool mountCfaMuzzleFilter(void*,bool,unsigned char,bool);
+bool mountCfaMuzzleRelease();
+void mountCfaMuzzleSync();
 bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
 struct F35CoverState {
@@ -374,6 +377,7 @@ bool fixedMountRelease() {
         if(!pending.error.empty())pending.error+="；";
         pending.error+=error.what();
     };
+    if(!mountCfaMuzzleRelease())failure(std::runtime_error("CFA炮口：原生显示仍待归还"));
     try { mountExteriorRelease(fixedMount); }
     catch(const std::exception& error) {
         pending.aircraft=fixedMount.aircraft;pending.exteriorRack=fixedMount.exteriorRack;
@@ -495,6 +499,9 @@ void mountFilterVisibility(void* object,bool requested,unsigned char propagation
             original(object,hidden?false:mountDesired(visual),0);
             return;
         }
+    }catch(const std::exception& error) { fixedMountFail(error.what()); }
+    if(GetCurrentThreadId()==mountGameThread.load())try {
+        if(mountCfaMuzzleFilter(object,requested,propagation,hidden))return;
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
     original(object,requested,propagation); // 非本机模型或明确退出后的原生行为。
 }
@@ -716,6 +723,7 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
 #include "mount_animation_reflection_adapter.hpp"
 #include "static_mount_collision.hpp"
 #include "light_mount.hpp"
+#include "cfa_muzzle_visual.hpp"
 #include "f22_exterior_bones.hpp"
 #include "mount_exterior.hpp"
 template<class T> T mountAnimationRead(Addr address) { return read<T>(address); }
@@ -852,6 +860,7 @@ void fixedMountCommit(const Command& command) {
     }
     fixedMount.rebuilding=false;
     mountLightAnimationCommit(); // keepArmed完整结束后才消费轻量同舱快照。
+    mountCfaMuzzleSync();
     if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
     fixedMountRefresh(command.time);
 }

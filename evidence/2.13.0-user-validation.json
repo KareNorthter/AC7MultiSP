@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "candidate": "2.13.0",
+  "source_candidate": "2.14.0",
+  "user_confirmed": [
+    "任务重开换机功能正常"
+  ],
+  "requests": [
+    "换机默认三SP",
+    "任务调试允许未购买SP",
+    "Su30M2三挂腹4AGM2、内翼4AAM4、外翼HPAA2",
+    "Falken停止TLS时消除原地滞留光束",
+    "CFA ADMM/EML互切不重复展开",
+    "按指定研究线程最新结论修CFA左侧EML炮口蓝光"
+  ],
+  "deferred_by_user": [
+    "CFA44切换三SP明显卡顿，稍后再排查"
+  ],
+  "not_generalized": "换机正常不等于47机/所有无DLC机体均实测；未扩大其他机型或2.14新效果验收",
+  "animation_thread": "codex://threads/01a14787-e328-72b3-9b0e-1bfa7d81cc52",
+  "cfa_eml_native_evidence": "Temp/cfa44-eml-effect-fix/Temp/cfa44-eml-shot-watch.jsonl",
+  "cfa_eml_conclusion": "每轮首发激活SWP2/sp21的FX_EML_Muzzleflash02，次发右sp22；发射变换两槽均映射右侧，因此仅多挂接管时抑制左PSC，不全局禁模板",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false
+}

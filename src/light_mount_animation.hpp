@@ -10,9 +10,10 @@ struct LightMountAnimation {
     unsigned flags{};
     struct Pending {
         Addr plane{},engine{},parts{};
+        MountIdentity activator;
         int target{-1},request{},phase{};
         std::array<float,7> progress{};
-        bool valid{};
+        bool valid{},committed{};
     } pending;
 } lightMountAnimation;
 
@@ -35,7 +36,9 @@ void mountLightAnimationBind() {
         {0x1cd315a,"488b5908"},{0x1cd3172,"48899368120000"},{0x1cd3181,"488d8b900f0000"},
         {0x1cd55e1,"488d8b900f00004533c04c8d4b600f28cee8a93d0100"},
         {0x1ce94a4,"4c8d430c488bcbe8c0d8ffff"},{0x1ce6bb4,"488d05bd853101488901"},
-        {0x1ce6d70,"4d85c00f84fe170000488bc455564881ecb8000000"},{0x81e8f8,"8b874c0b0000"}};
+        {0x1ce6d70,"4d85c00f84fe170000488bc455564881ecb8000000"},{0x81e8f8,"8b874c0b0000"},
+        // 原生请求1从现有进度继续打开，抵达1后phase才变2；不自行制造全开姿态。
+        {0x1ce7f69,"8b454c83f8017526"},{0x1ce7f86,"c7867c0100000000803fb802000000"}};
     for(const auto& item:code)require(access.originalCodeMatches(item.first,item.second),"轻量动画：原生Parts代码资格改变");
     require(mountClassIs(fixedMount.plane.address,"PlayerPlane","/Script/Nimbus"),"轻量动画：不是原生玩家机体");
     state.plane=fixedMount.plane;state.aircraft=fixedMount.aircraft;
@@ -81,27 +84,54 @@ void mountLightAnimationPut(const std::array<float,7>& values) {
 void mountLightAnimationBeforeRebuild(const Command& command,int target) {
     auto& state=lightMountAnimation;state.pending={};
     if(!fixedMount.bound || fixedMount.aircraft!=MountAircraft::Fa44 || command.op!="switch" ||
-       command.plane!=fixedMount.plane.address || target<0 || target>1 ||
-       read<unsigned char>(command.activator+0x2a1)==0)return;
+       command.plane!=fixedMount.plane.address || command.activator!=fixedMount.animationActivator.address ||
+       target<0 || target>1)return;
     mountLightAnimationBind();
-    const int prior=mountLightAnimationCurrent();if(prior>1)return;
+    const int prior=mountLightAnimationCurrent();if(prior>1 || prior==target)return;
+    MountAnimationReflection::alive(fixedMount.animationActivator);
+    const unsigned armed=read<unsigned char>(command.activator+0x2a1);
+    require(armed<=1,"轻量动画：原生兵装类别无效");
+    const auto progress=mountLightAnimationProgress();
+    // 普通按键循环先由原生切MSL，再由Lua重建下一SP；该短暂中间态仍可能有未收完的真实姿态。
+    // 真正停留在MSL且机构已经关闭时不保旧姿态，后续SP照常从闭合状态打开。
+    if(!armed && progress[0]<=state.closed)return;
     state.pending.plane=state.plane.address;state.pending.engine=state.engine;state.pending.parts=state.parts;state.pending.target=target;
+    state.pending.activator=fixedMount.animationActivator;
     state.pending.request=read<int>(state.parts+0x58);state.pending.phase=read<int>(state.parts+0x274);
     require(state.pending.request>=0 && state.pending.request<=3 && state.pending.phase>=0 && state.pending.phase<=3,
         "轻量动画：同机构请求无效");
-    state.pending.progress=mountLightAnimationProgress();state.pending.valid=true;
+    state.pending.progress=progress;state.pending.valid=true;
+}
+
+// 仅在最终逻辑SP已真实armed后消费；核心Commit可能早于Lua为普通按键循环执行的最后一次pressSwitch。
+void mountLightAnimationRestoreSwitch() {
+    auto& state=lightMountAnimation;
+    const auto saved=state.pending;state.pending={};
+    if(!saved.valid || !saved.committed)return;
+    require(saved.plane==state.plane.address && saved.engine==state.engine && saved.parts==state.parts &&
+        saved.target==mountLightAnimationCurrent() && mountMeshIdentityEqual(saved.activator,fixedMount.animationActivator) &&
+        mountAlive(saved.activator),"轻量动画：同机构切换身份改变");
+    const unsigned armed=read<unsigned char>(saved.activator.address+0x2a1);
+    require(armed<=1,"轻量动画：同机构切换类别无效");
+    if(!armed)return; // 首个Parts帧仍是MSL便放弃，不在未来真正重选SP时重放陈旧快照。
+    require(MountAnimationReflection::writable(state.parts+0x58,4) && MountAnimationReflection::writable(state.parts+0x274,4),
+        "轻量动画：同机构请求不可写");
+    // 中间MSL可能已把request改为0/3；保留采样姿态，使用已核的原生打开请求继续，而非还回关闭请求。
+    const int request=(saved.request==2 && saved.progress[0]==1.f)?2:1;
+    const int phase=saved.progress[0]==1.f?2:1;
+    mountLightAnimationPut(saved.progress);write<int>(state.parts+0x58,request);write<int>(state.parts+0x274,phase);
 }
 void mountLightAnimationCommit() {
     if(!fixedMount.bound || !mountLightHasAnimation(fixedMount.aircraft)) {mountLightAnimationRelease();return;}
     mountLightAnimationBind();
     auto& state=lightMountAnimation;
-    const auto saved=state.pending;state.pending={}; // 只消费一次，拒绝旧事务覆盖新场景。
-    if(!saved.valid)return;
-    require(saved.plane==state.plane.address && saved.engine==state.engine && saved.parts==state.parts &&
-        saved.target==mountLightAnimationCurrent(),"轻量动画：同机构切换身份改变");
-    require(MountAnimationReflection::writable(state.parts+0x58,4) && MountAnimationReflection::writable(state.parts+0x274,4),
-        "轻量动画：同机构请求不可写");
-    mountLightAnimationPut(saved.progress);write<int>(state.parts+0x58,saved.request);write<int>(state.parts+0x274,saved.phase);
+    if(!state.pending.valid)return;
+    require(state.pending.target==mountLightAnimationCurrent() && mountAlive(state.pending.activator),
+        "轻量动画：提交时同机构切换身份改变");
+    state.pending.committed=true;
+    const unsigned armed=read<unsigned char>(state.pending.activator.address+0x2a1);
+    require(armed<=1,"轻量动画：提交时原生兵装类别无效");
+    if(armed)mountLightAnimationRestoreSwitch();
 }
 
 bool mountLightAnimationParts(void* object,float delta,void* input) {
@@ -113,6 +143,7 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
         const int config=mountLightAnimationCurrent();
         require(input && reinterpret_cast<Addr>(input)==state.parts+0xc && std::isfinite(delta) && delta>=0,
             "轻量动画：原生输入或帧间隔改变");
+        if(state.pending.valid && state.pending.committed)mountLightAnimationRestoreSwitch();
         const auto before=mountLightAnimationProgress();
         called=true;mountOriginalPartsUpdate(object,delta,input);
         require(config==mountLightAnimationCurrent(),"轻量动画：原生更新期间选择改变");
@@ -121,8 +152,15 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
         const float speed=(options&0x40)?read<float>(reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x257beec):1.f;
         require(std::isfinite(speed) && speed>0,"轻量动画：原生速率无效");
         auto close=[&](float value) {return std::max(state.closed,value-delta/state.seconds*speed);};
-        // 非当前通道按原速收回；Falken离开TLS时已由兵装层立即结束光束。
-        for(int channel=0;channel<3;++channel)if(channel!=config)after[1+channel]=close(before[1+channel]);
+        // CFA两套挂架共用spwc，Body另有原生swc1盖板；ADMM/EML激活时不能按独立舱把它收回。
+        // MSL、IEWS仍走原有收拢，Dark/Falken继续只收非当前独立通道。
+        bool sameCfaDomain=false;
+        if(state.aircraft==MountAircraft::Fa44 && config<2) {
+            MountAnimationReflection::alive(fixedMount.animationActivator);
+            const unsigned armed=read<unsigned char>(fixedMount.animationActivator.address+0x2a1);
+            require(armed<=1,"轻量动画：更新时原生兵装类别无效");sameCfaDomain=armed!=0;
+        }
+        if(!sameCfaDomain)for(int channel=0;channel<3;++channel)if(channel!=config)after[1+channel]=close(before[1+channel]);
         if(state.aircraft==MountAircraft::Fa44 && config==2) {
             // IEWS效果和请求不变；仅将可见ADMM/EML共用机构按原速收回。
             after[0]=close(before[0]);for(int i=1;i<4;++i)after[i]=close(before[i]);

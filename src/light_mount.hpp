@@ -441,6 +441,7 @@ void mountLightMaintain(FixedMountState& state) {
 bool mountLightCopyTransform(void* output,const FixedMountState& state,int position) {
     require(state.light && position>=0 && position<state.physicalCount,"轻量挂载：发射位置越界");
     const auto& point=state.light->positions[position];const Addr component=point.component.address;
+    if(state.aircraft==MountAircraft::Fa44 && point.pool==1)mountCfaMuzzleSync();
     require(component==state.physical[position] && mountAlive(point.component),"轻量挂载：发射组件身份改变");
     // 从原挂架的具名Socket取实时世界位置，避免UAV回收运动或隐藏骨缩放污染发射变换。
     const auto& rack=state.light->racks[point.pool];

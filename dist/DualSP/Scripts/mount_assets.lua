@@ -15,7 +15,7 @@ return {
     f04e={{18,"MSP_f04e_ugb_neg",1},{19,"MSP_f04e_lagm_pos",2}},
     f14atg={{20,"MSP_f14atg_laam_belly",1},{21,"MSP_f14atg_saam_neg",2}},
     j39e={{23,"MSP_j39e_missile_outer",1},{24,"MSP_j39e_aam_outer",2}},
-    su30={{27,"MSP_su30_hpaa_tips",1},{28,"MSP_su30_4agm_outer",2},{29,"MSP_su30_4aam_inner_belly",3},{40,"MSP_su30_4agm_wings",2},{46,"MSP_su30_4agm_belly",2},{47,"MSP_su30_4aam_wings",3}},
+    su30={{27,"MSP_su30_hpaa_tips",1},{29,"MSP_su30_4aam_inner_belly",3},{40,"MSP_su30_4agm_wings",2},{46,"MSP_su30_4agm_belly",2},{47,"MSP_su30_4aam_wings",3}},
     su34={{30,"MSP_su34_sffs_outer",1},{31,"MSP_su34_hcaa_inner",2},{32,"MSP_su34_4agm_belly",3},{41,"MSP_su34_4agm_inner_belly",3},{42,"MSP_su34_hcaa_outer",2}},
     m29a={{33,"MSP_m29a_hpaa_outer_neg",1},{35,"MSP_m29a_4aam_inner",3},{43,"MSP_m29a_hpaa_outer",1},{44,"MSP_m29a_lagm_inner",2},{48,"MSP_m29a_4aam_outer",3},{49,"MSP_m29a_4aam_outer_pos",3}},
     f16x={{36,"MSP_f16x_4agm_outer",3}},

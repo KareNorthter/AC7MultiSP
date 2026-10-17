@@ -15,7 +15,7 @@ def build():
     for sample in json.loads((ROOT/'evidence/static-expansion-2.11.0.json').read_text(encoding='utf-8'))['aircraft']:
         samples[sample['code']] = sample
     native_overrides = []
-    for name in ('static-expansion-2.12.0.json', 'static-expansion-2.13.0.json'):
+    for name in ('static-expansion-2.12.0.json', 'static-expansion-2.13.0.json', 'static-expansion-2.14.0.json'):
         feedback = json.loads((ROOT/'evidence'/name).read_text(encoding='utf-8'))
         for sample in feedback['aircraft']:
             samples[sample['code']] = sample

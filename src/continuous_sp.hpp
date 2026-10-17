@@ -91,6 +91,79 @@ bool continuousCfa44(Addr plane) {
 bool continuousSu37(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_su37_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_su37");
 }
+// 只处理Falken切离TLS时的主束；其蓝图在下一次OnCreateWeaponEnd明确恢复MainLaser可见。
+// 不改Actor显隐、尾段时长或池状态，声音、伤害结束、冷却和回收仍完整走原生End。
+bool continuousFinishFalkenTLSVisual(Addr plane,Addr activator,Addr weapon) {
+    if(!continuousPlaneClass(plane,"AcePlayerPawn_zoef_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_zoef") ||
+        !continuousClass(read<Addr>(weapon+0x10),"plwp_tls_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2"))return false;
+    require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"Falken TLS收尾不在游戏线程");
+    const auto shot=continuousIdentity(weapon),player=continuousIdentity(plane),owner=continuousIdentity(activator);
+    require(read<Addr>(plane+0x11a8)==activator && read<Addr>(weapon+0x3b8)==plane &&
+        read<unsigned char>(weapon+0x3b0)==25,"Falken TLS收尾身份不匹配");
+    const auto generation=read<uint64_t>(weapon+0x370);
+    const float age=read<float>(weapon+0x610);
+    using Reflection=MountAnimationReflection;
+    Reflection api; // 本接口也覆盖外观关闭时；不为粒子收尾安装或绑定外观钩子。
+    const auto loader=GetModuleHandleW(L"UE4SS.dll");require(loader!=nullptr,"Falken TLS收尾缺少加载器");
+    auto symbol=[&](const char* name) {const auto p=GetProcAddress(loader,name);
+        require(p!=nullptr,"Falken TLS收尾缺少反射导出");return p;};
+    api.parms=reinterpret_cast<Reflection::Ref>(symbol("?GetParmsSize@UFunction@Unreal@RC@@QEBAAEBGXZ"));
+    api.count=reinterpret_cast<Reflection::Ref>(symbol("?GetNumParms@UFunction@Unreal@RC@@QEBAAEBEXZ"));
+    api.extent=reinterpret_cast<Reflection::Ref>(symbol("?GetPropertiesSize@UStruct@Unreal@RC@@QEBAAEBHXZ"));
+    api.arrayDim=reinterpret_cast<Reflection::Ref>(symbol("?GetArrayDim@FProperty@Unreal@RC@@QEBAAEBHXZ"));
+    api.byteOffset=reinterpret_cast<Reflection::Ref>(symbol("?GetByteOffset@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
+    api.byteMask=reinterpret_cast<Reflection::Ref>(symbol("?GetByteMask@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
+    api.fieldMask=reinterpret_cast<Reflection::Ref>(symbol("?GetFieldMask@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
+    api.fieldSize=reinterpret_cast<Reflection::Ref>(symbol("?GetFieldSize@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
+    api.available=reinterpret_cast<Reflection::Available>(symbol("?IsProcessEventAvailable@UE4SSRuntime@RC@@SA_NXZ"));
+    api.process=reinterpret_cast<Reflection::Process>(symbol("?ProcessEvent@UObject@Unreal@RC@@QEAAXPEAVUFunction@23@PEAX@Z"));
+    require(api.available(),"Falken TLS收尾反射尚未就绪");
+    const Addr cls=read<Addr>(weapon+0x10);
+    const auto field=api.field(cls,"MainLaser","ObjectProperty",8,api.typeSize(cls));
+    const auto component=mountIdentity(read<Addr>(weapon+field.offset));
+    require(mountClassIs(component.address,"ParticleSystemComponent","/Script/Engine") &&
+        read<Addr>(component.address+0x20)==weapon,"Falken TLS主束组件身份改变");
+    const Addr componentClass=read<Addr>(component.address+0x10);
+    const auto parent=api.field(componentClass,"AttachParent","ObjectProperty",8,api.typeSize(componentClass),true);
+    const auto root=mountIdentity(read<Addr>(weapon+mountProperty(weapon,"RootComponent","ObjectProperty",8)));
+    require(read<Addr>(root.address+0x20)==weapon && read<Addr>(component.address+parent.offset)==root.address &&
+        mountName(root.address)=="Static Mesh",
+        "Falken TLS主束附着改变");
+    const auto templateField=api.field(componentClass,"Template","ObjectProperty",8,api.typeSize(componentClass),true);
+    const auto particle=mountIdentity(read<Addr>(component.address+templateField.offset));
+    Reflection::named(particle.address,"FX_TLS_Muzzleflash01_zoef",
+        "/Game/VFX/DLC/Update01/Vehicles/Weapon/TLS_zoef/FX_TLS_Muzzleflash01_zoef");
+    const Addr function=Reflection::find(componentClass,"SetVisibility");
+    require(function!=0,"Falken TLS缺少显隐接口");
+    Reflection::named(read<Addr>(function+0x20),"SceneComponent","/Script/Engine");
+    require(mountName(read<Addr>(function+0x10))=="Function" &&
+        Reflection::refValue<unsigned char>(api.count,function)==2,"Falken TLS显隐接口改变");
+    const int size=Reflection::refValue<unsigned short>(api.parms,function);
+    require(size>0 && size<=256,"Falken TLS显隐参数尺寸改变");
+    const auto visible=api.boolean(function,"bNewVisibility",size),propagate=api.boolean(function,"bPropagateToChildren",size);
+    Reflection::separate(visible.field,propagate.field);
+    require(read<Addr>(function+0x38)==visible.field.identity.address &&
+        read<Addr>(visible.field.identity.address+0x28)==propagate.field.identity.address &&
+        !read<Addr>(propagate.field.identity.address+0x28),"Falken TLS显隐参数链改变");
+    const auto functionId=mountIdentity(function);
+    // 所有资格检查先完成；原生End可能同步执行蓝图，不能随后重新取得未知代次的主束。
+    using End=void(*)(void*);
+    reinterpret_cast<End>(continuousBase()+0x894af0)(reinterpret_cast<void*>(weapon));
+    if(!continuousAlive(shot) || !continuousAlive(player) || !continuousAlive(owner) || !mountAlive(component))return true;
+    if(!read<unsigned char>(weapon+0x368))return true; // 零尾段已被原生回收，不再写组件。
+    Reflection::alive(root);Reflection::alive(particle);
+    require(read<Addr>(plane+0x11a8)==activator && read<Addr>(weapon+0x3b8)==plane &&
+        read<Addr>(weapon+0x10)==cls && read<uint64_t>(weapon+0x370)==generation && read<float>(weapon+0x610)>=age &&
+        read<Addr>(weapon+field.offset)==component.address && read<Addr>(component.address+parent.offset)==root.address &&
+        read<Addr>(component.address+templateField.offset)==particle.address,
+        "Falken TLS结束时发射代次或主束身份改变");
+    Reflection::alive(functionId);require(api.available(),"Falken TLS收尾反射不可用");
+    alignas(16) std::array<unsigned char,256> params{};
+    Reflection::putBool(params.data(),visible,false);Reflection::putBool(params.data(),propagate,false);
+    api.process(reinterpret_cast<void*>(component.address),reinterpret_cast<void*>(function),params.data());
+    Reflection::alive(component);Reflection::alive(functionId);
+    nativeLog("FALKEN_TLS_MAIN_BEAM_ENDED_ON_SWITCH");return true;
+}
 bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) ||
     continuousCfa44(plane) || continuousSu37(plane);}
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。

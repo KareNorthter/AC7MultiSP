@@ -308,6 +308,7 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
+bool continuousFinishFalkenTLSVisual(Addr plane,Addr activator,Addr weapon);
 // 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
 void finishPlayerTLS(Addr plane,Addr activator) {
     require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
@@ -334,7 +335,10 @@ void finishPlayerTLS(Addr plane,Addr activator) {
         lasers.push_back(weapon);
     }
     using End=void(*)(void*); // 与 TLS 丢失所属机体时使用同一个自然终止请求。
-    for(const auto weapon:lasers)reinterpret_cast<End>(base+0x894af0)(reinterpret_cast<void*>(weapon));
+    for(const auto weapon:lasers) {
+        if(!continuousFinishFalkenTLSVisual(plane,activator,weapon))
+            reinterpret_cast<End>(base+0x894af0)(reinterpret_cast<void*>(weapon));
+    }
     if(!lasers.empty())nativeLog("TLS_ENDED_ON_SWITCH "+std::to_string(lasers.size()));
 }
 // 发射槽是原生动态池，不等于机体挂点数；ADMM 现场为 Num=126、Max=170。

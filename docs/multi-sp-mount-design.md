@@ -4,6 +4,8 @@
 
 优先保留原生发射、装填和动画行为，再安排弹体与挂架。物理弹位不少于装填窗口，是改善齐射观感的目标；遇到发射路径穿插、活动挂架冲突或缺少导轨时，应接受较少的位置。F-15E 的换位、F-35C 的两处 4AAM 和 Su-30SM 的共用导轨，体现了不同机体需要不同取舍。
 
+2.14源码：换机优先默认三SP；未登记持续效果等仅限单挂项仍保安全限制，按可组合最多种回退。任务调试和组合轮切允许未购买SP，正常机库/补给保购买校验，临时方案不保存。Su30M2三挂=腹4AGM2/翼内4AAM4/翼外HPAA2，复用27/46/47资源；旧50资源/100成员不改。ADF01切离TLS仍走原生End并立即隐藏MainLaser，消除尾段静止主束；其他TLS持续不改。CFA保ADMM↔EML实际姿态、补原生临时MSL与re-arm交接、停止误收swc1；MSL/IEWS仍收拢。只在CFA多挂外观含EML时抑制当前SWP2/sp21的FX_EML_Muzzleflash02，归还最后原生显隐请求；右侧、弹药与装填不改。新效果尚未构建或实测。
+
 ## 审美准则与逐机方案摘要
 
 早期方案优先把多类模型同时显示出来，部分双挂直接沿用三挂分区，留下腹部空位、单侧某一种弹和大弹偏外的问题。少显示QAAM/UAV还暴露了把待发窗口当成外观总量的错误。用户这些调整的共同意图是：让负载看起来像一套合理、充足、协调的真实挂载。
@@ -44,7 +46,7 @@
 | F-4E | UGB×6＋LAGM×1；UGB×12＋SASM×2；LAGM×2＋SASM×2 | UGB×6＋LAGM×1＋SASM×2 | 无DLC未测，保候选 |
 | F-14A TGM | LAAM×4＋SAAM×2；LAAM×4＋HPAA×2；SAAM×1＋HPAA×1 | LAAM×4＋SAAM×1＋HPAA×1 | 用户本轮正常；SWP3保原生整架/碰撞，接受空导轨 |
 | Gripen E | SASM×2＋6AAM×5；SASM×2＋LACM×2；6AAM×5＋LACM×2 | SASM×2＋6AAM×3＋LACM×2 | 双挂尽量保五6AAM，三挂两SASM成对＋腹三6AAM |
-| Su-30M2 | HPAA×2＋4AGM×4；HPAA×2＋4AAM×4；4AGM×2＋4AAM×4 | HPAA×2＋4AGM×2＋4AAM×4 | 本轮仅4AGM+4AAM为大弹腹2、小弹翼4；其他组合保持 |
+| Su-30M2 | HPAA×2＋4AGM×4；HPAA×2＋4AAM×4；4AGM×2＋4AAM×4 | 腹4AGM×2＋翼内4AAM×4＋翼外HPAA×2 | 2.14源码将三挂也统一为大弹靠腹、AAM内翼、HPAA外翼；双挂保持2.13 |
 | Su-34 | SFFS×2＋HCAA×2；SFFS×2＋4AGM×4；HCAA×2＋4AGM×4 | SFFS×2＋HCAA×2＋4AGM×2 | 用户本轮正常；双挂4AGM内翼/腹4，三挂仍腹2 |
 | MiG-29A | HPAA×2＋LAGM×2；HPAA×2＋4AAM×2；LAGM×2＋4AAM×2 | HPAA×1＋LAGM×2＋4AAM×1 | 本轮内LAGM成对，小弹外侧；三挂左HPAA右4AAM，左右以机体为准 |
 | F-16XL | UGB×12＋4AAM×4；UGB×12＋4AGM×2；4AAM×2＋4AGM×6 | UGB×12＋4AAM×4＋4AGM×2 | 无DLC未测；保窄间距候选，不声称离架已通过 |
@@ -54,10 +56,10 @@
 |---|---|
 | F-22A | 含8AAM保侧舱弹体，腹内QAAM/XSDB原生；撤腹根骨显隐后的2.12本轮已无肉眼卡顿，保此路径 |
 | 普通Su-57 | 含PLSL保翼下吊舱，4AAM/GPB内舱原生，不套TGM |
-| ADF-01 | 4AAM/FAEB共架；本轮切走TLS（含MSL）立即停光、鼻口原速收回；其他布局保持 |
+| ADF-01 | 4AAM/FAEB共架；切走TLS含MSL走原生End，2.14源码补隐藏MainLaser，消除尾段静止主束；鼻口原速收回 |
 | DarkStar | PLSL双炮跨SP保留，SASM/XSDB当前SP原生；旧舱退出补齐关闭 |
 | ADF-11F | TLS+QAAM四位置，TLS+UAV两架；QAAM+UAV和三挂仍右QAAM2/左UAV1；保持续与回收 |
-| CFA-44 | 左ADMM阵列/右EML，IEWS隐藏外观；ADMM↔EML连续，MSL/IEWS收拢；不猜改充能或炮口粒子 |
+| CFA-44 | 左ADMM/右EML，IEWS隐藏外观；2.14源码补ADMM↔EML实际姿态交接并保swc1，MSL/IEWS收拢；仅抑制已证实左sp21炮口粒子。切换卡顿后置 |
 | Su-47 | 当前SP原生模型/动画，多SP兵装保留；完整舱内共存停用 |
 | Su-57 TGM | 当前SP原生模型/动画，避免旧2–3fps全舱路线；与普通Su57区分 |
 | X-02S | 本轮撤销全部外观接管，模型、机构、发射全部回原生；保基础多SP兵装功能，研究仅留Git历史 |
@@ -397,7 +399,7 @@ F-2A共87个受管组件（含76个原生火箭弹体候选），多挂选用38�
 | 机外保留六机 | F-22A、普通Su-57、ADF-01、DarkStar、ADF-11F、CFA-44 | 内部/机鼻原生，明确外装跨SP保留；部分机型有已记录轻微观感取舍 |
 | 原生外观旁路 | Su-47、Su-57 TGM | 只保留兵装多SP功能，不扩完整共舱 |
 
-运行数据由`build_runtime_mount_data.py`从原三批和[本版补充源](../evidence/static-expansion-2.11.0.json)统一生成核心表和Lua资源清单，覆盖源依次为[evidence/static-expansion-2.12.0.json](../evidence/static-expansion-2.12.0.json)与[2.13源码源表](../evidence/static-expansion-2.13.0.json)。未点名方案和旧46资源编号/编码字节保持；2.12.0成套46资源/92成员已装；2.13.0新增4副本，50资源/100成员已随本轮完整构建安装；新布局仍待用户实测。Gripen两份副本与历史未安装研究同名，已核关键来源/配方/编码摘要全相同才复用；旧工具执行记录不改写。Lua只预检实际需替换的组件，核心换网格前仍只读查询实际NoCollision，资格不符即外观回退；不写碰撞设置、不修改逻辑窗口/库存/冷却。显示与发射共用同一映射，队列最大保护256，物理表64；数量没有被写回游戏。
+运行数据由`build_runtime_mount_data.py`从原三批和[本版补充源](../evidence/static-expansion-2.11.0.json)统一生成核心表和Lua资源清单，覆盖源依次为[evidence/static-expansion-2.12.0.json](../evidence/static-expansion-2.12.0.json)、[2.13源表](../evidence/static-expansion-2.13.0.json)及[2.14三挂覆盖源](../evidence/static-expansion-2.14.0.json)。未点名方案和旧46资源编号/编码字节保持；2.12.0成套46资源/92成员已装；2.13.0新增4副本，50资源/100成员已随本轮完整构建安装；新布局仍待用户实测。Gripen两份副本与历史未安装研究同名，已核关键来源/配方/编码摘要全相同才复用；旧工具执行记录不改写。Lua只预检实际需替换的组件，核心换网格前仍只读查询实际NoCollision，资格不符即外观回退；不写碰撞设置、不修改逻辑窗口/库存/冷却。显示与发射共用同一映射，队列最大保护256，物理表64；数量没有被写回游戏。
 
 下表16架本轮不新增外观接管，保留已有兵装限制与原生显示，等用户醒后讨论。火箭排除只针对本轮新增，已做过的F-2A/XFA-27等不撤销。
 
