@@ -1,4 +1,4 @@
-AC7MultiSP 2.16.0
+AC7MultiSP 2.17.0 Test Candidate
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -11,7 +11,7 @@ Features
 • Experimental simultaneous SP models retain selected external stores where supported. Layouts vary by aircraft; some internal bays retain native model switching.
 • Chinese/English management panel, configurable controls, ammunition settings, model toggle and logs.
 • Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. Unpurchased and unlicensed DLC aircraft are listed for testing. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
-• Mission 14 uses its assigned weapons with Multi-SP takeover temporarily disabled. Features resume after leaving, without changing saved settings. Free flight on the same map is unaffected.
+• Mission 12 uses its assigned weapons with Multi-SP takeover temporarily disabled. Features resume after leaving, without changing saved settings. Free flight on the same map is unaffected.
 
 Installation
 1. Extract the entire archive and close the game. In Steam, use Manage > Browse local files. Locate the folder containing Ace7Game.exe.
@@ -32,18 +32,20 @@ Controls
 • Choose SP1, SP2 and SP3 in sequence; the latter two can be NO WEAPON. Use keyboard or controller in native preparation menus.
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
+• Optional target tracking toggle: enable controller X replacement in Features (off by default), or assign an independent keyboard key (unbound by default). Press once to track and again to stop. Y retains its native behavior. When X replacement is enabled, use the D-pad or native keyboard cycling for SP selection. Pausing, opening management, losing focus or losing the target stops tracking.
+• On first launch, settings migrate after saving profiles.before-target-gaze.json; installation preserves the original personal settings.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
 Known issues and planned improvements
-• CFA-44: switching among three SPs still causes a brief hitch, after which frame rate returns to normal. Selecting ECM still reveals and opens its model instead of keeping it hidden.
+• CFA-44: this candidate includes switching-overhead reductions and ECM mechanism hiding. Improvements over the 2.16 hitch/model exposure still require gameplay verification.
 • ADF-01: leaving TLS stops the beam immediately, but the first stop causes a noticeable hitch; later stops may cause smaller hitches.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
 • F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
 • An occasional hangar exit/crash was previously reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
-These issues are recorded and have not received additional fixes in this release.
+The other issues remain recorded. Target tracking and the Mission 12 correction also await gameplay verification; this candidate is not a formal release.
 
 Compatibility with other mods
 • Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received a complete 2.16 retest.

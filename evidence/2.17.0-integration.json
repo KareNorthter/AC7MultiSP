@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "version": "2.17.0",
+  "candidate": true,
+  "recorded_at": "2026-10-17T23:39:37.661945+08:00",
+  "branch": "codex/integration-2.17.0",
+  "formal_baseline": "main / v2.16.0 / 5dfd41f",
+  "sources": [
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "title": "优化CFA-44切换卡顿与ECM弹出",
+      "branch": "codex/cfa44-switch-ecm",
+      "commit": "ec2738b",
+      "scope": "接收已完成未提交源码及说明，单独提交留存；不含原有Release/baseline-0.1.7.json删除"
+    },
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/2.15-hud-mission14-localization",
+      "commits": [
+        "be76ab5",
+        "477a65b"
+      ],
+      "received_commits": [
+        "104c312",
+        "7d3495b"
+      ],
+      "scope": "目标注视及第12关更正；更早的a07dfe6已在main，未重复覆盖；来源工作区未修改"
+    }
+  ],
+  "integration_changes": [
+    "公共文档保留当前主线结构，仅协调功能和状态正文",
+    "版本及界面标题同步2.17.0，升级基线指向2.16安装回执",
+    "安装器识别配置版本7；现有检查同步协议8、配置7和112/212任务数据，未新增测试模块"
+  ],
+  "build_dir": "Temp/build-2.17.0-candidate",
+  "build_receipt_sha256": "22865dd970ff60bf1aa1f981511858f18f5c3802528b597dada0498ef0c31f4d",
+  "test_receipt_sha256": "4506dfa4179f83ffd61601eda9691cac8342b7d4c06ef879f16ba15b9b84258f",
+  "installed_receipt": "evidence/2.17.0-installed.json",
+  "installed_receipt_sha256": "84b198ce580c00a197f77e81053be817db5b6ea1a5868c8330fe25efb5b8911a",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_16": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "configuration_migrated_after_external_game_start": true,
+  "original_configuration_migration_backup_verified": true,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 172,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-233817-978168",
+  "protected_old_core_verified": true,
+  "formal_main_unchanged": true,
+  "formal_zip_2_16_verified": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "CFA三挂连续互切及ECM双挂、隐藏、功能、首次和后续卡顿",
+    "持续目标注视X和自定义键、Y保留、暂停/失焦/目标消失后的停止",
+    "第12关112旁路、离关恢复、第14关正常、212自由飞行不受限制",
+    "首次配置迁移、选装/补给/检查点及退出恢复"
+  ],
+  "remaining_issues": [
+    "ADF-01停光卡顿",
+    "CFA/F22 SP2/SP3光标停顿",
+    "F2多挂性能",
+    "偶发机库退出根因"
+  ],
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false
+}

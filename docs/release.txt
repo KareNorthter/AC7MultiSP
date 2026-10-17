@@ -1,8 +1,13 @@
-AC7MultiSP 2.16.0 正式发布
+AC7MultiSP 2.17.0 测试候选
 
-用户已测试当前版本并授权合入main。已知问题保留：CFA三SP切换短卡后恢复；ECM模型仍显示和展开；ADF-01首次停光明显卡、后续轻卡。其他功能基本正常不代表全47机逐组合验收。
+以main / v2.16.0为正式基线，整合两条用户指定线程的最新成果：
+• CFA-44：减少切换重复显隐、调度和无用外观计算；增加ECM独立机构隐藏。
+• 单次按键持续目标注视：手柄X替换默认关闭，独立键盘键默认未绑定；Y保留原生操作。
+• 固定SP限制更正为第12关112，第14关恢复多SP，212自由飞行不受影响。
 
-完整功能、安装、兼容性与待优化项见README_zh-CN.txt / README_en.txt。
-发布包：Release/AC7MultiSP-2.16.0.zip
-冻结构建：Temp/build-2.16.0-final，沿用已测字节，无重新构建。
-回执：evidence/2.16.0-installed.json、2.16.0-integration.json、2.16.0-user-validation.json、2.16.0-release.json。
+候选分支codex/integration-2.17.0，构建Temp/build-2.17.0-candidate。
+管理协议8、配置版本7，核心/UI/Lua成套交付；个人配置首次启动先备份再迁移。
+已按用户授权构建安装，现有安装所需检查及安装后核验通过；未启动游戏，实际效果待用户验收。
+ADF-01停光、CFA/F22选装光标、F2性能及偶发机库退出继续保留待办。
+2.16正式标签、冻结构建、回执及发布ZIP保留，不提前合入main或制作正式包。
+安装及整合定位见evidence/2.17.0-installed.json和2.17.0-integration.json。

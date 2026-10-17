@@ -37,11 +37,12 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==6 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.management_revision==7 and config.mod_enabled and config.fixed_mount_enabled)
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=7,language='en',mod_enabled=false,fixed_mount_enabled=false,
+local action={request=1,management_protocol=8,language='en',mod_enabled=false,fixed_mount_enabled=false,
+    target_gaze_pad_x=false,target_gaze_key=0,
     ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
 assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
@@ -120,10 +121,11 @@ for _,bad in ipairs({
     assert(readText(fixture..'current-profiles.json')==bytes)
 end
 local legacy5=json.decode(json.encode(config));legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.management_key=119
+legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_key=nil
 writeJson(fixture..'shortcuts-profiles.json',legacy5)
 local legacyBytes=readText(fixture..'shortcuts-profiles.json')
 local shortcutConfig=store('shortcuts-'):load()
-assert(shortcutConfig.management_revision==6 and shortcutConfig.shortcuts.management.key==119)
+assert(shortcutConfig.management_revision==7 and shortcutConfig.shortcuts.management.key==119)
 assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 assert(store('shortcuts-'):load().shortcuts.management.key==119)
@@ -144,7 +146,7 @@ for _,revision in ipairs({3,4})do
     writeJson(fixture..prefix..'profiles.json',legacy)
     local bytes=readText(fixture..prefix..'profiles.json')
     local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==6 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.management_revision==7 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
     assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
     assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
     assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
@@ -527,8 +529,8 @@ print('配置/协议/页面、场景预览、开场定位、调试快捷操作�
 context_source = (ROOT / 'dist/DualSP/Scripts/runtime_context.lua').read_text(encoding='utf-8')
 lua.globals().mission_gate_source = context_source[context_source.index('function Context.allowed('):context_source.index('-- 管理面板暂借了原生输入')]
 lua.execute(r'''
--- 执行真实许可判断：仅114任务/机库旁路，残留ID、214自由飞行及多人边界不能混淆。
-local state={id=114,name='World /Game/Maps/Mission/ms14.ms14',shared=false,network=false,multi=false,kind='hangar'}
+-- 执行真实许可判断：仅112任务/机库旁路，残留ID、212自由飞行及多人边界不能混淆。
+local state={id=112,name='World /Game/Maps/Mission/ms12.ms12',shared=false,network=false,multi=false,kind='hangar'}
 local function valid(o)return o and o:IsValid()end
 local world={IsValid=function()return true end,GetAddress=function()return 900 end,GetFullName=function()return state.name end}
 local mode={IsValid=function()return true end,IsA=function(_,class)return class=='ui'and state.shared or class=='multi'and(state.shared or state.multi)end}
@@ -542,20 +544,20 @@ local env=setmetatable({Context=context,valid=valid,initialize=function()end,
     system={IsStandalone=function()return not state.network end},game={GetGameMode=function()return mode end},
     ui={GetCurrentUIManagerActor=function()return manager end},modeClasses={UIGameMode='ui',MultiPlayerGameMode='multi'},
     menuBaseClass='base',singleEntryClasses={'main'},lastHangarTime=-1},{__index=_G})
-local allowed=assert(load(mission_gate_source..'return Context.allowed','第14关上下文旁路','t',env))()
+local allowed=assert(load(mission_gate_source..'return Context.allowed','第12关上下文旁路','t',env))()
 local instance={IsValid=function()return true end,GetWorld=function()return world end,GetMissionID=function()return state.id end}
-local ok,reason=allowed(instance);assert(ok and reason=='mission14_fixed_sp')
+local ok,reason=allowed(instance);assert(ok and reason=='mission12_fixed_sp')
 state.id=113;ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
-state.id=214;state.name='World /Game/Maps/FreeFlight/ms14.ms14';ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
-state.id=114;state.shared=true;state.name='World /Game/UI/Menu/Menu.Menu';ok,reason=allowed(instance);assert(ok and reason=='mission14_fixed_sp')
-state.kind='main';ok,reason=allowed(instance);assert(ok and reason=='singleplayer_menu','主菜单不能因残留114编号停用')
+state.id=212;state.name='World /Game/Maps/FreeFlight/ms12.ms12';ok,reason=allowed(instance);assert(ok and reason=='singleplayer')
+state.id=112;state.shared=true;state.name='World /Game/UI/Menu/Menu.Menu';ok,reason=allowed(instance);assert(ok and reason=='mission12_fixed_sp')
+state.kind='main';ok,reason=allowed(instance);assert(ok and reason=='singleplayer_menu','主菜单不能因残留112编号停用')
 state.kind='hangar';state.network=true;ok,reason=allowed(instance);assert(not ok and reason=='network_world')
-state.network=false;state.shared=false;state.multi=true;state.name='World /Game/Maps/Mission/ms14.ms14'
+state.network=false;state.shared=false;state.multi=true;state.name='World /Game/Maps/Mission/ms12.ms12'
 ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_mode')
 state.shared=true;state.multi=false;state.multiWidget=true;state.name='World /Game/UI/Menu/Menu.Menu'
 ok,reason=allowed(instance);assert(not ok and reason=='multiplayer_menu')
 ''')
-print('第14关114旁路、214自由飞行/离关恢复、主菜单残留ID及多人优先边界检查通过')
+print('第12关112旁路、212自由飞行/离关恢复、主菜单残留ID及多人优先边界检查通过')
 lua.globals().master_menu_source = context_source[context_source.index('function Context.canToggleMaster('):context_source.index('-- 仅在许可变化时记录上下文')]
 lua.globals().master_apply_source = main_source[main_source.index('tryApplyMasterSwitch=function(force)'):main_source.index('local function tick()')]
 lua.execute(r"""
