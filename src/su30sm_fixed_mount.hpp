@@ -176,7 +176,8 @@ unsigned mountLightRackMask(MountAircraft,unsigned);
 void mountBindLightVisuals(FixedMountState&,Addr);
 bool mountLightDesired(const FixedMountState&,const MountVisual&,bool);
 void mountLightMaintain(FixedMountState&);
-void mountLightRelease(FixedMountState&);
+void mountLightRelease(FixedMountState&,bool keepBones=false);
+void mountLightBeforeRebuild(const Command&);
 void mountLightInherit(FixedMountState&,const FixedMountState&);
 bool mountLightLayoutChanged(const FixedMountState&);
 bool mountLightCopyTransform(void*,const FixedMountState&,int);
@@ -339,6 +340,16 @@ bool mountDesired(const FixedMountState& state,const MountVisual& visual,bool gr
     return (state.readyMask&visual.physicalBit)!=0;
 }
 bool mountDesired(const FixedMountState& state,const MountVisual& visual) { return mountDesired(state,visual,mountGroupVisible(state)); }
+bool mountCfaEcmVisual(const FixedMountState& state,const MountVisual& visual) {
+    return state.aircraft==MountAircraft::Fa44 && visual.pool==2 && visual.index<0;
+}
+// CFA固定架的最新原生请求由调用方记账；目标状态不变时不重复通知渲染。
+void mountApplyOwnedVisibility(const FixedMountState& state,const MountVisual& visual,void* object,bool hidden) {
+    const bool desired=hidden?mountCfaEcmVisual(state,visual):mountDesired(state,visual);
+    if(state.aircraft==MountAircraft::Fa44 &&
+       bool(read<unsigned char>(visual.identity.address+0x1bc)&(hidden?0x20:0x10))==desired)return;
+    (hidden?mountOriginalHidden:mountOriginalVisibility)(object,desired,0);
+}
 // 只在状态发生变化时调用引擎更新；不逐帧强制反隐藏。
 void mountApplyVisuals(const FixedMountState& state) {
     if(!mountMeshChanging && !state.meshOverrides.empty()) {
@@ -358,7 +369,8 @@ void mountApplyVisuals(const FixedMountState& state) {
         const Addr object=visual.identity.address; // 已验证的当前组件。
         const auto flags=read<unsigned char>(object+0x1bc); // 两个反射确认的显隐位。
         const bool desired=mountDesired(state,visual,groupVisible,animationGate); // 聚合结果和本批次原生总显隐共同决定。
-        if(flags&0x20)mountOriginalHidden(reinterpret_cast<void*>(object),false,0);
+        const bool desiredHidden=mountCfaEcmVisual(state,visual);
+        if(bool(flags&0x20)!=desiredHidden)mountOriginalHidden(reinterpret_cast<void*>(object),desiredHidden,0);
         if(bool(flags&0x10)!=desired)mountOriginalVisibility(reinterpret_cast<void*>(object),desired,0);
     }
 }
@@ -496,7 +508,7 @@ void mountFilterVisibility(void* object,bool requested,unsigned char propagation
             if(visual.index<0 && propagation==2)for(auto& child:fixedMount.visuals)
                 if(child.pool==visual.pool && child.index>=0)(hidden?child.nativeHidden:child.nativeVisible)=requested;
             if(!fixedMount.bound) { original(object,requested,propagation);return; } // 待归还期间跟踪新的原生请求，避免稍后恢复旧快照。
-            original(object,hidden?false:mountDesired(visual),0);
+            mountApplyOwnedVisibility(fixedMount,visual,object,hidden);
             return;
         }
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
@@ -747,6 +759,10 @@ void fixedMountRefresh(double time) {
     if(mountLight(fixedMount.aircraft)) {
         if(GetTickCount64()-fixedMount.animatedVisualAudit<100)return;
         mountLightMaintain(fixedMount);
+        if(fixedMount.aircraft==MountAircraft::Fa44) {
+            // CFA仅登记三副固定架，126个空发射组件没有可消耗弹体，无须捕获ADMM队列来算外观。
+            mountApply();fixedMount.animatedVisualAudit=GetTickCount64();return;
+        }
     }
     require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：更新时身份失效");
     if(mountAnimated(fixedMount.aircraft))mountAnimationEnsure(fixedMount,1);
@@ -893,7 +909,7 @@ MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeCo
     if(!fixedMountEnabled || fixedMountFailed)return saved;
     try {
         if(mountExterior(fixedMount.aircraft))mountExteriorBeforeRebuild(fixedMount);
-        if(mountLight(fixedMount.aircraft))mountLightRelease(fixedMount); // Init前逐项归还，结束后再读取原生请求。
+        if(mountLight(fixedMount.aircraft))mountLightBeforeRebuild(command); // CFA同布局保骨租约，动画调度仍归还后重采。
         mountLightAnimationBeforeRebuild(command,nativeConfig);
         require(!mountAnimationPendingSwitch.valid,"动画挂载：上一切换尚未完成，拒绝覆盖快照");
         if(mountAnimationHost.controller.active() && mountAnimationHost.binding.scene==1 &&

@@ -107,9 +107,9 @@ struct LightMountBones {
     }
     void prepare(MountIdentity rack,int pool,const std::vector<Name>& visibleSockets) {
         require(!prepared,"轻量骨显隐：旧租约未归还");
-        require(pool==0 || pool==1,"轻量骨显隐：未登记挂架");
+        require(pool>=0 && pool<3,"轻量骨显隐：未登记挂架");
         // 只缓存不可变资源资格和实际FName；绝不将native/owned或旧组件隐藏租约带进新绑定。
-        static std::array<LightMountBones,2> metadata;
+        static std::array<LightMountBones,3> metadata;
         const auto& cached=metadata[pool];
         if(!qualified && cached.qualified && cached.qualifiedPool==pool && sameSockets(cached.qualifiedSockets,visibleSockets) &&
            mountAlive(cached.componentClass) && read<Addr>(rack.address+0x10)==cached.componentClass.address) {
@@ -117,7 +117,7 @@ struct LightMountBones {
         }
         if(qualified && qualifiedPool==pool && mountMeshIdentityEqual(component,rack) && sameSockets(qualifiedSockets,visibleSockets)) {
             bool reusable=false;
-            try {current();reusable=count()==(pool==0?8:19);}catch(...) {}
+            try {current();reusable=count()==(pool==0?8:pool==1?19:7);}catch(...) {}
             if(reusable) {
                 require(!hidden(body),"轻量骨显隐：Body已隐藏，不能重绑租约");
                 std::vector<bool> baseline;for(const auto& root:roots)baseline.push_back(hidden(root.name));
@@ -168,9 +168,10 @@ struct LightMountBones {
             Name name{};std::memcpy(&name,params.data()+result.offset,8);
             require(names.emplace(label(name),name).second,"轻量骨显隐：骨名重复");
         }
-        // 原版两架的同名03骨父链不同，逐根核对，不从编号推测层级。
-        const std::vector<int> parents=pool==0?std::vector<int>{-1,0,1,1,0,4,4,0}:
-            std::vector<int>{-1,0,1,2,3,4,5,3,7,8,0,10,11,12,13,14,12,16,17};
+        // 三副原版挂架的同名骨父链不同，逐根核对，不从编号推测层级。
+        const std::vector<int> parents=pool==0?std::vector<int>{-1,0,1,1,0,4,4,0}:pool==1?
+            std::vector<int>{-1,0,1,2,3,4,5,3,7,8,0,10,11,12,13,14,12,16,17}:
+            std::vector<int>{-1,0,1,1,0,4,4};
         auto boneLabel=[](int i) {return i==0?std::string("Body"):"SWPCover_"+std::string(i<10?"0":"")+std::to_string(i);};
         require(boneCount==static_cast<int>(parents.size()),"轻量骨显隐：原生骨数与资源证据不同");
         for(int i=0;i<boneCount;++i) {
@@ -188,14 +189,15 @@ struct LightMountBones {
         for(const auto& socket:visibleSockets) {
             params={};std::memcpy(params.data()+socketInput.offset,&socket,8);
             reflection.invoke(component,socketBone,params.data());Name actual{};std::memcpy(&actual,params.data()+socketResult.offset,8);
-            require(same(actual,names.at(pool==0?"SWPCover_01":"SWPCover_12")),
+            require(same(actual,names.at(pool==0?"SWPCover_01":pool==1?"SWPCover_12":"Body")),
                 "轻量骨显隐：发射Socket落入未知或隐藏支路");
         }
         require(names.count("Body") && !hidden(names.at("Body")),"轻量骨显隐：Body缺失或已隐藏");
         body=names.at("Body");
         const std::vector<std::pair<std::string,bool>> rules=pool==0?
-            std::vector<std::pair<std::string,bool>>{{"SWPCover_01",false},{"SWPCover_04",true},{"SWPCover_07",true}}:
-            std::vector<std::pair<std::string,bool>>{{"SWPCover_01",true},{"SWPCover_10",false}};
+            std::vector<std::pair<std::string,bool>>{{"SWPCover_01",false},{"SWPCover_04",true},{"SWPCover_07",true}}:pool==1?
+            std::vector<std::pair<std::string,bool>>{{"SWPCover_01",true},{"SWPCover_10",false}}:
+            std::vector<std::pair<std::string,bool>>{{"SWPCover_01",true},{"SWPCover_04",true}};
         for(const auto& rule:rules) {
             require(names.count(rule.first),"轻量骨显隐：指定支路缺失");
             const auto name=names.at(rule.first);params={};std::memcpy(params.data()+parentInput.offset,&name,8);
@@ -304,6 +306,7 @@ struct LightMountOwnership {
         size_t meshOffset{};
         bool skeletal{},animationOwned{},nativeNoSkeleton{},nativeTick{};
         LightMountBones bones;
+        std::vector<MountAnimationReflection::SocketName> effectSockets;
     };
     std::array<Rack,3> racks;
     std::array<Point,64> positions;
@@ -368,6 +371,7 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
             require(mountAlive(known->second) && read<Addr>(component+0x100)==rack,
                 "轻量挂载：原生弹体组件类或父链改变");
             const MountAnimationReflection::SocketName socketName{read<unsigned>(component+0x108),read<unsigned>(component+0x10c)};
+            if(state.aircraft==MountAircraft::Fa44 && pool==2)record.effectSockets.push_back(socketName);
             std::string socket=LightMountBones::label(socketName);
             for(auto& c:socket)if(c>='A' && c<='Z')c+=32;
             require(components[pool].emplace(socket,component).second,
@@ -447,17 +451,35 @@ bool mountLightLayoutChanged(const FixedMountState& state) {
     }
     return false;
 }
-void mountLightRelease(FixedMountState& state) {
+void mountLightRelease(FixedMountState& state,bool keepBones) {
     if(!state.light)return;
     std::string failure;
     for(auto& rack:state.light->racks) {
-        try {rack.bones.release();}catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
+        try {
+            if(keepBones) {
+                // 同机同布局切换保留租约，避免先显示再隐藏；Init后只复核并补齐被原生重置的支路。
+                if(rack.bones.prepared) {rack.bones.current();rack.bones.applied=false;}
+            } else rack.bones.release();
+        }catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
         if(rack.animationOwned)try {
-            if(mountAlive(rack.component))mountSetRackAnimation(rack.component.address,rack.nativeNoSkeleton,rack.nativeTick);
+            if(mountAlive(rack.component) &&
+               (((read<unsigned char>(rack.component.address+0x9b0)&2)!=0)!=rack.nativeNoSkeleton ||
+                (read<unsigned char>(rack.component.address+0x3f)!=0)!=rack.nativeTick))
+                mountSetRackAnimation(rack.component.address,rack.nativeNoSkeleton,rack.nativeTick);
             rack.animationOwned=false;
         }catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
     }
     require(failure.empty(),failure.c_str());
+}
+void mountLightBeforeRebuild(const Command& command) {
+    auto& state=fixedMount;
+    const bool keep=command.op=="switch" && state.bound && state.aircraft==MountAircraft::Fa44 &&
+        state.plane.address==command.plane && state.animationActivator.address==command.activator &&
+        mountAlive(state.plane) && mountAlive(state.animationActivator) && mountAlive(state.manager) &&
+        mountAlive(state.meshManager) && read<Addr>(command.plane+0x11a8)==command.activator &&
+        read<Addr>(command.activator+0x260)==state.manager.address &&
+        read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state);
+    mountLightRelease(state,keep);
 }
 void mountLightInherit(FixedMountState& next,const FixedMountState& prior) {
     if(!mountLight(next.aircraft) || next.aircraft!=prior.aircraft || next.kindsMask!=prior.kindsMask || !next.light || !prior.light)return;
@@ -479,6 +501,13 @@ void mountLightMaintain(FixedMountState& state) {
         read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state),
         "轻量挂载：模型池、资源或管理器身份改变");
     if(state.aircraft!=MountAircraft::Fa44)return;
+    // SWP3两组机构只控制外形；sp31仍在Body上，不能隐藏根骨或压低公共开盖进度。
+    auto& ecm=state.light->racks[2];
+    if(!ecm.bones.prepared) {
+        // ECM允许没有持久效果源；有源时使用绑定阶段核对过的真实sp31 FName。
+        ecm.bones.prepare(ecm.component,2,ecm.effectSockets);
+    }
+    ecm.bones.maintain();
     const bool split=(state.kindsMask&3u)==3u;
     for(int pool=0;pool<2;++pool) {
         auto& rack=state.light->racks[pool];if(!(state.kindsMask&(1u<<pool)))continue;

@@ -341,7 +341,8 @@ bool mountPreviewFilter(void* object,bool requested,unsigned char propagation,bo
         if(visual.index<0 && propagation==2)for(auto& child:state.visuals)if(child.pool==visual.pool && child.index>=0) {
             (hidden?child.nativeHidden:child.nativeVisible)=requested;mountPreviewRememberTask(child);
         }
-        original(object,mountPreview.nativeOnly?requested:(hidden?false:mountDesired(state,visual)),mountPreview.nativeOnly?propagation:0);
+        if(mountPreview.nativeOnly)original(object,requested,propagation);
+        else mountApplyOwnedVisibility(state,visual,object,hidden);
         return true;
     }
     // 绑定失败可能尚无完整池，但已知旧任务模型仍要绕过任务显隐接管。
