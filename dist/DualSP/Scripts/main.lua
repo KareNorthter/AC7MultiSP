@@ -678,7 +678,7 @@ local function setPanel(open)
 end
 local function ready()return valid(plane) and plane.bEnableWeaponInput and not plane:IsWeaponSystemDisabled()end
 
--- 镜头许可独立于多SP会话；第14关仅旁路兵装，仍可使用原生目标跟踪轴。
+-- 镜头许可独立于多SP会话；第12关仅旁路兵装，仍可使用原生目标跟踪轴。
 function weaponSwitch.gaze.update(toggle,generation)
     local gaze=weaponSwitch.gaze
     if generation and generation~=gaze.generation then return end -- 旧世界或暂停前的按键不能重放。
@@ -984,7 +984,7 @@ local function observeOriginalSwitch()
 end
 -- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
 local function canDebugLoadout(hotkey)
-    if runtimeReason=="mission14_fixed_sp"then return false,tr("第14关使用任务指定SP，多SP功能暂时停用。","Mission 14 uses its assigned SP. Multi-SP is temporarily disabled.")end
+    if runtimeReason=="mission12_fixed_sp"then return false,tr("第12关使用任务指定SP，多SP功能暂时停用。","Mission 12 uses its assigned SP. Multi-SP is temporarily disabled.")end
     if aircraftDebug and aircraftDebug:busy()then return false,tr("正在重开任务换机，请稍候。","Restarting the mission with another aircraft; please wait.")end
     if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
     if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
@@ -1001,7 +1001,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     owned=loadExport("dualsp_debug_owned_aircraft"),
     changed=function()lastUIKey=nil end,
     game=function()return game end,catalogue=function()return catalogue end,
-    allowed=function()return runtimeAllowed and runtimeModEnabled and runtimeReason~="mission14_fixed_sp"end,
+    allowed=function()return runtimeAllowed and runtimeModEnabled and runtimeReason~="mission12_fixed_sp"end,
     matches=isSelectedPlane,
     bind=function(pawn,map)cachedPlane=pawn;cachedWorld=map end,
     context=function()return {instance=instance,plane=plane,id=planeId,profile=currentProfile,session=debugSession,revision=weaponRevision}end,
@@ -1053,8 +1053,8 @@ end
 local function applyDebugHotkey(action)
     if type(action.request)~="number"or action.request%1~=0 or action.request<=hotkeyResponse then return end
     hotkeyResponse=action.request;lastUIKey=nil
-    if runtimeReason=="mission14_fixed_sp"then
-        hotkeyNotice=tr("第14关使用任务指定SP，多SP功能暂时停用。","Mission 14 uses its assigned SP. Multi-SP is temporarily disabled.");return
+    if runtimeReason=="mission12_fixed_sp"then
+        hotkeyNotice=tr("第12关使用任务指定SP，多SP功能暂时停用。","Mission 12 uses its assigned SP. Multi-SP is temporarily disabled.");return
     end
     if aircraftDebug and aircraftDebug:busy()then hotkeyNotice=tr("正在重开任务换机，请稍候。","Restarting with another aircraft; please wait.");return end
     local profile=nil
@@ -1162,7 +1162,7 @@ local function publishState()
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=8,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
-        mission_fixed_sp=runtimeReason=="mission14_fixed_sp",
+        mission_fixed_sp=runtimeReason=="mission12_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
         target_gaze_pad_x=config.target_gaze_pad_x,target_gaze_key=config.target_gaze_key,
         runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
@@ -1217,8 +1217,8 @@ local function checkRuntime(activatedWidget)
     assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
-    if not allowed or reason=="mission14_fixed_sp"then
-        if reason=="mission14_fixed_sp"then aircraftDebug:cancel("第14关使用任务指定SP，已取消调试换机")end
+    if not allowed or reason=="mission12_fixed_sp"then
+        if reason=="mission12_fixed_sp"then aircraftDebug:cancel("第12关使用任务指定SP，已取消调试换机")end
         if reason=="network_world"or reason=="multiplayer_mode"or reason=="multiplayer_menu"or reason=="multiplayer_menu_transition"then
             aircraftDebug:cancel("已离开单人任务，换机请求已取消")
         end
@@ -1226,7 +1226,7 @@ local function checkRuntime(activatedWidget)
         local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
         assert(coreOK,coreErr)
         if panelOpen then setPanel(false)end
-        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission14_fixed_sp"};nativeSupply:reset{clearError=true,releaseInput=false}
+        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission12_fixed_sp"};nativeSupply:reset{clearError=true,releaseInput=false}
         nativeStandby:reset{clearError=true,releaseInput=false};nativeParts:reset{clearError=true,releaseInput=false}
         nativeHud:reset();weaponPresentation:reset()
         supplySession=nil;resetCheckpointState()
@@ -1320,7 +1320,7 @@ local function tick()
         lastUIKey=nil;note("GAME_TEXT_CULTURE "..runtimeContext.culture)
         nativeLoadout:languageChanged();nativeSupply:languageChanged()
     end
-    if not runtimeModEnabled or runtimeReason=="mission14_fixed_sp"then
+    if not runtimeModEnabled or runtimeReason=="mission12_fixed_sp"then
         releaseMountPreview(0)
         -- 停用时只留下重新启用所需的管理入口，不接入页面、武器、HUD 或模型。
         if not game then game=StaticFindObject("/Script/Engine.Default__GameplayStatics")end
@@ -1522,7 +1522,7 @@ end
 RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,selectedPlane,selectedWeapon)
     if not runtimeModEnabled then return end
     if aircraftDebug:busy()then return end
-    if not syncRuntime()or runtimeReason=="mission14_fixed_sp"then return end
+    if not syncRuntime()or runtimeReason=="mission12_fixed_sp"then return end
     nativeLoadout:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
     nativeSupply:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
 end,function()end)
@@ -1530,7 +1530,7 @@ end,function()end)
 RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,function(ctx,enabled)
     if not runtimeModEnabled then return end
     if runtimeChanging then return end
-    if not syncRuntime(enabled:get()and ctx:get()or nil)or runtimeReason=="mission14_fixed_sp"then return end
+    if not syncRuntime(enabled:get()and ctx:get()or nil)or runtimeReason=="mission12_fixed_sp"then return end
     nativeLoadout:onControlChanged(ctx,enabled)
     -- 激活事件内完成双栏，原生第一次绘制前即可使用模组文字；自身输入操作不重入。
     if not enabled:get()or nativeLoadout.controlDepth>0 or nativeSupply.controlDepth>0
@@ -1559,13 +1559,13 @@ end)
 RegisterHook("/Script/Nimbus.Mission:OnStartNextPhaseHandler",function()end,function()
     if not runtimeModEnabled then return end
     if aircraftDebug:busy()then return end
-    if not syncRuntime()or runtimeReason=="mission14_fixed_sp"then return end
+    if not syncRuntime()or runtimeReason=="mission12_fixed_sp"then return end
     if configured then checkpointPending=true end
 end)
 RegisterHook("/Script/Nimbus.PlayerPlane:RestoreWeaponFromCheckpoint",function()end,function(ctx)
     if not runtimeModEnabled then return end
     if aircraftDebug:busy()then return end
-    if not syncRuntime()or runtimeReason=="mission14_fixed_sp"then return end
+    if not syncRuntime()or runtimeReason=="mission12_fixed_sp"then return end
     if configured and valid(plane)and ctx:get():GetAddress()==plane:GetAddress()then
         releaseMountPreview(0) -- 重试不能继承补给候选的视觉上下文。
         -- 检查点重试中止尚未完成的返航草稿，恢复已捕获方案。
@@ -1580,7 +1580,7 @@ local function supplyHook(callback)
         local args={...}
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"补给事件不在游戏线程")
-            if not syncRuntime()or runtimeReason=="mission14_fixed_sp"then return end
+            if not syncRuntime()or runtimeReason=="mission12_fixed_sp"then return end
             callback(table.unpack(args))
         end,debug.traceback)
         if not ok then errorText=tostring(err);note("NATIVE_RESUPPLY_ERROR "..errorText);releaseRuntimeOwnership()end
