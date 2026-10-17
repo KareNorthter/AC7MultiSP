@@ -4,6 +4,28 @@
 
 当前main正式基线为2.4.0，标签v2.4.0。用户已确认全部改动及两条研究支线成果正常，授权提交正式版；可配置快捷键、三机型挂载修订及ADFX-01持续效果已统一纳入。正式核心在dist/DualSP/cores/2.4.0/DualSP.dll，UI在dist/DualSP/bin/DualSPUI.dll，均从Temp/build-2.4.0按原字节归档，未重新构建或安装。有效布局及扩机型方法见[挂载设计经验](multi-sp-mount-design.md)。
 
+## SP 切换动画研究的取用
+
+独立分支 `codex/sp-switch-animation-research` 从main／v2.4.0建立；工作区 `E:/AC7_MultiSP/Temp/sp-switch-animation-research`。基于挂载总研究线程 `01a1441b-45a7-7d91-80f2-cf03b98647b1`，不修改其工作区或当前主工作区未提交成果。逐机结论及完整边界见[挂载设计经验](multi-sp-mount-design.md#sp-切换动画的静态研究)。
+
+可取用三个文件：`src/research/analyze_sp_switch_animations.py`是离线分析入口；同目录`sp_switch_animation_policies.json`是16架机体的域划分、交接规则及未解条件；`evidence/sp-switch-animation-research.json`记录47架筛查、29个活动SWP、49份不同序列，以及15架新增机体的105条七组合关联。策略是研究数据，`runtime_enabled=false`，不能作为运行准入表。没有新增编译、测试模块、运行测试或安装。
+
+复现时显式提供原挂载线程的官方资源清单、目录和第三批方案；分析器按实际Pawn参数引用读取，校验资源摘要，拒绝其他压缩格式，输出文件必须不存在。需要本地原件，不下载依赖、不读取游戏进程。参数示意如下，路径须指向本机对应原件，输出仅放Temp：
+
+```powershell
+python -X utf8 src/research/analyze_sp_switch_animations.py `
+  --catalog E:/AC7_MultiSP/evidence/mount-expansion-catalog.json `
+  --batch E:/AC7_MultiSP/evidence/mount-expansion-batch3.json `
+  --manifest Temp/input-manifests.json `
+  --manifest Temp/mount-assets-20261017-094711-176575/manifest.json `
+  --manifest Temp/mount-assets-20261017-094909-555475/manifest.json `
+  --manifest Temp/mount-assets-20261017-095002-268072/manifest.json `
+  --native-manifest E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype/Temp/f35c-cover-state-native/manifest.json `
+  --output Temp/sp-animation-review.json
+```
+
+`Temp/input-manifests.json`列出参考线程的`Temp/batch3-manifests.json`实际输入清单，前三个本工作区提取批次补齐47架参数表、仅标志机体的Body和F-35C Body序列。原件均留本机Temp。上游目录与批次的SHA256、每个实际使用资源对的摘要写入回执；本轮回执不依赖上游尚未合并代码。接入线程可按需取此分支的三个文件；设计章节与证据索引按差异整合，避免覆盖其后续文档。
+
 ## 有效入口
 
 | 工作 | 工具 |
