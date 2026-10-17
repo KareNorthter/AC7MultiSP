@@ -53,6 +53,22 @@ python -X utf8 src/research/build_animated_mount_candidates.py --previous eviden
 
 复现CFA-44时先用`review_animated_cfa44.py`普通模式得到全整架拒绝依据，再传`--asymmetric-original-review`及旧AC7反射`--bone-api-index`核对左右骨支路。完整骨架资源、旧索引和原始采样不提交。运行队列／持久池没有据资源填值；真实Num、单位缩放、姿态容差和当帧见证仍是独立Host前提。本批没有编译、运行测试、生成游戏资源、安装或操作游戏。
 
+### 上一批三机的独立接入数据
+
+`src/research/build_animated_runtime_data.py`只为F-22A／Su-47／Su-57TG生成`src/animated_mount_data.hpp`，入口为`animatedMountData()`，需要宿主已有Json类型；没有改旧静态生成器／主核心／Lua或自动注册机体。数据包含三机21组合：`groups`的真实class／rack／自身mesh／Skeleton／AnimClass／组件种类／完整Socket顺序／窗口，`plans[1..7]`的native旁路、按owner索引的selected／providers、racks呈现mask、required骨架mask及Su-47端点门槛。组和provider是原生配置0–2，mask不是用户逻辑SP槽顺序；selected索引属于provider的资源Socket表，必须先按名字双射到真实池，不能直接作为运行组件下标。F-22A SWP3资源顺序不连续，生成器保留每方案指定的Socket次序，不按set重新排序。
+
+逻辑长度／持久池数仍为null，由真实原生capture和Socket完整集合双射核对。可选读取主管已取得的F-22A单8AAM暂停采样：逻辑Num14、window8，持久池6／6／14仅作该场景观察，不设为全部机体固定规格，也不证明另两类SP队列长度。
+
+Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间平移和显式旋转；所有Socket.RelativeScale均未序列化，运行组件单位／缩放没有该机实证，原有接触面分析也没有给出可用的距离／角度／缩放容差。因此scale与三类tolerance保留null，runtime_gate_ready=false；缺这些条件禁止可视接管，不用1／0／0.87等经验值填空。骨参考缩放为单位不等于Socket缩放已证。补齐至少需要Su-47真实全开时的provider变换／缩放／单位证据、同帧求值见证及有净空依据的容差。原门控语义及来源保留；旧研究字符串中的request=2只是历史文字，运行全开必须使用当前已核对原生Host语义，不把这个旧数字写入产品判据。
+
+生成命令只整理数据，输出必须新路径；审阅后按字节更新头文件，不编译或运行游戏：
+
+```powershell
+python -X utf8 src/research/build_animated_runtime_data.py --manifest Temp/batch3-manifests.json --native-state E:/AC7_MultiSP/Temp/f22a-8aam-paused-20261017-1144.json --output Temp/new-animated-runtime-data.hpp
+```
+
+头文件记录覆盖层／第三批／分析器和资源来源摘要；可选采样只保留摘要与紧凑观察，不提交原始内存。三单native=true；任何运行前提不满足仍须按整机七组合门槛回退，不能只开启Su-47其中几条。此次仅生成并核对数据，未编译、运行测试、安装或操作游戏。
+
 ## 有效入口
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
