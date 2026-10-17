@@ -27,4 +27,11 @@ inline bool validShortcuts(const std::array<Shortcut,3>& values,const std::array
     }
     return true;
 }
+inline bool validTargetGazeKey(int key,const std::array<Shortcut,3>& shortcuts,const std::array<int,4>& direct) {
+    if(key==0)return true; // 零明确表示未绑定，不替用户占用原生按键。
+    if(!supportedShortcutKey(key))return false;
+    for(const auto& chord:shortcuts)if(chord.mods==0 && chord.key==key)return false;
+    for(int value:direct)if(value==key)return false;
+    return true;
+}
 }

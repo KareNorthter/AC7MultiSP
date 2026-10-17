@@ -53,8 +53,10 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=7; // 安全菜单总开关与提示状态须搭配本版控制器。
+constexpr int managementProtocol=8; // 目标注视设置须与本版控制器成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
+bool draftTargetGazePadX=false;
+int draftTargetGazeKey=0,targetGazeResponse=0;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
 std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
@@ -109,6 +111,7 @@ bool shortcutModifierKey(int key) {
     return key==VK_CONTROL||key==VK_LCONTROL||key==VK_RCONTROL||key==VK_MENU||key==VK_LMENU||key==VK_RMENU||key==VK_SHIFT||key==VK_LSHIFT||key==VK_RSHIFT;
 }
 bool directInputEnabled();
+bool targetGazeInputEnabled();
 void enqueue(Json action) {std::lock_guard<std::mutex> guard(queueMutex);actions.push_back(std::move(action));}
 bool gameFocused() {return gameWindow && GetForegroundWindow()==GetAncestor(gameWindow,GA_ROOT);}
 HCURSOR WINAPI panelSetCursor(HCURSOR requested) {
@@ -176,6 +179,11 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
             return 0;
         }
         const int mods=shortcutModifiers();
+        if(targetGazeInputEnabled() && mods==0 && state.value("target_gaze_key",0)==static_cast<int>(w)) {
+            if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
+            enqueue({{"type","toggle_target_gaze"},{"generation",state.at("target_gaze").value("generation",-1)}});
+            return 0;
+        }
         for(size_t index=0;index<shortcuts.size();++index)if(dualsp::shortcutMatches(shortcuts[index],static_cast<int>(w),mods)) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
             if(index==0)togglePanel(!panel);
@@ -335,26 +343,33 @@ Json shortcutData(const std::array<dualsp::Shortcut,3>& values) {
     for(int i=0;i<3;++i)data[names[i]]={{"key",values[i].key},{"mods",values[i].mods}};
     return data;
 }
-bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys); }
+bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,draftKeys); }
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
     return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
         &&state.value("direct_selection_available",false);
 }
+bool targetGazeInputEnabled() {
+    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
+        &&state.contains("target_gaze")&&state.at("target_gaze").value("available",false);
+}
 
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
 void captureKeyboardKey(int key,int mods) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
-    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;
+    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextGaze=draftTargetGazeKey;
     if(captureSlot<4) {
         if(mods!=0){notice=tr("武器直接选择只支持单键。","Direct weapon selection accepts single keys.");return;}
         nextKeys[captureSlot]=key;
+    } else if(captureSlot==7) {
+        if(mods!=0){notice=tr("目标注视只支持单键。","Target tracking accepts a single key.");return;}
+        nextGaze=key;
     } else nextShortcuts[captureSlot-4]={key,mods};
-    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)) {
+    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)||!dualsp::validTargetGazeKey(nextGaze,nextShortcuts,nextKeys)) {
         notice=tr("键位不可用或重复；请换一个按键。Esc取消。","Unsupported or duplicate binding. Choose another key; Esc cancels.");return;
     }
-    draftKeys=nextKeys;draftShortcuts=nextShortcuts;captureSlot=-1;notice.clear();
+    draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftTargetGazeKey=nextGaze;captureSlot=-1;notice.clear();
 }
 
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
@@ -362,6 +377,8 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftTargetGazePadX=state.at("target_gaze_pad_x").get<bool>();
+    draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
     draftAmmoPercentTwo=state.at("ammo_percent_two").get<int>();
@@ -573,6 +590,7 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
+        {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -629,6 +647,11 @@ void drawPanel() {
             ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
             ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
+            ImGui::SeparatorText(tr("目标注视","Target tracking"));
+            ImGui::Checkbox(tr("手柄X改为按一下切换目标注视###TargetGazePadX","Use controller X to toggle target tracking###TargetGazePadX"),&draftTargetGazePadX);
+            ImGui::TextWrapped("%s",tr("默认关闭。开启后X不再循环切换武器：按一下持续注视当前目标，再按一下停止。Y切换目标和原生长按注视保留；切武器可用十字键或原生键盘键。","Off by default. When enabled, X toggles sustained tracking of the current target instead of cycling weapons. Y target selection and native hold-to-track remain available. Use the D-pad or native keyboard binding for weapons."));
+            ImGui::TextWrapped("%s",tr("键盘注视键在按键页独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第14关可单独使用。","Set an independent keyboard tracking key in Bindings; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 14."));
+            if(state.contains("target_gaze"))ImGui::TextWrapped("%s",state.at("target_gaze").value("active",false)?tr("当前目标注视：开启","Current target tracking: ON"):tr("当前目标注视：关闭","Current target tracking: OFF"));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
@@ -667,11 +690,23 @@ void drawPanel() {
             }
             if(ImGui::Button(tr("恢复三个默认快捷键","Reset three shortcuts"))) {
                 const std::array<dualsp::Shortcut,3> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
-                if(dualsp::validShortcuts(defaults,draftKeys)){draftShortcuts=defaults;captureSlot=-1;notice.clear();}
-                else notice=tr("默认快捷键与武器选择键重复，请先调整。","Defaults conflict with a direct weapon key.");
+                if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys))
+                    {draftShortcuts=defaults;captureSlot=-1;notice.clear();}
+                else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
             }
             if(captureSlot>=0&&ImGui::Button(tr("取消改键","Cancel capture")))captureSlot=-1;
-            if(ImGui::Button(tr("恢复默认 1 / 2 / 3 / 4","Reset to 1 / 2 / 3 / 4"))){draftKeys={49,50,51,52};captureSlot=-1;notice.clear();}
+            if(ImGui::Button(tr("恢复默认 1 / 2 / 3 / 4","Reset to 1 / 2 / 3 / 4"))) {
+                const std::array<int,4> defaults{49,50,51,52};
+                if(dualsp::validShortcuts(draftShortcuts,defaults)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,defaults))
+                    {draftKeys=defaults;captureSlot=-1;notice.clear();}
+                else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
+            }
+            ImGui::SeparatorText(tr("目标注视键","Target tracking key"));
+            const std::string gazeLabel=captureSlot==7?tr("请按键…","Press a key..."):draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Not assigned");
+            if(ImGui::Button((gazeLabel+"###TargetGazeKey").c_str(),{230,0})){captureSlot=7;notice.clear();}
+            ImGui::SameLine();
+            if(ImGui::Button(tr("清除注视键###ClearGazeKey","Clear tracking key###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;notice.clear();}
+            ImGui::TextWrapped("%s",tr("单次按下开始/停止注视，与手柄X选项独立。不要与游戏原生动作键冲突；原生默认F是长按注视，可按需改为单次切换。","Press once to start/stop tracking, independently of the controller X option. Avoid conflicting native actions. The native F hold-to-track key can also be assigned here for toggle operation."));
             ImGui::TextWrapped("%s",tr("装填中的武器可以选择；未搭载的 SP 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
             ImGui::EndTabItem();
         }
@@ -718,6 +753,9 @@ void drawPanel() {
         ImGui::TextWrapped("%s",reason=="empty_sp"?tr("此 SP 未配置，保持当前武器。","This SP is empty; selection unchanged."):
             tr("目标 SP 弹药耗尽，保持当前武器。","Target SP is depleted; selection unchanged."));
     }
+    if(state.contains("target_gaze")&&state.at("target_gaze").contains("error"))
+        ImGui::TextWrapped("%s",uiMessage(state.at("target_gaze").at("error").get<std::string>(),
+            "目标注视已停用，请查看日志。","Target tracking is disabled. See Logs for details.").c_str());
     if(!notice.empty())ImGui::TextWrapped("%s",uiMessage(notice,"操作未完成，请查看日志。","The operation could not be completed. See Logs for details.").c_str());
     ImGui::End();
 }
@@ -748,6 +786,11 @@ void refreshState() {
                     throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
+            state.at("target_gaze_pad_x").get<bool>();
+            if(!state.at("target_gaze_key").is_number_integer() ||
+                !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
+                throw std::runtime_error("目标注视键位无效或重复");
+            if(state.at("target_gaze").at("protocol").get<int>()!=1)throw std::runtime_error("目标注视协议不匹配");
             shortcuts=checkedShortcuts;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
@@ -770,6 +813,10 @@ void refreshState() {
             pendingDebug=0;
         }
         loadDebugAircraftDraft();
+        const auto& gaze=state.at("target_gaze");
+        if(gaze.value("response",0)!=targetGazeResponse) {
+            targetGazeResponse=gaze.value("response",0);showToast(gaze.value("notice",std::string()));
+        }
         const auto& hotkey=state.at("debug_hotkey");
         hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
         if(hotkey.at("response").get<int>()!=hotkeyResponse) {
@@ -785,7 +832,7 @@ void refreshState() {
         Json errors=Json::object();
         for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
             if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
-        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch"})
+        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch","target_gaze"})
             if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {
@@ -827,7 +874,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 static WORD previousPadButtons=0;
                 static ULONGLONG lastPadPoll{};
                 const auto padNow=GetTickCount64();
-                const ULONGLONG pollInterval=directInputEnabled()?20:100; // 非飞行选择场景只轮询管理组合键。
+                const ULONGLONG pollInterval=(directInputEnabled()||targetGazeInputEnabled())?20:100;
                 if(padNow-lastPadPoll>=pollInterval) {
                     lastPadPoll=padNow;
                     XINPUT_STATE pad{};
@@ -837,6 +884,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(reseedPad.exchange(false)){chordWas=chord;previousPadButtons=buttons;padWasConnected=connected;}
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
                     const WORD pressed=buttons&~previousPadButtons;
+                    if(connected&&padWasConnected&&targetGazeInputEnabled()&&state.value("target_gaze_pad_x",false)
+                        &&(pressed&XINPUT_GAMEPAD_X))
+                        enqueue({{"type","toggle_target_gaze"},{"generation",state.at("target_gaze").value("generation",-1)}});
                     if(connected&&padWasConnected&&directInputEnabled()) {
                         const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
                         int desired=-1,count=0; // 同时按下多个方向不猜测目标。
@@ -947,6 +997,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。
