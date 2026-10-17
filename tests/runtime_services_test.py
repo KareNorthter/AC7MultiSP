@@ -588,6 +588,9 @@ local function loader(mode)
     local donor=object(81);donor.IsA=function(_,class)return class==meshClass end
     local rack=object(82);rack.StaticMesh=donor;rack.GetCollisionEnabled=function()return mode=='collision' and 1 or 0 end
     local plane=object(83);plane.SWP1=rack;plane.SWP2=rack;plane.SWP3=rack
+    if mode=='unused_collision' then
+        plane.SWP3=object(86);plane.SWP3.GetCollisionEnabled=function()return 1 end
+    end
     local loaded=object(84)
     local helpers=object(85)
     helpers.CreateAssetData=function(_,source,allowBlueprint)
@@ -602,7 +605,7 @@ local function loader(mode)
         if mode~='failed' then return loaded end
     end
     local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
-        expandedMountAssets={f16c={{0,'MSP_case'}}},planeId=1,catalogue={['1']={code='f16c'}},plane=plane,
+        expandedMountAssets={f16c={{0,'MSP_case',1}}},planeId=1,catalogue={['1']={code='f16c'}},plane=plane,
         valid=function(o)return o and o:IsValid()end,IsInGameThread=function()return true end,
         isSelectedPlane=function(o,code)return o==plane and code=='f16c' end,FName=function(s)return s end,
         previewWarning=function(message)assert(message:find('回退'));calls.warnings=calls.warnings+1 end,
@@ -634,6 +637,8 @@ env.LoadAsset=function()calls.load=calls.load+1;return loaded,false,true end
 assert(load(nil,nil,true) and calls.load==2 and calls.register==1,'显式模型快捷键允许重试')
 load,calls=loader('collision')
 assert(not load() and calls.load==0 and calls.factory==0 and calls.register==0,'启用碰撞的原挂架不能替换为分区网格')
+load,calls=loader('unused_collision')
+assert(load() and calls.register==1,'未替换的原生架保原生碰撞，不能阻断其他池加载')
 ''')
 print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
 

@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "version": "2.11.0",
+  "source": "用户2026-10-17本会话实测，未逐项说明任务/组合顺序",
+  "reported": {
+    "f22a": "含8AAM切SP仍有肉眼可见轻卡顿",
+    "zoef": [
+      "FAEB+4AAM仅见1枚FAEB，期望2",
+      "TLS鼻口切走不收",
+      "发射TLS切SP后中止"
+    ],
+    "dark": "切SP/MSL后后舱不关闭",
+    "adf11f": [
+      "TLS+QAAM仅2枚，期望4",
+      "TLS+UAV仅1架，期望2",
+      "TLS跨SP持续正常"
+    ],
+    "fa44": [
+      "ADMM正常",
+      "EML首发双侧蓝效、次发仅右",
+      "ADMM/EML互切重复展开",
+      "MSL关闭正常，期望ECM也关闭"
+    ],
+    "su35": "LAAM+LASM期望LAAM4→6",
+    "su37": [
+      "HPAA+4AAM期望HPAA4→2，4AAM2→4",
+      "TLS切SP中止"
+    ],
+    "su30": "HPAA+4AGM期望4AGM2→4",
+    "su34": "SFFS/HCAA+4AGM期望4AGM2→4",
+    "f14atg": "多SP模型加载失败",
+    "j39e": "期望利用机腹6AAM，三挂左右各1SASM+机腹3个6AAM",
+    "m29a": "双挂多组合不对称，期望尽量对称用满挂点",
+    "j39e_additional_evidence": "用户后续明确：单选6AAM时机腹已有原生6AAM挂载；旧导轨范围判断不能否认原生腹挂，须重新核原生链。"
+  },
+  "not_tested_no_dlc": [
+    "f04e",
+    "f16x",
+    "m35d"
+  ],
+  "user_discretion": "数量以观感提出；不能可靠实现则说明并记录原因、保持原样，不硬凑；Su30SM旧修订回滚经验保留",
+  "authorization": "修复并加入X02S EML常驻方案，正常关闭游戏并编译安装，等待用户复测",
+  "game_closed": true,
+  "game_restarted_by_agent": false,
+  "local_logs": "Temp/feedback-2.11.0-20261017-161359",
+  "confirmed_log_findings": {
+    "f14atg": "加载器要求全部三池NoCollision，原生SWP3默认碰撞导致提前拒绝；非文件缺失",
+    "f22a": "绑定后23次切换0→1中位109ms，1→2中位62.5ms，2→0中位63ms；日志15ms粒度、整事务不能外推原生函数精确耗时"
+  }
+}

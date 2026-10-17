@@ -87,9 +87,8 @@ void mountExteriorRelease(FixedMountState& state) {
     require(failure.empty(),failure.c_str());
 }
 void mountExteriorBeforeRebuild(FixedMountState& state) {
-    auto cache=state.exteriorBones;
     mountExteriorRelease(state);
-    state.exteriorBones=std::move(cache); // 只保留未接管的已核元数据；同组件Init后快速重绑，不重复完整反射搜索。
+    // 不再取得腹根租约；若旧上下文仍持有租约，先完整归还再清除，不带入Init。
 }
 void mountExteriorObserveInit(FixedMountState& state) {
     if(state.aircraft!=MountAircraft::F22a || !state.exteriorRack.address)return;
@@ -107,14 +106,10 @@ void mountExteriorMaintain(FixedMountState& state) {
     state.exteriorConfig=read<int>(state.plane.address+0xb4c);
     require(state.exteriorConfig>=0 && state.exteriorConfig<3,"机外保留：原生选择编号无效");
     if(state.aircraft==MountAircraft::Pkfa)return;
-    // 仅在非8AAM配置隐藏重复腹架；当前8AAM的14个原生发射点及其骨骼全部恢复。
-    if(state.exteriorConfig==2) {
-        if(state.exteriorBones)state.exteriorBones->release(); // 原生8AAM必须恢复腹骨；保留已核元数据缓存。
-    } else {
-        if(!state.exteriorBones || !state.exteriorBones->active()) {
-            if(!state.exteriorBones)state.exteriorBones=std::make_shared<MountExteriorBones>();
-            state.exteriorBones->bind(state.exteriorRack.address,true); // 同栈完成基线采样和隐藏，逐根仍回读；周期巡检不重复查骨。
-        }
+    // 整块SWP3保留原生骨架；接受非8AAM时腹内空支架重叠，取消切SP逐根还/藏。
+    // 仅侧部sp31..38弹体进入显隐账本；8AAM全部14个原生Socket和发射取位始终不改。
+    if(state.exteriorBones) {
+        state.exteriorBones->release();state.exteriorBones.reset(); // 旧租约失败仍保留账本，交既有回退继续归还。
     }
     const Addr rack=state.exteriorRack.address;const auto flags=read<unsigned char>(rack+0x9b0);
     const bool noSkeleton=(flags&2)!=0,tick=read<unsigned char>(rack+0x3f)!=0;

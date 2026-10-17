@@ -1,5 +1,7 @@
 # 按需证据
 
+- [2.12.0交付](2.12.0-integration.json)：本轮反馈修订、Gripen原生腹挂及X02S EML保留，完整编译/检查/安装；[本轮用户反馈](2.11.0-user-validation.json)、[静态覆盖源](static-expansion-2.12.0.json)。CFA首发双侧蓝效仍待专项，实机待复测。
+
 - [2.11.0交付](2.11.0-integration.json)：新增十机静态70组合，完整构建/检查/安装通过，39资源/78成员；[源数据与47机分类](static-expansion-2.11.0.json)保留23资源回读及16项后置，实机待测。
 
 - [2.10.0交付](2.10.0-integration.json)：F22切换查询优化与四机轻量外观，完整构建/检查/安装通过，真实观感与性能待测；[2.9.0用户反馈](2.9.0-user-validation.json)。

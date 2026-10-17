@@ -1,0 +1,45 @@
+{
+  "name": "AC7MultiSP",
+  "version": "2.12.0",
+  "passed": true,
+  "created_at": "2026-10-17T09:05:13.118663+00:00",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "build_receipt_sha256": "bffcc0d04ee9b6cc3d86f201dd1e5d81d98deddf8a1a4747b2ec07d3f94785cb",
+  "test_sources": {
+    "tests/controller_test.py": "844e47d34a54c23fe39aaf1802a28f21a50528314812fef9f78f2aed1a2884db",
+    "tests/current_runtime_test.py": "ee41551c346d2bde52458bb59db8d0c0c4e4534070fa5652353bae74814be7e6",
+    "tests/mount_plan_test.py": "58ce156602be058d28c048fbcf8ffccdb15f703ac51abfd39ab8e8d0a449b2c6",
+    "tests/native_hud_test.py": "6603224216a43041f7c5ac76ecbbebcdcbaf6201baf95e06773ca05172c7ecaa",
+    "tests/native_loadout_fixture.lua": "98f7967be5ee870c42a859fc4dc6bf6c856e6b15e8e392014714665a5623b17c",
+    "tests/native_loadout_test.py": "d2bca9841603224a701d1123bc8f608465e757d5c905ce483f2e25f2ff783633",
+    "tests/overlay_hook_test.cpp": "2c00dfd980a3eba6c38a1511291f30a3d3ac98a16913e7c204ca46a8022f6f45",
+    "tests/panel_pointer_test.cpp": "ce0816461ff2f81addc0422c7ecd92dd4cd45e26b6c82fd337a364ae0da3dae5",
+    "tests/release_pipeline_test.py": "f539b43606b16c43a193a75c554cdf861d041c404a1b7e957406302492f25371",
+    "tests/reload_timer_test.cpp": "2412420ef87363018eec6da4f99e7fbc3b22950e6c482256b7e19ffbd86242de",
+    "tests/run.py": "5691a0de0bea9ec861b106f90d4193134dc071475c4f669773840e0c95f3dbeb",
+    "tests/runtime_services_test.py": "cb4b4858facec72ab8a9f6c0e1a73d45597a92046173daeff99f4682a815bb6f",
+    "tests/run_native.cmd": "6d79b1f35a02002ad1c8155c35b72c3c9b6acc28d5d46d1f8c019455245d9112",
+    "tests/run_overlay.cmd": "8f30f9d4f252071d1fbe99cf30714a2c725f7b7b76cb0fdb00ddc3aea8f2f515",
+    "tests/run_overlay_portable.cmd": "d3086cf804f7e53d8acb2408ea2ca64a5369372e6928460e5a834edb9b12ce77",
+    "tests/ui_binary_test.py": "8fb8c7fbf84f9193b23cfa4654d8fd1d4b22cfd3d0d6111e747646033f01d181",
+    "tests/weapon_group_test.cpp": "f20d159841e75ce8aa28281144ec732c412195d340677be5d78e3085eb84ceb3"
+  },
+  "game_started": false,
+  "gameplay_verified": false,
+  "excluded": [
+    "旧双SP控制器/HUD/选装模拟：协议过期",
+    "真实引擎挂载、补给、检查点、长时稳定性：待用户实测"
+  ]
+}

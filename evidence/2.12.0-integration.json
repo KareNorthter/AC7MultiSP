@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "candidate": "2.12.0",
+  "base_installed": "2.11.0",
+  "authorization": "用户要求修复本轮实测并加入X02S，关闭游戏后编译安装",
+  "build_dir": "Temp/build-2.12.0-final",
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "summary": "F22撤掉切换腹根显隐，保侧8AAM；FAEB按库存显示两位置；Raven TLS+QAAM四枚、TLS+UAV两架；Falken/Su37 TLS跨SP延续；Dark/Zoef旧舱收尾、CFA ADMM/EML互切连续及ECM收拢。静态布局调整与Gripen腹挂见设计，F14TG只预检实际替换池以恢复加载；X02S含EML多挂保原炮体，非当前EML/MSL保持原完整展开末帧，选回EML恢复原生，允许穿模。",
+  "limitations": "CFA44首发双侧蓝色特效仍保留：尚无可靠的专用特效入口，不改充能或发射机制。X02S非当前EML/MSL以独立原序列末姿态保持炮体展开，当前EML交还原曲线；实际切换和恢复待测。F22腹内可能多留空支架。Gripen腹挂已依用户新证据重核；所有新修订仍待实机复测。CFA ECM首次激活、切换持续及冷却后再激活均需复测；关闭模型或失败时非当前舱的中间姿态可能保留至再次选中/原生重建。",
+  "user_validation_source": "evidence/2.11.0-user-validation.json",
+  "static_source": "evidence/static-expansion-2.12.0.json",
+  "runtime_files_verified": 16,
+  "mount_variants": 46,
+  "mount_members": 92,
+  "protected_files_verified": 150,
+  "backup": "backup/AC7MultiSP-20261017-170637-986096",
+  "profiles_preserved": true,
+  "saves_preserved": true,
+  "other_mod_files_preserved": true,
+  "game_closed_normally_before_install": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "tls_qualification": "Falken x2/Su37 x0；实际CDO/Actor类、三虚表、发射即装填与TLS附件链仍守卫，原生寿命及冷却不改",
+  "animation_basis": [
+    "evidence/sp-animation-product-access.json",
+    "src/native_common_bay_parts.hpp",
+    "src/research/sp_switch_animation_policies.json"
+  ],
+  "cfa_ecm_boundary": "原生已激活更新未读取Parts公共进度，创建Actor前的通用按键/发射门控未完整覆盖，首次和冷却后再激活需用户实测",
+  "baseline_kept": "正式v2.4.0/旧DLL不改，旧39资源编号和编码字节保留；2.8.1完整布局归档仍保留",
+  "runtime_hashes": {
+    "bin/DualSP.dll": "f8826d391e767747eebe8098e096646dfd2ef7daaef7203a3d010b16faeb60f5",
+    "bin/DualSPUI.dll": "5b43847b9ab774b977443c76560aed6ddd61ce27ae16148ecf120d0463b20d9c",
+    "mount_pak": "85ff49ca89d31a2e3447fbb295f7d399c5a196a8d2b1da6f09b2fc0afafe1977"
+  },
+  "x02_pose_endpoint_source": "evidence/x02s-eml-endpoint-2.12.0.json",
+  "cfa_muzzle_remaining": {
+    "status": "未修复，保留原生充能与发射",
+    "confirmed": "plwp_eml_x2继承x0，无独立左右粒子覆盖；MuzzleFlashParticle/OnSpawnParticles为FX_EML_Muzzleflash02；FireParticles=FX_EML_Projectile02属于弹道拖尾",
+    "missing": "首发左蓝光PSC真实Template、AttachParent/Socket，以及充能更新中间段的创建与收尾入口；不能把推测模板直接过滤",
+    "next_evidence": "用户后续允许时，只读对比未充能、首充、首发PSC身份与原生更新入口，再决定纯VFX侧过滤；不改slot/充能/库存"
+  },
+  "x02_api_basis": "Temp/experience-object-index.json中的实际方法/子参数与ScriptStruct；运行时再核真实签名、EAnimationMode和原序列，不能把离线目录当现场通过"
+}

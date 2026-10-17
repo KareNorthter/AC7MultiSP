@@ -1,0 +1,1174 @@
+{
+  "schema": 1,
+  "code": "x02s",
+  "group": "SWP3",
+  "sequence": {
+    "frames": 101,
+    "asset_length": 3.3333332538604736,
+    "track_count": 16,
+    "compressed_stream_bytes": 15984,
+    "compressed_raw_data_size": 21216,
+    "non_bone_curve_count": 0,
+    "non_bone_curve_payload_sha256": "c65355139ac48231d9a7a0efeb1b33eb612d311d2207457667515efac6c74a1a",
+    "non_bone_curve_values_interpreted": false,
+    "compressed_stream_sha256": "865c751ac598bfb93f0c9b09707b66db7674e36c66614658fecad2e739c9374a",
+    "all_track_bytes_accounted_for": true,
+    "format": "ConstantKeyLerp / None / Float96NoW / no scale tracks"
+  },
+  "driver": {
+    "node": "AnimNode_FlightEngineBlend",
+    "bone_config": "PlaneBodyConfig",
+    "sequence": "x02s_SWP3_Anim",
+    "sequence_serialized_options": {},
+    "override_sequences": [],
+    "exposed_handler": {
+      "BoundFunction": "None",
+      "CopyRecords": []
+    },
+    "boundary": "本BP没有独立spwc FloatProperty；PlaneBodyConfig按骨名读取原生FlightEngine输出spwc。SequenceConfig未序列化转换范围，不能将缺省值冒充已读到0/1转换实现"
+  },
+  "bones": [
+    {
+      "bone": "Body",
+      "parent": -1,
+      "channel": null,
+      "local_frame0": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 0.0,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_14",
+      "parent": 0,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          3.9943904876708984,
+          7.052874565124512,
+          18.56133460998535
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          3.9943904876708984,
+          7.052874565124512,
+          18.56133460998535
+        ],
+        "quaternion": [
+          0.0,
+          1.0824450754283193e-17,
+          -0.7071067690849304,
+          0.7071067932881644
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -18.56133460998535,
+          3.9943904876708984,
+          -7.052874565124512
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          -18.56133460998535,
+          3.9943904876708984,
+          -7.052874565124512
+        ],
+        "quaternion": [
+          -1.2101616991694208e-08,
+          -0.7071067811865475,
+          1.2101616986281982e-08,
+          0.7071067811865475
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_13",
+      "parent": 0,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -3.9943904876708984,
+          7.0528740882873535,
+          18.56133460998535
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -3.9943904876708984,
+          7.0528740882873535,
+          18.56133460998535
+        ],
+        "quaternion": [
+          2.1648901508566386e-17,
+          0.0,
+          0.7071067690849304,
+          0.7071067932881644
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -18.56133460998535,
+          -3.9943904876708984,
+          -7.0528740882873535
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          -18.56133460998535,
+          -3.9943904876708984,
+          -7.0528740882873535
+        ],
+        "quaternion": [
+          -0.7071067811865475,
+          -1.2101616975457531e-08,
+          0.7071067811865475,
+          1.2101616986281982e-08
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_12",
+      "parent": 0,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          0.4188803434371948,
+          0.0
+        ],
+        "quaternion": [
+          0.7071067690849304,
+          -5.887846453861829e-17,
+          0.0,
+          0.7071067932881644
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          0.4188803434371948,
+          0.0
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          0.0,
+          0.0,
+          -0.4188803434371948
+        ],
+        "quaternion": [
+          -1.210161695684275e-08,
+          -1.2101617041793133e-08,
+          0.7071067811865475,
+          0.7071067811865475
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          0.0,
+          0.0,
+          -0.4188803434371948
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_10",
+      "parent": 3,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -9.5367431640625e-07,
+          12.25314712524414,
+          -4.0811178187696775e-15
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -9.5367431640625e-07,
+          12.25314712524414,
+          -4.0811178187696775e-15
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -12.253147125244135,
+          -9.536743155361777e-07,
+          -0.41888076284455716
+        ],
+        "quaternion": [
+          -1.210161695684275e-08,
+          -1.2101617041793133e-08,
+          0.7071067811865475,
+          0.7071067811865475
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          3.552713678800501e-15,
+          -9.5367431640625e-07,
+          -12.672027468681335
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 0.0,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_09",
+      "parent": 3,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -2.384185791015625e-07,
+          3.0587503910064697,
+          -1.0187685596727545e-15
+        ],
+        "quaternion": [
+          -0.9999999403953552,
+          0.0,
+          0.0,
+          0.0003452669778563649
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -2.384185791015625e-07,
+          3.0587503910064697,
+          -1.0187685596727545e-15
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -3.0587503910064684,
+          -2.3841857866133547e-07,
+          -0.41888044813376135
+        ],
+        "quaternion": [
+          -0.7071067390438773,
+          -0.7071067390438773,
+          0.00024412851974570067,
+          0.0002441285197457856
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          8.881784197001252e-16,
+          -2.384185791015625e-07,
+          -3.4776307344436646
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 179.96043531794112,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_11",
+      "parent": 0,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          0.4188804626464844,
+          -18.132549285888672
+        ],
+        "quaternion": [
+          0.7071067690849304,
+          -5.887846453861829e-17,
+          0.0,
+          0.7071067932881644
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          0.4188804626464844,
+          -18.132549285888672
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          18.132549285888672,
+          0.0,
+          -0.4188804626464844
+        ],
+        "quaternion": [
+          -1.210161695684275e-08,
+          -1.2101617041793133e-08,
+          0.7071067811865475,
+          0.7071067811865475
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          18.132549285888672,
+          0.0,
+          -0.4188804626464844
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_08",
+      "parent": 6,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          3.058751106262207,
+          -1.018768665551873e-15
+        ],
+        "quaternion": [
+          -0.9999999403953552,
+          0.0,
+          0.0,
+          0.0003452669778563649
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          3.058751106262207,
+          -1.018768665551873e-15
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          15.073798179626467,
+          -3.862246351247751e-18,
+          -0.41888056734307544
+        ],
+        "quaternion": [
+          -0.7071067390438773,
+          -0.7071067390438773,
+          0.00024412851974570067,
+          0.0002441285197457856
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          18.132549285888672,
+          0.0,
+          -3.4776315689086914
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "local_rotation_change_degrees": 179.96043531794112,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_07",
+      "parent": 6,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -9.5367431640625e-07,
+          12.25314712524414,
+          -4.0811178187696775e-15
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -9.5367431640625e-07,
+          12.25314712524414,
+          -4.0811178187696775e-15
+        ],
+        "quaternion": [
+          0.7071067690849304,
+          -5.887846453861829e-17,
+          0.0,
+          0.7071067932881644
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          5.879402160644537,
+          -9.536743155361777e-07,
+          -0.4188808820538467
+        ],
+        "quaternion": [
+          -1.210161695684275e-08,
+          -1.2101617041793133e-08,
+          0.7071067811865475,
+          0.7071067811865475
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          18.132549285888675,
+          -9.5367431640625e-07,
+          -12.672027587890625
+        ],
+        "quaternion": [
+          -1.210161695684275e-08,
+          -1.2101617041793133e-08,
+          0.7071067811865475,
+          0.7071067811865475
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_06",
+      "parent": 8,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -9.5367431640625e-07,
+          9.354032516479492,
+          -3.108583450317383
+        ],
+        "quaternion": [
+          -0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067932881644
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -9.5367431640625e-07,
+          9.354032516479492,
+          -3.108583450317383
+        ],
+        "quaternion": [
+          -0.7071067690849304,
+          0.0,
+          0.0,
+          0.7071067932881644
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -3.474630249432673,
+          -1.9073486304294268e-06,
+          -3.527464652546121
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          8.778516875811466,
+          -1.9073486312994993e-06,
+          -15.780611358382899
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "local_rotation_change_degrees": 0.0,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_05",
+      "parent": 9,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          0.0,
+          -16.168184280395508
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          0.0,
+          -16.168184280395508
+        ],
+        "quaternion": [
+          0.0,
+          1.0824450754283193e-17,
+          -0.7071067690849304,
+          0.7071067932881644
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          12.693554030962838,
+          -1.9073486304294268e-06,
+          -3.527464652546121
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          24.946701156206977,
+          -1.9073486312994993e-06,
+          -15.780611358382899
+        ],
+        "quaternion": [
+          -1.2101616936183057e-08,
+          -0.7071067811865475,
+          1.2101616930770831e-08,
+          0.7071067811865475
+        ]
+      },
+      "local_rotation_change_degrees": 89.99999803884903,
+      "last10_rotation_change_degrees": 29.99999803884906,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_02",
+      "parent": 10,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          1.2579998970031738,
+          -2.384185791015625e-07,
+          4.59999942779541
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          -0.5265254974365234,
+          -3.9750170799379703e-07,
+          -19.573089599609375
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          8.093554603167426,
+          1.2579979896545435,
+          -3.5274644141275417
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          44.51979075581636,
+          -2.322872539329223e-06,
+          -16.307136855819408
+        ],
+        "quaternion": [
+          -1.2101616936183057e-08,
+          -0.7071067811865475,
+          1.2101616930770831e-08,
+          0.7071067811865475
+        ]
+      },
+      "local_rotation_change_degrees": 0.0,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 1.6169124118903648
+    },
+    {
+      "bone": "SWPCover_01",
+      "parent": 10,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          -1.2576401233673096,
+          -3.4570693969726562e-06,
+          4.59999942779541
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.5261707305908203,
+          -3.24171287502395e-06,
+          -19.573078155517578
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          8.093554603167426,
+          -1.2576420307159397,
+          -3.527461195476724
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          44.519779311724555,
+          -5.131051449738879e-06,
+          -15.254440627791968
+        ],
+        "quaternion": [
+          -1.2101616936183057e-08,
+          -0.7071067811865475,
+          1.2101616930770831e-08,
+          0.7071067811865475
+        ]
+      },
+      "local_rotation_change_degrees": 0.0,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 1.616642286690017
+    },
+    {
+      "bone": "SWPCover_04",
+      "parent": 9,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          0.8781757354736328,
+          8.85584831237793
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          0.8781757354736328,
+          8.85584831237793
+        ],
+        "quaternion": [
+          0.3502073287963867,
+          -1.4901161193847656e-08,
+          0.0,
+          0.936672208863538
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -12.330478561810605,
+          -1.9073486304294268e-06,
+          -4.405640388019753
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          -0.07733143656646568,
+          -1.9073486312994993e-06,
+          -16.65878709385653
+        ],
+        "quaternion": [
+          -0.29323243258299503,
+          -0.29323244748415633,
+          0.6434397762805429,
+          0.6434397613793819
+        ]
+      },
+      "local_rotation_change_degrees": 40.999993581718144,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_00",
+      "parent": 13,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          -0.000171661376953125,
+          18.682411193847656
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          -0.000171661376953125,
+          18.682411193847656
+        ],
+        "quaternion": [
+          -0.3502073585987091,
+          0.0,
+          0.0,
+          0.9366721977209077
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -31.012889755658264,
+          -1.9073486304294268e-06,
+          -4.4054687266428
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          -14.17701489924721,
+          -2.428866482870007e-06,
+          -4.401894571782311
+        ],
+        "quaternion": [
+          -0.5000000063206189,
+          -0.5000000254966186,
+          0.4999999884608843,
+          0.4999999797218774
+        ]
+      },
+      "local_rotation_change_degrees": 40.999997227705,
+      "last10_rotation_change_degrees": 0.0,
+      "last10_translation_change": 0.0
+    },
+    {
+      "bone": "SWPCover_03",
+      "parent": 9,
+      "channel": "spwc",
+      "local_frame0": {
+        "position": [
+          0.0,
+          3.778392791748047,
+          4.38873291015625
+        ],
+        "quaternion": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      },
+      "local_frame100": {
+        "position": [
+          0.0,
+          3.778392791748047,
+          4.38873291015625
+        ],
+        "quaternion": [
+          0.09024144709110261,
+          -1.490116119384766e-08,
+          0.0,
+          0.9959199170751148
+        ]
+      },
+      "frame0_component": {
+        "position": [
+          -7.863363159588923,
+          -1.907348629763293e-06,
+          -7.305857444294168
+        ],
+        "quaternion": [
+          -0.5,
+          -0.5000000000000001,
+          0.5,
+          0.5000000000000001
+        ]
+      },
+      "frame100_component": {
+        "position": [
+          4.389783965655216,
+          -1.9073486306333654e-06,
+          -19.559004150130946
+        ],
+        "quaternion": [
+          -0.4528392275414255,
+          -0.45283924244258683,
+          0.5430806895336894,
+          0.5430806746325283
+        ]
+      },
+      "local_rotation_change_degrees": 10.354995024810762,
+      "last10_rotation_change_degrees": 10.354995024810762,
+      "last10_translation_change": 0.0
+    }
+  ],
+  "socket": {
+    "metadata": {
+      "SocketName": "sp",
+      "BoneName": "SWPCover_06",
+      "RelativeLocation": {
+        "RelativeLocation": {
+          "X": 1.5266585933204624e-06,
+          "Y": 0.0007731672376394272,
+          "Z": -53.17124557495117
+        }
+      },
+      "RelativeRotation": {
+        "RelativeRotation": {
+          "Pitch": -90.0,
+          "Yaw": "+0",
+          "Roll": -90.0
+        }
+      }
+    },
+    "frame0": [
+      49.696615325518515,
+      -3.806900371089644e-07,
+      -3.5282378197837603
+    ],
+    "frame50": [
+      49.696615325518515,
+      -3.806900371089644e-07,
+      -3.5282378197837603
+    ],
+    "frame90": [
+      61.94976245076265,
+      -3.8069003797903687e-07,
+      -15.781384525620538
+    ],
+    "frame100": [
+      61.94976245076265,
+      -3.8069003797903687e-07,
+      -15.781384525620538
+    ],
+    "translation_delta": [
+      12.253147125244134,
+      -8.700724551778541e-16,
+      -12.253146705836778
+    ],
+    "trajectory_aabb": [
+      [
+        49.696615325518515,
+        -2.9959105873247913e-06,
+        -15.781384525620538
+      ],
+      [
+        62.80449888636153,
+        8.128286181066172e-07,
+        -3.5282378197837603
+      ]
+    ]
+  },
+  "lods": [
+    {
+      "lod": 0,
+      "triangles": 4226,
+      "frames": {
+        "0": {
+          "aabb": [
+            [
+              -43.50034713745117,
+              -4.420004844665527,
+              -7.535188650507729
+            ],
+            [
+              51.05475997924805,
+              4.420004844665527,
+              0.0024323463439941406
+            ]
+          ]
+        },
+        "50": {
+          "aabb": [
+            [
+              -43.50034713745117,
+              -4.420004844665527,
+              -7.535188650507729
+            ],
+            [
+              51.05475997924805,
+              4.420004844665527,
+              0.0024323463439941406
+            ]
+          ]
+        },
+        "90": {
+          "aabb": [
+            [
+              -43.50034713745117,
+              -4.476690706049307,
+              -19.788335356344508
+            ],
+            [
+              60.72561110571689,
+              4.476691182886465,
+              0.0024323463439941406
+            ]
+          ]
+        },
+        "100": {
+          "aabb": [
+            [
+              -43.50034713745117,
+              -4.476690706049307,
+              -20.534692953178414
+            ],
+            [
+              61.955448546296026,
+              4.476691182886465,
+              0.0024323463439941406
+            ]
+          ]
+        }
+      },
+      "last10_max_vertex_displacement": 2.7763718702528264
+    }
+  ],
+  "evidence": {
+    "existing_animation_report": "Temp/sp-switch-animation-research/evidence/sp-switch-animation-research.json#aircraft[x02s].components[SWP3]",
+    "source_manifests": [
+      "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\manifest.json",
+      "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182234-951259\\manifest.json"
+    ],
+    "used_sources": {
+      "x02s_swp3": {
+        "pak": "pakchunk0-WindowsNoEditor.pak",
+        "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP3.uasset",
+        "encrypted_sha256": "c5df41020d26b2eb536dc6b7d84c0435dc72137ab46c6433ae68af882b92a164",
+        "decoded_sha256": "1472207ab53e7cdb05a487005a1fd442e7397b19f3e15d7824eea3215c6b21a7",
+        "encrypted_uexp_sha256": "0e48e2cadfa1d52c8898cb1951d7b852f80d9b9e0a730301dd5c84673eee9519",
+        "decoded_uexp_sha256": "e4e45ac56e9c75b467a45a2a1f9823e0e86b1e37fc73517e5ff03f75cbeaf51e",
+        "parsed_json_sha256": "019755ffa742d032938a7f82e13bf9e91e5c6ef1754a94b3026ebf620c8cbc36"
+      },
+      "x02s_swp3_anim": {
+        "pak": "pakchunk0-WindowsNoEditor.pak",
+        "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP3_Anim.uasset",
+        "encrypted_sha256": "80a69ed69fdd3c7ddefd9362911ecffdbd30150f2b209248b53bfb49fc0fa36e",
+        "decoded_sha256": "c246833729d182a9b81fbc095c5edf871193ac7f8e052f6778ed9d0dcf8139b3",
+        "encrypted_uexp_sha256": "2609a901a81cb7a64c9ea8835260644e1d53b51a80570a42e4519ed979d06920",
+        "decoded_uexp_sha256": "a021e80d396d3907a1d7286d9f69d076cbe710e494883b5703fdde8dfe532596",
+        "parsed_json_sha256": "2c36a484528c8c0e58371db6d114a5bb9ac3cad8681f039c09750ceb73855cd4"
+      },
+      "x02s_swp3_animbp": {
+        "pak": "pakchunk0-WindowsNoEditor.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Body/x02s_SWP3_AnimBP.uasset",
+        "encrypted_sha256": "807885235dc7be4c157e7a6986796c196ca1781dcb26e2a0dbfd85ba75a9ed15",
+        "decoded_sha256": "8b1ff20576058964edc4c02a2e8c8633a6a456be5e2401aaaf8cef7180707e47",
+        "encrypted_uexp_sha256": "a22cc51d1c36a48a070dc68d61239ddbffc401c5bc143b836b80ce04a76caea4",
+        "decoded_uexp_sha256": "41400881581c7763bfc6ea01cf32bb9887a56bf299e81f3943b52c4cc78a40f8",
+        "parsed_json_sha256": "bdf6992b28694cba8b008c906a915fa759d25205418d63e67b5ba2b8ca0d1f37"
+      },
+      "planebodyconfig": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Player/Parts/PlaneBodyConfig.uasset",
+        "encrypted_sha256": "39d6dd695d63756d06b1db5adbc9e97c6ae5520dd1e2ad1ac5502464fa5eb505",
+        "decoded_sha256": "e6a8fa0136bb35faba8f0331113e57087be9108ffdf5e1c630b747a4b6c104cd",
+        "encrypted_uexp_sha256": "e99fd42d1565f3bb0f41629f508fb0564b5395cb37436475da32bfe8414d3278",
+        "decoded_uexp_sha256": "6e69c79a8cef9eda4dc40eccbe7845b4c419f0d01a7a325e29ffe05e279dbacb",
+        "parsed_json_sha256": "ff68e3930bc645609feb918402ce2b3b70df9e1c605dd0f19ba440a6e4b423e2"
+      },
+      "x02s_swp3_skeleton": {
+        "pak": "pakchunk0-WindowsNoEditor.pak",
+        "asset": "Nimbus/Content/Vehicles/Aircraft/x02s/x02s_SWP3_Skeleton.uasset",
+        "encrypted_sha256": "290c4f915082cbd5f97679f1ab826ec12df051021f7137602672bc21c2f6758d",
+        "decoded_sha256": "fb0a8615273ebfd906930d46c9c1979996c49f33672a5a5d89d4d93420a5f183",
+        "encrypted_uexp_sha256": "4ed82fb72af3322574726eff750e939f2fab4c8136abc8d476d4a65e9d9bed3e",
+        "decoded_uexp_sha256": "cbbd0e68e8cc36d9dc6a1f3dac9abb4a26587772b90d19361c18136249eab329",
+        "parsed_json_sha256": "03d895034f48130009c2ff09aeec69ff73dbb2c4cad513fc01d5241a6c7c98e7"
+      }
+    },
+    "native_state_machine": "既有通用Parts采样证明打开推进至1、全开1、关闭退至-0.01；并非新X02现场采样"
+  },
+  "recommendation": "末端时间为3.3333332538604736秒；固定单节点可取GetPlayLength并SetPosition(length,false)，不应把通道值1当1秒。末帧为全展开端点的判据见端点几何/枪口前伸下放，不依赖未证实的FlightEngine转换实现。当前EML继续原生，只有非当前可租约固定并正确归还",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false
+}

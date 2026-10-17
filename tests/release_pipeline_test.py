@@ -26,12 +26,12 @@ def main():
     assert json.loads(header.split('R"MSP(', 1)[1].split(')MSP"', 1)[0]) == data
     loader = '-- 独立挂架资源清单；由同一份七组合数据生成。\nreturn {\n'
     for plane in data['planes']:
-        ids = sorted({i for plan in plane['plans'][1:] for i in plan['variants'] if i >= 0})
-        loader += '    ' + plane['code'] + '={' + ','.join('{' + str(i) + ',"' + data['assets'][i] + '"}' for i in ids) + '},\n'
+        entries = sorted({(i,pool+1) for plan in plane['plans'][1:] for pool,i in enumerate(plan['variants']) if i >= 0})
+        loader += '    ' + plane['code'] + '={' + ','.join('{' + str(i) + ',"' + data['assets'][i] + '",' + str(pool) + '}' for i,pool in entries) + '},\n'
     loader += '}\n'
     assert loader == (ROOT / 'dist/DualSP/Scripts/mount_assets.lua').read_text(encoding='utf-8')
     # 成套资源数量增长时必须逐成员对应；缺件、多件、重复名或伪造数量均拒绝。
-    for amount in (2, 18, 39):
+    for amount in (2, 18, 39, 46):
         variants = ['MSP_fixture_' + str(i) for i in range(amount)]
         members = {'Nimbus/Content/AC7MultiSP/Research/' + name + suffix: 'a' * 64
                    for name in variants for suffix in ('.uasset', '.uexp')}

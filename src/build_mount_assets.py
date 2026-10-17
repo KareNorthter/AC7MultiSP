@@ -15,17 +15,18 @@ def build(source, output):
     names = runtime_data()['assets']
     proof = json.loads((ROOT/'evidence/sp-combination-static-split-experiment.json').read_text(encoding='utf-8'))
     reports = {v['recipe']['name']:v for v in proof['variants']}
-    extra = json.loads((ROOT/'evidence/static-expansion-2.11.0.json').read_text(encoding='utf-8'))
-    for report in extra['resource_reports']:
-        name = report['recipe']['name']
-        if name in reports:
-            previous = reports[name]
-            # 曾离线研究但未安装的同名副本，只有配方关键来源和实际编码字节全相同才复用。
-            if (previous.get('encoded_hashes') != report.get('encoded_hashes') or any(
-                    previous['recipe'].get(key) != report['recipe'].get(key)
-                    for key in ('source_asset', 'source_extras_sha256', 'keep_boxes'))):
-                raise ValueError('同名历史副本与本轮资源来源或字节不符：' + name)
-        reports[name] = report
+    for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json'):
+        extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
+        for report in extra['resource_reports']:
+            name = report['recipe']['name']
+            if name in reports:
+                previous = reports[name]
+                # 曾离线研究但未安装的同名副本，只有配方关键来源和实际编码字节全相同才复用。
+                if (previous.get('encoded_hashes') != report.get('encoded_hashes') or any(
+                        previous['recipe'].get(key) != report['recipe'].get(key)
+                        for key in ('source_asset', 'source_extras_sha256', 'keep_boxes'))):
+                    raise ValueError('同名历史副本与本轮资源来源或字节不符：' + name)
+            reports[name] = report
     files = {}
     for name in names:
         report = reports[name]

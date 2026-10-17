@@ -88,14 +88,23 @@ bool continuousXfa27(Addr plane) {
 bool continuousCfa44(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_fa44_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44");
 }
-bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) || continuousCfa44(plane);}
+bool continuousFalken(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_zoef_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_zoef");
+}
+bool continuousSu37(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_su37_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_su37");
+}
+bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) ||
+    continuousCfa44(plane) || continuousFalken(plane) || continuousSu37(plane);}
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
 bool continuousSupported(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
     const int id=read<unsigned char>(weapon+0x3b0);
     const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
-        (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")));
+        (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")) ||
+        (continuousFalken(plane) && continuousClass(cls,"plwp_tls_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2")) ||
+        (continuousSu37(plane) && continuousClass(cls,"plwp_tls_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0")));
     const bool ecm=id==31 && ((morgan && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0")) ||
         (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")) ||
         (!raven && continuousCfa44(plane) && continuousClass(cls,"plwp_ecmp_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1")));
@@ -175,6 +184,20 @@ bool continuousSameShot(const ContinuousEffect& e) {
     return read<Addr>(e.plane.address+0x20)==e.level.address && read<Addr>(e.plane.address+0x11a8)==e.activator.address &&
         read<Addr>(w+0x3b8)==e.plane.address && read<Addr>(w+0x10)==e.weaponClass &&
         read<uint64_t>(w+0x370)==e.retirement && read<float>(w+0x610)>=e.age && read<unsigned char>(w+0x368)!=0;
+}
+// 只读判断仍在工作的激光；重建短暂清空原生数组时，先看已登记的发射代次。
+bool continuousHasActiveTls(Addr plane) {
+    for(const auto& e:continuousEffects)
+        if(e.plane.address==plane && !e.finalNotified && continuousSameShot(e) && read<unsigned char>(e.actor.address+0x3b0)==25)return true;
+    const Addr activator=read<Addr>(plane+0x11a8);
+    if(!activator)return false;
+    const auto active=continuousArray(activator+0x338);
+    for(int i=0;i<active.count;++i) {
+        const Addr actor=read<Addr>(active.data+i*sizeof(Addr));
+        if(actor && read<unsigned char>(actor+0x368) && read<Addr>(actor+0x3b8)==plane &&
+           read<unsigned char>(actor+0x3b0)==25)return true;
+    }
+    return false;
 }
 void continuousSweep() {
     continuousEffects.erase(std::remove_if(continuousEffects.begin(),continuousEffects.end(),
@@ -260,9 +283,10 @@ void continuousAttachment(ContinuousEffect& e) {
         e.attachment.push_back(continuousIdentity(component));component=read<Addr>(component+0x100);
     }
     require(!component && e.attachment.size()==4,"持续兵装：TLS 附着层级改变");
+    const char* expected=continuousSu37(e.plane.address)?"SWP3":"SWP1";
     require(read<Addr>(e.actor.address+0x640)==e.attachment[1].address &&
-        continuousName(e.attachment[1].address)=="SWP1" && continuousName(e.attachment[2].address)=="WeaponMeshBase" &&
-        e.attachment[3].address==read<Addr>(e.plane.address+0x160),"持续兵装：TLS 不再附着原生 SWP1");
+        continuousName(e.attachment[1].address)==expected && continuousName(e.attachment[2].address)=="WeaponMeshBase" &&
+        e.attachment[3].address==read<Addr>(e.plane.address+0x160),"持续兵装：TLS 原生挂架附着改变");
     e.socket=read<uint64_t>(e.actor.address+0x648);
     require(e.socket==read<uint64_t>(e.attachment[0].address+0x108),"持续兵装：TLS Socket 不一致");
 }

@@ -1,4 +1,4 @@
--- AC7MultiSP 2.11.0：扩展静态机外分区，内部机构沿用原生动画。
+-- AC7MultiSP 2.12.0：按实测修订机外挂载、持续TLS及轻量机构动画。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -42,6 +42,7 @@ loadExport("dualsp_management_options_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
+local lightMountAircraft={f22a=true,pkfa=true,dark=true,zoef=true,adf11f=true,fa44=true,x02s=true}
 local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
@@ -61,7 +62,7 @@ note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_proto
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
-local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却前核对持续策略，Morgan原生TLS交给保有事务。
+local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却前核对持续策略，已登记原生TLS交给保有事务。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
 local nativeLoadoutAmmo=loadExport("dualsp_loadout_ammo") -- 三页统一读取部件加成后的完整载量。
 local nativePartsAmmo=loadExport("dualsp_parts_ammo_preview") -- PART 只读候选快照；旧核心缺少接口时明确拒绝混装。
@@ -339,7 +340,9 @@ ensureMountAssets=function(code,sourcePlane,retry)
             sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
         end
         assert(valid(sourcePlane)and isSelectedPlane(sourcePlane,code),"扩展挂架缺少当前机体")
-        for pool=1,3 do
+        for _,entry in ipairs(entries)do
+            local pool=entry[3]
+            assert(type(pool)=="number"and pool>=1 and pool<=3,"扩展挂架缺少目标组件编号")
             local rack=sourcePlane["SWP"..pool]
             assert(valid(rack)and rack:GetCollisionEnabled()==0,"扩展挂架要求原生组件关闭碰撞")
         end
@@ -397,7 +400,7 @@ local function mountPreview(context)
             sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
         end
         local info=catalogue and catalogue[tostring(context.planeId)]
-        if info and info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"and not expandedMountAssets[info.code]then return releaseMountPreview(0)end
+        if info and info.code~="f15e"and info.code~="f35c"and info.code~="su30sm"and not expandedMountAssets[info.code]and not lightMountAircraft[info.code]then return releaseMountPreview(0)end
         -- 异步换机属于等待：先归还上一展示对象，下次 pump 再核对完整身份。
         if not valid(sourcePlane)or not info or not isSelectedPlane(sourcePlane,info.code)
             or context.instance:GetSelectedPlaneID()~=context.planeId then
@@ -1499,7 +1502,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.11.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.12.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
