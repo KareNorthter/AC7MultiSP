@@ -861,7 +861,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -893,7 +894,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -927,7 +929,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -978,7 +981,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -1025,7 +1029,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "candidate_existing_assets"
+            "disposition": "candidate_existing_assets",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -1076,7 +1081,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -1140,7 +1146,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -1153,6 +1160,43 @@
           "实机涂装继承、第三方PAK覆盖、补给/检查点/预览交接及所有动态发射净空未验证",
           "仅LOD0几何核对；新挂架资产还须处理其他LOD、材质、加载与归还"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "4AAM",
+              "GPB"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "GPB",
+              "SASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "4AAM",
+              "GPB",
+              "SASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -4860,7 +4904,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -4894,7 +4939,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5002,7 +5048,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5053,7 +5100,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5142,7 +5190,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5231,7 +5280,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5334,7 +5384,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -5348,6 +5399,52 @@
           "实机涂装继承、第三方PAK覆盖、补给/检查点/预览交接及所有动态发射净空未验证",
           "仅LOD0几何核对；新挂架资产还须处理其他LOD、材质、加载与归还"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "LASM",
+              "HVAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LASM",
+              "RKT"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HVAA",
+              "RKT"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LASM",
+              "HVAA",
+              "RKT"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -6504,7 +6601,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6550,7 +6648,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6582,7 +6681,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6639,7 +6739,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6688,7 +6789,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6745,7 +6847,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6765,7 +6868,8 @@
             "dynamic_clearance_verified": false,
             "logical_mapping": "保留原生队列与窗口；资源Socket顺序不直接当运行时序号。减位方案需现场核对原生槽身份及轮转后再给最终映射。",
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -6779,6 +6883,52 @@
           "实机涂装继承、第三方PAK覆盖、补给/检查点/预览交接及所有动态发射净空未验证",
           "仅LOD0几何核对；新挂架资产还须处理其他LOD、材质、加载与归还"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "SAAM",
+              "GRKT"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "GRKT",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "GRKT",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "new_station"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -7439,7 +7589,8 @@
                 "group": "SWP1"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "4AAM",
@@ -7554,7 +7705,8 @@
                 "group": "SWP2"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "LASM",
@@ -7635,7 +7787,8 @@
                 "group": "SWP3"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "GPB + 4AAM",
@@ -7780,7 +7933,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "GPB + LASM",
@@ -7891,7 +8045,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "4AAM + LASM",
@@ -8069,7 +8224,8 @@
                 "group": "SWP3"
               }
             ],
-            "disposition": "candidate_existing_assets"
+            "disposition": "candidate_existing_assets",
+            "integration_allowed": false
           },
           {
             "combination": "GPB + 4AAM + LASM",
@@ -8243,7 +8399,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "rejected": [
@@ -8379,6 +8536,43 @@
           "库存耗尽、补给、检查点、模型重建与失败归还",
           "第三方PAK覆盖；本报告只采原版资源"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "GPB",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "GPB",
+              "LASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "GPB",
+              "4AAM",
+              "LASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -9081,7 +9275,8 @@
                 "group": "SWP1"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "6AAM",
@@ -9223,7 +9418,8 @@
                 "group": "SWP2"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "LACM",
@@ -9292,7 +9488,8 @@
                 "group": "SWP3"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "SASM + 6AAM",
@@ -9412,7 +9609,8 @@
                 "group": "SWP2"
               }
             ],
-            "disposition": "candidate_existing_assets"
+            "disposition": "candidate_existing_assets",
+            "integration_allowed": false
           },
           {
             "combination": "SASM + LACM",
@@ -9533,7 +9731,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "6AAM + LACM",
@@ -9654,7 +9853,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "SASM + 6AAM + LACM",
@@ -9805,7 +10005,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "rejected": [
@@ -9947,6 +10148,43 @@
           "第三方PAK覆盖；本报告只采原版资源",
           "已提取j39e机体，但SkeletalMesh Extras缺可信分部顶点解析；腹部sp25/26/27轨道及原生LACM支撑必须现场核实，本候选不占用腹部三点。"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "SASM",
+              "LACM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "6AAM",
+              "LACM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SASM",
+              "6AAM",
+              "LACM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -10664,7 +10902,8 @@
                 "group": "SWP1"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "LACM",
@@ -10745,7 +10984,8 @@
                 "group": "SWP2"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "LAAM",
@@ -10860,7 +11100,8 @@
                 "group": "SWP3"
               }
             ],
-            "disposition": "native_single"
+            "disposition": "native_single",
+            "integration_allowed": false
           },
           {
             "combination": "HCAA + LACM",
@@ -11005,7 +11246,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "HCAA + LAAM",
@@ -11150,7 +11392,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "LACM + LAAM",
@@ -11295,7 +11538,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           },
           {
             "combination": "HCAA + LACM + LAAM",
@@ -11470,7 +11714,8 @@
               }
             ],
             "disposition": "deferred",
-            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分"
+            "deferred_reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "integration_allowed": false
           }
         ],
         "rejected": [
@@ -11603,6 +11848,52 @@
           "库存耗尽、补给、检查点、模型重建与失败归还",
           "第三方PAK覆盖；本报告只采原版资源"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "HCAA",
+              "LACM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HCAA",
+              "LAAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LACM",
+              "LAAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HCAA",
+              "LACM",
+              "LAAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需要拆分挂架/火箭巢或新增承载站；用户2026-10-17要求暂缓，后续单独研究资源拆分",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     }
   ],
@@ -12317,6 +12608,8 @@
     "existing_whole_assets_only": true,
     "defer_resource_splitting": true,
     "defer_new_stations": true,
-    "runtime_integration_performed": false
-  }
+    "runtime_integration_performed": false,
+    "require_all_seven_combinations": true
+  },
+  "assets_generated": false
 }

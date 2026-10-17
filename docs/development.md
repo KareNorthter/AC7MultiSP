@@ -8,7 +8,9 @@
 
 原版机体扩展研究在独立工作区`codex/mount-expansion`推进，以v2.4.0（8f600e4）为起点，不修改正式版安装。分批结论与整合要求统一见[挂载设计经验](multi-sp-mount-design.md#其他原版机体的分批研究)；完整机体索引见[evidence/mount-expansion-catalog.json](../evidence/mount-expansion-catalog.json)。研究脚本只读取离线资源，新增候选未编译、未运行测试、未安装。
 
-第一批六机、第二批十五机均按每机七组合交付资料。用户已要求拆架、拆巢及新增站工作后置：首批研究提交中的二十条拆架和一条新站建议现已标为`disposition=deferred`，不接入本阶段模型。第二批沿用该规则；`native_single`只是原生单挂参考，`candidate_existing_assets`才是可继续做运行接入的多挂候选，仍需现场确认模型池、原生槽及发射动作。
+三批分别六、十五、二十三机，已覆盖其余44架各七组合；连同正式三机型共47架／329种情况。用户最新要求整机七组合齐全才做，有任一组合受阻就整机后置，不交付部分组合。当前仅F-15C、F-15J、F-15 S/MTD、Typhoon、XFA-27、ADFX-01六机可进入完整适配接入，共42条（18单挂＋24多挂）；其余38机整机暂缓。统一入口为[evidence/mount-expansion-handoff.json](../evidence/mount-expansion-handoff.json)的`eligible_aircraft`与`integration_candidates`，可读全机表及逐机七组合见[挂载设计经验](multi-sp-mount-design.md#全机型接入总表)。
+
+各批新增`integration_gate.eligible`与逐项`integration_allowed`；先按整机门槛筛选，再看资源状态`disposition`。原47条逐组合资源候选只有上述六机24条进入本轮接入，其他只作研究参考；P1/P2也不能绕过整机门槛。拆架、拆巢、新站和动画／同舱支撑未明继续后置，不把研究完成写成已适配。固定炮、火箭／ADMM管口、UAV部署点与ECM/IEWS效果源按独立角色管理；不把资源点数抄成逻辑长度，不新增TLS或ECM/IEWS功能互斥。研究工具仅扩展离线资料，未改运行时注册或容量。A-10C的42个RKT管口为三对横向簇，实体巢数仍待完整几何确认。
 
 | 工作 | 工具 |
 |---|---|

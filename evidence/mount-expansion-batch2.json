@@ -12,7 +12,8 @@
     "existing_whole_assets_only": true,
     "defer_resource_splitting": true,
     "defer_new_stations": true,
-    "runtime_integration_performed": false
+    "runtime_integration_performed": false,
+    "require_all_seven_combinations": true
   },
   "aircraft": [
     {
@@ -3157,7 +3158,7 @@
             "window": 8,
             "runtime_field_offset": null,
             "fixed_launcher": true,
-            "launcher_lifecycle": "六个固定发射巢，每巢七管口，共42；巢体属于SWP2整块，耗尽仍保留，不能按八个窗口隐藏整巢。"
+            "launcher_lifecycle": "42个原生管口呈三对横向簇，每簇七口；实体巢数未按完整几何逐座确认。固定发射装置耗尽仍保留，不能按八个窗口整座隐藏。"
           },
           {
             "configuration": 2,
@@ -3924,7 +3925,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -3988,7 +3990,7 @@
                 "physical_count_unit": "muzzle",
                 "position_role": "launcher_muzzle",
                 "muzzle_count": 42,
-                "launcher_body_count": 6,
+                "launcher_body_count": null,
                 "muzzles_per_launcher": 7,
                 "transform_summary": [
                   {
@@ -5125,7 +5127,8 @@
                       ]
                     ]
                   }
-                ]
+                ],
+                "launcher_body_count_status": "42管口呈三对横向簇；实体巢数未按完整几何逐座确认"
               }
             ],
             "rack_plan": [
@@ -5141,7 +5144,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5403,7 +5407,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -5637,7 +5642,7 @@
                 "physical_count_unit": "muzzle",
                 "position_role": "launcher_muzzle",
                 "muzzle_count": 28,
-                "launcher_body_count": 4,
+                "launcher_body_count": null,
                 "muzzles_per_launcher": 7,
                 "transform_summary": [
                   {
@@ -6396,7 +6401,8 @@
                       ]
                     ]
                   }
-                ]
+                ],
+                "launcher_body_count_status": "42管口呈三对横向簇；实体巢数未按完整几何逐座确认"
               }
             ],
             "rack_plan": [
@@ -6437,7 +6443,8 @@
             "blockers": [
               "须移除SWP1中侧三联架；从SWP2单section移除内侧两巢及支架；本批不拆资产"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6793,7 +6800,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -6830,7 +6838,7 @@
                 "physical_count_unit": "muzzle",
                 "position_role": "launcher_muzzle",
                 "muzzle_count": 14,
-                "launcher_body_count": 2,
+                "launcher_body_count": null,
                 "muzzles_per_launcher": 7,
                 "transform_summary": [
                   {
@@ -7211,7 +7219,8 @@
                       ]
                     ]
                   }
-                ]
+                ],
+                "launcher_body_count_status": "42管口呈三对横向簇；实体巢数未按完整几何逐座确认"
               },
               {
                 "group": "SWP3",
@@ -7491,7 +7500,8 @@
             "blockers": [
               "须从SWP2单section拆除中/内侧四巢及支架，仅保留外侧两巢；本批暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -7712,7 +7722,7 @@
                 "physical_count_unit": "muzzle",
                 "position_role": "launcher_muzzle",
                 "muzzle_count": 14,
-                "launcher_body_count": 2,
+                "launcher_body_count": null,
                 "muzzles_per_launcher": 7,
                 "transform_summary": [
                   {
@@ -8093,7 +8103,8 @@
                       ]
                     ]
                   }
-                ]
+                ],
+                "launcher_body_count_status": "42管口呈三对横向簇；实体巢数未按完整几何逐座确认"
               },
               {
                 "group": "SWP3",
@@ -8358,7 +8369,8 @@
             "blockers": [
               "SWP1去中侧、SWP2去中内侧、SWP3去内侧两支；均单section，统一后续专题处理"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_comparison": [
@@ -8409,6 +8421,43 @@
           "组件相对变换省略项与原生C++父类其余默认值不猜测；参考Bounds暂按原生共同局部空间分析",
           "未做主机体/标准MSL网格/逐三角面碰撞及动态扫掠；未核对其他LOD、第三方覆盖和场景交接"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "UGB",
+              "RKT"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "RKT",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "UGB",
+              "RKT",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -10135,7 +10184,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -10229,7 +10279,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -10323,7 +10374,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -10598,7 +10650,8 @@
             "blockers": [
               "SWP1单section移除Y正半架；SWP2单section移除Y负半架，本批暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -11066,7 +11119,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -11254,7 +11308,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -11642,7 +11697,8 @@
             "blockers": [
               "同UGB+LAGM：先拆SWP1/2左右半架，后续专题处理"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_comparison": [
@@ -11692,6 +11748,34 @@
           "组件相对变换省略项与原生C++父类其余默认值不猜测；参考Bounds暂按原生共同局部空间分析",
           "未做主机体/标准MSL网格/逐三角面碰撞及动态扫掠；未核对其他LOD、第三方覆盖和场景交接"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "UGB",
+              "LAGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "UGB",
+              "LAGM",
+              "SASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -12987,7 +13071,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -13137,7 +13222,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -13231,7 +13317,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -13418,7 +13505,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -13661,7 +13749,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -13904,7 +13993,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -14203,7 +14293,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": true
           }
         ],
         "rack_comparison": [
@@ -14254,6 +14345,14 @@
           "组件相对变换省略项与原生C++父类其余默认值不猜测；参考Bounds暂按原生共同局部空间分析",
           "未做主机体/标准MSL网格/逐三角面碰撞及动态扫掠；未核对其他LOD、第三方覆盖和场景交接"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": true,
+        "status": "complete_seven_candidate",
+        "combination_count": 7,
+        "blocked_combinations": [],
+        "reason": "七组合均有现成资源方案，可整机接入并逐项验证前提"
       }
     },
     {
@@ -15676,7 +15775,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -15826,7 +15926,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -15976,7 +16077,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -16167,7 +16269,8 @@
             "blockers": [
               "SWP1移除内侧导轨；SWP2移除外侧导轨，两者单section；本批暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -16358,7 +16461,8 @@
             "blockers": [
               "SWP1移除内侧，SWP3移除外侧；须保留各武器原生承载结构，暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -16549,7 +16653,8 @@
             "blockers": [
               "SWP2移除内侧，SWP3移除外侧；需拆架并验证动态净空，暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -16797,7 +16902,8 @@
             "blockers": [
               "SWP1/2各只留指定单支外架；SWP3去外架，统一后续处理"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_comparison": [
@@ -16847,6 +16953,52 @@
           "组件相对变换省略项与原生C++父类其余默认值不猜测；参考Bounds暂按原生共同局部空间分析",
           "未做主机体/标准MSL网格/逐三角面碰撞及动态扫掠；未核对其他LOD、第三方覆盖和场景交接"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "HPAA",
+              "LAGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HPAA",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAGM",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HPAA",
+              "LAGM",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -18462,7 +18614,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -18668,7 +18821,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -18874,7 +19028,8 @@
             "logical_mapping": "保留原生队列/窗口/冷却/齐射；资源Socket序号不是已核对的运行槽号。减位方案须核对真实轮转后再给最终映射。",
             "blockers": [
               "尚未现场确认组件池、逻辑序号、完整父链变换及动作/补给/预览交接；本批仅离线方案"
-            ]
+            ],
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -19177,7 +19332,8 @@
             "blockers": [
               "须从SWP2单section移除|Y|≈46.16外翼两支，仅保留|Y|≈34.9/11.78四支，暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -19480,7 +19636,8 @@
             "blockers": [
               "从SWP3单section移除|Y|≈46.16外翼两支，暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -19727,7 +19884,8 @@
             "blockers": [
               "SWP2去内翼机腹，SWP3去外翼；不得直接套用Su-30SM共用架结论，本批暂缓"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -20087,7 +20245,8 @@
             "blockers": [
               "SWP1去外翼，SWP2去内翼机腹，SWP3去外翼；统一后续拆架专题"
             ],
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_comparison": [
@@ -20138,6 +20297,52 @@
           "组件相对变换省略项与原生C++父类其余默认值不猜测；参考Bounds暂按原生共同局部空间分析",
           "未做主机体/标准MSL网格/逐三角面碰撞及动态扫掠；未核对其他LOD、第三方覆盖和场景交接"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "HPAA",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HPAA",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "4AGM",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HPAA",
+              "4AGM",
+              "4AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -22001,7 +22206,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -22188,7 +22394,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -22375,7 +22582,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -22594,7 +22802,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -22813,7 +23022,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -23032,7 +23242,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -23283,7 +23494,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -23298,6 +23510,52 @@
           "低库存、齐射、非当前SP装填、补给、检查点、预览/任务交接与失败归还",
           "第三方PAK覆盖，本次仅分析原版资源；未安装、未编译、未测试或读取游戏进程"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "SFFS",
+              "HCAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SFFS",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HCAA",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SFFS",
+              "HCAA",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -25806,7 +26064,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -26269,7 +26528,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -26502,7 +26762,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -27043,7 +27304,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -27216,7 +27478,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -27757,7 +28020,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -28377,7 +28641,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           }
         ],
         "conclusions": [
@@ -28393,6 +28658,14 @@
           "低库存、齐射、非当前SP装填、补给、检查点、预览/任务交接与失败归还",
           "第三方PAK覆盖，本次仅分析原版资源；未安装、未编译、未测试或读取游戏进程"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": true,
+        "status": "complete_seven_candidate",
+        "combination_count": 7,
+        "blocked_combinations": [],
+        "reason": "七组合均有现成资源方案，可整机接入并逐项验证前提"
       }
     },
     {
@@ -29867,7 +30140,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -29962,7 +30236,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -30103,7 +30378,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -30322,7 +30598,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -30541,7 +30818,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -30760,7 +31038,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -31011,7 +31290,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -31027,6 +31307,52 @@
           "第三方PAK覆盖，本次仅分析原版资源；未安装、未编译、未测试或读取游戏进程",
           "SFFS整块额外翼下结构身份；F-14变后掠翼及本体动画与静态SP父链的完整动态关系。"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "LAAM",
+              "SAAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAAM",
+              "SFFS"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "SFFS"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAAM",
+              "SAAM",
+              "SFFS"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -32418,7 +32744,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -32513,7 +32840,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -32608,7 +32936,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -32827,7 +33156,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -33046,7 +33376,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -33173,7 +33504,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -33424,7 +33756,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": false
           }
         ],
         "conclusions": [
@@ -33440,6 +33773,52 @@
           "第三方PAK覆盖，本次仅分析原版资源；未安装、未编译、未测试或读取游戏进程",
           "F-14变后掠翼及本体动画与静态SP父链动态关系；不能由F-14A资源相似推断本机通过。"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "LAAM",
+              "SAAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAAM",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAAM",
+              "SAAM",
+              "HPAA"
+            ],
+            "research_priority": "deferred",
+            "reason": "用户要求本批暂缓拆挂架/新增游戏资源；当前整块不能按选用区域单独显隐。",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -34604,7 +34983,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -34699,7 +35079,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -34840,7 +35221,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -34968,7 +35350,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -35187,7 +35570,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -35407,7 +35791,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           },
           {
             "weapons": [
@@ -35659,7 +36044,8 @@
             ],
             "gameplay_tested": false,
             "dynamic_clearance_verified": false,
-            "installed": false
+            "installed": false,
+            "integration_allowed": true
           }
         ],
         "conclusions": [
@@ -35732,6 +36118,14 @@
             "json_sha256": "48b377a8c4cb2c2d1dbaf9f60f0b8d126ffd57c403ec5c4c5289842dbdb59b06"
           }
         }
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": true,
+        "status": "complete_seven_candidate",
+        "combination_count": 7,
+        "blocked_combinations": [],
+        "reason": "七组合均有现成资源方案，可整机接入并逐项验证前提"
       }
     },
     {
@@ -37252,7 +37646,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37297,7 +37692,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37344,7 +37740,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37441,7 +37838,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37532,7 +37930,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37617,7 +38016,8 @@
             "superseded_layout": {
               "assignments": "4AAM四点+4AGM外侧四点",
               "reason": "会固定留下SWP3内侧两空架，不默认用户接受，已用后侧4AAM双点+完整六候选4AGM替代"
-            }
+            },
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -37733,7 +38133,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_vertex_comparison": [
@@ -37780,6 +38181,34 @@
           "当前为严格Bounds核对的LOD0位置缓冲与参考弹体AABB，不是三角面碰撞或扫掠",
           "其他LOD、材质与完整挂架连通拆分边界、补给/检查点/显隐归还均未验证"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "UGB",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "UGB",
+              "4AAM",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -39072,7 +39501,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39117,7 +39547,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39162,7 +39593,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39237,7 +39669,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39314,7 +39747,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39385,7 +39819,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -39475,7 +39910,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_vertex_comparison": [
@@ -39527,6 +39963,34 @@
           "当前为严格Bounds核对的LOD0位置缓冲与参考弹体AABB，不是三角面碰撞或扫掠",
           "其他LOD、材质与完整挂架连通拆分边界、补给/检查点/显隐归还均未验证"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "4AGM",
+              "LAGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HCAA",
+              "4AGM",
+              "LAGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -40659,7 +41123,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -40702,7 +41167,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -40745,7 +41211,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -40818,7 +41285,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -40889,7 +41357,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -40956,7 +41425,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -41042,7 +41512,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_vertex_comparison": [
@@ -41096,6 +41567,34 @@
           "当前为严格Bounds核对的LOD0位置缓冲与参考弹体AABB，不是三角面碰撞或扫掠",
           "其他LOD、材质与完整挂架连通拆分边界、补给/检查点/显隐归还均未验证"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "HVAA",
+              "GPB"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "HCAA",
+              "HVAA",
+              "GPB"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -42278,7 +42777,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42325,7 +42825,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42370,7 +42871,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42445,7 +42947,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42516,7 +43019,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42587,7 +43091,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -42613,7 +43118,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_vertex_comparison": [
@@ -42660,6 +43166,52 @@
           "当前为严格Bounds核对的LOD0位置缓冲与参考弹体AABB，不是三角面碰撞或扫掠",
           "其他LOD、材质与完整挂架连通拆分边界、补给/检查点/显隐归还均未验证"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "SAAM",
+              "6AAM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "6AAM",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "SAAM",
+              "6AAM",
+              "4AGM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     },
     {
@@ -43981,7 +44533,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44028,7 +44581,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44073,7 +44627,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44150,7 +44705,8 @@
             "static_body_clearance_verified": false,
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
-            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。"
+            "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44225,7 +44781,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44304,7 +44861,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           },
           {
             "weapons": [
@@ -44400,7 +44958,8 @@
             "dynamic_clearance_verified": false,
             "runtime_logical_mapping": null,
             "logical_mapping_boundary": "不缩短原生队列或窗口；资源Socket数组不是已核实的原生轮转顺序。少点候选须核对原生槽身份，接受聚合显隐与重复离架。",
-            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究"
+            "deferred_reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "integration_allowed": false
           }
         ],
         "rack_vertex_comparison": [
@@ -44447,6 +45006,43 @@
           "当前为严格Bounds核对的LOD0位置缓冲与参考弹体AABB，不是三角面碰撞或扫掠",
           "其他LOD、材质与完整挂架连通拆分边界、补给/检查点/显隐归还均未验证"
         ]
+      },
+      "integration_gate": {
+        "policy": "all_seven_required",
+        "eligible": false,
+        "status": "defer_whole_aircraft",
+        "combination_count": 7,
+        "blocked_combinations": [
+          {
+            "weapons": [
+              "LAAM",
+              "LASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "6AAM",
+              "LASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          },
+          {
+            "weapons": [
+              "LAAM",
+              "6AAM",
+              "LASM"
+            ],
+            "research_priority": "deferred",
+            "reason": "需拆分或新增资源，或依赖尚未核实；按用户要求暂缓，后续单独研究",
+            "blocker_kind": "resource_split"
+          }
+        ],
+        "reason": "有组合尚未解决；按用户要求整机暂缓，不做部分组合"
       }
     }
   ],
