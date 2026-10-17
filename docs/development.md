@@ -71,6 +71,8 @@ Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间端点。�
 
 传`--endpoint-review`后，`endpoints[group].exact_pose`是各六根实际mesh骨的实采严格参照，`exact_body_pose`是实采Body38骨；原资源期望另存`resource_exact_pose/resource_exact_body_pose`，不混淆来源。每骨列名字、mesh/Skeleton索引、父索引及四元数xyzw／位置xyz／缩放xyz共十项有效float32；`uint32`保留正负零，不比较padding，不翻四元数符号或归一化。每Socket的`exact_match`包含依附骨索引和位置xyz／Pitch、Yaw、Roll角度／缩放xyz九项局部期望。`position/rotation/scale`可直接读取，旋转为xyzw。
 
+产品可直接读取`animatedMountData().su47_native_reference`：承载同份几何报告的`body/providers/socket_expectations/relative_components/geometry_passed_at_reference`等字段，另列`review_sha256`和`zero_deviation`比较规则。它不借用旧端点tolerance放行；顶层参照的`runtime_gate_ready=false`同样表示尚无运行验证，由宿主逐项核对实际条件。
+
 严格参照还要求`native_endpoint_geometry.relative_components`所列Body→Root、WeaponMeshBase→Root、SWP→WeaponMeshBase单位相对变换与None附着Socket。活动Body与SWP3的发布帧均197715，当前两者／Root／WeaponMeshBase世界变换相同；采样窗口渲染帧299604→299669，只称暂停发布数据稳定，不称同渲染帧。SWP2使用先前原生UGB活动端点179122，未用本次停更缓存，组合是明确离线场景。
 
 **飞控限制：本次几何只对所记录的Body全部38骨姿态成立。** 升降舵、方向舵、襟翼、进气道、减速板等其他通道不能忽略；这些有效分量变化时严格参照失配，必须隐藏受管弹体，不能仅凭spwc全开放行。要放宽需另做这些骨的几何隔离／扫掠依据。没有连续运动、发射轨迹或运行性能证明，静态零表面接触也不独立证明封闭体包含及挂耳贴合。

@@ -340,6 +340,13 @@ def apply_native_geometry_reference(result,path,overlay_path):
         raise ValueError('端点几何报告与当前生成器/分析器来源不同，须重新生成报告')
     if len(report['combinations'])!=4 or not all(c['geometry_passed_at_reference'] for c in report['combinations']):
         raise ValueError('必须全部四种多挂同时通过原生端点几何')
+    result['su47_native_reference']=deepcopy(report)
+    result['su47_native_reference'].update(review_record=path.name,review_sha256=digest(path),
+        zero_deviation={'comparison':'逐有效float32的uint32全等','allowed_nonzero_deviation':False,
+                        'quaternion_sign_flip_allowed':False,'normalization_allowed':False,
+                        'padding_compared':False,'body_bones':38,'provider_bones_each':6,
+                        'bone_effective_components':10,'socket_local_components':9,
+                        'requires_current_frame_and_release_recheck':True})
     plane=next(p for p in result['planes'] if p['code']=='su47')
     if len(report['body']['bones'])!=38 or set(report['providers'])!={'SWP2','SWP3'}:
         raise ValueError('不符合当前真实Body和provider完整骨架')
