@@ -1,4 +1,4 @@
--- AC7MultiSP 2.13.0：按实测修订机外挂载、持续TLS及轻量机构动画。
+-- AC7MultiSP 2.13.0：按实测修订挂载，并提供单人任务重开换机。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -77,6 +77,7 @@ local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
 local shortcutProtocol=loadExport("dualsp_shortcuts_supported","DualSPUI.dll") -- 可配置组合键须搭配新UI。
 local debugLoadoutProtocol=loadExport("dualsp_debug_loadout_supported","DualSPUI.dll") -- 调试扩展须与界面成套安装。
+loadExport("dualsp_debug_aircraft_supported","DualSPUI.dll") -- 换机独立子协议，不改变现有管理设置。
 local debugLoadoutReady=loadExport("dualsp_debug_loadout_ready") -- 重建前只读检查正在飞行的武器。
 local debugFixedMount=loadExport("dualsp_debug_fixed_mount")
 local hotkeyResponse=0
@@ -139,6 +140,7 @@ local debugResponse=0 -- 已处理请求编号，包含正常拒绝。
 local debugAck=0 -- 仅完成核心与 HUD 交接后确认成功。
 local debugError=nil -- 调试请求错误单独展示，不把输入拒绝当成控制器故障。
 local debugProfileActive=false -- 调试方案只属于本次任务，检查点恢复也不能写入个人配置。
+local aircraftDebug=nil -- 换机事务独立于兵装，允许跨整关载入等待新玩家实例。
 local checkpointDebugProfile=false -- 真实检查点是否捕获了调试方案。
 local inputNotice=nil
 local publishSequence=0
@@ -290,6 +292,8 @@ local function optionsFor(id)
     return options,waiting
 end
 local function profileFor(id)
+    local temporary=aircraftDebug and aircraftDebug:profile(id)
+    if temporary then return temporary end
     local saved=config.profiles[tostring(id)]
     if saved then return Profile.withSettings(saved,config)end
     local selected=valid(instance) and instance:GetSelectedPlaneSWP()or 0
@@ -720,6 +724,7 @@ local function configureFlight(profile,reason)
     releaseMountPreview(0) -- 已确认补给预览维持到此处，紧接原有兵装重建交接。
     local resupply=reason=="resupply" -- 原生补给必须先完成成功事务。
     local debugLoadout=reason=="debug"or reason=="debug_hotkey" -- 调试不伪造补给事务，不保存个人方案。
+    local debugAircraft=reason=="debug_aircraft" -- 新玩家完整初始化，但检查点标记为本次任务临时方案。
     -- 补给在原生成功事件返回后即可重建；等待飞控输入开放会把旧挂载多留在起飞画面约一秒。
     assert((resupply and supplySession and supplySession.success and valid(plane)and valid(activator))or ready(),
         "武器初始化需要已开放的出击控制，或已经成功返回的补给事务")
@@ -754,11 +759,12 @@ local function configureFlight(profile,reason)
     native(debugLoadout and "debug_setup"or resupply and "resupply_setup"or "setup",0)
     if not resupply and not debugLoadout then native("checkpoint_save",0)end
     configured=true;active=0;lastArmed=plane:IsSpecialWeaponArmed();note("LOADOUT "..planeId.." "..json.encode(profile))
-    debugProfileActive=debugLoadout
-    if not resupply and not debugLoadout then checkpointProfile=copyProfile(profile);checkpointDebugProfile=false end
+    debugProfileActive=debugLoadout or debugAircraft
+    if not resupply and not debugLoadout then checkpointProfile=copyProfile(profile);checkpointDebugProfile=debugAircraft end
     if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
+    if aircraftDebug then aircraftDebug:configured(planeId,profile)end
 end
 -- 在原生补给成功回调返回的同一帧提交，模型、弹药、HUD 共用一个事务边界。
 local function completeSupplyHandoff()
@@ -914,6 +920,7 @@ local function observeOriginalSwitch()
 end
 -- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
 local function canDebugLoadout(hotkey)
+    if aircraftDebug and aircraftDebug:busy()then return false,tr("正在重开任务换机，请稍候。","Restarting the mission with another aircraft; please wait.")end
     if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
     if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
     if supplySession or internal or restorePending or checkpointPending then return false,tr("正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress.")end
@@ -923,6 +930,35 @@ local function canDebugLoadout(hotkey)
     elseif not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
     return true
 end
+aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
+    json=json,copy=copyProfile,names=names,note=note,
+    owned=loadExport("dualsp_debug_owned_aircraft"),
+    changed=function()lastUIKey=nil end,
+    game=function()return game end,catalogue=function()return catalogue end,
+    allowed=function()return runtimeAllowed and runtimeModEnabled end,
+    matches=isSelectedPlane,
+    bind=function(pawn,map)cachedPlane=pawn;cachedWorld=map end,
+    context=function()return {instance=instance,plane=plane,id=planeId,profile=currentProfile,session=debugSession,revision=weaponRevision}end,
+    canChange=function()
+        local allowed,reason=canDebugLoadout();if not allowed then return false,reason end
+        if not managementPause or not managementPause.owned or managementPause.existing then
+            return false,tr("请先退出游戏暂停菜单，再直接打开管理界面换机。","Close the game's pause menu, then open management directly to change aircraft.")
+        end
+        return true
+    end,
+    failFlight=function(message)errorText=tostring(message);releaseRuntimeOwnership()end,
+    prepare=function()
+        setPanel(false)
+        assert(not panelOpen and not managementPause and not managementPauseError,"管理界面暂停没有归还，未发出重开请求")
+        assert(not game:IsGamePaused(plane),"原生任务仍在暂停，请先退出暂停菜单")
+        requestClose=requestClose+1
+        releaseWeaponInput("debug_aircraft")
+        releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()
+        -- 整关换机不携带旧机体的库存和检查点；原生重开负责生成玩家与任务系统。
+        local ok,err=nativeRuntimeGate(0);assert(ok,err)
+        ok,err=nativeRuntimeGate(1);assert(ok,err)
+        resetCheckpointState();resetFlightTracking()
+    end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
 local function applyDebugLoadout(action)
     local profile=nil -- 校验完成前不替换当前方案。
@@ -951,6 +987,7 @@ end
 local function applyDebugHotkey(action)
     if type(action.request)~="number"or action.request%1~=0 or action.request<=hotkeyResponse then return end
     hotkeyResponse=action.request;lastUIKey=nil
+    if aircraftDebug and aircraftDebug:busy()then hotkeyNotice=tr("正在重开任务换机，请稍候。","Restarting with another aircraft; please wait.");return end
     local profile=nil
     local accepted,why=pcall(function()
         assert(action.hotkey_protocol==1,"快捷键协议不匹配")
@@ -1008,6 +1045,7 @@ local function applyAction(action)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
+    elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
@@ -1068,6 +1106,7 @@ local function publishState()
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,profile=configured and currentProfile or nil,options=flightOptions}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
+    state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}
     state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
@@ -1102,6 +1141,9 @@ local function checkRuntime(activatedWidget)
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
     if not allowed then
+        if reason=="network_world"or reason=="multiplayer_mode"or reason=="multiplayer_menu"or reason=="multiplayer_menu_transition"then
+            aircraftDebug:cancel("已离开单人任务，换机请求已取消")
+        end
         releaseMountPreview(0)
         local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
         assert(coreOK,coreErr)
@@ -1189,6 +1231,11 @@ local function tick()
     local contextStarted=os.clock()
     local allowed=syncRuntime()
     recordStage("context",contextStarted)
+    -- 载入时单人许可可能短暂消失；换机只保留数据，不在过渡世界调用机体接口。
+    if aircraftDebug:pump(runtimeReason)then
+        if allowed and (not lastUIKey or os.clock()-lastPublish>=.25)then lastPublish=os.clock();lastUIKey="aircraft_restart";publishState()end
+        return
+    end
     if not allowed then return end
     tryApplyMasterSwitch(false)
     if runtimeContext.updateLanguage(os.clock())then
@@ -1261,7 +1308,7 @@ local function tick()
         nativeParts:reset{clearError=true,releaseInput=false}
         plane=found;planeAddress=address;activator=found and found.PlayerWeaponActivator or nil
         resetFlightTracking()
-        if not supplySession then errorText=nil end
+        if not supplySession then errorText=aircraftDebug.blocked end
         isFlight=found~=nil;currentWorld=world
         -- 补给可能暂时移走玩家机体；保留确认事务和检查点，等待原生成功事件。
         if not supplySession then
@@ -1287,7 +1334,7 @@ local function tick()
     -- 玩家对象与 HUD 在 START MISSION 前已经生成；先建立显示，不提前初始化武器或消耗冷却。
     if isFlight and not configured and not supplySession and not errorText and valid(activator)and os.clock()-lastPreviewHUD>=.05 then
         lastPreviewHUD=os.clock()
-        local saved=config.profiles[tostring(planeId)] -- 只展示已保存方案，开场期间不推导新的配弹比例。
+        local saved=aircraftDebug:profile(planeId)or config.profiles[tostring(planeId)] -- 换机只展示当前任务临时方案。
         if saved then
             previewOptions=previewOptions or optionsFor(planeId)
             primeFlightHUD(Profile.withSettings(saved,config),previewOptions)
@@ -1303,11 +1350,12 @@ local function tick()
     -- 若任务成功事件到达时玩家尚未回到世界，沿现有身份发现流程等待实例；不再等待武器输入开关。
     if supplySession and supplySession.success and not errorText then completeSupplyHandoff()end
     if isFlight and ready()and not configured and not supplySession and not errorText then
-        local saved=config.profiles[tostring(planeId)]
+        local temporary=aircraftDebug:profile(planeId)
+        local saved=temporary or config.profiles[tostring(planeId)]
         local options=optionsFor(planeId)
         local canUse=saved and Profile.validate(saved,options)
         assert(canUse,"没有已确认且可用的原生多 SP 配置，请返回机库通过原生兵装页确认后出击；管理界面不提供兵装选择")
-        configureFlight(profileFor(planeId))
+        configureFlight(profileFor(planeId),temporary and "debug_aircraft"or nil)
     end
     local now=os.clock()
     if now-lastActions>=.05 then
@@ -1320,6 +1368,7 @@ local function tick()
             for _,action in ipairs(batch)do applyAction(action)end
         end
     end
+    if aircraftDebug:busy()then publishState();return end -- 同一帧内也不继续维护原机体。
     if isFlight and configured and not supplySession and not errorText then
         if restorePending then
             weaponSwitch.clear("checkpoint_restore")
@@ -1391,6 +1440,7 @@ local function tick()
 end
 RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,selectedPlane,selectedWeapon)
     if not runtimeModEnabled then return end
+    if aircraftDebug:busy()then return end
     if not syncRuntime()then return end
     nativeLoadout:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
     nativeSupply:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
@@ -1427,11 +1477,13 @@ end)
 -- checkpoint/resupply coverage remains experimental and is logged explicitly.
 RegisterHook("/Script/Nimbus.Mission:OnStartNextPhaseHandler",function()end,function()
     if not runtimeModEnabled then return end
+    if aircraftDebug:busy()then return end
     if not syncRuntime()then return end
     if configured then checkpointPending=true end
 end)
 RegisterHook("/Script/Nimbus.PlayerPlane:RestoreWeaponFromCheckpoint",function()end,function(ctx)
     if not runtimeModEnabled then return end
+    if aircraftDebug:busy()then return end
     if not syncRuntime()then return end
     if configured and valid(plane)and ctx:get():GetAddress()==plane:GetAddress()then
         releaseMountPreview(0) -- 重试不能继承补给候选的视觉上下文。
@@ -1443,7 +1495,7 @@ end)
 -- 生命周期失败明确停用武器修改；不能忽略异常后继续应用旧方案。
 local function supplyHook(callback)
     return function(...)
-        if not runtimeModEnabled or runtimeChanging or errorText then return end
+        if not runtimeModEnabled or runtimeChanging or errorText or aircraftDebug:busy()then return end
         local args={...}
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"补给事件不在游戏线程")
@@ -1557,6 +1609,7 @@ LoopInGameThreadWithDelay(20,function()
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);note("ERROR "..errorText)
+            aircraftDebug:failed(errorText)
             releaseMountPreview(0)
             if runtimeChanging or not runtimeAllowed then
                 -- 模式识别/清理失败只保留诊断，绝不沿用上次单人许可。

@@ -1,0 +1,31 @@
+{
+  "schema": 1,
+  "version": "2.13.0",
+  "mode": "restart",
+  "gameplay_verified": false,
+  "user_request": "管理调试页任务换机，至少整关/检查点重开生效；缺少DLC许可的机体也须列出并可尝试",
+  "scope": "Steam build 9855922单人任务，当前原生目录中的47架官方编号/简称交叉核对；第三方机体不收录",
+  "selection": "NimbusGameInstance.SetPlaneAndSWP(目标ID,0)，基础涂装0；保留原徽章，不复制旧机部件",
+  "restart": "Engine.PlayerController.RestartLevel()零参数；不手动生成/销毁飞行Pawn，不承诺即时或检查点换机",
+  "availability": "全部官方候选均可尝试；当前购买记录及DLCInformation.IsDLCOwned只用于标注，不作为隐藏/拒绝条件；不写购买、许可或解锁记录",
+  "save_read": "已配置原生session.plane.GameInstance核当前GI；复用0x766776原生Options指纹读取GI+0x5f8当前SigmaSaveGame；正式CommonData/PurchasedAircrafts反射、有界uint32数组及前后UObject/数组身份复核。失败仅显示许可/购买资料未知，不影响换机候选",
+  "catalogue": "正式PlayerPlaneDataTable.DLCID StrProperty反射；新增资料失败独立降级，保留原有兵装目录",
+  "protocol": {
+    "management": 7,
+    "debug_aircraft": 1,
+    "request": "request/session/revision/target_plane_id",
+    "ack": "仅表示已接受原生重开请求",
+    "applied": "新受控玩家类链、当前世界/GI、本地控制器持有关系及兵装setup/checkpoint/HUD完成后才确认"
+  },
+  "lifecycle": "归还自有暂停和输入，清理旧核心兵装/检查点/视觉；载入过渡保留唯一事务，阻止旧补给/检查点/快捷调试重入；明确退菜单/多人/GI换代即取消。普通飞行无事务时不增加对象查询",
+  "failure": "原世界15秒仍为旧受控机体则恢复原选择；新世界生成最长等180秒。仅原世界原玩家仍在场时回滚，跨世界失败停用兵装接管并明确提示；不自动重复重开",
+  "temporary_profile": "新机先默认SP0单挂；可继续使用原SP调试，目标方案保存在任务临时状态和新检查点，不写profiles.json；离开任务清除",
+  "local_native_evidence": [
+    "Temp/plane-switch-native-research/selection-ownership-report.json",
+    "Temp/plane-switch-native-research/official-plane-dlc47.json",
+    "Temp/plane-switch-native-research/ownership-query-supplement.json",
+    "Temp/experience-object-index.json"
+  ],
+  "validation": "现有runtime_services_test扩展覆盖真实模块：官方编号、防冒用、未持有DLC允许尝试、过期/重复拒绝、过渡等待、控制器身份、新Pawn与兵装完成分离、临时方案、两类超时及同世界回滚/多人菜单取消；不等于真实游戏换机通过",
+  "pending": "首次完整任务重开是否采用GI新选择、无DLC目标能否实例化、重开后的任务/部件/检查点以及SP调试均待用户实测"
+}

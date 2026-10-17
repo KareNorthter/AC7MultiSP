@@ -7,6 +7,7 @@
   "candidate": true,
   "scripts": [
     "config_store.lua",
+    "debug_aircraft.lua",
     "json.lua",
     "loadout_flow.lua",
     "loadout_profile.lua",

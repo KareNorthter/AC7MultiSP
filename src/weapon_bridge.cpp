@@ -967,6 +967,65 @@ extern "C" __declspec(dllexport) int dualsp_selection_audio(void* luaState) {
     }
 }
 
+// 调试换机只读取当前任务GI所持存档；不合并其他存档，也不写入购买记录。
+extern "C" __declspec(dllexport) int dualsp_debug_owned_aircraft(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1 && runtimeEnabled,"已购机体查询需要当前单人任务和一个GI地址");
+        verifyVersion();MountAnimationReflection reflection;reflection.bindSdk();
+        const auto instance=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto instanceIdentity=continuousIdentity(instance);
+        require(mountClassIs(instance,"NimbusGameInstance","/Script/Nimbus"),"已购机体查询：GI类型不符");
+        require(session.plane!=0,"已购机体查询：当前任务尚未配置");
+        const auto planeIdentity=continuousIdentity(session.plane);
+        require(mountClassIs(session.plane,"PlayerPlane","/Script/Nimbus") &&
+            read<Addr>(session.plane+mountProperty(session.plane,"GameInstance","ObjectProperty",8))==instance,
+            "已购机体查询：GI不属于当前任务机体");
+        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        constexpr unsigned char optionRead[]={0x48,0x8b,0x90,0xf8,0x05,0,0,0x48,0x8b,0x87,0x38,0x04,0,0,0xf3,0x0f,0x10,0x82,0x30,0x01,0,0};
+        checkMemory(base+0x766776,sizeof(optionRead));
+        require(std::memcmp(reinterpret_cast<void*>(base+0x766776),optionRead,sizeof(optionRead))==0,
+            "已购机体查询：当前存档读取指纹改变");
+        const Addr save=read<Addr>(instance+0x5f8); // 仅此处沿用原生OptionsSound已证明的当前存档读取。
+        const auto saveIdentity=continuousIdentity(save);
+        require(!(read<unsigned>(instance+8)&0x30u) && !(read<unsigned>(save+8)&0x30u),"已购机体查询：不能使用默认对象或原型存档");
+        require(mountClassIs(save,"SigmaSaveGame","/Script/Nimbus"),"已购机体查询：当前存档类型不符");
+        const Addr saveClass=read<Addr>(save+0x10),commonProperty=MountAnimationReflection::find(saveClass,"CommonData");
+        require(commonProperty && mountName(read<Addr>(commonProperty+0x10))=="StructProperty",
+            "已购机体查询：缺少正式CommonData结构");
+        const Addr commonType=MountAnimationReflection::refValue<Addr>(reflection.structRef,commonProperty);
+        MountAnimationReflection::named(commonType,"CommonSaveData","/Script/Nimbus");
+        const auto common=reflection.field(saveClass,"CommonData","StructProperty",reflection.typeSize(commonType),
+            reflection.typeSize(saveClass),true);
+        const auto purchased=reflection.field(commonType,"PurchasedAircrafts","ArrayProperty",16,common.size);
+        const auto innerGetter=reinterpret_cast<MountAnimationReflection::Ref>(GetProcAddress(GetModuleHandleW(L"UE4SS.dll"),
+            "?GetInner@FArrayProperty@Unreal@RC@@QEBAAEAPEBVFProperty@23@XZ"));
+        const Addr inner=MountAnimationReflection::refValue<Addr>(innerGetter,purchased.identity.address);
+        MountAnimationReflection::alive(mountIdentity(inner));
+        require(mountName(read<Addr>(inner+0x10))=="UInt32Property" && read<int>(inner+0x34)==4 &&
+            MountAnimationReflection::refValue<int>(reflection.arrayDim,inner)==1 &&
+            read<Addr>(inner+0x20)==purchased.identity.address,"已购机体查询：购买列表不是原生uint32数组");
+        const Addr array=save+common.offset+purchased.offset,data=read<Addr>(array);
+        const int count=read<int>(array+8),capacity=read<int>(array+12);
+        require(count>=0 && count<=4096 && capacity>=count && capacity<=65536 && (!count || (data && !(data&3))),
+            "已购机体查询：购买列表范围无效");
+        Json result=Json::array();
+        if(count)checkMemory(data,static_cast<size_t>(count)*sizeof(uint32_t));
+        for(int i=0;i<count;++i) {
+            const auto id=read<uint32_t>(data+static_cast<Addr>(i)*sizeof(uint32_t));
+            require(id<=0x7fffffffu,"已购机体查询：机体编号超出原生IntProperty范围");result.push_back(id);
+        }
+        require(continuousAlive(instanceIdentity) && continuousAlive(planeIdentity) && continuousAlive(saveIdentity) &&
+            read<Addr>(instance+0x5f8)==save && read<Addr>(array)==data && read<int>(array+8)==count &&
+            read<int>(array+12)==capacity,"已购机体查询：读取期间当前存档或列表改变");
+        const auto text=result.dump();api->boolean(luaState,true);api->string(luaState,text.data(),text.size());return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
+
 // 按游戏线程现有调度更新暂停和音量；不通过扫描多个存档副本猜测当前设置。
 extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 与选择接口相同的明确错误回执。
@@ -1611,6 +1670,24 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
         verifyVersion();Addr planes{},weapons{};
         std::ifstream cmd(modRoot()/"catalogue-command.txt");cmd>>std::hex>>planes>>weapons;
         require(static_cast<bool>(cmd),"Invalid catalogue command");
+        int dlcOffset=-1;std::string dlcError;
+        try {
+            require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体目录需要在游戏线程读取");
+            require(mountClassIs(planes,"DataTable","/Script/Engine"),"机体目录：机体表类型不符");
+            const Addr rowType=read<Addr>(planes+mountProperty(planes,"RowStruct","ObjectProperty",8));
+            MountAnimationReflection::named(rowType,"PlayerPlaneDataTable","/Script/Nimbus");
+            // 目录早于任务绑定；只绑定只读元数据getter，不安装挂钩或取得写权限。
+            MountAnimationReflection metadata;
+            const auto loader=GetModuleHandleW(L"UE4SS.dll");require(loader!=nullptr,"机体目录：加载器未就绪");
+            metadata.extent=reinterpret_cast<MountAnimationReflection::Ref>(GetProcAddress(loader,
+                "?GetPropertiesSize@UStruct@Unreal@RC@@QEBAAEBHXZ"));
+            metadata.arrayDim=reinterpret_cast<MountAnimationReflection::Ref>(GetProcAddress(loader,
+                "?GetArrayDim@FProperty@Unreal@RC@@QEBAAEBHXZ"));
+            dlcOffset=metadata.field(rowType,"DLCID","StrProperty",16,metadata.typeSize(rowType)).offset;
+        }catch(const std::exception& error) {
+            // 换机扩展不可用时保留原有兵装目录；不能因此停用所有出击/补给功能。
+            dlcError=error.what();nativeLog("DEBUG_AIRCRAFT_CATALOGUE_ERROR "+dlcError);
+        }
         std::map<std::string,Json> byCode;
         for(const auto row:tableRows(weapons)) {
             Json stats=Json::array();for(int i=0;i<6;++i)stats.push_back(read<unsigned char>(row+40+i));
@@ -1627,7 +1704,11 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
                 require(byCode.count(code),"Unknown weapon data reference");
                 auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=read<int>(row+112+i*24);options.push_back(option);
             }
-            catalog[std::to_string(id)]={{"id",id},{"code",unrealString(row+16)},{"main_max",read<int>(row+88)},{"weapons",options},{"supported",supported}};
+            auto& entry=catalog[std::to_string(id)];
+            entry={{"id",id},{"code",unrealString(row+16)},{"main_max",read<int>(row+88)},
+                {"weapons",options},{"supported",supported}};
+            if(dlcOffset>=0)entry["dlc_id"]=unrealString(row+dlcOffset);
+            else entry["debug_aircraft_error"]=dlcError;
         }
         atomicJson(modRoot()/"catalogue.json",catalog);nativeLog("Catalogue loaded: "+std::to_string(catalog.size())+" planes");
     }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());atomicJson(modRoot()/"catalogue.json",Json{{"error",e.what()}});}

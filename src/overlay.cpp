@@ -62,6 +62,11 @@ std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟�
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
+struct DebugAircraftOption { int planeId{};std::string name; };
+std::vector<DebugAircraftOption> debugAircraftOptions; // 游戏线程核准的官方机体，包含用户要求的无DLC许可项。
+int aircraftRequest=0,pendingAircraft=0,aircraftSession=-1,aircraftRevision=-1,aircraftTarget=-1;
+bool aircraftAvailable=false,aircraftSupported=false;
+std::string aircraftMode="restart",aircraftStatus="idle",aircraftNotice,aircraftReason,aircraftDataError;
 int hotkeyRequest=0,hotkeyResponse=0;
 int masterResponse=0;
 std::array<bool,256> consumedShortcutKeys{};
@@ -100,6 +105,8 @@ std::string modLogText,nativeLogText,logError;
 const char* tr(const char* zh,const char* en);
 void loadManagementDraft();
 void loadDebugDraft();
+void loadDebugAircraftDraft() noexcept;
+bool debugAircraftBusy();
 void captureKeyboardKey(int key,int mods);
 int shortcutModifiers() {
     return ((GetKeyState(VK_CONTROL)&0x8000)?1:0)|((GetKeyState(VK_MENU)&0x8000)?2:0)|((GetKeyState(VK_SHIFT)&0x8000)?4:0);
@@ -178,6 +185,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         for(size_t index=0;index<shortcuts.size();++index)if(dualsp::shortcutMatches(shortcuts[index],static_cast<int>(w),mods)) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
             if(index==0)togglePanel(!panel);
+            else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."));
             else if(state.contains("debug_hotkey")&&state["debug_hotkey"].value("protocol",0)==1&&state.contains("debug_loadout")) {
                 const auto& debug=state["debug_loadout"];
                 enqueue({{"type","debug_hotkey"},{"hotkey_protocol",1},{"request",++hotkeyRequest},
@@ -372,7 +380,7 @@ void loadManagementDraft() {
     if(!bindingsValid())throw std::runtime_error("Management keyboard bindings are invalid");
     saveRequest=std::max(saveRequest,state.value("settings_response",0));
     captureSlot=-1;logsLoaded=false;
-    loadDebugDraft();
+    loadDebugDraft();loadDebugAircraftDraft();
 }
 
 // 打开管理页或任务上下文改变时读取真实当前搭载；编辑勾选不修改游戏。
@@ -389,6 +397,106 @@ void loadDebugDraft() {
     }
 }
 
+// 换机子协议独立于管理设置和SP换装；缺失或错误只禁用换机区域。
+bool debugAircraftBusy() {return pendingAircraft>0||(aircraftSupported&&aircraftStatus=="restarting");}
+void loadDebugAircraftDraft() noexcept {
+    try {
+        if(!state.contains("debug_aircraft")) {
+            aircraftSupported=aircraftAvailable=false;debugAircraftOptions.clear();aircraftDataError.clear();return;
+        }
+        const auto& data=state.at("debug_aircraft");
+        if(data.at("protocol").get<int>()!=1)throw std::runtime_error("换机协议不匹配");
+        const int session=data.at("session").get<int>(),revision=data.at("revision").get<int>();
+        const int response=data.at("response").get<int>(),ack=data.at("ack").get<int>();
+        const auto mode=data.value("mode",std::string("restart")),status=data.value("status",std::string("idle"));
+        if(mode!="restart"&&mode!="next_restart")throw std::runtime_error("换机生效方式无效");
+        if(status!="idle"&&status!="restarting"&&status!="applied"&&status!="failed")throw std::runtime_error("换机状态无效");
+        const auto& options=data.at("options");
+        if(!options.is_array()||options.size()>47)throw std::runtime_error("换机候选列表无效");
+        std::vector<DebugAircraftOption> next;
+        for(const auto& option:options) {
+            if(!option.at("plane_id").is_number_integer())throw std::runtime_error("换机候选编号无效");
+            const int id=option.at("plane_id").get<int>();const auto name=option.value("label",option.at("name").get<std::string>());
+            if(id<0||name.empty()||std::any_of(next.begin(),next.end(),[&](const auto& prior){return prior.planeId==id;}))
+                throw std::runtime_error("换机候选编号重复或名称为空");
+            next.push_back({id,name});
+        }
+        const bool changedSession=session!=aircraftSession;
+        const bool appliedNow=status=="applied"&&aircraftStatus!="applied";
+        aircraftSession=session;aircraftRevision=revision;aircraftMode=mode;aircraftStatus=status;
+        aircraftAvailable=data.at("available").get<bool>();aircraftReason=data.value("reason",std::string());
+        aircraftSupported=true;aircraftDataError.clear();debugAircraftOptions=std::move(next);
+        aircraftRequest=std::max(aircraftRequest,response);
+        const auto contains=[&](int id){return std::any_of(debugAircraftOptions.begin(),debugAircraftOptions.end(),[&](const auto& option){return option.planeId==id;});};
+        if(changedSession||!contains(aircraftTarget)) {
+            const int current=state.value("plane_id",-1);
+            aircraftTarget=contains(current)?current:debugAircraftOptions.empty()?-1:debugAircraftOptions.front().planeId;
+        }
+        if(pendingAircraft>0&&response==pendingAircraft) {
+            const bool accepted=ack==pendingAircraft&&status!="failed";
+            aircraftNotice=accepted?(status=="applied"?tr("换机已在重开的任务中生效。","Aircraft change applied in the restarted mission."):
+                mode=="next_restart"?tr("机体已选择；请手动重开任务后生效。","Aircraft selected; restart the mission to apply it."):
+                tr("请求已接受，正在重开任务；换机尚待生效。","Request accepted; restarting the mission. Aircraft change is not applied yet.")):
+                tr("换机请求未完成，请查看错误说明。","Aircraft change was not completed; see the error details.");
+            const auto message=data.value("notice",std::string());if(!message.empty())aircraftNotice=message;
+            pendingAircraft=0;showToast(aircraftNotice,!accepted);
+        } else if(appliedNow) {
+            aircraftNotice=data.value("notice",std::string());
+            if(aircraftNotice.empty())aircraftNotice=tr("换机已在重开的任务中生效。","Aircraft change applied in the restarted mission.");
+            showToast(aircraftNotice);
+        } else if(data.contains("notice")&&!data.at("notice").get<std::string>().empty())aircraftNotice=data.at("notice").get<std::string>();
+        else if(changedSession&&status=="idle"&&pendingAircraft==0)aircraftNotice.clear();
+    }catch(const std::exception& error) {
+        aircraftSupported=aircraftAvailable=false;debugAircraftOptions.clear();
+        if(aircraftDataError!=error.what()) {
+            showToast(std::string(tr("换机状态错误：","Aircraft state error: "))+error.what(),true);
+            nativeLog(std::string("DEBUG_AIRCRAFT_DATA_ERROR ")+error.what());
+        }
+        aircraftDataError=error.what();
+    }
+}
+void drawDebugAircraft() {
+    ImGui::SeparatorText(tr("任务内换机","Aircraft change"));
+    ImGui::TextWrapped("%s",aircraftMode=="next_restart"?
+        tr("选择机体后请手动重开本任务，换机才会生效；当前飞行中的机体不会立即替换。","Select an aircraft, then manually restart this mission to apply it. The current aircraft is not replaced immediately."):
+        tr("选择机体后点击下方按钮，将重开本任务并使用目标机体；当前任务进度会重置。","Choose an aircraft and use the button below to restart this mission with it. Current mission progress will reset."));
+    ImGui::TextWrapped("%s",tr("包含未购买及无DLC许可的官方机体；不改购买记录，能否生成以游戏实际结果为准。","Includes unpurchased and unlicensed official aircraft. Purchase records stay unchanged; spawning depends on the game."));
+    const bool busy=debugAircraftBusy();
+    const bool available=aircraftSupported&&aircraftAvailable&&!busy&&pendingDebug==0;
+    const auto selected=std::find_if(debugAircraftOptions.begin(),debugAircraftOptions.end(),[](const auto& option){return option.planeId==aircraftTarget;});
+    const char* preview=selected!=debugAircraftOptions.end()?selected->name.c_str():tr("暂无可用机体","No available aircraft");
+    ImGui::BeginDisabled(!available);ImGui::SetNextItemWidth(380);
+    if(ImGui::BeginCombo(tr("目标机体###DebugAircraftTarget","Target aircraft###DebugAircraftTarget"),preview)) {
+        for(const auto& option:debugAircraftOptions) {
+            const bool chosen=option.planeId==aircraftTarget;
+            ImGui::PushID(option.planeId);
+            if(ImGui::Selectable(option.name.c_str(),chosen))aircraftTarget=option.planeId;
+            if(chosen)ImGui::SetItemDefaultFocus();
+            ImGui::PopID();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::EndDisabled();
+    const bool same=aircraftTarget==state.value("plane_id",-1);
+    if(same&&selected!=debugAircraftOptions.end())ImGui::TextDisabled("%s",tr("这是当前机体，请选择其他机体。","This is the current aircraft; choose another."));
+    if(!aircraftSupported)ImGui::TextWrapped("%s",aircraftDataError.empty()?tr("当前控制器未提供任务换机。","The controller does not provide mission aircraft changes."):aircraftDataError.c_str());
+    else if(!aircraftAvailable&&!aircraftReason.empty())ImGui::TextWrapped("%s",aircraftReason.c_str());
+    if(pendingDebug>0)ImGui::TextWrapped("%s",tr("正在应用SP方案，请等待完成。","An SP loadout is being applied; wait for it to finish."));
+    ImGui::BeginDisabled(!available||same||selected==debugAircraftOptions.end());
+    if(ImGui::Button(aircraftMode=="next_restart"?
+        tr("选择机体，等待重开任务###ApplyAircraft","Select aircraft for next restart###ApplyAircraft"):
+        tr("换机并重开任务###ApplyAircraft","Change aircraft and restart mission###ApplyAircraft"),{350,36})) {
+        pendingAircraft=++aircraftRequest;
+        enqueue({{"type","debug_aircraft"},{"debug_aircraft_protocol",1},{"request",pendingAircraft},
+            {"session",aircraftSession},{"revision",aircraftRevision},{"target_plane_id",aircraftTarget}});
+        aircraftNotice=tr("已提交换机请求，等待游戏线程确认…","Aircraft change submitted; waiting for the game thread...");
+    }
+    ImGui::EndDisabled();
+    if(!aircraftNotice.empty())ImGui::TextWrapped("%s",aircraftNotice.c_str());
+    if(state.contains("debug_aircraft")&&state.at("debug_aircraft").contains("error")&&state.at("debug_aircraft").at("error").is_string())
+        ImGui::TextWrapped("%s",state.at("debug_aircraft").at("error").get<std::string>().c_str());
+}
+
 // 调试仅发送完整方案与任务版本，游戏线程重新校验身份、购买与活动武器。
 void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
@@ -396,7 +504,7 @@ void drawDebugLoadout(bool focus) {
     ImGui::TextWrapped("%s",tr("调试：任务内重配 SP。按勾选顺序（从上到下）分配 SP1 / SP2 / SP3。","Debug: rebuild SP loadout in this mission. Checked weapons become SP1 / SP2 / SP3 from top to bottom."));
     ImGui::TextWrapped(tr("快捷测试：%s 轮切SP组合；%s 即时开关模型。按键页可自定义。","Quick test: %s cycles SP combinations; %s toggles models. Customize in Bindings."),shortcutLabel(shortcuts[1]).c_str(),shortcutLabel(shortcuts[2]).c_str());
     ImGui::TextWrapped("%s",tr("应用后 SP 按已保存的管理比例配弹并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills SP ammunition using saved management percentages, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
-    const bool available=debug.value("available",false)&&pendingDebug==0; // 等待回执时不能重复提交。
+    const bool available=debug.value("available",false)&&pendingDebug==0&&!debugAircraftBusy(); // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
     const int count=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true)); // 实际选择数量。
     bool valid=count>0&&options.is_array()&&options.size()==3; // UAV/ECM 多挂限制同步显示。
@@ -422,7 +530,7 @@ void drawDebugLoadout(bool focus) {
     }
     if(!debug.value("available",false)&&debug.contains("reason"))
         ImGui::TextWrapped("%s",debug.at("reason").get<std::string>().c_str());
-    ImGui::TextWrapped("%s",tr("若提示仍有活动武器，请关闭面板、等待已发射武器结束后重试。任务内换飞机尚未开放。","If active weapons are reported, close this panel and wait for them to finish before retrying. In-mission aircraft replacement is not available yet."));
+    ImGui::TextWrapped("%s",tr("若提示仍有活动武器，请关闭面板、等待已发射武器结束后重试。换机入口见下方。","If active weapons are reported, close this panel and wait for them to finish before retrying. Aircraft changes are available below."));
     ImGui::BeginDisabled(!available||!valid);
     if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),{300,36})) {
         std::array<int,3> configs{-1,-1,-1};int slot=0; // 只在点击时形成连续逻辑槽。
@@ -581,7 +689,7 @@ void drawPanel() {
             ImGui::EndTabItem();
         }
         if(beginManagementTab(tr("调试###Debug","Debug###Debug"),3)) {
-            drawDebugLoadout(requestedTab==3);
+            drawDebugLoadout(requestedTab==3);drawDebugAircraft();
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();
@@ -657,6 +765,7 @@ void refreshState() {
                 tr("换装未完成，请查看错误说明。","Loadout was not applied. See the error details.");
             pendingDebug=0;
         }
+        loadDebugAircraftDraft();
         const auto& hotkey=state.at("debug_hotkey");
         hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
         if(hotkey.at("response").get<int>()!=hotkeyResponse) {
@@ -672,7 +781,7 @@ void refreshState() {
         Json errors=Json::object();
         for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
             if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
-        for(const char* field:{"debug_loadout","management_pause","master_switch"})
+        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch"})
             if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {
@@ -833,6 +942,8 @@ extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。
 extern "C" __declspec(dllexport) int dualsp_debug_loadout_supported(void*) {return 0;}
+// 换机独立子协议1，不改变现有管理设置与SP换装协议。
+extern "C" __declspec(dllexport) int dualsp_debug_aircraft_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
     try {

@@ -690,3 +690,111 @@ select,env,state,calls=switchCase();select(2);state.busy=false;state.paused=true
 assert(calls.native==0 and calls.pressed==0,'暂停期间不操作武器')
 ''')
 print('原生连射等待、成对输入、节流/超时、上下文取消、空弹及类别重试检查通过')
+
+lua.execute(r'''
+-- 执行真实换机事务：选择回读不等于新玩家生成，旧检查点也不能完成换机回执。
+local Aircraft=dofile(script_dir..'/debug_aircraft.lua')
+local json=dofile(script_dir..'/json.lua')
+local Profile=dofile(script_dir..'/loadout_profile.lua')
+local originalFind=StaticFindObject
+StaticFindObject=function(path)return {IsValid=function()return true end}end
+local function object(id)
+    return {IsValid=function()return true end,GetAddress=function()return id end,IsA=function()return true end}
+end
+local function scenario()
+    local state={restart=0,prepared=0,blocked=0,time=0,allowed=true,dlc=false,selected=110,weapon=2,skin=3,emblem=4}
+    local function world(id)
+        local value=object(id);value.GetFullName=function()return 'World /Game/Maps/Mission/ms06.ms06' end;return value
+    end
+    local currentWorld=world(900)
+    local instance=object(100)
+    instance.GetWorld=function()return currentWorld end
+    instance.GetSelectedPlaneID=function()return state.selected end
+    instance.GetSelectedPlaneSWP=function()return state.weapon end
+    instance.GetSelectedPlaneSkinNo=function()return state.skin end
+    instance.GetSelectedPlaneEmblemID=function()return state.emblem end
+    instance.SetPlaneAndSWP=function(_,id,weapon)if not state.refuseSelection then state.selected=id;state.weapon=weapon end end
+    instance.SetSelectedPlaneSkinNo=function(_,v)state.skin=v end
+    instance.SetSelectedPlaneEmblemID=function(_,v)state.emblem=v end
+    instance.DLCInformation=object(101);instance.DLCInformation.IsDLCOwned=function()return state.dlc end
+    local owner=object(300)
+    owner.GetWorld=function()return currentWorld end
+    owner.IsLocalController=function()return true end;owner.IsLocalPlayerController=function()return true end
+    owner.RestartLevel=function()state.restart=state.restart+1;if state.throwRestart then error('模拟重开失败')end end
+    local function pawn(id,code)
+        local value=object(id);value.code=code;value.bEnableWeaponInput=true
+        value.GetWorld=function()return currentWorld end;value.GetController=function()return owner end
+        value.IsWeaponSystemDisabled=function()return false end;return value
+    end
+    local held=pawn(200,'f22a')
+    owner.K2_GetPawn=function()return held end
+    local context={instance=instance,plane=held,id=110,profile={a=2,b=0,c=-1,ratio=.5},session=7,revision=8}
+    local catalog={['110']={code='f22a',supported=true,dlc_id='Base',weapons={{},{},{}}},
+        ['120']={code='su35',supported=true,dlc_id='Base',weapons={{},{},{}}},
+        ['130']={code='zoef',supported=true,dlc_id='DLC',weapons={{},{},{}}},
+        ['444']={code='su35',supported=true,dlc_id='Base',weapons={{},{},{}}}}
+    local game={GetPlayerPawn=function()return held end,GetGameInstance=function()return instance end}
+    local deps={json=json,copy=Profile.copy,names={f22a='F-22A',su35='Su-35S',zoef='ADF-01'},note=function()end,changed=function()end,
+        context=function()return context end,game=function()return game end,catalogue=function()return catalog end,
+        owned=function()return true,'[110,120]'end,allowed=function()return state.allowed end,
+        canChange=function()return state.allowed,'当前不可换机' end,
+        prepare=function()state.prepared=state.prepared+1;assert(state.module:busy())end,
+        matches=function(value,code)return value.code==code end,
+        bind=function(value)context.plane=value;context.id=state.selected end,
+        failFlight=function()state.blocked=state.blocked+1 end}
+    state.module=Aircraft.new(deps)
+    state.context=context;state.instance=instance;state.deps=deps
+    function state:request(number,id,revision)
+        self.module:request{debug_aircraft_protocol=1,request=number,session=7,revision=revision or 8,target_plane_id=id or 120}
+    end
+    function state:spawn(code)
+        currentWorld=world(901);held=pawn(201,code or 'su35');return held
+    end
+    function state:menu()
+        currentWorld=world(902);currentWorld.GetFullName=function()return 'World /Game/Maps/Menu/Main.Main' end
+    end
+    function state:noPawn()currentWorld=world(901);held=nil end
+    return state
+end
+local s=scenario();local view=s.module:state(7,8)
+assert(view.available and #view.options==3,'须包含无DLC许可项，按官方编号过滤冒用简称的第三方机体')
+local unlicensed=false;for _,option in ipairs(view.options)do if option.plane_id==130 then unlicensed=option.label:find('无DLC许可',1,true)~=nil end end
+assert(unlicensed,'缺少DLC只能标注，不能从调试列表移除')
+s:request(1,444);assert(s.restart==0 and s.module.status=='failed' and s.module.ack==0)
+s:request(2,120,7);assert(s.restart==0,'旧兵装代次不能重开')
+s:request(3);assert(s.restart==1 and s.prepared==1 and s.selected==120 and s.weapon==0 and s.skin==0 and s.emblem==4)
+assert(s.module:busy()and s.module.status=='restarting' and s.module.ack==3)
+assert(s.module:pump('singleplayer')and not s.module:profile(120),'GI选择回读成功但旧Pawn还在，不得反馈生效')
+s:request(3);assert(s.restart==1,'请求不能重复重开')
+s.allowed=false;assert(s.module:pump('waiting_world')and s.module:busy(),'载入过渡必须保留事务')
+s.allowed=true;s:spawn();assert(not s.module:pump('singleplayer'))
+assert(s.module:busy()and s.module.status=='restarting','玩家生成仍需等待兵装初始化')
+local temporary=s.module:profile(120);assert(temporary.a==0 and temporary.b==-1 and temporary.ratio==1)
+s.module:configured(120,temporary);assert(not s.module:busy()and s.module.status=='applied' and s.module.notice:find('Su-35S',1,true))
+s.module:configured(120,{a=0,b=1,c=-1,ratio=.5});assert(s.module:profile(120).b==1,'当前任务临时方案须跟随调试换装')
+temporary.a=2;assert(s.module:profile(120).a==0,'外部副本不能改写任务临时方案')
+s:menu();s.module:pump('singleplayer_menu');assert(not s.module:profile(120),'返回菜单不保留临时换机方案')
+
+s=scenario();s.throwRestart=true;s:request(1)
+assert(s.restart==1 and not s.module:busy()and s.module.status=='failed' and s.selected==110 and s.weapon==2)
+assert(s.skin==3 and s.emblem==4 and s.module:profile(110).a==2 and s.blocked==0,'同一原世界失败须恢复选择及临时原方案')
+s=scenario();s.refuseSelection=true;s:request(1);assert(s.restart==0 and s.module.status=='failed')
+s=scenario();s:request(1);s.allowed=false;s.module:pump('multiplayer_mode')
+assert(not s.module:busy()and s.module.status=='failed' and s.selected==120,'进入多人只取消，不写回旧选择')
+s=scenario();s:request(1);s:menu();s.module:pump('singleplayer_menu');assert(not s.module:busy())
+s=scenario();s:request(1);s:spawn('f22a');s.module:pump('singleplayer')
+assert(s.module.status=='failed' and s.blocked==1 and s.module.blocked,'原生仍生成旧机时必须报失败，不能伪报换机成功')
+s=scenario();s.deps.owned=function()return false,'当前存档身份不符'end
+view=s.module:state(7,8);assert(view.available and #view.options==3,'购买信息读取失败不隐藏用户要求的调试候选')
+s=scenario();s:request(1,130);assert(s.restart==1 and s.selected==130,'无DLC许可项必须允许尝试重开，不改购买或许可')
+local originalClock=os.clock;local now=0;os.clock=function()return now end
+s=scenario();s:request(1);now=16;s.module:pump('singleplayer')
+assert(not s.module:busy()and s.module.status=='failed' and s.selected==110 and s.blocked==0,'原世界15秒无反应须恢复原机选择')
+now=0;s=scenario();s:request(1);s:noPawn();now=16
+assert(s.module:pump('singleplayer')and s.module:busy(),'新世界仍在生成玩家时应继续等待')
+now=181;s.module:pump('singleplayer')
+assert(not s.module:busy()and s.module.blocked and s.blocked==1,'新世界超时不能恢复旧选择或继续普通接管')
+os.clock=originalClock
+StaticFindObject=originalFind
+''')
+print('原生重开换机：官方编号/许可标记、未持有DLC可尝试、过期拒绝、代次等待、实际玩家确认、临时方案与失败/退出隔离检查通过')
