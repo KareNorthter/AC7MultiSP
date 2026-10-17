@@ -22,6 +22,7 @@ def summarize(model):
             raise ValueError('原生参考姿态蒙皮重建误差超限')
         normalized = [[tuple(p) for p in lod['points']],lod['indices'],lod['weights'],lod['sections']]
         lods.append({'lod':index,'vertices':len(lod['points']),'triangles':len(lod['indices'])//3,
+                     'vertex_color_count':lod.get('color_count',0),
                      'sections':[{k:s[k] for k in ('material','first','triangles','start','vertices','influences','bone_map')} for s in lod['sections']],
                      'adjacency_indices':lod['adjacency_count'], 'reference_reconstruction_max_error':error,
                      'geometry_and_skin_sha256':hashlib.sha256(json.dumps(normalized,separators=(',',':')).encode()).hexdigest(),

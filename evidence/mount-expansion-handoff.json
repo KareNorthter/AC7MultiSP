@@ -30,10 +30,10 @@
       "P2": 29,
       "P1": 11
     },
-    "animated_complete_layout_aircraft": 3,
-    "animated_complete_combination_cases": 21,
-    "distinct_complete_layout_aircraft": 13,
-    "deferred_after_animation_overlay": 31
+    "animated_complete_layout_aircraft": 4,
+    "animated_complete_combination_cases": 28,
+    "distinct_complete_layout_aircraft": 14,
+    "deferred_after_animation_overlay": 30
   },
   "source_files": [
     {
@@ -16343,7 +16343,7 @@
   ],
   "animated_design_overlay": {
     "record": "evidence/mount-expansion-animated.json",
-    "sha256": "c62c41b9bd069b5d355f8261c15f8993f569ccbedfba289d6079ffc5ec791543",
+    "sha256": "36e4d0c983ddc5965665712f9ac72c6188da2a6484a235c1e1cbc161b13d98de",
     "aircraft": [
       {
         "code": "f22a",
@@ -16358,6 +16358,11 @@
       {
         "code": "su57tg",
         "name": "Su-57 TGM",
+        "combination_count": 7
+      },
+      {
+        "code": "fa44",
+        "name": "CFA-44 Nosferatu",
         "combination_count": 7
       }
     ],

@@ -6,7 +6,7 @@
 import base64
 import math
 import struct
-from summarize_mount_assets import resolve
+from summarize_mount_assets import properties, resolve
 from survey_aircraft_mounts import multiply, rotate
 
 FORMAT_SOURCE = 'https://github.com/gildor2/UEViewer/blob/master/Unreal/UnrealMesh/UnMesh4.cpp'
@@ -50,6 +50,9 @@ def read_skeletal_mesh(document, name):
     export = next(e for e in document['Exports'] if e['ObjectName'].casefold() == name.casefold())
     if resolve(document, export['ClassIndex']) != 'SkeletalMesh':
         raise ValueError('要求原生SkeletalMesh导出')
+    has_colors = properties(export).get('bHasVertexColors', False)
+    if not isinstance(has_colors, bool):
+        raise ValueError('顶点颜色标志不是明确布尔值')
     raw = base64.b64decode(export['Extras'], validate=True)
     r = Reader(raw)
     r.strip()
@@ -133,6 +136,14 @@ def read_skeletal_mesh(document, name):
         width = 8 if extra else 4
         weights_raw = r.bulk(width*2,vertex_count)
         weights = [tuple(zip(weights_raw[i*width*2:i*width*2+width],weights_raw[i*width*2+width:(i+1)*width*2])) for i in range(vertex_count)]
+        # UE4.18共享FColorVertexBuffer，严格按序列化属性读取；不搜索后续索引起点。
+        color_count = 0
+        if has_colors:
+            r.strip()
+            color_stride, color_count = r.unpack('ii')
+            if color_stride != 4 or color_count != vertex_count:
+                raise ValueError('顶点颜色数量/尺寸与LOD不符')
+            r.bulk(4, color_count)
         adjacency = read_indices(r)
         if len(indices) != sum(s['triangles'] for s in sections)*3 or any(i >= vertex_count for i in indices+adjacency):
             raise ValueError('三角面范围/计数不符')
@@ -152,7 +163,7 @@ def read_skeletal_mesh(document, name):
                 if sum(w for _,w in weights[i]) != 255 or any(b >= len(section['bone_map']) for b,w in weights[i] if w):
                     raise ValueError('蒙皮权重/section局部骨号无效')
             vertex_cursor, index_cursor = vertex_end, index_end
-        lods.append(dict(sections=sections,points=points,indices=indices,weights=weights,adjacency_count=len(adjacency)))
+        lods.append(dict(sections=sections,points=points,indices=indices,weights=weights,adjacency_count=len(adjacency),color_count=color_count))
     tail = r.take(len(raw)-r.offset)
     if tail != b'\0'*4:
         raise ValueError('未识别骨架网格尾部，不交付部分解析')
