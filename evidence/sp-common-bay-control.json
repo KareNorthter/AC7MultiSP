@@ -1,0 +1,355 @@
+{
+  "schema": 1,
+  "steam_build": 9855922,
+  "basis_commit": "e519d02",
+  "previous_research_sha256": "15fc5de041ccfd4f780755793ea4d38f6a903028df16c9990c7a56cad1ccc601",
+  "header": "src/common_bay_animation.hpp",
+  "header_sha256": "6d520348391bc6ed8575e99449a419a9ea30aecc47662e8246eb6718ffab5324",
+  "analyzer_sha256": "da3b30682b79f0518bce3478eec11f0012d4acb49e10c234f76828ab8f26eae6",
+  "scope": "YF-23/Su-47/Su-57TG/F-22A限定profile及带代码指纹的原生Parts解析/访问候选；不含2.7产品接入或公共支架几何研究",
+  "game_process_access": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "models": [
+    {
+      "code": "yf23",
+      "body_channels": [
+        "spwc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ],
+        "SWP2": [
+          "spwc"
+        ],
+        "SWP3": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": true,
+      "header_whitelist": true,
+      "animated_rack_mask": 7,
+      "snapshot_domain_mask": 7,
+      "reason": "控制profile保留，但协调线程最新几何结论为借位撞固定隔框或失去支撑，整机暂缓；不可将白名单当放行",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "su47",
+      "body_channels": [
+        "spwc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ],
+        "SWP2": [
+          "spwc"
+        ],
+        "SWP3": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": true,
+      "header_whitelist": true,
+      "animated_rack_mask": 7,
+      "snapshot_domain_mask": 7,
+      "reason": "三组同名spwc轨一致；保留实际Socket provider和唯一呈现架，不按武器mask停掉借位组件",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "su57tg",
+      "body_channels": [
+        "spwc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ],
+        "SWP2": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": true,
+      "header_whitelist": true,
+      "animated_rack_mask": 3,
+      "snapshot_domain_mask": 3,
+      "reason": "明确混合profile：骨架mask=3、静态mask=4；只有0/1同舱互切恢复快照，出入LACM沿原生流程",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "f22a",
+      "body_channels": [
+        "spwc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ],
+        "SWP2": [
+          "spwc"
+        ],
+        "SWP3": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": false,
+      "header_whitelist": true,
+      "animated_rack_mask": 7,
+      "snapshot_domain_mask": 7,
+      "reason": "明确三骨架profile，保留原生曲线；若布局全部借SWP3，则requiredRackMask=4，不要求源SWP1/2曲线与provider一致；完整几何资格另给",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "fb22",
+      "body_channels": [
+        "spwc",
+        "swcc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ],
+        "SWP2": [
+          "spwc"
+        ],
+        "SWP3": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": false,
+      "header_whitelist": false,
+      "animated_rack_mask": null,
+      "snapshot_domain_mask": null,
+      "reason": "Body同时含spwc/swcc，公共进度与分通道关系未纳入首版控制模块",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "pkfa",
+      "body_channels": [
+        "swcc"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": false,
+      "header_whitelist": false,
+      "animated_rack_mask": null,
+      "snapshot_domain_mask": null,
+      "reason": "Body swcc而SWP1 spwc；离开0/1后分通道收拢/聚合及旧SWP1路由另核对，不能直接沿用TG profile",
+      "host_adapter_implemented": false,
+      "installable": false
+    },
+    {
+      "code": "zoef",
+      "body_channels": [
+        "swc1"
+      ],
+      "rack_channels": {
+        "SWP1": [
+          "spwc"
+        ]
+      },
+      "all_same_named_rack_tracks_equal": false,
+      "header_whitelist": false,
+      "animated_rack_mask": null,
+      "snapshot_domain_mask": null,
+      "reason": "沿既有finishPlayerTLS结束x2后再换槽是较小范围；鼻门swc1和SWP1 spwc需独立源域，不新增持续保有",
+      "host_adapter_implemented": false,
+      "installable": false
+    }
+  ],
+  "native_evidence": {
+    "pause_helper": {
+      "capture": "f35c-cover-native",
+      "manifest_sha256": "016d53b15b59b4aaf22d835ac5abdffacdb87dc22a704e2d41e7849f245b44fd",
+      "range_sha256": "55a4b1e530d0a0bc9cfcf05c09c38e8a25fa7280e2539ecc5e12e76681f4ec2a",
+      "rva": "0x7f0210",
+      "size": 171,
+      "fragment_sha256": "a1412822d81f15c4d9f7d427a1a5552957982f1866c10708b106d698dae71d9a",
+      "observed_tick_call_rva": "0x7f0297",
+      "observed_direct_pause_write_rva": "0x7f029d",
+      "conclusion": "原生调用关闭Tick后仍直接写Pause位；仅拦Tick不能保证骨架继续求值",
+      "binding_scope": "旧F-35C采样的代码依据，不是新机体组件指针证明"
+    },
+    "body_output_getter": {
+      "capture": "f35c-cover-native",
+      "manifest_sha256": "016d53b15b59b4aaf22d835ac5abdffacdb87dc22a704e2d41e7849f245b44fd",
+      "range_sha256": "5388abdd85cddd33e1ba8c168825b45ed4d17e989cac1b3790e530fad2b01cd2",
+      "rva": "0x819600",
+      "size": 8,
+      "fragment_sha256": "ea9ebff13ab59fcced543fe343dae0b841fd318b92328828dbe8b1348efa48b2",
+      "conclusion": "旧原生Body动画getter返回this+0x1430；不得将其当成新机型Parts地址"
+    },
+    "parts_control": {
+      "capture": "f35c-cover-state-native",
+      "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+      "range_sha256": "56abfcf631d5f4e1d3637ca61fdc663cb7b70348945e79a7ba7bdb0b4f3ef6cb",
+      "rva": "0x1ce7f57",
+      "size": 284,
+      "fragment_sha256": "1662a5080df3163e561acb2892d5d2df5a841474399b9a345024dc590566deaa",
+      "conclusion": "保留原生四态与公共进度，模块不另造逐帧时钟；恢复不改选择编号"
+    },
+    "node_cache_text_only": {
+      "record": "f35-node-update9.txt",
+      "sha256": "8dbbd9038d6db09d566034ce47d5e699ead6652b03437c32e31a510946a7bf10",
+      "candidate_entry_rva": "0x3f83b0",
+      "binary_entry_verified_by_this_work": false,
+      "finding": "旧反汇编文本显示复制Body输出到节点缓存再填入逐节点浮点数组；不是即时读取公共全局值的简单getter",
+      "use": "YF-23/Su-47首版保留原生求值，无需改此缓存或安装此入口钩子",
+      "limit": "已有47MB小转储不含所查主映像代码页；本轮不为取得字节而附加游戏"
+    },
+    "parts_wrapper_candidate": {
+      "header": "src/native_common_bay_parts.hpp",
+      "sha256": "3703a667996d42361b71559decd094016c5829186104b8e223be93347f56a6a8",
+      "signature_fragments": [
+        {
+          "capture": "f35c-cover-native",
+          "manifest_sha256": "016d53b15b59b4aaf22d835ac5abdffacdb87dc22a704e2d41e7849f245b44fd",
+          "range_sha256": "5388abdd85cddd33e1ba8c168825b45ed4d17e989cac1b3790e530fad2b01cd2",
+          "rva": "0x810efa",
+          "size": 19,
+          "fragment_sha256": "2a89c01b0db8a7255b9e6c8e149f1f90c75253d0e1e1a78ef9a31a617f3dda3e"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "cb47babd2bd46415f68fc8540edfe257953f0fc7c9fe8fc35e77aec8890936ea",
+          "rva": "0x1cd315a",
+          "size": 4,
+          "fragment_sha256": "2b63ca6f33bbb1f6a086c4b9d2b36e10a6b02cdebebecea6089a1b4ac225fe8a"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "cb47babd2bd46415f68fc8540edfe257953f0fc7c9fe8fc35e77aec8890936ea",
+          "rva": "0x1cd3172",
+          "size": 7,
+          "fragment_sha256": "211c5fe4b99dafd6348a604271d22758cd4c6b9c9fc0d3ac59402ebce05a0731"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "cb47babd2bd46415f68fc8540edfe257953f0fc7c9fe8fc35e77aec8890936ea",
+          "rva": "0x1cd3181",
+          "size": 7,
+          "fragment_sha256": "dca426a896952945b9a077d90e37c85a1b244638639db2cf9e8abe3ea0b3fbff"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "cb47babd2bd46415f68fc8540edfe257953f0fc7c9fe8fc35e77aec8890936ea",
+          "rva": "0x1cd55e1",
+          "size": 22,
+          "fragment_sha256": "992ee7b5fbce78825f839621e9e5fc2e19a1e7bf67cc99e83f24d27e88954bcb"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "56abfcf631d5f4e1d3637ca61fdc663cb7b70348945e79a7ba7bdb0b4f3ef6cb",
+          "rva": "0x1ce94a4",
+          "size": 12,
+          "fragment_sha256": "50fbd7d72148e4eca4ca89d2409199d6c526f28fd66cb8be6627bd0a86b70b2b"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "56abfcf631d5f4e1d3637ca61fdc663cb7b70348945e79a7ba7bdb0b4f3ef6cb",
+          "rva": "0x1ce6bb4",
+          "size": 10,
+          "fragment_sha256": "c9ca398137e09998da2c7e6f2f89de825bcefa4e1cf0710aed5f99047f03f710"
+        },
+        {
+          "capture": "f35c-cover-state-native",
+          "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+          "range_sha256": "56abfcf631d5f4e1d3637ca61fdc663cb7b70348945e79a7ba7bdb0b4f3ef6cb",
+          "rva": "0x1ce6d70",
+          "size": 21,
+          "fragment_sha256": "92eec60a97acf0300cb0e152c485e22ee43b2a7e3514b3c0c7bedc0e452dd3fd"
+        },
+        {
+          "capture": "f35c-cover-native",
+          "manifest_sha256": "016d53b15b59b4aaf22d835ac5abdffacdb87dc22a704e2d41e7849f245b44fd",
+          "range_sha256": "5388abdd85cddd33e1ba8c168825b45ed4d17e989cac1b3790e530fad2b01cd2",
+          "rva": "0x81e8f8",
+          "size": 6,
+          "fragment_sha256": "984e7ddcc8896f9ee52b18aee2dd36dd433e3d77527201c993b640f2012c33b5"
+        }
+      ],
+      "owner_binding": {
+        "capture": "f35c-cover-state-native",
+        "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+        "range_sha256": "cb47babd2bd46415f68fc8540edfe257953f0fc7c9fe8fc35e77aec8890936ea",
+        "rva": "0x1cd3150",
+        "size": 79,
+        "fragment_sha256": "001b7a1c7b80e36e845f6b192d2d766b258540db9396a0bb19ce683679b27986"
+      },
+      "generic_update": {
+        "capture": "f35c-cover-state-native",
+        "manifest_sha256": "6df915da2e5466c48f72f72d2fc22439575c6d3a15d39af9fa682177da02be23",
+        "range_sha256": "56abfcf631d5f4e1d3637ca61fdc663cb7b70348945e79a7ba7bdb0b4f3ef6cb",
+        "rva": "0x1ce93a0",
+        "size": 336,
+        "fragment_sha256": "e4960fe8a09bea4f701542470f146da1a5e0cff1f52bdf670087b057fd3d15b6"
+      },
+      "chain": "PlayerPlane+1408包装器→包装器+8原生实例→实例+1268回指PlayerPlane+b40→实例+f90 Parts→1ce93a0→1ce6d70(input=Parts+c)",
+      "parts_vtable_rva": "0x2fff178",
+      "qualification": "完整/Script/Nimbus.PlayerPlane父链和规范机型包，代码/自有跳板原始指纹、包装器/owner/原生vtable、公共盖板flag、配置/四态/范围均核对；不把engine或parts当UObject",
+      "not_yet_verified": "没有对四种新机的运行实例调用此候选；组件反射/Tick/隐藏刷新/完整Host仍由产品适配；已有第三方跳转不接受",
+      "write_failure_contract": "预检request/phase/七进度完整写区；每笔写前重新核对owner/generation/instance/vtable/选择编号；失败或回读不符时同身份下尽力恢复写前cover并回读；返回Applied/RejectedBeforeWrite/FailedRolledBack/FailedRollbackIncomplete/IdentityChanged，不把false当未写入"
+    },
+    "sequence_requested_time": {
+      "text_record": "f35-animnode9.txt",
+      "text_sha256": "c82a5124dd761ff78005ffefb26ca3f1c827cc9988bf762f8e1cc4ba94b27082",
+      "disk_exe_sha256": "c7da97f5f8a807d4f1264adbb074146fcffe9bdc2ffa98791b822cd28e558f4f",
+      "constants": {
+        "0x2574490": 0.5,
+        "0x2574494": 1.0
+      },
+      "requested_time": "(当前节点缓存的channel_output + 1.0) * 0.5 * 序列对象+0x88处float",
+      "sequence_field_semantics": "SequenceLength为该字段的候选解释；旧采样未保存该序列对象属性元数据/内容，本轮不把它当成新机全开资源帧正式映射证明",
+      "important_boundary": "channel_output是AnimGraph节点读到的Body输出，不能直接把Parts公共progress或0..100资源键编号等同于它",
+      "full_open_candidate": "native request=phase=2且public progress=1，再核对实际provider组件空间Socket与登记的端点姿态、同帧骨骼/世界变换，才显示内部ammo",
+      "mapping_limit": "尚未独立证明Parts progress→Body输出完整转换和所有端点/覆盖序列处理，不将-.01直接换算到资源49.5帧或把.87当Parts安全阈值"
+    }
+  },
+  "implementation": {
+    "equipped_masks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "snapshot": "同步换槽前保存请求/phase/七进度；相同Binding+generation+一次性事务号；重建后keepArmed前恢复，回读但不写选择编号",
+    "binding": "Host核对规范Pawn包、派生SkeletalMeshComponent、三组网格/Skeleton/AnimClass及原父链，再读取全部原生基线；全预检后才写",
+    "leases": "独立接收equipped与requiredRackMask；只对(provider|presenter)&animatedMask记录暂停/Tick租约，不改网格、Skeleton、AnimClass、父链或bNoSkeletonUpdate；两种原生请求分别记账",
+    "provider_example": "YF23的HVAA+4AAM可为equipped=3，HVAA借SWP3点、4AAM用SWP2、SWP2呈现架，则requiredRackMask=6；不伪造选择第三SP。此为布局线程接口例子，几何由该线程独立核对",
+    "mixed_profile": "TG静态第三组仍校验身份/父链/资源，但Skeleton和AnimClass必须留空，不调用readRack/applyRack；captureSwitch出入配置2返回正常NativeTransition",
+    "hidden_provider": "owned_bone_refresh.hpp提供具名反射模式租约：prepare全预检、acquire/maintain、原生请求观察、逐组件归还。只管required骨架；两候选字段必须恰有一个有效，枚举名称/值/宽度/所属Engine类型按实际元数据核对，不猜偏移或数字，不碰bNoSkeletonUpdate",
+    "pose_mode_header": "src/owned_bone_refresh.hpp",
+    "pose_mode_header_sha256": "ba74e78c6c704fa6108bcb8609c74017f26242757e2bc852e0ca348c4e1cc00f",
+    "restore": "恢复最新原生请求；失败逐组件保留待重试，不阻断其他组件；失效UObject丢弃；未恢复完拒绝新绑定",
+    "pose": "使用完整原生Parts更新及原生AnimGraph，不新增节点缓存写入；显示与发射均在动画和世界变换完成后取同一Socket"
+  },
+  "remaining_host_work": [
+    "把native_common_bay_parts的Access接到产品安全内存接口、规范PlayerPlane继承检查及自有钩子原始字节记录；再核对新机实例及同步调度，不能省略候选已给出的九处签名/owner检查",
+    "在现有模型绑定层按反射父链接受SkeletalMeshComponent派生类，绑定正确的资源/原生池Socket；不直接替换StaticMesh固定偏移",
+    "接入原生Tick请求观察及Pause直接写入后的观察；本模块自己的写入用重入标记绕过；读取实际强制状态不能覆盖最新原生意图",
+    "绑定/重建后立即维持活动组件，定时巡检仅兜底；处理显示隐藏时的原生动画更新策略，不能强行清除全局隐藏",
+    "几何线程证明唯一公共门体/支撑呈现及全部七组合扫掠后，才能置allSevenLayoutQualified；每个组合另给planEquippedMask/providerMask/presentationMask",
+    "实现owned_bone_refresh的元数据/标量Access与排他字段所有权；实际枚举/字段不可得或原生请求无法跟踪时完整回退，不能仅以Tick=true填资格通过",
+    "关闭、失败、页面退出、补给/检查点、换世界和组件重建先release，RestorePending期间不接新绑定"
+  ],
+  "runtime_admission": "未放行；Host尚无产品适配器，新机体运行身份/公共架及原生流程仍未验证"
+}

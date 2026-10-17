@@ -97,6 +97,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--catalog', type=Path, required=True)
     parser.add_argument('--batch', type=Path, action='append', required=True)
+    parser.add_argument('--animated-batch', type=Path, help='独立动画方案覆盖层，不混入旧静态载体接入数组')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     catalog = json.loads(args.catalog.read_text(encoding='utf-8'))
@@ -177,6 +178,29 @@ def main():
                        '旧逐组合可复用状态只保留研究事实；整机integration_gate.eligible为最终接入门槛',
                        '持续效果可跨SP不等于已登记所有机型/类；本研究不预设TLS与ECM/IEWS互斥',
                        '只接受附完整离线证据的静态分区方案；其余拆架/拆巢/新站继续后置，不安装或发布产物']}
+    if args.animated_batch:
+        layer=json.loads(args.animated_batch.read_text(encoding='utf-8'))
+        codes=set()
+        for sample in layer['aircraft']:
+            code=sample['code']
+            if code not in seen or code in codes or code in {a['code'] for a in eligible}:
+                raise ValueError('动画覆盖层机体重复或不属于暂缓研究机体')
+            codes.add(code)
+            combos=sample['combinations']
+            singles={c['weapons'][0] for c in combos if len(c['weapons'])==1}
+            if len(singles)!=3 or len(combos)!=7 or len({tuple(sorted(c['weapons'])) for c in combos})!=7 or \
+               any(not set(c['weapons'])<=singles or not c['integration_allowed'] for c in combos):
+                raise ValueError('动画覆盖层七组合不完整：'+code)
+            if sample['runtime_enabled'] or sample['runtime_ready']:
+                raise ValueError('本覆盖层不能冒充已接入运行')
+        report['animated_design_overlay']={
+            'record':'evidence/'+args.animated_batch.name,'sha256':hashlib.sha256(args.animated_batch.read_bytes()).hexdigest(),
+            'aircraft':[{'code':a['code'],'name':a['name'],'combination_count':7} for a in layer['aircraft']],
+            'runtime_enabled':False,
+            'policy':'本层替代对应机体旧批次的布局暂缓结论；仍须专用动画Host/provider接入，不进入旧静态数组，不自动启用运行白名单'}
+        report['verification'].update(animated_complete_layout_aircraft=len(codes),animated_complete_combination_cases=len(codes)*7,
+                                      distinct_complete_layout_aircraft=len(eligible)+len(codes),
+                                      deferred_after_animation_overlay=len(seen)-len(eligible)-len(codes))
     with args.output.open('x',encoding='utf-8',newline='\n') as stream:
         json.dump(report,stream,ensure_ascii=False,indent=2)
         stream.write('\n')

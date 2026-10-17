@@ -29,7 +29,11 @@
     "integration_priority_counts": {
       "P2": 29,
       "P1": 11
-    }
+    },
+    "animated_complete_layout_aircraft": 3,
+    "animated_complete_combination_cases": 21,
+    "distinct_complete_layout_aircraft": 13,
+    "deferred_after_animation_overlay": 31
   },
   "source_files": [
     {
@@ -16504,5 +16508,28 @@
     "旧逐组合可复用状态只保留研究事实；整机integration_gate.eligible为最终接入门槛",
     "持续效果可跨SP不等于已登记所有机型/类；本研究不预设TLS与ECM/IEWS互斥",
     "只接受附完整离线证据的静态分区方案；其余拆架/拆巢/新站继续后置，不安装或发布产物"
-  ]
+  ],
+  "animated_design_overlay": {
+    "record": "evidence/mount-expansion-animated.json",
+    "sha256": "c62c41b9bd069b5d355f8261c15f8993f569ccbedfba289d6079ffc5ec791543",
+    "aircraft": [
+      {
+        "code": "f22a",
+        "name": "F-22A",
+        "combination_count": 7
+      },
+      {
+        "code": "su47",
+        "name": "Su-47",
+        "combination_count": 7
+      },
+      {
+        "code": "su57tg",
+        "name": "Su-57 TGM",
+        "combination_count": 7
+      }
+    ],
+    "runtime_enabled": false,
+    "policy": "本层替代对应机体旧批次的布局暂缓结论；仍须专用动画Host/provider接入，不进入旧静态数组，不自动启用运行白名单"
+  }
 }

@@ -22,8 +22,8 @@
 
 | 线程 | 负责内容 | 接手时重点 |
 |---|---|---|
-| [各个战机多SP挂载方案](codex://threads/01a1441b-45a7-7d91-80f2-cf03b98647b1) | 剩余机体的完整七组合、挂架几何与布局 | 工作树`C:/Users/83717/.codex/worktrees/mount-expansion/AC7_MultiSP`，分支`codex/mount-expansion`；已吸收至b1bc370，最新正在吸收动画源码并复核下一批，提交可能继续前进。下次收取时保留主线2.7.2新F-2A布局/资源，避免旧表覆盖。 |
-| [研究带SP切换动画的机体](codex://threads/01a14787-e328-72b3-9b0e-1bfa7d81cc52) | 共用弹仓控制、骨骼刷新与失败归还 | 工作树`Temp/sp-switch-animation-research`，分支`codex/sp-switch-animation-research`；旧设计e519d02已合入，最新00bd24c未合入本工作区。该提交提供common_bay_animation.hpp、native_common_bay_parts.hpp、owned_bone_refresh.hpp、离线检查脚本和交接证据；产品Host、Socket真实反射取位和运行调度仍待接线。F-22A、Su-47、Su-57TG为后续对象，YF-23暂缓；不能宣称已安装或实测。 |
+| [各个战机多SP挂载方案](codex://threads/01a1441b-45a7-7d91-80f2-cf03b98647b1) | 剩余机体的完整七组合、挂架几何与布局 | 工作树`C:/Users/83717/.codex/worktrees/mount-expansion/AC7_MultiSP`，分支`codex/mount-expansion`；已吸收0c13178的三机21种动画候选，保留主工作区2.7.2的F-2A新布局和资源。原生队列、模型池及Su-47全开端点的运行依据继续核对；候选不表示运行适配。 |
+| [研究带SP切换动画的机体](codex://threads/01a14787-e328-72b3-9b0e-1bfa7d81cc52) | 共用弹仓控制、骨骼刷新与失败归还 | 工作树`Temp/sp-switch-animation-research`，分支`codex/sp-switch-animation-research`；00bd24c的三个控制头、离线检查脚本及交接证据已通过0c13178合入。本轮由该线程补产品Host所需的安全反射适配器，主工作区接线由主管维护。F-22A、Su-47、Su-57TG尚未运行接入，YF-23暂缓；不能宣称已安装或实测。 |
 | [研究ECM/TLS/UAV](codex://threads/01a14506-b653-7552-9bb2-98e6d1b612f9) | ADF-11F等持续效果生命周期与故障修复 | 工作树`Temp/adf11f-uav-research`，分支`codex/adf11f-uav-research`仍有未提交研究成果；两UAV切TLS容量修复已差异吸收并在2.7.1收到正常反馈。线程旧总结中的“未安装”是当时状态，以本工作区回执为准。保留XFA-27 ECM与当前共用层，不用旧基线整体覆盖。 |
 | [拆分挂架](codex://threads/01a14764-4328-7923-a865-22b7efba4d8e) | 静态挂架分区技术和资源往返 | 工作树`C:/Users/83717/.codex/worktrees/sp-combination-technology/AC7_MultiSP`，已吸收加载修复e35ff09。新增配方要连同证据、载体、Socket、资产清单一起交付；退化三角面保留原顶点/边界，不等于性能优化。 |
 
@@ -31,7 +31,7 @@
 
 ### 验收范围与待办
 
-1. **剩余机体适配。** 当前运行白名单13架静态多挂，ADF-11F只是功能共存、外观仍原生；剩余34架在整机门槛下继续后置。下一批先复核动画/几何两方面都完整的方案，再接线。保留关闭实验开关、资源/身份失败以及场景交接的原生单SP回退；机库、PART/SKIN切页、出击/补给确认和过场都要覆盖。用户无F-15 S/MTD、XFA-27 DLC，两机尚未实测。
+1. **剩余机体适配。** 当前运行白名单13架静态多挂，ADF-11F只是功能共存、外观仍原生；剩余34架中，F-22A、Su-47、Su-57TG已有整机七组合候选，其余31架继续后置。用户本轮授权合并0c13178并安装供测试，安装前必须补齐三机运行接线，不能只合并研究头文件或将资格布尔值直接置真。保留关闭实验开关、资源/身份失败以及场景交接的原生单SP回退；机库、PART/SKIN切页、出击/补给确认和过场都要覆盖。用户无F-15 S/MTD、XFA-27 DLC，两机尚未实测。
 2. **F-2A性能暂缓。** 用户本轮要求先记录、之后专门研究。2.7.1机库和过场卡，任务单SP不掉帧、所有双/三SP组合均掉帧，关闭多挂模型后恢复；LASM+HVAA也慢，不能直接归因RKT。武器切换与发射已正常。后续分别测CPU分段、引擎显隐/模型池、渲染与派生资源开销，不能拿Lua回调时间当总帧时间，也不能以减少安全检查冒充解决。
 3. **评分页与普遍性能。** 2.5之后普通机库转镜头已获改善反馈；评分页轨迹箭头前进后退感仍未复测2.6/2.7门控，保留独立问题。不要把F-2A新对照与早期所有机体的菜单开销混成同一个已知根因。
 4. **稳定性。** 约23:50 ADF-11F进入SP页偶发进程退出仍无对应异常栈，不能宣称修复。23:51手动关闭后的UE4SS清理异常为另一事件；评分页F12假死已证实是取证CDB漏配系统断点并恢复，勿误记Mod死锁。继续用桌面“AC7 崩溃取证启动”或根目录启动入口；原始dump/日志在Temp，不提交。发生后保存时间、机体/组合/页面与提示，按PID对齐日志和转储。
@@ -87,6 +87,38 @@ python -X utf8 src/research/analyze_sp_switch_animations.py `
 `Temp/input-manifests.json`列出参考线程的`Temp/batch3-manifests.json`实际输入清单，前三个本工作区提取批次补齐47架参数表、仅标志机体的Body和F-35C Body序列。原件均留本机Temp。上游目录与批次的SHA256、每个实际使用资源对的摘要写入回执；本轮回执不依赖上游尚未合并代码。接入线程可按需取此分支的三个文件；设计章节与证据索引按差异整合，避免覆盖其后续文档。
 
 ## 有效入口
+
+
+## 动画布局覆盖层的取用
+
+本分支以`evidence/mount-expansion-animated.json`记录八机深入评审与三机完整七组合，统一正文见[动画候选](multi-sp-mount-design.md#带动画机体的完整七组合候选)。`mount-expansion-handoff.json`的`animated_design_overlay`单独绑定这份数据；旧`eligible_aircraft`／`integration_candidates`仍只服务十机静态路线，旧三批记录不当作最新动画布局。不要直接把三机代码追加到旧运行生成器：本层显式区分owner/provider/呈现架、隐藏provider刷新与内部ammo门控，旧数据格式没有这些保证。
+
+引用线程`01a14787-e328-72b3-9b0e-1bfa7d81cc52`的`analyze_sp_switch_animations.py`、`sp_switch_animation_policies.json`与`sp-switch-animation-research.json`，并从其提交`00bd24c`按原字节吸收`common_bay_animation.hpp`、`native_common_bay_parts.hpp`、`owned_bone_refresh.hpp`、`inspect_common_bay_control.py`与`sp-common-bay-control.json`。三个控制头没有自动注册／新钩子，不改变产品运行代码。几何准入来自本分支覆盖层，YF-23虽有控制profile仍被几何排除。
+
+产品接入必须补齐：安全访问与反射Host；完整原生实例／场景身份校验；同步切换快照与原生Parts更新顺序；Pause/Tick及刷新模式最新原生请求观察和逐组件归还；provider当帧组件空间／世界空间Socket取位；Su-47的严格全开＋端点姿态见证。Parts原生引擎不是UObject；指纹／owner／配置必须通过，写入部分失败及归还失败不得误报成功。TG第三组静态不读骨架字段，第三原生配置的NativeTransition保留原生流程。姿态容差、坐标换算和运行池数量需有真实依据，不能填经验值或直接等于Socket数。
+
+| 离线入口 | 作用 |
+|---|---|
+| `inspect_mount_assets.py --asset-path` | 可重复指定精确PAK相对.uasset路径；提取同名HUD图与真实模型时避免歧义，仍保留原basename重复保护，不改原游戏包 |
+| `read_cooked_skeletal_mount.py` | 严格解析本版本骨架网格Extras、全部LOD/分区/权重/索引与参考骨架；不扫描偏移猜顶点，不支持的布局直接拒绝。格式参考UEViewer的UE4原始序列化实现 |
+| `audit_animated_mount_geometry.py` | 核对25份机体／挂架、49LOD的完整读取与参考姿态蒙皮回构，仅输出摘要 |
+| `review_animated_us_bays.py` | F-22A／YF-23及FB-22旧参考；真实Socket、骨架、原生接触基线及XSDB展开序列 |
+| `review_animated_sukhoi.py` | Su-47／普通Su-57／Su-57TG七组合、完整架、Body及原生弹体核对 |
+| `review_animated_dark_falken.py`、`review_animated_fb22.py` | DarkStar／ADF-01／FB-22整架与固定Body干涉，保留拒绝依据 |
+| `build_animated_mount_candidates.py` | 只接收人工评审的整机七组合，校验真实owner类／自身弹体／provider点与更新集合，生成独立覆盖层；不启用机型 |
+| `build_mount_handoff.py --animated-batch` | 校验覆盖层七组合完整性和来源指纹，将静态路线与动画路线分开索引 |
+
+分析器只读显式manifest与资源，原始提取物／完整大采样在Temp；提交的证据保留摘要、少量接触见证和哈希，不带游戏资源、PAK或原始顶点数组。NumPy仅用于离线几何，未下载新依赖。数据整理与资源分析不属于游戏编译或运行测试，本轮均未执行后者。
+
+复现须提供本机原生资源manifest（包含Pawn／三组SWP／参数表／Body／各序列与武器模型；F-22还需真实XSDB骨架、Skeleton及展开序列），分析器参数见各入口。所有输出必须新路径并放Temp，例如：
+
+```powershell
+python -X utf8 src/research/audit_animated_mount_geometry.py --manifest Temp/batch3-manifests.json --manifest Temp/body-manifest.json --batch evidence/mount-expansion-batch3.json --aircraft f22a --aircraft su47 --aircraft su57tg --output Temp/new-geometry-review.json
+python -X utf8 src/research/build_animated_mount_candidates.py --batch evidence/mount-expansion-batch3.json --review Temp/animated-us-bays-review.json --review Temp/animated-sukhoi-review.json --review Temp/animated-dark-falken-review.json --review Temp/animated-fb22-review.json --geometry-audit Temp/animated-mount-geometry-audit-final.json --control-source src/common_bay_animation.hpp --control-source src/native_common_bay_parts.hpp --control-source src/owned_bone_refresh.hpp --admit f22a --admit su47 --admit su57tg --output Temp/new-animated-candidates.json
+python -X utf8 src/research/build_mount_handoff.py --catalog evidence/mount-expansion-catalog.json --batch evidence/mount-expansion-batch1.json --batch evidence/mount-expansion-batch2.json --batch evidence/mount-expansion-batch3.json --animated-batch evidence/mount-expansion-animated.json --output Temp/new-mount-handoff.json
+```
+
+覆盖层中`reviews`的完整分析指纹、`analysis_sources`及`control_sources`限定取用版本；US／Sukhoi分析器入库仅统一行尾及末尾空行，原分析指纹保留，入库源码指纹另列，没有重新运行几何。后续修改控制头、解析器或资源需重核对相应依据。XSDB展开播放推导不能替代实际释放运动，Su-47显隐也不能证明闭舱实体净空。全部新增机体待产品接入和用户实玩，不编译、不安装、不操作当前游戏。
 
 | 工作 | 工具 |
 |---|---|
