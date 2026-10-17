@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "candidate": "2.6.0",
+  "baseline_installed": "2.5.0",
+  "research_thread": "01a1441b-45a7-7d91-80f2-cf03b98647b1",
+  "research_commit": "77e9ffc13278523b934980b459bc29db0298cf30",
+  "static_split_upstream_commit": "7ae97b6",
+  "aircraft": [
+    "f02a",
+    "f15c",
+    "f15j",
+    "f15m",
+    "f16c",
+    "fa27",
+    "mr2k",
+    "mrgn",
+    "rflm",
+    "typn"
+  ],
+  "native_single_cases": 30,
+  "multi_cases": 40,
+  "split_variants": 16,
+  "user_feedback_2_5_0": {
+    "features_work": true,
+    "hangar_camera_smooth": true,
+    "results_arrow_steps_forward_and_backward": true,
+    "results_priority": "later"
+  },
+  "results_evidence": {
+    "local_time_window": "2026-10-17 09:19:30–09:20:00 +08:00",
+    "window_lines": [
+      "2026-10-17T01:19:45Z PERF_TICK scene=menu samples=423 average_ms=9.090 peak_ms=82.000 page=WidgetBlueprintGeneratedClass /Game/UI/Menu/Campaign/CampaignDebriefing.CampaignDebriefing_C",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=context samples=423 total_ms=46.000 average_ms=0.109 peak_ms=1.000",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=options samples=29 total_ms=238.000 average_ms=8.207 peak_ms=17.000",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=pages samples=423 total_ms=1257.000 average_ms=2.972 peak_ms=44.000",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=preview_scene samples=423 total_ms=2416.000 average_ms=5.712 peak_ms=32.000",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=preview_native samples=423 total_ms=2147.000 average_ms=5.076 peak_ms=17.000",
+      "2026-10-17T01:19:45Z PERF_STAGE scene=menu stage=publish samples=15 total_ms=104.000 average_ms=6.933 peak_ms=8.000"
+    ],
+    "raw_log_path": "Temp/2.6.0-integration-inputs/mod-2.5.0.log",
+    "raw_sha256": "56146d343c2fa73fe809e3e0766c80feef625dc14a691e88b4df52e59d835aaf",
+    "interpretation": "评分页仍维护后台机库飞机；分段为嵌套墙钟耗时，不能相加，也不能直接证明箭头回退根因"
+  },
+  "changes": {
+    "font_pixels": {
+      "before": 20,
+      "after": 26
+    },
+    "panel_max_size": [
+      1180,
+      920
+    ],
+    "preview_only_visible_hangar": true,
+    "hangar_page_gap_grace_seconds": 0.35,
+    "other_menu_stops_page_scans": true,
+    "asset_loading": "游戏线程LoadAsset、精确包名/类名及FUObjectItem身份核对；最多16个纯网格进程内RootSet保有，不引用World；组件关闭碰撞才允许分区接入",
+    "projectile_mapping": "任务和预览同选位；真实队列原序号随恢复旋转，最多256槽，物理掩码64位；F-2A多挂仅外侧38管口",
+    "ecm": "XFA-27 ecmp_x2仅在原生类、虚表、发射即装填契约全部通过时开放持续保有；未放开其他ECM/UAV"
+  },
+  "compiled": true,
+  "checks_passed": true,
+  "installed": true,
+  "gameplay_verified": false,
+  "game_started_by_agent": false,
+  "installed_at": "2026-10-17T09:43:59.167557+08:00",
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-094359-167557",
+  "runtime_files_verified": 16,
+  "protected_files_verified": 126,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "98d19128ae4e9bbadfd84b1f8abf934344a69fa467cb1a38a28f23a7361a641a",
+    "variant_count": 16,
+    "file_count": 32
+  }
+}

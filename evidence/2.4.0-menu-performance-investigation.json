@@ -1,0 +1,301 @@
+{
+  "status": "用户确认关闭功能后两处不卡；2.5.0分段诊断版已编译检查安装，具体功能热点及修复待实机分段日志",
+  "date_local": "2026-10-17 +08:00",
+  "baseline": "main/v2.4.0 已安装运行文件，未修改或重新安装",
+  "raw_local_only": "Temp/menu-performance-review-20261017",
+  "measurement_scope": "PERF_TICK为游戏线程Lua tick同步回调的计时，不是完整帧时间；未知回调外原生钩子、渲染、GPU和其他Mod耗时；不包含其子项细分；scene=menu不区分评分/机库/标题等具体页面，取样时间基于用户事件描述，未逐窗口确认实际页面",
+  "measurements": {
+    "post_f12_score_menu": {
+      "windows": 16,
+      "callbacks": 6779,
+      "weighted_average_ms": 9.416,
+      "maximum_peak_ms": 102.0,
+      "first": "2026-10-17 00:58:06 +08:00",
+      "last": "2026-10-17 01:01:51 +08:00"
+    },
+    "earlier_hangar_menu_candidate": {
+      "windows": 6,
+      "callbacks": 2749,
+      "weighted_average_ms": 7.791,
+      "maximum_peak_ms": 55.0,
+      "first": "2026-10-17 00:26:57 +08:00",
+      "last": "2026-10-17 00:28:13 +08:00"
+    },
+    "score_rows": [
+      {
+        "time_local": "2026-10-17 00:58:06 +08:00",
+        "scene": "menu",
+        "count": 417,
+        "average_ms": 9.59,
+        "peak_ms": 88.0
+      },
+      {
+        "time_local": "2026-10-17 00:58:21 +08:00",
+        "scene": "menu",
+        "count": 417,
+        "average_ms": 9.602,
+        "peak_ms": 84.0
+      },
+      {
+        "time_local": "2026-10-17 00:58:36 +08:00",
+        "scene": "menu",
+        "count": 422,
+        "average_ms": 9.332,
+        "peak_ms": 88.0
+      },
+      {
+        "time_local": "2026-10-17 00:58:51 +08:00",
+        "scene": "menu",
+        "count": 416,
+        "average_ms": 9.5,
+        "peak_ms": 84.0
+      },
+      {
+        "time_local": "2026-10-17 00:59:06 +08:00",
+        "scene": "menu",
+        "count": 413,
+        "average_ms": 10.005,
+        "peak_ms": 96.0
+      },
+      {
+        "time_local": "2026-10-17 00:59:21 +08:00",
+        "scene": "menu",
+        "count": 425,
+        "average_ms": 9.558,
+        "peak_ms": 101.0
+      },
+      {
+        "time_local": "2026-10-17 00:59:36 +08:00",
+        "scene": "menu",
+        "count": 427,
+        "average_ms": 9.55,
+        "peak_ms": 92.0
+      },
+      {
+        "time_local": "2026-10-17 00:59:51 +08:00",
+        "scene": "menu",
+        "count": 424,
+        "average_ms": 9.361,
+        "peak_ms": 87.0
+      },
+      {
+        "time_local": "2026-10-17 01:00:06 +08:00",
+        "scene": "menu",
+        "count": 430,
+        "average_ms": 9.188,
+        "peak_ms": 87.0
+      },
+      {
+        "time_local": "2026-10-17 01:00:21 +08:00",
+        "scene": "menu",
+        "count": 429,
+        "average_ms": 9.315,
+        "peak_ms": 81.0
+      },
+      {
+        "time_local": "2026-10-17 01:00:36 +08:00",
+        "scene": "menu",
+        "count": 438,
+        "average_ms": 8.936,
+        "peak_ms": 84.0
+      },
+      {
+        "time_local": "2026-10-17 01:00:51 +08:00",
+        "scene": "menu",
+        "count": 429,
+        "average_ms": 9.266,
+        "peak_ms": 83.0
+      },
+      {
+        "time_local": "2026-10-17 01:01:06 +08:00",
+        "scene": "menu",
+        "count": 428,
+        "average_ms": 9.231,
+        "peak_ms": 73.0
+      },
+      {
+        "time_local": "2026-10-17 01:01:21 +08:00",
+        "scene": "menu",
+        "count": 426,
+        "average_ms": 9.46,
+        "peak_ms": 83.0
+      },
+      {
+        "time_local": "2026-10-17 01:01:36 +08:00",
+        "scene": "menu",
+        "count": 432,
+        "average_ms": 9.144,
+        "peak_ms": 86.0
+      },
+      {
+        "time_local": "2026-10-17 01:01:51 +08:00",
+        "scene": "menu",
+        "count": 406,
+        "average_ms": 9.675,
+        "peak_ms": 102.0
+      }
+    ],
+    "hangar_rows": [
+      {
+        "time_local": "2026-10-17 00:26:57 +08:00",
+        "scene": "menu",
+        "count": 456,
+        "average_ms": 7.952,
+        "peak_ms": 33.0
+      },
+      {
+        "time_local": "2026-10-17 00:27:12 +08:00",
+        "scene": "menu",
+        "count": 457,
+        "average_ms": 7.899,
+        "peak_ms": 55.0
+      },
+      {
+        "time_local": "2026-10-17 00:27:28 +08:00",
+        "scene": "menu",
+        "count": 457,
+        "average_ms": 7.777,
+        "peak_ms": 37.0
+      },
+      {
+        "time_local": "2026-10-17 00:27:43 +08:00",
+        "scene": "menu",
+        "count": 459,
+        "average_ms": 7.767,
+        "peak_ms": 45.0
+      },
+      {
+        "time_local": "2026-10-17 00:27:58 +08:00",
+        "scene": "menu",
+        "count": 455,
+        "average_ms": 7.892,
+        "peak_ms": 51.0
+      },
+      {
+        "time_local": "2026-10-17 00:28:13 +08:00",
+        "scene": "menu",
+        "count": 465,
+        "average_ms": 7.467,
+        "peak_ms": 44.0
+      }
+    ]
+  },
+  "f12_exclusion": "80000003暂停已定位和修正，用户确认恢复；315887ms峰值是调试暂停，不计入稳定性能数据",
+  "source_findings": [
+    {
+      "id": "runtime_context",
+      "status": "代码确认持续执行；耗时占比待测",
+      "path": "dist/DualSP/Scripts/main.lua:1006 -> runtime_context.lua:65-102",
+      "behavior": "20ms主循环及模式事件调用Context.allowed；每次遍历UIManager.MenuWidgetArray并核对有效性、类、可见性和输入状态；菜单池越大工作越多；早于runtimeModEnabled禁用分支执行",
+      "implication": "总开关关闭不会消除此项，不能把该对照当作完全卸载Mod"
+    },
+    {
+      "id": "scene_preview",
+      "status": "代码及暂停栈确认评分页仍有调用；独立耗时待测",
+      "path": "dist/DualSP/Scripts/main.lua:349-367,1189; src/mount_preview.hpp:276",
+      "behavior": "共享单人菜单世界中只要HangarManager保留受支持的LoadedPlayerPlane，即使没有武器/STANDBY/PART活动页也会维护场景预览；每tick进入Lua及三个身份校验；稳定候选的完整Apply每100ms",
+      "sample": "评分页暂停栈dualsp_mount_preview -> mountIdentity -> checkMemory -> VirtualQuery",
+      "implication": "评分页无须接管的后台机体也可能付出预览开销；需按真正展示场景限定，不能简单关闭SKIN/PART/起飞交接以换性能"
+    },
+    {
+      "id": "periodic_discovery",
+      "status": "代码确认；发生次数及耗时待测",
+      "path": "dist/DualSP/Scripts/main.lua:359; native_loadout.lua:75-88",
+      "behavior": "场景预览每0.5秒重新optionsFor，含原生部件配弹、购买资料和反射；非任务界面仍泵送三类页面，发现间隔各0.5秒，未命中活动页时会重复FindAllOf",
+      "implication": "机库和评分页可能存在周期尖峰；实际调用受活动页事件缓存和页面状态影响，不能把最坏频率说成已实测次数"
+    },
+    {
+      "id": "memory_checks",
+      "status": "代码确认大量小读校验；CPU占比待测",
+      "path": "src/weapon_bridge.cpp:77-85; src/mount_preview.hpp:157-246; src/su30sm_fixed_mount.hpp:105-144",
+      "behavior": "每次原生read/write均VirtualQuery；对象身份和布局巡检多次访问同一区域，名称按字符读取也逐字校验",
+      "implication": "后续应保留对象索引/序列号和页边界检查，考虑单次操作内批量读与缓存，不能靠去掉安全校验优化"
+    },
+    {
+      "id": "disabled_residual",
+      "status": "代码确认",
+      "path": "dist/DualSP/Scripts/main.lua:1003-1031; src/overlay.cpp:onPresent",
+      "behavior": "关闭后仍运行游戏线程调度、场景许可、语言检查、预览归还空操作、管理动作读取与状态发布、渲染/输入钩子；UE4SS和AC7MouseAim仍加载",
+      "implication": "若功能关闭仍卡，需进一步区分残留管理/许可、加载器、其他Mod与游戏本身"
+    },
+    {
+      "id": "overlay_idle",
+      "status": "已确认现有优化，暂不当作每帧绘制开销候选",
+      "path": "src/overlay.cpp:645-719",
+      "behavior": "管理面板关闭时不调用ImGui NewFrame、后端绘制或切换渲染目标；仍保留状态刷新、管理输入与100ms手柄轮询",
+      "implication": "不能笼统归因为管理界面每帧GPU绘制；回调外开销需另量"
+    }
+  ],
+  "next_measurement": {
+    "comparison": "功能关闭后两处不卡已收到用户确认；下一轮以分段诊断候选定位启用功能热点，并保持机体、镜头、分辨率/限帧/取证方式一致",
+    "breakdown": [
+      "场景许可及菜单池数量",
+      "页面发现与pump",
+      "optionsFor及配弹",
+      "原生预览identity/apply/rebind",
+      "UI发布/动作读取",
+      "回调外显隐钩子"
+    ],
+    "constraint": "用户已明确授权2.5.0完整构建、适用检查、安装和禁用锁定图标PAK，均已完成；未自动启动游戏。后续先取用户实际机库/评分分段日志再优化。"
+  },
+  "actions": {
+    "game_operated": false,
+    "runtime_changed": true,
+    "compiled": true,
+    "tests_added_or_run": true,
+    "installed": true,
+    "candidate_source_modified": true
+  },
+  "disabled_comparison": {
+    "runtime_verified_local": "2026-10-17T08:41:56.772229+08:00",
+    "mod_enabled": false,
+    "runtime_mod_enabled": false,
+    "verified": true,
+    "scene": "menu",
+    "rows": [
+      {
+        "time_local": "2026-10-17T08:41:23+08:00",
+        "scene": "menu",
+        "count": 688,
+        "average_ms": 0.349,
+        "peak_ms": 28.0
+      },
+      {
+        "time_local": "2026-10-17T08:41:38+08:00",
+        "scene": "menu",
+        "count": 704,
+        "average_ms": 0.303,
+        "peak_ms": 9.0
+      },
+      {
+        "time_local": "2026-10-17T08:41:53+08:00",
+        "scene": "menu",
+        "count": 696,
+        "average_ms": 0.322,
+        "peak_ms": 9.0
+      }
+    ],
+    "limits": "启动和当前菜单样本，实际页面未逐窗口标记；尚无用户同机体机库镜头与评分页对照结果，不能与先前9.416ms直接算改善比例",
+    "raw_local_only": "Temp/menu-performance-review-20261017/disabled-start"
+  },
+  "user_comparison": {
+    "reported_local_date": "2026-10-17",
+    "exact_feedback": "关闭mod后，机库预览飞机时移动镜头完全不卡，评分页也完全不卡",
+    "verified_runtime_disabled": true,
+    "scope": "机库预览移动镜头和通关评分界面；定性体验对照，未采集同机体同镜头严格帧时间曲线",
+    "conclusion": "应优先定位本Mod总开关启用的功能路径；仍加载的UE4SS/AC7MouseAim/管理与许可检查没有单独导致本次对照的卡顿体验，交互影响未排除；不能只据此锁定实验模型或某个函数"
+  },
+  "candidate_source": {
+    "path": "dist/DualSP/Scripts/main.lua",
+    "type": "分段性能诊断候选，非已完成优化修复",
+    "behavior": "保留PERF_TICK，每15秒输出PERF_STAGE的context/options/pages/preview_scene/preview_native/publish计数、总耗时、平均和峰值；不修改刷新频率/武器事务/失败回退",
+    "limits": "父阶段含子阶段，部分共享函数计数包含菜单事件调用，不能直接相加；跨场景重置并可能丢弃首帧分段，既有总tick仍照常计时；不覆盖所有原生钩子、渲染或完整帧",
+    "compiled": true,
+    "build_checks_or_functional_tests_run": true,
+    "installed": true,
+    "static_review": "已回读差异、校验文档JSON、检查差异空白；顶层local声明近似179→182，未把静态计数当Lua语法/运行验证",
+    "previous_installation_matched_v2_4_0_before_upgrade": true,
+    "version": "2.5.0",
+    "delivery_record": "evidence/2.5.0-diagnostics.json"
+  }
+}

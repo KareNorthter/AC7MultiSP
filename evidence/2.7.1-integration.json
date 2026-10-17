@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "candidate": "2.7.1",
+  "base_installed": "2.7.0",
+  "inputs": {
+    "mount": {
+      "thread": "01a1441b-45a7-7d91-80f2-cf03b98647b1",
+      "commit": "b1bc3700f7500ed45bdce7fdf5f14304b7b7230c",
+      "record": "evidence/2.7.0-mount-feedback-repair.json"
+    },
+    "uav": {
+      "thread": "01a14506-b653-7552-9bb2-98e6d1b612f9",
+      "branch": "codex/adf11f-uav-research",
+      "uncommitted_candidate": true,
+      "source_sha256": {
+        "src/continuous_sp.hpp": "f5bea4c16d53da55c17fe1c5eca9065a58d85a6aa9dc40b11e9de1541eee2b64",
+        "src/raven_sp.hpp": "06c80686e13d6f1ad40cf67801bfb76e576f442be84dba0b697b7a7f05b5e7be",
+        "evidence/adf11f-uav-research.json": "44c98c8feca689078ec059e9e169bee69cfcf25ba3368fca6f988a26be15ee68"
+      }
+    }
+  },
+  "integrated_input_sha256": {
+    "dist/DualSP/Scripts/main.lua": "5ea5835f29a2fbbc37d8956d8fdb71c3d98ba7460187124d3cf33774995507f7",
+    "src/weapon_bridge.cpp": "3f86a64bc35bd7006b20abde7d6201241ec1cfd66d5f89b0826da9919e1a9892",
+    "src/mount_expansion.hpp": "39633dcc3b28880a3b8b066fcb27332c144b28ac8b65451ab4f8eb42dc09f190",
+    "src/su30sm_fixed_mount.hpp": "5bf22427971d9526b52407ab17078836c5cd0c3de4104688f3112b284974e4f7",
+    "src/mount_mesh_override.hpp": "a8fca4d04c8955fe8ae6f5cf427b10e9e882ac8b9f55832628602fbed125b399",
+    "src/mount_preview.hpp": "25b2945d4e762a7c29c18d455cdc65ccbc279314f39bc7cf3afbae2b6b6b6c78",
+    "src/mount_expansion_data.hpp": "a468b5f3229ba3752de85120acbdde9c9cf85237da81e256750e4d9cc5899bf2",
+    "evidence/mount-expansion-batch2.json": "80f92f57d7231470288eff525a7e29ef018b2ee1c70dfd047a5bdeac923fd10e",
+    "evidence/mount-expansion-handoff.json": "6d18720ce52f949d20548bc9d02a90e9846a2085f2ee154562e9a08852100e5b",
+    "src/continuous_sp.hpp": "dd51ce78d293636d8c663e031a9c92d602fca2be39be5a026b5eab419ebd87ac",
+    "src/raven_sp.hpp": "0d4ddab485f60b132731b533781558e9d2d82dee58287584bec76cde0bd6358a",
+    "evidence/adf11f-uav-research.json": "1e68894b954898dfcf069c2ecce04287255857de52fb5c5f32a6e77c5872affe",
+    "tests/weapon_group_test.cpp": "729dbd667d1e0e7cdedc36191be93986ff5d8d9879ab30468646c1fcb8734f7c",
+    "tests/runtime_services_test.py": "3de97802b3387d80969eb727811ddeff13e9833c96951cd6ea03a4b38cff9f7b"
+  },
+  "changes": [
+    "F-2A连射等待原生允许后切换，五游戏秒取消并保留原生忙碌门控",
+    "挂载批量巡检减少重复校验，保留身份/父链/接管权及失败回退",
+    "Rafale按Socket名称双射匹配，保留原生数组下标",
+    "Typhoon双挂LAAM+8AGM=4+18、LAAM+HCAA=4+4、8AGM+HCAA=18+4",
+    "ADF-11F两架UAV切回TLS时，通过加载器公开游戏分配器扩容引用数组"
+  ],
+  "integration_adjustments": [
+    "引用扩容抽取延迟分配入口供合成内存验证；实际运行仍绑定同一游戏分配器"
+  ],
+  "asset_package_changed": false,
+  "profiles_migration_required": false,
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "manual_test_focus": [
+    "F-2A连射中切换及机库/任务性能",
+    "Rafale七组合及离架/补装",
+    "Typhoon三个双挂的布局/发射净空",
+    "ADF-11F两架UAV活动中切TLS/QAAM及完整退场、补给/检查点"
+  ],
+  "limits": [
+    "性能收益和新选位净空待实机测试",
+    "合成数组检查不能替代游戏分配器/GC与完整生命周期实测",
+    "本轮未新增动画机型"
+  ],
+  "installed_at": "2026-10-17T11:02:05.136925+08:00",
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-110205-136925",
+  "runtime_files_verified": 16,
+  "protected_files_verified": 131,
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "receipts": {
+    "build": "evidence/2.7.1-build.json",
+    "tests": "evidence/2.7.1-tests.json",
+    "installed": "evidence/2.7.1-installed.json"
+  },
+  "verification": [
+    "十机70组合与生成表一致；Typhoon双挂新数量一致；16资源及PAK不变",
+    "实际Lua连射等待、成对输入、节流/超时、上下文/空弹取消及类别重试",
+    "合成数组强制搬迁、失败不改头、原元素/Num保留、无须扩容不调用分配器",
+    "原生忙碌条件与挂载反向表首匹配/64位高位；既有适用检查通过",
+    "成套运行文件、个人配置/存档及其他模组核对；未自动启动游戏"
+  ]
+}

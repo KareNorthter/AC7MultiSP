@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "candidate": "2.7.0",
+  "base_installed": "2.6.0",
+  "inputs": {
+    "mount_repair": {
+      "thread": "01a1441b-45a7-7d91-80f2-cf03b98647b1",
+      "technical_commit": "e35ff09",
+      "record": "evidence/2.6.0-mount-loader-repair.json",
+      "already_in_current_source": true
+    },
+    "uav": {
+      "thread": "01a14506-b653-7552-9bb2-98e6d1b612f9",
+      "branch": "codex/adf11f-uav-research",
+      "base_commit": "8f600e4",
+      "uncommitted_candidate": true,
+      "source_files": {
+        "src/continuous_sp.hpp": "c510d8bd0993d55bad4796e245ec069a43a9b0eda4d6365072e892d412d82a20",
+        "src/raven_sp.hpp": "06c80686e13d6f1ad40cf67801bfb76e576f442be84dba0b697b7a7f05b5e7be",
+        "src/weapon_bridge.cpp": "f68df0aece683644e767413d0be612b8551b1c4f8b772cde5dd9828b53fe5826",
+        "dist/DualSP/Scripts/main.lua": "986c92a3718add2f316723310ab75ac466c009796a60e9b763a04dd52f998e6b",
+        "evidence/adf11f-uav-research.json": "c4d196368f30840a0b0b752d2004131f2d3767ec4f3bf7c7127800345a47089e"
+      }
+    },
+    "animation": {
+      "thread": "01a14787-e328-72b3-9b0e-1bfa7d81cc52",
+      "commit": "e519d02",
+      "policy": "src/research/sp_switch_animation_policies.json",
+      "record": "evidence/sp-switch-animation-research.json",
+      "runtime_enabled": false,
+      "new_runtime_eligible_aircraft": 0,
+      "combination_cases": 105
+    }
+  },
+  "merge_choices": [
+    "保留当前26号字体、管理协议7、安全总开关、快捷提示、分段与评分页门控",
+    "保留十机布局与XFA-27原生ECM精确契约",
+    "UAV以机体和原生三配置、真实武器类/虚表/冷却为准入，其他UAV不放开",
+    "UAV普通帧由Active保有，切SP仅临时RootSet，不修改目标/攻击/寿命或已射出子弹",
+    "UAV模型回收与战斗Actor分离，ADF-11F仍为原生当前SP模型",
+    "动画仅合入设计/策略/分析器与证据；未满足整机准入的活动机体维持原生模型"
+  ],
+  "integration_adjustments": [
+    "将持续兵装检查合并为机体+武器双参数，保留XFA-27并严格限定机体/类组合",
+    "抽出两表去重与延迟队列筛选函数，用合成内存验证，实际调用仍由原生重建顺序执行"
+  ],
+  "program_version_changed": true,
+  "profiles_migration_required": false,
+  "asset_package_changed": false,
+  "compiled": true,
+  "tests_passed": true,
+  "installed": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "manual_test_focus": [
+    "四机独立挂架是否成功加载、七组合与离架/补装",
+    "ADF-11F三个双挂及三挂，UAV攻击中换QAAM/TLS并发射、TLS中换UAV/QAAM",
+    "两架UAV独立冷却，最后两秒切回、低库存/最后一发",
+    "在途UAV/TLS时调试拒绝，效果结束后恢复调试；补给/检查点/重启",
+    "Morgan及XFA-27持续效果回归；未知机型原生模型回退"
+  ],
+  "limits": [
+    "未验证真实引擎AssetRegistryHelpers工厂加载",
+    "UAV真实伤害、特殊目标、完整生命周期和场景边界待实玩",
+    "动画研究未新增可安装机型"
+  ],
+  "installed_at": "2026-10-17T10:20:57.803131+08:00",
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-102057-803131",
+  "runtime_files_verified": 16,
+  "protected_files_verified": 128,
+  "mount_assets_sha256": "98d19128ae4e9bbadfd84b1f8abf934344a69fa467cb1a38a28f23a7361a641a",
+  "profiles_preserved": true
+}

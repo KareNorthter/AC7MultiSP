@@ -1,4 +1,4 @@
-// ADFX-01 持续兵装实验；在核心私有命名空间内使用，仅限 build 9855922。
+// 已登记机型的持续兵装；在核心私有命名空间内使用，仅限 build 9855922。
 #pragma once
 
 struct ContinuousIdentity { Addr address{}; int index{},serial{}; };
@@ -15,6 +15,10 @@ struct ContinuousEffect {
 std::vector<ContinuousEffect> continuousEffects; // 弱身份；强引用由原生数组持有。
 using ContinuousNotify=void(*)(void*,void*);
 ContinuousNotify continuousOriginalRelease{},continuousOriginalRetire{};
+using ContinuousEnd=void(*)(void*);
+ContinuousEnd continuousOriginalUavEnd{};
+bool continuousUavHookReady=false;
+std::string continuousUavHookFailure;
 bool continuousHooksReady=false;
 std::string continuousHookFailure;
 std::string continuousRuntimeFailure; // 回调错误留给下一次 HUD/命令读取，不能只写日志后继续运行。
@@ -55,21 +59,48 @@ std::string continuousName(Addr object) {
 bool continuousClass(Addr cls,const char* name,const char* package) {
     return continuousName(cls)==name && continuousName(read<Addr>(cls+0x20))==package;
 }
-bool continuousMorgan(Addr plane) {
+bool continuousPlaneClass(Addr plane,const char* name,const char* package) {
     continuousIdentity(plane);
     Addr cls=read<Addr>(plane+0x10);
     for(int i=0;cls && i<32;++i,cls=read<Addr>(cls+0x30))
-        if(continuousClass(cls,"AcePlayerPawn_mrgn_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_mrgn"))return true;
+        if(continuousClass(cls,name,package))return true;
     return false;
 }
+bool continuousMorgan(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_mrgn_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_mrgn");
+}
+bool continuousRaven(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_adf11f_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_adf11f");
+}
+bool continuousRavenLoadout(Addr activator) {
+    const std::array<const char*,3> names{"plwp_tls_x3_C","plwp_qaam_a0_C","plwp_WeaponUAV_C"};
+    const std::array<const char*,3> packages{"/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0","/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV"};
+    for(int i=0;i<3;++i) {
+        const Addr cls=read<Addr>(activator+0x158+i*0x30); // PlayerSpecialWeaponConfig.WeaponClass。
+        if(!cls || !continuousClass(cls,names[i],packages[i]))return false;
+    }
+    return true;
+}
+bool continuousXfa27(Addr plane) {
+    return continuousPlaneClass(plane,"AcePlayerPawn_fa27_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa27");
+}
+bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane);}
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
-bool continuousSupported(Addr weapon) {
+bool continuousSupported(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
     const int id=read<unsigned char>(weapon+0x3b0);
-    const bool tls=id==25 && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1");
-    const bool ecm=id==31 && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0");
-    return (tls || ecm) && read<unsigned char>(weapon+0x458)==1 && !read<unsigned char>(weapon+0x459) &&
-        !read<Addr>(weapon+0x5d8) && read<Addr>(table+0x648)==base+0x894850 &&
+    const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
+    const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
+        (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")));
+    const bool ecm=id==31 && ((morgan && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0")) ||
+        (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")));
+    const bool uav=raven && id==26 && continuousClass(cls,"plwp_WeaponUAV_C","/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV");
+    if(!(tls || ecm || uav) || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return false;
+    if(uav)return !read<unsigned char>(weapon+0x45d) && read<float>(weapon+0x518)==0 && read<Addr>(table+0x618)==base+0x8a6bf0 &&
+        read<Addr>(table+0x628)==base+0x8779a0 && read<Addr>(table+0x648)==base+0x8a5260 &&
+        read<Addr>(table+0x668)==base+0x878d40 && read<Addr>(table+0x680)==base+0x878eb0;
+    return read<Addr>(table+0x648)==base+0x894850 &&
         read<Addr>(table+0x628)==base+(tls?0x85f1c0:0x895fd0) &&
         read<Addr>(table+0x680)==base+(tls?0x861490:0x86bf90);
 }
@@ -83,6 +114,49 @@ ContinuousArray continuousArray(Addr header) {
 bool continuousContains(const ContinuousArray& a,Addr actor) {
     for(int i=0;i<a.count;++i)if(read<Addr>(a.data+i*sizeof(Addr))==actor)return true;
     return false;
+}
+// 加载器公开的 FMemory 接口最终调用游戏 GMalloc；不能用 CRT/std::vector 的内存替换 UPROPERTY 数组。
+using ContinuousRealloc=void*(*)(void*,size_t,unsigned);
+ContinuousRealloc continuousAllocator() {
+    const auto module=GetModuleHandleW(L"UE4SS.dll");
+    require(module!=nullptr,"持续兵装：加载器未就绪，无法准备引用容量");
+    const auto ready=reinterpret_cast<Addr>(GetProcAddress(module,"?bVersionedContainerIsInitialized@StaticStorage@UnrealInitializer@Unreal@RC@@2_NA"));
+    const auto allocator=reinterpret_cast<Addr>(GetProcAddress(module,"?GMalloc@Unreal@RC@@3PEAPEAVFMalloc@12@EA"));
+    const auto realloc=reinterpret_cast<ContinuousRealloc>(GetProcAddress(module,"?Realloc@FMemory@Unreal@RC@@SAPEAXPEAX_KI@Z"));
+    require(ready && allocator && realloc,"持续兵装：加载器缺少原生引用分配接口");
+    require(read<unsigned char>(ready)==1 && read<Addr>(allocator) && read<Addr>(read<Addr>(allocator)),
+        "持续兵装：游戏分配器尚未绑定");
+    return realloc;
+}
+// 分配入口延迟取得；离线检查可验证移动/失败分配，运行时始终使用游戏分配器。
+template<typename AllocatorProvider>
+void continuousReserveUsing(Addr header,size_t required,const char* kind,AllocatorProvider allocatorProvider) {
+    const auto before=continuousArray(header);
+    require(required<=65536,"持续兵装：引用数量超过安全边界");
+    if(required<=static_cast<size_t>(before.capacity))return;
+    const int capacity=std::max(static_cast<int>(required),std::min(65536,before.capacity+std::max(4,before.capacity/2)));
+    checkMemory(header,16); // 分配前完成头部检查；成功后立即公布新指针，不能再持有已释放的旧 data。
+    const auto realloc=allocatorProvider();
+    const Addr data=reinterpret_cast<Addr>(realloc(reinterpret_cast<void*>(before.data),static_cast<size_t>(capacity)*sizeof(Addr),0));
+    require(data!=0,"持续兵装：游戏分配器未返回引用空间");
+    std::memcpy(reinterpret_cast<void*>(header),&data,sizeof(data));
+    std::memcpy(reinterpret_cast<void*>(header+12),&capacity,sizeof(capacity)); // Num 不变；新增元素尚未写入。
+    const auto after=continuousArray(header);
+    require(after.count==before.count && after.capacity>=static_cast<int>(required),"持续兵装：引用扩容后布局改变");
+    nativeLog(Json{{"event","CONTINUOUS_REFERENCE_GROWN"},{"array",kind},{"count",before.count},
+        {"old_capacity",before.capacity},{"required",required},{"new_capacity",after.capacity}}.dump());
+}
+void continuousReserve(Addr header,size_t required,const char* kind) {
+    continuousReserveUsing(header,required,kind,continuousAllocator);
+}
+// UAV可仅由Active保有；并集去重后再逐项核对身份，不能复制两份旧数组头。
+std::vector<Addr> continuousCandidates(const ContinuousArray& active,const ContinuousArray& spawned) {
+    std::vector<Addr> result;
+    for(const auto& array:{active,spawned})for(int i=0;i<array.count;++i) {
+        const Addr object=read<Addr>(array.data+i*sizeof(Addr));
+        if(object && std::find(result.begin(),result.end(),object)==result.end())result.push_back(object);
+    }
+    return result;
 }
 void continuousRemove(Addr header,Addr actor) {
     const auto a=continuousArray(header);int count=0;
@@ -122,6 +196,34 @@ void continuousNotification(void* activator,void* weapon,bool final) noexcept {
 }
 void continuousRelease(void* activator,void* weapon){continuousNotification(activator,weapon,false);}
 void continuousRetire(void* activator,void* weapon){continuousNotification(activator,weapon,true);}
+// UAV 零尾迹直接到这里，先补足源对象 Release，再完整执行其导弹/武器父类收尾。
+void continuousUavEnd(void* weapon) {
+    if(GetCurrentThreadId()==continuousThread.load())for(auto& e:continuousEffects) {
+        if(e.actor.address!=reinterpret_cast<Addr>(weapon))continue;
+        try {if(continuousSameShot(e)) {
+            continuousRemove(e.activator.address+0x338,e.actor.address);e.released=true;
+            nativeLog(Json{{"event","CONTINUOUS_UAV_RELEASE_ISOLATED"},{"source",e.source},{"index",e.actor.index},{"serial",e.actor.serial}}.dump());
+        }}
+        catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_UAV_END_ERROR ")+error.what());}
+        break;
+    }
+    continuousOriginalUavEnd(weapon);
+}
+void continuousInstallUav() {
+    require(continuousUavHookFailure.empty(),continuousUavHookFailure.c_str());
+    if(continuousUavHookReady)return;
+    const Addr base=continuousBase();
+    constexpr unsigned char end[]={0x40,0x53,0x48,0x83,0xec,0x20,0x33,0xd2,0x48,0x8b,0xd9,0xe8,0x20,0x7f,0xff,0xff};
+    constexpr unsigned char parent[]={0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x8b,0xd9,0x33,0xd2,0x48,0x81,0xc1,0xe0,0x06,0,0};
+    try {
+        require(std::memcmp(reinterpret_cast<void*>(base+0x878eb0),end,sizeof(end))==0 &&
+            std::memcmp(reinterpret_cast<void*>(base+0x871ca0),parent,sizeof(parent))==0,"持续兵装：UAV 收尾入口不匹配");
+        require(MH_CreateHook(reinterpret_cast<void*>(base+0x878eb0),reinterpret_cast<void*>(&continuousUavEnd),
+            reinterpret_cast<void**>(&continuousOriginalUavEnd))==MH_OK,"持续兵装：UAV 收尾接入失败");
+        require(MH_EnableHook(reinterpret_cast<void*>(base+0x878eb0))==MH_OK,"持续兵装：UAV 收尾启用失败");
+        continuousUavHookReady=true;
+    }catch(const std::exception& error){MH_DisableHook(reinterpret_cast<void*>(base+0x878eb0));continuousUavHookFailure=error.what();throw;}
+}
 void continuousInstall() {
     require(continuousHookFailure.empty(),continuousHookFailure.c_str());
     if(continuousHooksReady){require(GetCurrentThreadId()==continuousThread.load(),"持续兵装：调用线程改变");return;}
@@ -171,7 +273,7 @@ bool continuousAttachmentIntact(const ContinuousEffect& e) {
 // 完整原生结束 + 最终退场，用于补给/检查点/重建失败。不能把两秒尾迹丢在无引用区间。
 void continuousFinish(ContinuousEffect& e) {
     if(!continuousSameShot(e))return;
-    require(continuousSupported(e.actor.address),"持续兵装：回退收尾接口改变");
+    require(continuousSupported(e.plane.address,e.actor.address),"持续兵装：回退收尾接口改变");
     using End=void(*)(void*);
     reinterpret_cast<End>(continuousBase()+0x894af0)(reinterpret_cast<void*>(e.actor.address));
     if(continuousSameShot(e))reinterpret_cast<End>(read<Addr>(read<Addr>(e.actor.address)+0x680))(reinterpret_cast<void*>(e.actor.address));
@@ -201,28 +303,35 @@ struct ContinuousRebuild {
     Addr plane{},activator{};
     std::vector<ContinuousRoot> roots;
     bool committed=false;
+    bool rebuilding=false;
     explicit ContinuousRebuild(const Command& command,bool strict=true) {
-        if(command.op!="switch" || !continuousMorgan(command.plane))return;
+        if(command.op!="switch" || !continuousPlane(command.plane))return;
         plane=command.plane;activator=command.activator;
         continuousInstall();continuousSweep();
+        if(continuousRaven(plane))continuousInstallUav();
         const auto active=continuousArray(activator+0x338),spawned=continuousArray(activator+0x2e8);
         // 活动数组已移除的尾迹，从现有弱身份记录保留，不恢复历史已退场对象。
         std::vector<ContinuousEffect> additions;
-        for(int i=0;i<spawned.count;++i) {
-            const Addr w=read<Addr>(spawned.data+i*sizeof(Addr));
+        const auto candidates=continuousCandidates(active,spawned);
+        for(const Addr w:candidates) {
             if(!w || read<Addr>(w+0x3b8)!=plane || !read<unsigned char>(w+0x368))continue;
-            const int id=read<unsigned char>(w+0x3b0);if(id!=25 && id!=31)continue;
-            if(!continuousSupported(w)) {
-                require(!strict,"持续兵装：仅支持 ADFX-01 原生 TLS/IEWS 的发射即装填机制");continue;
+            const int id=read<unsigned char>(w+0x3b0);if(id!=25 && id!=31 && id!=26)continue;
+            if(!continuousSupported(plane,w)) {
+                require(!strict,"持续兵装：只保留已登记机型的原生 TLS/IEWS/UAV 与发射即装填机制");continue;
             }
             if(std::any_of(continuousEffects.begin(),continuousEffects.end(),[w](const auto& e){return e.actor.address==w;}))continue;
             require(read<unsigned char>(w+0x5c0) || continuousContains(active,w),"持续兵装：发射对象缺少活动登记");
             ContinuousEffect e;e.actor=continuousIdentity(w);e.plane=continuousIdentity(plane);e.activator=continuousIdentity(activator);
-            e.level=continuousIdentity(read<Addr>(plane+0x20));e.weaponClass=read<Addr>(w+0x10);e.source=session.active;
+            e.level=continuousIdentity(read<Addr>(plane+0x20));e.weaponClass=read<Addr>(w+0x10);e.source=-1;
+            for(int slot=0;slot<session.count;++slot)if(session.special[slot].valid && session.special[slot].weaponClass==e.weaponClass)e.source=slot;
+            require(e.source>=0,"持续兵装：找不到发射源逻辑槽");
             e.age=read<float>(w+0x610);e.retirement=read<uint64_t>(w+0x370);e.released=read<unsigned char>(w+0x5c0)!=0;
             require(std::isfinite(e.age) && e.age>=0,"持续兵装：对象时间无效");continuousAttachment(e);additions.push_back(std::move(e));
         }
         require(continuousEffects.size()+additions.size()<=64,"持续兵装：待退场对象过多");
+        // 有在途效果时先核对分配后端；不能等原生重建已清空引用后才发现接口缺失。
+        if(!additions.empty() || std::any_of(continuousEffects.begin(),continuousEffects.end(),[this](const auto& e){
+            return e.plane.address==plane && e.activator.address==activator;}))continuousAllocator();
         continuousEffects.reserve(continuousEffects.size()+additions.size());
         roots.reserve(continuousEffects.size()+additions.size());
         // 先完成所有可失败的校验/保有，再登记新对象，避免构造失败改变现有收尾政策。
@@ -236,17 +345,27 @@ struct ContinuousRebuild {
     }
     void restoreReferences() {
         if(!plane){committed=true;return;}
-        const auto active=continuousArray(activator+0x338),spawned=continuousArray(activator+0x2e8);
+        auto active=continuousArray(activator+0x338),spawned=continuousArray(activator+0x2e8);
         std::vector<Addr> addActive,addSpawned;
         for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator) {
             require(continuousSameShot(e),"持续兵装：重建改变了活动对象身份或发射代次");
             require(continuousAttachmentIntact(e),"持续兵装：重建破坏 TLS 附着");
-            if(!continuousContains(spawned,e.actor.address))addSpawned.push_back(e.actor.address);
+            // UAV 由 ActiveWeapons 保有，SpawnedWeapons 会被新 MSL 覆盖，且新 SP 的小池未必容得下两架 UAV。
+            if(read<unsigned char>(e.actor.address+0x3b0)!=26 && !continuousContains(spawned,e.actor.address))addSpawned.push_back(e.actor.address);
             if(!e.released && !read<unsigned char>(e.actor.address+0x5c0) && !continuousContains(active,e.actor.address))addActive.push_back(e.actor.address);
         }
+        const size_t neededActive=active.count+addActive.size(),neededSpawned=spawned.count+addSpawned.size();
+        nativeLog(Json{{"event","CONTINUOUS_REFERENCE_PLAN"},{"active_count",active.count},{"active_capacity",active.capacity},
+            {"active_required",neededActive},{"spawned_count",spawned.count},{"spawned_capacity",spawned.capacity},{"spawned_required",neededSpawned}}.dump());
+        continuousReserve(activator+0x338,neededActive,"active");
+        continuousReserve(activator+0x2e8,neededSpawned,"spawned");
+        // Realloc 可移动 data；两组准备完毕后重新读取，禁止使用旧分配区地址。
+        active=continuousArray(activator+0x338);spawned=continuousArray(activator+0x2e8);
+        require(active.count+addActive.size()==neededActive && spawned.count+addSpawned.size()==neededSpawned,
+            "持续兵装：容量准备期间原生引用数量改变");
         require(active.count+addActive.size()<=static_cast<size_t>(active.capacity) &&
-            spawned.count+addSpawned.size()<=static_cast<size_t>(spawned.capacity),"持续兵装：原生引用数组容量不足，旧效果将结束");
-        // 两组全部验证后才写元素与 Num，不复制数组头，不换分配器或扩大 Max。
+            spawned.count+addSpawned.size()<=static_cast<size_t>(spawned.capacity),"持续兵装：原生引用容量准备失败");
+        // 两组容量就绪后才写缺项与 Num，不复制旧数组头，不改变元素数量语义或分配器。
         for(size_t i=0;i<addSpawned.size();++i)write<Addr>(spawned.data+(spawned.count+i)*sizeof(Addr),addSpawned[i]);
         for(size_t i=0;i<addActive.size();++i)write<Addr>(active.data+(active.count+i)*sizeof(Addr),addActive[i]);
         write<int>(spawned.header+8,spawned.count+static_cast<int>(addSpawned.size()));
@@ -256,7 +375,7 @@ struct ContinuousRebuild {
             {"active_added",addActive.size()},{"spawned_added",addSpawned.size()}}.dump());
     }
     ~ContinuousRebuild() noexcept {
-        if(!plane || committed)return;
+        if(!plane || committed || !rebuilding)return;
         // 临时 root 析构前结束旧效果；异常明确记录，不能声称已经恢复持续行为。
         for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator)
             try{continuousFinish(e);}catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_ABORT_ERROR ")+error.what());}

@@ -40,6 +40,16 @@ def main():
     if args.apply and result_path.exists():
         raise ValueError('此版本已有安装回执，请先核对，不能覆盖历史')
     game = Path('E:/SteamLibrary/steamapps/common/ACE COMBAT 7')
+    asset_relative = 'Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak'
+    asset_target = contained(game / asset_relative, game)
+    asset_source = build / receipt['mount_assets']['file']
+    asset_hash = receipt['mount_assets']['sha256']
+    old_asset = previous.get('mount_assets')
+    if old_asset:
+        if old_asset.get('path')!=asset_relative or digest(asset_target)!=old_asset['sha256']:
+            raise ValueError('已装挂架资源与基线不符')
+    elif asset_target.exists():
+        raise ValueError('挂架包目标已被未登记文件占用，停止覆盖')
     mod = game / 'ue4ss/Mods/DualSP'  # 不操作其他模组和发布包。
     if mod.is_symlink() or mod.is_junction() or not mod.resolve(strict=True).is_relative_to(game.resolve(strict=True)):
         raise ValueError('安装目标路径无效')
@@ -58,6 +68,7 @@ def main():
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
     plan = {'candidate': version, 'base': previous['candidate'], 'runtime_files': hashes,
+            'mount_assets': {'path':asset_relative,'sha256':asset_hash,'variant_count':16,'file_count':32},
             'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动备份后迁移管理参数6的快捷键',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
@@ -79,7 +90,8 @@ def main():
     for folder in (game / 'Game/Content/Paks').glob('*'):
         if folder.is_dir():
             for name in inventory(folder):
-                protected_paths.append(folder / name)
+                if folder / name != asset_target:
+                    protected_paths.append(folder / name)
     protected = {path: digest(path) for path in protected_paths}  # 仅校验摘要，公共证据不保存个人内容。
     now = datetime.now(timezone(timedelta(hours=8)))
     batch = now.strftime('%Y%m%d-%H%M%S-%f')
@@ -93,6 +105,10 @@ def main():
     contained(backup, root / "backup")
     contained(staging, root / "Temp")
     shutil.copytree(mod, staging)
+    asset_staging = staging.parent / asset_source.name
+    shutil.copy2(asset_source, asset_staging)
+    if digest(asset_staging)!=asset_hash:
+        raise ValueError('挂架包暂存核对失败')
     for name, source in sources.items():
         target = staging / name  # 仅复制已核验运行文件，保留已有音频。
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -123,15 +139,26 @@ def main():
     contained(mod, game)
     contained(backup / 'DualSP', root / 'backup')
     contained(staging, root / 'Temp')
-    mod.rename(backup / 'DualSP')  # 两个绝对目标均已检查，无递归删除和跨壳路径拼接。
+    if (old_asset and digest(asset_target)!=old_asset['sha256']) or (not old_asset and asset_target.exists()):
+        raise ValueError('交换前挂架包发生并发变化')
+    asset_backup = backup / 'MountAssets' / asset_target.name
+    asset_backup.parent.mkdir()
+    if old_asset:
+        asset_target.rename(asset_backup)
     try:
+        asset_staging.rename(asset_target)
+        mod.rename(backup / 'DualSP')  # 两个绝对目标均已检查，无递归删除和跨壳路径拼接。
         staging.rename(mod)
     except OSError:
         # 交换第二步失败时归还原目录；不删除任何文件。
-        if not mod.exists():
+        if not mod.exists() and (backup / 'DualSP').exists():
             (backup / 'DualSP').rename(mod)
+        if asset_target.exists():
+            asset_target.rename(asset_staging)
+        if old_asset:
+            asset_backup.rename(asset_target)
         raise
-    if inventory(mod) != expected or inventory(backup / 'DualSP') != before or any(digest(path) != value for path, value in protected.items()):
+    if digest(asset_target)!=asset_hash or inventory(mod) != expected or inventory(backup / 'DualSP') != before or any(digest(path) != value for path, value in protected.items()):
         raise RuntimeError('安装后校验失败，完整备份位于：' + str(backup))
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
               'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,

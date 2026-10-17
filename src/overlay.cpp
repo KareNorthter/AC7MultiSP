@@ -52,7 +52,7 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=6; // 新管理参数必须与游戏线程成套安装。
+constexpr int managementProtocol=7; // 安全菜单总开关与提示状态须搭配本版控制器。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
@@ -63,9 +63,34 @@ std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组�
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
 int hotkeyRequest=0,hotkeyResponse=0;
+int masterResponse=0;
 std::array<bool,256> consumedShortcutKeys{};
 std::string hotkeyToast;
 ULONGLONG hotkeyToastUntil{};
+bool toastIsError=false;
+Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
+void showToast(std::string message,bool error=false) {
+    const auto newline=message.find_first_of("\r\n");
+    if(newline!=std::string::npos)message.resize(newline);
+    const auto source=message.find(".lua:");
+    if(source!=std::string::npos) {
+        size_t end=source+5;
+        while(end<message.size()&&message[end]>='0'&&message[end]<='9')++end;
+        if(end<message.size()&&message[end]==':') {
+            ++end;while(end<message.size()&&message[end]==' ')++end;
+            message.erase(0,end); // 悬浮窗省略源码路径和行号，完整信息仍保留在日志和管理页。
+        }
+    }
+    // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
+    if(message.size()>240) {
+        size_t end=240;
+        while(end && (static_cast<unsigned char>(message[end])&0xc0)==0x80)--end;
+        message.resize(end);message+="…";
+    }
+    if(message.empty())return;
+    hotkeyToast=std::move(message);toastIsError=error;
+    hotkeyToastUntil=GetTickCount64()+(error?6500:4500);
+}
 int managementTab=0,requestedTab=-1; // Ctrl+Tab 在四个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到语言选择，不依赖鼠标点击。
 // 日志只在页面打开或手动刷新时读取。
@@ -244,7 +269,7 @@ bool init(IDXGISwapChain* swap) {
     io.ConfigNavMoveSetMousePos=false;
     io.ConfigNavEscapeClearFocusItem=false; // 关闭下拉框后保留可见的键盘焦点。
     const auto font=std::filesystem::path(L"C:/Windows/Fonts/msyh.ttc");
-    if(std::filesystem::exists(font))io.Fonts->AddFontFromFileTTF(font.string().c_str(),20.f,nullptr,io.Fonts->GetGlyphRangesChineseFull());
+    if(std::filesystem::exists(font))io.Fonts->AddFontFromFileTTF(font.string().c_str(),26.f,nullptr,io.Fonts->GetGlyphRangesChineseFull());
     else io.Fonts->AddFontDefault();
     ImGui::StyleColorsDark();auto& s=ImGui::GetStyle();s.WindowRounding=2;s.FrameRounding=2;s.WindowPadding={24,22};s.ItemSpacing={14,12};
     s.Colors[ImGuiCol_WindowBg]={.025f,.065f,.085f,.98f};
@@ -453,9 +478,9 @@ bool beginManagementTab(const char* label,int index) {
 // 普通管理和显式调试分开，键盘焦点始终可以到达所有操作。
 void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
-    const float width=std::min(940.f,display.x-40),height=std::min(740.f,display.y-35);
+    const float width=std::min(1180.f,display.x-40),height=std::min(920.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.4.0 管理###DualSPManagement","AC7MultiSP 2.4.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.7.1 管理###DualSPManagement","AC7MultiSP 2.7.1 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
@@ -482,19 +507,21 @@ void drawPanel() {
         if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
             if(requestedTab==0)ImGui::SetKeyboardFocusHere();
             ImGui::Checkbox(tr("启用 AC7MultiSP###ModEnabled","Enable AC7MultiSP###ModEnabled"),&draftModEnabled);
-            ImGui::TextWrapped("%s",tr("总开关保存后重启游戏生效。关闭后恢复原生兵装流程，仍可打开管理页重新启用。","Save and restart the game to apply the master switch. When disabled, native loadouts are restored; management remains available to enable the mod again."));
+            ImGui::TextWrapped("%s",tr("在主菜单或单人任务选择页保存，总开关可直接生效。任务、补给及机库中保存后，返回上述安全菜单自动应用，无需重启游戏；管理入口始终保留。","Save in the main menu or single-player mission selection to apply immediately. Saves in missions, resupply or the hangar apply automatically upon returning to those safe menus; no game restart is required. Management remains available."));
             ImGui::SetNextItemWidth(300);
             ImGui::SliderInt(tr("双 SP 各自弹药量###AmmoTwo","Ammo per SP with two SPs###AmmoTwo"),&draftAmmoPercentTwo,50,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
             ImGui::SetNextItemWidth(300);
             ImGui::SliderInt(tr("三 SP 各自弹药量###AmmoThree","Ammo per SP with three SPs###AmmoThree"),&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
             ImGui::TextWrapped("%s",tr("默认双 SP 各 50%、三 SP 各 33%；单 SP 为 100%。先计入部件，再按百分比向上取整。保存后于下一次出击、补给确认或调试应用时配弹。","Defaults: 50% per SP with two SPs, 33% with three, 100% with one. Parts apply first, then the percentage is rounded up. Saved values apply at the next departure, resupply confirmation or debug loadout application."));
             ImGui::Checkbox(tr("多 SP 武器模型同时挂载（实验性）###FixedMount","Simultaneous multi-SP weapon models (experimental)###FixedMount"),&draftFixedMountEnabled);
-            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。仅适配原版 F-15E、F-35C、Su-30SM；关闭或挂载失败时回退到原生单 SP 模型。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Supports the original F-15E, F-35C and Su-30SM. Disabled or failed mounting falls back to native single-SP models."));
+            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。适配原有三机与新增十机（详见安装说明）；关闭或挂载失败时回退到原生单 SP 模型。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Supports the original three aircraft and ten new aircraft; see installation notes. Disabled or failed mounting falls back to native single-SP models."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
             ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",state.at("mount_warning").get<std::string>().c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
-                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，请重启游戏。","Master switch saved. Restart the game to apply."));
+                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
+            if(state.contains("master_switch")&&state.at("master_switch").contains("error"))
+                ImGui::TextWrapped("%s",state.at("master_switch").at("error").get<std::string>().c_str());
             if(state.at("fixed_mount_enabled").get<bool>()!=state.at("runtime_fixed_mount_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("模型开关已保存，等待重新出击、任务/检查点重试、补给确认或调试换装。","Model switch saved. Awaiting a sortie, mission/checkpoint retry, confirmed resupply or debug loadout."));
             ImGui::EndTabItem();
@@ -566,7 +593,7 @@ void drawPanel() {
     if(ImGui::Button(tr("保存设置","Save settings"),{180,36}))saveManagementSettings();
     ImGui::EndDisabled();ImGui::SameLine();
     if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
-    ImGui::TextWrapped("%s",tr("语言和键位保存后生效；总开关需重启游戏，模型开关在下次武器重建时生效。修改比例不会立即补充当前弹药。关闭会丢弃未保存修改。","Language and bindings apply after saving; the master switch requires a game restart, and the model switch applies at the next weapon rebuild. Percentage changes do not immediately refill ammunition. Closing discards unsaved changes."));
+    ImGui::TextWrapped("%s",tr("语言和键位保存后生效；总开关在主菜单等安全入口应用。修改比例不会立即补充当前弹药。关闭会丢弃未保存修改。","Language and bindings apply after saving; the master switch applies at safe menus such as the main menu. Percentage changes do not immediately refill ammunition. Closing discards unsaved changes."));
     ImGui::TextWrapped(tr("%s 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","%s or controller Back + Y opens/closes management. Opening during a mission pauses the game."),shortcutLabel(shortcuts[0]).c_str());
     // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
     const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
@@ -633,11 +660,29 @@ void refreshState() {
         const auto& hotkey=state.at("debug_hotkey");
         hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
         if(hotkey.at("response").get<int>()!=hotkeyResponse) {
-            hotkeyResponse=hotkey.at("response").get<int>();hotkeyToast=hotkey.value("notice",std::string());
-            hotkeyToastUntil=GetTickCount64()+4500;
+            hotkeyResponse=hotkey.at("response").get<int>();showToast(hotkey.value("notice",std::string()));
             draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
         }
+        if(state.contains("master_switch")) {
+            const auto& master=state.at("master_switch");
+            if(master.value("response",0)!=masterResponse) {
+                masterResponse=master.value("response",0);showToast(master.value("notice",std::string()));
+            }
+        }
+        Json errors=Json::object();
+        for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
+            if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
+        for(const char* field:{"debug_loadout","management_pause","master_switch"})
+            if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
+                &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
+        for(auto item=errors.begin();item!=errors.end();++item) {
+            if(!reportedToastErrors.contains(item.key())||reportedToastErrors.at(item.key())!=item.value()) {
+                showToast(std::string(tr("Mod提示：","Mod: "))+item.value().get<std::string>(),true);break;
+            }
+        }
+        reportedToastErrors=std::move(errors);
     }catch(const std::exception& error) {
+        if(managementError!=error.what())showToast(std::string(tr("管理状态错误：","Management state error: "))+error.what(),true);
         managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());
     }
 }
@@ -684,9 +729,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     }
                     previousPadButtons=buttons;padWasConnected=connected;
                 }
-                // Flight HUD is native UMG. With the menu closed there is no
-                // ImGui frame, backend update or render-target state change.
-                if(panel) {
+                // 平时仍跳过整个绘制；只有管理面板或短暂通知可见时提交ImGui帧。
+                const bool toastVisible=foreground&&!hotkeyToast.empty()&&GetTickCount64()<hotkeyToastUntil;
+                if(panel||toastVisible) {
                 ImGui_ImplDX11_NewFrame();
                 ImGui::GetIO().WantSetMousePos=false;
                 ImGui_ImplWin32_NewFrame();
@@ -700,13 +745,17 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 ImGui::GetIO().MouseDrawCursor=panel&&foreground;ImGui::NewFrame();
                 try {
                     if(panel)drawPanel();
-                    if(foreground && !hotkeyToast.empty() && GetTickCount64()<hotkeyToastUntil) {
+                    if(toastVisible) {
                         ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,72},ImGuiCond_Always,{.5f,0});
                         ImGui::SetNextWindowBgAlpha(.8f);
-                        ImGui::Begin("##DebugHotkeyNotice",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings);
-                        ImGui::TextUnformatted(hotkeyToast.c_str());ImGui::End();
+                        ImGui::Begin("##DebugHotkeyNotice",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
+                        ImGui::PushTextWrapPos(std::min(ImGui::GetFontSize()*36,ImGui::GetIO().DisplaySize.x-80));
+                        if(toastIsError)ImGui::PushStyleColor(ImGuiCol_Text,{1,.65f,.4f,1});
+                        ImGui::TextUnformatted(hotkeyToast.c_str());
+                        if(toastIsError)ImGui::PopStyleColor();
+                        ImGui::PopTextWrapPos();ImGui::End();
                     }
-                }catch(const Json::exception& e){notice=e.what();nativeLog(std::string("UI_ERROR ")+e.what());}
+                }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),true);nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight))togglePanel(false);
                 ImGui::Render();
                 ID3D11RenderTargetView* oldTarget{};ID3D11DepthStencilView* oldDepth{};context->OMGetRenderTargets(1,&oldTarget,&oldDepth);

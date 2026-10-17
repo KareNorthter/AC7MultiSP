@@ -47,16 +47,16 @@ bool mountOuterContains(Addr object,Addr expected) {
     return false;
 }
 // 按任务满载规则聚合，限于实际持久位置；没有创建额外弹体。
-unsigned mountPreviewReadyMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
+uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
     require(count>=1 && count<=3,"模型预览：槽数无效");
     const auto& specification=mountSpecification(state.aircraft);
-    unsigned result=0;
+    uint64_t result=0;
     for(int slot=0;slot<count;++slot) {
         const int kind=kinds[slot];
         require(kind>=0 && kind<3 && ammo[slot]>=0 && ammo[slot]<=100000,"模型预览：配弹参数无效");
-        if(state.aircraft==MountAircraft::F15e && kind==2)continue; // TLS 的空网格不是导弹，炮体由挂架显示。
+        if((state.aircraft==MountAircraft::F15e && kind==2) || mountFixedEmitter(state.aircraft,kind))continue; // TLS 的空网格不是导弹，炮体由挂架显示。
         const int limit=mountShowReserve(state.aircraft,state.kindsMask,kind)?specification.logicalCounts[kind]:specification.loadedCounts[kind];
-        for(int ordinal=0;ordinal<std::min(limit,ammo[slot]);++ordinal)result|=1u<<mountPhysical(state,kind,ordinal);
+        for(int ordinal=0;ordinal<std::min(limit,ammo[slot]);++ordinal)result|=uint64_t{1}<<mountPhysical(state,kind,ordinal);
     }
     return result;
 }
@@ -161,13 +161,17 @@ bool mountPreviewLayoutChanged() {
     if(read<Addr>(state.manager.address+0x150)!=state.meshManager.address || !mountAlive(state.meshManager))return true;
     if(read<Addr>(state.plane.address+0x160)!=state.root.address || !mountAlive(state.root) ||
        read<Addr>(state.plane.address+0x1ae0)!=state.weaponBase.address || !mountAlive(state.weaponBase))return true;
-    const auto& specification=mountSpecification(state.aircraft);
+    std::array<Addr,3> arrays{},racks{};
+    for(int pool=0;pool<3;++pool) {
+        const Addr array=state.meshManager.address+0x150+pool*16;
+        if(read<int>(array+8)!=state.poolCounts[pool])return true;
+        arrays[pool]=read<Addr>(array);
+        racks[pool]=read<Addr>(state.plane.address+state.rackOffsets[pool]);
+    }
     for(const auto& visual:state.visuals) {
         if(!mountAlive(visual.identity))return true;
-        const Addr array=state.meshManager.address+0x150+visual.pool*16;
-        if(read<int>(array+8)!=specification.poolCounts[visual.pool])return true;
-        if((visual.index<0?read<Addr>(state.plane.address+specification.rackOffsets[visual.pool]):
-            read<Addr>(read<Addr>(array)+visual.index*8))!=visual.identity.address)return true;
+        if((visual.index<0?racks[visual.pool]:
+            read<Addr>(arrays[visual.pool]+visual.index*8))!=visual.identity.address)return true;
     }
     return false;
 }
@@ -180,7 +184,7 @@ bool mountPreviewRebindHangar() {
     if(!meshManager)return false;
     mountIdentity(meshManager);
     // 原生可能先清空旧池、再填新池；不把明确的加载空窗永久锁成失败。
-    for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0)return false;
+    for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(prior.aircraft,pool))return false;
     FixedMountState next;
     next.aircraft=prior.aircraft;next.kindsMask=prior.kindsMask;
     const auto& specification=mountSpecification(next.aircraft);
@@ -218,24 +222,19 @@ void mountPreviewApply() {
             "模型预览：机库或玩家展示对象改变");
     }
     require(read<Addr>(mountPreview.layout.plane.address+0x11a8)==mountPreview.activator.address,"模型预览：飞机激活器已改变");
-    if(mountPreview.mode==1 && mountPreviewLayoutChanged() && !mountPreviewRebindHangar())return;
+    // 同一轮只核对一次完整池；机库确实重建后再核对新池。
+    if(mountPreviewLayoutChanged()) {
+        if(mountPreview.mode!=1)require(false,"模型预览：持久池实例或管理器被替换");
+        if(!mountPreviewRebindHangar())return;
+        require(!mountPreviewLayoutChanged(),"模型预览：重建后的持久池实例改变");
+    }
     require(mountAlive(mountPreview.layout.manager) && mountAlive(mountPreview.layout.meshManager) &&
         mountAlive(mountPreview.layout.root) && mountAlive(mountPreview.layout.weaponBase),"模型预览：模型管理器或祖先失效");
     require(read<Addr>(mountPreview.layout.plane.address+0x11a8)==mountPreview.activator.address &&
         read<Addr>(mountPreview.activator.address+0x260)==mountPreview.layout.manager.address &&
         read<Addr>(mountPreview.layout.manager.address+0x150)==mountPreview.layout.meshManager.address,"模型预览：模型管理器被替换");
     if(!mountPreview.nativeOnly) {
-        auto& state=mountPreview.layout;const auto& specification=mountSpecification(state.aircraft);
-        for(int pool=0;pool<3;++pool) {
-            const Addr rack=read<Addr>(state.plane.address+specification.rackOffsets[pool]);
-            const Addr array=state.meshManager.address+0x150+pool*16;
-            require(read<int>(array+8)==specification.poolCounts[pool],"模型预览：持久池数量改变");
-            for(const auto& visual:state.visuals)if(visual.pool==pool) {
-                require(mountAlive(visual.identity),"模型预览：持久组件身份失效");
-                require(visual.index<0?visual.identity.address==rack:
-                    read<Addr>(read<Addr>(array)+visual.index*8)==visual.identity.address,"模型预览：持久池实例被替换");
-            }
-        }
+        auto& state=mountPreview.layout;
         mountPreviewAnimate();mountApplyVisuals(state);mountPreview.lastApply=GetTickCount64();
     }
 }
@@ -341,7 +340,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         bool pending=!meshManager;
         if(meshManager) {
             mountIdentity(meshManager);
-            for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0)pending=true;
+            for(int pool=0;pool<3;++pool)if(read<int>(meshManager+0x158+pool*16)==0 && !mountFixedEmitter(aircraft,pool))pending=true;
         }
         if(pending) {
             mountPreview.pending=true;mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();return;
@@ -360,11 +359,19 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             require(kind>=0,"模型预览：兵装类未适配");
             const Addr package=read<Addr>(weaponClass+0x20);mountIdentity(package);
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            require(mountName(package)==expected,"模型预览：兵装原版资源路径不匹配");
+            const auto actual=mountName(package);
+            const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
+            require(actual==expected || (mountExpanded(aircraft) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }
         require(count>0,"模型预览：没有有效兵装");
+        if(mountExpanded(aircraft) && count==1) {
+            mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
+            mountPreview.layout.meshOverrides.clear();mountPreview.layout.bound=false;
+            mountPreview.layout.plane=planeIdentity;mountPreview.layout.kindsMask=mask;
+            mountPreview.configs=configs;mountPreview.ammo=ammo;mountPreview.planCached=true;return;
+        }
         if(!mountPreview.layout.bound || mountPreview.layout.kindsMask!=mask) {
             FixedMountState next;
             next.plane=planeIdentity;next.aircraft=aircraft;next.kindsMask=mask;

@@ -2,6 +2,27 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [2.7.1用户实测](2.7.1-user-validation.json)：切换/发射、Rafale/Typhoon与ADF-11F反馈正常；F-2A所有多挂外观组合仍卡，关闭模型恢复，待专门研究。
+- 2.7.1两线修复：[来源/范围](2.7.1-integration.json)、[构建](2.7.1-build.json)、[检查](2.7.1-tests.json)、[安装](2.7.1-installed.json)。F-2A切换/重复巡检、Rafale名称匹配、Typhoon双挂及UAV引用扩容已安装，用户反馈见上条，不能外推全部场景通过。
+- [2.7.0挂载实测与源码修订](2.7.0-mount-feedback-repair.json)：F-2A忙时等待及性能候选、Rafale名称绑定、Typhoon双挂补位；该回执保留研究时状态，最新成套安装见2.7.1回执。
+- 2.7.0三线整合：[来源/范围](2.7.0-integration.json)、[构建](2.7.0-build.json)、[检查](2.7.0-tests.json)、[安装](2.7.0-installed.json)。四机挂架加载修复与ADF-11F UAV/TLS运行候选纳入，XFA-27保留；实机加载/持续/回收待用户验证。
+- [ADF-11F研究](adf11f-uav-research.json)：上游源码候选和原生UAV采样依据，未编译/安装字段属于研究时状态。当前交付看2.7.1回执；不能把原生切MSL采样当跨SP新代码通过。
+- [SP切换动画研究](sp-switch-animation-research.json)：e519d02的47机筛查、16机29个活动挂架、49序列及15机105组合关联。策略runtime_enabled=false，新增运行准入0，未在本版启用。
+
+
+- 2.6.0挂载扩展：[来源/用户反馈/评分分段](2.6.0-integration.json)、[构建](2.6.0-build.json)、[检查](2.6.0-tests.json)、[安装](2.6.0-installed.json)。整合77e9ffc十机70条方案，16独立挂架副本32成员回读及纯布局/队列检查通过；已收到三机正常、四机加载回退、两机DLC未测反馈；Typhoon未反馈，评分优化另待实机。下列研究JSON保留研究当时的未编译/未安装状态，不作为当前交付状态。
+
+- [2.6.0挂架加载修复](2.6.0-mount-loader-repair.json)：四机第一份独立资源均未加载，结合e35ff09接入登记表诊断和原生AssetData按路径加载候选；记录用户三机正常、四机失败、两机DLC未测及Typhoon未反馈。源码候选未编译、运行测试或安装，不改写原安装回执。
+
+- [原版挂载扩展目录](mount-expansion-catalog.json)：47架有武装原版机型的真实代码、三SP类、组件/网格引用、来源与分批建议；排除无武装f104av和第三方机体。仅资源核对，不代表全部适配。
+- [首批挂载方案](mount-expansion-batch1.json)：六机各七组合；吸收7ae97b6的静态分区依据后，F-16C、F-2A、Mirage、Rafale四机有完整七组合及精确载体表，共28条，含14条分区候选。F-104C缺第三站、Gripen的LACM支撑未明，继续整机暂缓。
+- [第二批挂载方案](mount-expansion-batch2.json)：十五机各七组合；区分原生单挂参考、现成整架复用研究候选和暂缓组合，保留净空/支撑依据与不足窗口取舍。三批均为离线研究，未编译、运行测试或安装；可读表及整合要求统一见[挂载设计经验](../docs/multi-sp-mount-design.md#其他原版机体的分批研究)。
+
+- [第三批挂载方案](mount-expansion-batch3.json)：剩余二十三机各七组合；69条单挂参考、22条现成资源候选、70条暂缓。保留静态／骨架挂点、原生通道、固定发射器／效果源／UAV角色和逐项动画／资源／支撑阻塞，包含CFA-44；仅F-15C、XFA-27、ADFX-01三机七组合齐全，其余整机暂缓。
+- [全机型交接索引](mount-expansion-handoff.json)：47机研究覆盖；当前十机70条完整方案可继续接入，其余34机整机暂缓。`integration_candidates`含40条多挂（26原资源＋14已核对静态分区），附精确分配、载体及前提。整机七组合门槛不变，未编译、测试或安装，无安装包。
+
+- [静态分区往返依据](sp-combination-static-split-experiment.json)：技术线程7ae97b6的原字节回执，22副本／66个LOD完成资源及改名编码往返，未验证游戏加载、渲染或动作；本轮四机选用其中16副本／48个LOD。实验`integration_allowed=false`保持原样，不能直接安装。
+
 - [F-15E补给模型观察](resupply-model-observation-20261016.json)：ms06补给展示任务玩家本体，保留入场前多挂状态；只读采样及实现约束，不代表动态预览已实现。
 
 - 2.4.0正式版（main/v2.4.0）：[构建](2.4.0-build.json)、[检查](2.4.0-tests.json)、[安装](2.4.0-installed.json)；三个可配置快捷键及两支线最新候选，完整编译、检查和安装核验通过，比例引导PAK按用户要求移入备份禁用；三机型布局获用户认可，反馈范围见[挂载设计经验](../docs/multi-sp-mount-design.md#当前结论和验证范围)，用户随后确认全部改动及两支线成果正常，授权正式提交main，见[用户验证](2.4.0-user-validation.json)。

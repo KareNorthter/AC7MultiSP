@@ -4,6 +4,17 @@
 #include <cassert>
 #include <iostream>
 
+// 合成数组专用：强制搬迁，检验扩容后是否仍引用旧地址；不接入游戏。
+static size_t referenceBytes=0;
+static bool failReferenceAllocation=false;
+static void* moveReferenceArray(void* old,size_t bytes,unsigned alignment) {
+    assert(alignment==0 && bytes>=referenceBytes);
+    if(failReferenceAllocation)return nullptr;
+    auto next=HeapAlloc(GetProcessHeap(),0,bytes);assert(next);
+    if(old){std::memcpy(next,old,referenceBytes);assert(HeapFree(GetProcessHeap(),0,old));}
+    referenceBytes=bytes;return next;
+}
+
 int main() {
     // 持续对象引用数组只移除指定对象，容量不变，不误删普通导弹。
     std::array<Addr,4> effects{10,20,30,20};
@@ -11,12 +22,50 @@ int main() {
     continuousRemove(reinterpret_cast<Addr>(&effectArray),20);
     assert(effectArray.count==2&&effectArray.capacity==4&&effects[0]==10&&effects[1]==30&&effects[2]==0&&effects[3]==0);
     continuousRemove(reinterpret_cast<Addr>(&effectArray),99);assert(effectArray.count==2);
+    // 保留Num与原元素；成功搬迁公布新data，失败保持原头，已有容量不取得分配器。
+    auto arrayMemory=HeapAlloc(GetProcessHeap(),0,2*sizeof(Addr));assert(arrayMemory);
+    EffectArray reserveArray{reinterpret_cast<Addr>(arrayMemory),2,2};
+    write<Addr>(reserveArray.data,41);write<Addr>(reserveArray.data+8,42);referenceBytes=16;
+    int allocatorCalls=0;
+    auto allocator=[&](){++allocatorCalls;return &moveReferenceArray;};
+    const Addr reserveHeader=reinterpret_cast<Addr>(&reserveArray),oldReferenceData=reserveArray.data;
+    continuousReserveUsing(reserveHeader,5,"test",allocator);
+    assert(allocatorCalls==1 && reserveArray.data!=oldReferenceData && reserveArray.count==2 && reserveArray.capacity>=5);
+    assert(read<Addr>(reserveArray.data)==41 && read<Addr>(reserveArray.data+8)==42);
+    continuousReserveUsing(reserveHeader,5,"test",allocator);assert(allocatorCalls==1);
+    const auto beforeFailure=reserveArray;failReferenceAllocation=true;
+    try{continuousReserveUsing(reserveHeader,20,"test",allocator);assert(false);}catch(const std::runtime_error&){}
+    assert(reserveArray.data==beforeFailure.data && reserveArray.count==2 && reserveArray.capacity==beforeFailure.capacity);
+    assert(read<Addr>(reserveArray.data)==41 && read<Addr>(reserveArray.data+8)==42);
+    try{continuousReserveUsing(reserveHeader,65537,"test",allocator);assert(false);}catch(const std::runtime_error&){}
+    assert(allocatorCalls==2);assert(HeapFree(GetProcessHeap(),0,reinterpret_cast<void*>(reserveArray.data)));
+    // UAV可能仅在Active中，普通导弹可能覆盖Spawned；两表并集不能遗漏或重复保有。
+    std::array<Addr,5> activeEffects{40,20,40,0,10};
+    std::array<Addr,3> spawnedEffects{10,30,20};
+    ContinuousArray activeArray{0,reinterpret_cast<Addr>(activeEffects.data()),5,5};
+    ContinuousArray spawnedArray{0,reinterpret_cast<Addr>(spawnedEffects.data()),3,3};
+    assert((continuousCandidates(activeArray,spawnedArray)==std::vector<Addr>{40,20,10,30}));
+    assert((activeEffects==std::array<Addr,5>{40,20,40,0,10}));
+    // SP回收记录移走，MSL记录原字节保留；未知组先拒绝，原队列不能被部分写入。
+    std::array<std::array<unsigned char,16>,4> delayed{};
+    for(int i=0;i<4;++i){delayed[i].fill(static_cast<unsigned char>(20+i));delayed[i][0]=i==0?0:i==2?1:2;}
+    ContinuousArray delayedArray{0,reinterpret_cast<Addr>(delayed.data()),4,4};
+    const auto originalDelayed=delayed;
+    const auto kept=ravenKeepMainQueue(delayedArray);
+    assert(kept.size()==2 && kept[0]==originalDelayed[0] && kept[1]==originalDelayed[2] && delayed==originalDelayed);
+    delayed[3][0]=3;
+    try{ravenKeepMainQueue(delayedArray);assert(false);}catch(const std::runtime_error&){}
+    assert(delayed[0]==originalDelayed[0] && delayed[1]==originalDelayed[1] && delayed[3][0]==3);
     effectArray.count=5;
     try{continuousArray(reinterpret_cast<Addr>(&effectArray));assert(false);}catch(const std::runtime_error&){}
     // 非换槽事务不得读取不存在的游戏机体或保有对象。
     { Command noSwitch;noSwitch.op="setup";noSwitch.plane=1;ContinuousRebuild skipped(noSwitch);skipped.restoreReferences(); }
     std::vector<unsigned char> activator(0x300),owner(0x200),state(0x200),slots(4*0x60);
     const Addr act=reinterpret_cast<Addr>(activator.data());
+    assert(weaponSwitchReady(act));
+    write<unsigned char>(act+0x2a0,1);assert(!weaponSwitchReady(act));write<unsigned char>(act+0x2a0,0);
+    write<unsigned char>(act+0x2c0,1);write<int>(act+0x2e0,2);assert(!weaponSwitchReady(act));
+    write<int>(act+0x2e0,1);assert(weaponSwitchReady(act));write<unsigned char>(act+0x2c0,0);
     const Addr own=reinterpret_cast<Addr>(owner.data());
     const Addr st=reinterpret_cast<Addr>(state.data());
     const Addr pool=reinterpret_cast<Addr>(slots.data());
@@ -48,6 +97,15 @@ int main() {
     write<float>(pool+0x48,10);
     try{restore(act,true,cooling,99);assert(false);}catch(const std::runtime_error&){}
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    // 反向表保留首个同址映射和高位；未映射模型不凭旧位置显示。
+    FixedMountState reverseMap;reverseMap.aircraft=MountAircraft::Su30sm;reverseMap.physicalCount=41;
+    reverseMap.physical[0]=123;reverseMap.physical[1]=123;reverseMap.physical[40]=456;
+    for(Addr address:{Addr{123},Addr{456},Addr{789}}){MountVisual visual;visual.pool=0;visual.index=0;visual.identity.address=address;reverseMap.visuals.push_back(visual);}
+    mountBindVisualPositions(reverseMap);
+    assert(reverseMap.visuals[0].physicalBit==1 && reverseMap.visuals[1].physicalBit==(uint64_t{1}<<40) && reverseMap.visuals[2].physicalBit==0);
+    reverseMap.readyMask=uint64_t{1}<<40;
+    assert(!mountDesired(reverseMap,reverseMap.visuals[0],true) && mountDesired(reverseMap,reverseMap.visuals[1],true));
+    assert(!mountDesired(reverseMap,reverseMap.visuals[1],false) && !mountDesired(reverseMap,reverseMap.visuals[2],true));
     // 挂载边界只操作合成内存；不调用引擎或验证真实动画。
     Command command;command.op="setup";
     Session noSelection;noSelection.active=100; // setup 必须短路，不读取不存在的当前槽。
@@ -195,6 +253,55 @@ int main() {
             assert(actual.slots[slot].mountOrdinal==prior.slots[slot].mountOrdinal);
         }
     }
+    // 十机方案完整性、不同武器共用位置隔离，以及超过32位的火箭巢显隐。
+    assert(mountExpansionData().at("planes").size()==10 && mountExpansionData().at("assets").size()==16);
+    int multiCases=0;
+    for(int aircraft=static_cast<int>(MountAircraft::F02a);aircraft<=static_cast<int>(MountAircraft::Typn);++aircraft) {
+        const auto type=static_cast<MountAircraft>(aircraft);
+        const auto& definition=mountExpansionDefinition(type);
+        assert(definition.at("plans").size()==8);
+        for(unsigned selection=1;selection<=7;++selection) {
+            const auto& plan=mountExpansionPlan(type,selection);
+            assert(!plan.is_null());
+            if(selection==1 || selection==2 || selection==4)continue; // 单挂原生管理，无新模型写入。
+            FixedMountState layout;layout.aircraft=type;layout.kindsMask=selection;
+            layout.logicalCounts=mountSpecification(type).logicalCounts;mountExpansionPositions(layout);
+            uint64_t occupied=0;
+            for(int kind=0;kind<3;++kind) {
+                const auto& selected=plan.at("selected").at(kind);
+                assert(selected.empty()==((selection&(1u<<kind))==0));
+                for(int physical:layout.expansionPositions[kind]) {
+                    assert(physical>=0 && physical<64 && !(occupied&(uint64_t{1}<<physical)));
+                    occupied|=uint64_t{1}<<physical;
+                }
+                if(selected.empty())continue;
+                for(int ordinal=0;ordinal<layout.logicalCounts[kind];++ordinal) {
+                    const int position=mountPhysical(layout,kind,ordinal);
+                    assert(std::find(layout.expansionPositions[kind].begin(),layout.expansionPositions[kind].end(),position)!=layout.expansionPositions[kind].end());
+                }
+                // 窗口位置充足时一轮不重复；减位方案接受共用位置，不减少游戏窗口。
+                const int window=std::min<int>(mountSpecification(type).loadedCounts[kind],selected.size());
+                uint64_t ready=0;
+                for(int ordinal=0;ordinal<window;++ordinal) {
+                    const auto bit=uint64_t{1}<<mountPhysical(layout,kind,ordinal);assert(!(ready&bit));ready|=bit;
+                }
+            }
+            if(type==MountAircraft::F02a && (selection&4)) {
+                assert(layout.expansionSockets[2].size()==38);
+                const int last=mountPhysical(layout,2,37);
+                assert(last>=32 && ((uint64_t{1}<<last)>>32)!=0); // 后续轮转到外侧巢后段时不丢高位。
+            }
+            ++multiCases;
+        }
+    }
+    assert(multiCases==40);
+    // 大于旧12槽和64位范围时仍保存原生序号；重建后的数组下标不能冒充原挂点。
+    Group rocketQueue;rocketQueue.slots.resize(76);
+    for(int i=0;i<76;++i)rocketQueue.slots[i].mountOrdinal=i;
+    fixedMountRestoreOrder(rocketQueue,71);
+    for(int i=0;i<76;++i)assert(fixedMount.order[i]==(71+i)%76);
+    fixedMount.pendingReadyMask.reset();fixedMountRecordReload(true,75,10,9,10);
+    assert(fixedMount.pendingReadyMask.test(75) && !fixedMount.pendingReadyMask.test(11));
     fixedMount={};fixedMountEnabled=false;
 #endif
     std::cout<<"weapon_group: cache restore, reload, mount layout and preview boundary checks passed\n";

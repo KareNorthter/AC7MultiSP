@@ -1,0 +1,1100 @@
+{
+  "steam_build": "9855922",
+  "baseline_commit": "8f600e4",
+  "baseline_version": "2.4.0",
+  "branch": "codex/adf11f-uav-research",
+  "scope": "ADF-11F原生TLS/QAAM/UAV三SP共存源码候选；未编译、未测试、未安装",
+  "product_modified": true,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_functions_called": false,
+  "process_write": false,
+  "offline": {
+    "aircraft": "AcePlayerPawn_adf11f_C",
+    "configurations": [
+      "plwp_tls_x3_C",
+      "plwp_qaam_a0_C",
+      "plwp_WeaponUAV_C"
+    ],
+    "uav_class": "plwp_WeaponUAV_C",
+    "native_parent": "WeaponUAV",
+    "blueprint_defaults": {
+      "AttackStartTime": 2.0,
+      "AttackTime": 5.099999904632568,
+      "DecelerationDistance": 900.0,
+      "DecelerationSpeed": 1750.0,
+      "MinimumSpeed": 950.0,
+      "DecelerationDistance_Ground": 1100.0,
+      "DecelerationSpeed_Ground": 1550.0,
+      "MinimumSpeed_Ground": 400.0,
+      "AttackDistance_Ground": 600.0,
+      "GroundCorrectionHeight": 190.0,
+      "DecelerationSpeed_Fas": 1200.0,
+      "MinimumSpeed_Fas": 450.0,
+      "AttackDistance_Fas": 1300.0,
+      "LifeTime": 15.0,
+      "LoadTime": 15.199999809265137,
+      "MaxLoadedCount": 2,
+      "LockonRange": 50000.0,
+      "TargetSelectionMidRange": 100000.0
+    },
+    "weapon_data": {
+      "SpawnWeaponClass": -6,
+      "ShotRange": 1250.0,
+      "ShotIntervalTime": 0.25,
+      "DeviationShootingCurve": -19,
+      "ShootingPositionOffsetCurve": -21,
+      "DeviationShootingCurve_Ground": -20
+    },
+    "target_specific_lists": {
+      "TomorrowShootTargetList": [
+        "ContainerAircraft_Name_ah64",
+        "ContainerAircraft_Name_ch47",
+        "ContainerGround_Name_Bridge",
+        "ContainerGround_Name_Core",
+        "ContainerGround_Name_Repeater",
+        "ContainerAircraft_Name_aps",
+        "ContainerAircraft_Name_joint"
+      ],
+      "FasParameterTargetList": [
+        "ContainerAircraft_Name_sprop",
+        "ContainerAircraft_Name_mprop",
+        "ContainerAircraft_Name_aam",
+        "ContainerAircraft_Name_lcannon",
+        "ContainerAircraft_Name_plcannon",
+        "ContainerAircraft_Name_joint",
+        "ContainerAircraft_Name_Hook",
+        "ContainerAircraft_Name_aps"
+      ],
+      "FasInvincibleAttackTargetList": [
+        "ContainerAircraft_Name_aam",
+        "ContainerAircraft_Name_plcannon",
+        "ContainerAircraft_Name_lcannon",
+        "ContainerAircraft_Name_aps",
+        "ContainerAircraft_Name_joint",
+        "ContainerAircraft_Name_Hook"
+      ],
+      "FasUnderAttackTargetList": [
+        "ContainerAircraft_Name_lcannon",
+        "ContainerAircraft_Name_plcannon",
+        "ContainerAircraft_Name_aps",
+        "ContainerAircraft_Name_Hook",
+        "ContainerAircraft_Name_joint"
+      ],
+      "FasIgnoreMoveRayCastTargetList": [
+        "ContainerAircraft_Name_lcannon",
+        "ContainerAircraft_Name_joint",
+        "ContainerAircraft_Name_aps",
+        "ContainerAircraft_Name_Hook",
+        "ContainerAircraft_Name_aam"
+      ]
+    },
+    "sources": {
+      "plwp_WeaponUAV": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_WeaponUAV.uasset",
+        "sha256": "3fd519769efdca2dff1487f9bc1bf13f00035108c434cca0216fae2e24d23348",
+        "json_sha256": "e271e293d43ffe5194f577c2776696a9f6e48aeae8a9b4e12124d3e203a5b2cb"
+      },
+      "plwp_plsl_UAV": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_UAV.uasset",
+        "encrypted_sha256": "faa1c046b4d13318e3314f442c5d952ed31a3655ad42d121f70ef27f9fa3e3aa",
+        "json_sha256": "b19ba148add69ea5144c630c894e9b9fe18a11e9f8a9fe26fb01acb19c76ac65"
+      },
+      "CUR_WP_Player_UAV_DeviationShooting": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_UAV_DeviationShooting.uasset",
+        "encrypted_sha256": "d35353edfb7f5b9c1feace6998e55958a0d91b1e176a683208a38bd37f15f6b7",
+        "json_sha256": "6588a3a7b7de5eaf885b875f03610db965337b6873a0c9a236aaba57264f9260"
+      },
+      "CUR_WP_Player_UAV_DeviationShooting_S": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_UAV_DeviationShooting_S.uasset",
+        "encrypted_sha256": "db84e9fad8ffde689a79cc8623e04c812e785baff579532785411e22cb5bd77a",
+        "json_sha256": "e4b6d9e57552ee3618584b7f2b8343200db8250e1557283d19e7548fcc805bab"
+      },
+      "CUR_WP_Player_UAV_ShootingPositionOffset": {
+        "pak": "pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_UAV_ShootingPositionOffset.uasset",
+        "encrypted_sha256": "3bb04cdd7f4814da4d4692d3716b3952e1252c722e7a0cf4685d4f415020aa2b",
+        "json_sha256": "0eb675b525fc945454e1f58a7864fc6d6b3d39626ce5828f49bdfb9c7accc7f5"
+      }
+    },
+    "child_weapon": {
+      "class": "plwp_plsl_UAV_C",
+      "native_parent": "BulletUAV",
+      "defaults": {
+        "WeaponID": "EWeaponID::WID_uav_plsl",
+        "LifeTime": 1.0,
+        "Damage": 16.0,
+        "MultiDamage": 16.0,
+        "EffectiveTime": 0.699999988079071,
+        "SpeedInitial": 27777.77734375,
+        "RayCastRadius": 130.0,
+        "bAutoFireOnHold": true
+      }
+    }
+  },
+  "runtime_stages": [
+    {
+      "stage": "uav-attacking-paused",
+      "meaning": "首次攻击中",
+      "captured_local": "2026-10-17T09:27:08.125728+08:00",
+      "snapshot_sha256": "b7346b678f70562c135e6707338cc09972345ace55c49bb623b0885fe23e948b",
+      "process_write": false,
+      "game_functions_called": false,
+      "uav": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "active": true,
+          "ending": false,
+          "age": 3.014666795730591,
+          "retirement_marker_hex": "0000000000000000",
+          "weapon_id": 26,
+          "target": "GroundTarget1_1_Radar",
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "trail_time": 0.0
+        }
+      ],
+      "bullets": [
+        {
+          "index": 132203,
+          "serial": 29539,
+          "active": true,
+          "ending": false,
+          "age": 0.11291259527206421,
+          "retirement_marker_hex": "0000000000000000",
+          "weapon_id": 101,
+          "target": "GroundTarget1_1_Radar",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 132210,
+          "serial": 29533,
+          "active": false,
+          "ending": false,
+          "age": 0.36799249053001404,
+          "retirement_marker_hex": "0cda010000000000",
+          "weapon_id": 101,
+          "target": "GroundTarget1_1_Radar",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        }
+      ],
+      "return_spline": [],
+      "activator": {
+        "index": 123335,
+        "serial": 29147
+      },
+      "ActiveWeapons": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        }
+      ],
+      "SpawnedWeapons": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        }
+      ],
+      "slot_timers": [
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 3.014666795730591
+        },
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 15.199999809265137
+        }
+      ]
+    },
+    {
+      "stage": "uav-msl-paused",
+      "meaning": "切MSL后；用户确认期间又发射UAV/飞行较久，不能与前一阶段当同代次对照",
+      "captured_local": "2026-10-17T09:28:32.868122+08:00",
+      "snapshot_sha256": "8b5685c5f923bf38699b635d815576cbfbf05245e1d589eee5892ac047885fdc",
+      "process_write": false,
+      "game_functions_called": false,
+      "uav": [
+        {
+          "index": 184599,
+          "serial": 29701,
+          "active": true,
+          "ending": false,
+          "age": 14.842283248901367,
+          "retirement_marker_hex": "0000000000000000",
+          "weapon_id": 26,
+          "target": "GroundTarget1_2_Radar",
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 0.6335101127624512,
+          "native_a70": 1,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "active": true,
+          "ending": false,
+          "age": 2.51509952545166,
+          "retirement_marker_hex": "98f5010000000000",
+          "weapon_id": 26,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 0.25991159677505493,
+          "native_a70": 0,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        }
+      ],
+      "bullets": [
+        {
+          "index": 132203,
+          "serial": 29539,
+          "active": true,
+          "ending": false,
+          "age": 0.01000940054655075,
+          "retirement_marker_hex": "b7f6010000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 132210,
+          "serial": 29533,
+          "active": true,
+          "ending": false,
+          "age": 0.26990288496017456,
+          "retirement_marker_hex": "c7f6010000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        }
+      ],
+      "return_spline": [],
+      "activator": {
+        "index": 123335,
+        "serial": 29147
+      },
+      "ActiveWeapons": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 184599,
+          "serial": 29701,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 184662,
+          "serial": 29803,
+          "name": "plwp_msl_a0_C"
+        },
+        {
+          "index": 184617,
+          "serial": 29810,
+          "name": "plwp_msl_a0_C"
+        }
+      ],
+      "SpawnedWeapons": [
+        {
+          "index": 184617,
+          "serial": 29810,
+          "name": "plwp_msl_a0_C"
+        }
+      ],
+      "slot_timers": [
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 2.51509952545166
+        },
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 14.842283248901367
+        }
+      ]
+    },
+    {
+      "stage": "uav-msl-follow-paused",
+      "meaning": "保持MSL且不再发射，继续飞行后",
+      "captured_local": "2026-10-17T09:30:19.951635+08:00",
+      "snapshot_sha256": "229cfab6ff35d954c2ba9f58d967fb752b28760d0d886ad32ce45634c09d1cf8",
+      "process_write": false,
+      "game_functions_called": false,
+      "uav": [
+        {
+          "index": 184599,
+          "serial": 29701,
+          "active": false,
+          "ending": false,
+          "age": 15.006279945373535,
+          "retirement_marker_hex": "9e2b020000000000",
+          "weapon_id": 26,
+          "target": null,
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 0.6335101127624512,
+          "native_a70": 1,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "active": true,
+          "ending": false,
+          "age": 5.488941192626953,
+          "retirement_marker_hex": "98f5010000000000",
+          "weapon_id": 26,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 1.123980164527893,
+          "native_a70": 1,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        }
+      ],
+      "bullets": [
+        {
+          "index": 132203,
+          "serial": 29539,
+          "active": false,
+          "ending": false,
+          "age": 0.4299488961696625,
+          "retirement_marker_hex": "bd2b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 131822,
+          "serial": 29840,
+          "active": false,
+          "ending": false,
+          "age": 0.2499445080757141,
+          "retirement_marker_hex": "ba2b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 132210,
+          "serial": 29533,
+          "active": false,
+          "ending": false,
+          "age": 0.03004319965839386,
+          "retirement_marker_hex": "d12b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        }
+      ],
+      "return_spline": [
+        {
+          "index": 135748,
+          "serial": 0,
+          "native_parent": "ReturnMoveSplineDataActor",
+          "return_time": 2.0,
+          "owner_index": 123346,
+          "note": "这是回收路径数据Actor；仍可读取不等于回收动画仍播放"
+        }
+      ],
+      "activator": {
+        "index": 123335,
+        "serial": 29147
+      },
+      "ActiveWeapons": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 184599,
+          "serial": 29701,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        }
+      ],
+      "SpawnedWeapons": [
+        {
+          "index": 184617,
+          "serial": 29810,
+          "name": "plwp_msl_a0_C"
+        }
+      ],
+      "slot_timers": [
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 5.488941192626953
+        },
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 15.20633316040039
+        }
+      ]
+    },
+    {
+      "stage": "uav-ended-paused",
+      "meaning": "保持MSL，等待原生寿命结束及冷却完成",
+      "captured_local": "2026-10-17T09:31:14.027042+08:00",
+      "snapshot_sha256": "f8950b70b396e76e64fb908803b1992058f4f7e10ac8c58f19e2d5ed46720e53",
+      "process_write": false,
+      "game_functions_called": false,
+      "uav": [
+        {
+          "index": 184599,
+          "serial": 29701,
+          "active": false,
+          "ending": false,
+          "age": 15.006279945373535,
+          "retirement_marker_hex": "9e2b020000000000",
+          "weapon_id": 26,
+          "target": null,
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 0.6335101127624512,
+          "native_a70": 1,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "active": false,
+          "ending": false,
+          "age": 15.002755165100098,
+          "retirement_marker_hex": "a641020000000000",
+          "weapon_id": 26,
+          "target": null,
+          "owning_player_index": 123346,
+          "source_weapon_index": null,
+          "life_time": 15.0,
+          "load_time": 15.199999809265137,
+          "damage": 0.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true,
+          "class_size": 2720,
+          "native_attack_elapsed": 1.123980164527893,
+          "native_a70": 1,
+          "attack_start_time": 2.0,
+          "attack_time": 5.099999904632568,
+          "trail_time": 0.0
+        }
+      ],
+      "bullets": [
+        {
+          "index": 132203,
+          "serial": 29539,
+          "active": false,
+          "ending": false,
+          "age": 0.4299488961696625,
+          "retirement_marker_hex": "bd2b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 131822,
+          "serial": 29840,
+          "active": false,
+          "ending": false,
+          "age": 0.2499445080757141,
+          "retirement_marker_hex": "ba2b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        },
+        {
+          "index": 132210,
+          "serial": 29533,
+          "active": false,
+          "ending": false,
+          "age": 0.03004319965839386,
+          "retirement_marker_hex": "d12b020000000000",
+          "weapon_id": 101,
+          "target": "Optional9_Heli1",
+          "owning_player_index": 123346,
+          "source_weapon_index": 132221,
+          "life_time": 1.0,
+          "load_time": 0.0,
+          "damage": 16.0,
+          "reload_on_fire": "01",
+          "reload_after_all_fired": "00",
+          "switch_on_last_destroyed": "00",
+          "end_reload_owner_null": true
+        }
+      ],
+      "return_spline": [
+        {
+          "index": 135748,
+          "serial": 0,
+          "native_parent": "ReturnMoveSplineDataActor",
+          "return_time": 2.0,
+          "owner_index": 123346,
+          "note": "这是回收路径数据Actor；仍可读取不等于回收动画仍播放"
+        }
+      ],
+      "activator": {
+        "index": 123335,
+        "serial": 29147
+      },
+      "ActiveWeapons": [
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 184599,
+          "serial": 29701,
+          "name": "plwp_WeaponUAV_C"
+        },
+        {
+          "index": 132221,
+          "serial": 29523,
+          "name": "plwp_WeaponUAV_C"
+        }
+      ],
+      "SpawnedWeapons": [
+        {
+          "index": 184617,
+          "serial": 29810,
+          "name": "plwp_msl_a0_C"
+        }
+      ],
+      "slot_timers": [
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 15.20425033569336
+        },
+        {
+          "duration": 15.199999809265137,
+          "elapsed": 15.20633316040039
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "本轮证实MSL路径与原生机制，不代表跨另一SP重建通过",
+    "第二次快照前用户有再次发射/较长飞行，第一到第二阶段不能当同代次对照",
+    "覆盖地面雷达和直升机目标，不扩大到所有特殊目标/任务",
+    "回收数据Actor被后续工具纳入，不能据此断言它在第三阶段才创建",
+    "未测故障注入、跨SP、补给、死亡或检查点；未编译/测试/安装或修改游戏运行代码",
+    "游戏由用户在最终快照完成后手动退出，随后读取失败没有重试"
+  ],
+  "runtime_context": {
+    "gameplay_user_controlled": true,
+    "input_modifications": false,
+    "player_class": "AcePlayerPawn_adf11f_C",
+    "player_index": 123346,
+    "player_serial": 26857,
+    "target_types_sampled": [
+      "radar_ground",
+      "helicopter_air"
+    ],
+    "manual_game_exit_confirmed": true,
+    "post_capture_read_failure": {
+      "error": "WinError 299 while obtaining process modules",
+      "interpretation": "用户确认已手动退出，非崩溃证据",
+      "complete_snapshots_preserved": 4
+    }
+  },
+  "native_sources": [
+    {
+      "rva": "0x876180",
+      "end": "0x8761da",
+      "file": "native-876180.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "b850ff912db9b237cf1009301f14c5fa7afba2f6674c1565f3c37e68df9e60ba",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x876240",
+      "end": "0x8762d3",
+      "file": "native-876240.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "ecc4b98a580abf5e5772b3577e2f3909b9189983e608c79c7f2f2e0e511cb963",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x876ab0",
+      "end": "0x876b25",
+      "file": "native-876ab0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "eb9ff4ea68f0e8308b18832f7477ca8dc11accd056c057fdaa05da2f7c36020e",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x877890",
+      "end": "0x87791e",
+      "file": "native-877890.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "e7a40ef165594cfd7a726802578d14a6eaf69229b90f3ee0b3eb50d67ec9b7a8",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x877970",
+      "end": "0x877999",
+      "file": "native-877970.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "e30bfb8b08c05bb942ace7ac3bd40851f6c7def61f0e8f17e1ab4e1255860d37",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x8788e0",
+      "end": "0x878b2e",
+      "file": "native-8788e0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "69741bc1d6c5e5a2bf2e89505efa9bc735c0e08c4a31dba6353e776201d84b1a",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x878d40",
+      "end": "0x878d93",
+      "file": "native-878d40.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "679fb7e5cf314e45c09d264116f0378827bc12853482fb508f7f1dbbe80d3388",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x878eb0",
+      "end": "0x878ef3",
+      "file": "native-878eb0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "2cbb4499e98f0a20b74fd8e3e7397f239b4cbf9692821dd268f1c75ede8d87a3",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x879a50",
+      "end": "0x879ab8",
+      "file": "native-879a50.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "acb12566eb313818e0d73f088136e4287d8f59afc1402c3bdd2ed40530f6d0b9",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x884f10",
+      "end": "0x88523c",
+      "file": "native-884f10.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "e5ed064d9e95ecad96281602decdee6cd0f6a0efbfab10907f418d3426ed3b62",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x885240",
+      "end": "0x885268",
+      "file": "native-885240.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "ca6b493055b698bf4fc1356b384e2644f1881c1f9f8bb76f8353463fd7ef6abb",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x885510",
+      "end": "0x8855ac",
+      "file": "native-885510.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "a555432f2e244bd984b18f54a662fc653904daabf465a46cea6b265b9f8eac30",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x88abd0",
+      "end": "0x88ac5d",
+      "file": "native-88abd0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "dfe26570299cd18997d445f5143216f85bbee659c38d172d329d763704c06ddc",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x88ac60",
+      "end": "0x88ac77",
+      "file": "native-88ac60.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "fa6838a155bd9ad429de7215296d42f1847e26787052bcbdd1b774056e2eefcf",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x88acf0",
+      "end": "0x88ad00",
+      "file": "native-88acf0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "151ebfae4e07935693afaab5f8f2f10e3ee6c22980c37a3127c7adcc5ac083a8",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x897010",
+      "end": "0x8971a5",
+      "file": "native-897010.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x89da40",
+      "end": "0x89e05a",
+      "file": "native-89da40.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "ba80ba1a82b8d68a8b2ad33028d58554e3b2971c9058208a499f3af5dffba486",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x89e3c0",
+      "end": "0x89e432",
+      "file": "native-89e3c0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "fbccdeb1cb4ff4b2481f691cd3fb8864ab3a6a8c634bbffda5fda719b516cc24",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x8a5260",
+      "end": "0x8a5315",
+      "file": "native-8a5260.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "ff6657861d4355892a2019d0e0b0743d88bd60e11ddfd816f01561dff4c5f82d",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x8a6a20",
+      "end": "0x8a6a3b",
+      "file": "native-8a6a20.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "4eb74f54fa3f7a79eeac89849cc6b0cba6a55e666d362e349f0c16980b71e285",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x8a6bf0",
+      "end": "0x8a6c5a",
+      "file": "native-8a6bf0.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "841969fda75b207abab1c6fc21600831ff6f9a3a62326a4b279896d21299215b",
+      "stage": "uav-attacking-paused"
+    },
+    {
+      "rva": "0x879860",
+      "end": "0x879942",
+      "file": "native-879860.bin",
+      "boundary": "PE 展开记录片段，可能只是函数的一部分，外跳须继续采集",
+      "sha256": "d0724cd21aab209eb9a2e5fdbc17be758bdd79222d1c7cecc86c337b10871ab4",
+      "stage": "uav-msl-follow-paused"
+    },
+    {
+      "rva": "0x8a5260",
+      "length": 13312,
+      "file": "mount-8a5260-3400.bin",
+      "sha256": "1f9bd536dc664c259d4a77ade18ef3a7311599c572887c5ab3fc7ab698854b32",
+      "stage": "uav-native-chain"
+    },
+    {
+      "rva": "0x876ab0",
+      "length": 9216,
+      "file": "mount-876ab0-2400.bin",
+      "sha256": "6520fccf40f2f42369a85451f5414f778b5a00c51043176634fa674a91ba3e94",
+      "stage": "uav-native-chain"
+    },
+    {
+      "rva": "0x88abd0",
+      "length": 688,
+      "file": "mount-88abd0-2b0.bin",
+      "sha256": "f786b3be5de591c4248e84302b8ecb577d1d52237d15e14d0523eb813cd58116",
+      "stage": "uav-native-chain"
+    },
+    {
+      "rva": "0x86f5d0",
+      "length": 768,
+      "file": "mount-86f5d0-300.bin",
+      "sha256": "8968d708a5067d32b06af1223c5d1c5199f441aa1ceaa7eb9f07c4a609e7a996",
+      "stage": "uav-end-chain"
+    },
+    {
+      "rva": "0x878d40",
+      "length": 928,
+      "file": "mount-878d40-3a0.bin",
+      "sha256": "668aab11a05d6394edf055ebd97e89921d32c7c66000df5efbc34182482198d0",
+      "stage": "uav-end-chain"
+    },
+    {
+      "rva": "0x8a4e90",
+      "length": 976,
+      "file": "mount-8a4e90-3d0.bin",
+      "sha256": "faf340bbc0ea0d029338ead4be665c60800eef213efbab553cceda4d82c68664",
+      "stage": "uav-end-chain"
+    },
+    {
+      "rva": "0x885510",
+      "length": 416,
+      "file": "mount-885510-1a0.bin",
+      "sha256": "88cc79c79a64419edd68304239ddb3f45ae11eb6c3957440ee08f045d3896982",
+      "stage": "uav-end-chain"
+    }
+  ],
+  "historical_native_sources": [
+    {
+      "source": "挂载研究已核对的同build原始代码",
+      "rva": "0x898000",
+      "length": 49152,
+      "sha256": "ec4452f4e6bc4e160d73d67c17ea6d8c8b29c274431d36b71707847e43123b35",
+      "used_for": [
+        "0x89f5df UAV专门标记",
+        "0x8a0730 回收队列入列",
+        "0x8a0c79 回收数据Actor建立",
+        "0x8a12f0 回收/装填模型更新"
+      ],
+      "limits": "旧暂停进程原件，不是本次运行对象；不将旧指针复用于本次进程"
+    }
+  ],
+  "observations": [
+    "同代次MSL对照为第二到第三阶段：UAV index132221/serial29523/退场标记相同，年龄2.5151→5.48894，目标Optional9_Heli1保持；用户观察持续攻击",
+    "两条UAV槽发射即开始冷却；bReloadOnFire=1、bReloadAfterAllFired=0，结束装填owner为空；无需复用等待结束启动冷却的假设",
+    "本体Damage=0，专用子弹WeaponID=101，Damage=16，LifeTime=1，OwningGameObject为玩家、OwnerWeapon为UAV；子弹复用与本体发射代次分开",
+    "UAV攻击受目标存活/距离/本体AttackStartTime和独立攻击计时约束；目标提前失效可进入离场行为，15秒寿命不等于15秒连续射击",
+    "本体约15秒退场，目标引用清零；末次槽冷却均达到15.2秒",
+    "本体退场后ActiveWeapons仍有三项UAV旧登记，同一index132221出现两次；MSL发射还使SpawnedWeapons仅保留最近普通导弹，不能从单一列表或长度判断活动UAV",
+    "回收不是将仍攻击的同一UAV附着回飞机：原生挂载管理器建立ReturnMoveSplineDataActor及Spline，保存ReturnTime=2与曲线并驱动模型队列；现场数据Actor在回收结束后仍存在",
+    "8a7410按本体WeaponData.SpawnWeaponClass、OwningGameObject、TargetToHome与原生group生成子弹，随后写OwnerWeapon指向本体；3eb540内部完整依赖链尚待补齐",
+    "UAV自然结束入口8779a0→895fd0→虚表648的8a5260→876ab0→86f5d0，后者TrailTime=0时直接680=878eb0→871ca0，不能机械套用TLS/ECM的894850生命周期；871ca0后续父类链已从同build历史原件补齐为897740→885510及原生退场"
+  ],
+  "candidate": {
+    "status": "已改代码和文档，等待用户后续安排构建及实玩",
+    "version_policy": "VERSION和所有DLL保留2.4.0原字节；整合前核对主工作区最新源码和实际安装回执",
+    "functions": [
+      "仅ADF-11F原生TLS/QAAM/UAV三配置放开UAV多挂，增加新Lua/核心握手",
+      "从Active/Spawned并集发现活动对象，以身份和发射代次去重并映射源槽",
+      "Raven TLS原生父链/Socket保留，UAV由ActiveWeapons保有，不占SpawnedWeapons小池",
+      "878eb0为已保留UAV补足活动登记移除，完整执行871ca0→897740收尾并隔离旧通知",
+      "重建前后裁掉旧SP延迟/回收运动队列，归还原生组件原位；当前UAV按独立冷却重建回收及最后阶段进度",
+      "调试拒绝活动效果，仅豁免已退场原生UAV旧登记；补给/检查点沿用排空，失败清理效果和队列"
+    ],
+    "visual_boundary": "ADF-11F仍为原生当前SP模型，不扩展三组模型同时显示；非当前UAV的战斗继续，旧挂点回收动画在切回后按冷却恢复",
+    "not_validated": [
+      "本候选的编译、自动检查、安装及跨SP实玩均未执行",
+      "UAV跨TLS/QAAM后的真实攻击伤害、Raven TLS真实光束伤害与随动",
+      "三双挂/三挂及任意顺序、快速往返、回收最后两秒切回、部件及低库存/最后一发",
+      "补给、调试、死亡、任务重启、检查点和长期稳定性",
+      "3eb540子弹生成内部完整依赖仍待补读，不能声称所有特殊目标已通过"
+    ],
+    "sources_sha256": {
+      "src/continuous_sp.hpp": "c510d8bd0993d55bad4796e245ec069a43a9b0eda4d6365072e892d412d82a20",
+      "src/raven_sp.hpp": "06c80686e13d6f1ad40cf67801bfb76e576f442be84dba0b697b7a7f05b5e7be",
+      "src/weapon_bridge.cpp": "f68df0aece683644e767413d0be612b8551b1c4f8b772cde5dd9828b53fe5826",
+      "dist/DualSP/Scripts/main.lua": "986c92a3718add2f316723310ab75ac466c009796a60e9b763a04dd52f998e6b",
+      "src/build.py": "41e5340d682140489575ea7b04faed6abff3897b3524dd2450d375000f7fd6db"
+    }
+  },
+  "native_capture_note": {
+    "all_unique_fragments_in_Temp": 255,
+    "relevant_sources_listed": 29,
+    "boundary": "PE展开记录可能拆分函数；叶跳板和外跳目标需要连续片段，不把单段当完整函数"
+  },
+  "offline_parent_completion": {
+    "source": "E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype/Temp/f35c-batch8-activator-native/mount-870000-20000.bin",
+    "source_sha256": "9c062b8d4c6e501f25fadcda93ae3625228df60712232cc95cd3681ea2cac86d",
+    "rva": "0x871ca0",
+    "length": 43,
+    "finding": "清理6e0，清零6ac后尾跳897740；最终走885510通知及原生退场",
+    "boundary": "同build历史运行内存原件；未复用历史地址，不是当前游戏采样或新代码通过证据"
+  },
+  "capacity_failure_2_7_0": {
+    "user_report": "初始可切换，依次切SP并发射后失效并回退MSL+单SP",
+    "native_error": "持续兵装：原生引用数组容量不足，旧效果将结束",
+    "request": 104,
+    "game_time": 35.736671448,
+    "source_config": 2,
+    "target_config": 0,
+    "config_order": [
+      "TLS",
+      "QAAM",
+      "UAV"
+    ],
+    "retained_uav_ages": [
+      5.952749252319336,
+      5.619405746459961
+    ],
+    "conclusion": "原生引用数组的旧固定容量守卫触发，随后结束保留效果并停止控制器；不能伪造具体不足数组及原Num/Max",
+    "native_tail_sha256": "4b8728d6ae9fe0642b6c5ca3470a2d93a47344bbfb4a047dcb4caba2c5ababc5",
+    "backend_read_only": {
+      "read_only": true,
+      "game_functions_called": false,
+      "steam_build": "9855922",
+      "loader_sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd",
+      "realloc_export": "?Realloc@FMemory@Unreal@RC@@SAPEAXPEAX_KI@Z",
+      "versioned_container_initialized": true,
+      "allocator_nonnull": true,
+      "allocator_vtable_in_game": true,
+      "failure_request": 104,
+      "failure_game_time": 35.736671448,
+      "failure": "持续兵装：原生引用数组容量不足，旧效果将结束",
+      "retained_uavs": [
+        {
+          "index": 140488,
+          "serial": 72635,
+          "age": 5.952749252319336
+        },
+        {
+          "index": 140452,
+          "serial": 72645,
+          "age": 5.619405746459961
+        }
+      ],
+      "boundary": "只确认原容量守卫触发；原日志没有两数组各自Num/Max，不能伪造具体不足的是哪一组"
+    },
+    "source_fix": "FMemory/GMalloc预检；Active/Spawned按需原生扩容，保留Num，重读data后补项及Num；临时RootSet仍仅覆盖同步事务",
+    "events": [
+      "CONTINUOUS_REFERENCE_PLAN",
+      "CONTINUOUS_REFERENCE_GROWN"
+    ],
+    "fix_compiled": false,
+    "fix_tests_run": false,
+    "fix_installed": false,
+    "fix_game_validated": false,
+    "research_header_sha256": "f5bea4c16d53da55c17fe1c5eca9065a58d85a6aa9dc40b11e9de1541eee2b64",
+    "integrated_header_sha256": "bb71bada16e286f0f73d0f345c571063babadbcf88bab9451fa1d043ddf4cb90",
+    "boundary": "尚未执行扩容调用或跨SP修复复测；只读确认当前加载器已绑定游戏GMalloc，不能据此声称修复通过",
+    "installed_runtime_unchanged": 16
+  }
+}

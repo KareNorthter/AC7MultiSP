@@ -1,0 +1,180 @@
+{
+  "event_date": "2026-10-16",
+  "version": "2.4.0",
+  "baseline_tag": "v2.4.0",
+  "user_report": {
+    "frequency": "近几日偶发两三次进程完全退出",
+    "latest": "23:50左右选中ADF-11F，进入SP选择界面后立即退出；未看清原生或模组界面；重开选择相同机体正常",
+    "followup": {
+      "confirmed_on": "2026-10-17",
+      "user_answer": "是，重开测试正常后手动关闭",
+      "meaning": "23:51:38是正常测试后手动关闭；23:51:40转储仅对应关闭后的UE4SS清理异常。"
+    }
+  },
+  "current_runtime": {
+    "matches_installed_receipt": true,
+    "UE4SS_sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd",
+    "other_lua_mod": "AC7MouseAim 0.6.0-beta.1（仅确认共存，未归因）"
+  },
+  "historical_record": "AGENTS及版本说明早已记录旧版崩溃/退出未定位；旧.9证据明确把UE4SS退出异常与任务内崩溃分开。",
+  "findings": [
+    {
+      "status": "已确认",
+      "subject": "重复的退出阶段异常",
+      "dump": "Ace7Game.exe.14728.dmp",
+      "time_local": "2026-10-16 23:51:40 +08:00",
+      "exception": "0xc0000005",
+      "module": "UE4SS.dll",
+      "rva": "0x2f5957",
+      "export_symbol": "RC::Input::Handler::~Handler+0x1a7",
+      "instruction": "mov rax,[rcx]，RCX=0；此前从[RBX+0x200]取指针",
+      "stack": [
+        "UE4SS input handler cleanup",
+        "ntdll!LdrShutdownProcess",
+        "ntdll!RtlExitUserProcess",
+        "kernel32!ExitProcess",
+        "CRT exit path",
+        "Ace7Game main-return path"
+      ],
+      "comparison": "23:04:54转储同地址、同退出清理栈；今日11条应用1000事件均为同模块/异常码/RVA，不能据此统计为11次游戏内崩溃。",
+      "boundary": "用户已确认23:51:38为重开测试正常后手动关闭，因此该转储不能用于解释此前机库突发退出。仅使用导出符号，部分相邻帧名称是最近导出名；不把这些名称视为精确内部函数。23:04记录的退出动机未单独确认。"
+    },
+    {
+      "status": "已确认",
+      "subject": "本次突发退出前后时序",
+      "before_restart_last_log_local": "2026-10-16 23:49:52 +08:00",
+      "before_restart_last_log": "PERF_TICK scene=menu；没有新增ADF-11F页面接入或原生异常栈",
+      "restart_local": "2026-10-16 23:50:25 +08:00",
+      "successful_adf11f_page_local": "2026-10-16 23:51:29 +08:00",
+      "successful_confirm_local": "2026-10-16 23:51:31 +08:00",
+      "successful_standby_local": "2026-10-16 23:51:32 +08:00",
+      "note": "重开后SP1/SP2等阶段与确认记录证明确已接入模组三SP选择页。WER没有23:49–23:50对应的首次异常记录或转储。",
+      "manual_close_local": "2026-10-16 23:51:38 +08:00（用户确认）"
+    },
+    {
+      "status": "尚未定位",
+      "subject": "ADF-11F进入SP页的第一次突发退出",
+      "reproduction": "用户重试未触发；本轮没有复现",
+      "missing": "首次异常/主动结束请求的线程栈、重启前UE4SS日志（重开后已覆盖）、触发时的页面接入阶段",
+      "candidates": "游戏原生页面/资源加载；通用Lua页面接入与控件构建；加载器/共存模组。均未建立因果关系。",
+      "excluded_overclaim": "ADF-11F不在固定多模型和Morgan持续实验适配范围，这两条专用映射不是本次已证根因；但不能据此排除通用UI逻辑。"
+    }
+  ],
+  "followup": [
+    "下一次测试需在首个异常或进程结束请求发生时保存线程栈，并同时保留退出前UE4SS/mod/native日志。只看最终WER会被加载器清理异常覆盖。",
+    "在证据明确后分别验证：游戏+加载器、只启用MultiSP、再加入AC7MouseAim；每次仅改变一个条件，不擅自改写用户当前配置。",
+    "页面接入如需诊断版，日志应增加PID/会话号与进入事件、读取弹药、构建控件前后标记；不能把推测性延时或吞掉异常当作修复。"
+  ],
+  "actions": {
+    "raw_preserved_in": "Temp/crash-analysis-20261016-2351",
+    "game_started": false,
+    "game_stopped": false,
+    "process_memory_written": false,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "runtime_or_loader_patched": false
+  },
+  "raw_preserved": {
+    "Ace7Game.exe.14728.dmp": {
+      "size": 40053241,
+      "sha256": "16574d7de7c707972937f751b883dd0682f2aeb23d8522a4cbb05b0638ecb145"
+    },
+    "Ace7Game.exe.34012.dmp": {
+      "size": 40003897,
+      "sha256": "9e94f474609936033a1f96abd44b13e4c507101163f7368ff4818058b8f60583"
+    },
+    "UE4SS.log": {
+      "size": 93112,
+      "sha256": "6358f5e2ee76c199685677bcff1c8c60e4e7bacb997c98a1380dcb67dae3ee77"
+    },
+    "mod.log": {
+      "size": 2731343,
+      "sha256": "4610e7c603b9db5a3fccbdf7306cd800e6f46803ee0342325da5a224eb14bebe"
+    },
+    "native.log": {
+      "size": 679207,
+      "sha256": "deedd25d5f55950e9676fbbe2b8656462f7b1911b5077782ed070d6adcc89ca9"
+    },
+    "cdb-latest-local.txt": {
+      "size": 12957,
+      "sha256": "f23df16bb30c75060d55bcfb55c6beb021bbc92597982d93a7b118b033248c34"
+    },
+    "cdb-2304-local.txt": {
+      "size": 9956,
+      "sha256": "99c0cfd219e31ce902d51a6665fb17d479fc5d83d13a745dbf42b308cba7c5d4"
+    }
+  },
+  "capture_setup": {
+    "prepared_local": "2026-10-17 +08:00",
+    "script": "src/research/start_crash_capture.ps1",
+    "entry": "启动游戏并取证.cmd",
+    "desktop_shortcut": "AC7 崩溃取证启动",
+    "backend": "本机微软签名 WinDbg amd64/cdb；未安装全局调试器或计划任务",
+    "output": "Temp/crash-capture-时间/session-N-pid-PID",
+    "scope": "筛选的首次异常、未处理异常、RtlExitUserProcess/NtTerminateProcess入口栈、小转储；5秒日志快照、转储附近快照、退出完整日志、配置与状态、文件哈希及应用事件",
+    "verification": {
+      "environment_and_signature": true,
+      "script_parse": true,
+      "background_wait": true,
+      "actual_log_snapshot": true,
+      "isolated_process_first_chance_dump": true,
+      "isolated_process_exit_request_dump": true,
+      "isolated_process_final_hidden_backend": true,
+      "raw_local_only": [
+        "Temp/capture-check-20261017-002026",
+        "Temp/capture-check-final-20261017-002248",
+        "Temp/crash-capture-20261017-002128-228"
+      ],
+      "game_attached": true,
+      "actual_game_crash_captured": false
+    },
+    "current_state": "用户游戏PID35172已附加，F12暂停已现场恢复；当前bpe规则已修正，仍保持取证",
+    "limits": "正常关闭也采集，不自动判定崩溃；外部强杀、附加前退出或范围外异常不保证捕获最初调用者；调试器和写转储会影响时序；原始资料仅保留本机Temp"
+  },
+  "f12_pause_investigation": {
+    "date_local": "2026-10-17 +08:00",
+    "report": "通关评分页原有卡顿，按Steam截图键F12后画面卡住且无声，进程仍在",
+    "game_pid": 35172,
+    "debugger_pid": 32564,
+    "first_pause_local": "00:52:35",
+    "exception_code": "0x80000003",
+    "exception_stack": [
+      "ntdll!DbgBreakPoint",
+      "ntdll!DbgUiRemoteBreakin",
+      "KERNEL32!BaseThreadInitThunk",
+      "ntdll!RtlUserThreadStart"
+    ],
+    "diagnosis": "采集器未配置系统调试断点自动继续，导致调试暂停；非本次已证Mod死锁，不能解释此前偶发退出",
+    "restored_local": "00:57:50–00:57:51",
+    "recovery": "经已有采集器标准输入保存栈和转储，设置sxe -c日志及gh的bpe规则，gh恢复；未结束或重启游戏",
+    "user_confirmation": "已恢复，可以继续操作；问题问项明确包含画面和声音",
+    "raw_local_only": "Temp/hang-20261017-005235-f12",
+    "hang_dump": {
+      "bytes": 3502497,
+      "sha256": "9fa5fb184ce92f6e3438082b8deeb21c0eda806d2dd535e672c0178c672a2ccf"
+    },
+    "secondary_debugger_attempt": "非侵入附加返回NTSTATUS 0xC0000022，未取得现场；后经已有采集器成功保存",
+    "source_changes": [
+      "启动脚本添加bpe日志和gh自动继续",
+      "工作进程增加固定snapshot/continue-breakpoint/detach控制文件入口，仅在调试器能接受输入时执行"
+    ],
+    "verification": "Temp/capture-f12-check-20261017-005903：独立Python进程DebugBreak后自动继续，输出12345并正常退出，仍保存退出请求转储；Mod未编译或安装",
+    "score_page_performance": {
+      "status": "独立待查",
+      "single_main_thread_sample": [
+        "dualsp_mount_preview+0x2c2",
+        "mountIdentity+0xa6",
+        "checkMemory+0x34",
+        "KERNELBASE!VirtualQuery"
+      ],
+      "symbol_source": "与安装相同的2.4.0 DLL完整COFF符号；不可依赖最近导出名称误解为weapon_icon或catalogue",
+      "last_pre_pause_mod_callback_ms": {
+        "average": 1.422,
+        "peak": 94
+      },
+      "limits": "只统计Mod回调且仅有一次暂停栈样本，不是总帧时间或性能因果证据；恢复后315887ms峰值包含约5分钟调试暂停"
+    },
+    "reference": "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-registerhotkey"
+  }
+}

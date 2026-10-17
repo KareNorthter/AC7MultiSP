@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "version": "2.7.1",
+  "date": "2026-10-17",
+  "source": "用户本线程实测反馈",
+  "reported_work_effective": true,
+  "aircraft": {
+    "f02a": {
+      "weapon_selection_and_fire": "正常，包含连射切换修复",
+      "performance": {
+        "hangar": "卡顿",
+        "cutscenes": "卡顿",
+        "mission_single_sp": "不掉帧",
+        "mission_all_double_and_triple_combinations": "均掉帧",
+        "multi_model_disabled": "不掉帧"
+      },
+      "conclusion": "多挂外观路径相关，不能仅归因RKT；LASM+HVAA不含RKT仍慢，未定位具体CPU/GPU原因",
+      "layout_request": "LASM+HVAA双挂改为大LASM在内侧、小HVAA在外侧；后续同类方案优先遵循",
+      "next_action": "本轮仅记录性能问题，之后专门研究，不继续性能试改"
+    },
+    "rflm": {
+      "user_report": "一切正常"
+    },
+    "typn": {
+      "user_report": "一切正常"
+    },
+    "adf11f": {
+      "user_report": "用户反馈正常，未列举逐项场景"
+    }
+  },
+  "limits": [
+    "不能扩大为所有七组合、任务、检查点、完整生命周期或长时稳定性均验收",
+    "F-2A性能未解决；下一源码布局调整未包含于本次已安装实测字节"
+  ],
+  "installed_receipt": "evidence/2.7.1-installed.json",
+  "integration_record": "evidence/2.7.1-integration.json",
+  "formal_main_unchanged": "v2.4.0",
+  "publish_or_push_authorized": false
+}

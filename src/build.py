@@ -15,6 +15,8 @@ def main():
     """整套构建，全部产物放在主工作区的新 Temp 子目录。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tools-root", type=Path, default=ROOT / "tools")
+    parser.add_argument("--mount-assets-dir", type=Path, default=ROOT / "Temp/mount-assets-2.6.0/source",
+                        help="按研究回执核对的16份AC7编码资源对，仅使用本地自有资源")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "Temp" / ("build-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")))
     args = parser.parse_args()
     root = ROOT
@@ -43,6 +45,8 @@ def main():
         compile_only(path.read_text(encoding="utf-8"), "@" + str(path))
         scripts[path.relative_to(root).as_posix()] = digest(path)
     output.mkdir(parents=True, exist_ok=False)
+    from build_mount_assets import build as build_mount_assets
+    mount_assets = build_mount_assets(args.mount_assets_dir.resolve(strict=True), output)
     compiler_temp = output / "compiler-temp"  # 编译器的中间临时文件也限制在 Temp。
     compiler_temp.mkdir()
     environment = dict(os.environ, TMP=str(compiler_temp), TEMP=str(compiler_temp))
@@ -94,7 +98,7 @@ def main():
             raise ValueError("构建期间保护文件改变：" + name)
     if source_before != source_snapshot() or toolchain_before != tree_fingerprint(compiler.parent):
         raise ValueError("构建期间来源或工具链发生变化，产物不能交付")
-    report = {"receipt_schema": 2, "name": info["name"], "version": info["version"],
+    report = {"receipt_schema": 2, "name": info["name"], "version": info["version"], "mount_assets": mount_assets,
               "source_files": source_before, "toolchain": toolchain_before, "toolchain_path": str(compiler.parent),
               "compiler_version": subprocess.check_output([str(compiler / "clang++.exe"), "--version"], text=True),
               "commands": commands, "objects": {p.name: digest(p) for p in sorted(output.glob('*.o'))},
@@ -106,7 +110,7 @@ def main():
               "game_installed": False, "game_validated": False, "test_modules_run": False,
               "installation_blockers": [],
               "protected_files": protected, "lua_sources": scripts,
-              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/mount_mesh_override.hpp", "src/continuous_sp.hpp", "src/keyboard_shortcuts.hpp", "src/overlay.cpp")}}
+              "cpp_sources": {name: digest(root / name) for name in ("src/weapon_bridge.cpp", "src/su30sm_fixed_mount.hpp", "src/mount_mesh_override.hpp", "src/continuous_sp.hpp", "src/raven_sp.hpp", "src/keyboard_shortcuts.hpp", "src/overlay.cpp")}}
     (output / "build-receipt.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"candidate": str(candidate), "sha256": report["candidate_sha256"],
                       "status": "已构建；安装前须核对本阶段证据和正式安装文件"}, ensure_ascii=False))

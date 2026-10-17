@@ -41,7 +41,7 @@ assert(config.management_revision==6 and config.mod_enabled and config.fixed_mou
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=6,language='en',mod_enabled=false,fixed_mount_enabled=false,
+local action={request=1,management_protocol=7,language='en',mod_enabled=false,fixed_mount_enabled=false,
     ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
 assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
@@ -404,10 +404,11 @@ local options={{max=30},{max=47},{max=11}}
 local profile={a=0,b=1,c=-1,ratio=.5}
 local calls,lease,fail={},nil,false
 local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
+    expandedMountAssets={},runtimeContext={hangarVisible=true},
     instance=instance,planeId=128,plane=model,activator=model.PlayerWeaponActivator,catalogue={['128']={code='su30sm'}},Profile=Profile,
     valid=function(o)return o and o:IsValid()end,isSelectedPlane=function()return true end,
     profileFor=function()return profile end,optionsFor=function()return options end,
-    previewWarning=function()end,nativeMountPreview=function(owner,plane,activator,mode,a,b,c,aa,ab,ac)
+    previewWarning=function()end,recordStage=function()end,nativeMountPreview=function(owner,plane,activator,mode,a,b,c,aa,ab,ac)
         if fail then error('模拟模型失败')end
         calls[#calls+1]={owner=owner,plane=plane,mode=mode,a=a,aa=aa,ab=ab}
         if mode==0 then if owner==0 or owner==lease then lease=nil end
@@ -440,6 +441,13 @@ fail=true;coordinator.beginTick();coordinator.scene();assert(not env.errorText,'
 fail=false;env.runtimeFixedMountEnabled=false
 coordinator.preview{instance=instance,planeId=128,mode='flight',profile=profile,options=options}
 assert(not lease and calls[#calls].mode==0,'禁用必须归还整个场景')
+env.runtimeFixedMountEnabled=true
+coordinator.preview{instance=instance,planeId=128,mode='scene',profile=profile,options=options}
+env.runtimeContext.hangarVisible=false
+coordinator.beginTick();coordinator.scene();assert(not lease,'评分页即使保留机库飞机也必须归还预览')
+before=#calls;coordinator.beginTick();coordinator.scene();assert(#calls==before,'评分页不能持续调用原生预览')
+env.runtimeContext.hangarVisible=true
+coordinator.beginTick();coordinator.scene();assert(lease==100,'返回机库必须恢复预览')
 ''')
 lua.globals().locate_plane_source = main_source[main_source.index('local function locatePlane()'):main_source.index('local function publishState()')]
 lua.execute(r'''
@@ -514,3 +522,166 @@ apply(action(12,'mount'));assert(not env.runtimeFixedMountEnabled and env.mountW
 assert(configured==1,'任何外观开关操作均不得补弹或改组合')
 ''')
 print('配置/协议/页面、场景预览、开场定位、调试快捷操作及失败隔离检查通过')
+
+# 执行实际安全菜单判定和总开关交接函数，覆盖管理面板借走输入、任务拒绝及清理失败。
+context_source = (ROOT / 'dist/DualSP/Scripts/runtime_context.lua').read_text(encoding='utf-8')
+lua.globals().master_menu_source = context_source[context_source.index('function Context.canToggleMaster('):context_source.index('-- 仅在许可变化时记录上下文')]
+lua.globals().master_apply_source = main_source[main_source.index('tryApplyMasterSwitch=function(force)'):main_source.index('local function tick()')]
+lua.execute(r"""
+local world={IsValid=function()return true end,GetAddress=function()return 900 end,GetFullName=function()return 'World /Game/UI/Menu/Menu.Menu' end}
+local otherWorld={IsValid=function()return true end,GetAddress=function()return 901 end}
+local visible,controlled,permitted=true,false,true
+local kind='main'
+local widget={IsValid=function()return true end,GetWorld=function()return world end,
+    IsVisible=function()return visible end,IsEnableControl=function()return controlled end,
+    IsA=function(_,class)return class=='base' or class==kind end}
+local manager={IsValid=function()return true end,GetWorld=function()return world end,
+    MenuWidgetArray={ForEach=function(_,fn)fn(nil,{get=function()return widget end})end}}
+local env=setmetatable({Context={allowed=function()return permitted end},toggleMenuClasses={'main','title','campaign','missions'},
+    menuBaseClass='base',valid=function(o)return o and o:IsValid()end,
+    ui={GetCurrentUIManagerActor=function()return manager end}}, {__index=_G})
+local canToggle=assert(load(master_menu_source..'return Context.canToggleMaster','总开关安全菜单','t',env))()
+local instance={GetWorld=function()return world end}
+assert(not canToggle(instance,{}),'不能使用仍可见但未开放输入的底层主菜单')
+assert(canToggle(instance,{widget}),'管理面板实际持有的主菜单可以安全切换')
+controlled=true;assert(canToggle(instance,{}))
+visible=false;assert(not canToggle(instance,{widget}));visible=true
+kind='hangar';assert(not canToggle(instance,{widget}),'机库草稿期间不能切换');kind='main'
+world.GetFullName=function()return 'World /Game/Maps/Mission/ms19.ms19' end
+assert(not canToggle(instance,{widget}),'任务世界不能用缓存主菜单绕过限制')
+world.GetFullName=function()return 'World /Game/UI/Menu/Menu.Menu' end
+widget.GetWorld=function()return otherWorld end;assert(not canToggle(instance,{widget}))
+widget.GetWorld=function()return world end;permitted=false;assert(not canToggle(instance,{widget}));permitted=true
+local resets,gates,fail=0,{},false
+local adapter={isPreparationHandoffPending=function()return false end,reset=function()resets=resets+1;if fail then error('模拟控件归还失败')end end}
+local applyEnv=setmetatable({config={mod_enabled=true},runtimeModEnabled=false,runtimeAllowed=true,runtimeChanging=false,isFlight=false,
+    masterSwitch={lastCheck=-1,failed=false,response=0},instance=instance,gatedWidgets={widget},nativeLoadout=adapter,
+    nativeSupply=adapter,nativeStandby=adapter,nativeParts=adapter,nativeHud=adapter,weaponPresentation=adapter,
+    runtimeContext={canToggleMaster=function(i,held)return canToggle(i,held)end},
+    nativeRuntimeGate=function(n)gates[#gates+1]=n;return true end,
+    releaseMountPreview=function()return true end,setFixedMountEnabled=function()return true end,
+    resetCheckpointState=function()end,resetFlightTracking=function()end,applyFixedMountSetting=function()end,
+    tr=function(zh,en)return zh end,note=function()end}, {__index=_G})
+local apply=assert(load(master_apply_source..'return tryApplyMasterSwitch','总开关完整交接','t',applyEnv))()
+applyEnv.isFlight=true;apply(true);assert(#gates==0 and resets==0 and not applyEnv.runtimeModEnabled)
+applyEnv.isFlight=false;apply(true)
+assert(applyEnv.runtimeModEnabled and resets==6 and gates[1]==0 and gates[2]==1)
+assert(applyEnv.masterSwitch.response==1 and not applyEnv.runtimeChanging)
+applyEnv.config.mod_enabled=false;apply(true)
+assert(not applyEnv.runtimeModEnabled and resets==12 and gates[#gates]==0)
+applyEnv.config.mod_enabled=true;fail=true;apply(true)
+assert(not applyEnv.runtimeModEnabled and applyEnv.masterSwitch.failed and applyEnv.masterSwitch.error:find('归还失败'))
+local count=#gates;apply(true);assert(#gates==count,'清理失败不能在每帧自动重试')
+fail=false;applyEnv.masterSwitch.failed=false;apply(true);assert(applyEnv.runtimeModEnabled)
+""")
+print('总开关安全入口、同世界/输入所有权、禁止任务内切换及失败停用检查通过')
+
+lua.globals().mount_asset_source = main_source[main_source.index('local mountAssetStatus={}'):main_source.index('local function mountPreview(context)')]
+lua.execute(r'''
+-- 执行真实加载修复：保留LoadAsset三返回值，新PAK未登记时走完整AssetData工厂。
+local function object(address)
+    return {IsValid=function()return true end,GetAddress=function()return address end}
+end
+local function loader(mode)
+    local calls={load=0,factory=0,register=0,warnings=0,logs={}}
+    local meshClass=object(80)
+    local donor=object(81);donor.IsA=function(_,class)return class==meshClass end
+    local rack=object(82);rack.StaticMesh=donor;rack.GetCollisionEnabled=function()return mode=='collision' and 1 or 0 end
+    local plane=object(83);plane.SWP1=rack;plane.SWP2=rack;plane.SWP3=rack
+    local loaded=object(84)
+    local helpers=object(85)
+    helpers.CreateAssetData=function(_,source,allowBlueprint)
+        assert(source==donor and allowBlueprint==false);calls.factory=calls.factory+1
+        return {nativeFactorySentinel=123,ObjectPath='old',PackageName='old',TagsAndValues={keep=true}}
+    end
+    helpers.GetAsset=function(_,data)
+        assert(data.nativeFactorySentinel==123 and data.TagsAndValues.keep)
+        assert(data.ObjectPath=='/Game/AC7MultiSP/Research/MSP_case.MSP_case')
+        assert(data.PackageName=='/Game/AC7MultiSP/Research/MSP_case' and data.AssetName=='MSP_case')
+        assert(data.PackagePath=='/Game/AC7MultiSP/Research' and data.AssetClass=='StaticMesh')
+        if mode~='failed' then return loaded end
+    end
+    local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
+        expandedMountAssets={f16c={{0,'MSP_case'}}},planeId=1,catalogue={['1']={code='f16c'}},plane=plane,
+        valid=function(o)return o and o:IsValid()end,IsInGameThread=function()return true end,
+        isSelectedPlane=function(o,code)return o==plane and code=='f16c' end,FName=function(s)return s end,
+        previewWarning=function(message)assert(message:find('回退'));calls.warnings=calls.warnings+1 end,
+        note=function(message)calls.logs[#calls.logs+1]=message end,
+        StaticFindObject=function(path)
+            if path=='/Script/AssetRegistry.Default__AssetRegistryHelpers' then return helpers end
+            if path=='/Script/Engine.StaticMesh' then return meshClass end
+        end,
+        LoadAsset=function(path)
+            calls.load=calls.load+1
+            if mode=='returned' then return loaded,false,true end
+            return nil,false,false
+        end,
+        registerMountAsset=function(id,address)assert(id==0 and address==84);calls.register=calls.register+1;return true,'' end}, {__index=_G})
+    return assert(load(mount_asset_source..'return ensureMountAssets','挂架加载入口','t',env))(),calls,env,loaded
+end
+local load,calls=loader('returned')
+assert(load() and calls.load==1 and calls.factory==0 and calls.register==1,'不得丢弃LoadAsset已返回的对象')
+assert(load() and calls.load==1,'成功资源不重复加载')
+load,calls=loader('unregistered')
+assert(load() and calls.load==1 and calls.factory==1 and calls.register==1)
+assert(calls.logs[1]:find('registered=false') and calls.logs[1]:find('loaded=false'))
+assert(calls.logs[2]:find('valid=true'))
+local env,loaded
+load,calls,env,loaded=loader('failed')
+assert(not load() and calls.warnings==1 and calls.register==0)
+assert(not load() and calls.load==1,'失败不能每帧反复加载')
+env.LoadAsset=function()calls.load=calls.load+1;return loaded,false,true end
+assert(load(nil,nil,true) and calls.load==2 and calls.register==1,'显式模型快捷键允许重试')
+load,calls=loader('collision')
+assert(not load() and calls.load==0 and calls.factory==0 and calls.register==0,'启用碰撞的原挂架不能替换为分区网格')
+''')
+print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
+
+lua.globals().weapon_switch_source = main_source[main_source.index('function weaponSwitch.defer'):main_source.index('-- 直接选择只在允许武器操作')]
+lua.execute(r'''
+-- 使用真实切换/等待代码；原生忙碌不能重建SP，重试不重复释放输入。
+local function switchCase()
+    local calls={release=0,native=0,pressed=0,released=0,audio=0,hud=0}
+    local state={busy=true,time=10,armed=false,allowPress=true,paused=false}
+    local plane={GetAddress=function()return 100 end,IsSpecialWeaponArmed=function()return state.armed end,
+        OnWeaponSwitchPressed=function()calls.pressed=calls.pressed+1;if state.allowPress then state.armed=not state.armed end end,
+        OnWeaponSwitchReleased=function()calls.released=calls.released+1 end}
+    local activator={GetAddress=function()return 200 end,GetSpecialWeaponCount=function()return 20 end}
+    local env=setmetatable({weaponSwitch={read=function()return true,not state.busy,'native_busy' end},
+        plane=plane,activator=activator,currentWorld={},weaponRevision=1,active=0,configured=true,isFlight=true,
+        nativeState={cached_sp={20,20,20}},
+        game={GetTimeSeconds=function()return state.time end,IsGamePaused=function()return state.paused end},
+        valid=function(o)return o~=nil end,ready=function()return true end,IsInGameThread=function()return true end,
+        note=function()end,refreshHUD=function()calls.hud=calls.hud+1 end,
+        selectionAudio=function()calls.audio=calls.audio+1 end,
+        releaseWeaponInput=function()calls.release=calls.release+1 end}, {__index=_G})
+    env.native=function(op,index)assert(op=='switch');calls.native=calls.native+1;env.active=index;env.weaponRevision=env.weaponRevision+1 end
+    local select=assert(load(weapon_switch_source..'return selectLogicalWeapon','原生忙碌等待切换','t',env))()
+    return select,env,state,calls
+end
+local select,env,state,calls=switchCase()
+assert(not select(2) and env.weaponSwitch.pending.desired==2)
+assert(calls.release==1 and calls.native==0 and calls.pressed==0 and calls.audio==0)
+env.weaponSwitch.pump();assert(calls.native==0)
+state.busy=false;state.time=10.02;env.weaponSwitch.pump();assert(calls.native==0,'50ms内不能重试')
+state.time=10.06;env.weaponSwitch.pump()
+assert(env.active==1 and not env.weaponSwitch.pending and calls.release==1 and calls.native==1)
+assert(calls.pressed==1 and calls.released==1 and calls.audio==1 and state.armed)
+select,env,state,calls=switchCase();select(2);env.currentWorld={};env.weaponSwitch.pump()
+assert(not env.weaponSwitch.pending and calls.native==0,'换世界取消旧请求')
+select,env,state,calls=switchCase();select(2);env.weaponRevision=2;env.weaponSwitch.pump()
+assert(not env.weaponSwitch.pending and calls.native==0,'配装版本变化取消旧请求')
+select,env,state,calls=switchCase();select(2);state.time=15.01;state.busy=false;env.weaponSwitch.pump()
+assert(not env.weaponSwitch.pending and calls.native==0,'超过五游戏秒取消')
+select,env,state,calls=switchCase();select(2);env.nativeState.cached_sp[2]=0;state.busy=false;env.weaponSwitch.pump()
+assert(not env.weaponSwitch.pending and env.inputNotice=='empty_ammo' and calls.native==0)
+select,env,state,calls=switchCase();select(2);select(3)
+assert(env.weaponSwitch.pending.desired==3 and calls.release==2,'新目标覆盖旧目标')
+select,env,state,calls=switchCase();state.busy=false;state.allowPress=false
+assert(not select(2) and calls.native==1 and calls.pressed==1 and calls.released==1 and calls.audio==0)
+state.allowPress=true;env.weaponSwitch.pump()
+assert(not env.weaponSwitch.pending and calls.native==1 and calls.pressed==2 and calls.released==2 and calls.audio==1)
+select,env,state,calls=switchCase();select(2);state.busy=false;state.paused=true;env.weaponSwitch.pump()
+assert(calls.native==0 and calls.pressed==0,'暂停期间不操作武器')
+''')
+print('原生连射等待、成对输入、节流/超时、上下文取消、空弹及类别重试检查通过')

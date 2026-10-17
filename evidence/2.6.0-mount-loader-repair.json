@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "installed_version": "2.6.0",
+  "source_fix_upstream_commit": "e35ff09",
+  "user_reported_normal": [
+    "f15c",
+    "f15j",
+    "mrgn"
+  ],
+  "user_reported_load_fallback": [
+    "f02a",
+    "f16c",
+    "mr2k",
+    "rflm"
+  ],
+  "not_tested_dlc_not_owned": [
+    "f15m",
+    "fa27"
+  ],
+  "no_user_feedback": [
+    "typn"
+  ],
+  "user_feedback_scope": "未逐项列明七组合或任务范围，不扩大为全组合通过",
+  "observed_failure_lines": {
+    "MSP_f02a_lasm_outer": "2026-10-17T01:55:02Z MOUNT_ASSET_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_f02a_lasm_outer",
+    "MSP_f16c_missile_outer": "2026-10-17T02:04:34Z MOUNT_ASSET_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_f16c_missile_outer",
+    "MSP_mr2k_aam_rear": "2026-10-17T02:06:33Z MOUNT_ASSET_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_mr2k_aam_rear",
+    "MSP_rflm_hcaa_belly": "2026-10-17T02:07:11Z MOUNT_ASSET_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_rflm_hcaa_belly"
+  },
+  "probable_cause": "本机LoadAsset先查资源登记表；新资源未登记可能使按路径加载未执行，旧Lua丢弃了两个布尔结果，尚待新日志证实",
+  "source_fix": "已在当前2.6.0源码接入技术研究e35ff09的加载候选：保留LoadAsset返回对象、registered和didLoad；新路径未成功加载时，从当前原生StaticMesh用CreateAssetData建立完整描述，设置独立包路径后经GetAsset加载。成功后仍由核心核对包名、对象名、StaticMesh类型与对象身份并保有；保留NoCollision、失败缓存、显式重试和原生回退，不改挂点或全局AssetRegistry.bin。",
+  "source_main_before_sha256": "5335f2788a9f785c7a1d8f5116ebd321c6ce1641e212727bb94af979d8c630a6",
+  "source_main_after_sha256": "65ae2e52b36fef374f7d126c2664b0f2d7acfc83aba52d0ef404ca2a19f653c0",
+  "source_fix_state": "候选已接入源码，原生工厂反射与实际按路径加载未验证",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_stopped": false,
+  "installed_runtime_unchanged": true,
+  "runtime_file_identity_checks": {
+    "Scripts/config_store.lua": true,
+    "Scripts/json.lua": true,
+    "Scripts/loadout_flow.lua": true,
+    "Scripts/loadout_profile.lua": true,
+    "Scripts/main.lua": true,
+    "Scripts/native_bridge.lua": true,
+    "Scripts/native_hud.lua": true,
+    "Scripts/native_loadout.lua": true,
+    "Scripts/runtime_context.lua": true,
+    "Scripts/weapon_cycle.lua": true,
+    "Scripts/weapon_names.lua": true,
+    "Scripts/weapon_presentation.lua": true,
+    "Scripts/mount_assets.lua": true,
+    "bin/DualSP.dll": true,
+    "bin/DualSPUI.dll": true,
+    "VERSION": true
+  },
+  "game_memory_modified": false,
+  "game_files_modified": false,
+  "next_validation": [
+    "登记表registered/didLoad及按路径加载日志",
+    "16项资源身份登记",
+    "四机完整七组合、真实离架及场景归还"
+  ]
+}

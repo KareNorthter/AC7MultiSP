@@ -76,8 +76,11 @@ def source_snapshot(root=ROOT):
     paths.update(p for p in (root / 'vendor').rglob('*') if p.is_file())
     paths.update(root / 'dist/DualSP/Scripts' / name for name in info['scripts'])
     paths.update(root / 'src' / name for name in (
-        'build.py', 'release_tools.py', 'install.py', 'package-release.py',
+        'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
+    paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
+        'evidence/mount-expansion-batch1.json','evidence/mount-expansion-batch2.json','evidence/mount-expansion-batch3.json',
+        'evidence/sp-combination-static-split-experiment.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
 
@@ -100,6 +103,11 @@ def verify_build(receipt, build_dir=None, root=ROOT):
         if digest(root / name) != value:
             raise ValueError('受保护文件改变：' + name)
     if build_dir:
+        assets = receipt.get('mount_assets',{})
+        if assets.get('file')!='AC7MultiSP_Mounts_P.pak' or assets.get('file_count')!=32 or assets.get('independent_readback') is not True:
+            raise ValueError('缺少完整挂架资源构建回执')
+        if digest(contained(Path(build_dir)/assets['file'],build_dir))!=assets['sha256']:
+            raise ValueError('挂架资源包与构建回执不符')
         for name, expected in receipt['objects'].items():
             if digest(contained(Path(build_dir) / name, build_dir)) != expected:
                 raise ValueError('构建中间文件改变：' + name)

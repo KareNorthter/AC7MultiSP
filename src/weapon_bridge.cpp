@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <atomic>
+#include <bitset>
 #include <cmath>
 #include <cstdint>
 #include <cstring>
@@ -357,7 +358,10 @@ Group capture(Addr activator, bool special, double time) {
     const auto slotData=slots.data;const int num=slots.count; // 不遍历 TArray 的备用容量。
     result.slots.reserve(num);
     for(int i=0;i<num;++i) {
-        Slot slot{read<float>(slotData+static_cast<size_t>(i)*0x60+0x48),read<float>(slotData+static_cast<size_t>(i)*0x60+0x4c)};
+        // 本次同步采样已验证完整数组，循环内不调用引擎；批量读相邻计时，避免每槽重复查页。
+        std::array<float,2> timers{};
+        std::memcpy(timers.data(),reinterpret_cast<void*>(slotData+static_cast<size_t>(i)*0x60+0x48),sizeof(timers));
+        Slot slot{timers[0],timers[1]};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         slot.mountOrdinal=i; // 新建逻辑队列按资源顺序编号。
         if(special) {
@@ -473,9 +477,11 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 }
 #endif
 #include "continuous_sp.hpp"
+#include "raven_sp.hpp"
 
 void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
-    ContinuousRebuild continuous(command); // 仅逻辑换槽保留已核对的 Morgan 持续发射体。
+    ravenBeforeRebuild(command);
+    ContinuousRebuild continuous(command); // 保留已登记机型/真实类的持续发射体。
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
     const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
@@ -490,7 +496,9 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     syncPlaneWeaponSelection(command.plane,index); // 保持原生选择编号与本次真实配置一致，舱门继续由原生更新。
 #endif
     continuousRebuildStarted=true;
+    continuous.rebuilding=true;
     reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
+    ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);
 #endif
@@ -585,15 +593,29 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         return e.plane.address==plane && e.activator.address==activator;}),"持续效果或 TLS 尾迹尚未退场，请等待后再调试换装");
     const int count=read<int>(activator+0x340),capacity=read<int>(activator+0x344); // 原生 ActiveWeapons 有效数量。
     require(count>=0 && count<=capacity,"调试换装的活动武器数组无效");
-    require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
-    if(continuousMorgan(plane)) {
+    if(continuousRaven(plane) && continuousRavenLoadout(activator)) {
+        // 原生 UAV 结束后可留重复项；只豁免已确认不活动的原生 UAV，其余仍拒绝。
+        const auto active=continuousArray(activator+0x338);
+        for(int i=0;i<active.count;++i) {
+            const Addr weapon=read<Addr>(active.data+i*sizeof(Addr));
+            require(weapon && read<Addr>(weapon+0x3b8)==plane && read<unsigned char>(weapon+0x3b0)==26 &&
+                !read<unsigned char>(weapon+0x368) && continuousSupported(plane,weapon),
+                "仍有已发射的活动武器，请等待结束后再调试换装");
+        }
+    }else require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
+    if(continuousPlane(plane)) {
         const auto spawned=continuousArray(activator+0x2e8);
         for(int i=0;i<spawned.count;++i) {
             const Addr weapon=read<Addr>(spawned.data+i*sizeof(Addr));
-            require(!weapon || !read<unsigned char>(weapon+0x368) || !continuousSupported(weapon),
+            require(!weapon || !read<unsigned char>(weapon+0x368) || !continuousSupported(plane,weapon),
                 "持续效果或 TLS 尾迹尚未退场，请等待后再调试换装");
         }
     }
+}
+// 与原生 ToggleSpecial 的暂拒条件一致；只读，不取消或改写连射队列。
+bool weaponSwitchReady(Addr activator) {
+    return read<unsigned char>(activator+0x2a0)==0 &&
+        !(read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1);
 }
 void execute(const Command& command) {
     verifyVersion();
@@ -639,6 +661,7 @@ void execute(const Command& command) {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
         require(command.target<session.count && command.configs==session.configs && command.count==session.count,"切换方案与当前会话不符");
         require(command.target!=session.active,"Already using requested SP");
+        require(weaponSwitchReady(command.activator),"原生连射尚未结束，暂不能重建SP");
         session.main=capture(command.activator,false,command.time);
         session.special[session.active]=capture(command.activator,true,command.time);
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
@@ -692,6 +715,7 @@ void execute(const Command& command) {
     } else {
         require(command.op=="snapshot","Unknown command");
     }
+    if(command.op!="snapshot" && command.op!="checkpoint_save")ravenRestoreReload(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     try {
         fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
@@ -718,7 +742,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;selectionWave.close();
-            session={};checkpoint={};checkpointValid=false;checkpointTime=0;
+            session={};checkpoint={};checkpointValid=false;checkpointTime=0;ravenVisual={};
         }
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     }catch(const std::exception& error) {
@@ -731,6 +755,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
 // 菜单用实际 CDO 核对实验可选性；新 Lua 因此也会拒绝旧核心混装。
 extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
@@ -742,7 +767,8 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
         const Addr cdo=static_cast<Addr>(api->readInteger(luaState,2));
         continuousIdentity(cdo);
-        const bool supported=continuousMorgan(plane) && continuousSupported(cdo);
+        const bool supported=continuousSupported(plane,cdo) &&
+            (!continuousRaven(plane) || continuousRavenLoadout(read<Addr>(plane+0x11a8)));
         api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
@@ -754,6 +780,38 @@ extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
 }
 
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 独立资源仅接受生成白名单的精确包名；只保有纯网格，不保有机体或世界。
+extern "C" __declspec(dllexport) int dualsp_mount_asset(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(runtimeEnabled,"扩展挂载：当前场景禁止接入");
+        require(api->top(luaState)==2,"扩展挂载：资源登记参数无效");verifyVersion();mountInstallHooks();
+        require(GetCurrentThreadId()==mountGameThread.load(),"扩展挂载：资源登记不在游戏线程");
+        const int index=static_cast<int>(api->readInteger(luaState,1));
+        const Addr object=static_cast<Addr>(api->readInteger(luaState,2));
+        const auto& names=mountExpansionData().at("assets");
+        require(index>=0 && index<static_cast<int>(names.size()),"扩展挂载：独立资源编号越界");
+        const auto identity=mountIdentity(object);const auto name=names.at(index).get<std::string>();
+        require(mountName(object)==name && mountName(read<Addr>(object+0x20))=="/Game/AC7MultiSP/Research/"+name &&
+            mountName(read<Addr>(object+0x10))=="StaticMesh","扩展挂载：资源包、名称或类型不匹配");
+        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24;
+        require(!(read<unsigned>(entry+8)&0x30000000u),"扩展挂载：资源正在销毁");
+        const auto found=mountAssets.find(index);
+        if(found!=mountAssets.end())require(mountMeshIdentityEqual(found->second.identity,identity),"扩展挂载：已保有资源身份改变");
+        else {
+            // 与持续兵装短期保有使用同一已核对的FUObjectItem内部RootSet位；这些网格只占固定16项。
+            const LONG previous=InterlockedOr(reinterpret_cast<volatile LONG*>(entry+8),0x40000000L);
+            mountAssets.emplace(index,MountAssetReference{identity,(previous&0x40000000L)==0});
+            nativeLog("MOUNT_ASSET_READY "+name);
+        }
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
 // 与其他具名接口一致，Lua 以整数 0/1 传开关；关闭也执行完整的原生外观归还。
 extern "C" __declspec(dllexport) int dualsp_set_fixed_mount_enabled(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
@@ -988,6 +1046,24 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
     }
 }
 #endif
+// 暂拒切换是可恢复状态；Lua 等待原生连射结束后才进入兵装事务。
+extern "C" __declspec(dllexport) int dualsp_switch_ready(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==2 && runtimeEnabled,"切换就绪查询需要单人任务与两个参数");
+        verifyVersion();
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
+        require(session.plane==plane && session.activator==activator &&
+            read<Addr>(plane+0x11a8)==activator,"切换就绪查询的玩家会话已经改变");
+        api->boolean(luaState,true);api->boolean(luaState,weaponSwitchReady(activator));
+        api->string(luaState,"",0);return 3;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 3;}
+        return 0;
+    }
+}
 // 在保存冷却前选择 TLS 策略；研究机型交给后续保有事务，其余沿用原生结束。
 extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 出错就停止本次选择，不继续重建武器。
@@ -999,8 +1075,8 @@ extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
-        // Morgan 的已核对 TLS 交由换槽事务保留；其他机型仍走既有结束策略。
-        if(!(continuousMorgan(plane) && continuousSupported(read<Addr>(groupOf(activator,true)+0x40))))
+        // 已登记机型的原生 TLS 交由换槽事务保留；其余仍沿用原生结束。
+        if(!continuousSupported(plane,read<Addr>(groupOf(activator,true)+0x40)))
             finishPlayerTLS(plane,activator);
         api->boolean(luaState,true);return 1;
     }catch(const std::exception& error) {
@@ -1476,7 +1552,9 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_DONE"},{"op",command.op},{"request",request},
             {"active",session.active},{"main_ammo",state["main_ammo"]},{"sp",state["cached_sp"]}}.dump());
     } catch(const std::exception& error) {
-        if(runtimeEnabled && continuousRebuildStarted)continuousAbortRetained(); // 已重建后失败才清理；前置拒绝不结束正在工作的效果。
+        if(runtimeEnabled && continuousRebuildStarted) {
+            continuousAbortRetained();ravenAbortRebuild(); // 已重建后失败才清理，前置拒绝不结束在途效果。
+        }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         fixedMountFail(error.what()); // 原型错误写日志并归还原生显示，既有错误回执继续向用户报告。
 #endif

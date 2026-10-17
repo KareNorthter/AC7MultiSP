@@ -83,12 +83,13 @@ void mountBindMeshSetter(Addr component) {
 void mountApplyMesh(MountMeshOverride item,bool replacement) {
     if(!mountAlive(item.component))return; // 已销毁组件不再归还或解引用。
     require(mountAlive(item.original) && mountAlive(item.replacement),"弹体换位：资源身份失效");
-    require(mountName(read<Addr>(item.original.address+0x10))=="StaticMesh" &&
-        mountName(read<Addr>(item.replacement.address+0x10))=="StaticMesh","弹体换位：资源类型不符");
     const Addr current=read<Addr>(item.component.address+0x728);
     require(current==item.original.address || current==item.replacement.address,"弹体换位：组件已被其他逻辑接管");
     const Addr target=replacement?item.replacement.address:item.original.address;
     if(current==target)return;
+    // 稳定网格仍核对三份对象身份及接管权；仅真正替换时再次解码资源类型名。
+    require(mountName(read<Addr>(item.original.address+0x10))=="StaticMesh" &&
+        mountName(read<Addr>(item.replacement.address+0x10))=="StaticMesh","弹体换位：资源类型不符");
     require(!mountMeshChanging,"弹体换位：正在完成上一项网格替换");
     require(GetCurrentThreadId()==mountGameThread.load(),"弹体换位：只能在绑定的游戏线程执行");
     mountBindMeshSetter(item.component.address);

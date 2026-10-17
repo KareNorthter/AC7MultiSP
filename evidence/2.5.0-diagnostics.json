@@ -1,0 +1,41 @@
+{
+  "version": "2.5.0",
+  "status": "已完整编译、通过适用检查并安装；实机功能和分段性能日志待用户反馈",
+  "installed_at": "2026-10-17T09:06:10.898203+08:00",
+  "features": {
+    "diagnostics": "每15秒PERF_TICK及PERF_STAGE，附菜单类名；不是已完成卡顿修复",
+    "master_switch": "主菜单/标题/单人入口或自由任务选择保存可应用；任务/补给/机库保存等待返回安全入口，无需重启，失败保持停用且不自动循环重试",
+    "notifications": "快捷轮切及模型开关结果约4.5秒，上方居中；新错误及模型回退约6.5秒，简短原因且去重，不抢输入，平时不绘制"
+  },
+  "management_protocol": 7,
+  "configuration_revision": 6,
+  "runtime_files_verified": 15,
+  "profiles_preserved": true,
+  "master_switch_preserved_disabled": true,
+  "save_backup_verified": true,
+  "other_protected_files_verified": 123,
+  "lockon_mod_disabled": {
+    "disabled_at": "2026-10-17T09:05:43.733848+08:00",
+    "mod": "锁定图标/准星UI",
+    "source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\~~!UI (Lock-on Crosshair) Hex!~~_P.pak",
+    "backup": "E:\\AC7_MultiSP\\backup\\disabled-lockon-20261017-090543\\~~!UI (Lock-on Crosshair) Hex!~~_P.pak",
+    "sha256": "5b9018904ba09135c29bd4e4dc18f40a6cb8518a119015fac672ca3e5ae65eb2",
+    "restore": "退出游戏后将backup中的原PAK移回source路径",
+    "other_mod_files_unchanged": true,
+    "other_mod_files_verified": 14
+  },
+  "proportional_guidance_still_disabled": true,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-090610-898203",
+  "build_dir": "Temp/build-2.5.0",
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "validation_limits": "自动检查执行实际安全菜单及交接函数的模拟依赖，不等于真实游戏UI/通知/动画/性能或全部任务通过；未验证错误通知的实际视觉效果",
+  "test_steps": [
+    "使用取证启动入口启动游戏",
+    "主菜单打开管理页，开启总开关并保存，确认运行状态已开启",
+    "机库预览同一机体并转动镜头至少30秒",
+    "任务结束评分页停留至少30秒",
+    "测试自定义组合轮切和模型开关键的上方提示",
+    "反馈时间、机体、界面和卡顿感受，再读取分段日志"
+  ]
+}
