@@ -67,6 +67,10 @@ Su-47的SWP2／SWP3共八处Socket已导出资源第100键组件空间端点。�
 
 现有几何报告定位为`evidence/mount-expansion-animated.json → reviews[1].report.aircraft[0]`（code=su47、分析来源animated-sukhoi-review.json），重点看`combinations`、`native_surface_contact_baselines`及`whole_rack_comparisons`；高层显隐依据在`aircraft[code=su47].combinations[].internal_ammo_visibility.offline_sample_review`。这些报告只统计离散键接触，不能反推出最近距离。最小补充是为四种多挂在全开状态建立明确允许接触面集，再求其余Body／架体／邻弹面的保守净空下界，并用各弹体相对Socket最大半径把平移、转角、缩放的共同扰动限制在该下界内；没有这个预算就不交付经验容差。端点`position/rotation/scale`供绑定器直接读取，`position/rotation`分别与原`translation/rotation_xyzw`同义，旋转顺序为xyzw。
 
+另有不接受非零误差的条件路线：全部几何相关姿态与已核几何参照的有效float32分量逐位相等时，可以不设非零扰动预算。它必须覆盖实际Socket局部属性、取位骨、呈现架的全部蒙皮骨、Body及共同坐标中的相对父链变换；只比较八处Socket骨不能证明其他门体/架体同姿态。`endpoints[group].exact_pose`给出六根mesh骨的名字、mesh/Skeleton索引、父索引、第100键期望与实采有效分量；`exact_body_pose`给出Body实际38骨的资源期望，未认证Body运行观察。每骨顺序为四元数xyzw、位置xyz、缩放xyz，另列FTransform字节偏移；`uint32`比较保留正负零，不比较padding，不翻四元数符号或归一化。每Socket的`exact_match`另列依附骨索引和九个局部期望分量（位置xyz、Pitch/Yaw/Roll角度、缩放xyz）。
+
+现有SWP2／SWP3采样各有SWPCover_02、03、04一项四元数分量不同：绝对差分别约7.450580596923828e-9、7.450580596923828e-9、1.6391277313232422e-7，不是q/-q，符合浮点求值路径差异；全六骨严格相等因此未通过。数据保留实采十个有效分量及来源摘要，`native_capture_geometry_reaudited=false`，不能直接改成认证参照。可用这些真实姿态重蒙皮并重核对全开四多挂及原生接触基线，再把通过后的真实姿态作为精确参照；SWP2／3已有数据，还需同帧Body发布骨骼、Body/WeaponMeshBase/挂架相对变换及身份，若要完整原生SAAM基线还需该配置的有效SWP1姿态。该路线只需全开静态分析，不重跑101键；仍由产品Host取得同帧发布见证并在离架前重验，当前`runtime_gate_ready`不变。
+
 生成命令只整理数据，输出必须新路径；审阅后按字节更新头文件，不编译或运行游戏：
 
 ```powershell

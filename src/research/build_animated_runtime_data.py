@@ -111,6 +111,40 @@ def f32(values):
     return struct.unpack('<'+'f'*len(values),struct.pack('<'+'f'*len(values),*values))
 
 
+def exact_f32(values):
+    """显式保留有效分量位型，包括正负零；不比较FTransform填充字节。"""
+    raw=struct.pack('<'+'f'*len(values),*values)
+    return {'values':list(struct.unpack('<'+'f'*len(values),raw)),
+            'uint32':list(struct.unpack('<'+'I'*len(values),raw))}
+
+
+def exact_pose_contract(assets,mesh,skeleton,sequence):
+    document=assets.load(skeleton)
+    export=next(e for e in document['Exports'] if e['ObjectName']==skeleton)
+    bones=reference_bones(document,export)
+    tracks,metadata=animation_tracks(assets.load(sequence),bones)
+    if metadata['frames']!=101 or set(tracks)!=set(range(len(bones))):
+        raise ValueError('精确姿态期望必须有完整101键，不能填缺轨')
+    model=read_skeletal_mesh(assets.load(mesh),mesh)
+    sample=poses(bones,tracks,metadata['frames'])[-1]
+    names={b['name']:i for i,b in enumerate(bones)}
+    entries=[]
+    for i,b in enumerate(model['bones']):
+        j=names[b['name']];p,q=sample[j]
+        parent=model['bones'][b['parent']]['name'] if b['parent']>=0 else None
+        if parent!=(bones[bones[j]['parent']]['name'] if bones[j]['parent']>=0 else None):
+            raise ValueError('精确姿态mesh/Skeleton父链不一致')
+        entries.append({'name':b['name'],'mesh_bone_index':i,'skeleton_bone_index':j,
+                        'parent_mesh_bone_index':b['parent'],
+                        'component':exact_f32([*q,*p,1.0,1.0,1.0])})
+    return {'mesh':mesh,'skeleton':skeleton,'sequence':sequence,'key':100,
+            'component_order':['qx','qy','qz','qw','px','py','pz','sx','sy','sz'],
+            'byte_offsets_in_ftransform':[0,4,8,12,16,20,24,32,36,40],
+            'comparison':'逐有效float32的uint32相等；不归一化、不翻四元数符号、不用epsilon、不比较padding',
+            'bones':entries,'runtime_gate_ready':False,
+            'boundary':'资源第100键期望，不是运行采样通过；还须同帧Body/呈现架/取位provider及其相对父链变换均符合分析姿态'}
+
+
 def sampled_vector(properties_by_name,name):
     field=properties_by_name[name]
     layout=field['layout'];meta=layout['metadata']
@@ -157,6 +191,17 @@ def supplement_endpoints(result,assets,endpoint_files):
             raise ValueError('已发布骨骼数组不能与真实mesh参考骨架双射')
         transforms=[struct.unpack_from('<12f',raw,i*48) for i in range(buffer['count'])]
         by_bone={b['name']:transforms[i] for i,b in enumerate(model['bones'])}
+        contract=endpoint['exact_pose']
+        for entry in contract['bones']:
+            v=transforms[entry['mesh_bone_index']]
+            actual=exact_f32([*v[:7],*v[8:11]])
+            entry['native_capture_component']=actual
+            entry['native_capture_equal_uint32']=actual['uint32']==entry['component']['uint32']
+            entry['native_capture_differing_components']=[i for i,(a,b) in enumerate(zip(actual['uint32'],entry['component']['uint32'])) if a!=b]
+            entry['native_capture_absolute_difference']=[abs(a-b) for a,b in zip(actual['values'],entry['component']['values'])]
+        contract['native_capture_all_mesh_bones_equal_uint32']=all(e['native_capture_equal_uint32'] for e in contract['bones'])
+        contract['native_capture_source_sha256']=digest(path)
+        contract['native_capture_geometry_reaudited']=False
         defaults=capture['socket_class_defaults']
         if len(defaults)!=1 or defaults[0]['identity']['name']!='Default__SkeletalMeshSocket':
             raise ValueError('没有唯一实际Socket CDO默认值')
@@ -187,6 +232,18 @@ def supplement_endpoints(result,assets,endpoint_files):
                         f32(local_rotation(dict(zip(('Pitch','Yaw','Roll'),angles))))==f32(local_rotation(rs['RelativeRotation']))
             expected_socket_scale=f32(e['scale']) if e['socket_scale_serialized'] else default_scale
             scale_exact=scale==expected_socket_scale
+            entry=next(b for b in contract['bones'] if b['name']==e['bone'])
+            raw_angles=rs['RelativeRotation']
+            while 'Pitch' not in raw_angles:raw_angles=next(iter(raw_angles.values()))
+            local_expected=exact_f32([*vector(rs['RelativeLocation']),
+                                     *(float(raw_angles[k]) for k in ('Pitch','Yaw','Roll')),*expected_socket_scale])
+            e['exact_match']={'mesh_bone_index':entry['mesh_bone_index'],'skeleton_bone_index':entry['skeleton_bone_index'],
+                             'component':deepcopy(entry['component']),
+                             'socket_local_order':['px','py','pz','pitch_degrees','yaw_degrees','roll_degrees','sx','sy','sz'],
+                             'socket_local':local_expected,
+                             'native_capture_bone_equal_uint32':entry['native_capture_equal_uint32'],
+                             'native_capture_local_equal_uint32':exact_f32([*location,*angles,*scale])['uint32']==local_expected['uint32'],
+                             'scale_source':'已核资源显式字段；省略时使用实采Default__SkeletalMeshSocket CDO，运行还须身份和实际局部值均匹配'}
             exact=f32(observed_position)==f32(e['translation']) and f32(observed_rotation)==f32(e['rotation_xyzw']) and bone_exact and local_exact and scale_exact
             e.update(scale=list(expected_socket_scale),runtime_units_verified=exact,complete_runtime_transform=exact,
                      scale_source='实际Socket属性及Default__SkeletalMeshSocket采样；不是省略字段填默认1',
@@ -206,6 +263,8 @@ def supplement_endpoints(result,assets,endpoint_files):
         endpoint['units']='resource_to_observed_RTS_Component_1_to_1' if all(e['runtime_units_verified'] for e in endpoint['sockets']) else 'not_verified'
         endpoint['missing']=['缺有净空依据的距离/角度/缩放容差；本次float32对照一致不是允许误差预算',
                              '两次单挂暂停采样不证明多挂所需隐藏provider在当前帧更新的运行调度']
+        if not contract['native_capture_all_mesh_bones_equal_uint32']:
+            endpoint['missing'].append('严格零偏差替代尚未通过：呈现架存在非Socket骨骼与资源第100键有效float32不全等')
         if not all(e['runtime_units_verified'] for e in endpoint['sockets']):
             endpoint['missing'].append('至少一处发布骨骼/局部Socket/单位分量与资源不一致，不能认证单位映射')
         endpoint['native_observation']={'record':path.name,'sha256':digest(path),'state_source_sha256':capture['source_sha256'],
@@ -214,6 +273,12 @@ def supplement_endpoints(result,assets,endpoint_files):
              'inactive_provider_caches_not_used':True}
     for plan in plane['plans'][1:]:
         if plan['gate']:
+            plan['gate']['exact_match_alternative']={
+                'mode':'all_geometry_relevant_components_exact_f32_only','epsilon':None,
+                'runtime_gate_ready':False,'require_current_frame_and_release_recheck':True,
+                'scope':'取位骨及Socket局部值；呈现架全部蒙皮骨；Body全部实际mesh骨；经核对的相对父链变换',
+                'body_pose':'plane.exact_body_pose','provider_pose':'plane.endpoints[group].exact_pose',
+                'boundary':'仅比较Socket骨不能推出其余门体/架体/Body姿态全等；全部条件逐位相等可免非零扰动预算，不自动证明几何或运行已通过'}
             plan['gate']['missing']='；'.join(sorted({m for name in plan['gate']['groups'] for m in plane['endpoints'][name]['missing']}))
 
 
@@ -254,6 +319,7 @@ def end_poses(assets,group):
                        'bone_reference_scale_verified_unit':True,
                        'socket_scale_serialized':socket['serialized_scale'] is not None})
     return {'group':group['group'],'skeleton':skeleton,'sequence':sequence,'frames':101,
+            'exact_pose':exact_pose_contract(assets,group['rack_mesh'],skeleton,sequence),
             'sockets':result,'units':'serialized_resource_transform_units',
             'tolerance':{'distance':None,'angle_radians':None,'scale_difference':None},
             'runtime_gate_ready':False,
@@ -357,6 +423,8 @@ def build(overlay,batch,assets):
         body['packages']={k:body[k+'_path'].rsplit('.',1)[0] for k in ('mesh','skeleton','animclass')}
         planes.append({'code':code,'pawn_path':pawn_path,'body':deepcopy(body),'body_driver':body,
                        'groups':groups,'plans':plans,'endpoints':endpoints,'runtime_enabled':False})
+        if code=='su47':
+            planes[-1]['exact_body_pose']=exact_pose_contract(assets,body['mesh'],body['skeleton'],body['sequence'])
     return {'schema':1,'purpose':'三机21组合产品接入数据候选；不自动注册或授权启用','planes':planes,
             'numbering':'groups/providers使用原生SWP1/2/3的零基索引；plans[mask]使用原生配置位，不是用户逻辑SP槽顺序',
             'logical_count_policy':'从每类武器原生capture动态取得队列Num/窗口/游标及持久mountOrdinal；从不把Socket数写为队列长度',
