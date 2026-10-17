@@ -97,6 +97,8 @@ python -X utf8 src/research/analyze_sp_switch_animations.py `
 
 产品接入必须补齐：安全访问与反射Host；完整原生实例／场景身份校验；同步切换快照与原生Parts更新顺序；Pause/Tick及刷新模式最新原生请求观察和逐组件归还；provider当帧组件空间／世界空间Socket取位；Su-47的严格全开＋端点姿态见证。Parts原生引擎不是UObject；指纹／owner／配置必须通过，写入部分失败及归还失败不得误报成功。TG第三组静态不读骨架字段，第三原生配置的NativeTransition保留原生流程。姿态容差、坐标换算和运行池数量需有真实依据，不能填经验值或直接等于Socket数。
 
+现有离线证据仍未覆盖Pause直接写入的完整路径、刷新模式的最新原生请求和同帧骨骼／Socket更新顺序，因此0c13178合并后尚不能交付三机可玩安装。`capture_mount_state.py`已接受`f22a`／`su47`／`su57tg`，并可只读保存GetSocketTransform及SetComponentTickEnabled的参数元数据，原生逻辑槽与持久模型池仍分别记录。该工具不调用游戏函数、不写进程，只将新快照放Temp；暂停快照本身也不能证明逐帧调度。下一步需用户先将目标机以单SP带入任务并暂停，明确准备采样后再读取；取得实际函数布局后，另行核对开舱、收拢、切换与取位的顺序，不能凭一次缓存变换宣称动态更新已证明。安装仍为2.7.1，三机运行准入未开放。
+
 | 离线入口 | 作用 |
 |---|---|
 | `inspect_mount_assets.py --asset-path` | 可重复指定精确PAK相对.uasset路径；提取同名HUD图与真实模型时避免歧义，仍保留原basename重复保护，不改原游戏包 |

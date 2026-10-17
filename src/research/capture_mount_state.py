@@ -16,8 +16,10 @@ def main():
     parser.add_argument("--project-root", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--expected-sp", choices=("6AAM", "LAGM", "QAAM"))
-    parser.add_argument("--expected-plane", choices=("su30sm", "fa27", "f35c", "f15e"), default="su30sm")  # 新机体先核对真实父类，不复用旧玩家地址。
+    parser.add_argument("--expected-plane", choices=("su30sm", "fa27", "f35c", "f15e", "f22a", "su47", "su57tg"), default="su30sm")  # 新机体先核对真实父类，不复用旧玩家地址。
     args = parser.parse_args()
+    if args.output.exists():
+        raise ValueError("输出文件已存在，请使用新路径")
     # 完整运行快照只能进入本研究工作区的忽略目录。
     temporary_root = Path(__file__).resolve().parents[2] / "Temp"
     if not args.output.resolve().is_relative_to(temporary_root.resolve()):
@@ -121,7 +123,7 @@ def main():
                         elif kind == "StructProperty" and label in ("RelativeLocation", "RelativeRotation", "RelativeScale3D"):
                             result[label] = {"offset": hex(offset), "xyz": unpack(address + offset, "<fff")}
                         elif kind == "BoolProperty" and (animation_instance
-                                or label in ("bVisible", "bHiddenInGame", "bHidden") or 'cover' in label.lower()):
+                                or label in ("bVisible", "bHiddenInGame", "bHidden", "bPauseAnims", "bNoSkeletonUpdate") or 'cover' in label.lower()):
                             # 位掩码语义留待核对，先记录值和属性元数据，不直接猜布尔值。
                             result[label] = {"offset": hex(offset), "raw": memory.read(address + offset, 8).hex(),
                                 "property_tail": memory.read(child + 0x70, 8).hex()}
@@ -146,11 +148,30 @@ def main():
                     item = describe(child)
                     label = item.get("name", "")
                     if item.get("class_name") == "Function" and label not in methods and any(
-                        term in label.lower() for term in ("weapon", "reload", "fire", "shot", "socket", "visib", "hidden", "transform", "cover", "flightengine")):
+                        term in label.lower() for term in ("weapon", "reload", "fire", "shot", "socket", "visib", "hidden", "transform", "cover", "flightengine", "tick", "pose", "bone", "anim")):
                         entry = pointer(child + 0xb0)  # 当前构建已用过的 UFunction 原生入口字段。
                         methods[label] = {"declaring_class": describe(cls).get("name"),
                                           "function": describe(child), "entry": hex(entry),
                                           "entry_minus_image_base": hex(entry - memory.base)}
+                        # 只记录反射参数元数据，不执行GetSocketTransform或其他游戏函数。
+                        if label in ("GetSocketTransform", "SetComponentTickEnabled"):
+                            parameters = []
+                            parameter = pointer(child + 0x38)
+                            parameter_seen = set()
+                            while parameter:
+                                if parameter in parameter_seen or len(parameters) >= 32:
+                                    raise ValueError("函数参数反射链异常")
+                                parameter_seen.add(parameter)
+                                info = describe(parameter)
+                                if not info.get('uobject') or not info.get('class_name', '').endswith('Property'):
+                                    raise ValueError("函数参数不是已核对的反射属性")
+                                size, offset = unpack(parameter + 0x34, '<I')[0], unpack(parameter + 0x44, '<I')[0]
+                                if not 0 < size <= 0x1000 or offset > 0x1000:
+                                    raise ValueError("函数参数元数据越界")
+                                parameters.append({'identity': info, 'element_size': size, 'offset': hex(offset),
+                                    'type_metadata_raw_at_0x70': memory.read(parameter + 0x70, 0x20).hex()})
+                                parameter = pointer(parameter + 0x28)
+                            methods[label]['parameter_metadata'] = parameters
                     child = pointer(child + 0x28)
                 cls = pointer(cls + 0x30)
             return methods
