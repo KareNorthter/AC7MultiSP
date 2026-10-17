@@ -1,0 +1,144 @@
+{
+  "schema": 1,
+  "version": "2.6.0",
+  "reported_aircraft": "f02a",
+  "reported_scene": "机库选择多SP后回退；任务内F-2A尚无对应通过记录",
+  "observed_failure": "第一份派生挂架MSP_f02a_lasm_outer未成为有效已加载对象，随后原生回退",
+  "local_failure_time": "2026-10-17 09:55:02 +08:00",
+  "logs": {
+    "mod.log": {
+      "snapshot_sha256": "91231307b88eae9f2a4f6d9589ea49e3cd9117972b21931d58cdab6cedc2005f",
+      "lines": [
+        "2026-10-17T01:55:02Z MOUNT_PREVIEW_WARNING 多 SP 挂载已回退：...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_f02a_lasm_outer",
+        "2026-10-17T01:55:02Z MOUNT_ASSET_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:347: 独立挂架加载失败：MSP_f02a_lasm_outer",
+        "2026-10-17T01:55:05Z MOUNT_PREVIEW_WARNING 多 SP 模型预览已回退为原生单 SP：扩展挂载：独立挂架未加载或已失效"
+      ]
+    },
+    "native.log": {
+      "snapshot_sha256": "be79e52dab9dc4a2d9ff8445014efe8ff53864d0a3be72a93a6e68b5745e7f9c",
+      "lines": [
+        "77588921 MOUNT_PREVIEW_FALLBACK 多 SP 模型预览已回退为原生单 SP：扩展挂载：独立挂架未加载或已失效",
+        "77704234 {\"aircraft\":\"f15c\",\"event\":\"FIXED_MOUNT_BOUND\",\"kinds_mask\":7,\"physical_positions\":8,\"rack_mask\":7}"
+      ]
+    }
+  },
+  "installed_runtime_matches_receipt": true,
+  "installed_runtime_hashes": {
+    "Scripts/config_store.lua": "034117ae7c65b1c0f9ef720c50511612870eceaf35bb8059353231d918b2a9bc",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "2ac082317ce10f8284595eae5748298f721510800e2772dfe1463839fb567cc1",
+    "Scripts/loadout_profile.lua": "93ec6503bf8e3d510171b70a743163dd029867e4cc858e6446ed896d7fe93dbe",
+    "Scripts/main.lua": "5335f2788a9f785c7a1d8f5116ebd321c6ce1641e212727bb94af979d8c630a6",
+    "Scripts/native_bridge.lua": "e8edf582036cf26462d175794567fa34c57ebc51dc0c786b7f87954292daa2d9",
+    "Scripts/native_hud.lua": "cc30120f651af8e09e25da68cb931b25202e48e6f7f9de2b79da00cebabbd1eb",
+    "Scripts/native_loadout.lua": "18fc4ca5cd74a7015fbee657a343716ee1f04be4b6f856004758b95abca903f3",
+    "Scripts/runtime_context.lua": "dcf741294a366dc0472bf87238e27754ac10e0db4e6bb3238aab5f5eaeb13f1f",
+    "Scripts/weapon_cycle.lua": "254ebcf5a1456a0b373b0a8fb71cb7a3e7159fedfb79ee5e8462b6cbcfeeac65",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "bb0d2650a9669de158ef9b47b191b79f4af5fec253f5fe0c84346c2da9eed57f",
+    "Scripts/mount_assets.lua": "64bac3d3074d864b28283fd24147df6fbf454b3d9a1ecda196f9a8ad463fe602",
+    "bin/DualSP.dll": "f81a81208491eb83ea2fc910d7d279c3531abeb894311db75b94187437eccf6a",
+    "bin/DualSPUI.dll": "3a3171b6739ac5a0c27503e5aba8fd79a9994072ade954ef2c4ad17d1aa45db5",
+    "VERSION": "6693435eadb673dda297a0652d241e293e361200bc40db949cf2501d18dd01ee"
+  },
+  "installed_pak_matches_receipt": true,
+  "installed_pak_sha256": "98d19128ae4e9bbadfd84b1f8abf934344a69fa467cb1a38a28f23a7361a641a",
+  "pak_mount": "../../../",
+  "pak_member_count": 32,
+  "pak_contains_registry": false,
+  "pak_members": [
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_hvaa_inner.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_hvaa_inner.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_hvaa_inner_pos.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_hvaa_inner_pos.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_inner.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_inner.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_inner_neg.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_inner_neg.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_outer.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_lasm_outer.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_rocket_outer.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f02a_rocket_outer.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f16c_missile_outer.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f16c_missile_outer.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f16c_sasm_outer.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_f16c_sasm_outer.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_aam_rear.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_aam_rear.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_gpb_neg_aux.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_gpb_neg_aux.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_lasm_pos.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_mr2k_lasm_pos.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_belly.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_belly.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_belly_neg.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_belly_neg.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_outer.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_hcaa_outer.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_laam_belly.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_laam_belly.uexp",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_laam_belly_pos.uasset",
+    "Nimbus/Content/AC7MultiSP/Research/MSP_rflm_laam_belly_pos.uexp"
+  ],
+  "original_path_comparison": "原生与派生包均为../../../挂载加Nimbus/Content/...，没有发现工程目录拼写差异",
+  "source_main_sha256": "5335f2788a9f785c7a1d8f5116ebd321c6ce1641e212727bb94af979d8c630a6",
+  "loader_dll_sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd",
+  "loader_source": {
+    "url": "https://github.com/Playmore-ModdingConcepts/PM-UE4SS/blob/main/UE4SS/src/Mod/LuaMod.cpp",
+    "snapshot_sha256": "cc77b1567712d8c84a55a3716de285a44d90d55c18ecd538945feddddfc4ef13",
+    "loadasset_starts_line": 3302,
+    "observed_implementation": "LoadAsset先GetAssetByObjectPath；有效FAssetData才调用GetAsset，不是直接按磁盘路径加载",
+    "binary_export_present": "?GetAssetByObjectPath@UAssetRegistry@Unreal@RC@@QEAA?AUFAssetData@23@VFName@23@_N@Z"
+  },
+  "probable_cause": "新PAK仅32个资源对成员、没有资源登记表；LoadAsset的登记表前置查询可能阻止新路径加载，现有日志未保存registered/didLoad，故尚未实机证实这一层",
+  "candidate": "以原生CreateAssetData建立StaticMesh描述并设置新对象路径，再由原生GetAsset直接加载；记录登记表结果和路径加载结果，不覆盖全局AssetRegistry.bin",
+  "executable_name_presence": {
+    "CreateAssetData": true,
+    "GetAsset": true,
+    "ObjectPath": true,
+    "PackageName": true,
+    "PackagePath": true,
+    "AssetName": true,
+    "AssetClass": true,
+    "AssetRegistryHelpers": true,
+    "LoadAsset_Blocking": false,
+    "Conv_SoftObjPathToSoftObjRef": false
+  },
+  "candidate_receipt": {
+    "schema": 1,
+    "candidate": "2.6.0-registry-bypass-research",
+    "source_main_sha256": "5335f2788a9f785c7a1d8f5116ebd321c6ce1641e212727bb94af979d8c630a6",
+    "candidate_main_sha256": "65ae2e52b36fef374f7d126c2664b0f2d7acfc83aba52d0ef404ca2a19f653c0",
+    "patch_sha256": "bb3301f982760f7e0913bf8b3ac38c6d9c7216eb6ae4a0600c35978f96eb883e",
+    "generator_sha256": "aedbfa057bc76bbd6d7d23ded117351e4e2b26fe7509553900edacc4d60816f4",
+    "output_relative": "Temp/f02a-loader-fix-candidate",
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_executed": false,
+    "source_changed": false,
+    "limits": [
+      "尚未核对本机CreateAssetData/GetAsset的运行反射与按路径加载结果",
+      "需要整合线程沿用整套来源登记后交付；本文件不改产品源码或安装目录",
+      "不覆盖全局AssetRegistry.bin；仍要求原PAK已经正确挂载",
+      "仅解决加载入口候选，不代表后续模型池、Socket和真实离架验证通过"
+    ]
+  },
+  "affected_aircraft_to_check": [
+    "f02a",
+    "f16c",
+    "mr2k",
+    "rflm"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_memory_read": false,
+  "game_executed": false,
+  "limits": [
+    "源码与日志足以确认加载阶段失败；登记表缺失机制仍需新诊断验证",
+    "exe中存在函数名不等于运行反射契约或调用已验证",
+    "无证据证明分区几何错误，也无证据证明16份资源已全部成功加载",
+    "F-15C无需派生资源的任务绑定记录仅作区别，不扩展到F-2A通过"
+  ]
+}

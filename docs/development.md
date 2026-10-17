@@ -18,6 +18,14 @@ python -X utf8 src/research/run_static_mount_split_experiment.py --manifest Temp
 
 工具只写出资源副本和离线回读，不执行Mod构建、测试模块、PAK打包或安装。每个结果目录包含解码JSON／资源对、roundtrip重新读取数据、encoded新名AC7资源对、原有解码器回读和report.json。最终实验目录的相对位置保存在摘要的local_artifacts_relative。加载接口、PAK挂载、碰撞与渲染尚待整合线程在授权阶段验证，不能把生成资源当作已安装适配。
 
+2.6.0的F-2A机库回退已只读定位到第一份派生挂架加载失败，来源和PAK与安装回执一致。[调查摘要](../evidence/2.6.0-f02a-mount-load-investigation.json)及[有效设计](multi-sp-mount-design.md#f-2a加载回退与修复候选)区分已确认的失败阶段和待实证的登记表原因。`prepare_mount_asset_loader_fix.py`从显式源码生成完整Lua候选、局部补丁和指纹；当前产物在Temp/f02a-loader-fix-candidate，未覆盖原产品源码或安装文件。整合者可对已核对的2.6.0来源复现到新目录：
+
+```powershell
+python -X utf8 src/research/prepare_mount_asset_loader_fix.py --source-main E:/AC7_MultiSP/dist/DualSP/Scripts/main.lua --output Temp/mount-loader-review-next
+```
+
+生成器要求原加载段唯一匹配，来源改变就先人工核对。应用补丁仍由整合线程管理成套来源和版本；本研究没有运行Lua候选、编译、测试或安装。旧2.6.0回执保留，不补写为通过；后续实测应记录登记表结果、按路径加载结果、全部资源登记，以及进入模型池校验后的新错误。
+
 ## 有效入口
 
 | 工作 | 工具 |

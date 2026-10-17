@@ -198,12 +198,24 @@ F-16C 外翼分区在 LOD0 保留352/704个原三角面，其他两级保留296/
 ### 交给整合线程的接入约定
 
 1. **单独挂载新资源。** 为新资产保留 `/Game/AC7MultiSP/Research/MSP_...` 独立路径，不覆盖原版同名包。候选的 `encoded/` 内是按新文件名重新编码的资源对；未来PAK内相应为 `Game/Content/AC7MultiSP/Research/MSP_....uasset/.uexp`。本轮没有打PAK或验证挂载，正式路径确定后应重新生成同路径配方与回执。
-2. **明确加载与引用。** 在已确认的游戏线程边界预加载本机所需副本。上游[UE4SS LoadAsset文档](https://docs.ue4ss.com/lua-api/global-functions/loadasset.html)说明它必须在游戏线程调用；本机PM分支是否提供该接口仍需现场核对。调用后按完整对象路径查找并核对StaticMesh身份，不能仅用StaticFindObject期待它自动加载。原件与副本都要有引擎管理的引用，不能只缓存裸地址；缺接口、未挂载或身份不符时保持原生视觉。
+2. **明确加载与引用。** 在已确认的游戏线程边界预加载本机所需副本。[UE4SS LoadAsset文档](https://docs.ue4ss.com/lua-api/global-functions/loadasset.html)要求游戏线程调用，但接口存在不代表能从任意已挂载PAK直接加载新资源：本机PM分支的实现先查AssetRegistry，再取Asset。必须区分登记表未命中、已登记但加载失败，以及已加载但身份不符，并保存LoadAsset的三个返回结果。新资源可以研究由原生CreateAssetData建立完整StaticMesh描述、改成新路径后通过GetAsset加载；不要覆盖全局登记表或手拼软引用内存。该旁路候选尚未实机验证。调用后按完整对象路径查找并核对StaticMesh身份，不能仅用StaticFindObject期待它自动加载。原件与副本都要有引擎管理的引用，不能只缓存裸地址；缺接口、未挂载或身份不符时保持原生视觉。
 3. **复用原组件。** 使用现有[网格替换管理](../src/mount_mesh_override.hpp)的ProcessEvent/SetStaticMesh及身份恢复方式，扩展到静态挂架组件；不直接写渲染缓冲或网格指针。记录每组的几何载体、所用资源、需要隐藏的重复架，以及继续提供Socket的原生组。载体规则按武器集合固定，不随SP槽位顺序变化。
 4. **分开可见几何与碰撞。** 实验保留了BodySetup、NavCollision、section碰撞位和LightingGuid，它们没有被重新烘焙。接入时先确认这类外观挂架本来就是NoCollision、无需静态烘焙光照；条件不符时停止，另做碰撞／光照资源处理。不能声称原碰撞已经随不可见三角面删除。原包围范围保守保留，远近LOD、阴影与细分材质均需实机观察。
 5. **发射器独立管理。** RKT/GRKT固定巢体不随单发消耗而隐藏；逐管发射点按已确认的运行逻辑槽身份映射到保留簇。保留原库存、窗口和连射行为；不把76个资源Socket直接写进现有十二槽表。F-104C单巢七管口少于八窗口的重复取位仍需专门观察。
 6. **绑定边界才换资源。** 换机、组合变化、组件重建、补给和检查点触发重新绑定，稳定帧不加载或重换网格。候选切换、改单挂、关闭模型、视觉失败或退出时归还原网格及最近原生显隐请求，再释放引用；预览和任务各自保存身份与恢复项。不能为加入拆架而扩大当前菜单周期扫描开销。
 7. **保持整机门槛。** 四架静态候选F-16C、F-2A、Mirage、Rafale可以优先接入完整七组合；这是资源研究建议，不是已验证名单。F-104C、Gripen及其他有未决条件的机体继续整机暂缓。首机建议F-16C；其七组合与原生还原通过后，再接F-2A火箭，随后Mirage和Rafale。
+
+### F-2A加载回退与修复候选
+
+用户在外部整合的2.6.0安装版报告：F-2A机库选择多SP后回退原生单SP。09:55:02日志明确记录第一份 `MSP_f02a_lasm_outer` 加载失败；09:55:05再报“独立挂架未加载或已失效”。安装的16项运行文件和PAK均匹配2.6.0安装回执，PAK包含32个资源文件，挂载与成员前缀同原生包一致，没有发现路径拼写差异。本次F-2A没有进入挂点／模型池成功绑定，不能将故障归为火箭管口数量、Socket顺序或拆架几何，也不能宣称已排除这些后续问题。详情见[调查摘要](../evidence/2.6.0-f02a-mount-load-investigation.json)。
+
+[PM分支LoadAsset源码](https://github.com/Playmore-ModdingConcepts/PM-UE4SS/blob/main/UE4SS/src/Mod/LuaMod.cpp)先调用GetAssetByObjectPath，仅在登记结果有效时调用GetAsset。新PAK没有AssetRegistry成员，2.6.0 Lua又丢弃了登记／加载布尔返回值；因此“登记表前置查询挡住未登记新路径”是当前有源码依据的首要原因，仍须新日志实证，不能把“没有登记表”单独当作所有加载失败的定因。离线回读PAK成功不等于游戏已加载新资源。
+
+研究分支的 [prepare_mount_asset_loader_fix.py](../src/research/prepare_mount_asset_loader_fix.py)只对明确指定的2.6.0加载段生成修复候选：先保留已有对象和LoadAsset路径，记录registered／didLoad；未得到对象时，从当前原生StaticMesh通过CreateAssetData获得完整描述，再将ObjectPath、PackageName、PackagePath、AssetName、AssetClass改成新资源的精确值，调用原生GetAsset。成功后仍交给既有核心执行资源身份、包名、类型及保有校验。它不直接修改全局登记表、不硬编码软指针布局，也不改变失败缓存、NoCollision门槛和恢复规则。
+
+本机可执行文件中能找到上述工厂、GetAsset及字段名称，但没有找到LoadAsset_Blocking和Conv_SoftObjPathToSoftObjRef名称，因此不套用较新UE版本的软引用方案。函数名字存在不代表实际反射和调用已经通过；候选若缺少原生工厂、字段或有效返回对象，继续明确回退，由整合线程根据新日志定位。一个底层依赖源仓库不可公开访问，本轮停止该资料项，没有尝试替换或重建加载器。
+
+候选完整Lua、单段补丁及来源指纹位于本研究工作区 `Temp/f02a-loader-fix-candidate`。生成器仅写Temp，不修改主工作区或游戏中的运行Lua；本轮未编译、执行测试模块、安装、读写游戏内存或操作游戏。整合线程应接入候选并更新成套构建来源，在用户授权安装后先确认 `MOUNT_ASSET_PATH_RESULT valid=true` 及六项 `MOUNT_ASSET_READY`，再检查F-2A的七组合与后续绑定；同时复核F-16C、Mirage、Rafale三架同加载入口。无需新资源的F-15C任务成功绑定不能替代这些验证。
 
 ### 其他技术阻碍的具体处理方向
 
