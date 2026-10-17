@@ -1,0 +1,74 @@
+{
+  "base": "2.15.0",
+  "branch": "codex/2.15-hud-mission14-localization",
+  "steam_build": 9855922,
+  "authorization": "用户要求研究并提供手柄X单次切换目标注视及自定义键盘键；用户进入任务并按住/松开原生Y，授权只读观察。继续遵守不编译、不运行测试、不安装。",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "observation": {
+    "aircraft": "Mirage 2000-5",
+    "axis_name": "INP_CameraTrackTarget",
+    "released_values": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "held_values": [
+      1.0
+    ],
+    "held_samples": 40,
+    "selected_target_action": "INP_TrackTarget",
+    "native_default_keyboard_axis_key": "CKM_F",
+    "native_default_controller_action_and_axis_key": "Gamepad_FaceButton_Top",
+    "native_default_controller_weapon_cycle_key": "Gamepad_FaceButton_Left"
+  },
+  "native_contract": {
+    "actor_input_component": "Actor+0x118",
+    "axis_array": "InputComponent+0x110, Num+0x118, Max+0x11c",
+    "axis_binding_stride": "0x70",
+    "axis_binding_name": "binding+0x08",
+    "axis_binding_value": "binding+0x60",
+    "axis_getter": "0x16c03b0",
+    "actor_axis_getter": "0x155e460",
+    "selected_target_getter": "0x81c100",
+    "input_component_ownership_verified": true,
+    "duplicate_native_axis_bindings": "三种相机相关绑定均出现，按名称识别，不要求只有一条或改写数组。",
+    "xinput": "游戏及当前管理UI都使用XINPUT1_3.dll!XInputGetState；沿用现有0号手柄通道。"
+  },
+  "implementation": {
+    "controller_x_default": false,
+    "keyboard_default": 0,
+    "keyboard_zero_means": "未绑定",
+    "management_protocol": 8,
+    "management_revision": 7,
+    "config_backup": "profiles.before-target-gaze.json",
+    "camera_method": "原生读取本玩家INP_CameraTrackTarget时覆盖返回值，不写输入绑定、相机坐标或目标选择。",
+    "x_replacement": "仅过滤游戏映像发起的0号XInput查询中的X；管理UI仍读取原始X边沿，菜单及其他按键保持原生。",
+    "cleanup": [
+      "暂停",
+      "打开管理界面",
+      "失焦",
+      "失去目标",
+      "机体/输入组件换代",
+      "离开单人任务",
+      "关闭总开关",
+      "控制器报错或停止调度"
+    ],
+    "mission14": "镜头许可独立于多SP许可，可在第14关使用；不恢复多SP兵装接管。",
+    "fallback": "不匹配、Hook失败或两秒未观察到原生读取时仅停用本功能，日志与中英界面明确提示，重新保存可重试。"
+  },
+  "source_hashes": {
+    "default_input_ini": "15c72920f645a8724e1318cb268eefe7177973af11bdb1704f672b2e73b1ea14",
+    "axis_getter_capture": "11f89b4a575f35e3d71ec2400fc713ec8d0d76f4177a0f740e91ca4e2bb289e2",
+    "held_observation": "e140ef8941fb8261749392a341b5b5b5e11c56136d53613cf4171a3893fecca0",
+    "released_observation": "30bdff26c512c95ac90534f25f5b25c5d118b1d2a75c8c82d754f8a3e78333f5"
+  },
+  "raw_data_location": "本工作区Temp/target-gaze-*，不提交游戏资源、原始地址或代码字节。",
+  "compiled": false,
+  "test_modules_created": false,
+  "tests_run": false,
+  "installed": false,
+  "mod_toggle_gameplay_verified": false,
+  "validation_boundary": "已确认原生输入拆分、按住1/松开0与输入组件布局；新切换功能仅完成源码，不能据此宣称已在游戏中运行通过。"
+}

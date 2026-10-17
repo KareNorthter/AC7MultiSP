@@ -58,7 +58,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=7") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=8") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -70,6 +70,8 @@ local nativeWeaponIcon=loadExport("dualsp_weapon_icon") -- 机库全名前复用
 local prepareWeaponRebuild=loadExport("dualsp_prepare_weapon_rebuild") -- 丢弃锁定槽前配对停止音效。
 local weaponSwitch={read=loadExport("dualsp_switch_ready"),takeCycle=loadExport("dualsp_take_cycle_switch"),
     press=loadExport("dualsp_controlled_weapon_switch")} -- 循环请求与模组内部类别切换须搭配本次核心。
+weaponSwitch.gaze={invoke=loadExport("dualsp_target_gaze"),active=false,available=false,generation=0,response=0}
+loadExport("dualsp_target_gaze_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
 local catalogExport=loadExport("dualsp_catalogue")
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
@@ -644,6 +646,8 @@ local function setPanel(open)
         note("MANAGEMENT_WAITING_FOR_PREPARATION_CLOSE");return
     end
     if open then
+        local gazeOK,_,gazeError=weaponSwitch.gaze.invoke(0,0,0,0)
+        assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
         local ok,err=pcall(acquireManagementPause) -- 暂停失败必须在面板可见，不能变成无菜单的静止画面。
         managementPauseError=not ok and tostring(err)or nil
         if not ok then note("MANAGEMENT_PAUSE_ERROR "..managementPauseError)end
@@ -683,6 +687,33 @@ local function setPanel(open)
 end
 local function ready()return valid(plane) and plane.bEnableWeaponInput and not plane:IsWeaponSystemDisabled()end
 
+-- 镜头许可独立于多SP会话；第14关仅旁路兵装，仍可使用原生目标跟踪轴。
+function weaponSwitch.gaze.update(toggle,generation)
+    local gaze=weaponSwitch.gaze
+    if generation and generation~=gaze.generation then return end -- 旧世界或暂停前的按键不能重放。
+    local enabled=config.target_gaze_pad_x or config.target_gaze_key~=0
+    local allowed=enabled and runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
+        and valid(plane.InputComponent)and plane.bEnableCameraInput and not panelOpen and not supplySession and not(aircraftDebug and aircraftDebug:busy())
+        and not game:IsGamePaused(plane)
+    local address=allowed and plane:GetAddress()or 0
+    if gaze.address~=address then gaze.generation=gaze.generation+1;gaze.address=address;lastUIKey=nil end
+    if gaze.failed then allowed=false;address=0 end
+    local oldActive,oldAvailable=gaze.active,gaze.available
+    if not gaze.failed then
+        local ok,active,reason=gaze.invoke(address,allowed and 1 or 0,config.target_gaze_pad_x and 1 or 0,toggle and allowed and 1 or 0)
+        gaze.active=ok and active or false;gaze.available=ok and allowed and reason~="waiting_input"or false
+        if not ok then gaze.failed=true;gaze.error=tostring(reason);note("TARGET_GAZE_ERROR "..gaze.error)end
+        if toggle then
+            gaze.response=gaze.response+1
+            gaze.notice=not ok and gaze.error or not allowed and tr("当前不能使用目标注视。","Target tracking is currently unavailable.")
+                or reason=="no_target"and tr("没有可注视的目标。","No target is selected.")
+                or gaze.active and tr("目标注视：开启","Target tracking: ON")or tr("目标注视：关闭","Target tracking: OFF")
+            lastUIKey=nil
+        end
+    else gaze.active=false;gaze.available=false end
+    if oldActive~=gaze.active or oldAvailable~=gaze.available then lastUIKey=nil end
+end
+
 -- 周期调度和最终选择都读取最新状态，刚解除暂停后立即切换也能正常出声。
 local function updateCustomAudio()
     local allowed=isFlight and configured and not errorText and not supplySession and not panelOpen
@@ -700,6 +731,9 @@ end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
 local function releaseRuntimeOwnership()
     weaponSwitch.pending=nil;internal=false
+    local gazeCall,gazeOK,_,gazeError=pcall(weaponSwitch.gaze.invoke,0,0,0,0)
+    weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
+    if not gazeCall or not gazeOK then note("TARGET_GAZE_RELEASE_ERROR "..tostring(gazeCall and gazeError or gazeOK))end
     releaseMountPreview(0)
     local ok,err=pcall(function()selectionAudio(2)end)
     if not ok then note("SELECTION_AUDIO_RELEASE_ERROR "..tostring(err))end
@@ -1088,6 +1122,7 @@ local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
+    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation)
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
@@ -1095,6 +1130,7 @@ local function applyAction(action)
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             config=configStore:applySettings(config,action)
+            weaponSwitch.gaze.failed=false;weaponSwitch.gaze.error=nil;weaponSwitch.gaze.update(false)
             masterSwitch.failed=false;masterSwitch.error=nil;masterSwitch.lastCheck=-1
             tryApplyMasterSwitch(true)
             if not isFlight and not supplySession then applyFixedMountSetting()end
@@ -1134,9 +1170,10 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=7,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=8,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission14_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
+        target_gaze_pad_x=config.target_gaze_pad_x,target_gaze_key=config.target_gaze_key,
         runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
         ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
         keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="percentage",
@@ -1151,6 +1188,8 @@ local function publishState()
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
+    state.target_gaze={protocol=1,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
+        generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,error=weaponSwitch.gaze.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}
@@ -1183,6 +1222,8 @@ local function checkRuntime(activatedWidget)
     if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
     runtimeChanging=true
     runtimeAllowed=allowed;runtimeReason=reason
+    local gazeOK,_,gazeError=weaponSwitch.gaze.invoke(0,0,0,0)
+    assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
     if not allowed or reason=="mission14_fixed_sp"then
@@ -1299,6 +1340,7 @@ local function tick()
             plane=found;planeAddress=found and found:GetAddress()or nil
             activator=found and found.PlayerWeaponActivator or nil;isFlight=found~=nil;currentWorld=world
         end
+        weaponSwitch.gaze.update(false)
         if now-lastActions>=.05 then
             lastActions=now;drain()
             local batch=readJson(root.."ui-actions.json")
@@ -1363,6 +1405,7 @@ local function tick()
         note("WORLD_CHANGED "..world)
     end
     local selected=instance:GetSelectedPlaneID()
+    weaponSwitch.gaze.update(false)
     if selected~=lastSelected then
         releaseMountPreview(0)
         local previousPlaneId=planeId -- 页面错误属于引发错误的机体，换机后重新建立适配上下文。
