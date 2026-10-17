@@ -16,6 +16,8 @@ bool mountFixedEmitter(MountAircraft aircraft,int kind) {
     return mountExpanded(aircraft) && mountExpansionDefinition(aircraft).at("groups").at(kind).at("fixed").get<bool>();
 }
 bool mountNeedsMappedTransform(const FixedMountState& state,int kind) {
+    // CFA仅ADMM/EML共存才分侧；与ECM双挂保完整原生左右口，126口不挤入64位映射。
+    if(state.aircraft==MountAircraft::Fa44 && (state.kindsMask&3u)!=3u)return false;
     if(mountLight(state.aircraft))return mountLightMapped(state.aircraft,kind);
     if(mountExterior(state.aircraft))return false; // 机外外观保留不换原生发射点。
     return !mountFixedEmitter(state.aircraft,kind);

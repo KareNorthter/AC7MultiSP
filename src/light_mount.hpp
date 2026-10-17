@@ -412,8 +412,10 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
         }
         if(state.kindsMask&4) {select(2,"sp31");if(state.kindsMask==5)select(2,"sp32");} // 原生双组件池及回收不变。
     } else if(state.aircraft==MountAircraft::Fa44) {
+        const bool split=(state.kindsMask&3u)==3u;
+        // 非分侧组合的ADMM保完整126口并走原生发射；这里42位只供既有预览就绪账本使用。
         if(state.kindsMask&1)for(int i=1;i<=124;i+=3)select(0,"sp"+std::string(i<10?"00":i<100?"0":"")+std::to_string(i));
-        if(state.kindsMask&2)select(1,"sp22");
+        if(state.kindsMask&2) {if(!split)select(1,"sp21");select(1,"sp22");}
     }
 }
 
@@ -477,14 +479,15 @@ void mountLightMaintain(FixedMountState& state) {
         read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state),
         "轻量挂载：模型池、资源或管理器身份改变");
     if(state.aircraft!=MountAircraft::Fa44)return;
+    const bool split=(state.kindsMask&3u)==3u;
     for(int pool=0;pool<2;++pool) {
         auto& rack=state.light->racks[pool];if(!(state.kindsMask&(1u<<pool)))continue;
-        if(!rack.bones.prepared) {
+        if(split && !rack.bones.prepared) {
             std::vector<MountAnimationReflection::SocketName> sockets;
             for(int p=0;p<state.physicalCount;++p)if(state.light->positions[p].pool==pool)sockets.push_back(state.light->positions[p].socket);
             rack.bones.prepare(rack.component,pool,sockets);
         }
-        rack.bones.maintain();
+        if(split)rack.bones.maintain();else rack.bones.release(); // 仅ADMM+EML/三挂分侧，和ECM双挂保整架左右。
         const Addr object=rack.component.address;const auto flags=read<unsigned char>(object+0x9b0);
         const bool noSkeleton=(flags&2)!=0,tick=read<unsigned char>(object+0x3f)!=0;
         require(!(flags&4),"轻量挂载：原生主动暂停挂架动画");
@@ -495,6 +498,7 @@ void mountLightMaintain(FixedMountState& state) {
     }
 }
 bool mountLightCopyTransform(void* output,const FixedMountState& state,int position) {
+    if(state.aircraft==MountAircraft::Fa44 && (state.kindsMask&3u)!=3u)return false; // 整架双挂保原生全部发射口。
     require(state.light && position>=0 && position<state.physicalCount,"轻量挂载：发射位置越界");
     const auto& point=state.light->positions[position];const Addr component=point.component.address;
     if(state.aircraft==MountAircraft::Fa44 && point.pool==1)mountCfaMuzzleSync();

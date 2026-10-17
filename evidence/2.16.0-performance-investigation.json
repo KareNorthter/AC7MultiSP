@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "candidate": "2.16.0",
+  "installed": "2.15.0",
+  "compiled": false,
+  "tests_run": false,
+  "installed_new_candidate": false,
+  "game_operated": false,
+  "previous_source": "a4f7d1b",
+  "feedback": "evidence/2.15.0-user-validation.json",
+  "log_snapshot": "Temp/performance-feedback-2.16-20261017-215024",
+  "log_hashes": {
+    "mod.log": {
+      "bytes": 4981453,
+      "sha256": "96e259dc6c713318df7632bd6756f953d6fa1572558cc19b5443de8ad0110f0a"
+    },
+    "native.log": {
+      "bytes": 1740782,
+      "sha256": "f0eca65afd6973c05e09a6095abab0175733848e00e2dc83c792103988ce3ae5"
+    }
+  },
+  "findings": [
+    {
+      "issue": "CFA ECM发射被阻断",
+      "confidence": "代码与现有原生指令可确定旧代码施加了门槛冲突；修复效果未实测",
+      "native_evidence": [
+        "0x81c130→0x1cd30f0读engine+0x1204，即Parts+0x274阶段",
+        "0x883a9e调用并cmp阶段2；0x884264的SP路径亦要求2",
+        "0x1ce7f69/0x1ce7f71推进Parts+0x17c，进度抵达1才将Parts+0x274置2"
+      ],
+      "old_conflict": "旧CFA config2每帧写max(-0.01,before[0]-delta/0.4*speed)，抵消原生打开，阻止到达发射所需阶段2。",
+      "fix": "CFA退出Parts接管与姿态快照，恢复原生互切、开合和门槛；不绕过ECM伤害/装填/持续生命周期。",
+      "archive": "旧2.15完整方案a4f7d1b:src/light_mount_animation.hpp；本机Temp/build-2.15.0-final及安装备份均保留。"
+    },
+    {
+      "issue": "CFA EML仅4fps",
+      "confidence": "发现显著重复热路径，尚不能定量或单独归因动画",
+      "old_cost": "持续取位反复按名搜索AttachChildren/粒子字段，并对已经隐藏的PSC重复调用SetVisibility(false)。",
+      "fix": "弱身份缓存类/字段/模板资格；按实际bVisible避免重复通知；仅ADMM与EML同时选择时抑制左sp21。",
+      "guards": "每次仍核玩家/rack/PSC/模板弱身份、Socket和数组头；原生显隐请求独立记账并可归还。"
+    },
+    {
+      "issue": "CFA与ECM双挂缺半边",
+      "fix": "mask5完整ADMM、mask6完整EML，两者发射原生；只有mask3/7分侧映射。原126口与逻辑槽不减少，不挤入64位物理表。"
+    },
+    {
+      "issue": "共用选装和入场加载",
+      "log_examples_ms": {
+        "Su30_three_assets": [
+          126,
+          57,
+          34
+        ],
+        "Mirage_first_asset": 901,
+        "F16_first_asset": 389
+      },
+      "fix": "自有Research包优先精确路径原生加载，保登记表后备；同栈预览重入合并，原生请求继续记账，末尾核实例代际。",
+      "limit": "旧耗时是每份总加载时间，不可全部归因失败搜索；首次必需磁盘/引擎资源加载峰仍可能存在。"
+    },
+    {
+      "issue": "ADF停光卡顿",
+      "fix": "每次重新找10个导出及7次按名反射链改为弱元数据复用，每次仍验证当前主束/类/模板/父链/发射代次；原生End与隐藏各一次。",
+      "limit": "首发或元数据失效后仍冷解析，未新增Actor预热扫描；复测仍卡可仅退MainLaser强隐、保留原生End。",
+      "archive": "a4f7d1b:src/continuous_sp.hpp保留未缓存的立即停光版本。"
+    }
+  ],
+  "deferred": [
+    "CFA/F22 SP2-SP3光标卡顿专项",
+    "F2专项",
+    "真实引擎性能和ECM/动画/完整左右双挂复测"
+  ],
+  "source_hashes": {
+    "src/cfa_muzzle_visual.hpp": "8895c663700c0a2cc7c6fa83d03e9aeffe50096d273c70850c9e7fde1f7619cd",
+    "src/light_mount_animation.hpp": "d37c6313b0ab8779ad63ebe65cd964ecafba0682716274261589c4b204513439",
+    "src/light_mount.hpp": "a455063ef6aeefbb5ea648d82a008d15386bc490f2b86df05839880aecda885b",
+    "src/continuous_sp.hpp": "34aa13c9eaaad3540a84bcc58eec6b5c6ba7c17e9c6c44227e367057b5da6d27",
+    "src/mount_expansion.hpp": "d51a4742e0ca30ace229d88a580ef65bf7fb5ce778d4a1c9b9b43a24d83fc462",
+    "src/mount_preview.hpp": "9baaac3aee1030238a9d513ae5bc0a9ac298a5f4c71dae915b63fbc600e81e7f",
+    "dist/DualSP/Scripts/main.lua": "1c897236b06188d1d2c7536ed30d7c081ea42acbe3dae34fc78244a18b188f84"
+  },
+  "validation_boundary": "仅源码复核和差异格式检查；没有编译、新增/运行测试、安装或游戏现场采样。"
+}

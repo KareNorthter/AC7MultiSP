@@ -859,7 +859,7 @@ void fixedMountCommit(const Command& command) {
         mountSetRackAnimation(rack,false,true);
     }
     fixedMount.rebuilding=false;
-    mountLightAnimationCommit(); // keepArmed完整结束后才消费轻量同舱快照。
+    mountLightAnimationCommit(); // 仅Dark/Falken维护独立通道，CFA公共机构完全原生。
     mountCfaMuzzleSync();
     if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
     fixedMountRefresh(command.time);

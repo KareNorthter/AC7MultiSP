@@ -2,6 +2,7 @@
 #pragma once
 
 bool mountPreviewRestoring=false; // 仅覆盖同步归还调用栈；待重试状态仍继续记录原生显隐请求。
+bool mountPreviewApplying=false, mountPreviewApplyReentered=false; // 同一原生同步批次只维护一次完整预览。
 bool mountSameIdentity(const MountIdentity& a,const MountIdentity& b) {
     return a.address==b.address && a.index==b.index && a.serial==b.serial;
 }
@@ -253,9 +254,13 @@ bool mountPreviewRebindHangar() {
     return true;
 }
 void mountPreviewApply() {
+    if(mountPreviewApplying) { mountPreviewApplyReentered=true;return; }
     if(!mountPreview.active)return;
     if(mountPreview.failed) { mountPreviewRetryRestore();return; }
     if(mountPreviewRestoring || mountPreview.pending || !mountPreview.layout.bound)return;
+    mountPreviewApplying=true;mountPreviewApplyReentered=false;
+    struct ApplyScope { ~ApplyScope() { mountPreviewApplying=false;mountPreviewApplyReentered=false; } } applyScope;
+    const auto batchPlane=mountPreview.layout.plane;
     if(!mountAlive(mountPreview.layout.plane) || !mountAlive(mountPreview.activator) || !mountAlive(mountPreview.world)) {
         mountPreviewWaitGeneration("展示实例或世界换代");return;
     }
@@ -292,7 +297,21 @@ void mountPreviewApply() {
         read<Addr>(mountPreview.layout.manager.address+0x150)==mountPreview.layout.meshManager.address,"模型预览：模型管理器被替换");
     if(!mountPreview.nativeOnly) {
         auto& state=mountPreview.layout;
-        mountPreviewAnimate();mountApplyVisuals(state);mountPreview.lastApply=GetTickCount64();
+        mountPreviewAnimate();
+        if(!mountPreview.active || mountPreview.failed || mountPreview.nativeOnly || !state.bound ||
+           !mountSameIdentity(batchPlane,state.plane))return;
+        mountApplyVisuals(state);mountPreview.lastApply=GetTickCount64();
+        // SetStaticMesh/显隐可能同步触发总显隐回调；原生请求仍记账，批次末再核换代，不逐回调重复整池扫描。
+        if(mountPreviewApplyReentered && mountPreview.active && !mountPreview.failed && !mountPreview.nativeOnly &&
+           state.bound && mountSameIdentity(batchPlane,state.plane)) {
+            const bool sourceChanged=(mountPreview.mode==2 || mountPreview.mode==5)?
+                session.plane!=state.plane.address || session.activator!=mountPreview.activator.address:
+                !mountAlive(mountPreview.owner) || !mountAlive(mountPreview.source) ||
+                read<Addr>(mountPreview.source.address+mountPreview.sourcePlaneOffset)!=state.plane.address;
+            if(!mountAlive(state.plane) || !mountAlive(mountPreview.activator) || !mountAlive(mountPreview.world) ||
+               sourceChanged || read<Addr>(state.plane.address+0x11a8)!=mountPreview.activator.address ||
+               mountPreviewLayoutChanged())mountPreviewWaitGeneration("预览同步更新期间模型换代");
+        }
     }
 }
 bool mountPreviewFilter(void* object,bool requested,unsigned char propagation,bool hidden) {

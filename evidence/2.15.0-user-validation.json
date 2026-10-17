@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "version": "2.15.0",
+  "reported_at": "2026-10-17T14:13:03.624381+00:00",
+  "scope": "用户本次点名的实际场景，不扩大为全机、全组合验收。",
+  "reported": [
+    {
+      "area": "准备页光标",
+      "aircraft": [
+        "CFA-44",
+        "F-22A"
+      ],
+      "result": "SP1流畅，SP2/SP3移动光标明显卡一下",
+      "status": "记录，后续单独定位；不宣称本轮已修复"
+    },
+    {
+      "area": "共用加载",
+      "aircraft": "所有启用多SP外观的适配机体",
+      "result": "选SP及进入任务均有小卡顿",
+      "status": "已做2.16源码共用优化，未验证"
+    },
+    {
+      "area": "CFA机构",
+      "result": "ADMM/EML互切没有动画；EML选中仅4fps；ECM发射无反应",
+      "status": "旧无互切动画观感达成，但整体未通过；用户接受恢复原生互切动画"
+    },
+    {
+      "area": "CFA炮口",
+      "result": "EML发射时左侧多余蓝光消失",
+      "status": "用户确认通过，后续保留分侧组合抑制"
+    },
+    {
+      "area": "CFA双挂模型",
+      "result": "EML+ECM、ADMM+ECM另一侧为空，应恢复已选武器完整左右，ECM隐藏",
+      "status": "2.16源码调整"
+    },
+    {
+      "area": "ADF-01",
+      "result": "切离TLS立即停光，但明显卡顿",
+      "status": "功能达成，性能未通过；用户允许优化不佳回退"
+    },
+    {
+      "area": "Su-30M2",
+      "result": "正常",
+      "status": "用户确认通过，布局不改"
+    }
+  ],
+  "policy": "优先原生动画和功能，接管成本过高可退回；保留研究记录。",
+  "raw_logs_local_only": "Temp/performance-feedback-2.16-20261017-215024"
+}

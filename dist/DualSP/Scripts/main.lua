@@ -1,4 +1,4 @@
--- AC7MultiSP 2.15.0：减少预览/选装重复开销，等待正常模型换代，统一阶段标题。
+-- AC7MultiSP 2.16.0：批量减少预览重入与加载开销，CFA恢复原生机构并优化炮口，缓存Falken停光元数据。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -370,16 +370,15 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
         for _,entry in ipairs(needed)do
             loadingIndex=entry[1]
             local started=os.clock()
+            local pathElapsed,registryElapsed=0,0
             local package="/Game/AC7MultiSP/Research/"..entry[2]
             local objectPath=package.."."..entry[2]
             local object=StaticFindObject(objectPath)
             if not valid(object)then
-                local loaded,registered,didLoad=LoadAsset(objectPath)
-                object=valid(loaded)and loaded or StaticFindObject(objectPath)
-                if not valid(object)then
-                    note("MOUNT_ASSET_REGISTRY_RESULT path="..objectPath.." registered="..tostring(registered).." loaded="..tostring(didLoad))
-                    -- LoadAsset先查登记表，新PAK未登记时改用引擎按对象路径加载。
-                    -- 用原生工厂建立完整AssetData，再改路径；不手拼软引用或原生结构内存。
+                -- 本PAK的自有资源在登记表中未命中；先用已验证的原生精确路径，避免逐份重复失败搜索。
+                -- 原生工厂建立完整AssetData；来源或接口未就绪时仍可尝试原加载器入口。
+                local pathStarted=os.clock()
+                local pathOK,pathObject=pcall(function()
                     local helpers=StaticFindObject("/Script/AssetRegistry.Default__AssetRegistryHelpers")
                     assert(valid(helpers),"独立挂架缺少原生AssetRegistryHelpers")
                     local donor=sourcePlane.SWP1.StaticMesh
@@ -391,16 +390,26 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
                     data.PackagePath=FName("/Game/AC7MultiSP/Research")
                     data.AssetName=FName(entry[2])
                     data.AssetClass=FName("StaticMesh")
-                    object=helpers:GetAsset(data)
-                    if not valid(object)then object=StaticFindObject(objectPath)end
-                    note("MOUNT_ASSET_PATH_RESULT path="..objectPath.." valid="..tostring(valid(object)))
+                    return helpers:GetAsset(data)
+                end)
+                pathElapsed=(os.clock()-pathStarted)*1000
+                object=pathOK and valid(pathObject)and pathObject or StaticFindObject(objectPath)
+                if not pathOK then note("MOUNT_ASSET_PATH_ERROR path="..objectPath.." error="..tostring(pathObject))end
+                note("MOUNT_ASSET_PATH_RESULT path="..objectPath.." valid="..tostring(valid(object)))
+                if not valid(object)then
+                    local registryStarted=os.clock()
+                    local loaded,registered,didLoad=LoadAsset(objectPath)
+                    registryElapsed=(os.clock()-registryStarted)*1000
+                    object=valid(loaded)and loaded or StaticFindObject(objectPath)
+                    note("MOUNT_ASSET_REGISTRY_RESULT path="..objectPath.." registered="..tostring(registered).." loaded="..tostring(didLoad))
                 end
             end
             assert(valid(object),"独立挂架加载失败："..entry[2])
             local accepted,message=registerMountAsset(entry[1],object:GetAddress())
             assert(accepted,message)
             status[entry[1]]=true
-            note(string.format("MOUNT_ASSET_LOAD_COST asset=%s elapsed_ms=%.3f",entry[2],(os.clock()-started)*1000))
+            note(string.format("MOUNT_ASSET_LOAD_COST asset=%s elapsed_ms=%.3f path_ms=%.3f registry_ms=%.3f",
+                entry[2],(os.clock()-started)*1000,pathElapsed,registryElapsed))
         end
     end)
     if not ok then status[loadingIndex]=tostring(err)end
@@ -1580,7 +1589,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.15.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.16.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
