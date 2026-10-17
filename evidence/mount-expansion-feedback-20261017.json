@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "date": "2026-10-17",
+  "installed_version": "2.7.0",
+  "candidate": "2.7.0反馈后源码候选，未分配发布版本",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "new_assets_generated": false,
+  "user_feedback": "用户2.7.0实测：F-16C、Mirage 2000-5正常且无卡顿；Typhoon正常但双SP空挂点较多。F-2A三挂模型正常、非对称可接受，但机库卡顿、任务约降40 FPS，RKT连射中切换会使多SP失效。Rafale M仍回退；F-15C、F-15J、ADFX-01沿用此前正常反馈，F-15 S/MTD、XFA-27因无DLC未测。反馈未逐项列明全部七组合和任务边界。",
+  "changes": {
+    "f02a": "释放输入；只读原生busy；请求上下文绑定、50ms游戏时间重试、5游戏秒取消；批量巡检减重复读取",
+    "rflm": "Socket名称白名单双射；原生池index和身份校验保留",
+    "typn": {
+      "LAAM+8AGM": [
+        4,
+        18
+      ],
+      "LAAM+HCAA": [
+        4,
+        4
+      ],
+      "8AGM+HCAA": [
+        18,
+        4
+      ],
+      "singles_and_triple": "保留"
+    }
+  },
+  "evidence": {
+    "f02a_switch": {
+      "time_utc": "2026-10-17T02:26:37Z",
+      "request": "DIRECT_SELECTION_REQUESTED 0",
+      "error": "main.lua:789 原生武器类别切换未完成",
+      "native_queue": "此前RKT mask=1019→1011→995，错误时未开始新的native switch事务"
+    },
+    "rflm": {
+      "variants_loaded": 5,
+      "fallback": "扩展挂载：原生Socket顺序改变",
+      "boundary": "现场未记录实际错误池/下标，不能断言具体置换；新增上下文诊断"
+    },
+    "f02a_performance": {
+      "managed_visuals": 87,
+      "selected_physical": 40,
+      "rkt_native_candidates": 76,
+      "selected_rkt_muzzles": 38,
+      "flight_lua_callback_mean_ms": "约23–24，非总帧时间",
+      "benefit_measured": false
+    },
+    "typn_static": {
+      "method": "原生Rotator旋转局部完整包围盒；15轴OBB分离筛查，单位为资源单位；不含机体和运动扫掠",
+      "laam_front_vs_agm_aabb_lateral_overlap": 0.4356618293569223,
+      "obb_separation": [
+        {
+          "group": "SWP1",
+          "minimum_separating_axis_gap": [
+            0.3442629551018688,
+            "sp13",
+            "sp37"
+          ]
+        },
+        {
+          "group": "SWP3",
+          "minimum_separating_axis_gap": [
+            2.0615491189132276,
+            "sp35",
+            "sp37"
+          ]
+        }
+      ],
+      "limitation": "LAAM与8AGM窄静态间隔不证明发射/下落/点火/补装净空"
+    }
+  },
+  "verification": "仅源码/数据回读、差异审阅及离线几何分析，未运行测试模块",
+  "deployment": "本次仅完成源码候选，未编译、新增或运行测试、安装、停止或操作游戏。已安装程序仍为2.7.0；新Lua增加dualsp_switch_ready具名接口，必须与新核心成套构建，不能单独覆盖游戏中的Lua。原16个派生网格及PAK不变；Typhoon选位表需随核心更新。"
+}

@@ -38,7 +38,7 @@
     },
     {
       "record": "evidence/mount-expansion-batch2.json",
-      "sha256": "e19d771a62103e8c5a97ca671ae9fee52705f9a28f953295b3ed338e2d2e7142"
+      "sha256": "80f92f57d7231470288eff525a7e29ef018b2ee1c70dfd047a5bdeac923fd10e"
     },
     {
       "record": "evidence/mount-expansion-batch3.json",
@@ -9661,10 +9661,56 @@
           "weapon": "HCAA",
           "group": "SWP3",
           "sockets": [
+            "sp35",
+            "sp36",
             "sp37",
             "sp38"
           ],
           "socket_details": [
+            {
+              "name": "sp35",
+              "bone": null,
+              "reference_position": [
+                37.80515,
+                -9.10455,
+                -7.93704
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.9966133236885071,
+                  "Yaw": -1.8093808889389038,
+                  "Roll": 53.706050872802734
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
+            {
+              "name": "sp36",
+              "bone": null,
+              "reference_position": [
+                37.80515,
+                9.1,
+                -7.93704
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.9966133236885071,
+                  "Yaw": 1.8093808889389038,
+                  "Roll": -53.706050872802734
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
             {
               "name": "sp37",
               "bone": null,
@@ -9714,7 +9760,7 @@
           "weapon_mesh": "w_4aam_a0_SM",
           "position_role": "ordnance_station_candidate",
           "physical_count_unit": "station",
-          "physical_candidate_count": 2,
+          "physical_candidate_count": 4,
           "loaded_window_from_blueprint": 2,
           "fewer_physical_positions_than_window": false,
           "native_single_policy": false,
@@ -9739,7 +9785,7 @@
         {
           "group": "SWP3",
           "mode": "hide",
-          "description": "隐藏翼下/内翼附加架，保留原生后腹Socket及父链",
+          "description": "隐藏翼下/内翼附加架，保留原生前后腹四处Socket及父链",
           "new_resource_required": false,
           "restore_native_visibility_required": true,
           "mesh_override_restore_required": false
@@ -9747,7 +9793,8 @@
       ],
       "split_evidence": null,
       "layout_notes": [
-        "HCAA后腹二处达到二窗口，远离最内8AGM；18只是资源候选。"
+        "用户2.7.0反馈双挂腹部空位；HCAA使用前后腹四处，8AGM保留18候选。",
+        "前腹HCAA沿用原三挂选位；本次补位仍需发射、下落与补装实测。"
       ]
     },
     {
@@ -9773,10 +9820,56 @@
           "weapon": "LAAM",
           "group": "SWP1",
           "sockets": [
+            "sp13",
+            "sp14",
             "sp15",
             "sp16"
           ],
           "socket_details": [
+            {
+              "name": "sp13",
+              "bone": null,
+              "reference_position": [
+                38.5017,
+                -9.1953,
+                -7.93377
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.6525311470031738,
+                  "Yaw": 2.1254210472106934,
+                  "Roll": 53.69123458862305
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
+            {
+              "name": "sp14",
+              "bone": null,
+              "reference_position": [
+                38.5017,
+                9.1953,
+                -7.93377
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.6525311470031738,
+                  "Yaw": -2.1254210472106934,
+                  "Roll": -53.69123458862305
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
             {
               "name": "sp15",
               "bone": null,
@@ -9826,7 +9919,7 @@
           "weapon_mesh": "w_laam_e0_SM",
           "position_role": "ordnance_station_candidate",
           "physical_count_unit": "station",
-          "physical_candidate_count": 2,
+          "physical_candidate_count": 4,
           "loaded_window_from_blueprint": 2,
           "fewer_physical_positions_than_window": false,
           "native_single_policy": false,
@@ -10280,7 +10373,7 @@
         {
           "group": "SWP1",
           "mode": "hide",
-          "description": "隐藏LAAM原翼下整块，保留后腹原Socket及父链",
+          "description": "隐藏LAAM原翼下整块，保留前后腹四处原Socket及父链",
           "new_resource_required": false,
           "restore_native_visibility_required": true,
           "mesh_override_restore_required": false
@@ -10296,7 +10389,8 @@
       ],
       "split_evidence": null,
       "layout_notes": [
-        "LAAM后二处=二窗口，避开前腹与内侧8AGM距离较近区域；8AGM实际显隐取库存/装填。"
+        "用户2.7.0反馈双挂腹部空位；LAAM使用原生前后腹四处，8AGM保留18候选。",
+        "新增前腹LAAM与最内8AGM距离较近；旋转包围盒仍存在分离轴，实际离架/下落需实测。"
       ]
     },
     {
@@ -10323,7 +10417,9 @@
           "group": "SWP1",
           "sockets": [
             "sp11",
-            "sp12"
+            "sp12",
+            "sp15",
+            "sp16"
           ],
           "socket_details": [
             {
@@ -10369,13 +10465,57 @@
               "omitted_transform_fields": [
                 "RelativeScale"
               ]
+            },
+            {
+              "name": "sp15",
+              "bone": null,
+              "reference_position": [
+                -9.35608,
+                -10.21,
+                -6.32456
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.9697446823120117,
+                  "Yaw": 0.40039023756980896,
+                  "Roll": 53.53171920776367
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
+            {
+              "name": "sp16",
+              "bone": null,
+              "reference_position": [
+                -9.35608,
+                10.2052,
+                -6.32456
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -2.9697446823120117,
+                  "Yaw": -0.40039023756980896,
+                  "Roll": -53.53171920776367
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
             }
           ],
           "weapon_class": "plwp_laam_e0_C",
           "weapon_mesh": "w_laam_e0_SM",
           "position_role": "ordnance_station_candidate",
           "physical_count_unit": "station",
-          "physical_candidate_count": 2,
+          "physical_candidate_count": 4,
           "loaded_window_from_blueprint": 2,
           "fewer_physical_positions_than_window": false,
           "native_single_policy": false,
@@ -10392,7 +10532,9 @@
           "group": "SWP3",
           "sockets": [
             "sp33",
-            "sp34"
+            "sp34",
+            "sp35",
+            "sp36"
           ],
           "socket_details": [
             {
@@ -10438,13 +10580,57 @@
               "omitted_transform_fields": [
                 "RelativeScale"
               ]
+            },
+            {
+              "name": "sp35",
+              "bone": null,
+              "reference_position": [
+                37.80515,
+                -9.10455,
+                -7.93704
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.9966133236885071,
+                  "Yaw": -1.8093808889389038,
+                  "Roll": 53.706050872802734
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
+            },
+            {
+              "name": "sp36",
+              "bone": null,
+              "reference_position": [
+                37.80515,
+                9.1,
+                -7.93704
+              ],
+              "position_status": "已解析并换算",
+              "ancestor_animation_channels": [],
+              "serialized_rotation": {
+                "RelativeRotation": {
+                  "Pitch": -0.9966133236885071,
+                  "Yaw": 1.8093808889389038,
+                  "Roll": -53.706050872802734
+                }
+              },
+              "serialized_scale": null,
+              "omitted_transform_fields": [
+                "RelativeScale"
+              ]
             }
           ],
           "weapon_class": "plwp_hcaa_a0_C",
           "weapon_mesh": "w_4aam_a0_SM",
           "position_role": "ordnance_station_candidate",
           "physical_count_unit": "station",
-          "physical_candidate_count": 2,
+          "physical_candidate_count": 4,
           "loaded_window_from_blueprint": 2,
           "fewer_physical_positions_than_window": false,
           "native_single_policy": false,
@@ -10469,7 +10655,7 @@
         {
           "group": "SWP3",
           "mode": "whole",
-          "description": "外翼原LAAM相同支撑由LAAM使用，内翼原HCAA导轨由HCAA使用",
+          "description": "外翼支撑供LAAM，内翼导轨供HCAA；腹部按LAAM后/HCAA前分区",
           "new_resource_required": false,
           "restore_native_visibility_required": true,
           "mesh_override_restore_required": false
@@ -10477,7 +10663,7 @@
       ],
       "split_evidence": null,
       "layout_notes": [
-        "二/二处各达到二窗口；保持各自原Socket变换，不换弹体网格。"
+        "用户要求双挂补齐空位：LAAM外翼两处与后腹两处，HCAA内翼两处与前腹两处；四加四使用各自原生Socket，前后腹不重叠。"
       ]
     },
     {

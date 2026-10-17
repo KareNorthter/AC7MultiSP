@@ -15,6 +15,8 @@
 - 用户要求禁用`proportional guided missile_P.pak`，已移至backup/disabled-guidance-20261016-231440，原PAK哈希和恢复路径见其中disable-receipt.json；其他模组保留。
 - 2.4.0已作为本地正式版提交main并标记v2.4.0，未制作ZIP或远端发布；2.0/2.0.0均未制作ZIP；本地旧包 `Release/AC7DualSP-1.1.0.zip` 保持原发布字节。验证凭据按需查[证据索引](evidence/README.md)。
 
+最新实测为主工作区2.7.0：F-16C、Mirage、Typhoon正常；F-2A模型成功但卡顿，RKT连射中切换触发控制器错误；Rafale资源已加载、Socket顺序校验回退。此分支按反馈补齐Typhoon三个双挂空位，数据与正文同步；运行修复源码在E:/AC7_MultiSP，未构建或安装，不能将修订候选计为实测通过。详见evidence/mount-expansion-feedback-20261017.json。
+
 ## 工作规则
 
 挂载方案研究位于`codex/mount-expansion`，从main/v2.4.0（8f600e4）创建。三批44机七组合的离线研究完成，连同正式三机共47机；不编译、运行测试或安装。用户最新要求整机七组合齐全才做，否则整机后置，不能只做部分组合。依据静态分区技术成果7ae97b6新增F-16C、F-2A、Mirage、Rafale四机；现共十机70条完整七组合候选，其余34机整体暂缓。交接入口`evidence/mount-expansion-handoff.json`的`eligible_aircraft`；各批`integration_gate.eligible`是最终门槛，不能单看`candidate_existing_assets`或`candidate_split_assets`。仅接受有全部LOD与编码往返依据的静态副本，未核对分区、新站及动画/支撑未明继续后置，资料不表示已适配或实测。ECM/IEWS与TLS不因持续效果预设互斥，具体类接入与布局分别核对。

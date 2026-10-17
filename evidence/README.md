@@ -2,6 +2,8 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [2.7.0挂载反馈与修订](mount-expansion-feedback-20261017.json)：记录正常范围、F-2A/Rafale故障依据及Typhoon双挂补位的窄静态间隔；本分支仅更新研究布局，运行源码候选在主工作区，尚未构建或安装。
+
 - [原版挂载扩展目录](mount-expansion-catalog.json)：47架有武装原版机型的真实代码、三SP类、组件/网格引用、来源与分批建议；排除无武装f104av和第三方机体。仅资源核对，不代表全部适配。
 - [首批挂载方案](mount-expansion-batch1.json)：六机各七组合；吸收7ae97b6的静态分区依据后，F-16C、F-2A、Mirage、Rafale四机有完整七组合及精确载体表，共28条，含14条分区候选。F-104C缺第三站、Gripen的LACM支撑未明，继续整机暂缓。
 - [第二批挂载方案](mount-expansion-batch2.json)：十五机各七组合；区分原生单挂参考、现成整架复用研究候选和暂缓组合，保留净空/支撑依据与不足窗口取舍。三批均为离线研究，未编译、运行测试或安装；可读表及整合要求统一见[挂载设计经验](../docs/multi-sp-mount-design.md#其他原版机体的分批研究)。
