@@ -63,8 +63,10 @@ inline bool valid(const CoverState& state) {
 }
 struct PartsSample { CoverState cover; int nativeConfig{-1}; };
 
-struct RackRequest { bool paused{}, tick{}; };
-inline bool same(RackRequest a, RackRequest b) { return a.paused == b.paused && a.tick == b.tick; }
+struct RackRequest { bool paused{}, tick{}, noSkeletonUpdate{}; };
+inline bool same(RackRequest a, RackRequest b) {
+    return a.paused == b.paused && a.tick == b.tick && a.noSkeletonUpdate == b.noSkeletonUpdate;
+}
 
 struct ResourceDescription {
     std::string pawnPackage; // 沿真实Pawn继承链找到的原版规范包；不能用当前涂装类名猜测。
@@ -122,7 +124,7 @@ struct Host {
     virtual bool readParts(const Binding&, PartsSample&) = 0;
     virtual bool writeCover(const Binding&, const CoverState&) = 0; // 只写请求、phase、七进度；绝不写选择编号。
     virtual bool readRack(Identity, RackRequest&) = 0;
-    virtual bool applyRack(Identity, RackRequest) = 0; // bPauseAnims+原生SetComponentTickEnabled，回读一致才成功；不碰bNoSkeletonUpdate。
+    virtual bool applyRack(Identity, RackRequest) = 0; // 按真实元数据分别归还Pause/NoSkeletonUpdate/Tick。
     virtual bool acquirePoseRefresh(Identity) = 0; // 全预检已prepare；只对required骨架取得/维持刷新模式租约。
     virtual bool releasePoseRefresh(Identity) = 0; // 恢复最新原生模式；死亡对象仅丢弃，失败保留待重试。
 };
@@ -217,17 +219,31 @@ public:
         return Error::None;
     }
 
+    // 原生重建的批量观察只记明确改过的字段；不调用Host读写，不维持、不归还、不过滤。
+    // 让全部挂架先完成记账，随后统一maintain/release，避免首个Pause提前归还污染后续采样。
+    bool rememberNativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields) {
+        if (!host.onGameThread() || !changedFields || (changedFields & ~7u)) return false;
+        for (auto& lease: leases_) if (lease.owned && same(lease.rack,rack)) {
+            if (changedFields & 1u) lease.latestNative.paused=wanted.paused;
+            if (changedFields & 2u) lease.latestNative.tick=wanted.tick;
+            if (changedFields & 4u) lease.latestNative.noSkeletonUpdate=wanted.noSkeletonUpdate;
+            return true;
+        }
+        return false;
+    }
+
     // 放在原生请求的入口过滤；仅真正原生调用进入此函数，本模块自己的applyRack必须用重入标记绕过。
     // 过滤/应用必须同一游戏线程同步完成，不能靠每100ms巡检补救已经错过的动画帧。
-    // changedFields位0=本次原生修改Pause，位1=本次原生修改Tick。未改字段沿用已记录的原生请求，
-    // 不能从已经强制启用的实际Tick反推原生意图。初始化直接写Pause时，宿主须另行报告位0。
-    RackRequest nativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields=3u) {
+    // changedFields位0=Pause，位1=Tick，位2=NoSkeletonUpdate；未改字段沿用已记原生请求。
+    // 原生初始化直接写NoSkeletonUpdate须在完成条件赋值后另行报告位2。
+    RackRequest nativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields=7u) {
         if (!host.onGameThread()) return wanted;
-        if (!changedFields || (changedFields & ~3u)) return wanted;
+        if (!changedFields || (changedFields & ~7u)) return wanted;
         for (auto& lease: leases_) if (lease.owned && same(lease.rack,rack)) {
             const bool allowed=!active_ || controlWritesAllowed(host);
             if (changedFields & 1u) lease.latestNative.paused=wanted.paused;
             if (changedFields & 2u) lease.latestNative.tick=wanted.tick;
+            if (changedFields & 4u) lease.latestNative.noSkeletonUpdate=wanted.noSkeletonUpdate;
             if (active_) {
                 if (((changedFields & 1u) && wanted.paused) || !allowed || !host.bindingAlive(binding_) || !host.rackAlive(rack)) {
                     // 先采实际Pause、再记本次具名请求。本次Pause=false也须优先于调用前的旧true。

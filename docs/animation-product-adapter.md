@@ -31,7 +31,7 @@
 
 `bindTickReader(component,generation)` 在绑定时反射检查函数所属类、返回布局和真实原生入口，核对完整0x2b字节wrapper及8字节getter，再做一次反射返回值交叉核对。`tickFast(reader,generation)` 逐次核对对象/类/函数/参数身份、绑定代次和原生代码后直接读+0x3f，不遍历反射链、不调用ProcessEvent、不执行getter。Endpoint的tickReader由该绑定接口生成；Tracker已改用此路径。它只消除读取Tick的重复开销，其余骨架布尔字段和挂点反射仍需后续缓存优化。
 
-**00bd24c的旧三个头不可直接原样接入产品。** 当时的 `RackRequest{paused,tick}` 无法表达 NoSkeletonUpdate，`Host::applyRack` 的“不碰NoSkeletonUpdate”约定与原生非当前挂架行为冲突，`nativeFullyOpen(request==2)` 过严。主管已报告在主工作区追加了第三字段及request1/2门槛修订；整合时以该修订版为准。本轮按主管要求只新增文件，没有覆盖研究树的旧头。旧骨骼刷新 Lease 只管理模式字段这一点可以保留，但不能代替另外三个字段的所有权与归还。
+**00bd24c的旧三个头不可直接原样接入产品。** 当时的 `RackRequest{paused,tick}` 无法表达 NoSkeletonUpdate，`Host::applyRack` 的“不碰NoSkeletonUpdate”约定与原生非当前挂架行为冲突，`nativeFullyOpen(request==2)` 过严。主管已在主工作区追加第三字段及request1/2门槛修订；研究树本次补纯记账入口时同步三字段合同，未另改旧Parts门槛，整合仍以主管已修订版本为准。旧骨骼刷新 Lease 只管理模式字段这一点可以保留，但不能代替另外三个字段的所有权与归还。
 
 ## 原生控制及归还
 
@@ -47,7 +47,7 @@ NoSkeletonUpdate与Tick按需要接管；Pause仍保留独立状态和三字段�
 
 原生请求入口先采调用前的实际Pause，再登记本次changedFields明确声明的请求；因此本次Pause=false不会被调用前的旧true覆盖。本次原生Pause=true直接停止过滤并归还。release仅应用latestNative，不调用接管保护或stopControl；已进入归还重试时也不再次把上次恢复的true当作新原生请求，避免递归和丢失较新的明确请求。Host自己的applyRack写入仍必须用重入标记绕过原生观察。
 
-该窄修改基于研究树的旧两字段Controller；主管主工作区已有的NoSkeletonUpdate第三字段、changedFields=7及bit2记录必须保留。整合时按差异加入Pause保护，不用研究树整文件覆盖主工作区版本。Host收到Controller已退出或归还失败后仍须完成自身release：清理owner登记，或保留待重试组件，不允许重新prepare覆盖未归还所有权。本轮没有编译或运行验证。
+Pause保护最初提交ca5a420基于旧两字段Controller；后续新增纯记账入口时已同步NoSkeletonUpdate第三字段、changedFields=7及bit2记录，与主管合同一致。整合时按差异加入保护与记账入口，保留主工作区其他修订。Host收到Controller已退出或归还失败后仍须完成自身release：清理owner登记，或保留待重试组件，不允许重新prepare覆盖未归还所有权。本轮没有编译或运行验证。
 
 ### 原生清除NoSkeletonUpdate的实际位置
 
@@ -71,6 +71,19 @@ NoSkeletonUpdate与Tick按需要接管；Pause仍保留独立状态和三字段�
 当前F-22A只读原件 `Temp/f22a-socket-native-20261017-1144/mount-882e40-800.bin` 已覆盖上述赋值，SHA256为 `88ada28452481d9fa0b7347d1a9d17285cd0c12ee4ef4ddf9690f842e9e2fe8a`。整段0xc12字节来自既有 `Temp/su30sm-fixed-mount-prototype/Temp/native-current/mount-87f000-9000.bin`，前0x800与本轮原件逐字节相同；抽取段SHA256为 `9ee46f9696a89bcde9804e4b4bd7ab3cf7897af8fbe56f1bb132262abed19583`。本轮.pdata原件为 `Temp/f22a-vtable-native-extended-20261017-1144/runtime-functions.bin`。
 
 这是实际切换时另一个置位/清位来源，不能只观察7f0210。产品可以在既有初始化绑定中按真实循环组身份和配置参数登记原生意图，但须保证该原生类型门和对应组件确实匹配，并在本模块重新强制清位之前完成记录；不能用已被本模块清过的最终位值反推原生请求。没有证明独立启用helper或C++返回类型，本轮不新增猜测函数指针、不在函数中间安装钩子。
+
+实际调用边界已在本轮 `Temp/f22a-native-20261017-1144/mount-81e810-2200.bin` 核对：产品现有 `initialize()` 调 `0x81e810(plane,index)`；其 `0x81e831` 读取 `plane+0x11a8` 为激活器，`0x81e841` 传配置EDX，`0x81e843` 的 `e8f8450600` 调 `0x882e40`，返回点 `0x81e848`。无需再调用初始化一次；在产品已有那一次 `0x81e810` **正常返回后立即观察**即可。
+
+当前产品调用次序为 `fixedMountBeforeRebuild → syncPlaneWeaponSelection → 0x81e810 → ravenAfterRebuild → fixedMountAfterRebuild`。推荐在实际Init调用的RAII范围尾部、ravenAfterRebuild之前收集原生值；如果放在fixedMountAfterRebuild顶部，则必须将禁止强制的范围连续保持到那里，且在restoreSwitch/maintain之前完成记账。不能先结束禁止范围、触发其他维护，再读已经被清过的NoSkeletonUpdate。
+
+初始化批量观察使用新增 `rememberNativeRequest(host,rack,wanted,changedFields)`。它只更新对应lease的最新原生请求，不读组件、不写字段、不触发归还，也不返回强制请求；普通 `nativeRequest` 遇到Pause会主动归还，**不能拿来充当初始化阶段的纯记账函数**。具体顺序：
+
+1. 整个原生初始化期间抑制本模块所有维持/接管写入；Tick和7f0210钩子仍执行原函数，但改用rememberNativeRequest分别记录位1和位2，不触发maintain。仅外层remember跳过maintain并不构成通用保护，其他ensure/发布回调若能写控制字段也须遵守该范围。
+2. 正常返回后，禁止范围仍有效。先核对同一Binding/generation及飞机当前三架引用，再一次性读取全部prepared骨架的原生状态存入本地数组；Su-57 TG静态第三组不读骨架字段。
+3. 数组全部读取成功后逐架调用rememberNativeRequest报告changedFields=4，仅记NoSkeletonUpdate；读取到真实Pause=true则追加位0。Tick由真实setter钩子记录明确参数，不用未经赋值的当前强制值覆盖旧Tick意图，也不把所有字段一概标成7。
+4. 全部记完才结束禁止范围，然后进入原有restoreSwitch/maintain。此时统一Pause保护即使要求退出，也已掌握其他挂架最新NoSkeletonUpdate，不会先恢复旧值再污染后续读取。异常/读失败走回退并保留未归还项，不继续维持一个未完成记账的绑定。
+
+主管已确认本机C runtime的全局 `::read` 会遮住产品匿名命名空间模板；主工作区使用独立 `mountAnimationRead<T>` 包装解决。合入适配器时保留该编译兼容修订，不用研究树旧的 `::read<T>` 调用覆盖它；本轮未自动回拷主核心或运行编译。
 
 ## 同帧发布的具体接线
 
