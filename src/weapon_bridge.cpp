@@ -531,15 +531,31 @@ struct CfaSwitchCost {
     bool active{};uint64_t start{},last{};
     std::array<uint64_t,9> ticks{};
     std::array<bool,9> reached{};
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    std::array<CfaMuzzleCost::Sample,9> muzzle{};
+    size_t muzzleRecordsBefore{};
+#endif
     static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
-    void begin(bool enabled) { *this={};active=enabled;if(active)start=last=now(); }
+    void begin(bool enabled) {
+        *this={};active=enabled;
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        cfaMuzzleCost={};cfaMuzzleCost.active=active;muzzleRecordsBefore=cfaMuzzleVisuals.size();
+#endif
+        if(active)start=last=now();
+    }
     void mark(unsigned stage) {
         if(!active)return;
         const auto time=now();ticks.at(stage)=time-last;reached.at(stage)=true;last=time;
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        muzzle.at(stage)=cfaMuzzleCost.sample;cfaMuzzleCost.sample={};
+#endif
     }
     void finish(uint64_t request,bool ok) noexcept {
         if(!active)return;
         const auto end=now();active=false;
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        cfaMuzzleCost.active=false;
+#endif
         try {
             LARGE_INTEGER frequency{};QueryPerformanceFrequency(&frequency);
             if(frequency.QuadPart<=0)return;
@@ -548,8 +564,16 @@ struct CfaSwitchCost {
                 "restore_effects","reload_armed","mount_commit","response_publish"};
             Json stages=Json::object();
             for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
-            nativeLog(Json{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
-                {"total_ms",double(end-start)*ms},{"stages_ms",stages}}.dump());
+            Json result{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
+                {"total_ms",double(end-start)*ms},{"stages_ms",stages}};
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+            Json filterStages=Json::object();
+            for(unsigned i=0;i<muzzle.size();++i)if(reached[i])filterStages[names[i]]={
+                {"ms",double(muzzle[i].ticks)*ms},{"calls",muzzle[i].calls},{"hits",muzzle[i].hits}};
+            result["muzzle_filter"]={{"stages",filterStages},{"records_before",muzzleRecordsBefore},
+                {"records_after",cfaMuzzleVisuals.size()}};
+#endif
+            nativeLog(result.dump());
         }catch(...) { } // 计时记录失败不影响已经完成的兵装事务。
     }
 } cfaSwitchCost;

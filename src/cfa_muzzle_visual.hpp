@@ -8,7 +8,30 @@ struct CfaMuzzleVisual {
     unsigned socketIndex{};
     bool nativeVisible{};
 };
-std::vector<CfaMuzzleVisual> cfaMuzzleVisuals;
+// 全局显隐回调只查询本次对象，不能逐条核对历史炮口的UObject身份。
+std::map<Addr,CfaMuzzleVisual> cfaMuzzleVisuals;
+
+struct CfaMuzzleCost {
+    struct Sample { uint64_t ticks{},calls{},hits{}; } sample;
+    bool active{};
+    unsigned depth{};
+    static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
+} cfaMuzzleCost;
+// 仅切换事务计时；嵌套显隐不重复累计时间，异常退出也能结算。
+struct CfaMuzzleCostScope {
+    bool active{cfaMuzzleCost.active},outer{};
+    uint64_t start{};
+    CfaMuzzleCostScope() {
+        if(!active)return;
+        outer=cfaMuzzleCost.depth++==0;
+        ++cfaMuzzleCost.sample.calls;if(outer)start=CfaMuzzleCost::now();
+    }
+    ~CfaMuzzleCostScope() {
+        if(!active)return;
+        if(outer)cfaMuzzleCost.sample.ticks+=CfaMuzzleCost::now()-start;
+        --cfaMuzzleCost.depth;
+    }
+};
 
 // 仅缓存类/字段和资源的弱身份，不保留PSC、显隐基线或租约。类换代后重新完整核对。
 struct CfaMuzzleMetadata {
@@ -76,14 +99,14 @@ bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item) {
         mountSameIdentity(item.rack,fixedMount.light->racks[1].component) && mountCfaMuzzleAttached(item);
 }
 CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
-    for(auto it=cfaMuzzleVisuals.begin();it!=cfaMuzzleVisuals.end();) {
-        if(!mountAlive(it->component)) {it=cfaMuzzleVisuals.erase(it);continue;}
-        if(it->component.address==object) {
+    const auto found=cfaMuzzleVisuals.find(object);
+    if(found!=cfaMuzzleVisuals.end()) {
+        if(!mountAlive(found->second.component))cfaMuzzleVisuals.erase(found);
+        else {
             // PSC被池重新分配或改挂时退出该记录，让本次原生显隐请求直接生效。
-            if(mountCfaMuzzleCurrent(*it))return &*it;
-            cfaMuzzleVisuals.erase(it);return nullptr;
+            if(mountCfaMuzzleCurrent(found->second))return &found->second;
+            cfaMuzzleVisuals.erase(found);return nullptr;
         }
-        ++it;
     }
     const auto& rack=fixedMount.light->racks[1].component;
     if(read<Addr>(object+0x100)!=rack.address || read<unsigned>(object+0x10c)!=0 ||
@@ -97,31 +120,36 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
     if(!mountCfaMuzzleTemplate(particle))return nullptr;
     require(mountAlive(fixedMount.plane) && mountAlive(rack) && mountOuterContains(object,fixedMount.plane.address),
         "CFA炮口：粒子不属于当前玩家机体");
-    cfaMuzzleVisuals.push_back({mountIdentity(object),fixedMount.plane,rack,mountIdentity(particle),offset,
+    const auto inserted=cfaMuzzleVisuals.emplace(object,CfaMuzzleVisual{mountIdentity(object),fixedMount.plane,rack,mountIdentity(particle),offset,
         read<unsigned>(object+0x108),
         (read<unsigned char>(object+0x1bc)&0x10)!=0});
     nativeLog("CFA_LEFT_EML_MUZZLE_SUPPRESSED sp21 FX_EML_Muzzleflash02");
-    return &cfaMuzzleVisuals.back();
+    return &inserted.first->second;
 }
 bool mountCfaMuzzleFilter(void* object,bool requested,unsigned char propagation,bool hidden) {
+    CfaMuzzleCostScope cost;
     if(!mountCfaMuzzleScope()) {
         // 归还失败后仍记最新原生请求；此时只直通，不再抑制或用旧请求覆盖原生状态。
-        for(auto it=cfaMuzzleVisuals.begin();it!=cfaMuzzleVisuals.end();) {
-            if(!mountAlive(it->component)) {it=cfaMuzzleVisuals.erase(it);continue;}
-            if(it->component.address==reinterpret_cast<Addr>(object)) {
-                if(!mountCfaMuzzleAttached(*it))cfaMuzzleVisuals.erase(it);
-                else if(!hidden)it->nativeVisible=requested;
-                break;
-            }
-            ++it;
+        const auto found=cfaMuzzleVisuals.find(reinterpret_cast<Addr>(object));
+        if(found!=cfaMuzzleVisuals.end()) {
+            if(!mountCfaMuzzleAttached(found->second))cfaMuzzleVisuals.erase(found);
+            else if(!hidden)found->second.nativeVisible=requested;
         }
         return false;
     }
     auto* item=mountCfaMuzzleFind(reinterpret_cast<Addr>(object));
     if(!item)return false;
+    if(cost.active)++cfaMuzzleCost.sample.hits;
     if(hidden)mountOriginalHidden(object,requested,propagation); // 隐藏请求照常执行，不取得该位的所有权。
     else item->nativeVisible=requested;
     mountCfaMuzzleHide(*item);return true;
+}
+// 每次模型提交清理一次失效记录；活对象仍保留归还责任，不在每个显隐回调里全表巡检。
+void mountCfaMuzzlePrune() {
+    for(auto it=cfaMuzzleVisuals.begin();it!=cfaMuzzleVisuals.end();) {
+        if(!mountAlive(it->second.component))it=cfaMuzzleVisuals.erase(it);
+        else ++it;
+    }
 }
 // 初始化会先生成持久PSC；提交后及实际取发射位置前补查，覆盖初始已可见而未再调用显隐的粒子。
 void mountCfaMuzzleSync() {
@@ -148,10 +176,11 @@ void mountCfaMuzzleSync() {
         "CFA炮口：检查期间子组件列表改变");
 }
 bool mountCfaMuzzleRelease() {
-    std::vector<CfaMuzzleVisual> pending;
-    for(const auto& item:cfaMuzzleVisuals)try {
+    std::map<Addr,CfaMuzzleVisual> pending;
+    for(const auto& entry:cfaMuzzleVisuals)try {
+        const auto& item=entry.second;
         if(mountCfaMuzzleAttached(item))
             mountOriginalVisibility(reinterpret_cast<void*>(item.component.address),item.nativeVisible,0);
-    }catch(const std::exception& error) {pending.push_back(item);nativeLog(std::string("CFA_MUZZLE_RELEASE_ERROR ")+error.what());}
+    }catch(const std::exception& error) {pending.emplace(entry);nativeLog(std::string("CFA_MUZZLE_RELEASE_ERROR ")+error.what());}
     cfaMuzzleVisuals=std::move(pending);return cfaMuzzleVisuals.empty();
 }

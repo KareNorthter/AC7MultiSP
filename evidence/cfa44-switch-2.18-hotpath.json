@@ -1,0 +1,313 @@
+{
+  "observed_at": "2026-10-18T00:11:14.540473+08:00",
+  "source_base_commit": "0991906a8d4528178fe567b6bbfa35b1ef341303",
+  "source_branch": "codex/cfa44-hotpath-audit",
+  "installed_receipt": "evidence/2.18.0-installed.json",
+  "installed_receipt_sha256": "00b6ae16c5b72185f7db3a87c3a87963ab358532bf978327a93ed7f0531f70e7",
+  "installed_runtime_files_checked": 17,
+  "installed_runtime_mismatches": [],
+  "user_feedback": "2.18切换时依旧明显卡顿；要求仔细研究，若无显著优化方法应建议放弃。",
+  "log_snapshot": "Temp/cfa44-hotpath-20261018-001114",
+  "log_hashes": {
+    "native.log": {
+      "bytes": 1843405,
+      "sha256": "cd239e485dce9907d7914e1dae0c5ad662bf3e4acf1f8e043ca58faa375ad2ea"
+    },
+    "mod.log": {
+      "bytes": 5152567,
+      "sha256": "5acd8fb73c1b9a4339d159e3bad4192ca6bce39ceef47bb8aa07b419e08e6cbe"
+    }
+  },
+  "session_start_line": 21389,
+  "samples": [
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 3,
+      "stages_ms": {
+        "audio_selection": 0.17,
+        "capture": 0.3945,
+        "mount_before": 25.6281,
+        "mount_commit": 44.4641,
+        "native_init": 716.3954,
+        "reload_armed": 0.037200000000000004,
+        "response_publish": 0.5926,
+        "restore_effects": 0.7284,
+        "retain_effects": 3.4347000000000003
+      },
+      "total_ms": 791.845,
+      "line": 21402,
+      "target": 1,
+      "registrations_before": 0,
+      "cost_line": 21407,
+      "registrations_after": 1
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 4,
+      "stages_ms": {
+        "audio_selection": 0.1704,
+        "capture": 0.5995,
+        "mount_before": 25.6275,
+        "mount_commit": 42.9339,
+        "native_init": 63.439800000000005,
+        "reload_armed": 0.019700000000000002,
+        "response_publish": 0.6437,
+        "restore_effects": 0.7262000000000001,
+        "retain_effects": 3.8538
+      },
+      "total_ms": 138.0146,
+      "line": 21409,
+      "target": 2,
+      "registrations_before": 1,
+      "cost_line": 21413,
+      "registrations_after": 1
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 5,
+      "stages_ms": {
+        "audio_selection": 0.1749,
+        "capture": 0.5146000000000001,
+        "mount_before": 25.07,
+        "mount_commit": 42.541900000000005,
+        "native_init": 63.4525,
+        "reload_armed": 0.0135,
+        "response_publish": 0.9447000000000001,
+        "restore_effects": 0.7162000000000001,
+        "retain_effects": 3.4297
+      },
+      "total_ms": 136.858,
+      "line": 21416,
+      "target": 0,
+      "registrations_before": 1,
+      "cost_line": 21420,
+      "registrations_after": 1
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 6,
+      "stages_ms": {
+        "audio_selection": 0.1743,
+        "capture": 0.6278,
+        "mount_before": 25.354200000000002,
+        "mount_commit": 45.758,
+        "native_init": 67.32050000000001,
+        "reload_armed": 0.021500000000000002,
+        "response_publish": 0.7511,
+        "restore_effects": 0.6691,
+        "retain_effects": 5.5967
+      },
+      "total_ms": 146.2732,
+      "line": 21422,
+      "target": 1,
+      "registrations_before": 1,
+      "cost_line": 21427,
+      "registrations_after": 2
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 7,
+      "stages_ms": {
+        "audio_selection": 0.1568,
+        "capture": 0.3894,
+        "mount_before": 25.4779,
+        "mount_commit": 43.9281,
+        "native_init": 123.5481,
+        "reload_armed": 0.0212,
+        "response_publish": 0.6103000000000001,
+        "restore_effects": 0.7503000000000001,
+        "retain_effects": 3.3848000000000003
+      },
+      "total_ms": 198.26690000000002,
+      "line": 21429,
+      "target": 2,
+      "registrations_before": 2,
+      "cost_line": 21433,
+      "registrations_after": 2
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 8,
+      "stages_ms": {
+        "audio_selection": 0.1617,
+        "capture": 0.44820000000000004,
+        "mount_before": 27.082900000000002,
+        "mount_commit": 44.8093,
+        "native_init": 129.7191,
+        "reload_armed": 0.0112,
+        "response_publish": 0.8714000000000001,
+        "restore_effects": 0.9579000000000001,
+        "retain_effects": 3.6711
+      },
+      "total_ms": 207.7328,
+      "line": 21436,
+      "target": 0,
+      "registrations_before": 2,
+      "cost_line": 21440,
+      "registrations_after": 2
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 9,
+      "stages_ms": {
+        "audio_selection": 0.198,
+        "capture": 0.3961,
+        "mount_before": 25.4477,
+        "mount_commit": 45.847500000000004,
+        "native_init": 128.0481,
+        "reload_armed": 0.021500000000000002,
+        "response_publish": 0.6453,
+        "restore_effects": 0.6719,
+        "retain_effects": 3.3796000000000004
+      },
+      "total_ms": 204.6557,
+      "line": 21442,
+      "target": 1,
+      "registrations_before": 2,
+      "cost_line": 21447,
+      "registrations_after": 3
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 10,
+      "stages_ms": {
+        "audio_selection": 0.1786,
+        "capture": 0.38830000000000003,
+        "mount_before": 25.7089,
+        "mount_commit": 43.348800000000004,
+        "native_init": 182.74370000000002,
+        "reload_armed": 0.0199,
+        "response_publish": 0.6353,
+        "restore_effects": 0.7462000000000001,
+        "retain_effects": 3.5171
+      },
+      "total_ms": 257.2868,
+      "line": 21449,
+      "target": 2,
+      "registrations_before": 3,
+      "cost_line": 21453,
+      "registrations_after": 3
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 11,
+      "stages_ms": {
+        "audio_selection": 0.1844,
+        "capture": 0.3936,
+        "mount_before": 25.6046,
+        "mount_commit": 43.615100000000005,
+        "native_init": 182.10240000000002,
+        "reload_armed": 0.0115,
+        "response_publish": 0.8741,
+        "restore_effects": 0.7373000000000001,
+        "retain_effects": 3.4164000000000003
+      },
+      "total_ms": 256.9395,
+      "line": 21456,
+      "target": 0,
+      "registrations_before": 3,
+      "cost_line": 21460,
+      "registrations_after": 3
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 12,
+      "stages_ms": {
+        "audio_selection": 0.1971,
+        "capture": 0.41290000000000004,
+        "mount_before": 25.4552,
+        "mount_commit": 47.1892,
+        "native_init": 186.9958,
+        "reload_armed": 0.023200000000000002,
+        "response_publish": 0.7384000000000001,
+        "restore_effects": 0.7121000000000001,
+        "retain_effects": 3.4204000000000003
+      },
+      "total_ms": 265.1443,
+      "line": 21462,
+      "target": 1,
+      "registrations_before": 3,
+      "cost_line": 21467,
+      "registrations_after": 4
+    },
+    {
+      "event": "CFA_SWITCH_COST",
+      "ok": true,
+      "request": 13,
+      "stages_ms": {
+        "audio_selection": 0.1758,
+        "capture": 0.4056,
+        "mount_before": 25.7072,
+        "mount_commit": 44.129000000000005,
+        "native_init": 243.06210000000002,
+        "reload_armed": 0.0211,
+        "response_publish": 0.7288,
+        "restore_effects": 0.8319000000000001,
+        "retain_effects": 3.3017000000000003
+      },
+      "total_ms": 318.36330000000004,
+      "line": 21469,
+      "target": 2,
+      "registrations_before": 4,
+      "cost_line": 21473,
+      "registrations_after": 4
+    }
+  ],
+  "warm_summary_ms": {
+    "count": 10,
+    "total_min": 136.858,
+    "total_max": 318.36330000000004,
+    "total_median": 206.19425,
+    "stage_medians": {
+      "audio_selection": 0.17535,
+      "capture": 0.40925,
+      "mount_before": 25.54125,
+      "mount_commit": 44.02855,
+      "native_init": 128.8836,
+      "reload_armed": 0.0205,
+      "response_publish": 0.7336,
+      "restore_effects": 0.7317500000000001,
+      "retain_effects": 3.42505
+    }
+  },
+  "observations": [
+    "首次核心事务约792ms；后续约137–318ms，不能视作已解决。",
+    "模型重建前处理约25ms、提交约43–47ms；回执发布不到1ms，继续优化落盘不可能解决主要卡顿。",
+    "后续native_init分段约63、123、183、243ms阶梯上升，与每轮EML增加一条炮口登记日志吻合。",
+    "2.18的mountCfaMuzzleFind及非抑制分支先遍历全部记录并逐个mountAlive，才比较本次对象地址；全局显隐请求会重复承担历史记录检查。"
+  ],
+  "limits": [
+    "登记日志是累计登记次数，不等于当时存活记录数；本次日志没有过滤器自耗时，相关性不是根因证明。",
+    "native_init包含本模组同步钩子，不能直接归为纯引擎开销。",
+    "核心计时不含Lua请求/回执轮询与后续渲染帧；没有完整逐帧数据。",
+    "约70ms模型处理和首次资源加载仍存在；本次修订不承诺无感切换。"
+  ],
+  "source_changes": [
+    "炮口账本改为按地址索引；无关请求不核验历史炮口，命中仍复核弱身份、所属机体/挂架、模板、Socket。",
+    "地址复用重新资格审查，活对象改挂/换模板让本次原生请求直通；归还失败仍保留账本和最新原生可见请求。",
+    "失效记录每次模型提交清理一次；不因记录变多而丢弃活对象的归还责任。",
+    "CFA_SWITCH_COST增加muzzle_filter分段耗时、调用数、命中数和前后账本数量；计时只在切换事务开启，嵌套不重复计时。"
+  ],
+  "measurement_contract": "muzzle_filter.ms是各阶段总耗时的子集，不能相加；包含目标炮口过滤内同步显隐调用和资格检查，不含直通后的原生显隐，不是纯查表耗时。",
+  "recommendation": "有针对越切越卡的明确源码缺陷，值得最后一次定向验证；尚无证据保证显著改善。若修订后持续切换仍明显卡顿，不建议继续零碎优化，CFA退回原生单SP或接受现状。",
+  "acceptance_boundary": "观察连续多轮ADMM→EML→ECM是否仍阶梯增长，并核对过滤耗时占比及用户观感；ECM隐藏、任务外原生模型沿用2.18。仅停用多SP模型不能保证绕过逻辑武器重建，不能等同原生单SP。",
+  "validation": {
+    "reviewed_source_diff": true,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_started": false,
+    "performance_improvement_verified": false
+  },
+  "protected_old_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}
