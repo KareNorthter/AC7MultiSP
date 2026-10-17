@@ -8883,7 +8883,7 @@
     "helpers": {
       "read_cooked_skeletal_mount.py": "93de7aa8526e508063469e8c9c6f3ec0b212c2b45c0a4abec2f0c774c4f49113",
       "review_animated_sukhoi.py": "cd1b089426f58c5dd51be09cab24cc607e617c8081ff12a0479f2958e173da06",
-      "build_animated_runtime_data.py": "2ddd4e602c9b5c7a51088b1798b9781cd2d8ffaca0c4b0f5002bbcf348616abe"
+      "build_animated_runtime_data.py": "a1d9612ae288b3b725b7bde9caf93a696cd1c3d66ce0e1aa48633c40eb4f317f"
     },
     "assets": {
       "su47": {

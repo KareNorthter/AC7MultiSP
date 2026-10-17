@@ -340,7 +340,9 @@ def apply_native_geometry_reference(result,path,overlay_path):
         raise ValueError('端点几何报告与当前生成器/分析器来源不同，须重新生成报告')
     if len(report['combinations'])!=4 or not all(c['geometry_passed_at_reference'] for c in report['combinations']):
         raise ValueError('必须全部四种多挂同时通过原生端点几何')
-    result['su47_native_reference']=deepcopy(report)
+    required=('schema','code','geometry_passed_at_reference','runtime_gate_ready',
+              'body','providers','socket_expectations','relative_components','limits')
+    result['su47_native_reference']={key:deepcopy(report[key]) for key in required}
     result['su47_native_reference'].update(review_record=path.name,review_sha256=digest(path),
         zero_deviation={'comparison':'逐有效float32的uint32全等','allowed_nonzero_deviation':False,
                         'quaternion_sign_flip_allowed':False,'normalization_allowed':False,
