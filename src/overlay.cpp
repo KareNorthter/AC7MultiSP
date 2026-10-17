@@ -631,8 +631,8 @@ void drawPanel() {
     ImGui::TextWrapped("%s",tr("键盘：Tab / Shift+Tab 移动，方向键选择，Enter / 空格操作；Ctrl+Tab 切页，Esc 返回或关闭。","Keyboard: Tab / Shift+Tab to move, arrows to select, Enter / Space to act; Ctrl+Tab changes pages, Esc goes back or closes."));
     ImGui::Separator();
     if(state.value("mission_fixed_sp",false))ImGui::TextWrapped("%s",tr(
-        "第12关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
-        "Mission 12 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
+        "第13关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
+        "Mission 13 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
     if(ImGui::BeginTabBar("ManagementTabs")) {
         if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
             if(requestedTab==0)ImGui::SetKeyboardFocusHere();
@@ -647,11 +647,6 @@ void drawPanel() {
             ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
             ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
-            ImGui::SeparatorText(tr("目标注视","Target tracking"));
-            ImGui::Checkbox(tr("手柄X改为按一下切换目标注视###TargetGazePadX","Use controller X to toggle target tracking###TargetGazePadX"),&draftTargetGazePadX);
-            ImGui::TextWrapped("%s",tr("默认关闭。开启后X不再循环切换武器：按一下持续注视当前目标，再按一下停止。Y切换目标和原生长按注视保留；切武器可用十字键或原生键盘键。","Off by default. When enabled, X toggles sustained tracking of the current target instead of cycling weapons. Y target selection and native hold-to-track remain available. Use the D-pad or native keyboard binding for weapons."));
-            ImGui::TextWrapped("%s",tr("键盘注视键在按键页独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第12关可单独使用。","Set an independent keyboard tracking key in Bindings; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 12."));
-            if(state.contains("target_gaze"))ImGui::TextWrapped("%s",state.at("target_gaze").value("active",false)?tr("当前目标注视：开启","Current target tracking: ON"):tr("当前目标注视：关闭","Current target tracking: OFF"));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
@@ -701,7 +696,11 @@ void drawPanel() {
                     {draftKeys=defaults;captureSlot=-1;notice.clear();}
                 else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
             }
-            ImGui::SeparatorText(tr("目标注视键","Target tracking key"));
+            ImGui::SeparatorText(tr("目标注视","Target tracking"));
+            ImGui::Checkbox(tr("手柄X改为按一下切换目标注视###TargetGazePadX","Use controller X to toggle target tracking###TargetGazePadX"),&draftTargetGazePadX);
+            ImGui::TextWrapped("%s",tr("默认关闭。开启后X不再循环切换武器：按一下持续注视当前目标，再按一下停止。Y切换目标和原生长按注视保留；切武器可用十字键或原生键盘键。","Off by default. When enabled, X toggles sustained tracking of the current target instead of cycling weapons. Y target selection and native hold-to-track remain available. Use the D-pad or native keyboard binding for weapons."));
+            ImGui::TextWrapped("%s",tr("键盘注视键在下方独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第13关可单独使用。","Set an independent keyboard tracking key below; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 13."));
+            if(state.contains("target_gaze"))ImGui::TextWrapped("%s",state.at("target_gaze").value("active",false)?tr("当前目标注视：开启","Current target tracking: ON"):tr("当前目标注视：关闭","Current target tracking: OFF"));
             const std::string gazeLabel=captureSlot==7?tr("请按键…","Press a key..."):draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Not assigned");
             if(ImGui::Button((gazeLabel+"###TargetGazeKey").c_str(),{230,0})){captureSlot=7;notice.clear();}
             ImGui::SameLine();
