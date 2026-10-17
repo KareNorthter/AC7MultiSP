@@ -4,6 +4,20 @@
 
 当前main正式基线为2.4.0，标签v2.4.0。用户已确认全部改动及两条研究支线成果正常，授权提交正式版；可配置快捷键、三机型挂载修订及ADFX-01持续效果已统一纳入。正式核心在dist/DualSP/cores/2.4.0/DualSP.dll，UI在dist/DualSP/bin/DualSPUI.dll，均从Temp/build-2.4.0按原字节归档，未重新构建或安装。有效布局及扩机型方法见[挂载设计经验](multi-sp-mount-design.md)。
 
+## SP组合技术研究工具
+
+SP组合技术研究在 `codex/sp-combination-technology`，从main/v2.4.0建立；参考挂载扩展研究2a74e1c，未整枝继承其44机方案数据。有效技术结论统一见[挂载设计经验](multi-sp-mount-design.md#sp-组合技术研究静态挂架分区)，[离线实验摘要](../evidence/sp-combination-static-split-experiment.json)记录22项副本及来源。研究提交只含工具、配方、摘要和相关正文，整合时按差异采用；不覆盖其他线程正在维护的入口和诊断文档。
+
+`src/research/split_static_mount_asset.py`处理一个静态网格；`run_static_mount_split_experiment.py`从显式资源manifest复现全部配方。默认配方是同目录的 `static_mount_split_recipes.json`，绑定原网格Extras摘要。新产物强制写入本工作区Temp新目录；未支持的结构、跨界三角面、距离场、非空面积采样表或编码不一致均停止，不写游戏目录。
+
+当前工作区Temp/source-manifests.json是从挂载扩展工作区既有提取清单汇总的本机来源表，不入Git。既有manifest或manifest路径列表也可直接传入 `--manifest`；相对JSON路径按manifest所在目录解析。自有原始提取资源、UAssetGUI 1.1.0、本地.NET和AC7密钥仍是本机依赖，不随研究提交。复现示例（汇总目标必须不存在）：
+
+```powershell
+python -X utf8 src/research/run_static_mount_split_experiment.py --manifest Temp/source-manifests.json --tools-root E:/AC7_MultiSP/tools --summary-output Temp/static-split-rerun.json
+```
+
+工具只写出资源副本和离线回读，不执行Mod构建、测试模块、PAK打包或安装。每个结果目录包含解码JSON／资源对、roundtrip重新读取数据、encoded新名AC7资源对、原有解码器回读和report.json。最终实验目录的相对位置保存在摘要的local_artifacts_relative。加载接口、PAK挂载、碰撞与渲染尚待整合线程在授权阶段验证，不能把生成资源当作已安装适配。
+
 ## 有效入口
 
 | 工作 | 工具 |

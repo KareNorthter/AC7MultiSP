@@ -1,0 +1,456 @@
+{
+  "schema": 1,
+  "steam_build": 9855922,
+  "method": "degenerate_indices_all_lods",
+  "status": "offline_geometry_recipe",
+  "coordinate_space": "源网格局部坐标，原样保留父链与Socket；不换算为世界厘米",
+  "integration_gate": "七组合完整接入前整机不放行；配方成功不等于可安装",
+  "variants": [
+    {
+      "name": "MSP_f16c_missile_outer",
+      "aircraft": "f16c",
+      "source_asset": "f16c_SWP1_SM",
+      "source_extras_sha256": "823f62db391468fb44a4cd289517a849a10cefe77868fcf2128c4ca07b078e1e",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -35,
+          1000
+        ],
+        [
+          -1000,
+          35,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "保留外翼双导轨；GPB 使用原 SWP2 内翼架"
+    },
+    {
+      "name": "MSP_f02a_lasm_outer",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP1_SM",
+      "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -35,
+          1000
+        ],
+        [
+          -1000,
+          35,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "LASM 外翼双架，与内翼 HVAA 共存"
+    },
+    {
+      "name": "MSP_f02a_lasm_inner",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP1_SM",
+      "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "keep_boxes": [
+        [
+          -1000,
+          -35,
+          -1000,
+          1000,
+          0,
+          1000
+        ],
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          35,
+          1000
+        ]
+      ],
+      "purpose": "LASM 内翼双架，与外翼 RKT 共存"
+    },
+    {
+      "name": "MSP_f02a_lasm_inner_neg",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP1_SM",
+      "source_extras_sha256": "38f683e2d10c067af8b943fe45e5de939958cba5901ada733053041222ef7fa5",
+      "keep_boxes": [
+        [
+          -1000,
+          -35,
+          -1000,
+          1000,
+          0,
+          1000
+        ]
+      ],
+      "purpose": "三挂 LASM 内翼负 Y 单架"
+    },
+    {
+      "name": "MSP_f02a_hvaa_inner",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP2_SM",
+      "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "keep_boxes": [
+        [
+          -1000,
+          -35,
+          -1000,
+          1000,
+          0,
+          1000
+        ],
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          35,
+          1000
+        ]
+      ],
+      "purpose": "HVAA 内翼双架"
+    },
+    {
+      "name": "MSP_f02a_hvaa_inner_pos",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP2_SM",
+      "source_extras_sha256": "a2c6c0eb22424e790d258cdd9b49f648b33d4abdf7c0613339883ef2ce76c351",
+      "keep_boxes": [
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          35,
+          1000
+        ]
+      ],
+      "purpose": "三挂 HVAA 内翼正 Y 单架"
+    },
+    {
+      "name": "MSP_f02a_rocket_outer",
+      "aircraft": "f02a",
+      "source_asset": "f02a_SWP3_SM",
+      "source_extras_sha256": "3aecd516c3ffa60b8dc970dd12e2962ee1b4f3f88421ab68dd2054e8ce86d934",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -35,
+          1000
+        ],
+        [
+          -1000,
+          35,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "保留外翼两巢及两 section 的对应支架；38 管口另行映射"
+    },
+    {
+      "name": "MSP_f104_saam_neg",
+      "aircraft": "f104",
+      "source_asset": "f104_SWP1_SM",
+      "source_extras_sha256": "06d28f8ac8a9f5a808c8433947d2ad09ef3f6309754f96a6d12d70d35f370549",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          0,
+          1000
+        ]
+      ],
+      "purpose": "双挂 SAAM 负 Y 半架"
+    },
+    {
+      "name": "MSP_f104_grkt_pos",
+      "aircraft": "f104",
+      "source_asset": "f104_SWP2_SM",
+      "source_extras_sha256": "7ff38b3a230d060fcfedffb315fe963fccdd1bca35b28668a898053d9ff8b833",
+      "keep_boxes": [
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "双挂 GRKT 正 Y 单巢及支架"
+    },
+    {
+      "name": "MSP_f104_hpaa_neg",
+      "aircraft": "f104",
+      "source_asset": "f104_SWP3_SM",
+      "source_extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          0,
+          1000
+        ]
+      ],
+      "purpose": "GRKT 共存时 HPAA 负 Y 半架"
+    },
+    {
+      "name": "MSP_f104_hpaa_pos",
+      "aircraft": "f104",
+      "source_asset": "f104_SWP3_SM",
+      "source_extras_sha256": "1f2595bdeb623dce69c9769fa48b3867cf888a649a1d487bcd5fc393f07972f8",
+      "keep_boxes": [
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "SAAM 共存时 HPAA 正 Y 半架"
+    },
+    {
+      "name": "MSP_mr2k_gpb_neg_aux",
+      "aircraft": "mr2k",
+      "source_asset": "mr2k_SWP1_SM",
+      "source_extras_sha256": "d8c969bf4d8cb5d3267ee322b73ab6a6cc15aea22ba25e9be364d8c12c08c700",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          15,
+          1000
+        ]
+      ],
+      "purpose": "GPB 负 Y 翼下架，保留原前腹未知固定结构，避免误删"
+    },
+    {
+      "name": "MSP_mr2k_aam_rear",
+      "aircraft": "mr2k",
+      "source_asset": "mr2k_SWP2_SM",
+      "source_extras_sha256": "e2e8586d9673ab4973e85f1e28a3a9f480e999175ef34d0995f1ab18083c8c60",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          20,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "4AAM 仅后腹双架；原前腹未知结构不动"
+    },
+    {
+      "name": "MSP_mr2k_lasm_pos",
+      "aircraft": "mr2k",
+      "source_asset": "mr2k_SWP3_SM",
+      "source_extras_sha256": "163bac0d5f96b7ab4975f9197d3665f4bd02713142070b63c3930c37438ab588",
+      "keep_boxes": [
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "LASM 正 Y 翼下半架"
+    },
+    {
+      "name": "MSP_j39e_missile_outer",
+      "aircraft": "j39e",
+      "source_asset": "j39e_SWP1_SM",
+      "source_extras_sha256": "e64575e3a88c7471dd5fd2b5755e5e86dd426d24df61357d0e27bb353e6c43d1",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -25,
+          1000
+        ],
+        [
+          -1000,
+          25,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "外翼双导轨的几何分离；LACM 内翼支撑仍待原生画面确认"
+    },
+    {
+      "name": "MSP_rflm_hcaa_belly",
+      "aircraft": "rflm",
+      "source_asset": "rflm_SWP1_SM",
+      "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "keep_boxes": [
+        [
+          -1000,
+          -20,
+          -1000,
+          1000,
+          20,
+          1000
+        ]
+      ],
+      "purpose": "HCAA 腹侧双导轨，与 LACM 翼下共存"
+    },
+    {
+      "name": "MSP_rflm_hcaa_belly_neg",
+      "aircraft": "rflm",
+      "source_asset": "rflm_SWP1_SM",
+      "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "keep_boxes": [
+        [
+          -1000,
+          -20,
+          -1000,
+          1000,
+          0,
+          1000
+        ]
+      ],
+      "purpose": "三挂 HCAA 负 Y 腹侧单轨"
+    },
+    {
+      "name": "MSP_rflm_hcaa_outer",
+      "aircraft": "rflm",
+      "source_asset": "rflm_SWP1_SM",
+      "source_extras_sha256": "8a67f378530a74453f7e67671bab40ec267ad6d1be97c55e8e08e1c0ee50adfe",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -20,
+          1000
+        ],
+        [
+          -1000,
+          20,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "HCAA 翼下双架，与 LAAM 腹侧共存"
+    },
+    {
+      "name": "MSP_rflm_laam_belly",
+      "aircraft": "rflm",
+      "source_asset": "rflm_SWP3_SM",
+      "source_extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+      "keep_boxes": [
+        [
+          -1000,
+          -20,
+          -1000,
+          1000,
+          20,
+          1000
+        ]
+      ],
+      "purpose": "LAAM 腹侧双导轨"
+    },
+    {
+      "name": "MSP_rflm_laam_belly_pos",
+      "aircraft": "rflm",
+      "source_asset": "rflm_SWP3_SM",
+      "source_extras_sha256": "f2e323eacb7923d2a0243b48b1e1cb9efcb15ecdc7e91eeaa3a73dd4d2dc8758",
+      "keep_boxes": [
+        [
+          -1000,
+          0,
+          -1000,
+          1000,
+          20,
+          1000
+        ]
+      ],
+      "purpose": "三挂 LAAM 正 Y 腹侧单轨"
+    },
+    {
+      "name": "MSP_f16c_sasm_outer",
+      "aircraft": "f16c",
+      "source_asset": "f16c_SWP3_SM",
+      "source_extras_sha256": "70cd6811f62ea247a5bad52540cbba65631760966fe18a0507f8bd37fa01ed18",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -35,
+          1000
+        ],
+        [
+          -1000,
+          35,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "保留该SP自身外翼导轨及原Socket，不能因几何相同而跨组替换Socket元数据"
+    },
+    {
+      "name": "MSP_j39e_aam_outer",
+      "aircraft": "j39e",
+      "source_asset": "j39e_SWP2_SM",
+      "source_extras_sha256": "515b3f24925307915448ab8e9ce6f0e963638011ccde70a6a07b02338f5a2cc7",
+      "keep_boxes": [
+        [
+          -1000,
+          -1000,
+          -1000,
+          1000,
+          -25,
+          1000
+        ],
+        [
+          -1000,
+          25,
+          -1000,
+          1000,
+          1000,
+          1000
+        ]
+      ],
+      "purpose": "保留该SP自身外翼导轨及原Socket，不能因几何相同而跨组替换Socket元数据"
+    }
+  ]
+}

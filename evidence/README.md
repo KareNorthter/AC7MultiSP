@@ -2,6 +2,7 @@
 
 日常状态见 [AGENTS](../AGENTS.md)，无需通读本目录。
 
+- [SP静态挂架分区实验](sp-combination-static-split-experiment.json)：109份静态架结构调查、六机22个副本的全LOD索引分区、独立包名和AC7编码往返；包含来源与输出哈希，不含原始资源。副本仅存本研究工作区Temp；未编译、运行测试、安装、打PAK或验证游戏。技术结论和整合约定统一见[挂载设计经验](../docs/multi-sp-mount-design.md#sp-组合技术研究静态挂架分区)，不改变上游七组合门槛。
 - [F-15E补给模型观察](resupply-model-observation-20261016.json)：ms06补给展示任务玩家本体，保留入场前多挂状态；只读采样及实现约束，不代表动态预览已实现。
 
 - 2.4.0正式版（main/v2.4.0）：[构建](2.4.0-build.json)、[检查](2.4.0-tests.json)、[安装](2.4.0-installed.json)；三个可配置快捷键及两支线最新候选，完整编译、检查和安装核验通过，比例引导PAK按用户要求移入备份禁用；三机型布局获用户认可，反馈范围见[挂载设计经验](../docs/multi-sp-mount-design.md#当前结论和验证范围)，用户随后确认全部改动及两支线成果正常，授权正式提交main，见[用户验证](2.4.0-user-validation.json)。
