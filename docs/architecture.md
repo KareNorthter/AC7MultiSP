@@ -20,6 +20,9 @@
 | src/su30sm_fixed_mount.hpp / mount_preview.hpp | 三机型规格、模型显隐、实际离架、活动挂架和舱门 |
 | src/continuous_sp.hpp | ADFX-01原生IEWS/TLS的引用保有、来源通知隔离与边界清理 |
 | src/mount_mesh_override.hpp | F-15E弹体网格替换、原网格快照与归还 |
+| src/mount_animated_layout.hpp / animated_mount_data.hpp | F-22A、Su-47、Su-57 Top Gun候选的原生资源、七组合、owner/provider和Socket映射 |
+| src/mount_animation_host.hpp / mount_animation_runtime.hpp | 共舱切换、三字段原生请求记账、场景独占与逐组件归还；未完成资格的方案保持原生回退 |
+| src/mount_animation_reflection_adapter.hpp / mount_animation_product_access.hpp / mount_animation_publication_tracker.hpp | 本机反射访问、实例及自有钩子资格、原生骨骼发布后的Socket取位见证 |
 | src/keyboard_shortcuts.hpp | 单键/修饰键匹配、重复与冲突校验 |
 | src/overlay.cpp | 管理 UI、直接输入、只读状态与动作队列 |
 

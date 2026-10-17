@@ -1,0 +1,83 @@
+{
+  "schema": 1,
+  "candidate": "2.8.0",
+  "base_installed": "2.7.1",
+  "inputs": {
+    "requested": "0c131783773d36b84eed2abcea3d17d6379b31a1",
+    "merge": "7f2cd1092b2c4d8b7307e0f7c6e9cf4c812f4ab4",
+    "product_access": "617642d83315ac7bed8db92f2241fe71620c57b4",
+    "pause_guard": "ca5a420cfa2ca2700f1cc66da62074ad121750f8",
+    "native_batch_observation": "bf4a251a0315ce1097b1cdbe04de9ff30990f5ce",
+    "geometry_data": "d3c2eefae969c9ab0e7f40c513558aa6c8c89cbb",
+    "f2_layout": "evidence/2.7.2-layout.json"
+  },
+  "integration_adjustments": [
+    "三字段原生请求及Init纯记账，禁止从强制后的状态反推原生请求",
+    "任务/预览独占绑定，UObject序列号、共同父链与实际SWP字段复核，失败逐项归还",
+    "自有MinHook安装前/后回执；Tick、禁用入口、Parts及骨骼发布完整原函数各执行一次",
+    "同舱切换在Init前捕获、Init后keepArmed前恢复，TG出入静态第三配置走原生流程",
+    "改用mountAnimationRead避免C runtime全局read遮蔽，刷新模式缓存元数据后只读核验",
+    "现场确认SkeletalMesh的网格Socket数组名为Sockets，ArrayProperty/16字节/偏移0x2c0",
+    "Su47以实采全骨重核几何的严格零偏差参照替代未证明的非零容差；不符时隐藏并旁路本次映射发射"
+  ],
+  "scope": {
+    "static_aircraft": 13,
+    "animated_candidates": [
+      "f22a",
+      "su47",
+      "su57tg"
+    ],
+    "animated_cases": 21,
+    "su47": "受限可视候选：全部38根Body骨与所需6骨挂架、Socket和相对变换精确匹配且当帧发布才显示；其他姿态隐藏并保留原生发射，不声称全姿态适配完成",
+    "other_aircraft_added": false,
+    "f2_performance_fixed": false,
+    "adf11f_visuals": "仍为当前SP原生模型"
+  },
+  "read_only_capture_sha256": {
+    "f22a-8aam-paused-20261017-1144.json": "2f1e178b7e308e3955b127059004a8c2c167441e64a470b41f8ba6daa4d6d0db",
+    "f22a-native-pose-sequence-20261017-1144.jsonl": "ef850f4eb789b0ce8b8ff7f3e4aca2d662db7e3dc80f4571cd98636937999ef3",
+    "su47-ugb-endpoint-20261017.json": "499c792e511d0f193321529518fddd58fde2fb91c9907ad34591448e809c4654",
+    "su47-qaam-endpoint-20261017.json": "b31bb9c58c8a3686b09441fc7b181e0aa28748c8b47dafd5f76def48bd5bfad3",
+    "su47-qaam-full-geometry-endpoint-20261017.json": "dfce36dbca4b5c762b1822a99127c39d18fd7b7d29d2bdc853992c0dee2e4bab",
+    "su47-socket-array-metadata-20261017.json": "b65175f901f7c8d128f5126fae0be533590105a0b0bb0b4d44a62d475ca578f1"
+  },
+  "capture_process_write": false,
+  "capture_game_functions_called": false,
+  "same_render_frame_claimed_for_paused_capture": false,
+  "build_dir": "Temp/build-2.8.0-final",
+  "discarded_build": "Temp/build-2.8.0（Socket字段修正前，不可安装）",
+  "build_receipt_sha256": "a6cd30bbce966867f2c79bd475c1e38c1ed24d7d94cb93e69a6c8de07a031bde",
+  "test_receipt_sha256": "d1b9f93cfbc4b5ea3f1c25480ffa9c6f921bee58bd9ad9f8cf95633985920b5a",
+  "install_receipt_sha256": "993347b02079cdc9b529e1460a969ade4a3c45c06e7ebbad9cfaefbbececc327",
+  "compiled": true,
+  "tests_passed": true,
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed": true,
+  "runtime_files_verified": 16,
+  "mount_members_verified": 32,
+  "protected_files_verified": 136,
+  "profiles_preserved": true,
+  "save_backup_verified": true,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261017-123525-791486",
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pushed": false,
+  "published": false,
+  "manual_test_focus": [
+    "F22A/TG双三挂切换、开关舱、实际离架与补装",
+    "Su47全开且姿态匹配时显示，飞控变化时保守隐藏；此限制不能算全姿态完成",
+    "机库、补给、检查点、关模型/总开关后的原生归还；关注回退提示与性能"
+  ]
+}

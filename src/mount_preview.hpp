@@ -69,6 +69,7 @@ void mountPreviewRememberTask(const MountVisual& source) {
 }
 void mountPreviewRestoreVisuals() {
     std::string error;
+    if(!mountAnimationRelease(mountPreview.layout.plane.address,2))error="多 SP 动画控制仍待归还";
     for(const auto& item:mountPreview.layout.meshOverrides)try {
         mountApplyMesh(item,false);
     }catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
@@ -117,6 +118,7 @@ void mountPreviewRetryRestore() {
 void mountPreviewAnimate() {
     auto& state=mountPreview.layout;
     const Addr plane=state.plane.address;const unsigned mask=state.kindsMask;
+    if(mountAnimated(state.aircraft)) { mountAnimationEnsure(state,2);return; }
     if(state.aircraft==MountAircraft::F35c) {
         const Addr rack=read<Addr>(plane+0x1b90);
         const bool paused=(read<unsigned>(rack+0x9b0)&2)!=0,tick=read<unsigned char>(rack+0x3f)!=0;
@@ -361,12 +363,12 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
             const auto actual=mountName(package);
             const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            require(actual==expected || (mountExpanded(aircraft) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
+            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }
         require(count>0,"模型预览：没有有效兵装");
-        if(mountExpanded(aircraft) && count==1) {
+        if((mountExpanded(aircraft) || mountAnimated(aircraft)) && count==1) {
             mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
             mountPreview.layout.meshOverrides.clear();mountPreview.layout.bound=false;
             mountPreview.layout.plane=planeIdentity;mountPreview.layout.kindsMask=mask;

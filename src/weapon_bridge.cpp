@@ -22,10 +22,14 @@
 #include <vector>
 #include "MinHook.h"
 #include <map>
+#include <set>
 #include "common.hpp"
 #include "reload_timer.hpp"
 #include "ue4ss_lua_api.hpp"
 #include "selection_wave.hpp"
+#include "common_bay_animation.hpp"
+#include "native_common_bay_parts.hpp"
+#include "owned_bone_refresh.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -497,7 +501,15 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #endif
     continuousRebuildStarted=true;
     continuous.rebuilding=true;
-    reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
+    {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        MountAnimationNativeRebuild animationRebuild(command.plane);
+#endif
+        reinterpret_cast<Init>(base+0x81e810)(reinterpret_cast<void*>(command.plane),index);
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        animationRebuild.returned=true;
+#endif
+    }
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);

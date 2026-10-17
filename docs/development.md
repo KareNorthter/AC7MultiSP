@@ -4,7 +4,7 @@
 
 当前main正式基线为2.4.0，标签v2.4.0。用户已确认全部改动及两条研究支线成果正常，授权提交正式版；可配置快捷键、三机型挂载修订及ADFX-01持续效果已统一纳入。正式核心在dist/DualSP/cores/2.4.0/DualSP.dll，UI在dist/DualSP/bin/DualSPUI.dll，均从Temp/build-2.4.0按原字节归档，未重新构建或安装。有效布局及扩机型方法见[挂载设计经验](multi-sp-mount-design.md)。
 
-当前工作分支codex/menu-diagnostics-controls源码2.7.2、已安装2.7.1修复测试版；管理通信协议7、个人配置管理版本6，保留用户安装前的配置。2.5.0分段诊断及安全总开关作为既有功能保留，当前交付状态见下文。
+当前工作分支codex/menu-diagnostics-controls源码及安装均为2.8.0保守测试候选；管理通信协议7、个人配置管理版本6，保留用户安装前的配置。2.5.0分段诊断及安全总开关作为既有功能保留，当前交付状态见下文。
 
 ## 主管接手入口
 
@@ -13,17 +13,17 @@
 ### 版本与本轮收尾
 
 - 主工作区`E:/AC7_MultiSP`，整合分支`codex/menu-diagnostics-controls`。`dc4c2c1`归档源码与已安装2.7.1构建完全一致的阶段成果，以及本轮用户实测。main/v2.4.0保持原正式基线；本轮提交在整合分支，没有推送或发布。
-- 当前源码升级为2.7.2：仅改F-2A的LASM+HVAA双挂为大弹内侧、小弹外侧，配套新HVAA外侧副本；其他组合选位、弹药与冷却不变。三挂外侧为RKT，仍为分侧内翼导弹。新资源完成三LOD与AC7编码回读；未编译、运行测试模块或安装，游戏继续使用用户刚验证的2.7.1。详见[布局修订](../evidence/2.7.2-layout.json)。
+- 当前源码升级为2.8.0，接入F-22A、Su-47、Su-57 Top Gun的七组合候选、动态取位和保守失败回退；Su-47仅对完整实采全开姿态提供零偏差可视资格，其他姿态隐藏内部弹体并保留原生发射。同步纳入2.7.2中已准备的F-2A修订：F-2A的LASM+HVAA双挂为大弹内侧、小弹外侧，配套新HVAA外侧副本；其他组合选位、弹药与冷却不变。三挂外侧为RKT，仍为分侧内翼导弹。新资源完成三LOD与AC7编码回读，已随2.8.0成套构建、现有检查并安装；新三机与F-2A新布局仍待用户实测。详见[布局修订](../evidence/2.7.2-layout.json)。
 - 源数据为`evidence/mount-expansion-batch1.json`，配方`src/research/static_mount_split_recipes.json`，离线回执`evidence/sp-combination-static-split-experiment.json`。运行表由`src/research/build_runtime_mount_data.py`生成，同时更新头文件与`mount_assets.lua`；禁止只改生成表。
-- 下次授权构建使用`Temp/mount-assets-2.7.2/source`（16副本、32资源文件，已按回执摘要核对），构建默认值已更新。原16资源中不再使用lasm_outer，增加hvaa_outer；索引与PAK将变化，核心/UI/Lua/PAK必须成套升级。不能沿用2.7.1旧PAK或把2.7.2 Lua拷进旧安装。游戏资源与工具全部留本机，不能提交。
-- 2.7.1成套产物`Temp/build-2.7.1`，安装回执`evidence/2.7.1-installed.json`，备份`backup/AC7MultiSP-20261017-110205-136925`。2.7.2升级基线已指向该回执。示例流程为`python -X utf8 src/build.py --output-dir Temp/build-2.7.2`，随后对同目录运行`tests/run.py --build-dir ...`及`src/install.py --build-dir ...`预检，再加`--apply`安装；这些命令本轮没有执行。不能重用旧版本目录或覆盖旧回执。
+- 本轮构建使用`Temp/mount-assets-2.7.2/source`（16副本、32资源文件，已按回执摘要核对），构建默认值已更新。原16资源中不再使用lasm_outer，增加hvaa_outer；索引与PAK已随2.8.0成套升级。不能沿用2.7.1旧PAK或把2.7.2 Lua拷进旧安装。游戏资源与工具全部留本机，不能提交。
+- 2.7.1成套产物`Temp/build-2.7.1`，安装回执`evidence/2.7.1-installed.json`，备份`backup/AC7MultiSP-20261017-110205-136925`。2.8.0以该回执为升级基线，已通过正式build/tests/install流程交付Temp/build-2.8.0-final；16运行文件、32成员PAK、136保护文件核验通过，备份backup/AC7MultiSP-20261017-123525-791486。前一次Temp/build-2.8.0因Socket字段修正作废，不能安装。下个版本须改用2.8.0-installed.json为升级基线。
 
 ### 具体工作线程
 
 | 线程 | 负责内容 | 接手时重点 |
 |---|---|---|
 | [各个战机多SP挂载方案](codex://threads/01a1441b-45a7-7d91-80f2-cf03b98647b1) | 剩余机体的完整七组合、挂架几何与布局 | 工作树`C:/Users/83717/.codex/worktrees/mount-expansion/AC7_MultiSP`，分支`codex/mount-expansion`；已吸收0c13178的三机21种动画候选，保留主工作区2.7.2的F-2A新布局和资源。原生队列、模型池及Su-47全开端点的运行依据继续核对；候选不表示运行适配。 |
-| [研究带SP切换动画的机体](codex://threads/01a14787-e328-72b3-9b0e-1bfa7d81cc52) | 共用弹仓控制、骨骼刷新与失败归还 | 工作树`Temp/sp-switch-animation-research`，分支`codex/sp-switch-animation-research`；00bd24c的三个控制头、离线检查脚本及交接证据已通过0c13178合入。本轮由该线程补产品Host所需的安全反射适配器，主工作区接线由主管维护。F-22A、Su-47、Su-57TG尚未运行接入，YF-23暂缓；不能宣称已安装或实测。 |
+| [研究带SP切换动画的机体](codex://threads/01a14787-e328-72b3-9b0e-1bfa7d81cc52) | 共用弹仓控制、骨骼刷新与失败归还 | 工作树`Temp/sp-switch-animation-research`，分支`codex/sp-switch-animation-research`；00bd24c的三个控制头、离线检查脚本及交接证据已通过0c13178合入。本轮由该线程补产品Host所需的安全反射适配器，主工作区接线由主管维护。F-22A、Su-47、Su-57TG已接入2.8.0候选并安装，Su-47仅精确已核全开姿态可视；YF-23暂缓。不能宣称新三机已实测通过。 |
 | [研究ECM/TLS/UAV](codex://threads/01a14506-b653-7552-9bb2-98e6d1b612f9) | ADF-11F等持续效果生命周期与故障修复 | 工作树`Temp/adf11f-uav-research`，分支`codex/adf11f-uav-research`仍有未提交研究成果；两UAV切TLS容量修复已差异吸收并在2.7.1收到正常反馈。线程旧总结中的“未安装”是当时状态，以本工作区回执为准。保留XFA-27 ECM与当前共用层，不用旧基线整体覆盖。 |
 | [拆分挂架](codex://threads/01a14764-4328-7923-a865-22b7efba4d8e) | 静态挂架分区技术和资源往返 | 工作树`C:/Users/83717/.codex/worktrees/sp-combination-technology/AC7_MultiSP`，已吸收加载修复e35ff09。新增配方要连同证据、载体、Socket、资产清单一起交付；退化三角面保留原顶点/边界，不等于性能优化。 |
 
@@ -31,7 +31,7 @@
 
 ### 验收范围与待办
 
-1. **剩余机体适配。** 当前运行白名单13架静态多挂，ADF-11F只是功能共存、外观仍原生；剩余34架中，F-22A、Su-47、Su-57TG已有整机七组合候选，其余31架继续后置。用户本轮授权合并0c13178并安装供测试，安装前必须补齐三机运行接线，不能只合并研究头文件或将资格布尔值直接置真。保留关闭实验开关、资源/身份失败以及场景交接的原生单SP回退；机库、PART/SKIN切页、出击/补给确认和过场都要覆盖。用户无F-15 S/MTD、XFA-27 DLC，两机尚未实测。
+1. **剩余机体适配。** 当前有13架静态多挂，以及F-22A、Su-47、Su-57TG三机七组合测试候选；Su-47仅限精确已核全开姿态可视，仍须进一步扩展适配。ADF-11F只是功能共存、外观仍原生；其他31架继续后置。用户本轮授权合并0c13178并安装供测试，安装前必须补齐三机运行接线，不能只合并研究头文件或将资格布尔值直接置真。保留关闭实验开关、资源/身份失败以及场景交接的原生单SP回退；机库、PART/SKIN切页、出击/补给确认和过场都要覆盖。用户无F-15 S/MTD、XFA-27 DLC，两机尚未实测。
 2. **F-2A性能暂缓。** 用户本轮要求先记录、之后专门研究。2.7.1机库和过场卡，任务单SP不掉帧、所有双/三SP组合均掉帧，关闭多挂模型后恢复；LASM+HVAA也慢，不能直接归因RKT。武器切换与发射已正常。后续分别测CPU分段、引擎显隐/模型池、渲染与派生资源开销，不能拿Lua回调时间当总帧时间，也不能以减少安全检查冒充解决。
 3. **评分页与普遍性能。** 2.5之后普通机库转镜头已获改善反馈；评分页轨迹箭头前进后退感仍未复测2.6/2.7门控，保留独立问题。不要把F-2A新对照与早期所有机体的菜单开销混成同一个已知根因。
 4. **稳定性。** 约23:50 ADF-11F进入SP页偶发进程退出仍无对应异常栈，不能宣称修复。23:51手动关闭后的UE4SS清理异常为另一事件；评分页F12假死已证实是取证CDB漏配系统断点并恢复，勿误记Mod死锁。继续用桌面“AC7 崩溃取证启动”或根目录启动入口；原始dump/日志在Temp，不提交。发生后保存时间、机体/组合/页面与提示，按PID对齐日志和转储。
@@ -99,7 +99,11 @@ python -X utf8 src/research/analyze_sp_switch_animations.py `
 
 0c13178合并后尚不能直接交付三机可玩安装。用户已用F-22A单SP8AAM配合暂停态及45秒连续只读采样：实际8AAM逻辑14槽／8窗口，持久SWP1／2／3池6／6／14。现场元数据证明NoSkeletonUpdate为mask2、PauseAnims为mask4；原生7f0210在关闭Tick后写的是NoSkeletonUpdate，旧研究“直接写Pause”结论已修正。共舱控制请求现分别保存三项字段，仅更新本次原生确实改变的项。原生打开请求1可在phase2／progress1时保持全开，原生全开判据已接受请求1或2；关闭请求3立即不满足该判据。
 
-采样摘要见[三机接入的F-22A运行依据](../evidence/animated-runtime-f22a-capture.json)。GetSocketTransform参数、枚举与Transform布局已取证；骨骼发布slot890→16e5de0和帧标记写入slot878→16fb660是时序接线依据，原件及连续记录只在Temp。连续轮询不是函数调用跟踪，不能把任意缓存变换当成当帧结果。当前仍需落实三字段最新原生请求归还、骨骼发布后的取位和Su-47全开端点／容差。安装仍为2.7.1，三机运行准入未开放；没有调用游戏函数、写进程或附加调试器。
+采样摘要见[三机接入的F-22A运行依据](../evidence/animated-runtime-f22a-capture.json)。GetSocketTransform参数、枚举与Transform布局已取证；骨骼发布slot890→16e5de0和帧标记写入slot878→16fb660是时序接线依据，原件及连续记录只在Temp。连续轮询不是函数调用跟踪，不能把任意缓存变换当成当帧结果。2.8.0已接入三字段最新原生请求归还、发布后的取位及Su-47严格零偏差全骨门槛并成套安装，运行效果待用户验证。现场取证始终只读，没有调用游戏函数、写进程或附加调试器；候选运行时仅在自己的游戏线程绑定内管理已授权的模型状态。
+
+产品接线现位于`mount_animated_layout.hpp`、`mount_animation_host.hpp`和`mount_animation_runtime.hpp`，三份实际反射/发布适配头一并包含核心。已通过核心语法编译、成套构建和现有适用检查，并安装2.8.0；具体哈希与保护范围见本版回执，新三机尚待用户实测。刷新模式只允许原生已是AlwaysTickPoseAndRefreshBones的所需骨架，不写或恢复模式字段；原生改变模式即回退。共用Controller的Pause保护覆盖绑定、维持和restoreSwitch内部路径；真实暂停先记账再归还。NoSkeletonUpdate、Pause和Tick分别跟踪，原生初始化期间暂停强制维持，实际Init完成后、重新接管前读取最后三字段请求；不能把初始化循环的中间清位当最终原生意图。任务/预览独占一个动画绑定，世界、资源、组件或组合改变时先归还；归还失败保留身份拒绝覆盖。
+
+Su-47两份UGB/QAAM全开只读快照证明Socket局部属性、实际CDO缩放和Socket骨组件单位与资源一致，但全架另三根骨的四元数存在约10^-7差异。已用实际发布的完整骨骼重核全部LOD，四种多挂的弹体—Body、弹体—弹体均无表面接触，弹体—架体保留与原生完全相同的挂耳基线。产品采用`su47_native_reference`的严格uint32逐分量相等门槛，需同帧发布的全部38根Body骨、所需6骨挂架、Socket局部及相对父链变换同时相符；不允许非零姿态偏差。其他飞控姿态隐藏内部ammo并旁路本次映射发射，不永久关闭会话或阻止原生发射。证据见`evidence/su47-native-endpoint-geometry.json`；这不是全姿态/全流程实机通过。
 
 | 离线入口 | 作用 |
 |---|---|

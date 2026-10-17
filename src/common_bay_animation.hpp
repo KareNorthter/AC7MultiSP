@@ -63,7 +63,7 @@ inline bool valid(const CoverState& state) {
 }
 struct PartsSample { CoverState cover; int nativeConfig{-1}; };
 
-// 现场反射证明NoSkeletonUpdate、PauseAnims和Tick是三项独立状态，不能共用一个“暂停”字段。
+// NoSkeletonUpdate、PauseAnims和Tick分别记账，不能用一个暂停位代替。
 struct RackRequest { bool paused{}, tick{}, noSkeletonUpdate{}; };
 inline bool same(RackRequest a, RackRequest b) {
     return a.paused == b.paused && a.tick == b.tick && a.noSkeletonUpdate == b.noSkeletonUpdate;
@@ -125,7 +125,7 @@ struct Host {
     virtual bool readParts(const Binding&, PartsSample&) = 0;
     virtual bool writeCover(const Binding&, const CoverState&) = 0; // 只写请求、phase、七进度；绝不写选择编号。
     virtual bool readRack(Identity, RackRequest&) = 0;
-    virtual bool applyRack(Identity, RackRequest) = 0; // 按真实元数据分别恢复Pause/NoSkeletonUpdate/Tick，仅管理持有租约的provider。
+    virtual bool applyRack(Identity, RackRequest) = 0; // 三字段分别按真实元数据/原生Tick入口应用，完整回读一致才成功。
     virtual bool acquirePoseRefresh(Identity) = 0; // 全预检已prepare；只对required骨架取得/维持刷新模式租约。
     virtual bool releasePoseRefresh(Identity) = 0; // 恢复最新原生模式；死亡对象仅丢弃，失败保留待重试。
 };
@@ -156,6 +156,22 @@ class Controller {
     }
     static bool validMask(unsigned mask) { return mask && !(mask & ~7u); }
     bool selected(int config) const { return config >= 0 && config < 3 && (equipped_ & (1u << config)); }
+    // 接管写入共用保护。扫描全部所需架子，不能遇到第一个Pause就漏记其他架子的暂停意图。
+    // 只把实际true记作新原生请求；强制后的false不能反推原生意图。
+    bool controlWritesAllowed(Host& host) {
+        bool allowed=true;
+        for (auto& lease: leases_) if (lease.rack.address) {
+            RackRequest actual;
+            if (!host.rackAlive(lease.rack) || !host.readRack(lease.rack,actual)) { allowed=false; continue; }
+            if (actual.paused) { lease.latestNative.paused=true; allowed=false; }
+        }
+        return allowed;
+    }
+    Error stopControl(Host& host, bool duringBind=false) {
+        // 已进入归还重试时不再把本模块上次恢复的true误当新原生请求。
+        if (active_ || duringBind) controlWritesAllowed(host);
+        return release(host);
+    }
 
 public:
     // 所有资源与基线请求先读完，才允许第一笔控制写入；不改Body、父链、Mesh或AnimClass。
@@ -194,8 +210,9 @@ public:
             // 先登记恢复所有权，再调用可能只完成部分操作的原生接口。
             leases_[i].owned=true;
             if (!host.bindingAlive(binding_) || !host.rackAlive(leases_[i].rack) ||
-                !host.acquirePoseRefresh(leases_[i].rack) || !host.applyRack(leases_[i].rack,{false,true})) {
-                release(host);
+                !controlWritesAllowed(host) || !host.acquirePoseRefresh(leases_[i].rack) ||
+                !controlWritesAllowed(host) || !host.applyRack(leases_[i].rack,{false,true})) {
+                stopControl(host,true);
                 return Error::NativeAccess;
             }
         }
@@ -203,19 +220,37 @@ public:
         return Error::None;
     }
 
-    // 放在原生请求的入口过滤；仅真正原生调用进入此函数，本模块自己的applyRack必须用重入标记绕过。
-    // 过滤/应用必须同一游戏线程同步完成，不能靠每100ms巡检补救已经错过的动画帧。
-    // changedFields位0=本次原生修改Pause，位1=本次原生修改Tick，位2=本次原生修改NoSkeletonUpdate。
-    // 未改字段沿用已记录的原生请求，
-    // 不能从强制后的实际值反推原生意图。7f0210直接写NoSkeletonUpdate须在原生完成后另报位2。
-    RackRequest nativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields=7u) {
-        if (!host.onGameThread()) return wanted;
-        if (!changedFields || (changedFields & ~7u)) return wanted;
+    // 初始化批量观察只记账，不触发Host读写、维持或归还；全部收集完成后再统一处置。
+    bool rememberNativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields) {
+        if (!host.onGameThread() || !changedFields || (changedFields & ~7u)) return false;
         for (auto& lease: leases_) if (lease.owned && same(lease.rack,rack)) {
             if (changedFields & 1u) lease.latestNative.paused=wanted.paused;
             if (changedFields & 2u) lease.latestNative.tick=wanted.tick;
             if (changedFields & 4u) lease.latestNative.noSkeletonUpdate=wanted.noSkeletonUpdate;
-            if (active_ && host.bindingAlive(binding_) && host.rackAlive(rack)) return {false,true};
+            return true;
+        }
+        return false;
+    }
+    // 放在原生请求的入口过滤；仅真正原生调用进入此函数，本模块自己的applyRack必须用重入标记绕过。
+    // 过滤/应用必须同一游戏线程同步完成，不能靠每100ms巡检补救已经错过的动画帧。
+    // changedFields位0=Pause，位1=Tick，位2=NoSkeletonUpdate；未改字段沿用已记录原生请求，
+    // 不能从强制后的值反推原生意图；初始化NoSkeletonUpdate须在条件赋值全部完成后报告位2。
+    RackRequest nativeRequest(Host& host, Identity rack, RackRequest wanted, unsigned changedFields=7u) {
+        if (!host.onGameThread()) return wanted;
+        if (!changedFields || (changedFields & ~7u)) return wanted;
+        for (auto& lease: leases_) if (lease.owned && same(lease.rack,rack)) {
+            const bool allowed=!active_ || controlWritesAllowed(host);
+            if (changedFields & 1u) lease.latestNative.paused=wanted.paused;
+            if (changedFields & 2u) lease.latestNative.tick=wanted.tick;
+            if (changedFields & 4u) lease.latestNative.noSkeletonUpdate=wanted.noSkeletonUpdate;
+            if (active_) {
+                if (((changedFields & 1u) && wanted.paused) || !allowed || !host.bindingAlive(binding_) || !host.rackAlive(rack)) {
+                    // 先采实际Pause、再记本次具名请求。本次Pause=false也须优先于调用前的旧true。
+                    release(host);
+                    return wanted; // 原生Pause请求不再被过滤成false；归还失败仍保留lease供重试。
+                }
+                return {false,true};
+            }
             break;
         }
         return wanted;
@@ -225,12 +260,13 @@ public:
     Error maintain(Host& host) {
         if (!host.onGameThread()) return Error::WrongThread;
         if (!active_) return hasLeases() ? Error::RestorePending : Error::InvalidBinding;
-        if (!host.bindingAlive(binding_)) { release(host); return Error::InvalidBinding; }
+        if (!host.bindingAlive(binding_)) { stopControl(host); return Error::InvalidBinding; }
+        if (!controlWritesAllowed(host)) { stopControl(host); return Error::NativeAccess; }
         for (auto& lease: leases_) if (lease.owned) {
             RackRequest actual;
             if (!host.rackAlive(lease.rack) || !host.acquirePoseRefresh(lease.rack) || !host.readRack(lease.rack,actual) ||
-                (!same(actual,{false,true}) && !host.applyRack(lease.rack,{false,true}))) {
-                release(host);
+                (!same(actual,{false,true}) && (!controlWritesAllowed(host) || !host.applyRack(lease.rack,{false,true})))) {
+                stopControl(host);
                 return Error::NativeAccess;
             }
         }
@@ -267,18 +303,19 @@ public:
         pendingTransaction_=0;
         lastTransaction_=transaction;
         if (!active_ || !same(current,binding_) || !same(copy.binding,binding_) ||
-            !host.bindingAlive(binding_)) { release(host); return Error::InvalidBinding; }
+            !host.bindingAlive(binding_)) { stopControl(host); return Error::InvalidBinding; }
+        if (!controlWritesAllowed(host)) { stopControl(host); return Error::NativeAccess; }
         PartsSample after;
-        if (!host.readParts(binding_,after)) { release(host); return Error::NativeAccess; }
+        if (!host.readParts(binding_,after)) { stopControl(host); return Error::NativeAccess; }
         if (after.nativeConfig != copy.targetConfig || !valid(copy.cover) || !valid(after.cover)) {
-            release(host);
+            stopControl(host);
             return Error::InvalidState;
         }
-        if (!host.writeCover(binding_,copy.cover)) { release(host); return Error::NativeAccess; }
+        if (!controlWritesAllowed(host) || !host.writeCover(binding_,copy.cover)) { stopControl(host); return Error::NativeAccess; }
         // 回读确认本模块没误改选择编号；异常由宿主停止本绑定并独立回退视觉，不回滚弹药事务。
         if (!host.readParts(binding_,after) || after.nativeConfig != copy.targetConfig ||
             after.cover.request != copy.cover.request || after.cover.phase != copy.cover.phase ||
-            after.cover.progress != copy.cover.progress) { release(host); return Error::NativeAccess; }
+            after.cover.progress != copy.cover.progress) { stopControl(host); return Error::NativeAccess; }
         return maintain(host);
     }
 
@@ -286,7 +323,7 @@ public:
     // 生存组件恢复失败时保留lease，宿主稍后重试；新绑定在lease清空前会拒绝。
     Error release(Host& host) {
         if (!host.onGameThread()) return Error::WrongThread;
-        active_=false;
+        active_=false; // 归还只应用latestNative；不走接管保护或stopControl，避免递归归还。
         pendingTransaction_=0;
         for (auto& lease: leases_) if (lease.owned) {
             if (!host.rackAlive(lease.rack)) { host.releasePoseRefresh(lease.rack); lease={}; continue; }

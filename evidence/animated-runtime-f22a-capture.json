@@ -72,6 +72,13 @@
       "offset": "0x804",
       "size": 1,
       "observed_value": 0
+    },
+    "IsComponentTickEnabled": {
+      "wrapper_rva": "0x1b2ab30",
+      "native_getter_rva": "0x16840d0",
+      "getter_signature": "80793f000f95c0c3",
+      "actual_byte_offset": "0x3f",
+      "boundary": "getter布尔启用状态与是否实际进行骨骼求值不同"
     }
   },
   "corrections": [
@@ -115,6 +122,12 @@
     },
     "Temp/f22a-native-pose-sequence-20261017-1144.jsonl": {
       "sha256": "ef850f4eb789b0ce8b8ff7f3e4aca2d662db7e3dc80f4571cd98636937999ef3"
+    },
+    "Temp/f22a-tick-getter-native-20261017-1144/manifest.json": {
+      "sha256": "47e6271b20012789940dea79d286b31715d35b0583164347d0f5d5653fc1b0ce"
+    },
+    "Temp/f22a-tick-state-native-20261017-1144/manifest.json": {
+      "sha256": "6a970cd0ba4cdf84565ab59e32229234045e3756f3697b7865c082270166db4c"
     }
   },
   "runtime_admission": false,
@@ -226,7 +239,7 @@
     "ammo_world_changes": 1402,
     "limits": [
       "100Hz轮询不是函数入口跟踪，不能由此声称证明全部调度顺序",
-      "旧+0x3f字节始终1，不作为真实TickEnabled证明；产品使用实际反射IsComponentTickEnabled",
+      "后续真实IsComponentTickEnabled wrapper调用16840d0，其8字节getter确实读取+0x3f；本次三架Tick均true，但非当前NoSkeletonUpdate=true，Tick启用不能证明骨骼求值",
       "未选择QAAM/XSDB，未证明其逻辑槽数；未启用多挂或改变骨骼更新字段"
     ]
   }

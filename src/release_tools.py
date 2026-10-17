@@ -79,6 +79,9 @@ def source_snapshot(root=ROOT):
         'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
+        'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',
+        'src/research/summarize_animation_product_access.py','evidence/mount-expansion-animated.json',
+        'evidence/su47-native-endpoint-geometry.json','evidence/sp-animation-product-access.json',
         'evidence/mount-expansion-batch1.json','evidence/mount-expansion-batch2.json','evidence/mount-expansion-batch3.json',
         'evidence/sp-combination-static-split-experiment.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
