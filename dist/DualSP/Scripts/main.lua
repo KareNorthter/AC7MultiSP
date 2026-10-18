@@ -700,7 +700,7 @@ end
 local function ready()return valid(plane) and plane.bEnableWeaponInput and not plane:IsWeaponSystemDisabled()end
 
 -- 镜头许可独立于多SP会话；第13关仅旁路兵装，仍可使用原生目标跟踪轴。
-function weaponSwitch.gaze.update(toggle,generation)
+function weaponSwitch.gaze.update(toggle,generation,quiet)
     local gaze=weaponSwitch.gaze
     if generation and generation~=gaze.generation then return end -- 旧世界或暂停前的按键不能重放。
     local enabled=config.target_gaze_pad_x or config.target_gaze_key~=0
@@ -720,6 +720,7 @@ function weaponSwitch.gaze.update(toggle,generation)
             gaze.notice=not ok and gaze.error or not allowed and tr("当前不能使用目标注视。","Target tracking is currently unavailable.")
                 or reason=="no_target"and tr("没有可注视的目标。","No target is selected.")
                 or gaze.active and tr("目标注视：开启","Target tracking: ON")or tr("目标注视：关闭","Target tracking: OFF")
+            if quiet and ok and allowed and reason~="no_target"then gaze.notice=""end -- 手柄X只静默正常开关，错误和无目标仍提示。
             lastUIKey=nil
         end
     else gaze.active=false;gaze.available=false end
@@ -1177,7 +1178,7 @@ local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
-    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation)
+    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation,action.source=="pad_x")
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)

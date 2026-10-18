@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/camera-view-continuity",
+  "base_commit": "9bb6bd28763b706b49de14435e5179790140701f",
+  "branch_origin": "从main新建分支，再快进至已安装2.19.4来源；不接收主工作区或其他线程未提交改动。",
+  "installed_baseline": "evidence/2.19.4-installed.json",
+  "status": "源码及文档修订完成；未编译、测试或安装，新效果待实测",
+  "authorization": "用户要求换视角保持方向、仅camera-hold开启时屏蔽原生回正、取消手柄X正常注视开关弹窗；追加长按Y开始注视不要先回正，并回复开始授权约15秒只读对照。用户手动操作，采样器未代按或改变镜头。",
+  "user_feedback": {
+    "installed_camera_features": "用户反馈各项功能都正常，另报告普通换视角及长按Y开始注视仍先回正。",
+    "scope": "限此前镜头功能反馈，不扩大为全机体、全视角、全故障路径或CFA性能验收；不是此次新源码验证。"
+  },
+  "observations": {
+    "scope": "已安装2.19.4、第三人称view=2。跨线程只读采样不是同帧原子快照，不能当作新源码效果。",
+    "sample": {
+      "file": "Temp/camera-input-coverage-28024-1792336675.json",
+      "sha256": "58cd390349a379bba2e881db9196a70c2b3df5132bcf4265bb5b8cd7e3dfdb7c",
+      "samples": 732,
+      "duration_seconds": 14.9972,
+      "view_types": [
+        2
+      ]
+    },
+    "finding": "长按跟踪轴持续为1、注视状态进入2后，旧安装的普通环视归一化姿态迅速趋零。例如4.407秒约(0.1883,0.2536)，4.819秒状态2时约(0.1544,0.2079)，5.414秒约(0.0020,0.0027)。与源码在实际注视开始时resetPose相符。",
+    "native_windows": {
+      "0x420170": {
+        "size": 1690,
+        "boundary": "unwind_chain",
+        "sha256": "6cc34e01052dbafba258adcdb97e5811ab91f94e3cc8f5bdd6a445756182bdf2"
+      },
+      "0x41e350": {
+        "size": 5809,
+        "boundary": "unwind_chain",
+        "sha256": "e1a436f296d5175437add1ab8f14d9038e85736bf72554791cef3f9f18778527"
+      },
+      "0x421110": {
+        "size": 494,
+        "boundary": "unwind_chain",
+        "sha256": "b346d34e5df38f840b124578bfbb8f16424af27121adba25614702b7bda58f28"
+      }
+    },
+    "native_interpretation": [
+      "注视组件原生更新在长按门槛后进入状态2；原有0x420120判据识别状态2/3。没有据此把状态3解释为简单的松开过渡。",
+      "普通第一/第三人称输出读取归一化环视姿态生成手动方向，再按原生实际注视状态、目标方向及原生混合权重插值。因此清掉环视会把过渡起点先拉回零姿态。",
+      "保留环视基底可让原生注视输出继续优先；无需新增输出钩子或写目标、输出四元数、原生混合权重。"
+    ],
+    "read_only_access": "OpenProcess仅查询和VM_READ；使用原有只读研究工具及Temp临时采样器。"
+  },
+  "source_changes": {
+    "view_switch": "移除原生换视角和受控R3长按派发前的resetPose；缓存原生输入更新后的实际普通环视姿态，目标普通视角首帧按原生轴缩放及竖轴反转接续。该帧输入delta=1/7，随后恢复普通delta，避免从新视角零姿态重新渐进。Lua和原生输入钩子共用视角交接，不等待20毫秒Lua调度。",
+    "tracking_transition": "实际长按Y或模组持续注视时不清环视基底，原生输出从保留方向转向目标，松开后返回保留方向；不修改跟踪轴、目标或输出姿态。跟踪期间不应用手柄灵敏度调整。",
+    "off_gate": "仅camera_hold_enabled、原有单人任务/前台/玩家身份及心跳许可满足时建立轴作用域和姿态接续。总开关关闭清缓存，原生轴、delta及换视角回调原样执行，恢复原生回正。",
+    "explicit_center_and_lifecycle": "独立回正键、启用替换后的R3短按和双摇杆组合仍明确回正；暂停、管理、失焦、换代、关闭、特殊模式及心跳过期继续清理。特殊/委托座舱不缓存普通姿态。",
+    "pad_x_notice": "目标注视动作增加可选source标识；pad_x正常开关仅清空notice，仍更新应答编号和实际状态。错误/无目标及键盘提示保留，界面忽略空文本。与camera-hold开关独立。",
+    "ui": "第二个按键页中英文说明同步解释普通换视角保持及注视过渡。"
+  },
+  "protocols": {
+    "management": 11,
+    "configuration": 10,
+    "camera": 3
+  },
+  "protocol_change": "无新增配置或镜头接口参数；动作source为可选元数据，缺省继续原提示行为，协议不变。核心/UI/Lua修订仍需后续成套交付。",
+  "compiled": false,
+  "test_modules_added_or_modified": false,
+  "test_modules_run": false,
+  "installed": false,
+  "new_source_gameplay_verified": false,
+  "game_started_or_stopped_by_agent": false,
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "installed_product_files_modified": false,
+  "version_changed": false,
+  "historical_receipts_modified": false,
+  "verification": "只读研究、人工源码及总开关关闭路径复核、Git差异空白检查和保护旧核心摘要核对；没有执行新运行代码。普通换视角接续及长按Y新过渡均待用户后续实测。",
+  "source_sha256": {
+    "src/camera_hold.hpp": "2e8eabd6a70155654f170308e0194ef1311b6bbb2ebe8563375ad14c858b1667",
+    "src/overlay.cpp": "28be8404eb82729c1d709fdc38853fe9270468951218c672724f75cf5849b5db",
+    "dist/DualSP/Scripts/main.lua": "d84c83c9ff2c995812e402265a0d9caf9984b08e9305b4a438a492c93abb37e3"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "raw_data": "原始内存样本、实例地址、函数代码窗口及临时脚本仅在本工作区已忽略的Temp保留，不提交原始地址或游戏代码。旧研究脚本、回执及已安装文件不改。"
+}

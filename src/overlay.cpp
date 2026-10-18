@@ -201,7 +201,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         const int mods=shortcutModifiers();
         if(targetGazeInputEnabled() && mods==0 && state.value("target_gaze_key",0)==static_cast<int>(w)) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
-            enqueue({{"type","toggle_target_gaze"},{"generation",state.at("target_gaze").value("generation",-1)}});
+            enqueue({{"type","toggle_target_gaze"},{"source","keyboard"},{"generation",state.at("target_gaze").value("generation",-1)}});
             return 0;
         }
         for(size_t index=0;index<shortcuts.size();++index)if(dualsp::shortcutMatches(shortcuts[index],static_cast<int>(w),mods)) {
@@ -744,7 +744,7 @@ void drawPanel() {
             ImGui::Checkbox(tr("保持镜头方向（手柄与键鼠）###CameraHold","Keep camera direction (controller and keyboard/mouse)###CameraHold"),&draftCameraHold);
             if(!draftCameraHold && captureSlot==8)captureSlot=-1;
             if(draftCameraHold) {
-                ImGui::TextWrapped("%s",tr("松开右摇杆或键鼠视点操作模式键（默认Alt）后保持方向，使用独立回正键回正。短按切换目标保留方向；真正的长按注视和模组持续注视照常。","Keep the direction after releasing the right stick or the keyboard/mouse viewpoint operation mode key (Alt by default). Use the independent recenter shortcut to recenter. Short target selection retains the direction; actual hold-to-track and mod toggle tracking still work normally."));
+                ImGui::TextWrapped("%s",tr("松开右摇杆或键鼠视点操作模式键（默认Alt）、短按切目标及普通视角切换后保持方向。注视从当前方向直接转向目标，松开后回到保留方向；使用独立回正键回正。","Keep the direction after releasing the right stick or viewpoint operation mode key (Alt by default), selecting a target briefly, or changing ordinary views. Tracking turns directly toward the target from the current direction and returns to the retained direction on release. Use the independent recenter shortcut to recenter."));
                 ImGui::Checkbox(tr("替换R3按下功能###CameraR3","Replace R3 click behavior###CameraR3"),&draftCameraR3);
                 ImGui::TextWrapped("%s",tr("默认关闭，保存后生效。关闭时R3保持游戏原生功能；开启时短按松开回正，长按满0.5秒立即切换一次视角，无需松开，之后松开不再回正。","Off by default; applies after saving. When off, R3 retains its native behavior. When on, short-press and release to recenter, or hold for 0.5 seconds to change view once immediately without releasing. Releasing afterward does not recenter."));
                 ImGui::TextWrapped("%s",tr("独立回正快捷键（默认鼠标中键）：点击下方按钮后，按一个键盘键或鼠标中键；Esc取消。","Independent recenter shortcut (middle mouse by default): click below, then press a keyboard key or middle mouse; Esc cancels."));
@@ -954,7 +954,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     const WORD pressed=buttons&~previousPadButtons;
                     if(connected&&padWasConnected&&targetGazeInputEnabled()&&state.value("target_gaze_pad_x",false)
                         &&(pressed&XINPUT_GAMEPAD_X))
-                        enqueue({{"type","toggle_target_gaze"},{"generation",state.at("target_gaze").value("generation",-1)}});
+                        enqueue({{"type","toggle_target_gaze"},{"source","pad_x"},{"generation",state.at("target_gaze").value("generation",-1)}});
                     if(connected&&padWasConnected&&directInputEnabled()) {
                         const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
                         int desired=-1,count=0; // 同时按下多个方向不猜测目标。

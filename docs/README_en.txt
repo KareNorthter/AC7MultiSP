@@ -1,11 +1,13 @@
 AC7MultiSP 2.19.4 Test Candidate
 
-The 2.19.4 candidate integrates the following camera revisions and has been built, passed existing checks and been installed; gameplay verification is pending. Enable Camera hold in the second tab, Bindings, to show its subsettings; save to apply.
+The 2.19.4 candidate integrates the following camera revisions and has been built, passed existing checks and been installed. The user reports that the camera features work. Enable Camera hold in the second tab, Bindings, to show its subsettings; save to apply.
 • Right-stick sensitivity: 5% to 200%, default 100%, without increasing the maximum look angle.
 • Replace R3 click behavior is off by default. When off, R3 retains its native function. When on, short-press and release to recenter, or hold for 0.5 seconds to change view once immediately without releasing. Releasing afterward does not recenter.
 • The independent recenter shortcut defaults to middle mouse; assign one keyboard key or clear it. It acts on press. Native keyboard view switching remains a separate action.
 • Keep the viewing direction after releasing the right stick or the native viewpoint operation mode key (Alt by default) when using a mouse. Native bindings are unchanged. Short target selection retains the direction; actual native hold-to-track and mod toggle tracking still take priority.
 Native countermeasures remain available. With R3 replacement enabled, clicking both sticks also recenters. Disabling Camera hold disables its subfeatures; pause, management, focus loss and special camera modes restore native behavior. New sources use management protocol 11, configuration 10 and camera subprotocol 3. Configuration 9 is backed up to profiles.before-camera-input-options.json before adding the default-off R3 option. Old sensitivity values above 200 are limited to 200; other valid settings are retained. Matching core, UI and Lua files are required. Older frozen builds and receipts are retained; the installation is upgraded to 2.19.4.
+
+Additional source changes have not been built, tested or installed: with Camera hold enabled, ordinary first-person, cockpit and third-person view changes retain the look direction. Holding Y starts tracking directly from that direction; releasing it returns to the retained direction. Native recenter suppression applies only while Camera hold is enabled; explicit recenter still works. Normal controller X tracking toggles no longer show ON/OFF popups. Error, no-target and keyboard notifications remain. These source changes await gameplay verification.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
