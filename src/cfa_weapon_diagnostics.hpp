@@ -47,7 +47,10 @@ void cfaObserveWeapons(Addr plane,Addr activator,const Group& main,const Group& 
                 {"armed",armed},{"previous_armed",last.armed},{"target_config",session.configs[session.active]},
                 {"admm_consumption_observed",last.admmObserved},
                 {"switch_gate_raw",{{"byte_2a0",read<unsigned char>(activator+0x2a0)},
-                    {"byte_2c0",read<unsigned char>(activator+0x2c0)},{"int_2e0",read<int>(activator+0x2e0)}}},
+                    {"byte_2a5",read<unsigned char>(activator+0x2a5)},{"queued_inputs",read<int>(activator+0x2b8)},
+                    {"byte_2c0",read<unsigned char>(activator+0x2c0)},{"byte_2c1",read<unsigned char>(activator+0x2c1)},
+                    {"volley_fired",read<int>(activator+0x2dc)},{"volley_total",read<int>(activator+0x2e0)},
+                    {"tick_weapon_group",read<unsigned char>(activator+0x2e4)}}},
                 {"main",group(false,main)},{"special",group(true,special)}};
             if(same) {record["main_consumed"]=last.mainAmmo-mainAmmo;record["special_consumed"]=last.specialAmmo-specialAmmo;}
             if(last.admmObserved) {

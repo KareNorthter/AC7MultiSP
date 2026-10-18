@@ -1,0 +1,121 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "branch": "codex/cfa44-fire-switch-audit",
+  "parent_commit": "1678c74",
+  "request": "继续研究ADMM发射后切回MSL概率双发且扣2，只改源码及文档，不编译安装",
+  "related_baseline": "evidence/cfa44-fire-switch-2.19.1-audit.json",
+  "sources": [
+    {
+      "path": "Temp\\parts-ammo-hover\\runtime-text.bin",
+      "bytes": 38857296,
+      "text_rva": "0x1000",
+      "sha256": "0ccbc16cddef5217ff9d09c3d1e0412b6d7c4ca033aee39aa90cd3397180760e"
+    },
+    {
+      "path": "Temp\\parts-ammo-hover\\runtime-meta.json",
+      "sha256": "e96bb2a9d748aeebb42d3829e5cc5cda5ab1c2153bcbae22813983654e8c4583"
+    }
+  ],
+  "native_ranges": [
+    {
+      "start": "0x93ff30",
+      "end_exclusive": "0x93ff4a",
+      "sha256": "c0d5ce6707607cc51ae6e3e5d971885ac4fde586d79a0ac8092efbb7c9f07f9a",
+      "finding": "ReleaseWeaponInput反射入口跳至0x885e90"
+    },
+    {
+      "start": "0x885e90",
+      "end_exclusive": "0x885eb3",
+      "sha256": "ae1c3cdc387dd44e9da2fc69812ac6f32b90165748bf424a9917de2d5f4f4704",
+      "finding": "仅释放机枪/主武器/干扰弹按住输入，不清待发队列"
+    },
+    {
+      "start": "0x884289",
+      "end_exclusive": "0x8842ce",
+      "sha256": "bf9ff3df174663dfcaad246d244145e705905d88ac229ff006fea382db24c3b6",
+      "finding": "按键队列+2b0，每项为单字节1，Num在+2b8"
+    },
+    {
+      "start": "0x889d46",
+      "end_exclusive": "0x889e98",
+      "sha256": "0ebb7e7747d4c68d3fb8c23645797df46783f4eb1b4accb92131f86722d84d85",
+      "finding": "每Tick从armed重算组号；队列消费及批次初始化"
+    },
+    {
+      "start": "0x889e9d",
+      "end_exclusive": "0x889f04",
+      "sha256": "eb90180bfd5f8580300d27a8cf25019c5d33ebf841536f55334f6d112e159df9",
+      "finding": "按当前武器齐射配置确定计划总数"
+    },
+    {
+      "start": "0x88a202",
+      "end_exclusive": "0x88a289",
+      "sha256": "e75bca61cf69ff88d8ffa9a9fbf3058b5839ac63c8dcc4788628a6494b36ecef",
+      "finding": "已发数量与计划总数比较，使用当前组号发射"
+    },
+    {
+      "start": "0x88a46d",
+      "end_exclusive": "0x88a499",
+      "sha256": "f2de0bec80af136fef83e5a566c7966d11d62b66b56b1c8328112bff29ab2caf",
+      "finding": "递增批次已发数量及目标索引"
+    },
+    {
+      "start": "0x88a557",
+      "end_exclusive": "0x88a5df",
+      "sha256": "6e271b80629b5c8cea60032a5ceaffc48e3976c87e748efc558fb3b85ea43e24",
+      "finding": "结束活动阶段，进入原生收尾"
+    },
+    {
+      "start": "0x88a7eb",
+      "end_exclusive": "0x88a7f4",
+      "sha256": "c2c80755563fd108eb343bc317a8b9f1efd372725c74c613a7af12124d2fd11a",
+      "finding": "原生收尾后清除活动/收尾两标志"
+    }
+  ],
+  "read_only_analysis": "解析已有运行时代码快照，不读取当前游戏进程。磁盘EXE相关区域仍打包，旧minidump不含目标代码；最终使用已有runtime-text.bin。反汇编临时文本在Temp/cfa-admm-residue，未更名旧资料。",
+  "state_fields": {
+    "+0x2a1": "当前MSL/SP类别",
+    "+0x2a5": "主武器按住输入",
+    "+0x2b0/+0x2b8/+0x2bc": "待消费按键字节数组Data/Num/Max，无武器类别",
+    "+0x2c0": "正在处理发射批次",
+    "+0x2c1": "批次收尾待处理",
+    "+0x2c8/+0x2d0": "本批次目标数组及数量",
+    "+0x2d8": "当前目标索引",
+    "+0x2dc": "本批次已发数量",
+    "+0x2e0": "本批次计划发射总数，不是剩余数",
+    "+0x2e4": "每Tick根据当前armed写出的发射组号"
+  },
+  "conclusions": [
+    "ReleaseWeaponInput不清未消费的按键队列，队列消费时使用当前武器，因此旧按键可在类别切换后成为新武器请求。",
+    "原生门槛仅拒绝活动批次且总数>1，允许活动单发批次、待收尾或未消费队列通过；在多SP受控类别/配置切换边界不充分。",
+    "静态代码证实跨类别状态漏洞，符合用户时序；尚无异常帧现场证明本次两枚MSL全部由该路径导致，也未证明EML所有双发同因。"
+  ],
+  "source_fix": [
+    "新增dualsp_prepare_cfa_switch；Lua仅新选择在ReleaseWeaponInput后调用，CFA清除尚未开始的单字节输入队列Num，保留分配。重试只查询，不反复取消新发射输入。",
+    "CFA就绪门槛要求无活动批次、无待收尾、无按住输入及无待发队列；只读查询、受控类别切换、SP重建共用门槛。活动批次交还原生自然完成，等待沿既有50ms轮询/5秒取消。",
+    "仅当前玩家会话游戏线程可清队列；首次核对七处相关原生代码片段，之后只读必要状态。CFA机型结果按弱身份缓存。",
+    "不写+2c0/+2c1、计划/已发数量、目标数组、活动发射体、弹药、冷却或bFireAllInOneShot；不依赖多SP模型开关。",
+    "ADF发射期间直接丢弃切换请求的前次修订保持。新Lua要求新增核心导出，禁止与旧DLL混装。"
+  ],
+  "scope": "模组接管的逻辑选择与SP重建；不是拦截每次发射的补丁，也不接管单挂纯原生循环或其他Mod直接改类别的路径。",
+  "manual_review": [
+    "确认新请求先释放、再清队列、再查询，忙碌时不重建或切类别；普通等待重试不再次清队列。",
+    "确认两处核心事务边界复用同一门槛；世界失效及五秒超时沿用现有取消。",
+    "确认新导出由现有构建脚本loadExport扫描收录；本轮未运行该构建检查。"
+  ],
+  "validation": {
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_started": false,
+    "game_process_accessed": false,
+    "runtime_fix_verified": false,
+    "performance_improvement_claimed": false
+  },
+  "followup_by_user_directed_thread": [
+    "审核父提交1678c74及本次独立提交后，再按用户授权成套构建安装。",
+    "复测初始MSL→ADMM单目标/多目标发射→快速切MSL→一次按键；模型开关分组，正常/异常样本都保留。",
+    "观察快速MSL/SP互切、切EML及EML发射、连射收尾、取消/超时、补给/检查点；不以双发一次未出现宣布概率问题解决。"
+  ]
+}

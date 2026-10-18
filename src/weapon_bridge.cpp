@@ -62,6 +62,7 @@ struct Group {
 };
 struct Session {
     Addr plane{}, activator{};
+    DWORD gameThread{}; // 出击/重配建立的线程；CFA待发输入只能在该线程归还。
     int active{};
     int count{1}; // 有效逻辑槽数量；空槽不初始化。
     double ratio{1}; // 会话建立时的配弹比例；检查点恢复沿用其原始比例。
@@ -536,6 +537,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 }
 #endif
 #include "continuous_sp.hpp"
+#include "cfa_fire_transition.hpp"
 #include "cfa_weapon_diagnostics.hpp"
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
@@ -767,14 +769,15 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         }
     }
 }
-// 保留既有的纯原生忙碌判断，切换入口另叠加Falken退场门槛。
+// 保留其他机体既有的原生忙碌判断，统一入口另叠加CFA批次边界和Falken退场门槛。
 bool weaponSwitchReady(Addr activator) {
     return read<unsigned char>(activator+0x2a0)==0 &&
         !(read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1);
 }
-// Falken先等TLS及尾迹自然退场，再沿用ToggleSpecial门槛；只读，不改连射队列。
+// CFA须批次完整收尾，Falken须TLS自然退场；该查询只读，不改发射状态。
 const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
     if(continuousFalkenTLSBusy(plane,activator))return "falken_tls_active";
+    if(cfaFireTransitionBusy(plane,activator))return "native_busy";
     if(!weaponSwitchReady(activator))return "native_busy";
     return nullptr;
 }
@@ -802,6 +805,7 @@ void execute(const Command& command) {
         fixedMountRelease(); // 新组合不沿用上一组合的视觉状态。
 #endif
         session={}; session.plane=command.plane; session.activator=command.activator; session.active=0;
+        session.gameThread=GetCurrentThreadId();
         session.count=command.count;session.configs=command.configs;session.ratio=command.ratio;
         if(command.op=="setup")checkpointValid=false;
         // 第一槽与其余槽走同一初始化入口，包含单挂；重建次数与原 Lua 路径相同。
@@ -1320,6 +1324,24 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
     }
 }
 #endif
+// 仅新选择请求在释放输入后调用；查询/等待接口仍保持只读。
+extern "C" __declspec(dllexport) int dualsp_prepare_cfa_switch(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==2 && runtimeEnabled,"CFA切换准备需要单人任务与两个参数");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
+        require(session.plane==plane && session.activator==activator &&
+            session.gameThread && session.gameThread==GetCurrentThreadId() &&
+            read<Addr>(plane+0x11a8)==activator,"CFA切换准备的玩家会话或线程不符");
+        cfaDiscardQueuedFireInput(plane,activator);
+        api->boolean(luaState,true);return 1;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
 // 暂拒切换是可恢复状态；Lua对普通连射暂存请求，对Falken TLS直接丢弃请求。
 extern "C" __declspec(dllexport) int dualsp_switch_ready(void* luaState) {
     const dualsp::LuaApi* api=nullptr;

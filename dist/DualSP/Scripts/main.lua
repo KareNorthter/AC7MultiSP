@@ -69,7 +69,7 @@ local nativePartsAmmo=loadExport("dualsp_parts_ammo_preview") -- PART 只读候�
 local nativeWeaponIcon=loadExport("dualsp_weapon_icon") -- 机库全名前复用原生分类图标。
 local prepareWeaponRebuild=loadExport("dualsp_prepare_weapon_rebuild") -- 丢弃锁定槽前配对停止音效。
 local weaponSwitch={read=loadExport("dualsp_switch_ready"),takeCycle=loadExport("dualsp_take_cycle_switch"),
-    press=loadExport("dualsp_controlled_weapon_switch")} -- 循环请求与模组内部类别切换须搭配本次核心。
+    press=loadExport("dualsp_controlled_weapon_switch"),prepareCfa=loadExport("dualsp_prepare_cfa_switch")} -- 新Lua与核心须成套。
 weaponSwitch.gaze={invoke=loadExport("dualsp_target_gaze"),active=false,available=false,generation=0,response=0}
 loadExport("dualsp_target_gaze_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
 weaponSwitch.camera={invoke=loadExport("dualsp_camera_hold"),available=false,released=true}
@@ -928,7 +928,8 @@ end
 local function selectLogicalWeapon(desired,retry)
     assert(desired>=0 and desired<=3,"无效的逻辑武器选择")
     if not retry then weaponSwitch.clear("superseded")end
-    local falken=catalogue and catalogue[tostring(planeId)]and catalogue[tostring(planeId)].code=="zoef"
+    local aircraftCode=catalogue and catalogue[tostring(planeId)]and catalogue[tostring(planeId)].code
+    local falken=aircraftCode=="zoef"
     if falken then
         -- 放在ReleaseWeaponInput之前：拒绝切换时不通过释放输入干预正在发射的TLS。
         local ok,canSwitch,reason=weaponSwitch.read(plane:GetAddress(),activator:GetAddress())
@@ -940,6 +941,11 @@ local function selectLogicalWeapon(desired,retry)
     end
     if not retry then
         releaseWeaponInput("logical_weapon_switch") -- 包括切回MSL；等待期间不重复释放输入。
+        -- CFA原生释放只清按住状态，旧待发队列会按切换后的类别消费。仅新请求丢弃旧队列。
+        if aircraftCode=="fa44"then
+            local prepared,prepareError=weaponSwitch.prepareCfa(plane:GetAddress(),activator:GetAddress())
+            assert(prepared,prepareError or "CFA切换准备失败")
+        end
     end
     local ok,canSwitch,reason=weaponSwitch.read(plane:GetAddress(),activator:GetAddress())
     assert(ok,reason or "原生切换状态读取失败")

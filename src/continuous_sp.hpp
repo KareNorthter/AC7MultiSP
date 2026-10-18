@@ -84,7 +84,13 @@ bool continuousXfa27(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_fa27_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa27");
 }
 bool continuousCfa44(Addr plane) {
-    return continuousPlaneClass(plane,"AcePlayerPawn_fa44_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44");
+    // 切换等待会重复查询，只缓存机体弱身份与机型，不保留发射状态。
+    static ContinuousIdentity cached;
+    static bool matched=false;
+    if(cached.address==plane && continuousAlive(cached))return matched;
+    const auto current=continuousIdentity(plane);
+    const bool cfa=continuousPlaneClass(plane,"AcePlayerPawn_fa44_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44");
+    cached=current;matched=cfa;return matched;
 }
 bool continuousSu37(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_su37_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_su37");
