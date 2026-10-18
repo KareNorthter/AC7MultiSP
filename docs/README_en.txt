@@ -1,4 +1,4 @@
-AC7MultiSP 2.19.0 Accepted Mainline (no new package)
+AC7MultiSP 2.19.0
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -40,12 +40,13 @@ Controls
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
 Known issues and planned improvements
-• CFA-44: the user accepted ECM model hiding in 2.17, but switching still hitched. Switching still hitched in 2.18. This candidate uses address-based muzzle lookup to reduce repeated checks. Native models outside missions and Multi-SP models in missions and resupply are retained. The user confirmed a clear reduction in switching hitches and approved merging 2.19 into main. This does not establish hitch-free behavior in every case.
+• CFA-44: the user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
+• Arrows on the mission-results screen stutter noticeably less, but slight stuttering remains. This is still a known issue.
 • ADF-01: leaving TLS stops the beam immediately, but the first stop causes a noticeable hitch; later stops may cause smaller hitches.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
 • F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
 • An occasional hangar exit/crash was previously reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
-The other issues remain recorded. Target tracking was reported working in 2.17; the new Mission 13 correction and moving its settings to Bindings await gameplay verification; this accepted mainline version has no new release package; the latest package remains 2.16.0.
+The other issues remain recorded. Target tracking was reported working in 2.17; the new Mission 13 correction and moving its settings to Bindings await gameplay verification; this package preserves the tested 2.19 runtime bytes and does not establish validation of every aircraft, combination or mission.
 
 Compatibility with other mods
 • Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received a complete 2.16 retest.

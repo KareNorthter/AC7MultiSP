@@ -1,4 +1,4 @@
-"""从冻结的 2.16 构建生成手动发布包；不构建、不测试、不访问游戏目录。"""
+"""从当前已验收的冻结构建生成手动发布包；不构建、不测试、不访问游戏目录。"""
 import argparse
 from datetime import datetime, timezone
 import hashlib
@@ -12,10 +12,10 @@ import zipfile
 from release_tools import ROOT, PWSH, contained, digest, read_json, verify_build
 
 
-VERSION = '2.16.0'
+VERSION = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
 NAME = 'AC7MultiSP'
-OLD_NAME = 'AC7DualSP-1.1.0'
-OLD_ARCHIVE_HASH = '8764d8c4381784782b463cb5de974a5dadb9d4891628f2bedc004b760a52a187'
+OLD_NAME = 'AC7MultiSP-2.16.0'
+OLD_ARCHIVE_HASH = '5381a990515fcca8662505d1538384fa640ce3ea3108477da745be63dc18183a'
 MOD = 'GameFiles/ue4ss/Mods/DualSP/'
 PAK = 'Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak'
 LICENSES = ('UE4SS.txt', 'DearImGui.txt', 'MinHook.txt', 'nlohmann-json.txt')
@@ -71,12 +71,12 @@ def microsoft_signature(path):
 
 def legacy_payload(archive_path):
     """整包和旧清单都可信后，仅收取固定的运行库集合。"""
-    receipt = read_json(ROOT / 'evidence/1.1.0-release.json')
-    if (receipt.get('name') != 'AC7DualSP' or receipt.get('version') != '1.1.0' or
+    receipt = read_json(ROOT / 'evidence/2.16.0-release.json')
+    if (receipt.get('name') != NAME or receipt.get('version') != '2.16.0' or
             receipt.get('all_members_verified') is not True or
             receipt.get('sha256', '').lower() != OLD_ARCHIVE_HASH or
             digest(archive_path) != OLD_ARCHIVE_HASH or archive_path.stat().st_size != receipt['size']):
-        raise ValueError('旧 1.1.0 发布包或来源回执不符')
+        raise ValueError('旧 2.16.0 发布包或来源回执不符')
     records = receipt['files']
     with zipfile.ZipFile(archive_path) as archive:
         names = archive_names(archive)
@@ -84,7 +84,7 @@ def legacy_payload(archive_path):
         if names != expected or len(names) != receipt['member_count']:
             raise ValueError('旧包成员与发布回执不符')
         manifest = json.loads(archive.read(OLD_NAME + '/文件清单.json').decode('utf-8-sig'))
-        if (manifest.get('name') != 'AC7DualSP' or manifest.get('version') != '1.1.0' or
+        if (manifest.get('name') != NAME or manifest.get('version') != '2.16.0' or
                 manifest.get('files') != records):
             raise ValueError('旧包内外文件清单不一致')
         runtimes = {}
@@ -122,7 +122,16 @@ def frozen_sources(build_dir):
             installed.get('test_receipt_sha256') != test_hash or
             tests.get('name') != NAME or tests.get('version') != VERSION or
             tests.get('passed') is not True or tests.get('build_receipt_sha256') != build_hash):
-        raise ValueError('2.16 构建、通过测试和安装回执未形成完整关联')
+        raise ValueError('当前构建、通过测试和安装回执未形成完整关联')
+    validation_path = ROOT / ('evidence/' + VERSION + '-user-validation.json')
+    authorization_path = ROOT / ('evidence/' + VERSION + '-user-feedback-followup.json')
+    validation = read_json(validation_path)
+    authorization = read_json(authorization_path)
+    if (validation.get('version') != VERSION or validation.get('main_acceptance_authorized') is not True or
+            validation.get('build_receipt_sha256') != build_hash or
+            validation.get('installed_receipt_sha256') != digest(ROOT / ('evidence/' + VERSION + '-installed.json')) or
+            authorization.get('version') != VERSION or authorization.get('release_authorized') is not True):
+        raise ValueError('缺少当前冻结构建的用户验收或本轮发布授权')
     if not tests.get('test_sources'):
         raise ValueError('测试回执缺少来源摘要')
     for name, expected in tests['test_sources'].items():
@@ -132,7 +141,7 @@ def frozen_sources(build_dir):
     sources.update({'bin/DualSP.dll': build_dir / 'DualSP.dll',
                     'bin/DualSPUI.dll': build_dir / 'DualSPUI.dll', 'VERSION': ROOT / 'VERSION'})
     if len(sources) != 17 or set(sources) != set(installed['runtime_files']):
-        raise ValueError('2.16 运行文件必须恰为完整的 17 项')
+        raise ValueError('当前运行文件必须恰为完整的 17 项')
     runtime = {}
     for name, path in sources.items():
         data = contained(path, ROOT).read_bytes()
@@ -145,11 +154,11 @@ def frozen_sources(build_dir):
             asset_record.get('variant_count') != len(assets['variants']) or
             asset_record.get('file_count') != assets['file_count'] or
             len(assets['variants']) != 50 or assets['file_count'] != 100):
-        raise ValueError('2.16 挂架包与安装回执不符')
+        raise ValueError('当前挂架包与安装回执不符')
     pak = (build_dir / assets['file']).read_bytes()
     if data_hash(pak) != assets['sha256'].lower():
         raise ValueError('挂架包读取期间发生变化')
-    return runtime, pak, installed, build_hash, test_hash
+    return runtime, pak, installed, build_hash, test_hash, digest(validation_path), digest(authorization_path)
 
 
 def verify_package(path, prefix, payload):
@@ -166,7 +175,7 @@ def verify_package(path, prefix, payload):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
-    parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7DualSP-1.1.0.zip')
+    parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7MultiSP-2.16.0.zip')
     parser.add_argument('--output', type=Path, default=ROOT / ('Release/' + NAME + '-' + VERSION + '.zip'))
     args = parser.parse_args()
     build_dir = contained(args.build_dir, ROOT / 'Temp').resolve(strict=True)
@@ -175,7 +184,7 @@ def main():
     receipt_path = ROOT / ('evidence/' + VERSION + '-release.json')
     if output.exists() or receipt_path.exists() or output.suffix.lower() != '.zip':
         raise ValueError('发布包或发布回执已存在，或输出不是 ZIP；拒绝覆盖')
-    runtime, pak, installed, build_hash, test_hash = frozen_sources(build_dir)
+    runtime, pak, installed, build_hash, test_hash, validation_hash, authorization_hash = frozen_sources(build_dir)
     runtimes, legacy_records = legacy_payload(archive_path)
     payload = {MOD + name: data for name, data in runtime.items()}
     legacy_sources = {
@@ -198,7 +207,8 @@ def main():
     install = {'Name': NAME, 'Version': VERSION, 'Candidate': False, 'Distribution': 'manual',
                'name': NAME, 'candidate': VERSION, 'runtime_files': installed['runtime_files'],
                'mount_assets': installed['mount_assets'], 'build_receipt_sha256': build_hash,
-               'test_receipt_sha256': test_hash}
+               'test_receipt_sha256': test_hash, 'user_validation_sha256': validation_hash,
+               'release_authorization_sha256': authorization_hash}
     payload[MOD + 'install-receipt.json'] = json_bytes(install)
     for name in ('README_zh-CN.txt', 'README_en.txt'):
         data = contained(ROOT / 'docs' / name, ROOT).read_bytes()
@@ -236,11 +246,12 @@ def main():
               'archive': output.relative_to(ROOT).as_posix(), 'size': output.stat().st_size,
               'sha256': digest(output), 'member_count': len(payload), 'game_file_count': 28,
               'runtime_file_count': len(runtimes), 'all_members_verified': True,
-              'test_modules_run': False, 'game_started_by_agent': False,
+              'test_modules_run': False, 'recompiled': False, 'game_started_by_agent': False,
               'build_receipt_sha256': build_hash, 'test_receipt_sha256': test_hash,
               'installed_receipt_sha256': digest(ROOT / ('evidence/' + VERSION + '-installed.json')),
               'packager_sha256': digest(Path(__file__)),
-              'runtime_source': '完整核验 1.1.0 发布包及其清单后恢复的原始微软运行库',
+              'user_validation_sha256': validation_hash, 'release_authorization_sha256': authorization_hash,
+              'runtime_source': '完整核验 2.16.0 发布包及清单后复用的原始微软运行库，历史来源见2.16发布回执',
               'runtime_archive_sha256': OLD_ARCHIVE_HASH,
               'microsoft_signatures': signatures, 'files': records}
     with receipt_path.open('x', encoding='utf-8') as stream:

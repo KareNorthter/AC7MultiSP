@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "version": "2.19.0",
+  "recorded_at": "2026-10-18T08:28:59.698756+08:00",
+  "source": "用户补充反馈及本轮明确发布授权",
+  "user_message": "另外任务结算界面的箭头卡顿已经明显缓解，只是还有一点点卡，请记录。然后根据最新版本，制作一个发布包",
+  "issue": {
+    "scene": "任务结算界面",
+    "element": "箭头",
+    "status": "明显缓解，仍有轻微卡顿",
+    "fully_resolved": false,
+    "scope": "用户观感反馈，不扩大为全任务验证，不混同机库SP2/SP3选装光标卡顿"
+  },
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "runtime_version_unchanged": "2.19.0",
+  "rebuild_required": false,
+  "prior_validation_preserved": "evidence/2.19.0-user-validation.json"
+}
