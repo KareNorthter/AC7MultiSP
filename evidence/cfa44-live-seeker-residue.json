@@ -1,0 +1,302 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "branch": "codex/cfa44-live-fire-residue",
+  "parent_commit": "9fafb78",
+  "installed_version": "2.19.2",
+  "authorization": "用户授权读取当前游戏内存并亲自协助复现；仍仅修改源码和文档，不编译安装",
+  "pid": 9244,
+  "process_start_local": "2026-10-18 21:22:59 +08:00",
+  "installed_receipt": "evidence/2.19.2-installed.json",
+  "installed_runtime_hashes_match": 17,
+  "snapshot": "Temp\\cfa-live-20261018",
+  "files": {
+    "paused.json": {
+      "bytes": 4223,
+      "sha256": "2c671d029a3b3a16d527c449a24fc8fa15c9008b8458640ebaf26f3bd950a80a"
+    },
+    "seeker.json": {
+      "bytes": 88809,
+      "sha256": "3f21b5b2b457bf2946ae706f3cd1b3b493055136885160be562574a88c29eb02"
+    },
+    "activator.bin": {
+      "bytes": 1280,
+      "sha256": "9e22e5aaaf28ec5804be06285ffda15f353d88445728ce19e1e0b2e293b8e479"
+    },
+    "seeker.bin": {
+      "bytes": 2128,
+      "sha256": "5658d4e0d5d3354ce567c917bd6af0952d205c900c30bc7cf22076bc32122f18"
+    },
+    "native.log": {
+      "bytes": 2524418,
+      "sha256": "cf44a62bd36574ab05a71d9997cdf323a8e9c76289e4cd837f2da1bf29aeecf2"
+    },
+    "mod.log": {
+      "bytes": 5465803,
+      "sha256": "5fadabaf2be407d377b7bd487fbf5f0316995f270bcc6ca15f9eeec3b2d428de"
+    },
+    "fire-round1.jsonl": {
+      "bytes": 42469,
+      "sha256": "07bf9dbec2c442af4cf59481a50d3d8555c14f3d995b8e270465fec0f2f00692"
+    },
+    "after-native.log": {
+      "bytes": 2533456,
+      "sha256": "35ef13c5497de1e4d3cc0dce2e780acac3c837813272a97b2c2778daba397558"
+    },
+    "cost-grouped.json": {
+      "bytes": 477122,
+      "sha256": "e0b4977c1ae4d2758779889aaa6451813fc77355944f15fb8f803f80ba4e98f2"
+    },
+    "4bf930.bin": {
+      "bytes": 115,
+      "sha256": "dedab22f8d51243d2a407b2212db18d86356828f8ec5865a9db3dacdc5d953bb"
+    },
+    "4bf9b0.bin": {
+      "bytes": 1560,
+      "sha256": "8004e0aeef1a55f8a7975dbfb7dc19f62c980c5fdabcce7d1692f9ddc2d9e3f4"
+    },
+    "4c3cb0.bin": {
+      "bytes": 280,
+      "sha256": "1424a278a8e9ab4becc87e9c61b67e2bb07ec86ac78ed1fb7952dde5461360d9"
+    },
+    "4c6d10.bin": {
+      "bytes": 368,
+      "sha256": "fb3ba4a3e77bcd9bc317ee5c5305c53f4166c695aa43d6914664a82e30321d5f"
+    },
+    "4c7130.bin": {
+      "bytes": 217,
+      "sha256": "b6da7fe36a0a655c7658f37cfa7db8fac399690a1ff655a22124eb5bdbbc6c84"
+    },
+    "4c7210.bin": {
+      "bytes": 143,
+      "sha256": "3c9e6fa6f054c51b3f6653d802869978a96822ff491555941c250cf51d685319"
+    },
+    "4c8ee0.bin": {
+      "bytes": 132,
+      "sha256": "ce534947d0de6af8f1f16c9ae3051433ee3a80c08b266c5a0a98d8a0956780ab"
+    },
+    "4c98a0.bin": {
+      "bytes": 100,
+      "sha256": "638ecf8583cb77b4585ec7d7adf8d6db4bd47104f3406e9a46481aaf31a7a537"
+    },
+    "81e810.bin": {
+      "bytes": 421,
+      "sha256": "be76fed2feb78eceb4b0c9eaee8cc43acdddd58e96fcf6df369ab206afed5447"
+    },
+    "881aa0.bin": {
+      "bytes": 2281,
+      "sha256": "6e28349b17e41fac346fcb1dd698a799f2af3e83d00ef076387b6149bc11b52e"
+    },
+    "882e40.bin": {
+      "bytes": 3090,
+      "sha256": "9ee46f9696a89bcde9804e4b4bd7ab3cf7897af8fbe56f1bb132262abed19583"
+    },
+    "889c90.bin": {
+      "bytes": 2970,
+      "sha256": "f34b58e1fda62697e320c7c6846a9376da76143a5a0be76752827c976e223a1b"
+    }
+  },
+  "user_feedback": "本次协助采样的每次有效发射都是双发；肉眼切换短卡减轻但仍可感知，要求进一步争取20ms",
+  "paused_observation": {
+    "held": 0,
+    "queued_inputs": 0,
+    "batch_active": 0,
+    "batch_finishing": 0,
+    "prior_batch_targets": 19,
+    "planned": 19,
+    "fired": 2,
+    "live_lock_slots": 2,
+    "locked_slot_states": [
+      3,
+      0
+    ],
+    "locked_targets_count": 19,
+    "main_fire_all": 0,
+    "eml_fire_all": 0,
+    "current_config": "EML+ECM，旧ADMM状态可跨调试重配残留"
+  },
+  "live_observation": {
+    "duration_seconds": 180,
+    "interval_ms": 10,
+    "changes": 62,
+    "button_episodes": [
+      [
+        71.40890239999999,
+        71.45107659999985
+      ],
+      [
+        75.67996360000006,
+        75.81608289999986
+      ],
+      [
+        79.13924279999992,
+        79.20244779999985
+      ],
+      [
+        89.51506569999992,
+        89.59875809999994
+      ],
+      [
+        102.12928139999985,
+        102.23467299999993
+      ]
+    ],
+    "effective_shots": 4,
+    "consumption": [
+      {
+        "elapsed": 71.4192109999999,
+        "main_delta": 2,
+        "sp_delta": 0,
+        "armed": 0,
+        "fired": 2,
+        "planned": 19,
+        "locked_count": 19,
+        "current_locked_slots": 1
+      },
+      {
+        "elapsed": 79.16035099999999,
+        "main_delta": 2,
+        "sp_delta": 0,
+        "armed": 0,
+        "fired": 2,
+        "planned": 16,
+        "locked_count": 16,
+        "current_locked_slots": 0
+      },
+      {
+        "elapsed": 89.52555540000003,
+        "main_delta": 0,
+        "sp_delta": 1,
+        "armed": 1,
+        "fired": 1,
+        "planned": 15,
+        "locked_count": 15,
+        "current_locked_slots": 0
+      },
+      {
+        "elapsed": 89.53604809999979,
+        "main_delta": 0,
+        "sp_delta": 1,
+        "armed": 1,
+        "fired": 2,
+        "planned": 15,
+        "locked_count": 15,
+        "current_locked_slots": 0
+      },
+      {
+        "elapsed": 102.13972409999997,
+        "main_delta": 0,
+        "sp_delta": 1,
+        "armed": 1,
+        "fired": 1,
+        "planned": 15,
+        "locked_count": 15,
+        "current_locked_slots": 0
+      },
+      {
+        "elapsed": 102.15046639999991,
+        "main_delta": 0,
+        "sp_delta": 1,
+        "armed": 1,
+        "fired": 2,
+        "planned": 15,
+        "locked_count": 15,
+        "current_locked_slots": 0
+      }
+    ],
+    "excluded_rebuild_jump": {
+      "elapsed": 83.8837573,
+      "reason": "原生新建池恢复库存，非发射"
+    },
+    "critical_transition": "83.873秒起旧锁定槽指针被新槽替换，但LockedTargets仍有16项；EML发射时现存槽均未锁定，列表仍有15项",
+    "limits": "轮询非原子快照，可漏掉中间帧；手柄按键5段中只有4次有效扣弹，不把冷却期无效按键当单发或双发"
+  },
+  "native_chain": [
+    {
+      "rva": "0x882e40 -> 0x4c6d10",
+      "finding": "武器Init会重新构建LockonSeekers；4c6d38直接清槽数组Num，不解除目标登记"
+    },
+    {
+      "rva": "0x4c98a0 -> 0x4c0080",
+      "finding": "旧模组只停止每槽声音，不进入解除锁定状态"
+    },
+    {
+      "rva": "0x4c6b80 -> 0x4c3cb0",
+      "finding": "LockedTargets getter仅剔除空/失效/死亡目标，不校对现存锁定槽或清存活旧目标"
+    },
+    {
+      "rva": "0x881aa0 -> 0x889e80..0x889e92",
+      "finding": "发射复制LockedTargets并按数量设置本轮计划数；非齐射武器仍可因此多发"
+    },
+    {
+      "rva": "0x4c8ee0 -> 0x4bf930 -> 0x4bf9b0",
+      "finding": "原生逐槽Reset进入状态0，跳表0指向4bfa1c，调用4c7210解除目标登记并停止声音"
+    },
+    {
+      "rva": "0x4c7210 -> 0x1a9b240",
+      "finding": "原生解除移除该目标的登记并发送解除通知，可清理无主旧记录"
+    }
+  ],
+  "fix": {
+    "source": "src/seeker_rebuild.hpp",
+    "scope": "所有通过模组initialize或dualsp_prepare_weapon_rebuild的玩家机体，含出击、SP切换、调试、补给及检查点重建，与多SP模型无关",
+    "behavior": "先原生Reset旧槽并核对声音归零，再原生过滤失效目标及解除无主登记；保留SelectedTarget和正常多重锁定语义，不改弹药或fire_all",
+    "cfa_prior_gate": "保留；仅队列/批次边界不足以消除本次确认的列表污染",
+    "qualification": "四处代码片段首次核对；边界读当前对象身份及数组，原生调用后复核；不增加帧钩子"
+  },
+  "performance": {
+    "source_version": "已安装2.19.2，发生在本轮内存采样前；不是本次修复后成绩",
+    "groups": {
+      "(True, [0, 1, 2])": {
+        "count": 103,
+        "min": 38.763600000000004,
+        "median": 41.1837,
+        "p95": 46.290800000000004,
+        "max": 716.4781
+      },
+      "(False, [0, 1, 2])": {
+        "count": 10,
+        "min": 6.0888,
+        "median": 6.376200000000001,
+        "p95": 12.841000000000001,
+        "max": 12.841000000000001
+      },
+      "(True, [0, 1])": {
+        "count": 5,
+        "min": 39.368500000000004,
+        "median": 43.895500000000006,
+        "p95": 44.2528,
+        "max": 44.2528
+      }
+    },
+    "old_three_sp_models_on": {
+      "source": "evidence/cfa44-fire-switch-2.19.1-audit.json",
+      "count": 30,
+      "median_ms": 83.4254,
+      "first_ms": 788.8721
+    },
+    "new_three_sp_models_on": {
+      "count": 103,
+      "median_ms": 41.1837,
+      "p95_ms": 46.2908,
+      "first_ms": 716.4781,
+      "mount_before_median_ms": 8.0115,
+      "mount_commit_median_ms": 21.858
+    },
+    "median_reduction_percent": 50.634099446931025,
+    "interpretation": "支持此前减负有效，仍有可见卡顿及首次峰值；仅核心事务，非帧时间/FPS；场景、样本量和计时修订不同，不是严格A/B。用户后续20ms目标另行研究"
+  },
+  "validation": {
+    "source_review": true,
+    "compiled": false,
+    "test_modules_written": false,
+    "test_modules_run": false,
+    "installed": false,
+    "process_read": true,
+    "process_write": false,
+    "input_injected": false,
+    "game_functions_called_by_research_tool": false,
+    "source_fix_gameplay_verified": false
+  },
+  "followup": "后续成套构建安装后复测四次有效发射及ADMM多目标、快速切换、其他多SP机体、补给/检查点和声音；不能把当前复现当新源码修复通过"
+}

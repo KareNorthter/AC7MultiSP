@@ -537,6 +537,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 }
 #endif
 #include "continuous_sp.hpp"
+#include "seeker_rebuild.hpp"
 #include "cfa_fire_transition.hpp"
 #include "cfa_weapon_diagnostics.hpp"
 #include "raven_sp.hpp"
@@ -623,7 +624,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
 #endif
     cfaSwitchCost.mark(2);
-    finishSeekerAudio(command.plane,command.activator); // 先释放旧槽音效，再重建锁定槽和武器池。
+    prepareSeekerRebuild(command.plane,command.activator); // 先解除旧锁定登记及声音，再丢弃旧槽。
     const int gun=read<int>(stateOf(command.activator)+8);
     const auto owner=read<Addr>(command.activator+0x260);
     const int flares=read<int>(owner+0x10c);
@@ -1669,7 +1670,7 @@ extern "C" __declspec(dllexport) int dualsp_resupply_control(void* luaState) {
     }
 }
 
-// Lua 的出击/补给初始化也必须在丢弃旧槽前完成音效收尾。
+// Lua的出击/补给初始化同样先完整解除锁定；所有机体共用，不依赖多SP模型。
 extern "C" __declspec(dllexport) int dualsp_prepare_weapon_rebuild(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 失败返回明确错误，不清零或静音回退。
     try {
@@ -1680,11 +1681,11 @@ extern "C" __declspec(dllexport) int dualsp_prepare_weapon_rebuild(void* luaStat
         verifyVersion();
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 当前玩家。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2)); // 当前武器组件。
-        finishSeekerAudio(plane,activator);
+        prepareSeekerRebuild(plane,activator);
         api->boolean(luaState,true);api->string(luaState,"",0);
         return 2;
     }catch(const std::exception& error) {
-        nativeLog(std::string("SEEKER_AUDIO_ERROR ")+error.what());
+        nativeLog(std::string("SEEKER_REBUILD_ERROR ")+error.what());
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
     }
