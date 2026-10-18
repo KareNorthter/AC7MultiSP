@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "branch": "codex/cfa44-live-fire-residue",
+  "parent_commit": "99fc952",
+  "request": "用户反馈短卡减轻但仍可感知，要求继续争取约20ms，若空间不大须诚实说明",
+  "baseline": {
+    "installed_version": "2.19.2",
+    "source": "Temp\\cfa-live-20261018\\cost-grouped.json",
+    "sha256": "e0b4977c1ae4d2758779889aaa6451813fc77355944f15fb8f803f80ba4e98f2",
+    "related": "evidence/cfa44-live-seeker-residue.json",
+    "sample_count": 103,
+    "filter": "profile_revision=2, models=true, configs=[0,1,2]",
+    "transaction_median_ms": 41.1837,
+    "memory_query_total_median_ms": 39.24100000000001,
+    "stages": {
+      "mount_before": {
+        "query_calls_median": 230,
+        "query_ms_median": 7.988600000000001
+      },
+      "mount_commit": {
+        "query_calls_median": 665,
+        "query_ms_median": 21.745
+      },
+      "native_init": {
+        "query_calls_median": 463,
+        "query_ms_median": 4.5031
+      }
+    },
+    "work": {
+      "layout_audit": {
+        "calls": 2,
+        "ms": 9.5024
+      },
+      "bones_maintain": {
+        "calls": 3,
+        "ms": 9.912600000000001
+      },
+      "muzzle_sync": {
+        "calls": 1,
+        "ms": 4.9168
+      }
+    },
+    "first_transaction_ms": 716.4781,
+    "limits": "分项相互重叠，不相加、不直接扣掉后当预测成绩；现场由用户操作，不是严格受控A/B。上述数据均为修改前已安装2.19.2"
+  },
+  "implementation": {
+    "NativeReadBatch": "栈上8段可读区间，非命中执行原VirtualQuery检查，命中只省重复查页；每次都重新从内存复制字段值；无对象判断缓存，无后台任务",
+    "sites": [
+      "mountIdentity/mountAlive短只读函数",
+      "MountIdentityBatch对象表头与条目批次",
+      "LightMountBones::componentCurrent纯组件/资源关系检查",
+      "mountLightLayoutChanged纯布局检查",
+      "MountAnimationReflection::invoke调用前后各自建立并销毁独立批次",
+      "CFA炮口缓存字段核对与附着关系纯检查"
+    ],
+    "unchanged_checks": [
+      "对象地址和序列号",
+      "对象表索引/长度",
+      "组件父链、挂架资源与槽位",
+      "反射函数与组件调用前后身份",
+      "页面提交、Guard/NoAccess及请求范围",
+      "所有写入仍即时checkMemory"
+    ],
+    "forbidden_lifetimes": "不能跨ProcessEvent、原生引擎调用、对象创建回收、帧或线程；没有在这些边界外保存批次。类不可复制，已审查全部调用点",
+    "threading": "仍在原游戏线程短块执行，不移动UObject或动画至后台",
+    "instrumentation": "CFA_SWITCH_COST profile_revision=3；memory_checks新增batch_reads/batch_reused，calls/ms仍为实际查页；汇总工具新增--profile-revision过滤"
+  },
+  "target_assessment": "重复查页耗时占比明显，仍有可优化空间，值得继续；是否达到20ms、新锁定收尾成本、首次峰值均需新源码运行后确认，不给出未测的新中位数",
+  "verification": {
+    "manual_source_review": true,
+    "diff_whitespace_review": true,
+    "test_modules_written": false,
+    "test_modules_run": false,
+    "compiled": false,
+    "installed": false,
+    "process_write": false,
+    "new_code_runtime_measured": false,
+    "performance_claim": "只证明上一轮83.43ms到41.18ms的改善，不把本次源码当成20ms结果"
+  },
+  "handoff": "先接收99fc952双发根因修订，再接收本次独立优化；由用户指挥的交付线程授权后成套构建安装，重复三SP开启模型各方向切换，区分首次与热切换、模型开关及target_config。比对修订3总耗时/P95和batch_reused，确认正常ADMM齐射、MSL/EML单按、骨显隐及退出恢复。"
+}

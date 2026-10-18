@@ -64,9 +64,9 @@ struct LightMountBones {
         Reflection::thread();const MountIdentityBatch identities;
         require(identities.alive(component) && identities.alive(mesh) && identities.alive(skeleton) &&
             identities.alive(componentClass),"轻量骨显隐：组件或资源身份失效");
-        require(read<Addr>(component.address+0x10)==componentClass.address &&
-            read<Addr>(component.address+meshField.offset)==mesh.address &&
-            read<Addr>(mesh.address+skeletonField.offset)==skeleton.address,"轻量骨显隐：骨架资源被替换");
+        require(identities.read<Addr>(component.address+0x10)==componentClass.address &&
+            identities.read<Addr>(component.address+meshField.offset)==mesh.address &&
+            identities.read<Addr>(mesh.address+skeletonField.offset)==skeleton.address,"轻量骨显隐：骨架资源被替换");
     }
     void current() {
         componentCurrent();Reflection::alive(meshField.identity);Reflection::alive(skeletonField.identity);Reflection::alive(physicsEnum);
@@ -440,18 +440,18 @@ bool mountLightLayoutChanged(const FixedMountState& state) {
     for(int pool=0;pool<3;++pool) {
         const auto& rack=state.light->racks[pool];if(!rack.component.address)continue;
         if(!identities.alive(rack.component) || !identities.alive(rack.mesh) ||
-            read<Addr>(state.plane.address+state.rackOffsets[pool])!=rack.component.address ||
-            read<Addr>(rack.component.address+rack.meshOffset)!=rack.mesh.address)return true;
+            identities.read<Addr>(state.plane.address+state.rackOffsets[pool])!=rack.component.address ||
+            identities.read<Addr>(rack.component.address+rack.meshOffset)!=rack.mesh.address)return true;
         if(state.aircraft==MountAircraft::Dark)continue;
         const Addr array=state.meshManager.address+0x150+pool*16;
-        if(read<int>(array+8)!=state.poolCounts[pool])return true;
-        const Addr data=read<Addr>(array);
+        if(identities.read<int>(array+8)!=state.poolCounts[pool])return true;
+        const Addr data=identities.read<Addr>(array);
         for(const auto& visual:state.visuals)if(visual.pool==pool && visual.index>=0 &&
-            (!identities.alive(visual.identity) || read<Addr>(data+static_cast<Addr>(visual.index)*8)!=visual.identity.address))return true;
+            (!identities.alive(visual.identity) || identities.read<Addr>(data+static_cast<Addr>(visual.index)*8)!=visual.identity.address))return true;
         if(state.aircraft==MountAircraft::Fa44)for(int position=0;position<state.physicalCount;++position) {
             const auto& point=state.light->positions[position];if(point.pool!=pool)continue;
-            if(!identities.alive(point.component) || read<Addr>(data+static_cast<Addr>(point.index)*8)!=point.component.address ||
-                read<Addr>(point.component.address+0x100)!=rack.component.address)return true;
+            if(!identities.alive(point.component) || identities.read<Addr>(data+static_cast<Addr>(point.index)*8)!=point.component.address ||
+                identities.read<Addr>(point.component.address+0x100)!=rack.component.address)return true;
         }
     }
     return false;

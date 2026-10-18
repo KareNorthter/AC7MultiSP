@@ -43,10 +43,13 @@ struct CfaChildrenMetadata {
     MountAnimationReflection::Field children;
 } cfaChildrenMetadata;
 std::map<Addr,std::pair<MountIdentity,bool>> cfaMuzzleTemplates;
-void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field) {
-    MountAnimationReflection::alive(field.identity);
-    require(read<int>(field.identity.address+0x44)==field.offset && read<int>(field.identity.address+0x34)==field.size,
+void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field,const MountIdentityBatch& identities) {
+    require(identities.alive(field.identity),"CFA炮口：缓存字段身份失效");
+    require(identities.read<int>(field.identity.address+0x44)==field.offset && identities.read<int>(field.identity.address+0x34)==field.size,
         "CFA炮口：缓存字段布局改变");
+}
+void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field) {
+    const MountIdentityBatch identities;mountCfaMuzzleFieldCurrent(field,identities);
 }
 const CfaMuzzleMetadata& mountCfaMuzzleFields(Addr object) {
     const auto cls=mountIdentity(read<Addr>(object+0x10));
@@ -65,7 +68,10 @@ const CfaMuzzleMetadata& mountCfaMuzzleFields(Addr object) {
             "CFA炮口：原生附着或可见字段改变");
         cached=next;
     }
-    for(const auto& field:{cached.parent,cached.socket,cached.particle,cached.visible})mountCfaMuzzleFieldCurrent(field);
+    {
+        const MountIdentityBatch identities;
+        for(const auto& field:{cached.parent,cached.socket,cached.particle,cached.visible})mountCfaMuzzleFieldCurrent(field,identities);
+    }
     return cached;
 }
 bool mountCfaMuzzleTemplate(Addr particle) {
@@ -88,11 +94,12 @@ bool mountCfaMuzzleScope() {
         fixedMount.aircraft==MountAircraft::Fa44 && (fixedMount.kindsMask&3u)==3u;
 }
 bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item) {
-    return mountAlive(item.component) && mountAlive(item.plane) && mountAlive(item.rack) && mountAlive(item.particle) &&
-        read<Addr>(item.component.address+0x100)==item.rack.address &&
-        read<Addr>(item.component.address+item.templateOffset)==item.particle.address &&
-        read<unsigned>(item.component.address+0x10c)==0 &&
-        read<unsigned>(item.component.address+0x108)==item.socketIndex;
+    const MountIdentityBatch identities;
+    return identities.alive(item.component) && identities.alive(item.plane) && identities.alive(item.rack) && identities.alive(item.particle) &&
+        identities.read<Addr>(item.component.address+0x100)==item.rack.address &&
+        identities.read<Addr>(item.component.address+item.templateOffset)==item.particle.address &&
+        identities.read<unsigned>(item.component.address+0x10c)==0 &&
+        identities.read<unsigned>(item.component.address+0x108)==item.socketIndex;
 }
 bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item) {
     return mountSameIdentity(item.plane,fixedMount.plane) &&

@@ -84,7 +84,7 @@ float fixedMountElapsed(int index,float duration,float elapsed); // 区分实际
 void require(bool condition, const char* message) { if (!condition) throw std::runtime_error(message); }
 // 仅CFA切换期间统计实际VirtualQuery次数及耗时，不用估计值代替实测。
 struct NativeReadCost {
-    bool active{};uint64_t calls{},ticks{};
+    bool active{};uint64_t calls{},ticks{},batchReads{},batchReused{};
     static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
 };
 thread_local NativeReadCost nativeReadCost;
@@ -96,7 +96,7 @@ struct CfaWorkScope {
     void stop() {if(start){auto& s=cfaWorkCosts[kind];++s.calls;s.ticks+=NativeReadCost::now()-start;start=0;}}
     ~CfaWorkScope() {stop();}
 };
-void checkMemory(Addr address, size_t size) {
+MEMORY_BASIC_INFORMATION readableMemory(Addr address, size_t size) {
     MEMORY_BASIC_INFORMATION info{};
     const auto started=nativeReadCost.active?NativeReadCost::now():0;
     const bool queried=address && VirtualQuery(reinterpret_cast<void*>(address), &info, sizeof(info));
@@ -104,7 +104,36 @@ void checkMemory(Addr address, size_t size) {
     require(queried, "Invalid address");
     require(info.State==MEM_COMMIT && !(info.Protect & (PAGE_GUARD|PAGE_NOACCESS)), "Unreadable memory");
     require(address+size>=address && address+size<=reinterpret_cast<Addr>(info.BaseAddress)+info.RegionSize, "Range outside allocation");
+    return info;
 }
+void checkMemory(Addr address,size_t size) { (void)readableMemory(address,size); }
+// 仅在没有引擎调用的短只读块内合并VirtualQuery；不缓存对象字段的值。
+// 必须是栈上局部变量，不能跨ProcessEvent、原生调用、帧或线程保留。
+class NativeReadBatch {
+    struct Region { Addr begin{},end{}; };
+    mutable std::array<Region,8> regions_{};
+    mutable size_t used_{},next_{};
+public:
+    NativeReadBatch()=default;
+    NativeReadBatch(const NativeReadBatch&)=delete;
+    NativeReadBatch& operator=(const NativeReadBatch&)=delete;
+    template<class T> T read(Addr address) const {
+        bool covered=false;
+        if(address && address+sizeof(T)>=address)for(size_t i=0;i<used_;++i) {
+            const auto& region=regions_[i];
+            if(address>=region.begin && address+sizeof(T)<=region.end) {covered=true;break;}
+        }
+        if(nativeReadCost.active) {++nativeReadCost.batchReads;if(covered)++nativeReadCost.batchReused;}
+        if(!covered) {
+            const auto info=readableMemory(address,sizeof(T));
+            const Addr begin=reinterpret_cast<Addr>(info.BaseAddress);
+            require(begin+info.RegionSize>=begin,"只读批次：内存区间溢出");
+            regions_[next_]={begin,begin+info.RegionSize};
+            next_=(next_+1)%regions_.size();used_=std::min(used_+1,regions_.size());
+        }
+        T value;std::memcpy(&value,reinterpret_cast<const void*>(address),sizeof(T));return value;
+    }
+};
 template<class T> T read(Addr address) { checkMemory(address,sizeof(T)); T value; std::memcpy(&value,reinterpret_cast<void*>(address),sizeof(T)); return value; }
 template<class T> void write(Addr address, T value) { checkMemory(address,sizeof(T)); std::memcpy(reinterpret_cast<void*>(address),&value,sizeof(T)); }
 // 名称读取按可读区分块校验，不为每个字符重复调用VirtualQuery；不缓存跨调用的页或对象。
@@ -549,7 +578,7 @@ struct CfaSwitchCost {
     bool active{};uint64_t start{},last{};
     std::array<uint64_t,9> ticks{};
     std::array<bool,9> reached{};
-    std::array<std::array<uint64_t,2>,9> reads{};
+    std::array<std::array<uint64_t,4>,9> reads{};
     int target{-1};bool models{};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     std::array<CfaMuzzleCost::Sample,9> muzzle{};
@@ -568,7 +597,8 @@ struct CfaSwitchCost {
     void mark(unsigned stage) {
         if(!active)return;
         const auto time=now();ticks.at(stage)=time-last;reached.at(stage)=true;last=time;
-        reads.at(stage)={nativeReadCost.calls,nativeReadCost.ticks};nativeReadCost.calls=nativeReadCost.ticks=0;
+        reads.at(stage)={nativeReadCost.calls,nativeReadCost.ticks,nativeReadCost.batchReads,nativeReadCost.batchReused};
+        nativeReadCost.calls=nativeReadCost.ticks=nativeReadCost.batchReads=nativeReadCost.batchReused=0;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         muzzle.at(stage)=cfaMuzzleCost.sample;cfaMuzzleCost.sample={};
 #endif
@@ -590,10 +620,11 @@ struct CfaSwitchCost {
             for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
             Json result{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
                 {"total_ms",double(end-start)*ms},{"stages_ms",stages},{"target_config",target},{"models",models},
-                {"profile_revision",2}};
+                {"profile_revision",3}};
             Json checks=Json::object();
             for(unsigned i=0;i<reads.size();++i)if(reached[i])checks[names[i]]={
-                {"calls",reads[i][0]},{"ms",double(reads[i][1])*ms}};
+                {"calls",reads[i][0]},{"ms",double(reads[i][1])*ms},
+                {"batch_reads",reads[i][2]},{"batch_reused",reads[i][3]}};
             result["memory_checks"]=checks; // 各段的子集，不能与stages_ms相加。
             const char* workNames[]={"layout_audit","bones_return","rack_return","bones_maintain",
                 "rack_maintain","commit_classify","parts_bind","muzzle_sync"};

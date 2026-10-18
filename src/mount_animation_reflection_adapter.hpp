@@ -112,10 +112,17 @@ struct MountAnimationReflection {
         require(a.offset+a.size<=b.offset || b.offset+b.size<=a.offset,"动画访问：参数重叠");
     }
     void invoke(const MountIdentity& object,Function f,void* parameters) {
-        thread(); alive(object); alive(f.identity);
+        thread();
+        {
+            const MountIdentityBatch identities;
+            require(identities.alive(object) && identities.alive(f.identity),"动画访问：调用前对象或函数身份失效");
+        } // 调用前结束只读批次，引擎可以在ProcessEvent中改变对象表或内存分配。
         require(process && available(),"动画访问：反射调用不可用");
         process(reinterpret_cast<void*>(object.address),reinterpret_cast<void*>(f.identity.address),parameters);
-        alive(object); alive(f.identity);
+        {
+            const MountIdentityBatch identities; // 调用后重新查页、读取表头与当前条目。
+            require(identities.alive(object) && identities.alive(f.identity),"动画访问：调用后对象或函数身份失效");
+        }
     }
     unsigned enumValue(Addr enumeration,const char* enumName,const char* item) {
         named(enumeration,enumName,"/Script/Engine");

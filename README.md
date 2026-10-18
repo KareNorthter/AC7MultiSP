@@ -12,6 +12,8 @@
 
 2.19.2现场复现确认CFA的MSL/EML仍双发：重建丢弃旧锁定槽，却留下旧目标登记。后续源码在所有机体共用重建入口补齐原生解除锁定，未构建安装。已安装2.19.2的三SP模型开启切换中位数41.18ms（103次），较旧83.43ms约减半，但仍会短卡，首次716.48ms峰值也仍存在。现场及修订见[双发根因与计时](evidence/cfa44-live-seeker-residue.json)。
 
+用户追加约20ms目标后，源码继续合并短只读块的重复查页，保留身份判断及引擎调用前后的独立检查；新计时会记录实际查页和复用量。尚未编译实测，20ms不是已经达到的成绩，见[优化依据](evidence/cfa44-read-batch-optimization.json)。
+
 - [下载本地发布包2.19.0](Release/AC7MultiSP-2.19.0.zip)
 - [中文 ReadMe](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)
 - [开发与恢复](docs/development.md) · [当前架构](docs/architecture.md)

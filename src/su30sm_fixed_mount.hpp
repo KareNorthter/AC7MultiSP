@@ -226,42 +226,44 @@ std::string mountName(Addr object) { return mountNameIndex(read<unsigned>(object
 
 // 对象表只做按索引访问，避免在每次更新中扫描全局对象。
 MountIdentity mountIdentity(Addr object) {
+    const NativeReadBatch memory;
     const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前 UObject 表。
-    const int index=read<int>(object+0xc),count=read<int>(base+0x3bcfdb0+12); // 实例索引和表长度。
+    const int index=memory.read<int>(object+0xc),count=memory.read<int>(base+0x3bcfdb0+12); // 实例索引和表长度。
     require(index>=0 && index<count && count<3000000,"固定挂载：对象索引无效");
-    const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(index)*24; // 每项含地址与序列号。
-    require(read<Addr>(entry)==object,"固定挂载：对象表身份不匹配");
-    return {object,index,read<int>(entry+16)};
+    const Addr entry=memory.read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(index)*24; // 每项含地址与序列号。
+    require(memory.read<Addr>(entry)==object,"固定挂载：对象表身份不匹配");
+    return {object,index,memory.read<int>(entry+16)};
 }
 // 先核对对象表，再读取实例，拒绝已销毁对象及地址复用。
 bool mountAlive(const MountIdentity& identity) {
     if(!identity.address)return false;
+    const NativeReadBatch memory;
     const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 对象表全局地址。
-    const int count=read<int>(base+0x3bcfdb0+12); // 当前长度。
+    const int count=memory.read<int>(base+0x3bcfdb0+12); // 当前长度。
     require(count>=0 && count<3000000,"固定挂载：对象表长度无效");
     if(identity.index<0 || identity.index>=count)return false;
-    const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24; // 当前条目。
-    return read<Addr>(entry)==identity.address && read<int>(entry+16)==identity.serial;
+    const Addr entry=memory.read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24; // 当前条目。
+    return memory.read<Addr>(entry)==identity.address && memory.read<int>(entry+16)==identity.serial;
 }
 // 同一段只读循环复用对象表头，条目仍逐个核对地址和序列号；不缓存跨帧内存页。
 // 作用域内不能调用ProcessEvent、生成/回收对象或其他可能重入引擎的接口。
 struct MountIdentityBatch {
+    NativeReadBatch memory;
     Addr entries{};int count{};
     MountIdentityBatch() {
-        std::array<unsigned char,16> header{};
         const Addr address=reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x3bcfdb0;
-        checkMemory(address,header.size());std::memcpy(header.data(),reinterpret_cast<void*>(address),header.size());
+        const auto header=memory.read<std::array<unsigned char,16>>(address);
         std::memcpy(&entries,header.data(),8);std::memcpy(&count,header.data()+12,4);
         require(count>=0 && count<3000000,"固定挂载：对象表长度无效");
     }
     bool alive(const MountIdentity& id) const {
         if(!id.address || id.index<0 || id.index>=count)return false;
         const Addr entry=entries+static_cast<Addr>(id.index)*24;
-        std::array<unsigned char,24> bytes{};checkMemory(entry,bytes.size());
-        std::memcpy(bytes.data(),reinterpret_cast<void*>(entry),bytes.size());
+        const auto bytes=memory.read<std::array<unsigned char,24>>(entry);
         Addr object{};int serial{};std::memcpy(&object,bytes.data(),8);std::memcpy(&serial,bytes.data()+16,4);
         return object==id.address && serial==id.serial;
     }
+    template<class T> T read(Addr address) const {return memory.read<T>(address);}
 };
 // 使用已核对的组件 Tick 接口更新调度队列，不能仅改 Tick 状态字节。
 void mountSetRackAnimation(Addr rack,bool paused,bool tick) {
