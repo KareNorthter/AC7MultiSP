@@ -6,7 +6,9 @@
 
 用户反馈不扩大为完全无卡或全机全组合验收，其他待办继续保留。后续同类小优化递增补丁号，下一版为2.19.1。当前实现和验证边界见[挂载设计](docs/multi-sp-mount-design.md)。
 
-当前整合候选2.19.1位于`codex/integration-2.19.1`：接收CFA双/三SP开合保留、FALKEN等待TLS及尾迹自然结束后切换，以及默认关闭的镜头保持/R3长短按功能。候选已成套构建、通过现有检查并安装，效果待用户测试；正式主线及发布包仍为2.19.0。
+当前整合候选2.19.1位于`codex/integration-2.19.1`：接收CFA双/三SP开合保留、FALKEN等待TLS及尾迹自然结束后切换，以及默认关闭的镜头保持/R3长短按功能。候选已构建安装；用户确认CFA互切不再播放动画，但仍明显卡顿，并反馈MSL双发、关闭模型时EML双发。正式主线及发布包仍为2.19.0。
+
+后续源码`codex/cfa44-fire-switch-audit`基于已安装候选，改为ADF发射期间直接拒绝切换，并减少CFA重复核对、补充诊断。现有30次CFA切换中位数83.43毫秒；新修订尚未构建安装，双发未定位、性能改善未验证，见[调查记录](evidence/cfa44-fire-switch-2.19.1-audit.json)。
 
 - [下载本地发布包2.19.0](Release/AC7MultiSP-2.19.0.zip)
 - [中文 ReadMe](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)

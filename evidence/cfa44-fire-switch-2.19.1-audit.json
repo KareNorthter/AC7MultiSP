@@ -1,0 +1,223 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "branch": "codex/cfa44-fire-switch-audit",
+  "baseline_commit": "a970ca4",
+  "installed_version": "2.19.1",
+  "user_feedback": {
+    "cfa_sp_animation": "SP互切不再播放动画，符合预期；切换仍明显卡顿",
+    "cfa_msl": "用户补充：起初MSL正常，切至ADMM发射后再切回MSL，概率出现一次按键发射两枚且扣2；一枚制导、一枚直飞，关闭模型仍存在。不是持续必现，也不能把包含关系扩大到没有ADMM的组合。",
+    "cfa_eml": "关闭多SP模型时双发齐射",
+    "adf_policy": "TLS发射期间拒绝切换，不保存结束后自动执行的请求",
+    "delivery": "用户明确要求本线程不编译安装，由用户另行指挥其他线程检查成果并构建安装；本线程不代为发消息。"
+  },
+  "snapshot": "Temp\\cfa44-fire-switch-20261018-160256",
+  "logs": {
+    "native.log": {
+      "sha256": "00a0323ffdc7a34857697e44e0993729f04e2ed53c8ebdd4058f362af58d92d8",
+      "bytes": 2002706
+    },
+    "mod.log": {
+      "sha256": "1db0f07746587388a1829c3a4d9e2e43100b9b822d08583ae24b8cb9f549c009",
+      "bytes": 5292752
+    }
+  },
+  "installed_files": {
+    "Scripts/config_store.lua": true,
+    "Scripts/debug_aircraft.lua": true,
+    "Scripts/json.lua": true,
+    "Scripts/loadout_flow.lua": true,
+    "Scripts/loadout_profile.lua": true,
+    "Scripts/main.lua": true,
+    "Scripts/native_bridge.lua": true,
+    "Scripts/native_hud.lua": true,
+    "Scripts/native_loadout.lua": true,
+    "Scripts/runtime_context.lua": true,
+    "Scripts/weapon_cycle.lua": true,
+    "Scripts/weapon_names.lua": true,
+    "Scripts/weapon_presentation.lua": true,
+    "Scripts/mount_assets.lua": true,
+    "bin/DualSP.dll": true,
+    "bin/DualSPUI.dll": true,
+    "VERSION": true
+  },
+  "measurement": {
+    "after_tick": 178018000,
+    "total_ms": {
+      "count": 30,
+      "min": 78.93440000000001,
+      "median": 83.4254,
+      "p95": 96.00420000000001,
+      "max": 788.8721
+    },
+    "stages_ms": {
+      "audio_selection": {
+        "count": 30,
+        "min": 0.14750000000000002,
+        "median": 0.17615000000000003,
+        "p95": 0.232,
+        "max": 0.2722
+      },
+      "capture": {
+        "count": 30,
+        "min": 0.7486,
+        "median": 0.80545,
+        "p95": 1.0528,
+        "max": 2.1444
+      },
+      "mount_before": {
+        "count": 30,
+        "min": 25.233500000000003,
+        "median": 25.961100000000002,
+        "p95": 27.4452,
+        "max": 30.9632
+      },
+      "mount_commit": {
+        "count": 30,
+        "min": 41.6413,
+        "median": 43.3684,
+        "p95": 46.767700000000005,
+        "max": 49.1391
+      },
+      "native_init": {
+        "count": 30,
+        "min": 5.102,
+        "median": 5.4892,
+        "p95": 10.3385,
+        "max": 713.1915
+      },
+      "reload_armed": {
+        "count": 30,
+        "min": 0.0103,
+        "median": 0.68515,
+        "p95": 0.8,
+        "max": 1.6278000000000001
+      },
+      "response_publish": {
+        "count": 30,
+        "min": 0.5720000000000001,
+        "median": 0.65985,
+        "p95": 0.9770000000000001,
+        "max": 0.9919
+      },
+      "restore_effects": {
+        "count": 30,
+        "min": 0.6228,
+        "median": 0.6925000000000001,
+        "p95": 2.2699000000000003,
+        "max": 2.5943
+      },
+      "retain_effects": {
+        "count": 30,
+        "min": 3.1203000000000003,
+        "median": 3.2533000000000003,
+        "p95": 7.6237,
+        "max": 8.1734
+      }
+    },
+    "first_sample": {
+      "line": 22174,
+      "tick": 178028484,
+      "event": "CFA_SWITCH_COST",
+      "muzzle_filter": {
+        "records_after": 1,
+        "records_before": 0,
+        "stages": {
+          "audio_selection": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "capture": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "mount_before": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "mount_commit": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "native_init": {
+            "calls": 272,
+            "hits": 1,
+            "ms": 711.9682
+          },
+          "reload_armed": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "response_publish": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "restore_effects": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          },
+          "retain_effects": {
+            "calls": 0,
+            "hits": 0,
+            "ms": 0.0
+          }
+        }
+      },
+      "ok": true,
+      "request": 3,
+      "stages_ms": {
+        "audio_selection": 0.159,
+        "capture": 0.7643000000000001,
+        "mount_before": 26.1319,
+        "mount_commit": 43.272000000000006,
+        "native_init": 713.1915,
+        "reload_armed": 0.7503000000000001,
+        "response_publish": 0.6475000000000001,
+        "restore_effects": 0.6706000000000001,
+        "retain_effects": 3.2849000000000004
+      },
+      "total_ms": 788.8721
+    },
+    "following_samples": {
+      "count": 29,
+      "median_ms": 83.3622,
+      "min_ms": 78.93440000000001,
+      "max_ms": 96.00420000000001
+    },
+    "scope": "最后一轮CFA三挂30条切换；旧采样只在外观绑定时启用，关闭模型缺少同口径高精度数据；不是帧耗时/FPS"
+  },
+  "findings": [
+    "常规切换模型前处理和提交分别约26/43毫秒，为主要已测阶段；具体子函数尚未分解。",
+    "首条总计约789毫秒，native_init约713毫秒，其中muzzle_filter约712毫秒；已定位到炮口过滤路径，尚未拆分其元数据解析、身份检查和显隐调用。",
+    "用户确认ADMM发射后切回MSL概率双发且扣2，优先调查跨类别的发射/连射状态残留；不只是重复外观，根因仍未证实。",
+    "现有weaponSwitchReady沿用原生门槛：+0x2a0为0，且非(+0x2c0非0且+0x2e0大于1)；不能未经现场核对把大于1改成大于0或直接清零。",
+    "现有日志没有按键/发射计数，不能判定MSL与EML是否同因；不得把旧EML字段样本当作本次现场。"
+  ],
+  "source_changes": [
+    "ADF直接拒绝TLS期间选择并清空等待，结束后须重新按键。",
+    "短只读循环批量核对对象表条目，逐项地址/序列号仍保留，不缓存跨帧页、不跨引擎调用。",
+    "骨显隐布局在绑定/元数据复用时全检，维持及同布局切换保留组件/资源动态检查和每次调用前后函数弱身份检查。",
+    "CFA_SWITCH_COST修订2覆盖外观开关，新增memory_checks、mount_work、目标配置。",
+    "CFA_WEAPON_SAMPLE复用HUD库存采样，记录MSL/EML扣弹和原生fire_all等字段；增加类别变化、最近ADMM扣弹时间与切换门槛原始字段。不为ADMM每枚另写日志，采样扣弹不等于单次按键发射计数。"
+  ],
+  "async_decision": "未把UObject读取、ProcessEvent或Init放后台；检查结果跨线程/跨帧会过期，单纯延后整段Init不能减少最长阻塞。新数据先确定可拆分工作，不能用用户可能晚发射作为安全门槛。",
+  "status": {
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "after_measurement": false,
+    "double_fire_fixed": false,
+    "performance_improvement_proven": false
+  },
+  "next_evidence": [
+    "同组合、同场景、模型开/关各连续切换；首次单列，报告中位数/P95/最大值。",
+    "按首次MSL正常→ADMM发射→切回MSL→单次按键的顺序复现；MSL扣2已获用户确认，结合CFA_WEAPON_SAMPLE观察ADMM历史、类别、门槛和齐射字段。EML另行对照，不能默认同因。若仍不足，需获授权进行发射入口现场只读采样。"
+  ]
+}

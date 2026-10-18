@@ -889,9 +889,12 @@ releaseWeaponInput=function(reason)
     assert(ok,err)
     note("WEAPON_INPUT_RELEASED "..reason)
 end
--- 原生连射或Falken TLS尚未结束时暂存选择，不提前重建或关闭鼻口。
+-- 普通连射暂存选择；Falken TLS发射期间直接拒绝，不保存或自动重放请求。
 function weaponSwitch.defer(desired,reason)
     internal=false;lastArmed=plane:IsSpecialWeaponArmed()
+    if reason=="falken_tls_active"then
+        weaponSwitch.clear("falken_tls_active");return
+    end
     local pending=weaponSwitch.pending
     if not pending or pending.desired~=desired then
         pending={desired=desired,plane=plane:GetAddress(),activator=activator:GetAddress(),world=currentWorld,
@@ -899,8 +902,6 @@ function weaponSwitch.defer(desired,reason)
         weaponSwitch.pending=pending
         note("WEAPON_SWITCH_PENDING target="..desired.." reason="..tostring(reason or "native_busy"))
     end
-    -- TLS退场后若仍有普通连射门槛，再给予原有五秒窗口。
-    if pending.reason=="falken_tls_active"and reason~="falken_tls_active"then pending.started=game:GetTimeSeconds(plane)end
     pending.reason=reason and reason~=""and reason or "native_busy"
     lastUIKey=nil
 end
@@ -929,19 +930,22 @@ local function selectLogicalWeapon(desired,retry)
     if not retry then weaponSwitch.clear("superseded")end
     local falken=catalogue and catalogue[tostring(planeId)]and catalogue[tostring(planeId)].code=="zoef"
     if falken then
-        -- 放在ReleaseWeaponInput之前：等待期间不通过释放输入干预正在发射的TLS。
+        -- 放在ReleaseWeaponInput之前：拒绝切换时不通过释放输入干预正在发射的TLS。
         local ok,canSwitch,reason=weaponSwitch.read(plane:GetAddress(),activator:GetAddress())
         assert(ok,reason or "原生切换状态读取失败")
-        if not canSwitch and reason=="falken_tls_active"then weaponSwitch.defer(desired,reason);return false end
+        if not canSwitch and reason=="falken_tls_active"then
+            weaponSwitch.clear("falken_tls_active");lastArmed=plane:IsSpecialWeaponArmed()
+            note("WEAPON_SWITCH_REJECTED FALKEN_TLS_ACTIVE");return false
+        end
     end
-    if not retry or (weaponSwitch.pending and weaponSwitch.pending.reason=="falken_tls_active")then
+    if not retry then
         releaseWeaponInput("logical_weapon_switch") -- 包括切回MSL；等待期间不重复释放输入。
     end
     local ok,canSwitch,reason=weaponSwitch.read(plane:GetAddress(),activator:GetAddress())
     assert(ok,reason or "原生切换状态读取失败")
     if not canSwitch then weaponSwitch.defer(desired,reason);return false end
     internal=true
-    -- Falken已等到自然退场，不调用提前停光；其他机型保留既有TLS策略。
+    -- Falken仅在已经自然退场时接受本次按键；其他机型保留既有TLS策略。
     -- 原生循环可能先经过 MSL，仍按最终逻辑目标和当前挂载判断，不能依据中间 armed 状态。
     if not falken and desired>0 and desired~=active+1 and flightOptions and flightOptions[currentProfile[Profile.fields[active+1]]+1].runtime_weapon_id==25 then
         local ended,err=finishTLS(plane:GetAddress(),activator:GetAddress())
@@ -963,7 +967,7 @@ local function selectLogicalWeapon(desired,retry)
     weaponSwitch.pending=nil;lastUIKey=nil
     return true
 end
--- 等待原生连射/TLS及尾迹结束再重建；只在存在待切换请求时每50ms查询。
+-- 仅普通连射保留待切换请求；Falken TLS期间的选择已直接丢弃。
 function weaponSwitch.pump()
     local pending=weaponSwitch.pending
     if not pending then return end
@@ -974,8 +978,7 @@ function weaponSwitch.pump()
     end
     if internal or panelOpen or not ready()or game:IsGamePaused(plane)then return end
     local time=game:GetTimeSeconds(plane)
-    -- TLS按真实退场判定，不能被普通连射的五秒超时提前丢弃；上下文失效仍立即取消。
-    if time<pending.started or (pending.reason~="falken_tls_active"and time-pending.started>5)then weaponSwitch.clear("expired");return end
+    if time<pending.started or time-pending.started>5 then weaponSwitch.clear("expired");return end
     if pending.lastCheck and time-pending.lastCheck<.05 then return end
     pending.lastCheck=time
     if pending.desired>0 then

@@ -243,6 +243,26 @@ bool mountAlive(const MountIdentity& identity) {
     const Addr entry=read<Addr>(base+0x3bcfdb0)+static_cast<Addr>(identity.index)*24; // 当前条目。
     return read<Addr>(entry)==identity.address && read<int>(entry+16)==identity.serial;
 }
+// 同一段只读循环复用对象表头，条目仍逐个核对地址和序列号；不缓存跨帧内存页。
+// 作用域内不能调用ProcessEvent、生成/回收对象或其他可能重入引擎的接口。
+struct MountIdentityBatch {
+    Addr entries{};int count{};
+    MountIdentityBatch() {
+        std::array<unsigned char,16> header{};
+        const Addr address=reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x3bcfdb0;
+        checkMemory(address,header.size());std::memcpy(header.data(),reinterpret_cast<void*>(address),header.size());
+        std::memcpy(&entries,header.data(),8);std::memcpy(&count,header.data()+12,4);
+        require(count>=0 && count<3000000,"固定挂载：对象表长度无效");
+    }
+    bool alive(const MountIdentity& id) const {
+        if(!id.address || id.index<0 || id.index>=count)return false;
+        const Addr entry=entries+static_cast<Addr>(id.index)*24;
+        std::array<unsigned char,24> bytes{};checkMemory(entry,bytes.size());
+        std::memcpy(bytes.data(),reinterpret_cast<void*>(entry),bytes.size());
+        Addr object{};int serial{};std::memcpy(&object,bytes.data(),8);std::memcpy(&serial,bytes.data()+16,4);
+        return object==id.address && serial==id.serial;
+    }
+};
 // 使用已核对的组件 Tick 接口更新调度队列，不能仅改 Tick 状态字节。
 void mountSetRackAnimation(Addr rack,bool paused,bool tick) {
     const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前构建的 SetComponentTickEnabled。
@@ -808,6 +828,7 @@ void fixedMountRefresh(double time) {
 // 在完整兵装事务后绑定；静态组合先匹配真实类，再检查各机体现场核对的布局。
 void fixedMountCommit(const Command& command) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
+    CfaWorkScope admission(5);
     if(command.op=="checkpoint_save" || command.op=="snapshot") { fixedMountRefresh(command.time);return; }
     if(session.count<1) { fixedMountRelease();return; }
     const MountAircraft aircraft=mountAircraft(command.plane); // 未登记机体继续使用原生当前 SP 模型。
@@ -830,6 +851,7 @@ void fixedMountCommit(const Command& command) {
     }
     // 单 QAAM 也接管显隐，保留原生四处库存外观；其他单挂仍由原生管理。
     const bool singleQaam=session.count==1 && aircraft==MountAircraft::Su30sm && kindsMask==4;
+    admission.stop();
     if(session.count==1 && !singleQaam) { fixedMountRelease();return; }
     if(mountExterior(aircraft) && !(kindsMask&4u)) { fixedMountRelease();return; } // 无8AAM/PLSL的组合完全原生。
     if(mountLight(aircraft) && mountLightNative(aircraft,kindsMask)) { fixedMountRelease();return; }
@@ -870,8 +892,8 @@ void fixedMountCommit(const Command& command) {
         mountSetRackAnimation(rack,false,true);
     }
     fixedMount.rebuilding=false;
-    mountLightAnimationCommit(); // CFA只复用开合状态并同步附属盖板，公共进度仍由原生推进。
-    mountCfaMuzzlePrune();mountCfaMuzzleSync();
+    { CfaWorkScope cost(6);mountLightAnimationCommit(); } // CFA公共进度仍由原生推进。
+    { CfaWorkScope cost(7);mountCfaMuzzlePrune();mountCfaMuzzleSync(); }
     if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
     fixedMountRefresh(command.time);
 }

@@ -81,9 +81,26 @@ float fixedMountElapsed(int index,float duration,float elapsed); // 区分实际
 #endif
 
 void require(bool condition, const char* message) { if (!condition) throw std::runtime_error(message); }
+// 仅CFA切换期间统计实际VirtualQuery次数及耗时，不用估计值代替实测。
+struct NativeReadCost {
+    bool active{};uint64_t calls{},ticks{};
+    static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
+};
+thread_local NativeReadCost nativeReadCost;
+struct CfaWorkCost { uint64_t calls{},ticks{}; };
+thread_local std::array<CfaWorkCost,8> cfaWorkCosts;
+struct CfaWorkScope {
+    unsigned kind;uint64_t start{};
+    explicit CfaWorkScope(unsigned value):kind(value) {if(nativeReadCost.active)start=NativeReadCost::now();}
+    void stop() {if(start){auto& s=cfaWorkCosts[kind];++s.calls;s.ticks+=NativeReadCost::now()-start;start=0;}}
+    ~CfaWorkScope() {stop();}
+};
 void checkMemory(Addr address, size_t size) {
     MEMORY_BASIC_INFORMATION info{};
-    require(address && VirtualQuery(reinterpret_cast<void*>(address), &info, sizeof(info)), "Invalid address");
+    const auto started=nativeReadCost.active?NativeReadCost::now():0;
+    const bool queried=address && VirtualQuery(reinterpret_cast<void*>(address), &info, sizeof(info));
+    if(nativeReadCost.active){++nativeReadCost.calls;nativeReadCost.ticks+=NativeReadCost::now()-started;}
+    require(queried, "Invalid address");
     require(info.State==MEM_COMMIT && !(info.Protect & (PAGE_GUARD|PAGE_NOACCESS)), "Unreadable memory");
     require(address+size>=address && address+size<=reinterpret_cast<Addr>(info.BaseAddress)+info.RegionSize, "Range outside allocation");
 }
@@ -519,6 +536,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 }
 #endif
 #include "continuous_sp.hpp"
+#include "cfa_weapon_diagnostics.hpp"
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
@@ -528,6 +546,8 @@ struct CfaSwitchCost {
     bool active{};uint64_t start{},last{};
     std::array<uint64_t,9> ticks{};
     std::array<bool,9> reached{};
+    std::array<std::array<uint64_t,2>,9> reads{};
+    int target{-1};bool models{};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     std::array<CfaMuzzleCost::Sample,9> muzzle{};
     size_t muzzleRecordsBefore{};
@@ -535,6 +555,8 @@ struct CfaSwitchCost {
     static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
     void begin(bool enabled) {
         *this={};active=enabled;
+        nativeReadCost={};nativeReadCost.active=active;
+        cfaWorkCosts={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         cfaMuzzleCost={};cfaMuzzleCost.active=active;muzzleRecordsBefore=cfaMuzzleVisuals.size();
 #endif
@@ -543,6 +565,7 @@ struct CfaSwitchCost {
     void mark(unsigned stage) {
         if(!active)return;
         const auto time=now();ticks.at(stage)=time-last;reached.at(stage)=true;last=time;
+        reads.at(stage)={nativeReadCost.calls,nativeReadCost.ticks};nativeReadCost.calls=nativeReadCost.ticks=0;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         muzzle.at(stage)=cfaMuzzleCost.sample;cfaMuzzleCost.sample={};
 #endif
@@ -550,6 +573,7 @@ struct CfaSwitchCost {
     void finish(uint64_t request,bool ok) noexcept {
         if(!active)return;
         const auto end=now();active=false;
+        nativeReadCost.active=false;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         cfaMuzzleCost.active=false;
 #endif
@@ -562,7 +586,18 @@ struct CfaSwitchCost {
             Json stages=Json::object();
             for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
             Json result{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
-                {"total_ms",double(end-start)*ms},{"stages_ms",stages}};
+                {"total_ms",double(end-start)*ms},{"stages_ms",stages},{"target_config",target},{"models",models},
+                {"profile_revision",2}};
+            Json checks=Json::object();
+            for(unsigned i=0;i<reads.size();++i)if(reached[i])checks[names[i]]={
+                {"calls",reads[i][0]},{"ms",double(reads[i][1])*ms}};
+            result["memory_checks"]=checks; // 各段的子集，不能与stages_ms相加。
+            const char* workNames[]={"layout_audit","bones_return","rack_return","bones_maintain",
+                "rack_maintain","commit_classify","parts_bind","muzzle_sync"};
+            Json work=Json::object();
+            for(unsigned i=0;i<cfaWorkCosts.size();++i)work[workNames[i]]={
+                {"calls",cfaWorkCosts[i].calls},{"ms",double(cfaWorkCosts[i].ticks)*ms}};
+            result["mount_work"]=work; // 与memory_checks重叠，只用于定位，不能相加。
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             Json filterStages=Json::object();
             for(unsigned i=0;i<muzzle.size();++i)if(reached[i])filterStages[names[i]]={
@@ -747,6 +782,10 @@ void execute(const Command& command) {
     verifyVersion();
     require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
+    if(command.op!="snapshot" && command.op!="checkpoint_save") {
+        cfaWeaponDiagnostic.sampled=false;
+        if(command.op!="switch")cfaWeaponDiagnostic.admmObserved=false; // 换装/补给/检查点不沿用旧发射历史。
+    }
     continuousSweep();
     if(command.op=="setup" || command.op=="resupply_setup" || command.op=="checkpoint_restore" || command.op=="resupply")
         continuousDrain(command.plane,command.activator); // 活动效果不进入弹药/检查点快照。
@@ -1281,7 +1320,7 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
     }
 }
 #endif
-// 暂拒切换是可恢复状态；Lua等待原生连射或Falken TLS自然结束后才进入兵装事务。
+// 暂拒切换是可恢复状态；Lua对普通连射暂存请求，对Falken TLS直接丢弃请求。
 extern "C" __declspec(dllexport) int dualsp_switch_ready(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1743,6 +1782,7 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         std::array<bool,3> spReady{}; // 未搭载槽固定不就绪。
         require(session.plane==plane && session.activator==activator && session.count==count,"HUD SP 会话不匹配");
         require(session.active>=0 && session.active<count,"HUD 活动 SP 无效");
+        cfaObserveWeapons(plane,activator,main,special,time);
         for(int index=0;index<count;++index)
             spReady[index]=hasReadyRound(index==session.active ? special : session.special[index],time);
         api->boolean(luaState,true);api->boolean(luaState,mainReady);
@@ -1773,9 +1813,11 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         request=command.request;
         require(runtimeEnabled,"Mod disabled outside single-player");
         transientSwitch=command.op=="switch";
+        verifyVersion();
+        cfaSwitchCost.begin(transientSwitch && continuousCfa44(command.plane));
+        cfaSwitchCost.target=command.configs[command.target];
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        cfaSwitchCost.begin(transientSwitch && fixedMount.bound && fixedMount.aircraft==MountAircraft::Fa44 &&
-            fixedMount.plane.address==command.plane);
+        cfaSwitchCost.models=fixedMountEnabled && fixedMount.bound && !fixedMountFailed;
 #endif
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
             {"target",command.target},{"configs",command.configs},{"count",command.count},{"thread",GetCurrentThreadId()}}.dump());

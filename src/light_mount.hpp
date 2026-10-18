@@ -61,8 +61,9 @@ struct LightMountBones {
     static bool same(Name a,Name b) {return a.index==b.index && a.number==b.number;}
     static std::string label(Name n) {return mountNameIndex(n.index)+(n.number?"_"+std::to_string(n.number-1):"");}
     void componentCurrent() {
-        Reflection::thread();Reflection::alive(component);Reflection::alive(mesh);Reflection::alive(skeleton);
-        Reflection::alive(componentClass);
+        Reflection::thread();const MountIdentityBatch identities;
+        require(identities.alive(component) && identities.alive(mesh) && identities.alive(skeleton) &&
+            identities.alive(componentClass),"轻量骨显隐：组件或资源身份失效");
         require(read<Addr>(component.address+0x10)==componentClass.address &&
             read<Addr>(component.address+meshField.offset)==mesh.address &&
             read<Addr>(mesh.address+skeletonField.offset)==skeleton.address,"轻量骨显隐：骨架资源被替换");
@@ -212,7 +213,9 @@ struct LightMountBones {
     }
     void maintain() {
         if(applied)return;
-        require(prepared,"轻量骨显隐：尚未绑定");current();
+        // 参数布局在prepare绑定/复用时完整核对；同一资源只重验动态身份。
+        // set/invoke仍在每次引擎调用前后检查组件与函数弱身份。
+        require(prepared,"轻量骨显隐：尚未绑定");componentCurrent();
         for(auto& root:roots)set(root,root.wanted);
         applied=true;
     }
@@ -431,10 +434,12 @@ bool mountLightDesired(const FixedMountState& state,const MountVisual& visual,bo
     return (state.readyMask&visual.physicalBit)!=0;
 }
 bool mountLightLayoutChanged(const FixedMountState& state) {
+    CfaWorkScope cost(0);
     if(!state.light)return true;
+    const MountIdentityBatch identities; // 这段只读循环不调用引擎，结束后不保留表头。
     for(int pool=0;pool<3;++pool) {
         const auto& rack=state.light->racks[pool];if(!rack.component.address)continue;
-        if(!mountAlive(rack.component) || !mountAlive(rack.mesh) ||
+        if(!identities.alive(rack.component) || !identities.alive(rack.mesh) ||
             read<Addr>(state.plane.address+state.rackOffsets[pool])!=rack.component.address ||
             read<Addr>(rack.component.address+rack.meshOffset)!=rack.mesh.address)return true;
         if(state.aircraft==MountAircraft::Dark)continue;
@@ -442,10 +447,10 @@ bool mountLightLayoutChanged(const FixedMountState& state) {
         if(read<int>(array+8)!=state.poolCounts[pool])return true;
         const Addr data=read<Addr>(array);
         for(const auto& visual:state.visuals)if(visual.pool==pool && visual.index>=0 &&
-            (!mountAlive(visual.identity) || read<Addr>(data+static_cast<Addr>(visual.index)*8)!=visual.identity.address))return true;
+            (!identities.alive(visual.identity) || read<Addr>(data+static_cast<Addr>(visual.index)*8)!=visual.identity.address))return true;
         if(state.aircraft==MountAircraft::Fa44)for(int position=0;position<state.physicalCount;++position) {
             const auto& point=state.light->positions[position];if(point.pool!=pool)continue;
-            if(!mountAlive(point.component) || read<Addr>(data+static_cast<Addr>(point.index)*8)!=point.component.address ||
+            if(!identities.alive(point.component) || read<Addr>(data+static_cast<Addr>(point.index)*8)!=point.component.address ||
                 read<Addr>(point.component.address+0x100)!=rack.component.address)return true;
         }
     }
@@ -456,12 +461,14 @@ void mountLightRelease(FixedMountState& state,bool keepBones) {
     std::string failure;
     for(auto& rack:state.light->racks) {
         try {
+            CfaWorkScope cost(1);
             if(keepBones) {
                 // 同机同布局切换保留租约，避免先显示再隐藏；Init后只复核并补齐被原生重置的支路。
-                if(rack.bones.prepared) {rack.bones.current();rack.bones.applied=false;}
+                if(rack.bones.prepared) {rack.bones.componentCurrent();rack.bones.applied=false;}
             } else rack.bones.release();
         }catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
         if(rack.animationOwned)try {
+            CfaWorkScope cost(2);
             if(mountAlive(rack.component) &&
                (((read<unsigned char>(rack.component.address+0x9b0)&2)!=0)!=rack.nativeNoSkeleton ||
                 (read<unsigned char>(rack.component.address+0x3f)!=0)!=rack.nativeTick))
@@ -503,20 +510,27 @@ void mountLightMaintain(FixedMountState& state) {
     if(state.aircraft!=MountAircraft::Fa44)return;
     // SWP3两组机构只控制外形；sp31仍在Body上，不能隐藏根骨或压低公共开盖进度。
     auto& ecm=state.light->racks[2];
-    if(!ecm.bones.prepared) {
-        // ECM允许没有持久效果源；有源时使用绑定阶段核对过的真实sp31 FName。
-        ecm.bones.prepare(ecm.component,2,ecm.effectSockets);
+    {
+        CfaWorkScope cost(3);
+        if(!ecm.bones.prepared) {
+            // ECM允许没有持久效果源；有源时使用绑定阶段核对过的真实sp31 FName。
+            ecm.bones.prepare(ecm.component,2,ecm.effectSockets);
+        }
+        ecm.bones.maintain();
     }
-    ecm.bones.maintain();
     const bool split=(state.kindsMask&3u)==3u;
     for(int pool=0;pool<2;++pool) {
         auto& rack=state.light->racks[pool];if(!(state.kindsMask&(1u<<pool)))continue;
-        if(split && !rack.bones.prepared) {
-            std::vector<MountAnimationReflection::SocketName> sockets;
-            for(int p=0;p<state.physicalCount;++p)if(state.light->positions[p].pool==pool)sockets.push_back(state.light->positions[p].socket);
-            rack.bones.prepare(rack.component,pool,sockets);
+        {
+            CfaWorkScope cost(3);
+            if(split && !rack.bones.prepared) {
+                std::vector<MountAnimationReflection::SocketName> sockets;
+                for(int p=0;p<state.physicalCount;++p)if(state.light->positions[p].pool==pool)sockets.push_back(state.light->positions[p].socket);
+                rack.bones.prepare(rack.component,pool,sockets);
+            }
+            if(split)rack.bones.maintain();else rack.bones.release(); // 和ECM双挂保整架左右。
         }
-        if(split)rack.bones.maintain();else rack.bones.release(); // 仅ADMM+EML/三挂分侧，和ECM双挂保整架左右。
+        CfaWorkScope cost(4);
         const Addr object=rack.component.address;const auto flags=read<unsigned char>(object+0x9b0);
         const bool noSkeleton=(flags&2)!=0,tick=read<unsigned char>(object+0x3f)!=0;
         require(!(flags&4),"轻量挂载：原生主动暂停挂架动画");
