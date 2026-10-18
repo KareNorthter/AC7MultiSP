@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/camera-r3-short-press-fix",
+  "branch_origin": "从main建立独立工作区，再快进到已安装2.19.1；未收取其他线程未提交修改。",
+  "base_commit": "a970ca44ad8a79ee5a372542f81356d89e9e6a75",
+  "installed_baseline": "evidence/2.19.1-installed.json",
+  "status": "修复候选源码完成，未构建安装，效果待实测",
+  "user_feedback": "功能基本正常，但是按一下右摇杆可以同时触发回正和切换视角（而非长按），需要修复",
+  "static_findings": [
+    "旧逻辑仅拦截按住R3时的第一个原生换视角回调，nativePress已置位或longDone后会放行后续回调。",
+    "旧回调每次重读硬件；硬件已松开但游戏尚未交付按下事件时，原生动作可能直接放行。",
+    "旧逻辑松开及换视角时立即清除原生动作隔离，释放交接中的重复或迟到回调可能漏放。"
+  ],
+  "finding_boundary": "仅人工源码分析，未采集本次故障的现场回调栈，不能断言唯一实机原因。",
+  "changes": [
+    "接管完整R3按压及释放交接中的所有原生换视角回调；短按只在释放确认后回正一次。",
+    "已有按压使用缓存边沿，无缓存时才补采硬件，兼容原生动作先于游戏线程输入观察到达。",
+    "原生动作确认且达到500毫秒后，仅由Lua游戏线程调用一次原生换视角跳板；松开不再回正。",
+    "换视角清除旧镜头保持、取消未执行动作，保留当前R3隔离，防止同次按住再换一次。",
+    "释放后已确认原生动作保留100毫秒交接，未确认最多等待500毫秒；只在Lua调度中结束交接。",
+    "保留R3/L3真实输入，双摇杆继续允许原生干扰弹并同时回正，取消该次未完成长按换视角。"
+  ],
+  "input_boundary": "沿用原生R3换视角映射。原生动作无FKey，R3按压及释放交接期间混合输入的另一换视角键也被归入本次R3；其余时间原生换视角直通。",
+  "diagnostics": {
+    "CAMERA_HOLD_R3_VIEW_BLOCK": "每次R3最多记录前两个被拦截回调及是否已经松开。",
+    "CAMERA_HOLD_R3_VIEW_DISPATCH": "仅受控长按换视角时记录按住毫秒数。"
+  },
+  "unchanged": {
+    "default_enabled": false,
+    "setting_page": "第二个按键页",
+    "long_press_ms": 500,
+    "management_protocol": 9,
+    "configuration_revision": 8,
+    "version": "保留已安装2.19.1历史元数据，未更改版本号。",
+    "historical_evidence": "原研究、实现、构建、安装及发布回执未改写。"
+  },
+  "verification": "人工核对短按、重复回调、释放后迟到回调、长按单次、换视角后仍按住、双摇杆及清理路径；Git差异空白检查通过，受保护旧核心摘要一致。以上均为静态复核，不是运行测试或游戏验收。",
+  "compiled": false,
+  "test_modules_created": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "gameplay_verified": false,
+  "source_sha256": {
+    "src/camera_hold.hpp": "9b642027ce2e7708c5a46c30bf151ed9d3de63ff95baacbc637aa686bc049be2"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}
