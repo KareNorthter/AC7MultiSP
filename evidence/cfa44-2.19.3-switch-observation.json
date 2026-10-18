@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "version": "2.19.3",
+  "installed_receipt": "evidence/2.19.3-installed.json",
+  "installed_core_sha256": "221c76213fc22f6e4bf677a5368868cf69eb348ba64cef42afbc8590ee466577",
+  "installed_core_hash_matches_receipt": true,
+  "log_snapshot": "Temp\\cfa-latest-20261018-2216\\native.log",
+  "log_sha256": "71310e58deef8bdd1971cbfc9c80ba4dca46efb201181de7d8e67ac5b10eec75",
+  "filter": {
+    "profile_revision": 3,
+    "after_tick": 4385578,
+    "configs": [
+      0,
+      1,
+      2
+    ],
+    "models": true,
+    "requests": [
+      3,
+      46
+    ]
+  },
+  "all_ms": {
+    "count": 44,
+    "min": 24.6693,
+    "median": 26.1871,
+    "p95": 33.8603,
+    "max": 399.2242
+  },
+  "first_ms": 399.2242,
+  "warm_ms": {
+    "count": 43,
+    "min": 24.6693,
+    "median": 26.123800000000003,
+    "p95": 33.5628,
+    "max": 37.8506
+  },
+  "last10_ms": {
+    "count": 10,
+    "min": 25.3201,
+    "median": 26.167250000000003,
+    "p95": 27.2387,
+    "max": 27.2387
+  },
+  "last_switch_ms": 25.5286,
+  "warm_exclusion": "仅排除本次第一条切换request=3，未排除其他较慢样本",
+  "warm_stages_median_ms": {
+    "audio_selection": 4.3785,
+    "capture": 1.1151,
+    "mount_before": 2.3251,
+    "mount_commit": 9.7399,
+    "native_init": 3.1892,
+    "reload_armed": 0.3524,
+    "response_publish": 0.6429,
+    "restore_effects": 0.7059000000000001,
+    "retain_effects": 3.112
+  },
+  "warm_query_medians": {
+    "calls": 1524,
+    "ms": 24.415300000000002,
+    "batch_reused": 396
+  },
+  "previous_2_19_2_median_ms": 41.1837,
+  "all_median_reduction_percent": 36.413921041577126,
+  "user_feedback": {
+    "first_switch_peak_acceptable": true,
+    "double_fire": "目前未复现，用户认为可能已解决；不扩大为所有机体已验收"
+  },
+  "limits": "计量为核心SP重建切换事务，不含完整按键输入到显示延迟、MSL原生组切换或后续渲染；非严格受控A/B。当前无运行中的游戏进程，依据最新已完成测试日志，不推断退出原因。",
+  "actions": "仅读取安装文件和既有日志、汇总并保存证据；未编译、运行测试模块、安装或操作游戏"
+}

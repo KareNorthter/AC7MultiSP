@@ -116,8 +116,11 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
         }
     }
     const auto& rack=fixedMount.light->racks[1].component;
-    if(read<Addr>(object+0x100)!=rack.address || read<unsigned>(object+0x10c)!=0 ||
-       mountNameIndex(read<unsigned>(object+0x108))!="sp21")return nullptr;
+    {
+        const NativeReadBatch memory;
+        if(memory.read<Addr>(object+0x100)!=rack.address || memory.read<unsigned>(object+0x10c)!=0 ||
+           mountNameIndex(memory.read<unsigned>(object+0x108))!="sp21")return nullptr;
+    } // 后续解析元数据及显隐调用不共享这份批次。
     // 非目标模板先快速退出；Outer和反射字段不再随每个持续特效请求从头扫描。
     if((!mountAlive(cfaMuzzleMetadata.componentClass) || read<Addr>(object+0x10)!=cfaMuzzleMetadata.componentClass.address) &&
        !mountClassIs(object,"ParticleSystemComponent","/Script/Engine"))return nullptr;
@@ -153,8 +156,10 @@ bool mountCfaMuzzleFilter(void* object,bool requested,unsigned char propagation,
 }
 // 每次模型提交清理一次失效记录；活对象仍保留归还责任，不在每个显隐回调里全表巡检。
 void mountCfaMuzzlePrune() {
+    if(cfaMuzzleVisuals.empty())return;
+    const MountIdentityBatch identities; // 这里只移除已失效的弱记录，不调用粒子或显隐入口。
     for(auto it=cfaMuzzleVisuals.begin();it!=cfaMuzzleVisuals.end();) {
-        if(!mountAlive(it->second.component))it=cfaMuzzleVisuals.erase(it);
+        if(!identities.alive(it->second.component))it=cfaMuzzleVisuals.erase(it);
         else ++it;
     }
 }

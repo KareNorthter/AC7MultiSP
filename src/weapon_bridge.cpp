@@ -374,22 +374,24 @@ void playSelection(int target) {
 // 在原生初始化丢弃旧锁定槽之前，逐槽释放其搜索/锁定音引用。
 // 不能只清零计数或发送全局静音；这会丢失原生播放与停止的配对关系。
 void finishSeekerAudio(Addr plane,Addr activator) {
-    require(read<Addr>(plane+0x11a8)==activator,"音效收尾的机体与激活器不匹配");
-    const auto seeker=read<Addr>(plane+0x1310); // 当前玩家的锁定组件。
-    require(seeker && read<Addr>(seeker+0x378)==plane,"音效收尾缺少当前玩家锁定组件");
+    Addr seeker{};
+    std::array<int,4> before{}; // 四种音效的引用计数，只用于检查和记录。
+    {
+        const NativeReadBatch memory;
+        require(memory.read<Addr>(plane+0x11a8)==activator,"音效收尾的机体与激活器不匹配");
+        seeker=memory.read<Addr>(plane+0x1310);
+        require(seeker && memory.read<Addr>(seeker+0x378)==plane,"音效收尾缺少当前玩家锁定组件");
+        before=memory.read<std::array<int,4>>(seeker+0x4f0);
+        for(const int count:before)require(count>=0 && count<=512,"锁定音引用计数无效");
+    } // 原生停音会调用引擎，不能保留前面的可读区间。
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 原生逐槽音效收尾函数。
     constexpr unsigned char stop[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x20,
         0x48,0x8b,0x99,0x68,0x04,0,0};
     require(std::memcmp(reinterpret_cast<void*>(base+0x4c98a0),stop,sizeof(stop))==0,"原生锁定音收尾入口不匹配");
-    std::array<int,4> before{}; // 四种音效的引用计数，只用于检查和记录。
-    for(size_t i=0;i<before.size();++i) {
-        before[i]=read<int>(seeker+0x4f0+i*4);
-        require(before[i]>=0 && before[i]<=512,"锁定音引用计数无效");
-    }
     using Stop=void(*)(void*); // 原生内部按每个槽的播放标记发送对应停止事件。
     reinterpret_cast<Stop>(base+0x4c98a0)(reinterpret_cast<void*>(seeker));
-    for(size_t i=0;i<before.size();++i)
-        require(read<int>(seeker+0x4f0+i*4)==0,"旧锁定音引用已失配，请重新开始任务；停止重建兵装");
+    for(const int count:read<std::array<int,4>>(seeker+0x4f0))
+        require(count==0,"旧锁定音引用已失配，请重新开始任务；停止重建兵装");
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
@@ -425,9 +427,10 @@ void finishPlayerTLS(Addr plane,Addr activator) {
 // 发射槽是原生动态池，不等于机体挂点数；ADMM 现场为 Num=126、Max=170。
 struct WeaponSlotArray { Addr data{}; int count{}; }; // 校验后只暴露有效元素，不读备用容量。
 WeaponSlotArray weaponSlotArray(Addr group) {
-    const auto data=read<Addr>(group+0x58); // 原生 TArray 数据区。
-    const int count=read<int>(group+0x60),capacity=read<int>(group+0x64); // 数量与已分配容量。
-    const int window=read<int>(group+0x10),next=read<int>(group+0x14); // 允许装填的窗口和发射游标。
+    const NativeReadBatch memory;
+    const auto data=memory.read<Addr>(group+0x58); // 原生 TArray 数据区。
+    const int count=memory.read<int>(group+0x60),capacity=memory.read<int>(group+0x64); // 数量与已分配容量。
+    const int window=memory.read<int>(group+0x10),next=memory.read<int>(group+0x14); // 允许装填的窗口和发射游标。
     if(!(count>0 && count<=capacity && window>=0 && window<=count && next>=0 && next<count)) {
         // 只在失败时生成诊断，避免 HUD 每次采样都拼接 JSON。
         throw std::runtime_error(Json{{"error","武器槽数组或装填队列无效"},{"count",count},
@@ -621,7 +624,7 @@ struct CfaSwitchCost {
             for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
             Json result{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
                 {"total_ms",double(end-start)*ms},{"stages_ms",stages},{"target_config",target},{"models",models},
-                {"profile_revision",3}};
+                {"profile_revision",4}};
             Json checks=Json::object();
             for(unsigned i=0;i<reads.size();++i)if(reached[i])checks[names[i]]={
                 {"calls",reads[i][0]},{"ms",double(reads[i][1])*ms},

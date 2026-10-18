@@ -26,42 +26,62 @@ bool continuousRebuildStarted=false; // 仅当前核心命令；拒绝调试或�
 std::atomic<DWORD> continuousThread{0};
 
 Addr continuousBase() {return reinterpret_cast<Addr>(GetModuleHandleW(nullptr));}
-Addr continuousEntry(const ContinuousIdentity& id) {
-    const int count=read<int>(continuousBase()+0x3bcfdbc);
-    require(count>=0 && count<3000000,"持续兵装：对象表长度无效");
-    if(!id.address || id.index<0 || id.index>=count)return 0;
-    const Addr entry=read<Addr>(continuousBase()+0x3bcfdb0)+static_cast<Addr>(id.index)*24;
-    return read<Addr>(entry)==id.address && read<int>(entry+16)==id.serial ? entry:0;
-}
+// 仅用于不调用引擎、不写入的短块；PendingKill/Unreachable也每次读取，不缓存身份结论。
+struct ContinuousReadBatch {
+    NativeReadBatch memory;
+    Addr entries{};int count{};
+    ContinuousReadBatch() {
+        const Addr header=continuousBase()+0x3bcfdb0;
+        entries=memory.read<Addr>(header);count=memory.read<int>(header+12);
+        require(count>=0 && count<3000000,"持续兵装：对象表长度无效");
+    }
+    template<class T> T read(Addr address) const {return memory.read<T>(address);}
+    Addr entry(const ContinuousIdentity& id) const {
+        if(!id.address || id.index<0 || id.index>=count)return 0;
+        const Addr item=entries+static_cast<Addr>(id.index)*24;
+        return read<Addr>(item)==id.address && read<int>(item+16)==id.serial?item:0;
+    }
+    bool alive(const ContinuousIdentity& id) const {
+        const Addr item=entry(id);
+        return item && !(read<unsigned>(item+8)&0x30000000u);
+    }
+    ContinuousIdentity identity(Addr object) const {
+        require(object!=0,"持续兵装：对象为空");
+        const int index=read<int>(object+0xc);
+        require(index>=0 && index<count,"持续兵装：对象索引越界");
+        const Addr item=entries+static_cast<Addr>(index)*24;
+        ContinuousIdentity id{object,index,read<int>(item+16)};
+        require(alive(id),"持续兵装：对象身份已失效");return id;
+    }
+};
+Addr continuousEntry(const ContinuousIdentity& id) {return ContinuousReadBatch{}.entry(id);}
 bool continuousAlive(const ContinuousIdentity& id) {
-    const Addr entry=continuousEntry(id);
-    return entry && !(read<unsigned>(entry+8)&0x30000000u); // Unreachable / PendingKill。
+    return ContinuousReadBatch{}.alive(id);
 }
 ContinuousIdentity continuousIdentity(Addr object) {
-    require(object!=0,"持续兵装：对象为空");
-    const int index=read<int>(object+0xc),count=read<int>(continuousBase()+0x3bcfdbc);
-    require(index>=0 && index<count && count<3000000,"持续兵装：对象索引越界");
-    const Addr entry=read<Addr>(continuousBase()+0x3bcfdb0)+static_cast<Addr>(index)*24;
-    ContinuousIdentity id{object,index,read<int>(entry+16)};
-    require(continuousAlive(id),"持续兵装：对象身份已失效");return id;
+    return ContinuousReadBatch{}.identity(object);
 }
-std::string continuousName(Addr object) {
-    const unsigned index=read<unsigned>(object+0x18);
+std::string continuousName(Addr object,const NativeReadBatch& memory) {
+    const unsigned index=memory.read<unsigned>(object+0x18);
     require(index<4000000,"持续兵装：名称索引越界");
-    const Addr names=read<Addr>(continuousBase()+0x3bc7070);
-    const Addr chunk=read<Addr>(names+(index/0x4000)*8);
-    const Addr entry=read<Addr>(chunk+(index%0x4000)*8);
-    require(!(read<unsigned char>(entry)&1),"持续兵装：资源名编码不符");
+    const Addr names=memory.read<Addr>(continuousBase()+0x3bc7070);
+    const Addr chunk=memory.read<Addr>(names+(index/0x4000)*8);
+    const Addr entry=memory.read<Addr>(chunk+(index%0x4000)*8);
+    require(!(memory.read<unsigned char>(entry)&1),"持续兵装：资源名编码不符");
     return readBoundedName(entry+16,"持续兵装：资源名不可读或过长");
 }
+std::string continuousName(Addr object) {const NativeReadBatch memory;return continuousName(object,memory);}
+bool continuousClass(Addr cls,const char* name,const char* package,const NativeReadBatch& memory) {
+    return continuousName(cls,memory)==name && continuousName(memory.read<Addr>(cls+0x20),memory)==package;
+}
 bool continuousClass(Addr cls,const char* name,const char* package) {
-    return continuousName(cls)==name && continuousName(read<Addr>(cls+0x20))==package;
+    const NativeReadBatch memory;return continuousClass(cls,name,package,memory);
 }
 bool continuousPlaneClass(Addr plane,const char* name,const char* package) {
-    continuousIdentity(plane);
-    Addr cls=read<Addr>(plane+0x10);
-    for(int i=0;cls && i<32;++i,cls=read<Addr>(cls+0x30))
-        if(continuousClass(cls,name,package))return true;
+    const ContinuousReadBatch memory;memory.identity(plane);
+    Addr cls=memory.read<Addr>(plane+0x10);
+    for(int i=0;cls && i<32;++i,cls=memory.read<Addr>(cls+0x30))
+        if(continuousClass(cls,name,package,memory.memory))return true;
     return false;
 }
 bool continuousMorgan(Addr plane) {
@@ -121,8 +141,8 @@ bool continuousFalkenTLSBusy(Addr plane,Addr activator) {
     }
     return false;
 }
-bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) ||
-    continuousCfa44(plane) || continuousSu37(plane);}
+bool continuousPlane(Addr plane) {return continuousCfa44(plane) || continuousMorgan(plane) || continuousRaven(plane) ||
+    continuousXfa27(plane) || continuousSu37(plane);} // CFA已有弱身份机型缓存，先命中，避免先遍历另外三架的类链。
 // 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
 bool continuousSupported(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
@@ -145,13 +165,15 @@ bool continuousSupported(Addr plane,Addr weapon) {
 }
 struct ContinuousArray {Addr header{},data{};int count{},capacity{};};
 ContinuousArray continuousArray(Addr header) {
-    ContinuousArray a{header,read<Addr>(header),read<int>(header+8),read<int>(header+12)};
+    const NativeReadBatch memory;
+    ContinuousArray a{header,memory.read<Addr>(header),memory.read<int>(header+8),memory.read<int>(header+12)};
     require(a.count>=0 && a.count<=a.capacity && a.capacity<=65536,"持续兵装：原生引用数组无效");
     if(a.capacity)checkMemory(a.data,static_cast<size_t>(a.capacity)*sizeof(Addr));
     return a;
 }
 bool continuousContains(const ContinuousArray& a,Addr actor) {
-    for(int i=0;i<a.count;++i)if(read<Addr>(a.data+i*sizeof(Addr))==actor)return true;
+    const NativeReadBatch memory;
+    for(int i=0;i<a.count;++i)if(memory.read<Addr>(a.data+i*sizeof(Addr))==actor)return true;
     return false;
 }
 // 加载器公开的 FMemory 接口最终调用游戏 GMalloc；不能用 CRT/std::vector 的内存替换 UPROPERTY 数组。
@@ -191,8 +213,9 @@ void continuousReserve(Addr header,size_t required,const char* kind) {
 // UAV可仅由Active保有；并集去重后再逐项核对身份，不能复制两份旧数组头。
 std::vector<Addr> continuousCandidates(const ContinuousArray& active,const ContinuousArray& spawned) {
     std::vector<Addr> result;
+    const NativeReadBatch memory;
     for(const auto& array:{active,spawned})for(int i=0;i<array.count;++i) {
-        const Addr object=read<Addr>(array.data+i*sizeof(Addr));
+        const Addr object=memory.read<Addr>(array.data+i*sizeof(Addr));
         if(object && std::find(result.begin(),result.end(),object)==result.end())result.push_back(object);
     }
     return result;
@@ -205,11 +228,12 @@ void continuousRemove(Addr header,Addr actor) {
     write<int>(header+8,count); // 不释放或更换原生分配区。
 }
 bool continuousSameShot(const ContinuousEffect& e) {
-    if(!continuousAlive(e.actor) || !continuousAlive(e.plane) || !continuousAlive(e.activator) || !continuousAlive(e.level))return false;
+    const ContinuousReadBatch memory;
+    if(!memory.alive(e.actor) || !memory.alive(e.plane) || !memory.alive(e.activator) || !memory.alive(e.level))return false;
     const Addr w=e.actor.address;
-    return read<Addr>(e.plane.address+0x20)==e.level.address && read<Addr>(e.plane.address+0x11a8)==e.activator.address &&
-        read<Addr>(w+0x3b8)==e.plane.address && read<Addr>(w+0x10)==e.weaponClass &&
-        read<uint64_t>(w+0x370)==e.retirement && read<float>(w+0x610)>=e.age && read<unsigned char>(w+0x368)!=0;
+    return memory.read<Addr>(e.plane.address+0x20)==e.level.address && memory.read<Addr>(e.plane.address+0x11a8)==e.activator.address &&
+        memory.read<Addr>(w+0x3b8)==e.plane.address && memory.read<Addr>(w+0x10)==e.weaponClass &&
+        memory.read<uint64_t>(w+0x370)==e.retirement && memory.read<float>(w+0x610)>=e.age && memory.read<unsigned char>(w+0x368)!=0;
 }
 void continuousSweep() {
     continuousEffects.erase(std::remove_if(continuousEffects.begin(),continuousEffects.end(),

@@ -24,37 +24,46 @@ void qualifySeekerRebuild() {
 
 void prepareSeekerRebuild(Addr plane,Addr activator) {
     qualifySeekerRebuild();
-    const auto playerId=continuousIdentity(plane),activatorId=continuousIdentity(activator);
-    require(read<Addr>(plane+0x11a8)==activator,"锁定收尾：玩家武器组件不匹配");
-    const Addr seeker=read<Addr>(plane+0x1310);
-    const auto seekerId=continuousIdentity(seeker);
-    require(read<Addr>(seeker+0x378)==plane,"锁定收尾：组件不属于当前玩家");
+    ContinuousIdentity playerId,activatorId,seekerId;
+    Addr seeker{};
+    ContinuousArray slots;
+    int lockedBefore{};
     if(session.plane==plane && session.activator==activator && session.gameThread)
         require(session.gameThread==GetCurrentThreadId(),"锁定收尾：不在会话游戏线程");
-    const auto slots=continuousArray(seeker+0x468);
-    const int lockedBefore=continuousArray(seeker+0x398).count;
-    // 只在重建边界检查旧槽；不增加帧钩子，不缓存跨帧发射状态。
-    for(int i=0;i<slots.count;++i) {
-        const Addr slot=read<Addr>(slots.data+i*sizeof(Addr));
-        continuousIdentity(slot);
-        require(read<Addr>(slot+0x28)==plane && read<Addr>(slot+0x30)==seeker &&
-            read<unsigned char>(slot+0x40)<=6,"锁定收尾：旧槽归属或状态无效");
+    {
+        const ContinuousReadBatch memory;
+        playerId=memory.identity(plane);activatorId=memory.identity(activator);
+        require(memory.read<Addr>(plane+0x11a8)==activator,"锁定收尾：玩家武器组件不匹配");
+        seeker=memory.read<Addr>(plane+0x1310);seekerId=memory.identity(seeker);
+        require(memory.read<Addr>(seeker+0x378)==plane,"锁定收尾：组件不属于当前玩家");
+        slots=continuousArray(seeker+0x468);lockedBefore=continuousArray(seeker+0x398).count;
+        // 只合并本段只读查页；原生Reset前结束批次，不把任何槽状态带过回调。
+        for(int i=0;i<slots.count;++i) {
+            const Addr slot=memory.read<Addr>(slots.data+i*sizeof(Addr));
+            memory.identity(slot);
+            require(memory.read<Addr>(slot+0x28)==plane && memory.read<Addr>(slot+0x30)==seeker &&
+                memory.read<unsigned char>(slot+0x40)<=6,"锁定收尾：旧槽归属或状态无效");
+        }
     }
     using Reset=void(*)(void*,float,float);
     // 逐槽原生Reset进入状态0，解除目标登记并配对停音；0参数沿用原有锁定时间。
     // 不调用会清SelectedTarget和候选表的整组件Reset，保留用户选中的目标。
     reinterpret_cast<Reset>(continuousBase()+0x4c8ee0)(reinterpret_cast<void*>(seeker),0.f,0.f);
     auto alive=[&] {
-        require(continuousAlive(playerId) && continuousAlive(activatorId) && continuousAlive(seekerId) &&
-            read<Addr>(plane+0x1310)==seeker && read<Addr>(plane+0x11a8)==activator,
+        const ContinuousReadBatch memory; // 每次原生调用返回后重新查页和读取当前身份。
+        require(memory.alive(playerId) && memory.alive(activatorId) && memory.alive(seekerId) &&
+            memory.read<Addr>(plane+0x1310)==seeker && memory.read<Addr>(plane+0x11a8)==activator,
             "锁定收尾：原生回调期间玩家已换代");
     };
     alive();
     const auto after=continuousArray(seeker+0x468);
     require(after.data==slots.data && after.count==slots.count,"锁定收尾：旧槽数组已换代");
-    for(int i=0;i<after.count;++i) {
-        const Addr slot=read<Addr>(after.data+i*sizeof(Addr));
-        require(read<unsigned char>(slot+0x40)==0 && !read<Addr>(slot+0x38),"锁定收尾：旧槽尚未解除");
+    {
+        const NativeReadBatch memory;
+        for(int i=0;i<after.count;++i) {
+            const Addr slot=memory.read<Addr>(after.data+i*sizeof(Addr));
+            require(memory.read<unsigned char>(slot+0x40)==0 && !memory.read<Addr>(slot+0x38),"锁定收尾：旧槽尚未解除");
+        }
     }
     finishSeekerAudio(plane,activator); // 保留原有音效引用归零核验，兼容状态0仍有声音的旧现场。
     alive();

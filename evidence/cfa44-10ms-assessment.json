@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "branch": "codex/cfa44-10ms",
+  "parent_commit": "3b4bdce6111243dbdf249e3c82b54e39bf4b959e",
+  "basis": "已安装2.19.3的继续优化，独立工作区；不改整合工作区、版本、冻结产物或历史回执",
+  "user_feedback": {
+    "optimization": "用户确认有效",
+    "first_peak": "用户接受首次约716ms峰值，不再作为本轮重点",
+    "double_fire": "目前未复现，可能已解决；不扩大为全机型验收",
+    "new_target_ms": 10
+  },
+  "baseline_evidence": "evidence/cfa44-2.19.3-switch-observation.json",
+  "baseline_evidence_sha256": "08a2ce1994a06c4499464663b63e6877d97e41a562c36e87c85c4cd58106790a",
+  "baseline": {
+    "installed_version": "2.19.3",
+    "profile_revision": 3,
+    "configs": [
+      0,
+      1,
+      2
+    ],
+    "models": true,
+    "all_ms": {
+      "count": 44,
+      "min": 24.6693,
+      "median": 26.1871,
+      "p95": 33.8603,
+      "max": 399.2242
+    },
+    "warm_ms": {
+      "count": 43,
+      "min": 24.6693,
+      "median": 26.123800000000003,
+      "p95": 33.5628,
+      "max": 37.8506
+    },
+    "work_warm_median_ms": {
+      "bones_maintain": 5.216200000000001,
+      "bones_return": 0.6586000000000001,
+      "commit_classify": 0.08900000000000001,
+      "layout_audit": 0.8716,
+      "muzzle_sync": 2.4349000000000003,
+      "parts_bind": 0.0007,
+      "rack_maintain": 0.0819,
+      "rack_return": 0.31120000000000003
+    },
+    "query_calls_warm_median": 1524,
+    "query_ms_warm_median": 24.415300000000002
+  },
+  "implementation": [
+    "ContinuousReadBatch只在纯读取中合并对象表头与查页，地址/序列号和PendingKill/Unreachable保持当前读取；全机体共用函数受益",
+    "持续效果的类型链、引用数组、候选并集和同一发射代次比较复用局部读取区间；不跨任何原生调用或强引用写入",
+    "continuousPlane优先命中既有CFA弱身份机型缓存，避免先否定Morgan/Raven/XFA27；准入机型集合不变",
+    "prepareSeekerRebuild的Reset前槽检查、Reset后状态检查及每次alive回调分别使用独立短批次；停音前后计数分别集中读取",
+    "weaponSlotArray的5个头字段合并查页，容量/窗口/游标及完整分配区检查不变",
+    "CFA新炮口的父架/Socket筛选、失效弱记录清理使用独立只读批次，不跨隐藏调用",
+    "CFA_SWITCH_COST profile_revision=4；沿用实际查页、批次复用量及阶段计时"
+  ],
+  "unchanged": [
+    "原生锁定Reset和无主目标解除",
+    "声音配对及归零核验",
+    "持续兵装强引用/恢复/分配器",
+    "正常多目标齐射/弹药/发射门槛",
+    "骨显隐/公共开合/ECM外观",
+    "所有引擎调用边界后的新检查"
+  ],
+  "assessment": "可继续削减重复工作，但26ms到10ms需再减少六成以上；没有新运行数据，不能保证10ms。查询计时与骨/炮口子项重叠，不能直接相减预测。若剩余集中在必要引擎调用，应停止固定数字追求或单独讨论功能取舍/架构重做。",
+  "validation": {
+    "compiled": false,
+    "installed": false,
+    "test_modules_written": false,
+    "test_modules_run": false,
+    "game_operated": false,
+    "new_runtime_measurement": false
+  },
+  "next_measurement": "交付由用户另行指挥；对照相同三SP/模型开启与各目标方向，单列首次，筛选profile_revision=4，核对中位数/P95及memory_checks。复核MSL/EML单按、ADMM正常齐射、ECM持续、补给/检查点/退出；共用读取变化还须关注其他持续武器。"
+}
