@@ -1,0 +1,84 @@
+{
+  "schema": 1,
+  "version": "2.19.2",
+  "candidate": true,
+  "recorded_at": "2026-10-18T21:06:18.866263+08:00",
+  "branch": "codex/integration-2.19.2",
+  "formal_baseline": "main / v2.19.0 / a8a6b77",
+  "installed_baseline": "2.19.1 / a970ca4",
+  "sources": [
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "title": "优化CFA-44切换卡顿与ECM弹出",
+      "branch": "codex/cfa44-fire-switch-audit",
+      "commits": [
+        "1678c74",
+        "0c1d35a"
+      ],
+      "scope": "CFA发射边界行为修订、重复核对减负及诊断；FALKEN发射期间丢弃切换请求"
+    },
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/camera-r3-short-press-fix",
+      "commit": "4ba961a",
+      "received_commit": "5715774",
+      "scope": "R3整次按压与释放交接隔离，短按仅回正，长按0.5秒换一次视角；来源工作区未修改"
+    }
+  ],
+  "integration_changes": [
+    "版本及UI标题2.19.2，升级基线2.19.1",
+    "仅协调README和证据索引冲突，运行行为按来源提交接收",
+    "管理协议9、配置8保持，不新增迁移，不修改或新增测试模块"
+  ],
+  "previous_feedback": [
+    "2.19.1 CFA互切无展开动画但仍卡",
+    "发射ADMM后切回MSL概率双发扣2，关闭模型时另有EML双发",
+    "镜头保持基本正常，但R3短按兼触回正和换视角"
+  ],
+  "build_dir": "Temp/build-2.19.2-candidate",
+  "build_receipt_sha256": "0e8442009c63eb93c23ae63759891d044170e03825510650750323cc695b1fc8",
+  "test_receipt_sha256": "b4d101346c4eea46c3a716a0a9e5598a3fcdd27a715fd8d575a10e4262965abe",
+  "installed_receipt": "evidence/2.19.2-installed.json",
+  "installed_receipt_sha256": "c4d38245f43d9288f27f32286a2688450988d627f40c51fcf4114557e8a2ed4e",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_19_1": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "profiles_match_install_backup_at_final_check": true,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 192,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261018-210603-159865",
+  "formal_main_unchanged": true,
+  "formal_package_2_19_0_verified": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "CFA初始MSL与发射ADMM后切回MSL的单发/扣弹，反复切换及模型关闭对照",
+    "EML发射/扣弹及切换，正常齐射、活动批次收尾和在途导弹",
+    "FALKEN发射期间按键被丢弃，结束后重按切换，无自动排队",
+    "R3短按仅回正、0.5秒长按一次换视角、松开无兼触，双摇杆干扰弹",
+    "CFA开合、补给/检查点/退出，镜头暂停/失焦/换机及旧配置保留"
+  ],
+  "performance_boundary": "旧2.19.1日志30次切换中位数83.43ms不作为本轮改善证明；双发消除及EML是否同因均未实机确认",
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false,
+  "new_release_package_created": false
+}

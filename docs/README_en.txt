@@ -1,6 +1,6 @@
-AC7MultiSP 2.19.1 Test Candidate
+AC7MultiSP 2.19.2 Test Candidate
 
-Development candidate only (not compiled, tested or installed; not part of the released 2.19.0 files above): Camera hold is off by default and is configured in the second tab, Bindings. After enabling and saving, releasing the right stick keeps the viewing direction relative to the aircraft. Short-press and release R3 to recenter; hold R3 for 0.5 seconds to change view once. Clicking both sticks allows native countermeasures and recentering together, without a view change for that gesture. Recentering ends mod target tracking; native Y/F hold behavior remains. Pausing, management, focus loss or changing aircraft/views clears the previous hold and timer. Uses the native R3 view binding; special camera modes remain native. Configuration 7 is backed up to profiles.before-camera-hold.json before migration to 8. Management protocol 9 requires matching core, UI and Lua files.
+The 2.19.2 candidate has been built, passed existing checks and been installed; gameplay verification is pending: Camera hold is off by default and is configured in the second tab, Bindings. After enabling and saving, releasing the right stick keeps the viewing direction relative to the aircraft. Short-press and release R3 to recenter; hold R3 for 0.5 seconds to change view once. Clicking both sticks allows native countermeasures and recentering together, without a view change for that gesture. Recentering ends mod target tracking; native Y/F hold behavior remains. Pausing, management, focus loss or changing aircraft/views clears the previous hold and timer. Uses the native R3 view binding; special camera modes remain native. Configuration 7 is backed up to profiles.before-camera-hold.json before migration to 8. Management protocol 9 requires matching core, UI and Lua files.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -44,11 +44,11 @@ Controls
 Known issues and planned improvements
 • CFA-44: the user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
 • Arrows on the mission-results screen stutter noticeably less, but slight stuttering remains. This is still a known issue.
-• ADF-01: requested switches to another SP or MSL now wait for TLS and its trail to end naturally. The candidate no longer forces an early stop; switching behavior and performance await gameplay testing.
+• ADF-01: switches requested while TLS or its trail remains active are discarded. Press again after it ends; requests are not queued and the beam is not forcibly stopped. Gameplay verification is pending.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
 • F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
 • An occasional hangar exit/crash was previously reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
-The other issues remain recorded. Target tracking was reported working in 2.17; the new Mission 13 correction and moving its settings to Bindings await gameplay verification; this package preserves the tested 2.19 runtime bytes and does not establish validation of every aircraft, combination or mission.
+The other issues remain recorded. Target tracking was reported working in 2.17; the new Mission 13 correction and moving its settings to Bindings await gameplay verification; this candidate is a new build and awaits gameplay verification, including the CFA firing-transition and R3 short-press corrections.
 
 Compatibility with other mods
 • Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received a complete 2.16 retest.
