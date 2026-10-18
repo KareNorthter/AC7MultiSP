@@ -41,6 +41,7 @@ local function validateSettings(settings)
     assert(type(settings.fixed_mount_enabled)=="boolean","多 SP 挂载模型开关必须为布尔值")
     assert(type(settings.target_gaze_pad_x)=="boolean","手柄X注视开关必须为布尔值")
     assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
+    assert(type(settings.camera_r3_enabled)=="boolean","R3替换开关必须为布尔值")
     local gazeKey=settings.target_gaze_key
     assert(gazeKey==0 or supportedKey(gazeKey),"目标注视键位无效")
     assert(gazeKey==0 or not chords["0:"..gazeKey],"目标注视键不能与模组快捷键重复")
@@ -50,7 +51,7 @@ local function validateSettings(settings)
         assert(not chords["0:"..centerKey]and centerKey~=gazeKey,"镜头回正键不能与其他模组键位重复")
     end
     local sensitivity=settings.camera_sensitivity
-    assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=25 and sensitivity<=300,"镜头灵敏度必须为25至300的整数")
+    assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=5 and sensitivity<=200,"镜头灵敏度必须为5至200的整数")
     for field,minimum in pairs({ammo_percent_two=50,ammo_percent_three=33})do
         local value=settings[field]
         assert(type(value)=="number"and value%1==0 and value>=minimum and value<=100,"SP 弹药百分比必须为范围内的整数："..field)
@@ -81,7 +82,7 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=9,profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_x=false,target_gaze_key=0,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=10,profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_x=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
@@ -133,10 +134,18 @@ function Config.new(options)
             assert(config.camera_center_key==nil and config.camera_sensitivity==nil,"旧配置含未知镜头控制设置")
             config.camera_center_key=4;config.camera_sensitivity=100;config.management_revision=9
         end
-        assert(config.management_revision==9,"需要管理参数第 9 版")
+        local migrateCameraInput=config.management_revision==9
+        if migrateCameraInput then
+            assert(config.camera_r3_enabled==nil,"旧配置含未知R3替换设置")
+            local sensitivity=config.camera_sensitivity
+            assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=25 and sensitivity<=300,"旧镜头灵敏度无效")
+            config.camera_r3_enabled=false;config.camera_sensitivity=math.min(sensitivity,200);config.management_revision=10
+            if sensitivity>200 then note("CAMERA_SENSITIVITY_MIGRATION old="..sensitivity.." new=200")end
+        end
+        assert(config.management_revision==10,"需要管理参数第 10 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","r")))
             local backups={}
@@ -145,22 +154,23 @@ function Config.new(options)
             if migrateGaze then backups[#backups+1]="profiles.before-target-gaze.json"end
             if migrateCamera then backups[#backups+1]="profiles.before-camera-hold.json"end
             if migrateCameraControls then backups[#backups+1]="profiles.before-camera-controls.json"end
+            if migrateCameraInput then backups[#backups+1]="profiles.before-camera-input-options.json"end
             if migrateSettings then backups[#backups+1]="profiles.before-three-sp.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=9")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=10")
         end
         return config
     end
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==10,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==11,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","target_gaze_pad_x","target_gaze_key","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","target_gaze_pad_x","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

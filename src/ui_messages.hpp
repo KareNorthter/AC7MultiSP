@@ -6,9 +6,15 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"镜头保持实际注视判据不匹配","The camera tracking state check does not match this game build."},
+    {"镜头保持注视组件身份不符","The camera tracking component identity changed."},
     {"镜头回正键位无效或重复","The camera recenter key is invalid or conflicts with another mod binding."},
     {"镜头回正键不能与其他模组键位重复","The camera recenter key conflicts with another mod binding."},
-    {"镜头灵敏度必须为25至300的整数","Camera sensitivity must be a whole number from 25 to 300."},
+    {"镜头灵敏度必须为5至200的整数","Camera sensitivity must be a whole number from 5 to 200."},
+    {"R3替换开关必须为布尔值","The R3 replacement setting must be on or off."},
+    {"旧配置含未知R3替换设置","The old configuration contains an unexpected R3 replacement setting."},
+    {"旧镜头灵敏度无效","The old camera sensitivity is invalid."},
+    {"需要管理参数第 10 版","Management configuration revision 10 is required."},
     {"镜头保持参数超出范围","Camera hold parameters are outside the supported range."},
     {"镜头回正键位无效","The camera recenter key is invalid."},
     {"镜头保持参数数量无效","The camera hold interface does not match the controller."},
