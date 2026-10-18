@@ -1,6 +1,6 @@
 # AC7MultiSP
 
-主工作区 `E:/AC7_MultiSP`。唯一正式主线是 **main / v2.19.0**。用户已确认CFA修订有效、卡顿明显减少，授权合入main；用户现已授权制作2.19.0本地发布包，沿用已测字节，不重新构建；旧2.16包保留。已测2.19运行字节、旧候选与2.16恢复基线保留。
+主工作区 `E:/AC7_MultiSP`。唯一正式主线是 **main / v2.19.0**。用户确认CFA修订有效、卡顿明显减少，已合入main；2.19.0本地发布包已按授权生成，189成员回读及微软运行库签名核验通过，沿用已测字节，未重新构建。回执`evidence/2.19.0-release.json`；旧包、旧候选及恢复基线保留。
 
 开工先看Git状态。当前功能见[项目入口](README.md)、[开发说明](docs/development.md)和[架构](docs/architecture.md)。挂载研究先读[设计经验](docs/multi-sp-mount-design.md)，历史与回退见[归档索引](docs/archive/README.md)，证据见[evidence索引](evidence/README.md)。不另建重复交接文档。
 
