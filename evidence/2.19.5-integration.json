@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "version": "2.19.5",
+  "candidate": true,
+  "recorded_at": "2026-10-18T23:32:41.721733+08:00",
+  "branch": "codex/integration-2.19.5",
+  "formal_baseline": "main / v2.19.0 / a8a6b77",
+  "installed_baseline": "2.19.4 / 9bb6bd2",
+  "sources": [
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/camera-view-continuity",
+      "commit": "9ee1883",
+      "scope": "普通视角接续方向、长按Y注视保留环视起点、仅camera-hold启用时屏蔽回正；手柄X正常注视提示静默"
+    }
+  ],
+  "source_evidence_sha256_verified": {
+    "evidence/camera-view-continuity.json": "a19a660a5adb56ecb005e867a1224c35fdca2d8d1e3455a6d9e8f5dab0be6595"
+  },
+  "integration_changes": [
+    "版本及标题2.19.5，升级基线2.19.4；运行行为按来源提交接收，无源码合并冲突",
+    "协议11/配置10/镜头子协议3保持，无新增配置或迁移",
+    "未新增或修改测试模块；只运行既有安装所需检查",
+    "原FOV兼容说明暂存后在交付提交完成后恢复，原未跟踪回执不混入镜头提交"
+  ],
+  "previous_feedback": [
+    "用户反馈2.19.4镜头各项功能正常，另报告普通换视角及长按Y开始注视先回正",
+    "此反馈不代表本次新源码验收，不扩大为CFA性能、全机体或全故障路径验收"
+  ],
+  "management_protocol": 11,
+  "configuration_revision": 10,
+  "camera_subprotocol": 3,
+  "configuration_migration_changed": false,
+  "build_dir": "Temp/build-2.19.5-candidate",
+  "build_receipt_sha256": "476d3e5b302a330b44adae13b690b65f659d9126dc3b5055de380c6eac0af85b",
+  "test_receipt_sha256": "4675ec3f710a56672f38e5b68fe80dddca7f642ca7a7aec67300b88ec5583878",
+  "installed_receipt": "evidence/2.19.5-installed.json",
+  "installed_receipt_sha256": "0e37e08a566ba14d04645dc17134b62164b1e461d1b1af4fe9a1a74021fc17ce",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_19_4": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "profiles_match_install_backup_at_final_check": true,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 23,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261018-233218-471141",
+  "fov_keyboard_only_pak_preserved_sha256": "8b39881cad6d6a365814586799f3f80bb956b7d5b5e006ff8cace527c3a33cc6",
+  "formal_main_unchanged": true,
+  "formal_package_2_19_0_verified": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "普通第一/座舱/第三人称及原生键盘、R3切视角后接续方向",
+    "长按Y和模组持续注视从当前方向转向目标，释放后返回保留方向",
+    "camera-hold关闭时恢复原生回正，开启时明确回正及R3短按/组合仍有效",
+    "手柄X正常开关无弹窗，错误/无目标及键盘提示仍保留",
+    "5至200%灵敏度、键鼠松模式键/切目标保持、暂停失焦/特殊视角及设置保留",
+    "当前FOV及其他Mod与新镜头衔接的实际兼容性"
+  ],
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false,
+  "new_release_package_created": false
+}
