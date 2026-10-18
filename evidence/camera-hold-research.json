@@ -1,0 +1,144 @@
+{
+  "date": "2026-10-18",
+  "base": "main / v2.19.0",
+  "base_commit": "a8a6b779854a2d72fe96137a4a6b880b2d8c1dd7",
+  "branch": "codex/camera-hold-research",
+  "status": "可行性研究，未接入产品",
+  "authorization": "用户要求探索可选镜头保持、短按R3回正、长按R3切视角；用户手动解除暂停、转动摇杆并松开，允许只读采样。",
+  "process_access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "runtime_product_files_modified": false,
+  "observation": {
+    "aircraft": "ADF-11F",
+    "samples": 785,
+    "duration_seconds": 19.9914,
+    "sample_interval_seconds": 0.025,
+    "axis_names": [
+      "INP_CameraLookRight",
+      "INP_CameraLookUp",
+      "INP_CameraTrackTarget"
+    ],
+    "axis_binding_indices": {
+      "look_right": [
+        6,
+        9,
+        12
+      ],
+      "look_up": [
+        7,
+        10,
+        13
+      ],
+      "track_target": [
+        8,
+        11,
+        14
+      ]
+    },
+    "observed_view_types": [
+      2,
+      5
+    ],
+    "validation_boundary": "动态结论限正常第三人称view=2的左右/上下输入与松杆归零。末段view=5用途未确认，排除该段，不称作第一人称或座舱验收。跨线程采样不是同帧原子快照。",
+    "release_decay_examples": [
+      {
+        "start_seconds": 8.2822,
+        "later_seconds": 8.9719,
+        "third_person_normalized_at_release": [
+          0.9574373960494995,
+          -7.939319989426119e-25
+        ],
+        "third_person_normalized_later": [
+          0.006669864524155855,
+          -5.491455665353835e-27
+        ]
+      },
+      {
+        "start_seconds": 13.4124,
+        "later_seconds": 14.1008,
+        "third_person_normalized_at_release": [
+          8.46715045201284e-17,
+          -0.8539612293243408
+        ],
+        "third_person_normalized_later": [
+          5.958843179721618e-19,
+          -0.006009839940816164
+        ]
+      }
+    ]
+  },
+  "native_contract": {
+    "input_axes": "原生getter接收FName，左右/上下看与目标注视按名称分开。",
+    "third_person": {
+      "update_rva": "0x43df90",
+      "normalized_axes": [
+        "0x3d4",
+        "0x3d8"
+      ]
+    },
+    "first_person": {
+      "update_rva": "0x41e150",
+      "normalized_axes": [
+        "0x3d4",
+        "0x3d8"
+      ]
+    },
+    "cockpit": {
+      "update_rva": "0x424cf0",
+      "normalized_axes": [
+        "0x38c",
+        "0x390"
+      ]
+    },
+    "smoothing": "主分支将两轴平滑到clamp(input,-0.95,0.95)/0.95；步长乘delta_seconds*7。普通座舱分支clamp到[-1,1]，同样乘7；竖轴反转单独处理。",
+    "native_view_action": "INP_View → PlayerPlane::OnInputViewPressed → 0x821430，原生在按下时立即轮切视角。",
+    "default_mappings": {
+      "right_stick_click": "INP_View 与 INP_ActivateFlareR",
+      "left_stick_click": "INP_ActivateFlareL",
+      "keyboard_view": "CKM_V"
+    },
+    "capture_hashes": {
+      "0x41e150": {
+        "size": 455,
+        "sha256": "cd60382a462668ccf1111dc422ce61c732134d152c0787036793998141a1e9a8",
+        "boundary": "unwind_chain"
+      },
+      "0x43df90": {
+        "size": 463,
+        "sha256": "b1bebd19edc3d835c8bcfff3bd5b7ecd53641bab26bf09ecee34e4c9b6fce7cc",
+        "boundary": "unwind_chain"
+      },
+      "0x821430": {
+        "size": 333,
+        "sha256": "a33fc208879215370011c795773325f7098d9e17000c07b146c84adb68d679a0",
+        "boundary": "unwind_chain"
+      },
+      "0x424cf0": {
+        "size": 726,
+        "sha256": "ce06047796b07a5b34ca5142e36b91227e7abf4ef07e25fdc57d3a513599c13d",
+        "boundary": "unwind_chain"
+      }
+    }
+  },
+  "proposed_design": {
+    "enabled_default": false,
+    "management_location": "第二个按键页；尚未添加产品设置",
+    "hold": "在已确认的本玩家/本视角输入更新作用域内，摇杆回到死区时用当前平滑后的相对观察方向建立保持值，再走原生输出和边界。不能只记最后非零摇杆值，也不能简单跳过整个镜头更新。",
+    "axis_conversion": "第一/第三人称保持值需逆转0.95归一化，竖轴按反转设置还原；普通座舱归一化不同。",
+    "shared_hook": "与target_gaze.hpp共用现有GetAxisValue接入，不重复创建同地址钩子；不得把自由环视值写入目标跟踪轴。",
+    "short_click": "建议松开时判断小于0.5秒，执行回正；按下瞬间不先回正，避免长按兼触短按。",
+    "long_click": "建议满0.5秒在游戏线程只调用一次原生切视角入口，松开不再回正或切换。阈值是建议值。",
+    "countermeasures": "必须在视角动作层分流并给双摇杆组合优先权；不能全局屏蔽R3，否则影响原生干扰弹。具体动作来源和拦截边界尚待实现核对。",
+    "other_input": "键盘V保留原生；目标注视优先；暂停、管理、失焦或手柄断连期间不派发计时动作，恢复重设按钮基线。换世界/玩家/视角结束旧保持责任，关闭选项回原生。",
+    "unsupported": "VR、回放、过场和特殊视角先走原生；普通座舱特殊委托分支也须单独核对。"
+  },
+  "remaining": "尚未实现保持/R3分流/设置或迁移；需要在后续产品实现中验证三种视角、双摇杆干扰弹、目标注视交接、暂停/失焦/重试及关闭归还。",
+  "raw_sample_sha256": "1cbce9eaa8dcb71c189883b451205957a86b31771122dcdbef8c4b1e1d1da2ea",
+  "input_ini_sha256": "15c72920f645a8724e1318cb268eefe7177973af11bdb1704f672b2e73b1ea14",
+  "raw_data": "本研究工作区Temp/camera-hold-*，仅留本机，不提交原始实例地址、游戏代码或资源。"
+}
