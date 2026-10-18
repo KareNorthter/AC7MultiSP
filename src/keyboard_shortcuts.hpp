@@ -34,4 +34,9 @@ inline bool validTargetGazeKey(int key,const std::array<Shortcut,3>& shortcuts,c
     for(int value:direct)if(value==key)return false;
     return true;
 }
+inline bool validCameraCenterKey(int key,bool enabled,int gazeKey,const std::array<Shortcut,3>& shortcuts,const std::array<int,4>& direct) {
+    if(key!=0 && key!=4 && !supportedShortcutKey(key))return false; // 4为鼠标中键，仅回正功能支持。
+    if(!enabled || key==0)return true;
+    return key!=gazeKey && (key==4 || validTargetGazeKey(key,shortcuts,direct));
+}
 }

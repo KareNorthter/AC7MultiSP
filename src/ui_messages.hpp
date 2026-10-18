@@ -6,6 +6,15 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"镜头回正键位无效或重复","The camera recenter key is invalid or conflicts with another mod binding."},
+    {"镜头回正键不能与其他模组键位重复","The camera recenter key conflicts with another mod binding."},
+    {"镜头灵敏度必须为25至300的整数","Camera sensitivity must be a whole number from 25 to 300."},
+    {"镜头保持参数超出范围","Camera hold parameters are outside the supported range."},
+    {"镜头回正键位无效","The camera recenter key is invalid."},
+    {"镜头保持参数数量无效","The camera hold interface does not match the controller."},
+    {"镜头保持设置无效","The camera hold setting is invalid."},
+    {"旧配置含未知镜头控制设置","The old configuration contains unexpected camera control settings."},
+    {"需要管理参数第 9 版","Management configuration revision 9 is required."},
     {"镜头保持特殊视角判据不匹配","The special camera check does not match this game build."},
     {"镜头保持接口与当前游戏不匹配","The camera hold interface does not match this game build."},
     {"镜头保持原生入口接入失败","The native camera hold interface could not be connected."},

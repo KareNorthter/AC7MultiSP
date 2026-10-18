@@ -53,10 +53,12 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=9; // 新增镜头保持设置，必须与本版控制器成套部署。
+constexpr int managementProtocol=10; // 回正键和灵敏度须与新核心、控制器成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
 bool draftTargetGazePadX=false,draftCameraHold=false;
 int draftTargetGazeKey=0,targetGazeResponse=0;
+int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
+bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
 std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
@@ -163,7 +165,24 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;captureSlot=-1;consumedShortcutKeys={};}
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};}
+    // 回正键捕获也接受真实鼠标中键；原生可能只交付RAWINPUT，所以两条消息路径都处理。
+    if(gameFocused() && (msg==WM_MBUTTONDOWN || msg==WM_MBUTTONUP) && (suppressedCaptureMouse || (panel && captureSlot==8))) {
+        if(msg==WM_MBUTTONDOWN && !suppressedCaptureMouse){suppressedCaptureMouse=true;captureKeyboardKey(VK_MBUTTON,shortcutModifiers());}
+        if(msg==WM_MBUTTONUP)suppressedCaptureMouse=false;
+        return 0;
+    }
+    if(gameFocused() && msg==WM_INPUT && (suppressedCaptureMouse || (panel && captureSlot==8))) {
+        RAWINPUT raw{};UINT size=sizeof(raw);
+        if(GetRawInputData(reinterpret_cast<HRAWINPUT>(l),RID_INPUT,&raw,&size,sizeof(RAWINPUTHEADER))!=static_cast<UINT>(-1) && raw.header.dwType==RIM_TYPEMOUSE) {
+            const auto flags=raw.data.mouse.usButtonFlags;
+            if(flags&RI_MOUSE_MIDDLE_BUTTON_DOWN) {
+                if(!suppressedCaptureMouse){suppressedCaptureMouse=true;captureKeyboardKey(VK_MBUTTON,shortcutModifiers());}
+            }
+            if(flags&RI_MOUSE_MIDDLE_BUTTON_UP)suppressedCaptureMouse=false;
+            if(flags&(RI_MOUSE_MIDDLE_BUTTON_DOWN|RI_MOUSE_MIDDLE_BUTTON_UP))return DefWindowProcW(hwnd,msg,w,l);
+        }
+    }
     const bool keyDown=msg==WM_KEYDOWN || msg==WM_SYSKEYDOWN;
     const bool keyUp=msg==WM_KEYUP || msg==WM_SYSKEYUP;
     if((keyDown||keyUp)&&w<consumedShortcutKeys.size()&&consumedShortcutKeys[w]) {
@@ -310,6 +329,7 @@ std::string keyLabel(int key) {
     if(key>=VK_F1&&key<=VK_F24)return "F"+std::to_string(key-VK_F1+1);
     if(key>=VK_NUMPAD0&&key<=VK_NUMPAD9)return std::string(tr("小键盘 ","Numpad "))+std::to_string(key-VK_NUMPAD0);
     switch(key) {
+        case VK_MBUTTON:return tr("鼠标中键","Middle mouse");
         case VK_BACK:return "Backspace";case VK_TAB:return "Tab";case VK_RETURN:return "Enter";
         case VK_SPACE:return tr("空格","Space");case VK_PRIOR:return "Page Up";case VK_NEXT:return "Page Down";
         case VK_END:return "End";case VK_HOME:return "Home";case VK_LEFT:return tr("左方向键","Left Arrow");
@@ -343,7 +363,8 @@ Json shortcutData(const std::array<dualsp::Shortcut,3>& values) {
     for(int i=0;i<3;++i)data[names[i]]={{"key",values[i].key},{"mods",values[i].mods}};
     return data;
 }
-bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,draftKeys); }
+bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,draftKeys)
+    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,draftKeys); }
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
@@ -358,18 +379,22 @@ bool targetGazeInputEnabled() {
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
 void captureKeyboardKey(int key,int mods) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
-    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextGaze=draftTargetGazeKey;
+    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextGaze=draftTargetGazeKey,nextCenter=draftCameraCenterKey;
     if(captureSlot<4) {
         if(mods!=0){notice=tr("武器直接选择只支持单键。","Direct weapon selection accepts single keys.");return;}
         nextKeys[captureSlot]=key;
     } else if(captureSlot==7) {
         if(mods!=0){notice=tr("目标注视只支持单键。","Target tracking accepts a single key.");return;}
         nextGaze=key;
+    } else if(captureSlot==8) {
+        if(mods!=0){notice=tr("镜头回正只支持单键。","Camera recenter accepts a single key.");return;}
+        nextCenter=key;
     } else nextShortcuts[captureSlot-4]={key,mods};
-    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)||!dualsp::validTargetGazeKey(nextGaze,nextShortcuts,nextKeys)) {
+    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)||!dualsp::validTargetGazeKey(nextGaze,nextShortcuts,nextKeys)
+        ||!dualsp::validCameraCenterKey(nextCenter,draftCameraHold,nextGaze,nextShortcuts,nextKeys)) {
         notice=tr("键位不可用或重复；请换一个按键。Esc取消。","Unsupported or duplicate binding. Choose another key; Esc cancels.");return;
     }
-    draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftTargetGazeKey=nextGaze;captureSlot=-1;notice.clear();
+    draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftTargetGazeKey=nextGaze;draftCameraCenterKey=nextCenter;captureSlot=-1;notice.clear();
 }
 
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
@@ -379,6 +404,8 @@ void loadManagementDraft() {
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
     draftTargetGazePadX=state.at("target_gaze_pad_x").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
+    draftCameraCenterKey=state.at("camera_center_key").get<int>();
+    draftCameraSensitivity=state.at("camera_sensitivity").get<int>();
     draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
@@ -592,6 +619,7 @@ void saveManagementSettings() {
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
         {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
+        {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -686,14 +714,16 @@ void drawPanel() {
             }
             if(ImGui::Button(tr("恢复三个默认快捷键","Reset three shortcuts"))) {
                 const std::array<dualsp::Shortcut,3> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
-                if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys))
+                if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys)
+                    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys))
                     {draftShortcuts=defaults;captureSlot=-1;notice.clear();}
                 else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
             }
             if(captureSlot>=0&&ImGui::Button(tr("取消改键","Cancel capture")))captureSlot=-1;
             if(ImGui::Button(tr("恢复默认 1 / 2 / 3 / 4","Reset to 1 / 2 / 3 / 4"))) {
                 const std::array<int,4> defaults{49,50,51,52};
-                if(dualsp::validShortcuts(draftShortcuts,defaults)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,defaults))
+                if(dualsp::validShortcuts(draftShortcuts,defaults)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,defaults)
+                    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,defaults))
                     {draftKeys=defaults;captureSlot=-1;notice.clear();}
                 else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
             }
@@ -709,8 +739,26 @@ void drawPanel() {
             ImGui::TextWrapped("%s",tr("单次按下开始/停止注视，与手柄X选项独立。不要与游戏原生动作键冲突；原生默认F是长按注视，可按需改为单次切换。","Press once to start/stop tracking, independently of the controller X option. Avoid conflicting native actions. The native F hold-to-track key can also be assigned here for toggle operation."));
             ImGui::SeparatorText(tr("镜头保持","Camera hold"));
             ImGui::Checkbox(tr("松开右摇杆后保持镜头方向###CameraHold","Keep the camera direction after releasing the right stick###CameraHold"),&draftCameraHold);
-            ImGui::TextWrapped("%s",tr("默认关闭，保存后生效。开启时：短按R3（右摇杆按下）并松开后回正；长按满0.5秒切换一次视角，松开不再回正。使用游戏原生R3换视角绑定。","Off by default; applies after saving. Short-press and release R3 (right-stick click) to recenter. Hold for 0.5 seconds to change view once; releasing then does not recenter. Uses the game's native R3 view binding."));
-            ImGui::TextWrapped("%s",tr("双摇杆按下时允许原生释放干扰弹并同时回正，不触发本次长按换视角。回正会结束模组目标注视；仍按住Y/F时保留原生注视。暂停、管理界面、失焦及特殊镜头期间不处理长短按。","Clicking both sticks allows native countermeasures and recentering together, without changing view for that gesture. Recentering ends mod target tracking; holding Y/F retains native tracking. Short/long presses are inactive while paused, in management, unfocused or in special camera modes."));
+            if(!draftCameraHold && captureSlot==8)captureSlot=-1;
+            if(draftCameraHold) {
+                ImGui::TextWrapped("%s",tr("保存后生效。R3短按松开回正；长按满0.5秒立即切换一次视角，无需松开，之后松开不再回正。","Applies after saving. Short-press and release R3 to recenter. Holding for 0.5 seconds changes view immediately, without releasing; releasing afterward does not recenter."));
+                ImGui::TextWrapped("%s",tr("独立回正快捷键（默认鼠标中键）：点击下方按钮后，按一个键盘键或鼠标中键；Esc取消。","Independent recenter shortcut (middle mouse by default): click below, then press a keyboard key or middle mouse; Esc cancels."));
+                const std::string centerLabel=captureSlot==8?tr("请按键或鼠标中键…","Press a key or middle mouse..."):draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Not assigned");
+                if(ImGui::Button((centerLabel+"###CameraCenterKey").c_str(),{280,0})){captureSlot=8;notice.clear();}
+                ImGui::SameLine();
+                if(ImGui::Button(tr("恢复鼠标中键###ResetCenterKey","Reset to middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;notice.clear();}
+                ImGui::SameLine();
+                if(ImGui::Button(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;notice.clear();}
+                ImGui::TextWrapped("%s",tr("回正键按下即触发，按住不重复；与游戏原生键盘换视角是两个功能，原生换视角无需长按。请使用不同按键，避免同键触发两个动作。","The recenter shortcut acts on press and does not repeat while held. Native keyboard view switching remains a separate, immediate action. Assign different keys to avoid triggering both actions together."));
+                if(!dualsp::validCameraCenterKey(draftCameraCenterKey,true,draftTargetGazeKey,draftShortcuts,draftKeys))
+                    ImGui::TextWrapped("%s",tr("回正键与其他模组键位重复，请调整后保存。","The recenter key conflicts with another mod binding. Change it before saving."));
+                ImGui::SetNextItemWidth(350);
+                ImGui::SliderInt(tr("右摇杆视角移动灵敏度###CameraSensitivity","Right-stick camera sensitivity###CameraSensitivity"),&draftCameraSensitivity,25,300,"%d%%",ImGuiSliderFlags_AlwaysClamp);
+                ImGui::SameLine();
+                if(ImGui::Button(tr("恢复100%###ResetCameraSensitivity","Reset to 100%###ResetCameraSensitivity")))draftCameraSensitivity=100;
+                ImGui::TextWrapped("%s",tr("默认100%。调整右摇杆环视的移动速度，不改变最大转动角度；回正、目标注视和单独的键鼠环视保留原生速度。","Default: 100%. Adjusts right-stick look movement speed without changing the maximum look angle. Recentering, target tracking and keyboard/mouse-only look retain their native speed."));
+                ImGui::TextWrapped("%s",tr("双摇杆按下时允许原生释放干扰弹并同时回正，不触发本次尚未完成的长按换视角。回正结束模组目标注视；仍按住Y/F时保留原生注视。暂停、管理界面、失焦及特殊镜头期间不处理镜头快捷键。","Clicking both sticks allows native countermeasures and recentering together, cancelling a pending view change. Recentering ends mod target tracking; holding Y/F retains native tracking. Camera shortcuts are inactive while paused, in management, unfocused or in special camera modes."));
+            }
             ImGui::TextWrapped("%s",tr("装填中的武器可以选择；未搭载的 SP 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
             ImGui::EndTabItem();
         }
@@ -795,7 +843,12 @@ void refreshState() {
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
             state.at("target_gaze_pad_x").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
-            if(state.at("camera_hold").at("protocol").get<int>()!=1)throw std::runtime_error("镜头保持协议不匹配");
+            if(state.at("camera_hold").at("protocol").get<int>()!=2)throw std::runtime_error("镜头保持协议不匹配");
+            if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
+                state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
+                throw std::runtime_error("镜头回正键位无效或重复");
+            if(!state.at("camera_sensitivity").is_number_integer() || state.at("camera_sensitivity").get<int>()<25 || state.at("camera_sensitivity").get<int>()>300)
+                throw std::runtime_error("镜头灵敏度必须为25至300的整数");
             if(!state.at("target_gaze_key").is_number_integer() ||
                 !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("目标注视键位无效或重复");
@@ -1008,6 +1061,7 @@ extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。
