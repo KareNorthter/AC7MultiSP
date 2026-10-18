@@ -345,7 +345,6 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
-bool continuousFinishFalkenTLSVisual(Addr plane,Addr activator,Addr weapon);
 // 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
 void finishPlayerTLS(Addr plane,Addr activator) {
     require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
@@ -372,10 +371,7 @@ void finishPlayerTLS(Addr plane,Addr activator) {
         lasers.push_back(weapon);
     }
     using End=void(*)(void*); // 与 TLS 丢失所属机体时使用同一个自然终止请求。
-    for(const auto weapon:lasers) {
-        if(!continuousFinishFalkenTLSVisual(plane,activator,weapon))
-            reinterpret_cast<End>(base+0x894af0)(reinterpret_cast<void*>(weapon));
-    }
+    for(const auto weapon:lasers)reinterpret_cast<End>(base+0x894af0)(reinterpret_cast<void*>(weapon));
     if(!lasers.empty())nativeLog("TLS_ENDED_ON_SWITCH "+std::to_string(lasers.size()));
 }
 // 发射槽是原生动态池，不等于机体挂点数；ADMM 现场为 Num=126、Max=170。
@@ -645,6 +641,7 @@ void keepArmed(const Command& command,bool armed) {
     }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     mountAnimationAfterArmed(command,armed);
+    mountLightAnimationAfterArmed(command,armed);
     animationCompletion.completed=true;
 #endif
 }
@@ -734,10 +731,12 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         }
     }
 }
-// 与原生 ToggleSpecial 的暂拒条件一致；只读，不取消或改写连射队列。
-bool weaponSwitchReady(Addr activator) {
-    return read<unsigned char>(activator+0x2a0)==0 &&
-        !(read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1);
+// Falken先等TLS及尾迹自然退场，再沿用ToggleSpecial门槛；只读，不改连射队列。
+const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
+    if(continuousFalkenTLSBusy(plane,activator))return "falken_tls_active";
+    if(read<unsigned char>(activator+0x2a0)!=0 ||
+        (read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1))return "native_busy";
+    return nullptr;
 }
 void execute(const Command& command) {
     verifyVersion();
@@ -783,7 +782,7 @@ void execute(const Command& command) {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
         require(command.target<session.count && command.configs==session.configs && command.count==session.count,"切换方案与当前会话不符");
         require(command.target!=session.active,"Already using requested SP");
-        require(weaponSwitchReady(command.activator),"原生连射尚未结束，暂不能重建SP");
+        require(!weaponSwitchBlockReason(command.plane,command.activator),"原生连射或Falken TLS尚未结束，暂不能重建SP");
         session.main=capture(command.activator,false,command.time);
         session.special[session.active]=capture(command.activator,true,command.time);
         const bool armed=read<unsigned char>(command.activator+0x2a1)!=0;
@@ -1211,6 +1210,8 @@ extern "C" __declspec(dllexport) int dualsp_controlled_weapon_switch(void* luaSt
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         require(session.plane==plane && session.activator==activator && read<Addr>(plane+0x11a8)==activator,
             "类别切换玩家会话不符");
+        // 与Lua等待和核心重建共用门槛；暂拒时不按下切换，由实际类别让Lua继续等待。
+        if(weaponSwitchBlockReason(plane,activator)){api->boolean(luaState,true);return 1;}
         const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
         constexpr unsigned char pressed[]={0x33,0xd2,0xe9};
         constexpr unsigned char released[]={0xc6,0x81,0x51,0x1a,0,0,0,0xc3};
@@ -1274,7 +1275,7 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
     }
 }
 #endif
-// 暂拒切换是可恢复状态；Lua 等待原生连射结束后才进入兵装事务。
+// 暂拒切换是可恢复状态；Lua等待原生连射或Falken TLS自然结束后才进入兵装事务。
 extern "C" __declspec(dllexport) int dualsp_switch_ready(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1285,8 +1286,9 @@ extern "C" __declspec(dllexport) int dualsp_switch_ready(void* luaState) {
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         require(session.plane==plane && session.activator==activator &&
             read<Addr>(plane+0x11a8)==activator,"切换就绪查询的玩家会话已经改变");
-        api->boolean(luaState,true);api->boolean(luaState,weaponSwitchReady(activator));
-        api->string(luaState,"",0);return 3;
+        const char* reason=weaponSwitchBlockReason(plane,activator);
+        api->boolean(luaState,true);api->boolean(luaState,reason==nullptr);
+        api->string(luaState,reason?reason:"",reason?std::strlen(reason):0);return 3;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 3;}
         return 0;
@@ -1303,7 +1305,12 @@ extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
-        // 已登记机型的原生 TLS 交由换槽事务保留；其余仍沿用原生结束。
+        // Falken只允许自然退场；即使调用旧收尾接口，也不得提前End或隐藏主束。
+        if(continuousFalken(plane)) {
+            require(!continuousFalkenTLSBusy(plane,activator),"Falken TLS尚未自然结束，请等待后切换");
+            api->boolean(luaState,true);return 1;
+        }
+        // 已登记机型的原生TLS交由换槽事务保留；其余仍沿用原生结束。
         if(!continuousSupported(plane,read<Addr>(groupOf(activator,true)+0x40)))
             finishPlayerTLS(plane,activator);
         api->boolean(luaState,true);return 1;

@@ -6,6 +6,8 @@
 
 用户反馈不扩大为完全无卡或全机全组合验收，其他待办继续保留。后续同类小优化递增补丁号，下一版为2.19.1。当前实现和验证边界见[挂载设计](docs/multi-sp-mount-design.md)。
 
+后续源码正在处理CFA双SP/三SP重复展开：MSL与SP之间开关舱，SP互切保留原进度。同时按用户要求，将FALKEN改为TLS与尾迹自然结束后再执行切换，取消提前停光及主束隐藏。这些修改尚未编译或实测，不属于当前2.19.0发布包；已验证经验与踩坑记录已归入挂载设计。
+
 - [下载本地发布包2.19.0](Release/AC7MultiSP-2.19.0.zip)
 - [中文 ReadMe](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)
 - [开发与恢复](docs/development.md) · [当前架构](docs/architecture.md)

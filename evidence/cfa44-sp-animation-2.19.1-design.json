@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-18",
+  "base_commit": "a8a6b779854a2d72fe96137a4a6b880b2d8c1dd7",
+  "branch": "codex/cfa44-sp-animation",
+  "planned_version": "2.19.1",
+  "accepted_baseline": "2.19.0",
+  "request": "记录已验证经验和踩坑；CFA双SP及三SP仅在MSL与SP间开关舱，SP互切不重复展开，评估性能并修改代码。",
+  "scope": ["ADMM+EML", "ADMM+ECM", "EML+ECM", "ADMM+EML+ECM"],
+  "sources": [
+    "evidence/2.19.0-user-validation.json：炮口按地址查找的性能改善已获用户确认",
+    "evidence/2.16.0-performance-investigation.json：旧ECM强收公共进度阻断阶段2",
+    "evidence/sp-switch-animation-research.json：fa44共舱旗帜1；SWP1/2/3读spwc，Body另有swc1",
+    "Temp/f22a-native-20261017-1144/mount-1ce6d70-1900.txt：通用Parts更新的请求、阶段和按配置复制输出指令；不能仅凭F22机名外推，CFA资源及运行绑定另核",
+    "dist/DualSP/Scripts/main.lua：cycleRequested与directSelect统一选择事务，不先主动切MSL",
+    "src/weapon_bridge.cpp：initialize之后仍须恢复弹药、session.active及完整keepArmed"
+  ],
+  "native_offsets": {
+    "request": "Parts+0x58",
+    "phase": "Parts+0x274",
+    "public_progress": "Parts+0x17c",
+    "admm_body_output": "Parts+0x180",
+    "selected_config": "Parts+0x178",
+    "advance_and_complete": "RVA 0x1ce7f69 / 0x1ce7f86",
+    "config_output_dispatch": "RVA 0x1ce8013",
+    "admm_output_store": "RVA 0x1ce805b"
+  },
+  "implementation": [
+    "仅已绑定多挂CFA、op=switch且原生armed时捕获公共请求/阶段/进度；MSL、不兼容特殊请求及非switch重建不捕获。",
+    "绑定时核代码与域旗帜；同一事务keepArmed结束后复核请求编号、目标配置、弱身份及Parts实例，预检三个写区后一次恢复。",
+    "半开保存原阶段和进度，交给原生继续推进，不强制全开；ECM与其他SP同等对待，不降低公共进度。",
+    "含ADMM的组合在原生Parts调用后同步一个swc1浮点输出，同值不写；EML+ECM不增加此逐帧同步。",
+    "盖板输出保留原生基线和最后写值；Init前及退出归还。归还失败保留记录重试，已观察到原生新值时不以旧值覆盖。",
+    "原生完整Parts每帧执行一次；没有逐骨操作、历史炮口扫描、循环反射查找或重复渲染通知。"
+  ],
+  "limitations": [
+    "原生主动关闭等特殊请求保留；本方案针对普通逻辑切换，不承诺冻结所有原生或射击动画。",
+    "首次绑定与每次切换仍有资格检查，含ADMM组合新增固定数量的逐帧检查/一个输出同步，性能尚未实测。",
+    "没有绕过武器池重建，消除重复展开不等于消除切换卡顿。",
+    "两侧机构沿当前组合布局，不增加未选兵装，单挂及任务外原生策略沿用。"
+  ],
+  "manual_verification_scope": [
+    "三种双挂及三挂的普通循环/直接选择",
+    "MSL直选每种SP、SP切MSL、半开连续换SP和快速反向切换",
+    "ECM启动和持续、ADMM齐射、EML发射及弹药冷却",
+    "补给转单挂、检查点、关闭多挂及退出恢复",
+    "对照2.19稳定帧率和CFA_SWITCH_COST，不以动画消失推定性能通过"
+  ],
+  "validation": {
+    "source_review_only": true,
+    "compiled": false,
+    "tests_added_or_run": false,
+    "installed": false,
+    "game_operated": false,
+    "gameplay_verified": false,
+    "performance_verified": false
+  }
+}

@@ -89,120 +89,31 @@ bool continuousCfa44(Addr plane) {
 bool continuousSu37(Addr plane) {
     return continuousPlaneClass(plane,"AcePlayerPawn_su37_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_su37");
 }
-// 只处理Falken切离TLS时的主束；其蓝图在下一次OnCreateWeaponEnd明确恢复MainLaser可见。
-// 不改Actor显隐、尾段时长或池状态，声音、伤害结束、冷却和回收仍完整走原生End。
-struct FalkenTLSVisualMetadata {
-    using Reflection=MountAnimationReflection;
-    Reflection api;
-    MountIdentity weaponClass,componentClass,particle,function;
-    Reflection::Field main,parent,root,templateField;
-    Reflection::BoolField visible,propagate;
-    int size{};
-    bool prepared{};
-
-    bool current(Addr weapon) const {
-        if(!prepared || !mountAlive(weaponClass) || !mountAlive(componentClass) || !mountAlive(particle) ||
-            !mountAlive(function) || read<Addr>(weapon+0x10)!=weaponClass.address)return false;
-        for(const auto& field:{main,parent,root,templateField,visible.field,propagate.field}) {
-            if(!mountAlive(field.identity) || read<int>(field.identity.address+0x44)!=field.offset ||
-                read<int>(field.identity.address+0x34)!=field.size)return false;
+// 只缓存机体弱身份与机型结论；不缓存发射体、组件或反射字段。
+bool continuousFalken(Addr plane) {
+    static ContinuousIdentity cached;
+    static bool matched=false;
+    if(cached.address==plane && continuousAlive(cached))return matched;
+    const auto current=continuousIdentity(plane);
+    const bool falken=continuousPlaneClass(plane,"AcePlayerPawn_zoef_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_zoef");
+    cached=current;matched=falken;return matched;
+}
+// 发射结束请求不等于尾迹已经退场；两组原生引用中的存活TLS都须自然结束。
+// 仅切换请求/等待时读取，不扫描全局对象、不调用End或组件显隐，也不依赖外观开关。
+bool continuousFalkenTLSBusy(Addr plane,Addr activator) {
+    if(!continuousFalken(plane))return false;
+    for(const Addr header:{activator+0x338,activator+0x2e8}) {
+        const Addr data=read<Addr>(header);
+        const int count=read<int>(header+8),capacity=read<int>(header+12);
+        require(count>=0 && count<=capacity && capacity<=65536,"Falken TLS等待：原生武器数组无效");
+        if(count)checkMemory(data,static_cast<size_t>(count)*sizeof(Addr));
+        for(int i=0;i<count;++i) {
+            const Addr weapon=read<Addr>(data+i*sizeof(Addr));
+            if(weapon && read<unsigned char>(weapon+0x3b0)==25 && read<Addr>(weapon+0x3b8)==plane &&
+                read<unsigned char>(weapon+0x368))return true;
         }
-        if(Reflection::refValue<unsigned short>(api.parms,function.address)!=size ||
-            Reflection::refValue<unsigned char>(api.count,function.address)!=2)return false;
-        const auto component=mountIdentity(read<Addr>(weapon+main.offset));
-        return read<Addr>(component.address+0x10)==componentClass.address &&
-            read<Addr>(component.address+templateField.offset)==particle.address;
     }
-};
-bool continuousFinishFalkenTLSVisual(Addr plane,Addr activator,Addr weapon) {
-    if(!continuousPlaneClass(plane,"AcePlayerPawn_zoef_C","/Game/Blueprint/Player/Pawn/AcePlayerPawn_zoef") ||
-        !continuousClass(read<Addr>(weapon+0x10),"plwp_tls_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x2"))return false;
-    require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"Falken TLS收尾不在游戏线程");
-    const auto shot=continuousIdentity(weapon),player=continuousIdentity(plane),owner=continuousIdentity(activator);
-    require(read<Addr>(plane+0x11a8)==activator && read<Addr>(weapon+0x3b8)==plane &&
-        read<unsigned char>(weapon+0x3b0)==25,"Falken TLS收尾身份不匹配");
-    const auto generation=read<uint64_t>(weapon+0x370);
-    const float age=read<float>(weapon+0x610);
-    using Reflection=MountAnimationReflection;
-    const Addr cls=read<Addr>(weapon+0x10);
-    // 进程内仅保弱元数据，不保存玩家/发射体/PSC实例、可见基线或租约；首发及失效后仍冷解析。
-    static FalkenTLSVisualMetadata metadata;
-    bool reusable=false;try {reusable=metadata.current(weapon);}catch(...) {}
-    if(!reusable) {
-        FalkenTLSVisualMetadata next;
-        auto& api=next.api; // 关闭外观时也可停光，不为反射安装外观钩子。
-        const auto loader=GetModuleHandleW(L"UE4SS.dll");require(loader!=nullptr,"Falken TLS收尾缺少加载器");
-        auto symbol=[&](const char* name) {const auto p=GetProcAddress(loader,name);
-            require(p!=nullptr,"Falken TLS收尾缺少反射导出");return p;};
-        api.parms=reinterpret_cast<Reflection::Ref>(symbol("?GetParmsSize@UFunction@Unreal@RC@@QEBAAEBGXZ"));
-        api.count=reinterpret_cast<Reflection::Ref>(symbol("?GetNumParms@UFunction@Unreal@RC@@QEBAAEBEXZ"));
-        api.extent=reinterpret_cast<Reflection::Ref>(symbol("?GetPropertiesSize@UStruct@Unreal@RC@@QEBAAEBHXZ"));
-        api.arrayDim=reinterpret_cast<Reflection::Ref>(symbol("?GetArrayDim@FProperty@Unreal@RC@@QEBAAEBHXZ"));
-        api.byteOffset=reinterpret_cast<Reflection::Ref>(symbol("?GetByteOffset@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
-        api.byteMask=reinterpret_cast<Reflection::Ref>(symbol("?GetByteMask@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
-        api.fieldMask=reinterpret_cast<Reflection::Ref>(symbol("?GetFieldMask@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
-        api.fieldSize=reinterpret_cast<Reflection::Ref>(symbol("?GetFieldSize@FBoolProperty@Unreal@RC@@QEBAAEBEXZ"));
-        api.available=reinterpret_cast<Reflection::Available>(symbol("?IsProcessEventAvailable@UE4SSRuntime@RC@@SA_NXZ"));
-        api.process=reinterpret_cast<Reflection::Process>(symbol("?ProcessEvent@UObject@Unreal@RC@@QEAAXPEAVUFunction@23@PEAX@Z"));
-        require(api.available(),"Falken TLS收尾反射尚未就绪");
-        next.weaponClass=mountIdentity(cls);
-        next.main=api.field(cls,"MainLaser","ObjectProperty",8,api.typeSize(cls));
-        next.root=api.field(cls,"RootComponent","ObjectProperty",8,api.typeSize(cls),true);
-        const auto component=mountIdentity(read<Addr>(weapon+next.main.offset));
-        require(mountClassIs(component.address,"ParticleSystemComponent","/Script/Engine"),"Falken TLS主束组件类型改变");
-        next.componentClass=mountIdentity(read<Addr>(component.address+0x10));
-        const Addr componentClass=next.componentClass.address;
-        next.parent=api.field(componentClass,"AttachParent","ObjectProperty",8,api.typeSize(componentClass),true);
-        next.templateField=api.field(componentClass,"Template","ObjectProperty",8,api.typeSize(componentClass),true);
-        next.particle=mountIdentity(read<Addr>(component.address+next.templateField.offset));
-        Reflection::named(next.particle.address,"FX_TLS_Muzzleflash01_zoef",
-            "/Game/VFX/DLC/Update01/Vehicles/Weapon/TLS_zoef/FX_TLS_Muzzleflash01_zoef");
-        const Addr function=Reflection::find(componentClass,"SetVisibility");
-        require(function!=0,"Falken TLS缺少显隐接口");
-        Reflection::named(read<Addr>(function+0x20),"SceneComponent","/Script/Engine");
-        require(mountName(read<Addr>(function+0x10))=="Function" &&
-            Reflection::refValue<unsigned char>(api.count,function)==2,"Falken TLS显隐接口改变");
-        next.size=Reflection::refValue<unsigned short>(api.parms,function);
-        require(next.size>0 && next.size<=256,"Falken TLS显隐参数尺寸改变");
-        next.visible=api.boolean(function,"bNewVisibility",next.size);
-        next.propagate=api.boolean(function,"bPropagateToChildren",next.size);
-        Reflection::separate(next.visible.field,next.propagate.field);
-        require(read<Addr>(function+0x38)==next.visible.field.identity.address &&
-            read<Addr>(next.visible.field.identity.address+0x28)==next.propagate.field.identity.address &&
-            !read<Addr>(next.propagate.field.identity.address+0x28),"Falken TLS显隐参数链改变");
-        next.function=mountIdentity(function);next.prepared=true;
-        metadata=std::move(next); // 全部冷解析完成后才发布，失败不留下半套参数。
-    }
-    const auto binding=metadata; // 原生End可同步进入蓝图；当前调用只使用这份不可变资格快照。
-    const auto& api=binding.api;
-    require(api.available(),"Falken TLS收尾反射不可用");
-    const auto component=mountIdentity(read<Addr>(weapon+binding.main.offset));
-    require(read<Addr>(component.address+0x10)==binding.componentClass.address &&
-        read<Addr>(component.address+0x20)==weapon,"Falken TLS主束组件身份改变");
-    const auto root=mountIdentity(read<Addr>(weapon+binding.root.offset));
-    require(read<Addr>(root.address+0x20)==weapon && read<Addr>(component.address+binding.parent.offset)==root.address &&
-        mountName(root.address)=="Static Mesh",
-        "Falken TLS主束附着改变");
-    const auto particle=mountIdentity(read<Addr>(component.address+binding.templateField.offset));
-    require(mountMeshIdentityEqual(particle,binding.particle),"Falken TLS主束粒子模板改变");
-    const auto functionId=binding.function;
-    // 所有资格检查先完成；原生End可能同步执行蓝图，不能随后重新取得未知代次的主束。
-    using End=void(*)(void*);
-    reinterpret_cast<End>(continuousBase()+0x894af0)(reinterpret_cast<void*>(weapon));
-    if(!continuousAlive(shot) || !continuousAlive(player) || !continuousAlive(owner) || !mountAlive(component))return true;
-    if(!read<unsigned char>(weapon+0x368))return true; // 零尾段已被原生回收，不再写组件。
-    Reflection::alive(root);Reflection::alive(particle);
-    require(read<Addr>(plane+0x11a8)==activator && read<Addr>(weapon+0x3b8)==plane &&
-        read<Addr>(weapon+0x10)==cls && read<uint64_t>(weapon+0x370)==generation && read<float>(weapon+0x610)>=age &&
-        read<Addr>(weapon+binding.main.offset)==component.address && read<Addr>(component.address+binding.parent.offset)==root.address &&
-        read<Addr>(component.address+binding.templateField.offset)==particle.address,
-        "Falken TLS结束时发射代次或主束身份改变");
-    Reflection::alive(functionId);require(api.available(),"Falken TLS收尾反射不可用");
-    alignas(16) std::array<unsigned char,256> params{};
-    Reflection::putBool(params.data(),binding.visible,false);Reflection::putBool(params.data(),binding.propagate,false);
-    api.process(reinterpret_cast<void*>(component.address),reinterpret_cast<void*>(functionId.address),params.data());
-    Reflection::alive(component);Reflection::alive(functionId);
-    nativeLog("FALKEN_TLS_MAIN_BEAM_ENDED_ON_SWITCH");return true;
+    return false;
 }
 bool continuousPlane(Addr plane) {return continuousMorgan(plane) || continuousRaven(plane) || continuousXfa27(plane) ||
     continuousCfa44(plane) || continuousSu37(plane);}

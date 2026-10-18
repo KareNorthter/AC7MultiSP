@@ -182,7 +182,7 @@ void mountLightInherit(FixedMountState&,const FixedMountState&);
 bool mountLightLayoutChanged(const FixedMountState&);
 bool mountLightCopyTransform(void*,const FixedMountState&,int);
 bool mountLightAnimationParts(void*,float,void*);
-void mountLightAnimationRelease();
+bool mountLightAnimationRelease();
 void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
 bool mountCfaMuzzleFilter(void*,bool,unsigned char,bool);
@@ -375,7 +375,7 @@ bool fixedMountRelease() {
     const bool previewReleased=mountPreviewRelease(0,false); // 预览归还失败也必须撤销任务显隐接管；待归还身份仍保存在预览上下文。
     const bool hadPending=!fixedMount.error.empty();
     f35Cover={}; // 生命周期结束或重建后由当前飞机重新绑定动画状态。
-    mountLightAnimationRelease();
+    const bool lightAnimationReleased=mountLightAnimationRelease();
     fixedMount.bound=false; // 先直通，避免归还显示的调用再次被过滤。
     const bool animationReleased=mountAnimationRelease(fixedMount.plane.address,1);
     FixedMountState pending; // 只保留未完成恢复的对象，不重新启用显隐或取位接管。
@@ -417,6 +417,7 @@ bool fixedMountRelease() {
         return false;
     }
     if(!animationReleased) { fixedMountWarning="多 SP 动画控制仍待归还";return false; }
+    if(!lightAnimationReleased) { fixedMountWarning="CFA盖板输出仍待归还";return false; }
     if(!previewReleased) { fixedMountWarning=mountPreview.warning;return false; }
     if(hadPending)fixedMountWarning="多 SP 挂载已回退为原生单 SP，原生显示已恢复";
     return true;
@@ -869,7 +870,7 @@ void fixedMountCommit(const Command& command) {
         mountSetRackAnimation(rack,false,true);
     }
     fixedMount.rebuilding=false;
-    mountLightAnimationCommit(); // 仅Dark/Falken维护独立通道，CFA公共机构完全原生。
+    mountLightAnimationCommit(); // CFA只复用开合状态并同步附属盖板，公共进度仍由原生推进。
     mountCfaMuzzlePrune();mountCfaMuzzleSync();
     if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
     fixedMountRefresh(command.time);
