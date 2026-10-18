@@ -1,10 +1,10 @@
-AC7MultiSP 2.19.2 Test Candidate
+AC7MultiSP 2.19.3 Test Candidate
 
-The installed 2.19.2 R3 short-press fix received positive user feedback. The following new camera controls are source-only and have not been built or installed. Camera hold remains off by default in the second tab, Bindings. Its subsettings appear and take effect only when enabled; save to apply.
+The installed 2.19.2 R3 short-press fix received positive user feedback. The 2.19.3 candidate has been built, passed existing checks and been installed; the new camera controls await gameplay verification. Camera hold remains off by default in the second tab, Bindings. Its subsettings appear and take effect only when enabled; save to apply.
 • Short-press and release R3 to recenter. Holding for 0.5 seconds changes view once immediately, without releasing. Releasing afterward does not recenter.
 • The independent recenter shortcut defaults to middle mouse. Assign one keyboard key, use middle mouse or clear it. It acts on press without repeating while held. Native keyboard view switching remains a separate immediate action; use different keys to avoid triggering both together.
 • Right-stick camera sensitivity ranges from 25% to 300%, default 100%. It adjusts look movement speed, not the maximum angle. Recentering, target tracking and keyboard/mouse-only look retain their native speed.
-Clicking both sticks preserves native countermeasures and recenters, cancelling a pending view change. Recentering ends mod target tracking; native Y/F hold tracking remains. Camera shortcuts are inactive while paused, in management, unfocused or in special camera modes. Disabling Camera hold restores native behavior and retains the saved subsettings. New sources use management protocol 10 and configuration 9. Configuration 8 is backed up to profiles.before-camera-controls.json before adding middle mouse and 100% defaults; existing settings remain. Matching core, UI and Lua files are required. Existing installations and frozen builds are unchanged.
+Clicking both sticks preserves native countermeasures and recenters, cancelling a pending view change. Recentering ends mod target tracking; native Y/F hold tracking remains. Camera shortcuts are inactive while paused, in management, unfocused or in special camera modes. Disabling Camera hold restores native behavior and retains the saved subsettings. New sources use management protocol 10 and configuration 9. Configuration 8 is backed up to profiles.before-camera-controls.json before adding middle mouse and 100% defaults; existing settings remain. Matching core, UI and Lua files are required. The installation has been upgraded to 2.19.3; older frozen builds and receipts are retained.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -46,7 +46,7 @@ Controls
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
 Known issues and planned improvements
-• CFA-44: the user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
+• CFA-44: 2.19.2 still reproduced MSL/EML double shots. This candidate adds native lock-registration cleanup at the shared rebuild entry and reduces repeated memory queries; double-shot elimination and the 20 ms goal await gameplay verification. The user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
 • Arrows on the mission-results screen stutter noticeably less, but slight stuttering remains. This is still a known issue.
 • ADF-01: switches requested while TLS or its trail remains active are discarded. Press again after it ends; requests are not queued and the beam is not forcibly stopped. Gameplay verification is pending.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.

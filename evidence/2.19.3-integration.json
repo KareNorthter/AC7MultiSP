@@ -1,0 +1,93 @@
+{
+  "schema": 1,
+  "version": "2.19.3",
+  "candidate": true,
+  "recorded_at": "2026-10-18T22:07:47.043981+08:00",
+  "branch": "codex/integration-2.19.3",
+  "formal_baseline": "main / v2.19.0 / a8a6b77",
+  "installed_baseline": "2.19.2 / 9fafb78",
+  "sources": [
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "title": "优化CFA-44切换卡顿与ECM弹出",
+      "branch": "codex/cfa44-live-fire-residue",
+      "commits": [
+        "99fc952",
+        "4b5c1b5"
+      ],
+      "scope": "所有机体共用重建入口解除旧锁定登记；短只读查页批次减负，身份及引擎边界复核保持"
+    },
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/camera-controls-options",
+      "commit": "c3102d4",
+      "received_commit": "4bbc8ad",
+      "scope": "R3满500ms无需松开即换视角、独立回正键默认中键、25至300%右摇杆灵敏度"
+    }
+  ],
+  "source_evidence_sha256_verified": {
+    "evidence/cfa44-live-seeker-residue.json": "0dce0cb54db7cd0f6505ff848789d71fd68c333c5591b22e80f858cbe8c5e210",
+    "evidence/cfa44-read-batch-optimization.json": "58ff4d477911bfc3ab40725b6aa7ae757740d1e17fb2cc12451f71e803e3a29c",
+    "evidence/camera-controls-options.json": "c6cab48bfe8e5db052d11a45feb0ba32775ee0159e51cbe0fbb3dcde74ce2170"
+  },
+  "integration_changes": [
+    "版本及标题2.19.3，升级基线2.19.2；运行行为按来源提交接收，源码合并无冲突",
+    "管理协议10/配置9/镜头子协议2，安装保留个人配置，首次启动备份后迁移",
+    "仅同步既有检查的固定协议/配置预期、设置字段及旧配置夹具，不新增测试模块"
+  ],
+  "previous_feedback": [
+    "2.19.2 R3短按修订正常，新镜头扩展未实测",
+    "2.19.2 MSL/EML仍双发，旧锁定目标登记残留已在来源线程复现",
+    "2.19.2三SP模型开启103次中位41.18ms、首次峰值716.48ms，不代表本轮成绩"
+  ],
+  "management_protocol": 10,
+  "configuration_revision": 9,
+  "camera_subprotocol": 2,
+  "build_dir": "Temp/build-2.19.3-candidate",
+  "build_receipt_sha256": "3f0a83a955ab87b401c1fb28d4d86ca3339b3aa29d9c68eddcac8e6e7dc96026",
+  "test_receipt_sha256": "58b39abe10dbeed598b9a8b0c9103a71034d08cd16a874fadb04f7d807112f4b",
+  "installed_receipt": "evidence/2.19.3-installed.json",
+  "installed_receipt_sha256": "1d973b8aef003ffd97321b6cd07d92d6f4c72637ff3dadade164ddfc66ee286e",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_19_2": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "profiles_match_install_backup_at_final_check": true,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 195,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261018-220727-161019",
+  "formal_main_unchanged": true,
+  "formal_package_2_19_0_verified": true,
+  "game_closed_with_user_authorization": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "MSL/EML单按扣弹，ADMM后切回MSL，其他多SP机体及模型开关对照",
+    "正常多目标齐射、锁定音效、调试/补给/检查点和退出恢复",
+    "计时修订3的首次/热切换、模型开关、中位数/P95及20ms目标",
+    "R3短按松开回正、长按满0.5秒无需松开换一次视角、双摇杆干扰弹",
+    "默认中键与自定义回正、25至300%灵敏度、开关隐藏/停用及暂停失焦",
+    "首次启动配置备份迁移，个人开关/注视/键位/配弹方案保留"
+  ],
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false,
+  "new_release_package_created": false
+}
