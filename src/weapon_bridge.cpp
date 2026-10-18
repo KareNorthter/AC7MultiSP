@@ -936,6 +936,7 @@ void execute(const Command& command) {
 extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return targetGazeLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
 // 模式改变时清除本模块私有状态；禁止解引用旧玩家，不向多人武器写回单人快照。
 extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 错误显式返回，禁用状态先于清理生效。

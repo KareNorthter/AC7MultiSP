@@ -1,0 +1,135 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/camera-input-coverage",
+  "base_commit": "3b4bdce6111243dbdf249e3c82b54e39bf4b959e",
+  "installed_baseline": "evidence/2.19.3-installed.json",
+  "status": "源码修订与旧版只读对照完成；未构建安装，新效果待实测",
+  "authorization": "用户要求5%～200%灵敏度、R3独立开关、键鼠视点模式松开保持；后续明确要求短按切目标不回正，并三次授权开始单人任务只读采样。用户手动操作，模组和采样器未代按。",
+  "observations": {
+    "scope": "已安装2.19.3、普通第三人称view=2；不是新修订实机验收，不扩大为三视角全测。跨线程内存采样不是同帧原子快照。",
+    "records": [
+      {
+        "file": "Temp/camera-input-coverage-2972-1792334341.json",
+        "sha256": "58ee4fc9e6c192285e404216cf8f83089434597b51e857d63b622943bf456ae6",
+        "samples": 1221,
+        "duration_seconds": 24.9819,
+        "view_types": [
+          2
+        ]
+      },
+      {
+        "file": "Temp/camera-input-coverage-2972-1792334448.json",
+        "sha256": "c3bc0775c3edf3b322a1130775f7749c26ae2d929dcca30b08094a6dc2738240",
+        "samples": 1223,
+        "duration_seconds": 24.9965,
+        "view_types": [
+          2
+        ]
+      },
+      {
+        "file": "Temp/camera-input-coverage-2972-1792334596.json",
+        "sha256": "d4dadd7d5f242f03c2fe72987645d36f7655f3c4b046d5331d40b7bcf6119496",
+        "samples": 732,
+        "duration_seconds": 14.9845,
+        "view_types": [
+          2
+        ]
+      }
+    ],
+    "mouse_release": "Alt松开后左右/上下原生轴归零，camera input许可仍为1，第三人称姿态随后向零衰减。原代码只由物理右摇杆建立保持，键鼠输入还会清除保持。",
+    "target_short_pulses": [
+      {
+        "duration_seconds": 0.1233,
+        "pose_at_start": [
+          0.25652,
+          -0.0
+        ],
+        "pose_at_release": [
+          0.11723,
+          -0.0
+        ],
+        "selected_target_changed": true
+      },
+      {
+        "duration_seconds": 0.1437,
+        "pose_at_start": [
+          0.28407,
+          -0.0
+        ],
+        "pose_at_release": [
+          0.09085,
+          -0.0
+        ],
+        "selected_target_changed": true
+      },
+      {
+        "duration_seconds": 0.1631,
+        "pose_at_start": [
+          0.27266,
+          -0.0
+        ],
+        "pose_at_release": [
+          0.08033,
+          -0.0
+        ],
+        "selected_target_changed": true
+      }
+    ],
+    "target_short": "三次短按时跟踪轴均为1约0.12～0.16秒；释放后选中目标改变，观察分量衰减。原代码直接以tracking>.05清除保持，把短按选择也当成持续注视。",
+    "target_long": "第三段同时记录短按和持续数秒的原生Y输入；说明跟踪轴本身不能区分两者。FocusTarget指针始终跟随选中目标，也不能用“指针非空”判定实际注视。",
+    "native_predicate": {
+      "rva": "0x420120",
+      "first_16_sha256": "aaf2ec83687ef9f003f1623c64482a77ec805c06e092bde569678b7f92f5b447",
+      "meaning": "原生判据对CameraFocusTargetComponent+0x108做无符号state-2<=1，状态2/3为实际注视；来自只读代码，不调用函数。",
+      "identity_check": "只读确认该组件类型正确、Outer为当前玩家，玩家+0x1370及三个输入组件+0x338指向同一组件；暂停时状态为1。"
+    },
+    "offline_boundary": "首次磁盘代码指纹与旧运行态记录不同，已停止离线推断并即时求助；后续按授权使用运行态只读代码和数据，不更改指纹来绕过核验。"
+  },
+  "changes": {
+    "sensitivity": "5～200整数百分比，默认100；UI/Lua/核心一致。仍只调整右摇杆普通环视速度，不扩大角度或调整注视、回正及键鼠速度。",
+    "r3": "camera_r3_enabled默认false；仅总功能和此开关都开启时短按释放回正、长按500毫秒立即换一次视角。关闭时原生回调直通，不累计手势，不触发组合回正；镜头保持和独立回正仍可用。",
+    "mouse": "原生环视轴出现输入即建立保持，轴归零记录交接并保持实际平滑姿态。移除键鼠清除保持的路径；不读取硬编码Alt，不改游戏键位。",
+    "target": "按原生实际注视状态2/3或模组持续注视归还；不再以跟踪轴脉冲清除保持，不自设长按计时，不改目标选择行为。新增判据16字节核验及注视组件弱身份/归属/关联核验。",
+    "lifecycle": "暂停、管理、失焦、特殊镜头、换机/世界、关闭及心跳超时沿用原清理，真实注视优先；干扰弹输入保留，组合回正仅在R3替换开启时工作。"
+  },
+  "interfaces": {
+    "management_protocol": 11,
+    "configuration_revision": 10,
+    "camera_subprotocol": 3,
+    "native_arguments": [
+      "飞机地址",
+      "许可",
+      "回正键",
+      "灵敏度",
+      "R3替换0/1"
+    ],
+    "capability": "核心和UI的dualsp_camera_input_options_supported均必须存在，Lua成套校验。",
+    "migration": "旧9先备份profiles.before-camera-input-options.json，再补R3默认false；旧灵敏度超过200时限为200并记日志，其他有效设置保留。旧配置按原顺序迁移。",
+    "checks": "未改测试模块；现有固定协议预期待后续获授权整合时同步。安装工具仅同步配置10与说明，未执行。"
+  },
+  "process_access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ (0x410)",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "game_operated_by_agent": false,
+  "compiled": false,
+  "test_modules_modified": false,
+  "tests_run": false,
+  "installed": false,
+  "gameplay_verified": false,
+  "runtime_product_files_modified": false,
+  "version_changed": false,
+  "historical_receipts_modified": false,
+  "verification": "只读研究、人工源码复核、Git差异空白检查和保护旧核心摘要核对；没有执行新运行代码或把旧版样本当成修复效果。",
+  "source_sha256": {
+    "src/camera_hold.hpp": "64aaf7b3c8e459181dde22ea1a48c9ed9079f02cb3e85efb96bd39a5ccf21baf",
+    "src/overlay.cpp": "b3967b28affb42732a8549faff53f487a6ea0b794a6269ccf12f1fcf07cccadb",
+    "src/weapon_bridge.cpp": "f48173e01cbf18bb8ee29e8744565c26c9ad39e3b45351ae617ecc58400be6b7",
+    "src/ui_messages.hpp": "94bbac646f079d2ca09741d24e934dd103eeb0804723828a4996bb4abfbccc35",
+    "src/install.py": "064578209d6fc882225b3b4970835d9baaf0ccf57068f3a02902baacf4294ebf",
+    "dist/DualSP/Scripts/main.lua": "0a2a8367a33c3dd45cc7fa693943bcb04110afe6f4276fb747eb1252348e6e20",
+    "dist/DualSP/Scripts/config_store.lua": "5f40d2fabe2fff202d51d7de354e2def64bf68738ead3cc9353a489b3ee62d98"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "raw_data": "原始内存样本、实例地址、函数窗口及临时研究脚本只在本工作区Temp，未提交游戏资源或原始地址。"
+}
