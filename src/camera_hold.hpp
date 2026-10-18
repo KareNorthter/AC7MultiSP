@@ -11,14 +11,19 @@ struct CameraHold {
     std::atomic<DWORD> thread{0};
     std::atomic<ULONGLONG> heartbeat{0};
     bool ready{},seeded{},rightDown{},nativePress{},longDone{},combo{},pendingView{},centering{},waitNeutral{},armed{};
+    bool r3Gesture{},releaseHandled{}; // 整次按压及释放交接都接管，不能只吞第一个原生回调。
+    unsigned nativeRequests{};
     bool frozenX{},frozenY{};
     bool stickWas{};
     float heldX{},heldY{};
     SHORT padX{},padY{};
-    ULONGLONG pressedAt{},releasedAt{};
+    ULONGLONG pressedAt{},releasedAt{},buttonReleasedAt{};
     std::string error;
     void resetPose() {armed=false;frozenX=frozenY=false;centering=false;waitNeutral=false;stickWas=false;releasedAt=0;}
-    void cancelGesture() {seeded=false;rightDown=nativePress=longDone=combo=pendingView=false;pressedAt=0;}
+    void cancelGesture() {
+        seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
+        pressedAt=buttonReleasedAt=0;nativeRequests=0;
+    }
     void clear() {
         allowed=false;heartbeat=0;plane={};input={};view={};cameras={};bindings=0;count=capacity=0;
         right=up=track=0;viewType=-1;cancelGesture();
@@ -62,6 +67,13 @@ void cameraHoldCenter() {
     // 明确回正会结束模组保持的目标注视；真实按住Y/F仍按原生轴优先。
     targetGaze.active=false;
 }
+void cameraHoldResolveRelease() {
+    if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled || !cameraHold.nativePress)return;
+    cameraHold.releaseHandled=true;
+    if(cameraHold.longDone || cameraHold.combo)return;
+    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<500)cameraHoldCenter();
+    else {cameraHold.longDone=true;cameraHold.pendingView=true;} // 游戏线程调度阶段再换视角，不能在XInput栈中调用。
+}
 void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     if(!cameraHoldLive())return;
     if(result!=ERROR_SUCCESS || !state) {
@@ -76,33 +88,38 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     if(!cameraHold.seeded) {
         cameraHold.seeded=true;cameraHold.rightDown=right;
         cameraHold.nativePress=false;cameraHold.longDone=right;cameraHold.combo=both; // 已按住的旧边沿不补发。
+        cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;
         return;
     }
     if(right && !cameraHold.rightDown) {
         cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.combo=false;cameraHold.pendingView=false;
+        cameraHold.r3Gesture=true;cameraHold.releaseHandled=false;cameraHold.buttonReleasedAt=0;cameraHold.nativeRequests=0;
     }
     if(both && !cameraHold.combo) {
-        cameraHold.combo=true;cameraHold.pendingView=false;cameraHoldCenter(); // 无论双摇杆先后顺序，都允许原生干扰弹和回正同时发生。
+        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;cameraHoldCenter(); // 无论双摇杆先后顺序，都允许原生干扰弹和回正同时发生。
     }
-    if(!right && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && cameraHold.nativePress) {
-        if(now-cameraHold.pressedAt<500)cameraHoldCenter();
-        else {cameraHold.longDone=true;cameraHold.pendingView=true;} // 系统输入回调只记请求，不在XInput栈内切视角。
-    }
+    if(!right && cameraHold.rightDown)cameraHold.buttonReleasedAt=now;
     cameraHold.rightDown=right;
-    if(!right){cameraHold.nativePress=false;cameraHold.combo=false;}
+    cameraHoldResolveRelease(); // 保留原生确认和组合标记，释放后的重复回调仍属于同次按压。
 }
-// 只消费真实R3按下后的一次原生视角请求；同次按住期间的其他视角请求继续原生。
-// 标准R3视角绑定必须确实产生该回调才启动长短按，不凭硬件状态凭空切视角。
+// 整次R3按压的原生换视角请求都隔离；唯一放行入口是满500毫秒后的受控跳板调用。
+// 原生动作没有FKey，按压期间及短暂释放交接中的混合换视角输入也归本次R3处理。
 void cameraHoldViewPressed(void* object) {
     if(!cameraHoldLive() || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
         originalCameraHoldView(object);return;
     }
     try {
         if(!cameraHoldIdentities() || cameraHoldNativeSpecial()){cameraHold.clear();originalCameraHoldView(object);return;}
-        XINPUT_STATE pad{};const auto result=originalTargetGazePad(0,&pad);
-        cameraHoldObservePad(result,&pad);
-        if(result==ERROR_SUCCESS && cameraHold.rightDown && !cameraHold.nativePress && !cameraHold.longDone) {
-            cameraHold.nativePress=true;return;
+        // 已有按压只用缓存边沿；无记录时补采，兼容原生动作先于游戏线程输入观察到达。
+        if(!cameraHold.r3Gesture) {
+            XINPUT_STATE pad{};const auto result=originalTargetGazePad(0,&pad);
+            cameraHoldObservePad(result,&pad);
+        }
+        if(cameraHold.r3Gesture) {
+            cameraHold.nativePress=true;++cameraHold.nativeRequests;
+            if(cameraHold.nativeRequests<=2)nativeLog("CAMERA_HOLD_R3_VIEW_BLOCK callbacks="+std::to_string(cameraHold.nativeRequests)+
+                " released="+std::to_string(!cameraHold.rightDown));
+            cameraHoldResolveRelease();return;
         }
         cameraHold.resetPose();
     }catch(const std::exception& error){cameraHoldFailure(error.what());}
@@ -273,13 +290,29 @@ int cameraHoldLua(void* luaState) {
                 if(view>2 || cameraHoldNativeSpecial()) {cameraHold.resetPose();cameraHold.cancelGesture();reason="special_view";cameraHold.allowed=false;}
                 else {
                     const auto now=GetTickCount64();
-                    if(cameraHold.viewType!=view || (cameraHold.heartbeat.load() && now-cameraHold.heartbeat.load()>500)) {
-                        cameraHold.resetPose();cameraHold.cancelGesture();cameraHold.viewType=view;
+                    if(cameraHold.heartbeat.load() && now-cameraHold.heartbeat.load()>500) {
+                        cameraHold.resetPose();cameraHold.cancelGesture();
+                    }
+                    if(cameraHold.viewType!=view) {
+                        cameraHold.resetPose();cameraHold.viewType=view;
+                        if(cameraHold.r3Gesture) {
+                            // 长按完成换视角后仍隔离本次R3的剩余回调，但不再派发动作。
+                            cameraHold.longDone=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;
+                        }else cameraHold.cancelGesture();
                     }
                     cameraHold.heartbeat=now;cameraHold.allowed=true;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
                     if(cameraHold.pendingView || (cameraHold.rightDown && cameraHold.nativePress && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=500)) {
-                        cameraHold.pendingView=false;cameraHold.longDone=true;cameraHold.resetPose();originalCameraHoldView(reinterpret_cast<void*>(plane));
+                        cameraHold.pendingView=false;cameraHold.longDone=true;cameraHold.resetPose();
+                        nativeLog("CAMERA_HOLD_R3_VIEW_DISPATCH held_ms="+std::to_string((cameraHold.buttonReleasedAt?cameraHold.buttonReleasedAt:GetTickCount64())-cameraHold.pressedAt));
+                        originalCameraHoldView(reinterpret_cast<void*>(plane));
+                    }
+                    if(cameraHold.r3Gesture && !cameraHold.rightDown && cameraHold.buttonReleasedAt && !cameraHold.pendingView) {
+                        const auto sinceRelease=GetTickCount64()-cameraHold.buttonReleasedAt;
+                        // 已确认动作保留100毫秒交接；尚未交付的原生动作最多等500毫秒，避免快点漏放或无限占键。
+                        if(sinceRelease>=(cameraHold.nativePress?100:500)) {
+                            cameraHold.r3Gesture=false;cameraHold.nativePress=false;cameraHold.combo=false;
+                        }
                     }
                 }
             }

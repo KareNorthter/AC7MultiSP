@@ -6,7 +6,7 @@
 
 用户反馈不扩大为完全无卡或全机全组合验收，其他待办继续保留。后续同类小优化递增补丁号，下一版为2.19.1。当前实现和验证边界见[挂载设计](docs/multi-sp-mount-design.md)。
 
-当前整合候选2.19.1位于`codex/integration-2.19.1`：接收CFA双/三SP开合保留、FALKEN等待TLS及尾迹自然结束后切换，以及默认关闭的镜头保持/R3长短按功能。候选已成套构建、通过现有检查并安装，效果待用户测试；正式主线及发布包仍为2.19.0。
+当前整合候选2.19.1位于`codex/integration-2.19.1`：接收CFA双/三SP开合保留、FALKEN等待TLS及尾迹自然结束后切换，以及默认关闭的镜头保持/R3长短按功能。候选已成套构建、通过现有检查并安装。用户反馈镜头保持基本正常，但R3短按同时回正和换视角；后续[短按修订](evidence/camera-hold-r3-short-press-fix.json)已改源码，未编译安装，待实测。正式主线及发布包仍为2.19.0。
 
 - [下载本地发布包2.19.0](Release/AC7MultiSP-2.19.0.zip)
 - [中文 ReadMe](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)
