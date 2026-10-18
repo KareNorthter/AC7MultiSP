@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "version": "2.19.4",
+  "candidate": true,
+  "recorded_at": "2026-10-18T22:56:50.209174+08:00",
+  "branch": "codex/integration-2.19.4",
+  "formal_baseline": "main / v2.19.0 / a8a6b77",
+  "installed_baseline": "2.19.3 / 3b4bdce",
+  "sources": [
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "title": "优化CFA-44切换卡顿与ECM弹出",
+      "branch": "codex/cfa44-10ms",
+      "commit": "37260c7",
+      "scope": "持续效果/锁定收尾/数组/炮口短只读检查减负，计时修订4；有效经验和踩坑统一整理"
+    },
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/camera-input-coverage",
+      "commit": "b4290e2",
+      "received_commit": "abb969b",
+      "scope": "R3默认关闭的独立替换、5至200%灵敏度、键鼠松开视点模式与短按选目标保持"
+    }
+  ],
+  "source_evidence_sha256_verified": {
+    "evidence/cfa44-10ms-assessment.json": "8a997878676128b10f8d942e3dec0c0e5184e9ae8351a3397535b8ce5c7492d4",
+    "evidence/cfa44-2.19.3-switch-observation.json": "08a2ce1994a06c4499464663b63e6877d97e41a562c36e87c85c4cd58106790a",
+    "evidence/camera-input-coverage.json": "4d594cee9de4f0d67340a9d5d5528f03b35eca9d35e3341ee83466fc04bd8322"
+  },
+  "integration_changes": [
+    "版本和UI标题2.19.4，升级基线2.19.3；源码合并无冲突，行为按来源接收",
+    "管理协议11/配置10/镜头子协议3成套部署；安装保留个人配置，首次启动先备份再迁移",
+    "仅同步既有检查固定协议/配置预期、设置字段及旧配置夹具，不新增测试模块"
+  ],
+  "previous_feedback": [
+    "用户确认2.19.3优化有效，双发目前未复现；不扩大为全机全组合验收",
+    "2.19.3三SP模型开启44次中位26.19ms，非首次43次中位26.12ms/P95为33.56ms",
+    "用户接受首次峰值，进一步争取10ms；旧数据不代表本轮新源码成绩"
+  ],
+  "management_protocol": 11,
+  "configuration_revision": 10,
+  "camera_subprotocol": 3,
+  "switch_cost_revision": 4,
+  "build_dir": "Temp/build-2.19.4-candidate",
+  "build_receipt_sha256": "dd4a9f627136b0c96756a368d2f5ec0c1d9bf7374fc84564172b30a81340a34d",
+  "test_receipt_sha256": "3050bdbed8d25d34aca13f8cdb072bf1bc6276ced5ad735204b9092d7f6fa1b8",
+  "installed_receipt": "evidence/2.19.4-installed.json",
+  "installed_receipt_sha256": "a15b5bb6a51aa0caf1178f682e07abc3021a602c81e64b333bda2ac58590ee36",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_19_3": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "profiles_match_install_backup_at_final_check": true,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 202,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261018-225629-942957",
+  "formal_main_unchanged": true,
+  "formal_package_2_19_0_verified": true,
+  "game_closed_with_user_authorization": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "计时修订4同组合首次/热切换、模型开关、中位数/P95及10ms目标",
+    "MSL/EML单按扣弹、ADMM正常多目标齐射、持续效果、补给/检查点及退出恢复",
+    "R3替换关闭时原生，开启后短按释放回正、长按0.5秒立即一次换视角和双摇杆干扰弹",
+    "中键/自定义回正、5至200%灵敏度、键鼠松开视点模式和短按选目标后的保持",
+    "真正长按注视与模组持续注视、三视角、暂停失焦/断连和功能关闭",
+    "首次启动配置备份及默认R3关闭，原设置保留和超过200%灵敏度限幅"
+  ],
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false,
+  "new_release_package_created": false
+}
