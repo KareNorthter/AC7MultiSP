@@ -53,9 +53,9 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=8; // 目标注视设置须与本版控制器成套部署。
+constexpr int managementProtocol=9; // 新增镜头保持设置，必须与本版控制器成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
-bool draftTargetGazePadX=false;
+bool draftTargetGazePadX=false,draftCameraHold=false;
 int draftTargetGazeKey=0,targetGazeResponse=0;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
@@ -378,6 +378,7 @@ void loadManagementDraft() {
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
     draftTargetGazePadX=state.at("target_gaze_pad_x").get<bool>();
+    draftCameraHold=state.at("camera_hold_enabled").get<bool>();
     draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
@@ -590,7 +591,7 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
-        {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},
+        {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -706,6 +707,10 @@ void drawPanel() {
             ImGui::SameLine();
             if(ImGui::Button(tr("清除注视键###ClearGazeKey","Clear tracking key###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;notice.clear();}
             ImGui::TextWrapped("%s",tr("单次按下开始/停止注视，与手柄X选项独立。不要与游戏原生动作键冲突；原生默认F是长按注视，可按需改为单次切换。","Press once to start/stop tracking, independently of the controller X option. Avoid conflicting native actions. The native F hold-to-track key can also be assigned here for toggle operation."));
+            ImGui::SeparatorText(tr("镜头保持","Camera hold"));
+            ImGui::Checkbox(tr("松开右摇杆后保持镜头方向###CameraHold","Keep the camera direction after releasing the right stick###CameraHold"),&draftCameraHold);
+            ImGui::TextWrapped("%s",tr("默认关闭，保存后生效。开启时：短按R3（右摇杆按下）并松开后回正；长按满0.5秒切换一次视角，松开不再回正。使用游戏原生R3换视角绑定。","Off by default; applies after saving. Short-press and release R3 (right-stick click) to recenter. Hold for 0.5 seconds to change view once; releasing then does not recenter. Uses the game's native R3 view binding."));
+            ImGui::TextWrapped("%s",tr("双摇杆按下时允许原生释放干扰弹并同时回正，不触发本次长按换视角。回正会结束模组目标注视；仍按住Y/F时保留原生注视。暂停、管理界面、失焦及特殊镜头期间不处理长短按。","Clicking both sticks allows native countermeasures and recentering together, without changing view for that gesture. Recentering ends mod target tracking; holding Y/F retains native tracking. Short/long presses are inactive while paused, in management, unfocused or in special camera modes."));
             ImGui::TextWrapped("%s",tr("装填中的武器可以选择；未搭载的 SP 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
             ImGui::EndTabItem();
         }
@@ -755,6 +760,9 @@ void drawPanel() {
     if(state.contains("target_gaze")&&state.at("target_gaze").contains("error"))
         ImGui::TextWrapped("%s",uiMessage(state.at("target_gaze").at("error").get<std::string>(),
             "目标注视已停用，请查看日志。","Target tracking is disabled. See Logs for details.").c_str());
+    if(state.contains("camera_hold")&&state.at("camera_hold").contains("error"))
+        ImGui::TextWrapped("%s",uiMessage(state.at("camera_hold").at("error").get<std::string>(),
+            "镜头保持已停用，请查看日志。","Camera hold is disabled. See Logs for details.").c_str());
     if(!notice.empty())ImGui::TextWrapped("%s",uiMessage(notice,"操作未完成，请查看日志。","The operation could not be completed. See Logs for details.").c_str());
     ImGui::End();
 }
@@ -786,6 +794,8 @@ void refreshState() {
             state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
             state.at("target_gaze_pad_x").get<bool>();
+            state.at("camera_hold_enabled").get<bool>();
+            if(state.at("camera_hold").at("protocol").get<int>()!=1)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("target_gaze_key").is_number_integer() ||
                 !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("目标注视键位无效或重复");
@@ -831,7 +841,7 @@ void refreshState() {
         Json errors=Json::object();
         for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
             if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
-        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch","target_gaze"})
+        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch","target_gaze","camera_hold"})
             if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {
@@ -997,6 +1007,7 @@ extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。

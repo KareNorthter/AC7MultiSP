@@ -525,6 +525,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "continuous_sp.hpp"
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
+#include "camera_hold.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
 struct CfaSwitchCost {
@@ -851,6 +852,7 @@ void execute(const Command& command) {
 
 // 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
 extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return targetGazeLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
 // 模式改变时清除本模块私有状态；禁止解引用旧玩家，不向多人武器写回单人快照。
 extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 错误显式返回，禁用状态先于清理生效。
