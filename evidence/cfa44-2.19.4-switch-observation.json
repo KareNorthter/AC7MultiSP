@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "date": "2026-10-18",
+  "version": "2.19.4",
+  "change_commit": "37260c7",
+  "profile_revision": 4,
+  "installed_receipt": "E:/AC7_MultiSP/evidence/2.19.4-installed.json",
+  "installed_receipt_sha256": "a15b5bb6a51aa0caf1178f682e07abc3021a602c81e64b333bda2ac58590ee36",
+  "runtime_files_verified": 17,
+  "runtime_hash_mismatches": [],
+  "core_sha256": "7cd50b17210aff5b4f73fe6968269d8237653cae6b490b07ef545bccf0d2ca25",
+  "log_snapshot": "E:\\AC7_MultiSP\\Temp\\cfa-latest-20261018-2315\\native.log",
+  "log_sha256": "2c384636337e72ad72922ac1a69997a15a12f570ddbb6c6d4d9de53c2c5658e8",
+  "log_bytes": 3152229,
+  "sample_window": {
+    "after_tick": 7828375,
+    "first_request": 3,
+    "last_request": 88,
+    "last_tick": 8291875,
+    "configs": [
+      0,
+      1,
+      2
+    ],
+    "models": true,
+    "all_ok": true
+  },
+  "all_ms": {
+    "count": 79,
+    "min": 16.665300000000002,
+    "median": 17.5669,
+    "p95": 19.8764,
+    "max": 382.1186
+  },
+  "first_ms": 382.1186,
+  "warm_ms": {
+    "count": 78,
+    "min": 16.665300000000002,
+    "median": 17.5484,
+    "p95": 19.6689,
+    "max": 20.2388
+  },
+  "last10_ms": {
+    "count": 10,
+    "min": 17.4315,
+    "median": 17.782600000000002,
+    "p95": 19.8764,
+    "max": 19.8764
+  },
+  "last_switch_ms": 19.6689,
+  "warm_by_target_ms": {
+    "0": {
+      "count": 26,
+      "min": 16.665300000000002,
+      "median": 17.356,
+      "p95": 19.336100000000002,
+      "max": 19.523500000000002
+    },
+    "1": {
+      "count": 27,
+      "min": 18.835800000000003,
+      "median": 19.2301,
+      "p95": 19.9662,
+      "max": 20.2388
+    },
+    "2": {
+      "count": 25,
+      "min": 16.7898,
+      "median": 17.218600000000002,
+      "p95": 17.8487,
+      "max": 18.6999
+    }
+  },
+  "target_names": {
+    "0": "ADMM",
+    "1": "EML",
+    "2": "ECM"
+  },
+  "warm_exclusion": "仅排除本次首个switch/request=3；调试换装不计作SP切换。请求43起回到三SP后46次另列，未删除慢样本。",
+  "last_after_debug_ms": {
+    "count": 46,
+    "min": 16.8881,
+    "median": 17.595350000000003,
+    "p95": 19.8764,
+    "max": 20.2388
+  },
+  "warm_above_20ms": 1,
+  "warm_below_10ms": 0,
+  "warm_stages_median_ms": {
+    "audio_selection": 0.61185,
+    "capture": 0.68405,
+    "mount_before": 2.2926,
+    "mount_commit": 9.0658,
+    "native_init": 3.1405000000000003,
+    "reload_armed": 0.3524,
+    "response_publish": 0.601,
+    "restore_effects": 0.29725,
+    "retain_effects": 0.45185
+  },
+  "warm_queries_median": {
+    "calls": 1053.0,
+    "ms": 15.721250000000001,
+    "batch_reads": 1353.5,
+    "batch_reused": 638.5
+  },
+  "warm_work_median_ms": {
+    "bones_maintain": 5.21445,
+    "bones_return": 0.6601,
+    "commit_classify": 0.08845,
+    "layout_audit": 0.86875,
+    "muzzle_sync": 2.1094,
+    "parts_bind": 0.0006000000000000001,
+    "rack_maintain": 0.07975,
+    "rack_return": 0.30605000000000004
+  },
+  "baseline": "evidence/cfa44-2.19.3-switch-observation.json",
+  "baseline_warm_median_ms": 26.123800000000003,
+  "warm_median_reduction_percent": 32.826005405032966,
+  "interpretation": "再次提速，正常切换通常17至20ms；锁定/音效收尾和持续效果保留显著下降，骨维护约5.21ms基本未变，模型提交仍约9.07ms。尚无10ms样本，不能声称达到10ms。",
+  "limits": "核心事务计时，不是完整输入显示延迟或FPS；分项中位数不可相加，子项重叠。非受控A/B，当前整合含其他镜头修改，环境也新增FOV相关兼容项；只确认本次样本与阶段变化，不推出全机全组合或稳定性验收。日志为一次快照，不持续监控。",
+  "actions": "只读核对安装文件与日志、保存汇总及文档；未修改运行源码、编译、运行测试模块、安装或操作游戏",
+  "raw_summary": "E:/AC7_MultiSP/Temp/cfa-latest-20261018-2315/summary.json"
+}
