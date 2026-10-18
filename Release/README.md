@@ -1,9 +1,13 @@
 # 本地发布
 
-正式版 **AC7MultiSP 2.19.0**：[AC7MultiSP-2.19.0.zip](AC7MultiSP-2.19.0.zip)，131.1 MiB。
+正式版 **AC7MultiSP 2.20.0**：[AC7MultiSP-2.20.0.zip](AC7MultiSP-2.20.0.zip)，131.2 MiB。
 
-中英文ReadMe、完整Mod/模型包、专用加载器和微软离线运行库均在包内；没有个人配置、存档、日志或其他Mod。189个ZIP成员逐项回读核验，微软安装程序签名有效；运行字节与用户已测试的安装一致，没有重新构建。
+包内包含本版更新说明、中英文ReadMe、29架已适配/部分适配机体列表及必要特殊备注、完整Mod/模型包、专用加载器与微软离线运行库。不含个人配置、存档、日志或其他Mod。189成员逐项回读、微软签名及11项既有检查通过。
 
-SHA256：`408516022be168cca00942b4a9dc5374aeb9d3256565b9b8700793801d05d5e4`
+SHA256：`5a61bcfeea0909fc15c7460e0d7078059278e9d5103ec4ef06094f79dbddda01`
 
-[发布回执](../evidence/2.19.0-release.json) · [用户验收](../evidence/2.19.0-user-validation.json) · [补充反馈及授权](../evidence/2.19.0-user-feedback-followup.json)。任务结算箭头卡顿明显缓解，仍有轻微卡顿；CFA切换改善也不等于完全无卡。发布ZIP仅在本机，不进Git；未上传远端。旧2.16 ZIP保留为来源与恢复材料。
+功能来自用户已验收的2.19.5，2.20.0仅统一版本标识后重建；原安装仍是2.19.5，本轮未重装或启动游戏。核心除构建标识节外字节一致；版本标识精确变换见[构建证明](../evidence/2.20.0-version-label-build.json)。
+
+[发布回执](../evidence/2.20.0-release.json) · [用户验收](../evidence/2.20.0-user-validation.json) · [发布授权](../evidence/2.20.0-user-feedback-followup.json)。
+
+ZIP仅保留本机、不入Git、未上传。旧2.19.0与2.16.0包保留用于恢复和来源核对。

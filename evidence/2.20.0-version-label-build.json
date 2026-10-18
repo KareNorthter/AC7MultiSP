@@ -1,0 +1,65 @@
+{
+  "schema": 1,
+  "version": "2.20.0",
+  "recorded_at": "2026-10-18T23:50:01.820260+08:00",
+  "validated_version": "2.19.5",
+  "validated_commit": "2902705",
+  "validated_build_dir": "Temp/build-2.19.5-candidate",
+  "build_dir": "Temp/build-2.20.0-final",
+  "exact_version_label_transform_verified": true,
+  "functional_sources_identical": true,
+  "changed_source_files": {
+    "dist/DualSP/Scripts/main.lua": {
+      "accepted_sha256": "deff6740fc02143a3d286d1ad2b9f3717983bdac078fece8dc7d9a11e2392772",
+      "release_sha256": "dbd564c700c5e84c4d1619bcf49f480a2cdc04455e1025338f7d6d75c5579145"
+    },
+    "src/overlay.cpp": {
+      "accepted_sha256": "986235a3b4b263343b7df45d491be1fe8fed5a8acc3e8e5872bec5f6b2c5611a",
+      "release_sha256": "3b91c506865b3a244d6382742dcb4a0d48d47aa36e49400e2b7e45c9e696f2bf"
+    },
+    "src/product.json": {
+      "accepted_sha256": "eabf75a9f9807e085b3a6471a05cd4b5b4d93c0db1fb25780c31bcd0cac11563",
+      "release_sha256": "ffa382bfbdb29b90e68826dd2a3f55f1eaf07cb28b586acce5f1deba7837381b"
+    },
+    "VERSION": {
+      "accepted_sha256": "d936cd1c69d4da35608fdfb765c57c136f0cefad39073f2740b03ddfdf9e2a49",
+      "release_sha256": "f9390af682526565a4ea8d3299bd45f738940035311ee197eb2eeede78178119"
+    }
+  },
+  "test_sources_identical": true,
+  "toolchain_identical": true,
+  "mount_pak_identical": true,
+  "runtime_file_count": 17,
+  "core_sections_identical": false,
+  "core_section_sha256": {
+    ".text": "59822a84a35589b73a4d62fd4294a422b006d797f82f871b81543b07f6d10659",
+    ".rdata": "a62344d9fa08b7b5b74dd1f860eec15d95c36c5f5ecab6929b1ba367d48392c5",
+    ".buildid": "d1ed5f7458dc1446e031473af95f7d92bf97715cdea814dcc57af01f9fa5c80c",
+    ".data": "ba174a8e3733f1b95d3204d9ee620ab3c76a0f424ea0ffa36d8907f77c67df93",
+    ".pdata": "c340f2232ad541f4d18eb5654d89d6fb04d1526042f50702d9a9188ab9e6f860",
+    ".tls": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+    ".reloc": "22b1b0a16e06fbbd73251276705f57327d221a2c96939be23d46dd134f9925a0",
+    "/4": "078f72912f12e42f20af2c27a19ee1429ce934b29af3c30762b73424ccc12d44",
+    "/18": "6db222a69a0fd3aa144b7bb50b746c7242f1f94bd32b7b917759a2b89f0ee358",
+    "/58": "4024bf63ed32380780e0e503af97bdc2008ad1e98185ac05573c3f067dd79e45",
+    "/70": "8f468f4ed843d3e8cdeec3c9e65ee82fea87183f145b0834fd608827c70e6d04",
+    "/82": "18c85fd339704a9b2e35877053c57b458c8fa15efa70fee79d1b0f2000bddceb",
+    "/33": "07abf8aa0a1229316af549721dcdc4ef6a97cdcca819e3ab26a57fa8f5afa828",
+    "/47": "e94dc79840c1cfbfe15b71fcd3d0a64f98b2496e723dbcd644400a6d4746aae6"
+  },
+  "build_receipt_sha256": "34d5e5cb46b395036f739c0b79b6086405ccd9ed2887e2d7b0aba96eecc4c4e7",
+  "test_receipt_sha256": "73e36b9d9c31dbdedf3d4641433b8fdb7fce1105c71f47e5b18a4c453db3d750",
+  "user_validation_sha256": "8ad1032ea771c77680fa68b54069b25229d60c092a42cc0e6f518a6307d1b05f",
+  "release_authorization_sha256": "2f972f2371975226ffca926dfecc54b712d87f6a5a2a759cf3f49cb92f050af6",
+  "installed_new_version": false,
+  "new_version_gameplay_tested": false,
+  "note": "用户实机验收2.19.5；仅版本标识2.20.0已完整构建并通过既有检查。发布清单不是实际安装回执。",
+  "core_changed_sections": [
+    ".buildid"
+  ],
+  "core_sections_except_buildid_identical": true,
+  "core_instruction_section_identical": true,
+  "readme_aircraft_rows_verified": 29,
+  "release_members_verified": 189,
+  "previous_2_19_0_package_verified": true
+}

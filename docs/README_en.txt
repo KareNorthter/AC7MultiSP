@@ -1,13 +1,12 @@
-AC7MultiSP 2.19.5 Test Candidate
+AC7MultiSP 2.20.0
 
-The user reports that the 2.19.4 camera features work. The 2.19.5 candidate adds view-switch and target-tracking continuity corrections; the new behavior awaits gameplay verification. Enable Camera hold in the second tab, Bindings, to show its subsettings; save to apply.
-• Right-stick sensitivity: 5% to 200%, default 100%, without increasing the maximum look angle.
-• Replace R3 click behavior is off by default. When off, R3 retains its native function. When on, short-press and release to recenter, or hold for 0.5 seconds to change view once immediately without releasing. Releasing afterward does not recenter.
-• The independent recenter shortcut defaults to middle mouse; assign one keyboard key or clear it. It acts on press. Native keyboard view switching remains a separate action.
-• Keep the viewing direction after releasing the right stick or the native viewpoint operation mode key (Alt by default) when using a mouse. Native bindings are unchanged. Short target selection retains the direction; actual native hold-to-track and mod toggle tracking still take priority.
-Native countermeasures remain available. With R3 replacement enabled, clicking both sticks also recenters. Disabling Camera hold disables its subfeatures; pause, management, focus loss and special camera modes restore native behavior. New sources use management protocol 11, configuration 10 and camera subprotocol 3. Configuration 9 is backed up to profiles.before-camera-input-options.json before adding the default-off R3 option. Old sensitivity values above 200 are limited to 200; other valid settings are retained. Matching core, UI and Lua files are required. Older frozen builds and receipts are retained; the installation is upgraded to 2.19.5.
-
-The additional corrections are included in the complete 2.19.5 build, which passed existing checks and has been installed: with Camera hold enabled, ordinary first-person, cockpit and third-person view changes retain the look direction. Holding Y starts tracking directly from that direction; releasing it returns to the retained direction. Native recenter suppression applies only while Camera hold is enabled; explicit recenter still works. Normal controller X tracking toggles no longer show ON/OFF popups. Error, no-target and keyboard notifications remain. These source changes await gameplay verification.
+What is new in 2.20.0 (since 2.19.0)
+• Camera direction hold, off by default in the second Bindings tab, supports controller release, mouse viewpoint-mode release, short target selection and ordinary view changes. Tracking turns from the current direction and returns to it afterward. Native auto-recentering is suppressed only while Camera hold is enabled.
+• Independent recenter defaults to middle mouse and can be rebound. Right-stick sensitivity is 5%–200%, default 100%. Optional R3 replacement is off by default: when enabled, release a short press to recenter, or hold 0.5 seconds to change view immediately; both sticks retain countermeasures and recenter together.
+• CFA-44 dual/triple-SP changes retain deployment progress. Reduced repeated muzzle, model, lock and persistent-effect checks lower switching hitches. Initial loading can still be slower; no fixed 10 ms or hitch-free guarantee is made.
+• Shared weapon rebuilding now releases old lock registrations to prevent stale targets causing extra MSL/EML shots, while preserving normal multi-target salvos. The user confirmed the latest changes work; this is not exhaustive validation of every aircraft/combination.
+• ADF-01 switch requests during TLS/trails are discarded; press again after they end. The beam is not forcibly stopped and requests are not queued.
+• Normal controller-X target-tracking toggles are silent; errors, no-target and keyboard notifications remain. Personal settings are retained, with a backup before any required migration.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -42,20 +41,53 @@ Controls
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
 • Optional target tracking toggle: enable controller X replacement in the second tab, Bindings (off by default), or assign an independent keyboard key (unbound by default). Press once to track and again to stop. Y retains its native behavior. When X replacement is enabled, use the D-pad or native keyboard cycling for SP selection. Pausing, opening management, losing focus or losing the target stops tracking.
-• On first launch, settings migrate after saving profiles.before-camera-hold.json; installation preserves the original personal settings.
+• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 10. Existing revision-10 settings need no further migration.
+• Camera hold is off by default in the second Bindings tab. R3 replacement is a separate default-off option; recenter defaults to middle mouse. Save settings to apply. Native view switching and recenter should use different keys.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
+Simultaneous SP-model support
+Adapted means a simultaneous-visual layout is implemented, not that every aircraft and combination has been individually playtested. Visible positions follow hardpoints, ammunition and reload state; they do not equal total ammunition. Aircraft without adapted visuals retain Multi-SP weapon functionality. Aircraft not listed below use native visuals.
+
+Aircraft | Status | Necessary notes
+F-15E | Adapted |
+F-35C | Adapted | 4AAM has fewer visible positions when SOD is selected; ammunition and lock windows are unchanged.
+Su-30SM | Adapted |
+F-2A | Adapted | Simultaneous-model performance still needs work.
+F-15C | Adapted |
+F-15J | Adapted |
+F-15 S/MTD | Adapted |
+F-16C | Adapted |
+XFA-27 | Adapted |
+Mirage 2000-5 | Adapted |
+ADFX-01 | Adapted |
+Rafale M | Adapted |
+Typhoon | Adapted |
+Su-35S | Adapted |
+Su-37 | Adapted |
+F-4E | Adapted |
+F-14A TGM | Adapted |
+Gripen E | Adapted |
+Su-30M2 | Adapted |
+Su-34 | Adapted |
+MiG-29A | Adapted |
+F-16XL | Adapted |
+MiG-35D | Adapted |
+F-22A | Partial | Retains side 8AAM models when selected; internal QAAM/XSDB use native switching.
+Su-57 (standard) | Partial | Retains PLSL pods; internal 4AAM/GPB remain native.
+ADF-01 FALKEN | Adapted | 4AAM/FAEB share racks. Switches during TLS/trails are discarded; press again afterward.
+DarkStar | Partial | Retains both PLSL guns across SP changes; SASM/XSDB follow native current-SP visuals.
+ADF-11F | Adapted | QAAM+UAV and triple loadouts use two QAAM positions on the right and one UAV on the left; minor UAV/rail clipping remains.
+CFA-44 | Adapted | ADMM+EML and triple loadouts split the sides; ECM models are hidden and out-of-mission visuals remain native.
+
+Su-47, Su-57 TGM and X-02S retain Multi-SP weapon functionality but use native current-SP models/animations, without full simultaneous mounting. Standard Su-57 and Su-57 TGM are separate cases.
+
 Known issues and planned improvements
-• CFA-44: 2.19.2 still reproduced MSL/EML double shots. This candidate adds native lock-registration cleanup at the shared rebuild entry and reduces repeated memory queries; the user confirmed 2.19.3 improved switching to around 26 ms with double shots not reproduced in that test. This candidate reduces further repeated reads; the 10 ms goal and wider gameplay verification remain pending. The user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
-• Arrows on the mission-results screen stutter noticeably less, but slight stuttering remains. This is still a known issue.
-• ADF-01: switches requested while TLS or its trail remains active are discarded. Press again after it ends; requests are not queued and the beam is not forcibly stopped. Gameplay verification is pending.
-• SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
-• F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
-• An occasional hangar exit/crash was previously reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
-The other issues remain recorded. Target tracking was reported working in 2.17; the new Mission 13 correction and moving its settings to Bindings await gameplay verification; this candidate is a new build and awaits gameplay verification, including the CFA firing-transition and R3 short-press corrections.
+• SP selection, first-time resource loading and mission entry can still pause. CFA-44/F-22A SP2/SP3 selection cursors and F-2A simultaneous-model performance remain improvement areas.
+• Mission-results arrows stutter noticeably less, but slight stuttering remains.
+• An occasional hangar exit/crash was reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
 
 Compatibility with other mods
 • Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received a complete 2.16 retest.

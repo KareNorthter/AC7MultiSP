@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "version": "2.20.0",
+  "recorded_at": "2026-10-18T23:47:33.191719+08:00",
+  "user_message": "所有改动有效。请将最新功能提交到主线main，版本号更新到2.20.0。然后制作一个发布包，readme里面补充这个版本的更新说明，也要补充 多SP模型 的机体适配情况（不是所有的机体都写备注，仅写特殊情况的、必要的备注）",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "requested_documentation": [
+    "2.20.0更新说明",
+    "多SP模型机体适配列表，备注仅列特殊情况与必要限制"
+  ],
+  "validated_version": "2.19.5",
+  "version_label_rebuild_required": true,
+  "install_requested": false
+}

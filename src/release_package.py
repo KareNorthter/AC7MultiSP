@@ -161,6 +161,92 @@ def frozen_sources(build_dir):
     return runtime, pak, installed, build_hash, test_hash, digest(validation_path), digest(authorization_path)
 
 
+def version_label_sources(build_dir, accepted_dir):
+    """仅版本标识重建：逐源对照已验收安装，不伪造新版本安装或实机验收。"""
+    validation_path = ROOT / ('evidence/' + VERSION + '-user-validation.json')
+    authorization_path = ROOT / ('evidence/' + VERSION + '-user-feedback-followup.json')
+    validation, authorization = read_json(validation_path), read_json(authorization_path)
+    old_version = validation['validated_version']
+    if (validation.get('version') != VERSION or validation.get('main_acceptance_authorized') is not True or
+            validation.get('version_label_only_authorized') is not True or old_version == VERSION or
+            authorization.get('version') != VERSION or authorization.get('release_authorized') is not True or
+            accepted_dir != contained(ROOT / validation['validated_build_dir'], ROOT / 'Temp').resolve(strict=True)):
+        raise ValueError('缺少已验收基线或仅版本标识重建的发布授权')
+    old_build = read_json(accepted_dir / 'build-receipt.json')
+    old_tests = read_json(accepted_dir / 'test-receipt.json')
+    installed_path = ROOT / ('evidence/' + old_version + '-installed.json')
+    old_installed = read_json(installed_path)
+    old_build_hash, old_test_hash = digest(accepted_dir / 'build-receipt.json'), digest(accepted_dir / 'test-receipt.json')
+    if (old_build.get('version') != old_version or old_build.get('receipt_schema') != 2 or
+            old_tests.get('passed') is not True or old_tests.get('build_receipt_sha256') != old_build_hash or
+            old_installed.get('installed') is not True or old_installed.get('candidate') != old_version or
+            old_installed.get('build_receipt_sha256') != old_build_hash or
+            old_installed.get('test_receipt_sha256') != old_test_hash or
+            validation.get('validated_build_receipt_sha256') != old_build_hash or
+            validation.get('validated_installed_receipt_sha256') != digest(installed_path)):
+        raise ValueError('已验收基线的构建、测试和安装记录不一致')
+    for name, expected in old_build['objects'].items():
+        if digest(contained(accepted_dir / name, accepted_dir)) != expected:
+            raise ValueError('已验收构建中间文件改变：' + name)
+    for name, field in (('DualSP.dll', 'candidate_sha256'), ('DualSPUI.dll', 'ui_sha256')):
+        if (digest(accepted_dir / name) != old_build[field] or
+                old_installed['runtime_files']['bin/' + name] != old_build[field]):
+            raise ValueError('已验收产物改变：' + name)
+    current = read_json(build_dir / 'build-receipt.json')
+    info = verify_build(current, build_dir)
+    tests = read_json(build_dir / 'test-receipt.json')
+    build_hash, test_hash = digest(build_dir / 'build-receipt.json'), digest(build_dir / 'test-receipt.json')
+    if (info['version'] != VERSION or tests.get('name') != NAME or tests.get('version') != VERSION or tests.get('passed') is not True or
+            tests.get('build_receipt_sha256') != build_hash or tests.get('test_sources') != old_tests.get('test_sources') or
+            current['build_define'] != old_build['build_define'] or current['toolchain'] != old_build['toolchain'] or
+            set(current['source_files']) != set(old_build['source_files'])):
+        raise ValueError('新构建条件、来源集合或检查来源与验收基线不同')
+    allowed = {'VERSION', 'src/product.json', 'src/overlay.cpp', 'dist/DualSP/Scripts/main.lua'}
+    changed = {name for name, value in current['source_files'].items() if value != old_build['source_files'][name]}
+    if changed != allowed:
+        raise ValueError('超出版本标识差异：' + repr(sorted(changed)))
+    commit = validation['validated_commit']
+    subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)
+    for name in allowed:
+        original = subprocess.check_output(['git', 'show', commit + ':' + name], cwd=ROOT)
+        if data_hash(original) != old_build['source_files'][name]:
+            raise ValueError('原提交与已测来源不符：' + name)
+        runtime_name = name.removeprefix('dist/DualSP/')
+        if name in ('VERSION', 'dist/DualSP/Scripts/main.lua'):
+            if data_hash(original) != old_installed['runtime_files'][runtime_name]:
+                raise ValueError('原版本标识与已装记录不符：' + name)
+        actual = (ROOT / name).read_bytes()
+        if name == 'src/product.json':
+            expected = json.loads(original)
+            expected.update(candidate=False, upgrade_receipt='evidence/' + old_version + '-installed.json')
+            equal = json.loads(actual) == expected
+        else:
+            equal = actual == original.replace(old_version.encode(), VERSION.encode())
+        if not equal:
+            raise ValueError('版本标识文件含其他改动：' + name)
+    for name, expected in tests['test_sources'].items():
+        if digest(ROOT / name) != expected:
+            raise ValueError('检查来源改变：' + name)
+    assets = current['mount_assets']
+    if (assets['sha256'] != old_build['mount_assets']['sha256'] or
+            assets['members'] != old_build['mount_assets']['members'] or
+            assets['sha256'] != old_installed['mount_assets']['sha256']):
+        raise ValueError('挂载资源不同于已验收版本')
+    runtime = {'Scripts/' + name: (ROOT / 'dist/DualSP/Scripts' / name).read_bytes() for name in info['scripts']}
+    runtime.update({'bin/DualSP.dll': (build_dir / 'DualSP.dll').read_bytes(),
+                    'bin/DualSPUI.dll': (build_dir / 'DualSPUI.dll').read_bytes(), 'VERSION': (ROOT / 'VERSION').read_bytes()})
+    if len(runtime) != 17 or set(runtime) != set(old_installed['runtime_files']):
+        raise ValueError('运行文件集合不同于已验收版本')
+    for name, data in runtime.items():
+        if name not in ('bin/DualSP.dll', 'bin/DualSPUI.dll', 'VERSION', 'Scripts/main.lua'):
+            if data_hash(data) != old_installed['runtime_files'][name]:
+                raise ValueError('非版本运行文件改变：' + name)
+    manifest = {'runtime_files': {name: data_hash(data) for name, data in runtime.items()},
+                'mount_assets': old_installed['mount_assets'],
+                'validated_version': old_version, 'actual_installed_receipt': installed_path.relative_to(ROOT).as_posix()}
+    return runtime, (build_dir / assets['file']).read_bytes(), manifest, build_hash, test_hash, digest(validation_path), digest(authorization_path)
+
+
 def verify_package(path, prefix, payload):
     """完整解压回读每个白名单成员，包括文件清单自身。"""
     with zipfile.ZipFile(path) as archive:
@@ -175,6 +261,7 @@ def verify_package(path, prefix, payload):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
+    parser.add_argument('--validated-build-dir', type=Path, help='仅版本标识重建时，显式给出已获用户验收的旧冻结构建')
     parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7MultiSP-2.16.0.zip')
     parser.add_argument('--output', type=Path, default=ROOT / ('Release/' + NAME + '-' + VERSION + '.zip'))
     args = parser.parse_args()
@@ -184,7 +271,12 @@ def main():
     receipt_path = ROOT / ('evidence/' + VERSION + '-release.json')
     if output.exists() or receipt_path.exists() or output.suffix.lower() != '.zip':
         raise ValueError('发布包或发布回执已存在，或输出不是 ZIP；拒绝覆盖')
-    runtime, pak, installed, build_hash, test_hash, validation_hash, authorization_hash = frozen_sources(build_dir)
+    accepted_dir = contained(args.validated_build_dir, ROOT / 'Temp').resolve(strict=True) if args.validated_build_dir else None
+    def sources():
+        return version_label_sources(build_dir, accepted_dir) if accepted_dir else frozen_sources(build_dir)
+    runtime, pak, installed, build_hash, test_hash, validation_hash, authorization_hash = sources()
+    actual_installed = installed.get('actual_installed_receipt', 'evidence/' + VERSION + '-installed.json')
+    validated_version = installed.get('validated_version', VERSION)
     runtimes, legacy_records = legacy_payload(archive_path)
     payload = {MOD + name: data for name, data in runtime.items()}
     legacy_sources = {
@@ -208,7 +300,8 @@ def main():
                'name': NAME, 'candidate': VERSION, 'runtime_files': installed['runtime_files'],
                'mount_assets': installed['mount_assets'], 'build_receipt_sha256': build_hash,
                'test_receipt_sha256': test_hash, 'user_validation_sha256': validation_hash,
-               'release_authorization_sha256': authorization_hash}
+               'release_authorization_sha256': authorization_hash,
+               'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(accepted_dir)}
     payload[MOD + 'install-receipt.json'] = json_bytes(install)
     for name in ('README_zh-CN.txt', 'README_en.txt'):
         data = contained(ROOT / 'docs' / name, ROOT).read_bytes()
@@ -236,7 +329,7 @@ def main():
             archive.writestr(prefix + '/' + name, data)
     verify_package(temporary, prefix, payload)
     # 不重建，只再次复核来源仍冻结；写目标时用独占创建，绝不覆盖旧包。
-    frozen_sources(build_dir)
+    sources()
     output.parent.mkdir(parents=True, exist_ok=True)
     with temporary.open('rb') as source, output.open('xb') as target:
         shutil.copyfileobj(source, target)
@@ -248,7 +341,9 @@ def main():
               'runtime_file_count': len(runtimes), 'all_members_verified': True,
               'test_modules_run': False, 'recompiled': False, 'game_started_by_agent': False,
               'build_receipt_sha256': build_hash, 'test_receipt_sha256': test_hash,
-              'installed_receipt_sha256': digest(ROOT / ('evidence/' + VERSION + '-installed.json')),
+              'installed_receipt_sha256': digest(ROOT / actual_installed),
+              'actual_installed_receipt': actual_installed, 'gameplay_validated_version': validated_version,
+              'version_label_rebuild': bool(accepted_dir), 'new_version_installed': not bool(accepted_dir),
               'packager_sha256': digest(Path(__file__)),
               'user_validation_sha256': validation_hash, 'release_authorization_sha256': authorization_hash,
               'runtime_source': '完整核验 2.16.0 发布包及清单后复用的原始微软运行库，历史来源见2.16发布回执',
