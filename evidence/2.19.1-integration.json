@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "version": "2.19.1",
+  "candidate": true,
+  "recorded_at": "2026-10-18T13:47:09.907927+08:00",
+  "branch": "codex/integration-2.19.1",
+  "formal_baseline": "main / v2.19.0 / a8a6b77",
+  "sources": [
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "title": "优化CFA-44切换卡顿与ECM弹出",
+      "branch": "codex/cfa44-sp-animation",
+      "received_commit": "66ed7ec",
+      "scope": "接收已完成CFA双/三SP开合保留、FALKEN自然停光等待、正文及设计证据；排除原有旧基线删除与其他版本文档"
+    },
+    {
+      "thread": "01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "title": "基本功能修复和优化",
+      "branch": "codex/camera-hold-research",
+      "commits": [
+        "1d72ff1",
+        "579215a"
+      ],
+      "received_commits": [
+        "7a1eabb",
+        "c9ed866"
+      ],
+      "scope": "镜头保持/R3长短按的研究资料和实际候选实现，默认关闭；来源工作区未修改，研究脚本未执行"
+    }
+  ],
+  "integration_adjustments": [
+    "版本及UI标题2.19.1，安装基线2.19.0",
+    "保留既有纯原生忙碌判断函数供新门槛复用，FALKEN等待仍优先执行",
+    "安装器识别配置版本8，首次启动备份后迁移，保留注视设置",
+    "现有配置检查同步管理协议9、配置8和新增默认关闭字段；未新增测试模块"
+  ],
+  "build_dir": "Temp/build-2.19.1-candidate",
+  "build_receipt_sha256": "ba65248385c2d519c2fa406fe665a1f2a2eae666b5bf9c9bdba7ec26387c34e6",
+  "test_receipt_sha256": "5cb372815d2ebdc93ff810ae401ad5fed48d7e7cf928abc7bf9bb3f64be5f976",
+  "installed_receipt": "evidence/2.19.1-installed.json",
+  "installed_receipt_sha256": "1fa7f668704c27263297a6f8295f62c70c49b946e3d4ecc4d57317bb34f3d64b",
+  "checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "runtime_file_count": 17,
+  "mount_variant_count": 50,
+  "mount_file_count": 100,
+  "mount_pak_unchanged_from_2_19_0": true,
+  "installed_files_verified": true,
+  "profiles_preserved_at_install": true,
+  "profiles_match_install_backup_at_final_check": true,
+  "camera_configuration_migrated_after_external_game_start": false,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "other_mod_files_preserved": true,
+  "protected_files_verified": 186,
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261018-134616-590416",
+  "formal_main_unchanged": true,
+  "formal_package_2_19_0_verified": true,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "pending_user_validation": [
+    "CFA三种双挂/三挂的SP互切不重复展开，半开时继续原进度，MSL边界正常",
+    "CFA发射/ECM与盖板、补给/退出恢复",
+    "FALKEN TLS发射及尾迹期间等候，退场后其他SP/MSL自动切换，鼻口和弹药正常",
+    "镜头保持默认关闭、三视角、R3短按回正/0.5秒长按换视角、双摇杆干扰弹",
+    "镜头保持与目标注视交接、暂停/失焦/重试/换机与关闭归还、配置迁移"
+  ],
+  "research_performed_by_integrator": false,
+  "messages_sent_to_other_threads": false,
+  "new_release_package_created": false
+}

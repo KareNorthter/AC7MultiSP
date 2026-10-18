@@ -732,11 +732,15 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         }
     }
 }
+// 保留既有的纯原生忙碌判断，切换入口另叠加Falken退场门槛。
+bool weaponSwitchReady(Addr activator) {
+    return read<unsigned char>(activator+0x2a0)==0 &&
+        !(read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1);
+}
 // Falken先等TLS及尾迹自然退场，再沿用ToggleSpecial门槛；只读，不改连射队列。
 const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
     if(continuousFalkenTLSBusy(plane,activator))return "falken_tls_active";
-    if(read<unsigned char>(activator+0x2a0)!=0 ||
-        (read<unsigned char>(activator+0x2c0)!=0 && read<int>(activator+0x2e0)>1))return "native_busy";
+    if(!weaponSwitchReady(activator))return "native_busy";
     return nullptr;
 }
 void execute(const Command& command) {

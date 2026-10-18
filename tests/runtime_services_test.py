@@ -37,12 +37,12 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==7 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.management_revision==8 and config.mod_enabled and config.fixed_mount_enabled)
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=8,language='en',mod_enabled=false,fixed_mount_enabled=false,
-    target_gaze_pad_x=false,target_gaze_key=0,
+local action={request=1,management_protocol=9,language='en',mod_enabled=false,fixed_mount_enabled=false,
+    target_gaze_pad_x=false,target_gaze_key=0,camera_hold_enabled=false,
     ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
 assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
@@ -121,11 +121,11 @@ for _,bad in ipairs({
     assert(readText(fixture..'current-profiles.json')==bytes)
 end
 local legacy5=json.decode(json.encode(config));legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.management_key=119
-legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_key=nil
+legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_key=nil;legacy5.camera_hold_enabled=nil
 writeJson(fixture..'shortcuts-profiles.json',legacy5)
 local legacyBytes=readText(fixture..'shortcuts-profiles.json')
 local shortcutConfig=store('shortcuts-'):load()
-assert(shortcutConfig.management_revision==7 and shortcutConfig.shortcuts.management.key==119)
+assert(shortcutConfig.management_revision==8 and shortcutConfig.shortcuts.management.key==119)
 assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 assert(store('shortcuts-'):load().shortcuts.management.key==119)
@@ -146,7 +146,7 @@ for _,revision in ipairs({3,4})do
     writeJson(fixture..prefix..'profiles.json',legacy)
     local bytes=readText(fixture..prefix..'profiles.json')
     local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==7 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.management_revision==8 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
     assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
     assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
     assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)

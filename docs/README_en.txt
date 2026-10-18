@@ -1,4 +1,4 @@
-AC7MultiSP 2.19.0
+AC7MultiSP 2.19.1 Test Candidate
 
 Development candidate only (not compiled, tested or installed; not part of the released 2.19.0 files above): Camera hold is off by default and is configured in the second tab, Bindings. After enabling and saving, releasing the right stick keeps the viewing direction relative to the aircraft. Short-press and release R3 to recenter; hold R3 for 0.5 seconds to change view once. Clicking both sticks allows native countermeasures and recentering together, without a view change for that gesture. Recentering ends mod target tracking; native Y/F hold behavior remains. Pausing, management, focus loss or changing aircraft/views clears the previous hold and timer. Uses the native R3 view binding; special camera modes remain native. Configuration 7 is backed up to profiles.before-camera-hold.json before migration to 8. Management protocol 9 requires matching core, UI and Lua files.
 
@@ -35,7 +35,7 @@ Controls
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
 • Optional target tracking toggle: enable controller X replacement in the second tab, Bindings (off by default), or assign an independent keyboard key (unbound by default). Press once to track and again to stop. Y retains its native behavior. When X replacement is enabled, use the D-pad or native keyboard cycling for SP selection. Pausing, opening management, losing focus or losing the target stops tracking.
-• On first launch, settings migrate after saving profiles.before-target-gaze.json; installation preserves the original personal settings.
+• On first launch, settings migrate after saving profiles.before-camera-hold.json; installation preserves the original personal settings.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
@@ -44,7 +44,7 @@ Controls
 Known issues and planned improvements
 • CFA-44: the user confirmed a clear reduction in switching hitches in 2.19, though this does not guarantee hitch-free behavior. ECM models stay hidden while ADMM/EML may remain deployed. Native models outside missions and Multi-SP models in missions and resupply are retained.
 • Arrows on the mission-results screen stutter noticeably less, but slight stuttering remains. This is still a known issue.
-• ADF-01: leaving TLS stops the beam immediately, but the first stop causes a noticeable hitch; later stops may cause smaller hitches.
+• ADF-01: requested switches to another SP or MSL now wait for TLS and its trail to end naturally. The candidate no longer forces an early stop; switching behavior and performance await gameplay testing.
 • SP selection, first-time asset loading and mission entry can still pause briefly. Cursor hitches on the SP2/SP3 pages of CFA-44 and F-22A need further investigation.
 • F-2A simultaneous-model performance needs more work. Some aircraft, special mechanisms or limited hardpoints retain native visuals. Su-47, Su-57 TGM and X-02S use native visuals.
 • An occasional hangar exit/crash was previously reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
