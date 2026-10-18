@@ -40,6 +40,7 @@ local function validateSettings(settings)
     assert(type(settings.mod_enabled)=="boolean","模组总开关必须为布尔值")
     assert(type(settings.fixed_mount_enabled)=="boolean","多 SP 挂载模型开关必须为布尔值")
     assert(type(settings.target_gaze_pad_x)=="boolean","手柄X注视开关必须为布尔值")
+    assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
     local gazeKey=settings.target_gaze_key
     assert(gazeKey==0 or supportedKey(gazeKey),"目标注视键位无效")
     assert(gazeKey==0 or not chords["0:"..gazeKey],"目标注视键不能与模组快捷键重复")
@@ -72,7 +73,7 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=7,profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_x=false,target_gaze_key=0,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=8,profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_x=false,target_gaze_key=0,camera_hold_enabled=false,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
@@ -114,32 +115,38 @@ function Config.new(options)
             assert(config.target_gaze_pad_x==nil and config.target_gaze_key==nil,"旧配置含未知目标注视设置")
             config.target_gaze_pad_x=false;config.target_gaze_key=0;config.management_revision=7
         end
-        assert(config.management_revision==7,"需要管理参数第 7 版")
+        local migrateCamera=config.management_revision==7
+        if migrateCamera then
+            assert(config.camera_hold_enabled==nil,"旧配置含未知镜头保持设置")
+            config.camera_hold_enabled=false;config.management_revision=8
+        end
+        assert(config.management_revision==8,"需要管理参数第 8 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","r")))
             local backups={}
             if migrateOptions then backups[#backups+1]="profiles.before-management-options.json"end
             if migrateShortcuts then backups[#backups+1]="profiles.before-custom-shortcuts.json"end
             if migrateGaze then backups[#backups+1]="profiles.before-target-gaze.json"end
+            if migrateCamera then backups[#backups+1]="profiles.before-camera-hold.json"end
             if migrateSettings then backups[#backups+1]="profiles.before-three-sp.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=7")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=8")
         end
         return config
     end
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==8,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==9,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","target_gaze_pad_x","target_gaze_key","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","target_gaze_pad_x","target_gaze_key","camera_hold_enabled","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

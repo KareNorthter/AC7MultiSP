@@ -1,0 +1,293 @@
+#pragma once
+// 当前玩家的相对环视保持；仅改变原生读取的轴值，不冻结相机、改坐标或吞掉干扰弹输入。
+// 本文件在target_gaze.hpp之后包含，共享GetAxisValue与XInput入口。
+struct CameraHold {
+    ContinuousIdentity plane,input,view;
+    std::array<ContinuousIdentity,3> cameras; // 原生槽0=第一人称、1=座舱、2=第三人称。
+    Addr bindings{};
+    int count{},capacity{},viewType{-1};
+    uint64_t right{},up{},track{};
+    std::atomic<bool> allowed{false};
+    std::atomic<DWORD> thread{0};
+    std::atomic<ULONGLONG> heartbeat{0};
+    bool ready{},seeded{},rightDown{},nativePress{},longDone{},combo{},pendingView{},centering{},waitNeutral{},armed{};
+    bool frozenX{},frozenY{};
+    bool stickWas{};
+    float heldX{},heldY{};
+    SHORT padX{},padY{};
+    ULONGLONG pressedAt{},releasedAt{};
+    std::string error;
+    void resetPose() {armed=false;frozenX=frozenY=false;centering=false;waitNeutral=false;stickWas=false;releasedAt=0;}
+    void cancelGesture() {seeded=false;rightDown=nativePress=longDone=combo=pendingView=false;pressedAt=0;}
+    void clear() {
+        allowed=false;heartbeat=0;plane={};input={};view={};cameras={};bindings=0;count=capacity=0;
+        right=up=track=0;viewType=-1;cancelGesture();
+        padX=padY=0;resetPose();
+    }
+} cameraHold;
+using CameraHoldUpdate=void(*)(void*,float,void*,void*);
+using CameraHoldView=void(*)(void*);
+std::array<CameraHoldUpdate,3> originalCameraHoldUpdates{};
+CameraHoldView originalCameraHoldView{};
+CameraHoldUpdate originalCameraHoldSpecial{};
+bool cameraHoldNativeSpecial() {return reinterpret_cast<bool(*)()>(continuousBase()+0x3ceac0)();}
+struct CameraHoldFrame {bool enabled{};Addr component{};float x{},y{};};
+thread_local CameraHoldFrame cameraHoldFrame;
+
+bool cameraHoldLive() {
+    return cameraHold.allowed.load() && GetCurrentThreadId()==cameraHold.thread.load() &&
+        GetTickCount64()-cameraHold.heartbeat.load()<=500 && targetGazeFocused();
+}
+void cameraHoldFailure(const char* reason) {
+    const std::string message=reason;
+    cameraHold.clear();cameraHold.error=message;
+    try {nativeLog(std::string("CAMERA_HOLD_ERROR ")+message);}catch(...){}
+}
+bool cameraHoldIdentities() {
+    return continuousAlive(cameraHold.plane) && continuousAlive(cameraHold.input) && continuousAlive(cameraHold.view) &&
+        read<Addr>(cameraHold.plane.address+0x118)==cameraHold.input.address &&
+        read<Addr>(cameraHold.plane.address+0x1250)==cameraHold.view.address &&
+        read<Addr>(cameraHold.input.address+0x20)==cameraHold.plane.address && read<Addr>(cameraHold.view.address+0x20)==cameraHold.plane.address;
+}
+bool cameraHoldCameraIdentities() {
+    for(int i=0;i<3;++i) {
+        const auto& camera=cameraHold.cameras[i];
+        if(!continuousAlive(camera) || read<Addr>(cameraHold.view.address+0x318+i*0x10)!=camera.address ||
+            read<Addr>(camera.address+0x20)!=cameraHold.plane.address || read<Addr>(camera.address+0x330)!=cameraHold.plane.address)return false;
+    }
+    return true;
+}
+void cameraHoldCenter() {
+    cameraHold.resetPose();cameraHold.centering=true;cameraHold.waitNeutral=true;
+    // 明确回正会结束模组保持的目标注视；真实按住Y/F仍按原生轴优先。
+    targetGaze.active=false;
+}
+void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
+    if(!cameraHoldLive())return;
+    if(result!=ERROR_SUCCESS || !state) {
+        cameraHold.cancelGesture();
+        cameraHold.resetPose();cameraHold.padX=cameraHold.padY=0;return;
+    }
+    const WORD buttons=state->Gamepad.wButtons;
+    const bool right=(buttons&XINPUT_GAMEPAD_RIGHT_THUMB)!=0;
+    const bool both=right && (buttons&XINPUT_GAMEPAD_LEFT_THUMB)!=0;
+    cameraHold.padX=state->Gamepad.sThumbRX;cameraHold.padY=state->Gamepad.sThumbRY;
+    const auto now=GetTickCount64();
+    if(!cameraHold.seeded) {
+        cameraHold.seeded=true;cameraHold.rightDown=right;
+        cameraHold.nativePress=false;cameraHold.longDone=right;cameraHold.combo=both; // 已按住的旧边沿不补发。
+        return;
+    }
+    if(right && !cameraHold.rightDown) {
+        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.combo=false;cameraHold.pendingView=false;
+    }
+    if(both && !cameraHold.combo) {
+        cameraHold.combo=true;cameraHold.pendingView=false;cameraHoldCenter(); // 无论双摇杆先后顺序，都允许原生干扰弹和回正同时发生。
+    }
+    if(!right && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && cameraHold.nativePress) {
+        if(now-cameraHold.pressedAt<500)cameraHoldCenter();
+        else {cameraHold.longDone=true;cameraHold.pendingView=true;} // 系统输入回调只记请求，不在XInput栈内切视角。
+    }
+    cameraHold.rightDown=right;
+    if(!right){cameraHold.nativePress=false;cameraHold.combo=false;}
+}
+// 只消费真实R3按下后的一次原生视角请求；同次按住期间的其他视角请求继续原生。
+// 标准R3视角绑定必须确实产生该回调才启动长短按，不凭硬件状态凭空切视角。
+void cameraHoldViewPressed(void* object) {
+    if(!cameraHoldLive() || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
+        originalCameraHoldView(object);return;
+    }
+    try {
+        if(!cameraHoldIdentities() || cameraHoldNativeSpecial()){cameraHold.clear();originalCameraHoldView(object);return;}
+        XINPUT_STATE pad{};const auto result=originalTargetGazePad(0,&pad);
+        cameraHoldObservePad(result,&pad);
+        if(result==ERROR_SUCCESS && cameraHold.rightDown && !cameraHold.nativePress && !cameraHold.longDone) {
+            cameraHold.nativePress=true;return;
+        }
+        cameraHold.resetPose();
+    }catch(const std::exception& error){cameraHoldFailure(error.what());}
+    originalCameraHoldView(object);
+}
+float cameraHoldAxis(void* component,uint64_t name,float native) {
+    if(!cameraHoldFrame.enabled || !cameraHoldLive() || reinterpret_cast<Addr>(component)!=cameraHoldFrame.component)return native;
+    if(name==cameraHold.right)return cameraHoldFrame.x;
+    if(name==cameraHold.up)return cameraHoldFrame.y;
+    return native;
+}
+void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* camera) {
+    const auto previous=cameraHoldFrame;
+    cameraHoldFrame={};
+    try {
+        if(cameraHoldLive() && index==cameraHold.viewType && reinterpret_cast<Addr>(component)==cameraHold.cameras[index].address &&
+            reinterpret_cast<Addr>(actor)==cameraHold.plane.address && cameraHoldIdentities() &&
+            continuousAlive(cameraHold.cameras[index])) {
+            const int view=read<unsigned char>(cameraHold.view.address+0x350);
+            if(view==index && read<unsigned char>(cameraHold.plane.address+0xe12) && !cameraHoldNativeSpecial()) {
+                const float rawX=originalTargetGazeAxis(reinterpret_cast<void*>(cameraHold.input.address),cameraHold.right);
+                const float rawY=originalTargetGazeAxis(reinterpret_cast<void*>(cameraHold.input.address),cameraHold.up);
+                const float tracking=originalTargetGazeAxis(reinterpret_cast<void*>(cameraHold.input.address),cameraHold.track);
+                const bool targetTracking=tracking>.05f || (targetGazeLive() && targetGaze.active.load());
+                const bool stick=std::abs(static_cast<int>(cameraHold.padX))>8192 || std::abs(static_cast<int>(cameraHold.padY))>8192;
+                const auto now=GetTickCount64();
+                if(!stick && cameraHold.stickWas)cameraHold.releasedAt=now;
+                cameraHold.stickWas=stick;
+                if(!std::isfinite(rawX) || !std::isfinite(rawY))throw std::runtime_error("镜头保持收到无效环视轴");
+                // 第一/第三人称状态是[-1,1]，原生输入先夹到0.95再归一化；普通座舱没有这一步。
+                const Addr state=reinterpret_cast<Addr>(component)+(index==1?0x38c:0x3d4);
+                const float x=read<float>(state),y=read<float>(state+4);
+                require(std::isfinite(x) && std::isfinite(y) && std::abs(x)<=1.01f && std::abs(y)<=1.01f,"镜头保持状态超出原生范围");
+                if(targetTracking)cameraHold.resetPose();
+                else {
+                    if(!stick)cameraHold.waitNeutral=false;
+                    if(stick && !cameraHold.waitNeutral) {cameraHold.centering=false;cameraHold.armed=true;}
+                    // 物理回中与引擎轴存在一帧交接：先保持实际平滑姿态，不能把回弹尾值存成接近零。
+                    const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
+                    // 交接之后出现独立的键盘/鼠标环视，立即恢复其原生操作，不继续维持旧手柄姿态。
+                    if(!stick && !releaseTail && (std::abs(rawX)>.001f || std::abs(rawY)>.001f))cameraHold.resetPose();
+                    float outX=rawX,outY=rawY;
+                    if(cameraHold.centering) {
+                        outX=outY=0;
+                        if(std::abs(x)<.0001f && std::abs(y)<.0001f && !cameraHold.waitNeutral)cameraHold.centering=false;
+                    }else if(cameraHold.armed) {
+                        const float scale=index==1?1.f:.95f;
+                        const bool reversed=read<unsigned char>(cameraHold.plane.address+0xe17)!=0;
+                        if(std::abs(rawX)<=.001f || releaseTail) {
+                            if(!cameraHold.frozenX){cameraHold.heldX=x*scale;cameraHold.frozenX=true;}
+                            outX=cameraHold.heldX;
+                        }else cameraHold.frozenX=false;
+                        if(std::abs(rawY)<=.001f || releaseTail) {
+                            if(!cameraHold.frozenY){cameraHold.heldY=y*scale*(reversed?-1.f:1.f);cameraHold.frozenY=true;}
+                            outY=cameraHold.heldY;
+                        }else cameraHold.frozenY=false;
+                    }
+                    cameraHoldFrame={true,cameraHold.input.address,outX,outY};
+                }
+            }
+        }
+    }catch(const std::exception& error){cameraHoldFailure(error.what());cameraHoldFrame={};}
+    // 不在原生调用外复制/写回相机姿态，原生边界、动画和插值继续执行。
+    originalCameraHoldUpdates[index](component,delta,actor,camera);
+    cameraHoldFrame=previous;
+}
+void cameraHoldFirst(void* c,float d,void* a,void* v){cameraHoldUpdate(0,c,d,a,v);}
+void cameraHoldCockpit(void* c,float d,void* a,void* v){cameraHoldUpdate(1,c,d,a,v);}
+void cameraHoldThird(void* c,float d,void* a,void* v){cameraHoldUpdate(2,c,d,a,v);}
+void cameraHoldSpecial(void* c,float d,void* a,void* v) {
+    const auto previous=cameraHoldFrame;cameraHoldFrame={};
+    originalCameraHoldSpecial(c,d,a,v);cameraHoldFrame=previous; // 特殊/委托分支使用四元数，不套普通座舱的两轴保持。
+}
+
+void installCameraHold() {
+    if(cameraHold.ready)return;
+    installTargetGaze();
+    constexpr std::array<Addr,5> rvas{0x41e150,0x424cf0,0x43df90,0x821430,0x421320};
+    constexpr unsigned char signatures[5][16]={
+        {0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x60,0x48,0x8b,0x81,0x30,0x03,0x00},
+        {0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x6c,0x24,0x10,0x48,0x89,0x74,0x24,0x18,0x57},
+        {0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x50,0x0f,0x29,0x74,0x24,0x40,0x48},
+        {0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x83,0xb9,0x50,0x12,0x00,0x00,0x00,0x48,0x8b},
+        {0x4c,0x8b,0xdc,0x49,0x89,0x6b,0x10,0x49,0x89,0x73,0x18,0x57,0x48,0x81,0xec,0x90}};
+    const auto base=continuousBase();
+    constexpr unsigned char special[]={0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x8b,0x05,0x5b,0xd1,0x8e,0x03};
+    checkMemory(base+0x3ceac0,sizeof(special));
+    require(std::memcmp(reinterpret_cast<void*>(base+0x3ceac0),special,sizeof(special))==0,"镜头保持特殊视角判据不匹配");
+    for(size_t i=0;i<rvas.size();++i) {
+        checkMemory(base+rvas[i],sizeof(signatures[i]));
+        require(std::memcmp(reinterpret_cast<void*>(base+rvas[i]),signatures[i],sizeof(signatures[i]))==0,"镜头保持接口与当前游戏不匹配");
+    }
+    std::array<void*,5> hooks{reinterpret_cast<void*>(&cameraHoldFirst),reinterpret_cast<void*>(&cameraHoldCockpit),
+        reinterpret_cast<void*>(&cameraHoldThird),reinterpret_cast<void*>(&cameraHoldViewPressed),reinterpret_cast<void*>(&cameraHoldSpecial)};
+    size_t created=0;
+    try {
+        for(size_t i=0;i<rvas.size();++i) {
+            void** original=i<3?reinterpret_cast<void**>(&originalCameraHoldUpdates[i]):i==3?reinterpret_cast<void**>(&originalCameraHoldView):reinterpret_cast<void**>(&originalCameraHoldSpecial);
+            require(MH_CreateHook(reinterpret_cast<void*>(base+rvas[i]),hooks[i],original)==MH_OK,"镜头保持原生入口接入失败");++created;
+        }
+        for(auto rva:rvas)require(MH_QueueEnableHook(reinterpret_cast<void*>(base+rva))==MH_OK,"镜头保持钩子排队失败");
+        require(MH_ApplyQueued()==MH_OK,"镜头保持钩子启用失败");
+    }catch(...) {
+        for(size_t i=0;i<created;++i){MH_DisableHook(reinterpret_cast<void*>(base+rvas[i]));MH_RemoveHook(reinterpret_cast<void*>(base+rvas[i]));}
+        throw;
+    }
+    cameraHold.ready=true;nativeLog("CAMERA_HOLD_HOOKS_READY");
+}
+void bindCameraHold(Addr plane) {
+    cameraHold.clear();
+    require(mountClassIs(plane,"PlayerPlane","/Script/Nimbus") && !(read<unsigned>(plane+8)&0x30u),"镜头保持需要当前玩家飞机");
+    cameraHold.plane=continuousIdentity(plane);
+    cameraHold.input=continuousIdentity(read<Addr>(plane+0x118));
+    cameraHold.view=continuousIdentity(read<Addr>(plane+0x1250));
+    require(mountClassIs(cameraHold.input.address,"InputComponent","/Script/Engine") &&
+        mountClassIs(cameraHold.view.address,"CameraViewComponent","/Script/Nimbus"),"镜头保持组件类型不符");
+    require(read<Addr>(cameraHold.input.address+0x20)==plane && read<Addr>(cameraHold.view.address+0x20)==plane,"镜头保持组件不属于当前飞机");
+    const char* classes[]={"FirstPersonCameraInputComponent","CockpitCameraInputComponent","ThirdPersonCameraInputComponent"};
+    for(int i=0;i<3;++i) {
+        cameraHold.cameras[i]=continuousIdentity(read<Addr>(cameraHold.view.address+0x318+i*0x10));
+        const auto address=cameraHold.cameras[i].address;
+        require(mountClassIs(address,classes[i],"/Script/Nimbus") && read<Addr>(address+0x20)==plane && read<Addr>(address+0x330)==plane,"镜头保持视角输入身份不符");
+    }
+    cameraHold.bindings=read<Addr>(cameraHold.input.address+0x110);
+    cameraHold.count=read<int>(cameraHold.input.address+0x118);cameraHold.capacity=read<int>(cameraHold.input.address+0x11c);
+    require(cameraHold.bindings && cameraHold.count>0 && cameraHold.count<=cameraHold.capacity && cameraHold.capacity<=128,"镜头保持输入轴列表无效");
+    for(int i=0;i<cameraHold.count;++i) {
+        const auto name=read<uint64_t>(cameraHold.bindings+i*0x70+8);
+        const auto label=mountNameIndex(static_cast<unsigned>(name));
+        uint64_t* slot=label=="INP_CameraLookRight"?&cameraHold.right:label=="INP_CameraLookUp"?&cameraHold.up:label=="INP_CameraTrackTarget"?&cameraHold.track:nullptr;
+        if(slot){require(!*slot || *slot==name,"镜头保持轴名称不一致");*slot=name;}
+    }
+    require(cameraHold.right && cameraHold.up && cameraHold.track,"镜头保持缺少原生环视轴");
+    cameraHold.thread=GetCurrentThreadId();
+}
+int cameraHoldLua(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==2,"镜头保持参数数量无效");
+        const auto plane=static_cast<Addr>(api->readInteger(luaState,1));const auto allowed=api->readInteger(luaState,2);
+        require(allowed==0 || allowed==1,"镜头保持设置无效");
+        std::string reason;
+        if(!allowed || !plane || !targetGazeFocused()){cameraHold.clear();cameraHold.error.clear();}
+        else {
+            require(cameraHold.error.empty(),cameraHold.error.c_str());
+            installCameraHold();continuousIdentity(plane);
+            const auto input=read<Addr>(plane+0x118);
+            const auto viewObject=read<Addr>(plane+0x1250);
+            bool pending=!input || !viewObject || !read<int>(input+0x118);
+            if(!pending) {
+                continuousIdentity(viewObject);
+                require(mountClassIs(viewObject,"CameraViewComponent","/Script/Nimbus"),"镜头保持组件类型不符");
+                for(int i=0;i<3;++i) {
+                    const auto camera=read<Addr>(viewObject+0x318+i*0x10);
+                    if(!camera){pending=true;break;}
+                    continuousIdentity(camera);
+                    if(!read<Addr>(camera+0x330)){pending=true;break;}
+                }
+            }
+            if(pending) {
+                cameraHold.clear();reason="waiting_input";
+            }else {
+                const bool same=cameraHold.plane.address==plane && cameraHoldIdentities() && cameraHoldCameraIdentities() &&
+                    read<Addr>(input+0x110)==cameraHold.bindings && read<int>(input+0x118)==cameraHold.count && read<int>(input+0x11c)==cameraHold.capacity;
+                if(!same)bindCameraHold(plane);
+                const int view=read<unsigned char>(cameraHold.view.address+0x350);
+                if(view>2 || cameraHoldNativeSpecial()) {cameraHold.resetPose();cameraHold.cancelGesture();reason="special_view";cameraHold.allowed=false;}
+                else {
+                    const auto now=GetTickCount64();
+                    if(cameraHold.viewType!=view || (cameraHold.heartbeat.load() && now-cameraHold.heartbeat.load()>500)) {
+                        cameraHold.resetPose();cameraHold.cancelGesture();cameraHold.viewType=view;
+                    }
+                    cameraHold.heartbeat=now;cameraHold.allowed=true;
+                    XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
+                    if(cameraHold.pendingView || (cameraHold.rightDown && cameraHold.nativePress && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=500)) {
+                        cameraHold.pendingView=false;cameraHold.longDone=true;cameraHold.resetPose();originalCameraHoldView(reinterpret_cast<void*>(plane));
+                    }
+                }
+            }
+        }
+        api->boolean(luaState,true);api->boolean(luaState,cameraHold.allowed.load());api->string(luaState,reason.data(),reason.size());return 3;
+    }catch(const std::exception& error) {
+        const std::string reason=error.what();cameraHoldFailure(reason.c_str());
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,reason.data(),reason.size());return 3;}
+        return 0;
+    }
+}

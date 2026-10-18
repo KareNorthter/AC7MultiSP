@@ -1,0 +1,66 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/camera-hold-research",
+  "base_commit": "a8a6b779854a2d72fe96137a4a6b880b2d8c1dd7",
+  "status": "候选源码完成，未构建安装",
+  "research": "evidence/camera-hold-research.json",
+  "authorization": "用户要求继续实现；默认关闭，第二个按键页，长按0.5秒，双摇杆允许干扰弹与回正同时发生；更新文档，暂不编译安装。",
+  "setting": {
+    "name": "camera_hold_enabled",
+    "default": false,
+    "management_protocol": 9,
+    "configuration_revision": 8,
+    "backup": "profiles.before-camera-hold.json"
+  },
+  "controls": {
+    "short_r3": "释放时小于500毫秒则回正",
+    "long_r3": "达到500毫秒只调用一次原生视角入口，释放不再回正",
+    "both_sticks": "原生干扰弹真实输入直通，同时回正，取消本次长按换视角"
+  },
+  "native_entries": [
+    "0x41e150",
+    "0x424cf0",
+    "0x43df90",
+    "0x821430",
+    "0x421320"
+  ],
+  "native_special_predicate": "0x3ceac0；沿原生镜头调用，接入前核对指纹",
+  "view_slots": {
+    "0": "第一人称输入，CameraView+0x318",
+    "1": "座舱输入，CameraView+0x328",
+    "2": "第三人称输入，CameraView+0x338"
+  },
+  "hold": "当前玩家/当前视角作用域覆盖左右及上下轴返回值，保存原生平滑方向；不写相机坐标、不冻结原生更新。按视角反归一化并处理竖轴反转，50毫秒物理/引擎轴交接。",
+  "shared_hook": "复用target_gaze的GetAxisValue/XInput入口，不重复安装相同地址钩子；R3/L3不屏蔽、不注入。",
+  "tracking": "目标注视优先；明确回正结束模组注视，真实Y/F长按保留。",
+  "cleanup": [
+    "暂停",
+    "打开管理",
+    "失焦",
+    "手柄断连",
+    "切换视角",
+    "换机/世界",
+    "关闭选项或总开关",
+    "500毫秒心跳过期",
+    "单功能错误"
+  ],
+  "failure": "仅停用镜头保持并显示中英错误，重新保存设置可重试；不停止兵装。",
+  "input_source_boundary": "标准原生R3换视角绑定；原生回调没有FKey参数，按硬件边沿确认一次原生请求。同帧R3与另一换视角键混合输入或用户另改R3映射仍待实测。",
+  "product_version": "保留2.19.0作为分支基线，不改已测历史元数据；整合/构建时按主线规则确定版本和实际安装基线。",
+  "compiled": false,
+  "test_modules_created": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "gameplay_verified": false,
+  "verification": "仅人工源码复核和Git差异/空白检查；未将原生只读样本当成新保持或按键时序的运行验收。",
+  "source_hashes": {
+    "src/camera_hold.hpp": "2888e8a2c338e1044463de0f6bb882bee13818ffa5f632b9d113e16f2605c34c",
+    "src/target_gaze.hpp": "57ba0af603cd172c02febe79917ac64ea6cd942583096a2fccdd3787a064fdd3",
+    "src/weapon_bridge.cpp": "412969d2732826197c37f7c5799ee5338c8e046f5c93452689e229fb40abf904",
+    "src/overlay.cpp": "10c226dbb4b45cd38bd2bc1657b339772bd552a0572bd7deb8786432f649f8ef",
+    "src/ui_messages.hpp": "8e7fc3c72858d1dfc602a196f8810bd7d4785a6800f96d206be830ed0b076800",
+    "dist/DualSP/Scripts/main.lua": "98e9fa61ec1065afe8e464a2244f41c9821a7bf217e46a2d1f3ed2698f391997",
+    "dist/DualSP/Scripts/config_store.lua": "664013083668c44674e589cf125ed3ea3505632f664187d1bdec998b49f13e85"
+  }
+}

@@ -1,5 +1,8 @@
 #pragma once
-// 仅在已核对的玩家输入组件上覆盖目标跟踪轴的返回值；不改选中目标或镜头坐标。
+float cameraHoldAxis(void* component,uint64_t name,float native);
+void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state);
+void cameraHoldFailure(const char* reason);
+// 已核对玩家的共用镜头轴入口；目标注视与环视保持按名称隔离，不改目标或镜头坐标。
 // 本头文件包含在核心私有命名空间，复用已有弱身份与原生内存访问。
 struct TargetGaze {
     ContinuousIdentity plane,input;
@@ -35,9 +38,10 @@ bool targetGazeLive() {
 }
 float targetGazeAxis(void* object,uint64_t name) {
     const float native=originalTargetGazeAxis(object,name);
-    if(!targetGazeLive()){targetGaze.active=false;return native;}
+    const float look=cameraHoldAxis(object,name,native); // 两种镜头功能共享入口，按轴名称与更新作用域隔离。
+    if(!targetGazeLive()){targetGaze.active=false;return look;}
     if(reinterpret_cast<Addr>(object)!=targetGaze.component.load() ||
-        name!=targetGaze.axis.load() || GetCurrentThreadId()!=targetGaze.thread.load())return native;
+        name!=targetGaze.axis.load() || GetCurrentThreadId()!=targetGaze.thread.load())return look;
     targetGaze.observed=GetTickCount64();
     if(!targetGaze.active.load())return native;
     try {
@@ -50,12 +54,14 @@ float targetGazeAxis(void* object,uint64_t name) {
 DWORD WINAPI targetGazePad(DWORD index,XINPUT_STATE* state) {
     const auto result=originalTargetGazePad(index,state);
     if(index!=0)return result; // 沿用当前模组UI的0号手柄通道，其他设备保持原生。
+    const auto caller=reinterpret_cast<Addr>(__builtin_return_address(0));
+    const bool fromGame=caller>=targetGazeImageBegin && caller<targetGazeImageEnd;
+    if(fromGame)try {cameraHoldObservePad(result,state);}catch(const std::exception& error){cameraHoldFailure(error.what());}
     if(result!=ERROR_SUCCESS || !state){targetGaze.maskedHeld=false;return result;}
     const bool down=(state->Gamepad.wButtons&XINPUT_GAMEPAD_X)!=0;
     if(!down){targetGaze.maskedHeld=false;return result;}
-    const auto caller=reinterpret_cast<Addr>(__builtin_return_address(0));
     // 管理UI自己的读取保留真实按键；只过滤游戏映像发起的XInput查询。
-    if(caller<targetGazeImageBegin || caller>=targetGazeImageEnd)return result;
+    if(!fromGame)return result;
     if(targetGazeLive() && targetGaze.replaceX.load() && targetGazeFocused())targetGaze.maskedHeld=true;
     if(targetGaze.maskedHeld.load())state->Gamepad.wButtons&=static_cast<WORD>(~XINPUT_GAMEPAD_X);
     return result;

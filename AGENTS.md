@@ -6,7 +6,7 @@
 
 ## 当前事实
 
-- 用户本轮指定镜头保持研究，独立分支`codex/camera-hold-research`从main `a8a6b77`创建，未收主工作区CFA未提交改动。只读确认普通第三人称松杆后的原生归零路径，已保存方案及证据`evidence/camera-hold-research.json`；保持/R3长短按/可选设置均未接入产品，未编译、测试或安装。R3还参与双摇杆干扰弹，后续必须在视角动作层分流，不能全局屏蔽。详见开发说明“右摇杆镜头保持研究”。
+- 用户指定的镜头保持候选位于`codex/camera-hold-research`，从main `a8a6b77`创建，未收主工作区CFA未提交改动。已接入默认关闭的`camera_hold_enabled`，选项在第二个“按键”页；R3短按回正，满0.5秒只切一次视角，双摇杆允许原生干扰弹并同时回正。协议9、配置8，7迁8先备份`profiles.before-camera-hold.json`。共享目标注视轴入口，未编译、测试、安装或实测；只读研究`evidence/camera-hold-research.json`保持原样，候选设计见`evidence/camera-hold-implementation.json`及开发说明。
 - Steam build 9855922，Windows 10/11 x64，单人战役/自由任务。2.18更正为第13关任务ID113使用原生指定SP，离开后恢复，213自由飞行不受影响；第12/14关恢复多SP；多人功能停用。
 - 用户已测2.16：其他功能基本正常，授权合入main和制作发布包；不代表全机全组合全面验收。
 - 2.19用户确认CFA修订有效、卡顿明显减少并授权合入main；未声称完全无卡或全机全组合验收。ECM隐藏、ADMM/EML展开和注视功能的此前反馈保留。原2.18热路径调查保持原记录，最新反馈见`evidence/2.19.0-user-validation.json`。用户另反馈任务结算界面箭头卡顿明显缓解、仍有轻微卡顿，单独记录于`evidence/2.19.0-user-feedback-followup.json`，不混同选装光标。ADF停光卡顿后续已获用户指定研究：当前源码取消提前End/主束隐藏，改为等待TLS及尾迹自然退场后切换，尚未编译或实测。选装光标卡顿、F2性能及偶发机库退出继续保留待办，不自行继续研究。

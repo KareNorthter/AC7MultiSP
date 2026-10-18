@@ -6,6 +6,22 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"镜头保持特殊视角判据不匹配","The special camera check does not match this game build."},
+    {"镜头保持接口与当前游戏不匹配","The camera hold interface does not match this game build."},
+    {"镜头保持原生入口接入失败","The native camera hold interface could not be connected."},
+    {"镜头保持钩子排队失败","Camera hold hooks could not be scheduled."},
+    {"镜头保持钩子启用失败","Camera hold hooks could not be enabled."},
+    {"镜头保持需要当前玩家飞机","Camera hold requires the current player aircraft."},
+    {"镜头保持组件类型不符","The player camera component is unsupported."},
+    {"镜头保持组件不属于当前飞机","The camera does not belong to the current aircraft."},
+    {"镜头保持视角输入身份不符","The camera input identity changed."},
+    {"镜头保持输入轴列表无效","The camera input axis list is invalid."},
+    {"镜头保持轴名称不一致","The camera axis identity changed."},
+    {"镜头保持缺少原生环视轴","The native camera look axes are unavailable."},
+    {"镜头保持收到无效环视轴","Camera hold received an invalid look axis."},
+    {"镜头保持状态超出原生范围","The camera hold state is outside the native range."},
+    {"镜头保持协议不匹配","The camera hold interface does not match the controller."},
+    {"镜头保持开关必须为布尔值","The camera hold setting must be on or off."},
     {"未观察到原生目标跟踪轴读取，已停止注视","Native target tracking was not observed. Toggle tracking has been stopped."},
     {"目标注视接口与当前游戏不匹配","The target tracking interface does not match this game build."},
     {"目标注视缺少游戏使用的XInput接口","The game's XInput interface is unavailable."},

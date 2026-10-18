@@ -1,5 +1,7 @@
 AC7MultiSP 2.19.0
 
+Development candidate only (not compiled, tested or installed; not part of the released 2.19.0 files above): Camera hold is off by default and is configured in the second tab, Bindings. After enabling and saving, releasing the right stick keeps the viewing direction relative to the aircraft. Short-press and release R3 to recenter; hold R3 for 0.5 seconds to change view once. Clicking both sticks allows native countermeasures and recentering together, without a view change for that gesture. Recentering ends mod target tracking; native Y/F hold behavior remains. Pausing, management, focus loss or changing aircraft/views clears the previous hold and timer. Uses the native R3 view binding; special camera modes remain native. Configuration 7 is backed up to profiles.before-camera-hold.json before migration to 8. Management protocol 9 requires matching core, UI and Lua files.
+
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
 Other builds, VR and multiplayer are outside the supported scope. Mod features are automatically disabled in multiplayer.
