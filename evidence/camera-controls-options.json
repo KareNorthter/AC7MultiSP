@@ -1,0 +1,65 @@
+{
+  "date": "2026-10-18",
+  "branch": "codex/camera-controls-options",
+  "base_commit": "9fafb7871e76351e4890d9512529ab5434022de0",
+  "installed_baseline": "evidence/2.19.2-installed.json",
+  "branch_origin": "从main新建独立工作区，再快进至已安装2.19.2来源；未收取主工作区其他线程未提交修改。",
+  "status": "新扩展仅源码和文档，未构建安装，效果待实测",
+  "prior_user_feedback": "正常了",
+  "feedback_boundary": "仅作为已安装2.19.2的R3短按修订反馈，不代表本次新增回正键、灵敏度或长按独立计时已验收，也不代表兵装性能或双发问题已验收。",
+  "requested": [
+    "R3长按0.5秒无需松开即可切换视角，短按松开回正。",
+    "提供自定义键盘回正键，默认鼠标中键，按下即触发；与原生键盘换视角分开，不需要长按。",
+    "提供视角移动灵敏度滑条，子功能只在camera-hold开启时提供。"
+  ],
+  "implementation": {
+    "r3": "去掉长按及短按释放判定对nativePress的依赖，R3物理边沿独立计时；满500毫秒在首次游戏线程调度调用一次原生跳板，无需松开。短按松开回正；长按释放不兼触回正。重复回调和释放交接隔离保留。",
+    "countermeasures": "R3/L3真实输入不改，双摇杆同时回正并取消未派发的长按动作，原生干扰弹保留。",
+    "center_key": "camera_center_key默认4（鼠标中键）；支持一个常用键盘键、鼠标中键或0未绑定。约20毫秒游戏线程调度读取GetAsyncKeyState高位，只在无Ctrl/Alt/Shift的按下边沿回正，按住不重复；启用、恢复和改键先播种。明确回正不被同帧鼠标尾值取消，完成后归还键鼠环视，真实Y/F目标注视仍优先。没有修改游戏原生按键映射。",
+    "capture": "管理页捕获槽8，键盘沿用现有捕获，中键兼容WM_MBUTTON及RAWINPUT；捕获期间消费中键按下/释放，避免顺带点击页面。",
+    "sensitivity": "camera_sensitivity默认100，整数范围25至300。仅普通手柄环视移动时缩放原生输入组件的delta，非100时上限1/7；原生目标值、观察角度及保持逆归一化值不放大。100保持原delta；回正、目标注视、单独键鼠不变，座舱特殊委托归还原delta。",
+    "sensitivity_basis": "沿用evidence/camera-hold-research.json中已核对的普通环视delta*7平滑结论；本轮未重新采样、读取游戏内存或执行研究脚本。",
+    "visibility": "第二个按键页的camera-hold默认关闭；仅草稿勾选时显示R3说明、回正键及滑条，保存后生效。关闭时归还原生行为、保留子设置。",
+    "lifecycle": "仅单人飞行、前台、未暂停、未开管理、非特殊镜头且总开关许可时生效。失效清理及500毫秒心跳超时沿用；手柄断连只清一次姿态，不能每次调度取消独立键鼠回正。"
+  },
+  "interfaces": {
+    "management_protocol": 10,
+    "configuration_revision": 9,
+    "camera_subprotocol": 2,
+    "native_arguments": [
+      "飞机地址",
+      "许可0/1",
+      "回正键",
+      "灵敏度百分比"
+    ],
+    "new_capability": "dualsp_camera_controls_supported在核心及UI同时提供，Lua加载时要求两者存在。",
+    "migration": "旧配置8先永久备份profiles.before-camera-controls.json，再补入中键及100%；已有camera-hold开关、个人方案、注视和快捷键不变。更旧配置先走原迁移。",
+    "installer_source": "仅同步允许已有配置9及新迁移说明，未执行安装工具。"
+  },
+  "boundaries": [
+    "回正键不调用原生换视角动作。游戏原生键位无法由本次静态改动自动去冲突，用户需为回正和原生换视角使用不同按键。",
+    "原生换视角回调没有FKey；R3按压及释放交接期间混合的另一换视角输入仍归入本次R3，其余原生换视角直接执行。",
+    "灵敏度指右摇杆普通环视移动响应，不是扩大最大观察角度，也不调整鼠标或键盘单独环视。",
+    "现有检查含固定协议9/配置8预期，后续获授权整合构建需同步；本轮未修改或运行检查模块。"
+  ],
+  "verification": "仅人工源码复核及Git差异空白检查；保护旧核心摘要核对。未把静态审阅当作实际运行或按键时序验收。",
+  "compiled": false,
+  "test_modules_modified": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "gameplay_verified": false,
+  "version_changed": false,
+  "historical_receipts_modified": false,
+  "source_sha256": {
+    "src/camera_hold.hpp": "ecc719cd8089174c7dc0dabf0f6d1776ca106635869fd71d52218242cf60590c",
+    "src/keyboard_shortcuts.hpp": "fb50cb29ac3a821125de0451a5ae753c1f8269f21074624f8b6f1343c137850a",
+    "src/weapon_bridge.cpp": "467e93789a51e70c04b9c1b5d0f4287ad4e8d8a0e88e1c05bca9e4954f2c2b7b",
+    "src/overlay.cpp": "7a3cde74b21d35d7a790e2c5330bd03ab81380bc7c5eab8984692aa73709c827",
+    "src/ui_messages.hpp": "a22c48c8c1489dab8ec325b42e861e24e43461fcc46ba655767ef7a5f40a4685",
+    "src/install.py": "5bbebfb1b1a84e3799666326004f2ce043f6987076fc8012b98f191276bc93e5",
+    "dist/DualSP/Scripts/main.lua": "69ee748dc409f47b7c0f77adfb5094189ede44769f7261bd0beba267207b2693",
+    "dist/DualSP/Scripts/config_store.lua": "b57e0200ca6fa8ce8da0379fda84a4d503e2df2f1a2fb7270df055af8591fc21"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}
