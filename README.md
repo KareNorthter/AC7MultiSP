@@ -55,6 +55,8 @@ Su-47、Su-57 TGM、X-02S保留多SP兵装功能，模型/动画按当前SP原�
 
 ## 使用与交付
 
+“机炮齐射”仅完成静态研究，尚缺目标吊舱配置与输入归属依据，未接入运行功能、管理开关或快捷键，未生成2.21.1候选。进度及恢复入口见[开发说明](docs/development.md#机炮齐射研究等待关键静态依据)，原生链路与边界见[架构正文](docs/architecture.md#机炮齐射静态研究未实现)。正式发布及已测安装基线保持原记录。
+
 - [本地发布包2.21.0](Release/AC7MultiSP-2.21.0.zip)
 - [中文ReadMe及安装](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)
 - [开发与恢复](docs/development.md) · [架构](docs/architecture.md) · [挂载设计与经验](docs/multi-sp-mount-design.md)

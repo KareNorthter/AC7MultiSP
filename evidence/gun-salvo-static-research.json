@@ -1,0 +1,300 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "base_commit": "7a0559d",
+  "branch": "codex/gun-salvo",
+  "status": "静态研究受阻；未实现运行候选",
+  "scope": "机炮齐射：原生机枪动作联动MGP/HGP或PLSL；管理开关及可自定义Ctrl+Alt+F5",
+  "process_opened": false,
+  "game_functions_called": false,
+  "memory_written": false,
+  "compiled": false,
+  "tests_written": false,
+  "tests_run": false,
+  "installed": false,
+  "packaged": false,
+  "version_changed": false,
+  "sources": [
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\parts-ammo-hover\\runtime-text.bin",
+      "bytes": 38857296,
+      "sha256": "0ccbc16cddef5217ff9d09c3d1e0412b6d7c4ca033aee39aa90cd3397180760e"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\parts-ammo-hover\\runtime-meta.json",
+      "bytes": 4362304,
+      "sha256": "e96bb2a9d748aeebb42d3829e5cc5cda5ab1c2153bcbae22813983654e8c4583"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\parts-ammo-hover\\object-index.json",
+      "bytes": 24771179,
+      "sha256": "dede09db98f75c294509e6b84f9a7aad23b14bb7035545b9a08a1ebffbdcb2c5"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\parts-ammo-hover\\objects.json",
+      "bytes": 16588618,
+      "sha256": "68d23d5c6c61808bf312cc36bc3478d94d14437b57edf27f2c558ad7f037141b"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\candidate7-interfaces.txt",
+      "bytes": 32335,
+      "sha256": "dcb7f32c57a1c9161a077adededf87439735f570d5610dd237d5358cf18aa0bf"
+    }
+  ],
+  "native_ranges": [
+    {
+      "start": "0x93feb0",
+      "end_exclusive": "0x93feca",
+      "sha256": "2b5d7de7e4b5b900c82cd59cd9e9f1435aad3161c7882d0dafda4a58026675c1",
+      "finding": "MachineGunPressed反射入口跳至0x883e10",
+      "instructions": [
+        "0x93feb0: mov rax, qword ptr [rdx + 0x20]",
+        "0x93feb4: xor r8d, r8d",
+        "0x93feb7: test rax, rax",
+        "0x93feba: setne r8b",
+        "0x93febe: add r8, rax",
+        "0x93fec1: mov qword ptr [rdx + 0x20], r8",
+        "0x93fec5: jmp 0x883e10"
+      ]
+    },
+    {
+      "start": "0x93fed0",
+      "end_exclusive": "0x93feea",
+      "sha256": "1af2d5f6ecab48700216f60aa6a49ac325ded418dc63f7425ba2488a1f2e11aa",
+      "finding": "MachineGunReleased反射入口跳至0x883f80",
+      "instructions": [
+        "0x93fed0: mov rax, qword ptr [rdx + 0x20]",
+        "0x93fed4: xor r8d, r8d",
+        "0x93fed7: test rax, rax",
+        "0x93feda: setne r8b",
+        "0x93fede: add r8, rax",
+        "0x93fee1: mov qword ptr [rdx + 0x20], r8",
+        "0x93fee5: jmp 0x883f80"
+      ]
+    },
+    {
+      "start": "0x93fef0",
+      "end_exclusive": "0x93ff0a",
+      "sha256": "2b8fc8dea2caff16765ae3db98e59b1f3f4f08eaf00c19fa66ee6a5e2c1cf206",
+      "finding": "MainWeaponPressed反射入口跳至0x8840b0",
+      "instructions": [
+        "0x93fef0: mov rax, qword ptr [rdx + 0x20]",
+        "0x93fef4: xor r8d, r8d",
+        "0x93fef7: test rax, rax",
+        "0x93fefa: setne r8b",
+        "0x93fefe: add r8, rax",
+        "0x93ff01: mov qword ptr [rdx + 0x20], r8",
+        "0x93ff05: jmp 0x8840b0"
+      ]
+    },
+    {
+      "start": "0x93ff10",
+      "end_exclusive": "0x93ff2a",
+      "sha256": "08f47ea82f5e63d057bfc5675157f4e6a325cda3d341ce21c788d26d598a341f",
+      "finding": "MainWeaponReleased反射入口跳至0x8844c0",
+      "instructions": [
+        "0x93ff10: mov rax, qword ptr [rdx + 0x20]",
+        "0x93ff14: xor r8d, r8d",
+        "0x93ff17: test rax, rax",
+        "0x93ff1a: setne r8b",
+        "0x93ff1e: add r8, rax",
+        "0x93ff21: mov qword ptr [rdx + 0x20], r8",
+        "0x93ff25: jmp 0x8844c0"
+      ]
+    },
+    {
+      "start": "0x883e10",
+      "end_exclusive": "0x883e68",
+      "sha256": "c140d21bb07002c23956c5a88303b2630cd5c179de6b7563f45ac6ac4353f721",
+      "finding": "机枪按下通过原生准入后设置activator+0x2a4=1",
+      "instructions": [
+        "0x883e10: push rbx",
+        "0x883e12: sub rsp, 0x20",
+        "0x883e16: cmp qword ptr [rcx + 0x260], 0",
+        "0x883e1e: mov rbx, rcx",
+        "0x883e21: je 0x883f08",
+        "0x883e27: mov rax, qword ptr [rcx + 0x250]",
+        "0x883e2e: cmp byte ptr [rax + 0x4ee], 0",
+        "0x883e35: jne 0x883f08",
+        "0x883e3b: call 0x16840d0",
+        "0x883e40: test al, al",
+        "0x883e42: je 0x883f08",
+        "0x883e48: cmp byte ptr [rbx + 0x2a0], 0",
+        "0x883e4f: jne 0x883f08",
+        "0x883e55: mov rax, qword ptr [rbx + 0xe8]",
+        "0x883e5c: mov qword ptr [rsp + 0x30], rdi",
+        "0x883e61: mov byte ptr [rbx + 0x2a4], 1"
+      ]
+    },
+    {
+      "start": "0x883f80",
+      "end_exclusive": "0x883fb2",
+      "sha256": "20659bae160b77b21d97a6dd2645374d8f547dd6193bf430f1ff5a269adf7b72",
+      "finding": "机枪释放核对按住状态后清activator+0x2a4",
+      "instructions": [
+        "0x883f80: push rbx",
+        "0x883f82: sub rsp, 0x50",
+        "0x883f86: cmp qword ptr [rcx + 0x260], 0",
+        "0x883f8e: mov rbx, rcx",
+        "0x883f91: je 0x8840aa",
+        "0x883f97: cmp byte ptr [rcx + 0x2a4], 0",
+        "0x883f9e: je 0x8840aa",
+        "0x883fa4: mov rax, qword ptr [rcx + 0xe8]",
+        "0x883fab: mov byte ptr [rcx + 0x2a4], 0"
+      ]
+    },
+    {
+      "start": "0x8840b0",
+      "end_exclusive": "0x884165",
+      "sha256": "81e0c92f7131f473ea1dbe413fe7422f80e2dbec7574ed6c3acf13e567a2601c",
+      "finding": "主武器按下使用当前armed类别，设置+0x2a5并检查当前武器+0x451",
+      "instructions": [
+        "0x8840b0: push rbx",
+        "0x8840b2: sub rsp, 0x50",
+        "0x8840b6: cmp qword ptr [rcx + 0x260], 0",
+        "0x8840be: mov rbx, rcx",
+        "0x8840c1: je 0x88424e",
+        "0x8840c7: mov rax, qword ptr [rcx + 0x250]",
+        "0x8840ce: cmp byte ptr [rax + 0x4ee], 0",
+        "0x8840d5: jne 0x88424e",
+        "0x8840db: call 0x16840d0",
+        "0x8840e0: test al, al",
+        "0x8840e2: je 0x88424e",
+        "0x8840e8: cmp byte ptr [rbx + 0x2a0], 0",
+        "0x8840ef: jne 0x88424e",
+        "0x8840f5: cmp byte ptr [rbx + 0x2c0], 0",
+        "0x8840fc: je 0x88410b",
+        "0x8840fe: cmp dword ptr [rbx + 0x2e0], 1",
+        "0x884105: jg 0x8842ce",
+        "0x88410b: mov rcx, rbx",
+        "0x88410e: call 0x883d50",
+        "0x884113: test al, al",
+        "0x884115: jne 0x8842ce",
+        "0x88411b: cmp byte ptr [rbx + 0x2a1], al",
+        "0x884121: mov qword ptr [rsp + 0x68], rsi",
+        "0x884126: setne sil",
+        "0x88412a: mov byte ptr [rbx + 0x2a5], 1",
+        "0x884131: inc sil",
+        "0x884134: mov qword ptr [rsp + 0x70], rdi",
+        "0x884139: movzx eax, sil",
+        "0x88413d: imul rdx, rax, 0x88",
+        "0x884144: mov rax, qword ptr [rbx + 0x260]",
+        "0x88414b: mov rcx, qword ptr [rax + 0xf0]",
+        "0x884152: mov rax, qword ptr [rdx + rcx + 0x40]",
+        "0x884157: test rax, rax",
+        "0x88415a: je 0x88416a",
+        "0x88415c: cmp byte ptr [rax + 0x451], 0",
+        "0x884163: je 0x88416a"
+      ]
+    },
+    {
+      "start": "0x8844c0",
+      "end_exclusive": "0x8844f2",
+      "sha256": "3c579334482ed08b18e7e9f3fa5253ed92a2545d3ba7baa124197444cf59a789",
+      "finding": "主武器释放使用共享+0x2a5，不含输入来源标识",
+      "instructions": [
+        "0x8844c0: push rbx",
+        "0x8844c2: sub rsp, 0x40",
+        "0x8844c6: cmp qword ptr [rcx + 0x260], 0",
+        "0x8844ce: mov rbx, rcx",
+        "0x8844d1: je 0x884648",
+        "0x8844d7: cmp byte ptr [rcx + 0x2a5], 0",
+        "0x8844de: je 0x884648",
+        "0x8844e4: mov rax, qword ptr [rcx + 0xe8]",
+        "0x8844eb: mov byte ptr [rcx + 0x2a5], 0"
+      ]
+    },
+    {
+      "start": "0x885e90",
+      "end_exclusive": "0x885eb3",
+      "sha256": "ae1c3cdc387dd44e9da2fc69812ac6f32b90165748bf424a9917de2d5f4f4704",
+      "finding": "ReleaseWeaponInput同时释放机枪、主武器、干扰弹",
+      "instructions": [
+        "0x885e90: push rbx",
+        "0x885e92: sub rsp, 0x20",
+        "0x885e96: mov rbx, rcx",
+        "0x885e99: call 0x883f80",
+        "0x885e9e: mov rcx, rbx",
+        "0x885ea1: call 0x8844c0",
+        "0x885ea6: mov byte ptr [rbx + 0x2a6], 0",
+        "0x885ead: add rsp, 0x20",
+        "0x885eb1: pop rbx",
+        "0x885eb2: ret "
+      ]
+    },
+    {
+      "start": "0x884f1f",
+      "end_exclusive": "0x884f56",
+      "sha256": "6345a8a542c5f3d4faab938805e651b80db2e8bbe46a2587eafe6ba803996867",
+      "finding": "初始化链中的入口先释放机枪和主武器，再清输入队列Num",
+      "instructions": [
+        "0x884f1f: movzx edi, dl",
+        "0x884f22: mov rbx, rcx",
+        "0x884f25: call 0x883f80",
+        "0x884f2a: mov rcx, rbx",
+        "0x884f2d: call 0x8844c0",
+        "0x884f32: mov rcx, rbx",
+        "0x884f35: mov byte ptr [rbx + 0x2a6], 0",
+        "0x884f3c: call 0x885ec0",
+        "0x884f41: xor esi, esi",
+        "0x884f43: lea rcx, [rbx + 0x2b0]",
+        "0x884f4a: mov dword ptr [rbx + 0x2a8], esi",
+        "0x884f50: mov eax, dword ptr [rcx + 0xc]",
+        "0x884f53: mov dword ptr [rcx + 8], esi"
+      ]
+    },
+    {
+      "start": "0x889d46",
+      "end_exclusive": "0x889dcc",
+      "sha256": "d6951cb71ec6ec45f124488106306ad65fda14f63f95050e532670cbad3b8bec",
+      "finding": "每Tick由armed得到1/2组号，仅使用一个主武器组和+0x2a5/队列",
+      "instructions": [
+        "0x889d46: cmp byte ptr [rdi + 0x2a1], 0",
+        "0x889d4d: mov rcx, rdi",
+        "0x889d50: setne dl",
+        "0x889d53: inc dl",
+        "0x889d55: mov byte ptr [rdi + 0x2e4], dl",
+        "0x889d5b: call 0x883a60",
+        "0x889d60: xor r12d, r12d",
+        "0x889d63: test al, al",
+        "0x889d65: jne 0x889d81",
+        "0x889d67: cmp byte ptr [rdi + 0x2a1], r12b",
+        "0x889d6e: je 0x88a5ab",
+        "0x889d74: cmp byte ptr [rdi + 0x493], r12b",
+        "0x889d7b: je 0x88a5ab",
+        "0x889d81: mov rax, qword ptr [rdi + 0x260]",
+        "0x889d88: mov ebx, 1",
+        "0x889d8d: mov rcx, qword ptr [rax + 0xf0]",
+        "0x889d94: movzx eax, byte ptr [rdi + 0x2e4]",
+        "0x889d9b: imul r14, rax, 0x88",
+        "0x889da2: add r14, rcx",
+        "0x889da5: mov rsi, qword ptr [r14 + 0x40]",
+        "0x889da9: cmp byte ptr [rdi + 0x2c0], r12b",
+        "0x889db0: jne 0x889f11",
+        "0x889db6: cmp byte ptr [rdi + 0x2a5], r12b",
+        "0x889dbd: jne 0x889dcc",
+        "0x889dbf: cmp dword ptr [rdi + 0x2b8], r12d",
+        "0x889dc6: jle 0x889f04"
+      ]
+    }
+  ],
+  "confirmed": [
+    "机枪与主武器有独立原生按下/松开入口；可作为后续不写死A键的接入依据，但尚未核对当前机体动作绑定与调用时序。",
+    "当前源码只有一个原生SP组，其他逻辑SP存快照；多个模型同时显示不等于多个SP发射池同时活动。",
+    "普通选择会释放全部发射输入；SP重建也会释放机枪，原生机枪连续行为不能靠原样调用selectLogicalWeapon保证。",
+    "主武器按住状态和待发队列不区分真实输入与模组输入，必须先建立输入归属策略。"
+  ],
+  "blockers": [
+    "既有菜单对象快照没有所需PlayerPlane/PlayerWeaponActivator函数对象原始内容和当前动作绑定；需对应静态反射/绑定快照或还原原生绑定函数，核对机枪动作到激活器的真实链路以及系统释放与真实松键的区分。",
+    "未取得目标机体MGP/HGP/PLSL的配置、实际类、默认对象连发字段与炮口/原生发射映射；不能仅按显示名或通用Weapon字段存在就认定每种均可连续联动。HGP不在当前中文简称表中，不能擅自认作MGP别名或认定兼容第三方。",
+    "当前发射链没有已证实的多个SP并行入口；若同方案确有多个合格SP，需独立研究池、弹药和发射生命周期，不能用快速轮切替代。"
+  ],
+  "next_evidence": "优先补充或定位既有离线的目标机体配置/CDO、原生动作绑定与调用链资料；若必须动态采样，另请用户授权，不自动启动或附加游戏。",
+  "implementation_deferred": [
+    "运行时机炮齐射",
+    "管理开关",
+    "第四组快捷键与迁移",
+    "2.21.1候选版本标识"
+  ],
+  "notes": "只整理现存快照与当前源码。没有证明不可实现；现有证据不足以安全承诺完整需求。正式2.21.0、已装已测2.20.3和所有旧回执保持。"
+}
