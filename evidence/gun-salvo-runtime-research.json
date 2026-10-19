@@ -1,0 +1,540 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "branch": "codex/gun-salvo",
+  "base_commit": "7a0559d",
+  "candidate": "2.21.1",
+  "status": "完成源码候选，未编译、未安装、未验证候选效果",
+  "authorization": "用户明确允许只读采集AC7进程的机体、兵装配置和输入状态；游戏操作由用户完成。",
+  "scope_change": "用户更正首架为mig21b，并要求先不研究Adler/HGP；本候选仅含已核对MGP/PLSL。",
+  "user_observations": [
+    "简单难度，自带机炮无限弹药。",
+    "Su-57按住A期间切换SP会打断GUN发射。"
+  ],
+  "process_access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ (0x410)",
+  "process_write": false,
+  "game_functions_called_by_collector": false,
+  "input_injected": false,
+  "compiled": false,
+  "automated_tests_written": false,
+  "automated_tests_run": false,
+  "installed": false,
+  "packaged": false,
+  "captures": [
+    {
+      "aircraft": "MiG-21bis",
+      "class": "AcePlayerPawn_m21b_C",
+      "sp_classes": [
+        "plwp_mgp_r0_C",
+        "plwp_rkt_r0_C",
+        "plwp_saam_r0_C"
+      ],
+      "defaults": [
+        {
+          "name": "Default__plwp_msl_r0_C",
+          "fields": {
+            "WeaponID": "01",
+            "LoadTime": "0000b040",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "00"
+          }
+        },
+        {
+          "name": "Default__plwp_rkt_r0_C",
+          "fields": {
+            "WeaponID": "13",
+            "LoadTime": "0000d040",
+            "MaxLoadedCount": "08000000",
+            "bFireAllInOneShot": "01",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "0000803e",
+            "bReloadOnFire": "00",
+            "bReloadAfterAllFired": "01",
+            "bShouldTreatAsOneWeapon": "01",
+            "bCanUseSameSlot": "01",
+            "bGunReaction": "00"
+          }
+        },
+        {
+          "name": "Default__plwp_saam_r0_C",
+          "fields": {
+            "WeaponID": "14",
+            "LoadTime": "00000841",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "00"
+          }
+        },
+        {
+          "name": "Default__plwp_mgp_r0_C",
+          "fields": {
+            "WeaponID": "11",
+            "LoadTime": "cdcc4c3d",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "01",
+            "bAutoFireOnHold": "01",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "00",
+            "bReloadAfterAllFired": "01",
+            "bShouldTreatAsOneWeapon": "01",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "01"
+          }
+        },
+        {
+          "name": "Default__plwp_gun_x0_C",
+          "fields": {
+            "WeaponID": "00",
+            "LoadTime": "cdcc4c3d",
+            "MaxLoadedCount": "01000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "01"
+          }
+        }
+      ],
+      "gun_ammo_values": [
+        -1
+      ],
+      "state_changes": [
+        {
+          "elapsed": 0.000984,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1158
+        },
+        {
+          "elapsed": 38.64664,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 1,
+          "sp_ammo": 6
+        },
+        {
+          "elapsed": 38.852136,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 6
+        },
+        {
+          "elapsed": 39.015928,
+          "armed": 0,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 6
+        },
+        {
+          "elapsed": 40.881195,
+          "armed": 0,
+          "gun_held": 1,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 6
+        },
+        {
+          "elapsed": 44.531543,
+          "armed": 0,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 6
+        },
+        {
+          "elapsed": 45.761511,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1158
+        },
+        {
+          "elapsed": 47.215213,
+          "armed": 1,
+          "gun_held": 1,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1158
+        },
+        {
+          "elapsed": 50.454386,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1158
+        },
+        {
+          "elapsed": 53.097939,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 1,
+          "plane_swp": 0,
+          "sp_ammo": 1157
+        },
+        {
+          "elapsed": 55.730498,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1108
+        },
+        {
+          "elapsed": 58.03143,
+          "armed": 1,
+          "gun_held": 1,
+          "main_held": 1,
+          "plane_swp": 0,
+          "sp_ammo": 1107
+        },
+        {
+          "elapsed": 62.369913,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 0,
+          "sp_ammo": 1026
+        }
+      ],
+      "sampling_end": "用户完成后从采集端中止；保留完整JSON行，未记录为正常到时退出",
+      "sources": [
+        {
+          "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-paused-20261019\\capture.json",
+          "bytes": 978478,
+          "sha256": "d034f77adec7c2b513dcc231e2f73c4f354a7710d65ac584247849dc09a311f0"
+        },
+        {
+          "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-fire-20261019.jsonl",
+          "bytes": 70391,
+          "sha256": "c178d7945b9d92d8f37d68dcd0e45c4658c2ed6e2af6f91b51313d55562dfd3e"
+        }
+      ]
+    },
+    {
+      "aircraft": "Su-57",
+      "class": "AcePlayerPawn_pkfa_C",
+      "sp_classes": [
+        "plwp_4aam_r1_C",
+        "plwp_gpb_r0_C",
+        "plwp_plsl_x0_C"
+      ],
+      "defaults": [
+        {
+          "name": "Default__plwp_plsl_x0_C",
+          "fields": {
+            "WeaponID": "16",
+            "LoadTime": "cdcccc3e",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "01",
+            "VolleyRestInterval": "cdcc4c3e",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "01"
+          }
+        },
+        {
+          "name": "Default__plwp_4aam_r1_C",
+          "fields": {
+            "WeaponID": "02",
+            "LoadTime": "00003041",
+            "MaxLoadedCount": "04000000",
+            "bFireAllInOneShot": "01",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "00"
+          }
+        },
+        {
+          "name": "Default__plwp_gpb_r0_C",
+          "fields": {
+            "WeaponID": "08",
+            "LoadTime": "00003041",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "00"
+          }
+        },
+        {
+          "name": "Default__plwp_gun_x1_C",
+          "fields": {
+            "WeaponID": "00",
+            "LoadTime": "9a99193e",
+            "MaxLoadedCount": "01000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "01"
+          }
+        },
+        {
+          "name": "Default__plwp_msl_r0_C",
+          "fields": {
+            "WeaponID": "01",
+            "LoadTime": "0000b040",
+            "MaxLoadedCount": "02000000",
+            "bFireAllInOneShot": "00",
+            "bAutoFireOnHold": "00",
+            "VolleyRestInterval": "00000000",
+            "bReloadOnFire": "01",
+            "bReloadAfterAllFired": "00",
+            "bShouldTreatAsOneWeapon": "00",
+            "bCanUseSameSlot": "00",
+            "bGunReaction": "00"
+          }
+        }
+      ],
+      "gun_ammo_values": [
+        -1
+      ],
+      "state_changes": [
+        {
+          "elapsed": 0.00072,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 215
+        },
+        {
+          "elapsed": 42.224961,
+          "armed": 1,
+          "gun_held": 1,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 215
+        },
+        {
+          "elapsed": 44.871406,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 215
+        },
+        {
+          "elapsed": 46.162574,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 1,
+          "plane_swp": 2,
+          "sp_ammo": 214
+        },
+        {
+          "elapsed": 48.688999,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 203
+        },
+        {
+          "elapsed": 49.508087,
+          "armed": 1,
+          "gun_held": 1,
+          "main_held": 1,
+          "plane_swp": 2,
+          "sp_ammo": 202
+        },
+        {
+          "elapsed": 53.056648,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 186
+        },
+        {
+          "elapsed": 53.919232,
+          "armed": 0,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 186
+        },
+        {
+          "elapsed": 55.500242,
+          "armed": 0,
+          "gun_held": 1,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 186
+        },
+        {
+          "elapsed": 57.901911,
+          "armed": 1,
+          "gun_held": 0,
+          "main_held": 0,
+          "plane_swp": 2,
+          "sp_ammo": 186
+        }
+      ],
+      "sampling_end": "用户完成后从采集端中止；保留完整JSON行，未记录为正常到时退出",
+      "sources": [
+        {
+          "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-su57-paused-20261019\\capture.json",
+          "bytes": 987492,
+          "sha256": "e3b7d25cc725bd149e2310a097dad33e47becdf45ad9833096833ba1e0662eea"
+        },
+        {
+          "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-su57-fire-20261019.jsonl",
+          "bytes": 20845,
+          "sha256": "474d0c861ff444531fd4b098ef773b5e6b99f8a70c5086263ee924887e9c4515"
+        }
+      ]
+    }
+  ],
+  "native_sources": [
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\823590.bin",
+      "bytes": 184,
+      "sha256": "8bf3e8aba7168320475dbd3b2144de43a6c4508f713fec25ab3b0fc6ebeb8130"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\823650.bin",
+      "bytes": 115,
+      "sha256": "c9413d50b1decc876e8833305eef9a804ab3fd0e14c3d621b14cf780decb365f"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\8236d0.bin",
+      "bytes": 121,
+      "sha256": "9209f3a9f21d2e663c07755e8355ba007d66e441b690369a6b45e44d35e8aba0"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\823750.bin",
+      "bytes": 206,
+      "sha256": "40964e23eaf1fc5d9c064da64764ffaf680aa348700039617f25427e69d9b7ea"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\823820.bin",
+      "bytes": 127,
+      "sha256": "0cbe9aa9ba9ae6636ff6c9fc48382135512b90570fe314e2d31feca59e14fbd9"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-input-functions-20261019\\capture.json",
+      "bytes": 2187,
+      "sha256": "e36b5a09dd39bfeb4d805e5ca2ddb99a26296b5e78e8cd2f3a2dfad57989f4b8"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\5dc150.bin",
+      "bytes": 179,
+      "sha256": "78dfbac583aeafef20d997d7c46f3864ccbce04e81c131183e7ecc3b91613e9f"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\5dc210.bin",
+      "bytes": 179,
+      "sha256": "99d5d56a026d2123989042e00c4fb82c20350a22e499e42c978c3c6cb3e46d46"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\823360.bin",
+      "bytes": 284,
+      "sha256": "200c21d536f40596be9cc8a42fb850192cdf6f57f222b4a5c209b362adb5a189"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\823480.bin",
+      "bytes": 266,
+      "sha256": "3476691914649d00cef84ea34dd0e3efba5e5c43607fb913df34439a9605a7dd"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\884ab0.bin",
+      "bytes": 198,
+      "sha256": "f11b7b61083c8706879284f13421df62cc7e5eb8e7b009678417220562ba8e1c"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-mig21-action-flow-20261019\\capture.json",
+      "bytes": 2543,
+      "sha256": "266fcfde87c59ab62a305ce0a45ff0173074db794ef71d32943bc5477a042b57"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-fire-dispatch-20261019\\5dc010.bin",
+      "bytes": 153,
+      "sha256": "94b0412a505df12bc7784db35c00fa1c1e38729422838e6470e0526c1b28e2ca"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-fire-dispatch-20261019\\8238a0.bin",
+      "bytes": 96,
+      "sha256": "7aa6495745eb9b0d69ab74f35f1b54d3118c44343c3c05845b6fad062be77b12"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP\\Temp\\gun-salvo-fire-dispatch-20261019\\capture.json",
+      "bytes": 1015,
+      "sha256": "a1a11beb4e35ccc1a2dab20e00144c93e0541976aa3976352fb59d5cd34137b7"
+    }
+  ],
+  "native_chain": [
+    "OnWeaponFire反射包装0x93bea0 -> 0x823360(bool)；许可分支通过0x5dc150 -> 0x8238a0(bool) -> MachineGunPressed 0x883e10 / Released 0x883f80。",
+    "主武器对应0x93bf30 -> 0x823480(bool)；许可分支通过0x5dc210 -> 0x8236d0(bool) -> MainWeaponPressed 0x8840b0 / Released 0x8844c0。",
+    "OnWeaponFirePressed和Released还有其他原生行为，不能只凭函数名直接当成一对低层机枪边沿。候选观察已核对的最终玩家分发入口。",
+    "原生释放/重建走激活器内部入口，不等于真实机枪动作已松开；候选以玩家分发记录真实按住，自动换装后延至下一次调度再恢复。"
+  ],
+  "implementation": {
+    "management_protocol": 14,
+    "management_revision": 13,
+    "default_enabled": false,
+    "shortcut": {
+      "key": 116,
+      "mods": 3,
+      "display": "Ctrl+Alt+F5",
+      "customizable": true
+    },
+    "migration_backup": "profiles.before-gun-salvo.json",
+    "shortcut_conflict": "保留旧键，新键置为key=0/mods=0，允许管理页重新绑定。",
+    "core": "gun_salvo.hpp：玩家机枪/SP动作归属合并、当前CDO/类别守卫、500ms心跳收尾。",
+    "lua": "gun_salvo.lua：单一合格SP识别、临时选择、按住/松开、人工优先、选择版本及世界身份检查。"
+  },
+  "limits": [
+    "MGP=WeaponID17且CDO名Default__plwp_mgp_r0_C；PLSL=22且Default__plwp_plsl_x0_C，并要求原生bAutoFireOnHold。其他运行类暂不认作支持。",
+    "只保证候选设计使用机枪与一个原生SP的独立通道；本机两架各仅一个合格SP。多个合格逻辑SP拒绝本次联动，不轮切。HGP未采集、未实现。",
+    "现有快照和采样均来自原已装2.20.3，并非2.21.1候选测试；原生机炮无限弹药无法据扣弹计数验证枪数。",
+    "跨进程读取不是同帧原子快照，20ms采样不能当作按键次数或精确发射数量。",
+    "原生SP切换重建仍有成本，恢复机枪在下一次游戏线程调度，不承诺切换期间绝无发射间隙。",
+    "暂停/失焦/管理/生命周期变化取消旧恢复权；原生对象失效不调用旧对象，归还失败保留收尾责任，异常路径仍待验证。"
+  ],
+  "manual_acceptance_pending": [
+    "MSL/其他SP/吊舱自身起按与松开、快速点按、切换未完成就松开",
+    "机枪和原生SP键交错/同时按松、持续按住期间人工选择",
+    "空弹/装填、暂停/管理页/失焦/关闭、补给/检查点/退出换玩家世界",
+    "113指定SP停用、213自由飞行、多人旁路",
+    "默认关闭、Ctrl+Alt+F5捕获和改键、保存及重启、旧键冲突与备份保留"
+  ]
+}

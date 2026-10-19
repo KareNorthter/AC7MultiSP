@@ -53,8 +53,8 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=13; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
-bool draftModEnabled=true,draftFixedMountEnabled=true;
+constexpr int managementProtocol=14; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
+bool draftModEnabled=true,draftFixedMountEnabled=true,draftGunSalvo=false;
 bool draftTargetGazePadL3=true,draftCameraHold=true;
 bool draftCameraR3=true;
 int draftTargetGazeKey=0,targetGazeResponse=0;
@@ -62,8 +62,8 @@ int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
 bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
-std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
-std::array<dualsp::Shortcut,3> draftShortcuts=shortcuts;
+std::array<dualsp::Shortcut,4> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3}}};
+std::array<dualsp::Shortcut,4> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 std::string draftCentralWeaponDisplay="always"; // 默认保留中央简称常驻。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
@@ -209,6 +209,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         for(size_t index=0;index<shortcuts.size();++index)if(dualsp::shortcutMatches(shortcuts[index],static_cast<int>(w),mods)) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
             if(index==0)togglePanel(!panel);
+            else if(index==3){if(!panel)enqueue({{"type","toggle_gun_salvo"}});}
             else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."));
             else if(state.contains("debug_hotkey")&&state["debug_hotkey"].value("protocol",0)==1&&state.contains("debug_loadout")) {
                 const auto& debug=state["debug_loadout"];
@@ -359,22 +360,23 @@ std::string keyLabel(int key) {
 }
 
 std::string shortcutLabel(dualsp::Shortcut value) {
+    if(value.key==0)return tr("未绑定","Unassigned");
     return std::string(value.mods&1?"Ctrl+":"")+(value.mods&2?"Alt+":"")+(value.mods&4?"Shift+":"")+keyLabel(value.key);
 }
-std::array<dualsp::Shortcut,3> readShortcuts(const Json& data) {
-    std::array<dualsp::Shortcut,3> values;
-    const char* names[]={"management","cycle","mount"};
-    for(int i=0;i<3;++i) {
+std::array<dualsp::Shortcut,4> readShortcuts(const Json& data) {
+    std::array<dualsp::Shortcut,4> values;
+    const char* names[]={"management","cycle","mount","salvo"};
+    for(int i=0;i<4;++i) {
         const auto& item=data.at(names[i]);
         if(!item.at("key").is_number_integer()||!item.at("mods").is_number_integer())throw std::runtime_error("快捷键格式无效");
         values[i]={item.at("key").get<int>(),item.at("mods").get<int>()};
-        if(!dualsp::validShortcut(values[i]))throw std::runtime_error("快捷键不可用");
+        if(!(i==3&&values[i].key==0&&values[i].mods==0)&&!dualsp::validShortcut(values[i]))throw std::runtime_error("快捷键不可用");
     }
     return values;
 }
-Json shortcutData(const std::array<dualsp::Shortcut,3>& values) {
-    Json data=Json::object();const char* names[]={"management","cycle","mount"};
-    for(int i=0;i<3;++i)data[names[i]]={{"key",values[i].key},{"mods",values[i].mods}};
+Json shortcutData(const std::array<dualsp::Shortcut,4>& values) {
+    Json data=Json::object();const char* names[]={"management","cycle","mount","salvo"};
+    for(int i=0;i<4;++i)data[names[i]]={{"key",values[i].key},{"mods",values[i].mods}};
     return data;
 }
 bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,draftKeys)
@@ -403,7 +405,7 @@ void captureKeyboardKey(int key,int mods) {
     } else if(captureSlot==8) {
         if(mods!=0){notice=tr("镜头回正只支持单键。","Camera recenter accepts a single key.");return;}
         nextCenter=key;
-    } else nextShortcuts[captureSlot-4]={key,mods};
+    } else nextShortcuts[captureSlot==9?3:captureSlot-4]={key,mods};
     if(!dualsp::validShortcuts(nextShortcuts,nextKeys)||!dualsp::validTargetGazeKey(nextGaze,nextShortcuts,nextKeys)
         ||!dualsp::validCameraCenterKey(nextCenter,draftCameraHold,nextGaze,nextShortcuts,nextKeys)) {
         notice=tr("键位不可用或重复；请换一个按键。Esc取消。","Unsupported or duplicate binding. Choose another key; Esc cancels.");return;
@@ -416,6 +418,7 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
     draftTargetGazePadL3=state.at("target_gaze_pad_l3").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
@@ -633,7 +636,7 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
-        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
+        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"gun_salvo_enabled",draftGunSalvo},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
@@ -656,6 +659,7 @@ void refreshState() {
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
         const bool wasManagement=state.value("management_protocol",0)==managementProtocol;
+        const bool wasGunSalvo=state.value("gun_salvo_enabled",false);
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
@@ -679,6 +683,7 @@ void refreshState() {
             state.at("target_gaze_pad_l3").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
+            state.at("gun_salvo_enabled").get<bool>();
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
             if(state.at("camera_hold").at("protocol").get<int>()!=4)throw std::runtime_error("镜头保持协议不匹配");
@@ -700,6 +705,10 @@ void refreshState() {
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
         if(!wasManagement&&panel&&state.value("management_protocol",0)==managementProtocol)loadManagementDraft();
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
+        if(!panel && wasManagement && wasGunSalvo!=state.at("gun_salvo_enabled").get<bool>()) {
+            draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
+            showToast(draftGunSalvo?tr("机炮齐射：开启","Gun salvo: ON"):tr("机炮齐射：关闭","Gun salvo: OFF"));
+        }
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
                 tr("保存失败，详见错误和日志。","Save failed; see the error and logs.");
@@ -901,6 +910,7 @@ extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}

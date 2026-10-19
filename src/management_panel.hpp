@@ -26,7 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
@@ -38,6 +38,11 @@ void drawFeatureSettings() {
         ImGui::Checkbox(tr("启用模组###ModEnabled","Enable mod###ModEnabled"),&draftModEnabled);
         panelHelp("总开关在主菜单或单人任务选择页应用；在任务/机库保存后，回到这些菜单自动生效，无需重启。管理入口始终可用。",
             "The master switch applies at the main menu or single-player mission selection. Changes saved during a mission or in the hangar apply on returning there. No restart is needed; management stays available.");
+        ImGui::Checkbox(tr("机炮齐射###GunSalvo","Gun salvo###GunSalvo"),&draftGunSalvo);
+        if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
+            ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，本候选不支持它们同时发射。","This loadout has multiple eligible SPs; this candidate cannot fire them simultaneously."));
+        panelHelp("默认关闭。按住实际原生机枪键联动方案中的MGP或PLSL，松开后恢复先前选择；自定义机枪键同样生效。暂停、管理页、失焦或人工换武器会取消联动。不支持HGP及多种不同SP并发。",
+            "Off by default. Hold your native gun action to also fire the selected loadout’s MGP or PLSL; release to restore the prior selection. Native remapping is respected. Pause, management, focus loss or manual weapon selection cancels the action. HGP and simultaneous different SPs are unsupported.");
         ImGui::Checkbox(tr("多SP挂载模型###FixedMount","Multi-SP weapon models###FixedMount"),&draftFixedMountEnabled);
         panelHelp("同时显示已适配机体的多SP模型，并控制机库/补给预览；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试换装时应用。失败恢复原生外观，不影响兵装选择。适配机体见安装说明。",
             "Shows supported multi-SP models and controls hangar/resupply previews. Some internal bays remain native. Applies on sortie, mission/checkpoint retry, resupply or debug loadout. Visual failures restore native models without affecting selection. See installation notes for aircraft coverage.");
@@ -129,13 +134,14 @@ void drawBindingSettings() {
             "Click a binding and press a new key; Esc cancels. D-pad bindings are fixed. Empty or depleted SPs keep the current selection; reloading weapons can be selected.");
     }
     if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"))) {
-        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models")};
-        for(int i=0;i<3;++i) {
+        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo")};
+        for(int i=0;i<4;++i) {
             ImGui::TextUnformatted(names[i]);ImGui::SameLine(std::min(260.f,ImGui::GetContentRegionAvail().x*.45f));
-            bindingButton(i+4,shortcutLabel(draftShortcuts[i]));
+            bindingButton(i==3?9:i+4,shortcutLabel(draftShortcuts[i]));
+            if(i==3){ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}}
         }
         if(ImGui::SmallButton(tr("恢复默认快捷键###ResetShortcuts","Reset shortcuts###ResetShortcuts"))) {
-            const std::array<dualsp::Shortcut,3> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
+            const std::array<dualsp::Shortcut,4> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3}}};
             if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys)&&
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys)){draftShortcuts=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
@@ -147,12 +153,12 @@ void drawBindingSettings() {
 void drawManagementErrors() {
     const char* fields[]={"error","menu_error","hud_error","central_error","settings_error"};
     bool errors=false;for(const char* field:fields)errors=errors||state.contains(field);
-    for(const char* field:{"target_gaze","camera_hold","management_pause"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
+    for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
     if(errors) {
         ImGui::TextColored({1,.65f,.4f,1},"%s",tr("有功能或保存异常，请展开查看。","A feature or save operation needs attention."));
         if(ImGui::CollapsingHeader(tr("查看异常详情###ManagementErrors","View error details###ManagementErrors"))) {
             for(const char* field:fields)if(state.contains(field))ImGui::TextWrapped("%s",uiMessage(state.at(field).get<std::string>()).c_str());
-            for(const char* field:{"target_gaze","camera_hold","management_pause"})if(state.contains(field)&&state.at(field).contains("error"))
+            for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo"})if(state.contains(field)&&state.at(field).contains("error"))
                 ImGui::TextWrapped("%s",uiMessage(state.at(field).at("error").get<std::string>()).c_str());
         }
     }
@@ -162,7 +168,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.0");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.1 候选");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());

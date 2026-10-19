@@ -4,10 +4,11 @@
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
   "upgrade_receipt": "evidence/2.20.3-installed.json",
-  "candidate": false,
+  "candidate": true,
   "scripts": [
     "config_store.lua",
     "debug_aircraft.lua",
+    "gun_salvo.lua",
     "json.lua",
     "loadout_flow.lua",
     "loadout_profile.lua",

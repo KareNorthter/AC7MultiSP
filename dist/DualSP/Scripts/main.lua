@@ -1,4 +1,4 @@
--- AC7MultiSP 2.21.0候选：固定反射字段名的生命周期，规避准备页字符串缓存悬空崩溃。
+-- AC7MultiSP 2.21.1源码候选：机炮齐射联动已核对的MGP/PLSL；未编译或实机验证。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=13") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=14") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -83,6 +83,9 @@ loadExport("dualsp_camera_input_options_supported","DualSPUI.dll")
 loadExport("dualsp_controller_clicks_supported")
 loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
+loadExport("dualsp_gun_salvo_supported")
+loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
+weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
 local catalogExport=loadExport("dualsp_catalogue")
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
@@ -212,6 +215,7 @@ local function valid(object)return object and object:IsValid()end
 local nativeClient=dofile(root.."Scripts/native_bridge.lua").new{
     root=root,execute=bridge,readJson=readJson,profile=Profile}
 local function native(op,target)
+    if weaponSwitch.salvo.service and op~="switch"and op~="snapshot"then weaponSwitch.salvo.service:release()end
     if ensureMountAssets and runtimeFixedMountEnabled then ensureMountAssets(nil,nil,false,currentProfile)end
     assert(IsInGameThread(),"Native weapon access requires the game thread")
     assert(valid(plane) and valid(activator),"Player plane is unavailable")
@@ -273,6 +277,7 @@ local function readOptionsFor(id)
     local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
     local continuousOptions={}
+    local salvoOptions={}
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     for i=1,3 do
         local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
@@ -280,6 +285,10 @@ local function readOptionsFor(id)
         local weaponDefault=weaponClass:GetCDO() -- 原生枚举仍受核心范围校验保护。
         assert(valid(weaponDefault),"当前机体兵装默认对象缺失："..info.code.."/"..i)
         weaponIds[i]=weaponDefault.WeaponID
+        local name=weaponDefault:GetFullName()
+        salvoOptions[i]=weaponDefault.bAutoFireOnHold and
+            ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
+             (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         if ((info.code=="mrgn"or info.code=="fa27"or info.code=="fa44")and weaponIds[i]==31)or (info.code=="adf11f"and weaponIds[i]==26)then
             local ok,supported=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
@@ -292,7 +301,7 @@ local function readOptionsFor(id)
     assert(type(amounts)=="table"and #amounts==3,"原生弹药预览结果不完整")
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
-        options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
+        options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
             stats=item.stats,description=descriptions[item.code]or item.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=not unsupportedDual[weaponIds[i]]or continuousOptions[i]==true}
@@ -774,6 +783,7 @@ end
 local function releaseRuntimeOwnership()
     weaponSwitch.pending=nil;internal=false
     weaponSwitch.camera.release()
+    if weaponSwitch.salvo.service then weaponSwitch.salvo.service:release()end
     local gazeCall,gazeOK,_,gazeError=pcall(weaponSwitch.gaze.invoke,0,0,0,0)
     weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
     if not gazeCall or not gazeOK then note("TARGET_GAZE_RELEASE_ERROR "..tostring(gazeCall and gazeError or gazeOK))end
@@ -909,7 +919,7 @@ function weaponSwitch.defer(desired,reason)
     local pending=weaponSwitch.pending
     if not pending or pending.desired~=desired then
         pending={desired=desired,plane=plane:GetAddress(),activator=activator:GetAddress(),world=currentWorld,
-            revision=weaponRevision,started=game:GetTimeSeconds(plane)}
+            revision=weaponRevision,started=game:GetTimeSeconds(plane),salvo=weaponSwitch.salvo.service and weaponSwitch.salvo.service.ownedCall or false}
         weaponSwitch.pending=pending
         note("WEAPON_SWITCH_PENDING target="..desired.." reason="..tostring(reason or "native_busy"))
     end
@@ -937,6 +947,7 @@ local function pressSwitch(desired)
 end
 -- MSL/SP 类别转换与 SP 重建共同完成后才刷新，避免暴露中间的 MSL 状态。
 local function selectLogicalWeapon(desired,retry)
+    if not retry and weaponSwitch.salvo.service and not weaponSwitch.salvo.service.ownedCall then weaponSwitch.salvo.service:cancel("manual_selection")end
     assert(desired>=0 and desired<=3,"无效的逻辑武器选择")
     if not retry then weaponSwitch.clear("superseded")end
     local aircraftCode=catalogue and catalogue[tostring(planeId)]and catalogue[tostring(planeId)].code
@@ -984,6 +995,30 @@ local function selectLogicalWeapon(desired,retry)
     weaponSwitch.pending=nil;lastUIKey=nil
     return true
 end
+weaponSwitch.salvo.service=dofile(root.."Scripts/gun_salvo.lua").new{
+    invoke=weaponSwitch.salvo.invoke,note=note,
+    select=function(target)return selectLogicalWeapon(target)end,
+    clearPending=function()if weaponSwitch.pending and weaponSwitch.pending.salvo then weaponSwitch.clear("gun_salvo_cancelled")end end,
+    context=function()
+        local c={enabled=config.gun_salvo_enabled,valid=false,operable=false,eligible={},ammo={}}
+        if not c.enabled and not weaponSwitch.salvo.service.bound then return c end
+        c.valid=runtimeAllowed and runtimeModEnabled and isFlight and configured and not errorText
+            and valid(plane)and valid(activator)and currentProfile~=nil and flightOptions~=nil and nativeState~=nil
+        if not c.valid then return c end
+        c.plane=plane:GetAddress();c.activator=activator:GetAddress()
+        c.key=tostring(currentWorld)..":"..c.plane..":"..c.activator
+        c.operable=not panelOpen and not supplySession and not internal and not restorePending and not checkpointPending
+            and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)and plane.bEnableWeaponInput
+        c.logical=plane:IsSpecialWeaponArmed()and active+1 or 0;c.revision=weaponRevision;c.time=game:GetTimeSeconds(plane)
+        c.pending=weaponSwitch.pending~=nil
+        c.pendingOwned=weaponSwitch.pending and weaponSwitch.pending.salvo or false
+        for i=1,Profile.count(currentProfile)do
+            local option=flightOptions[currentProfile[Profile.fields[i]]+1]
+            if option and option.salvo_supported then c.eligible[#c.eligible+1]=i end
+            c.ammo[i]=i==active+1 and activator:GetSpecialWeaponCount()or nativeState.cached_sp[i]
+        end
+        return c
+    end}
 -- 仅普通连射保留待切换请求；Falken TLS期间的选择已直接丢弃。
 function weaponSwitch.pump()
     local pending=weaponSwitch.pending
@@ -1010,6 +1045,7 @@ local function directSelect(desired)
     if not configured or supplySession or panelOpen or internal or errorText or restorePending or checkpointPending
         or not isFlight or not ready()or game:IsGamePaused(plane)then return end
     inputNotice=nil
+    weaponSwitch.salvo.service:cancel("manual_direct_selection")
     weaponSwitch.clear("new_direct_selection")
     if desired>Profile.count(currentProfile)then inputNotice="empty_sp";note("DIRECT_SELECTION_REJECTED EMPTY_SP "..desired);return end
     local armed=plane:IsSpecialWeaponArmed()
@@ -1187,11 +1223,23 @@ local function applyAction(action)
     elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation,action.source=="pad_l3")
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
+    elseif action.type=="toggle_gun_salvo"then
+        if runtimeAllowed and runtimeModEnabled then
+            local saved,err=pcall(function()
+                local nextConfig=json.decode(json.encode(config));nextConfig.gun_salvo_enabled=not config.gun_salvo_enabled
+                configStore:save(nextConfig);config=nextConfig
+                weaponSwitch.salvo.service.error=nil
+                note("GUN_SALVO_TOGGLED "..tostring(config.gun_salvo_enabled))
+            end)
+            if not saved then weaponSwitch.salvo.service.error=tostring(err)end
+            lastUIKey=nil
+        end
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             config=configStore:applySettings(config,action)
+            weaponSwitch.salvo.service.failed=false;weaponSwitch.salvo.service.error=nil
             weaponSwitch.gaze.failed=false;weaponSwitch.gaze.error=nil;weaponSwitch.gaze.update(false)
             weaponSwitch.camera.release();weaponSwitch.camera.failed=false;weaponSwitch.camera.error=nil;weaponSwitch.camera.update()
             masterSwitch.failed=false;masterSwitch.error=nil;masterSwitch.lastCheck=-1
@@ -1233,9 +1281,10 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=13,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=14,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
-        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,central_weapon_display=config.central_weapon_display,
+        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
+        gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,
         target_gaze_pad_l3=config.target_gaze_pad_l3,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
         camera_r3_enabled=config.camera_r3_enabled,
@@ -1712,7 +1761,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.21.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.21.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
@@ -1762,7 +1811,7 @@ LoopInGameThreadWithDelay(20,function()
             end
             assert(IsInGameThread(),"Controller callback is outside the game thread")
             local started=os.clock() -- 不改变输入、武器和 HUD 的既有更新频率。
-            tick();recordTickCost(started)
+            tick();weaponSwitch.salvo.service:update();recordTickCost(started)
         end,debug.traceback)
         if not ok then
             errorText=tostring(err);note("ERROR "..errorText)
