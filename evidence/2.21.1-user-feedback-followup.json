@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "version": "2.21.1",
+  "recorded_at": "2026-10-19T20:48:59.223276+08:00",
+  "user_message": "经过测试，没问题了。合并到main，版本号就叫2.21.1。然后做一个发布包。发布包ReadMe文件的开头要有当前版本的变化（简洁概括），ReadMe的末尾要有2.XX版本以来，各版本的更新日志（要简洁概括）。如果有的版本号变化内容不清楚，则就写“中间测试版本”",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "validated_version": "2.21.1",
+  "recompile_requested": false,
+  "install_requested": false,
+  "readme_requirements": {
+    "beginning": "简洁概括当前版本变化",
+    "ending": "2.xx以来各版本简要日志；未知写中间测试版本"
+  }
+}
