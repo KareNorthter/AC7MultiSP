@@ -1,4 +1,4 @@
--- AC7MultiSP 2.20.0：整合普通视角与注视衔接，静默手柄X正常注视开关提示。
+-- AC7MultiSP 2.20.1 候选：中央武器简称可选常驻或切换后显示1秒，默认常驻。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -58,7 +58,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=11") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=12") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -78,6 +78,7 @@ loadExport("dualsp_camera_controls_supported")
 loadExport("dualsp_camera_controls_supported","DualSPUI.dll") -- 新回正键/灵敏度要求核心及管理页一起升级。
 loadExport("dualsp_camera_input_options_supported")
 loadExport("dualsp_camera_input_options_supported","DualSPUI.dll")
+loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
 local catalogExport=loadExport("dualsp_catalogue")
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
@@ -786,10 +787,11 @@ refreshHUD=function(now)
     if internal then return end
     -- HUD 生命周期不依赖武器输入许可；过场暂时禁止操作不能把已接管的多 SP 恢复成单 SP。
     local enabled=runtimeAllowed and not errorText and (not supplySession or supplySession.applied)and valid(plane)and plane:GetNimbusHUDEnabled()
-    -- 右下 HUD 始终启用；中央简称可独立关闭，两处显示共用一次就绪采样。
+    -- 右下 HUD 始终启用；中央简称选择常驻或短显，两处共用一次就绪采样和游戏时间。
+    local gameTime=enabled and game:GetTimeSeconds(plane)or 0
     if enabled and not hudSamplingError then
         local callOK,sampleOK,mainReady,sp1Ready,sp2Ready,sp3Ready,err=pcall(readReadiness,
-            plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),Profile.count(currentProfile))
+            plane:GetAddress(),activator:GetAddress(),gameTime,Profile.count(currentProfile))
         nativeState.ready=nil
         if not callOK or sampleOK~=true then
             hudSamplingError=tostring(callOK and (err or "候选核心的 HUD 内存接口不可用")or sampleOK)
@@ -804,7 +806,7 @@ refreshHUD=function(now)
     if enabled and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
-        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled,now)
+        weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled,now,config.central_weapon_display,gameTime)
     end
 end
 -- 由出击初始化和飞行切换共同使用的输入释放接口，在 configureFlight
@@ -821,7 +823,7 @@ local function primeFlightHUD(profile,options,prewarm)
     local visible=plane:GetNimbusHUDEnabled()
     -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
     nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
-    weaponPresentation:update(plane,profile,options,seed,visible,os.clock())
+    weaponPresentation:update(plane,profile,options,seed,visible,os.clock(),config.central_weapon_display,game:GetTimeSeconds(plane))
 end
 -- 正常出击建立检查点；补给和显式调试重建保留任务检查点。
 local function configureFlight(profile,reason)
@@ -1227,9 +1229,9 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=11,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=12,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
-        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
+        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,central_weapon_display=config.central_weapon_display,
         target_gaze_pad_x=config.target_gaze_pad_x,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
         camera_r3_enabled=config.camera_r3_enabled,
@@ -1706,7 +1708,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.20.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.20.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

@@ -53,7 +53,7 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=11; // R3独立开关和新灵敏度范围须成套部署。
+constexpr int managementProtocol=12; // 中央简称显示方式须与控制器成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
 bool draftTargetGazePadX=false,draftCameraHold=false;
 bool draftCameraR3=false;
@@ -65,6 +65,7 @@ std::array<int,4> draftKeys{49,50,51,52};
 std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
 std::array<dualsp::Shortcut,3> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
+std::string draftCentralWeaponDisplay="always"; // 默认保留中央简称常驻。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
@@ -403,6 +404,7 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
     draftTargetGazePadX=state.at("target_gaze_pad_x").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
     draftCameraR3=state.at("camera_r3_enabled").get<bool>();
@@ -620,6 +622,7 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
+        {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"camera_r3_enabled",draftCameraR3},
@@ -638,7 +641,7 @@ void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
     const float width=std::min(1180.f,display.x-40),height=std::min(920.f,display.y-35);
     ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.20.0 管理###DualSPManagement","AC7MultiSP 2.20.0 Management###DualSPManagement"),nullptr,
+    ImGui::Begin(tr("AC7MultiSP 2.20.1 管理###DualSPManagement","AC7MultiSP 2.20.1 Management###DualSPManagement"),nullptr,
         ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
@@ -678,7 +681,12 @@ void drawPanel() {
             ImGui::Checkbox(tr("多 SP 武器模型同时挂载（实验性）###FixedMount","Simultaneous multi-SP weapon models (experimental)###FixedMount"),&draftFixedMountEnabled);
             ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
             ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
-            ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
+            int centralDisplay=draftCentralWeaponDisplay=="always"?0:1;
+            ImGui::SetNextItemWidth(300);
+            if(ImGui::Combo(tr("中央武器简称###CentralWeaponDisplay","Central weapon abbreviation###CentralWeaponDisplay"),&centralDisplay,
+                tr("始终显示\0切换武器后显示1秒\0","Always visible\0Show for 1 second after switching\0")))
+                draftCentralWeaponDisplay=centralDisplay==0?"always":"switch_1s";
+            ImGui::TextWrapped("%s",tr("默认始终显示，保存后立即生效。短显模式只在实际切换后显示1秒；重复选择当前武器不延长，暂停不计时。两处信息跟随游戏 HUD 显隐，右下兵装信息持续保留。","Always visible by default; saving applies immediately. Timed mode shows for 1 second after an actual switch; reselecting the current weapon does not extend it, and pauses do not count. Both follow game HUD visibility; lower-right weapon information remains available."));
             if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
             if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
                 ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
@@ -849,6 +857,8 @@ void refreshState() {
             state.at("target_gaze_pad_x").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
+            const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
+            if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
             if(state.at("camera_hold").at("protocol").get<int>()!=3)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
@@ -1069,6 +1079,7 @@ extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。
