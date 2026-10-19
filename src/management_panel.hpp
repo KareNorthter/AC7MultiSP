@@ -33,6 +33,7 @@ bool managementDirty() {
         draftAmmoPercentTwo!=state.at("ammo_percent_two").get<int>() || draftAmmoPercentThree!=state.at("ammo_percent_three").get<int>() ||
         draftLanguage!=state.at("language").get<std::string>() || Json(draftKeys)!=state.at("keyboard_keys") || shortcutData(draftShortcuts)!=state.at("shortcuts");
 }
+void drawBasicBindings();
 void drawFeatureSettings() {
     if(panelCard("MainOptions",tr("飞行设置","Flight settings"))) {
         ImGui::Checkbox(tr("启用模组###ModEnabled","Enable mod###ModEnabled"),&draftModEnabled);
@@ -66,28 +67,29 @@ void drawFeatureSettings() {
         ImGui::SliderInt(tr("三SP，各自###AmmoThree","Three SPs, each###AmmoThree"),&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
     }
     ImGui::EndChild();
+    drawBasicBindings(); // 基础设置、兵装键位和模组快捷键集中在第一页。
     if(ImGui::CollapsingHeader(tr("使用提示###FeatureHelp","Quick guide###FeatureHelp"))) {
         ImGui::BulletText("%s",tr("机库直接选择1至3种SP，任务中用X轮切或十字键直选。","Select 1–3 SPs in the hangar; cycle with X or select with the D-pad."));
         ImGui::BulletText("%s",tr("中央兵装提示及右下HUD跟随游戏HUD显隐。","Weapon hints and the lower-right HUD follow game HUD visibility."));
-        ImGui::BulletText("%s",tr("镜头保持、保持注视和所有快捷键在“按键”页。","Find camera hold, toggle tracking and shortcuts in Bindings."));
+        ImGui::BulletText("%s",tr("镜头保持、保持注视及相关键位在“视角”页。","Find camera hold, toggle tracking and their bindings in Camera."));
     }
 }
-void drawBindingSettings() {
+void drawCameraSettings() {
     if(panelCard("TrackingOptions",tr("保持注视","Toggle tracking"))) {
         ImGui::Checkbox(tr("左摇杆按下切换注视###TargetGazePadL3","L3 toggles tracking###TargetGazePadL3"),&draftTargetGazePadL3);
-        panelHelp("默认开启。左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
-            "On by default. Press and release L3 to start/stop tracking; the two-stick countermeasure gesture never toggles tracking. X cycles weapons; Y selection and native hold-to-track remain. Stops on pause, management, focus loss, target loss or mission exit; also works in Mission 13.");
+        panelHelp("默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
+            "Off by default. When enabled, press and release L3 to start/stop tracking; the two-stick countermeasure gesture never toggles tracking. X cycles weapons; Y selection and native hold-to-track remain. Stops on pause, management, focus loss, target loss or mission exit; also works in Mission 13.");
         ImGui::TextUnformatted(tr("键盘注视键","Keyboard tracking key"));ImGui::SameLine();
         bindingButton(7,draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Unassigned"),180);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearGazeKey","Clear###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;}
-        panelHelp("键盘注视键与左摇杆选项独立，单次按下切换，按住不重复。不要与原生操作或其他模组按键重复。",
-            "The keyboard tracking key works independently of L3. Press once to toggle; holding does not repeat. Avoid conflicts with native actions or other mod bindings.");
+        panelHelp("键盘注视键与左摇杆选项独立，按下切换、按住不重复；可同时按住Shift/Ctrl/Alt，明确设置的组合快捷键优先。请避开原生操作键。",
+            "Independent of L3. Press to toggle without repetition; works while Shift/Ctrl/Alt is held. An exact configured mod chord takes priority. Avoid native action keys.");
     }
     ImGui::EndChild();
     if(panelCard("CameraOptions",tr("镜头保持","Camera hold"))) {
         ImGui::Checkbox(tr("启用镜头保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
-        panelHelp("默认开启。松开摇杆/视点模式键、短按切目标或切换普通视角后保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
-            "On by default. Retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
+        panelHelp("默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
+            "Off by default. When enabled, retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
         if(!draftCameraHold&&captureSlot==8)captureSlot=-1;
         if(draftCameraHold) {
             ImGui::Checkbox(tr("R3长按回中###CameraR3","Hold R3 to recenter###CameraR3"),&draftCameraR3);
@@ -97,8 +99,8 @@ void drawBindingSettings() {
             bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
             ImGui::SameLine();if(ImGui::SmallButton(tr("中键###ResetCenterKey","Middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;}
             ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;}
-            panelHelp("点击后按一个键盘键或鼠标中键，Esc取消。按下即回中，按住不重复；与原生键盘换视角是独立功能，请分配不同按键。",
-                "Click, then press one keyboard key or middle mouse; Esc cancels. Acts on press without repetition. This is separate from native keyboard view switching; assign different keys.");
+            panelHelp("点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。可同时按住Shift/Ctrl/Alt，已配置组合优先；与原生换视角请用不同键。",
+                "Click, then press a key or middle mouse; Esc cancels. Recenters once on press, including while Shift/Ctrl/Alt is held; exact configured chords take priority. Use a different key for native view switching.");
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("摇杆灵敏度###CameraSensitivity","Stick sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
             panelHelp("默认100%，范围5%至200%。仅调整右摇杆普通环视移动速度，不扩大角度；回中、注视和单独键鼠操作保留原生速度。",
@@ -106,8 +108,11 @@ void drawBindingSettings() {
         }
     }
     ImGui::EndChild();
-    ImGui::TextDisabled("%s",tr("X：轮切兵装    L3 + R3：干扰弹","X: cycle weapons    L3 + R3: countermeasures"));
-    if(ImGui::CollapsingHeader(tr("武器直选键###DirectKeys","Direct weapon keys###DirectKeys"))) {
+    ImGui::TextDisabled("%s",tr("L3 + R3：干扰弹","L3 + R3: countermeasures"));
+}
+void drawBasicBindings() {
+    if(ImGui::CollapsingHeader(tr("武器直选键###DirectKeys","Direct weapon keys###DirectKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::TextDisabled("%s",tr("X：原生轮切兵装","X: native weapon cycling"));
         if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp|ImGuiTableFlags_RowBg)) {
             ImGui::TableSetupColumn(tr("兵装","Weapon"));ImGui::TableSetupColumn(tr("键盘","Keyboard"));ImGui::TableSetupColumn(tr("手柄","Controller"));ImGui::TableHeadersRow();
             const char* weapons[]={"MSL","SP1","SP2","SP3"};
@@ -125,10 +130,10 @@ void drawBindingSettings() {
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,defaults)){draftKeys=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
         }
-        panelHelp("点击键位后按新键，Esc取消；手柄十字键固定。未搭载或耗尽的SP不切换，装填中的武器可选择。",
-            "Click a binding and press a new key; Esc cancels. D-pad bindings are fixed. Empty or depleted SPs keep the current selection; reloading weapons can be selected.");
+        panelHelp("点击后按新键，Esc取消；手柄十字键固定。按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先。未搭载或耗尽的SP不切换，装填中可选。",
+            "Click, then press a new key; Esc cancels. D-pad bindings are fixed. Direct selection works while Shift/Ctrl/Alt is held; exact configured mod chords take priority. Empty or depleted SPs cannot be selected; reloading weapons can.");
     }
-    if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"))) {
+    if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
         const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models")};
         for(int i=0;i<3;++i) {
             ImGui::TextUnformatted(names[i]);ImGui::SameLine(std::min(260.f,ImGui::GetContentRegionAvail().x*.45f));
@@ -140,8 +145,8 @@ void drawBindingSettings() {
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys)){draftShortcuts=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
         }
-        panelHelp("点击后按单键，或按住Ctrl/Alt/Shift再按主键。Tab移动焦点，Enter操作，Ctrl+Tab切页，Esc返回；手柄Back+Y也可开关管理界面。",
-            "Click, then press a key, optionally with Ctrl/Alt/Shift. Tab moves focus, Enter activates, Ctrl+Tab changes pages, Esc goes back. Controller Back+Y also toggles management.");
+        panelHelp("点击后按单键或Ctrl/Alt/Shift组合。运行时先匹配完整组合，再匹配单键，只执行一个Mod动作。Tab选项，Enter操作，Ctrl+Tab切页，Esc返回；Back+Y开关管理界面。",
+            "Click, then press a key or Ctrl/Alt/Shift chord. Exact chords take priority over single-key actions; one mod action per press. Tab navigates, Enter activates, Ctrl+Tab changes pages, Esc goes back; Back+Y toggles management.");
     }
 }
 void drawManagementErrors() {
@@ -162,7 +167,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.0");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.2");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());
@@ -187,8 +192,8 @@ void drawPanel() {
     drawManagementErrors();
     if(state.value("mission_fixed_sp",false))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("第13关：使用任务指定SP；镜头功能仍可用。","Mission 13: assigned SP; camera features remain available."));
     if(ImGui::BeginTabBar("ManagementTabs")) {
-        if(beginManagementTab(tr("常用###Features","General###Features"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
-        if(beginManagementTab(tr("按键###Bindings","Bindings###Bindings"),1)) {drawBindingSettings();ImGui::EndTabItem();}
+        if(beginManagementTab(tr("基础###Features","General###Features"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
+        if(beginManagementTab(tr("视角###Bindings","Camera###Bindings"),1)) {drawCameraSettings();ImGui::EndTabItem();}
         if(beginManagementTab(tr("日志###Logs","Logs###Logs"),2)) {
             if(!logsLoaded)refreshLogs();
             if(ImGui::Button(tr("刷新###RefreshLogs","Refresh###RefreshLogs")))refreshLogs();

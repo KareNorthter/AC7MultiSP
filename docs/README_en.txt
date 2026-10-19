@@ -1,6 +1,10 @@
-AC7MultiSP 2.21.0
+AC7MultiSP 2.21.2 Source Candidate
 
-What is new in 2.21.0 (since 2.20.0)
+L3 toggle tracking and Camera hold are off for fresh settings; saved choices are retained. F6 uses General, Camera, Logs and Debug: weapon bindings and mod shortcuts join the first page, while camera controls occupy the second. Aircraft changes now include loaded mod aircraft with complete three-SP data, with name/code/ID search, official/mod filters and initial-letter filters. Missing names fall back to codes; visual replacements use the base aircraft entry.
+Direct weapon selection, keyboard toggle tracking, recentering and single-key mod shortcuts now work while Shift/Ctrl/Alt is held. An exact configured mod chord using the same main key takes priority to avoid two mod actions. Native held modifiers remain available to the game. Configured chords still require the complete modifier combination; extra modifiers are not ignored.
+This revision has only been reviewed in source; it has not been built, tested or installed. Gameplay verification is pending. The released version remains 2.21.0 and the installed baseline remains 2.20.3. Management 13/configuration 12/tracking 2 and aircraft-change subprotocol 2 remain; camera subprotocol advances to 5. Lua, core and UI must be updated together.
+
+Historical 2.21.0 release notes (new defaults, pages and keyboard rules follow 2.21.2 above)
 • Central weapon abbreviations can remain visible (default) or appear for 1 second after switching. Pauses do not count; selecting the same weapon again does not extend the timer. Lower-right HUD information is retained.
 • X uses native weapon cycling. Release a short L3 press to toggle sustained tracking; release short R3 to change view or hold it for 0.3 seconds to recenter. Both sticks together only release countermeasures.
 • Fresh settings enable tracking, Camera hold and R3 hold-to-recenter. All remain optional in the second Bindings tab. Upgrades preserve existing Camera hold choices, custom bindings, sensitivity and loadouts; backups precede migration to configuration 12.
@@ -22,7 +26,7 @@ Features
 • In Management > Features & Parameters, choose Always visible (default) or Show for 1 second after switching for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
 • Experimental simultaneous SP models retain selected external stores where supported. Layouts vary by aircraft; some internal bays retain native model switching.
 • Chinese/English management panel, configurable controls, ammunition settings, model toggle and logs.
-• Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. Unpurchased and unlicensed DLC aircraft are listed for testing. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
+• Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. The aircraft picker includes loaded mods with complete three-SP data, plus unpurchased/unlicensed official aircraft. Search by name/code/ID and filter by source or initial letter. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
 • Mission 13 uses its assigned weapons with Multi-SP takeover temporarily disabled. Features resume after leaving, without changing saved settings. Free flight on the same map is unaffected.
 
 Installation
@@ -44,11 +48,11 @@ Controls
 • Choose SP1, SP2 and SP3 in sequence; the latter two can be NO WEAPON. Use keyboard or controller in native preparation menus.
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
-• Optional toggle tracking: L3 is enabled by default in the second Bindings tab; press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
+• Optional toggle tracking: L3 is off by default in the second Camera tab; enable it, then press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
 • Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 12. Older settings migrate in stages with backups retained.
-• Camera hold and Hold R3 to recenter are enabled by default for fresh configurations. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
+• Camera hold is off for fresh settings. Hold R3 to recenter remains enabled as a suboption, available only while Camera hold is enabled. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
-• Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
+• Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. Change these bindings and direct weapon keys in the first General tab.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 

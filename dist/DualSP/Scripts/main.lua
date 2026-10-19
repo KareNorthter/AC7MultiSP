@@ -1,4 +1,4 @@
--- AC7MultiSP 2.21.0候选：固定反射字段名的生命周期，规避准备页字符串缓存悬空崩溃。
+-- AC7MultiSP 2.21.2候选：修饰键不再阻断单键功能，完整组合优先；保留默认值、分页与Mod换机修订。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -80,6 +80,8 @@ loadExport("dualsp_camera_controls_supported")
 loadExport("dualsp_camera_controls_supported","DualSPUI.dll") -- 新回正键/灵敏度要求核心及管理页一起升级。
 loadExport("dualsp_camera_input_options_supported")
 loadExport("dualsp_camera_input_options_supported","DualSPUI.dll")
+loadExport("dualsp_keyboard_modifier_routing_supported")
+loadExport("dualsp_keyboard_modifier_routing_supported","DualSPUI.dll") -- 修饰键分流及六参数回中接口须成套。
 loadExport("dualsp_controller_clicks_supported")
 loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
@@ -735,7 +737,7 @@ end
 -- 镜头保持只归还自己的轴作用域和R3计时，不改变兵装许可或原生暂停来源。
 function weaponSwitch.camera.release()
     local camera=weaponSwitch.camera
-    local called,ok,_,reason=pcall(camera.invoke,0,0,0,100,0)
+    local called,ok,_,reason=pcall(camera.invoke,0,0,0,100,0,0)
     camera.available=false;camera.released=true
     if not called or not ok then
         camera.failed=true;camera.error=tostring(called and reason or ok);note("CAMERA_HOLD_RELEASE_ERROR "..camera.error)
@@ -749,7 +751,8 @@ function weaponSwitch.camera.update()
         and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
     if not allowed and camera.released then return end -- 默认关闭时不每20毫秒重复跨DLL清理。
     local before=camera.available
-    local ok,available,reason=camera.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,config.camera_center_key,config.camera_sensitivity,config.camera_r3_enabled and 1 or 0)
+    local ok,available,reason=camera.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,config.camera_center_key,
+        config.camera_sensitivity,config.camera_r3_enabled and 1 or 0,ConfigStore.centerShortcutMask(config))
     camera.available=ok and available or false
     camera.released=not allowed or not ok
     if not ok then camera.failed=true;camera.error=tostring(reason);note("CAMERA_HOLD_ERROR "..camera.error);lastUIKey=nil end
@@ -1255,7 +1258,7 @@ local function publishState()
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
     state.target_gaze={protocol=2,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,error=weaponSwitch.gaze.error}
-    state.camera_hold={protocol=4,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
+    state.camera_hold={protocol=5,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}
@@ -1712,7 +1715,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.21.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.21.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

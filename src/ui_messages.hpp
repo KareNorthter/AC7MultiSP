@@ -6,6 +6,7 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"目标不是当前已加载目录中的可用三SP机体","The target is not an available three-SP aircraft in the loaded catalogue."},
     {"镜头注视交接进度超出原生范围","The camera tracking transition is outside the native range."},
     {"镜头注视交接方向无效","The camera tracking transition direction is invalid."},
     {"镜头注视交接接口不匹配","The camera tracking transition interface does not match this game build."},

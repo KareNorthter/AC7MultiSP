@@ -71,7 +71,7 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动先备份再迁移至管理参数12；中央简称默认始终显示，X归还原生，L3保持注视及R3长按0.3秒回中默认开启，保留旧镜头保持开关、自定义键位和灵敏度',
+            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动按需备份并迁移至管理参数12；新配置L3保持注视和镜头保持默认关闭，键盘注视默认未绑定，R3回中子选项仅随镜头保持生效；升级保留已保存的开关、键位和灵敏度，中央简称默认始终显示，X保持原生轮切',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}
