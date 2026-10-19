@@ -1,7 +1,9 @@
--- AC7MultiSP 2.20.2候选：持续注视切换普通视角时接续注视进度与方向，避免先回正。
+-- AC7MultiSP 2.20.3候选：固定反射字段名的生命周期，规避准备页字符串缓存悬空崩溃。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
+-- 与页面字段一样，反射查询的短字符串须由回调持续持有，不能临时拼接后交给加载器缓存。
+local weaponFieldNames={config={"SpecialWeaponConfig1","SpecialWeaponConfig2","SpecialWeaponConfig3"},pool={"SWP1","SWP2","SWP3"}}
 local json=dofile(root.."Scripts/json.lua")
 local ConfigStore=dofile(root.."Scripts/config_store.lua")
 local Profile=dofile(root.."Scripts/loadout_profile.lua") -- 三槽结构、购买校验和百分比配弹。
@@ -273,7 +275,7 @@ local function readOptionsFor(id)
     local continuousOptions={}
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     for i=1,3 do
-        local weaponClass=sourceActivator["SpecialWeaponConfig"..i].WeaponClass -- 每槽可被替换模组独立改写。
+        local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
         assert(valid(weaponClass),"当前机体兵装类缺失："..info.code.."/"..i)
         local weaponDefault=weaponClass:GetCDO() -- 原生枚举仍受核心范围校验保护。
         assert(valid(weaponDefault),"当前机体兵装默认对象缺失："..info.code.."/"..i)
@@ -376,7 +378,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
             loadingIndex=entry[1]
             local pool=entry[3]
             assert(type(pool)=="number"and pool>=1 and pool<=3,"扩展挂架缺少目标组件编号")
-            local rack=sourcePlane["SWP"..pool]
+            local rack=sourcePlane[weaponFieldNames.pool[pool]]
             assert(valid(rack)and rack:GetCollisionEnabled()==0,"扩展挂架要求原生组件关闭碰撞")
         end
         for _,entry in ipairs(needed)do
@@ -1710,7 +1712,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.20.2 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.20.3 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

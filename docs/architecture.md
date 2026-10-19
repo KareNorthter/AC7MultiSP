@@ -147,6 +147,8 @@ CFA开发修订仅在同机、同激活器/管理器、同池资源的普通切�
 
 ## 身份、缓存与预览
 
+2.20.3增加反射字段名生命周期约束：本机加载器的字符串池会保存调用者的字节视图，动态拼接的Lua字段名被回收后可留下悬空键。F-22准备页现场恢复出`SpecItem6`的旧键已不可读，原始AV及Lua行号均吻合该路径；上游已记录并修订[同类缺陷#1270/#1271](https://github.com/UE4SS-RE/RE-UE4SS/issues/1270)。本Mod不替换专用加载器，改由活跃闭包持续持有固定字段名数组：页面SpecItem1～6/WeaponsSP1～3，主流程SpecialWeaponConfig1～3/SWP1～3；覆盖准备、待机/PART、补给及模型池查询。普通Lua表的ItemText/CursorText索引无需走此反射池，保持原样。该修订不缓存UObject身份或跨引擎调用复用对象，只固定字符串；现场旧缓存需要完整重启清除。未编译安装，效果待实测，见[记录](../evidence/f22-preparation-string-lifetime.json)。
+
 机库只取当前 `HangarManager.LoadedPlayerPlane`，任务只取实际受控玩家。绑定核对完整类/包、父链、网格、原生池、Socket 双射以及所需 `NoCollision`；资源点数不写回逻辑队列。位置减少或借位时，显示与实际离架共用映射，活动点读取当帧原生世界变换。网格通过引擎 `SetStaticMesh` 替换并登记原值，不直接写网格指针或碰撞设置。
 
 CFA任务外为单独例外：Lua在资源准备和多挂绑定前归还预览并退出，机库、准备、STANDBY等只显示当前原生兵装。核心mode1亦强制原生旁路，不建立CFA多挂池、骨隐藏或模型替换。原生三SP选装与弹药UI仍可用；实际任务玩家mode3、补给mode2/5保持任务内多挂策略，其他机体预览不变。
