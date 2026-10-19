@@ -623,7 +623,10 @@ fail=false;applyEnv.masterSwitch.failed=false;apply(true);assert(applyEnv.runtim
 """)
 print('总开关安全入口、同世界/输入所有权、禁止任务内切换及失败停用检查通过')
 
-lua.globals().mount_asset_source = main_source[main_source.index('local mountAssetStatus={}'):main_source.index('local function mountPreview(context)')]
+# 截取入口时同时保留真实上值，避免把固定字段名缺失误报为资源加载失败。
+field_names_start = main_source.index('local weaponFieldNames=')
+field_names_source = main_source[field_names_start:main_source.index('\n', field_names_start)]
+lua.globals().mount_asset_source = field_names_source + '\n' + main_source[main_source.index('local mountAssetStatus={}'):main_source.index('local function mountPreview(context)')]
 lua.execute(r'''
 -- 执行真实加载修复：精确路径优先，保留原LoadAsset后备和工厂元数据。
 local function object(address)

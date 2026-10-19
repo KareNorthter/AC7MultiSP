@@ -1,7 +1,7 @@
-AC7MultiSP 2.20.3 Source Candidate
+AC7MultiSP 2.20.3 Test Candidate
 
 Addresses a crash when entering weapon preparation: fixed field names remain referenced for as long as the mod uses them, avoiding dangling strings in the loader's member-name cache. Covers preparation, review, parts, resupply, weapon configurations and mount queries. Layouts, models, animations and settings are unchanged.
-This revision has not been built, tested or installed. Gameplay verification is pending. After deployment, fully restart the game; hot reload cannot repair an existing dangling cache. The installed candidate remains 2.20.2 and the released version remains 2.20.0.
+This candidate has been built, passed 11 existing checks and been installed over 2.20.2. Gameplay verification is pending. Fully restart the game; hot reload cannot repair an existing dangling cache. Settings, saves and other mods are preserved. The released version remains 2.20.0.
 
 Installed 2.20.2 candidate notes:
 
