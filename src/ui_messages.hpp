@@ -6,6 +6,10 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"旧手柄注视配置无效","The old controller tracking configuration is invalid."},
+    {"手柄X替换设置已退役","The controller X replacement setting is no longer supported."},
+    {"需要管理参数第 11 版","Management configuration revision 11 is required."},
+    {"左摇杆保持注视开关必须为布尔值","The L3 tracking setting must be on or off."},
     {"镜头保持实际注视判据不匹配","The camera tracking state check does not match this game build."},
     {"镜头保持注视组件身份不符","The camera tracking component identity changed."},
     {"镜头回正键位无效或重复","The camera recenter key is invalid or conflicts with another mod binding."},
@@ -42,7 +46,7 @@ inline constexpr std::pair<const char*,const char*> uiMessages[]={
     {"目标注视缺少游戏使用的XInput接口","The game's XInput interface is unavailable."},
     {"目标注视输入钩子初始化失败","Target tracking input could not be initialized."},
     {"目标跟踪轴接入失败","The native target tracking axis could not be connected."},
-    {"手柄X替换接入失败","Controller X could not be reassigned."},
+    {"手柄观察接口接入失败","Controller input observation could not be connected."},
     {"目标注视输入钩子启用失败","Target tracking input could not be enabled."},
     {"目标注视输入组件类型不符","The player input component is unsupported."},
     {"目标注视输入轴列表无效","The player input axis list is invalid."},

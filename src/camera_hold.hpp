@@ -99,8 +99,8 @@ void cameraHoldResolveRelease() {
     if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled)return;
     cameraHold.releaseHandled=true;
     if(cameraHold.longDone || cameraHold.combo)return;
-    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<500)cameraHoldCenter();
-    else {cameraHold.longDone=true;cameraHold.pendingView=true;} // 刚好跨过阈值后松开，也只在游戏线程调度阶段换视角。
+    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<300)cameraHold.pendingView=true;
+    else {cameraHold.longDone=true;cameraHoldCenter();} // 跨过阈值才松开时补回中，不能兼触短按。
 }
 void cameraHoldObserveCenterKey(int key) {
     if(cameraHold.centerKey!=key){cameraHold.centerKey=key;cameraHold.centerKeySeeded=false;}
@@ -126,22 +126,23 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     const auto now=GetTickCount64();
     if(!cameraHold.seeded) {
         cameraHold.seeded=true;cameraHold.rightDown=right;
-        cameraHold.nativePress=false;cameraHold.longDone=right;cameraHold.combo=both; // 已按住的旧边沿不补发。
-        cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;
+        cameraHold.nativePress=false;cameraHold.longDone=right; // 已按住的旧边沿不补发。
+        cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;cameraHold.combo=right || (buttons&XINPUT_GAMEPAD_LEFT_THUMB);
         return;
     }
     if(right && !cameraHold.rightDown) {
-        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.combo=false;cameraHold.pendingView=false;
+        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.pendingView=false;
         cameraHold.r3Gesture=true;cameraHold.releaseHandled=false;cameraHold.buttonReleasedAt=0;cameraHold.nativeRequests=0;
     }
     if(both && !cameraHold.combo) {
-        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;cameraHoldCenter(); // 无论双摇杆先后顺序，都允许原生干扰弹和回正同时发生。
+        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
     }
     if(!right && cameraHold.rightDown)cameraHold.buttonReleasedAt=now;
     cameraHold.rightDown=right;
-    cameraHoldResolveRelease(); // 保留原生确认和组合标记，释放后的重复回调仍属于同次按压。
+    cameraHoldResolveRelease(); // 释放后的重复回调仍属于同次按压。
+    if(!right && !(buttons&XINPUT_GAMEPAD_LEFT_THUMB))cameraHold.combo=false; // 组合锁定至两边都松开。
 }
-// 整次R3按压的原生换视角请求都隔离；唯一放行入口是满500毫秒后的受控跳板调用。
+// 整次R3按压的视角请求隔离；短按松开只派发一次原生换视角，长按满300毫秒只回中。
 // 原生动作没有FKey，按压期间及短暂释放交接中的混合换视角输入也归本次R3处理。
 void cameraHoldViewPressed(void* object) {
     if(!cameraHoldLive() || !cameraHold.replaceR3 || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
@@ -378,17 +379,20 @@ int cameraHoldLua(void* luaState) {
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
                     cameraHoldObserveCenterKey(static_cast<int>(centerKey));
-                    // R3计时独立于原生回调到达时机；满500毫秒仍按住也立即派发一次。
-                    if(cameraHold.replaceR3 && (cameraHold.pendingView || (cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=500))) {
+                    // 300毫秒按实际时间计，回中在游戏线程立即执行一次，松开不再换视角。
+                    if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=300) {
+                        cameraHold.longDone=true;cameraHoldCenter();
+                    }
+                    if(cameraHold.replaceR3 && cameraHold.pendingView && !cameraHold.combo) {
                         cameraHold.pendingView=false;cameraHold.longDone=true;
-                        nativeLog("CAMERA_HOLD_R3_VIEW_DISPATCH held_ms="+std::to_string((cameraHold.buttonReleasedAt?cameraHold.buttonReleasedAt:GetTickCount64())-cameraHold.pressedAt));
+                        nativeLog("CAMERA_HOLD_R3_SHORT_VIEW");
                         originalCameraHoldView(reinterpret_cast<void*>(plane));
                     }
                     if(cameraHold.r3Gesture && !cameraHold.rightDown && cameraHold.buttonReleasedAt && !cameraHold.pendingView) {
                         const auto sinceRelease=GetTickCount64()-cameraHold.buttonReleasedAt;
                         // 已确认动作保留100毫秒交接；尚未交付的原生动作最多等500毫秒，避免快点漏放或无限占键。
                         if(sinceRelease>=(cameraHold.nativePress?100:500)) {
-                            cameraHold.r3Gesture=false;cameraHold.nativePress=false;cameraHold.combo=false;
+                            cameraHold.r3Gesture=false;cameraHold.nativePress=false;
                         }
                     }
                 }

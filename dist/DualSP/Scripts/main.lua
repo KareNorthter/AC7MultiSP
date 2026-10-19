@@ -1,4 +1,4 @@
--- AC7MultiSP 2.20.0：整合普通视角与注视衔接，静默手柄X正常注视开关提示。
+-- AC7MultiSP 2.20.1：L3保持注视、R3长按回中及精简管理页；X保留原生轮切。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -58,7 +58,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=11") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=12") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -78,6 +78,8 @@ loadExport("dualsp_camera_controls_supported")
 loadExport("dualsp_camera_controls_supported","DualSPUI.dll") -- 新回正键/灵敏度要求核心及管理页一起升级。
 loadExport("dualsp_camera_input_options_supported")
 loadExport("dualsp_camera_input_options_supported","DualSPUI.dll")
+loadExport("dualsp_controller_clicks_supported")
+loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 local catalogExport=loadExport("dualsp_catalogue")
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
@@ -703,7 +705,7 @@ local function ready()return valid(plane) and plane.bEnableWeaponInput and not p
 function weaponSwitch.gaze.update(toggle,generation,quiet)
     local gaze=weaponSwitch.gaze
     if generation and generation~=gaze.generation then return end -- 旧世界或暂停前的按键不能重放。
-    local enabled=config.target_gaze_pad_x or config.target_gaze_key~=0
+    local enabled=config.target_gaze_pad_l3 or config.target_gaze_key~=0
     local allowed=enabled and runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
         and valid(plane.InputComponent)and plane.bEnableCameraInput and not panelOpen and not supplySession and not(aircraftDebug and aircraftDebug:busy())
         and not game:IsGamePaused(plane)
@@ -712,15 +714,15 @@ function weaponSwitch.gaze.update(toggle,generation,quiet)
     if gaze.failed then allowed=false;address=0 end
     local oldActive,oldAvailable=gaze.active,gaze.available
     if not gaze.failed then
-        local ok,active,reason=gaze.invoke(address,allowed and 1 or 0,config.target_gaze_pad_x and 1 or 0,toggle and allowed and 1 or 0)
+        local ok,active,reason,padToggle=gaze.invoke(address,allowed and 1 or 0,config.target_gaze_pad_l3 and 1 or 0,toggle and allowed and 1 or 0)
         gaze.active=ok and active or false;gaze.available=ok and allowed and reason~="waiting_input"or false
         if not ok then gaze.failed=true;gaze.error=tostring(reason);note("TARGET_GAZE_ERROR "..gaze.error)end
-        if toggle then
+        if toggle or padToggle then
             gaze.response=gaze.response+1
             gaze.notice=not ok and gaze.error or not allowed and tr("当前不能使用目标注视。","Target tracking is currently unavailable.")
                 or reason=="no_target"and tr("没有可注视的目标。","No target is selected.")
                 or gaze.active and tr("目标注视：开启","Target tracking: ON")or tr("目标注视：关闭","Target tracking: OFF")
-            if quiet and ok and allowed and reason~="no_target"then gaze.notice=""end -- 手柄X只静默正常开关，错误和无目标仍提示。
+            if (quiet or padToggle)and ok and allowed and reason~="no_target"then gaze.notice=""end -- L3正常开关静默，错误和无目标仍提示。
             lastUIKey=nil
         end
     else gaze.active=false;gaze.available=false end
@@ -1178,7 +1180,7 @@ local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
-    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation,action.source=="pad_x")
+    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation,action.source=="pad_l3")
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
@@ -1227,10 +1229,10 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=11,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=12,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,
-        target_gaze_pad_x=config.target_gaze_pad_x,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
+        target_gaze_pad_l3=config.target_gaze_pad_l3,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
         camera_r3_enabled=config.camera_r3_enabled,
         runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
@@ -1247,9 +1249,9 @@ local function publishState()
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
-    state.target_gaze={protocol=1,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
+    state.target_gaze={protocol=2,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,error=weaponSwitch.gaze.error}
-    state.camera_hold={protocol=3,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
+    state.camera_hold={protocol=4,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}
@@ -1706,7 +1708,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.20.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.20.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
