@@ -1,33 +1,15 @@
-AC7MultiSP 2.20.3 Test Candidate
+AC7MultiSP 2.21.0
 
-Addresses a crash when entering weapon preparation: fixed field names remain referenced for as long as the mod uses them, avoiding dangling strings in the loader's member-name cache. Covers preparation, review, parts, resupply, weapon configurations and mount queries. Layouts, models, animations and settings are unchanged.
-This candidate has been built, passed 11 existing checks and been installed over 2.20.2. Gameplay verification is pending. Fully restart the game; hot reload cannot repair an existing dangling cache. Settings, saves and other mods are preserved. The released version remains 2.20.0.
+What is new in 2.21.0 (since 2.20.0)
+• Central weapon abbreviations can remain visible (default) or appear for 1 second after switching. Pauses do not count; selecting the same weapon again does not extend the timer. Lower-right HUD information is retained.
+• X uses native weapon cycling. Release a short L3 press to toggle sustained tracking; release short R3 to change view or hold it for 0.3 seconds to recenter. Both sticks together only release countermeasures.
+• Fresh settings enable tracking, Camera hold and R3 hold-to-recenter. All remain optional in the second Bindings tab. Upgrades preserve existing Camera hold choices, custom bindings, sensitivity and loadouts; backups precede migration to configuration 12.
+• F6 has General, Bindings, Logs and Debug cards, contextual ? help, expandable advanced controls and a fixed Save footer below scrolling content.
+• While Camera hold is enabled, ordinary first-person, cockpit and third-person changes retain the progress and direction of sustained tracking on the same target instead of recentering first.
+• Avoids an identified F-22 preparation crash by retaining reflected field-name strings for page, weapon and mount queries. This is a mod-side workaround, not a global loader fix. Fully exit the game before upgrading.
+• XFA-27 SOD+MSTM retains brackets and two MSTM positions. MiG-35D dual-SP layouts use matched left/right pairs. The complete mount package contains 54 variants/108 members.
 
-Installed 2.20.2 candidate notes:
-
-With Camera hold enabled, ordinary first-person, cockpit and third-person view changes now carry sustained tracking progress and direction across views. This addresses recentering before returning to the tracked target. Applies to L3 and custom keyboard tracking toggles. Controls, settings and defaults remain unchanged. Disabling Camera hold retains native behavior.
-This candidate has been built, passed 11 existing checks and been installed over 2.20.1. Gameplay verification is pending. Controls, profiles, saves and other mods are preserved. The released version remains 2.20.0.
-
-Installed 2.20.1 candidate features:
-
-This candidate integrates always-visible/one-second weapon labels, the four-page management UI, L3 tracking/R3 0.3-second recenter and XFA-27/MiG-35D mount changes. Management protocol 13/configuration 12; first launch backs up before migration. Gameplay verification is pending.
-
-This candidate has been built, passed the 11 existing checks and been installed; gameplay validation is pending. The released version remains 2.20.0.
-• X retains native weapon cycling. Press and release L3 to toggle sustained target tracking.
-• With Camera hold and Hold R3 to recenter enabled, release a short R3 press to change view, or hold 0.3 seconds to recenter immediately without also changing view. Both sticks only release native countermeasures.
-• Fresh configurations enable L3 tracking, Camera hold and R3 hold-to-recenter by default. All remain optional in the second Bindings tab. Middle-mouse recenter, custom bindings and 5%–200% sensitivity remain.
-• F6 now uses General, Bindings, Logs and Debug pages with dark cards. Read details through hover/focus/click on ?, expand less-used bindings or aircraft controls, and use the fixed Save footer beneath scrollable content.
-• Migration backs up profiles.before-controller-clicks.json then backs up profiles.before-central-weapon-display.json before moving to configuration 12. Both backups retain the original old bytes. Central weapon text defaults to always visible. X replacement is retired; the new L3 and R3 behavior starts enabled. Existing Camera hold choices, bindings and loadouts remain. Matching core/UI/Lua files are required: management protocol 13, tracking 2, camera 4.
-
-The following 2.20.0 release notes are historical; this candidate's defaults and R3/X behavior follow the rules above.
-
-What is new in 2.20.0 (since 2.19.0)
-• Camera direction hold, off by default in the second Bindings tab, supports controller release, mouse viewpoint-mode release, short target selection and ordinary view changes. Tracking turns from the current direction and returns to it afterward. Native auto-recentering is suppressed only while Camera hold is enabled.
-• Independent recenter defaults to middle mouse and can be rebound. Right-stick sensitivity is 5%–200%, default 100%. Optional R3 replacement is off by default: when enabled, release a short press to recenter, or hold 0.5 seconds to change view immediately; both sticks retain countermeasures and recenter together.
-• CFA-44 dual/triple-SP changes retain deployment progress. Reduced repeated muzzle, model, lock and persistent-effect checks lower switching hitches. Initial loading can still be slower; no fixed 10 ms or hitch-free guarantee is made.
-• Shared weapon rebuilding now releases old lock registrations to prevent stale targets causing extra MSL/EML shots, while preserving normal multi-target salvos. The user confirmed the latest changes work; this is not exhaustive validation of every aircraft/combination.
-• ADF-01 switch requests during TLS/trails are discarded; press again after they end. The beam is not forcibly stopped and requests are not queued.
-• Normal controller-X target-tracking toggles are silent; errors, no-target and keyboard notifications remain. Personal settings are retained, with a backup before any required migration.
+The user tested 2.20.3 and reported no issues. 2.21.0 rebuilds the same functional sources with release labels and existing checks; this is not exhaustive validation of every aircraft, combination, mod or performance scenario.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
@@ -63,7 +45,7 @@ Controls
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
 • Optional toggle tracking: L3 is enabled by default in the second Bindings tab; press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
-• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 10. Existing revision-10 settings need no further migration.
+• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 12. Older settings migrate in stages with backups retained.
 • Camera hold and Hold R3 to recenter are enabled by default for fresh configurations. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
@@ -109,10 +91,10 @@ Su-47, Su-57 TGM and X-02S retain Multi-SP weapon functionality but use native c
 Known issues and planned improvements
 • SP selection, first-time resource loading and mission entry can still pause. CFA-44/F-22A SP2/SP3 selection cursors and F-2A simultaneous-model performance remain improvement areas.
 • Mission-results arrows stutter noticeably less, but slight stuttering remains.
-• An occasional hangar exit/crash was reported without a confirmed cause. Not every aircraft, combination, mission or recovery path has been individually validated.
+• One identified preparation-cache crash is addressed by this mod-side workaround. Other hangar exits, custom-aircraft sorties and recovery paths still need their own evidence; they are not assumed to share that cause.
 
 Compatibility with other mods
-• Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received a complete 2.16 retest.
+• Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received an exhaustive 2.21.0 retest.
 • A J-20 replacement was previously checked for model/skin appearance with native single-SP behavior. This does not establish Multi-SP support for all custom aircraft.
 • Skin, model, HUD, weapon-table, firing and input mods may modify the same assets or interfaces. Changed skeletons or sockets can make simultaneous models unsupported or trigger a native-visual fallback.
 • Conflicting dwmapi.dll files, different UE4SS versions, or mods controlling the same weapon/input paths require individual checks. Rebind F6 if another mod uses it.

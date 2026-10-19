@@ -201,9 +201,11 @@ def version_label_sources(build_dir, accepted_dir):
             current['build_define'] != old_build['build_define'] or current['toolchain'] != old_build['toolchain'] or
             set(current['source_files']) != set(old_build['source_files'])):
         raise ValueError('新构建条件、来源集合或检查来源与验收基线不同')
-    allowed = {'VERSION', 'src/product.json', 'src/overlay.cpp', 'dist/DualSP/Scripts/main.lua'}
     changed = {name for name, value in current['source_files'].items() if value != old_build['source_files'][name]}
-    if changed != allowed:
+    # 新卡片界面的版本文字已移到management_panel.hpp；仍只允许一个UI标识文件精确换版。
+    ui_labels = changed & {'src/overlay.cpp', 'src/management_panel.hpp'}
+    allowed = {'VERSION', 'src/product.json', 'dist/DualSP/Scripts/main.lua'} | ui_labels
+    if len(ui_labels) != 1 or changed != allowed:
         raise ValueError('超出版本标识差异：' + repr(sorted(changed)))
     commit = validation['validated_commit']
     subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)

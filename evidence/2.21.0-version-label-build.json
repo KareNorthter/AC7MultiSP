@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "version": "2.21.0",
+  "recorded_at": "2026-10-19T10:44:37.102335+08:00",
+  "validated_version": "2.20.3",
+  "validated_commit": "b72d36d",
+  "validated_build_dir": "Temp/build-2.20.3-candidate",
+  "build_dir": "Temp/build-2.21.0-final",
+  "exact_version_label_transform_verified": true,
+  "functional_sources_identical": true,
+  "changed_source_files": {
+    "dist/DualSP/Scripts/main.lua": {
+      "accepted_sha256": "b142f5fb70c668582282b4477107c3258608433d7b012c9861365c6194ac4199",
+      "release_sha256": "2c95b9909fd1bd0fb410680db23dc994c747db8fda0b2d0f2cff6a0dc5015065"
+    },
+    "src/management_panel.hpp": {
+      "accepted_sha256": "45fa65b57f8c7aa3b91e176b50fc94f3d0338bda9c8683ceaad9ebdd410b09ee",
+      "release_sha256": "e44c9e49f7bacc6dbf779f0e2b8b0ff87e5bc05a555083f783693fc5c447d404"
+    },
+    "src/product.json": {
+      "accepted_sha256": "47823214f925948d91c3ea4f711f411e90800d4b8409b2ea852553caa701cf97",
+      "release_sha256": "f6c17b64a0c5404d9e68ca5a029543fe662dee9700e23b02a2d65b859e9505b5"
+    },
+    "VERSION": {
+      "accepted_sha256": "eda128e388c3ea1d0e3b598208569b05919ea48de6e54455ea798637c5e2c8f5",
+      "release_sha256": "0c37357ff7072ddbda9af0ddbac98b1685cb10f7fa8357102d99d0effffc846b"
+    }
+  },
+  "test_sources_identical": true,
+  "toolchain_identical": true,
+  "mount_pak_identical": true,
+  "mount_variant_count": 54,
+  "mount_member_count": 108,
+  "runtime_file_count": 17,
+  "core_changed_sections": [
+    ".buildid"
+  ],
+  "core_instruction_section_identical": true,
+  "core_sections_except_buildid_identical": true,
+  "core_section_sha256": {
+    ".text": "3ec7ea15758e86013932c5b56c5ad2d447baff2dbf430b93a51a3f78b2bcef52",
+    ".rdata": "b26c80c9d0fc63d5894a7f93eb9a495a04149a852ab52afdd810cfaa6610f009",
+    ".buildid": "06d45b0f032ab51809083ac17f0bc9825736af6d136cf2c467b4faf2d73630ee",
+    ".data": "ad67414e4e93a71b71c6946e45f4de2639b551febc8d7c07c08cdbc1a0b48719",
+    ".pdata": "7669f7f59f6337823688e2e415fe8c3557e28494f79e847da79aedc7f8f9701f",
+    ".tls": "076a27c79e5ace2a3d47f9dd2e83e4ff6ea8872b3c2218f66c92b89b55f36560",
+    ".reloc": "90a4cfadd6ef41577482930a3e115d45357371fe38ecc2f5a6a444e66815c1cd",
+    "/4": "078f72912f12e42f20af2c27a19ee1429ce934b29af3c30762b73424ccc12d44",
+    "/18": "9c9762877827f3cbeb699db9309649d7115de0eef9bfe270d44a475c9dccaabc",
+    "/58": "5f432ff433c3a48abd2e5b003ff62d1261f6bd4c9646bf18032fe19e03cf6d01",
+    "/70": "df6bb7160511cd814ca44ed6170075592a098fd93dddaf98ce8f649cd5a4cbef",
+    "/82": "18c85fd339704a9b2e35877053c57b458c8fa15efa70fee79d1b0f2000bddceb",
+    "/33": "07abf8aa0a1229316af549721dcdc4ef6a97cdcca819e3ab26a57fa8f5afa828",
+    "/47": "e94dc79840c1cfbfe15b71fcd3d0a64f98b2496e723dbcd644400a6d4746aae6"
+  },
+  "build_receipt_sha256": "350bf089276dbbca9057fca09a628eb2eab1c96893d9dda7cc1299472dba1fa9",
+  "test_receipt_sha256": "8228f4911702767472d935425989f039b5a82968433569a2ba2a811104bd4be0",
+  "user_validation_sha256": "e2402e69cacf4e8ca070036e8966b08706ce06a959723d4b246cfc53f630dfdf",
+  "release_authorization_sha256": "8e510d7e209fc27e1e0ab9b0b4a52c25a190a5fdfc3dc700cfff68f840b997d1",
+  "installed_new_version": false,
+  "new_version_gameplay_tested": false,
+  "readme_aircraft_rows_verified": {
+    "README_zh-CN.txt": 29,
+    "README_en.txt": 29
+  },
+  "note": "用户实测及当前安装基线为2.20.3；2.21.0仅版本标识构建和本地包，不伪造安装或实机验收。",
+  "release_members_verified": 189,
+  "release_sha256": "74da1ef448f08585ceebf824116c83a16d23037a17207b2c163c5cc4ee5be1fd",
+  "previous_packages_verified": {
+    "2.16.0": "5381a990515fcca8662505d1538384fa640ce3ea3108477da745be63dc18183a",
+    "2.19.0": "408516022be168cca00942b4a9dc5374aeb9d3256565b9b8700793801d05d5e4",
+    "2.20.0": "5a61bcfeea0909fc15c7460e0d7078059278e9d5103ec4ef06094f79dbddda01"
+  },
+  "microsoft_runtime_signatures_verified": true,
+  "release_readmes_match": true
+}
