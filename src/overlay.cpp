@@ -53,7 +53,7 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=12; // L3注视、R3长按回中及新管理页须成套部署。
+constexpr int managementProtocol=13; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
 bool draftTargetGazePadL3=true,draftCameraHold=true;
 bool draftCameraR3=true;
@@ -65,6 +65,7 @@ std::array<int,4> draftKeys{49,50,51,52};
 std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
 std::array<dualsp::Shortcut,3> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
+std::string draftCentralWeaponDisplay="always"; // 默认保留中央简称常驻。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
@@ -415,6 +416,7 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
     draftTargetGazePadL3=state.at("target_gaze_pad_l3").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
     draftCameraR3=state.at("camera_r3_enabled").get<bool>();
@@ -632,6 +634,7 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
+        {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"camera_r3_enabled",draftCameraR3},
@@ -676,6 +679,8 @@ void refreshState() {
             state.at("target_gaze_pad_l3").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
+            const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
+            if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
             if(state.at("camera_hold").at("protocol").get<int>()!=4)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
@@ -896,6 +901,7 @@ extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。

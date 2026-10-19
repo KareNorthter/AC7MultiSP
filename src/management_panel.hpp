@@ -26,7 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+    return draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
@@ -46,6 +46,15 @@ void drawFeatureSettings() {
         if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
         if(state.contains("master_switch")&&state.at("master_switch").contains("error"))
             ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>(),"总开关应用失败，请查看日志。","The master switch could not be applied; see Logs.").c_str());
+    }
+    ImGui::EndChild();
+    if(panelCard("HudOptions",tr("中央武器简称","Central weapon abbreviation"))) {
+        int display=draftCentralWeaponDisplay=="always"?0:1;
+        ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.65f));
+        if(ImGui::Combo("##CentralWeaponDisplay",&display,tr("始终显示\0切换武器后显示1秒\0","Always visible\0Show for 1 second after switching\0")))
+            draftCentralWeaponDisplay=display==0?"always":"switch_1s";
+        panelHelp("默认始终显示，保存后立即生效。短显只在实际切换成功后计时1秒，重复选择不延长，暂停不计时；隐藏最多约100毫秒刷新误差，右下HUD持续保留。",
+            "Always visible by default; saving applies immediately. Timed mode shows for 1 second after an actual switch; reselecting does not extend it and pauses do not count. Hiding can lag by one 100 ms update; lower-right weapon information stays available.");
     }
     ImGui::EndChild();
     if(panelCard("AmmoOptions",tr("SP弹药量","SP ammunition"))) {

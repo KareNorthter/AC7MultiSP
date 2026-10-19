@@ -46,6 +46,17 @@ python -X utf8 src/release_package.py --build-dir Temp/build-2.20.0-final --vali
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，五机复核只改MiG-35D三个双挂及XFA-27的SOD＋MSTM。源码和54资源输入已齐，未编译、运行测试、安装或操作游戏；正式2.20.0标识不在本分支改写，接收线程按下一补丁2.20.1统一版本。方案与配方/往返回执保存在`evidence/static-mount-five-aircraft-review.json`，不修改旧来源证据。
 
 接收时同时收取本分支源码/文档/证据和本机完整资源目录：`C:/Users/83717/.codex/worktrees/five-aircraft-mount-review/AC7_MultiSP/Temp/five-aircraft-mount-review/source`。该目录为旧50份原字节加4份新副本，共54资源/108文件，资源本身不入Git。可复制到接收工作区独立Temp目录，构建时通过`--mount-assets-dir`显式指定；原默认`Temp/mount-assets-2.14.0/source`只有旧50份，不能直接用于此候选。核心生成表、Lua清单和新PAK必须成套，不能拿现有2.20.0 PAK混装。新的JSON已加入来源冻结，旧构建回执不能接收这些功能差异。
+### 中央简称显示方式候选（2.20.1）
+
+`codex/hud-weapon-label-options`从main `66cc725`建立，工作区为`C:/Users/83717/.codex/worktrees/hud-weapon-label-options/AC7_MultiSP`。用户要求本线程仅修改源码和说明，由其他线程编译安装供用户测试。本候选未编译、未运行测试、未安装、未启动游戏；既有实测与2.20.0发布包均不改写。
+
+管理协议升至12、配置管理版本升至11，镜头子协议仍为3。新增`central_weapon_display`，仅允许`always`/`switch_1s`，默认`always`；配置10迁11前保留原始字节到`profiles.before-central-weapon-display.json`，更旧配置沿原链逐级迁移。新Lua在读配置前要求UI能力`dualsp_central_weapon_display_supported`，防止旧界面提交时丢失新设置。安装工具允许配置11作为后续升级来源，仍不覆盖个人配置。
+
+功能差异涉及`config_store.lua`、`main.lua`、`weapon_presentation.lua`、`overlay.cpp`和错误翻译；核心C++、多挂资源和受保护DLL未改。版本标识为2.20.1、product标记为候选，不生成新发布包。接收时按精确差异整合，UI和Lua须匹配；遇到其他线程的管理页或协议修改需协调合并。
+
+原有`tests/runtime_services_test.py`仍按协议11/配置10构造数据，本轮遵守用户要求未修改或执行测试模块；接收线程获授权执行检查前应同步新字段、版本断言和配置迁移用例。人工验收重点：默认常驻；MSL↔SP与SP↔SP成功后短显；快速连续切换重新计时；重复/拒绝切换不延长；暂停后继续剩余时间；模式保存、HUD显隐、补给/检查点/换机后不残留旧计时；第13关及多人沿用原生旁路。性能判断见[架构说明](architecture.md#任务hud与中央武器简称)，尚无本候选的耗时或帧率测量。
+
+### 常规流程
 
 1. 看Git状态，从main新建`codex/`分支；不继续修改封存研究工作树。
 2. 更改唯一源码及对应正文。布局调整同时维护源JSON、生成表和资源配方；不只改生成结果。

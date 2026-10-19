@@ -1,9 +1,10 @@
--- 管理中央常驻简称；右下角所有名称的就绪显示由 native_hud 管理。
+-- 管理中央简称的常驻或切换后短显；右下角就绪显示由 native_hud 管理。
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local names=dofile(assert(path:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 local Presentation={}
--- 常驻文本不接受鼠标输入；右下角名称状态由 native_hud 处理。
+-- 中央文本不接受鼠标输入；右下角名称状态由 native_hud 处理。
 local TRANSIENT,COLLAPSED,HIT_TEST_INVISIBLE=0x40,1,3
+local SLOT_FIELDS={"a","b","c"}
 local function valid(widget)return widget and widget:IsValid()end
 local function vec(value)return {X=value.X,Y=value.Y}end
 
@@ -106,7 +107,7 @@ function Presentation.new(note)
         local labelSlot=c.sourceParent:AddChildToCanvas(c.label)
         assert(valid(labelSlot),"无法接入中央武器简称")
         applyLayout(labelSlot,c.sourceLayout)
-        c.label:SetVisibility(HIT_TEST_INVISIBLE)
+        c.label:SetVisibility(COLLAPSED);c.visible=false -- 首次更新决定显隐，短显模式不闪出初始 MSL。
         -- 原提示可能已进入淡出，不能继承那一瞬间的文字 Alpha。
         -- 正常 Alpha 从原生 0.5 提高到 0.7；就绪系数在更新时叠加，不继承原提示的淡出。
         c.tint={R=.08,G=1,B=.05,A=.7} -- 保留原生绿色，提高文字不透明度以改善清晰度。
@@ -147,8 +148,8 @@ function Presentation.new(note)
         return nil
     end
 
-    -- 只在当前选择变化时写简称；没有计时、渐变或重复延迟回调。
-    local function update(plane,profile,options,state,enabled,now)
+    -- 沿用 HUD 周期检查截止时间，不增加逐帧钩子或延迟回调。
+    local function update(plane,profile,options,state,enabled,now,mode,gameTime)
         if not enabled then restore();self.status="stock";self.waitingSince=nil;return end
         if self.error then return end
         -- 过场期间 HUD 可以尚未生成，正式接管后才启动缺失诊断。
@@ -163,10 +164,31 @@ function Presentation.new(note)
             return
         end
         assert(valid(c.label)and valid(c.sourcePanel),"中央武器提示已销毁")
+        assert(mode=="always"or mode=="switch_1s","中央武器简称显示方式无效")
+        assert(type(gameTime)=="number"and gameTime>=0,"中央武器提示缺少游戏时间")
+        local selection=state.armed and state.active+2 or 1
+        -- 区分最终逻辑槽和配置；MSL 下预载其他 SP 不算切换，失败或重复选择也不重计时。
+        local weaponConfig=state.armed and profile[SLOT_FIELDS[state.active+1]]or -1
+        if c.mode~=mode then c.hideAt=nil end -- 保存短显模式先清旧计时，保留选择基线以识别同次更新的真实切换。
+        if c.lastGameTime and gameTime<c.lastGameTime then
+            c.hideAt=nil;c.lastSelection=nil;c.lastConfig=nil -- 时间回退只建立新基线，不伪造切换。
+        end
+        c.mode=mode;c.lastGameTime=gameTime
+        if state.pending then
+            c.hideAt=nil;c.lastSelection=nil;c.lastConfig=nil -- 预热的 MSL 占位不是实际切换。
+        else
+            if mode=="switch_1s"and c.lastSelection and (selection~=c.lastSelection or weaponConfig~=c.lastConfig)then c.hideAt=gameTime+1 end
+            c.lastSelection=selection;c.lastConfig=weaponConfig
+        end
+        local visible=mode=="always"or (not state.pending and c.hideAt~=nil and gameTime<c.hideAt)
+        -- 隐藏时停止文字、颜色和字体同步；原生短提示仍被折叠，不会重新冒出。
+        if not visible then
+            if c.visible then c.label:SetVisibility(COLLAPSED);c.visible=false end
+            self.status="native";return
+        end
         local label=names.current(profile,options,state)
         if label~=c.lastLabel then c.label:SetText(FText(label));c.lastLabel=label end
         -- 与右下角共用核心就绪结果；至少一发可用即正常，未锁定目标不属于装填状态。
-        local selection=state.armed and state.active+2 or 1
         assert(state.ready and type(state.ready[selection])=="boolean","中央武器提示缺少当前武器就绪状态")
         local factor=state.ready[selection]and 1 or .35 -- 耗尽和全部装填中仅保留正常亮度的35%。
         if factor~=c.lastFactor then
@@ -183,6 +205,8 @@ function Presentation.new(note)
             local origin=c.sourceLayout.position -- 只挪本模块文字，保留原提示的布局供退出时恢复。
             c.label.Slot:SetPosition({X=origin.X,Y=origin.Y-font.Size*.5})
         end
+        -- 先同步内容再显示，避免新一次切换短暂露出旧简称或旧装填亮度。
+        if not c.visible then c.label:SetVisibility(HIT_TEST_INVISIBLE);c.visible=true end
         self.status="native"
     end
 
@@ -192,8 +216,8 @@ function Presentation.new(note)
         local restored,restoreErr=pcall(restore)
         if not restored then note("WEAPON_PRESENTATION_RESTORE_ERROR "..tostring(restoreErr))end
     end
-    function self:update(plane,profile,options,state,enabled,now)
-        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now)end,debug.traceback)
+    function self:update(plane,profile,options,state,enabled,now,mode,gameTime)
+        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now,mode,gameTime)end,debug.traceback)
         if not ok then self:fail(err)end
     end
     -- 补给、检查点和世界变化重新绑定页面，绝不复用旧任务控件。

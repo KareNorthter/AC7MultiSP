@@ -55,6 +55,7 @@ inline constexpr std::pair<const char*,const char*> uiMessages[]={
     {"目标注视键位无效或重复","The target tracking key is invalid or conflicts with another mod binding."},
     {"目标注视协议不匹配","The target tracking interface does not match the controller."},
     {"目标注视键不能与模组快捷键重复","The tracking key conflicts with a mod shortcut."},
+    {"中央武器简称显示方式无效","The central weapon abbreviation display mode is invalid."},
     {"目标注视键不能与武器选择键重复","The tracking key conflicts with a direct weapon key."},
     {"当前不能使用目标注视。","Target tracking is currently unavailable."},
     {"没有可注视的目标。","No target is selected."},

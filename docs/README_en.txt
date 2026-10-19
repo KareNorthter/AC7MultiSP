@@ -25,6 +25,7 @@ Features
 • Select one to three SP weapons through the native preparation menus. Standard missiles remain available. You can change your SP loadout during resupply.
 • Each SP keeps its own ammunition and reload state. One SP uses full ammunition; defaults are 50% each for two SPs and 33% each for three. Adjust these percentages in the management panel.
 • HUD weapon and reload information, native weapon cycling, and direct selection of all four weapon slots.
+• In Management > Features & Parameters, choose Always visible (default) or Show for 1 second after switching for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
 • Experimental simultaneous SP models retain selected external stores where supported. Layouts vary by aircraft; some internal bays retain native model switching.
 • Chinese/English management panel, configurable controls, ammunition settings, model toggle and logs.
 • Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. Unpurchased and unlicensed DLC aircraft are listed for testing. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
