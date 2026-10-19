@@ -83,7 +83,7 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=12,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=true,target_gaze_key=0,camera_hold_enabled=true,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=12,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
@@ -146,8 +146,8 @@ function Config.new(options)
         local migrateControllerClicks=config.management_revision==10
         if migrateControllerClicks then
             assert(type(config.target_gaze_pad_x)=="boolean"and config.target_gaze_pad_l3==nil,"旧手柄注视配置无效")
-            -- X归还原生；L3是新选项，默认开启。旧镜头保持开关和自定义键位保留。
-            config.target_gaze_pad_x=nil;config.target_gaze_pad_l3=true
+            -- X归还原生；L3新选项默认关闭。已有镜头保持开关和自定义键位保留。
+            config.target_gaze_pad_x=nil;config.target_gaze_pad_l3=false
             config.camera_r3_enabled=true;config.management_revision=11
         end
         local migrateCentralDisplay=config.management_revision==11
