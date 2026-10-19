@@ -81,6 +81,10 @@
 
 ## 独立研究
 
+[F-4E UGB＋SASM库存对照及决定](f04e-ugb-sasm-stock-review.json)：旧日志显示UGB18按50%缩为9，十二个UGB候选中的前9位可见，与左6右3反馈一致。用户确认保持50%和9枚显示，本项关闭；同时明确以后完整模型布局优先对称，不受实际载量、配弹比例及待发数量限制。没有改代码、个人设置、游戏文件或旧资源，没有编译/测试/安装/操作游戏。
+
+[五机补充反馈与修订](static-mount-five-aircraft-feedback.json)：用户反馈首批其余挂载验证通过，明确F-15 S/MTD同侧HPAA/FAEB可共存，要求FAEB增为两枚；双挂及三挂改HPAA2/FAEB2，HVAA不变，无新增资源。F-4E观察到某组合左六右三枚UGB，随后明确暂不处理、后续复测，本轮不改。新源码未编译、运行测试、安装或操作游戏，不把新布局视为已经验收。
+
 [五机挂载复核候选](static-mount-five-aircraft-review.json)：从main `66cc725`建立独立分支，F-15 S/MTD、F-4E、F-16XL保持；MiG-35D三个双挂补成对，XFA-27无ECM的SOD＋MSTM补回负侧下挂。四份新副本三LOD分区与编码往返成立，调整组合逐武器全部LOD互配未见静态穿面；仅离线候选，未编译、运行测试、安装或操作游戏。旧50副本保留，追加为54资源/108文件，本机完整输入目录与逐资源摘要在JSON内；正式2.20.0交付事实不变。
 
 [右摇杆镜头保持研究](camera-hold-research.json)保留原只读阶段；[实现摘要](camera-hold-implementation.json)记录后续默认关闭、第二个按键页、0.5秒长按及双摇杆干扰弹同时回正的候选源码。原记录保留源码阶段状态；后续2.19.1已构建安装且获用户基本正常反馈，R3短按修订现已接收至2.19.2，见[R3修订来源](camera-hold-r3-short-press-fix.json)，效果仍待用户实测。
@@ -97,6 +101,8 @@
 以下11份被source_snapshot或生成器直接引用，不归入压缩清理：
 
 本分支另新增`static-mount-five-aircraft-review.json`作为第12份挂载输入；旧11份路径和字节保持。
+
+后续补充`static-mount-five-aircraft-feedback.json`为第13份输入，保持前12份的原字节。
 
 - `mount-expansion-batch1.json`、`mount-expansion-batch2.json`、`mount-expansion-batch3.json`
 - `static-expansion-2.11.0.json`、`static-expansion-2.12.0.json`、`static-expansion-2.13.0.json`、`static-expansion-2.14.0.json`

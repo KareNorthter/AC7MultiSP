@@ -1,0 +1,213 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "branch": "codex/five-aircraft-mount-review",
+  "feedback_source": "用户本会话反馈；结合接收线程2.20.1整合/安装回执确认对应上一批候选",
+  "previous_source_commit": "e622f869078eb069d5ae8472ca17f00af8988b26",
+  "integrated_source_commit": "3ec3325",
+  "reported_installed_version": "2.20.1",
+  "user_report": {
+    "f15m": "HPAA+FAEB时FAEB从1增加到2个；三SP时左右都可以挂FAEB和HPAA，不会互相影响",
+    "f04e": "某个SP组合UGB没有挂满，可以补满",
+    "other_mount_items": "其他的没有问题，验证通过",
+    "f04e_followup": "似乎有个组合左边6个UGB、右边3个，右边还可以加3个；具体组合未确认",
+    "f04e_final_instruction": "暂不处理这个飞机，我后面再测"
+  },
+  "validation_boundary": "用户通过反馈仅对应本次五机挂载范围的其余项目；F4观察单列、暂缓，不归为无问题；不扩写为HUD/镜头、全部任务或全部组合逐项验收",
+  "design_correction": "F15M旧静态包围范围不能代替实际展开/离架时序；以用户实测认为可共存的反馈接收原生左右完整站位",
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos",
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg"
+  ],
+  "appended_assets": [],
+  "resource_reports": [],
+  "plan_overrides": [
+    {
+      "code": "f15m",
+      "mask": 3,
+      "expected_plan": {
+        "selected": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          []
+        ],
+        "racks": 3,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      "selected_sockets": [
+        [
+          "sp11",
+          "sp12"
+        ],
+        [
+          "sp31",
+          "sp32"
+        ],
+        []
+      ],
+      "variants": [
+        null,
+        null,
+        null
+      ],
+      "racks": 3
+    },
+    {
+      "code": "f15m",
+      "mask": 7,
+      "expected_plan": {
+        "selected": [
+          [
+            0
+          ],
+          [
+            1
+          ],
+          [
+            0,
+            1,
+            2,
+            3
+          ]
+        ],
+        "racks": 7,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      "selected_sockets": [
+        [
+          "sp11",
+          "sp12"
+        ],
+        [
+          "sp31",
+          "sp32"
+        ],
+        [
+          "sp31",
+          "sp32",
+          "sp33",
+          "sp34"
+        ]
+      ],
+      "variants": [
+        null,
+        null,
+        null
+      ],
+      "racks": 7
+    }
+  ],
+  "resource_count": 54,
+  "encoded_member_count": 108,
+  "local_resource_source": "C:/Users/83717/.codex/worktrees/five-aircraft-mount-review/AC7_MultiSP/Temp/five-aircraft-mount-review/source",
+  "source_evidence": {
+    "evidence/static-mount-five-aircraft-review.json": "d188a698c5eb0325bc403cc97e3b0fb721b7c3f33c4f314f660e3374b37aedbf"
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "new_layout_gameplay_verified": false,
+  "f04e_deferred": {
+    "reason": "用户明确暂不处理F4、后面再测；保持全部旧布局与资源，不继续研究或修改",
+    "same_socket_full_ugb_review": {
+      "lod": 0,
+      "lagm_socket": "SWP2/sp22",
+      "strict_surface_contacts_per_added_ugb_socket": {
+        "sp12": 297,
+        "sp14": 181,
+        "sp16": 148,
+        "sp18": 110,
+        "sp20": 139,
+        "sp22": 109
+      }
+    },
+    "boundary": "先前离线穿面记录只描述原位补12且保LAGM/sp22的静态几何，不认定为用户9枚现象的原因；不实施原位补12，不扩大为已获接受穿插",
+    "observation": "某个未明确组合左6右3，共9枚；当前布局表只定义6/12位，库存、冷却和预览场景未确认，不能据此认定是六位布局缺位"
+  },
+  "source_diff_review": {
+    "baseline": "e622f86",
+    "plan_changes": [
+      [
+        "f15m",
+        3
+      ],
+      [
+        "f15m",
+        7
+      ]
+    ],
+    "resource_names_and_indices_unchanged": true,
+    "f04e_unchanged": true,
+    "other_plane_fields_unchanged": true,
+    "lua_resource_list_unchanged": true
+  },
+  "integration_reference": {
+    "E:\\AC7_MultiSP\\evidence\\2.20.1-integration.json": "9ac07f66b3dedb96abe659c4f214bb708fc5d865c85c4097c8873e5731182c39",
+    "E:\\AC7_MultiSP\\evidence\\2.20.1-installed.json": "5f68718df4807884801806e048a1cdf00adb7a344303814b121ff115609173d1"
+  }
+}

@@ -28,9 +28,14 @@
 
 ## 后续开发流程
 
-本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，五机复核只改MiG-35D三个双挂及XFA-27的SOD＋MSTM。源码和54资源输入已齐，未编译、运行测试、安装或操作游戏；正式2.20.0标识不在本分支改写，接收线程按下一补丁2.20.1统一版本。方案与配方/往返回执保存在`evidence/static-mount-five-aircraft-review.json`，不修改旧来源证据。
+本线程按用户要求继续使用`codex/five-aircraft-mount-review`，已合入main 2.21.0/`7a0559d`并保留F-15后续修订。F-4E新反馈限定UGB＋SASM左6右3，现有日志证实是UGB18枚按双SP50%缩为9枚，而非十二位布局缺件。用户已选择保持50%和9枚显示，此项关闭；完整布局仍保留左右各六位。以后按对称、支撑和净空设计布局，不以载量、配弹比例或待发数量限制设计容量。依据`evidence/f04e-ugb-sasm-stock-review.json`；本次仅更新规则/文档/记录，未修改代码、个人设置或游戏文件，未编译/运行测试/安装。旧F-4E暂缓记录保留历史含义。
+
+本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 
 接收时同时收取本分支源码/文档/证据和本机完整资源目录：`C:/Users/83717/.codex/worktrees/five-aircraft-mount-review/AC7_MultiSP/Temp/five-aircraft-mount-review/source`。该目录为旧50份原字节加4份新副本，共54资源/108文件，资源本身不入Git。可复制到接收工作区独立Temp目录，构建时通过`--mount-assets-dir`显式指定；原默认`Temp/mount-assets-2.14.0/source`只有旧50份，不能直接用于此候选。核心生成表、Lua清单和新PAK必须成套，不能拿现有2.20.0 PAK混装。新的JSON已加入来源冻结，旧构建回执不能接收这些功能差异。
+
+接收线程已有的`E:/AC7_MultiSP/Temp/mount-assets-2.20.1/source`也是完整54份输入；本次F-15补位不新增或改写资源，可继续使用这套输入。已接收首批时只收后续提交，不重复接收`e622f86`，不覆盖其他线程的手柄/UI/HUD修订；无需本线程编译安装。
+
 ### 中央简称显示方式候选（2.20.1）
 
 `codex/hud-weapon-label-options`从main `66cc725`建立，工作区为`C:/Users/83717/.codex/worktrees/hud-weapon-label-options/AC7_MultiSP`。用户要求本线程仅修改源码和说明，由其他线程编译安装供用户测试。本候选未编译、未运行测试、未安装、未启动游戏；既有实测与2.20.0发布包均不改写。
