@@ -206,14 +206,9 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         }
         const int mods=shortcutModifiers();
         const bool editingText=panel&&ImGui::GetIO().WantTextInput;
-        if(targetGazeInputEnabled() && mods==0 && state.value("target_gaze_key",0)==static_cast<int>(w)) {
-            if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
-            enqueue({{"type","toggle_target_gaze"},{"source","keyboard"},{"generation",state.at("target_gaze").value("generation",-1)}});
-            return 0;
-        }
         // 搜索时字母/数字属于输入框；管理界面的功能键入口仍可直接关闭窗口。
-        for(size_t index=0;index<shortcuts.size();++index)if((!editingText||(index==0&&w>=VK_F1&&w<=VK_F24))&&
-            dualsp::shortcutMatches(shortcuts[index],static_cast<int>(w),mods)) {
+        const int index=dualsp::matchingShortcut(shortcuts,static_cast<int>(w),mods);
+        if(index>=0&&(!editingText||(index==0&&w>=VK_F1&&w<=VK_F24))) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
             if(index==0)togglePanel(!panel);
             else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."));
@@ -224,6 +219,18 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
                     {"command",index==1?"cycle":"mount"}});
             }
             return 0;
+        }
+        if(targetGazeInputEnabled()&&dualsp::singleKeyMatches(state.value("target_gaze_key",0),static_cast<int>(w),mods)) {
+            if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
+            enqueue({{"type","toggle_target_gaze"},{"source","keyboard"},{"generation",state.at("target_gaze").value("generation",-1)}});
+            return 0;
+        }
+        if(directInputEnabled()) {
+            const auto& keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
+            for(int slot=0;slot<4;++slot)if(dualsp::singleKeyMatches(keys.at(slot).get<int>(),static_cast<int>(w),mods)) {
+                enqueue({{"type","select_weapon"},{"target",slot}});break;
+            }
+            // 直选键和修饰键继续交给原生输入，不打断加速等持续操作。
         }
     }
     if(panel&&captureSlot>=0&&(keyDown||keyUp))return 0;
@@ -239,13 +246,6 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
             requestedTab=((requestedTab>=0?requestedTab:managementTab)+((GetKeyState(VK_SHIFT)&0x8000)?3:1))%4;
             return 0;
         }
-        if(directInputEnabled()&&shortcutModifiers()==0) {
-            const auto keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
-            for(int slot=0;slot<4;++slot)if(keys.at(slot).get<int>()==static_cast<int>(w)) {
-                enqueue({{"type","select_weapon"},{"target",slot}});break;
-            }
-        }
-        // 直接选择键继续交给游戏原生映射；冲突由用户自行处理。
     }
     // A HUD is a passive overlay. Feeding its mouse messages into ImGui would
     // let the backend capture the mouse and change the native menu's cursor.
@@ -728,7 +728,7 @@ void refreshState() {
             state.at("camera_r3_enabled").get<bool>();
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
-            if(state.at("camera_hold").at("protocol").get<int>()!=4)throw std::runtime_error("镜头保持协议不匹配");
+            if(state.at("camera_hold").at("protocol").get<int>()!=5)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
@@ -947,6 +947,7 @@ extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_keyboard_modifier_routing_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。

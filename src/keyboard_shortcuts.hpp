@@ -15,6 +15,20 @@ inline bool validShortcut(Shortcut value) {
 }
 inline bool sameShortcut(Shortcut a,Shortcut b) { return a.key==b.key&&a.mods==b.mods; }
 inline bool shortcutMatches(Shortcut value,int key,int mods) { return value.key==key&&value.mods==mods; }
+// 单键允许同时按住飞行用的修饰键；系统组合不回落到模组单键动作。
+inline bool singleKeyMatches(int binding,int key,int mods) {
+    const bool system=((mods&2)!=0&&(key==9||key==27||key==32||key==115))
+        ||((mods&1)!=0&&key==27)||((mods&3)==3&&key==46);
+    return binding!=0&&binding==key&&!system;
+}
+inline int matchingShortcut(const std::array<Shortcut,3>& values,int key,int mods) {
+    // 先匹配明确设置的组合，再回落到单键，不能受快捷键的保存顺序影响。
+    for(std::size_t i=0;i<values.size();++i)
+        if(values[i].mods!=0&&shortcutMatches(values[i],key,mods))return static_cast<int>(i);
+    for(std::size_t i=0;i<values.size();++i)
+        if(values[i].mods==0&&singleKeyMatches(values[i].key,key,mods))return static_cast<int>(i);
+    return -1;
+}
 inline bool validShortcuts(const std::array<Shortcut,3>& values,const std::array<int,4>& direct) {
     for(std::size_t i=0;i<values.size();++i) {
         if(!validShortcut(values[i]))return false;

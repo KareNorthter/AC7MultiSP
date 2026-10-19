@@ -82,8 +82,8 @@ void drawCameraSettings() {
         ImGui::TextUnformatted(tr("键盘注视键","Keyboard tracking key"));ImGui::SameLine();
         bindingButton(7,draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Unassigned"),180);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearGazeKey","Clear###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;}
-        panelHelp("键盘注视键与左摇杆选项独立，单次按下切换，按住不重复。不要与原生操作或其他模组按键重复。",
-            "The keyboard tracking key works independently of L3. Press once to toggle; holding does not repeat. Avoid conflicts with native actions or other mod bindings.");
+        panelHelp("键盘注视键与左摇杆选项独立，按下切换、按住不重复；可同时按住Shift/Ctrl/Alt，明确设置的组合快捷键优先。请避开原生操作键。",
+            "Independent of L3. Press to toggle without repetition; works while Shift/Ctrl/Alt is held. An exact configured mod chord takes priority. Avoid native action keys.");
     }
     ImGui::EndChild();
     if(panelCard("CameraOptions",tr("镜头保持","Camera hold"))) {
@@ -99,8 +99,8 @@ void drawCameraSettings() {
             bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
             ImGui::SameLine();if(ImGui::SmallButton(tr("中键###ResetCenterKey","Middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;}
             ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;}
-            panelHelp("点击后按一个键盘键或鼠标中键，Esc取消。按下即回中，按住不重复；与原生键盘换视角是独立功能，请分配不同按键。",
-                "Click, then press one keyboard key or middle mouse; Esc cancels. Acts on press without repetition. This is separate from native keyboard view switching; assign different keys.");
+            panelHelp("点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。可同时按住Shift/Ctrl/Alt，已配置组合优先；与原生换视角请用不同键。",
+                "Click, then press a key or middle mouse; Esc cancels. Recenters once on press, including while Shift/Ctrl/Alt is held; exact configured chords take priority. Use a different key for native view switching.");
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("摇杆灵敏度###CameraSensitivity","Stick sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
             panelHelp("默认100%，范围5%至200%。仅调整右摇杆普通环视移动速度，不扩大角度；回中、注视和单独键鼠操作保留原生速度。",
@@ -130,8 +130,8 @@ void drawBasicBindings() {
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,defaults)){draftKeys=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
         }
-        panelHelp("点击键位后按新键，Esc取消；手柄十字键固定。未搭载或耗尽的SP不切换，装填中的武器可选择。",
-            "Click a binding and press a new key; Esc cancels. D-pad bindings are fixed. Empty or depleted SPs keep the current selection; reloading weapons can be selected.");
+        panelHelp("点击后按新键，Esc取消；手柄十字键固定。按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先。未搭载或耗尽的SP不切换，装填中可选。",
+            "Click, then press a new key; Esc cancels. D-pad bindings are fixed. Direct selection works while Shift/Ctrl/Alt is held; exact configured mod chords take priority. Empty or depleted SPs cannot be selected; reloading weapons can.");
     }
     if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
         const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models")};
@@ -145,8 +145,8 @@ void drawBasicBindings() {
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys)){draftShortcuts=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
         }
-        panelHelp("点击后按单键，或按住Ctrl/Alt/Shift再按主键。Tab移动焦点，Enter操作，Ctrl+Tab切页，Esc返回；手柄Back+Y也可开关管理界面。",
-            "Click, then press a key, optionally with Ctrl/Alt/Shift. Tab moves focus, Enter activates, Ctrl+Tab changes pages, Esc goes back. Controller Back+Y also toggles management.");
+        panelHelp("点击后按单键或Ctrl/Alt/Shift组合。运行时先匹配完整组合，再匹配单键，只执行一个Mod动作。Tab选项，Enter操作，Ctrl+Tab切页，Esc返回；Back+Y开关管理界面。",
+            "Click, then press a key or Ctrl/Alt/Shift chord. Exact chords take priority over single-key actions; one mod action per press. Tab navigates, Enter activates, Ctrl+Tab changes pages, Esc goes back; Back+Y toggles management.");
     }
 }
 void drawManagementErrors() {
@@ -167,7 +167,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.1");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.21.2");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());

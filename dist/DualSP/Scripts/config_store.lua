@@ -1,5 +1,14 @@
 -- 个人配置的加载、迁移、校验和保存；不持有玩家、页面或武器状态。
 local Config={}
+-- 回中键与组合快捷键可共用主键；按修饰键状态编码，交给游戏线程避开双触发。
+function Config.centerShortcutMask(settings)
+    local mask=0
+    for _,name in ipairs({"management","cycle","mount"})do
+        local chord=settings.shortcuts[name]
+        if chord.key==settings.camera_center_key and chord.mods~=0 then mask=mask|(1<<chord.mods) end
+    end
+    return mask
+end
 local function writeText(path,text)
     local file=assert(io.open(path,"w"))
     local written,writeError=file:write(text)
