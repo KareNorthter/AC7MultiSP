@@ -37,12 +37,12 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==12 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.management_revision==13 and config.mod_enabled and config.fixed_mount_enabled)
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
-assert(config.target_gaze_pad_l3 and config.camera_hold_enabled and config.camera_r3_enabled and config.central_weapon_display=="always")
+assert(not config.target_gaze_pad_l3 and not config.camera_hold_enabled and config.camera_r3_enabled and config.central_weapon_display=="always")
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=13,language='en',mod_enabled=false,fixed_mount_enabled=false,
+local action={request=1,management_protocol=14,language='en',mod_enabled=false,fixed_mount_enabled=false,gun_salvo_enabled=false,
     central_weapon_display="always",target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=false,camera_center_key=4,camera_sensitivity=100,
     ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
@@ -103,10 +103,10 @@ for _,failure in ipairs({'write','close'})do
     io.open=realOpen
 end
 assert(readText(fixture..'current-profiles.json')==saved)
--- 三个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
+-- 四个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
 local oldShortcuts=nextConfig.shortcuts
 local candidate=json.decode(json.encode(action))
-candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7}}
+candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7},salvo={key=116,mods=3}}
 local custom=currentStore:applySettings(nextConfig,candidate)
 assert(custom.management_key==120 and custom.shortcuts.management.mods==5)
 assert(custom.shortcuts.cycle.key==121 and custom.shortcuts.mount.mods==7)
@@ -117,33 +117,48 @@ for _,bad in ipairs({
     {management={key=117,mods=8},cycle={key=117,mods=3},mount={key=118,mods=3}},
     {management={key=115,mods=2},cycle={key=117,mods=3},mount={key=118,mods=3}}
 })do
-    candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
+    bad.salvo=json.decode(json.encode(config.shortcuts.salvo));candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
     rejects(function()currentStore:applySettings(custom,candidate)end)
     assert(readText(fixture..'current-profiles.json')==bytes)
 end
-local legacy5=json.decode(json.encode(config));legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.management_key=119
+local legacy5=json.decode(json.encode(config));legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.gun_salvo_enabled=nil;legacy5.management_key=119
 legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_pad_l3=nil;legacy5.central_weapon_display=nil;legacy5.target_gaze_key=nil;legacy5.camera_hold_enabled=nil;legacy5.camera_r3_enabled=nil;legacy5.camera_center_key=nil;legacy5.camera_sensitivity=nil
 writeJson(fixture..'shortcuts-profiles.json',legacy5)
 local legacyBytes=readText(fixture..'shortcuts-profiles.json')
 local shortcutConfig=store('shortcuts-'):load()
-assert(shortcutConfig.management_revision==12 and shortcutConfig.shortcuts.management.key==119)
+assert(shortcutConfig.management_revision==13 and shortcutConfig.shortcuts.management.key==119)
 assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 assert(store('shortcuts-'):load().shortcuts.management.key==119)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 -- 整合后的旧配置10须连续迁移两项设置；两份永久备份均保留原始字节。
-local legacy10=json.decode(json.encode(config));legacy10.management_revision=10
+local legacy10=json.decode(json.encode(config));legacy10.management_revision=10;legacy10.gun_salvo_enabled=nil;legacy10.shortcuts.salvo=nil
 legacy10.target_gaze_pad_l3=nil;legacy10.target_gaze_pad_x=true;legacy10.central_weapon_display=nil
 legacy10.camera_hold_enabled=false;legacy10.camera_sensitivity=73
 writeJson(fixture..'combined-profiles.json',legacy10)
 local combinedBytes=readText(fixture..'combined-profiles.json')
 local combined=store('combined-'):load()
-assert(combined.management_revision==12 and combined.target_gaze_pad_l3 and combined.camera_r3_enabled)
+assert(combined.management_revision==13 and not combined.target_gaze_pad_l3 and combined.camera_r3_enabled)
 assert(not combined.camera_hold_enabled and combined.camera_sensitivity==73 and combined.central_weapon_display=='always')
 assert(combined.target_gaze_pad_x==nil and combined.profiles['10'].ratio==.82)
 assert(readText(fixture..'combined-profiles.before-controller-clicks.json')==combinedBytes)
 assert(readText(fixture..'combined-profiles.before-central-weapon-display.json')==combinedBytes)
 assert(store('combined-'):load().camera_sensitivity==73)
+-- 真实旧配置12保留开关/方案；追加齐射默认关闭，备份原字节且重复加载不覆写。
+local legacy12=json.decode(json.encode(config));legacy12.management_revision=12
+legacy12.gun_salvo_enabled=nil;legacy12.shortcuts.salvo=nil
+legacy12.target_gaze_pad_l3=true;legacy12.camera_hold_enabled=true
+legacy12.shortcuts.mount={key=116,mods=3};legacy12.camera_center_key=116
+writeJson(fixture..'salvo-profiles.json',legacy12)
+local salvoBytes=readText(fixture..'salvo-profiles.json')
+local salvoConfig=store('salvo-'):load()
+assert(salvoConfig.management_revision==13 and not salvoConfig.gun_salvo_enabled)
+assert(salvoConfig.target_gaze_pad_l3 and salvoConfig.camera_hold_enabled and salvoConfig.profiles['10'].ratio==.82)
+assert(salvoConfig.shortcuts.salvo.key==0 and salvoConfig.shortcuts.mount.key==116)
+assert(readText(fixture..'salvo-profiles.before-gun-salvo.json')==salvoBytes)
+assert(store('salvo-'):load().shortcuts.salvo.key==0)
+salvoConfig.shortcuts.salvo={key=116,mods=5}
+assert(Config.centerShortcutMask(salvoConfig)==((1<<3)|(1<<5)))
 local old={schema=1,profiles={['9']={a=0,b=1,ratio=.75}},keyboard_keys={49,50,51},management_key=119}
 writeJson(fixture..'migration-profiles.json',old)
 local oldBytes=readText(fixture..'migration-profiles.json')
@@ -160,7 +175,7 @@ for _,revision in ipairs({3,4})do
     writeJson(fixture..prefix..'profiles.json',legacy)
     local bytes=readText(fixture..prefix..'profiles.json')
     local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==12 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.management_revision==13 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
     assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
     assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
     assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
@@ -809,7 +824,7 @@ local function scenario()
     state.module=Aircraft.new(deps)
     state.context=context;state.instance=instance;state.deps=deps
     function state:request(number,id,revision)
-        self.module:request{debug_aircraft_protocol=1,request=number,session=7,revision=revision or 8,target_plane_id=id or 120}
+        self.module:request{debug_aircraft_protocol=2,request=number,session=7,revision=revision or 8,target_plane_id=id or 120}
     end
     function state:spawn(code)
         currentWorld=world(901);held=pawn(201,code or 'su35');return held
@@ -821,10 +836,11 @@ local function scenario()
     return state
 end
 local s=scenario();local view=s.module:state(7,8)
-assert(view.available and #view.options==3,'须包含无DLC许可项，按官方编号过滤冒用简称的第三方机体')
+assert(view.available and #view.options==4,'须包含官方无DLC许可项及目录完整的Mod机体')
+local modFound=false;for _,option in ipairs(view.options)do if option.plane_id==444 then modFound=option.mod and option.code=='su35' end end;assert(modFound,'Mod须保留编号及来源身份')
 local unlicensed=false;for _,option in ipairs(view.options)do if option.plane_id==130 then unlicensed=option.label:find('无DLC许可',1,true)~=nil end end
 assert(unlicensed,'缺少DLC只能标注，不能从调试列表移除')
-s:request(1,444);assert(s.restart==0 and s.module.status=='failed' and s.module.ack==0)
+s:request(1,999);assert(s.restart==0 and s.module.status=='failed' and s.module.ack==0)
 s:request(2,120,7);assert(s.restart==0,'旧兵装代次不能重开')
 s:request(3);assert(s.restart==1 and s.prepared==1 and s.selected==120 and s.weapon==0 and s.skin==0 and s.emblem==4)
 assert(s.module:busy()and s.module.status=='restarting' and s.module.ack==3)
@@ -849,7 +865,7 @@ s=scenario();s:request(1);s:menu();s.module:pump('singleplayer_menu');assert(not
 s=scenario();s:request(1);s:spawn('f22a');s.module:pump('singleplayer')
 assert(s.module.status=='failed' and s.blocked==1 and s.module.blocked,'原生仍生成旧机时必须报失败，不能伪报换机成功')
 s=scenario();s.deps.owned=function()return false,'当前存档身份不符'end
-view=s.module:state(7,8);assert(view.available and #view.options==3,'购买信息读取失败不隐藏用户要求的调试候选')
+view=s.module:state(7,8);assert(view.available and #view.options==4,'购买信息读取失败不隐藏用户要求的调试候选')
 s=scenario();s:request(1,130);assert(s.restart==1 and s.selected==130,'无DLC许可项必须允许尝试重开，不改购买或许可')
 local originalClock=os.clock;local now=0;os.clock=function()return now end
 s=scenario();s:request(1);now=16;s.module:pump('singleplayer')

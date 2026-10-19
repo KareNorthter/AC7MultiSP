@@ -1,10 +1,13 @@
-AC7MultiSP 2.21.2 Source Candidate
+AC7MultiSP 2.21.1 Source Candidate
+
+Integrated candidate: Gun salvo is off by default; Ctrl+Alt+F5 toggles it and is remappable. It links the native gun action to MGP or PLSL, attempts to restore the previous selection on release, and may have switching gaps. HGP and concurrent different SPs are unsupported. CFA muzzle records are rechecked on mismatch; F-15 S/MTD HPAA+FAEB and triple-SP layouts show two HPAA/two FAEB. F-4E keeps 50% ammunition and nine visible UGBs.
+Integrated interfaces: management 14/configuration 13/tracking 2/camera 5/aircraft change 2. Upgrade together. Migration first backs up profiles.before-gun-salvo.json and retains saved choices; a conflicting new shortcut is left unassigned. Source-only statements and earlier interface numbers below describe the source threads; build/install results belong to the 2.21.1 receipts. Gameplay acceptance is pending.
 
 L3 toggle tracking and Camera hold are off for fresh settings; saved choices are retained. F6 uses General, Camera, Logs and Debug: weapon bindings and mod shortcuts join the first page, while camera controls occupy the second. Aircraft changes now include loaded mod aircraft with complete three-SP data, with name/code/ID search, official/mod filters and initial-letter filters. Missing names fall back to codes; visual replacements use the base aircraft entry.
 Direct weapon selection, keyboard toggle tracking, recentering and single-key mod shortcuts now work while Shift/Ctrl/Alt is held. An exact configured mod chord using the same main key takes priority to avoid two mod actions. Native held modifiers remain available to the game. Configured chords still require the complete modifier combination; extra modifiers are not ignored.
 This revision has only been reviewed in source; it has not been built, tested or installed. Gameplay verification is pending. The released version remains 2.21.0 and the installed baseline remains 2.20.3. Management 13/configuration 12/tracking 2 and aircraft-change subprotocol 2 remain; camera subprotocol advances to 5. Lua, core and UI must be updated together.
 
-Historical 2.21.0 release notes (new defaults, pages and keyboard rules follow 2.21.2 above)
+Historical 2.21.0 release notes (new defaults, pages and keyboard rules follow 2.21.1 above)
 • Central weapon abbreviations can remain visible (default) or appear for 1 second after switching. Pauses do not count; selecting the same weapon again does not extend the timer. Lower-right HUD information is retained.
 • X uses native weapon cycling. Release a short L3 press to toggle sustained tracking; release short R3 to change view or hold it for 0.3 seconds to recenter. Both sticks together only release countermeasures.
 • Fresh settings enable tracking, Camera hold and R3 hold-to-recenter. All remain optional in the second Bindings tab. Upgrades preserve existing Camera hold choices, custom bindings, sensitivity and loadouts; backups precede migration to configuration 12.

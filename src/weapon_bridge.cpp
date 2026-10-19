@@ -576,6 +576,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
+#include "gun_salvo.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
 struct CfaSwitchCost {
@@ -934,6 +935,8 @@ void execute(const Command& command) {
 
 // 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
 extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return targetGazeLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_gun_salvo(void* luaState) {return gunSalvoLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
@@ -949,6 +952,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+            salvoNeedRelease=salvoNeedRelease || gunSalvo.gun;salvoStopExtra();gunSalvo={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。

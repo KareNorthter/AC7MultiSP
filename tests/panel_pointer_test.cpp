@@ -4,8 +4,8 @@
 #include <iostream>
 
 int main() {
-    // 同一主键的单键/组合键区分，三个动作重复和无效修饰键不能通过保存。
-    std::array<dualsp::Shortcut,3> chords{{{117,0},{117,3},{118,3}}};
+    // 四个动作共用组合优先规则；新功能键可清除，不能遮挡既有键位。
+    std::array<dualsp::Shortcut,4> chords{{{117,0},{117,3},{118,3},{116,3}}};
     const std::array<int,4> direct{49,50,51,52};
     assert(dualsp::validShortcuts(chords,direct));
     for(int mods=0;mods<8;++mods) {
@@ -18,6 +18,12 @@ int main() {
     chords[2]={49,4};assert(dualsp::validShortcuts(chords,direct));
     assert(!dualsp::validShortcut({117,8})&&!dualsp::validShortcut({27,0}));
     assert(!dualsp::validShortcut({115,2})&&!dualsp::validShortcut({46,3}));
+    for(int mods=0;mods<8;++mods)assert(dualsp::singleKeyMatches(49,49,mods));
+    assert(dualsp::matchingShortcut(chords,117,3)==1);
+    assert(dualsp::matchingShortcut(chords,117,4)==0);
+    assert(dualsp::matchingShortcut(chords,116,3)==3);
+    assert(!dualsp::singleKeyMatches(115,115,2));
+    chords[3]={0,0};assert(dualsp::validShortcuts(chords,direct));
     dualsp::PanelPointer p;
     p.center(1920,1080);assert(p.x==960 && p.y==540);
     p.relative(120,-40);assert(p.x==1080 && p.y==500);

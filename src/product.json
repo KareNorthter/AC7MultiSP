@@ -8,6 +8,7 @@
   "scripts": [
     "config_store.lua",
     "debug_aircraft.lua",
+    "gun_salvo.lua",
     "json.lua",
     "loadout_flow.lua",
     "loadout_profile.lua",

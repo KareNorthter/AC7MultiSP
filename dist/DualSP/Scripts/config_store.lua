@@ -3,7 +3,7 @@ local Config={}
 -- 回中键与组合快捷键可共用主键；按修饰键状态编码，交给游戏线程避开双触发。
 function Config.centerShortcutMask(settings)
     local mask=0
-    for _,name in ipairs({"management","cycle","mount"})do
+    for _,name in ipairs({"management","cycle","mount","salvo"})do
         local chord=settings.shortcuts[name]
         if chord.key==settings.camera_center_key and chord.mods~=0 then mask=mask|(1<<chord.mods) end
     end
@@ -33,21 +33,22 @@ local function supportedKey(key)
 end
 -- 所有管理设置先完整验证，再写盘，不允许部分保存或静默替换错误键位。
 local function validateSettings(settings)
-    assert(type(settings.shortcuts)=="table","缺少三个快捷键设置")
+    assert(type(settings.shortcuts)=="table","缺少四个快捷键设置")
     local chords={}
-    for _,name in ipairs({"management","cycle","mount"})do
+    for _,name in ipairs({"management","cycle","mount","salvo"})do
         local chord=settings.shortcuts[name]
-        assert(type(chord)=="table"and supportedKey(chord.key),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
+        assert(type(chord)=="table"and (supportedKey(chord.key)or(name=="salvo"and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
         assert(type(chord.mods)=="number"and chord.mods%1==0 and chord.mods>=0 and chord.mods<=7,"快捷键修饰键无效")
         assert(not(chord.mods==3 and chord.key==46),"Ctrl+Alt+Delete不能用作模组快捷键")
         assert(not(chord.mods==2 and chord.key==115),"Alt+F4不能用作模组快捷键")
         local identity=chord.mods..":"..chord.key
-        assert(not chords[identity],"三个快捷键不能重复");chords[identity]=true
+        assert(not chords[identity],"四个快捷键不能重复");chords[identity]=true
     end
     assert(settings.management_key==settings.shortcuts.management.key,"管理入口旧字段与快捷键不一致")
     assert(settings.language=="auto"or settings.language=="zh"or settings.language=="en","Language must be auto, zh or en")
     assert(type(settings.mod_enabled)=="boolean","模组总开关必须为布尔值")
     assert(type(settings.fixed_mount_enabled)=="boolean","多 SP 挂载模型开关必须为布尔值")
+    assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
     assert(type(settings.target_gaze_pad_l3)=="boolean","左摇杆保持注视开关必须为布尔值")
     assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
     assert(type(settings.camera_r3_enabled)=="boolean","R3替换开关必须为布尔值")
@@ -92,8 +93,8 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=12,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
-            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}}}
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=13,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
         assert(type(config.profiles)=="table"and (migrateSettings or config.schema==2),"不支持的配置版本")
@@ -164,11 +165,24 @@ function Config.new(options)
             assert(config.central_weapon_display==nil,"旧配置含未知中央武器简称设置")
             config.central_weapon_display="always";config.management_revision=12
         end
+        local migrateGunSalvo=config.management_revision==12
+        if migrateGunSalvo then
+            assert(config.gun_salvo_enabled==nil and config.shortcuts.salvo==nil,"旧配置含未知机炮齐射设置")
+            config.gun_salvo_enabled=false
+            local conflict=false
+            for _,name in ipairs({"management","cycle","mount"})do
+                local chord=config.shortcuts[name]
+                if chord.key==116 and chord.mods==3 then conflict=true end
+            end
+            config.shortcuts.salvo=conflict and {key=0,mods=0}or {key=116,mods=3}
+            if conflict then note("GUN_SALVO_SHORTCUT_UNASSIGNED old_binding_preserved")end
+            config.management_revision=13
+        end
         assert(config.target_gaze_pad_x==nil,"手柄X替换设置已退役")
-        assert(config.management_revision==12,"需要管理参数第 12 版")
+        assert(config.management_revision==13,"需要管理参数第 13 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","r")))
             local backups={}
@@ -181,21 +195,22 @@ function Config.new(options)
             if migrateControllerClicks then backups[#backups+1]="profiles.before-controller-clicks.json"end
             if migrateCentralDisplay then backups[#backups+1]="profiles.before-central-weapon-display.json"end
             if migrateSettings then backups[#backups+1]="profiles.before-three-sp.json"end
+            if migrateGunSalvo then backups[#backups+1]="profiles.before-gun-salvo.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=12")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=13")
         end
         return config
     end
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==13,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==14,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","central_weapon_display","target_gaze_pad_l3","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","gun_salvo_enabled","central_weapon_display","target_gaze_pad_l3","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key
