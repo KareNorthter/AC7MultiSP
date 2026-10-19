@@ -720,7 +720,11 @@ assert(load()and calls.load==0,'另一组合的资源失败不能锁死已正常
 ''')
 print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
 
-lua.globals().weapon_switch_source = main_source[main_source.index('function weaponSwitch.defer'):main_source.index('-- 直接选择只在允许武器操作')]
+# 只抽取选择/等待函数；齐射服务的装配需完整运行上下文，不属于本夹具。
+lua.globals().weapon_switch_source = (
+    main_source[main_source.index('function weaponSwitch.defer'):main_source.index('weaponSwitch.salvo.service=dofile')]
+    + main_source[main_source.index('-- 仅普通连射保留待切换请求'):main_source.index('-- 直接选择只在允许武器操作')]
+)
 lua.execute(r'''
 -- 使用真实切换/等待代码；原生忙碌不能重建SP，重试不重复释放输入。
 local function switchCase()
@@ -730,7 +734,7 @@ local function switchCase()
         OnWeaponSwitchPressed=function()calls.pressed=calls.pressed+1;if state.allowPress then state.armed=not state.armed end end,
         OnWeaponSwitchReleased=function()calls.released=calls.released+1 end}
     local activator={GetAddress=function()return 200 end,GetSpecialWeaponCount=function()return 20 end}
-    local env=setmetatable({weaponSwitch={read=function()return true,not state.busy,'native_busy' end,
+    local env=setmetatable({weaponSwitch={salvo={},read=function()return true,not state.busy,'native_busy' end,
         press=function(p,a)assert(p==100 and a==200);plane:OnWeaponSwitchPressed();plane:OnWeaponSwitchReleased();return true end},
         plane=plane,activator=activator,currentWorld={},weaponRevision=1,active=0,configured=true,isFlight=true,
         nativeState={cached_sp={20,20,20}},

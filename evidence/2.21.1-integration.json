@@ -1,0 +1,104 @@
+{
+  "candidate": "2.21.1",
+  "created_at": "2026-10-19T20:20:41.430590+08:00",
+  "branch": "codex/integration-2.21.1",
+  "formal_main": "7a0559dd1b360f73c84b8d2f9c57b5e1cdd0a49a",
+  "formal_release": "2.21.0",
+  "sources": [
+    {
+      "thread": "codex://threads/01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "branch": "codex/cfa44-muzzle-notes",
+      "commit": "3ecdfd8d2fa251a5fffea91d8c265e7b3efbf89b",
+      "scope": "CFA旧炮口记录失配后重核当前组件，性能优先；不宣称偶发蓝光根因已证实"
+    },
+    {
+      "thread": "codex://threads/01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+      "branch": "codex/keyboard-modifier-routing",
+      "commit": "66e75f91cb5a0bf2fcc872a9259faa12a8abed5f",
+      "scope": "含effa304默认值/F6/Mod检索换机及修饰键输入修复；来源2.21.2统一2.21.1"
+    },
+    {
+      "thread": "codex://threads/01a1532a-e99f-74f2-a89e-70ef7d40aa9a",
+      "branch": "codex/gun-salvo",
+      "commit": "90891aa79302f7f456bae408b24ba061d0f62bff",
+      "scope": "含3f9badc和只读研究；默认关闭的MGP/PLSL联动，HGP和不同SP并发不支持"
+    },
+    {
+      "thread": "codex://threads/01a15180-e665-7a82-a7e4-6584e0ab6342",
+      "branch": "codex/five-aircraft-mount-review",
+      "commit": "437665d01ab3a09b4a6845d9b097b31addda921b",
+      "scope": "含b708a22 F15 HPAA/FAEB双三挂补位；F4保留50%和9枚显示及对称设计原则"
+    }
+  ],
+  "integration_source_commit": "25f5f03d37faad3eb027f4ab4e3103789f34119b",
+  "base_candidate": "2.20.3",
+  "protocols": {
+    "management": 14,
+    "configuration": 13,
+    "tracking": 2,
+    "camera": 5,
+    "debug_aircraft": 2
+  },
+  "merge_adjustments": [
+    "四快捷键数组统一，完整组合优先匹配",
+    "Config.centerShortcutMask将新增salvo快捷键纳入回中避让",
+    "新配置保留镜头/注视默认关闭，同时配置13及齐射默认关闭",
+    "候选版本文字统一2.21.1，product为candidate，实际升级回执仍2.20.3"
+  ],
+  "build": "Temp/build-2.21.1-candidate",
+  "build_receipt_sha256": "fcd638a51743ff415cb9f22def9b1b76f2f29282a2748590ed3c7bf7085db868",
+  "test_receipt_sha256": "8de14e229e7db664ed9ae2d2fbccc020d0a39cbcca425f379cadcf3d01038c11",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "test_modules_added": false,
+  "existing_test_fixture_updated": [
+    "配置13/管理14/四快捷键与旧配置迁移",
+    "换机2及完整Mod目录候选，保留无效目标/旧代次/身份/失败回滚断言",
+    "切换片段抽取排除新增齐射装配，保留真实选择与pump函数，不改变产品实现"
+  ],
+  "initial_check_failure": "旧切换夹具抽取范围连带齐射装配，缺root；收窄抽取并提供空salvo依赖后通过，未修改产品源码",
+  "installed_receipt": "evidence/2.21.1-installed.json",
+  "installed_receipt_sha256": "8830c932039c0bf272ba03d91a3d6e2b1339710a70a3f8bb70e2638b4fbf0801",
+  "installed_at": "2026-10-19T20:19:29.787449+08:00",
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261019-201929-787449",
+  "runtime_files": 18,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "a5eb2e80025bec9b92d5fff6a19e82ed10396919f447634e1e560546ec88178e",
+    "variant_count": 54,
+    "file_count": 108
+  },
+  "protected_files_verified": 226,
+  "profiles_preserved": true,
+  "saves_and_other_mods_preserved": true,
+  "protected_old_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "game_stopped_by_agent": true,
+  "game_started_by_agent": false,
+  "source_worktrees_modified": false,
+  "old_builds_and_receipts_preserved": true,
+  "pre_integration_stash": "8b21e64f1515f082c4b5352e468c3950183f5c1a",
+  "new_runtime_gameplay_verified": false,
+  "merged_to_main": false,
+  "published": false,
+  "pending_validation": [
+    "MiG-21bis带MGP、普通Su-57带PLSL：启用齐射后从MSL/其他SP/吊舱自身起按松开，核对机枪与吊舱联动、恢复选择和扣弹；快速点按、交错SP按键、人工切武器、暂停/F6/失焦/关闭后不残留连射",
+    "按住Shift加速时用1/2/3/4直选；Ctrl/Alt及自定义组合快捷键只执行一个Mod动作，镜头回中避让，保存改键重启保留",
+    "F6基础/视角/日志/调试分页、第四快捷键捕获/清除/冲突及中英切换；保留旧设置，新配置注视/镜头/齐射默认关闭",
+    "调试换机搜索名称/代号/编号和官方/Mod/首字母筛选，尝试已装PW-Mk.I/VF-1等完整三SP目录机体；确认重开任务后真正换机",
+    "CFA ADMM+EML及三SP发射EML、反复切换、检查点重试与任务重开，观察左侧多余蓝光及卡顿；EML+ECM本就保两侧效果",
+    "F15 S/MTD HPAA+FAEB及三SP各2挂位、发射/补装/切换后不重叠；F4 50%九枚UGB保持",
+    "顺带回归F22准备页、出击/补给/检查点，第13关113原生SP及213自由飞行区别；不推定旧PW崩溃同因或修复"
+  ],
+  "pw_previous_crash_same_cause_not_claimed": true
+}
