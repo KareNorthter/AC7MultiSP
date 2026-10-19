@@ -47,6 +47,8 @@
 
 ## 独立研究
 
+[五机挂载复核候选](static-mount-five-aircraft-review.json)：从main `66cc725`建立独立分支，F-15 S/MTD、F-4E、F-16XL保持；MiG-35D三个双挂补成对，XFA-27无ECM的SOD＋MSTM补回负侧下挂。四份新副本三LOD分区与编码往返成立，调整组合逐武器全部LOD互配未见静态穿面；仅离线候选，未编译、运行测试、安装或操作游戏。旧50副本保留，追加为54资源/108文件，本机完整输入目录与逐资源摘要在JSON内；正式2.20.0交付事实不变。
+
 [右摇杆镜头保持研究](camera-hold-research.json)保留原只读阶段；[实现摘要](camera-hold-implementation.json)记录后续默认关闭、第二个按键页、0.5秒长按及双摇杆干扰弹同时回正的候选源码。原记录保留源码阶段状态；后续2.19.1已构建安装且获用户基本正常反馈，R3短按修订现已接收至2.19.2，见[R3修订来源](camera-hold-r3-short-press-fix.json)，效果仍待用户实测。
 
 ## 上一发布包2.16
@@ -59,6 +61,8 @@
 ## 构建输入：原路径、原字节保留
 
 以下11份被source_snapshot或生成器直接引用，不归入压缩清理：
+
+本分支另新增`static-mount-five-aircraft-review.json`作为第12份挂载输入；旧11份路径和字节保持。
 
 - `mount-expansion-batch1.json`、`mount-expansion-batch2.json`、`mount-expansion-batch3.json`
 - `static-expansion-2.11.0.json`、`static-expansion-2.12.0.json`、`static-expansion-2.13.0.json`、`static-expansion-2.14.0.json`

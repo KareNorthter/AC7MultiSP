@@ -4,6 +4,57 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn','su35','su37','f04e','f14atg','j39e','su30','su34','m29a','f16x','m35d']
+LAYOUT_REVIEW = 'evidence/static-mount-five-aircraft-review.json'
+
+
+def apply_layout_review(planes, assets):
+    """按精确旧方案追加双挂修订；保留历史来源、资源编号及其余组合。"""
+    review = json.loads((ROOT/LAYOUT_REVIEW).read_text(encoding='utf-8'))
+    if review['schema'] != 1 or assets != review['baseline_assets']:
+        raise ValueError('五机复核的旧资源基线不符，须先复核差异')
+    appended = review['appended_assets']
+    reports = {r['recipe']['name']: r for r in review['resource_reports']}
+    if (not appended or len(set(assets + appended)) != len(assets) + len(appended) or
+            len(reports) != len(review['resource_reports']) or set(appended) != set(reports)):
+        raise ValueError('五机复核的新增资源清单无效')
+    for name, report in reports.items():
+        if not all(report.get(k) is True for k in (
+                'asset_roundtrip', 'renamed_ac7_roundtrip', 'all_exports_payload_preserved')):
+            raise ValueError('新增挂架缺少完整资源往返依据：'+name)
+    assets.extend(appended)
+    by_code = {p['code']: p for p in planes}
+    seen = set()
+    for item in review['plan_overrides']:
+        code, mask = item['code'], item['mask']
+        if (code, mask) in seen or (code, mask) not in {('m35d',3),('m35d',5),('m35d',6),('fa27',3)}:
+            raise ValueError('五机复核存在重复或超范围组合')
+        seen.add((code, mask))
+        plane = by_code[code]
+        if plane['plans'][mask] != item['expected_plan']:
+            raise ValueError('五机复核的旧布局已变化：'+code+'/'+str(mask))
+        if len(item['selected_sockets']) != 3 or len(item['variants']) != 3:
+            raise ValueError('双挂修订必须明确三组选择及载体')
+        selected, variants = [], []
+        for pool, group in enumerate(plane['groups']):
+            wanted = item['selected_sockets'][pool]
+            if (len(set(wanted)) != len(wanted) or not set(wanted) <= set(group['sockets']) or
+                    bool(wanted) != bool(mask & (1 << pool))):
+                raise ValueError('双挂修订含未知、重复或未选兵装Socket')
+            selected.append([i for i, socket in enumerate(group['sockets']) if socket in wanted])
+            name = item['variants'][pool]
+            if name is not None:
+                report = reports[name]
+                if (not wanted or report['recipe']['aircraft'] != code or
+                        report['recipe']['source_asset'] != group['rack']):
+                    raise ValueError('双挂副本必须属于该兵装原生挂架')
+            variants.append(assets.index(name) if name is not None else -1)
+        if item['racks'] != mask:
+            raise ValueError('本轮双挂只显示已选兵装的原组挂架')
+        # XFA首次使用派生挂架，沿用静态分区的运行碰撞守卫，不改原生碰撞设置。
+        plane['requires_no_collision'] = True
+        plane['plans'][mask] = {'selected':selected, 'racks':item['racks'], 'variants':variants}
+    if seen != {('m35d',3),('m35d',5),('m35d',6),('fa27',3)}:
+        raise ValueError('五机复核缺少已登记的双挂修订')
 
 
 def build():
@@ -126,6 +177,7 @@ def build():
         planes.append(plane)
     if assets[len(feedback['baseline_assets']):] != appended:
         raise ValueError('新增资源编号顺序与追加清单不符')
+    apply_layout_review(planes, assets)
     return {'planes':planes,'assets':assets}
 
 

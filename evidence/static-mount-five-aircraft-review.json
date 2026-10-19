@@ -1,0 +1,1433 @@
+{
+  "schema": 1,
+  "baseline_commit": "66cc725918c283a23f0ee3da2deb8e03260828ae",
+  "branch": "codex/five-aircraft-mount-review",
+  "date": "2026-10-19",
+  "steam_build": 9855922,
+  "status": "offline_layout_candidate",
+  "candidate_version": "由接收线程统一为2.20.1，本分支不改正式2.20.0版本标识",
+  "authorization": "用户要求从最新main独立分支核对五机并改源码/文件；无需编译安装，交其他线程接收后实测",
+  "policy": "复用已验收机体的双挂独立补位、真实支撑及显示/离架同点原则；不扩大原机验收",
+  "decisions": [
+    {
+      "code": "f15m",
+      "decision": "保持",
+      "reason": "HPAA与同侧FAEB展开范围相交，双挂/三挂分侧有依据；另两双挂已成对补满；不跨组借腹点或移动原生支撑"
+    },
+    {
+      "code": "fa27",
+      "decision": "仅修订SOD+MSTM",
+      "reason": "无ECM时恢复负侧原生下挂sp21，连同侧面sp23为MSTM两处；负侧副本保sp21真实支架；SOD正侧与MSTM负侧隔离；含ECM原方案保持"
+    },
+    {
+      "code": "f04e",
+      "decision": "保持",
+      "reason": "UGB与LAGM共用翼下承载站，含两者维持半侧分区；另外两双挂已成对补满，不为数量恢复相互覆盖的整架"
+    },
+    {
+      "code": "f16x",
+      "decision": "保持",
+      "reason": "现方案双挂已独立利用空间；UGB共存时4AGM外移原生站，4AAM+4AGM取后侧4AAM双点；保已复核实体面及支撑，不凭窗口凑位"
+    },
+    {
+      "code": "m35d",
+      "decision": "修订三个双挂，三挂保持",
+      "reason": "旧双挂照搬三挂左右分侧，只有1枚6AAM/4AGM；改SAAM2+外6AAM2、SAAM2+中4AGM2、外6AAM2+内4AGM2，保原Socket及对应原生挂架；三挂不新增相邻外6AAM/中4AGM穿插风险"
+    }
+  ],
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos"
+  ],
+  "appended_assets": [
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg"
+  ],
+  "plan_overrides": [
+    {
+      "code": "m35d",
+      "mask": 3,
+      "expected_plan": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [
+            0
+          ],
+          []
+        ],
+        "racks": 3,
+        "variants": [
+          -1,
+          37,
+          -1
+        ]
+      },
+      "selected_sockets": [
+        [
+          "sp11",
+          "sp12"
+        ],
+        [
+          "sp21",
+          "sp22"
+        ],
+        []
+      ],
+      "variants": [
+        null,
+        "MSP_m35d_6aam_outer_pair",
+        null
+      ],
+      "racks": 3
+    },
+    {
+      "code": "m35d",
+      "mask": 5,
+      "expected_plan": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [],
+          [
+            1
+          ]
+        ],
+        "racks": 5,
+        "variants": [
+          -1,
+          -1,
+          38
+        ]
+      },
+      "selected_sockets": [
+        [
+          "sp11",
+          "sp12"
+        ],
+        [],
+        [
+          "sp31",
+          "sp32"
+        ]
+      ],
+      "variants": [
+        null,
+        null,
+        "MSP_m35d_4agm_middle_pair"
+      ],
+      "racks": 5
+    },
+    {
+      "code": "m35d",
+      "mask": 6,
+      "expected_plan": {
+        "selected": [
+          [],
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          37,
+          38
+        ]
+      },
+      "selected_sockets": [
+        [],
+        [
+          "sp21",
+          "sp22"
+        ],
+        [
+          "sp33",
+          "sp34"
+        ]
+      ],
+      "variants": [
+        null,
+        "MSP_m35d_6aam_outer_pair",
+        "MSP_m35d_4agm_inner_pair"
+      ],
+      "racks": 6
+    },
+    {
+      "code": "fa27",
+      "mask": 3,
+      "expected_plan": {
+        "selected": [
+          [
+            1
+          ],
+          [
+            2
+          ],
+          []
+        ],
+        "racks": 3,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      "selected_sockets": [
+        [
+          "sp12"
+        ],
+        [
+          "sp21",
+          "sp23"
+        ],
+        []
+      ],
+      "variants": [
+        null,
+        "MSP_fa27_mstm_neg",
+        null
+      ],
+      "racks": 3
+    }
+  ],
+  "resource_reports": [
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "m35d_SWP2_SM",
+      "json_sha256": "6629a2c83cf04e692a14127b720acf2c8851ef37cf987040f1f24af800f1824d",
+      "extras_sha256": "89bdf9bce50cde8d0c0f062ec0fd7bed872d64aa2b0c4b34cdcb52f013368eec",
+      "structure": {
+        "socket_count": 6,
+        "original_lod_bounds_overflow": [
+          3.814697265625e-06,
+          4.76837158203125e-06,
+          4.76837158203125e-06
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1410,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1224,
+                "min": 0,
+                "max": 1409,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -10.485838890075684,
+                25.564300537109375
+              ],
+              [
+                -39.895751953125,
+                39.895755767822266
+              ],
+              [
+                -3.1986608505249023,
+                0.556012749671936
+              ]
+            ],
+            "buffers": {
+              "main": 1224,
+              "reversed": 0,
+              "depth": 1224,
+              "reversed_depth": 0,
+              "adjacency": 1224
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 636,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 480,
+                "min": 0,
+                "max": 635,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -10.46399211883545,
+                25.564306259155273
+              ],
+              [
+                -39.895751953125,
+                39.895755767822266
+              ],
+              [
+                -3.1258673667907715,
+                0.5560125112533569
+              ]
+            ],
+            "buffers": {
+              "main": 480,
+              "reversed": 0,
+              "depth": 480,
+              "reversed_depth": 0,
+              "adjacency": 480
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 488,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 340,
+                "min": 0,
+                "max": 487,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -10.46399211883545,
+                25.564306259155273
+              ],
+              [
+                -39.895751953125,
+                39.895755767822266
+              ],
+              [
+                -3.1258673667907715,
+                0.5560125112533569
+              ]
+            ],
+            "buffers": {
+              "main": 340,
+              "reversed": 0,
+              "depth": 340,
+              "reversed_depth": 0,
+              "adjacency": 340
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_m35d_6aam_outer_pair",
+        "aircraft": "m35d",
+        "source_asset": "m35d_SWP2_SM",
+        "source_extras_sha256": "89bdf9bce50cde8d0c0f062ec0fd7bed872d64aa2b0c4b34cdcb52f013368eec",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -36,
+            1000
+          ],
+          [
+            -1000,
+            36,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_m35d_6aam_outer_pair",
+      "candidate_extras_sha256": "b46835ecc87a7dec0c17b7da49cf3018f291dcc1fd2149e7923250cf5333247f",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 408,
+              "degenerated": 816
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 408,
+              "degenerated": 816
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 408,
+              "degenerated": 816
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 160,
+              "degenerated": 320
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 160,
+              "degenerated": 320
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 160,
+              "degenerated": 320
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 112,
+              "degenerated": 228
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 112,
+              "degenerated": 228
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 112,
+              "degenerated": 228
+            }
+          }
+        }
+      ],
+      "changed_bytes": 20753,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "4e922478900ecc005453c994a944a1a11e3de05d551e51b380b9da5351216b82",
+        ".uexp": "997a81801c76640f359ce1a3af481eada36b354a1f57837d8409cffabfeb9cf1"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "5aace7396f49fcbd93d6078a506a91731f7ad0a449e325714e3c01af65b7a5e2",
+        ".uexp": "2cd1f0d0673928c486f5011e977d59e0c50030ee32191ca14babadbdd31ed800"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "m35d_SWP3_SM",
+      "json_sha256": "5c628787ad385d6596a8f41d9b10da4a5e0e183e1c0a2b2f7b4cf3d204f8756e",
+      "extras_sha256": "c9ebe312586ad719b0bc0cf3111426a27a047e584f356d1a2d76e7840cb33056",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          3.814697265625e-06,
+          2.384185791015625e-07,
+          2.384185791015625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1990,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1656,
+                "min": 0,
+                "max": 1989,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02351760864258
+              ],
+              [
+                -5.005095481872559,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 1656,
+              "reversed": 0,
+              "depth": 1656,
+              "reversed_depth": 0,
+              "adjacency": 1656
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1312,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 964,
+                "min": 0,
+                "max": 1311,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02287292480469
+              ],
+              [
+                -5.005095481872559,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 964,
+              "reversed": 0,
+              "depth": 964,
+              "reversed_depth": 0,
+              "adjacency": 964
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 918,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 692,
+                "min": 0,
+                "max": 917,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02287292480469
+              ],
+              [
+                -4.860000133514404,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 692,
+              "reversed": 0,
+              "depth": 692,
+              "reversed_depth": 0,
+              "adjacency": 692
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_m35d_4agm_middle_pair",
+        "aircraft": "m35d",
+        "source_asset": "m35d_SWP3_SM",
+        "source_extras_sha256": "c9ebe312586ad719b0bc0cf3111426a27a047e584f356d1a2d76e7840cb33056",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -28,
+            1000
+          ],
+          [
+            -1000,
+            28,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_m35d_4agm_middle_pair",
+      "candidate_extras_sha256": "52568effeddc024578061a34003c42ed6f2b8802dcd10f21eeb044c3f236d93c",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 896,
+              "degenerated": 760
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 896,
+              "degenerated": 760
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 896,
+              "degenerated": 760
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 524,
+              "degenerated": 440
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 524,
+              "degenerated": 440
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 524,
+              "degenerated": 440
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 362,
+              "degenerated": 330
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 362,
+              "degenerated": 330
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 362,
+              "degenerated": 330
+            }
+          }
+        }
+      ],
+      "changed_bytes": 24756,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "40c5453ee36fd77fb7c3b4590252f0df5f0d451a70ee5919ea52b912a1dee3f3",
+        ".uexp": "81b4507a5167fa7748b31e23ec3cd9617af44d7fe77bbc91fd1543718364c512"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "0356ddb6619357a740bf5f7b6cc809c3c3e3a1cb162d3ac8a2be9833efd5cbcc",
+        ".uexp": "b6fe519bea4737af35bda723cb5c37caa9bf97d4a40d85c4a9382b1d5a8ce0b8"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "m35d_SWP3_SM",
+      "json_sha256": "5c628787ad385d6596a8f41d9b10da4a5e0e183e1c0a2b2f7b4cf3d204f8756e",
+      "extras_sha256": "c9ebe312586ad719b0bc0cf3111426a27a047e584f356d1a2d76e7840cb33056",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          3.814697265625e-06,
+          2.384185791015625e-07,
+          2.384185791015625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1990,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1656,
+                "min": 0,
+                "max": 1989,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02351760864258
+              ],
+              [
+                -5.005095481872559,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 1656,
+              "reversed": 0,
+              "depth": 1656,
+              "reversed_depth": 0,
+              "adjacency": 1656
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1312,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 964,
+                "min": 0,
+                "max": 1311,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02287292480469
+              ],
+              [
+                -5.005095481872559,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 964,
+              "reversed": 0,
+              "depth": 964,
+              "reversed_depth": 0,
+              "adjacency": 964
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 918,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 692,
+                "min": 0,
+                "max": 917,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -7.636421203613281,
+                37.03839111328125
+              ],
+              [
+                -34.02351379394531,
+                34.02287292480469
+              ],
+              [
+                -4.860000133514404,
+                0.4018442630767822
+              ]
+            ],
+            "buffers": {
+              "main": 692,
+              "reversed": 0,
+              "depth": 692,
+              "reversed_depth": 0,
+              "adjacency": 692
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_m35d_4agm_inner_pair",
+        "aircraft": "m35d",
+        "source_asset": "m35d_SWP3_SM",
+        "source_extras_sha256": "c9ebe312586ad719b0bc0cf3111426a27a047e584f356d1a2d76e7840cb33056",
+        "keep_boxes": [
+          [
+            -1000,
+            -28,
+            -1000,
+            1000,
+            28,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_m35d_4agm_inner_pair",
+      "candidate_extras_sha256": "95294d5fd63038098d6d57075b8bf9aeb0abce5f7d28c5421b6f4cc2506e929e",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 760,
+              "degenerated": 896
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 760,
+              "degenerated": 896
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 760,
+              "degenerated": 896
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 440,
+              "degenerated": 524
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 440,
+              "degenerated": 524
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 440,
+              "degenerated": 524
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 330,
+              "degenerated": 362
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 330,
+              "degenerated": 362
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 330,
+              "degenerated": 362
+            }
+          }
+        }
+      ],
+      "changed_bytes": 28664,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "05b9556728ab96c5d52ce9be47aa4fae017b7acc3ef26c5fd41213ab3286f85d",
+        ".uexp": "71c778bbc9a2cdb9c3ccf0fbc623f7afa6a3efde16b04a3179c74b54ae8b94d2"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "1befcc65b6d32008905379bf69947a5114ef52866ab49a08c4f4e5a815f07189",
+        ".uexp": "b367994d8e25fefa544bf14d31eb38524e2a4bd2725692305254c31555465c04"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "fa27_SWP2_SM",
+      "json_sha256": "af82989c87ca0dbc788acdd7ca470ac7e31d1936c313dab5e3d69d86c52e27d2",
+      "extras_sha256": "1f9840a4db210b6ec815ad28ac5b641c91b7a93f6d1045ec6ea22bf7c59180f9",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          0,
+          0.01171112060546875,
+          0.01171112060546875
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 332,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 244,
+                "min": 0,
+                "max": 331,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                9.1727294921875,
+                35.52276611328125
+              ],
+              [
+                -27.230491638183594,
+                27.230491638183594
+              ],
+              [
+                -6.063629150390625,
+                -3.559101104736328
+              ]
+            ],
+            "buffers": {
+              "main": 244,
+              "reversed": 0,
+              "depth": 244,
+              "reversed_depth": 0,
+              "adjacency": 244
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 192,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 112,
+                "min": 0,
+                "max": 191,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                9.1727294921875,
+                35.53447723388672
+              ],
+              [
+                -27.230491638183594,
+                27.230491638183594
+              ],
+              [
+                -6.063629150390625,
+                -3.559101104736328
+              ]
+            ],
+            "buffers": {
+              "main": 112,
+              "reversed": 0,
+              "depth": 112,
+              "reversed_depth": 0,
+              "adjacency": 112
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 96,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 56,
+                "min": 0,
+                "max": 95,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                9.1727294921875,
+                35.53447723388672
+              ],
+              [
+                -26.870147705078125,
+                26.870147705078125
+              ],
+              [
+                -6.063629150390625,
+                -3.559101104736328
+              ]
+            ],
+            "buffers": {
+              "main": 56,
+              "reversed": 0,
+              "depth": 56,
+              "reversed_depth": 0,
+              "adjacency": 56
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_fa27_mstm_neg",
+        "aircraft": "fa27",
+        "source_asset": "fa27_SWP2_SM",
+        "source_extras_sha256": "1f9840a4db210b6ec815ad28ac5b641c91b7a93f6d1045ec6ea22bf7c59180f9",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -1,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_fa27_mstm_neg",
+      "candidate_extras_sha256": "ef48d86360470cabd4275cc067ab6141e39813f23bf3e8dd44cd97b83089949b",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 122,
+              "degenerated": 122
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 122,
+              "degenerated": 122
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 122,
+              "degenerated": 122
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 56,
+              "degenerated": 56
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 56,
+              "degenerated": 56
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 56,
+              "degenerated": 56
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 28,
+              "degenerated": 28
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 28,
+              "degenerated": 28
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 28,
+              "degenerated": 28
+            }
+          }
+        }
+      ],
+      "changed_bytes": 3030,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "eecc2d88c1b1feb63196a81140f5b26a5db859ca1af308287096c263cc57d07d",
+        ".uexp": "747cc8af62ee14bfbe1f64d413fd33655d5dc6e9f104daf97cebd393532daac7"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "e31c8573b219616a5cdc0216fa9b358b1f26cbfd0260161713bc7b87063d9c5e",
+        ".uexp": "1ab5dd1fce74a876521057fb2ec351115c68571cab434eb46d3f02488f732918"
+      }
+    }
+  ],
+  "geometry_review": [
+    {
+      "code": "m35d",
+      "mask": 3,
+      "cross_weapon_lod_pairs": 36,
+      "minimum_signed_aabb_axis_gap": 8.60528564453125,
+      "aabb_overlapping_lod_pairs": 0,
+      "strict_surface_contacts": 0,
+      "same_group_policy": "同组同时显示位置是原生子集；不改变其相对关系",
+      "scope": "各武器全部LOD互配；XFA包含SOD闭合与展开；共同局部参考空间，非实机轨迹"
+    },
+    {
+      "code": "m35d",
+      "mask": 5,
+      "cross_weapon_lod_pairs": 36,
+      "minimum_signed_aabb_axis_gap": -0.3041992650604257,
+      "aabb_overlapping_lod_pairs": 4,
+      "strict_surface_contacts": 0,
+      "same_group_policy": "同组同时显示位置是原生子集；不改变其相对关系",
+      "scope": "各武器全部LOD互配；XFA包含SOD闭合与展开；共同局部参考空间，非实机轨迹"
+    },
+    {
+      "code": "m35d",
+      "mask": 6,
+      "cross_weapon_lod_pairs": 36,
+      "minimum_signed_aabb_axis_gap": 5.862877607345581,
+      "aabb_overlapping_lod_pairs": 0,
+      "strict_surface_contacts": 0,
+      "same_group_policy": "同组同时显示位置是原生子集；不改变其相对关系",
+      "scope": "各武器全部LOD互配；XFA包含SOD闭合与展开；共同局部参考空间，非实机轨迹"
+    },
+    {
+      "code": "fa27",
+      "mask": 3,
+      "cross_weapon_lod_pairs": 24,
+      "minimum_signed_aabb_axis_gap": 32.619397220687866,
+      "aabb_overlapping_lod_pairs": 0,
+      "strict_surface_contacts": 0,
+      "same_group_policy": "同组同时显示位置是原生子集；不改变其相对关系",
+      "scope": "各武器全部LOD互配；XFA包含SOD闭合与展开；共同局部参考空间，非实机轨迹"
+    }
+  ],
+  "local_resource_source": "C:\\Users\\83717\\.codex\\worktrees\\five-aircraft-mount-review\\AC7_MultiSP\\Temp\\five-aircraft-mount-review\\source",
+  "resource_count": 54,
+  "encoded_member_count": 108,
+  "source_files": {
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001522-815449\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\m35d_SWP2_SM.json": "6629a2c83cf04e692a14127b720acf2c8851ef37cf987040f1f24af800f1824d",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001522-815449\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\m35d_SWP3_SM.json": "5c628787ad385d6596a8f41d9b10da4a5e0e183e1c0a2b2f7b4cf3d204f8756e",
+    "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\fa27_SWP2_SM.json": "af82989c87ca0dbc788acdd7ca470ac7e31d1936c313dab5e3d69d86c52e27d2",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_saam_r0_SM.json": "213eb77039557d7678d4201966314edb4a8954e7798b4c73153722a9c00ee8c5",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_4aam_r0_SM.json": "46451366671a25902b6de182a9805c2ce7e9c6679d6b3aef778b557c95e539ad",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_4agm_r0_SM.json": "08ad6befc6ea552d00d120a1579ebd70b2e107fd5fe1cd80a6a4da7d25d5d7ac",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-084417-986139\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\w_mstm_x0_SM.json": "d6eb37afafef1308356f1417aa9778ba88a26d88be7b010941543f7f444e16c1",
+    "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-225921-374913\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_sod_a0_closed_SM.json": "9c914b0c79e82f551759b4c6df71cd45d97190f9ce654d062303371034da81cf",
+    "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-084417-986139\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_sod_a0_SM.json": "3f533ae58190958b521d612b6a6c5060a5b96251ccc168b36eb406c09df722e3"
+  },
+  "source_evidence": {
+    "mount-expansion-batch2.json": "80f92f57d7231470288eff525a7e29ef018b2ee1c70dfd047a5bdeac923fd10e",
+    "mount-expansion-batch3.json": "be313f92bd86cd8168122baef653b2f01c0336fb2792f77653d57a5f60544329",
+    "static-expansion-2.11.0.json": "e696fca116cd7dacb86b9cb8b18189cd89104d04ba4cda82c7f5d20853f7752e",
+    "2.11.0-user-validation.json": "c0473b89095e044cc1478772c2154caed544feae321838983ab4018449f26331",
+    "2.12.0-user-validation.json": "cb719fe5cc8a107bf565d7c6e360b1de81ed7af172894c2ce9e730d549b776c5",
+    "2.15.0-user-validation.json": "87ed6846e0be0eb6470e95478514588f9aec244f6fc4ead2e62e9a0bc402378f",
+    "2.20.0-user-validation.json": "8ad1032ea771c77680fa68b54069b25229d60c092a42cc0e6f518a6307d1b05f"
+  },
+  "executed_tool_sources": {
+    "src/research/split_static_mount_asset.py": "be4234c5ea0e8256b82e140868b597a033e0bfc2f29a94046a3f051c32db718c",
+    "src/research/inspect_mount_assets.py": "cd4cab6ea134e6b8a17ca542f15b89d4acbc4af36077a341727269e101787c2b",
+    "src/research/review_animated_us_bays.py": "8dc63da690fc8040a5ebc18491af7fb9258beec96c9775a303401a12cf3203b9",
+    "src/research/survey_aircraft_mounts.py": "a4e66315d7ac34248c43c31547ee0871a78f50fb2537a7a075c65c8272ce6e02"
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "gameplay_verified": false,
+  "limits": [
+    "离线索引分区及编码往返不等于游戏加载、动态离架、低库存/补装、LOD阴影或场景交接验收",
+    "不修改武器参数、库存、窗口、锁定、齐射、冷却、动画、原有运行身份核对或公共性能路径；XFA新增分区所需NoCollision只读守卫",
+    "四种副本均保持全部Socket/材质/非索引字节与原父链，三LOD的主/深度/邻接块均不跨分区；旧50副本不覆盖",
+    "本轮只生成四份独立派生资源及核心/Lua同源表；未制作PAK或发布包，未编译/测试/安装/操作游戏",
+    "用户先前验收的Su30M2/MiG29/Gripen等仅提供设计经验，不转写为五机的新验收"
+  ],
+  "native_collision_review": {
+    "code": "fa27",
+    "source_json": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\inventory\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\AcePlayerPawn_fa27.json",
+    "source_json_sha256": "59581252225708f893416df86a88a8f68f32324716dd089e538d321615e8fcdd",
+    "components": {
+      "SWP1_GEN_VARIABLE": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      },
+      "SWP2_GEN_VARIABLE": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      },
+      "SWP3_GEN_VARIABLE": {
+        "CollisionEnabled": "ECollisionEnabled::NoCollision",
+        "CollisionProfileName": "NoCollision",
+        "CollisionResponses": {
+          "ResponseArray": [
+            {
+              "Channel": "Visibility",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Camera",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "Weather",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "PlaneOverlap",
+              "Response": "ECR_Ignore"
+            },
+            {
+              "Channel": "AvoidObstacle",
+              "Response": "ECR_Ignore"
+            }
+          ]
+        },
+        "ObjectType": "ECC_WorldStatic"
+      }
+    },
+    "runtime_change": "首次使用派生挂架，将fa27.requires_no_collision置true；只读守卫，绝不改写原生碰撞配置"
+  },
+  "local_analysis": {
+    "script": "Temp/five-aircraft-mount-review/collect_review.py",
+    "sha256": "8823a3eaeb50083f580ef8b132b2bbc428a071dcd627e4debeee773f54c8f68e",
+    "purpose": "仅离线资源、弹体及完整输入整理，非测试模块；原脚本保留本机Temp",
+    "boundary": "原脚本在本分支改生成器前运行，用main旧生成器取得旧50资源基线；保留执行来源，不作为现行再次生成入口"
+  },
+  "baseline_generator_sha256": "a6cbf442225163a30e9ff611f8077dd75a7b029dda8100a76b81557cffc25720",
+  "source_diff_review": {
+    "plan_changes": [
+      [
+        "fa27",
+        3
+      ],
+      [
+        "m35d",
+        3
+      ],
+      [
+        "m35d",
+        5
+      ],
+      [
+        "m35d",
+        6
+      ]
+    ],
+    "additional_guard": "fa27.requires_no_collision:未设置→true",
+    "old_asset_indices_preserved": true,
+    "other_planes_and_combinations_unchanged": true
+  }
+}
