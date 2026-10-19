@@ -4,7 +4,7 @@
   "branch": "codex/five-aircraft-mount-review",
   "formal_baseline": "main / 2.21.0 / 7a0559d",
   "user_report": "F4在UGB+SASM组合中左边6个UGB、右边3个，右边应该增加到6个",
-  "status": "root_cause_confirmed_pending_ammo_policy_choice",
+  "status": "resolved_keep_50_percent_and_9_visible",
   "confirmed": {
     "code": "f04e",
     "mask": 5,
@@ -101,12 +101,25 @@
     "src/mount_expansion_data.hpp": "f381f7c0913ca9856d5aeb548234e0d3e47dd8dfdcd483591c469f5533f4d816",
     "dist/DualSP/Scripts/loadout_profile.lua": "f17063c43de93a116cdfe148c111dbd78b4e9211070d217b32d3653765a00a07"
   },
-  "pending_choice": "双SP全局比例改62%，或仅F4该组合UGB至少12枚，或保留50%与真实9枚显示；尚未据此修改代码或个人设置",
   "compiled": false,
   "tests_run": false,
   "installed": false,
   "game_process_access": false,
   "game_functions_called": false,
   "game_files_changed": false,
-  "boundary": "只读现有日志和设置中必要的两项配弹比例；没有写游戏内存、调用游戏接口、代按按键或复现实机操作；旧回执和资源保留"
+  "boundary": "只读现有日志和设置中必要的两项配弹比例；没有写游戏内存、调用游戏接口、代按按键或复现实机操作；旧回执和资源保留",
+  "previous_status": "root_cause_confirmed_pending_ammo_policy_choice",
+  "choices_presented": "双SP全局比例改62%，或仅F4该组合UGB至少12枚，或保留50%与真实9枚显示；尚未据此修改代码或个人设置",
+  "decision": {
+    "source": "用户本会话对待选问题的回复",
+    "user_quote": "保持50%配弹，和9枚显示。这两个不用互相制约，另外装载数量也不用制约挂载模型设计。以后设计时遵从这个思路。毕竟两边对称才美观。",
+    "two_sp_percent": 50,
+    "ugb_visible_count": 9,
+    "layout_ugb_capacity": 12,
+    "global_ammo_setting_changed": false,
+    "aircraft_ammo_exception_added": false,
+    "runtime_display_changed": false,
+    "future_design_rule": "完整挂载布局先考虑真实支撑、净空和左右对称；配弹比例、实际载量及装填/待发数量不限制布局设计容量；配弹、布局与运行显隐分别处理，不为填满外观反改配弹规则。",
+    "closed": true
+  }
 }
