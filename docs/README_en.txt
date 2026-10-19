@@ -1,4 +1,13 @@
-AC7MultiSP 2.20.0
+AC7MultiSP 2.20.1 Source Candidate
+
+Source and documentation only: not built, tested or installed. The released version remains 2.20.0.
+• X retains native weapon cycling. Press and release L3 to toggle sustained target tracking.
+• With Camera hold and Hold R3 to recenter enabled, release a short R3 press to change view, or hold 0.3 seconds to recenter immediately without also changing view. Both sticks only release native countermeasures.
+• Fresh configurations enable L3 tracking, Camera hold and R3 hold-to-recenter by default. All remain optional in the second Bindings tab. Middle-mouse recenter, custom bindings and 5%–200% sensitivity remain.
+• F6 now uses General, Bindings, Logs and Debug pages with dark cards. Read details through hover/focus/click on ?, expand less-used bindings or aircraft controls, and use the fixed Save footer beneath scrollable content.
+• Migration backs up profiles.before-controller-clicks.json before moving to configuration 11. X replacement is retired; the new L3 and R3 behavior starts enabled. Existing Camera hold choices, bindings and loadouts remain. Matching core/UI/Lua files are required: management protocol 12, tracking 2, camera 4.
+
+The following 2.20.0 release notes are historical; this candidate's defaults and R3/X behavior follow the rules above.
 
 What is new in 2.20.0 (since 2.19.0)
 • Camera direction hold, off by default in the second Bindings tab, supports controller release, mouse viewpoint-mode release, short target selection and ordinary view changes. Tracking turns from the current direction and returns to it afterward. Native auto-recentering is suppressed only while Camera hold is enabled.
@@ -40,9 +49,9 @@ Controls
 • Choose SP1, SP2 and SP3 in sequence; the latter two can be NO WEAPON. Use keyboard or controller in native preparation menus.
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
-• Optional target tracking toggle: enable controller X replacement in the second tab, Bindings (off by default), or assign an independent keyboard key (unbound by default). Press once to track and again to stop. Y retains its native behavior. When X replacement is enabled, use the D-pad or native keyboard cycling for SP selection. Pausing, opening management, losing focus or losing the target stops tracking.
+• Optional toggle tracking: L3 is enabled by default in the second Bindings tab; press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
 • Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 10. Existing revision-10 settings need no further migration.
-• Camera hold is off by default in the second Bindings tab. R3 replacement is a separate default-off option; recenter defaults to middle mouse. Save settings to apply. Native view switching and recenter should use different keys.
+• Camera hold and Hold R3 to recenter are enabled by default for fresh configurations. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
