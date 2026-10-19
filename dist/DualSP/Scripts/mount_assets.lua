@@ -5,7 +5,7 @@ return {
     f15j={},
     f15m={},
     f16c={{6,"MSP_f16c_missile_outer",1,136},{7,"MSP_f16c_sasm_outer",3,64}},
-    fa27={},
+    fa27={{53,"MSP_fa27_mstm_neg",2,8}},
     mr2k={{8,"MSP_mr2k_aam_rear",2,136},{9,"MSP_mr2k_gpb_neg_aux",1,160},{10,"MSP_mr2k_lasm_pos",3,160}},
     mrgn={},
     rflm={{11,"MSP_rflm_hcaa_belly",1,8},{12,"MSP_rflm_hcaa_outer",1,32},{13,"MSP_rflm_laam_belly",3,96},{14,"MSP_rflm_hcaa_belly_neg",1,128},{15,"MSP_rflm_laam_belly_pos",3,128}},
@@ -19,5 +19,5 @@ return {
     su34={{30,"MSP_su34_sffs_outer",1,168},{31,"MSP_su34_hcaa_inner",2,136},{32,"MSP_su34_4agm_belly",3,128},{41,"MSP_su34_4agm_inner_belly",3,96},{42,"MSP_su34_hcaa_outer",2,64}},
     m29a={{33,"MSP_m29a_hpaa_outer_neg",1,128},{35,"MSP_m29a_4aam_inner",3,32},{43,"MSP_m29a_hpaa_outer",1,40},{44,"MSP_m29a_lagm_inner",2,200},{48,"MSP_m29a_4aam_outer",3,64},{49,"MSP_m29a_4aam_outer_pos",3,128}},
     f16x={{36,"MSP_f16x_4agm_outer",3,160}},
-    m35d={{37,"MSP_m35d_6aam_outer_neg",2,200},{38,"MSP_m35d_4agm_middle_pos",3,224}},
+    m35d={{37,"MSP_m35d_6aam_outer_neg",2,128},{38,"MSP_m35d_4agm_middle_pos",3,128},{50,"MSP_m35d_6aam_outer_pair",2,72},{51,"MSP_m35d_4agm_middle_pair",3,32},{52,"MSP_m35d_4agm_inner_pair",3,64}},
 }

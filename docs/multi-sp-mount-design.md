@@ -2,6 +2,8 @@
 
 本文当前正式版本为2.20.0，功能基于用户已验收2.19.5；仅版本标识重建，未扩大实测范围。原来源阶段及历史测量以下文证据为准。
 
+本分支另有2026-10-19五机复核候选：仅修订MiG-35D的三个双挂及XFA-27的SOD＋MSTM，以下布局表这两项为候选值。正式2.20.0发布与安装不变；本轮未编译、运行测试、安装或操作游戏，待接收线程成套交付后实测。来源为main `66cc725`，详见[本轮依据](../evidence/static-mount-five-aircraft-review.json)。
+
 本文记录已验收并本地发布的2.19.0、2.19.1用户反馈及2.19.4候选阶段的CFA/FALKEN策略，适用原生 Steam build 9855922。2.19炮口按地址查找修订已获用户确认有效、卡顿明显减少；2.19.1互切无展开动画也获确认，但仍明显卡顿，并有MSL/EML双发反馈。后续`codex/cfa44-fire-switch-audit`减少重复核对、修补CFA发射状态跨类别的边界，并改为FALKEN发射期间丢弃切换请求，已接收至2.19.2并成套构建、通过现有检查和安装，实际效果待用户测试。已测旧版本与产物不回改。完整旧研究和逐组合长表保留于[挂载设计归档](archive/multi-sp-mount-design-before-2.16.txt)。
 
 最新CFA结论以上方版本历史之后的“已验证经验与踩坑”为准：2.19.3优化已获确认，正常切换约26ms、双发暂未复现；继续争取10ms的源码随2.19.5获用户确认有效并合入2.20.0，但没有10ms新计量，首次峰值用户接受。FALKEN及其他机体不随此次CFA反馈扩大验收。
@@ -98,7 +100,7 @@
 | F-15J | HCAA2＋SAAM2；HCAA4＋QAAM2；SAAM4＋QAAM2 | HCAA2＋SAAM2＋QAAM2 | 保前后排及原生离架关系 |
 | F-15 S/MTD | HPAA1＋FAEB1；HPAA2＋HVAA4；FAEB2＋HVAA4 | HPAA1＋FAEB1＋HVAA4 | 保已有布局；此前DLC未单独实测 |
 | F-16C | 4AAM2＋GPB2；4AAM2＋SASM2；GPB2＋SASM2 | 4AAM1＋GPB2＋SASM1 | 导弹外侧、炸弹内侧；保持原窗口 |
-| XFA-27 | SOD1＋MSTM1；SOD1＋ECM；MSTM2＋ECM | SOD1＋MSTM1＋ECM | ECM仍须真实类及持续机制资格 |
+| XFA-27 | SOD1＋MSTM2；SOD1＋ECM；MSTM2＋ECM | SOD1＋MSTM1＋ECM | SOD＋MSTM双挂补回负侧下挂，半侧副本保支架；候选待测 |
 | Mirage 2000-5 | GPB2＋4AAM2；GPB1＋LASM1；4AAM4＋LASM2 | GPB1＋4AAM2＋LASM1 | GPB共存时AAM后腹；保前腹原固定结构 |
 | ADFX-01 | TLS＋MPBM2；TLS＋IEWS；MPBM2＋IEWS | TLS＋MPBM2＋IEWS | 保原架及已登记IEWS/TLS持续策略 |
 | Rafale M | HCAA2＋LACM2；HCAA2＋LAAM2；LACM2＋LAAM2 | HCAA1＋LACM2＋LAAM1 | Socket名完整双射，不按池枚举猜顺序 |
@@ -112,9 +114,25 @@
 | Su-34 | SFFS2＋HCAA2；SFFS2＋4AGM4；HCAA2＋4AGM4 | SFFS2＋HCAA2＋4AGM2 | 双挂4AGM内翼/腹4，三挂仍腹2 |
 | MiG-29A | HPAA2＋LAGM2；HPAA2＋4AAM2；LAGM2＋4AAM2 | HPAA1＋LAGM2＋4AAM1 | 内LAGM成对，外左HPAA/右4AAM |
 | F-16XL | UGB12＋4AAM4；UGB12＋4AGM2；4AAM2＋4AGM6 | UGB12＋4AAM4＋4AGM2 | 实体面复核支持窄间距，不据此宣称离架通过 |
-| MiG-35D | SAAM2＋6AAM1；SAAM2＋4AGM1；6AAM1＋4AGM1 | SAAM2＋6AAM1＋4AGM1 | 仅原生分侧站位，保原窗口 |
+| MiG-35D | SAAM2＋6AAM2；SAAM2＋4AGM2；6AAM2＋4AGM2 | SAAM2＋6AAM1＋4AGM1 | 双挂分别为内SAAM/最外6AAM、内SAAM/中4AGM、最外6AAM/内4AGM；候选待测 |
 
 F-15E 早期仅挪模型、未同步离架时，机腹导弹下落穿过SFFS；现四枚导弹与六枚炸弹换用位置，用户认可净空改善。F-35C 曾为达到四个AAM窗口增加两处模型，但与发射中的SOD冲突，故保两处。Su-30SM 外移QAAM曾失去导轨支撑，已回滚。这些经验说明：位置更多或更对称不是唯一标准，动态离架和真实支撑优先。
+
+### 五机复核候选（2026-10-19）
+
+依据用户已认可的Su-30M2、MiG-29A、Gripen等经验，双挂应独立使用释放出来的原生站位，同时保真实支撑和显示/离架同点。它是设计原则，不是这五款机体的新实机验收。
+
+| 机体 | 复核结论 |
+|---|---|
+| F-15 S/MTD | 保持。HPAA与同侧FAEB闭合间隙很小，FAEB展开范围与HPAA相交；含两者继续分侧各一。与HVAA的两种双挂已成对补满，不为对称新增未知支撑。 |
+| XFA-27 | 只改SOD＋MSTM：SOD为SWP1/sp12，MSTM从SWP2/sp23补为sp21、sp23。两枚MSTM均位于负Y，沿用原生相对位置；新增负侧SWP2副本保下挂sp21的支架，正侧SOD保原点。含ECM继续原方案，固定吊舱不套CFA隐藏策略。 |
+| F-4E | 保持。UGB和LAGM占同一翼下站位，继续UGB负侧六点、LAGM正侧一处；SASM位于更内侧。另两双挂已使用完整双侧，不叠回两套冲突的整架。 |
+| F-16XL | 保持。UGB共存时4AGM取外侧sp31/32，UGB十二点和4AAM四点保留；不含UGB时4AAM取后侧sp23/24、4AGM六点。旧实体面复核支持窄间距，不扩大为离架通过。 |
+| MiG-35D | 三个双挂独立补成对：SAAM2＋最外6AAM sp21/22；SAAM2＋中4AGM sp31/32；最外6AAM sp21/22＋内4AGM sp33/34。新增三份双侧副本保各组自身支撑；三挂仍保旧分侧布局，避免直接增加相邻最外6AAM/中4AGM风险。 |
+
+四份副本均在全部三LOD的主、深度及邻接索引中完整分区，Socket、材质、非索引字节和父链保留；资源新名编码及独立解码回读成立。四个调整组合逐武器全部LOD互配，含SOD闭合/展开，未见静态弹体穿面。MiG-35D的SAAM＋中4AGM有四对LOD包围盒重叠，进一步三角面复核未见相交；不能只凭AABB判定失败，也不能据此宣称动态离架已通过。
+
+核心表和Lua由同一源生成，旧50资源编号/字节保留，仅追加四份为54资源/108成员；本轮未制作PAK。XFA首次使用派生挂架，增加与其他静态分区机体相同的NoCollision只读守卫，原版三个SWP配置已离线核对为NoCollision，不改碰撞参数。库存、装填、锁定、齐射、冷却和持续效果策略保持。后续重点实测这四个双挂的支撑/离架、补装/低库存、MSL切换、改单挂及关闭模型归还；七组合门槛与运行身份核对继续沿用。
 
 ### 机外保留6架与原生旁路2架
 

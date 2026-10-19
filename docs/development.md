@@ -41,6 +41,10 @@ python -X utf8 src/release_package.py --build-dir Temp/build-2.20.0-final --vali
 
 ## 后续开发流程
 
+本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，五机复核只改MiG-35D三个双挂及XFA-27的SOD＋MSTM。源码和54资源输入已齐，未编译、运行测试、安装或操作游戏；正式2.20.0标识不在本分支改写，接收线程按下一补丁2.20.1统一版本。方案与配方/往返回执保存在`evidence/static-mount-five-aircraft-review.json`，不修改旧来源证据。
+
+接收时同时收取本分支源码/文档/证据和本机完整资源目录：`C:/Users/83717/.codex/worktrees/five-aircraft-mount-review/AC7_MultiSP/Temp/five-aircraft-mount-review/source`。该目录为旧50份原字节加4份新副本，共54资源/108文件，资源本身不入Git。可复制到接收工作区独立Temp目录，构建时通过`--mount-assets-dir`显式指定；原默认`Temp/mount-assets-2.14.0/source`只有旧50份，不能直接用于此候选。核心生成表、Lua清单和新PAK必须成套，不能拿现有2.20.0 PAK混装。新的JSON已加入来源冻结，旧构建回执不能接收这些功能差异。
+
 1. 看Git状态，从main新建`codex/`分支；不继续修改封存研究工作树。
 2. 更改唯一源码及对应正文。布局调整同时维护源JSON、生成表和资源配方；不只改生成结果。
 3. 用户明确授权后，才完整构建并运行适用检查。新构建使用独立Temp目录，不能覆盖旧实测产物。
