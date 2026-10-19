@@ -1,11 +1,13 @@
-AC7MultiSP 2.20.1 Source Candidate
+AC7MultiSP 2.20.1 Test Candidate
 
-Source and documentation only: not built, tested or installed. The released version remains 2.20.0.
+This candidate integrates always-visible/one-second weapon labels, the four-page management UI, L3 tracking/R3 0.3-second recenter and XFA-27/MiG-35D mount changes. Management protocol 13/configuration 12; first launch backs up before migration. Gameplay verification is pending.
+
+This candidate has been built, passed the 11 existing checks and been installed; gameplay validation is pending. The released version remains 2.20.0.
 • X retains native weapon cycling. Press and release L3 to toggle sustained target tracking.
 • With Camera hold and Hold R3 to recenter enabled, release a short R3 press to change view, or hold 0.3 seconds to recenter immediately without also changing view. Both sticks only release native countermeasures.
 • Fresh configurations enable L3 tracking, Camera hold and R3 hold-to-recenter by default. All remain optional in the second Bindings tab. Middle-mouse recenter, custom bindings and 5%–200% sensitivity remain.
 • F6 now uses General, Bindings, Logs and Debug pages with dark cards. Read details through hover/focus/click on ?, expand less-used bindings or aircraft controls, and use the fixed Save footer beneath scrollable content.
-• Migration backs up profiles.before-controller-clicks.json before moving to configuration 11. X replacement is retired; the new L3 and R3 behavior starts enabled. Existing Camera hold choices, bindings and loadouts remain. Matching core/UI/Lua files are required: management protocol 12, tracking 2, camera 4.
+• Migration backs up profiles.before-controller-clicks.json then backs up profiles.before-central-weapon-display.json before moving to configuration 12. Both backups retain the original old bytes. Central weapon text defaults to always visible. X replacement is retired; the new L3 and R3 behavior starts enabled. Existing Camera hold choices, bindings and loadouts remain. Matching core/UI/Lua files are required: management protocol 13, tracking 2, camera 4.
 
 The following 2.20.0 release notes are historical; this candidate's defaults and R3/X behavior follow the rules above.
 

@@ -299,7 +299,7 @@ int main() {
         }
     }
     // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==50);
+    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==54);
     int multiCases=0;
     for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
         const auto type=mountExpansionAircraft(aircraft);
