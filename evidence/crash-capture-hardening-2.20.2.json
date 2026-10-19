@@ -1,0 +1,43 @@
+{
+  "revision": 2,
+  "updated_at": "2026-10-19T09:34:53.767533+08:00",
+  "entry": "src/research/start_crash_capture.ps1",
+  "entry_sha256": "c7bfd2078315d1e7580c59d60af845f6375cc20d58c4efb6cbfc6e3ea8d86638",
+  "desktop_shortcut": "F:/桌面/AC7 崩溃取证启动.lnk",
+  "shortcut_target_verified": true,
+  "features": [
+    "硬件执行断点记录两种退出和ANSI/Unicode消息框，保留F12自动放行",
+    "首次异常交还原生处理，严重异常/消息框/非零退出共用每PID一份完整内存预算",
+    "低于8GiB空闲时降为含数据段小转储并记录策略",
+    "两路输出异步独立落盘，状态文件原子更新",
+    "每5秒日志快照、时间戳及调试连接查询，拒绝旧版或过期就绪状态",
+    "提前持有进程句柄以保留真实退出码",
+    "按触发标记、写盘成功次数、MDMP头、长度及摘要判定产物；不完整/仅退出时明确提醒并保留needs_attention",
+    "运行中stdin控制请求明确记未执行，避免假报快照或脱离成功"
+  ],
+  "probe": {
+    "evidence": "Temp/capture-check-2.20.2-20261019-093158/probe-result.json",
+    "sha256": "bb8166fe85f33afa4b998e708480b96abd5adaec3fd8eb037436755104ea36d7",
+    "reused_existing_access_violation_probe": true,
+    "first_chance_observed": true,
+    "exit_hook_observed": true,
+    "dump_count": 4,
+    "all_headers_valid": true,
+    "full_memory_bytes": 43658791,
+    "game_started": false
+  },
+  "validation_scope": "实际探针核对命令生成、输出排空、首次异常/退出触发及转储；其后补充就绪复用和写盘次数判定并做末次语法/环境核对。完整游戏内故障、消息框及后台状态生命周期待后续使用验证。",
+  "limitations": [
+    "附加前的早期故障可能遗漏",
+    "非Win32消息框、外部终止等路径不保证留下初始故障",
+    "调试器会改变时序；一次探针通过不等于所有游戏崩溃均可捕获"
+  ],
+  "compiled_product_for_probe": false,
+  "product_test_modules_added": false,
+  "game_or_profiles_modified_for_capture": false,
+  "references": [
+    "https://learn.microsoft.com/en-us/windows-hardware/drivers/debuggercmds/-dump--create-dump-file-",
+    "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/breakpoints3",
+    "https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/cdb-command-line-options"
+  ]
+}
