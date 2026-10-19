@@ -57,8 +57,14 @@ def main():
         support.restype = ctypes.c_int
         # 导出使用 Lua 参数协议；这里只核对符号存在，不能以空指针调用。
         checks.append(name + '_loaded_exports')
-    if (info['name'] + ' ' + info['version'] + ' 管理').encode('utf-8') not in (build / 'DualSPUI.dll').read_bytes():
-        raise ValueError('UI 标题不是当前产品版本')
+    # 新卡片页把产品名与版本分开绘制，仍同时核对源码显示点和实际DLL。
+    panel = (ROOT / 'src/management_panel.hpp').read_text(encoding='utf-8')
+    ui_bytes = (build / 'DualSPUI.dll').read_bytes()
+    if (f'ImGui::Begin("{info["name"]}###DualSPManagement"' not in panel or
+            f'ImGui::TextDisabled("{info["version"]}")' not in panel or
+            (info['name'] + '###DualSPManagement').encode('utf-8') not in ui_bytes or
+            (info['version'] + '\0').encode('utf-8') not in ui_bytes):
+        raise ValueError('UI 标识或显示版本不是当前产品版本')
     verify_build(receipt, build)
     if any(digest(ROOT / name) != value for name, value in test_sources.items()):
         raise ValueError('测试期间测试来源改变')

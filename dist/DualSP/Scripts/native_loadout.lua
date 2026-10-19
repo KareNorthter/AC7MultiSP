@@ -3,6 +3,9 @@
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Flow=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_flow.lua")
 local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 预览与核心共用百分比及向上取整规则。
+-- 本机加载器会借用反射字段名的字节；固定名字由这些闭包持续持有，避免临时拼接串回收后留下悬空缓存。
+local specFields={"SpecItem1","SpecItem2","SpecItem3","SpecItem4","SpecItem5","SpecItem6"}
+local ammoFields={"WeaponsSP1","WeaponsSP2","WeaponsSP3"}
 local NativeLoadout={}
 local TRANSIENT,VISIBLE,COLLAPSED=0x40,0,1
 local function valid(o)return o and o:IsValid()end
@@ -346,7 +349,7 @@ function NativeLoadout.new(dependencies)
         assert(valid(info)and valid(info.HangarAircraftAllWeaponsAmmo),"等待中的兵装信息区缺失")
         local ammo=info.HangarAircraftAllWeaponsAmmo -- 两条 SP 占位，不展示原单 SP 内容或猜测载量。
         for index=1,3 do
-            local row=controls(ammo["WeaponsSP"..index])
+            local row=controls(ammo[ammoFields[index]])
             setText(view,clone(view,assert(row.WeaponsName),false),"SP"..index)
             setText(view,clone(view,assert(row.WeaponsAmmo),false),"…")
         end
@@ -734,7 +737,7 @@ function NativeLoadout.new(dependencies)
         local fullNameTemplate=controls(info.HangarAircraftWeaponNameLong) -- 原生彩色分类图标和全名字体。
         local items={}
         for i=1,6 do
-            local item=group["SpecItem"..i]
+            local item=group[specFields[i]]
             assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar)and valid(item.SpecBar.BarA),"准备性能项模板缺失")
             items[i]=item
         end
@@ -755,7 +758,7 @@ function NativeLoadout.new(dependencies)
              ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",gap)
         c.ammo={}
         for i=1,3 do
-            c.ammo[i]=preparationAmmoRow(c,ammo["WeaponsSP"..i])
+            c.ammo[i]=preparationAmmoRow(c,ammo[ammoFields[i]])
         end
         mask(c,wrapper);mask(c,info.HangarAircraftWeaponNameLong)
         mask(c,info.HangarAircraftWeaponProperties);mask(c,info.HangarAircraftWeaponType)
@@ -845,7 +848,7 @@ function NativeLoadout.new(dependencies)
             local column={bars={},barWidth=width*.40};c.columns[index]=column
             column.name=informationTitle(c,assert(weaponTemplate.WeaponsName),panel,width)
             for stat=1,6 do
-                local item=group["SpecItem"..stat] -- 性能名称和画刷取自原生右侧兵装组。
+                local item=group[specFields[stat]] -- 性能名称和画刷取自原生右侧兵装组。
                 assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar.BarA),"STANDBY 性能模板缺失")
                 local y=statTop+(stat-1)*statPitch -- 六行性能共用固定节奏，随原生父容器缩放。
                 infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.52,Y=statPitch},false)
@@ -1015,7 +1018,7 @@ function NativeLoadout.new(dependencies)
         assert(origin.X+3*columnWidth+2*gap<=mainSize.X-60,"补给三栏超出面板安全边距")
         local items={} -- 直接使用已核对的 SpecName/SpecBar 原生变量，不复制 UserWidget 子树。
         for i=1,6 do
-            local item=group["SpecItem"..i]
+            local item=group[specFields[i]]
             assert(valid(item)and valid(item.SpecName)and valid(item.SpecBar)and valid(item.SpecBar.BarA),"补给性能项模板缺失")
             items[i]=item
         end

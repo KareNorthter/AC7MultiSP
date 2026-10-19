@@ -1,0 +1,172 @@
+{
+  "date": "2026-10-19",
+  "candidate": "2.20.3",
+  "branch": "codex/f22-preparation-hang",
+  "base_commit": "b05eb8b216f61bcdaf0fcca69f367e8f9a431921",
+  "installed_baseline": "evidence/2.20.2-installed.json",
+  "formal_release": "main / v2.20.0",
+  "status": "定位已安装版本原始异常并完成源码规避；新源码未编译、测试或安装",
+  "user_report": "出击选F-22后停在正在准备兵装界面。用户确认进程尚在、没有选择任何SP，也没有展示SP。",
+  "authorization": "本轮排查及必要源码修订。只读已有日志和取证器保存的转储，不控制游戏；用户允许必要时询问模型/动画线程，但现场定位为页面反射字符串池，未向该线程发消息。",
+  "runtime_integrity": {
+    "files": 17,
+    "mismatches": [],
+    "mount_pak_sha256": "a5eb2e80025bec9b92d5fff6a19e82ed10396919f447634e1e560546ec88178e",
+    "mount_pak_matches": true,
+    "loader_sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd"
+  },
+  "timeline": [
+    "10:09:45（北京时间）预览由PW切到F-22A，NATIVE_MODEL_READY plane=110，Lua等待约364毫秒；没有对应NATIVE_LOADOUT_ATTACHED或UI_ATTACH_COST完成记录。",
+    "10:09:45.645取证器已命中游戏MessageBoxW，文字为Fatal error及Game has crashed and will close；停住画面对应致命错误处理。",
+    "10:09:46开始保存完整转储；取证器末尾记录进程/调试器以0x80000004退出，capture_complete=false，不能据此认定最初故障为调试断点。"
+  ],
+  "dump": {
+    "directory": "E:\\AC7_MultiSP\\Temp\\crash-capture-20261019-095424-131\\session-1-pid-29544",
+    "recorded_dump": {
+      "bytes": 5086995822,
+      "name": "primary_2a14_2026-10-19_10-09-46-095_7368.dmp",
+      "sha256": "8AAA1D2E13826D770ADFE20FEC5E0D0B1104CA25ED8D6254C07EDAB17D66C39E",
+      "valid_header": true
+    },
+    "quality": "incomplete",
+    "note": "保留原不完整退出回执；原始异常仍可从主线程异常分派栈恢复，不用消息框断点上下文替代原始故障。"
+  },
+  "original_exception": {
+    "record": "0xabc54ce0b0",
+    "context": "0xabc54cdbc0",
+    "code": "0xc0000005",
+    "operation": "read",
+    "fault_instruction": "VCRUNTIME140+0xda93: cmp rax,qword ptr [rcx+rdx]",
+    "bad_address": "0x1b62e3132c8",
+    "compare_length": 9,
+    "path": "Lua UObject __index经UE4SS字符串池哈希桶比较失效的旧键；导出符号只有邻近名称，未把HasAnyInternalFlags等偏移符号误判为真实函数名。",
+    "borrowed_key": {
+      "node": "0x1b5c509fb60",
+      "borrowed_key": "0x1b62e3132c8",
+      "length": 9,
+      "owned_wide_string": "SpecItem6",
+      "current_lua_key": "SpecItem6",
+      "key_memory_state": "0x2000",
+      "key_region": {
+        "start": "0x1b62e303000",
+        "length": 143360,
+        "allocation": "0x1b62d710000"
+      }
+    },
+    "lua_stack": [
+      {
+        "source": "@E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+        "function_line": 715,
+        "line": 737
+      },
+      {
+        "source": "@E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+        "function_line": 401,
+        "line": 403
+      },
+      {
+        "source": "@E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+        "function_line": 1121,
+        "line": 1187
+      },
+      {
+        "source": "@E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+        "function_line": 1263,
+        "line": 1272
+      },
+      {
+        "source": "@E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+        "function_line": 1262,
+        "line": 1263
+      },
+      {
+        "source": "@E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua",
+        "function_line": 1380,
+        "line": 1581
+      },
+      {
+        "source": "@E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua",
+        "function_line": 1745,
+        "line": 1763
+      },
+      {
+        "source": "@E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua",
+        "function_line": 1744,
+        "line": 1745
+      }
+    ],
+    "line_meaning": "native_loadout.lua:737：group[SpecItem拼接序号]，本次查询SpecItem6；调用链为attach→measuredAttach→pump→主循环。",
+    "interpretation": "池节点借用键为9字节地址，落入MEM_RESERVE(0x2000)未提交区；同一节点自有宽字符串及当前Lua查询均为SpecItem6。与上游悬空string_view键缺陷一致，不是仅凭屏幕文字推测模型加载。"
+  },
+  "references": [
+    {
+      "url": "https://github.com/UE4SS-RE/RE-UE4SS/issues/1270",
+      "role": "上游报告字符串池借用Lua字符串，回收后哈希比较访问释放内存"
+    },
+    {
+      "url": "https://github.com/UE4SS-RE/RE-UE4SS/pull/1271",
+      "role": "上游修订为拥有键的存储；不据此替换本机AC7专用加载器"
+    },
+    {
+      "url": "https://www.lua.org/source/5.4/lstate.h.html",
+      "role": "CallInfo/lua_State布局参考，按本机转储指针及标签验证"
+    },
+    {
+      "url": "https://www.lua.org/source/5.4/lobject.h.html",
+      "role": "Proto/TString布局参考"
+    },
+    {
+      "url": "https://www.lua.org/source/5.4/ldebug.c.html",
+      "role": "保存PC及绝对/差分行号还原规则参考"
+    }
+  ],
+  "source_fix": {
+    "strategy": "将会进入UObject反射的动态拼接字段名改为固定短字符串数组，由实际查询闭包的上值持续持有，直至这些查询回调退出生命周期。Lua同状态短字符串驻留使后续使用同名常量保持同一存活字符串。",
+    "fields": {
+      "native_loadout.lua": [
+        "SpecItem1..6",
+        "WeaponsSP1..3"
+      ],
+      "main.lua": [
+        "SpecialWeaponConfig1..3",
+        "SWP1..3"
+      ]
+    },
+    "sites_changed": 7,
+    "scope": "准备、待机/PART、补给性能行/弹药行，以及机体兵装配置/挂架池查询；各机体共用。",
+    "remaining_concat_indexes": "ItemText/CursorText及配置和JSON索引均为普通Lua表，人工复核不经加载器反射字符串池。",
+    "unchanged": "模型/动画/资源、兵装和弹药规则、镜头与按键、协议13/配置12/注视2/镜头4、个人配置和其他Mod、专用加载器及受保护核心。",
+    "restart": "后续成套更新后完整重启游戏；热重载不能修复旧进程已有的失效缓存。"
+  },
+  "validation": {
+    "review": "人工核对已有完整转储、Lua调用链、缓存节点和未提交地址、字段名上值的持有关系、全部拼接索引、Git差异与摘要；未执行新产品或测试代码。",
+    "compiled": false,
+    "tests_written_or_run": false,
+    "installed": false,
+    "new_runtime_verified": false,
+    "game_started_stopped_or_input_injected": false,
+    "live_process_attached_or_written": false,
+    "raw_dumps_committed": false,
+    "historical_receipts_modified": false,
+    "pushed_or_uploaded": false
+  },
+  "limits": [
+    "本次为模组侧规避已定位触发路径，不是加载器全局修复，也不保证其他Mod产生的临时字段名。",
+    "新源码尚待获授权部署后，验证长任务返机库、反复换机和准备/待机/PART/补给进出；本次没有自动操作。",
+    "PW旧出击崩溃缺原始异常证明，保留原因待查，不追认同因或已修复。"
+  ],
+  "offline_materials": {
+    "E:\\AC7_MultiSP\\Temp\\f22-preparation-20261019-100945\\exception.txt": "5b71bbb00c9744d97df8ae62c93f0430ff97e596df008e849b91e1d9b6ab8745",
+    "E:\\AC7_MultiSP\\Temp\\f22-preparation-20261019-100945\\key.txt": "f48fb87fb016b9357a0b8939f9f88d97ec803197c1db983fe8a32c69739c9089",
+    "E:\\AC7_MultiSP\\Temp\\f22-preparation-20261019-100945\\lua-stack.json": "58683dbe48e3204b47591702143d815952121409a3614a946cb1048cb598ff6b",
+    "E:\\AC7_MultiSP\\Temp\\f22-preparation-20261019-100945\\borrowed-key.json": "bd3e5fafd6e370dc76ed6d5a83955166838bdd8077e3c9f3b379c9c61dc4f94a"
+  },
+  "source_sha256": {
+    "VERSION": "eda128e388c3ea1d0e3b598208569b05919ea48de6e54455ea798637c5e2c8f5",
+    "dist/DualSP/Scripts/main.lua": "b142f5fb70c668582282b4477107c3258608433d7b012c9861365c6194ac4199",
+    "dist/DualSP/Scripts/native_loadout.lua": "17b6a965a941260ccc5f8a4f35c5e68eb2864e3e594a9cf9db9cb30097b4ff02",
+    "src/management_panel.hpp": "45fa65b57f8c7aa3b91e176b50fc94f3d0338bda9c8683ceaad9ebdd410b09ee",
+    "src/product.json": "47823214f925948d91c3ea4f711f411e90800d4b8409b2ea852553caa701cf97"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}

@@ -53,10 +53,10 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=11; // R3独立开关和新灵敏度范围须成套部署。
+constexpr int managementProtocol=13; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true;
-bool draftTargetGazePadX=false,draftCameraHold=false;
-bool draftCameraR3=false;
+bool draftTargetGazePadL3=true,draftCameraHold=true;
+bool draftCameraR3=true;
 int draftTargetGazeKey=0,targetGazeResponse=0;
 int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
 bool suppressedCaptureMouse=false;
@@ -65,6 +65,7 @@ std::array<int,4> draftKeys{49,50,51,52};
 std::array<dualsp::Shortcut,3> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
 std::array<dualsp::Shortcut,3> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
+std::string draftCentralWeaponDisplay="always"; // 默认保留中央简称常驻。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
@@ -81,6 +82,7 @@ ULONGLONG hotkeyToastUntil{};
 bool toastIsError=false;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
 const char* tr(const char* zh,const char* en);
+void panelHelp(const char* zh,const char* en);
 std::string uiMessage(const std::string& message,
     const char* zh="操作未完成，请在日志页查看详细原因。",
     const char* en="The operation could not be completed. See Logs for details.");
@@ -299,14 +301,25 @@ bool init(IDXGISwapChain* swap) {
     io.ConfigNavMoveSetMousePos=false;
     io.ConfigNavEscapeClearFocusItem=false; // 关闭下拉框后保留可见的键盘焦点。
     const auto font=std::filesystem::path(L"C:/Windows/Fonts/msyh.ttc");
-    if(std::filesystem::exists(font))io.Fonts->AddFontFromFileTTF(font.string().c_str(),26.f,nullptr,io.Fonts->GetGlyphRangesChineseFull());
+    if(std::filesystem::exists(font))io.Fonts->AddFontFromFileTTF(font.string().c_str(),22.f,nullptr,io.Fonts->GetGlyphRangesChineseFull());
     else io.Fonts->AddFontDefault();
-    ImGui::StyleColorsDark();auto& s=ImGui::GetStyle();s.WindowRounding=2;s.FrameRounding=2;s.WindowPadding={24,22};s.ItemSpacing={14,12};
-    s.Colors[ImGuiCol_WindowBg]={.025f,.065f,.085f,.98f};
-    s.Colors[ImGuiCol_FrameBg]={.075f,.14f,.17f,1};s.Colors[ImGuiCol_Button]={.09f,.21f,.25f,1};
-    s.Colors[ImGuiCol_ButtonHovered]={.15f,.39f,.43f,1};s.Colors[ImGuiCol_ButtonActive]={.16f,.48f,.50f,1};
-    s.Colors[ImGuiCol_Header]={.11f,.30f,.34f,1};s.Colors[ImGuiCol_Text]={.82f,.94f,.94f,1};
-    s.Colors[ImGuiCol_Border]={.20f,.43f,.48f,.7f};s.Colors[ImGuiCol_PlotHistogram]={.22f,.80f,.64f,1};
+    // 深色卡片、青绿强调色；增加留白，普通说明由帮助按钮按需展示。
+    ImGui::StyleColorsDark();auto& s=ImGui::GetStyle();
+    s.WindowRounding=14;s.ChildRounding=10;s.FrameRounding=6;s.PopupRounding=8;s.GrabRounding=6;s.TabRounding=6;
+    s.WindowPadding={24,20};s.FramePadding={12,7};s.ItemSpacing={12,10};s.ItemInnerSpacing={8,6};
+    s.ChildBorderSize=1;s.WindowBorderSize=1;s.ScrollbarSize=10;
+    s.Colors[ImGuiCol_WindowBg]={.055f,.069f,.09f,.99f};s.Colors[ImGuiCol_ChildBg]={.080f,.099f,.125f,1};
+    s.Colors[ImGuiCol_PopupBg]={.085f,.105f,.135f,.99f};s.Colors[ImGuiCol_Border]={.18f,.23f,.28f,.65f};
+    s.Colors[ImGuiCol_FrameBg]={.12f,.15f,.19f,1};s.Colors[ImGuiCol_FrameBgHovered]={.16f,.23f,.27f,1};
+    s.Colors[ImGuiCol_FrameBgActive]={.18f,.29f,.32f,1};s.Colors[ImGuiCol_Text]={.90f,.93f,.96f,1};
+    s.Colors[ImGuiCol_TextDisabled]={.53f,.61f,.68f,1};s.Colors[ImGuiCol_Button]={.11f,.30f,.31f,1};
+    s.Colors[ImGuiCol_ButtonHovered]={.14f,.42f,.41f,1};s.Colors[ImGuiCol_ButtonActive]={.17f,.52f,.48f,1};
+    s.Colors[ImGuiCol_Header]={.12f,.25f,.29f,1};s.Colors[ImGuiCol_HeaderHovered]={.15f,.34f,.37f,1};
+    s.Colors[ImGuiCol_HeaderActive]={.18f,.40f,.41f,1};s.Colors[ImGuiCol_CheckMark]={.35f,.86f,.74f,1};
+    s.Colors[ImGuiCol_SliderGrab]={.30f,.75f,.68f,1};s.Colors[ImGuiCol_SliderGrabActive]={.40f,.92f,.80f,1};
+    s.Colors[ImGuiCol_Tab]={.08f,.12f,.16f,1};s.Colors[ImGuiCol_TabSelected]={.13f,.29f,.32f,1};
+    s.Colors[ImGuiCol_TabHovered]={.15f,.36f,.38f,1};s.Colors[ImGuiCol_Separator]={.20f,.27f,.33f,.7f};
+    s.Colors[ImGuiCol_NavCursor]={.39f,.84f,.79f,1};
     ImGui_ImplWin32_Init(gameWindow);ImGui_ImplDX11_Init(device,context);
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
     initialized=true;nativeLog("DX11 overlay ready");return true;
@@ -403,7 +416,8 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
-    draftTargetGazePadX=state.at("target_gaze_pad_x").get<bool>();
+    draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
+    draftTargetGazePadL3=state.at("target_gaze_pad_l3").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
     draftCameraR3=state.at("camera_r3_enabled").get<bool>();
     draftCameraCenterKey=state.at("camera_center_key").get<int>();
@@ -504,7 +518,8 @@ void drawDebugAircraft() {
     ImGui::TextWrapped("%s",aircraftMode=="next_restart"?
         tr("选择机体后请手动重开本任务，换机才会生效；当前飞行中的机体不会立即替换。","Select an aircraft, then manually restart this mission to apply it. The current aircraft is not replaced immediately."):
         tr("选择机体后点击下方按钮，将重开本任务并使用目标机体；当前任务进度会重置。","Choose an aircraft and use the button below to restart this mission with it. Current mission progress will reset."));
-    ImGui::TextWrapped("%s",tr("包含未购买及无DLC许可的官方机体；不改购买记录，能否生成以游戏实际结果为准。","Includes unpurchased and unlicensed official aircraft. Purchase records stay unchanged; spawning depends on the game."));
+    panelHelp("包含未购买及无DLC许可的官方机体；不改购买记录，能否生成以游戏实际结果为准。",
+        "Includes unpurchased and unlicensed official aircraft. Purchase records stay unchanged; spawning depends on the game.");
     const bool busy=debugAircraftBusy();
     const bool available=aircraftSupported&&aircraftAvailable&&!busy&&pendingDebug==0;
     const auto selected=std::find_if(debugAircraftOptions.begin(),debugAircraftOptions.end(),[](const auto& option){return option.planeId==aircraftTarget;});
@@ -546,9 +561,8 @@ void drawDebugAircraft() {
 void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
     ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),uiMessage(state.value("plane_name",std::string())).c_str());
-    ImGui::TextWrapped("%s",tr("调试：任务内重配 SP。按勾选顺序（从上到下）分配 SP1 / SP2 / SP3。","Debug: rebuild SP loadout in this mission. Checked weapons become SP1 / SP2 / SP3 from top to bottom."));
-    ImGui::TextWrapped(tr("快捷测试：%s 轮切SP组合；%s 即时开关模型。按键页可自定义。","Quick test: %s cycles SP combinations; %s toggles models. Customize in Bindings."),shortcutLabel(shortcuts[1]).c_str(),shortcutLabel(shortcuts[2]).c_str());
-    ImGui::TextWrapped("%s",tr("应用后 SP 按已保存的管理比例配弹并补满，切回 MSL；普通导弹、机炮、干扰弹保留。个人方案和已有检查点不改写。","Apply refills SP ammunition using saved management percentages, then selects MSL. MSL, gun and flares are preserved. Saved loadouts and existing checkpoints are unchanged."));
+    panelHelp("按列表从上到下分配SP1/SP2/SP3。应用后按已保存比例补满SP并切回MSL；普通导弹、机炮、干扰弹保留，个人方案和已有检查点不改写。组合轮切及模型快捷键在按键页设置。",
+        "Checked weapons become SP1/SP2/SP3 from top to bottom. Applying refills SPs with saved percentages and selects MSL; standard missiles, gun, countermeasures, saved loadouts and checkpoints remain unchanged. Configure loadout/model shortcuts in Bindings.");
     const bool available=debug.value("available",false)&&pendingDebug==0&&!debugAircraftBusy(); // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
     const int count=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true)); // 实际选择数量。
@@ -576,7 +590,7 @@ void drawDebugLoadout(bool focus) {
     }
     if(!debug.value("available",false)&&debug.contains("reason"))
         ImGui::TextWrapped("%s",uiMessage(debug.at("reason").get<std::string>(),"当前无法调试兵装，请查看日志。","Loadout debugging is unavailable. See Logs for details.").c_str());
-    ImGui::TextWrapped("%s",tr("若提示仍有活动武器，请关闭面板、等待已发射武器结束后重试。换机入口见下方。","If active weapons are reported, close this panel and wait for them to finish before retrying. Aircraft changes are available below."));
+
     ImGui::BeginDisabled(!available||!valid);
     if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),
         {std::min(ImGui::GetContentRegionAvail().x,430.f),36})) {
@@ -620,7 +634,8 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},
-        {"target_gaze_pad_x",draftTargetGazePadX},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
+        {"central_weapon_display",draftCentralWeaponDisplay},
+        {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"camera_r3_enabled",draftCameraR3},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
@@ -633,192 +648,7 @@ bool beginManagementTab(const char* label,int index) {
     if(selected)managementTab=index;
     return selected;
 }
-// 普通管理和显式调试分开，键盘焦点始终可以到达所有操作。
-void drawPanel() {
-    const auto display=ImGui::GetIO().DisplaySize; // 面板随窗口尺寸缩放，固定居中。
-    const float width=std::min(1180.f,display.x-40),height=std::min(920.f,display.y-35);
-    ImGui::SetNextWindowPos({display.x/2,display.y/2},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin(tr("AC7MultiSP 2.20.0 管理###DualSPManagement","AC7MultiSP 2.20.0 Management###DualSPManagement"),nullptr,
-        ImGuiWindowFlags_NoResize|ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoSavedSettings);
-    if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
-        ImGui::TextWrapped("%s",tr("管理界面与控制器版本不匹配，请完整安装同一版本。","Management UI and controller versions do not match. Install a complete matching version."));
-        if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError,"管理状态异常，请查看日志。","Management data could not be read. See Logs for details.").c_str());
-        if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
-        ImGui::End();return;
-    }
-    // 暂停归属来自游戏线程回执；渲染线程不推断原生任务状态。
-    if(state.contains("management_pause")) {
-        const auto& pause=state.at("management_pause"); // 关闭失败会重新打开面板并显示具体错误。
-        if(pause.contains("error"))ImGui::TextWrapped("%s",uiMessage(pause.at("error").get<std::string>(),"暂停交接未完成，请查看日志。","Pause handoff failed. See Logs for details.").c_str());
-        else if(pause.value("owned",false))ImGui::TextWrapped("%s",tr("管理界面已暂停任务；关闭本界面后继续飞行。","Management paused the mission; close this panel to resume."));
-        else if(pause.value("existing",false))ImGui::TextWrapped("%s",tr("打开前已有原生暂停；关闭本界面后仍保留，请从游戏暂停菜单继续。","The mission was already paused; resume from the game's pause menu after closing."));
-    }
-    // 语言切换只影响界面草稿，点击保存后持久化；稳定 ID 保留当前页和焦点。
-    int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
-    ImGui::SetNextItemWidth(210);
-    if(focusManagement){ImGui::SetKeyboardFocusHere();focusManagement=false;}
-    if(ImGui::Combo(tr("语言选择###Language","Language###Language"),&language,
-        tr("跟随游戏\0中文\0English\0","Game language\0Chinese\0English\0")))
-        draftLanguage=language==0?"auto":language==1?"zh":"en";
-    ImGui::TextWrapped("%s",tr("键盘：Tab / Shift+Tab 移动，方向键选择，Enter / 空格操作；Ctrl+Tab 切页，Esc 返回或关闭。","Keyboard: Tab / Shift+Tab to move, arrows to select, Enter / Space to act; Ctrl+Tab changes pages, Esc goes back or closes."));
-    ImGui::Separator();
-    if(state.value("mission_fixed_sp",false))ImGui::TextWrapped("%s",tr(
-        "第13关使用任务指定的SP；多SP、模型预览和调试换装暂时停用，离开后自动恢复。",
-        "Mission 13 uses its assigned SP. Multi-SP, model previews and loadout debugging are temporarily disabled and resume after leaving."));
-    if(ImGui::BeginTabBar("ManagementTabs")) {
-        if(beginManagementTab(tr("功能与参数###Features","Features & Parameters###Features"),0)) {
-            if(requestedTab==0)ImGui::SetKeyboardFocusHere();
-            ImGui::Checkbox(tr("启用 AC7MultiSP###ModEnabled","Enable AC7MultiSP###ModEnabled"),&draftModEnabled);
-            ImGui::TextWrapped("%s",tr("在主菜单或单人任务选择页保存，总开关可直接生效。任务、补给及机库中保存后，返回上述安全菜单自动应用，无需重启游戏；管理入口始终保留。","Save in the main menu or single-player mission selection to apply immediately. Saves in missions, resupply or the hangar apply automatically upon returning to those safe menus; no game restart is required. Management remains available."));
-            ImGui::SetNextItemWidth(300);
-            ImGui::SliderInt(tr("双 SP 各自弹药量###AmmoTwo","Ammo per SP with two SPs###AmmoTwo"),&draftAmmoPercentTwo,50,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-            ImGui::SetNextItemWidth(300);
-            ImGui::SliderInt(tr("三 SP 各自弹药量###AmmoThree","Ammo per SP with three SPs###AmmoThree"),&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-            ImGui::TextWrapped("%s",tr("默认双 SP 各 50%、三 SP 各 33%；单 SP 为 100%。先计入部件，再按百分比向上取整。保存后于下一次出击、补给确认或调试应用时配弹。","Defaults: 50% per SP with two SPs, 33% with three, 100% with one. Parts apply first, then the percentage is rounded up. Saved values apply at the next departure, resupply confirmation or debug loadout application."));
-            ImGui::Checkbox(tr("多 SP 武器模型同时挂载（实验性）###FixedMount","Simultaneous multi-SP weapon models (experimental)###FixedMount"),&draftFixedMountEnabled);
-            ImGui::TextWrapped("%s",tr("保存后在下次出击、重启任务、检查点重试、补给确认或调试换装时生效，无需重启游戏。已适配机体保留机外挂载，部分内置弹舱继续使用当前 SP 原生模型；具体机体见安装说明。关闭或挂载失败时恢复原生外观。","Applies at the next sortie, mission restart, checkpoint retry, confirmed resupply or debug loadout; no game restart needed. Adapted aircraft retain external stores; some internal bays keep the current SP's native models. See installation notes for aircraft coverage. Disabled or failed mounting restores native visuals."));
-            ImGui::TextWrapped("%s",tr("同时控制机库与补给的挂载预览：模型随当前 SP 候选组合变化。预览只改变外观；失败时恢复原生显示，不影响选择、弹药或补给。","Also controls hangar and resupply model previews, following the current SP selection. Previews change appearance only; failures restore native visuals without affecting selection, ammunition or resupply."));
-            ImGui::TextWrapped("%s",tr("模组开启时，中央武器简称与右下兵装信息固定开启，跟随游戏 HUD 显隐；原游戏循环切换键继续可用。","When the mod is enabled, the central weapon abbreviation and lower-right weapon information stay enabled and follow game HUD visibility. Native weapon cycling remains available."));
-            if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"多挂外观已回退原生，请查看日志。","Multi-SP models reverted to native visuals. See Logs for details.").c_str());
-            if(state.at("mod_enabled").get<bool>()!=state.at("runtime_mod_enabled").get<bool>())
-                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("总开关已保存，等待返回主菜单或单人任务选择页。","Master switch saved; return to the main menu or single-player mission selection."));
-            if(state.contains("master_switch")&&state.at("master_switch").contains("error"))
-                ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>(),"总开关应用失败，请查看日志。","The master switch could not be applied. See Logs for details.").c_str());
-            if(state.at("fixed_mount_enabled").get<bool>()!=state.at("runtime_fixed_mount_enabled").get<bool>())
-                ImGui::TextColored({1,.8f,.35f,1},"%s",tr("模型开关已保存，等待重新出击、任务/检查点重试、补给确认或调试换装。","Model switch saved. Awaiting a sortie, mission/checkpoint retry, confirmed resupply or debug loadout."));
-            ImGui::EndTabItem();
-        }
-        if(beginManagementTab(tr("按键###Bindings","Bindings###Bindings"),1)) {
-            ImGui::TextWrapped("%s",tr("选择键位按钮并按 Enter，然后按新键；也可鼠标点击。武器选择使用单键，Esc 取消；键位不能重复。","Focus a binding and press Enter, then press the new key; mouse clicks also work. Weapon selection uses single keys; Esc cancels. Bindings must be distinct."));
-            ImGui::TextWrapped("%s",tr("与原生键位冲突时，请自行调整游戏或模组键位。","If a binding conflicts with the game, adjust either mapping yourself."));
-            if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp)) {
-                ImGui::TableSetupColumn(tr("选择","Selection"));ImGui::TableSetupColumn(tr("键盘","Keyboard"));
-                ImGui::TableSetupColumn(tr("手柄（固定）","Controller (fixed)"));ImGui::TableHeadersRow();
-                const char* weapons[]={"MSL","SP1","SP2","SP3"}; // 固定逻辑槽，实际简称由任务 HUD 显示。
-                const char* pads[]={tr("十字键左","D-pad Left"),tr("十字键上","D-pad Up"),tr("十字键右","D-pad Right"),tr("十字键下","D-pad Down")};
-                for(int slot=0;slot<4;++slot) {
-                    ImGui::PushID(slot);ImGui::TableNextRow();ImGui::TableNextColumn();ImGui::TextUnformatted(weapons[slot]);
-                    ImGui::TableNextColumn();
-                    const auto label=captureSlot==slot?std::string(tr("请按键…","Press a key...")):keyLabel(draftKeys[slot]);
-                    if(requestedTab==1&&slot==0)ImGui::SetKeyboardFocusHere();
-                    if(ImGui::Button(label.c_str(),{190,0})){captureSlot=slot;notice.clear();}
-                    ImGui::TableNextColumn();ImGui::TextUnformatted(pads[slot]);ImGui::PopID();
-                }
-                ImGui::EndTable();
-            }
-            ImGui::SeparatorText(tr("模组快捷键","Mod shortcuts"));
-            const char* shortcutNames[]={tr("呼出管理界面","Management"),tr("轮切SP组合","Cycle SP combinations"),tr("开关多SP模型","Toggle multi-SP models")};
-            ImGui::TextWrapped("%s",tr("点击后按单键，或按住Ctrl、Alt、Shift再按主键；Esc取消。保存后立即生效。","Click, then press one key, optionally holding Ctrl, Alt or Shift. Esc cancels; saving applies immediately."));
-            for(int i=0;i<3;++i) {
-                ImGui::PushID(100+i);ImGui::TextUnformatted(shortcutNames[i]);ImGui::SameLine(230);
-                const auto label=captureSlot==i+4?std::string(tr("请按快捷键…","Press shortcut...")):shortcutLabel(draftShortcuts[i]);
-                if(ImGui::Button(label.c_str(),{230,0})){captureSlot=i+4;notice.clear();}
-                ImGui::PopID();
-            }
-            if(ImGui::Button(tr("恢复三个默认快捷键","Reset three shortcuts"))) {
-                const std::array<dualsp::Shortcut,3> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3}}};
-                if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys)
-                    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys))
-                    {draftShortcuts=defaults;captureSlot=-1;notice.clear();}
-                else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
-            }
-            if(captureSlot>=0&&ImGui::Button(tr("取消改键","Cancel capture")))captureSlot=-1;
-            if(ImGui::Button(tr("恢复默认 1 / 2 / 3 / 4","Reset to 1 / 2 / 3 / 4"))) {
-                const std::array<int,4> defaults{49,50,51,52};
-                if(dualsp::validShortcuts(draftShortcuts,defaults)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,defaults)
-                    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,defaults))
-                    {draftKeys=defaults;captureSlot=-1;notice.clear();}
-                else notice=tr("默认武器键与当前键位重复，请先调整。","Default weapon keys conflict with a current binding.");
-            }
-            ImGui::SeparatorText(tr("目标注视","Target tracking"));
-            ImGui::Checkbox(tr("手柄X改为按一下切换目标注视###TargetGazePadX","Use controller X to toggle target tracking###TargetGazePadX"),&draftTargetGazePadX);
-            ImGui::TextWrapped("%s",tr("默认关闭。开启后X不再循环切换武器：按一下持续注视当前目标，再按一下停止。Y切换目标和原生长按注视保留；切武器可用十字键或原生键盘键。","Off by default. When enabled, X toggles sustained tracking of the current target instead of cycling weapons. Y target selection and native hold-to-track remain available. Use the D-pad or native keyboard binding for weapons."));
-            ImGui::TextWrapped("%s",tr("键盘注视键在下方独立设置，默认未绑定。按住不重复触发；暂停、打开管理、失焦、失去目标或离开任务会停止。第13关可单独使用。","Set an independent keyboard tracking key below; none is assigned by default. Holding it does not repeat. Tracking stops on pause, management, focus loss, target loss or mission exit. It also works in Mission 13."));
-            if(state.contains("target_gaze"))ImGui::TextWrapped("%s",state.at("target_gaze").value("active",false)?tr("当前目标注视：开启","Current target tracking: ON"):tr("当前目标注视：关闭","Current target tracking: OFF"));
-            const std::string gazeLabel=captureSlot==7?tr("请按键…","Press a key..."):draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Not assigned");
-            if(ImGui::Button((gazeLabel+"###TargetGazeKey").c_str(),{230,0})){captureSlot=7;notice.clear();}
-            ImGui::SameLine();
-            if(ImGui::Button(tr("清除注视键###ClearGazeKey","Clear tracking key###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;notice.clear();}
-            ImGui::TextWrapped("%s",tr("单次按下开始/停止注视，与手柄X选项独立。不要与游戏原生动作键冲突；原生默认F是长按注视，可按需改为单次切换。","Press once to start/stop tracking, independently of the controller X option. Avoid conflicting native actions. The native F hold-to-track key can also be assigned here for toggle operation."));
-            ImGui::SeparatorText(tr("镜头保持","Camera hold"));
-            ImGui::Checkbox(tr("保持镜头方向（手柄与键鼠）###CameraHold","Keep camera direction (controller and keyboard/mouse)###CameraHold"),&draftCameraHold);
-            if(!draftCameraHold && captureSlot==8)captureSlot=-1;
-            if(draftCameraHold) {
-                ImGui::TextWrapped("%s",tr("松开右摇杆或键鼠视点操作模式键（默认Alt）、短按切目标及普通视角切换后保持方向。注视从当前方向直接转向目标，松开后回到保留方向；使用独立回正键回正。","Keep the direction after releasing the right stick or viewpoint operation mode key (Alt by default), selecting a target briefly, or changing ordinary views. Tracking turns directly toward the target from the current direction and returns to the retained direction on release. Use the independent recenter shortcut to recenter."));
-                ImGui::Checkbox(tr("替换R3按下功能###CameraR3","Replace R3 click behavior###CameraR3"),&draftCameraR3);
-                ImGui::TextWrapped("%s",tr("默认关闭，保存后生效。关闭时R3保持游戏原生功能；开启时短按松开回正，长按满0.5秒立即切换一次视角，无需松开，之后松开不再回正。","Off by default; applies after saving. When off, R3 retains its native behavior. When on, short-press and release to recenter, or hold for 0.5 seconds to change view once immediately without releasing. Releasing afterward does not recenter."));
-                ImGui::TextWrapped("%s",tr("独立回正快捷键（默认鼠标中键）：点击下方按钮后，按一个键盘键或鼠标中键；Esc取消。","Independent recenter shortcut (middle mouse by default): click below, then press a keyboard key or middle mouse; Esc cancels."));
-                const std::string centerLabel=captureSlot==8?tr("请按键或鼠标中键…","Press a key or middle mouse..."):draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Not assigned");
-                if(ImGui::Button((centerLabel+"###CameraCenterKey").c_str(),{280,0})){captureSlot=8;notice.clear();}
-                ImGui::SameLine();
-                if(ImGui::Button(tr("恢复鼠标中键###ResetCenterKey","Reset to middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;notice.clear();}
-                ImGui::SameLine();
-                if(ImGui::Button(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;notice.clear();}
-                ImGui::TextWrapped("%s",tr("回正键按下即触发，按住不重复；与游戏原生键盘换视角是两个功能，原生换视角无需长按。请使用不同按键，避免同键触发两个动作。","The recenter shortcut acts on press and does not repeat while held. Native keyboard view switching remains a separate, immediate action. Assign different keys to avoid triggering both actions together."));
-                if(!dualsp::validCameraCenterKey(draftCameraCenterKey,true,draftTargetGazeKey,draftShortcuts,draftKeys))
-                    ImGui::TextWrapped("%s",tr("回正键与其他模组键位重复，请调整后保存。","The recenter key conflicts with another mod binding. Change it before saving."));
-                ImGui::SetNextItemWidth(350);
-                ImGui::SliderInt(tr("右摇杆视角移动灵敏度###CameraSensitivity","Right-stick camera sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-                ImGui::SameLine();
-                if(ImGui::Button(tr("恢复100%###ResetCameraSensitivity","Reset to 100%###ResetCameraSensitivity")))draftCameraSensitivity=100;
-                ImGui::TextWrapped("%s",tr("默认100%。调整右摇杆环视的移动速度，不改变最大转动角度；回正、目标注视和单独的键鼠环视保留原生速度。","Default: 100%. Adjusts right-stick look movement speed without changing the maximum look angle. Recentering, target tracking and keyboard/mouse-only look retain their native speed."));
-                ImGui::TextWrapped("%s",tr("双摇杆干扰弹保留原生；启用R3替换时还会同时回正并取消尚未完成的长按换视角。回正结束模组目标注视；仍按住Y/F时保留原生注视。暂停、管理界面、失焦及特殊镜头期间不处理镜头快捷键。","Native two-stick countermeasures remain available. With R3 replacement enabled, the gesture also recenters and cancels a pending view change. Recentering ends mod target tracking; holding Y/F retains native tracking. Camera shortcuts are inactive while paused, in management, unfocused or in special camera modes."));
-            }
-            ImGui::TextWrapped("%s",tr("装填中的武器可以选择；未搭载的 SP 或耗尽的 SP 保持当前选择。按住不会重复切换。","Reloading weapons can be selected. An empty or depleted SP keeps the current selection. Holding a key does not repeat."));
-            ImGui::EndTabItem();
-        }
-        if(beginManagementTab(tr("日志###Logs","Logs###Logs"),2)) {
-            if(!logsLoaded)refreshLogs();
-            if(requestedTab==2)ImGui::SetKeyboardFocusHere();
-            if(ImGui::Button(tr("刷新日志","Refresh logs")))refreshLogs();
-            ImGui::SameLine();ImGui::TextDisabled("%s",tr("每份最多显示末尾 64 KiB，点击刷新更新。","Last 64 KiB per log; refresh to update."));
-            if(!logError.empty())ImGui::TextWrapped("%s",uiMessage(logError,"日志读取失败。","The log could not be read.").c_str());
-            if(ImGui::BeginTabBar("LogFiles")) {
-                const char* files[]={"mod.log","native.log"}; // 日志文件固定，不开放任意路径访问。
-                const std::string* text[]={&modLogText,&nativeLogText};
-                for(int file=0;file<2;++file)if(ImGui::BeginTabItem(files[file])) {
-                    ImGui::BeginChild(files[file],{0,260},ImGuiChildFlags_Borders,ImGuiWindowFlags_HorizontalScrollbar);
-                    ImGui::TextUnformatted(text[file]->c_str());ImGui::EndChild();ImGui::EndTabItem();
-                }
-                ImGui::EndTabBar();
-            }
-            ImGui::EndTabItem();
-        }
-        if(beginManagementTab(tr("调试###Debug","Debug###Debug"),3)) {
-            drawDebugLoadout(requestedTab==3);drawDebugAircraft();
-            ImGui::EndTabItem();
-        }
-        ImGui::EndTabBar();
-        // ImGui 的分页选择在下一帧生效；等目标内容实际绘制并接收焦点后再消费。
-        if(requestedTab==managementTab)requestedTab=-1;
-    }
-    ImGui::Separator();
-    ImGui::BeginDisabled(captureSlot>=0||!bindingsValid()||pendingSave>0);
-    if(ImGui::Button(tr("保存设置","Save settings"),{180,36}))saveManagementSettings();
-    ImGui::EndDisabled();ImGui::SameLine();
-    if(ImGui::Button(tr("关闭","Close"),{120,36}))togglePanel(false);
-    ImGui::TextWrapped("%s",tr("语言和键位保存后生效；总开关在主菜单等安全入口应用。修改比例不会立即补充当前弹药。关闭会丢弃未保存修改。","Language and bindings apply after saving; the master switch applies at safe menus such as the main menu. Percentage changes do not immediately refill ammunition. Closing discards unsaved changes."));
-    ImGui::TextWrapped(tr("%s 或手柄 Back + Y 打开/关闭管理界面；任务中打开会暂停。","%s or controller Back + Y opens/closes management. Opening during a mission pauses the game."),shortcutLabel(shortcuts[0]).c_str());
-    // 明确报告失败，不引导用户到已移除的 F8 兵装替代流程。
-    const char* errorFields[]={"error","menu_error","hud_error","central_error","settings_error"};
-    for(const char* field:errorFields)if(state.contains(field)) {
-        ImGui::TextColored({1,.55f,.35f,1},"%s",tr("功能或保存错误（详见日志）","Feature or save error (see logs)"));
-        ImGui::TextWrapped("%s",uiMessage(state.at(field).get<std::string>(),"功能或保存操作未完成，请查看日志。","A feature or save operation failed. See Logs for details.").c_str());
-    }
-    if(state.contains("input_notice")) {
-        const auto reason=state.at("input_notice").get<std::string>(); // 拒绝直接选择的原因显示在管理页。
-        ImGui::TextWrapped("%s",reason=="empty_sp"?tr("此 SP 未配置，保持当前武器。","This SP is empty; selection unchanged."):
-            tr("目标 SP 弹药耗尽，保持当前武器。","Target SP is depleted; selection unchanged."));
-    }
-    if(state.contains("target_gaze")&&state.at("target_gaze").contains("error"))
-        ImGui::TextWrapped("%s",uiMessage(state.at("target_gaze").at("error").get<std::string>(),
-            "目标注视已停用，请查看日志。","Target tracking is disabled. See Logs for details.").c_str());
-    if(state.contains("camera_hold")&&state.at("camera_hold").contains("error"))
-        ImGui::TextWrapped("%s",uiMessage(state.at("camera_hold").at("error").get<std::string>(),
-            "镜头保持已停用，请查看日志。","Camera hold is disabled. See Logs for details.").c_str());
-    if(!notice.empty())ImGui::TextWrapped("%s",uiMessage(notice,"操作未完成，请查看日志。","The operation could not be completed. See Logs for details.").c_str());
-    ImGui::End();
-}
+#include "management_panel.hpp"
 
 // 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
 void refreshState() {
@@ -846,10 +676,12 @@ void refreshState() {
                     throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
-            state.at("target_gaze_pad_x").get<bool>();
+            state.at("target_gaze_pad_l3").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
-            if(state.at("camera_hold").at("protocol").get<int>()!=3)throw std::runtime_error("镜头保持协议不匹配");
+            const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
+            if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
+            if(state.at("camera_hold").at("protocol").get<int>()!=4)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
@@ -858,7 +690,7 @@ void refreshState() {
             if(!state.at("target_gaze_key").is_number_integer() ||
                 !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("目标注视键位无效或重复");
-            if(state.at("target_gaze").at("protocol").get<int>()!=1)throw std::runtime_error("目标注视协议不匹配");
+            if(state.at("target_gaze").at("protocol").get<int>()!=2)throw std::runtime_error("目标注视协议不匹配");
             shortcuts=checkedShortcuts;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
@@ -952,9 +784,6 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(reseedPad.exchange(false)){chordWas=chord;previousPadButtons=buttons;padWasConnected=connected;}
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
                     const WORD pressed=buttons&~previousPadButtons;
-                    if(connected&&padWasConnected&&targetGazeInputEnabled()&&state.value("target_gaze_pad_x",false)
-                        &&(pressed&XINPUT_GAMEPAD_X))
-                        enqueue({{"type","toggle_target_gaze"},{"source","pad_x"},{"generation",state.at("target_gaze").value("generation",-1)}});
                     if(connected&&padWasConnected&&directInputEnabled()) {
                         const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
                         int desired=-1,count=0; // 同时按下多个方向不猜测目标。
@@ -977,6 +806,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     // panel and is submitted after the backend's fallback.
                     io.AddMousePosEvent(pointer.x,pointer.y);
                 }
+                const bool popupAtFrameStart=ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel);
                 ImGui::GetIO().MouseDrawCursor=panel&&foreground;ImGui::NewFrame();
                 try {
                     if(panel)drawPanel();
@@ -992,7 +822,8 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         ImGui::PopTextWrapPos();ImGui::End();ImGui::PopFont();
                     }
                 }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),true);nativeLog(std::string("UI_ERROR ")+e.what());}
-                if(panel&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight))togglePanel(false);
+                if(panel&&!popupAtFrameStart&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight)&&
+                    !ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel))togglePanel(false);
                 ImGui::Render();
                 ID3D11RenderTargetView* oldTarget{};ID3D11DepthStencilView* oldDepth{};context->OMGetRenderTargets(1,&oldTarget,&oldDepth);
                 context->OMSetRenderTargets(1,&target,nullptr);ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());context->OMSetRenderTargets(1,&oldTarget,oldDepth);
@@ -1069,6 +900,8 @@ extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。

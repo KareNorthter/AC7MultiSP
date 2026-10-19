@@ -1,0 +1,69 @@
+{
+  "candidate": "2.20.2",
+  "branch": "codex/integration-2.20.2",
+  "formal_main": "66cc725",
+  "formal_release": "2.20.0",
+  "base_candidate": "2.20.1",
+  "base_commit": "3ec3325",
+  "source_thread": "codex://threads/01a14a2c-a3c4-7ae0-af92-a1fc7a33a5e1",
+  "source_branch": "codex/tracking-view-continuity",
+  "source_commit": "03684fb",
+  "source_runtime_hashes_equal": {
+    "VERSION": true,
+    "src/camera_hold.hpp": true,
+    "src/ui_messages.hpp": true,
+    "src/management_panel.hpp": true,
+    "src/product.json": true,
+    "dist/DualSP/Scripts/main.lua": true
+  },
+  "changes": [
+    "仅镜头保持开启且持续注视同一目标时，在普通三视角之间接续原生注视进度和方向",
+    "完善本机取证启动；桌面入口原位生效，不写入游戏运行目录"
+  ],
+  "protocols": {
+    "management": 13,
+    "configuration": 12,
+    "tracking": 2,
+    "camera": 4
+  },
+  "controls_and_profiles_unchanged": true,
+  "build": "Temp/build-2.20.2-candidate",
+  "build_receipt_sha256": "16cd439e63dc543a44a8202b3ae35013a1d4eab5c18891d1f6d3e6b0f8560c50",
+  "test_receipt_sha256": "4a9393bc2d4e5ab854fb91a7a21b3f40e6dab1bf3732ee1e87e1f2e9d0e7a20a",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed_receipt": "evidence/2.20.2-installed.json",
+  "installed_receipt_sha256": "e2d8890757665bf5d4e94229920061cb15e570de2a59d930ae9f7a2644326e37",
+  "installed_at": "2026-10-19T09:33:20.377839+08:00",
+  "backup": "E:\\AC7_MultiSP\\backup\\AC7MultiSP-20261019-093320-377839",
+  "protected_files_verified": 212,
+  "runtime_files": 17,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "a5eb2e80025bec9b92d5fff6a19e82ed10396919f447634e1e560546ec88178e",
+    "variant_count": 54,
+    "file_count": 108
+  },
+  "capture_tool": "evidence/crash-capture-hardening-2.20.2.json",
+  "protected_old_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "source_worktree_modified": false,
+  "game_started": false,
+  "game_stopped_by_agent": false,
+  "new_code_gameplay_verified": false,
+  "merged_to_main": false,
+  "published": false,
+  "unrelated_compatibility_changes_preserved": true,
+  "pre_integration_stash": "01593abfae000b8994fe4a64ea05e8e94ff3522e",
+  "old_builds_receipts_preserved": true
+}

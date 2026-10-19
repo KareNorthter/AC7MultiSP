@@ -1,13 +1,11 @@
 # 本地发布
 
-正式版 **AC7MultiSP 2.20.0**：[AC7MultiSP-2.20.0.zip](AC7MultiSP-2.20.0.zip)，131.2 MiB。
+正式版 **AC7MultiSP 2.21.0**：[AC7MultiSP-2.21.0.zip](AC7MultiSP-2.21.0.zip)，131.8 MiB。
 
-包内包含本版更新说明、中英文ReadMe、29架已适配/部分适配机体列表及必要特殊备注、完整Mod/模型包、专用加载器与微软离线运行库。不含个人配置、存档、日志或其他Mod。189成员逐项回读、微软签名及11项既有检查通过。
+包含当前更新说明、中英文ReadMe、29架机体的同时挂载适配表与必要备注、完整Mod、54资源/108成员挂载包、专用加载器和微软离线运行库。189成员逐项回读、微软签名及11项现有检查通过；不含个人配置、存档、日志、取证原始文件或第三方Mod。
 
-SHA256：`5a61bcfeea0909fc15c7460e0d7078059278e9d5103ec4ef06094f79dbddda01`
+SHA256：`74da1ef448f08585ceebf824116c83a16d23037a17207b2c163c5cc4ee5be1fd`
 
-功能来自用户已验收的2.19.5，2.20.0仅统一版本标识后重建；原安装仍是2.19.5，本轮未重装或启动游戏。核心除构建标识节外字节一致；版本标识精确变换见[构建证明](../evidence/2.20.0-version-label-build.json)。
+功能来自用户已测试无误的2.20.3。2.21.0只统一版本标识后重建；核心指令及除构建标识节外字节相同，资源及测试来源一致。本机安装和实测仍记录为2.20.3；发布清单不冒充新安装或实机验收。见[验收](../evidence/2.21.0-user-validation.json)、[版本证明](../evidence/2.21.0-version-label-build.json)及[发布回执](../evidence/2.21.0-release.json)。
 
-[发布回执](../evidence/2.20.0-release.json) · [用户验收](../evidence/2.20.0-user-validation.json) · [发布授权](../evidence/2.20.0-user-feedback-followup.json)。
-
-ZIP仅保留本机、不入Git、未上传。旧2.19.0与2.16.0包保留用于恢复和来源核对。
+ZIP仅保留本机，不入Git、不上传。[2.20.0](AC7MultiSP-2.20.0.zip)、[2.19.0](AC7MultiSP-2.19.0.zip)和[2.16.0](AC7MultiSP-2.16.0.zip)旧包原样保留。

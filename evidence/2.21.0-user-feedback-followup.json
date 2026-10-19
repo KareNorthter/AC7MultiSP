@@ -1,0 +1,12 @@
+{
+  "schema": 1,
+  "version": "2.21.0",
+  "recorded_at": "2026-10-19T10:42:59.137708+08:00",
+  "user_message": "测试无误，提交到主线main，版本号更新到2.21.0。并制作一个发布包。",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "validated_version": "2.20.3",
+  "version_label_rebuild_required": true,
+  "install_requested": false
+}

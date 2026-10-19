@@ -11,15 +11,16 @@ struct TargetGaze {
     std::atomic<Addr> component{0};
     std::atomic<uint64_t> axis{0};
     std::atomic<DWORD> thread{0};
-    std::atomic<bool> allowed{false},active{false},replaceX{false};
+    std::atomic<bool> allowed{false},active{false};
     std::atomic<ULONGLONG> observed{0};
     std::atomic<ULONGLONG> heartbeat{0}; // 控制器停止调度时自动交还，不能留下永久注视。
-    std::atomic<bool> maskedHeld{false}; // 已消费的X保留到松开，不能泄漏到刚打开的菜单。
+    bool padEnabled{},padSeeded{},leftDown{},leftCandidate{},padCombo{},pendingPadToggle{};
     ULONGLONG started{};
     bool ready{};
     void clear() {
-        allowed=false;active=false;replaceX=false;component=0;axis=0;observed=0;heartbeat=0;
+        allowed=false;active=false;component=0;axis=0;observed=0;heartbeat=0;
         plane={};input={};bindings=0;count=capacity=0;started=0;
+        padEnabled=padSeeded=leftDown=leftCandidate=padCombo=pendingPadToggle=false;
     }
 } targetGaze;
 using TargetGazeAxis=float(*)(void*,uint64_t);
@@ -51,20 +52,43 @@ float targetGazeAxis(void* object,uint64_t name) {
         return std::max(native,1.f); // 原生Y/F仍可按住；松开模组切换后立即回到真实轴值。
     }catch(...) {targetGaze.active=false;return native;} // 不让异常越过引擎输入栈。
 }
+// 只观察真实按键，不过滤X/L3/R3。双摇杆组合锁定到两边都松开，取消本次L3切换。
+void targetGazeObservePad(DWORD result,const XINPUT_STATE* state) {
+    if(GetCurrentThreadId()!=targetGaze.thread.load())return;
+    if(!targetGazeLive() || !targetGazeFocused()) {
+        targetGaze.padSeeded=false;targetGaze.leftCandidate=false;targetGaze.pendingPadToggle=false;return;
+    }
+    if(result!=ERROR_SUCCESS || !state || !targetGaze.padEnabled) {
+        targetGaze.padSeeded=false;targetGaze.leftCandidate=false;targetGaze.pendingPadToggle=false;return;
+    }
+    const auto buttons=state->Gamepad.wButtons;
+    const bool left=(buttons&XINPUT_GAMEPAD_LEFT_THUMB)!=0,right=(buttons&XINPUT_GAMEPAD_RIGHT_THUMB)!=0;
+    if(!targetGaze.padSeeded) {
+        targetGaze.padSeeded=true;targetGaze.leftDown=left;targetGaze.leftCandidate=false;
+        targetGaze.padCombo=left || right;return; // 恢复/重连时已按住的边沿不补发。
+    }
+    if(left && right) {targetGaze.padCombo=true;targetGaze.leftCandidate=false;targetGaze.pendingPadToggle=false;}
+    if(targetGaze.padCombo) {
+        targetGaze.leftCandidate=false;
+        if(!left && !right)targetGaze.padCombo=false;
+    }else {
+        if(left && !targetGaze.leftDown)targetGaze.leftCandidate=!right;
+        if(!left && targetGaze.leftDown && targetGaze.leftCandidate) {
+            targetGaze.pendingPadToggle=true;targetGaze.leftCandidate=false;
+        }
+    }
+    targetGaze.leftDown=left;
+}
 DWORD WINAPI targetGazePad(DWORD index,XINPUT_STATE* state) {
     const auto result=originalTargetGazePad(index,state);
-    if(index!=0)return result; // 沿用当前模组UI的0号手柄通道，其他设备保持原生。
+    if(index!=0)return result;
     const auto caller=reinterpret_cast<Addr>(__builtin_return_address(0));
     const bool fromGame=caller>=targetGazeImageBegin && caller<targetGazeImageEnd;
-    if(fromGame)try {cameraHoldObservePad(result,state);}catch(const std::exception& error){cameraHoldFailure(error.what());}
-    if(result!=ERROR_SUCCESS || !state){targetGaze.maskedHeld=false;return result;}
-    const bool down=(state->Gamepad.wButtons&XINPUT_GAMEPAD_X)!=0;
-    if(!down){targetGaze.maskedHeld=false;return result;}
-    // 管理UI自己的读取保留真实按键；只过滤游戏映像发起的XInput查询。
-    if(!fromGame)return result;
-    if(targetGazeLive() && targetGaze.replaceX.load() && targetGazeFocused())targetGaze.maskedHeld=true;
-    if(targetGaze.maskedHeld.load())state->Gamepad.wButtons&=static_cast<WORD>(~XINPUT_GAMEPAD_X);
-    return result;
+    if(fromGame) {
+        targetGazeObservePad(result,state);
+        try {cameraHoldObservePad(result,state);}catch(const std::exception& error){cameraHoldFailure(error.what());}
+    }
+    return result; // 原生轮切、干扰弹及UI均获得完整的原始按键。
 }
 void installTargetGaze() {
     if(targetGaze.ready)return;
@@ -84,7 +108,7 @@ void installTargetGaze() {
         reinterpret_cast<void**>(&originalTargetGazeAxis))==MH_OK,"目标跟踪轴接入失败");
     const auto padAddress=reinterpret_cast<void*>(entry);
     const auto padStatus=MH_CreateHook(padAddress,reinterpret_cast<void*>(&targetGazePad),reinterpret_cast<void**>(&originalTargetGazePad));
-    if(padStatus!=MH_OK){MH_RemoveHook(axisAddress);throw std::runtime_error("手柄X替换接入失败");}
+    if(padStatus!=MH_OK){MH_RemoveHook(axisAddress);throw std::runtime_error("手柄观察接口接入失败");}
     const auto dos=reinterpret_cast<const IMAGE_DOS_HEADER*>(base);
     const auto pe=reinterpret_cast<const IMAGE_NT_HEADERS64*>(base+dos->e_lfanew);
     targetGazeImageBegin=base;targetGazeImageEnd=base+pe->OptionalHeader.SizeOfImage;
@@ -123,9 +147,9 @@ int targetGazeLua(void* luaState) {
         static const dualsp::LuaApi bound;api=&bound;
         require(api->top(luaState)==4,"目标注视参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
-        const auto allowed=api->readInteger(luaState,2),replace=api->readInteger(luaState,3),toggle=api->readInteger(luaState,4);
-        require((allowed==0 || allowed==1) && (replace==0 || replace==1) && (toggle==0 || toggle==1),"目标注视设置无效");
-        std::string reason;
+        const auto allowed=api->readInteger(luaState,2),padEnabled=api->readInteger(luaState,3),toggle=api->readInteger(luaState,4);
+        require((allowed==0 || allowed==1) && (padEnabled==0 || padEnabled==1) && (toggle==0 || toggle==1),"目标注视设置无效");
+        std::string reason;bool padToggle=false;
         if(!allowed || !plane || !targetGazeFocused())targetGaze.clear();
         else {
             installTargetGaze();
@@ -133,7 +157,7 @@ int targetGazeLua(void* luaState) {
             const auto pendingInput=read<Addr>(plane+0x118);
             if(!pendingInput || read<int>(pendingInput+0x118)==0) {
                 targetGaze.clear();
-                api->boolean(luaState,true);api->boolean(luaState,false);api->string(luaState,"waiting_input",13);return 3;
+                api->boolean(luaState,true);api->boolean(luaState,false);api->string(luaState,"waiting_input",13);api->boolean(luaState,false);return 4;
             }
             const bool same=targetGaze.plane.address==plane && continuousAlive(targetGaze.plane) &&
                 continuousAlive(targetGaze.input) && read<Addr>(plane+0x118)==targetGaze.input.address &&
@@ -141,22 +165,30 @@ int targetGazeLua(void* luaState) {
                 read<Addr>(targetGaze.input.address+0x110)==targetGaze.bindings &&
                 read<int>(targetGaze.input.address+0x118)==targetGaze.count && read<int>(targetGaze.input.address+0x11c)==targetGaze.capacity;
             if(!same)bindTargetGaze(plane);
-            targetGaze.heartbeat=GetTickCount64();targetGaze.allowed=true;targetGaze.replaceX=replace!=0;
+            const auto now=GetTickCount64();
+            if(targetGaze.heartbeat.load() && now-targetGaze.heartbeat.load()>500) {
+                targetGaze.padSeeded=false;targetGaze.pendingPadToggle=false;
+            }
+            targetGaze.heartbeat=now;targetGaze.allowed=true;
+            if(targetGaze.padEnabled!=(padEnabled!=0))targetGaze.padSeeded=false;
+            targetGaze.padEnabled=padEnabled!=0;
+            XINPUT_STATE pad{};const auto result=originalTargetGazePad(0,&pad);targetGazeObservePad(result,&pad);
+            padToggle=targetGaze.pendingPadToggle;targetGaze.pendingPadToggle=false;
             const auto seeker=read<Addr>(plane+0x1310);
             const auto selected=seeker?read<Addr>(seeker+0x248):0;
             bool hasTarget=false;
             if(selected)try {hasTarget=continuousAlive(continuousIdentity(selected));}catch(...) {}
             if(!hasTarget){targetGaze.active=false;reason="no_target";}
-            else if(toggle){targetGaze.active=!targetGaze.active.load();targetGaze.started=GetTickCount64();}
+            else if(toggle || padToggle){targetGaze.active=!targetGaze.active.load();targetGaze.started=GetTickCount64();}
             if(targetGaze.active.load() && GetTickCount64()-targetGaze.started>2000) {
                 const auto observed=targetGaze.observed.load();
                 require(observed && GetTickCount64()-observed<2000,"未观察到原生目标跟踪轴读取，已停止注视");
             }
         }
-        api->boolean(luaState,true);api->boolean(luaState,targetGaze.active.load());api->string(luaState,reason.data(),reason.size());return 3;
+        api->boolean(luaState,true);api->boolean(luaState,targetGaze.active.load());api->string(luaState,reason.data(),reason.size());api->boolean(luaState,padToggle);return 4;
     }catch(const std::exception& error) {
         targetGaze.clear();nativeLog(std::string("TARGET_GAZE_ERROR ")+error.what());
-        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 3;}
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));api->boolean(luaState,false);return 4;}
         return 0;
     }
 }

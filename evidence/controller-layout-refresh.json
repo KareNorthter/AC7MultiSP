@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-19",
+  "candidate": "2.20.1",
+  "branch": "codex/controller-layout-refresh",
+  "base_commit": "66cc725918c283a23f0ee3da2deb8e03260828ae",
+  "formal_release_unchanged": "main / v2.20.0",
+  "installed_baseline": "evidence/2.19.5-installed.json",
+  "status": "源码与文档修订完成；尚未编译、测试、安装或实机验证",
+  "authorization": {
+    "requested": "X保留轮切、L3可选保持注视、R3长按0.3秒回中并恢复短按换视角，双摇杆干扰弹不触发注视；新配置注视和镜头保持默认开启，F6界面重新设计、精简和收纳说明。",
+    "confirmed_gestures": "用户明确选择：R3短按松开切视角、长按满0.3秒立即回中、双摇杆只释放干扰弹；L3也在松开且整次未形成组合时切换。",
+    "scope": "源码、资源文字及文档；没有本轮编译、测试、安装或操作游戏授权。"
+  },
+  "native_evidence_review": {
+    "source": "evidence/camera-hold-research.json",
+    "sha256": "049abc25604e65290804db21b945a95208f46b2d961303625d834828a01988c9",
+    "known_bindings": {
+      "L3": "INP_ActivateFlareL",
+      "R3": [
+        "INP_View",
+        "INP_ActivateFlareR"
+      ]
+    },
+    "view_entry": {
+      "rva": "0x821430",
+      "size": 333,
+      "sha256": "a33fc208879215370011c795773325f7098d9e17000c07b146c84adb68d679a0",
+      "finding": "阅读原有本机代码窗口：入口自身检查视角/许可并轮切，没有直接读取双摇杆状态。游戏完整互斥仍在上游，本轮未完整反向定位或新增实时采样。"
+    },
+    "implementation_choice": "保留XInput原始按键和包编号，仅观察物理边沿，在模组自己的注视和视角动作层分流。没有调用干扰弹函数或声称复制未知原生机制。"
+  },
+  "behavior": {
+    "X": "移除X过滤及渲染线程X注视排队；X完整保留原生轮切兵装。",
+    "L3": "游戏线程观察按下/释放，单次释放切换保持注视，持续按住不重复；键盘注视独立，Y保持原生。",
+    "R3": "镜头保持及其R3子开关开启时：小于300毫秒释放调用一次原生换视角；达到300毫秒首次游戏线程调度回中一次，释放不再换视角；关闭子开关完全原生。",
+    "two_sticks": "形成重叠双摇杆组合即取消本次L3候选、R3短按候选及尚未派发长按，锁定到两侧全部释放；先按/先松任一侧都不补发单键动作。干扰弹只由原生处理，不再附带回中。已有注视状态不会因组合被切换。",
+    "camera_hold": "沿用已验收的相对环视、普通视角接续、选目标及注视过渡；全部回正屏蔽仅在镜头保持及原有运行许可满足时执行。独立回中键默认中键，灵敏度5%～200%默认100%。",
+    "lifecycle": "暂停、管理、失焦、换代、停用、断连及500毫秒心跳过期继续清理；恢复/重连先播种，不重放已按住边沿。",
+    "notifications": "L3正常开启/关闭静默，错误/无目标和键盘提示保留。"
+  },
+  "configuration": {
+    "revision": 11,
+    "fresh_defaults": {
+      "target_gaze_pad_l3": true,
+      "camera_hold_enabled": true,
+      "camera_r3_enabled": true,
+      "camera_center_key": 4,
+      "camera_sensitivity": 100,
+      "target_gaze_key": 0
+    },
+    "migration_from_10": "先永久备份profiles.before-controller-clicks.json；退役target_gaze_pad_x，新增L3为true，R3的新长按语义设为true。保留旧camera_hold_enabled选择、有效键位、灵敏度、弹药比例及个人方案；更早配置逐级迁移，已安装配置本轮未改。",
+    "protocols": {
+      "management": 12,
+      "tracking": 2,
+      "camera": 4
+    },
+    "capability": "核心/UI新增dualsp_controller_clicks_supported，Lua同时要求，防止旧X/R3语义混装。目标注视仍四参数，第三参数为L3许可，第四返回值告知本次手柄切换；镜头五参数保持。",
+    "installer_source": "只同步允许配置11及迁移说明，没有运行安装工具。"
+  },
+  "management_ui": {
+    "implementation": "src/management_panel.hpp在overlay私有命名空间内绘制；overlay保留输入、状态与请求交接。",
+    "pages": [
+      "常用",
+      "按键",
+      "日志",
+      "调试"
+    ],
+    "layout": "深色圆角卡片和青绿强调色；顶部语言/暂停状态，中部滚动，底部固定保存/关闭与未保存提示。第二页首先展示保持注视和镜头保持。",
+    "progressive_disclosure": "武器直选、模组快捷键、换机及异常详情折叠；?支持悬停、键盘聚焦或点击打开，返回先关闭弹层。",
+    "retained": "中英文、Ctrl+Tab、键盘/手柄导航、改键冲突校验、暂停归属、保存应答、任务指定SP提示、错误摘要、调试事务和固定两份日志末尾64KiB读取。",
+    "font_pixels": {
+      "base": 22,
+      "notification": 32
+    },
+    "rendered_or_gameplay_verified": false
+  },
+  "review": "人工阅读改动及原证据、核对输入分流/生命周期/协议/默认迁移与ImGui本地接口声明；Git差异空白检查及保护旧核心摘要核对。未执行产品代码或测试模块。",
+  "remaining_validation": [
+    "未编译新C++/Lua或渲染新F6界面，实际布局、导航、组合键和300毫秒边界需后续授权验证。",
+    "R3原生回调不携带FKey，R3按压和短暂释放交接期间若混入另一个原生换视角键，仍沿用旧实现的同次手势边界；单独键盘换视角原样直通。",
+    "单独R3长按已完成回中后再按L3形成组合，不能回溯撤销此前已经完成的动作。",
+    "按用户规则未改写既有测试；旧固定协议/默认值预期需在后续获授权整合时同步核对，不把旧检查回执当作新源码通过。"
+  ],
+  "compiled": false,
+  "test_modules_added_or_modified": false,
+  "test_modules_run": false,
+  "installed": false,
+  "game_started_or_stopped": false,
+  "live_process_sampled": false,
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "pushed_or_uploaded": false,
+  "historical_receipts_modified": false,
+  "source_sha256": {
+    "VERSION": "ad709c219554404347779226100846dad6483dd84abbdbfd27c68e477bd5aa83",
+    "src/product.json": "383cd1c0b7771ed74e1646f2d222b57ee618e1c11734e3e915d872db9f15a110",
+    "src/target_gaze.hpp": "64f0bfc0afec0f8de573b6d2f9a40e54770c968a5fd0f060c166c8fe44011ebe",
+    "src/camera_hold.hpp": "25fddc6f2f3a419e5ad5b91fd65035e7c6869c809da1ceb4d4ee1153a5a694d2",
+    "src/overlay.cpp": "d66ff1e0089bcf30525e4863a29ceacd34b5919be7637298636598d17c21c00c",
+    "src/management_panel.hpp": "10ab0692051bff4df04df9f909351d83dcb5eb5fefae5dca40c1f9331eb79295",
+    "src/ui_messages.hpp": "55beefcd97bae4740804bb3ccc7b4dc1742de58fe6abca8abb216ca8a2e6c2f4",
+    "src/weapon_bridge.cpp": "623357fc1b67757b50ab6b9f84313b5594dae635eb5dd1c63ccd394546af5d0a",
+    "src/install.py": "6d1c1a6544518d05d294c041f30cd85b789d494c9b0b10aadb2c35213faa5b15",
+    "dist/DualSP/Scripts/main.lua": "9f5cd1c08e953b08d40866718057abbd6b9be14d262455dbf87e5f06c4ba8c84",
+    "dist/DualSP/Scripts/config_store.lua": "43c13c90997d56e210a4dc7a4c9c252e331ebf157d9e68e278683a30822d4dfb"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "other_work": "主工作区兼容性分支及其未提交文件未改；新源码位于本线程独立工作区。原研究代码窗口、Temp及其他原始资源不删除或提交。"
+}

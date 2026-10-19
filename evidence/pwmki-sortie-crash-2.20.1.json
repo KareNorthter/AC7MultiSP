@@ -1,0 +1,119 @@
+{
+  "version": "2.20.1候选",
+  "date": "2026-10-19",
+  "status": "一次重新出击成功，首轮崩溃未复现，根因未确认",
+  "user_report": {
+    "aircraft": "PW-Mk.I / pw01 / ID192",
+    "trigger": "确认出击后直接闪退",
+    "history": "用户称很旧的版本曾正常出击，新版首次测试即崩溃"
+  },
+  "first_session": {
+    "game_pid": 36640,
+    "loadout_commit": "2026-10-19T09:14:41+08:00",
+    "last_visible_stage": "选装已提交，未见PW玩家获取或飞行初始化记录",
+    "profile_slots": [
+      0,
+      1,
+      2
+    ],
+    "snapshot": "Temp/pw01-crash-20261019-091552",
+    "capture": "Temp/crash-capture-20261019-084914-990",
+    "wer_exception": "0x80000003 / ntdll!NtTerminateProcess",
+    "debugger_exit_code": "0x80000003",
+    "capture_dumps": 0,
+    "dump_limit": "WER记录的是退出调用上的软件断点，不能作为初始故障位置；消息框线程存在，但文字指针所指内存未包含在小转储中"
+  },
+  "capture_audit": {
+    "status": "原流程缺口已在取证修订2补强，异常探针通过，真实游戏崩溃采集待后续验证",
+    "confirmed": [
+      "首轮存在CAPTURE_READY，但未记录实际首次异常或退出断点触发，采集目录转储数量为0",
+      "脚本收尾只记录进程与调试器退出码及转储列表，未根据异常退出且缺少转储判为采集不完整；最终状态仍写finished",
+      "当前脚本没有错误窗口文字的专门采集入口；外部WER小转储缺少消息框文字指针所指内存",
+      "附加成功标记只写一次，后续未持续确认异常采集通道是否仍有效"
+    ],
+    "correction": "调试器返回异常退出码，不足以证明调试器自身崩溃；此前用语过强。初始故障、调试连接中断及退出断点未保存的先后关系仍未确认。",
+    "followup": [
+      "区分无异常、采集成功、采集失败和原因不明的退出，并明确提醒用户",
+      "核对退出断点为何未留下记录，增加采集通道健康检查",
+      "在错误窗口或致命错误入口尽早保存文字和调用栈",
+      "必要时扩大转储内存范围，避免只有退出栈而缺少原始错误内容"
+    ],
+    "runtime_or_tool_changed": true,
+    "improvement_receipt": "evidence/crash-capture-hardening-2.20.2.json",
+    "scope": "仅取证工具修订；不改变原两次PW现场或声称崩溃已修复。随后2.20.2游戏升级另见对应整合/安装回执。"
+  },
+  "offline_verification": {
+    "runtime_17_match_installed_receipt": true,
+    "mount_pak_match_installed_receipt": true,
+    "pw_pak_match_original": true,
+    "catalogue_match_vf1_install_receipt": true,
+    "catalogue_rows": 52,
+    "pw_skin_references_resolved": 16,
+    "original_plane_id": 148,
+    "compatibility_plane_id": 192,
+    "original_sp_codes": [
+      "admm",
+      "eml",
+      "mpbm"
+    ],
+    "compatibility_sp_codes": [
+      "bmlu",
+      "rg",
+      "mpbm"
+    ],
+    "weapon_blueprint_ids": {
+      "plwp_bmlu_x0": "EWeaponID::WID_admm",
+      "plwp_railgun_x0": "EWeaponID::WID_eml",
+      "plwp_eufm_x0": "EWeaponID::WID_mpbm"
+    },
+    "interpretation": "兼容表代号与原包不同；本次实际运行将bmlu、rg、mpbm分别识别为34、7、30，与武器蓝图的ADMM、EML、MPBM类型对应。代号差异本身不足以判为兼容错误或崩溃根因。",
+    "raw_audit": "Temp/pw01-crash-20261019-091552/resource-audit.json"
+  },
+  "reproduction": {
+    "authorization": "用户启动游戏并选择该机出击，本线程监视进程",
+    "capture": "Temp/crash-capture-20261019-091743-628",
+    "game_pid": 37684,
+    "reuse_existing_debugger": true,
+    "result": "用户确认本次未崩溃；日志及运行状态确认PW进入飞行",
+    "player_acquired_at": "2026-10-19T09:24:36.8494039+08:00",
+    "player_class": "AcePlayerPawn_pw01_C",
+    "mission": "ms02",
+    "profile_slots": [
+      0,
+      1,
+      2
+    ],
+    "ratio": 0.33,
+    "snapshot": "Temp/pw01-success-20261019-092534",
+    "observed_at": "2026-10-19T09:25:34.153914+08:00",
+    "weapon_types": [
+      {
+        "code": "bmlu",
+        "runtime_weapon_id": 34
+      },
+      {
+        "code": "rg",
+        "runtime_weapon_id": 7
+      },
+      {
+        "code": "mpbm",
+        "runtime_weapon_id": 30
+      }
+    ],
+    "checks": {
+      "runtime_17_match": true,
+      "mount_pak_match": true,
+      "pw_pak_match": true,
+      "catalogue_match": true
+    }
+  },
+  "actions": {
+    "game_files_changed": false,
+    "profiles_changed": false,
+    "compiled": false,
+    "tests_run": false,
+    "root_cause_confirmed": false,
+    "fix_validated": false
+  },
+  "scope": "本次成功只证明该次出击已进入飞行，不代表所有机体、涂装、任务及切换顺序均已验证。首轮崩溃继续保留，不以未改动情况下的一次成功标记已修复。"
+}

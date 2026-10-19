@@ -18,12 +18,19 @@ struct CameraHold {
     unsigned nativeRequests{};
     bool frozenX{},frozenY{};
     bool poseValid{},viewTransfer{};
+    ContinuousIdentity gazeTarget,gazeTransferTarget;
+    bool gazeTransfer{};
+    float gazeWeight{};
+    ULONGLONG gazeTransferAt{};
     bool stickWas{},axisWas{};
     float heldX{},heldY{},poseX{},poseY{};
     SHORT padX{},padY{};
     ULONGLONG pressedAt{},releasedAt{},buttonReleasedAt{};
     std::string error;
-    void resetPose() {armed=false;frozenX=frozenY=false;poseValid=viewTransfer=false;centering=false;waitNeutral=false;stickWas=axisWas=false;releasedAt=0;}
+    void resetPose() {
+        armed=false;frozenX=frozenY=false;poseValid=viewTransfer=false;centering=false;waitNeutral=false;stickWas=axisWas=false;releasedAt=0;
+        gazeTarget=gazeTransferTarget={};gazeTransfer=false;gazeWeight=0;gazeTransferAt=0;
+    }
     void cancelGesture() {
         seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
         pressedAt=buttonReleasedAt=0;nativeRequests=0;
@@ -41,6 +48,11 @@ using CameraHoldView=void(*)(void*);
 std::array<CameraHoldUpdate,3> originalCameraHoldUpdates{};
 CameraHoldView originalCameraHoldView{};
 CameraHoldUpdate originalCameraHoldSpecial{};
+// 两个输出入口均返回调用方的输出指针；公共第一/第三人称入口另有9个栈参数。
+using CameraHoldOutput=void*(*)(void*,void*,float,void*,const void*,const void*,const void*,const void*,const void*,bool,const void*,const void*,const void*);
+using CameraHoldCockpitOutput=void*(*)(void*,void*,float,void*,int,const void*,const void*);
+CameraHoldOutput originalCameraHoldOutput{};
+CameraHoldCockpitOutput originalCameraHoldCockpitOutput{};
 bool cameraHoldNativeSpecial() {return reinterpret_cast<bool(*)()>(continuousBase()+0x3ceac0)();}
 struct CameraHoldFrame {bool enabled{};Addr component{};float x{},y{},nativeDelta{};bool delegated{};};
 thread_local CameraHoldFrame cameraHoldFrame;
@@ -70,9 +82,28 @@ bool cameraHoldCameraIdentities() {
     }
     return true;
 }
+bool cameraHoldSameTarget(const ContinuousIdentity& a,const ContinuousIdentity& b) {
+    return a.address && a.address==b.address && a.index==b.index && a.serial==b.serial;
+}
+// 只接续已经进入原生注视的模组保持注视；目标消失/换代属于正常退出，不停整个镜头功能。
+ContinuousIdentity cameraHoldGazeTarget() {
+    if(!targetGazeLive() || !targetGaze.active.load() || targetGaze.plane.address!=cameraHold.plane.address ||
+        targetGaze.component.load()!=cameraHold.input.address || GetCurrentThreadId()!=targetGaze.thread.load() ||
+        read<unsigned>(cameraHold.focus.address+0x108)-2u>1u)return {};
+    const auto target=read<Addr>(cameraHold.focus.address+0x100);
+    if(target)try {return continuousIdentity(target);}catch(...){}
+    return {};
+}
 // 普通视角之间传递最近一帧的实际环视姿态；许可由调用方的游戏线程/前台/身份门槛保证。
 void cameraHoldChangeView(int view) {
     if(cameraHold.viewType==view)return;
+    const int previousView=cameraHold.viewType;
+    const auto target=cameraHoldGazeTarget();
+    const bool gaze=!cameraHold.centering && previousView>=0 && previousView<=2 && view>=0 && view<=2 &&
+        cameraHoldSameTarget(cameraHold.gazeTarget,target) && continuousAlive(cameraHold.cameras[previousView]);
+    const float weight=gaze?(cameraHold.gazeTransfer?cameraHold.gazeWeight:
+        read<float>(cameraHold.cameras[previousView].address+(previousView==1?0x39c:0x3e0))):0;
+    require(!gaze || (std::isfinite(weight) && weight>=0 && weight<=1.001f),"镜头注视交接进度超出原生范围");
     const bool transfer=cameraHold.poseValid && cameraHold.armed && !cameraHold.centering &&
         cameraHold.viewType>=0 && cameraHold.viewType<=2 && view>=0 && view<=2;
     const float x=cameraHold.poseX,y=cameraHold.poseY;
@@ -85,6 +116,10 @@ void cameraHoldChangeView(int view) {
         cameraHold.poseValid=cameraHold.viewTransfer=true;cameraHold.poseX=x;cameraHold.poseY=y;
         cameraHold.heldX=x*scale;cameraHold.heldY=y*scale*(reversed?-1.f:1.f);
     }else if(centering) {cameraHold.centering=true;cameraHold.waitNeutral=waitNeutral;}
+    if(gaze) {
+        cameraHold.gazeTarget=cameraHold.gazeTransferTarget=target;cameraHold.gazeTransfer=true;
+        cameraHold.gazeWeight=std::clamp(weight,0.f,1.f);cameraHold.gazeTransferAt=GetTickCount64();
+    }
     if(cameraHold.r3Gesture) {
         // 已切换视角不能再执行本次手势，但不能提前放行剩余原生回调。
         cameraHold.longDone=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;
@@ -99,8 +134,8 @@ void cameraHoldResolveRelease() {
     if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled)return;
     cameraHold.releaseHandled=true;
     if(cameraHold.longDone || cameraHold.combo)return;
-    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<500)cameraHoldCenter();
-    else {cameraHold.longDone=true;cameraHold.pendingView=true;} // 刚好跨过阈值后松开，也只在游戏线程调度阶段换视角。
+    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<300)cameraHold.pendingView=true;
+    else {cameraHold.longDone=true;cameraHoldCenter();} // 跨过阈值才松开时补回中，不能兼触短按。
 }
 void cameraHoldObserveCenterKey(int key) {
     if(cameraHold.centerKey!=key){cameraHold.centerKey=key;cameraHold.centerKeySeeded=false;}
@@ -126,22 +161,23 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     const auto now=GetTickCount64();
     if(!cameraHold.seeded) {
         cameraHold.seeded=true;cameraHold.rightDown=right;
-        cameraHold.nativePress=false;cameraHold.longDone=right;cameraHold.combo=both; // 已按住的旧边沿不补发。
-        cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;
+        cameraHold.nativePress=false;cameraHold.longDone=right; // 已按住的旧边沿不补发。
+        cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;cameraHold.combo=right || (buttons&XINPUT_GAMEPAD_LEFT_THUMB);
         return;
     }
     if(right && !cameraHold.rightDown) {
-        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.combo=false;cameraHold.pendingView=false;
+        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.pendingView=false;
         cameraHold.r3Gesture=true;cameraHold.releaseHandled=false;cameraHold.buttonReleasedAt=0;cameraHold.nativeRequests=0;
     }
     if(both && !cameraHold.combo) {
-        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;cameraHoldCenter(); // 无论双摇杆先后顺序，都允许原生干扰弹和回正同时发生。
+        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
     }
     if(!right && cameraHold.rightDown)cameraHold.buttonReleasedAt=now;
     cameraHold.rightDown=right;
-    cameraHoldResolveRelease(); // 保留原生确认和组合标记，释放后的重复回调仍属于同次按压。
+    cameraHoldResolveRelease(); // 释放后的重复回调仍属于同次按压。
+    if(!right && !(buttons&XINPUT_GAMEPAD_LEFT_THUMB))cameraHold.combo=false; // 组合锁定至两边都松开。
 }
-// 整次R3按压的原生换视角请求都隔离；唯一放行入口是满500毫秒后的受控跳板调用。
+// 整次R3按压的视角请求隔离；短按松开只派发一次原生换视角，长按满300毫秒只回中。
 // 原生动作没有FKey，按压期间及短暂释放交接中的混合换视角输入也归本次R3处理。
 void cameraHoldViewPressed(void* object) {
     if(!cameraHoldLive() || !cameraHold.replaceR3 || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
@@ -200,7 +236,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                 require(std::isfinite(x) && std::isfinite(y) && std::abs(x)<=1.01f && std::abs(y)<=1.01f,"镜头保持状态超出原生范围");
                 {
                     // 原生输出将环视姿态与目标方向插值。保留环视基底，避免先归零再转向目标。
-                    // 实际注视仍由原生输出优先，不覆盖跟踪轴、目标方向或原生混合权重。
+                    // 输入轴处理不覆盖跟踪轴；换视角时的注视缓存交接由下方输出入口单独处理。
                     if(!stick && !axes)cameraHold.waitNeutral=false;
                     if((stick || axes) && !cameraHold.waitNeutral) {cameraHold.centering=false;cameraHold.armed=true;}
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
@@ -240,6 +276,8 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
             if(cameraHoldFrame.delegated)cameraHold.resetPose(); // 特殊座舱不使用普通归一化姿态。
             else {
                 cameraHold.viewTransfer=false;
+                cameraHold.gazeTarget=cameraHoldGazeTarget();
+                if(!cameraHoldSameTarget(cameraHold.gazeTarget,cameraHold.gazeTransferTarget))cameraHold.gazeTransfer=false;
                 if(cameraHold.armed && !cameraHold.centering && cameraHoldLive() && cameraHoldIdentities() &&
                     continuousAlive(cameraHold.cameras[index]) && read<unsigned char>(cameraHold.view.address+0x350)==index) {
                     const Addr state=reinterpret_cast<Addr>(component)+(index==1?0x38c:0x3d4);
@@ -261,16 +299,89 @@ void cameraHoldSpecial(void* c,float d,void* a,void* v) {
     cameraHoldFrame.delegated=true; // 特殊/委托分支归还原delta，不缓存普通环视姿态。
 }
 
+// 输出钩子也可在首次可见帧发现换视角，不能等待20毫秒Lua调度或假定输入更新先到。
+bool cameraHoldGazeOutputReady(Addr component,bool cockpit) {
+    if(!cameraHold.gazeTransfer) {
+        if(!cameraHold.gazeTarget.address)return false;
+        if(cameraHold.viewType>=0 && cameraHold.viewType<=2 && component==cameraHold.cameras[cameraHold.viewType].address)return false;
+    }
+    if(!cameraHoldLive() || !cameraHoldIdentities())return false;
+    const int view=read<unsigned char>(cameraHold.view.address+0x350);
+    if(view>2 || (view==1)!=cockpit || component!=cameraHold.cameras[view].address || !continuousAlive(cameraHold.cameras[view]) ||
+        read<Addr>(cameraHold.view.address+0x318+view*0x10)!=component ||
+        read<Addr>(component+0x330)!=cameraHold.plane.address || read<Addr>(component+0x338)!=cameraHold.focus.address ||
+        !read<unsigned char>(cameraHold.plane.address+0xe12) || cameraHoldNativeSpecial())return false;
+    cameraHoldChangeView(view);
+    if(!cameraHold.gazeTransfer)return false;
+    if(GetTickCount64()-cameraHold.gazeTransferAt>250 || cameraHold.centering ||
+        !cameraHoldSameTarget(cameraHold.gazeTransferTarget,cameraHoldGazeTarget())) {
+        cameraHold.gazeTransfer=false;return false;
+    }
+    return true;
+}
+void* cameraHoldOutput(void* component,void* output,float delta,void* context,const void* a5,const void* a6,
+    const void* origin,const void* a8,const void* a9,bool a10,const void* a11,const void* a12,const void* a13) {
+    try {
+        const auto address=reinterpret_cast<Addr>(component);
+        if(cameraHoldGazeOutputReady(address,false)) {
+            // 原生输出使用同一个世界位置参数。只初始化输入组件的注视方向缓存，不写输出坐标/四元数。
+            std::array<float,3> direction{};float lengthSquared=0;
+            for(size_t i=0;i<direction.size();++i) {
+                direction[i]=read<float>(cameraHold.focus.address+0x120+i*4)-read<float>(reinterpret_cast<Addr>(origin)+i*4);
+                require(std::isfinite(direction[i]),"镜头注视交接方向无效");lengthSquared+=direction[i]*direction[i];
+            }
+            if(std::isfinite(lengthSquared) && lengthSquared>1.e-8f) {
+                const float length=std::sqrt(lengthSquared);
+                for(auto& value:direction)value/=length;
+                checkMemory(address+0x3bc,sizeof(direction));checkMemory(address+0x3e0,sizeof(float));
+                write(address+0x3bc,direction);write(address+0x3e0,cameraHold.gazeWeight);
+            }
+            cameraHold.gazeTransfer=false;
+        }
+    }catch(const std::exception& error){cameraHoldFailure(error.what());}
+    return originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
+}
+void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* context,int mode,const void* a6,const void* a7) {
+    try {
+        const auto address=reinterpret_cast<Addr>(component);
+        if(cameraHoldGazeOutputReady(address,true)) {
+            // 委托镜头没有普通座舱字段的语义，继续走原生；普通座舱沿用原生范围计算及缓动函数。
+            if(!read<unsigned char>(address+0x370) && !read<Addr>(address+0x378)) {
+                float negative{},positive{};
+                reinterpret_cast<void(*)(void*,int,float*,float*)>(continuousBase()+0x424200)(context,mode,&negative,&positive);
+                const float pitch=read<float>(address+0x394),rawYaw=read<float>(address+0x398);
+                const float extent=rawYaw<0?negative:positive;
+                const float scale=read<float>(continuousBase()+(rawYaw<0?0x25744b8:0x257449c));
+                if(std::isfinite(pitch) && std::abs(pitch)<=1.01f && std::isfinite(rawYaw) && std::isfinite(scale) &&
+                    std::isfinite(extent) && std::abs(extent)>1.e-6f) {
+                    const float yaw=std::clamp(rawYaw*scale/extent,-1.f,1.f);
+                    const float eased=reinterpret_cast<float(*)(float)>(continuousBase()+0x41fa10)(cameraHold.gazeWeight);
+                    require(std::isfinite(yaw) && std::isfinite(eased),"镜头注视交接方向无效");
+                    if(cameraHoldGazeOutputReady(address,true)) {
+                        checkMemory(address+0x39c,4*sizeof(float));
+                        write(address+0x39c,cameraHold.gazeWeight);write(address+0x3a0,eased);
+                        write(address+0x3a4,pitch);write(address+0x3a8,yaw);
+                    }
+                }
+            }
+            cameraHold.gazeTransfer=false;
+        }
+    }catch(const std::exception& error){cameraHoldFailure(error.what());}
+    return originalCameraHoldCockpitOutput(component,output,delta,context,mode,a6,a7);
+}
+
 void installCameraHold() {
     if(cameraHold.ready)return;
     installTargetGaze();
-    constexpr std::array<Addr,5> rvas{0x41e150,0x424cf0,0x43df90,0x821430,0x421320};
-    constexpr unsigned char signatures[5][16]={
+    constexpr std::array<Addr,7> rvas{0x41e150,0x424cf0,0x43df90,0x821430,0x421320,0x41e350,0x424610};
+    constexpr unsigned char signatures[7][16]={
         {0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x60,0x48,0x8b,0x81,0x30,0x03,0x00},
         {0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x6c,0x24,0x10,0x48,0x89,0x74,0x24,0x18,0x57},
         {0x48,0x89,0x5c,0x24,0x08,0x57,0x48,0x83,0xec,0x50,0x0f,0x29,0x74,0x24,0x40,0x48},
         {0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x83,0xb9,0x50,0x12,0x00,0x00,0x00,0x48,0x8b},
-        {0x4c,0x8b,0xdc,0x49,0x89,0x6b,0x10,0x49,0x89,0x73,0x18,0x57,0x48,0x81,0xec,0x90}};
+        {0x4c,0x8b,0xdc,0x49,0x89,0x6b,0x10,0x49,0x89,0x73,0x18,0x57,0x48,0x81,0xec,0x90},
+        {0x48,0x8b,0xc4,0x55,0x53,0x56,0x57,0x41,0x56,0x48,0x8d,0xa8,0xe8,0xfe,0xff,0xff},
+        {0x40,0x55,0x53,0x56,0x57,0x41,0x56,0x41,0x57,0x48,0x8d,0xac,0x24,0x48,0xff,0xff}};
     const auto base=continuousBase();
     constexpr unsigned char special[]={0x40,0x53,0x48,0x83,0xec,0x20,0x48,0x8b,0x05,0x5b,0xd1,0x8e,0x03};
     checkMemory(base+0x3ceac0,sizeof(special));
@@ -278,16 +389,23 @@ void installCameraHold() {
     constexpr unsigned char focused[]={0x8b,0x81,0x08,0x01,0x00,0x00,0x83,0xe8,0x02,0x83,0xf8,0x01,0x0f,0x96,0xc0,0xc3};
     checkMemory(base+0x420120,sizeof(focused));
     require(std::memcmp(reinterpret_cast<void*>(base+0x420120),focused,sizeof(focused))==0,"镜头保持实际注视判据不匹配");
+    constexpr unsigned char bounds[]={0x48,0x8b,0xc4,0x53,0x55,0x56,0x57,0x48,0x81,0xec,0xf8,0,0,0,0x0f,0x29};
+    constexpr unsigned char ease[]={0x0f,0x57,0xe4,0x0f,0x2f,0xc4,0x77,0x04,0x0f,0x28,0xc4,0xc3,0xf3,0x0f,0x10,0x0d};
+    checkMemory(base+0x424200,sizeof(bounds));checkMemory(base+0x41fa10,sizeof(ease));
+    require(std::memcmp(reinterpret_cast<void*>(base+0x424200),bounds,sizeof(bounds))==0 &&
+        std::memcmp(reinterpret_cast<void*>(base+0x41fa10),ease,sizeof(ease))==0,"镜头注视交接接口不匹配");
     for(size_t i=0;i<rvas.size();++i) {
         checkMemory(base+rvas[i],sizeof(signatures[i]));
         require(std::memcmp(reinterpret_cast<void*>(base+rvas[i]),signatures[i],sizeof(signatures[i]))==0,"镜头保持接口与当前游戏不匹配");
     }
-    std::array<void*,5> hooks{reinterpret_cast<void*>(&cameraHoldFirst),reinterpret_cast<void*>(&cameraHoldCockpit),
-        reinterpret_cast<void*>(&cameraHoldThird),reinterpret_cast<void*>(&cameraHoldViewPressed),reinterpret_cast<void*>(&cameraHoldSpecial)};
+    std::array<void*,7> hooks{reinterpret_cast<void*>(&cameraHoldFirst),reinterpret_cast<void*>(&cameraHoldCockpit),
+        reinterpret_cast<void*>(&cameraHoldThird),reinterpret_cast<void*>(&cameraHoldViewPressed),reinterpret_cast<void*>(&cameraHoldSpecial),
+        reinterpret_cast<void*>(&cameraHoldOutput),reinterpret_cast<void*>(&cameraHoldCockpitOutput)};
     size_t created=0;
     try {
         for(size_t i=0;i<rvas.size();++i) {
-            void** original=i<3?reinterpret_cast<void**>(&originalCameraHoldUpdates[i]):i==3?reinterpret_cast<void**>(&originalCameraHoldView):reinterpret_cast<void**>(&originalCameraHoldSpecial);
+            void** original=i<3?reinterpret_cast<void**>(&originalCameraHoldUpdates[i]):i==3?reinterpret_cast<void**>(&originalCameraHoldView):
+                i==4?reinterpret_cast<void**>(&originalCameraHoldSpecial):i==5?reinterpret_cast<void**>(&originalCameraHoldOutput):reinterpret_cast<void**>(&originalCameraHoldCockpitOutput);
             require(MH_CreateHook(reinterpret_cast<void*>(base+rvas[i]),hooks[i],original)==MH_OK,"镜头保持原生入口接入失败");++created;
         }
         for(auto rva:rvas)require(MH_QueueEnableHook(reinterpret_cast<void*>(base+rva))==MH_OK,"镜头保持钩子排队失败");
@@ -378,17 +496,20 @@ int cameraHoldLua(void* luaState) {
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
                     cameraHoldObserveCenterKey(static_cast<int>(centerKey));
-                    // R3计时独立于原生回调到达时机；满500毫秒仍按住也立即派发一次。
-                    if(cameraHold.replaceR3 && (cameraHold.pendingView || (cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=500))) {
+                    // 300毫秒按实际时间计，回中在游戏线程立即执行一次，松开不再换视角。
+                    if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=300) {
+                        cameraHold.longDone=true;cameraHoldCenter();
+                    }
+                    if(cameraHold.replaceR3 && cameraHold.pendingView && !cameraHold.combo) {
                         cameraHold.pendingView=false;cameraHold.longDone=true;
-                        nativeLog("CAMERA_HOLD_R3_VIEW_DISPATCH held_ms="+std::to_string((cameraHold.buttonReleasedAt?cameraHold.buttonReleasedAt:GetTickCount64())-cameraHold.pressedAt));
+                        nativeLog("CAMERA_HOLD_R3_SHORT_VIEW");
                         originalCameraHoldView(reinterpret_cast<void*>(plane));
                     }
                     if(cameraHold.r3Gesture && !cameraHold.rightDown && cameraHold.buttonReleasedAt && !cameraHold.pendingView) {
                         const auto sinceRelease=GetTickCount64()-cameraHold.buttonReleasedAt;
                         // 已确认动作保留100毫秒交接；尚未交付的原生动作最多等500毫秒，避免快点漏放或无限占键。
                         if(sinceRelease>=(cameraHold.nativePress?100:500)) {
-                            cameraHold.r3Gesture=false;cameraHold.nativePress=false;cameraHold.combo=false;
+                            cameraHold.r3Gesture=false;cameraHold.nativePress=false;
                         }
                     }
                 }
