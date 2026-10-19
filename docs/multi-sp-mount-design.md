@@ -107,7 +107,7 @@
 | Typhoon | LAAM4＋8AGM18；LAAM4＋HCAA4；8AGM18＋HCAA4 | LAAM2＋8AGM18＋HCAA2 | 保双挂补位及前腹净空取舍 |
 | Su-35S | LAAM2＋6AAM6；LAAM6＋LASM2；6AAM6＋LASM2 | LAAM2＋6AAM4＋LASM2 | LAAM＋6AAM额外两枚借LASM腹点 |
 | Su-37 | HPAA2＋4AAM4；HPAA4＋TLS；4AAM4＋TLS | HPAA4＋4AAM2＋TLS | 保现有布局；4AGM要求属于Su-30M2 |
-| F-4E | UGB6＋LAGM1；UGB12＋SASM2；LAGM2＋SASM2 | UGB6＋LAGM1＋SASM2 | 用户明确暂不处理，后续复测；本轮保持 |
+| F-4E | UGB6＋LAGM1；UGB12＋SASM2；LAGM2＋SASM2 | UGB6＋LAGM1＋SASM2 | UGB＋SASM已含左右各6位；已定位左6右3来自18枚按50%配为9枚，非布局缺位 |
 | F-14A TGM | LAAM4＋SAAM2；LAAM4＋HPAA2；SAAM1＋HPAA1 | LAAM4＋SAAM1＋HPAA1 | SWP3保原生整架/碰撞，接受空导轨 |
 | Gripen E | SASM2＋6AAM5；SASM2＋LACM2；6AAM5＋LACM2 | SASM2＋6AAM3＋LACM2 | 双挂保腹部6AAM；三挂两SASM成对 |
 | Su-30M2 | HPAA2＋4AGM4；HPAA2＋4AAM4；4AGM2＋4AAM4 | 腹4AGM2＋翼4AAM4＋翼尖HPAA2 | 大弹靠腹，双挂与三挂分别安排 |
@@ -126,7 +126,9 @@ F-15E 早期仅挪模型、未同步离架时，机腹导弹下落穿过SFFS；�
 |---|---|
 | F-15 S/MTD | 用户明确实测同侧FAEB/HPAA不影响，取消初次复核的保守分侧限制。HPAA＋FAEB及三SP都恢复HPAA原生sp11/12、FAEB原生sp31/32各两处；三SP的HVAA四处不变。三组均为原生占位网格，无新增挂架资源。 |
 | XFA-27 | 只改SOD＋MSTM：SOD为SWP1/sp12，MSTM从SWP2/sp23补为sp21、sp23。两枚MSTM均位于负Y，沿用原生相对位置；新增负侧SWP2副本保下挂sp21的支架，正侧SOD保原点。含ECM继续原方案，固定吊舱不套CFA隐藏策略。 |
-| F-4E | 用户描述某组合左六右三枚UGB，希望右侧再加三枚，尚未明确具体组合、库存或场景；随后明确暂不处理，后面再测。布局表目前是六位/十二位，不能将观察到九枚直接认定为某个限位方案。源码、资源和现有站位均保持，待用户新反馈再继续。 |
+| F-4E | 用户后续明确为UGB＋SASM，要求右侧由3补至6。只读旧现场日志确认：mask5绑定14位（UGB12＋SASM2），UGB完整载量18按双SP 50%缩为9；可见位图12799中的UGB位0–8恰为负Y六枚、正Y三枚。挂点及原生支架已齐，达到十二枚需调整实际配弹策略，不能直接把九枚库存画成十二枚。 |
+
+F-4E补充依据见[库存与显隐对照](../evidence/f04e-ugb-sasm-stock-review.json)。现有规则向上取整：18×50%得到9枚，双SP比例至少62%时得到12枚；修改全局双SP比例会影响所有机体，机型专用下限则改变该组合的比例规则。已向用户说明并等待选择，尚未改代码、个人设置或实际库存；此前UGB/LAGM同站的静态穿面分析不是此次UGB＋SASM现象的原因。此轮不编译、测试或安装，不改旧回执和54份资源。
 | F-16XL | 保持。UGB共存时4AGM取外侧sp31/32，UGB十二点和4AAM四点保留；不含UGB时4AAM取后侧sp23/24、4AGM六点。旧实体面复核支持窄间距，不扩大为离架通过。 |
 | MiG-35D | 三个双挂独立补成对：SAAM2＋最外6AAM sp21/22；SAAM2＋中4AGM sp31/32；最外6AAM sp21/22＋内4AGM sp33/34。新增三份双侧副本保各组自身支撑；三挂仍保旧分侧布局，避免直接增加相邻最外6AAM/中4AGM风险。 |
 

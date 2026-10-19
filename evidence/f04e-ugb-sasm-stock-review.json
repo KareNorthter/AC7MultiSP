@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "date": "2026-10-19",
+  "branch": "codex/five-aircraft-mount-review",
+  "formal_baseline": "main / 2.21.0 / 7a0559d",
+  "user_report": "F4在UGB+SASM组合中左边6个UGB、右边3个，右边应该增加到6个",
+  "status": "root_cause_confirmed_pending_ammo_policy_choice",
+  "confirmed": {
+    "code": "f04e",
+    "mask": 5,
+    "layout_capacity": {
+      "ugb": 12,
+      "sasm": 2
+    },
+    "ugb_selected_sockets": [
+      "sp11",
+      "sp13",
+      "sp15",
+      "sp17",
+      "sp19",
+      "sp21",
+      "sp12",
+      "sp14",
+      "sp16",
+      "sp18",
+      "sp20",
+      "sp22"
+    ],
+    "native_ugb_stock": 18,
+    "two_sp_percent": 50,
+    "scaled_ugb_stock": 9,
+    "native_sasm_stock": 12,
+    "scaled_sasm_stock": 6,
+    "visible_mask": 12799,
+    "visible_ugb_ordinals": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "visible_ugb_negative_y": 6,
+    "visible_ugb_positive_y": 3,
+    "physical_positions_including_sasm": 14,
+    "minimum_two_sp_percent_for_12_ugb": 62,
+    "at_62_percent_ugb_stock": 12,
+    "finding": "不是布局仅有9位；任务显隐按真实库存9枚聚合成前9个物理位，与用户左6右3一致"
+  },
+  "native_log_snapshot": {
+    "source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\native.log",
+    "captured_file_sha256": "4a7bb6809df3c1af0d2f558ac6cbc699d0f4942d073df3f9ce74730f8324597c",
+    "line_start": 28162,
+    "fragment": [
+      "83111015 {\"configs\":[0,2,-1],\"count\":2,\"event\":\"NATIVE_BEGIN\",\"op\":\"debug_setup\",\"request\":39,\"target\":0,\"thread\":29324}",
+      "83111015 {\"count\":2,\"event\":\"SP_AMMO_SCALED\",\"native\":[18,18],\"percent\":50,\"scaled\":[9,9]}",
+      "83111015 {\"event\":\"PLANE_SWP_SYNCHRONIZED\",\"old_engine\":0,\"old_plane\":0,\"target\":2}",
+      "83111031 {\"count\":2,\"event\":\"SP_AMMO_SCALED\",\"native\":[12,12],\"percent\":50,\"scaled\":[6,6]}",
+      "83111031 {\"event\":\"PLANE_SWP_SYNCHRONIZED\",\"old_engine\":2,\"old_plane\":2,\"target\":0}",
+      "83111031 {\"aircraft\":\"f04e\",\"event\":\"FIXED_MOUNT_BOUND\",\"kinds_mask\":5,\"physical_positions\":14,\"rack_mask\":5}",
+      "83111031 {\"after\":12799,\"before\":0,\"event\":\"FIXED_MOUNT_MASK\",\"game_time\":57.894302368}",
+      "83111031 {\"active\":0,\"event\":\"NATIVE_DONE\",\"main_ammo\":66,\"op\":\"debug_setup\",\"request\":39,\"sp\":[9,6]}"
+    ],
+    "fragment_sha256": "f5a91ee069930065bb81fea235c644df111b8ae0e439272c1222bc55c4805df4"
+  },
+  "source_layout": {
+    "selected": [
+      [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11
+      ],
+      [],
+      [
+        0,
+        1
+      ]
+    ],
+    "racks": 5,
+    "variants": [
+      -1,
+      -1,
+      -1
+    ]
+  },
+  "source_files_sha256": {
+    "src/su30sm_fixed_mount.hpp": "ea75553b231c6e5fd1284304e2b25c872879aad3d2d6bffe0d02e8d9e0609e34",
+    "src/mount_preview.hpp": "b01beff6bdae38ae4bce11e1c9a0234dbe3706235c8cedf9bad7b8b630028a9d",
+    "src/mount_expansion_data.hpp": "f381f7c0913ca9856d5aeb548234e0d3e47dd8dfdcd483591c469f5533f4d816",
+    "dist/DualSP/Scripts/loadout_profile.lua": "f17063c43de93a116cdfe148c111dbd78b4e9211070d217b32d3653765a00a07"
+  },
+  "pending_choice": "双SP全局比例改62%，或仅F4该组合UGB至少12枚，或保留50%与真实9枚显示；尚未据此修改代码或个人设置",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "game_functions_called": false,
+  "game_files_changed": false,
+  "boundary": "只读现有日志和设置中必要的两项配弹比例；没有写游戏内存、调用游戏接口、代按按键或复现实机操作；旧回执和资源保留"
+}

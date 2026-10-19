@@ -14,6 +14,8 @@
 
 ## 后续开发流程
 
+本线程按用户要求继续使用`codex/five-aircraft-mount-review`，已合入main 2.21.0/`7a0559d`并保留F-15后续修订。F-4E新反馈限定UGB＋SASM左6右3，现有日志证实是UGB18枚按双SP50%缩为9枚，而非十二位布局缺件。只读依据`evidence/f04e-ugb-sasm-stock-review.json`；正等待用户选择配弹策略，未修改代码、个人配弹设置或游戏文件，未编译/运行测试/安装。旧F-4E暂缓记录保留历史含义，此次已恢复核对。
+
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 
 接收时同时收取本分支源码/文档/证据和本机完整资源目录：`C:/Users/83717/.codex/worktrees/five-aircraft-mount-review/AC7_MultiSP/Temp/five-aircraft-mount-review/source`。该目录为旧50份原字节加4份新副本，共54资源/108文件，资源本身不入Git。可复制到接收工作区独立Temp目录，构建时通过`--mount-assets-dir`显式指定；原默认`Temp/mount-assets-2.14.0/source`只有旧50份，不能直接用于此候选。核心生成表、Lua清单和新PAK必须成套，不能拿现有2.20.0 PAK混装。新的JSON已加入来源冻结，旧构建回执不能接收这些功能差异。
