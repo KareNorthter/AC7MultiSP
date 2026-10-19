@@ -1,4 +1,9 @@
-AC7MultiSP 2.20.1 Test Candidate
+AC7MultiSP 2.20.2 Source Candidate
+
+With Camera hold enabled, ordinary first-person, cockpit and third-person view changes now carry sustained tracking progress and direction across views. This addresses recentering before returning to the tracked target. Applies to L3 and custom keyboard tracking toggles. Controls, settings and defaults remain unchanged. Disabling Camera hold retains native behavior.
+This source revision has not been built, tested or installed; gameplay verification is pending. The installed candidate remains 2.20.1, described below. The released version remains 2.20.0.
+
+Installed 2.20.1 candidate features:
 
 This candidate integrates always-visible/one-second weapon labels, the four-page management UI, L3 tracking/R3 0.3-second recenter and XFA-27/MiG-35D mount changes. Management protocol 13/configuration 12; first launch backs up before migration. Gameplay verification is pending.
 

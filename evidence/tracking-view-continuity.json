@@ -1,0 +1,303 @@
+{
+  "date": "2026-10-19",
+  "candidate": "2.20.2",
+  "branch": "codex/tracking-view-continuity",
+  "base_commit": "3ec3325fdc9fe9d0018cd80e98ca3e1d7e837d58",
+  "formal_release_unchanged": "main / v2.20.0",
+  "installed_baseline": "evidence/2.20.1-installed.json",
+  "status": "完成源码及说明；新源码未编译、写/运行测试、安装或实机验证",
+  "authorization": {
+    "request": "L3保持注视时短按R3切视角会先回正再注视，要求屏蔽该回正；全部回正屏蔽仅限camera-hold总开关开启。",
+    "feedback": "用户反馈上一版功能正常，按本次上下文记为手柄/管理页反馈，不扩大为HUD、挂载、性能或全机全组合验收。",
+    "sampling": "用户分别明确回复开始，手动完成两轮各15秒操作；只读采样，不代按、不调用游戏函数、不写游戏内存。"
+  },
+  "sampling": {
+    "pid": 36640,
+    "access": "OpenProcess(0x410): QUERY_INFORMATION | VM_READ",
+    "records": [
+      {
+        "path": "Temp/tracking-view-36640-1792371663.json",
+        "sha256": "ff7561f10889d56534220a13f9004fe0deb10b9fc80604826e382ab0d092aa4d",
+        "samples": 1413,
+        "last_sample_seconds": 14.9998,
+        "requested_window_seconds": 15,
+        "role": "切视角前L3已再次关闭，只作非持续注视对照",
+        "view_changes": [
+          {
+            "elapsed": 7.5472,
+            "from": 2,
+            "to": 0,
+            "focus_state": 1,
+            "outgoing_progress": 0.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.0
+          },
+          {
+            "elapsed": 8.4629,
+            "from": 0,
+            "to": 1,
+            "focus_state": 1,
+            "outgoing_progress": 0.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.0
+          },
+          {
+            "elapsed": 9.0712,
+            "from": 1,
+            "to": 2,
+            "focus_state": 1,
+            "outgoing_progress": 0.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.0
+          },
+          {
+            "elapsed": 14.8093,
+            "from": 2,
+            "to": 0,
+            "focus_state": 1,
+            "outgoing_progress": 0.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.0
+          }
+        ]
+      },
+      {
+        "path": "Temp/tracking-view-36640-1792371737.json",
+        "sha256": "349dd32430c397d97bf9a45a32c28cdc8c4023aaf0f95e1f3d2366cfe615f1b3",
+        "samples": 1412,
+        "last_sample_seconds": 14.9978,
+        "requested_window_seconds": 15,
+        "role": "一次L3开启后持续注视，八次普通视角切换覆盖问题场景",
+        "view_changes": [
+          {
+            "elapsed": 1.7285,
+            "from": 2,
+            "to": 0,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.5328146815299988
+          },
+          {
+            "elapsed": 3.0096,
+            "from": 0,
+            "to": 1,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.01736150123178959,
+            "progress_after_approximately_200ms": 0.5164777636528015
+          },
+          {
+            "elapsed": 4.4484,
+            "from": 1,
+            "to": 2,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.5249180197715759
+          },
+          {
+            "elapsed": 6.0799,
+            "from": 2,
+            "to": 0,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.017361249774694443,
+            "progress_after_approximately_200ms": 0.5398339629173279
+          },
+          {
+            "elapsed": 7.6196,
+            "from": 0,
+            "to": 1,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.017361249774694443,
+            "progress_after_approximately_200ms": 0.5402984619140625
+          },
+          {
+            "elapsed": 9.0091,
+            "from": 1,
+            "to": 2,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.5090371966362
+          },
+          {
+            "elapsed": 11.4861,
+            "from": 2,
+            "to": 0,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.01736150123178959,
+            "progress_after_approximately_200ms": 0.5414982438087463
+          },
+          {
+            "elapsed": 13.3012,
+            "from": 0,
+            "to": 1,
+            "focus_state": 2,
+            "outgoing_progress": 1.0,
+            "incoming_progress": 0.0,
+            "progress_after_approximately_200ms": 0.51622474193573
+          }
+        ]
+      }
+    ]
+  },
+  "findings": [
+    "第二轮切换期间原生焦点持续为2，目标持续注视未关闭；目标视角进度从0附近重新累计，约200毫秒后仍仅完成约一半。",
+    "第一/第三人称初始化清空0x3e0注视进度并把0x3bc方向缓存重设为机头方向；普通座舱初始化清空0x39c注视进度。原生视角复制不补齐这些字段。",
+    "第一/第三人称实际输出使用0x3e0及0x3bc；普通座舱输入更新0x394/0x398目标角、0x39c/0x3a0进度，输出另平滑0x3a4/0x3a8。共用0x360/0x364字段不是这里的实际输出权重。",
+    "输入轴内存快照未经过模组轴getter覆盖，不能以原始跟踪轴为0推断持续注视已停止。"
+  ],
+  "native_evidence": [
+    {
+      "rva": "0x41fac0",
+      "path": "Temp/tracking-view-36640-1792371737-native/41fac0.bin",
+      "size": 122,
+      "boundary": "unwind_chain",
+      "sha256": "b559687a6265529cd384aa72e417c50943ff5b641ac5387325672eb05d4a8fd1",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x421520",
+      "path": "Temp/tracking-view-36640-1792371737-native/421520.bin",
+      "size": 161,
+      "boundary": "unwind_chain",
+      "sha256": "56bc636f26c58688dc850d02c581c607407634f4ac391b21a8ffd7c504338fd4",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x41fb40",
+      "path": "Temp/tracking-view-36640-1792371737-native/41fb40.bin",
+      "size": 137,
+      "boundary": "unwind_chain",
+      "sha256": "382138ec05694d26032438683dd854d683e0c25cc64f0ec99ce8bd249efe75bc",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x424cf0",
+      "path": "Temp/tracking-view-36640-1792371737-native/424cf0.bin",
+      "size": 726,
+      "boundary": "unwind_chain",
+      "sha256": "98a02fdd8edd42df0b0a16bb6828e60ba955e5900d3c3ff0d3c38e2f71c9c8fe",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x424fd0",
+      "path": "Temp/tracking-output-methods-1792371793/424fd0.bin",
+      "size": 52,
+      "boundary": "unwind_chain",
+      "sha256": "a3cbf703448cb1ee2bef422e7a65db0b2b4e6112b7bc26a8eb2b9e996a0f220e",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x427050",
+      "path": "Temp/tracking-output-methods-1792371793/427050.bin",
+      "size": 456,
+      "boundary": "unwind_chain",
+      "sha256": "588e0654e33e03c6d90dda7993b24379561c1e291db7137a2ac5a518e476d6fc",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x43e160",
+      "path": "Temp/tracking-output-methods-1792371793/43e160.bin",
+      "size": 475,
+      "boundary": "unwind_chain",
+      "sha256": "cf592ba129504732a65b50c2b7fdeb5ff5a9702a0f52cd90666ee3e5e8ddee72",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x424610",
+      "path": "Temp/tracking-cockpit-native-36640/424610.bin",
+      "size": 1755,
+      "boundary": "unwind_chain",
+      "sha256": "4ed940c044c15b3fff98112abfb8bf5099b29aef75256d3806269b3a4bd91908",
+      "note": "本轮只读采集"
+    },
+    {
+      "rva": "0x41fe30",
+      "path": "Temp/tracking-focus-helpers-36640/41fe30.bin",
+      "size": 96,
+      "boundary": "leaf_window_not_exact",
+      "sha256": "cd82ec28c83eca1b16d4425c762f35c80eaf7cf625f73e13156cd4e6804ad311",
+      "note": "本轮只读采集；96字节叶函数窗口不称为完整函数"
+    },
+    {
+      "rva": "0x425120",
+      "path": "Temp/tracking-focus-helpers-36640/425120.bin",
+      "size": 810,
+      "boundary": "unwind_chain",
+      "sha256": "9c4e8f4610cd75fea5fa26b8a8ad11b6f80a3bd3a065ba59c0512ce1092d75f4",
+      "note": "本轮只读采集；96字节叶函数窗口不称为完整函数"
+    },
+    {
+      "rva": "0x424200",
+      "path": "Temp/tracking-focus-helpers-36640/424200.bin",
+      "size": 587,
+      "boundary": "unwind_chain",
+      "sha256": "e2a9650a016c5fae0c74ca1f348bbb51e0d97c7537458bfb063f8f0ecfd79c11",
+      "note": "本轮只读采集；96字节叶函数窗口不称为完整函数"
+    },
+    {
+      "rva": "0x41fa10",
+      "path": "Temp/tracking-focus-helpers-36640/41fa10.bin",
+      "size": 96,
+      "boundary": "leaf_window_not_exact",
+      "sha256": "55133a5e10e23e65b2657f583d40fb43be756f664db8677c9a0dc82760f75e32",
+      "note": "本轮只读采集；96字节叶函数窗口不称为完整函数"
+    },
+    {
+      "rva": "0x41e350",
+      "path": "Temp/camera-output-transition-28024/41e350.bin",
+      "size": 5809,
+      "boundary": "unwind_chain",
+      "sha256": "e1a436f296d5175437add1ab8f14d9038e85736bf72554791cef3f9f18778527",
+      "note": "先前授权只读采集的完整公共输出，沿用旧原始字节；不伪称本轮新采集"
+    }
+  ],
+  "implementation": {
+    "gate": "仅总镜头保持有效、当前玩家/输入/视角/焦点弱身份有效、原游戏线程、前台、500毫秒心跳内、普通视角及输入许可有效时运行；模组持续注视还须原生焦点2/3且同一目标地址/索引/序列号。",
+    "transfer": "缓存旧视角原生注视进度；输入更新或输出首次发现普通视角改变时排一次交接，最长保留250毫秒，同一交接成功一次即清除。",
+    "first_third": "首次输出前以该次原生目标世界位置减原生第7参数位置并归一化，补0x3bc方向缓存及0x3e0旧进度。原生输出仍接收全部13参数、原delta并调用一次。",
+    "cockpit": "普通非委托座舱使用已更新的0x394/0x398目标角，沿用原生0x424200范围和0x41fa10缓动以及原生常量；补0x39c/0x3a0进度与0x3a4/0x3a8方向缓存，原生输出保留全部7参数、原delta并调用一次。",
+    "bounds": "不修改目标选择、跟踪轴或最终输出坐标/四元数。主动回中、目标变化/换代、生命周期重置、总开关关闭及特殊/委托镜头不继承交接；真实Y/F单独注视保持既有行为。",
+    "signatures": "沿用原5个钩子，新增两输出入口16字节签名核对，原生范围和缓动接口另核对16字节。安装失败清除本批已建钩子；运行错误清许可并保留原生输出调用。",
+    "protocols_unchanged": {
+      "management": 13,
+      "configuration": 12,
+      "tracking": 2,
+      "camera": 4
+    },
+    "settings_and_controls": "无新增设置/迁移，X轮切、L3松开切换、R3短按松开换视角/300毫秒长按回中、双摇杆只干扰弹及默认值不变。"
+  },
+  "review": "人工源码、调用约定、原生代码/已记录样本、生命周期和开关范围复核；Git差异空白检查及受保护核心摘要核对，不运行产品或测试代码。",
+  "remaining_validation": [
+    "新输出钩子的编译、调用约定和普通三视角交接效果尚待后续明确授权构建安装后验证。",
+    "同目标注视未完成时切换、快速连切、切目标/销毁、暂停/检查点/换机、主动回中及总开关关闭回归尚未实测。",
+    "不覆盖特殊/委托座舱、VR或多人，不把旧版只读数据当作新代码已通过。"
+  ],
+  "compiled": false,
+  "test_modules_added_or_modified": false,
+  "test_modules_run": false,
+  "installed": false,
+  "live_process_sampled": true,
+  "new_code_gameplay_verified": false,
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "game_started_or_stopped": false,
+  "pushed_or_uploaded": false,
+  "historical_receipts_modified": false,
+  "raw_materials": "原始JSON、游戏代码窗口及采样辅助脚本保留于被忽略的Temp，不提交、不清理。附加状态读取在玩家身份失效时终止，未绕过身份检查，不作为几何证据。",
+  "source_sha256": {
+    "VERSION": "8f90a42103736ebc57714fb567cd75e91bbe73be639b5f823766a97fae7f0275",
+    "src/camera_hold.hpp": "44ff61e5f7e2ef149d9d0c061b9baa2b73ee91b5970a35cc2b54df68ee29ba15",
+    "src/ui_messages.hpp": "e85333860be84da494fa6e278a559a2e26accbcdf7dab5dcb032e89cadb1a3a7",
+    "src/management_panel.hpp": "807d7e4a10930e789df575e4a1cc6835c408709c7dbccddf6d62236fec8090a7",
+    "src/product.json": "7c3224de5412b720a0b37686b729e9ef57980044a44a356a3dd6320156ee8fcc",
+    "dist/DualSP/Scripts/main.lua": "0c131476ac3e0b49e24304495c7064e62cf429bc86ff84d861e5986d72f054d0"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}
