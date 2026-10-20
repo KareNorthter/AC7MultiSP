@@ -1,4 +1,4 @@
-// 七机静态分区的碰撞保真资格：不关闭、不改写原生组件的碰撞配置。
+// 登记挂架的碰撞保真资格：不关闭、不改写原生组件的碰撞配置。
 #pragma once
 
 struct MountRackCollisionAccess {
@@ -125,7 +125,7 @@ bool mountRequireRackCollision(Addr component,Addr original,Addr replacement) {
         read<std::array<unsigned char,16>>(replacementBody.address+offset)==guid,
         "碰撞保真：原生与派生碰撞GUID不一致");
     require(mountAlive(originalId) && mountAlive(replacementId),"碰撞保真：核验期间资源换代");
-    static std::set<std::string> logged; // 19项纯资源名，不保有机体或世界。
+    static std::set<std::string> logged; // 仅生成表登记的纯资源名，不保有机体或世界。
     if(logged.insert(proof->at("asset").get<std::string>()).second)nativeLog(Json{{"event","MOUNT_COLLISION_PRESERVED"},{"component_name",mountName(component)},
         {"source",mountName(original)},{"replacement",mountName(replacement)},{"stored",stored},
         {"guid_offset",offset}}.dump());

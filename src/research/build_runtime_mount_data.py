@@ -265,6 +265,12 @@ def build():
         preserved.append({k:entry[k] for k in ('asset','source','source_package','body_name','body_number','body_guid')})
     if collision['body_layout']['size']!=0x3a0 or collision['body_layout']['guid_offset']!=0x2e0:
         raise ValueError('原生BodySetup布局依据改变')
+    # 在旧19项原始资格核验完成后追加反馈；旧资源即使不再使用也保留编号与字节。
+    if __package__:
+        from .f18e_layout_feedback_data import apply_f18e_layout_feedback
+    else:
+        from f18e_layout_feedback_data import apply_f18e_layout_feedback
+    apply_f18e_layout_feedback(planes, assets, preserved, ROOT)
     return {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
 

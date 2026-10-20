@@ -18,7 +18,7 @@ def build(source, output):
     for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json', 'static-expansion-2.13.0.json',
                      'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json',
                      'local-four-mount-runtime.json', 'm31b-saam-offset-r1.json', 'm31b-saam-offset-r2.json',
-                     'm31b-saam-offset-r3.json'):
+                     'm31b-saam-offset-r3.json', 'f18e-layout-feedback-r1.json'):
         extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
         for report in extra['resource_reports']:
             name = report['recipe']['name']
@@ -35,6 +35,10 @@ def build(source, output):
     for entry in collision['entries']:
         if reports[entry['asset']]['encoded_hashes']!=entry['encoded_hashes']:
             raise ValueError('碰撞保持依据与实际打包资源字节不符：'+entry['asset'])
+    feedback=json.loads((ROOT/'evidence/f18e-layout-feedback-r1.json').read_text(encoding='utf-8'))
+    for entry in feedback['collision_preservation']:
+        if reports[entry['asset']]['encoded_hashes']!=entry['encoded_hashes']:
+            raise ValueError('两机反馈碰撞依据与实际资源字节不符：'+entry['asset'])
     for name in names:
         report = reports[name]
         if not all(report.get(k) is True for k in ('asset_roundtrip','renamed_ac7_roundtrip','all_exports_payload_preserved')):
