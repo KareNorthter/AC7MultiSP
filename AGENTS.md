@@ -1,5 +1,7 @@
 # AC7MultiSP
 
+当前新增 **2.22.0整合候选**，位于`Temp/integration-2.22.0`的`codex/integration-2.22.0`。正式main/已验收发布仍为2.21.1；候选由本线程按用户2026-10-20授权编译检查并安装，实玩待用户验收，未发布或上传。管理15/配置14/注视2/镜头7/换机2，核心、Lua和65资源/130成员PAK成套。来源及安装状态见`evidence/2.22.0-integration.json`与完成后生成的安装回执。
+
 主工作区`E:/AC7_MultiSP`。唯一正式主线 **main / v2.21.1**。用户测试2.21.1后反馈“经过测试，没问题了”，授权合main及制作本地发布包，不含上传。
 
 开工先看Git状态，再按需读[项目入口](README.md)、[开发说明](docs/development.md)、[架构](docs/architecture.md)。挂载先读[设计经验](docs/multi-sp-mount-design.md)，历史与恢复见[归档](docs/archive/README.md)，回执见[evidence索引](evidence/README.md)。不另建重复交接文档。
@@ -31,3 +33,5 @@
 11. 挂载设计重点：大弹优先靠内，小弹靠外。用户指定尺寸顺序为 **LACM＞LAGM/LASM＞4AGM/6AGM/8AGM＞远程空空导弹（LAAM、SAAM）＞中距空空导弹（4AAM、6AAM、8AAM、HVAA）＞近距空空导弹（QAAM、SASM、HPAA、HCAA）**。后续各机型、各SP组合均以此安排内外顺序，再核对实际模型、真实支撑和离架净空；挂点有限时允许不对称。
 
 默认搜索通过.ignore排除evidence/references/vendor，按需定向读；归档不作为日常预读。
+
+版本从2.21.1起按大版本.小功能版本.修复优化版本递增：新增小功能2.22.0，纯修复优化递增第三位；研究临时编号由整合方统一，旧版本不追溯改号。

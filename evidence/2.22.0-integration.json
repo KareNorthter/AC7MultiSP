@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "version": "2.22.0",
+  "candidate": true,
+  "base": "main/v2.21.1/0b75b21",
+  "requested_threads": [
+    "01a15180-e665-7a82-a7e4-6584e0ab6342",
+    "01a1576b-88f4-7731-b862-e81bc8dd90b2",
+    "01a156d2-3b9e-7196-bb3c-18ea721f809f"
+  ],
+  "thread_api_available": false,
+  "source_verification": "本机线程记录、独立源码仓库及哈希交付清单；不向其他线程发消息",
+  "sources": [
+    {
+      "branch": "codex/five-aircraft-mount-review",
+      "commit": "e366f9242d5202eb3341cd7e18f4c35f79fefa97"
+    },
+    {
+      "branch": "codex/camera-auto-center",
+      "commit": "f1ef54e",
+      "path": "Temp/camera-auto-center"
+    },
+    {
+      "patch": "Temp/remaining-native-mount-research/native-static-four-observation.patch",
+      "sha256": "43fe48496c67d23d2a2017da80caddc326e0d8813c199fec60f5711714a4a617"
+    },
+    {
+      "patch": "Temp/remaining-native-mount-research/animated-five/active-five-static-plan.patch",
+      "runtime_integrated": false
+    }
+  ],
+  "interfaces": {
+    "management": 15,
+    "configuration": 14,
+    "gaze": 2,
+    "camera": 7,
+    "aircraft": 2
+  },
+  "resource_variants": 65,
+  "resource_members": 130,
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.22.0\\Temp\\mount-assets-2.22.0\\source",
+  "resource_input_verified": true,
+  "exact_handoff_code_verified_before_merging": true,
+  "conflict_resolution": [
+    "借位入口同时保留MiG35D显式整组迁位及MiG31B限定后腹观察分支",
+    "旧容量/布局修订应用后追加四机表，重新生成核心表和Lua加载清单"
+  ],
+  "known_limits": [
+    "MiG31B已知SAAM互穿及三挂穿插由用户要求观察",
+    "另外五机只有静态方案，未启用运行适配",
+    "镜头效果、配置迁移及新挂载需用户实测",
+    "F2A、选装光标及其他偶发退出继续待办"
+  ],
+  "actual_install_baseline": "evidence/2.21.1-installed.json",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "scope": "只接收本次三线程产品及研究成果；主工作区兼容资料、个人设置、第三方Mod和历史删除均未混入"
+}

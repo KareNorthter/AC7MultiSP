@@ -1,4 +1,11 @@
-AC7MultiSP 2.21.1
+AC7MultiSP 2.22.0 (candidate)
+
+2.22.0 candidate changes (since 2.21.1; user validation pending)
+• Camera hold adds a 0–45 degree auto-center threshold, default 30; 0 disables it. Releasing look input inside the cone starts native smooth recentering.
+• Right-stick look uses smoothed relative angular velocity. Short R3 release changes view; 0.2 seconds recenters and 2 seconds toggles and saves Camera hold.
+• F-4E UGB+SASM shows six UGB models per side while retaining 50% ammunition and nine actual bombs. MiG-35D puts 4AGM inside and borrows outer stations for SAAM.
+• Added F-14A, F/A-18E and TGM mount candidates plus a MiG-31B observation layout with known intersections. Core, Lua and the 65-variant/130-member PAK must match.
+• Configuration 13 upgrades to 14 after saving profiles.before-camera-auto-center.json; existing settings and loadouts remain.
 
 Changes in this version (since 2.21.0)
 • Added Gun salvo linking the native gun action to MGP/PLSL. Off by default; remappable Ctrl+Alt+F5. HGP and concurrent different SPs are unsupported.
@@ -42,8 +49,8 @@ Controls
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
 • Optional toggle tracking: L3 is off by default in the second Camera tab; enable it, then press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
-• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 13. Migration backs up profiles.before-gun-salvo.json before adding Gun salvo, retaining saved switches, bindings and loadouts.
-• Camera hold is off for fresh settings. Hold R3 to recenter remains enabled as a suboption, available only while Camera hold is enabled. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
+• Upgrades preserve saved settings and loadouts. Current configuration revision is 14; upgrading revision 13 first saves the original bytes to profiles.before-camera-auto-center.json.
+• Camera hold is off by default. The independently enabled R3 gesture uses short release for view change, 0.2 seconds for recenter and 2 seconds for toggling and saving Camera hold; both sticks retain countermeasures. Hold mode offers a 0–45 degree auto-center threshold (30 default, 0 off), middle-mouse recenter and 5%–200% sensitivity.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
 • Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. Change these bindings and direct weapon keys in the first General tab.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
@@ -69,6 +76,10 @@ Typhoon | Adapted |
 Su-35S | Adapted |
 Su-37 | Adapted |
 F-4E | Adapted |
+F-14A | Candidate | Validation pending
+F/A-18E | Candidate | Validation pending
+F/A-18E TGM | Candidate | Validation pending
+MiG-31B | Observation | Known SAAM/rear-belly and triple-store intersections
 F-14A TGM | Adapted |
 Gripen E | Adapted |
 Su-30M2 | Adapted |
@@ -143,3 +154,5 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.20.3：Retained reflected field-name strings to avoid the identified F-22 preparation crash path.
 2.21.0：Released the integrated 2.20.1–2.20.3 changes with updated instructions and aircraft support tables.
 2.21.1：Added MGP/PLSL Gun salvo and mod-aircraft search; revised modifier input, F6, defaults, CFA handling and F-15 mounts.
+
+2.22.0: Added threshold recentering, smooth stick look, R3 hold toggle, F-4E/MiG-35D revisions and four mount candidates; validation pending.

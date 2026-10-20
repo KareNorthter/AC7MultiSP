@@ -3,8 +3,8 @@
   "internal_name": "DualSP",
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
-  "upgrade_receipt": "evidence/2.20.3-installed.json",
-  "candidate": false,
+  "upgrade_receipt": "evidence/2.21.1-installed.json",
+  "candidate": true,
   "scripts": [
     "config_store.lua",
     "debug_aircraft.lua",

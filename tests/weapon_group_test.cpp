@@ -298,8 +298,22 @@ int main() {
             assert(actual.slots[slot].mountOrdinal==prior.slots[slot].mountOrdinal);
         }
     }
+    // 两级R3阈值各触发一次，组合手势不派发回中或切换保持。
+    cameraHold.clear();cameraHoldResolveHold(199);
+    assert(!cameraHold.longDone && !cameraHold.pendingToggle);
+    cameraHoldResolveHold(200);assert(cameraHold.longDone && cameraHold.centering && !cameraHold.pendingToggle);
+    cameraHoldResolveHold(1999);assert(!cameraHold.pendingToggle);
+    cameraHoldResolveHold(2000);assert(cameraHold.toggleDone && cameraHold.pendingToggle);
+    cameraHold.pendingToggle=false;cameraHoldResolveHold(2500);assert(!cameraHold.pendingToggle);
+    cameraHold.clear();cameraHold.combo=true;cameraHoldResolveHold(2500);
+    assert(!cameraHold.longDone && !cameraHold.pendingToggle && !cameraHold.centering);
+    cameraHold.clear();
+    // 独立模型容量仅适用于F-4E的UGB＋SASM，不扩大其他组合/兵装。
+    assert(mountModelCapacityIndependent(MountAircraft::F04e,5,0));
+    assert(!mountModelCapacityIndependent(MountAircraft::F04e,5,2));
+    assert(!mountModelCapacityIndependent(MountAircraft::F04e,7,0));
     // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==20 && mountExpansionData().at("assets").size()==54);
+    assert(mountExpansionData().at("planes").size()==24 && mountExpansionData().at("assets").size()==65);
     int multiCases=0;
     for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
         const auto type=mountExpansionAircraft(aircraft);
@@ -315,18 +329,18 @@ int main() {
             uint64_t occupied=0;
             for(int kind=0;kind<3;++kind) {
                 const auto& selected=plan.at("selected").at(kind);
-                assert(selected.empty()==((selection&(1u<<kind))==0));
+                assert(layout.expansionPositions[kind].empty()==((selection&(1u<<kind))==0));
                 for(int physical:layout.expansionPositions[kind]) {
                     assert(physical>=0 && physical<64 && !(occupied&(uint64_t{1}<<physical)));
                     occupied|=uint64_t{1}<<physical;
                 }
-                if(selected.empty())continue;
+                if(layout.expansionPositions[kind].empty())continue;
                 for(int ordinal=0;ordinal<layout.logicalCounts[kind];++ordinal) {
                     const int position=mountPhysical(layout,kind,ordinal);
                     assert(std::find(layout.expansionPositions[kind].begin(),layout.expansionPositions[kind].end(),position)!=layout.expansionPositions[kind].end());
                 }
                 // 窗口位置充足时一轮不重复；减位方案接受共用位置，不减少游戏窗口。
-                const int window=std::min<int>(mountSpecification(type).loadedCounts[kind],selected.size());
+                const int window=std::min<int>(mountSpecification(type).loadedCounts[kind],layout.expansionPositions[kind].size());
                 uint64_t ready=0;
                 for(int ordinal=0;ordinal<window;++ordinal) {
                     const auto bit=uint64_t{1}<<mountPhysical(layout,kind,ordinal);assert(!(ready&bit));ready|=bit;
