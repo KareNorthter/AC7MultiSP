@@ -1,10 +1,20 @@
 # 开发与恢复
 
+## 原生挂载研究接管核验（2026-10-20）
+
+本次环境为Windows 11（10.0.26200）、PowerShell 7.6.6、Python 3.13.12。接管时本地main与主工作区HEAD均为`0b75b21e4e29c817d193188e7326700507417dae`，未接收下述四机与五机成果；未配置Git远端，不能据此判断云端最新提交。主工作区处于`codex/aircraft-mod-static-plan`且有其他工作未提交，保持原样。原云端线程`01a1576b-88f4-7731-b862-e81bc8dd90b2`未能通过当前只读工具找到，本次以本地交付、回执和精确差异接管。
+
+已从main建立独立工作树`C:/Users/83717/.codex/worktrees/native-sp-mount-takeover/AC7_MultiSP`、分支`codex/native-sp-mount-takeover`，建分支与提交成功，原线程Git不可写的限制不适用于本次。先接收完整四机补丁为`36439b1`，再接收五机研究增量为`fef0d75`；未应用仅供前三机v2使用的MiG-31B增量。两次接收后分别按回执核对13个、4个文件，字节摘要完全一致；两个ZIP内对应文件也与快照一致。原交付仍保留于`E:/AC7_MultiSP/Temp/remaining-native-mount-research/`，不回写旧快照或回执。
+
+65项资源的130个成员与四机回执全部一致，资源输入继续显式使用`E:/AC7_MultiSP/Temp/remaining-native-mount-research/source/Temp/mount-assets-native-four/source`。两份`E:/AC7_MultiSP/Temp/mount-assets-20261020-*`清单及其81份JSON均存在；UAssetGUI、AC7Key.bin与原版PAK目录存在，无需重复提取。受保护旧DLL摘要符合项目约定。这里仅核对文件、摘要、补丁与源码，未执行研究脚本、构建、测试、安装或游戏操作；不改版本号及旧验收。
+
+后续实现先从`src/mount_expansion.hpp::mountBindExpansionVisuals`的静态挂架限制与`src/su30sm_fixed_mount.hpp`的资格、绑定、显隐、映射和归还入口着手，为F/A-18F、Su-33增加独立的局部机构资格。`src/mount_animation_runtime.hpp`的旧三机控制不可直接扩白名单。具体约束沿用下文五机方案及挂载设计：先核原生EML组件更新和固定炮口来源，再处理F-14D动态Socket；Block III的上层朝向及LACM展开时序继续待证。四机仍为未实测候选（MiG-31B明确保留已知穿插观察状态），五机仍未接入运行代码；ASF-X及其他RKT、F-104C、MiG-21bis、Mod和复杂内舱继续后置。PLSL参照普通Su-57。
+
 ## 五机活动挂架第一版静态方案（2026-10-20，未接入）
 
 ASF-X、F-14D、F/A-18F、Su-33和F/A-18F Block III已形成五机35个非空组合设计。重新从原版PAK提取资源并回核既有摘要，解析五套SWP3蒙皮和101资源帧，九种静态分区意图通过全LOD边界检查，一种可保原架；未生成资产、编译、运行测试模块、安装或操作游戏。当前核心/Lua/四机观察候选保持。具体布局、1960个包络案例的范围及Block III重叠条件见[挂载设计](multi-sp-mount-design.md)与`evidence/active-five-mount-static-plan.json`。
 
-EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再跟进；Block III需补上层朝向和LACM展开时序，ASF-X还涉及Body swc3/挂架spwc双域及76个RKT管口，保持RKT专项后置。复现脚本`src/research/review_active_five_mounts.py`只读显式manifest，未注册这五架运行白名单。当前环境Git目录仍不可写，研究差异在`Temp/remaining-native-mount-research/animated-five/source`，基于已交付四机观察快照增量整理，不另建交接正文。
+EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再跟进；Block III需补上层朝向和LACM展开时序，ASF-X还涉及Body swc3/挂架spwc双域及76个RKT管口，保持RKT专项后置。复现脚本`src/research/review_active_five_mounts.py`只读显式manifest，未注册这五架运行白名单。原线程当时Git目录不可写，研究差异存于`Temp/remaining-native-mount-research/animated-five/source`，基于已交付四机观察快照增量整理；本次独立分支接收情况以上文为准，不另建交接正文。
 
 
 ## MiG-31B观察候选追加（2026-10-20）
@@ -16,7 +26,7 @@ EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再
 
 基于main `0b75b21` / 2.21.1追加F-14A、F/A-18E、F/A-18E TGM三机完整七组合源码候选，沿用静态挂载生命周期；11份新派生挂架已离线编码回读，原54份保持，总65资源/130成员。未编译、运行测试模块、打PAK、安装或游戏实测，未修改版本标识。MiG-31B参考普通Su-57保留双PLSL，但后腹SAAM借位被真实三角面核对否决，未注册。详细布局、取舍和后续验证范围见[挂载设计](multi-sp-mount-design.md#原生静态挂载候选批次2026-10-20)及`evidence/static-native-three-aircraft.json`；不将离线检查写成已验收。
 
-当前环境禁止写入主仓库.git，本线程在`Temp/remaining-native-mount-research/source`保存main来源的隔离源码快照，最终交付精确差异，未切换或修改另一线程主工作区。接收应按补丁核对三机枚举/生成器/核心表/Lua/新证据及资源构建/来源冻结登记，原运行DLL保持。完整资源输入在快照`Temp/mount-assets-native-four/source`，需要显式传给`src/build.py --mount-assets-dir`；构建、版本分配、安装及用户验收由接收线程负责。
+原线程当时禁止写入主仓库.git，在`Temp/remaining-native-mount-research/source`保存main来源的隔离源码快照，最终交付精确差异，未切换或修改另一线程主工作区。接收应按补丁核对三机枚举/生成器/核心表/Lua/新证据及资源构建/来源冻结登记，原运行DLL保持。完整资源输入在快照`Temp/mount-assets-native-four/source`，需要显式传给`src/build.py --mount-assets-dir`；构建、版本分配、安装及用户验收由用户或项目管理线程负责。本次独立分支接收未进行这些操作。
 
 
 ## 主管接手入口
