@@ -24,12 +24,14 @@ struct CameraHold {
     ULONGLONG gazeTransferAt{};
     bool stickWas{},axisWas{};
     float heldX{},heldY{},poseX{},poseY{};
+    double stickVelocityX{},stickVelocityY{}; // 统一环视参考角的度/秒，只在普通右摇杆移动中存活。
     SHORT padX{},padY{};
     ULONGLONG pressedAt{},releasedAt{},buttonReleasedAt{};
     std::string error;
     void resetPose() {
         armed=false;frozenX=frozenY=false;poseValid=viewTransfer=false;centering=false;waitNeutral=false;stickWas=axisWas=false;releasedAt=0;
         gazeTarget=gazeTransferTarget={};gazeTransfer=false;gazeWeight=0;gazeTransferAt=0;
+        stickVelocityX=stickVelocityY=0;
     }
     void cancelGesture() {
         seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
@@ -130,6 +132,38 @@ void cameraHoldCenter() {
     // 明确回正会结束模组保持的目标注视；真实按住Y/F仍按原生轴优先。
     targetGaze.active=false;
 }
+// 右摇杆在保持模式下控制相对角速度，不能继续把偏转量当作绝对目标角。
+// 只生成本帧原生环视输入，姿态写入/边界及输出仍由原生更新完成。
+void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float delta,float& outX,float& outY) {
+    const bool reversed=read<unsigned char>(cameraHold.plane.address+0xe17)!=0;
+    double commandX=std::clamp(static_cast<double>(rawX),-1.,1.);
+    double commandY=std::clamp(static_cast<double>(rawY),-1.,1.)*(reversed?-1.:1.);
+    // 复用游戏的映射、死区和响应曲线；只限制合成速度，防止斜向满推快sqrt(2)倍。
+    const double length=std::sqrt(commandX*commandX+commandY*commandY);
+    if(length>1.){commandX/=length;commandY/=length;}
+    const double speed=180.*cameraHold.sensitivity/100.;
+    commandX*=speed;commandY*=speed;
+    // 60毫秒一阶速度响应，解析积分减少普通帧率变化带来的步进差异。
+    // 超过50毫秒的卡顿只接收50毫秒位移，不在恢复帧补走整段停顿。
+    constexpr double response=.06;
+    const double step=std::min(static_cast<double>(delta),.05);
+    const double blend=-std::expm1(-step/response);
+    const auto integrate=[&](double command,double& velocity) {
+        const double difference=velocity-command;
+        const double distance=command*step+difference*response*blend;
+        velocity=command+difference*(1.-blend);
+        return distance;
+    };
+    const double nextX=static_cast<double>(x)+integrate(commandX,cameraHold.stickVelocityX)/180.;
+    const double nextY=static_cast<double>(y)+integrate(commandY,cameraHold.stickVelocityY)/90.;
+    if(nextX<-1. || nextX>1.)cameraHold.stickVelocityX=0;
+    if(nextY<-1. || nextY>1.)cameraHold.stickVelocityY=0;
+    const float scale=index==1?1.f:.95f;
+    outX=static_cast<float>(std::clamp(nextX,-1.,1.))*scale;
+    outY=static_cast<float>(std::clamp(nextY,-1.,1.))*scale*(reversed?-1.f:1.f);
+    // 松杆时重新采集实际姿态，包括原生飞行状态边界的钳位，不能保持预估姿态。
+    cameraHold.frozenX=cameraHold.frozenY=false;
+}
 void cameraHoldResolveRelease() {
     if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled)return;
     cameraHold.releaseHandled=true;
@@ -227,7 +261,9 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                 // 此判据与0x420120一致，接入时校验其完整16字节；不另设长按等待时间。
                 const unsigned focusState=read<unsigned>(cameraHold.focus.address+0x108);
                 const bool targetTracking=(focusState-2u<=1u) || (targetGazeLive() && targetGaze.active.load());
-                const bool stick=std::abs(static_cast<int>(cameraHold.padX))>8192 || std::abs(static_cast<int>(cameraHold.padY))>8192;
+                // 圆形活动门槛只用于识别输入来源；真正死区仍由游戏原生轴负责。
+                const double padX=cameraHold.padX,padY=cameraHold.padY;
+                const bool stick=cameraHold.padConnected && padX*padX+padY*padY>8192.*8192.;
                 if(!std::isfinite(rawX) || !std::isfinite(rawY))throw std::runtime_error("镜头保持收到无效环视轴");
                 const bool axes=std::abs(rawX)>.001f || std::abs(rawY)>.001f;
                 const auto now=GetTickCount64();
@@ -279,10 +315,18 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                             outY=cameraHold.heldY;
                         }else cameraHold.frozenY=false;
                     }
+                    const bool specialCockpit=index==1 && (read<unsigned char>(reinterpret_cast<Addr>(component)+0x370) ||
+                        read<Addr>(reinterpret_cast<Addr>(component)+0x378));
+                    const float trackingWeight=read<float>(reinterpret_cast<Addr>(component)+(index==1?0x39c:0x3e0));
+                    if(stick && axes && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer &&
+                        !targetTracking && !specialCockpit && std::isfinite(trackingWeight) && trackingWeight>=0 && trackingWeight<=.0001f &&
+                        std::isfinite(delta) && delta>0) {
+                        cameraHoldMoveStick(index,rawX,rawY,x,y,delta,outX,outY);
+                        // 位移已经按真实delta积分；原生delta*7取1，只消费本帧姿态一次，避免再次追近。
+                        // 此分支没有目标注视/退出插值；特殊委托仍通过CameraHoldFrame归还真实delta。
+                        cameraDelta=1.f/7.f;
+                    }else cameraHold.stickVelocityX=cameraHold.stickVelocityY=0;
                     cameraHoldFrame={true,cameraHold.input.address,outX,outY,delta};
-                    // 原生普通环视按delta*7平滑；只调手柄移动响应，不放大角度、保持值、回正或目标注视。
-                    if(stick && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer && !targetTracking && cameraHold.sensitivity!=100 && std::isfinite(delta) && delta>0)
-                        cameraDelta=std::min(delta*(cameraHold.sensitivity/100.f),1.f/7.f);
                 }
             }
         }

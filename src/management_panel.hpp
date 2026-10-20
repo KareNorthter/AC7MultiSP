@@ -113,8 +113,8 @@ void drawCameraSettings() {
                 "Click, then press a key or middle mouse; Esc cancels. Recenters once on press, including while Shift/Ctrl/Alt is held; exact configured chords take priority. Use a different key for native view switching.");
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("摇杆灵敏度###CameraSensitivity","Stick sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-            panelHelp("默认100%，范围5%至200%。仅调整右摇杆普通环视移动速度，不扩大角度；回中、注视和单独键鼠操作保留原生速度。",
-                "Default 100%, range 5%–200%. Adjusts ordinary right-stick look speed without increasing angles. Recentering, tracking and keyboard/mouse-only look retain native speed.");
+            panelHelp("默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，平滑加速和转向，松开保持当前方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+                "Default 100%, range 5%–200%. Stick deflection controls turn speed with smooth acceleration and direction changes; release to hold the current direction. View limits stay unchanged. Recentering, tracking and keyboard/mouse-only look retain their existing response; cockpit output retains native limits and animation.");
         }
     }
     ImGui::EndChild();
