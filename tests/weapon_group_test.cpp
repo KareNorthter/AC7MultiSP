@@ -313,7 +313,7 @@ int main() {
     assert(!mountModelCapacityIndependent(MountAircraft::F04e,5,2));
     assert(!mountModelCapacityIndependent(MountAircraft::F04e,7,0));
     // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==24 && mountExpansionData().at("assets").size()==65);
+    assert(mountExpansionData().at("planes").size()==28 && mountExpansionData().at("assets").size()==73);
     int multiCases=0;
     for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
         const auto type=mountExpansionAircraft(aircraft);

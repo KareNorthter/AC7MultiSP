@@ -232,6 +232,11 @@ def build():
     else:
         from native_static_batch_data import append_native_static_batch
     append_native_static_batch(planes, assets, ROOT)
+    if __package__:
+        from .local_four_runtime_data import append_local_four
+    else:
+        from local_four_runtime_data import append_local_four
+    append_local_four(planes, assets, ROOT)
     return {'planes':planes,'assets':assets}
 
 

@@ -1,0 +1,3038 @@
+{
+  "schema": 1,
+  "status": "runtime_source_candidate_not_validated",
+  "steam_build": 9855922,
+  "static_design_sha256": "46048bfeeb55e494b008bc8ed53a8615e67aad6d6b5d7a326aa40d37fdb19698",
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos",
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg",
+    "MSP_f14a_laam_belly",
+    "MSP_f14a_laam_wings",
+    "MSP_f14a_laam_front",
+    "MSP_f14a_sffs_belly",
+    "MSP_f14a_sffs_rear",
+    "MSP_f18e_hcaa_tips",
+    "MSP_f18e_agm_inner",
+    "MSP_f18e_lagm_outer",
+    "MSP_f18etg_hcaa_tips",
+    "MSP_f18etg_hvaa_neg",
+    "MSP_f18etg_gpb_pos_sensor"
+  ],
+  "appended_assets": [
+    "MSP_f14d_laam_wing_rear",
+    "MSP_f14d_laam_belly",
+    "MSP_f14d_laam_rear",
+    "MSP_f14d_gpb_front",
+    "MSP_f18f_lasm_inner",
+    "MSP_su33_hvaa_outer",
+    "MSP_f18x_lacm_outer",
+    "MSP_f18x_agm_inner_tips_sensor"
+  ],
+  "resource_reports": [
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f14d_SWP1_SM",
+      "json_sha256": "f47a4b348d0adcd38a3e9e4022d32d2aa998c2e2788ce8f763b21b369053ee3e",
+      "extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+      "structure": {
+        "socket_count": 6,
+        "original_lod_bounds_overflow": [
+          0,
+          0.5504302978515625,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 314,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 236,
+                "min": 0,
+                "max": 313,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 236,
+              "reversed": 0,
+              "depth": 236,
+              "reversed_depth": 0,
+              "adjacency": 236
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 246,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 166,
+                "min": 0,
+                "max": 245,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                74.38679504394531
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 166,
+              "reversed": 0,
+              "depth": 166,
+              "reversed_depth": 0,
+              "adjacency": 166
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 124,
+                "min": 0,
+                "max": 207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 124,
+              "reversed": 0,
+              "depth": 124,
+              "reversed_depth": 0,
+              "adjacency": 124
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f14d_laam_wing_rear",
+        "source_asset": "f14d_SWP1_SM",
+        "source_extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+        "keep_boxes": [
+          [
+            -1000,
+            -10,
+            -1000,
+            14,
+            10,
+            1000
+          ],
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -20,
+            1000
+          ],
+          [
+            -1000,
+            20,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f14d_laam_wing_rear",
+      "candidate_extras_sha256": "7ee0ea21882b452e0ed04701198b99421455ef595b0c8ccf60b8acce7851f863",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 104,
+              "degenerated": 132
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 104,
+              "degenerated": 132
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 104,
+              "degenerated": 132
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 80,
+              "degenerated": 86
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 80,
+              "degenerated": 86
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 80,
+              "degenerated": 86
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 68,
+              "degenerated": 56
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 68,
+              "degenerated": 56
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 68,
+              "degenerated": 56
+            }
+          }
+        }
+      ],
+      "changed_bytes": 3521,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "ca5902e85242149f04470d9e185afd852d5df47b203eba249e9117b2b051d8e6",
+        ".uexp": "201edb8b6bc247151891f1c3441dd954b4226879e831be20200e076de0dc681a"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "9968e7e734ffd181ced3098ea710c18f74c4bf767cfe3c64bc1913f01e528cc5",
+        ".uexp": "cab5d5d21e0563bf7447f598e458b9e4d047817685cefd0d8ad97d38a913ef92"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f14d_SWP1_SM",
+      "json_sha256": "f47a4b348d0adcd38a3e9e4022d32d2aa998c2e2788ce8f763b21b369053ee3e",
+      "extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+      "structure": {
+        "socket_count": 6,
+        "original_lod_bounds_overflow": [
+          0,
+          0.5504302978515625,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 314,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 236,
+                "min": 0,
+                "max": 313,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 236,
+              "reversed": 0,
+              "depth": 236,
+              "reversed_depth": 0,
+              "adjacency": 236
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 246,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 166,
+                "min": 0,
+                "max": 245,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                74.38679504394531
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 166,
+              "reversed": 0,
+              "depth": 166,
+              "reversed_depth": 0,
+              "adjacency": 166
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 124,
+                "min": 0,
+                "max": 207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 124,
+              "reversed": 0,
+              "depth": 124,
+              "reversed_depth": 0,
+              "adjacency": 124
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f14d_laam_belly",
+        "source_asset": "f14d_SWP1_SM",
+        "source_extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+        "keep_boxes": [
+          [
+            -1000,
+            -10,
+            -1000,
+            1000,
+            10,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f14d_laam_belly",
+      "candidate_extras_sha256": "211ab4ee4b9a6706553dd144282a3aae7369b311758a0ff6280f86fd60719a54",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 172,
+              "degenerated": 64
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 172,
+              "degenerated": 64
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 172,
+              "degenerated": 64
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 126,
+              "degenerated": 40
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 126,
+              "degenerated": 40
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 126,
+              "degenerated": 40
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 96,
+              "degenerated": 28
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 96,
+              "degenerated": 28
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 96,
+              "degenerated": 28
+            }
+          }
+        }
+      ],
+      "changed_bytes": 1765,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "607b6fe82222422b6a155a6495a44a26a2b8b8e35e076b92bf91b015adce5ff9",
+        ".uexp": "3747d1af465e20a60808d0d84616a0a01d4fee5cfc125d2bf4142c3d42d0dfbd"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "6056fc5b64a52a6172fb95002ae6adc28174d33a77ac05562f0903992cd75a8e",
+        ".uexp": "abe09504802f17157c38f9e98077d30422ff876b07b7550f143e0c7f142cb941"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f14d_SWP1_SM",
+      "json_sha256": "f47a4b348d0adcd38a3e9e4022d32d2aa998c2e2788ce8f763b21b369053ee3e",
+      "extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+      "structure": {
+        "socket_count": 6,
+        "original_lod_bounds_overflow": [
+          0,
+          0.5504302978515625,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 314,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 236,
+                "min": 0,
+                "max": 313,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 236,
+              "reversed": 0,
+              "depth": 236,
+              "reversed_depth": 0,
+              "adjacency": 236
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 246,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 166,
+                "min": 0,
+                "max": 245,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                74.38679504394531
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 166,
+              "reversed": 0,
+              "depth": 166,
+              "reversed_depth": 0,
+              "adjacency": 166
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 208,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 124,
+                "min": 0,
+                "max": 207,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -27.733474731445312,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                33.44140625
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 124,
+              "reversed": 0,
+              "depth": 124,
+              "reversed_depth": 0,
+              "adjacency": 124
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f14d_laam_rear",
+        "source_asset": "f14d_SWP1_SM",
+        "source_extras_sha256": "d582588a8677e419d6783f38ccd485b8a49e46c6421ac57d56b226cf7e3c82e1",
+        "keep_boxes": [
+          [
+            -1000,
+            -10,
+            -1000,
+            14,
+            10,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f14d_laam_rear",
+      "candidate_extras_sha256": "0e22e7fed63213745137b1d12484caff6ecf5564ad48db9001ffca8626fdfb27",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 40,
+              "degenerated": 196
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 40,
+              "degenerated": 196
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 40,
+              "degenerated": 196
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 40,
+              "degenerated": 126
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 40,
+              "degenerated": 126
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 40,
+              "degenerated": 126
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 40,
+              "degenerated": 84
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 40,
+              "degenerated": 84
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 40,
+              "degenerated": 84
+            }
+          }
+        }
+      ],
+      "changed_bytes": 5286,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "880c1b68a28d07565eb28bf4306c6a82cc8b76a6d4331a71943301a6fad4c9c1",
+        ".uexp": "a75065a8d2a511abe828555dd54c8381c5edbbfd73fa69422d5df51ecd2212fe"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "10041fcd66562f3f1ae130d685cb1d000ad8cc4ed362c9e46b40d19e827630db",
+        ".uexp": "9755cc2f3c66602311e48298c1699bb77ff1555f21fe26bb4d9117ae798c0a2c"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f14d_SWP2_SM",
+      "json_sha256": "f069d534dd67e215276b739e8bb8a86f62cbcc13611b72e4b8e84530435ddb67",
+      "extras_sha256": "ac76a9271a187c1697c707e696c92c2522ac3c7bda498a8e7211617d4b0f83b2",
+      "structure": {
+        "socket_count": 2,
+        "original_lod_bounds_overflow": [
+          0,
+          0.37104034423828125,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 2211,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1780,
+                "min": 0,
+                "max": 2210,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                0.10477501153945923,
+                73.83636474609375
+              ],
+              [
+                -33.44140625,
+                34.81526184082031
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 1780,
+              "reversed": 0,
+              "depth": 1780,
+              "reversed_depth": 0,
+              "adjacency": 1780
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1047,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 741,
+                "min": 0,
+                "max": 1046,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                0.10477501153945923,
+                74.20740509033203
+              ],
+              [
+                -33.44140625,
+                34.81526184082031
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 741,
+              "reversed": 0,
+              "depth": 741,
+              "reversed_depth": 0,
+              "adjacency": 741
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 361,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 266,
+                "min": 0,
+                "max": 360,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                0.10477501153945923,
+                73.83396911621094
+              ],
+              [
+                -33.44140625,
+                34.81526184082031
+              ],
+              [
+                -10.299606323242188,
+                -1.2275829315185547
+              ]
+            ],
+            "buffers": {
+              "main": 266,
+              "reversed": 0,
+              "depth": 266,
+              "reversed_depth": 0,
+              "adjacency": 266
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f14d_gpb_front",
+        "source_asset": "f14d_SWP2_SM",
+        "source_extras_sha256": "ac76a9271a187c1697c707e696c92c2522ac3c7bda498a8e7211617d4b0f83b2",
+        "keep_boxes": [
+          [
+            14,
+            -10,
+            -1000,
+            1000,
+            10,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f14d_gpb_front",
+      "candidate_extras_sha256": "3736f867b0edc6fe8db009fafd38f4c7ca411fc53125bdcd1c3707716bdb71d3",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 1054,
+              "degenerated": 726
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1054,
+              "degenerated": 726
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1054,
+              "degenerated": 726
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 388,
+              "degenerated": 353
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 388,
+              "degenerated": 353
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 388,
+              "degenerated": 353
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 76,
+              "degenerated": 190
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 76,
+              "degenerated": 190
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 76,
+              "degenerated": 190
+            }
+          }
+        }
+      ],
+      "changed_bytes": 18897,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "783c712fd88e7765e2f736b5cadfc307083450a5345423aee80d0cd454af714e",
+        ".uexp": "060128de70e61dd6d6434da931cb6a91e3743dab79cd3f0b23e3d77a8892452a"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "59e06808699a9a0686041333b7c7c986c008908c167ae71c58e59b92c84aff71",
+        ".uexp": "1120d7c178f4630611f158ee91b1e2342f1a7816f76b7089da64430e9f947a8a"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f18f_SWP2_SM",
+      "json_sha256": "e1b53c958f316e7450b4cac4b5591da438a3e30e2ba987cef5838e14245b5d83",
+      "extras_sha256": "585b85b01252b8af14ed2fb3617b95a51eeb4989bad0f4d379cf4b8bc220a9d7",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          4.76837158203125e-07,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 8292,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 2944,
+                "min": 0,
+                "max": 8291,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.507766723632812
+              ],
+              [
+                -36.18156814575195,
+                36.18156814575195
+              ],
+              [
+                -5.589897632598877,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 2944,
+              "reversed": 0,
+              "depth": 2944,
+              "reversed_depth": 0,
+              "adjacency": 2944
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 2264,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 848,
+                "min": 0,
+                "max": 2263,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.503265380859375
+              ],
+              [
+                -36.18156814575195,
+                36.18156814575195
+              ],
+              [
+                -5.589897632598877,
+                2.4407293796539307
+              ]
+            ],
+            "buffers": {
+              "main": 848,
+              "reversed": 0,
+              "depth": 848,
+              "reversed_depth": 0,
+              "adjacency": 848
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 336,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 112,
+                "min": 0,
+                "max": 335,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.494993209838867
+              ],
+              [
+                -35.925323486328125,
+                35.925323486328125
+              ],
+              [
+                -5.589897632598877,
+                2.413461923599243
+              ]
+            ],
+            "buffers": {
+              "main": 112,
+              "reversed": 0,
+              "depth": 112,
+              "reversed_depth": 0,
+              "adjacency": 112
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f18f_lasm_inner",
+        "source_asset": "f18f_SWP2_SM",
+        "source_extras_sha256": "585b85b01252b8af14ed2fb3617b95a51eeb4989bad0f4d379cf4b8bc220a9d7",
+        "keep_boxes": [
+          [
+            -1000,
+            -30,
+            -1000,
+            1000,
+            30,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f18f_lasm_inner",
+      "candidate_extras_sha256": "bacd597f6e95dfe859470def0fd3759fa202a6696662d06800f9dbd5c5846be5",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 1472,
+              "degenerated": 1472
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1472,
+              "degenerated": 1472
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1472,
+              "degenerated": 1472
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 424,
+              "degenerated": 424
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 424,
+              "degenerated": 424
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 424,
+              "degenerated": 424
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 56,
+              "degenerated": 56
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 56,
+              "degenerated": 56
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 56,
+              "degenerated": 56
+            }
+          }
+        }
+      ],
+      "changed_bytes": 34559,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "014e610ec0ed6b2999b1202d895dc6064062e61065dda616ac23bb2e9a63cd1b",
+        ".uexp": "764a90d117f4ac801c43556c691dfaab2215e5542c272ad909a814b92411909d"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "d9fd6906b0c21700192c7a4ba4980afd93688b270b1e0d07de5544eb2906d748",
+        ".uexp": "b109020d7a27303cf5863aeb5410ef496d2943c5a6fef9aa8341534efac5ed21"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "su33_SWP1_SM",
+      "json_sha256": "894cc5bd10db0000a4130db87421fc7b9b3f562cdd5e952872a868c23898a26e",
+      "extras_sha256": "6d73e00cd649562d07b2f44048b6f6f190ac8350ca0cc47d74051370eced14ee",
+      "structure": {
+        "socket_count": 6,
+        "original_lod_bounds_overflow": [
+          0,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 1448,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1168,
+                "min": 0,
+                "max": 1447,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -23.493263244628906,
+                24.8609619140625
+              ],
+              [
+                -59.416080474853516,
+                59.416080474853516
+              ],
+              [
+                -11.934310913085938,
+                2.947035789489746
+              ]
+            ],
+            "buffers": {
+              "main": 1168,
+              "reversed": 0,
+              "depth": 1168,
+              "reversed_depth": 0,
+              "adjacency": 1168
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1066,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 832,
+                "min": 0,
+                "max": 1065,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -23.492406845092773,
+                24.8609619140625
+              ],
+              [
+                -59.416080474853516,
+                59.416080474853516
+              ],
+              [
+                -11.934310913085938,
+                2.947035789489746
+              ]
+            ],
+            "buffers": {
+              "main": 832,
+              "reversed": 0,
+              "depth": 832,
+              "reversed_depth": 0,
+              "adjacency": 832
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 780,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 516,
+                "min": 0,
+                "max": 779,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -23.010162353515625,
+                24.74828338623047
+              ],
+              [
+                -59.416080474853516,
+                59.416080474853516
+              ],
+              [
+                -11.934310913085938,
+                2.947035789489746
+              ]
+            ],
+            "buffers": {
+              "main": 516,
+              "reversed": 0,
+              "depth": 516,
+              "reversed_depth": 0,
+              "adjacency": 516
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_su33_hvaa_outer",
+        "source_asset": "su33_SWP1_SM",
+        "source_extras_sha256": "6d73e00cd649562d07b2f44048b6f6f190ac8350ca0cc47d74051370eced14ee",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -40,
+            1000
+          ],
+          [
+            -1000,
+            40,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_su33_hvaa_outer",
+      "candidate_extras_sha256": "6055eaaafb55426add8ed6e1d586ba6516a01f8632a42578d325d2d69761886d",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 872,
+              "degenerated": 296
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 872,
+              "degenerated": 296
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 872,
+              "degenerated": 296
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 584,
+              "degenerated": 248
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 584,
+              "degenerated": 248
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 584,
+              "degenerated": 248
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 348,
+              "degenerated": 168
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 348,
+              "degenerated": 168
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 348,
+              "degenerated": 168
+            }
+          }
+        }
+      ],
+      "changed_bytes": 11103,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "1943549ac73fb70b9c66b90d37191e6d01cee63f835690e8f05350a74714e4fd",
+        ".uexp": "c57aa590740ecb6f99b9a55da7e0f3ae1f0ec7bdd192703aff8e1b0af1dc7cd7"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "dae5ec760f6b888e713dec4adc549e121e2dea609f11d89f50c3a6ab795a5cb7",
+        ".uexp": "4dae41b7f4a1148fef8f697001bf15b7da5d6613e92090bc25d5fe70662c6fb6"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f18x_SWP1_SM",
+      "json_sha256": "f04ab74513a7e8f2bf577355641d1785c45e60a8d12ef802070390462e804432",
+      "extras_sha256": "ec76110fecbb40473d16b711e8c2b10d1cd0b4b2deff652a016865030c22fca5",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          4.76837158203125e-07,
+          4.76837158203125e-07,
+          4.76837158203125e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 3501,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 4172,
+                "min": 0,
+                "max": 3500,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                26.507766723632812
+              ],
+              [
+                -44.68498992919922,
+                44.68498992919922
+              ],
+              [
+                -5.589897632598877,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 4172,
+              "reversed": 0,
+              "depth": 4172,
+              "reversed_depth": 0,
+              "adjacency": 4172
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 1786,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 2012,
+                "min": 0,
+                "max": 1785,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                26.507766723632812
+              ],
+              [
+                -44.68498992919922,
+                44.68498992919922
+              ],
+              [
+                -5.589897632598877,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 2012,
+              "reversed": 0,
+              "depth": 2012,
+              "reversed_depth": 0,
+              "adjacency": 2012
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 236,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 200,
+                "min": 0,
+                "max": 235,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                26.507766723632812
+              ],
+              [
+                -44.369300842285156,
+                44.369300842285156
+              ],
+              [
+                -5.589897632598877,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 200,
+              "reversed": 0,
+              "depth": 200,
+              "reversed_depth": 0,
+              "adjacency": 200
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f18x_lacm_outer",
+        "source_asset": "f18x_SWP1_SM",
+        "source_extras_sha256": "ec76110fecbb40473d16b711e8c2b10d1cd0b4b2deff652a016865030c22fca5",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -30,
+            1000
+          ],
+          [
+            -1000,
+            30,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f18x_lacm_outer",
+      "candidate_extras_sha256": "6afe863d123c16f745dce842632a70fad481d4667d4ea6668a6adedcb7c0c10e",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 2700,
+              "degenerated": 1472
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 2700,
+              "degenerated": 1472
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 2700,
+              "degenerated": 1472
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 1312,
+              "degenerated": 700
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1312,
+              "degenerated": 700
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1312,
+              "degenerated": 700
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 120,
+              "degenerated": 80
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 120,
+              "degenerated": 80
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 120,
+              "degenerated": 80
+            }
+          }
+        }
+      ],
+      "changed_bytes": 31596,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "aba9d7720328ff1329e688440697de566d702ee2d3e961715c2bc2fed7c7ad61",
+        ".uexp": "0b053f250f7f046e9ee5fd12f841a7e573d343eac86b71188d8e90068f6bd4d6"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "09824806a056ab0e556d12398939f9757a6d8248ea9ec865979e4d8742b95c9c",
+        ".uexp": "a9629cc22179f9f6f32b4608c0015915b3b9afba35979c072fee6d421e46b726"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f18x_SWP2_SM",
+      "json_sha256": "abff07eeaedf4f7fbccf186cb2491443705153553fa0f57f27a16e72c4d5b6a6",
+      "extras_sha256": "86f8eabab557f6ed6d1cb964a0a56aa0baf58c595c6887c207fff7df3a511557",
+      "structure": {
+        "socket_count": 18,
+        "original_lod_bounds_overflow": [
+          0,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 8175,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 8554,
+                "min": 0,
+                "max": 8174,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                27.07489776611328
+              ],
+              [
+                -46.5139045715332,
+                46.5139045715332
+              ],
+              [
+                -11.263330459594727,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 8554,
+              "reversed": 0,
+              "depth": 8554,
+              "reversed_depth": 0,
+              "adjacency": 8554
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 4034,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 3807,
+                "min": 0,
+                "max": 4033,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                27.07489776611328
+              ],
+              [
+                -46.51319122314453,
+                46.51319122314453
+              ],
+              [
+                -11.214079856872559,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 3807,
+              "reversed": 0,
+              "depth": 3807,
+              "reversed_depth": 0,
+              "adjacency": 3807
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 1490,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1007,
+                "min": 0,
+                "max": 1489,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -11.157417297363281,
+                27.071941375732422
+              ],
+              [
+                -46.51319122314453,
+                46.51319122314453
+              ],
+              [
+                -11.214079856872559,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 1007,
+              "reversed": 0,
+              "depth": 1007,
+              "reversed_depth": 0,
+              "adjacency": 1007
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f18x_agm_inner_tips_sensor",
+        "source_asset": "f18x_SWP2_SM",
+        "source_extras_sha256": "86f8eabab557f6ed6d1cb964a0a56aa0baf58c595c6887c207fff7df3a511557",
+        "keep_boxes": [
+          [
+            -1000,
+            -30,
+            -1000,
+            1000,
+            30,
+            1000
+          ],
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -40,
+            1000
+          ],
+          [
+            -1000,
+            40,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ]
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f18x_agm_inner_tips_sensor",
+      "candidate_extras_sha256": "3c63a301eb82754fdfbacb2501387d0d1a03db4a19d243166165e403dfbfd1b4",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 6150,
+              "degenerated": 2404
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 6150,
+              "degenerated": 2404
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 6150,
+              "degenerated": 2404
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 2675,
+              "degenerated": 1132
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 2675,
+              "degenerated": 1132
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 2675,
+              "degenerated": 1132
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 737,
+              "degenerated": 270
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 737,
+              "degenerated": 270
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 737,
+              "degenerated": 270
+            }
+          }
+        }
+      ],
+      "changed_bytes": 57975,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "50f124816d11ff34572a1704d1c068ddb17c584b8a71b9160d4f2bbe4a437d08",
+        ".uexp": "ec3f7e840a72216abb1caab7389ea9c52f80b71578d9eb0084dadaab8f752a68"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "3179c3fdaf0d1ef9500c0dc37ad12d31fe847ca5b910f83fb92c7e9ff9b5b54f",
+        ".uexp": "62c6fdd919797f27fc5f2fb9775f5bb7332b76a620abbdc3aadde75aa234a551"
+      }
+    }
+  ],
+  "planes": [
+    {
+      "code": "f14d",
+      "groups": [
+        {
+          "class": "plwp_laam_a0_C",
+          "rack": "f14d_SWP1_SM",
+          "mesh": "w_laam_a0_SM",
+          "sockets": [
+            "sp16",
+            "sp15",
+            "sp14",
+            "sp13",
+            "sp12",
+            "sp11"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_gpb_a0_C",
+          "rack": "f14d_SWP2_SM",
+          "mesh": "w_gpb_a0_closed_SM",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_8aam_a0_C",
+          "rack": "f14d_SWP3",
+          "mesh": "w_4aam_a0_SM",
+          "sockets": [
+            "sp01",
+            "sp07",
+            "sp05",
+            "sp03",
+            "sp08",
+            "sp02",
+            "sp04",
+            "sp06"
+          ],
+          "window": 8,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": true,
+          "skeleton": "f14d_SWP3_Skeleton",
+          "anim": "f14d_SWP3_AnimBP_C",
+          "bones": [
+            {
+              "name": "Body",
+              "parent": -1
+            },
+            {
+              "name": "SWPCover_16",
+              "parent": 0
+            },
+            {
+              "name": "SWPCover_14",
+              "parent": 1
+            },
+            {
+              "name": "SWPCover_13",
+              "parent": 1
+            },
+            {
+              "name": "SWPCover_12",
+              "parent": 1
+            },
+            {
+              "name": "SWPCover_11",
+              "parent": 1
+            },
+            {
+              "name": "SWPCover_10",
+              "parent": 1
+            },
+            {
+              "name": "SWPCover_09",
+              "parent": 6
+            },
+            {
+              "name": "SWPCover_08",
+              "parent": 6
+            },
+            {
+              "name": "SWPCover_15",
+              "parent": 0
+            },
+            {
+              "name": "SWPCover_07",
+              "parent": 9
+            },
+            {
+              "name": "SWPCover_06",
+              "parent": 9
+            },
+            {
+              "name": "SWPCover_05",
+              "parent": 9
+            },
+            {
+              "name": "SWPCover_04",
+              "parent": 9
+            },
+            {
+              "name": "SWPCover_03",
+              "parent": 9
+            },
+            {
+              "name": "SWPCover_02",
+              "parent": 14
+            },
+            {
+              "name": "SWPCover_01",
+              "parent": 14
+            }
+          ]
+        }
+      ],
+      "plans": [
+        null,
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [],
+            []
+          ],
+          "racks": 1,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1
+            ],
+            []
+          ],
+          "racks": 2,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              5,
+              4,
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            []
+          ],
+          "racks": 3,
+          "variants": [
+            65,
+            68,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "racks": 4,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              3,
+              2,
+              1,
+              0
+            ],
+            [],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "racks": 5,
+          "variants": [
+            66,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "racks": 6,
+          "variants": [
+            -1,
+            68,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              1,
+              0
+            ],
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          ],
+          "racks": 7,
+          "variants": [
+            67,
+            68,
+            -1
+          ]
+        }
+      ],
+      "requires_no_collision": true,
+      "local_mechanism": true
+    },
+    {
+      "code": "f18f",
+      "groups": [
+        {
+          "class": "plwp_qaam_a0_C",
+          "rack": "f18f_SWP1_SM",
+          "mesh": "w_qaam_a0_SM",
+          "sockets": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_lasm_a0_C",
+          "rack": "f18f_SWP2_SM",
+          "mesh": "w_lasm_a0_SM",
+          "sockets": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_eml_x0_C",
+          "rack": "f18f_SWP3",
+          "mesh": null,
+          "sockets": [
+            "sp01"
+          ],
+          "window": 0,
+          "fixed": true,
+          "launcher": false,
+          "skeletal": true,
+          "skeleton": "f18f_SWP3_Skeleton",
+          "anim": "f18f_SWP3_AnimBP_C",
+          "bones": [
+            {
+              "name": "Body",
+              "parent": -1
+            },
+            {
+              "name": "SWPCover_01",
+              "parent": 0
+            }
+          ]
+        }
+      ],
+      "plans": [
+        null,
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [],
+            []
+          ],
+          "racks": 1,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            []
+          ],
+          "racks": 2,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              2,
+              3
+            ],
+            []
+          ],
+          "racks": 3,
+          "variants": [
+            -1,
+            69,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [],
+            [
+              0
+            ]
+          ],
+          "racks": 4,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [],
+            [
+              0
+            ]
+          ],
+          "racks": 5,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              0
+            ]
+          ],
+          "racks": 6,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [
+              2,
+              3
+            ],
+            [
+              0
+            ]
+          ],
+          "racks": 7,
+          "variants": [
+            -1,
+            69,
+            -1
+          ]
+        }
+      ],
+      "requires_no_collision": true,
+      "local_mechanism": true
+    },
+    {
+      "code": "su33",
+      "groups": [
+        {
+          "class": "plwp_hvaa_r0_C",
+          "rack": "su33_SWP1_SM",
+          "mesh": "w_saam_r0_SM",
+          "sockets": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14",
+            "sp15",
+            "sp16"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_lasm_r0_C",
+          "rack": "su33_SWP2_SM",
+          "mesh": "w_lasm_r0_SM",
+          "sockets": [
+            "sp21",
+            "sp22",
+            "sp23",
+            "sp24"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_eml_x0_C",
+          "rack": "su33_SWP3",
+          "mesh": null,
+          "sockets": [
+            "sp01"
+          ],
+          "window": 0,
+          "fixed": true,
+          "launcher": false,
+          "skeletal": true,
+          "skeleton": "su33_SWP3_Skeleton",
+          "anim": "su33_SWP3_AnimBP_C",
+          "bones": [
+            {
+              "name": "Body",
+              "parent": -1
+            },
+            {
+              "name": "SWPCover_01",
+              "parent": 0
+            }
+          ]
+        }
+      ],
+      "plans": [
+        null,
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [],
+            []
+          ],
+          "racks": 1,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            []
+          ],
+          "racks": 2,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            []
+          ],
+          "racks": 3,
+          "variants": [
+            70,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [],
+            [
+              0
+            ]
+          ],
+          "racks": 4,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            [],
+            [
+              0
+            ]
+          ],
+          "racks": 5,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              0
+            ]
+          ],
+          "racks": 6,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [
+              0
+            ]
+          ],
+          "racks": 7,
+          "variants": [
+            70,
+            -1,
+            -1
+          ]
+        }
+      ],
+      "requires_no_collision": true,
+      "local_mechanism": true
+    },
+    {
+      "code": "f18x",
+      "groups": [
+        {
+          "class": "plwp_lacm_a1_C",
+          "rack": "f18x_SWP1_SM",
+          "mesh": "w_lacm_a1_closed_SM",
+          "sockets": [
+            "sp11",
+            "sp12",
+            "sp13",
+            "sp14"
+          ],
+          "window": 2,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_8agm_a0_C",
+          "rack": "f18x_SWP2_SM",
+          "mesh": "w_8agm_a0_SM",
+          "sockets": [
+            "sp21",
+            "sp23",
+            "sp25",
+            "sp27",
+            "sp29",
+            "sp31",
+            "sp33",
+            "sp35",
+            "sp37",
+            "sp34",
+            "sp36",
+            "sp38",
+            "sp28",
+            "sp30",
+            "sp32",
+            "sp22",
+            "sp24",
+            "sp26"
+          ],
+          "window": 8,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": false
+        },
+        {
+          "class": "plwp_4aam_a0_C",
+          "rack": "f18x_SWP3",
+          "mesh": "w_4aam_a0_SM",
+          "sockets": [
+            "sp31",
+            "sp32",
+            "sp34",
+            "sp33"
+          ],
+          "window": 4,
+          "fixed": false,
+          "launcher": false,
+          "skeletal": true,
+          "skeleton": "f18x_SWP3_Skeleton",
+          "anim": "f18x_SWP3_AnimBP_C",
+          "bones": [
+            {
+              "name": "Body",
+              "parent": -1
+            },
+            {
+              "name": "SWPCover_01",
+              "parent": 0
+            },
+            {
+              "name": "SWPCover_02",
+              "parent": 0
+            },
+            {
+              "name": "SWPCover_03",
+              "parent": 0
+            },
+            {
+              "name": "SWPCover_04",
+              "parent": 0
+            }
+          ]
+        }
+      ],
+      "plans": [
+        null,
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [],
+            []
+          ],
+          "racks": 1,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            []
+          ],
+          "racks": 2,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              15,
+              1,
+              16,
+              2,
+              17,
+              6,
+              9,
+              7,
+              10,
+              8,
+              11
+            ],
+            []
+          ],
+          "racks": 3,
+          "variants": [
+            71,
+            72,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "racks": 4,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1,
+              2,
+              3
+            ],
+            [],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "racks": 5,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [],
+            [
+              0,
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "racks": 6,
+          "variants": [
+            -1,
+            -1,
+            -1
+          ]
+        },
+        {
+          "selected": [
+            [
+              0,
+              1
+            ],
+            [
+              0,
+              15,
+              1,
+              16,
+              2,
+              17,
+              6,
+              9,
+              7,
+              10,
+              8,
+              11
+            ],
+            [
+              0,
+              1,
+              2,
+              3
+            ]
+          ],
+          "racks": 7,
+          "variants": [
+            71,
+            72,
+            -1
+          ]
+        }
+      ],
+      "requires_no_collision": true,
+      "local_mechanism": true
+    }
+  ],
+  "resource_input": "C:\\Users\\83717\\.codex\\worktrees\\native-sp-mount-takeover\\AC7_MultiSP\\Temp\\local-four-runtime-r1\\source",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "limits": [
+    "保留原生公共spwc及SWP3局部动画，不接入旧完整共舱控制器",
+    "Block III仍待实测上层朝向及LACM实际展开时序，不把包络重叠认作穿模",
+    "MiG-31B等待用户重试日志，本次不变更其观察布局或保护条件"
+  ],
+  "assets_generated": true
+}

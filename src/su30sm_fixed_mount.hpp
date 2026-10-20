@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b }; // 只追加MiG-31B观察候选，既有索引保持。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x }; // 新四机只追加索引，既有机体编号保持。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -17,8 +17,9 @@ struct MountSpecification {
 #include "animated_mount_data.hpp"
 bool mountExpanded(MountAircraft aircraft) {
     return (aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn) ||
-        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::M31b);
+        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::F18x);
 }
+bool mountLocal(MountAircraft aircraft) { return aircraft>=MountAircraft::F14d && aircraft<=MountAircraft::F18x; }
 int mountExpansionIndex(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型未登记");
     return aircraft<=MountAircraft::Typn?static_cast<int>(aircraft)-static_cast<int>(MountAircraft::F02a):
@@ -91,6 +92,7 @@ struct MountMeshOverride {
 };
 struct MountExteriorBones;
 struct LightMountOwnership;
+struct LocalMountOwnership;
 struct FixedMountState {
     bool bound{},rebuilding{}; // 重建期间仅固定外观，不改变原生临时武器池取位。
     MountIdentity plane,manager,meshManager; // 限定当前玩家，其他飞机全部直通。
@@ -120,6 +122,7 @@ struct FixedMountState {
     bool nativeRackPaused{},nativeRackTick{}; // 最近一次原生重建请求，解除固定挂载时归还。
     uint64_t readyMask{}; // 实际物理位置的聚合就绪状态。
     ULONGLONG animatedVisualAudit{}; // 新三机无状态变化时只周期核对显隐，骨骼/附着位置仍由原生逐帧更新。
+    ULONGLONG localAnimationAudit{}; // 局部机构资格巡检独立计时，不被弹药显隐刷新延后。
     MountIdentity exteriorRack;
     size_t exteriorMeshOffset{};
     MountIdentity exteriorMesh;
@@ -127,6 +130,7 @@ struct FixedMountState {
     int exteriorConfig{-1};
     std::shared_ptr<MountExteriorBones> exteriorBones; // 任务/补给共享同组件时共用一份骨显隐恢复记录。
     std::shared_ptr<LightMountOwnership> light; // 四机独立轻量外观账本，绝不接管完整公共弹舱。
+    std::shared_ptr<LocalMountOwnership> local; // 新四机共享实例租约，只维持原生SWP3局部机构。
     std::bitset<256> pendingReadyMask{}; // 已就绪但等待新池完成原生装填事件的逻辑槽。
     std::string error; // 钩子错误交回 Lua，不能在游戏调用栈中抛出异常。
 } fixedMount;
@@ -174,6 +178,12 @@ bool mountLightNative(MountAircraft,unsigned);
 bool mountLightMapped(MountAircraft,int);
 unsigned mountLightRackMask(MountAircraft,unsigned);
 void mountBindLightVisuals(FixedMountState&,Addr);
+void mountLocalBind(FixedMountState&,Addr);
+void mountLocalMaintain(FixedMountState&);
+void mountLocalRelease(FixedMountState&);
+void mountLocalBeforeRebuild(FixedMountState&);
+void mountLocalRemember(void*,unsigned,bool=false) noexcept;
+bool mountLocalCopyTransform(void*,const FixedMountState&,int);
 bool mountLightDesired(const FixedMountState&,const MountVisual&,bool);
 void mountLightMaintain(FixedMountState&);
 void mountLightRelease(FixedMountState&,bool keepBones=false);
@@ -415,6 +425,8 @@ bool fixedMountRelease() {
     }
     try { mountLightRelease(fixedMount); }
     catch(const std::exception& error) { pending.aircraft=fixedMount.aircraft;pending.light=fixedMount.light;failure(error); }
+    try { mountLocalRelease(fixedMount); }
+    catch(const std::exception& error) { pending.aircraft=fixedMount.aircraft;pending.local=fixedMount.local;failure(error); }
     for(const auto& item:fixedMount.meshOverrides)try {
         mountApplyMesh(item,false);
     }catch(const std::exception& error) { pending.meshOverrides.push_back(item);failure(error); }
@@ -576,6 +588,7 @@ bool mountCopyTransform(void* output,int slot) {
     const int physical=mountPhysical(kind,ordinal); // 与显隐聚合共用映射。
     if(mountLight(fixedMount.aircraft))return mountLightCopyTransform(output,fixedMount,physical);
     if(mountAnimated(fixedMount.aircraft))return mountAnimationCopyTransform(output,fixedMount,physical);
+    if(mountLocal(fixedMount.aircraft))return mountLocalCopyTransform(output,fixedMount,physical);
     const Addr component=fixedMount.physical[physical]; // 与可见模型一致的世界变换来源。
     const auto visual=std::find_if(fixedMount.visuals.begin(),fixedMount.visuals.end(),[&](const MountVisual& item){return item.identity.address==component;}); // 验证目的模型仍属于本次出击。
     require(visual!=fixedMount.visuals.end() && mountAlive(visual->identity),"固定挂载：目的模型身份失效");
@@ -766,6 +779,7 @@ template<class T> T mountAnimationRead(Addr address) { return read<T>(address); 
 #include "mount_animation_host.hpp"
 #include "mount_animation_exact_pose.hpp"
 #include "mount_animation_runtime.hpp"
+#include "local_mount.hpp"
 #include "light_mount_animation.hpp"
 // 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。
 void fixedMountRestoreOrder(const Group& saved,int next) {
@@ -778,6 +792,9 @@ void fixedMountRefresh(double time) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(!fixedMount.bound || mountPreviewOwnsTask())return;
     if(mountExterior(fixedMount.aircraft)) { mountExteriorRefresh(time);return; }
+    if(mountLocal(fixedMount.aircraft) && GetTickCount64()-fixedMount.localAnimationAudit>=100) {
+        mountLocalMaintain(fixedMount);fixedMount.localAnimationAudit=GetTickCount64();
+    }
     if(mountLight(fixedMount.aircraft)) {
         if(GetTickCount64()-fixedMount.animatedVisualAudit<100)return;
         mountLightMaintain(fixedMount);
@@ -900,6 +917,7 @@ void fixedMountCommit(const Command& command) {
         mountSetRackAnimation(rack,false,true);
     }
     fixedMount.rebuilding=false;
+    if(mountLocal(aircraft))mountLocalMaintain(fixedMount);
     { CfaWorkScope cost(6);mountLightAnimationCommit(); } // CFA公共进度仍由原生推进。
     { CfaWorkScope cost(7);mountCfaMuzzlePrune();mountCfaMuzzleSync(); }
     if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
@@ -935,6 +953,7 @@ MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeCo
     try {
         if(mountExterior(fixedMount.aircraft))mountExteriorBeforeRebuild(fixedMount);
         if(mountLight(fixedMount.aircraft))mountLightBeforeRebuild(command); // CFA同布局保骨租约，动画调度仍归还后重采。
+        if(mountLocal(fixedMount.aircraft))mountLocalBeforeRebuild(fixedMount); // Init期间以真实原生请求形成下一次恢复基线。
         mountLightAnimationBeforeRebuild(command,nativeConfig);
         require(!mountAnimationPendingSwitch.valid,"动画挂载：上一切换尚未完成，拒绝覆盖快照");
         if(mountAnimationHost.controller.active() && mountAnimationHost.binding.scene==1 &&

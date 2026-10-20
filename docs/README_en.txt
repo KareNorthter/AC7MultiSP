@@ -1,4 +1,10 @@
-AC7MultiSP 2.22.0 (candidate)
+AC7MultiSP 2.23.0 (candidate)
+
+2.23.0 candidate changes (since 2.22.0; user validation pending)
+• Added all seven nonempty SP combinations for F-14D, F/A-18F, Su-33 and F/A-18F Block III; single-SP visuals remain native.
+• Retained native SWP3 mechanisms and EML bodies, with shared visual/firing sockets. Block III deployment, clearance and performance need in-game validation.
+• Added eight rack variants, totaling 73 variants/146 members. Existing 24 aircraft layouts and 65 variants are preserved; core, Lua and PAK must match.
+• Retained 2.22.0 camera and F-4E/MiG-35D changes, personal settings and loadouts. MiG-31B remains deferred.
 
 2.22.0 candidate changes (since 2.21.1; user validation pending)
 • Camera hold adds a 0–45 degree auto-center threshold, default 30; 0 disables it. Releasing look input inside the cone starts native smooth recentering.
@@ -80,6 +86,10 @@ F-14A | Candidate | Validation pending
 F/A-18E | Candidate | Validation pending
 F/A-18E TGM | Candidate | Validation pending
 MiG-31B | Observation | Known SAAM/rear-belly and triple-store intersections
+F-14D | Candidate | Native SWP3 mechanism; validation pending
+F/A-18F | Candidate | Native SWP3 mechanism; validation pending
+Su-33 | Candidate | Native SWP3 mechanism; validation pending
+F/A-18F Block III | Candidate | Native SWP3 mechanism; validation pending
 F-14A TGM | Adapted |
 Gripen E | Adapted |
 Su-30M2 | Adapted |
@@ -156,3 +166,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.21.1：Added MGP/PLSL Gun salvo and mod-aircraft search; revised modifier input, F6, defaults, CFA handling and F-15 mounts.
 
 2.22.0: Added threshold recentering, smooth stick look, R3 hold toggle, F-4E/MiG-35D revisions and four mount candidates; validation pending.
+2.23.0: Added four aircraft runtime mount candidates and eight variants; validation pending.

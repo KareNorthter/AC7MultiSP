@@ -108,6 +108,7 @@ void mountAnimationRemember(void* component,unsigned fields,bool tickWanted=fals
 }
 void mountAnimationTick(void* component,bool enabled) {
     mountAnimationOriginalTick(component,enabled);
+    mountLocalRemember(component,1u,enabled);
     mountAnimationRemember(component,2u,enabled);
 }
 void mountAnimationDisable(void* owner,void* component) {
@@ -115,6 +116,7 @@ void mountAnimationDisable(void* owner,void* component) {
     ++mountAnimationNativeDepth;
     mountAnimationOriginalDisable(owner,component); // 原生物理/可见性/注册行为完整执行一次。
     --mountAnimationNativeDepth;
+    mountLocalRemember(component,2u);
     mountAnimationRemember(component,4u); // Tick由其独立入口记账，随后直接写的NoSkeletonUpdate单独记录。
 }
 void mountAnimationPublish(void* component) {

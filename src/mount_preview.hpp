@@ -80,6 +80,10 @@ void mountPreviewRestoreVisuals() {
     catch(const std::exception& item) { error=item.what(); }
     try { mountLightRelease(mountPreview.layout); }
     catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
+    try { mountLocalRelease(mountPreview.layout); }
+    catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
+    if(mountPreviewOwnsTask())try { mountLocalBeforeRebuild(fixedMount); }
+    catch(const std::exception& item) { if(!error.empty())error+="；";error+=item.what(); }
     if(!mountAnimationRelease(mountPreview.layout.plane.address,2))error="多 SP 动画控制仍待归还";
     for(const auto& item:mountPreview.layout.meshOverrides)try {
         mountApplyMesh(item,false);
@@ -104,6 +108,7 @@ bool mountPreviewRelease(Addr owner,bool resumeTask) {
         if(resume) {
             if(mountLight(fixedMount.aircraft))mountLightMaintain(fixedMount);
             if(mountExterior(fixedMount.aircraft))mountExteriorMaintain(fixedMount);
+            if(mountLocal(fixedMount.aircraft))mountLocalMaintain(fixedMount);
             if(fixedMount.animatedRack.address && mountAlive(fixedMount.animatedRack))mountSetRackAnimation(fixedMount.animatedRack.address,false,true);
             mountApply();
         } // 恢复本次仍有效任务的实际模型，不覆盖任何弹药缓存。
@@ -144,6 +149,7 @@ void mountPreviewAnimate() {
     if(mountLight(state.aircraft)) { mountLightMaintain(state);return; }
     if(mountExterior(state.aircraft)) { mountExteriorMaintain(state);return; }
     if(mountAnimated(state.aircraft)) { mountAnimationEnsure(state,2);return; }
+    if(mountLocal(state.aircraft)) { mountLocalMaintain(state);return; }
     if(state.aircraft==MountAircraft::F35c) {
         const Addr rack=read<Addr>(plane+0x1b90);
         const bool paused=(read<unsigned>(rack+0x9b0)&2)!=0,tick=read<unsigned char>(rack+0x3f)!=0;
@@ -238,6 +244,7 @@ bool mountPreviewRebindHangar() {
     mountBindVisuals(next,prior.plane.address,mountPreview.activator.address); // 全量校验成功前不写新组件。
     if(mountLight(prior.aircraft) && mountLightLayoutChanged(prior))mountLightRelease(prior);
     mountPreviewInheritNative(next,prior);
+    mountLocalRelease(prior); // 新绑定已按实例继承租约；旧组件不再共享时逐项归还。
     mountRestoreUnusedMeshes(prior,next);
     // 只归还已脱离本轮模型池的旧组件，复用组件不经过单挂状态。
     for(const auto& old:prior.visuals) {
@@ -479,6 +486,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             if(mountPreviewOwnsTask())mountPreviewInheritNative(next,fixedMount);
             mountPreviewInheritNative(next,mountPreview.layout);
             mountRestoreUnusedMeshes(mountPreview.layout,next);
+            mountLocalRelease(mountPreview.layout);
             next.bound=true;mountPreview.layout=std::move(next);
         }
         auto& state=mountPreview.layout;

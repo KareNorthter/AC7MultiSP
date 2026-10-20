@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "version": "2.23.0",
+  "candidate": true,
+  "formal_main": "0b75b21e4e29c817d193188e7326700507417dae",
+  "integration_base": "b023e703195ad288096e96ad94842f4e0007810c",
+  "source_commit": "873aeeca0783d0ff36d4c4de5a1cc037fd24cd84",
+  "source_thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
+  "handoff_patch": "E:\\AC7_MultiSP\\Temp\\remaining-native-mount-research\\local-four-runtime-r1\\local-four-for-2.22.0-source.patch",
+  "handoff_patch_sha256": "2741bf8807d139ae93b8acad97293dcfd86304a72ddb847a627161f73274a4d2",
+  "actual_install_baseline": "evidence/2.22.0-installed.json",
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.23.0\\Temp\\mount-assets-2.23.0\\source",
+  "resource_variants": 73,
+  "resource_members": 146,
+  "existing_24_aircraft_plans_preserved": true,
+  "existing_65_resource_members_preserved": true,
+  "interfaces": {
+    "management": 15,
+    "configuration": 14,
+    "gaze": 2,
+    "camera": 7,
+    "aircraft": 2
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "四机外观、局部动画、发射净空及性能待用户实测",
+    "Block III上层朝向与展开时序待游戏确认",
+    "MiG-31B按用户要求暂缓，观察布局与借位限制不改",
+    "ASF-X/RKT、F104C、MiG21bis和其他既有待办保持"
+  ]
+}

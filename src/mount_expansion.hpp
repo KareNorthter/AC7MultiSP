@@ -72,14 +72,17 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         state.rackOffsets[pool]=mountProperty(plane,("SWP"+std::to_string(pool+1)).c_str(),"ObjectProperty",8);
         const Addr rack=read<Addr>(plane+state.rackOffsets[pool]);
         const auto rackIdentity=mountIdentity(rack);
-        require(mountName(read<Addr>(rack+0x10))=="StaticMeshComponent" &&
+        const bool skeletal=mountLocal(state.aircraft) && group.value("skeletal",false);
+        require(mountName(read<Addr>(rack+0x10))==(skeletal?"SkeletalMeshComponent":"StaticMeshComponent") &&
             read<Addr>(rack+0x100)==state.weaponBase.address,("扩展挂载：挂架类型或父链改变"+context).c_str());
-        const Addr original=mountBaselineMesh(rackIdentity,read<Addr>(rack+0x728));
+        const Addr original=skeletal?read<Addr>(rack+mountProperty(rack,"SkeletalMesh","ObjectProperty",8)):
+            mountBaselineMesh(rackIdentity,read<Addr>(rack+0x728));
         require(mountName(mountIdentity(original).address)==group.at("rack").get<std::string>(),("扩展挂载：原生挂架资源不匹配"+context).c_str());
         const auto flags=read<unsigned char>(rack+0x1bc);
         state.visuals.push_back({rackIdentity,pool,-1,bool(flags&0x10),bool(flags&0x20)});
         const int variant=plan.at("variants").at(pool).get<int>();
         if(variant>=0) {
+            require(!skeletal,"局部机构：不能替换原生活动挂架");
             if(definition.value("requires_no_collision",false))mountRequireNoCollision(rack);
             const auto asset=mountAssets.find(variant);
             require(asset!=mountAssets.end() && mountAlive(asset->second.identity),("扩展挂载：独立挂架未加载或已失效"+context+", variant="+std::to_string(variant)).c_str());
@@ -162,4 +165,5 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
             "扩展借位：弹体网格与已核兵装不符");
         state.meshOverrides.push_back({identity,original,replacement}); // 与F-15E相同账本，关闭/换组/失败逐项归还。
     }
+    if(mountLocal(state.aircraft))mountLocalBind(state,plane);
 }

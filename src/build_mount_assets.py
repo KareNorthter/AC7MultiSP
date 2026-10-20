@@ -16,7 +16,8 @@ def build(source, output):
     proof = json.loads((ROOT/'evidence/sp-combination-static-split-experiment.json').read_text(encoding='utf-8'))
     reports = {v['recipe']['name']:v for v in proof['variants']}
     for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json', 'static-expansion-2.13.0.json',
-                     'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json'):
+                     'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json',
+                     'local-four-mount-runtime.json'):
         extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
         for report in extra['resource_reports']:
             name = report['recipe']['name']

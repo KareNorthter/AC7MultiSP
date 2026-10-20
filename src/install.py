@@ -71,7 +71,7 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动先备份再迁移至管理参数14；新增自动回正阈值默认30度，0度关闭，保留全部旧设置和个人方案',
+            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节；当前配置14无需新迁移，旧配置仍沿既有备份链迁至14；个人设置和方案保留',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}
