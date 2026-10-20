@@ -33,9 +33,9 @@
     "camera": 7,
     "aircraft": 2
   },
-  "compiled": false,
-  "tests_run": false,
-  "installed": false,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
@@ -44,5 +44,23 @@
     "四机路径修正、F14A预检重试、MiG31B r2及UI/暂停换机效果待用户实测",
     "F14A首次失败的具体触发原因尚未完全证实",
     "SP1进入卡顿和单SP页面闪现仅静态研究，未实作过渡动画"
-  ]
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "5f9efacbde654ffed8cc72c58751643f868f9cb3",
+  "build_dir": "Temp/build-2.24.0-candidate",
+  "build_receipt_sha256": "2541e03567fe673be731f39ff38a2608a870d21100326d32cbf299b61ce1cb9e",
+  "test_receipt_sha256": "19cf42167e71f73a72e027adfd3bc601e7889b6c68de0945f0e5431e02a5e7f2",
+  "install_receipt_sha256": "bbafb60e51da98e54929d09d13d68fd5020f490bec83c670a0b0284391af22d5",
+  "installed_at": "2026-10-20T22:15:12.784937+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.24.0\\backup\\AC7MultiSP-20261020-221512-784937",
+  "protected_files_verified": 315,
+  "runtime_files_verified": 18,
+  "preserved_mod_files_verified": 25,
+  "save_backup_file_count": 13,
+  "new_collision_export_verified": true,
+  "installed_r2_resource_and_loader_verified": true,
+  "game_close_receipt": "evidence/2.24.0-game-close.json",
+  "game_close_receipt_sha256": "9d0a9874f8020272eedf2eac27296f6a570e32bb335a5287788cbe37f0e76e07",
+  "game_closed_normally": true,
+  "game_remains_closed": true
 }

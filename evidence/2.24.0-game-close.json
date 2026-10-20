@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "version": "2.24.0",
+  "requested_by_user": true,
+  "checked_at": "2026-10-20T22:14:04.7414703+08:00",
+  "processes": [
+    {
+      "pid": 24988,
+      "started_at": "2026-10-20T20:28:01.9318650+08:00",
+      "close_requested": true,
+      "exited": true,
+      "forced": false
+    }
+  ],
+  "remaining": 0
+}
