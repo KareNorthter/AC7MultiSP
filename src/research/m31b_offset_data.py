@@ -25,3 +25,24 @@ def append_m31b_offset(planes, assets, root):
     # 只读NoCollision资格，不更改碰撞参数；原模板的三个SWP均已静态核实为NoCollision。
     plane['requires_no_collision'] = True
     assets.append(data['asset'])
+
+
+def apply_m31b_offset_r2(planes, assets, root):
+    previous = root/'evidence/m31b-saam-offset-r1.json'
+    old = json.loads(previous.read_text(encoding='utf-8'))
+    data = json.loads((root/'evidence/m31b-saam-offset-r2.json').read_text(encoding='utf-8'))
+    if (data['schema'] != 1 or data['status'] != 'user_requested_offset_observation_not_validated' or
+            data['previous_revision_sha256'] != hashlib.sha256(previous.read_bytes()).hexdigest() or
+            data['offset'] != {'X': -7.0, 'Y': 0.0, 'Z': -2.0} or data['masks'] != [6, 7] or
+            data['asset'] != 'MSP_m31b_saam_rear_lower_r2' or assets.count(old['asset']) != 1 or data['asset'] in assets):
+        raise ValueError('MiG-31B二次后移与旧观察副本不符，不覆盖')
+    index = assets.index(old['asset'])
+    plane = next(p for p in planes if p['code'] == 'm31b')
+    if any(plane['plans'][mask]['variants'][0] != index for mask in data['masks']):
+        raise ValueError('MiG-31B旧观察副本占位已变化，不能替换')
+    report, = data['resource_reports']
+    if (report['recipe']['name'] != data['asset'] or not all(report.get(k) is True for k in
+            ('asset_roundtrip', 'renamed_ac7_roundtrip', 'all_exports_payload_preserved',
+             'all_lod_geometry_bytes_unchanged', 'rotations_scales_and_other_sockets_unchanged'))):
+        raise ValueError('MiG-31B二次后移缺少限定改动或回读依据')
+    assets[index] = data['asset']  # 仅原观察副本槽位替换为r2，其他资源编号保持。

@@ -997,6 +997,32 @@ extern "C" __declspec(dllexport) int dualsp_resupply_supported(void*) {
 }
 
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+// 派生挂架加载前复用核心的枚举反射校验，不依赖Lua代理枚举与整数直接比较。
+extern "C" __declspec(dllexport) int dualsp_mount_collision_guard(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(runtimeEnabled && api->top(luaState)==2,"挂架预检：当前场景或参数无效");
+        verifyVersion();mountInstallHooks();
+        require(GetCurrentThreadId()==mountGameThread.load(),"挂架预检：不在绑定的游戏线程");
+        const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto requestedPool=api->readInteger(luaState,2);
+        require(requestedPool>=1 && requestedPool<=3,"挂架预检：组件编号无效");
+        const auto identity=mountIdentity(plane);
+        require(mountExpanded(mountAircraft(plane)),"挂架预检：机体不在扩展白名单");
+        const auto offset=mountProperty(plane,("SWP"+std::to_string(requestedPool)).c_str(),"ObjectProperty",8);
+        const Addr rack=read<Addr>(plane+offset),base=read<Addr>(plane+0x1ae0);
+        const auto rackIdentity=mountIdentity(rack);mountIdentity(base);
+        require(read<Addr>(rack+0x100)==base,"挂架预检：共同父链改变");
+        mountRequireNoCollision(rack);
+        require(mountAlive(identity) && mountAlive(rackIdentity) && read<Addr>(plane+offset)==rack &&
+            read<Addr>(plane+0x1ae0)==base,"挂架预检：原生查询期间对象换代");
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
 // 独立资源仅接受生成白名单的精确包名；只保有纯网格，不保有机体或世界。
 extern "C" __declspec(dllexport) int dualsp_mount_asset(void* luaState) {
     const dualsp::LuaApi* api=nullptr;

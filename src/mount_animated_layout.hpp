@@ -29,8 +29,14 @@ const MountSpecification& mountAnimatedSpecification(MountAircraft aircraft) {
 }
 void mountAnimatedResource(Addr object,const std::string& expected,const std::string& package,const char* type) {
     mountIdentity(object);
-    require(mountName(read<Addr>(object+0x10))==type && mountName(object)==expected &&
-            mountName(read<Addr>(object+0x20))==package,"动画挂载：原生资源类型、名称或包不符");
+    const auto actualType=mountName(read<Addr>(object+0x10)),actualName=mountName(object),
+        actualPackage=mountName(read<Addr>(object+0x20));
+    if(actualType==type && actualName==expected && actualPackage==package)return;
+    // 只在失败时记录差异，界面提示保持简短；类型、名称和包的严格门槛不放宽。
+    nativeLog(Json{{"event","MOUNT_RESOURCE_MISMATCH"},{"expected_type",type},{"expected_name",expected},
+        {"expected_package",package},{"actual_type",actualType},{"actual_name",actualName},
+        {"actual_package",actualPackage}}.dump());
+    throw std::runtime_error("动画挂载：原生资源类型、名称或包不符");
 }
 // 每个方案均核对owner/provider/Socket集合，不能只因为头文件里有七行就填资格通过。
 void mountAnimatedQualifyPlans(const Json& definition) {

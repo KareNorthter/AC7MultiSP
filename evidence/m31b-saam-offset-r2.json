@@ -1,0 +1,89 @@
+{
+  "schema": 1,
+  "status": "user_requested_offset_observation_not_validated",
+  "masks": [
+    6,
+    7
+  ],
+  "observation_sha256": "62b8cbab01ba9b84ff476bd347c1ee9efa21668c39a050a2a7e88d0dcf507014",
+  "asset": "MSP_m31b_saam_rear_lower_r2",
+  "offset": {
+    "X": -7.0,
+    "Y": 0.0,
+    "Z": -2.0
+  },
+  "resource_reports": [
+    {
+      "recipe": {
+        "name": "MSP_m31b_saam_rear_lower_r2",
+        "source_asset": "m31b_SWP1_SM",
+        "socket_offset": {
+          "X": -7.0,
+          "Y": 0.0,
+          "Z": -2.0
+        },
+        "sockets": [
+          "sp13",
+          "sp14"
+        ]
+      },
+      "asset_roundtrip": true,
+      "renamed_ac7_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "source_ac7_encoding_reproduced": true,
+      "all_lod_geometry_bytes_unchanged": true,
+      "lod_count": 1,
+      "allowed_changes": [
+        "自身资源名/包名",
+        "sp13/sp14的RelativeLocation"
+      ],
+      "socket_changes": [
+        {
+          "socket": "sp13",
+          "before": {
+            "X": 21.502639770507812,
+            "Y": -4.599999904632568,
+            "Z": -14.98927116394043
+          },
+          "after": {
+            "X": 14.502639770507812,
+            "Y": -4.599999904632568,
+            "Z": -16.98927116394043
+          }
+        },
+        {
+          "socket": "sp14",
+          "before": {
+            "X": 21.502639770507812,
+            "Y": 4.599999904632568,
+            "Z": -14.98927116394043
+          },
+          "after": {
+            "X": 14.502639770507812,
+            "Y": 4.599999904632568,
+            "Z": -16.98927116394043
+          }
+        }
+      ],
+      "rotations_scales_and_other_sockets_unchanged": true,
+      "encoded_hashes": {
+        ".uasset": "e9203f54dfcaeadcffab811b6d7a9ae909a7a4de05ae23958ec8a2dac50c3b98",
+        ".uexp": "412e713ae3f560757a62fe304fd72da1541edcc7b84500b70c08a83adaafb579"
+      },
+      "source_encrypted_sha256": "371b5cec68a69dd52aa6672bb3a5aae078ce5db83fb8d5bd0d35afb36f4f524b",
+      "source_decoded_sha256": "3f0482c61ea30e9d1d9079cbe8a1cf25d1d822c24be08c0c79ebfe54011e329a"
+    }
+  ],
+  "resource_input": "C:\\Users\\83717\\.codex\\worktrees\\native-sp-mount-takeover\\AC7_MultiSP\\Temp\\m31b-saam-offset-r2\\source",
+  "feedback": "用户确认MiG-31B整体方案可行、值得参考；后腹SAAM只需在r1基础上再稍后移一点，故追加后移1资源单位，高度不变",
+  "known_limits": [
+    "整体方案可行是用户反馈，不扩大为全部场景或其他机体通过",
+    "本次再后移的效果、支撑和净空仍待用户观察"
+  ],
+  "assets_generated": true,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "previous_revision_sha256": "31eedede302be5787f77b918e9ad8ff4d692e1d1013bf68fd350d88582752152"
+}

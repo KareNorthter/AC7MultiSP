@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "status": "source_fix_not_game_validated",
+  "installed_version": "2.23.1",
+  "installed_runtime_verified": 18,
+  "resource_package_error": {
+    "cause": "局部机构绑定把动画蓝图的包目录误拼成网格目录",
+    "source": "本研究线程上轮local_mount.hpp",
+    "aircraft": [
+      {
+        "code": "f14d",
+        "name": "f14d_SWP3_AnimBP_C",
+        "class": "AnimBlueprintGeneratedClass",
+        "actual_package": "/Game/Blueprint/Player/Body/f14d_SWP3_AnimBP",
+        "previous_wrong_package": "/Game/Vehicles/Aircraft/f14d/f14d_SWP3_AnimBP",
+        "source_json_sha256": "b77c14166bc226daff8981d8a1b8596293afaad8403d1f55f0585a5e71008f70"
+      },
+      {
+        "code": "f18f",
+        "name": "f18f_SWP3_AnimBP_C",
+        "class": "AnimBlueprintGeneratedClass",
+        "actual_package": "/Game/Blueprint/Player/Body/f18f_SWP3_AnimBP",
+        "previous_wrong_package": "/Game/Vehicles/Aircraft/f18f/f18f_SWP3_AnimBP",
+        "source_json_sha256": "277d18f082e7e44c8f7a706503e99a1851b37ae46d1999f7b1522b0a0406a665"
+      },
+      {
+        "code": "su33",
+        "name": "su33_SWP3_AnimBP_C",
+        "class": "AnimBlueprintGeneratedClass",
+        "actual_package": "/Game/Blueprint/Player/Body/su33_SWP3_AnimBP",
+        "previous_wrong_package": "/Game/Vehicles/Aircraft/su33/su33_SWP3_AnimBP",
+        "source_json_sha256": "a6d58a2bdff5b19632db1788f00864c352db71b1e2ba8c1d450c081ffd40cb8a"
+      },
+      {
+        "code": "f18x",
+        "name": "f18x_SWP3_AnimBP_C",
+        "class": "AnimBlueprintGeneratedClass",
+        "actual_package": "/Game/Blueprint/Player/Body/f18x_SWP3_AnimBP",
+        "previous_wrong_package": "/Game/Vehicles/Aircraft/f18x/f18x_SWP3_AnimBP",
+        "source_json_sha256": "1dad6ea7ea219bb364bd925b88e8381f695afd70eb9f1468edaee6e46bb0c34d"
+      }
+    ],
+    "strict_class_name_package_check_preserved": true
+  },
+  "f14a_current": {
+    "actual_class": "AcePlayerPawn_f14a_C",
+    "snapshot_sha256": "1f10ead32c89d44c8d383b359e2413d525968e98e8b811b04d3df46b2e70f4ec",
+    "collision_snapshot_sha256": "79afb930c75313ce24777d67b8c376bb8dfbdefa008a415f5b47eded3eefe3a0",
+    "raw_collision_mode": 0,
+    "raw_profile": "NoCollision",
+    "native_warning": "多 SP 挂载已回退为原生单 SP：扩展挂载：独立挂架未加载或已失效 [aircraft=f14a, pool=SWP1], variant=56",
+    "cause_scope": "已确认Lua碰撞预检曾失败并阻止资源加载；未捕获首次失败时Lua返回值，不能区分代理返回形式和过渡时序",
+    "revision": "使用核心具名枚举预检，绑定时仍独立复核；失败缓存按新机体地址/明确setup边界重试，成功保有资源仍复用"
+  },
+  "user_feedback": {
+    "mig31b_overall_design_viable": true,
+    "mig31b_reference_for_other_aircraft": true,
+    "mig31b_requested_extra_rear_shift": 1,
+    "height_unchanged_from_r1": true
+  },
+  "screenshots_sha256": {
+    "codex-clipboard-97ada107-911a-49f4-b4f3-14e6614343ec.png": "94c2a5d6103118bd0c0cef20aaf5a6c38f0e4b21e8dd99e580ecb5575c0cf940",
+    "codex-clipboard-48972066-de7d-438d-afb3-8c34be99b0eb.png": "872e28e2d9629e24db10ba324bd55a4bd03388617825c536694459fbef284d11"
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "process_memory_read": true,
+  "process_write": false,
+  "game_functions_called": false,
+  "limits": [
+    "未验证修订后四机完整动画与发射",
+    "未捕获F14A最初Lua预检失败时的返回值",
+    "MiG31B再后移幅度待用户观察"
+  ]
+}

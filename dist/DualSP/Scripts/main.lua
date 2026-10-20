@@ -43,6 +43,7 @@ loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成�
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
+local checkMountCollision=loadExport("dualsp_mount_collision_guard") -- 与核心成套；仍严格要求NoCollision。
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
 local lightMountAircraft={f22a=true,pkfa=true,dark=true,zoef=true,adf11f=true,fa44=true}
 local ensureMountAssets=nil
@@ -218,7 +219,11 @@ local nativeClient=dofile(root.."Scripts/native_bridge.lua").new{
     root=root,execute=bridge,readJson=readJson,profile=Profile}
 local function native(op,target)
     if weaponSwitch.salvo.service and op~="switch"and op~="snapshot"then weaponSwitch.salvo.service:release()end
-    if ensureMountAssets and runtimeFixedMountEnabled then ensureMountAssets(nil,nil,false,currentProfile)end
+    if ensureMountAssets and runtimeFixedMountEnabled then
+        -- 新玩家、重建或检查点是明确的新尝试边界；普通轮切不重复重试失败资源。
+        local retryAssets=op=="setup"or op=="resupply_setup"or op=="debug_setup"or op=="checkpoint_restore"
+        ensureMountAssets(nil,nil,retryAssets,currentProfile)
+    end
     assert(IsInGameThread(),"Native weapon access requires the game thread")
     assert(valid(plane) and valid(activator),"Player plane is unavailable")
     local time=game:GetTimeSeconds(plane)
@@ -352,12 +357,19 @@ local function releaseMountPreview(ownerAddress)
     return ok,not ok and previewMountWarning or warning
 end
 local mountAssetStatus={} -- 按实际资源记成功/失败；组合变化只加载新方案需要的副本。
+local mountAssetFailureOwner={} -- 失败只属于当时的机体实例，不阻断后来换机产生的新实例。
 ensureMountAssets=function(code,sourcePlane,retry,profile)
     if not(runtimeAllowed and runtimeModEnabled and (runtimeFixedMountEnabled or retry))then return true end
     local info=catalogue and catalogue[tostring(planeId)]
     code=code or info and info.code
     local entries=code and expandedMountAssets[code]
     if not entries or #entries==0 then return true end
+    sourcePlane=sourcePlane or plane
+    if not valid(sourcePlane)then
+        local hangar=valid(instance)and instance.HangarManager or nil
+        sourcePlane=valid(hangar)and hangar.LoadedPlayerPlane or nil
+    end
+    local owner=valid(sourcePlane)and sourcePlane:GetAddress()or 0
     profile=profile or currentProfile
     local mask=nil
     if profile then
@@ -366,6 +378,10 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
         if mask&(mask-1)==0 then return true end -- 原生单挂不替换派生网格，也不预加载其他组合。
     end
     local status=mountAssetStatus[code]or {};mountAssetStatus[code]=status
+    if mountAssetFailureOwner[code]~=owner then
+        for index,value in pairs(status)do if value~=true then status[index]=nil end end
+        mountAssetFailureOwner[code]=owner -- 已成功保有的纯资源仍可跨机体复用。
+    end
     local needed={}
     for _,entry in ipairs(entries)do
         if not mask or not entry[4]or entry[4]&(1 << mask)~=0 then
@@ -389,8 +405,8 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
             loadingIndex=entry[1]
             local pool=entry[3]
             assert(type(pool)=="number"and pool>=1 and pool<=3,"扩展挂架缺少目标组件编号")
-            local rack=sourcePlane[weaponFieldNames.pool[pool]]
-            assert(valid(rack)and rack:GetCollisionEnabled()==0,"扩展挂架要求原生组件关闭碰撞")
+            local accepted,message=checkMountCollision(sourcePlane:GetAddress(),pool)
+            assert(accepted,message or "扩展挂架要求原生组件关闭碰撞")
         end
         for _,entry in ipairs(needed)do
             loadingIndex=entry[1]
