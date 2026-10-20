@@ -52,12 +52,40 @@
     "F2A、选装光标及其他偶发退出继续待办"
   ],
   "actual_install_baseline": "evidence/2.21.1-installed.json",
-  "compiled": false,
-  "tests_run": false,
+  "compiled": true,
+  "tests_run": true,
   "installed": false,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
   "pushed_or_uploaded": false,
-  "scope": "只接收本次三线程产品及研究成果；主工作区兼容资料、个人设置、第三方Mod和历史删除均未混入"
+  "scope": "只接收本次三线程产品及研究成果；主工作区兼容资料、个人设置、第三方Mod和历史删除均未混入",
+  "checks_passed": 11,
+  "candidate_source_commit": "978385508ff9c83f8f7fda659baeaf5de4573582",
+  "build_dir": "Temp/integration-2.22.0/Temp/build-2.22.0-candidate-r2",
+  "build_receipt_sha256": "4a59709d16c1f1558b8de54dfe9cee54a6cec71ec3d931836fd0bb982cee6660",
+  "test_receipt_sha256": "c582cec062b4567d1da9d739580eaa167dbd6d1b809bf9a6b924eec1b6b52f9e",
+  "install_blocker": "当前执行环境不允许写游戏目录；交换PAK的首个rename返回WinError 5，未交换游戏文件",
+  "installed_version_unchanged": "2.21.1",
+  "full_current_mod_inventory_unchanged": true,
+  "save_backup_verified": true,
+  "save_backup_file_count": 13,
+  "partial_attempt_backup": "E:\\AC7_MultiSP\\Temp\\integration-2.22.0\\backup\\AC7MultiSP-20261020-140027-192358",
+  "existing_plane_layout_changes": [
+    [
+      "f04e",
+      [
+        5
+      ]
+    ],
+    [
+      "m35d",
+      [
+        5,
+        7
+      ]
+    ]
+  ],
+  "original_54_resource_prefix_preserved": true,
+  "manual_install_script": "Temp/integration-2.22.0/安装2.22.0候选.cmd"
 }

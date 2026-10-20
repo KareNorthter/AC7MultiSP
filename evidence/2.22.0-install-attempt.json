@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "version": "2.22.0",
+  "installed": false,
+  "game_started": false,
+  "preflight_passed": true,
+  "checks_passed": 11,
+  "error": "PermissionError WinError 5",
+  "blocked_operation": "将已装挂架PAK移入已核对的项目备份目录",
+  "game_runtime_and_mount_unchanged": true,
+  "original_mod_inventory_verified": true,
+  "save_backup_verified": true,
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.22.0\\backup\\AC7MultiSP-20261020-140027-192358",
+  "staging": "Temp/AC7MultiSP-install-20261020-140027-192358/DualSP",
+  "automatic_approval_requested": false,
+  "next_step": "由用户在普通本机终端运行已准备的安装脚本；沿用冻结构建和检查，不重编译"
+}
