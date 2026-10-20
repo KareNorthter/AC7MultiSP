@@ -1,5 +1,17 @@
 # 开发与恢复
 
+## MiG-31B观察候选追加（2026-10-20）
+
+用户已明确要求接入此前发现穿模的MiG-31B后腹SAAM方案，供其判断实际严重程度。接入完整七组合，保翼下双PLSL，SAAM＋PLSL用后腹SAAM2，三挂用前腹LAAM2/后腹SAAM2；原生发射源、队列和冷却不改。仅该机两组合获精确后腹借位及原SAAM池取网格例外，检查与归还保留。已知相交记录保持，新`evidence/m31b-mount-observation.json`不宣称几何通过。前三机与65份资源不变，无新资源或版本号变更。观察版在`Temp/remaining-native-mount-research/observation`，仍未编译、运行测试、安装或操作游戏；资源输入沿用上一三机快照的`Temp/mount-assets-native-four/source`。后续只接收完整四机补丁或三机至观察版增量之一，不能把两个完整补丁重复套用。
+
+
+## 原生静态挂载研究批次（2026-10-20，未构建）
+
+基于main `0b75b21` / 2.21.1追加F-14A、F/A-18E、F/A-18E TGM三机完整七组合源码候选，沿用静态挂载生命周期；11份新派生挂架已离线编码回读，原54份保持，总65资源/130成员。未编译、运行测试模块、打PAK、安装或游戏实测，未修改版本标识。MiG-31B参考普通Su-57保留双PLSL，但后腹SAAM借位被真实三角面核对否决，未注册。详细布局、取舍和后续验证范围见[挂载设计](multi-sp-mount-design.md#原生静态挂载候选批次2026-10-20)及`evidence/static-native-three-aircraft.json`；不将离线检查写成已验收。
+
+当前环境禁止写入主仓库.git，本线程在`Temp/remaining-native-mount-research/source`保存main来源的隔离源码快照，最终交付精确差异，未切换或修改另一线程主工作区。接收应按补丁核对三机枚举/生成器/核心表/Lua/新证据及资源构建/来源冻结登记，原运行DLL保持。完整资源输入在快照`Temp/mount-assets-native-four/source`，需要显式传给`src/build.py --mount-assets-dir`；构建、版本分配、安装及用户验收由接收线程负责。
+
+
 ## 主管接手入口
 
 唯一正式主线 **main / v2.21.1**。用户测试已安装2.21.1后反馈“经过测试，没问题了”，授权合main、保留版本号并制作本地包，不上传。已验收来源`cddea06`，冻结构建`Temp/build-2.21.1-candidate`，原11项检查和`evidence/2.21.1-installed.json`绑定同一代字节；18运行文件、54资源/108成员PAK，226项保护文件/备份核验通过。主线发布不重装，不操作或启动游戏。

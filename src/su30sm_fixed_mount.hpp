@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d }; // 既有索引保持，X-02S不接管外观。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b }; // 只追加MiG-31B观察候选，既有索引保持。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -17,7 +17,7 @@ struct MountSpecification {
 #include "animated_mount_data.hpp"
 bool mountExpanded(MountAircraft aircraft) {
     return (aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn) ||
-        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::M35d);
+        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::M31b);
 }
 int mountExpansionIndex(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型未登记");
