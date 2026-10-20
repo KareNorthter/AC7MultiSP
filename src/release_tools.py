@@ -81,6 +81,8 @@ def source_snapshot(root=ROOT):
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
         'src/research/native_static_batch_data.py','evidence/static-native-three-aircraft.json',
         'evidence/m31b-mount-observation.json',
+        'src/research/m31b_offset_data.py','src/research/prepare_m31b_saam_offset.py',
+        'evidence/m31b-saam-offset-r1.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',
         'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',

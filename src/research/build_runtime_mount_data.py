@@ -191,6 +191,11 @@ def build():
     else:
         from local_four_runtime_data import append_local_four
     append_local_four(planes, assets, ROOT)
+    if __package__:
+        from .m31b_offset_data import append_m31b_offset
+    else:
+        from m31b_offset_data import append_m31b_offset
+    append_m31b_offset(planes, assets, ROOT)
     return {'planes':planes,'assets':assets}
 
 
