@@ -37,6 +37,47 @@ bool targetGazeFocused() {
 bool targetGazeLive() {
     return targetGaze.allowed.load() && GetTickCount64()-targetGaze.heartbeat.load()<=500;
 }
+// 独立于短按注视开关；只观察原始L3，长按与双键组合会消费本轮短按。
+struct ViewTargetPadState {
+    Addr plane{};
+    std::atomic<DWORD> thread{0};
+    ULONGLONG heartbeat{},pressed{};
+    bool allowed{},seeded{},leftDown{},combo{},candidate{},fired{},pending{},suppressShort{};
+    void clear(){
+        thread=0;
+        if(allowed){targetGaze.leftCandidate=false;targetGaze.pendingPadToggle=false;}
+        plane=0;heartbeat=pressed=0;allowed=seeded=leftDown=combo=candidate=fired=pending=suppressShort=false;
+    }
+} viewTargetPad;
+void viewTargetObservePad(DWORD result,const XINPUT_STATE* state) {
+    if(GetCurrentThreadId()!=viewTargetPad.thread.load())return;
+    const auto now=GetTickCount64();
+    if(!viewTargetPad.allowed||now-viewTargetPad.heartbeat>500||!targetGazeFocused()||result!=ERROR_SUCCESS||!state) {
+        viewTargetPad.seeded=false;viewTargetPad.candidate=false;viewTargetPad.pending=false;
+        viewTargetPad.suppressShort=true;return;
+    }
+    const auto buttons=state->Gamepad.wButtons;
+    const bool left=(buttons&XINPUT_GAMEPAD_LEFT_THUMB)!=0,right=(buttons&XINPUT_GAMEPAD_RIGHT_THUMB)!=0;
+    if(!viewTargetPad.seeded) {
+        viewTargetPad.seeded=true;viewTargetPad.leftDown=left;viewTargetPad.combo=left||right;
+        viewTargetPad.candidate=false;viewTargetPad.suppressShort=left||right;return;
+    }
+    if(left&&right) {
+        viewTargetPad.combo=true;viewTargetPad.candidate=false;viewTargetPad.pending=false;viewTargetPad.suppressShort=true;
+    }
+    if(viewTargetPad.combo) {
+        if(!left&&!right)viewTargetPad.combo=false;
+    }else {
+        if(left&&!viewTargetPad.leftDown) {
+            viewTargetPad.pressed=now;viewTargetPad.candidate=!right;viewTargetPad.fired=false;viewTargetPad.suppressShort=false;
+        }
+        if(viewTargetPad.candidate&&!viewTargetPad.fired&&(left||viewTargetPad.leftDown)&&now-viewTargetPad.pressed>=2000) {
+            viewTargetPad.fired=true;viewTargetPad.pending=true;viewTargetPad.suppressShort=true;
+        }
+        if(!left)viewTargetPad.candidate=false;
+    }
+    viewTargetPad.leftDown=left;
+}
 float targetGazeAxis(void* object,uint64_t name) {
     const float native=originalTargetGazeAxis(object,name);
     const float look=cameraHoldAxis(object,name,native); // 两种镜头功能共享入口，按轴名称与更新作用域隔离。
@@ -54,6 +95,7 @@ float targetGazeAxis(void* object,uint64_t name) {
 }
 // 只观察真实按键，不过滤X/L3/R3。双摇杆组合锁定到两边都松开，取消本次L3切换。
 void targetGazeObservePad(DWORD result,const XINPUT_STATE* state) {
+    viewTargetObservePad(result,state); // 必须先判长按，避免释放帧先执行短按注视。
     if(GetCurrentThreadId()!=targetGaze.thread.load())return;
     if(!targetGazeLive() || !targetGazeFocused()) {
         targetGaze.padSeeded=false;targetGaze.leftCandidate=false;targetGaze.pendingPadToggle=false;return;
@@ -74,7 +116,9 @@ void targetGazeObservePad(DWORD result,const XINPUT_STATE* state) {
     }else {
         if(left && !targetGaze.leftDown)targetGaze.leftCandidate=!right;
         if(!left && targetGaze.leftDown && targetGaze.leftCandidate) {
-            targetGaze.pendingPadToggle=true;targetGaze.leftCandidate=false;
+            const bool consumed=GetCurrentThreadId()==viewTargetPad.thread.load()&&viewTargetPad.suppressShort;
+            if(!consumed)targetGaze.pendingPadToggle=true;
+            targetGaze.leftCandidate=false;
         }
     }
     targetGaze.leftDown=left;

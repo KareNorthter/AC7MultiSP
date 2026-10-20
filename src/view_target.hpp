@@ -10,7 +10,7 @@ struct ViewTargetState {
     ULONGLONG heartbeat{};
     bool allowed{},enabled{};
     std::string error;
-    void clear(){plane=selection=controller=manager=root=view={};controllerOffset=0;thread=0;heartbeat=0;allowed=enabled=false;}
+    void clear(){plane=selection=controller=manager=root=view={};controllerOffset=0;thread=0;heartbeat=0;allowed=enabled=false;viewTargetPad.clear();}
 } viewTarget;
 struct ViewTargetFrame {bool active{};ViewTargetVector position,rotation;};
 thread_local ViewTargetFrame viewTargetFrame;
@@ -211,34 +211,43 @@ int viewTargetLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==4,"视角选目标参数数量无效");
+        require(api->top(luaState)==5,"视角选目标参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto allowed=api->readInteger(luaState,2),enabled=api->readInteger(luaState,3),dot=api->readInteger(luaState,4);
-        require((allowed==0||allowed==1)&&(enabled==0||enabled==1)&&(dot==0||dot==1),"视角选目标参数无效");
-        bool available=false,visible=false;
+        const auto pad=api->readInteger(luaState,5);
+        require((allowed==0||allowed==1)&&(enabled==0||enabled==1)&&(dot==0||dot==1)&&(pad==0||pad==1),"视角选目标参数无效");
+        bool available=false,visible=false,padToggle=false;
         if(!plane||!allowed||!targetGazeFocused()){viewTarget.clear();viewTarget.error.clear();}
         else {
             require(viewTarget.error.empty(),viewTarget.error.c_str());verifyVersion();
             if((viewTarget.plane.address!=plane||!viewTargetIdentities())&&!bindViewTarget(plane)) {
-                api->boolean(luaState,true);api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,"waiting_input",13);return 4;
+                api->boolean(luaState,true);api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,"waiting_input",13);api->boolean(luaState,false);return 5;
             }
             require(GetCurrentThreadId()==viewTarget.thread,"视角选目标不在玩家游戏线程");
             available=viewTargetOrdinary();
             if(enabled&&available)installViewTarget();
             viewTarget.allowed=available;viewTarget.enabled=enabled!=0;viewTarget.heartbeat=GetTickCount64();
+            if(pad&&available) {
+                installTargetGaze(); // 共用现有XInput观察入口，保持原生按键返回值。
+                const auto now=GetTickCount64();
+                if(!viewTargetPad.allowed||viewTargetPad.plane!=plane||now-viewTargetPad.heartbeat>500)viewTargetPad.clear();
+                viewTargetPad.plane=plane;viewTargetPad.heartbeat=now;viewTargetPad.allowed=true;viewTargetPad.thread=GetCurrentThreadId();
+                XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);viewTargetObservePad(result,&state);
+                padToggle=viewTargetPad.pending;viewTargetPad.pending=false;
+            }else viewTargetPad.clear();
             if(dot&&available) {
                 ViewTargetVector position,rotation;viewTargetPose(position,rotation);const auto forward=viewTargetForward(rotation);
                 const auto q=read<std::array<float,4>>(viewTarget.root.address+0x180);
                 const double x=q[0],y=q[1],z=q[2],w=q[3],length=x*x+y*y+z*z+w*w;
                 require(std::isfinite(length)&&length>.9&&length<1.1,"视角选目标的机头方向无效");
                 const double cosine=((1.-2.*(y*y+z*z)/length)*forward.x+2.*(x*y+w*z)/length*forward.y+2.*(x*z-w*y)/length*forward.z);
-                visible=cosine<std::cos(10.*3.14159265358979323846/180.); // 10度边界也隐藏，不用归一化环视轴代替实际画面方向。
+                visible=cosine<std::cos(15.*3.14159265358979323846/180.); // 15度边界也隐藏，不用归一化环视轴代替实际画面方向。
             }
         }
-        api->boolean(luaState,true);api->boolean(luaState,available);api->boolean(luaState,visible);api->string(luaState,"",0);return 4;
+        api->boolean(luaState,true);api->boolean(luaState,available);api->boolean(luaState,visible);api->string(luaState,"",0);api->boolean(luaState,padToggle);return 5;
     }catch(const std::exception& error) {
-        viewTarget.allowed=false;viewTarget.error=error.what();
-        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 4;}
+        viewTarget.allowed=false;viewTarget.error=error.what();viewTargetPad.clear();
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));api->boolean(luaState,false);return 5;}
         return 0;
     }
 }

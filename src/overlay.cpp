@@ -55,10 +55,10 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=16; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=17; // L3长按NEXT选项，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true,draftGunSalvo=false;
 bool draftTargetGazePadL3=false,draftCameraHold=false;
-bool draftCameraR3=true,draftViewTarget=false,draftViewCenterDot=true;
+bool draftCameraR3=true,draftViewTarget=false,draftViewTargetPadL3=false,draftViewCenterDot=true;
 std::atomic<bool> viewCenterDotVisible{false};
 std::atomic<ULONGLONG> viewCenterDotHeartbeat{0};
 int draftTargetGazeKey=0,targetGazeResponse=0;
@@ -429,7 +429,7 @@ void loadManagementDraft() {
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
-    draftViewTarget=state.at("view_target_enabled").get<bool>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
+    draftViewTarget=state.at("view_target_enabled").get<bool>();draftViewTargetPadL3=state.at("view_target_pad_l3").get<bool>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
     draftTargetGazePadL3=state.at("target_gaze_pad_l3").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
@@ -688,7 +688,7 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
-        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
+        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_target_pad_l3",draftViewTargetPadL3},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
@@ -738,8 +738,8 @@ void refreshState() {
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
-            state.at("view_target_enabled").get<bool>();state.at("view_center_dot_enabled").get<bool>();
-            if(state.at("view_target").at("protocol").get<int>()!=1)throw std::runtime_error("视角选目标协议不匹配");
+            state.at("view_target_enabled").get<bool>();state.at("view_target_pad_l3").get<bool>();state.at("view_center_dot_enabled").get<bool>();
+            if(state.at("view_target").at("protocol").get<int>()!=2)throw std::runtime_error("视角选目标协议不匹配");
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
             if(state.at("camera_hold").at("protocol").get<int>()!=7)throw std::runtime_error("镜头保持协议不匹配");
@@ -891,9 +891,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         const auto size=ImGui::GetIO().DisplaySize;const ImVec2 center{size.x*.5f,size.y*.5f};
                         auto* draw=ImGui::GetForegroundDrawList();
                         const float scale=std::clamp(size.y/1080.f,.75f,2.f);
-                        draw->AddCircleFilled(center,6.f*scale,IM_COL32(240,250,255,18),24);
-                        draw->AddCircleFilled(center,3.5f*scale,IM_COL32(245,252,255,55),20);
-                        draw->AddCircleFilled(center,1.5f*scale,IM_COL32(255,255,255,245),16);
+                        draw->AddCircleFilled(center,9.f*scale,IM_COL32(240,250,255,18),24);
+                        draw->AddCircleFilled(center,5.5f*scale,IM_COL32(245,252,255,55),20);
+                        draw->AddCircleFilled(center,2.5f*scale,IM_COL32(255,255,255,245),16);
                     }
                     if(toastVisible) {
                         ImGui::PushFont(nullptr,32.f); // 通知独立加大，不挤压管理面板。
@@ -991,7 +991,7 @@ extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*
 extern "C" __declspec(dllexport) int dualsp_keyboard_modifier_routing_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_view_target_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_view_target_pad_supported(void*) {return 0;}
 // 游戏线程只发布小白点显隐与心跳；渲染线程不读取游戏对象，也不逐帧读取状态文件。
 extern "C" __declspec(dllexport) int dualsp_view_center_marker(void* luaState) {
     const dualsp::LuaApi* api=nullptr;

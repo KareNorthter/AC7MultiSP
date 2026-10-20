@@ -940,7 +940,7 @@ extern "C" __declspec(dllexport) int dualsp_gun_salvo(void* luaState) {return gu
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_view_target(void* luaState) {return viewTargetLua(luaState);}
-extern "C" __declspec(dllexport) int dualsp_view_target_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_view_target_pad_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_r3_hold_toggle_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
