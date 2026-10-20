@@ -181,6 +181,11 @@ def build():
         raise ValueError('新增资源编号顺序与追加清单不符')
     apply_layout_review(planes, assets, LAYOUT_REVIEW, {('m35d',3),('m35d',5),('m35d',6),('fa27',3)})
     apply_layout_review(planes, assets, LAYOUT_FEEDBACK, {('f15m',3),('f15m',7)})
+    if __package__:
+        from .native_static_batch_data import append_native_static_batch
+    else:
+        from native_static_batch_data import append_native_static_batch
+    append_native_static_batch(planes, assets, ROOT)
     return {'planes':planes,'assets':assets}
 
 

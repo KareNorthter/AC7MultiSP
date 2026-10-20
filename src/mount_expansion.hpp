@@ -38,8 +38,12 @@ void mountExpansionPositions(FixedMountState& state) {
     }
     if(plan.contains("borrowed_positions"))for(const auto& borrowed:plan.at("borrowed_positions")) {
         const int kind=borrowed.at("kind").get<int>(),pool=borrowed.at("pool").get<int>(),socket=borrowed.at("socket").get<int>();
+        // 用户指定的MiG-31B观察方案：仅借后腹LAAM原点给SAAM；前腹仍可由LAAM使用。
+        const bool m31Belly=state.aircraft==MountAircraft::M31b && (state.kindsMask==6 || state.kindsMask==7) &&
+            kind==1 && pool==0 && (socket==2 || socket==3);
         require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)) &&
-            !(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty(),"扩展借位：只能借用未选兵装的原生位置");
+            (m31Belly || (!(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty())),
+            "扩展借位：供位池已选中或缺少本兵装原位，且不属于指定观察方案");
         const auto& provider=mountExpansionDefinition(state.aircraft).at("groups").at(pool);
         require(!provider.at("fixed").get<bool>() && !mountExpansionDefinition(state.aircraft).at("groups").at(kind).at("fixed").get<bool>() &&
             socket>=0 && socket<static_cast<int>(provider.at("sockets").size()),
@@ -128,8 +132,20 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         const Addr target=state.physical[state.expansionPositions[kind][index]];
         const auto identity=mountIdentity(target);
         mountRequireNoCollision(target); // 只读守卫；不改借用组件的碰撞设置。
-        const Addr source=state.physical[state.expansionPositions[kind].front()];
-        require(state.expansionPools[kind].front()==kind,"扩展借位：缺少本兵装原生弹体作为网格来源");
+        Addr source{};
+        if(state.expansionPools[kind].front()==kind)source=state.physical[state.expansionPositions[kind].front()];
+        else {
+            // SAAM原生池只作本网格来源；不使用供位LAAM网格，也不修改原生射击队列。
+            require(state.aircraft==MountAircraft::M31b && kind==1 && state.poolCounts[kind]==2 &&
+                (state.kindsMask==6 || state.kindsMask==7),"扩展借位：未登记的全迁移兵装");
+            const Addr array=state.meshManager.address+0x150+kind*16;
+            require(read<int>(array+8)==state.poolCounts[kind],"扩展借位：SAAM原生池发生换代");
+            source=read<Addr>(read<Addr>(array));
+            const auto found=std::find_if(state.visuals.begin(),state.visuals.end(),[&](const MountVisual& visual) {
+                return visual.pool==kind && visual.index==0 && visual.identity.address==source;
+            });
+            require(found!=state.visuals.end() && mountAlive(found->identity),"扩展借位：SAAM网格来源身份失效");
+        }
         const auto replacement=mountIdentity(mountBaselineMesh(mountIdentity(source),read<Addr>(source+0x728)));
         const auto original=mountIdentity(mountBaselineMesh(identity,read<Addr>(target+0x728)));
         require(!groups.at(kind).at("mesh").is_null() && mountName(replacement.address)==groups.at(kind).at("mesh").get<std::string>(),

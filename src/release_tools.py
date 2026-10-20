@@ -79,6 +79,8 @@ def source_snapshot(root=ROOT):
         'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
+        'src/research/native_static_batch_data.py','evidence/static-native-three-aircraft.json',
+        'evidence/m31b-mount-observation.json',
         'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',
         'src/research/summarize_animation_product_access.py','evidence/mount-expansion-animated.json',
         'evidence/su47-native-endpoint-geometry.json','evidence/sp-animation-product-access.json',

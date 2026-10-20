@@ -1,0 +1,637 @@
+{
+  "schema": 1,
+  "baseline": "main/0b75b21/v2.21.1 + native-static-three-handoff-v2",
+  "status": "known_geometry_conflicts_user_observation",
+  "user_requested_observation": true,
+  "user_request": "mig31b也按照这个方式接入，我观察一下是否严重",
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos",
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg",
+    "MSP_f14a_laam_belly",
+    "MSP_f14a_laam_wings",
+    "MSP_f14a_laam_front",
+    "MSP_f14a_sffs_belly",
+    "MSP_f14a_sffs_rear",
+    "MSP_f18e_hcaa_tips",
+    "MSP_f18e_agm_inner",
+    "MSP_f18e_lagm_outer",
+    "MSP_f18etg_hcaa_tips",
+    "MSP_f18etg_hvaa_neg",
+    "MSP_f18etg_gpb_pos_sensor"
+  ],
+  "plane": {
+    "code": "m31b",
+    "groups": [
+      {
+        "rack": "m31b_SWP1_SM",
+        "mesh": "w_laam_r0_SM",
+        "sockets": [
+          "sp11",
+          "sp12",
+          "sp13",
+          "sp14"
+        ],
+        "window": 2,
+        "fixed": false,
+        "launcher": false,
+        "class": "plwp_laam_r0_C"
+      },
+      {
+        "rack": "m31b_SWP2_SM",
+        "mesh": "w_saam_r1_SM",
+        "sockets": [
+          "sp21",
+          "sp22"
+        ],
+        "window": 2,
+        "fixed": false,
+        "launcher": false,
+        "class": "plwp_saam_r1_C"
+      },
+      {
+        "rack": "m31b_SWP3_SM",
+        "mesh": null,
+        "sockets": [
+          "sp31",
+          "sp32"
+        ],
+        "window": 2,
+        "fixed": true,
+        "launcher": false,
+        "class": "plwp_plsl_x0_C"
+      }
+    ],
+    "plans": [
+      null,
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [],
+          []
+        ],
+        "racks": 1,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            0,
+            1
+          ],
+          []
+        ],
+        "racks": 2,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [
+            0,
+            1
+          ],
+          []
+        ],
+        "racks": 2,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 1,
+            "pool": 0,
+            "socket": 2
+          },
+          {
+            "kind": 1,
+            "pool": 0,
+            "socket": 3
+          }
+        ]
+      },
+      {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 1,
+            "pool": 0,
+            "socket": 2
+          },
+          {
+            "kind": 1,
+            "pool": 0,
+            "socket": 3
+          }
+        ]
+      }
+    ],
+    "requires_no_collision": false
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "game_verified": false,
+  "known_geometry_conflicts": [
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "crossing_pairs": 197
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "crossing_pairs": 204
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "crossing_pairs": 108
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "crossing_pairs": 126
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "crossing_pairs": 80
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "crossing_pairs": 12
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "crossing_pairs": 76
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "crossing_pairs": 20
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "crossing_pairs": 2
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_laam_r0_SM",
+        "sp11",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 0
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 175
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 166
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        0
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 30
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 158
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 176
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        1
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 24
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        0
+      ],
+      "crossing_pairs": 30
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        1
+      ],
+      "crossing_pairs": 24
+    },
+    {
+      "first": [
+        "w_saam_r1_SM",
+        "sp13",
+        2
+      ],
+      "second": [
+        "w_saam_r1_SM",
+        "sp14",
+        2
+      ],
+      "crossing_pairs": 2
+    }
+  ],
+  "limits": [
+    "原对称后腹SAAM借位布局不变；用户要求接入观察，未证明穿模轻微或可接受",
+    "两枚后腹SAAM相互穿模；三挂时与同侧前腹LAAM穿模；机体净空和动态离架未实测",
+    "PLSL双炮体、原生发射源及冷却保持；库存、锁定、齐射、配弹比例不改",
+    "单挂沿原生；新SAAM显示和实际发射共用后腹原Socket变换，归还沿现有网格账本",
+    "额外机体、类别及Socket不获得借位例外"
+  ]
+}
