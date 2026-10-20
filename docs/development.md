@@ -1,5 +1,12 @@
 # 开发与恢复
 
+## 五机活动挂架第一版静态方案（2026-10-20，未接入）
+
+ASF-X、F-14D、F/A-18F、Su-33和F/A-18F Block III已形成五机35个非空组合设计。重新从原版PAK提取资源并回核既有摘要，解析五套SWP3蒙皮和101资源帧，九种静态分区意图通过全LOD边界检查，一种可保原架；未生成资产、编译、运行测试模块、安装或操作游戏。当前核心/Lua/四机观察候选保持。具体布局、1960个包络案例的范围及Block III重叠条件见[挂载设计](multi-sp-mount-design.md)与`evidence/active-five-mount-static-plan.json`。
+
+EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再跟进；Block III需补上层朝向和LACM展开时序，ASF-X还涉及Body swc3/挂架spwc双域及76个RKT管口，保持RKT专项后置。复现脚本`src/research/review_active_five_mounts.py`只读显式manifest，未注册这五架运行白名单。当前环境Git目录仍不可写，研究差异在`Temp/remaining-native-mount-research/animated-five/source`，基于已交付四机观察快照增量整理，不另建交接正文。
+
+
 ## MiG-31B观察候选追加（2026-10-20）
 
 用户已明确要求接入此前发现穿模的MiG-31B后腹SAAM方案，供其判断实际严重程度。接入完整七组合，保翼下双PLSL，SAAM＋PLSL用后腹SAAM2，三挂用前腹LAAM2/后腹SAAM2；原生发射源、队列和冷却不改。仅该机两组合获精确后腹借位及原SAAM池取网格例外，检查与归还保留。已知相交记录保持，新`evidence/m31b-mount-observation.json`不宣称几何通过。前三机与65份资源不变，无新资源或版本号变更。观察版在`Temp/remaining-native-mount-research/observation`，仍未编译、运行测试、安装或操作游戏；资源输入沿用上一三机快照的`Temp/mount-assets-native-four/source`。后续只接收完整四机补丁或三机至观察版增量之一，不能把两个完整补丁重复套用。
