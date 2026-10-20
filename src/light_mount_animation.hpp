@@ -21,7 +21,7 @@ struct LightMountAnimation {
 } lightMountAnimation;
 
 bool mountLightHasAnimation(MountAircraft aircraft) {
-    return aircraft==MountAircraft::Dark || aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44;
+    return aircraft==MountAircraft::Dark || aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 || mountLocal(aircraft);
 }
 void mountLightAnimationReturnCfaBody() {
     auto& state=lightMountAnimation;
@@ -136,7 +136,7 @@ int mountLightAnimationCfaFrameCurrent() {
 }
 void mountLightAnimationBeforeRebuild(const Command& command,int target) {
     auto& state=lightMountAnimation;state.pending={};
-    if(!fixedMount.bound || fixedMount.aircraft!=MountAircraft::Fa44)return;
+    if(!fixedMount.bound || (fixedMount.aircraft!=MountAircraft::Fa44 && !mountLocal(fixedMount.aircraft)))return;
     mountLightAnimationBind();
     // 先归还附属盖板，让Init产生的新原生值成为下一次基线。
     mountLightAnimationReturnCfaBody();
@@ -166,7 +166,8 @@ void mountLightAnimationAfterArmed(const Command& command,bool armed) noexcept {
     if(!saved.valid)return;
     try {
         require(fixedMountEnabled && !fixedMountFailed && fixedMount.bound &&
-            fixedMount.aircraft==MountAircraft::Fa44 && command.op=="switch" && armed &&
+            fixedMount.aircraft==state.aircraft && (state.aircraft==MountAircraft::Fa44 || mountLocal(state.aircraft)) &&
+            command.op=="switch" && armed &&
             command.request==saved.transaction && command.plane==saved.plane.address &&
             command.activator==saved.activator.address && mountMeshIdentityEqual(saved.plane,state.plane) &&
             mountMeshIdentityEqual(saved.plane,fixedMount.plane) && state.engine==saved.engine && state.parts==saved.parts &&
@@ -182,7 +183,7 @@ void mountLightAnimationAfterArmed(const Command& command,bool armed) noexcept {
         std::memcpy(reinterpret_cast<void*>(state.parts+0x58),&saved.request,sizeof(int));
         std::memcpy(reinterpret_cast<void*>(state.parts+0x274),&saved.phase,sizeof(int));
         std::memcpy(reinterpret_cast<void*>(state.parts+0x17c),&saved.progress,sizeof(float));
-        mountLightAnimationCfaBody(saved.target);
+        if(state.aircraft==MountAircraft::Fa44)mountLightAnimationCfaBody(saved.target);
     }catch(const std::exception& error) {fixedMountFail(error.what());}
 }
 void mountLightAnimationCommit() {
@@ -197,6 +198,7 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
     auto& state=lightMountAnimation;
     if(!state.parts || reinterpret_cast<Addr>(object)!=state.parts || !fixedMount.bound || fixedMount.rebuilding ||
        !mountMeshIdentityEqual(state.plane,fixedMount.plane))return false;
+    if(mountLocal(state.aircraft))return false; // 四机公共通道只在SP互切事务恢复一次，逐帧原生更新完整直通。
     if(state.aircraft==MountAircraft::Fa44) {
         // 无ADMM则没有额外swc1盖板，连通道同步也无需执行。
         if(!(fixedMount.kindsMask&1u))return false;

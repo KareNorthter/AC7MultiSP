@@ -1,5 +1,19 @@
 # 开发与恢复
 
+## 四机局部机构接入修订（2026-10-20，源码候选）
+
+用户在2.22.0候选中反馈F-14D、F/A-18F、Su-33、F/A-18F Block III的多SP外观仍与原生相同，且没有弹窗。已安装18运行文件与`E:/AC7_MultiSP/Temp/integration-2.22.0/evidence/2.22.0-installed.json`一致；安装并非主工作区旧的失败尝试。当前会话日志记录四架实际玩家切换，核心和Lua尚无这四架运行白名单，原五机交付本来只有静态设计；这是缺少接线，不把无报错当作适配通过。F-4E多SP外观正常是用户本轮反馈，不扩大到其他场景。
+
+本次追加四架各七组合，单挂继续原生。沿用五机静态设计，Su-33的LASM保原架，其余生成八份静态分区副本，资源为73项/146成员，旧65项字节和编号保持。`src/research/prepare_local_four_mounts.py`生成新证据`evidence/local-four-mount-runtime.json`，`local_four_runtime_data.py`追加唯一源数据，再由原生成器统一输出核心表与Lua加载清单。既有F-4E/MiG-35D等其他线程布局不在覆盖范围内。
+
+`src/local_mount.hpp`仅管理原生SWP3局部机构，核对组件/网格/骨架/动画类的包、弱身份、完整骨名父链及原生Socket双射；任务和补给预览共用同实例租约。保持Tick、NoSkeletonUpdate和必要的骨刷新选项，相同值不写；bPauseAnims、机身动画和原生发射条件不变。状态变化的原生请求通过既有Tick/停用入口记账，不增加全局对象或逐骨扫描。SP互切只在原事务完成后一次归还真实公共spwc请求、阶段及进度；MSL边界自然开合，不强制全开，也不把此路线接入旧三机完整共舱控制。
+
+F-14D和Block III使用更新后的真实SWP3 Socket世界变换，未发布完成时旁路该次映射；上层挂点朝向从原生FName读取，不填写静态证据省略的旋转。EML保完整炮体及原生炮口取位，不按冷却或弹数隐藏。改单挂、关闭模型、重建、换机及退出逐项归还，失败保留恢复责任。Block III的实际展开时序和净空仍待实机验证，静态包络重叠不直接判为穿模。
+
+资源输入在本分支`Temp/local-four-runtime-r1/source`，需显式交给后续构建者；核心、Lua及73项资源必须成套。接收2.22.0整合源时应应用专用源码增量，并在其保留的其他布局修订上重新生成两个表，不能用本研究分支的整表覆盖。未改版本、旧验收或受保护DLL，未编译、打PAK、运行测试、安装或操作游戏；仅执行离线资源生成/回读、摘要及源码静态核对。游戏内效果尚未验证。
+
+MiG-31B：当前找到的日志截至19:18，未找到本轮报错。用户随后说明发生在机库，要求找不到时先暂停，稍后自行重试；本次不更改其已知穿插观察布局、借位限制或原回执。ASF-X及其他RKT、F-104C、MiG-21bis、Mod和复杂内舱继续后置。原五机静态设计与接管记录保留来源阶段含义，当前状态以本节为准。
+
 ## 原生挂载研究接管核验（2026-10-20）
 
 本次环境为Windows 11（10.0.26200）、PowerShell 7.6.6、Python 3.13.12。接管时本地main与主工作区HEAD均为`0b75b21e4e29c817d193188e7326700507417dae`，未接收下述四机与五机成果；未配置Git远端，不能据此判断云端最新提交。主工作区处于`codex/aircraft-mod-static-plan`且有其他工作未提交，保持原样。原云端线程`01a1576b-88f4-7731-b862-e81bc8dd90b2`未能通过当前只读工具找到，本次以本地交付、回执和精确差异接管。
@@ -8,7 +22,7 @@
 
 65项资源的130个成员与四机回执全部一致，资源输入继续显式使用`E:/AC7_MultiSP/Temp/remaining-native-mount-research/source/Temp/mount-assets-native-four/source`。两份`E:/AC7_MultiSP/Temp/mount-assets-20261020-*`清单及其81份JSON均存在；UAssetGUI、AC7Key.bin与原版PAK目录存在，无需重复提取。受保护旧DLL摘要符合项目约定。这里仅核对文件、摘要、补丁与源码，未执行研究脚本、构建、测试、安装或游戏操作；不改版本号及旧验收。
 
-后续实现先从`src/mount_expansion.hpp::mountBindExpansionVisuals`的静态挂架限制与`src/su30sm_fixed_mount.hpp`的资格、绑定、显隐、映射和归还入口着手，为F/A-18F、Su-33增加独立的局部机构资格。`src/mount_animation_runtime.hpp`的旧三机控制不可直接扩白名单。具体约束沿用下文五机方案及挂载设计：先核原生EML组件更新和固定炮口来源，再处理F-14D动态Socket；Block III的上层朝向及LACM展开时序继续待证。四机仍为未实测候选（MiG-31B明确保留已知穿插观察状态），五机仍未接入运行代码；ASF-X及其他RKT、F-104C、MiG-21bis、Mod和复杂内舱继续后置。PLSL参照普通Su-57。
+接管时明确实现入口为`src/mount_expansion.hpp::mountBindExpansionVisuals`的静态挂架限制与`src/su30sm_fixed_mount.hpp`的资格、绑定、显隐、映射和归还入口，旧三机控制不可直接扩白名单。当时原四机仍为未实测候选（MiG-31B明确保留已知穿插观察状态），五机仍未接入运行代码；后续四机源码修订见上节。ASF-X及其他RKT、F-104C、MiG-21bis、Mod和复杂内舱继续后置。PLSL参照普通Su-57。
 
 ## 五机活动挂架第一版静态方案（2026-10-20，未接入）
 

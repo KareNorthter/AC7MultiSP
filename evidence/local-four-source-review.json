@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "status": "source_fix_not_game_validated",
+  "baseline": "c4f02d2",
+  "installed_version": "2.22.0",
+  "installed_runtime_files_verified": 18,
+  "installed_receipt_sha256": "24a0e47fe25a55d685fb82d38e5c5e6405b0db94bf856b833de7c1167769b5ab",
+  "diagnosis": "四机先前只有静态方案，未接运行白名单和局部骨架支持；无错误弹窗为未注册机体原生旁路",
+  "log_scope": {
+    "mod_log_sha256": "6354ba57667228238928220ffab33c4d1d46064a28f38cfb64b127b08734054d",
+    "mod_log_last_line": "2026-10-20T11:18:47Z PERF_STAGE scene=flight stage=publish samples=16 total_ms=137.000 average_ms=8.563 peak_ms=11.000",
+    "current_session_start_line": 58644,
+    "current_session_m31b_error_found": false,
+    "ue4ss_log_sha256": "e392bc6f9d9a2191e72c9000df16dd3cb6a424897c44d5847776677326333132",
+    "four_aircraft_acquisitions": [
+      "[2026-10-20 19:07:07.2598614] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_f14d_s07_C /Game/Maps/Mission/ms06/ms06.ms06:PersistentLevel.AcePlayerPawn_f14d_s07_C_0 model=108",
+      "[2026-10-20 19:10:52.0078479] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_f18f_C /Game/Maps/Mission/ms06/ms06.ms06:PersistentLevel.AcePlayerPawn_f18f_C_0 model=103",
+      "[2026-10-20 19:12:35.6704553] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_su33_C /Game/Maps/Mission/ms06/ms06.ms06:PersistentLevel.AcePlayerPawn_su33_C_0 model=118",
+      "[2026-10-20 19:13:43.6866627] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_f18x_C /Game/Maps/Mission/ms06/ms06.ms06:PersistentLevel.AcePlayerPawn_f18x_C_0 model=145"
+    ]
+  },
+  "user_feedback": {
+    "f04e_multi_sp_models_normal": true,
+    "m31b_hangar_error": true,
+    "m31b_followup": "用户要求本次先暂停，稍后自行重试后提供报错"
+  },
+  "code_scope": [
+    "f14d",
+    "f18f",
+    "su33",
+    "f18x"
+  ],
+  "original_65_assets_unchanged": true,
+  "resources": 73,
+  "members": 146,
+  "new_resources": 8,
+  "reviewed_paths": [
+    "整机七组合与单挂原生旁路",
+    "资源/骨架/动画类资格及Socket双射",
+    "任务与补给预览共用原生基线",
+    "SP互切真实进度一次恢复与MSL原生边界",
+    "EML固定炮体和原生发射来源",
+    "动态Socket与骨更新未完成时旁路",
+    "改单挂、关闭模型、重建和退出归还及失败保留责任"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "pak_built": false,
+  "installed": false,
+  "game_process_access": false,
+  "verification": "离线资源全部LOD分区/编码回读、文件摘要、Python源码AST解析及人工源码审阅；未写或运行测试模块",
+  "remaining": [
+    "游戏内外观、动画、离架和性能待验证",
+    "Block III实际展开顺序及上层朝向待游戏确认",
+    "MiG-31B等待用户重试日志"
+  ]
+}
