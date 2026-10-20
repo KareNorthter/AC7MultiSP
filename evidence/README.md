@@ -1,5 +1,9 @@
 # 证据分类索引
 
+## 当前2.25.1整合候选
+
+接收F-4E`65c52b6`、两机布局`98ca6aa`与暂停换机`1ddcc61`；19运行文件、77资源/154成员须成套。正在构建安装，结果以`evidence/2.25.1-integration.json`和`evidence/2.25.1-installed.json`为准。 新效果待用户验收。来源见[库存与交替](f04e-ugb-alternating-stock.json)、[两机布局](f18e-layout-feedback-r1.json)及[暂停菜单残留](aircraft-repeat-pause-restart.json)。旧回执保持原阶段含义。
+
 ## 两机布局反馈源码候选
 
 [用户反馈](native-batch-user-feedback-20261020.json)记录F-14A正常、普通E/TGM可出击和此前四机正常的有限认可；[布局与资源](f18e-layout-feedback-r1.json)只修改两机mask6/7，新增三资源，共77项/154成员，TGM借完整普通E挂架而不拆分。以已安装2.25.0的`6dec7d0`接续，旧74项及其他布局保持；未编译、测试或安装，新布局待用户观察。

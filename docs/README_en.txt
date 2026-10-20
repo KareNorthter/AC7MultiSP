@@ -1,4 +1,11 @@
-AC7MultiSP 2.25.0 (candidate)
+AC7MultiSP 2.25.1 (candidate)
+
+2.25.1 candidate changes (since 2.25.0; validation pending)
+
+• F-4E UGB+SASM alternates sides and follows remaining stock: 9 gives 5+4, 10 gives 5+5, zero clears all; twelve positions and reload gaps remain.
+• F/A-18E moves LAGM inboard and 4AGM outboard. TGM moves GPB inboard and air-to-air weapons outboard, borrowing the complete rack. Only the affected dual/triple combinations change.
+• Paused aircraft switching closes and resumes the native menu before restarting the mission. Closing F6 alone retains native pause.
+• Complete core/Lua and 77 variants/154 members must match; the previous 148 members remain unchanged. Personal configuration, saves and other mods are preserved.
 
 2.25.0 candidate changes (since 2.24.0; user validation pending)
 • Added camera-center NEXT selection, off by default, with remappable Ctrl+Alt+F8. NEXT and actual selection use the same native maintenance flow.
@@ -190,3 +197,5 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.23.1: Shifted MiG-31B rear SAAM sockets 6 aft/2 down; observation pending.
 2.24.0: Added native weapon descriptions, purchased-SP lists and paused F6 aircraft changes; fixed resource qualification and MiG-31B r2. Validation pending.
 2.25.0: Added view-center NEXT/dot, smoother hold and mod-aircraft skin-SP support; integrated native collision preservation, pause handoff and MiG-31B r3. Validation pending.
+
+2.25.1: Fixed F-4E stock/alternating visuals, two F/A-18E layouts and native menu pause during aircraft switching; validation pending.

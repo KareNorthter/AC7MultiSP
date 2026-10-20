@@ -71,7 +71,7 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动先备份profiles.before-view-target.json再由配置14迁15；视角中心NEXT默认关闭、白点默认开启，新增快捷键冲突仅留空新键；个人设置和方案保留',
+            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，配置15无需新迁移；更旧配置沿既有逐级备份链迁15，个人开关、快捷键与方案保留',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}

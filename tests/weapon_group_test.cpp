@@ -308,12 +308,22 @@ int main() {
     cameraHold.clear();cameraHold.combo=true;cameraHoldResolveHold(2500);
     assert(!cameraHold.longDone && !cameraHold.pendingToggle && !cameraHold.centering);
     cameraHold.clear();
-    // 独立模型容量仅适用于F-4E的UGB＋SASM，不扩大其他组合/兵装。
-    assert(mountModelCapacityIndependent(MountAircraft::F04e,5,0));
-    assert(!mountModelCapacityIndependent(MountAircraft::F04e,5,2));
-    assert(!mountModelCapacityIndependent(MountAircraft::F04e,7,0));
+    // F-4E保十二位置，库存决定可见量；左右顺序与真实离架映射共用。
+    FixedMountState f4;f4.aircraft=MountAircraft::F04e;f4.kindsMask=5;
+    f4.logicalCounts=mountSpecification(f4.aircraft).logicalCounts;mountExpansionPositions(f4);
+    assert((f4.expansionSockets[0]==std::vector<int>{0,6,1,7,2,8,3,9,4,10,5,11}));
+    assert(!mountExpansionPlan(f4.aircraft,5).contains("model_capacity_mask"));
+    for(int stock: {0,1,8,9,10,12,18}) {
+        const auto mask=mountPreviewReadyMask(f4,{0,2,-1},{stock,0,0},2);
+        int left=0,right=0;
+        for(size_t i=0;i<f4.expansionPositions[0].size();++i)
+            if(mask&(uint64_t{1}<<f4.expansionPositions[0][i]))
+                (f4.expansionSockets[0][i]<6?left:right)++;
+        const int visible=std::min(stock,12);
+        assert(left==(visible+1)/2 && right==visible/2);
+    }
     // 静态方案完整性、新旧非连续枚举、共用位置隔离及超过32位的火箭巢显隐。
-    assert(mountExpansionData().at("planes").size()==28 && mountExpansionData().at("assets").size()==74);
+    assert(mountExpansionData().at("planes").size()==28 && mountExpansionData().at("assets").size()==77);
     int multiCases=0;
     for(size_t aircraft=0;aircraft<mountExpansionData().at("planes").size();++aircraft) {
         const auto type=mountExpansionAircraft(aircraft);

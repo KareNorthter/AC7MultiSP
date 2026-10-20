@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T00:02:13.930165+08:00",
+  "status": "已定位菜单暂停原因残留并修订源码，未编译安装或实机验证",
+  "branch": "codex/ui-interaction",
+  "source_base": "6dec7d0",
+  "installed_version": "2.25.0",
+  "source_candidate": "2.25.1",
+  "pid": 27512,
+  "raw_directory": "C:\\Users\\83717\\.codex\\worktrees\\ui-interaction\\AC7_MultiSP\\Temp\\aircraft-repeat-hang-20261020-235721",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "new_debugger_attached": false,
+  "snapshot_sources_match_install_receipt": {
+    "Scripts/main.lua": true,
+    "Scripts/debug_aircraft.lua": true,
+    "VERSION": true
+  },
+  "timeline_local": [
+    "23:51:45 ms06第一次换机：X02A(221)到R172(187)，23:52:02实际应用成功。",
+    "23:53:38 从原生CampaignRetry菜单打开F6，记录existing=true、owned=false。",
+    "23:53:50 第二次换机：R172(187)到X02SB1(212)，旧代码只调用SetGamePaused(false)后RestartLevel。",
+    "23:54:06 目标Pawn和新世界已生成；换机停在waiting_flight_input paused=true。",
+    "23:56:50 等待重开超时；失败前Lua心跳持续，用户仍可打开F6，不能称为已证明进程死锁。"
+  ],
+  "live_observation": {
+    "target_pawn": "AcePlayerPawn_x02sb1_C",
+    "controller_pawn_matches": true,
+    "acknowledged_pawn_matches": true,
+    "movement_input": false,
+    "weapon_input": false,
+    "native_ui_stack_count": 0,
+    "pause_reason_mask": "0x110",
+    "menu_pause_reason_bit": "0x100",
+    "other_reason_not_classified": "0x10",
+    "world_pauser": "NimbusPlayerState",
+    "manager_lifetime": "NimbusPauseManager由当前GI持有，独立于重载的任务世界"
+  },
+  "native_findings": [
+    "UIManagerActor.CloseMenuAndResumePlay反射入口0x959690，无参数，转入0x6208b0。",
+    "0x6208b0先弹出原生菜单栈，随后读取GI+0x490的PauseManager，以原因编号8调用0x3df560。",
+    "0x3df560仅撤销PauseManager+0x38中的对应原因位，再按剩余原因决定世界暂停；不清空其他原因。",
+    "旧SetGamePaused(false)只改变世界暂停，未撤销GI中的菜单原因，后续任务初始化可重新暂停。"
+  ],
+  "native_bodies": [
+    {
+      "rva": "0x6208b0",
+      "bytes": 120,
+      "sha256": "04f22a260a53a8d40a264c42ce833275c80ec32e070ec9bbf2504b6e93de2b1b"
+    },
+    {
+      "rva": "0x3df560",
+      "bytes": 83,
+      "sha256": "626a3490ffb21cdcfa64bf1dc290bf43b1076d9b3a402319dc04cad76da02192"
+    },
+    {
+      "rva": "0x17a7520",
+      "bytes": 150,
+      "sha256": "df05cc3d18c7c6624c299b88004a90a5667476b3dbeb5b66c6601c4744132bdf"
+    }
+  ],
+  "source_changes": [
+    "原生暂停换机预检CloseMenuAndResumePlay接口及同世界UIManager；目标选择完成后使用该原生恢复路径，再核对WorldSettings和实际暂停已经归还，之后只重开一次。",
+    "删除仅用SetGamePaused(true)恢复旧暂停的错误补偿；原菜单已消费后，异常仍由既有换机事务恢复原机体选择，不伪造旧菜单。",
+    "普通关闭F6仍保留原生菜单暂停；直接F6的管理自有暂停流程保持。",
+    "未直接改写PauseManager位、Pauser或飞行输入；其他暂停未归还时拒绝重开。"
+  ],
+  "verification": "人工源码/反射入口与函数体审阅、现场复制及哈希核对；不运行测试或编译器",
+  "limitations": [
+    "本次记录证明实际暂停入口存在菜单原因残留，不推定所有黑屏、所有机体或单纯第二次换机必为同因。",
+    "当前0x10原因保留未归类；没有为了恢复画面强制清空任何原生暂停位。",
+    "修订未写入当前游戏，现有卡住状态未被本线程修改；连续换机与各暂停入口效果由接收方构建后验收。"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "raw_files": [
+    {
+      "path": "mod.log",
+      "bytes": 7084177,
+      "sha256": "663134301a00c73c66396c11b005fddc21ed8f2544b76fded88849213c650d70"
+    },
+    {
+      "path": "native.log",
+      "bytes": 4122434,
+      "sha256": "15a70d94e80b134f2427d088fd5e0db9ab9a99faba917160a1cd456fdbe98f34"
+    },
+    {
+      "path": "ui-state.json",
+      "bytes": 12107,
+      "sha256": "c20cdd2e229908f4caccb1031f856d6d7ee37bfeb95fb0ed0d672592ccfd54fe"
+    },
+    {
+      "path": "snapshot.json",
+      "bytes": 1295,
+      "sha256": "86ad85af5dca078caa53b81630f687776b63a916df328422feadf2c00a37cfde"
+    },
+    {
+      "path": "pause-reason.json",
+      "bytes": 1047,
+      "sha256": "49e4556381b03379c1a4bfe222ac2140a1cfa3b3d8a15787591d99e1217753fa"
+    },
+    {
+      "path": "memory\\capture.json",
+      "bytes": 1148935,
+      "sha256": "40905d0d82872979c1213f16a2e02a3d8b8ac5a8f9985cf270fe7dda64201707"
+    }
+  ]
+}
