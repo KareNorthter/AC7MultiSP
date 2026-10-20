@@ -1,0 +1,218 @@
+{
+  "任务": "第三方机体与涂装切换SP的源码适配，静态候选",
+  "日期": "2026-10-20",
+  "基线": "main / 0b75b21 / 2.21.1",
+  "分支": "codex/mod-aircraft-compat",
+  "范围": {
+    "编译": false,
+    "编写或运行测试": false,
+    "安装": false,
+    "操作游戏": false,
+    "推送或上传": false
+  },
+  "资料": "现有本机资源静态解码结果；仅归档引用与配置事实，不提交第三方PAK或蓝图",
+  "数据表": [
+    {
+      "source": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\tables\\000-~~~~~~~~~!Compatibility_Add-Ons-PPDT_P\\PlayerPlaneDataTable.json",
+      "sha256": "115AEE3C844F2AEEA5FB44ABE5C54D5BEB21D3D264EB00BE942DC7232C678696",
+      "selected_rows": [
+        {
+          "PlaneID": 221,
+          "PlaneStringID": "x02a",
+          "Reference": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+            "AssetPath": {
+              "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+              "PackageName": null,
+              "AssetName": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_x02a_01.AcePlayerPawn_x02a_01_C"
+            },
+            "SubPathString": null
+          },
+          "SpWeaponID1": "6aam",
+          "SpWeaponLoadCount1": 60,
+          "SpWeaponID2": "sod",
+          "SpWeaponLoadCount2": 30,
+          "SpWeaponID3": "qaam",
+          "SpWeaponLoadCount3": 40
+        },
+        {
+          "PlaneID": 284,
+          "PlaneStringID": "j15t",
+          "Reference": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+            "AssetPath": {
+              "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+              "PackageName": null,
+              "AssetName": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_j15t.AcePlayerPawn_j15t_C"
+            },
+            "SubPathString": null
+          },
+          "SpWeaponID1": "xlaa",
+          "SpWeaponLoadCount1": 28,
+          "SpWeaponID2": "lasm",
+          "SpWeaponLoadCount2": 20,
+          "SpWeaponID3": "2eml",
+          "SpWeaponLoadCount3": 25
+        }
+      ]
+    },
+    {
+      "source": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\tables\\001-~~~~~~~~~!since_SDT_Add-On-ASS_P\\SkinDataTable.json",
+      "sha256": "E4F2359B65140CFFAB70E15ADB678CCBD757C3F0FDFB0CF4B1EF1C55E488D9F4",
+      "selected_rows": [
+        {
+          "PlaneStringID": "x02a",
+          "SkinNo": 0,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_x02a_01.AcePlayerPawn_x02a_01_C"
+        },
+        {
+          "PlaneStringID": "x02a",
+          "SkinNo": 7,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_x02a_s07.AcePlayerPawn_x02a_s07_C"
+        },
+        {
+          "PlaneStringID": "x02a",
+          "SkinNo": 9,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_x02a_s09.AcePlayerPawn_x02a_s09_C"
+        },
+        {
+          "PlaneStringID": "j15t",
+          "SkinNo": 0,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_j15t_s00.AcePlayerPawn_j15t_s00_C"
+        },
+        {
+          "PlaneStringID": "j15t",
+          "SkinNo": 7,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_j15t_s07.AcePlayerPawn_j15t_s07_C"
+        },
+        {
+          "PlaneStringID": "j15t",
+          "SkinNo": 9,
+          "PlaneReference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_j15t_s09.AcePlayerPawn_j15t_s09_C"
+        }
+      ]
+    }
+  ],
+  "蓝图": [
+    {
+      "source_pak_name": "~~~J-15T_BASE-ADDON_P",
+      "asset": "AcePlayerPawn_j15t",
+      "decoded_uasset_sha256": "0E33CE79680B8496828AA2719B1AC2F23F31514F850CBC573DB824DB2468732F",
+      "decoded_uexp_sha256": "DF7E2A5D5FCA944F3BF9E126B200A17B43BB8380A422916C40626483BF94C706",
+      "parent_imports": [
+        "Default__AcePlayerPawn_C",
+        "AcePlayerPawn_C",
+        "/Game/Blueprint/Player/Pawn/AcePlayerPawn"
+      ],
+      "slot_overrides": [
+        {
+          "slot": "SpecialWeaponConfig1",
+          "weapon_class": "plwp_4aam_c1_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig2",
+          "weapon_class": "plwp_lasm_yj91_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig3",
+          "weapon_class": "plwp_eml_pjc0_C"
+        }
+      ]
+    },
+    {
+      "source_pak_name": "~~~J-15T_BASE-ADDON_P",
+      "asset": "AcePlayerPawn_j15t_s07",
+      "decoded_uasset_sha256": "DE5723EB3C7C73CFF30F3B590BA6E1745A422571545CBE867690A261624F73FC",
+      "decoded_uexp_sha256": "1A5C619E1B36243A21885ABE35B60F8C30EE02A651DEF4034AE8BBBBA16DD65E",
+      "parent_imports": [
+        "Default__AcePlayerPawn_C",
+        "AcePlayerPawn_C",
+        "/Game/Blueprint/Player/Pawn/AcePlayerPawn"
+      ],
+      "slot_overrides": [
+        {
+          "slot": "SpecialWeaponConfig1",
+          "weapon_class": "plwp_hcaa_c0_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig2",
+          "weapon_class": "plwp_laam_c2_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig3",
+          "weapon_class": "plwp_lasm_yj91_C"
+        }
+      ]
+    },
+    {
+      "source_pak_name": "~~~J-15T_BASE-ADDON_P",
+      "asset": "AcePlayerPawn_j15t_s09",
+      "decoded_uasset_sha256": "C049EAF9E1FCD72B2A3D23BCF40B0AA3E0D64E1290FD97E5C79100D14B13AB22",
+      "decoded_uexp_sha256": "080C6C6F8BE0DF275DEA7ED2B9831054ABD97A9157FDCEB241837918D7F3745C",
+      "parent_imports": [
+        "Default__AcePlayerPawn_C",
+        "AcePlayerPawn_C",
+        "/Game/Blueprint/Player/Pawn/AcePlayerPawn"
+      ],
+      "slot_overrides": [
+        {
+          "slot": "SpecialWeaponConfig1",
+          "weapon_class": "plwp_hcaa_c0_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig2",
+          "weapon_class": "plwp_laam_c2_C"
+        },
+        {
+          "slot": "SpecialWeaponConfig3",
+          "weapon_class": "plwp_lasm_yj91_C"
+        }
+      ]
+    },
+    {
+      "source_pak_name": "~~~~X02A_OGWyvern_P",
+      "asset": "AcePlayerPawn_x02a_01",
+      "decoded_uasset_sha256": "4BB4A04A788538DCAF37D29A55AD64407A0D521BC939F7D29355802C69863205",
+      "decoded_uexp_sha256": "1EB7387458C2DD2F4E23DC5C753AC32DCA2D554EE18EB705C78C13CA210E5545",
+      "parent_imports": [
+        "Default__AcePlayerPawn_C",
+        "AcePlayerPawn_C",
+        "/Game/Blueprint/Player/Pawn/AcePlayerPawn"
+      ],
+      "slot_overrides": [
+        {
+          "slot": "SpecialWeaponConfig1",
+          "weapon_class": "plwp_6aam_x02a_C",
+          "max_weapon_count": -1
+        },
+        {
+          "slot": "SpecialWeaponConfig2",
+          "weapon_class": "plwp_sod_x02a_C",
+          "max_weapon_count": -1
+        },
+        {
+          "slot": "SpecialWeaponConfig3",
+          "weapon_class": "plwp_qaam_x02a_C",
+          "max_weapon_count": -1
+        }
+      ]
+    }
+  ],
+  "结论": [
+    "J-15T部分涂装与基础机体平级继承通用AcePlayerPawn，不能靠基础类链或任意后缀识别。",
+    "J-15T的s07/s09三槽改为HCAA/LAAM/LASM；皮肤可以改变实际SP，而非仅换外观。",
+    "X-02A实际基础引用带_01，不能从x02a代号直接拼接资源名。",
+    "PPDT Reference是SoftObjectProperty；SDT PlaneReference是StrProperty，不能共用内存解码方式。",
+    "游戏映像含GetSelectedPlaneSkinNo；其NimbusGameInstance反射接口、只读软引用布局及本轮全部运行行为仍待后续验证。"
+  ],
+  "实现边界": [
+    "只兼容Steam build9855922与当前项目加载器；新增目录schema1及核心能力标记，不能只替换Lua。",
+    "新增核心读取仅用于目录；武器事务、对象/世界/类/所有权及写入校验未放宽。",
+    "载量仍以PPDT逻辑槽基础值计算部件和百分比，不把已加成实例库存再次加成；涂装自定义载量不在本轮支持范围。",
+    "兵装展示优先通过基础CDO同槽实际WeaponClass确认自定义代号；无法确认时按唯一运行编号资料回退或显示类代号。回退资料不证明自定义性能。",
+    "方案仍按机体逻辑槽保存，不自动另存每种皮肤方案；换皮肤须重新核对，提交和出击沿用现有购买/多挂资格校验。",
+    "ECM/UAV登记、MGP/PLSL齐射资格、多人与任务限制保持；不扩展任意武器编号或第三方挂载模型。",
+    "不支持飞行脚本热换机体/武器类；数据表覆盖冲突、第三方Mod本身缺件或不兼容引擎布局不由展示降级修复。",
+    "未编译、未运行任何测试、未实机验证；不引用其他用户的30条断言为本分支结果。"
+  ]
+}

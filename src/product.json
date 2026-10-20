@@ -13,6 +13,7 @@
     "loadout_flow.lua",
     "loadout_profile.lua",
     "main.lua",
+    "mod_aircraft.lua",
     "native_bridge.lua",
     "native_hud.lua",
     "native_loadout.lua",

@@ -43,6 +43,22 @@ function NativeLoadout.new(dependencies)
     if not standby then assert(type(confirmSound)=="function","缺少原生菜单确认音接口")end
     local self={cache=nil,status="waiting",error=nil,lastScan=-1,ignored=nil,ignoredReason=nil,controlDepth=0,serial=0,transaction=nil,phase=nil,phaseObject=nil,
         phaseWorld=nil,owners={},ownerWorld=nil,lastDiscovery=-1} -- 页面候选与阶段身份分别缓存。
+    local function displayFallback(c,key,message)
+        c.displayWarnings=c.displayWarnings or {}
+        if c.displayWarnings[key]then return end
+        c.displayWarnings[key]=true
+        note("MOD_WEAPON_TEXT_FALLBACK mode="..mode.." plane="..c.planeId.." "..message)
+    end
+    local function validateVariant(c,includeModel)
+        if supply or not c.getSelectionToken then return end -- 补给沿用绑定的任务快照。
+        assert(c.getSelectionToken()==c.selectionToken,"确认期间机体、涂装或世界已变化，请重新选择兵装")
+        local token,hasModel=c.getVariantToken()
+        if includeModel or hasModel then
+            assert(token==c.variantToken,"确认期间预览实例或兵装类已变化，请重新选择兵装")
+        else
+            assert(c.exitRequested or c.variantCommitValidated,"原生预览已销毁且未核对兵装提交，停止保存旧草稿")
+        end
+    end
     local function releasePreview(c)
         if not c or not c.mountOwner then return end
         local ownerAddress=c.mountOwner;c.mountOwner=nil
@@ -388,6 +404,7 @@ function NativeLoadout.new(dependencies)
         assert(not supply,"补给不允许等待机库模型："..reason)
         if not self.modelWait then
             local pending={owner=owner,planeId=planeId,world=instance:GetWorld():GetAddress(),started=now} -- 当前等待上下文。
+            pending.variantToken=self.variantToken
             self.modelWait=pending
             if not standby then
                 pending.originalControl=owner:IsEnableControl();pending.inputOwned=true
@@ -404,6 +421,8 @@ function NativeLoadout.new(dependencies)
     local function measuredAttach(create,owner,instance,planeId,profile,choices)
         local started=os.clock() -- 与既有 PERF_TICK 相同的 Lua 时钟，仅代表同步调用范围。
         local c=create(owner,instance,planeId,profile,choices) -- 保留原接入顺序与错误传播。
+        c.variantToken=self.variantToken;c.selectionToken=self.selectionToken
+        c.getVariantToken=self.getVariantToken;c.getSelectionToken=self.getSelectionToken
         c.mountOwner=owner:GetAddress()
         note(string.format("NATIVE_UI_ATTACH_COST mode=%s plane=%d options_ms=%.3f build_ms=%.3f",mode or "preparation",
             planeId,self.optionsCost or 0,(os.clock()-started)*1000))
@@ -619,7 +638,7 @@ function NativeLoadout.new(dependencies)
             setText(c,column.typeHeading,"[TYPE]")
         end
     end
-    -- 兵装全名来自当前原生名称表，支持模组新增或替换的名称；缺项明确报错。
+    -- 展示文案可缺省；对象、页面和兵装写入所需的结构校验仍保留。
     local function weaponFullName(c,option)
         c.weaponFullNames=c.weaponFullNames or {} -- 缓存只属于当前页面，重新进入即可反映语言变化。
         local code=option.code:lower() -- 采用目录里的真实兵装代码，不自行映射为原版武器。
@@ -627,9 +646,10 @@ function NativeLoadout.new(dependencies)
             local localizer=StaticFindObject("/Script/Nimbus.Default__LocalizationManager") -- 游戏已合并加载的名称源。
             local nameKey="Weapon_Name_"..code -- 与原生机库兵装名称使用同一组键。
             assert(valid(localizer),"原生兵装名称接口缺失")
-            assert(localizer:HasString(nameKey),"原生兵装名称不存在："..nameKey)
-            local name=localizer:LocalizeString(nameKey,true,""):ToString() -- 跟随原生语言，不改写全局语言。
-            assert(#name>0,"原生兵装名称为空："..nameKey)
+            local name=localizer:HasString(nameKey)and localizer:LocalizeString(nameKey,true,""):ToString()or ""
+            if #name==0 then
+                name=option.code:upper();displayFallback(c,nameKey,"key="..nameKey.." 使用兵装代号")
+            end
             c.weaponFullNames[code]=name
         end
         return c.weaponFullNames[code]
@@ -691,12 +711,24 @@ function NativeLoadout.new(dependencies)
             if column.lastContent==signature then goto nextColumn end
             setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or "EMPTY"))
             local fullName=option and weaponFullName(c,option)or "NO WEAPON" -- 空挂载不查询不存在的兵装键。
-            local typeText=option and assert(weaponTypes[option.type_key:gsub("^HangarWeaponType_Name_","")],"原生兵装类型未知："..option.type_key)or "NO WEAPON"
+            local typeText="NO WEAPON"
+            if option then
+                local typeKey=type(option.type_key)=="string"and option.type_key or ""
+                typeText=weaponTypes[typeKey:gsub("^HangarWeaponType_Name_","")]
+                if not typeText then
+                    typeText="OTHER";displayFallback(c,"type:"..typeKey,"type="..typeKey.." 使用OTHER")
+                end
+            end
             if column.fullName then setText(c,column.fullName,fullName)else typeText=fullName end -- STANDBY 紧凑栏保留原有全名位置。
             setText(c,column.type,typeText)
             if column.icon then
-                column.icon:SetVisibility(option and VISIBLE or COLLAPSED)
-                if option and column.category~=option.category then
+                local hasIcon=option and not option.generic and type(option.category)=="number"
+                    and option.category%1==0 and option.category>=0 and option.category<=2
+                column.icon:SetVisibility(hasIcon and VISIBLE or COLLAPSED)
+                if option and not option.generic and not hasIcon then
+                    displayFallback(c,"category:"..tostring(option.category),"category="..tostring(option.category).." 隐藏未知分类图标")
+                end
+                if hasIcon and column.category~=option.category then
                     local ok,err=weaponIcon(column.icon:GetAddress(),c.owner:GetAddress(),option.category)
                     assert(ok,err);column.category=option.category
                 end
@@ -997,9 +1029,11 @@ function NativeLoadout.new(dependencies)
         c.weaponDescriptions={}
         for _,option in ipairs(options)do
             local descriptionKey="Weapon_Description_"..option.code:lower()
-            assert(localizer:HasString(descriptionKey),"原生武器说明不存在："..descriptionKey)
-            local description=localizer:LocalizeString(descriptionKey,true,""):ToString()
-            assert(#description>0,"原生武器说明为空："..descriptionKey)
+            local description=localizer:HasString(descriptionKey)and localizer:LocalizeString(descriptionKey,true,""):ToString()or ""
+            if #description==0 then
+                description=tr("此模组兵装未提供说明。","No description was provided for this mod weapon.")
+                displayFallback(c,descriptionKey,"key="..descriptionKey.." 使用说明占位文字")
+            end
             -- 原生介绍自带针对宽面板的硬换行；本栏重新排版，保留空行划分的段落。
             description=description:gsub("\r\n","\n"):gsub("\r","\n")
             -- 英文换行转为空格，避免两个单词粘连；中文仍去除排版用硬换行。
@@ -1150,6 +1184,7 @@ function NativeLoadout.new(dependencies)
             if accepted then
                 c.actionQueued=false;c.actionAccepted=true
                 if not c.exitRequested then
+                    validateVariant(c,false) -- 原生收尾可能销毁预览，但不能更换已确认的涂装。
                     local prepared=c.flow:profile()
                     assert(instance:GetSelectedPlaneSWP()==prepared.a,"原生准备 SP1 未按确认方案保存")
                     commit(c.planeId,copyProfile(prepared));self.status="committed"
@@ -1236,6 +1271,7 @@ function NativeLoadout.new(dependencies)
         if c.continueRequested or c.exitRequested then
             -- 松开这次按键后自动交接，无需第二次按键；原生 Tick 执行实际跳转。
             if not c.handedOff and not input.accept and not input.cancel and not input.up and not input.down then
+                validateVariant(c,true)
                 c.actionWidget=c.owner:GetAddress() -- 留作取消与读取回执的身份，不再解引用已关闭页面。
                 local ok,_,err=preparationAction(c.actionWidget,c.flow.draft.a,c.exitRequested and 2 or 1)
                 assert(ok,err)
@@ -1266,8 +1302,23 @@ function NativeLoadout.new(dependencies)
         local ok,err=xpcall(function()
             assert(type(context)=="table"and type(context.getProfile)=="function"and type(context.getOptions)=="function","页面更新缺少具名上下文")
             assert(type(context.inFlight)=="boolean"and type(context.panelOpen)=="boolean","页面更新缺少飞行/管理状态")
+            if not supply then
+                self.getVariantToken=context.getVariantToken;self.getSelectionToken=context.getSelectionToken
+                assert(type(self.getVariantToken)=="function"and type(self.getSelectionToken)=="function","页面缺少机体涂装上下文")
+                self.variantToken=self.getVariantToken();self.selectionToken=self.getSelectionToken()
+                local c=self.cache
+                if c and c.variantToken~=self.variantToken then
+                    if c.handedOff or self.transaction then
+                        validateVariant(c,false) -- 已交接时不丢事务；其写前另核对完整模型签名。
+                    else
+                        note("NATIVE_MOD_VARIANT_CHANGED mode="..mode.." plane="..c.planeId.." 重新读取当前涂装兵装")
+                        restore(true);self.ignored=nil;self.ignoredReason=nil;self.lastScan=-1
+                    end
+                end
+            end
             local pending=self.modelWait -- 换机、换世界、离页或打开管理界面时结束本次等待，不能遗留输入锁。
             if pending and (not valid(pending.owner)or not pending.owner:IsVisible()or context.planeId~=pending.planeId
+                or not supply and pending.variantToken~=self.variantToken
                 or context.instance:GetWorld():GetAddress()~=pending.world or context.inFlight or context.panelOpen)then
                 note("NATIVE_MODEL_WAIT_CANCELLED plane="..pending.planeId)
                 clearModelWait(not context.inFlight)
@@ -1334,13 +1385,13 @@ function NativeLoadout.new(dependencies)
         if self.applying then return end -- 自己按已确认方案写入 SP1，不建立重复事务。
         local c=self.cache
         if not c or not c.handedOff or ctx:get():GetAddress()~=c.instance:GetAddress()or selectedPlane:get()~=c.planeId then return end
-        if c.exitRequested then
-            -- 交回原生退出后误按决定，也不能将未确认的草稿写入原生 SP1 或模组配置。
-            selectedWeapon:set(c.originalWeapon);note("NATIVE_LOADOUT_CANCELLED_NATIVE_DECIDE "..c.planeId);return
-        end
-        if c.flow.stage~="review"then return end
         local ok,err=xpcall(function()
             assert(IsInGameThread(),"Native preparation commit requires the game thread")
+            validateVariant(c,true) -- 包括取消分支；旧涂装的原单SP也不能回写到新涂装。
+            if c.exitRequested then
+                selectedWeapon:set(c.originalWeapon);note("NATIVE_LOADOUT_CANCELLED_NATIVE_DECIDE "..c.planeId);return
+            end
+            if c.flow.stage~="review"then return end
             -- SetPlaneAndSWP is a shared native API, not proof of a button
             -- confirmation. Ignore preview/hover writes unless the user has
             -- pressed the native decide binding. Allow a short native delay
@@ -1348,6 +1399,7 @@ function NativeLoadout.new(dependencies)
             if not c.actionQueued and not c.actionAccepted then return end
             local profile=c.flow:profile()
             selectedWeapon:set(profile.a) -- Never let the stock one-SP choice overwrite SP1.
+            c.variantCommitValidated=true -- 只允许已在写参数前核对过的事务跨原生模型销毁收尾。
             -- 补给可能共用此单 SP 接口，只对齐 SP1；提交仍等待原生结束及成功事件。
             if supply then return end
             -- 共享 setter 只对齐 SP1；保存由原生决定后关闭的协议负责。

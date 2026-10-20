@@ -89,6 +89,8 @@ loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
 local catalogExport=loadExport("dualsp_catalogue")
+loadExport("dualsp_mod_aircraft_catalogue_supported") -- 新Lua依赖真实机体/涂装目录，拒绝旧核心混装。
+local modAircraft=dofile(root.."Scripts/mod_aircraft.lua").new(note)
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
@@ -242,15 +244,9 @@ local function ownedWeapons()
     return set
 end
 local function isSelectedPlane(sourcePlane,code)
-    -- 直接核对已加载实例的类及父类；不再按显示大小写拼路径后做全局对象查找。
-    local baseName="aceplayerpawn_"..code:lower() -- 表内机体代码与资源显示名称可能大小写不同。
-    local expected="blueprintgeneratedclass /game/blueprint/player/pawn/"..baseName.."."..baseName.."_c" -- 比较完整路径，避免同短名误认。
-    local actualClass=sourcePlane:GetClass() -- 从当前原生预览/玩家实例取得真实类身份。
-    while valid(actualClass)do
-        if actualClass:GetFullName():lower()==expected then return true end
-        actualClass=actualClass:GetSuperStruct() -- 涂装派生类必须能追溯到所选机体的基础类。
-    end
-    return false
+    local info=catalogue and catalogue[tostring(instance:GetSelectedPlaneID())]
+    if not info or not info.code or info.code:lower()~=code:lower()then return false end
+    return modAircraft:matches(sourcePlane,info,instance)
 end
 local function readOptionsFor(id)
     -- Purchases cannot change during a sortie. Do not scan the global object
@@ -268,7 +264,7 @@ local function readOptionsFor(id)
         -- 选择编号先改变、预览模型后加载属于原生异步换机；返回显式等待原因，不能记成永久接入错误。
         if not valid(sourcePlane)then return {},"preview_missing selected="..info.code end
         if instance:GetSelectedPlaneID()~=id or not isSelectedPlane(sourcePlane,info.code)then
-            return {},"preview_changing selected="..info.code.." actual="..sourcePlane:GetClass():GetFullName()
+            return {},"preview_changing selected="..info.code.." expected="..modAircraft:reference(info,instance).." actual="..sourcePlane:GetClass():GetFullName()
         end
     end
     assert(valid(sourcePlane),"当前机体实例未加载，请确认模型已安装："..info.code)
@@ -280,6 +276,8 @@ local function readOptionsFor(id)
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
     local continuousOptions={}
     local salvoOptions={}
+    local presentation={}
+    local baseWeapons=modAircraft:baseWeapons(info)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     for i=1,3 do
         local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
@@ -292,6 +290,8 @@ local function readOptionsFor(id)
             ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
              (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
+        assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
+        presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
         if ((info.code=="mrgn"or info.code=="fa27"or info.code=="fa44")and weaponIds[i]==31)or (info.code=="adf11f"and weaponIds[i]==26)then
             local ok,supported=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
             assert(ok,supported);continuousOptions[i]=supported
@@ -303,8 +303,9 @@ local function readOptionsFor(id)
     assert(type(amounts)=="table"and #amounts==3,"原生弹药预览结果不完整")
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
-        options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
-            stats=item.stats,description=descriptions[item.code]or item.code:upper(),
+        local display=presentation[i]
+        options[i]={index=item.index,code=display.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=display.category,type_key=display.type_key,generic=display.generic,
+            stats=display.stats,description=descriptions[display.code]or display.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=not unsupportedDual[weaponIds[i]]or continuousOptions[i]==true}
     end
@@ -614,6 +615,8 @@ local function pageContext(context)
             local saved=config.profiles[tostring(planeId)];return saved and Profile.withSettings(saved,config)or nil
         end
         context.getOptions=function()return optionsFor(planeId)end
+        context.getVariantToken=function()return modAircraft:token(instance)end
+        context.getSelectionToken=function()return modAircraft:selection(instance)end
     end
     return context
 end
@@ -1486,8 +1489,10 @@ local function tick()
     updateCustomAudio()
     if not catalogue then
         local info=instance.GameInformation;if not valid(info)or not valid(info.PlaneDataTable)or not valid(info.WeaponDataTable)then return end
-        local f=assert(io.open(root.."catalogue-command.txt","w"));f:write(string.format("%X %X",info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress()));f:close()
-        catalogExport();catalogue=assert(readJson(root.."catalogue.json"));assert(not catalogue.error,catalogue.error);note("CATALOGUE_READY")
+        local skinTable=info.SkinDataTable
+        local f=assert(io.open(root.."catalogue-command.txt","w"));f:write(string.format("%X %X %X",info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress(),valid(skinTable)and skinTable:GetAddress()or 0));f:close()
+        catalogExport();catalogue=assert(readJson(root.."catalogue.json"));assert(not catalogue.error,catalogue.error)
+        assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
     end
     -- A live player actor remains valid for its world. Registry searches are
     -- needed while acquiring a new actor, not four times per second in flight.
@@ -1524,6 +1529,19 @@ local function tick()
         note("WORLD_CHANGED "..world)
     end
     local selected=instance:GetSelectedPlaneID()
+    if not isFlight and not supplySession then
+        local token=modAircraft:selection(instance)
+        if modAircraft.lastMenu~=token then
+            if modAircraft.lastMenu then releaseMountPreview(0)end -- 同一预览实例换涂装也不能沿用旧挂载选项。
+            previewOptions=nil;modAircraft.lastMenu=token
+            for _,adapter in ipairs({nativeLoadout,nativeStandby,nativeParts})do
+                if adapter.error then
+                    note("MENU_ERROR_VARIANT_CONTEXT_ENDED prior="..adapter.error)
+                    adapter:reset{clearError=true,releaseInput=false}
+                end
+            end
+        end
+    end
     weaponSwitch.gaze.update(false);weaponSwitch.camera.update()
     if selected~=lastSelected then
         releaseMountPreview(0)
