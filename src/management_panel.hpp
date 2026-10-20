@@ -26,7 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
@@ -81,6 +81,15 @@ void drawFeatureSettings() {
     }
 }
 void drawCameraSettings() {
+    if(panelCard("ViewTargetOptions",tr("视野中心","View center"))) {
+        ImGui::Checkbox(tr("视角中心优先选目标###ViewTarget","Prefer view center for NEXT###ViewTarget"),&draftViewTarget);
+        panelHelp("默认关闭。开启后原生NEXT按当前视野中心优先，保留游戏已有候选、目标资格和近期切换历史；按原生切目标键才选中，不扩大导弹锁定范围。默认Ctrl+Alt+F8切换，可在基础页改键。鼠标飞控的F2 HMD可能另行覆盖实际按键选择，使用本功能时请关闭该HMD。",
+            "Off by default. Prioritizes the current view center for native NEXT while retaining existing candidates, eligibility and recent selection history. The native target key still commits selection; missile lock limits stay unchanged. Toggle with Ctrl+Alt+F8; rebind in General. Disable the mouse-flight mod's F2 HMD to avoid its separate selection override.");
+        ImGui::Checkbox(tr("显示视野中心白点###ViewCenterDot","Show view-center dot###ViewCenterDot"),&draftViewCenterDot);
+        panelHelp("白点默认开启，与选目标和镜头保持开关独立。普通飞行中，实际镜头朝向偏离机头超过10°时，在画面中央显示荧光小白点；10°以内隐藏。跟随游戏HUD显隐，暂停、管理界面、失焦和特殊镜头时隐藏。",
+            "On by default, independent of targeting and camera hold. A small glowing white dot marks the screen center when the actual camera direction differs from the aircraft nose by more than 10 degrees. Hidden within 10 degrees, with HUD hidden, while paused or managing settings, without focus, or during special cameras.");
+    }
+    ImGui::EndChild();
     if(panelCard("TrackingOptions",tr("保持注视","Toggle tracking"))) {
         ImGui::Checkbox(tr("左摇杆按下切换注视###TargetGazePadL3","L3 toggles tracking###TargetGazePadL3"),&draftTargetGazePadL3);
         panelHelp("默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
@@ -113,8 +122,8 @@ void drawCameraSettings() {
                 "Click, then press a key or middle mouse; Esc cancels. Recenters once on press, including while Shift/Ctrl/Alt is held; exact configured chords take priority. Use a different key for native view switching.");
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("摇杆灵敏度###CameraSensitivity","Stick sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-            panelHelp("默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，平滑加速和转向，松开保持当前方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
-                "Default 100%, range 5%–200%. Stick deflection controls turn speed with smooth acceleration and direction changes; release to hold the current direction. View limits stay unchanged. Recentering, tracking and keyboard/mouse-only look retain their existing response; cockpit output retains native limits and animation.");
+            panelHelp("默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+                "Default 100%, range 5%–200%. Stick deflection controls turn speed with low-latency smooth acceleration and direction changes; release briefly eases to a stop, then holds direction. View limits stay unchanged. Recentering, tracking and keyboard/mouse-only look retain their existing response; cockpit output retains native limits and animation.");
         }
     }
     ImGui::EndChild();
@@ -144,14 +153,14 @@ void drawBasicBindings() {
             "Click, then press a new key; Esc cancels. D-pad bindings are fixed. Direct selection works while Shift/Ctrl/Alt is held; exact configured mod chords take priority. Empty or depleted SPs cannot be selected; reloading weapons can.");
     }
     if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
-        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo")};
-        for(int i=0;i<4;++i) {
+        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo"),tr("视角中心选目标","View-center targeting")};
+        for(int i=0;i<5;++i) {
             ImGui::TextUnformatted(names[i]);ImGui::SameLine(std::min(260.f,ImGui::GetContentRegionAvail().x*.45f));
-            bindingButton(i==3?9:i+4,shortcutLabel(draftShortcuts[i]));
-            if(i==3){ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}}
+            bindingButton(i==4?10:(i==3?9:i+4),shortcutLabel(draftShortcuts[i]));
+            if(i>=3){ImGui::SameLine();ImGui::PushID(i);if(ImGui::SmallButton(tr("清除###ClearOptionalShortcut","Clear###ClearOptionalShortcut"))){draftShortcuts[i]={0,0};captureSlot=-1;}ImGui::PopID();}
         }
         if(ImGui::SmallButton(tr("恢复默认快捷键###ResetShortcuts","Reset shortcuts###ResetShortcuts"))) {
-            const std::array<dualsp::Shortcut,4> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3}}};
+            const std::array<dualsp::Shortcut,5> defaults{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3},{VK_F8,3}}};
             if(dualsp::validShortcuts(defaults,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,defaults,draftKeys)&&
                 dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,defaults,draftKeys)){draftShortcuts=defaults;captureSlot=-1;notice.clear();}
             else notice=tr("默认快捷键与当前键位重复，请先调整。","Default shortcuts conflict with a current binding.");
@@ -163,12 +172,12 @@ void drawBasicBindings() {
 void drawManagementErrors() {
     const char* fields[]={"error","menu_error","hud_error","central_error","settings_error"};
     bool errors=false;for(const char* field:fields)errors=errors||state.contains(field);
-    for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
+    for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
     if(errors) {
         ImGui::TextColored({1,.65f,.4f,1},"%s",tr("有功能或保存异常，请展开查看。","A feature or save operation needs attention."));
         if(ImGui::CollapsingHeader(tr("查看异常详情###ManagementErrors","View error details###ManagementErrors"))) {
             for(const char* field:fields)if(state.contains(field))ImGui::TextWrapped("%s",uiMessage(state.at(field).get<std::string>()).c_str());
-            for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo"})if(state.contains(field)&&state.at(field).contains("error"))
+            for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target"})if(state.contains(field)&&state.at(field).contains("error"))
                 ImGui::TextWrapped("%s",uiMessage(state.at(field).at("error").get<std::string>()).c_str());
         }
     }
@@ -178,7 +187,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.24.0");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.25.0");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());

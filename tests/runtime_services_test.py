@@ -37,13 +37,13 @@ end
 local currentStore=store('current-')
 local config=currentStore:load()
 assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==14 and config.mod_enabled and config.fixed_mount_enabled)
+assert(config.management_revision==15 and config.mod_enabled and config.fixed_mount_enabled)
 assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
 assert(not config.target_gaze_pad_l3 and not config.camera_hold_enabled and config.camera_r3_enabled and config.central_weapon_display=="always")
 assert(config.camera_auto_center_degrees==30)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=15,language='en',mod_enabled=false,fixed_mount_enabled=false,gun_salvo_enabled=false,
+local action={request=1,management_protocol=16,language='en',mod_enabled=false,fixed_mount_enabled=false,gun_salvo_enabled=false,view_target_enabled=false,view_center_dot_enabled=true,
     central_weapon_display="always",target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_auto_center_degrees=30,camera_r3_enabled=false,camera_center_key=4,camera_sensitivity=100,
     ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
@@ -104,10 +104,20 @@ for _,failure in ipairs({'write','close'})do
     io.open=realOpen
 end
 assert(readText(fixture..'current-profiles.json')==saved)
--- 四个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
+-- 五个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
+local legacy14=json.decode(json.encode(config));legacy14.management_revision=14
+legacy14.view_target_enabled=nil;legacy14.view_center_dot_enabled=nil;legacy14.shortcuts.view_target=nil
+legacy14.shortcuts.mount={key=119,mods=3}
+writeJson(fixture..'view-target-profiles.json',legacy14)
+local viewBytes=readText(fixture..'view-target-profiles.json')
+local viewConfig=store('view-target-'):load()
+assert(viewConfig.management_revision==15 and not viewConfig.view_target_enabled and viewConfig.view_center_dot_enabled)
+assert(viewConfig.shortcuts.view_target.key==0 and viewConfig.shortcuts.mount.key==119)
+assert(readText(fixture..'view-target-profiles.before-view-target.json')==viewBytes)
+assert(store('view-target-'):load().shortcuts.view_target.key==0)
 local oldShortcuts=nextConfig.shortcuts
 local candidate=json.decode(json.encode(action))
-candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7},salvo={key=116,mods=3}}
+candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7},salvo={key=116,mods=3},view_target={key=119,mods=3}}
 local custom=currentStore:applySettings(nextConfig,candidate)
 assert(custom.management_key==120 and custom.shortcuts.management.mods==5)
 assert(custom.shortcuts.cycle.key==121 and custom.shortcuts.mount.mods==7)
@@ -118,28 +128,30 @@ for _,bad in ipairs({
     {management={key=117,mods=8},cycle={key=117,mods=3},mount={key=118,mods=3}},
     {management={key=115,mods=2},cycle={key=117,mods=3},mount={key=118,mods=3}}
 })do
-    bad.salvo=json.decode(json.encode(config.shortcuts.salvo));candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
+    bad.salvo=json.decode(json.encode(config.shortcuts.salvo));bad.view_target=json.decode(json.encode(config.shortcuts.view_target));candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
     rejects(function()currentStore:applySettings(custom,candidate)end)
     assert(readText(fixture..'current-profiles.json')==bytes)
 end
 local legacy5=json.decode(json.encode(config));legacy5.camera_auto_center_degrees=nil;legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.gun_salvo_enabled=nil;legacy5.management_key=119
+legacy5.view_target_enabled=nil;legacy5.view_center_dot_enabled=nil;if legacy5.shortcuts then legacy5.shortcuts.view_target=nil end
 legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_pad_l3=nil;legacy5.central_weapon_display=nil;legacy5.target_gaze_key=nil;legacy5.camera_hold_enabled=nil;legacy5.camera_r3_enabled=nil;legacy5.camera_center_key=nil;legacy5.camera_sensitivity=nil
 writeJson(fixture..'shortcuts-profiles.json',legacy5)
 local legacyBytes=readText(fixture..'shortcuts-profiles.json')
 local shortcutConfig=store('shortcuts-'):load()
-assert(shortcutConfig.management_revision==14 and shortcutConfig.shortcuts.management.key==119)
+assert(shortcutConfig.management_revision==15 and shortcutConfig.shortcuts.management.key==119)
 assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 assert(store('shortcuts-'):load().shortcuts.management.key==119)
 assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
 -- 整合后的旧配置10须连续迁移两项设置；两份永久备份均保留原始字节。
 local legacy10=json.decode(json.encode(config));legacy10.camera_auto_center_degrees=nil;legacy10.management_revision=10;legacy10.gun_salvo_enabled=nil;legacy10.shortcuts.salvo=nil
+legacy10.view_target_enabled=nil;legacy10.view_center_dot_enabled=nil;if legacy10.shortcuts then legacy10.shortcuts.view_target=nil end
 legacy10.target_gaze_pad_l3=nil;legacy10.target_gaze_pad_x=true;legacy10.central_weapon_display=nil
 legacy10.camera_hold_enabled=false;legacy10.camera_sensitivity=73
 writeJson(fixture..'combined-profiles.json',legacy10)
 local combinedBytes=readText(fixture..'combined-profiles.json')
 local combined=store('combined-'):load()
-assert(combined.management_revision==14 and not combined.target_gaze_pad_l3 and combined.camera_r3_enabled)
+assert(combined.management_revision==15 and not combined.target_gaze_pad_l3 and combined.camera_r3_enabled)
 assert(not combined.camera_hold_enabled and combined.camera_sensitivity==73 and combined.central_weapon_display=='always')
 assert(combined.target_gaze_pad_x==nil and combined.profiles['10'].ratio==.82)
 assert(readText(fixture..'combined-profiles.before-controller-clicks.json')==combinedBytes)
@@ -147,13 +159,14 @@ assert(readText(fixture..'combined-profiles.before-central-weapon-display.json')
 assert(store('combined-'):load().camera_sensitivity==73)
 -- 真实旧配置12保留开关/方案；追加齐射默认关闭，备份原字节且重复加载不覆写。
 local legacy12=json.decode(json.encode(config));legacy12.camera_auto_center_degrees=nil;legacy12.management_revision=12
+legacy12.view_target_enabled=nil;legacy12.view_center_dot_enabled=nil;if legacy12.shortcuts then legacy12.shortcuts.view_target=nil end
 legacy12.gun_salvo_enabled=nil;legacy12.shortcuts.salvo=nil
 legacy12.target_gaze_pad_l3=true;legacy12.camera_hold_enabled=true
 legacy12.shortcuts.mount={key=116,mods=3};legacy12.camera_center_key=116
 writeJson(fixture..'salvo-profiles.json',legacy12)
 local salvoBytes=readText(fixture..'salvo-profiles.json')
 local salvoConfig=store('salvo-'):load()
-assert(salvoConfig.management_revision==14 and not salvoConfig.gun_salvo_enabled)
+assert(salvoConfig.management_revision==15 and not salvoConfig.gun_salvo_enabled)
 assert(salvoConfig.target_gaze_pad_l3 and salvoConfig.camera_hold_enabled and salvoConfig.profiles['10'].ratio==.82)
 assert(salvoConfig.shortcuts.salvo.key==0 and salvoConfig.shortcuts.mount.key==116)
 assert(readText(fixture..'salvo-profiles.before-gun-salvo.json')==salvoBytes)
@@ -162,11 +175,12 @@ salvoConfig.shortcuts.salvo={key=116,mods=5}
 assert(Config.centerShortcutMask(salvoConfig)==((1<<3)|(1<<5)))
 -- 真实配置13升级：永久备份原字节、保留开关和方案；阈值端点可保存。
 local legacy13=json.decode(json.encode(config));legacy13.management_revision=13;legacy13.camera_auto_center_degrees=nil
+legacy13.view_target_enabled=nil;legacy13.view_center_dot_enabled=nil;if legacy13.shortcuts then legacy13.shortcuts.view_target=nil end
 legacy13.camera_hold_enabled=true
 writeJson(fixture..'camera-profiles.json',legacy13)
 local cameraBytes=readText(fixture..'camera-profiles.json')
 local cameraStore=store('camera-');local cameraConfig=cameraStore:load()
-assert(cameraConfig.management_revision==14 and cameraConfig.camera_auto_center_degrees==30 and cameraConfig.camera_hold_enabled)
+assert(cameraConfig.management_revision==15 and cameraConfig.camera_auto_center_degrees==30 and cameraConfig.camera_hold_enabled)
 assert(cameraConfig.profiles['10'].ratio==.82 and readText(fixture..'camera-profiles.before-camera-auto-center.json')==cameraBytes)
 for _,degrees in ipairs({0,45})do
     local update=json.decode(json.encode(action));update.camera_auto_center_degrees=degrees
@@ -201,7 +215,7 @@ for _,revision in ipairs({3,4})do
     writeJson(fixture..prefix..'profiles.json',legacy)
     local bytes=readText(fixture..prefix..'profiles.json')
     local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==14 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
+    assert(upgraded.management_revision==15 and upgraded.mod_enabled and upgraded.fixed_mount_enabled)
     assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
     assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
     assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
@@ -680,7 +694,7 @@ local function loader(mode)
     local rack=object(82);rack.StaticMesh=donor;rack.GetCollisionEnabled=function()return mode=='collision' and 1 or 0 end
     local plane=object(83);plane.SWP1=rack;plane.SWP2=rack;plane.SWP3=rack
     if mode=='unused_collision' then
-        plane.SWP3=object(86);plane.SWP3.GetCollisionEnabled=function()return 1 end
+        plane.SWP3=object(86);plane.SWP3.StaticMesh=donor;plane.SWP3.GetCollisionEnabled=function()return 1 end
     end
     local loaded=object(84)
     local helpers=object(85)
@@ -690,8 +704,8 @@ local function loader(mode)
     end
     helpers.GetAsset=function(_,data)
         assert(data.nativeFactorySentinel==123 and data.TagsAndValues.keep)
-        assert(data.ObjectPath=='/Game/AC7MultiSP/Research/MSP_case.MSP_case')
-        assert(data.PackageName=='/Game/AC7MultiSP/Research/MSP_case' and data.AssetName=='MSP_case')
+        assert(data.AssetName=='MSP_case' or data.AssetName=='MSP_unused');assert(data.ObjectPath=='/Game/AC7MultiSP/Research/'..data.AssetName..'.'..data.AssetName)
+        assert(data.PackageName=='/Game/AC7MultiSP/Research/'..data.AssetName)
         assert(data.PackagePath=='/Game/AC7MultiSP/Research' and data.AssetClass=='StaticMesh')
         if mode=='path_error' then error('模拟精确路径临时不可用')end
         if mode~='failed' and mode~='returned' then return loaded end
@@ -715,7 +729,7 @@ local function loader(mode)
             if mode=='returned' or mode=='path_error' then return loaded,false,true end
             return nil,false,false
         end,
-        registerMountAsset=function(id,address)assert(id==0 and address==84);calls.register=calls.register+1;return true,'' end}, {__index=_G})
+        registerMountAsset=function(id,address)assert((id==0 or id==1)and address==84);calls.register=calls.register+1;return true,'' end}, {__index=_G})
     return assert(load(mount_asset_source..'return ensureMountAssets','挂架加载入口','t',env))(),calls,env,loaded
 end
 local load,calls=loader('returned')
@@ -734,7 +748,7 @@ assert(not load() and calls.load==1,'失败不能每帧反复加载')
 env.LoadAsset=function()calls.load=calls.load+1;return loaded,false,true end
 assert(load(nil,nil,true) and calls.load==2 and calls.register==1,'显式模型快捷键允许重试')
 load,calls=loader('collision')
-assert(not load() and calls.load==0 and calls.factory==0 and calls.register==0,'启用碰撞的原挂架不能替换为分区网格')
+assert(load() and calls.factory==1 and calls.register==1,'纯资源预加载不判定组件碰撞，实际绑定仍须检查碰撞资格')
 load,calls=loader('unused_collision')
 assert(load() and calls.register==1,'未替换的原生架保原生碰撞，不能阻断其他池加载')
 load,calls,env=loader('unused_collision')
@@ -744,7 +758,7 @@ env.expandedMountAssets.f16c={{0,'MSP_case',1,1 << 3},{1,'MSP_unused',3,1 << 5}}
 env.currentProfile={a=0,b=1,c=-1}
 assert(load()and calls.load==0 and calls.factory==1 and calls.register==1,'仅加载当前选择集合真正使用的资源')
 env.currentProfile={a=0,b=2,c=-1}
-assert(not load()and calls.load==0,'新方案需要替换的碰撞组件仍须拒绝')
+assert(load()and calls.load==0 and calls.factory==2 and calls.register==2,'纯资源按新方案预载，组件碰撞由绑定时的守卫负责')
 env.currentProfile={a=0,b=1,c=-1}
 assert(load()and calls.load==0,'另一组合的资源失败不能锁死已正常加载的组合')
 ''')
@@ -851,7 +865,7 @@ local function scenario()
         context=function()return context end,game=function()return game end,catalogue=function()return catalog end,
         owned=function()return true,'[110,120]'end,allowed=function()return state.allowed end,
         canChange=function()return state.allowed,'当前不可换机' end,
-        prepare=function()state.prepared=state.prepared+1;assert(state.module:busy())end,
+        prepare=function()state.prepared=state.prepared+1;assert(state.module:busy());return function(controller)controller:RestartLevel()end end,
         matches=function(value,code)return value.code==code end,
         bind=function(value)context.plane=value;context.id=state.selected end,
         failFlight=function()state.blocked=state.blocked+1 end}

@@ -1,0 +1,402 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "branch": "codex/target-selection-research",
+  "base_commit": "0b75b21e4e29c817d193188e7326700507417dae",
+  "status": "静态机制已定位，已做当前带Mod现场的用户手动观察；未实现功能",
+  "authorization": "用户要求新建分支研究目标切换；用户随后明确回答可以现在配合环视和短按的只读观察",
+  "steam_build": 9855922,
+  "pid": 24988,
+  "process_access": "0x410 / PROCESS_QUERY_INFORMATION | PROCESS_VM_READ",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "game_launched": false,
+  "automatic_unpause": false,
+  "compiled": false,
+  "test_modules_created": false,
+  "tests_run": false,
+  "installed": false,
+  "product_source_modified": false,
+  "personal_settings_modified": false,
+  "identity": {
+    "player_class": "AcePlayerPawn_f14a_C",
+    "target_component_class": "TargetSelectionComponent",
+    "current_controller_pawn_verified": true,
+    "player_and_component_serial_rechecked": true,
+    "build_getter_signature_verified": true,
+    "installed_product_version": "本轮没有核验成套运行文件版本，不借main版本推定现场安装版本"
+  },
+  "offline_probe": {
+    "exe_sha256": "c7da97f5f8a807d4f1264adbb074146fcffe9bdc2ffa98791b822cd28e558f4f",
+    "result": "三个已知RVA的磁盘代码均不匹配运行签名，未继续把磁盘.text解释成原生代码",
+    "rvas": [
+      "0x81c100",
+      "0x4c6d10",
+      "0x882390"
+    ]
+  },
+  "component_fields": {
+    "SelectedTarget": "0x248",
+    "PreviousSelectedTarget": "0x250",
+    "NextTarget": "0x258",
+    "bAngleFirst": "0x285",
+    "bEnableNewTargetSelectionAlgorithm": "0x286",
+    "bInWideMode": "0x287",
+    "TargetDistanceLimit": "0x288",
+    "TargetAngleLimit": "0x294",
+    "TargetCandidates": "0x3b0",
+    "TargetHistoryResetTime": "0x420",
+    "TargetHistory": "0x428",
+    "camera_reference_runtime_byte": "0x45a",
+    "reference_position": "0x570",
+    "reference_direction": "0x57c"
+  },
+  "new_algorithm": {
+    "entry": "0x4c39b0",
+    "priority": "clamp((dot(normalize(target-reference_position),reference_direction)-A2)/(A0-A2),0,1)+0.1/(1+distance/D0)",
+    "native_return": "-priority，候选按返回值升序排序",
+    "parameters": {
+      "mode_camera_reference": 0,
+      "distance_limits": [
+        30000.0,
+        100000.0,
+        150000.0
+      ],
+      "angle_limits_cos": [
+        0.9993908405303955,
+        0.9396926164627075,
+        0.7071067690849304,
+        0.0,
+        -1.0
+      ],
+      "select_time_limit": 0.5,
+      "history_reset_time": 1.5,
+      "reference_position": [
+        122933.1640625,
+        65986.4375,
+        12704.265625
+      ],
+      "reference_direction": [
+        0.23724159598350525,
+        -0.9481138586997986,
+        0.2116519808769226
+      ],
+      "refresh_rate": 10.0
+    },
+    "limits": "位置来自原生目标位置getter；D0只记原生单位。角度排序参数不是锁定角，也不保证所有兵装相同。bAngleFirst字段名不能替代实际读取证据。"
+  },
+  "next_maintenance": {
+    "entry": "0x4cab80 -> 0x4c5e00",
+    "normal": "前至多4项优先，跳过当前目标和历史，再做历史回退、补选；兵装可选择另一候选表",
+    "history_maximum": 3,
+    "history_reset_seconds_observed": 1.5,
+    "selection_time_limit_seconds_observed": 0.5,
+    "candidate_update_rate_observed": 10,
+    "candidate_update_interval_initialization": "1 / UpdateTargetCandidatesRate",
+    "camera_path": "另有使用相机几何范围、不同遍历方式的分支，不能只替换排序向量就声称复刻VR"
+  },
+  "camera_path": {
+    "source_property": "WeaponBase.bUseCameraLockOn +0x468",
+    "weapon_homing_property": "WeaponBase.bIsHoming +0x45e",
+    "setup_entry": "0x4c72a0",
+    "reference_entry": "0x81bae0",
+    "normal": "玩家RootComponent世界位置和旋转",
+    "camera": "本地玩家PlayerCameraManager缓存视点位置和旋转，0x1989f90读取+0x400/+0x40c",
+    "implemented_or_enabled_this_round": false,
+    "psvr_runtime_observed": false
+  },
+  "release_hook": {
+    "entry_rva": "0x822a30",
+    "style": "absolute indirect jump",
+    "destinations": [
+      {
+        "module": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\AC7MouseAim\\Scripts\\ac7_mouse_aim.dll",
+        "destination_rva": "0x307c0"
+      }
+    ],
+    "original_tail_visible": "0x822a45 xor edx,edx; 0x822a47 jmp 0x4c90b0",
+    "boundary": "没有跟随执行或还原Hook，不能宣称纯原版运行链已经实测"
+  },
+  "existing_hmd": {
+    "owner": "AC7MouseAim",
+    "toggle_documented": "F2",
+    "installed_helmet_lua_sha256": "5fa218eafb211a225af382e31ef5587a1309d4bae5d289e2a31389f567996655",
+    "installed_full_lua_sha256": "c31e82beda3dbd7bd1381ecb1dec13400d4610f9afd0b38ff5eefdefc50e84e2",
+    "hook_dll_sha256": "3f6481b4e8cded33ea549a5f7ca7f3a716c1fb86a609636eb10c7b0e4e5654fc",
+    "behavior_from_source": "只在hmd==1且非gated时读取原生TargetCandidates；投影到屏幕并按离瞄准点的距离排序，屏宽12%半径内优先其他目标；提交原生桥，快照约30Hz、声明100ms过期",
+    "runtime_enabled_state": "未读取其原生启用位，未按F2",
+    "boundary": "第三方实现，不当作原生VR算法或HUD NEXT一致性的证明"
+  },
+  "manual_observation": {
+    "file": "Temp/target-native-20261020/manual-observation-20s.jsonl",
+    "sha256": "04fb88cefab101dc83d3e0da20a3c4253f5a893c1080c57beec3ffea6f16df5e",
+    "samples": 396,
+    "wall_duration_seconds": 20.0116612,
+    "last_sample_seconds": 19.96114,
+    "sample_interval_requested_seconds": 0.05,
+    "reference_direction_max_change_deg": 0.4607255387234413,
+    "camera_pitch_range_deg": [
+      -61.19967269897461,
+      -13.118565559387207
+    ],
+    "camera_yaw_range_deg": [
+      -52.353572845458984,
+      -26.989870071411133
+    ],
+    "camera_reference_mode_values": [
+      0
+    ],
+    "new_algorithm_values": [
+      1
+    ],
+    "release_events": [
+      {
+        "seconds": 0.55778,
+        "next_last_observed_held": "T2",
+        "selected_after_release": "T2",
+        "matched": true
+      },
+      {
+        "seconds": 2.12314,
+        "next_last_observed_held": "T1",
+        "selected_after_release": "T1",
+        "matched": true
+      },
+      {
+        "seconds": 3.38576,
+        "next_last_observed_held": "T3",
+        "selected_after_release": "T3",
+        "matched": true
+      },
+      {
+        "seconds": 5.15697,
+        "next_last_observed_held": "T1",
+        "selected_after_release": "T1",
+        "matched": true
+      },
+      {
+        "seconds": 6.72595,
+        "next_last_observed_held": "T2",
+        "selected_after_release": "T2",
+        "matched": true
+      },
+      {
+        "seconds": 8.74803,
+        "next_last_observed_held": "T1",
+        "selected_after_release": "T1",
+        "matched": true
+      }
+    ],
+    "state_change_events": [
+      {
+        "seconds": 0.25455,
+        "selected": "T1",
+        "next": "T2",
+        "history": [
+          "T1"
+        ]
+      },
+      {
+        "seconds": 0.55778,
+        "selected": "T2",
+        "next": "T3",
+        "history": [
+          "T2",
+          "T1"
+        ]
+      },
+      {
+        "seconds": 2.07272,
+        "selected": "T2",
+        "next": "T1",
+        "history": [
+          "T2"
+        ]
+      },
+      {
+        "seconds": 2.12314,
+        "selected": "T1",
+        "next": "T3",
+        "history": [
+          "T1",
+          "T2"
+        ]
+      },
+      {
+        "seconds": 3.38576,
+        "selected": "T3",
+        "next": "T4",
+        "history": [
+          "T3",
+          "T1",
+          "T2"
+        ]
+      },
+      {
+        "seconds": 4.85341,
+        "selected": "T3",
+        "next": "T1",
+        "history": [
+          "T3"
+        ]
+      },
+      {
+        "seconds": 5.15697,
+        "selected": "T1",
+        "next": "T2",
+        "history": [
+          "T1",
+          "T3"
+        ]
+      },
+      {
+        "seconds": 6.67541,
+        "selected": "T1",
+        "next": "T2",
+        "history": [
+          "T1"
+        ]
+      },
+      {
+        "seconds": 6.72595,
+        "selected": "T2",
+        "next": "T3",
+        "history": [
+          "T2",
+          "T1"
+        ]
+      },
+      {
+        "seconds": 8.24352,
+        "selected": "T2",
+        "next": "T1",
+        "history": [
+          "T2"
+        ]
+      },
+      {
+        "seconds": 8.74803,
+        "selected": "T1",
+        "next": "T3",
+        "history": [
+          "T1",
+          "T2"
+        ]
+      }
+    ],
+    "limits": [
+      "跨进程读取不是同帧原子快照，短于50ms的状态可能遗漏",
+      "观测到的机头方向仍有小幅变化，不能当作完全固定的实验",
+      "约9.4秒后状态不再变化，未单读暂停位，不把整20秒记作连续飞行",
+      "没有采集全部候选世界位置，未逐目标重放评分验证",
+      "有鼠标飞控目标释放Hook，不能冒充纯原版或PSVR实测",
+      "HMD开关位未知，未作开/关对照"
+    ],
+    "root_forward_vs_reference_max_difference_deg": 0.0009241893669178747,
+    "camera_forward_vs_reference_difference_deg_range": [
+      38.68958056007888,
+      76.92634249478056
+    ]
+  },
+  "web_sources": [
+    {
+      "url": "https://www.4gamer.net/games/326/G032682/20180918001/",
+      "date": "2018-09-20",
+      "kind": "开发者本人受访的一手说明",
+      "support": "VR制作人玉置绚说明通常按空间距离及机头方向选下一个目标，VR对应兵装改按观看方向，视野中心附近候选显示NEXT，按目标切换键后才选中",
+      "boundary": "发行前设计说明，不直接证明2022 Steam构建的全部权重或PSVR运行现状"
+    },
+    {
+      "url": "https://en.bandainamcoent.eu/ace-combat/news/ace-combat-7-skies-unknown-patch-102",
+      "date": "2019-03-12",
+      "kind": "官方补丁说明",
+      "support": "PS4、Steam、X1均记录目标切换调整，未公开具体公式"
+    }
+  ],
+  "raw_data_location": "C:\\Users\\83717\\.codex\\worktrees\\target-selection-research\\AC7_MultiSP\\Temp\\target-native-20261020",
+  "raw_capture_sha256": "9aed8fd5cca0138903dffb01dbba47528a7d9cab3ed4d2e5a3f1c62e3ff4c28d",
+  "functions": {
+    "0x4c39b0": {
+      "size": 514,
+      "sha256": "762f2bc9d7ceb67439b12676a8065f80bad2ad5beef7f371c78a5aeff231dbae",
+      "boundary": "unwind_chain"
+    },
+    "0x4c3650": {
+      "size": 859,
+      "sha256": "e6ce08fcf0d13769a4bc6747c044ab68fa5331889f10ad81c2aadfd1ede43e5a",
+      "boundary": "unwind_chain"
+    },
+    "0x4c1c10": {
+      "size": 823,
+      "sha256": "fa35e109542c5f9d939c069e575e8b66eda34f2607bb3dd60c8a861eac53e672",
+      "boundary": "unwind_chain"
+    },
+    "0x4cbbf0": {
+      "size": 3904,
+      "sha256": "fa44753ca6749cc92ee5360ee5a9d38af854f15e4b973be9b99f0ca83b14a6e8",
+      "boundary": "unwind_chain"
+    },
+    "0x4cab80": {
+      "size": 595,
+      "sha256": "2903f4750974340e2a0cc0789fc0d9d1e29fb464ab9c33b13ec29a7c55ac847c",
+      "boundary": "unwind_chain"
+    },
+    "0x4c5e00": {
+      "size": 2674,
+      "sha256": "bc5389253a7a908a8516ec53aca5b8f0501a789491f08c3dfab0a8a4628d97cd",
+      "boundary": "unwind_chain"
+    },
+    "0x4c90b0": {
+      "size": 629,
+      "sha256": "e3347d6c3255ae813bbe4d34a14b5c0797e662fc6d3595e2924b0c56406a4af2",
+      "boundary": "unwind_chain"
+    },
+    "0x4c9590": {
+      "size": 490,
+      "sha256": "7c00a90c2159dc96dfcb46ca495e6c13ebb2b4d5d150c2f57457bf78462ab15a",
+      "boundary": "unwind_chain"
+    },
+    "0x4c8f70": {
+      "size": 236,
+      "sha256": "7f86d898be558e2063944ddcb48f30af56f8af62238db942b5a406d6a5fce943",
+      "boundary": "unwind_chain"
+    },
+    "0x4c72a0": {
+      "size": 1094,
+      "sha256": "855ed22e315f86cd356470e7496c8ae94ec294be3845d7686ae35fd750ba3755",
+      "boundary": "unwind_chain"
+    },
+    "0x81bae0": {
+      "size": 309,
+      "sha256": "2351bf0ed80c8135dd00532a4ae7e6d78e6703d94286af00c9efb5798de81dca",
+      "boundary": "unwind_chain"
+    },
+    "0x1989f90": {
+      "size": 96,
+      "sha256": "c345f9e480464b18696bd140dd94febca656c8f09b4ae4fb41c2e130ea66aa42",
+      "boundary": "leaf_window_not_exact"
+    },
+    "0x3e8be0": {
+      "size": 108,
+      "sha256": "ddc7964e4d877bcc70581479b8a89febea68e9cd1ff426a38070b64bce54294a",
+      "boundary": "unwind_chain"
+    },
+    "0x822a10": {
+      "size": 96,
+      "sha256": "afe84dd002a3dad13f588cfbb909608de2fde5a6ddd74fff40af5ada5dec2c3c",
+      "boundary": "leaf_window_not_exact"
+    },
+    "0x822a30": {
+      "size": 96,
+      "sha256": "0aecb40c17cf382be6001bdc5f8ca5b4f6b56ebe4116cf54012fcb24abcccca4",
+      "boundary": "leaf_window_not_exact"
+    },
+    "0x4c9b90": {
+      "size": 1197,
+      "sha256": "f08cd09adebd95470b826cd2ed4dd9bc63586844721b5a337e12ba9a1f1ae0ac",
+      "boundary": "unwind_chain"
+    }
+  },
+  "next_scope": "若用户要求实现视角中心选择，先确定与现有HMD的关系，再核对原生NEXT、实际选择和兵装锁定；本轮不修改功能。"
+}

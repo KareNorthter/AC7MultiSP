@@ -91,6 +91,8 @@ def source_snapshot(root=ROOT):
         'evidence/native-seven-collision-preservation.json',
         'evidence/native-seven-collision-feedback.json',
         'evidence/mount-resource-qualification-fix.json',
+        'evidence/view-target-implementation.json','evidence/target-selection-research.json',
+        'evidence/mod-aircraft-compat-static.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',
         'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',

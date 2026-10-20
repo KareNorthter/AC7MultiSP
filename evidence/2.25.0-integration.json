@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "version": "2.25.0",
+  "candidate": true,
+  "formal_main": "0b75b21e4e29c817d193188e7326700507417dae",
+  "actual_install_baseline": "evidence/2.24.0-installed.json",
+  "sources": [
+    {
+      "thread": "01a1599c-1427-7ab2-8d61-0a6a0369edaa",
+      "commit": "39ec226"
+    },
+    {
+      "thread": "01a14f83-b067-7ee3-a696-ac5b9b1efcc8",
+      "commit": "a4dd3c7"
+    },
+    {
+      "thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
+      "commit": "2ba1542",
+      "includes": "6af68de"
+    }
+  ],
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.25.0\\Temp\\mount-assets-2.25.0\\source",
+  "resource_variants": 74,
+  "resource_members": 148,
+  "unchanged_resource_members": 146,
+  "layouts_28_aircraft_196_combinations_preserved": true,
+  "collision_preservation_assets": 19,
+  "interfaces": {
+    "management": 16,
+    "configuration": 15,
+    "gaze": 2,
+    "camera": 7,
+    "aircraft": 2,
+    "view_target": 1
+  },
+  "runtime_files": 19,
+  "configuration_migration_backup": "profiles.before-view-target.json",
+  "source_patches": {
+    "mod-aircraft.patch": "f0b1c7f9f55bc31748ed160730ce7d44a03f355172c3253221e29d17b307a85b",
+    "view-target.patch": "f9420dd03ff6d2dfef943f25b1ff331b37a1dfcac65acedd588dd310881da98d"
+  },
+  "merge_resolutions": [
+    "Mod缺失说明降级并入当前共用weaponDescription，保留机库/补给布局和语言缓存",
+    "同时保留Mod换涂装清缓存与视角目标周期调度",
+    "保留2.24.0 UI、明确暂停交接及原有键位，统一五快捷键/协议16/配置15",
+    "不接收未请求的F4E后续研究改动，不重复部署第三方机体PAK"
+  ],
+  "offset_local_resource_units": {
+    "X": -11.0,
+    "Y": 0.0,
+    "Z": -2.0
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "新NEXT/白点/不同帧率手感、Mod目录反射和换涂装SP、七机挂架与暂停交接均待用户实测",
+    "与鼠标飞控并用时，新NEXT启用前须由用户关闭其F2 HMD；个人设置本次保留",
+    "不扩展按涂装独立载量、飞行中热换武器类、Mod多SP挂架或未登记ECM/UAV",
+    "SP1入场动画仍为研究，黑屏不宣称唯一根因已定"
+  ]
+}

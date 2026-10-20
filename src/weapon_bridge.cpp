@@ -576,6 +576,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
+#include "view_target.hpp"
 #include "gun_salvo.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
@@ -938,6 +939,8 @@ extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return 
 extern "C" __declspec(dllexport) int dualsp_gun_salvo(void* luaState) {return gunSalvoLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_view_target(void* luaState) {return viewTargetLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_view_target_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_r3_hold_toggle_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
@@ -954,6 +957,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+            viewTarget.clear();
             salvoNeedRelease=salvoNeedRelease || gunSalvo.gun;salvoStopExtra();gunSalvo={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
@@ -1981,9 +1985,10 @@ std::string unrealString(Addr address) {
 }
 extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
     try {
-        verifyVersion();Addr planes{},weapons{};
+        verifyVersion();Addr planes{},weapons{},skins{};
         std::ifstream cmd(modRoot()/"catalogue-command.txt");cmd>>std::hex>>planes>>weapons;
         require(static_cast<bool>(cmd),"Invalid catalogue command");
+        cmd>>skins; // 旧调用仍可读取基础目录；新Lua通过能力标记要求本版核心。
         int dlcOffset=-1;std::string dlcError;
         try {
             require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体目录需要在游戏线程读取");
@@ -2002,29 +2007,123 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
             // 换机扩展不可用时保留原有兵装目录；不能因此停用所有出击/补给功能。
             dlcError=error.what();nativeLog("DEBUG_AIRCRAFT_CATALOGUE_ERROR "+dlcError);
         }
+        // 只读接入真实机体/涂装引用，避免由机体代号猜类名。布局不符时不猜偏移。
+        int referenceOffset=-1;Json skinReferences=Json::object();
+        std::string referenceError;
+        auto softReference=[](Addr address) {
+            // 本项目限定的UE4.18 FSoftObjectPtr为40字节：弱引用/标记16字节＋FSoftObjectPath。
+            checkMemory(address,40);
+            const auto index=read<unsigned>(address+16),number=read<unsigned>(address+20);
+            if(!index)return std::string{};
+            auto name=mountNameIndex(index);
+            if(name=="None")return std::string{};
+            require(number<100000 && unrealString(address+24).empty(),"机体目录：软引用包含未知子路径");
+            if(number)name+="_"+std::to_string(number-1);
+            require(name.rfind("/Game/",0)==0 && name.size()<1024,"机体目录：软引用路径无效");
+            return name;
+        };
+        try {
+            require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体引用需要在游戏线程读取");
+            MountAnimationReflection metadata;
+            const auto loader=GetModuleHandleW(L"UE4SS.dll");require(loader!=nullptr,"机体引用：加载器未就绪");
+            metadata.extent=reinterpret_cast<MountAnimationReflection::Ref>(GetProcAddress(loader,
+                "?GetPropertiesSize@UStruct@Unreal@RC@@QEBAAEBHXZ"));
+            metadata.arrayDim=reinterpret_cast<MountAnimationReflection::Ref>(GetProcAddress(loader,
+                "?GetArrayDim@FProperty@Unreal@RC@@QEBAAEBHXZ"));
+            auto rowType=[&](Addr table,const char* expected) {
+                require(mountClassIs(table,"DataTable","/Script/Engine"),"机体引用：数据表类型不符");
+                const Addr type=read<Addr>(table+mountProperty(table,"RowStruct","ObjectProperty",8));
+                MountAnimationReflection::named(type,expected,"/Script/Nimbus");return type;
+            };
+            const auto planeType=rowType(planes,"PlayerPlaneDataTable");
+            try {referenceOffset=metadata.field(planeType,"Reference","SoftObjectProperty",40,metadata.typeSize(planeType)).offset;}
+            catch(const std::exception& error) {referenceError=error.what();nativeLog("MOD_AIRCRAFT_REFERENCE_ERROR "+referenceError);}
+            if(skins) {
+                const auto skinType=rowType(skins,"SkinDataTable");const int size=metadata.typeSize(skinType);
+                const auto code=metadata.field(skinType,"PlaneStringID","StrProperty",16,size);
+                const auto number=metadata.field(skinType,"SkinNo","IntProperty",4,size);
+                const auto reference=metadata.field(skinType,"PlaneReference","StrProperty",16,size);
+                for(const auto row:tableRows(skins)) {
+                    std::string planeCode;int skinNo=-1;
+                    try {
+                        planeCode=unrealString(row+code.offset);skinNo=read<int>(row+number.offset);
+                        require(!planeCode.empty() && planeCode.size()<=128 && skinNo>=0 && skinNo<100000,
+                                "机体目录：涂装身份无效");
+                        const auto path=unrealString(row+reference.offset);
+                        require(path.rfind("/Game/",0)==0 && path.size()<1024,"机体目录：涂装引用无效");
+                        if(!skinReferences.contains(planeCode))skinReferences[planeCode]=Json::array();
+                        skinReferences[planeCode].push_back({{"skin_no",skinNo},{"reference",path}});
+                    }catch(const std::exception& error) {
+                        // 已知编号的坏引用必须保留拒绝标记，不能伪装成没有此涂装而回退基础类。
+                        if(!planeCode.empty() && planeCode.size()<=128 && skinNo>=0 && skinNo<100000) {
+                            if(!skinReferences.contains(planeCode))skinReferences[planeCode]=Json::array();
+                            skinReferences[planeCode].push_back({{"skin_no",skinNo},{"reference_error",error.what()}});
+                        }
+                        nativeLog(std::string("MOD_SKIN_ROW_SKIPPED ")+error.what());
+                    }
+                }
+            }
+        }catch(const std::exception& error) {
+            referenceError=error.what();nativeLog("MOD_AIRCRAFT_REFERENCE_ERROR "+referenceError);
+        }
         std::map<std::string,Json> byCode;
+        std::set<std::string> duplicateWeaponCodes;
         for(const auto row:tableRows(weapons)) {
-            Json stats=Json::array();for(int i=0;i<6;++i)stats.push_back(read<unsigned char>(row+40+i));
-            // 分类图标和类型键读取原生武器表，避免另维护一份兵装映射。
-            byCode[unrealString(row+16)]={{"weapon_id",read<int>(row+8)},{"stats",stats},
-                {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}};
+            try {
+                const auto code=unrealString(row+16);
+                require(!code.empty() && code.size()<=128,"机体目录：兵装代号无效");
+                require(!duplicateWeaponCodes.count(code),"机体目录：重复兵装代号");
+                if(byCode.count(code)) {
+                    byCode.erase(code);duplicateWeaponCodes.insert(code);
+                    throw std::runtime_error("机体目录：重复兵装代号 "+code);
+                }
+                Json stats=Json::array();for(int i=0;i<6;++i)stats.push_back(read<unsigned char>(row+40+i));
+                // 分类图标和类型键读取原生武器表，避免另维护一份兵装映射。
+                byCode[code]={{"weapon_id",read<int>(row+8)},{"stats",stats},
+                    {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}};
+            }catch(const std::exception& error) {nativeLog(std::string("MOD_WEAPON_ROW_SKIPPED ")+error.what());}
         }
         Json catalog=Json::object();
         for(const auto row:tableRows(planes)) {
-            const int id=read<int>(row+8);Json options=Json::array();bool supported=true;
-            for(int i=0;i<3;++i) {
-                const auto code=unrealString(row+96+i*24);
-                if(code=="-1") {supported=false;continue;}
-                require(byCode.count(code),"Unknown weapon data reference");
-                auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=read<int>(row+112+i*24);options.push_back(option);
+            int id=-1;
+            try {
+                id=read<int>(row+8);require(id>=0,"机体目录：机体编号无效");
+                const auto key=std::to_string(id);
+                if(catalog.contains(key)) {
+                    catalog[key]["supported"]=false;catalog[key]["compatibility_error"]="重复机体编号";
+                    nativeLog("MOD_AIRCRAFT_DUPLICATE_ID "+key);continue;
+                }
+                const auto planeCode=unrealString(row+16);
+                require(!planeCode.empty() && planeCode.size()<=128,"机体目录：机体代号无效");
+                Json options=Json::array();bool supported=true;
+                for(int i=0;i<3;++i) {
+                    const auto code=unrealString(row+96+i*24);
+                    if(code=="-1") {supported=false;continue;}
+                    if(!byCode.count(code))throw std::runtime_error("机体目录：兵装引用不存在 "+code);
+                    const int maximum=read<int>(row+112+i*24);
+                    require(maximum>0 && maximum<=100000,"机体目录：槽位基础载量无效");
+                    auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=maximum;options.push_back(option);
+                }
+                auto& entry=catalog[key];
+                entry={{"id",id},{"code",planeCode},{"main_max",read<int>(row+88)},
+                    {"weapons",options},{"supported",supported}};
+                if(dlcOffset>=0)entry["dlc_id"]=unrealString(row+dlcOffset);
+                else entry["debug_aircraft_error"]=dlcError;
+                if(referenceOffset>=0) {
+                    try {entry["reference"]=softReference(row+referenceOffset);}
+                    catch(const std::exception& error) {entry["reference_error"]=error.what();}
+                }
+                if(skinReferences.contains(planeCode))entry["skins"]=skinReferences[planeCode];
+            }catch(const std::exception& error) {
+                if(id>=0)catalog[std::to_string(id)]={{"id",id},{"supported",false},{"compatibility_error",error.what()}};
+                nativeLog("MOD_AIRCRAFT_ROW_UNAVAILABLE "+std::to_string(id)+" "+error.what());
             }
-            auto& entry=catalog[std::to_string(id)];
-            entry={{"id",id},{"code",unrealString(row+16)},{"main_max",read<int>(row+88)},
-                {"weapons",options},{"supported",supported}};
-            if(dlcOffset>=0)entry["dlc_id"]=unrealString(row+dlcOffset);
-            else entry["debug_aircraft_error"]=dlcError;
         }
-        atomicJson(modRoot()/"catalogue.json",catalog);nativeLog("Catalogue loaded: "+std::to_string(catalog.size())+" planes");
+        const auto planeCount=catalog.size();
+        catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError}};
+        atomicJson(modRoot()/"catalogue.json",catalog);nativeLog("Catalogue loaded: "+std::to_string(planeCount)+" planes");
     }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());atomicJson(modRoot()/"catalogue.json",Json{{"error",e.what()}});}
     return 0;
 }
+// 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。
+extern "C" __declspec(dllexport) int dualsp_mod_aircraft_catalogue_supported(void*) {return 0;}

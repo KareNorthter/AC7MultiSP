@@ -1,4 +1,4 @@
--- AC7MultiSP 2.24.0候选：整合资源资格、MiG31B r2、选装说明与暂停F6换机，待用户实测。
+-- AC7MultiSP 2.25.0候选：视角选目标/白点、Mod涂装SP及七机碰撞保真与换机交接整合，待实测。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=15") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=16") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -75,6 +75,9 @@ local weaponSwitch={read=loadExport("dualsp_switch_ready"),takeCycle=loadExport(
 weaponSwitch.gaze={invoke=loadExport("dualsp_target_gaze"),active=false,available=false,generation=0,response=0}
 loadExport("dualsp_target_gaze_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
 weaponSwitch.camera={invoke=loadExport("dualsp_camera_hold"),available=false,released=true}
+weaponSwitch.view={invoke=loadExport("dualsp_view_target"),marker=loadExport("dualsp_view_center_marker","DualSPUI.dll"),available=false,released=true}
+loadExport("dualsp_view_target_supported")
+loadExport("dualsp_view_target_supported","DualSPUI.dll") -- 新设置、五快捷键与白点发布接口须成套。
 loadExport("dualsp_camera_hold_supported","DualSPUI.dll")
 loadExport("dualsp_camera_r3_hold_toggle_supported")
 loadExport("dualsp_camera_r3_hold_toggle_supported","DualSPUI.dll") -- 八参数/四返回值镜头接口须成套。
@@ -93,6 +96,8 @@ loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
 local catalogExport=loadExport("dualsp_catalogue")
+loadExport("dualsp_mod_aircraft_catalogue_supported") -- 新Lua依赖真实机体/涂装目录，拒绝旧核心混装。
+local modAircraft=dofile(root.."Scripts/mod_aircraft.lua").new(note)
 local publish=loadExport("dualsp_publish","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
@@ -250,15 +255,9 @@ local function ownedWeapons()
     return set
 end
 local function isSelectedPlane(sourcePlane,code)
-    -- 直接核对已加载实例的类及父类；不再按显示大小写拼路径后做全局对象查找。
-    local baseName="aceplayerpawn_"..code:lower() -- 表内机体代码与资源显示名称可能大小写不同。
-    local expected="blueprintgeneratedclass /game/blueprint/player/pawn/"..baseName.."."..baseName.."_c" -- 比较完整路径，避免同短名误认。
-    local actualClass=sourcePlane:GetClass() -- 从当前原生预览/玩家实例取得真实类身份。
-    while valid(actualClass)do
-        if actualClass:GetFullName():lower()==expected then return true end
-        actualClass=actualClass:GetSuperStruct() -- 涂装派生类必须能追溯到所选机体的基础类。
-    end
-    return false
+    local info=catalogue and catalogue[tostring(instance:GetSelectedPlaneID())]
+    if not info or not info.code or info.code:lower()~=code:lower()then return false end
+    return modAircraft:matches(sourcePlane,info,instance)
 end
 local function readOptionsFor(id)
     -- Purchases cannot change during a sortie. Do not scan the global object
@@ -276,7 +275,7 @@ local function readOptionsFor(id)
         -- 选择编号先改变、预览模型后加载属于原生异步换机；返回显式等待原因，不能记成永久接入错误。
         if not valid(sourcePlane)then return {},"preview_missing selected="..info.code end
         if instance:GetSelectedPlaneID()~=id or not isSelectedPlane(sourcePlane,info.code)then
-            return {},"preview_changing selected="..info.code.." actual="..sourcePlane:GetClass():GetFullName()
+            return {},"preview_changing selected="..info.code.." expected="..modAircraft:reference(info,instance).." actual="..sourcePlane:GetClass():GetFullName()
         end
     end
     assert(valid(sourcePlane),"当前机体实例未加载，请确认模型已安装："..info.code)
@@ -288,6 +287,8 @@ local function readOptionsFor(id)
     assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
     local continuousOptions={}
     local salvoOptions={}
+    local presentation={}
+    local baseWeapons=modAircraft:baseWeapons(info)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     for i=1,3 do
         local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
@@ -300,6 +301,8 @@ local function readOptionsFor(id)
             ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
              (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
+        assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
+        presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
         if ((info.code=="mrgn"or info.code=="fa27"or info.code=="fa44")and weaponIds[i]==31)or (info.code=="adf11f"and weaponIds[i]==26)then
             local ok,supported=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
             assert(ok,supported);continuousOptions[i]=supported
@@ -311,8 +314,9 @@ local function readOptionsFor(id)
     assert(type(amounts)=="table"and #amounts==3,"原生弹药预览结果不完整")
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
-        options[i]={index=item.index,code=item.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=item.category,type_key=item.type_key,
-            stats=item.stats,description=descriptions[item.code]or item.code:upper(),
+        local display=presentation[i]
+        options[i]={index=item.index,code=display.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=display.category,type_key=display.type_key,generic=display.generic,
+            stats=display.stats,description=descriptions[display.code]or display.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=not unsupportedDual[weaponIds[i]]or continuousOptions[i]==true}
     end
@@ -632,6 +636,8 @@ local function pageContext(context)
             local saved=config.profiles[tostring(planeId)];return saved and Profile.withSettings(saved,config)or nil
         end
         context.getOptions=function()return optionsFor(planeId)end
+        context.getVariantToken=function()return modAircraft:token(instance)end
+        context.getSelectionToken=function()return modAircraft:selection(instance)end
     end
     return context
 end
@@ -703,6 +709,7 @@ local function setPanel(open)
         local gazeOK,_,gazeError=weaponSwitch.gaze.invoke(0,0,0,0)
         assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
         weaponSwitch.camera.release()
+        weaponSwitch.view.release()
         local ok,err=pcall(acquireManagementPause) -- 暂停失败必须在面板可见，不能变成无菜单的静止画面。
         managementPauseError=not ok and tostring(err)or nil
         if not ok then note("MANAGEMENT_PAUSE_ERROR "..managementPauseError)end
@@ -804,6 +811,33 @@ function weaponSwitch.camera.update()
     if before~=camera.available then lastUIKey=nil end
 end
 
+function weaponSwitch.view.release(force)
+    local view=weaponSwitch.view
+    view.marker(0)
+    if force or not view.released then
+        local called,ok,_,_,reason=pcall(view.invoke,0,0,0,0)
+        if not called or not ok then view.error=tostring(called and reason or ok);note("VIEW_TARGET_RELEASE_ERROR "..view.error)end
+    end
+    view.available=false;view.released=true
+end
+function weaponSwitch.view.update()
+    local view=weaponSwitch.view
+    if view.failed then view.marker(0);return end
+    local allowed=(config.view_target_enabled or config.view_center_dot_enabled)and runtimeAllowed and runtimeModEnabled
+        and not errorText and isFlight and valid(plane)and valid(plane.InputComponent)and plane.bEnableCameraInput
+        and not panelOpen and not supplySession and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
+    if not allowed and view.released then view.marker(0);return end
+    local before=view.available
+    local ok,available,dot,reason=view.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,
+        config.view_target_enabled and 1 or 0,config.view_center_dot_enabled and 1 or 0)
+    view.available=ok and available or false;view.released=not allowed or not ok
+    if not view.marker(ok and dot and plane:GetNimbusHUDEnabled()and 1 or 0)then
+        view.release(true);view.failed=true;view.error="视野中心白点发布失败";lastUIKey=nil;return
+    end
+    if not ok then view.failed=true;view.error=tostring(reason);note("VIEW_TARGET_ERROR "..view.error);lastUIKey=nil end
+    if before~=view.available then lastUIKey=nil end
+end
+
 -- 周期调度和最终选择都读取最新状态，刚解除暂停后立即切换也能正常出声。
 local function updateCustomAudio()
     local allowed=isFlight and configured and not errorText and not supplySession and not panelOpen
@@ -822,6 +856,7 @@ end
 local function releaseRuntimeOwnership()
     weaponSwitch.pending=nil;internal=false
     weaponSwitch.camera.release()
+    weaponSwitch.view.release()
     if weaponSwitch.salvo.service then weaponSwitch.salvo.service:release()end
     local gazeCall,gazeOK,_,gazeError=pcall(weaponSwitch.gaze.invoke,0,0,0,0)
     weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
@@ -1308,6 +1343,17 @@ local function applyAction(action)
             if not saved then weaponSwitch.salvo.service.error=tostring(err)end
             lastUIKey=nil
         end
+    elseif action.type=="toggle_view_target"then
+        if runtimeAllowed and runtimeModEnabled then
+            local saved,err=pcall(function()
+                local nextConfig=json.decode(json.encode(config));nextConfig.view_target_enabled=not config.view_target_enabled
+                configStore:save(nextConfig);config=nextConfig
+                weaponSwitch.view.release(true);weaponSwitch.view.failed=false;weaponSwitch.view.error=nil
+                weaponSwitch.view.update();note("VIEW_TARGET_TOGGLED "..tostring(config.view_target_enabled))
+            end)
+            if not saved then weaponSwitch.view.error=tostring(err)end
+            lastUIKey=nil
+        end
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
@@ -1316,6 +1362,7 @@ local function applyAction(action)
             weaponSwitch.salvo.service.failed=false;weaponSwitch.salvo.service.error=nil
             weaponSwitch.gaze.failed=false;weaponSwitch.gaze.error=nil;weaponSwitch.gaze.update(false)
             weaponSwitch.camera.release();weaponSwitch.camera.failed=false;weaponSwitch.camera.error=nil;weaponSwitch.camera.update()
+            weaponSwitch.view.release(true);weaponSwitch.view.failed=false;weaponSwitch.view.error=nil;weaponSwitch.view.update()
             masterSwitch.failed=false;masterSwitch.error=nil;masterSwitch.lastCheck=-1
             tryApplyMasterSwitch(true)
             if not isFlight and not supplySession then applyFixedMountSetting()end
@@ -1355,9 +1402,11 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=15,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=16,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
+        view_target_enabled=config.view_target_enabled,view_center_dot_enabled=config.view_center_dot_enabled,
+        view_target={protocol=1,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,
         target_gaze_pad_l3=config.target_gaze_pad_l3,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
@@ -1414,6 +1463,7 @@ local function checkRuntime(activatedWidget)
     local gazeOK,_,gazeError=weaponSwitch.gaze.invoke(0,0,0,0)
     assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
     weaponSwitch.camera.release()
+    weaponSwitch.view.release()
     local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
     assert(uiOK,uiErr)
     if not allowed or reason=="mission13_fixed_sp"then
@@ -1510,6 +1560,7 @@ local function tick()
     recordStage("context",contextStarted)
     -- 载入时单人许可可能短暂消失；换机只保留数据，不在过渡世界调用机体接口。
     if aircraftDebug:pump(runtimeReason)then
+        weaponSwitch.view.release()
         if allowed and (not lastUIKey or os.clock()-lastPublish>=.25)then lastPublish=os.clock();lastUIKey="aircraft_restart";publishState()end
         return
     end
@@ -1530,7 +1581,7 @@ local function tick()
             plane=found;planeAddress=found and found:GetAddress()or nil
             activator=found and found.PlayerWeaponActivator or nil;isFlight=found~=nil;currentWorld=world
         end
-        weaponSwitch.gaze.update(false);weaponSwitch.camera.update()
+        weaponSwitch.gaze.update(false);weaponSwitch.camera.update();weaponSwitch.view.update()
         if now-lastActions>=.05 then
             lastActions=now;drain()
             local batch=readJson(root.."ui-actions.json")
@@ -1557,8 +1608,10 @@ local function tick()
     updateCustomAudio()
     if not catalogue then
         local info=instance.GameInformation;if not valid(info)or not valid(info.PlaneDataTable)or not valid(info.WeaponDataTable)then return end
-        local f=assert(io.open(root.."catalogue-command.txt","w"));f:write(string.format("%X %X",info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress()));f:close()
-        catalogExport();catalogue=assert(readJson(root.."catalogue.json"));assert(not catalogue.error,catalogue.error);note("CATALOGUE_READY")
+        local skinTable=info.SkinDataTable
+        local f=assert(io.open(root.."catalogue-command.txt","w"));f:write(string.format("%X %X %X",info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress(),valid(skinTable)and skinTable:GetAddress()or 0));f:close()
+        catalogExport();catalogue=assert(readJson(root.."catalogue.json"));assert(not catalogue.error,catalogue.error)
+        assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
     end
     -- A live player actor remains valid for its world. Registry searches are
     -- needed while acquiring a new actor, not four times per second in flight.
@@ -1595,7 +1648,20 @@ local function tick()
         note("WORLD_CHANGED "..world)
     end
     local selected=instance:GetSelectedPlaneID()
-    weaponSwitch.gaze.update(false);weaponSwitch.camera.update()
+    if not isFlight and not supplySession then
+        local token=modAircraft:selection(instance)
+        if modAircraft.lastMenu~=token then
+            if modAircraft.lastMenu then releaseMountPreview(0)end -- 同一预览实例换涂装也不能沿用旧挂载选项。
+            previewOptions=nil;modAircraft.lastMenu=token
+            for _,adapter in ipairs({nativeLoadout,nativeStandby,nativeParts})do
+                if adapter.error then
+                    note("MENU_ERROR_VARIANT_CONTEXT_ENDED prior="..adapter.error)
+                    adapter:reset{clearError=true,releaseInput=false}
+                end
+            end
+        end
+    end
+    weaponSwitch.gaze.update(false);weaponSwitch.camera.update();weaponSwitch.view.update()
     if selected~=lastSelected then
         releaseMountPreview(0)
         local previousPlaneId=planeId -- 页面错误属于引发错误的机体，换机后重新建立适配上下文。
@@ -1838,7 +1904,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.24.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.25.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

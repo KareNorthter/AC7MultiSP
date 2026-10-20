@@ -1,0 +1,196 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "branch": "codex/target-selection-research",
+  "formal_base": "0b75b21e4e29c817d193188e7326700507417dae",
+  "source_parent_before_this_change": "1c33ff8",
+  "status": "源码候选已实现，未构建或实机验证",
+  "authorization": "用户要求一起实现管理页NEXT视角中心优先开关及Ctrl+Alt+F8、中心荧光白点10度死区、继续优化镜头保持平滑性",
+  "prerequisites": [
+    {
+      "source": "581d534",
+      "received_as": "b5bea56",
+      "scope": "镜头中心阈值及配置14迁移"
+    },
+    {
+      "source": "0f2d8d5",
+      "received_as": "c3647d0",
+      "scope": "摇杆角速度积分和平滑"
+    },
+    {
+      "source": "f1ef54e",
+      "received_as": "1c33ff8",
+      "scope": "R3 0.2秒回中及2秒切换保持"
+    }
+  ],
+  "interfaces": {
+    "management": 16,
+    "configuration": 15,
+    "view_target": 1,
+    "camera": 7,
+    "gaze": 2,
+    "aircraft": 2,
+    "required_new_capability": "dualsp_view_target_supported in core and UI",
+    "core_entry": "dualsp_view_target(plane, allowed, enabled, dot) -> ok, available, dot_visible, error",
+    "ui_dot_entry": "dualsp_view_center_marker(visible) -> ok"
+  },
+  "settings": {
+    "view_target_enabled": false,
+    "view_center_dot_enabled": true,
+    "shortcut": {
+      "name": "view_target",
+      "key": 119,
+      "mods": 3,
+      "label": "Ctrl+Alt+F8"
+    },
+    "migration_backup": "profiles.before-view-target.json",
+    "migration_from": 14,
+    "migration_to": 15,
+    "conflict_policy": "只把新快捷键留空，保留旧键位、开关和个人方案",
+    "shortcut_count": 5,
+    "modifier_precedence": "完整组合优先，覆盖回中主键的五快捷键修饰掩码"
+  },
+  "next_design": {
+    "entry": "0x4c5e00",
+    "reference_entry": "0x81bae0",
+    "candidate_arrays": [
+      "0x3b0",
+      "0x400"
+    ],
+    "sort": "相机中心射线与候选RootComponent位置的cos夹角降序，相同角度按距离及原顺序；普通分支取前4项部分排序",
+    "native_logic_retained": [
+      "目标资格",
+      "当前目标与近期历史",
+      "原生距离/锥体与兵装分支",
+      "由原生代码写NextTarget"
+    ],
+    "scoped_mutation": "只在本玩家NEXT计算中临时调整候选指针顺序与参考函数输出；原表头、Num、Max及分配保持；退出按弱身份和数组头复核归还",
+    "not_modified": [
+      "SelectedTarget",
+      "LockedTargets",
+      "锁定槽",
+      "bUseCameraLockOn",
+      "发射输入",
+      "目标/相机坐标"
+    ],
+    "guards": [
+      "实际Controller.Pawn和归属",
+      "对象索引及序列号",
+      "普通三视角与非委托镜头",
+      "前台",
+      "单人Lua许可",
+      "500毫秒心跳",
+      "完整函数体FNV-1a与入口签名"
+    ],
+    "fingerprints": [
+      {
+        "rva": "0x4c5e00",
+        "bytes": 2674,
+        "fnv1a64": "5f7cc9639f287f48",
+        "sha256": "bc5389253a7a908a8516ec53aca5b8f0501a789491f08c3dfab0a8a4628d97cd"
+      },
+      {
+        "rva": "0x81bae0",
+        "bytes": 309,
+        "fnv1a64": "b5fe8309a209f5fb",
+        "sha256": "2351bf0ed80c8135dd00532a4ae7e6d78e6703d94286af00c9efb5798de81dca"
+      }
+    ],
+    "limits": [
+      "不扩大原生候选池；原生范围/类别/可见性等条件继续限制",
+      "历史避让可能使最近选择过的正中央目标暂不成为NEXT",
+      "鼠标飞控F2 HMD仍可能覆盖按键实际提交目标，使用本功能应关闭该HMD",
+      "只针对Steam build9855922普通单人三视角，未移植或验证PSVR"
+    ]
+  },
+  "center_dot": {
+    "default_enabled": true,
+    "independent_of_next_and_hold": true,
+    "threshold_degrees": 10,
+    "show_rule": "实际相机前向与机头四元数前向的夹角严格大于10度",
+    "position": "屏幕正中心",
+    "appearance": "白芯、两层淡光晕，按画面高度缩放",
+    "game_object_reads": "仅游戏线程",
+    "publish_interval": "沿既有20毫秒Lua调度，直接发布原子信号，不新增逐帧状态文件",
+    "stale_hide_ms": 150,
+    "hidden_on": [
+      "夹角<=10度",
+      "HUD隐藏",
+      "暂停",
+      "管理界面",
+      "失焦",
+      "特殊/委托镜头",
+      "心跳过期",
+      "单人许可失效"
+    ]
+  },
+  "camera_response": {
+    "old_velocity_response_ms": 60,
+    "new_velocity_response_ms": 25,
+    "release": "沿同一解析积分短暂减速，低于0.1度/秒后结束尾段并保持实际姿态",
+    "delta": "<=100毫秒用完整游戏delta，超过100毫秒清速度、不追赶；去掉50毫秒硬截位移",
+    "preserved": [
+      "观察范围",
+      "灵敏度5至200%",
+      "30度自动回正默认值",
+      "R3分级长按",
+      "注视/回中原响应",
+      "特殊镜头归还",
+      "键鼠单独环视原响应"
+    ],
+    "user_feedback_basis": "用户确认上一轮平滑优化有效，仍有略不均匀感；本次新源码未验收"
+  },
+  "review": {
+    "mode": "人工静态审阅及只读源码/原件元数据核对",
+    "items": [
+      "新增开关的默认、草稿、保存和状态回执",
+      "五快捷键改键/清除/默认及修饰键回中避让",
+      "配置迁移原字节备份与新键冲突留空",
+      "核心/UI能力握手及对应导出",
+      "NEXT作用域、重入、原生只执行一次和候选顺序归还",
+      "组件载入等待、身份/归属及错误退出",
+      "白点150毫秒心跳隐藏和HUD/暂停/管理许可",
+      "镜头积分及松杆/特殊视角清理",
+      "Git差异格式和受保护DLL散列"
+    ],
+    "not_run": [
+      "编译或编译器语法检查",
+      "测试模块或测试套件",
+      "游戏启动/输入/内存写入",
+      "构建安装或发布"
+    ]
+  },
+  "compiled": false,
+  "test_modules_created": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated_this_change": false,
+  "new_game_capture": false,
+  "merged_to_main": false,
+  "uploaded": false,
+  "protected_dll_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "runtime_validation_pending": [
+    "普通MSL及不同SP的视野候选和NEXT与实际按键选择",
+    "三视角、特殊/委托镜头与注视交接",
+    "中心白点10度边界、实际屏幕布局与HUD显隐",
+    "默认关闭、快捷切换持久保存及冲突/清除/重启",
+    "暂停/管理/失焦/补给/换玩家与多人旁路",
+    "不同帧率和卡顿后的摇杆手感、松杆收尾及原生边界",
+    "鼠标飞控HMD关闭对照与第三方键位共存"
+  ],
+  "integration_policy": "此分支在main基础精确接收镜头前置改动，未覆盖其他线程。新增提交须按差异接收到较新的整合候选，结合已装2.24.0来源统一递增补丁标识后再授权构建/安装；不以旧2.21.1标识重建安装。",
+  "source_hashes": {
+    "src/view_target.hpp": "e1850c4432a3bfb71259898e960e30ac81e30a563132d67b82a993fe62c15bfa",
+    "src/camera_hold.hpp": "f5bb493f08b1c68d54a0129fab838d6c7c6fd85d18e6ee88141ab4f3e3df848c",
+    "src/keyboard_shortcuts.hpp": "feaf575d99642c6d9479bef31591ac568c6c2a5007a6b7eec4e1550e95f5ea35",
+    "src/management_panel.hpp": "883786f4b4e0732825d8311d126bd3e6d045a93e9bc18fc9a252ad4ada685000",
+    "src/overlay.cpp": "d1dbe6219d3bbc6473e71ca44f761dfdf55d25a3acaa48285cc88c5bdc2aa58d",
+    "src/weapon_bridge.cpp": "a6c31bad3d3dbb78250edff6c83c7ddffc4fe3be5092bdb8a50b8dff8113b5fa",
+    "src/ui_messages.hpp": "240d8e8d03e8d6ae547511adb286d6c7bc6ded45dfcb55fe274be16cacc78a41",
+    "src/install.py": "ce300b31166fb4f7be8f69bc5acd6f204e114a90c173f80f0d8759be01604c39",
+    "dist/DualSP/Scripts/main.lua": "8265479575634529f2106cc7fcac0726fca280bd905beb0158a3313ce9b33604",
+    "dist/DualSP/Scripts/config_store.lua": "b440be772bdcfb944771a48c0970f2ccd4224c334622f396ef8f824cc5b7eaad"
+  },
+  "prior_research": "evidence/target-selection-research.json",
+  "old_observation_does_not_validate_new_code": true
+}

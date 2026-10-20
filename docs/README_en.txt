@@ -1,4 +1,12 @@
-AC7MultiSP 2.24.0 (candidate)
+AC7MultiSP 2.25.0 (candidate)
+
+2.25.0 candidate changes (since 2.24.0; user validation pending)
+• Added camera-center NEXT selection, off by default, with remappable Ctrl+Alt+F8. NEXT and actual selection use the same native maintenance flow.
+• Center dot defaults on and appears beyond 10 degrees from the nose. Camera hold uses 25 ms velocity response and smooth release. Disable the mouse-flight mod F2 HMD before enabling the new target selection; its settings are not changed by this install.
+• Custom aircraft use actual table references and skin-specific SP classes. Skin changes rebuild unconfirmed drafts; missing presentation text falls back without relaxing identity, purchase or write guards.
+• Nineteen static variants on seven aircraft preserve native collision data and verify settings around mesh changes. Cross-pool projectiles still require NoCollision. Applied aircraft restarts hand off native pause and defer opening mounts until flight input is ready.
+• MiG-31B rear SAAM revision r3 moves another 4 units aft from r2, retaining height: native-local X minus 11/Z minus 2. Complete core/Lua and 74 variants/148 members must match.
+• Configuration 15/management 16 adds a fifth shortcut. Configuration 14 is backed up to profiles.before-view-target.json; a shortcut conflict leaves only the new binding empty. Personal settings and loadouts remain.
 
 2.24.0 candidate changes (since 2.23.1; user validation pending)
 • SP1/SP2/SP3 show the focused weapon native long description in the game language. Preparation and resupply hide unpurchased SPs while retaining native IDs.
@@ -97,7 +105,7 @@ F-4E | Adapted |
 F-14A | Candidate | Validation pending
 F/A-18E | Candidate | Validation pending
 F/A-18E TGM | Candidate | Validation pending
-MiG-31B | r2 observation | Rear SAAM pair moved 7 aft/2 down from native; clearance pending
+MiG-31B | r3 observation | Rear SAAM pair moved 11 aft/2 down from native; support and clearance pending
 F-14D | Candidate | Native SWP3 mechanism; validation pending
 F/A-18F | Candidate | Native SWP3 mechanism; validation pending
 Su-33 | Candidate | Native SWP3 mechanism; validation pending
@@ -181,3 +189,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.23.0: Added four aircraft runtime mount candidates and eight variants; validation pending.
 2.23.1: Shifted MiG-31B rear SAAM sockets 6 aft/2 down; observation pending.
 2.24.0: Added native weapon descriptions, purchased-SP lists and paused F6 aircraft changes; fixed resource qualification and MiG-31B r2. Validation pending.
+2.25.0: Added view-center NEXT/dot, smoother hold and mod-aircraft skin-SP support; integrated native collision preservation, pause handoff and MiG-31B r3. Validation pending.
