@@ -664,7 +664,7 @@ local function acquireManagementPause()
     end
     note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
 end
--- 暂停菜单换机仅借用打开F6前的同一原生暂停；不取得或清除其所有权。
+-- 只核对打开F6前的同一原生暂停；普通关闭保留，明确换机另行交接。
 local function existingManagementPauseValid(lease)
     return lease and lease.existing and not lease.owned and lease.effective_before
         and valid(plane)and valid(lease.settings)and valid(lease.settings:GetWorld())
@@ -1169,7 +1169,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         setPanel(false)
         assert(not panelOpen and not managementPause and not managementPauseError,"管理界面暂停没有归还，未发出重开请求")
         if fromNativePause then
-            -- RestartLevel是直接原生调用，不依赖飞行恢复；旧世界连同暂停菜单交给整关重载收尾。
+            -- 先保留原暂停，只有目标选择完成、即将重开时才通过原生接口交接。
             assert(existingManagementPauseValid(pause),"原生暂停身份已变化，未发出重开请求")
             note("DEBUG_AIRCRAFT_RESTART_FROM_NATIVE_PAUSE")
         else assert(not game:IsGamePaused(plane),"原生任务仍在暂停，请先退出暂停菜单")end
@@ -1180,6 +1180,33 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         local ok,err=nativeRuntimeGate(0);assert(ok,err)
         ok,err=nativeRuntimeGate(1);assert(ok,err)
         resetCheckpointState();resetFlightTracking()
+        return function(owner)
+            local released=false
+            local restarted,restartError=pcall(function()
+                if fromNativePause then
+                    -- 只在明确应用换机、目标已核对后交接同一原生暂停；关闭或取消F6仍保留暂停。
+                    assert(existingManagementPauseValid(pause),"重开前原生暂停身份已变化")
+                    local accepted=game:SetGamePaused(pause.settings,false)
+                    released=not valid(pause.settings.Pauser)
+                    assert(accepted==true and released and not game:IsGamePaused(pause.settings),"原生暂停未完成交接，未重开任务")
+                    note("DEBUG_AIRCRAFT_NATIVE_PAUSE_RELEASED world="..pause.world)
+                end
+                owner:RestartLevel() -- 不带着旧世界暂停直接进入新任务的黑屏开场。
+            end)
+            if not restarted then
+                -- 原生调用若拒绝且仍在原世界，按原生接口恢复本次刚交接的暂停；不影响新世界。
+                if released and valid(pause.settings)and valid(pause.settings:GetWorld())
+                    and pause.settings:GetWorld():GetAddress()==pause.world and valid(plane)
+                    and valid(plane:GetWorld())and plane:GetWorld():GetAddress()==pause.world
+                    and not valid(pause.settings.Pauser)then
+                    local restored,restoreError=pcall(function()
+                        assert(game:SetGamePaused(pause.settings,true)==true and valid(pause.settings.Pauser),"原生暂停恢复失败")
+                    end)
+                    if not restored then note("DEBUG_AIRCRAFT_PAUSE_ROLLBACK_ERROR "..tostring(restoreError))end
+                end
+                error(restartError)
+            end
+        end
     end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
 local function applyDebugLoadout(action)
@@ -1593,8 +1620,11 @@ local function tick()
             previewOptions=previewOptions or optionsFor(planeId)
             saved=aircraftDebug:resolveProfile(planeId,previewOptions)or saved
             primeFlightHUD(Profile.withSettings(saved,config),previewOptions)
-            mountPreview{owner=instance,instance=instance,planeId=planeId,mode="flight",
-                profile=Profile.withSettings(saved,config),options=previewOptions}
+            -- 换机开场可能尚未完成组件碰撞设置，等飞控开放后再接管模型；HUD预建仍继续。
+            if not aircraftDebug:busy()or ready()then
+                mountPreview{owner=instance,instance=instance,planeId=planeId,mode="flight",
+                    profile=Profile.withSettings(saved,config),options=previewOptions}
+            end
         end
     end
     -- 起飞过场即可预建已确认的显示，不等玩家武器输入重新开放。

@@ -85,6 +85,8 @@ def source_snapshot(root=ROOT):
         'src/research/m31b_offset_data.py','src/research/prepare_m31b_saam_offset.py',
         'evidence/m31b-saam-offset-r1.json',
         'evidence/m31b-saam-offset-r2.json',
+        'evidence/m31b-saam-offset-r3.json',
+        'evidence/f14a-restart-feedback-r3.json',
         'evidence/mount-resource-qualification-fix.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',

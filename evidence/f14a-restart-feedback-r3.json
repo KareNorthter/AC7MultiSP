@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "status": "源码修订待游戏验证",
+  "installed_version": "2.24.0",
+  "receiver_commit": "fc84af28b12941fcabcd56bc5bdb13994027d799",
+  "installed_receipt_sha256": "bbafb60e51da98e54929d09d13d68fd5020f490bec83c670a0b0284391af22d5",
+  "runtime_files_verified": 18,
+  "installed_pak_verified": true,
+  "raw_log_snapshots": {
+    "mod.log": {
+      "sha256": "85f652dfc94d90e3ba17f48f16dfc068f3a5f9ba9284cd84df539ec663726f0b",
+      "size": 6799047
+    },
+    "native.log": {
+      "sha256": "78d6b1dfd6c2246091bda94d0f37ed94685cbd899b31590817cd3e3bbe8308d5",
+      "size": 4022797
+    },
+    "ui-state.json": {
+      "sha256": "ec008595258ff1e28b75bebe593193ac137f6e68bbe8934a6a70fb5ad16d3f9e",
+      "size": 3060
+    },
+    "native-status.json": {
+      "sha256": "77a03a1301b25e37909f55e4331eb325f65f1ec0f895e1b87926fb31e3c50ff6",
+      "size": 325
+    }
+  },
+  "timeline_local": [
+    "22:23:46 原生暂停入口发出MiG-31B(114)到F-14A(134)的整关重开，关闭管理面板仍remaining=true。",
+    "22:24:03 新World及HUD建立；UE4SS日志识别新玩家AcePlayerPawn_f14a_C，不能称为目标机体完全未生成。",
+    "22:24:03 挂架预检MOUNT_COLLISION_MISMATCH记录actual=3、expected=0，并在Lua形成MOUNT_ASSET_ERROR。",
+    "22:24:18至22:25:03仍有context和管理面板日志，没有LOADOUT 134或DEBUG_AIRCRAFT_APPLIED。",
+    "22:27:34 用户重新启动后的DUALSP_LOADED出现；读取旧PID27272时已换进程，未取得该黑屏现场内存。"
+  ],
+  "confirmed": [
+    "新F-14A生成，外观预检拒绝是实际查询返回3，不是上一轮缺失资源的笼统错误。",
+    "换机完成标志未出现；日志循环仍在执行，不把黑屏描述为已证实的主线程死锁。",
+    "本次路径来自原生暂停；用户尚未对比直接F6路径。"
+  ],
+  "hypotheses_not_proven": [
+    "暂停跨重开保留是否为本次黑屏的唯一原因，旧进程已退出，仍需复测。",
+    "碰撞模式3是否只在新机开场短暂出现；未读取该实例稳定后的BodyInstance，不把旧进程NoCollision快照冒充本轮状态。",
+    "本次数据未证明其他Mod参与黑屏，不改其他Mod。"
+  ],
+  "source_changes": [
+    "明确应用换机且目标选择完成后，在RestartLevel前核对原暂停世界/Pauser并用原生SetGamePaused(false)完成交接；取消、普通关闭不解暂停。",
+    "重开调用抛错且原世界仍有效时，仅恢复本次刚交接的暂停；不向新世界写旧暂停，不重复重开。",
+    "换机开场HUD仍预建，挂载预览等飞控开放；正式接管仍严格检查真实NoCollision，不改碰撞模式。",
+    "DEBUG_AIRCRAFT_WAIT只在阶段变化时记日志，区分世界、目标Pawn、持有、飞控和兵装初始化等待。",
+    "MiG-31B r3后腹SAAM相对r2再后移4资源单位，高度不变；合计相对原生X减11、Z减2。"
+  ],
+  "unchanged_aircraft": 28,
+  "unchanged_combinations": 196,
+  "resource_count": 74,
+  "unchanged_resource_prefix": 73,
+  "lua_top_level_locals": 195,
+  "python_syntax_parsed": true,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_operated": false,
+  "process_memory_snapshot_obtained": false,
+  "process_write": false,
+  "game_functions_called": false
+}

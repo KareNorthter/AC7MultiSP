@@ -15,6 +15,12 @@ local function address(object)return valid(object)and object:GetAddress()or nil 
 function Module.new(deps)
     local self={response=0,ack=0,status="idle",notice="",options={},lastOptions=-1}
     local function changed()deps.changed()end
+    local function waiting(pending,stage)
+        -- 只在阶段变化时记一次，不把换机等待变成逐帧日志。
+        if pending.stage~=stage then
+            pending.stage=stage;deps.note("DEBUG_AIRCRAFT_WAIT request="..pending.request.." stage="..stage)
+        end
+    end
     local function fail(message,stopFlight)
         self.pending=nil;self.status="failed";self.error=tostring(message);self.notice="换机未完成："..self.error
         if stopFlight then self.blocked=self.error;deps.failFlight(self.error)end
@@ -149,7 +155,8 @@ function Module.new(deps)
                 sourceId=context.id,sourceWeapon=context.instance:GetSelectedPlaneSWP(),sourceSkin=context.instance:GetSelectedPlaneSkinNo(),
                 sourceEmblem=context.instance:GetSelectedPlaneEmblemID(),sourceProfile=deps.copy(context.profile),started=os.clock()}
             self.pending=pending -- 原生调用可能触发生命周期钩子，先隔离旧兵装和检查点。
-            deps.prepare()
+            local restart=deps.prepare()
+            assert(type(restart)=="function","换机缺少已核对的暂停交接")
             context.instance:SetPlaneAndSWP(target.plane_id,0) -- 每机原生默认SP，无需购买额外兵装。
             context.instance:SetSelectedPlaneSkinNo(0)
             assert(context.instance:GetSelectedPlaneID()==target.plane_id and context.instance:GetSelectedPlaneSWP()==0,
@@ -158,7 +165,7 @@ function Module.new(deps)
             self.ack=action.request;self.status="restarting";self.error=nil
             self.notice="正在重开任务，等待 "..target.name.." 实际生成。"
             deps.note("DEBUG_AIRCRAFT_RESTART request="..action.request.." from="..context.id.." to="..target.plane_id)
-            owner:RestartLevel() -- 包括暂停菜单入口，直接原生整关重载；不等待解暂停或自行生成Pawn。
+            restart(owner) -- 目标选择完成后才交接原生暂停并重开，不自行生成Pawn。
         end)
         if not ok then
             local recovered=not pending or rollback(pending)
@@ -196,15 +203,15 @@ function Module.new(deps)
             fail("等待重开超时；未重复重开，请返回机库换机。",not recovered)
             return false
         end
-        if not deps.allowed()or not valid(world)then return true end
+        if not deps.allowed()or not valid(world)then waiting(pending,"waiting_world");return true end
         local pawn=deps.game():GetPlayerPawn(context.instance,0)
-        if valid(pawn)and not pawn:IsA(StaticFindObject("/Script/Nimbus.PlayerPlane"))then return true end
+        if valid(pawn)and not pawn:IsA(StaticFindObject("/Script/Nimbus.PlayerPlane"))then waiting(pending,"waiting_player_plane");return true end
         if not valid(pawn)or (address(world)==pending.world and address(pawn)==pending.plane)then
             if address(world)==pending.world and address(pawn)==pending.plane and os.clock()-pending.started>15 then
                 local recovered=rollback(pending)
                 fail("原生重开未生成新玩家机体，请返回机库换机。",not recovered);return false
             end
-            return true
+            waiting(pending,"waiting_new_pawn");return true
         end
         local matched=deps.matches(pawn,pending.code)
         if not matched then
@@ -212,16 +219,19 @@ function Module.new(deps)
             if pawn.bEnableWeaponInput and not pawn:IsWeaponSystemDisabled()then
                 fail("任务仍生成原机体；当前任务不支持此重开入口，请返回机库换机。",true)
             end
-            return true
+            waiting(pending,"waiting_target_pawn");return true
         end
         if context.instance:GetSelectedPlaneID()~=pending.target then fail("重开期间原生机体选择被其他流程改变",true);return true end
         local held=pcall(controller,context,pawn)
-        if not held then return true end
+        if not held then waiting(pending,"waiting_possession");return true end
         -- 在主循环完成新Pawn身份绑定后才允许兵装初始化。
         if not self.flight or self.flight.id~=pending.target then
             self.flight={id=pending.target,profile={a=0,b=-1,c=-1,ratio=1},initial=true,instance=pending.instance,map=pending.map}
         end
         deps.bind(pawn,pending.map)
+        if not pawn.bEnableWeaponInput or pawn:IsWeaponSystemDisabled()then
+            waiting(pending,"waiting_flight_input paused="..tostring(deps.game():IsGamePaused(pawn)))
+        else waiting(pending,"waiting_weapon_setup")end
         return false
     end
     function self:configured(id,profile)

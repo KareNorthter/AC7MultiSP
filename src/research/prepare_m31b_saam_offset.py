@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 REVISIONS = {
     'r1': ('MSP_m31b_saam_rear_lower_r1', {'X': -6.0, 'Y': 0.0, 'Z': -2.0}),
     'r2': ('MSP_m31b_saam_rear_lower_r2', {'X': -7.0, 'Y': 0.0, 'Z': -2.0}),
+    'r3': ('MSP_m31b_saam_rear_lower_r3', {'X': -11.0, 'Y': 0.0, 'Z': -2.0}),
 }
 
 
@@ -111,6 +112,10 @@ def main(args):
         receipt['previous_revision_sha256'] = digest(ROOT/'evidence/m31b-saam-offset-r1.json')
         receipt['feedback'] = '用户确认MiG-31B整体方案可行、值得参考；后腹SAAM只需在r1基础上再稍后移一点，故追加后移1资源单位，高度不变'
         receipt['known_limits'] = ['整体方案可行是用户反馈，不扩大为全部场景或其他机体通过', '本次再后移的效果、支撑和净空仍待用户观察']
+    if args.revision == 'r3':
+        receipt['previous_revision_sha256'] = digest(ROOT/'evidence/m31b-saam-offset-r2.json')
+        receipt['feedback'] = '用户反馈r2后移太小、看不出来；本次再后移4资源单位，高度不变，追加幅度为上次的4倍'
+        receipt['known_limits'] = ['只改mask6/7的后腹SAAM，其他布局保持', '新幅度的支撑、净空与外观仍待用户观察，不宣称已消除穿模']
     args.evidence.write_text(json.dumps(receipt, ensure_ascii=False, indent=2)+'\n', encoding='utf-8')
     print(json.dumps({'resource': name, 'changes': changes, 'resource_input': str(encoded)}, ensure_ascii=False))
 
