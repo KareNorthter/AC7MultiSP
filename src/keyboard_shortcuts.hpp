@@ -21,7 +21,7 @@ inline bool singleKeyMatches(int binding,int key,int mods) {
         ||((mods&1)!=0&&key==27)||((mods&3)==3&&key==46);
     return binding!=0&&binding==key&&!system;
 }
-inline int matchingShortcut(const std::array<Shortcut,4>& values,int key,int mods) {
+template<std::size_t N> inline int matchingShortcut(const std::array<Shortcut,N>& values,int key,int mods) {
     // 先匹配明确设置的组合，再回落到单键，不能受快捷键的保存顺序影响。
     for(std::size_t i=0;i<values.size();++i)
         if(values[i].mods!=0&&shortcutMatches(values[i],key,mods))return static_cast<int>(i);
@@ -29,9 +29,9 @@ inline int matchingShortcut(const std::array<Shortcut,4>& values,int key,int mod
         if(values[i].mods==0&&singleKeyMatches(values[i].key,key,mods))return static_cast<int>(i);
     return -1;
 }
-inline bool validShortcuts(const std::array<Shortcut,4>& values,const std::array<int,4>& direct) {
+template<std::size_t N> inline bool validShortcuts(const std::array<Shortcut,N>& values,const std::array<int,4>& direct) {
     for(std::size_t i=0;i<values.size();++i) {
-        if(i==3 && values[i].key==0 && values[i].mods==0)continue; // 新键冲突时允许未绑定。
+        if(i>=3 && values[i].key==0 && values[i].mods==0)continue; // 新键冲突时允许未绑定。
         if(!validShortcut(values[i]))return false;
         for(std::size_t j=0;j<i;++j)if(sameShortcut(values[i],values[j]))return false;
         for(int key:direct)if(values[i].mods==0&&values[i].key==key)return false;
@@ -42,14 +42,14 @@ inline bool validShortcuts(const std::array<Shortcut,4>& values,const std::array
     }
     return true;
 }
-inline bool validTargetGazeKey(int key,const std::array<Shortcut,4>& shortcuts,const std::array<int,4>& direct) {
+template<std::size_t N> inline bool validTargetGazeKey(int key,const std::array<Shortcut,N>& shortcuts,const std::array<int,4>& direct) {
     if(key==0)return true; // 零明确表示未绑定，不替用户占用原生按键。
     if(!supportedShortcutKey(key))return false;
     for(const auto& chord:shortcuts)if(chord.mods==0 && chord.key==key)return false;
     for(int value:direct)if(value==key)return false;
     return true;
 }
-inline bool validCameraCenterKey(int key,bool enabled,int gazeKey,const std::array<Shortcut,4>& shortcuts,const std::array<int,4>& direct) {
+template<std::size_t N> inline bool validCameraCenterKey(int key,bool enabled,int gazeKey,const std::array<Shortcut,N>& shortcuts,const std::array<int,4>& direct) {
     if(key!=0 && key!=4 && !supportedShortcutKey(key))return false; // 4为鼠标中键，仅回正功能支持。
     if(!enabled || key==0)return true;
     return key!=gazeKey && (key==4 || validTargetGazeKey(key,shortcuts,direct));

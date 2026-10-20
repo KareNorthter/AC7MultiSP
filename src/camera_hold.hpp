@@ -144,10 +144,11 @@ void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float d
     if(length>1.){commandX/=length;commandY/=length;}
     const double speed=180.*cameraHold.sensitivity/100.;
     commandX*=speed;commandY*=speed;
-    // 60毫秒一阶速度响应，解析积分减少普通帧率变化带来的步进差异。
-    // 超过50毫秒的卡顿只接收50毫秒位移，不在恢复帧补走整段停顿。
-    constexpr double response=.06;
-    const double step=std::min(static_cast<double>(delta),.05);
+    // 25毫秒速度响应降低转向拖曳；松杆也用同一解析积分收尾，不在死区边缘突然清零。
+    // 普通波动按完整游戏delta积分，避免超过50毫秒即变慢；大于100毫秒视为停顿，不补走。
+    constexpr double response=.025;
+    if(delta>.1f){cameraHold.stickVelocityX=cameraHold.stickVelocityY=0;}
+    const double step=delta>.1f?0.:static_cast<double>(delta);
     const double blend=-std::expm1(-step/response);
     const auto integrate=[&](double command,double& velocity) {
         const double difference=velocity-command;
@@ -326,10 +327,11 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     const bool specialCockpit=index==1 && (read<unsigned char>(reinterpret_cast<Addr>(component)+0x370) ||
                         read<Addr>(reinterpret_cast<Addr>(component)+0x378));
                     const float trackingWeight=read<float>(reinterpret_cast<Addr>(component)+(index==1?0x39c:0x3e0));
-                    if(cameraHold.holdEnabled && stick && axes && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer &&
+                    const bool stickTail=!stick && !axes && (std::abs(cameraHold.stickVelocityX)>.1 || std::abs(cameraHold.stickVelocityY)>.1);
+                    if(cameraHold.holdEnabled && ((stick && axes)||stickTail) && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer &&
                         !targetTracking && !specialCockpit && std::isfinite(trackingWeight) && trackingWeight>=0 && trackingWeight<=.0001f &&
                         std::isfinite(delta) && delta>0) {
-                        cameraHoldMoveStick(index,rawX,rawY,x,y,delta,outX,outY);
+                        cameraHoldMoveStick(index,stick?rawX:0.f,stick?rawY:0.f,x,y,delta,outX,outY);
                         // 位移已经按真实delta积分；原生delta*7取1，只消费本帧姿态一次，避免再次追近。
                         // 此分支没有目标注视/退出插值；特殊委托仍通过CameraHoldFrame归还真实delta。
                         cameraDelta=1.f/7.f;

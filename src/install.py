@@ -62,8 +62,8 @@ def main():
         if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
     settings = read_json(mod / 'profiles.json')
-    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14):
-        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至14，请先核对上一版启动后的配置')
+    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15):
+        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至15，请先核对上一版启动后的配置')
     sources = {'Scripts/' + name: root / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。

@@ -576,6 +576,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
+#include "view_target.hpp"
 #include "gun_salvo.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
@@ -938,6 +939,8 @@ extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return 
 extern "C" __declspec(dllexport) int dualsp_gun_salvo(void* luaState) {return gunSalvoLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_view_target(void* luaState) {return viewTargetLua(luaState);}
+extern "C" __declspec(dllexport) int dualsp_view_target_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_r3_hold_toggle_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
@@ -954,6 +957,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+            viewTarget.clear();
             salvoNeedRelease=salvoNeedRelease || gunSalvo.gun;salvoStopExtra();gunSalvo={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
