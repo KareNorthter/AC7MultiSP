@@ -1,5 +1,17 @@
 # 开发与恢复
 
+## 七机静态挂架碰撞保真修订（2026-10-20，源码候选）
+
+用户在2.24.0机库F-14A选择第二项SAAM后遇到NoCollision弹窗。日志实际已进入第三项预览，失败的是SFFS的SWP3。只读现场确认SWP1/2为0/NoCollision，SWP3为3/BlockAllDynamic；用户将第三项改为无兵装后，明确反馈LAAM＋SAAM模型正常且无新报错。这只确认该双挂，不扩大为F-14A全组合通过。用户另报F/A-18E、F/A-18E TGM类似错误，并要求一并检查本批。前三机旧证据已记录SWP3模板BodyInstance省略为None，旧接入却统一要求NoCollision；因此上轮仅延后开场接管不足以修复机库的稳定状态问题。原始快照仅留Temp，精简证据见`evidence/native-seven-collision-feedback.json`。
+
+逐项复核前三机11份和后续F-14D、F/A-18F、Su-33、Block III的8份静态副本，合计七机19份；从原版来源与转换后回读JSON确认，完整BodySetup/NavCollision的属性、Extra/cooked数据及引用均保持。旧来源丢失的前三机8项只读补提，后四机复用现存提取，不重取。`qualify_native_mount_collisions.py`生成新依据`evidence/native-seven-collision-preservation.json`，旧静态证据不改写。MiG-31B借位仍要求NoCollision；ASF-X/RKT后置不变。
+
+资源加载仅加载、登记并保有纯网格，不再把当前组件碰撞资格前置到加载阶段；真正绑定仍逐项检查。静态挂架绑定的NoCollision路径同时核对有效查询与BodyInstance存储模式，避免Actor临时关闭碰撞掩盖组件原配置。仅上述19项可使用碰撞保真路径：原生BlockAllDynamic/QueryAndPhysics不关闭，严格核对来源/派生包、BodySetup类型/父链/弱身份/编号、原生类尺寸及序列化GUID，要求bUseDefaultCollision关闭。再次暂停只读证明原生BodySetup尺寸0x3a0、GUID在0x2e0，且与资源字节一致；运行直接读16字节，不加入全局或对象内搜索。只读取证为定位当前GameInstance曾一次查表47524项，随后沿真实HangarManager/LoadedPlayerPlane读取；该查表工具不进入产品运行路径，没有写进程或调用游戏函数。
+
+`MountMeshOverride`仅多记碰撞保真标记。每次真正调用原生SetStaticMesh前后核对组件模式、Profile、ObjectType、碰撞响应字段及动态响应数组，稳定网格仍立即返回；配置变化即停止接管，不写BodyInstance、不调用碰撞模式/Profile修改接口、不改碰撞或导航数据。弹体跨池借位保持严格NoCollision，未扩展为通用碰撞放行。首次保真资源记录`MOUNT_COLLISION_PRESERVED`，纯资源名日志集合最多19项，不持有世界或机体、不新增逐帧扫描及Tick钩子。
+
+本轮基于上一源码候选`6af68de`，保留MiG-31B r3后移和暂停换机交接；版本及旧验收不变，当前安装仍2.24.0。与r3相比，28架196组合、74项资源名称与全部148资源成员保持，仅生成表增加19项碰撞资格及布局元数据。构建另核对保真依据和实际资源摘要，核心/Lua/资源表须成套。仅完成离线资源复核、源码静态审阅及Python语法解析，未编译、打PAK、编写/运行测试、安装或操作游戏；换网格前后守卫、预览、发射、归还、其他机体及性能均待后续实测。暂停换机黑屏不据本次碰撞取证扩大为已证明同因或已修复。
+
 ## 2.24.0黑屏反馈及MiG-31B r3（2026-10-20，源码候选）
 
 本轮从实际已安装候选的整合提交`fc84af2`接续，在独立分支`codex/native-sp-mount-feedback-r3`修改；保留其他线程的UI、布局及全部既有成果，不改整合工作树、主工作区、版本号或旧回执。18运行文件和PAK均与2.24.0安装回执一致。用户反馈MiG-31B上次后移看不出来，并报告任务换F-14A出现新错误后黑屏。

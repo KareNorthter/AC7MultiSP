@@ -89,6 +89,7 @@ struct MountVisual {
 };
 struct MountMeshOverride {
     MountIdentity component,original,replacement; // 只替换现成组件的弹体网格，保留原生挂点和父链。
+    bool preserveCollision{}; // 仅完整碰撞数据已核验的静态挂架，实际换网格前后复核配置。
 };
 struct MountExteriorBones;
 struct LightMountOwnership;
@@ -769,6 +770,7 @@ void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
 #include "mount_preview.hpp"
 #include "mount_animation_reflection_adapter.hpp"
 #include "static_mount_collision.hpp"
+#include "mount_rack_collision.hpp"
 #include "light_mount.hpp"
 #include "cfa_muzzle_visual.hpp"
 #include "f22_exterior_bones.hpp"

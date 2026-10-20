@@ -1,7 +1,8 @@
 // 新静态分区的只读碰撞资格；不修改原生碰撞设置。
 #pragma once
 
-void mountRequireNoCollision(Addr component) {
+unsigned mountStoredCollisionMode(Addr component);
+unsigned mountCollisionMode(Addr component,unsigned* noCollision=nullptr,unsigned* queryAndPhysics=nullptr) {
     using Reflection=MountAnimationReflection;
     struct Getter {
         Reflection api;
@@ -9,6 +10,7 @@ void mountRequireNoCollision(Addr component) {
         Reflection::Field result;
         MountIdentity enumeration;
         unsigned noCollision{};
+        unsigned queryAndPhysics{};
     };
     static Getter cached;
     const auto identity=mountIdentity(component);
@@ -19,6 +21,7 @@ void mountRequireNoCollision(Addr component) {
         next.result=next.api.field(next.function.identity.address,"ReturnValue","ByteProperty",1,next.function.size);
         next.enumeration=mountIdentity(Reflection::refValue<Addr>(next.api.enumRef,next.result.identity.address));
         next.noCollision=next.api.enumValue(next.enumeration.address,"ECollisionEnabled","NoCollision");
+        next.queryAndPhysics=next.api.enumValue(next.enumeration.address,"ECollisionEnabled","QueryAndPhysics");
         cached=next;
     }
     Reflection::alive(cached.function.identity);Reflection::alive(cached.result.identity);Reflection::alive(cached.enumeration);
@@ -27,10 +30,18 @@ void mountRequireNoCollision(Addr component) {
         "静态分区：碰撞查询参数布局改变");
     alignas(16) std::array<unsigned char,256> params{};
     cached.api.invoke(identity,cached.function,params.data());
-    if(params[cached.result.offset]!=cached.noCollision) {
+    if(noCollision)*noCollision=cached.noCollision;
+    if(queryAndPhysics)*queryAndPhysics=cached.queryAndPhysics;
+    return params[cached.result.offset];
+}
+void mountRequireNoCollision(Addr component) {
+    unsigned expected{};
+    const auto actual=mountCollisionMode(component,&expected);
+    if(actual!=expected) {
+        const auto identity=mountIdentity(component);
         nativeLog(Json{{"event","MOUNT_COLLISION_MISMATCH"},{"component",component},
-            {"index",identity.index},{"serial",identity.serial},{"actual",params[cached.result.offset]},
-            {"expected",cached.noCollision}}.dump());
+            {"component_name",mountName(component)},{"index",identity.index},{"serial",identity.serial},
+            {"actual",actual},{"stored",mountStoredCollisionMode(component)},{"expected",expected}}.dump());
         throw std::runtime_error("静态分区：原生挂架并非NoCollision，已停止外观接管");
     }
 }

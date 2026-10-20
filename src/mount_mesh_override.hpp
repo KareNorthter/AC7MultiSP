@@ -1,6 +1,9 @@
 // 用加载器公开的ProcessEvent接口替换弹体网格；不直接写渲染资源指针。
 #pragma once
 
+bool mountRequireRackCollision(Addr component,Addr original,Addr replacement);
+std::vector<unsigned char> mountPreservedCollisionSettings(Addr component);
+
 bool mountMeshIdentityEqual(const MountIdentity& a,const MountIdentity& b) {
     return a.address==b.address && a.index==b.index && a.serial==b.serial;
 }
@@ -98,9 +101,16 @@ void mountApplyMesh(MountMeshOverride item,bool replacement) {
     std::memcpy(params.data()+mountMeshSetter.meshOffset,&target,sizeof(target));
     mountMeshChanging=true;
     struct ResetChanging { ~ResetChanging() { mountMeshChanging=false; } } resetChanging;
+    std::vector<unsigned char> collisionBefore;
+    if(item.preserveCollision) {
+        mountRequireRackCollision(item.component.address,item.original.address,item.replacement.address);
+        collisionBefore=mountPreservedCollisionSettings(item.component.address);
+    }
     mountMeshSetter.process(reinterpret_cast<void*>(item.component.address),reinterpret_cast<void*>(mountMeshSetter.function.address),params.data());
     require(mountAlive(item.component) && params[mountMeshSetter.resultOffset]!=0 &&
         read<Addr>(item.component.address+0x728)==target,"弹体换位：原生SetStaticMesh拒绝替换");
+    if(item.preserveCollision)require(collisionBefore==mountPreservedCollisionSettings(item.component.address),
+        "静态挂架：原生换网格期间碰撞配置变化，已停止接管");
 }
 // 切换候选或重建模型池时，先归还新布局不再接管的组件；失败保留旧上下文重试。
 void mountRestoreUnusedMeshes(const FixedMountState& prior,const FixedMountState& next) {

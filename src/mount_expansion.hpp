@@ -83,10 +83,11 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         const int variant=plan.at("variants").at(pool).get<int>();
         if(variant>=0) {
             require(!skeletal,"局部机构：不能替换原生活动挂架");
-            if(definition.value("requires_no_collision",false))mountRequireNoCollision(rack);
             const auto asset=mountAssets.find(variant);
             require(asset!=mountAssets.end() && mountAlive(asset->second.identity),("扩展挂载：独立挂架未加载或已失效"+context+", variant="+std::to_string(variant)).c_str());
-            state.meshOverrides.push_back({rackIdentity,mountIdentity(original),asset->second.identity});
+            const bool preserve=definition.value("requires_no_collision",false) &&
+                mountRequireRackCollision(rack,original,asset->second.identity.address);
+            state.meshOverrides.push_back({rackIdentity,mountIdentity(original),asset->second.identity,preserve});
         }
         const Addr array=state.meshManager.address+0x150+pool*16;
         const int count=read<int>(array+8),expected=static_cast<int>(group.at("sockets").size());

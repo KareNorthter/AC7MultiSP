@@ -1,0 +1,69 @@
+{
+  "schema": 1,
+  "status": "root_cause_observed_source_fix_not_game_validated",
+  "installed_version": "2.24.0",
+  "observed_local": "2026-10-20 22:50及23:05机库SP选择页",
+  "screenshot_sha256": "352e4c58dda8e6e5685d56e619aece2f3d8636606bbccc319554672807c2013d",
+  "snapshots": {
+    "f14a-hangar-collision-live.json": "04c1020ca76777d45b424474fb7835e71fd311c298c0699ed3eed42c0ecf51a8",
+    "f14a-sffs-bodysetup-live.json": "2268c89b24fcf6ba9baad5c0e0492474e4a4147c64cb6831e9177c2aac002f8c",
+    "f14a-preserved-collision-identity-live.json": "a7e51b5db458123a0b0c2effe79d694c99c50f8ac40fc4d61dc65c14e56eed52"
+  },
+  "observed_components": {
+    "f14a": {
+      "SWP1": {
+        "mode": 0,
+        "profile": "NoCollision"
+      },
+      "SWP2": {
+        "mode": 0,
+        "profile": "NoCollision"
+      },
+      "SWP3": {
+        "mode": 3,
+        "profile": "BlockAllDynamic",
+        "weapon": "SFFS",
+        "bUseDefaultCollision": false
+      }
+    }
+  },
+  "user_feedback": [
+    "F-14A第二项选SAAM后弹窗；日志随后进入SP3预览，实际失败组件为SFFS的SWP3。",
+    "用户改第三项为无兵装，确认LAAM+SAAM模型正常且没有新报错；只据此认可该双挂反馈，不扩大为全机通过。",
+    "用户报告F/A-18E和F/A-18E TGM选择SP也有类似错误，明确要求检查本批并合并修复。"
+  ],
+  "root_cause": "前三机SWP3模板省略BodyInstance，旧静态证据保留None但接入前提仍统一要求NoCollision；运行保真资格缺失。F14A稳定机库实际模式3，说明仅延后开场接管不能修复此问题。",
+  "qualification": {
+    "aircraft": 7,
+    "static_variants": 19,
+    "full_collision_and_navigation_payloads_preserved": true,
+    "source": "evidence/native-seven-collision-preservation.json",
+    "body_guid_offset": 736,
+    "body_class_size": 928,
+    "one_time_readonly_object_lookup_count": 47524
+  },
+  "runtime_change": [
+    "纯资源加载与组件接管分开，删除加载阶段的NoCollision预检；实际绑定继续验证碰撞资格。",
+    "静态挂架绑定同时检查有效模式及组件存储模式，避免Actor暂时关闭碰撞掩盖组件真实模式。",
+    "仅19项完整碰撞保真资源接受原生BlockAllDynamic/QueryAndPhysics；核对原生包、派生包、BodySetup父链/弱身份/序号/尺寸/GUID及关闭自动覆盖碰撞配置。",
+    "每次真正调用原生SetStaticMesh前后对照组件模式、Profile、ObjectType、响应字段和动态响应数组，稳定网格不重复写入。",
+    "不写BodyInstance、不调用碰撞模式/Profile修改函数、不改碰撞或导航数据；跨池弹体借位仍只接受NoCollision。",
+    "不增加运行全局扫描、每帧资源/碰撞扫描或新Tick钩子；BodySetup GUID按已核实偏移直接读16字节。"
+  ],
+  "unchanged_aircraft": 28,
+  "unchanged_combinations": 196,
+  "unchanged_resource_names_and_bytes": 74,
+  "mig31b": "保留r3后移及严格NoCollision借位，不放宽其碰撞资格",
+  "asfx": "RKT相关后置范围不变",
+  "limits": [
+    "七机19副本均完成离线碰撞数据对照，不代表全部七机都已实采或游戏通过",
+    "原生暂停换机黑屏仍属于上一修订待复测；本轮确认的SFFS碰撞问题与之不能混为已证明同因",
+    "新原生换网格和归还的实际配置守卫、预览/发射/场景恢复、性能均待构建后用户验证"
+  ],
+  "compiled": false,
+  "tests_written_or_run": false,
+  "installed": false,
+  "game_operated": false,
+  "process_write": false,
+  "game_functions_called_by_evidence_tool": false
+}

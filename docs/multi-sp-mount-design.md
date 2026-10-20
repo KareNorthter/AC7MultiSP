@@ -1,5 +1,13 @@
 # 多 SP 挂载设计
 
+## 原生挂架存在碰撞时的静态分区（2026-10-20，待实测）
+
+F-14A机库现场明确SWP3/SFFS为BlockAllDynamic，SWP1/2为NoCollision。用户确认LAAM＋SAAM双挂正常；选SAAM后出现弹窗，是进入第三项SFFS预览触发，不能把该双挂标为失败。前三机原生SWP3模板都省略BodyInstance，不能将省略当作NoCollision；F/A-18E和TGM的相似反馈纳入同一修订。
+
+七机19份派生静态挂架已逐项对照原版与回读资源，BodySetup/NavCollision完整序列化数据和引用保持，见`evidence/native-seven-collision-preservation.json`。新资格允许登记资源保留原生BlockAllDynamic，仍核对来源包、BodySetup弱身份/父链/尺寸/GUID、关闭自动配置覆盖，并在真正换网格前后检查组件碰撞模式、Profile、ObjectType及响应不变。没有关闭或修改原生碰撞。其余资源及跨池弹体借位继续NoCollision门槛；数据不匹配即停止接管，不泛化为所有碰撞网格都能裁分。
+
+与MiG-31B r3源码候选相比，布局、配弹、Socket、动画、资源名称与148成员字节保持；只增加资格与事务守卫。十九份离线通过不代表七架全组合游戏通过；目前明确新增的用户认可仅F-14A的LAAM＋SAAM双挂。旧静态/观察证据保持原阶段含义，当前源码仍未编译、安装或实机验证，详见[开发说明](development.md)。
+
 ## MiG-31B r3及换机开场边界（2026-10-20，待实测）
 
 用户反馈r2追加后移1看不出来，本次r3在其基础上再后移4资源单位，高度不变。后腹sp13/sp14相对原生X减11、Z减2，新X=10.50264、Y=±4.6、Z=-16.98927；仅mask6/7改用r3同编号副本，前方LAAM、完整双PLSL、其他组合及单挂保持。各LOD几何、旋转和其他Socket不变，仍74资源/148成员；旧r1/r2和证据保留。此幅度尚未实机观察，不宣称穿插消失或支撑已通过。见`evidence/m31b-saam-offset-r3.json`。

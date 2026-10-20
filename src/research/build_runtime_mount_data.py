@@ -244,7 +244,29 @@ def build():
     append_m31b_offset(planes, assets, ROOT)
     apply_m31b_offset_r2(planes, assets, ROOT)
     apply_m31b_offset_r3(planes, assets, ROOT)
-    return {'planes':planes,'assets':assets}
+    proof_path=ROOT/'evidence/native-seven-collision-preservation.json'
+    collision=json.loads(proof_path.read_text(encoding='utf-8'))
+    if (collision['schema']!=1 or collision['status']!='offline_collision_payload_preserved_runtime_candidate'
+            or len(collision['entries'])!=19):
+        raise ValueError('七机碰撞保持依据不完整')
+    import hashlib
+    preserved=[]
+    for entry in collision['entries']:
+        report_path=ROOT/'evidence'/entry['source_receipt']
+        if hashlib.sha256(report_path.read_bytes()).hexdigest()!=entry['source_receipt_sha256']:
+            raise ValueError('原资源依据已变化，不能沿用碰撞资格')
+        plane=next(p for p in planes if p['code']==entry['aircraft'])
+        index=assets.index(entry['asset'])
+        used=[pool for pool,g in enumerate(plane['groups']) if g['rack']==entry['source']]
+        if len(used)!=1 or not any(p['variants'][used[0]]==index for p in plane['plans'][1:]):
+            raise ValueError('碰撞保持资源与原生挂架方案不符')
+        if not entry['collision_references_unchanged'] or not entry['complete_body_and_nav_exports_unchanged']:
+            raise ValueError('碰撞子对象或引用改变')
+        preserved.append({k:entry[k] for k in ('asset','source','source_package','body_name','body_number','body_guid')})
+    if collision['body_layout']['size']!=0x3a0 or collision['body_layout']['guid_offset']!=0x2e0:
+        raise ValueError('原生BodySetup布局依据改变')
+    return {'planes':planes,'assets':assets,'collision_preservation':preserved,
+            'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
 
 
 if __name__=='__main__':

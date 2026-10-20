@@ -43,7 +43,6 @@ loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成�
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
-local checkMountCollision=loadExport("dualsp_mount_collision_guard") -- 与核心成套；仍严格要求NoCollision。
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
 local lightMountAircraft={f22a=true,pkfa=true,dark=true,zoef=true,adf11f=true,fa44=true}
 local ensureMountAssets=nil
@@ -409,8 +408,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
             loadingIndex=entry[1]
             local pool=entry[3]
             assert(type(pool)=="number"and pool>=1 and pool<=3,"扩展挂架缺少目标组件编号")
-            local accepted,message=checkMountCollision(sourcePlane:GetAddress(),pool)
-            assert(accepted,message or "扩展挂架要求原生组件关闭碰撞")
+            -- 这里只加载和保有纯资源；碰撞资格属于实际绑定阶段，不能据未使用的挂架阻止预加载。
         end
         for _,entry in ipairs(needed)do
             loadingIndex=entry[1]

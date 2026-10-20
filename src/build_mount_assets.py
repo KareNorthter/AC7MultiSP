@@ -31,6 +31,10 @@ def build(source, output):
                     raise ValueError('同名历史副本与本轮资源来源或字节不符：' + name)
             reports[name] = report
     files = {}
+    collision=json.loads((ROOT/'evidence/native-seven-collision-preservation.json').read_text(encoding='utf-8'))
+    for entry in collision['entries']:
+        if reports[entry['asset']]['encoded_hashes']!=entry['encoded_hashes']:
+            raise ValueError('碰撞保持依据与实际打包资源字节不符：'+entry['asset'])
     for name in names:
         report = reports[name]
         if not all(report.get(k) is True for k in ('asset_roundtrip','renamed_ac7_roundtrip','all_exports_payload_preserved')):
