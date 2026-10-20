@@ -14,7 +14,7 @@ struct CameraHold {
     bool r3Gesture{},releaseHandled{}; // 整次按压及释放交接都接管，不能只吞第一个原生回调。
     bool centerKeySeeded{},centerKeyDown{};
     bool replaceR3{},padConnected{};
-    int centerKey{},sensitivity{100};
+    int centerKey{},sensitivity{100},autoCenterDegrees{30};
     unsigned nativeRequests{};
     bool frozenX{},frozenY{};
     bool poseValid{},viewTransfer{};
@@ -38,7 +38,7 @@ struct CameraHold {
     void clear() {
         allowed=false;heartbeat=0;plane={};input={};view={};focus={};cameras={};bindings=0;count=capacity=0;
         right=up=track=0;viewType=-1;cancelGesture();
-        centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;
+        centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;autoCenterDegrees=30;
         replaceR3=padConnected=false;
         padX=padY=0;resetPose();
     }
@@ -245,6 +245,21 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
                     const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
                     // 键鼠也从原生环视轴建立保持；模式键松开、轴归零后保存实际平滑姿态，不写死Alt。
+                    // 输入完全释放、尾值交接结束后再判断；不能在从中心向外环视时吸住镜头。
+                    // 三种普通视角共用环视参考角：水平±180°、垂直±90°，保持切视角语义一致。
+                    // 座舱最终输出还会经过原生机型边界/动画，此处不把归一化轴当作最终画面欧拉角。
+                    if(cameraHold.autoCenterDegrees>0 && cameraHold.armed && !cameraHold.centering &&
+                        !cameraHold.viewTransfer && !stick && !axes && !targetTracking &&
+                        !(index==1 && (read<unsigned char>(reinterpret_cast<Addr>(component)+0x370) || read<Addr>(reinterpret_cast<Addr>(component)+0x378))) &&
+                        (!cameraHold.releasedAt || now-cameraHold.releasedAt>50)) {
+                        const float trackingWeight=read<float>(reinterpret_cast<Addr>(component)+(index==1?0x39c:0x3e0));
+                        constexpr float pi=3.14159265358979323846f;
+                        const float yaw=std::clamp(x,-1.f,1.f)*pi,pitch=std::clamp(y,-1.f,1.f)*(pi*.5f);
+                        // 前向夹角使用圆锥判定，避免水平/垂直各小于阈值而对角线超界仍吸附。
+                        if(std::isfinite(trackingWeight) && trackingWeight>=0 && trackingWeight<=.0001f &&
+                            std::cos(yaw)*std::cos(pitch)>=std::cos(cameraHold.autoCenterDegrees*pi/180.f))
+                            cameraHoldCenter();
+                    }
                     float outX=rawX,outY=rawY;
                     if(cameraHold.centering) {
                         outX=outY=0;
@@ -454,15 +469,17 @@ int cameraHoldLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==6,"镜头保持参数数量无效");
+        require(api->top(luaState)==7,"镜头保持参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));const auto allowed=api->readInteger(luaState,2);
         const auto centerKey=api->readInteger(luaState,3),sensitivity=api->readInteger(luaState,4);
         const auto replaceR3=api->readInteger(luaState,5);
         const auto shortcutMask=api->readInteger(luaState,6);
+        const auto autoCenterDegrees=api->readInteger(luaState,7);
         require(allowed==0 || allowed==1,"镜头保持设置无效");
         require(centerKey==0 || centerKey==VK_MBUTTON || dualsp::supportedShortcutKey(static_cast<int>(centerKey)),"镜头回正键位无效");
         require(centerKey>=0 && centerKey<=255 && sensitivity>=5 && sensitivity<=200 && (replaceR3==0 || replaceR3==1),"镜头保持参数超出范围");
         require(shortcutMask>=0&&shortcutMask<=255,"镜头回中组合键占用信息无效");
+        require(autoCenterDegrees>=0 && autoCenterDegrees<=45,"自动回正阈值必须为0至45的整数");
         std::string reason;
         if(!allowed || !plane || !targetGazeFocused()){cameraHold.clear();cameraHold.error.clear();}
         else {
@@ -497,6 +514,7 @@ int cameraHoldLua(void* luaState) {
                     cameraHoldChangeView(view);
                     cameraHold.heartbeat=now;cameraHold.allowed=true;
                     cameraHold.sensitivity=static_cast<int>(sensitivity);
+                    cameraHold.autoCenterDegrees=static_cast<int>(autoCenterDegrees);
                     if(cameraHold.replaceR3!=(replaceR3==1))cameraHold.cancelGesture();
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);

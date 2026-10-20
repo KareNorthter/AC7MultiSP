@@ -55,12 +55,12 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=14; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=15; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true,draftGunSalvo=false;
 bool draftTargetGazePadL3=false,draftCameraHold=false;
 bool draftCameraR3=true;
 int draftTargetGazeKey=0,targetGazeResponse=0;
-int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
+int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100,draftCameraAutoCenterDegrees=30;
 bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
@@ -432,6 +432,7 @@ void loadManagementDraft() {
     draftCameraR3=state.at("camera_r3_enabled").get<bool>();
     draftCameraCenterKey=state.at("camera_center_key").get<int>();
     draftCameraSensitivity=state.at("camera_sensitivity").get<int>();
+    draftCameraAutoCenterDegrees=state.at("camera_auto_center_degrees").get<int>();
     draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
@@ -687,7 +688,7 @@ void saveManagementSettings() {
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
-        {"camera_r3_enabled",draftCameraR3},
+        {"camera_r3_enabled",draftCameraR3},{"camera_auto_center_degrees",draftCameraAutoCenterDegrees},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -733,7 +734,7 @@ void refreshState() {
             state.at("gun_salvo_enabled").get<bool>();
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
-            if(state.at("camera_hold").at("protocol").get<int>()!=5)throw std::runtime_error("镜头保持协议不匹配");
+            if(state.at("camera_hold").at("protocol").get<int>()!=6)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
@@ -743,6 +744,8 @@ void refreshState() {
                 !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("目标注视键位无效或重复");
             if(state.at("target_gaze").at("protocol").get<int>()!=2)throw std::runtime_error("目标注视协议不匹配");
+            if(!state.at("camera_auto_center_degrees").is_number_integer() || state.at("camera_auto_center_degrees").get<int>()<0 || state.at("camera_auto_center_degrees").get<int>()>45)
+                throw std::runtime_error("自动回正阈值必须为0至45的整数");
             shortcuts=checkedShortcuts;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
@@ -953,6 +956,7 @@ extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
