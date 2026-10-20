@@ -1,5 +1,9 @@
 # 证据分类索引
 
+## 两机用户确认正常（2026-10-21）
+
+[最新反馈](native-two-user-feedback-20261021.json)：用户确认MiG-31B和普通F/A-18E正常；当前2.25.1的19运行文件及77资源/154成员PAK与安装回执一致。TGM新布局仍待明确反馈，不扩大为全组合、任务或性能验收。旧反馈与回执保持。
+
 ## 当前2.25.1整合候选
 
 接收F-4E`65c52b6`、两机布局`98ca6aa`与暂停换机`1ddcc61`；19运行文件、77资源/154成员须成套。已成套构建、11项现有检查通过并从2.25.0升级安装；19运行文件及77资源/154成员PAK一致，个人配置15原字节、存档及其他Mod已备份保留。游戏安装前已关闭且未重启。交付见`evidence/2.25.1-integration.json`和`evidence/2.25.1-installed.json`。 新效果待用户验收。来源见[库存与交替](f04e-ugb-alternating-stock.json)、[两机布局](f18e-layout-feedback-r1.json)及[暂停菜单残留](aircraft-repeat-pause-restart.json)。旧回执保持原阶段含义。
