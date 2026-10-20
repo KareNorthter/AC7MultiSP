@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "user_feedback": "F4E正常了",
+  "status": "user_confirmed_normal",
+  "scope": "本次F-4E UGB＋SASM按库存显隐及左右交替分配修订，用户实测反馈正常。",
+  "source_context": {
+    "implementation_commit": "65c52b6",
+    "design_record": "evidence/f04e-ugb-alternating-stock.json",
+    "installed_version": null,
+    "installed_build_receipt": null
+  },
+  "boundary": "用户未逐项列出九枚、十枚、耗尽、装填、补给及检查点的测试明细，不补造逐项结果或精确安装字节绑定；不扩展为其他F4组合、其他机体或MiG35D新借位验收。",
+  "agent_actions": "仅记录反馈和同步说明，不改代码、资源、生成输入或旧回执，不编译、运行测试、安装、合main或发布。"
+}
