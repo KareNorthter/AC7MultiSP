@@ -28,6 +28,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
 bool managementDirty() {
     return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
+        draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
         draftAmmoPercentTwo!=state.at("ammo_percent_two").get<int>() || draftAmmoPercentThree!=state.at("ammo_percent_three").get<int>() ||
@@ -97,6 +98,10 @@ void drawCameraSettings() {
             "Off by default. When enabled, retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
         if(!draftCameraHold&&captureSlot==8)captureSlot=-1;
         if(draftCameraHold) {
+            ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
+            ImGui::SliderInt(tr("自动回正阈值###CameraAutoCenter","Auto recenter threshold###CameraAutoCenter"),&draftCameraAutoCenterDegrees,0,45,tr("%d 度","%d deg"),ImGuiSliderFlags_AlwaysClamp);
+            panelHelp("默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
+                "Default 30 degrees; 0 disables. After releasing look input, smoothly recenters inside the center cone and retains direction outside. Target tracking takes priority. Uses a shared look reference of +/-180 degrees horizontally and +/-90 vertically; cockpit output retains native limits and animation. Save to apply.");
             ImGui::Checkbox(tr("R3长按回中###CameraR3","Hold R3 to recenter###CameraR3"),&draftCameraR3);
             panelHelp("默认开启。R3短按松开切换视角；长按满0.3秒立即回中，松开不切视角；双摇杆只释放干扰弹。关闭此项则R3完全使用原生功能。回中会停止模组注视，实际按住Y/F仍可原生注视。",
                 "On by default. Release a short R3 press to change view; holding for 0.3 seconds recenters immediately without changing view. Both sticks only release countermeasures. Disabling restores fully native R3 behavior. Recentering stops mod tracking; native Y/F hold-to-track remains.");
