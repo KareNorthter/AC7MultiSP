@@ -13,7 +13,7 @@ struct CameraHold {
     bool ready{},seeded{},rightDown{},nativePress{},longDone{},combo{},pendingView{},centering{},waitNeutral{},armed{};
     bool r3Gesture{},releaseHandled{}; // 整次按压及释放交接都接管，不能只吞第一个原生回调。
     bool centerKeySeeded{},centerKeyDown{};
-    bool replaceR3{},padConnected{};
+    bool replaceR3{},padConnected{},holdEnabled{},toggleDone{},pendingToggle{};
     int centerKey{},sensitivity{100},autoCenterDegrees{30};
     unsigned nativeRequests{};
     bool frozenX{},frozenY{};
@@ -35,13 +35,14 @@ struct CameraHold {
     }
     void cancelGesture() {
         seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
+        toggleDone=pendingToggle=false;
         pressedAt=buttonReleasedAt=0;nativeRequests=0;
     }
     void clear() {
         allowed=false;heartbeat=0;plane={};input={};view={};focus={};cameras={};bindings=0;count=capacity=0;
         right=up=track=0;viewType=-1;cancelGesture();
         centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;autoCenterDegrees=30;
-        replaceR3=padConnected=false;
+        replaceR3=padConnected=holdEnabled=false;
         padX=padY=0;resetPose();
     }
 } cameraHold;
@@ -101,12 +102,12 @@ void cameraHoldChangeView(int view) {
     if(cameraHold.viewType==view)return;
     const int previousView=cameraHold.viewType;
     const auto target=cameraHoldGazeTarget();
-    const bool gaze=!cameraHold.centering && previousView>=0 && previousView<=2 && view>=0 && view<=2 &&
+    const bool gaze=cameraHold.holdEnabled && !cameraHold.centering && previousView>=0 && previousView<=2 && view>=0 && view<=2 &&
         cameraHoldSameTarget(cameraHold.gazeTarget,target) && continuousAlive(cameraHold.cameras[previousView]);
     const float weight=gaze?(cameraHold.gazeTransfer?cameraHold.gazeWeight:
         read<float>(cameraHold.cameras[previousView].address+(previousView==1?0x39c:0x3e0))):0;
     require(!gaze || (std::isfinite(weight) && weight>=0 && weight<=1.001f),"镜头注视交接进度超出原生范围");
-    const bool transfer=cameraHold.poseValid && cameraHold.armed && !cameraHold.centering &&
+    const bool transfer=cameraHold.holdEnabled && cameraHold.poseValid && cameraHold.armed && !cameraHold.centering &&
         cameraHold.viewType>=0 && cameraHold.viewType<=2 && view>=0 && view<=2;
     const float x=cameraHold.poseX,y=cameraHold.poseY;
     const bool centering=cameraHold.centering,waitNeutral=cameraHold.waitNeutral;
@@ -124,7 +125,7 @@ void cameraHoldChangeView(int view) {
     }
     if(cameraHold.r3Gesture) {
         // 已切换视角不能再执行本次手势，但不能提前放行剩余原生回调。
-        cameraHold.longDone=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;
+        cameraHold.longDone=cameraHold.toggleDone=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true;
     }else cameraHold.cancelGesture();
 }
 void cameraHoldCenter() {
@@ -164,12 +165,19 @@ void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float d
     // 松杆时重新采集实际姿态，包括原生飞行状态边界的钳位，不能保持预估姿态。
     cameraHold.frozenX=cameraHold.frozenY=false;
 }
+// 两级长按分别触发一次；200毫秒回中不终止2秒切换的计时。
+void cameraHoldResolveHold(ULONGLONG duration) {
+    if(cameraHold.combo)return;
+    if(duration>=200 && !cameraHold.longDone){cameraHold.longDone=true;cameraHoldCenter();}
+    if(duration>=2000 && !cameraHold.toggleDone){cameraHold.toggleDone=true;cameraHold.pendingToggle=true;}
+}
 void cameraHoldResolveRelease() {
     if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled)return;
     cameraHold.releaseHandled=true;
-    if(cameraHold.longDone || cameraHold.combo)return;
-    if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<300)cameraHold.pendingView=true;
-    else {cameraHold.longDone=true;cameraHoldCenter();} // 跨过阈值才松开时补回中，不能兼触短按。
+    if(cameraHold.combo)return;
+    const auto duration=cameraHold.buttonReleasedAt-cameraHold.pressedAt;
+    if(duration<200 && !cameraHold.longDone)cameraHold.pendingView=true;
+    else cameraHoldResolveHold(duration); // 跨过阈值才松开时补触发，不能兼触短按。
 }
 void cameraHoldObserveCenterKey(int key,unsigned shortcutMask) {
     if(cameraHold.centerKey!=key){cameraHold.centerKey=key;cameraHold.centerKeySeeded=false;}
@@ -198,23 +206,23 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     const auto now=GetTickCount64();
     if(!cameraHold.seeded) {
         cameraHold.seeded=true;cameraHold.rightDown=right;
-        cameraHold.nativePress=false;cameraHold.longDone=right; // 已按住的旧边沿不补发。
+        cameraHold.nativePress=false;cameraHold.longDone=cameraHold.toggleDone=right; // 已按住的旧边沿不补发。
         cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;cameraHold.combo=right || (buttons&XINPUT_GAMEPAD_LEFT_THUMB);
         return;
     }
     if(right && !cameraHold.rightDown) {
-        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=false;cameraHold.pendingView=false;
+        cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=cameraHold.toggleDone=false;cameraHold.pendingView=false;
         cameraHold.r3Gesture=true;cameraHold.releaseHandled=false;cameraHold.buttonReleasedAt=0;cameraHold.nativeRequests=0;
     }
     if(both && !cameraHold.combo) {
-        cameraHold.combo=true;cameraHold.pendingView=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
+        cameraHold.combo=true;cameraHold.pendingView=cameraHold.pendingToggle=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
     }
     if(!right && cameraHold.rightDown)cameraHold.buttonReleasedAt=now;
     cameraHold.rightDown=right;
     cameraHoldResolveRelease(); // 释放后的重复回调仍属于同次按压。
     if(!right && !(buttons&XINPUT_GAMEPAD_LEFT_THUMB))cameraHold.combo=false; // 组合锁定至两边都松开。
 }
-// 整次R3按压的视角请求隔离；短按松开只派发一次原生换视角，长按满300毫秒只回中。
+// 整次R3按压的视角请求隔离；短按松开只派发一次原生换视角，满200毫秒回中，满2秒另请求切换保持开关。
 // 原生动作没有FKey，按压期间及短暂释放交接中的混合换视角输入也归本次R3处理。
 void cameraHoldViewPressed(void* object) {
     if(!cameraHoldLive() || !cameraHold.replaceR3 || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
@@ -248,7 +256,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
     cameraHoldFrame={};
     float cameraDelta=delta;
     try {
-        if(cameraHoldLive() && (index==cameraHold.viewType || (continuousAlive(cameraHold.view) && read<unsigned char>(cameraHold.view.address+0x350)==index)) &&
+        if(cameraHoldLive() && (cameraHold.holdEnabled || cameraHold.centering) && (index==cameraHold.viewType || (continuousAlive(cameraHold.view) && read<unsigned char>(cameraHold.view.address+0x350)==index)) &&
             reinterpret_cast<Addr>(component)==cameraHold.cameras[index].address &&
             reinterpret_cast<Addr>(actor)==cameraHold.plane.address && cameraHoldIdentities() &&
             continuousAlive(cameraHold.cameras[index])) {
@@ -277,7 +285,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     // 原生输出将环视姿态与目标方向插值。保留环视基底，避免先归零再转向目标。
                     // 输入轴处理不覆盖跟踪轴；换视角时的注视缓存交接由下方输出入口单独处理。
                     if(!stick && !axes)cameraHold.waitNeutral=false;
-                    if((stick || axes) && !cameraHold.waitNeutral) {cameraHold.centering=false;cameraHold.armed=true;}
+                    if(cameraHold.holdEnabled && (stick || axes) && !cameraHold.waitNeutral) {cameraHold.centering=false;cameraHold.armed=true;}
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
                     const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
                     // 键鼠也从原生环视轴建立保持；模式键松开、轴归零后保存实际平滑姿态，不写死Alt。
@@ -318,7 +326,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     const bool specialCockpit=index==1 && (read<unsigned char>(reinterpret_cast<Addr>(component)+0x370) ||
                         read<Addr>(reinterpret_cast<Addr>(component)+0x378));
                     const float trackingWeight=read<float>(reinterpret_cast<Addr>(component)+(index==1?0x39c:0x3e0));
-                    if(stick && axes && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer &&
+                    if(cameraHold.holdEnabled && stick && axes && cameraHold.armed && !cameraHold.centering && !cameraHold.viewTransfer &&
                         !targetTracking && !specialCockpit && std::isfinite(trackingWeight) && trackingWeight>=0 && trackingWeight<=.0001f &&
                         std::isfinite(delta) && delta>0) {
                         cameraHoldMoveStick(index,rawX,rawY,x,y,delta,outX,outY);
@@ -363,6 +371,7 @@ void cameraHoldSpecial(void* c,float d,void* a,void* v) {
 
 // 输出钩子也可在首次可见帧发现换视角，不能等待20毫秒Lua调度或假定输入更新先到。
 bool cameraHoldGazeOutputReady(Addr component,bool cockpit) {
+    if(!cameraHold.holdEnabled)return false;
     if(!cameraHold.gazeTransfer) {
         if(!cameraHold.gazeTarget.address)return false;
         if(cameraHold.viewType>=0 && cameraHold.viewType<=2 && component==cameraHold.cameras[cameraHold.viewType].address)return false;
@@ -513,12 +522,14 @@ int cameraHoldLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==7,"镜头保持参数数量无效");
+        require(api->top(luaState)==8,"镜头保持参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));const auto allowed=api->readInteger(luaState,2);
         const auto centerKey=api->readInteger(luaState,3),sensitivity=api->readInteger(luaState,4);
         const auto replaceR3=api->readInteger(luaState,5);
         const auto shortcutMask=api->readInteger(luaState,6);
         const auto autoCenterDegrees=api->readInteger(luaState,7);
+        const auto holdEnabled=api->readInteger(luaState,8);
+        require(holdEnabled==0 || holdEnabled==1,"镜头保持设置无效");
         require(allowed==0 || allowed==1,"镜头保持设置无效");
         require(centerKey==0 || centerKey==VK_MBUTTON || dualsp::supportedShortcutKey(static_cast<int>(centerKey)),"镜头回正键位无效");
         require(centerKey>=0 && centerKey<=255 && sensitivity>=5 && sensitivity<=200 && (replaceR3==0 || replaceR3==1),"镜头保持参数超出范围");
@@ -555,6 +566,8 @@ int cameraHoldLua(void* luaState) {
                     if(cameraHold.heartbeat.load() && now-cameraHold.heartbeat.load()>500) {
                         cameraHold.resetPose();cameraHold.cancelGesture();cameraHold.centerKeySeeded=false;
                     }
+                    if(cameraHold.holdEnabled!=(holdEnabled==1))cameraHold.resetPose(); // 保留本次R3手势，避免切换后重复计时。
+                    cameraHold.holdEnabled=holdEnabled==1;
                     cameraHoldChangeView(view);
                     cameraHold.heartbeat=now;cameraHold.allowed=true;
                     cameraHold.sensitivity=static_cast<int>(sensitivity);
@@ -562,11 +575,10 @@ int cameraHoldLua(void* luaState) {
                     if(cameraHold.replaceR3!=(replaceR3==1))cameraHold.cancelGesture();
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
-                    cameraHoldObserveCenterKey(static_cast<int>(centerKey),static_cast<unsigned>(shortcutMask));
-                    // 300毫秒按实际时间计，回中在游戏线程立即执行一次，松开不再换视角。
-                    if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=300) {
-                        cameraHold.longDone=true;cameraHoldCenter();
-                    }
+                    if(cameraHold.holdEnabled)cameraHoldObserveCenterKey(static_cast<int>(centerKey),static_cast<unsigned>(shortcutMask));
+                    else cameraHold.centerKeySeeded=false;
+                    if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.combo)
+                        cameraHoldResolveHold(GetTickCount64()-cameraHold.pressedAt);
                     if(cameraHold.replaceR3 && cameraHold.pendingView && !cameraHold.combo) {
                         cameraHold.pendingView=false;cameraHold.longDone=true;
                         nativeLog("CAMERA_HOLD_R3_SHORT_VIEW");
@@ -582,10 +594,12 @@ int cameraHoldLua(void* luaState) {
                 }
             }
         }
-        api->boolean(luaState,true);api->boolean(luaState,cameraHold.allowed.load());api->string(luaState,reason.data(),reason.size());return 3;
+        const bool toggle=cameraHold.pendingToggle;cameraHold.pendingToggle=false;
+        api->boolean(luaState,true);api->boolean(luaState,cameraHold.allowed.load() && cameraHold.holdEnabled);
+        api->string(luaState,reason.data(),reason.size());api->boolean(luaState,toggle);return 4;
     }catch(const std::exception& error) {
         const std::string reason=error.what();cameraHoldFailure(reason.c_str());
-        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,reason.data(),reason.size());return 3;}
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,reason.data(),reason.size());api->boolean(luaState,false);return 4;}
         return 0;
     }
 }
