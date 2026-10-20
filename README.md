@@ -1,6 +1,6 @@
 # AC7MultiSP
 
-当前 **2.23.0整合候选**位于`Temp/integration-2.23.0`，分支`codex/integration-2.23.0`，基于正式main/2.21.1接续已安装2.22.0。新增F-14D、F/A-18F、Su-33、F/A-18F Block III运行接入，四机各七组合，73资源/146成员须与核心及Lua成套。管理15/配置14/注视2/镜头7/换机2保持；原24架布局与65项资源字节/编号不变。当前正在构建与安装，结果以`evidence/2.23.0-integration.json`及`evidence/2.23.0-installed.json`为准。正式main/已验收发布仍2.21.1；2.22.0已于2026-10-20安装，旧权限阻塞只属前次尝试。实机效果待用户验收，MiG-31B按用户要求暂缓，不合main、不发布或上传。
+当前 **2.23.0整合候选**位于`Temp/integration-2.23.0`，分支`codex/integration-2.23.0`，基于正式main/2.21.1接续已安装2.22.0。新增F-14D、F/A-18F、Su-33、F/A-18F Block III运行接入，四机各七组合，73资源/146成员须与核心及Lua成套。管理15/配置14/注视2/镜头7/换机2保持；原24架布局与65项资源字节/编号不变。已成套构建、11项现有检查通过并由2.22.0升级安装；18运行文件及73资源/146成员PAK核对一致，个人配置、存档及其他Mod已备份并核验。交付见`evidence/2.23.0-integration.json`及`evidence/2.23.0-installed.json`。正式main/已验收发布仍2.21.1；2.22.0已于2026-10-20安装，旧权限阻塞只属前次尝试。实机效果待用户验收，MiG-31B按用户要求暂缓，不合main、不发布或上传。
 
 在《皇牌空战7》单人任务中选择1至3种特殊兵装，分别保留弹药和装填，提供原生选装/HUD、中英文管理及部分机体的多SP模型。
 
@@ -69,9 +69,9 @@ Su-47、Su-57 TGM、X-02S保留多SP兵装功能，模型/动画按当前SP原�
 
 ## 使用与交付
 
-本分支另有 **2.21.1机炮齐射源码候选**：默认关闭，按住原生机枪动作联动方案内已核对的MGP或PLSL，松开恢复先前选择；管理开关及可改的Ctrl+Alt+F5已接入。用户只读协助采集MiG-21bis/Su-57原生依据，候选未编译、测试或安装；HGP及多种不同SP并发不支持。见[开发说明](docs/development.md#机炮齐射源码候选2211)和[设计边界](docs/architecture.md#机炮齐射源码候选2211未编译)。正式发布仍为2.21.0，本机已测/安装仍为2.20.3。
+本分支当前交付2.23.0候选，已从本机2.22.0完整升级安装。新增四机的双/三SP外观、切换、发射、补给及任务重开待用户实测，重点观察Block III活动架展开和离架；MiG-31B按用户要求暂缓。正式main和本地发布仍2.21.1，验收后再办理正式接收，不把源码接入或自动检查等同于游戏验收。
 
-- [本地发布包2.21.0](Release/AC7MultiSP-2.21.0.zip)
+- [正式本地发布包2.21.1](Release/AC7MultiSP-2.21.1.zip)
 - [中文ReadMe及安装](docs/README_zh-CN.txt) · [English ReadMe](docs/README_en.txt)
 - [开发与恢复](docs/development.md) · [架构](docs/architecture.md) · [挂载设计与经验](docs/multi-sp-mount-design.md)
 - [证据索引](evidence/README.md) · [历史研究与回退](docs/archive/README.md)

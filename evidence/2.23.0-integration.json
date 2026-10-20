@@ -21,9 +21,9 @@
     "camera": 7,
     "aircraft": 2
   },
-  "compiled": false,
-  "tests_run": false,
-  "installed": false,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
@@ -33,5 +33,19 @@
     "Block III上层朝向与展开时序待游戏确认",
     "MiG-31B按用户要求暂缓，观察布局与借位限制不改",
     "ASF-X/RKT、F104C、MiG21bis和其他既有待办保持"
-  ]
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "72718044f799c435f977f69f06c5fba97a0b5468",
+  "build_dir": "Temp/build-2.23.0-candidate",
+  "build_receipt_sha256": "077ea8f0bbac1e1e2705eea76b1fbd623f013debeb2dbda1c5de105d14b2b4a9",
+  "test_receipt_sha256": "aa832b4be4ca9809c6dd4d6f50f0c36db70de1b244f3b7fdbf69db7d4487ce0d",
+  "install_receipt_sha256": "e6ac9e7eaaadba44d1af9ad79a5a0df7f57d43d43b4bd17d800a83b20d4b0b94",
+  "installed_at": "2026-10-20T20:07:41.582814+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.23.0\\backup\\AC7MultiSP-20261020-200741-582814",
+  "protected_files_verified": 314,
+  "runtime_files_verified": 18,
+  "preserved_mod_files_verified": 25,
+  "save_backup_file_count": 13,
+  "source_patch_scope": "保留2.22.0的MiG35D整组借位及F4E模型容量，仅追加四机运行接入",
+  "first_attempt": "evidence/2.23.0-first-install-attempt.json"
 }

@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "version": "2.23.0",
+  "installed": false,
+  "phase": "before_game_file_exchange",
+  "error": "新建整合工作区缺少backup根目录，contained严格路径校验停止",
+  "game_runtime_and_mount_unchanged": true,
+  "correction": "已补齐受忽略的工作区backup根目录，重试同一冻结构建，不修改安装器或旧回执",
+  "build_unchanged": true
+}
