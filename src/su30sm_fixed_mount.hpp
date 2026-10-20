@@ -676,6 +676,11 @@ bool mountShowReserve(MountAircraft aircraft,unsigned kindsMask,int kind) {
     return (aircraft==MountAircraft::Su30sm && ((kindsMask==6 && kind==1) || (kindsMask==4 && kind==2))) ||
         (aircraft==MountAircraft::F15e && kind==1) || (aircraft==MountAircraft::F35c && kind==1);
 }
+// 模型容量独立于实际库存；只作用于方案明确登记的外观，不改变弹药或发射队列。
+bool mountModelCapacityIndependent(MountAircraft aircraft,unsigned kindsMask,int kind) {
+    return mountExpanded(aircraft) &&
+        (mountExpansionPlan(aircraft,kindsMask).value("model_capacity_mask",0u)&(1u<<kind))!=0;
+}
 void mountBindVisuals(FixedMountState& state,Addr plane,Addr activator) {
     const auto aircraft=state.aircraft;const auto kindsMask=state.kindsMask;
     state.rackOffsets=mountSpecification(aircraft).rackOffsets;state.poolCounts=mountSpecification(aircraft).poolCounts;
@@ -768,7 +773,7 @@ void fixedMountRestoreOrder(const Group& saved,int next) {
     if(count<=0 || count>static_cast<int>(fixedMount.order.size()))return; // 未适配大队列不影响兵装恢复，视觉接入另行拒绝。
     for(int index=0;index<count;++index)fixedMount.order[index]=saved.slots[(next+index)%count].mountOrdinal;
 }
-// 根据真实弹药、装填窗口和备用弹占位聚合显示；未激活 SP 使用游戏时间推进。
+// 按登记的模型容量、装填窗口及备用位置聚合；实际弹药不被改写，未激活SP按游戏时间推进。
 void fixedMountRefresh(double time) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(!fixedMount.bound || mountPreviewOwnsTask())return;
@@ -793,9 +798,10 @@ void fixedMountRefresh(double time) {
         require(group.slots.size()==static_cast<size_t>(count) && ammo>=-1 && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
         require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
         const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
-        const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 显示实际库存中的备用弹，不表示同时可发射。
+        const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 备用弹或独立容量外观不表示同时可发射。
         const int visualLimit=showReserve?count:window; // 显示范围不改变原生装填窗口。
-        const int available=ammo<0?visualLimit:std::min(visualLimit,ammo); // 最后一发仍只分配一个物理位置。
+        const bool independentModels=mountModelCapacityIndependent(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]);
+        const int available=(independentModels || ammo<0)?visualLimit:std::min(visualLimit,ammo); // 明确登记的模型不因库存不足而减位。
         uint64_t weaponMask=0,readyWindow=0,vacancies=0; // 备用库存、实际待发弹和刚发射空位分别聚合。
         for(int distance=0;distance<available;++distance) {
             const Slot& slot=group.slots[(cursor+distance)%count]; // 窗口中的一个逻辑弹位。

@@ -41,9 +41,13 @@ void mountExpansionPositions(FixedMountState& state) {
         // 用户指定的MiG-31B观察方案：仅借后腹LAAM原点给SAAM；前腹仍可由LAAM使用。
         const bool m31Belly=state.aircraft==MountAircraft::M31b && (state.kindsMask==6 || state.kindsMask==7) &&
             kind==1 && pool==0 && (socket==2 || socket==3);
-        require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)) &&
+        require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)),
+            "扩展借位：逻辑兵装或供位池无效");
+        const bool fullBorrow=(plan.value("full_borrowed_kinds",0u)&(1u<<kind))!=0;
+        // 旧借位保持原门槛；整组迁位须显式登记，供位池可选中，但每个Socket只能分配一次。
+        require(fullBorrow?selected.at(kind).empty():
             (m31Belly || (!(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty())),
-            "扩展借位：供位池已选中或缺少本兵装原位，且不属于指定观察方案");
+            "扩展借位：未登记整组迁位或原生来源位置缺失");
         const auto& provider=mountExpansionDefinition(state.aircraft).at("groups").at(pool);
         require(!provider.at("fixed").get<bool>() && !mountExpansionDefinition(state.aircraft).at("groups").at(kind).at("fixed").get<bool>() &&
             socket>=0 && socket<static_cast<int>(provider.at("sockets").size()),
@@ -133,7 +137,13 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         const auto identity=mountIdentity(target);
         mountRequireNoCollision(target); // 只读守卫；不改借用组件的碰撞设置。
         Addr source{};
-        if(state.expansionPools[kind].front()==kind)source=state.physical[state.expansionPositions[kind].front()];
+        if((plan.value("full_borrowed_kinds",0u)&(1u<<kind))!=0) {
+            // MiG-35D整组迁位仍从已核验的本兵装原生组件取网格。
+            for(const auto& visual:state.visuals)if(visual.pool==kind && visual.index>=0) {
+                source=visual.identity.address;break;
+            }
+            require(source!=0,"扩展借位：整组迁位缺少原生弹体网格来源");
+        } else if(state.expansionPools[kind].front()==kind)source=state.physical[state.expansionPositions[kind].front()];
         else {
             // SAAM原生池只作本网格来源；不使用供位LAAM网格，也不修改原生射击队列。
             require(state.aircraft==MountAircraft::M31b && kind==1 && state.poolCounts[kind]==2 &&

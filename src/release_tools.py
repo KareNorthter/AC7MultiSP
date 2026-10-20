@@ -89,6 +89,8 @@ def source_snapshot(root=ROOT):
         'evidence/static-expansion-2.12.0.json','evidence/static-expansion-2.13.0.json','evidence/static-expansion-2.14.0.json',
         'evidence/static-mount-five-aircraft-review.json',
         'evidence/static-mount-five-aircraft-feedback.json',
+        'evidence/f04e-ugb-model-capacity.json',
+        'evidence/m35d-inner-4agm-layout.json',
         'evidence/sp-combination-static-split-experiment.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 

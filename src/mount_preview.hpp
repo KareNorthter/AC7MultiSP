@@ -48,7 +48,7 @@ bool mountOuterContains(Addr object,Addr expected) {
     }
     return false;
 }
-// 按任务满载规则聚合，限于实际持久位置；没有创建额外弹体。
+// 按各组模型容量策略聚合，限于已有持久位置；不创建可发射弹药。
 uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
     require(count>=1 && count<=3,"模型预览：槽数无效");
     if(mountExterior(state.aircraft))return mountExteriorPreviewMask(state,kinds,ammo,count);
@@ -59,7 +59,8 @@ uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int
         require(kind>=0 && kind<3 && ammo[slot]>=0 && ammo[slot]<=100000,"模型预览：配弹参数无效");
         if((state.aircraft==MountAircraft::F15e && kind==2) || mountFixedEmitter(state.aircraft,kind))continue; // TLS 的空网格不是导弹，炮体由挂架显示。
         const int limit=mountShowReserve(state.aircraft,state.kindsMask,kind)?specification.logicalCounts[kind]:specification.loadedCounts[kind];
-        for(int ordinal=0;ordinal<std::min(limit,ammo[slot]);++ordinal)result|=uint64_t{1}<<mountPhysical(state,kind,ordinal);
+        const int visible=mountModelCapacityIndependent(state.aircraft,state.kindsMask,kind)?limit:std::min(limit,ammo[slot]);
+        for(int ordinal=0;ordinal<visible;++ordinal)result|=uint64_t{1}<<mountPhysical(state,kind,ordinal);
     }
     return result;
 }

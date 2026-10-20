@@ -6,6 +6,50 @@ ROOT = Path(__file__).resolve().parents[2]
 CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn','su35','su37','f04e','f14atg','j39e','su30','su34','m29a','f16x','m35d']
 LAYOUT_REVIEW = 'evidence/static-mount-five-aircraft-review.json'
 LAYOUT_FEEDBACK = 'evidence/static-mount-five-aircraft-feedback.json'
+MODEL_CAPACITY = 'evidence/f04e-ugb-model-capacity.json'
+M35D_INNER_AGM = 'evidence/m35d-inner-4agm-layout.json'
+
+
+def apply_m35d_size_priority(planes, assets):
+    """4AGM优先原生内侧，SAAM借空闲外侧导轨；仅覆盖两个明确组合。"""
+    record = json.loads((ROOT/M35D_INNER_AGM).read_text(encoding='utf-8'))
+    if record['schema'] != 1 or record['code'] != 'm35d' or assets != record['baseline_assets']:
+        raise ValueError('MiG35内侧4AGM修订的机体或资源基线不符')
+    plane = next(p for p in planes if p['code'] == 'm35d')
+    seen = set()
+    for item in record['plan_overrides']:
+        mask = item['mask']
+        if mask not in (5,7) or mask in seen or plane['plans'][mask] != item['expected_plan']:
+            raise ValueError('MiG35内侧4AGM修订的原方案已变化或组合重复')
+        seen.add(mask)
+        plan = item['replacement_plan']
+        wanted_borrowed = [{'kind':0,'pool':1,'socket':i} for i in ([0,1] if mask == 5 else [1])]
+        if (set(plan) != {'selected','racks','variants','borrowed_positions','full_borrowed_kinds'} or
+                plan['selected'] != [[], [] if mask == 5 else [0], [2,3]] or
+                plan['racks'] != 6 or plan['full_borrowed_kinds'] != 1 or
+                plan['borrowed_positions'] != wanted_borrowed or plan['variants'] != [
+                    -1, assets.index('MSP_m35d_6aam_outer_pair'), assets.index('MSP_m35d_4agm_inner_pair')]):
+            raise ValueError('MiG35迁位必须保原内侧4AGM及不重复的最外空空弹位置')
+        if plane['groups'][1]['sockets'][:2] != ['sp21','sp22'] or plane['groups'][2]['sockets'][2:] != ['sp33','sp34']:
+            raise ValueError('MiG35借位原生Socket表已变化')
+        plane['plans'][mask] = plan
+    if seen != {5,7}:
+        raise ValueError('MiG35内侧4AGM修订遗漏组合')
+
+
+def apply_model_capacity(planes):
+    """登记用户明确要求的独立模型容量，不改站位、资源或实际配弹。"""
+    record = json.loads((ROOT/MODEL_CAPACITY).read_text(encoding='utf-8'))
+    item = record['override']
+    if record['schema'] != 1 or (item['code'], item['mask'], item['model_capacity_mask']) != ('f04e',5,1):
+        raise ValueError('独立模型容量登记超出F4的UGB＋SASM范围')
+    plane = next(p for p in planes if p['code'] == item['code'])
+    plan = plane['plans'][item['mask']]
+    if plan != item['expected_plan'] or plane['groups'][0]['sockets'] != item['expected_ugb_sockets']:
+        raise ValueError('F4独立模型容量的原生布局已变化，须先复核')
+    if len(plan['selected'][0]) != 12 or plane['groups'][0]['fixed'] or plane['groups'][0]['launcher']:
+        raise ValueError('F4独立模型容量必须对应十二个UGB原生弹体位置')
+    plan['model_capacity_mask'] = item['model_capacity_mask']
 
 
 def apply_layout_review(planes, assets, source, targets):
@@ -181,6 +225,8 @@ def build():
         raise ValueError('新增资源编号顺序与追加清单不符')
     apply_layout_review(planes, assets, LAYOUT_REVIEW, {('m35d',3),('m35d',5),('m35d',6),('fa27',3)})
     apply_layout_review(planes, assets, LAYOUT_FEEDBACK, {('f15m',3),('f15m',7)})
+    apply_model_capacity(planes)
+    apply_m35d_size_priority(planes, assets)
     if __package__:
         from .native_static_batch_data import append_native_static_batch
     else:
