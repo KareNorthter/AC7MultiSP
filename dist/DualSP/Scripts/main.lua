@@ -1,4 +1,4 @@
--- AC7MultiSP 2.25.0候选：视角选目标/白点、Mod涂装SP及七机碰撞保真与换机交接整合，待实测。
+-- AC7MultiSP 2.25.1源码候选：暂停换机走原生关菜单/恢复入口，避免菜单暂停原因跨重开残留；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -1198,7 +1198,20 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     prepare=function()
         local pause=managementPause
         local fromNativePause=pause and pause.existing and not pause.owned
-        if fromNativePause then assert(existingManagementPauseValid(pause),"原生暂停身份已变化，未发出重开请求")end
+        local resumeManager=nil
+        if fromNativePause then
+            assert(existingManagementPauseValid(pause),"原生暂停身份已变化，未发出重开请求")
+            -- SetGamePaused只改世界暂停，不能撤销GI暂停管理器保留的菜单原因；必须走原生关菜单/恢复路径。
+            for _,name in ipairs({"/Script/Nimbus.UIManagerActor:GetCurrentUIManagerActor",
+                "/Script/Nimbus.UIManagerActor:CloseMenuAndResumePlay"})do
+                assert(valid(StaticFindObject(name)),"原生暂停菜单交接接口缺失："..name)
+            end
+            local defaultManager=StaticFindObject("/Script/Nimbus.Default__UIManagerActor")
+            assert(valid(defaultManager),"原生暂停菜单管理器缺失")
+            resumeManager=defaultManager:GetCurrentUIManagerActor()
+            assert(valid(resumeManager)and valid(resumeManager:GetWorld())
+                and resumeManager:GetWorld():GetAddress()==pause.world,"原生暂停菜单不属于当前换机世界")
+        end
         setPanel(false)
         assert(not panelOpen and not managementPause and not managementPauseError,"管理界面暂停没有归还，未发出重开请求")
         if fromNativePause then
@@ -1214,31 +1227,23 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         ok,err=nativeRuntimeGate(1);assert(ok,err)
         resetCheckpointState();resetFlightTracking()
         return function(owner)
-            local released=false
-            local restarted,restartError=pcall(function()
-                if fromNativePause then
-                    -- 只在明确应用换机、目标已核对后交接同一原生暂停；关闭或取消F6仍保留暂停。
-                    assert(existingManagementPauseValid(pause),"重开前原生暂停身份已变化")
-                    local accepted=game:SetGamePaused(pause.settings,false)
-                    released=not valid(pause.settings.Pauser)
-                    assert(accepted==true and released and not game:IsGamePaused(pause.settings),"原生暂停未完成交接，未重开任务")
-                    note("DEBUG_AIRCRAFT_NATIVE_PAUSE_RELEASED world="..pause.world)
-                end
-                owner:RestartLevel() -- 不带着旧世界暂停直接进入新任务的黑屏开场。
-            end)
-            if not restarted then
-                -- 原生调用若拒绝且仍在原世界，按原生接口恢复本次刚交接的暂停；不影响新世界。
-                if released and valid(pause.settings)and valid(pause.settings:GetWorld())
-                    and pause.settings:GetWorld():GetAddress()==pause.world and valid(plane)
-                    and valid(plane:GetWorld())and plane:GetWorld():GetAddress()==pause.world
-                    and not valid(pause.settings.Pauser)then
-                    local restored,restoreError=pcall(function()
-                        assert(game:SetGamePaused(pause.settings,true)==true and valid(pause.settings.Pauser),"原生暂停恢复失败")
-                    end)
-                    if not restored then note("DEBUG_AIRCRAFT_PAUSE_ROLLBACK_ERROR "..tostring(restoreError))end
-                end
-                error(restartError)
+            local targetId,targetWeapon=instance:GetSelectedPlaneID(),instance:GetSelectedPlaneSWP()
+            if fromNativePause then
+                -- 仅明确换机才消费原生暂停菜单；普通关闭F6仍保留原菜单和暂停。
+                assert(existingManagementPauseValid(pause),"重开前原生暂停身份已变化")
+                assert(valid(resumeManager)and valid(resumeManager:GetWorld())
+                    and resumeManager:GetWorld():GetAddress()==pause.world,"重开前原生暂停菜单身份已变化")
+                resumeManager:CloseMenuAndResumePlay()
+                assert(valid(pause.settings)and valid(pause.settings:GetWorld())
+                    and pause.settings:GetWorld():GetAddress()==pause.world,"关闭暂停菜单时任务世界已变化，未重开任务")
+                assert(not valid(pause.settings.Pauser)and not game:IsGamePaused(pause.settings),
+                    "原生菜单暂停没有完成归还，未重开任务") -- 其他暂停原因仍存在时拒绝，不强行清除。
+                note("DEBUG_AIRCRAFT_NATIVE_MENU_RESUMED world="..pause.world)
             end
+            assert(instance:GetSelectedPlaneID()==targetId and instance:GetSelectedPlaneSWP()==targetWeapon,
+                "关闭暂停菜单时目标机体选择已变化，未重开任务") -- 原生关菜单可能同步回调，不能让它撤回已核对的目标。
+            -- 原生菜单已恢复后，重开失败交给外层恢复原机体选择；不能只用SetGamePaused(true)伪造旧菜单。
+            owner:RestartLevel()
         end
     end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
@@ -1904,7 +1909,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.25.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.25.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
