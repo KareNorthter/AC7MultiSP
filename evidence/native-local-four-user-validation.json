@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "status": "user_confirmed_four_aircraft_normal",
+  "date_local": "2026-10-20",
+  "timezone": "Asia/Shanghai",
+  "user_feedback": "经过测试，SU33,FA18F,FA18F BLOCKIII,F14D均正常，剩下的我马上测试",
+  "aircraft": [
+    {
+      "code": "su33",
+      "name": "Su-33"
+    },
+    {
+      "code": "f18f",
+      "name": "F/A-18F"
+    },
+    {
+      "code": "f18x",
+      "name": "F/A-18F Block III"
+    },
+    {
+      "code": "f14d",
+      "name": "F-14D"
+    }
+  ],
+  "installed_version": "2.24.0",
+  "installed_receipt_sha256": "bbafb60e51da98e54929d09d13d68fd5020f490bec83c670a0b0284391af22d5",
+  "runtime_files_verified": 18,
+  "mount_pak_sha256": "e9f2f95e6f61a05e186c1df54191f96492deb316d104ea8fda8230bb51bdb431",
+  "coverage": "用户明确四机正常，未逐项列出组合、任务、换机入口或性能测量，不扩大覆盖范围",
+  "remaining": {
+    "f14a": "仅LAAM+SAAM双挂获明确认可，SFFS与换机修订待复测",
+    "f18e": "类似碰撞报错，修订待复测",
+    "f18etg": "类似碰撞报错，修订待复测",
+    "m31b": "整体设计已认可，r3后腹SAAM位置尚待确认",
+    "asfx": "仅静态方案，RKT相关暂缓"
+  },
+  "candidate_2ba1542_validation": false,
+  "note": "只确认当前已安装2.24.0，不能将四机反馈记为尚未安装的七机碰撞修订通过",
+  "compiled": false,
+  "tests_run_by_agent": false,
+  "installed_by_agent": false,
+  "game_operated_by_agent": false
+}

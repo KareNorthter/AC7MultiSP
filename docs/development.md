@@ -1,5 +1,11 @@
 # 开发与恢复
 
+## 后续四机用户确认正常（2026-10-20）
+
+用户明确反馈Su-33、F/A-18F、F/A-18F Block III、F-14D经过测试均正常，其余机体继续测试。本次只读核对18运行文件和PAK，均对应当前已安装2.24.0，记录见`evidence/native-local-four-user-validation.json`。据此将这四机标为用户确认正常；用户未逐项列出全部组合、任务、换机入口或性能，不扩大覆盖，也不将该反馈记为尚未安装的`2ba1542`七机碰撞保真修订通过。
+
+仍待确认：F-14A除已认可的LAAM＋SAAM外，其SFFS与换机修订；F/A-18E、F/A-18E TGM碰撞修订；MiG-31B r3后腹SAAM位置。ASF-X/RKT仍后置。本次仅新增反馈记录和正文，不改源码、旧验收、版本或安装。
+
 ## 七机静态挂架碰撞保真修订（2026-10-20，源码候选）
 
 用户在2.24.0机库F-14A选择第二项SAAM后遇到NoCollision弹窗。日志实际已进入第三项预览，失败的是SFFS的SWP3。只读现场确认SWP1/2为0/NoCollision，SWP3为3/BlockAllDynamic；用户将第三项改为无兵装后，明确反馈LAAM＋SAAM模型正常且无新报错。这只确认该双挂，不扩大为F-14A全组合通过。用户另报F/A-18E、F/A-18E TGM类似错误，并要求一并检查本批。前三机旧证据已记录SWP3模板BodyInstance省略为None，旧接入却统一要求NoCollision；因此上轮仅延后开场接管不足以修复机库的稳定状态问题。原始快照仅留Temp，精简证据见`evidence/native-seven-collision-feedback.json`。
