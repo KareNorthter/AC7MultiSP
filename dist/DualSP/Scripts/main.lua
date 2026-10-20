@@ -1,4 +1,4 @@
--- AC7MultiSP 2.23.2源码候选：选装显示原生兵装说明、过滤未购买SP，通知统一前缀；未编译安装。
+-- AC7MultiSP 2.23.2源码候选：选装原生说明、已购列表、通知统一前缀和暂停菜单F6换机；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -637,7 +637,7 @@ local function acquireManagementPause()
     assert(valid(settings),"当前世界的暂停状态未就绪")
     local pauser=settings.Pauser -- 反射现场核对：WorldSettings.Pauser 是当前真实暂停拥有者。
     managementPause={world=world:GetAddress(),settings=settings,owned=false,
-        effective_before=game:IsGamePaused(plane),existing=valid(pauser)}
+        effective_before=game:IsGamePaused(plane),existing=valid(pauser),pauser=valid(pauser)and pauser:GetAddress()or nil}
     note("MANAGEMENT_PAUSE_BEGIN effective="..tostring(managementPause.effective_before).." existing="..tostring(managementPause.existing))
     if not managementPause.existing then
         local accepted=game:SetGamePaused(plane,true) -- 即使临时有效暂停已生效，也明确取得自己可归还的原生暂停。
@@ -647,6 +647,15 @@ local function acquireManagementPause()
         assert(accepted==true and managementPause.owned,"管理界面未能取得原生暂停")
     end
     note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
+end
+-- 暂停菜单换机仅借用打开F6前的同一原生暂停；不取得或清除其所有权。
+local function existingManagementPauseValid(lease)
+    return lease and lease.existing and not lease.owned and lease.effective_before
+        and valid(plane)and valid(lease.settings)and valid(lease.settings:GetWorld())
+        and lease.settings:GetWorld():GetAddress()==lease.world
+        and valid(plane:GetWorld())and plane:GetWorld():GetAddress()==lease.world
+        and valid(lease.settings.Pauser)and lease.settings.Pauser:GetAddress()==lease.pauser
+        and game:IsGamePaused(plane)
 end
 -- 只释放本面板创建且仍属于同一世界/拥有者的暂停；其他暂停不重写、不强制清零。
 local function releaseManagementPause()
@@ -1105,14 +1114,15 @@ local function observeOriginalSwitch()
         lastArmed=armed
     end
 end
--- 调试只在已配置且可操控的单人任务中可用；补给和检查点交接不能穿插换装。
-local function canDebugLoadout(hotkey)
+-- 普通调试要求可操控；换机允许借用已核对的原生暂停，补给和检查点交接仍禁止。
+local function canDebugLoadout(hotkey,allowNativePause)
     if runtimeReason=="mission13_fixed_sp"then return false,tr("第13关使用任务指定SP，多SP功能暂时停用。","Mission 13 uses its assigned SP. Multi-SP is temporarily disabled.")end
     if aircraftDebug and aircraftDebug:busy()then return false,tr("正在重开任务换机，请稍候。","Restarting the mission with another aircraft; please wait.")end
     if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
     if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
     if supplySession or internal or restorePending or checkpointPending then return false,tr("正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress.")end
-    if not valid(instance)or not valid(plane)or not valid(activator)or not ready()then return false,tr("当前飞行控制尚未开放。","Flight controls are not ready.")end
+    local nativePause=allowNativePause and existingManagementPauseValid(managementPause)
+    if not valid(instance)or not valid(plane)or not valid(activator)or(not ready()and not nativePause)then return false,tr("当前飞行控制尚未开放。","Flight controls are not ready.")end
     if hotkey and not panelOpen then
         if game:IsGamePaused(plane)then return false,tr("请先退出游戏暂停菜单。","Close the pause menu first.")end
     elseif not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
@@ -1129,17 +1139,24 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     bind=function(pawn,map)cachedPlane=pawn;cachedWorld=map end,
     context=function()return {instance=instance,plane=plane,id=planeId,profile=currentProfile,session=debugSession,revision=weaponRevision}end,
     canChange=function()
-        local allowed,reason=canDebugLoadout();if not allowed then return false,reason end
-        if not managementPause or not managementPause.owned or managementPause.existing then
-            return false,tr("请先退出游戏暂停菜单，再直接打开管理界面换机。","Close the game's pause menu, then open management directly to change aircraft.")
+        local allowed,reason=canDebugLoadout(false,true);if not allowed then return false,reason end -- 暂停可停用飞行输入，但整关重开不依赖该输入。
+        if not managementPause or not(managementPause.owned or existingManagementPauseValid(managementPause))then
+            return false,tr("暂停状态已变化，请关闭后重新打开管理界面换机。","Pause state changed. Close and reopen management to change aircraft.")
         end
         return true
     end,
     failFlight=function(message)errorText=tostring(message);releaseRuntimeOwnership()end,
     prepare=function()
+        local pause=managementPause
+        local fromNativePause=pause and pause.existing and not pause.owned
+        if fromNativePause then assert(existingManagementPauseValid(pause),"原生暂停身份已变化，未发出重开请求")end
         setPanel(false)
         assert(not panelOpen and not managementPause and not managementPauseError,"管理界面暂停没有归还，未发出重开请求")
-        assert(not game:IsGamePaused(plane),"原生任务仍在暂停，请先退出暂停菜单")
+        if fromNativePause then
+            -- RestartLevel是直接原生调用，不依赖飞行恢复；旧世界连同暂停菜单交给整关重载收尾。
+            assert(existingManagementPauseValid(pause),"原生暂停身份已变化，未发出重开请求")
+            note("DEBUG_AIRCRAFT_RESTART_FROM_NATIVE_PAUSE")
+        else assert(not game:IsGamePaused(plane),"原生任务仍在暂停，请先退出暂停菜单")end
         requestClose=requestClose+1
         releaseWeaponInput("debug_aircraft")
         releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()

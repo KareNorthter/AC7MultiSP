@@ -158,7 +158,7 @@ function Module.new(deps)
             self.ack=action.request;self.status="restarting";self.error=nil
             self.notice="正在重开任务，等待 "..target.name.." 实际生成。"
             deps.note("DEBUG_AIRCRAFT_RESTART request="..action.request.." from="..context.id.." to="..target.plane_id)
-            owner:RestartLevel() -- 使用原生完整地图重载，不自行销毁或生成飞行中的Pawn。
+            owner:RestartLevel() -- 包括暂停菜单入口，直接原生整关重载；不等待解暂停或自行生成Pawn。
         end)
         if not ok then
             local recovered=not pending or rollback(pending)

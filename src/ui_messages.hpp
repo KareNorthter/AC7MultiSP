@@ -104,6 +104,7 @@ inline constexpr std::pair<const char*,const char*> uiMessages[]={
     {"多 SP 挂载已回退为原生单 SP：","Multi-SP models reverted to native visuals: "},
     {"原生机库未接收决定/返回，已停止交接","The hangar did not receive the action. Reopen the weapon selection page."},
     {"管理界面暂停没有归还，未发出重开请求","The management pause was not released. The restart was not sent."},
+    {"原生暂停身份已变化，未发出重开请求","The native pause changed. The restart was not sent."},
     {"任务或兵装已变化，请重新打开调试页","The mission or loadout changed. Reopen Debug."},
     {"重开期间原生机体选择被其他流程改变","Another game action changed the selected aircraft during restart."},
     {"原生任务仍在暂停，请先退出暂停菜单","Close the native pause menu before changing aircraft."},

@@ -543,6 +543,9 @@ int aircraftInitial(const DebugAircraftOption& option) {
 }
 void drawDebugAircraft() {
     ImGui::SeparatorText(tr("任务内换机","Aircraft change"));
+    if(state.contains("management_pause")&&state.at("management_pause").value("existing",false))
+        ImGui::TextWrapped("%s",tr("任务暂停中可直接换机；关闭管理会返回暂停菜单。",
+            "Aircraft changes are available while paused. Closing management returns to the pause menu."));
     ImGui::TextWrapped("%s",aircraftMode=="next_restart"?
         tr("选择机体后请手动重开本任务，换机才会生效；当前飞行中的机体不会立即替换。","Select an aircraft, then manually restart this mission to apply it. The current aircraft is not replaced immediately."):
         tr("选择机体后点击下方按钮，将重开本任务并使用目标机体；当前任务进度会重置。","Choose an aircraft and use the button below to restart this mission with it. Current mission progress will reset."));
