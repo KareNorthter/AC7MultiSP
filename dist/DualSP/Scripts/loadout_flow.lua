@@ -15,13 +15,13 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
         local rows={}
         if self.stage=="sp1" then
             for index,option in ipairs(self.options)do
-                rows[#rows+1]={weapon=index-1,enabled=option.owned,code=option.code:upper()}
+                if option.owned then rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}end
             end
         elseif self.stage=="sp2"or self.stage=="sp3"then
             local first=self.options[self.draft.a+1]
             for index,option in ipairs(self.options)do
-                if index-1~=self.draft.a and (self.stage~="sp3"or index-1~=self.draft.b)and first.available and option.available then
-                    rows[#rows+1]={weapon=index-1,enabled=option.owned,code=option.code:upper()}
+                if option.owned and index-1~=self.draft.a and (self.stage~="sp3"or index-1~=self.draft.b)and first.available and option.available then
+                    rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}
                 end
             end
             rows[#rows+1]={weapon=-1,enabled=true,code=tr("无兵装","NO WEAPON")}
@@ -38,7 +38,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
         return false
     end
     -- 新进入可选槽时定位到第一项可选兵装；无可用兵装时列表只剩可选的 EMPTY。
-    -- 未购买项保留展示，但不能成为默认光标；返回上一步仍恢复先前选择。
+    -- 未购买项不进入显示列表；原生编号不变，返回上一步仍恢复先前选择。
     function self:selectFirstAvailable()
         for index,row in ipairs(self:rows())do
             if row.enabled then self.cursor=index;return end
@@ -51,7 +51,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
     function self:confirm()
         assert(self.stage~="review"or takeoffReview,"多 SP 已确认，正在返回 STANDBY")
         local row=self:rows()[self.cursor]
-        if not row.enabled then self.message=tr("该兵装尚未购买","This weapon has not been purchased");return "blocked"end
+        if not row or not row.enabled then self.message=nil;return "blocked"end -- 无效光标静默忽略，不生成购买错误提示。
         self.message=nil
         if self.stage=="sp1"then
             -- 每次确认 SP1 都重新选择 SP2，旧配置不能冒充本轮已经确认的兵装。

@@ -281,6 +281,25 @@ function NativeLoadout.new(dependencies)
         local address=widget:GetAddress()
         if c.texts[address]~=value then widget:SetText(FText(value));c.texts[address]=value end
     end
+    -- 选装和补给共用游戏原生长说明；只缓存当前页面的文字，游戏语言变化后重新读取。
+    local function weaponDescription(c,option)
+        if not option then return tr("不搭载特殊兵装。","No special weapon equipped.")end
+        c.weaponDescriptions=c.weaponDescriptions or {}
+        if c.weaponDescriptions[option.code]then return c.weaponDescriptions[option.code]end
+        local localizer=StaticFindObject("/Script/Nimbus.Default__LocalizationManager")
+        assert(valid(localizer),"原生武器说明翻译接口缺失")
+        local descriptionKey="Weapon_Description_"..option.code:lower()
+        assert(localizer:HasString(descriptionKey),"原生武器说明不存在："..descriptionKey)
+        local description=localizer:LocalizeString(descriptionKey,true,""):ToString()
+        assert(#description>0,"原生武器说明为空："..descriptionKey)
+        description=description:gsub("\r\n","\n"):gsub("\r","\n")
+        if supply then
+            -- 补给窄栏重新换行，保留段落；机库沿用原说明宽度和原生换行。
+            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr(""," ")):gsub("\1","\n\n")
+        end
+        c.weaponDescriptions[option.code]=description
+        return description
+    end
     local function mask(c,widget)
         assert(valid(widget),"Native preparation presentation is missing")
         if valid(widget.Slot)then
@@ -724,7 +743,10 @@ function NativeLoadout.new(dependencies)
         local list=controls(base)
         for _,name in ipairs({"TitleText","DescriptionText","ItemText0","ItemText1","ItemText2"})do assert(valid(list[name]),"Native list control is missing: "..name)end
         -- Preserve the game's own footer glyphs and device-dependent labels.
-        c.title=clone(c,list.TitleText,false,nil,nil,preparationTitle(c.flow.stage));c.description=clone(c,list.DescriptionText,false)
+        c.title=clone(c,list.TitleText,false,nil,nil,preparationTitle(c.flow.stage))
+        local descriptionWidth=canvasSlot(list.DescriptionText):GetSize().X -- 左下说明沿用原生位置、字号和宽度。
+        assert(descriptionWidth>0,"准备页说明宽度无效")
+        c.description=clone(c,list.DescriptionText,false,nil,descriptionWidth)
         c.rows={};for i=1,3 do c.rows[i]=clone(c,list["ItemText"..(i-1)],false)end
         -- 采用资源核对的机库信息蓝；列表第一项可能已被原生高亮改成深色。
         c.tint=color(.401978,.651406,1,1)
@@ -991,21 +1013,6 @@ function NativeLoadout.new(dependencies)
             setText(c,c.cursors[i],">")
         end
         c.title:SetColorAndOpacity(c.tint);c.description:SetColorAndOpacity(c.tint)
-        -- 在接入时读取一次原生完整武器说明；不拿简称表冒充说明，也不切换全局语言。
-        local localizer=StaticFindObject("/Script/Nimbus.Default__LocalizationManager")
-        assert(valid(localizer),"原生武器说明翻译接口缺失")
-        c.weaponDescriptions={}
-        for _,option in ipairs(options)do
-            local descriptionKey="Weapon_Description_"..option.code:lower()
-            assert(localizer:HasString(descriptionKey),"原生武器说明不存在："..descriptionKey)
-            local description=localizer:LocalizeString(descriptionKey,true,""):ToString()
-            assert(#description>0,"原生武器说明为空："..descriptionKey)
-            -- 原生介绍自带针对宽面板的硬换行；本栏重新排版，保留空行划分的段落。
-            description=description:gsub("\r\n","\n"):gsub("\r","\n")
-            -- 英文换行转为空格，避免两个单词粘连；中文仍去除排版用硬换行。
-            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr(""," ")):gsub("\1","\n\n")
-            c.weaponDescriptions[option.code]=description
-        end
         local group=assert(list.WeaponSpecifficationGroup,"补给性能组缺失")
         local video=assert(list.WeaponConceptPanel,"补给视频区域缺失")
         local typePanel=assert(list.WeaponTypePanel,"补给类型区域缺失")
@@ -1080,7 +1087,7 @@ function NativeLoadout.new(dependencies)
         if flow.message then description=flow.message..tr("。",". ")..description end
         setText(c,c.description,description)
         setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选的 1 至 3 个 SP 重新起飞。","Take off with the selected one to three SP weapons."))
-            or option and assert(c.weaponDescriptions[option.code])or tr("不搭载当前及后续槽，按管理页比例配弹。","Leave this and later slots empty. Ammunition follows management percentages."))
+            or option and weaponDescription(c,option)or tr("不搭载当前及后续槽，按管理页比例配弹。","Leave this and later slots empty. Ammunition follows management percentages."))
         self.status=stage;note("NATIVE_RESUPPLY_STAGE "..signature)
     end
 
@@ -1114,10 +1121,9 @@ function NativeLoadout.new(dependencies)
             part.widget.Slot:SetPosition({X=part.x,Y=position.Y+size.Y*.5+part.y})
         end
         paintColumns(c)
-        local description=stage=="sp1"and tr("请选择第一种特殊兵装。","Select your first special weapon.")
-            or tr("请选择当前槽兵装；无兵装结束选装。弹药按管理页比例向上取整。","Select this SP, or NO WEAPON to finish. Ammunition follows management percentages, rounded up.")
-        if flow.message then description=flow.message..tr("。",". ")..description end
-        setText(c,c.description,description);c.description:SetColorAndOpacity(blue)
+        local focused=rows[flow.cursor].weapon
+        setText(c,c.description,weaponDescription(c,focused>=0 and flow.options[focused+1]or nil))
+        c.description:SetColorAndOpacity(blue)
         self.status=stage
         note("NATIVE_LOADOUT_STAGE "..signature)
     end
@@ -1413,9 +1419,9 @@ function NativeLoadout.new(dependencies)
         assert(supply and self.transaction and self.transaction.finished,"Supply HUD preview requires a finished handoff")
         return copyProfile(self.transaction.profile)
     end
-    -- 操作提示可在下一次绘制更新；原生长说明在下次建立补给页面时重新本地化。
+    -- 游戏文本文化变化后，下次绘制立即重新读取原生长说明，不沿用旧语言缓存。
     function self:languageChanged()
-        if self.cache then self.cache.lastPaint=nil;self.cache.flow.message=nil end
+        if self.cache then self.cache.lastPaint=nil;self.cache.flow.message=nil;self.cache.weaponDescriptions=nil end
     end
     -- 管理界面和日志可据此区分普通补给编辑与原生起飞交接阶段。
     function self:isSupplyHandoffPending()

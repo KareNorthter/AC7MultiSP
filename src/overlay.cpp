@@ -91,6 +91,8 @@ std::string uiMessage(const std::string& message,
     const char* zh="操作未完成，请在日志页查看详细原因。",
     const char* en="The operation could not be completed. See Logs for details.");
 void showToast(std::string message,bool error=false) {
+    const std::string prefix="AC7MultiSP: ";
+    if(message.rfind(prefix,0)==0)message.erase(0,prefix.size()); // 统一入口只添加一次前缀。
     message=uiMessage(message);
     // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
     if(message.size()>240) {
@@ -99,7 +101,7 @@ void showToast(std::string message,bool error=false) {
         message.resize(end);message+="…";
     }
     if(message.empty())return;
-    hotkeyToast=std::move(message);toastIsError=error;
+    hotkeyToast=prefix+message;toastIsError=error;
     hotkeyToastUntil=GetTickCount64()+(error?6500:4500);
 }
 int managementTab=0,requestedTab=-1; // Ctrl+Tab 在四个管理分页间循环。
@@ -805,7 +807,7 @@ void refreshState() {
                 const auto detail=visual?uiMessage(item.value().get<std::string>(),"多挂外观已回退原生，请查看日志。",
                     "Multi-SP models reverted to native visuals. See Logs for details."):
                     uiMessage(item.value().get<std::string>());
-                showToast(std::string(tr("Mod提示：","Mod: "))+detail,true);break;
+                showToast(detail,true);break;
             }
         }
         reportedToastErrors=std::move(errors);
