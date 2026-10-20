@@ -1,5 +1,9 @@
 # 证据分类索引
 
+## 目标切换研究（2026-10-20）
+
+[NEXT与视线参考](target-selection-research.json)：独立分支`codex/target-selection-research`从main `0b75b21`建立。只读定位候选计分、NEXT、历史、短按门槛及兵装相机参考路径；用户手动配合20秒环视/短按，采集396条记录。现场存在AC7MouseAim释放Hook及HMD实现，不当作纯原版或PSVR验收；没有改产品、设置、安装或版本，没有编译、编写/运行测试。细节见[架构正文](../docs/architecture.md#原生目标选择与next2026-10-20研究)。
+
 ## 当前正式2.21.1
 
 [用户验收](2.21.1-user-validation.json)、[发布授权](2.21.1-user-feedback-followup.json)、[本地发布](2.21.1-release.json)：用户测试2.21.1后反馈“经过测试，没问题了”，授权合main及本地包。沿用冻结18运行文件及54资源/108成员PAK，原11项检查/安装回执保持；不重编译、不重装，仅product候选标记转正式并精确核验。ReadMe开头本版简述，末尾38条2.xx简要日志；2.1.0/2.1.1写中间测试版本。原安装候选阶段记录如下，不回改为当时已验收。
