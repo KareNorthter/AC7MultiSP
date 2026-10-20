@@ -1,0 +1,62 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "branch": "codex/five-aircraft-mount-review",
+  "baseline_source": "e366f92",
+  "status": "source_candidate_not_built",
+  "user_feedback": "实际体验后认为九枚弹药显示十二模型反常识，原左六右三希望改为五加四；库存归零仍显示十二模型。用户同意恢复库存显隐、左右交替分配，并要求记录为其他机体设计经验。",
+  "supersedes": "f04e-ugb-model-capacity.json中的固定十二模型显示要求；旧记录原字节保留。本次保十二位布局容量，但不再忽略实际库存。",
+  "override": {
+    "code": "f04e",
+    "mask": 5,
+    "expected_plan": {
+      "selected": [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [], [0, 1]],
+      "racks": 5,
+      "variants": [-1, -1, -1],
+      "model_capacity_mask": 1
+    },
+    "expected_ugb_sockets": ["sp11", "sp13", "sp15", "sp17", "sp19", "sp21", "sp12", "sp14", "sp16", "sp18", "sp20", "sp22"],
+    "replacement_plan": {
+      "selected": [[0, 6, 1, 7, 2, 8, 3, 9, 4, 10, 5, 11], [], [0, 1]],
+      "racks": 5,
+      "variants": [-1, -1, -1]
+    },
+    "alternating_ugb_sockets": ["sp11", "sp12", "sp13", "sp14", "sp15", "sp16", "sp17", "sp18", "sp19", "sp20", "sp21", "sp22"]
+  },
+  "design_basis": {
+    "native_socket_source": "static-expansion-2.11.0.json / f04e / SWP1",
+    "native_order": "原Socket表前六个为负Y、后六个为正Y；各同序位置成镜像对。保持原池和Socket身份表，只交替选择顺序。",
+    "physical_mapping": "mountExpansionPositions按selected顺序建立物理位置表，mountPhysical供任务显隐、预览及实际离架共同使用；逻辑持久序号和队列旋转保持。",
+    "stock_policy": "任务恢复min(布局显示上限,实际库存)，预览同样按实际配弹截断；原生无限弹哨兵ammo<0仍沿既有规则。正常库存归零时不再显示UGB模型。"
+  },
+  "stable_visible_examples": [
+    {"ammo": 0, "side_counts": [0, 0]},
+    {"ammo": 1, "side_counts": [1, 0]},
+    {"ammo": 8, "side_counts": [4, 4]},
+    {"ammo": 9, "side_counts": [5, 4]},
+    {"ammo": 10, "side_counts": [5, 5]},
+    {"ammo": 12, "side_counts": [6, 6]},
+    {"ammo": 18, "side_counts": [6, 6]}
+  ],
+  "display_boundary": "上表为装填完成、预览或正常连续队列下的目标数量；奇数时多一枚的一侧可随投放轮转，装填中保留真实临时空位，不强行搬移模型补对称。用户改配弹比例不会直接补充当前弹药，须待既有配弹应用流程实际改变库存。",
+  "scope": "仅改F-4E UGB＋SASM的UGB位置使用顺序并撤销旧独立容量策略。SASM、F4其他六组合、其他机体及MiG35D新借位方案保持。",
+  "weapon_policy": "不改实际库存、50%配弹默认规则、HUD、逻辑槽、装填窗口、锁定、齐射或冷却；最大十二个实体位置，超出部分为备用库存。",
+  "resources": "无新挂架、Socket、坐标或模型资源，沿用54资源/108成员；Lua资源清单保持。",
+  "review_boundary": "仅生成运行数据、人工审阅及精确来源差异核对，未编写测试模块或运行测试。后续实测关注九枚五加四、十枚五加五、耗尽清空、投放与显隐同点、切SP、补给和关闭归还。",
+  "source_diff_review": {
+    "baseline": "e366f92",
+    "changed_plans": [["f04e", 5]],
+    "other_139_plans_and_all_group_definitions_unchanged": true,
+    "final_model_capacity_registrations": 0,
+    "asset_names_and_indices_unchanged": true,
+    "asset_count": 54,
+    "lua_bytes_unchanged": true,
+    "protected_legacy_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "method": "只读比较HEAD与工作树的生成表、Lua字节及保护文件摘要，并人工审阅共同映射和队列旋转；未运行测试"
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "gameplay_verified": false
+}
