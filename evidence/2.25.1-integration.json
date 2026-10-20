@@ -55,9 +55,9 @@
     "view_target": 1
   },
   "runtime_files": 19,
-  "compiled": false,
-  "tests_run": false,
-  "installed": false,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
@@ -65,5 +65,23 @@
   "known_limits": [
     "九枚/十枚与耗尽、连续投放装填、两机挂架净空和实际离架、各暂停入口及连续换机待用户测试",
     "其他既有待办与验收范围保持，不扩大用户此前认可"
-  ]
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "134a0f9707aca902eafbe3243bc43dd455eb7252",
+  "build_dir": "Temp/build-2.25.1-candidate",
+  "build_receipt_sha256": "129263d19fcaf6b9ec4b8ee9fc42d1184f2d30f0809e3b1e3e740803148bdfc4",
+  "test_receipt_sha256": "217d260597f8ae785b5a0e1b50d176df6d347a6fed2e4451afa9e5970bc7bc8b",
+  "install_receipt_sha256": "147cc6c50ac4156bc307f85c893ddd68459db874754125356af930cb2f8fc4ee",
+  "installed_at": "2026-10-21T00:15:50.894475+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.25.1\\backup\\AC7MultiSP-20261021-001550-894475",
+  "protected_files_verified": 361,
+  "runtime_files_verified": 19,
+  "preserved_mod_files_verified": 26,
+  "save_backup_file_count": 13,
+  "game_close_receipt": "evidence/2.25.1-game-close.json",
+  "game_close_receipt_sha256": "36f208259103106151a1e22e6e609399f8d75273ec3f93fad0efcbb8b718ddd8",
+  "game_remains_closed": true,
+  "game_close_method": "already_stopped",
+  "actual_profiles_revision_preserved": 15,
+  "old_148_frozen_members_preserved": true
 }

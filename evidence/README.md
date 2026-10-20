@@ -2,7 +2,7 @@
 
 ## 当前2.25.1整合候选
 
-接收F-4E`65c52b6`、两机布局`98ca6aa`与暂停换机`1ddcc61`；19运行文件、77资源/154成员须成套。正在构建安装，结果以`evidence/2.25.1-integration.json`和`evidence/2.25.1-installed.json`为准。 新效果待用户验收。来源见[库存与交替](f04e-ugb-alternating-stock.json)、[两机布局](f18e-layout-feedback-r1.json)及[暂停菜单残留](aircraft-repeat-pause-restart.json)。旧回执保持原阶段含义。
+接收F-4E`65c52b6`、两机布局`98ca6aa`与暂停换机`1ddcc61`；19运行文件、77资源/154成员须成套。已成套构建、11项现有检查通过并从2.25.0升级安装；19运行文件及77资源/154成员PAK一致，个人配置15原字节、存档及其他Mod已备份保留。游戏安装前已关闭且未重启。交付见`evidence/2.25.1-integration.json`和`evidence/2.25.1-installed.json`。 新效果待用户验收。来源见[库存与交替](f04e-ugb-alternating-stock.json)、[两机布局](f18e-layout-feedback-r1.json)及[暂停菜单残留](aircraft-repeat-pause-restart.json)。旧回执保持原阶段含义。
 
 ## 两机布局反馈源码候选
 
