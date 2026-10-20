@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-19",
+  "candidate": "2.21.2",
+  "branch": "codex/keyboard-modifier-routing",
+  "base_commit": "7a0559dd1b360f73c84b8d2f9c57b5e1cdd0a49a",
+  "received_source": "effa304（2.21.1默认值、分页及Mod换机；快进精确接收）",
+  "formal_release": "main / v2.21.0",
+  "installed_baseline": "evidence/2.20.3-installed.json",
+  "status": "源码及中英文说明完成，人工复核；未编译、编写/运行测试、安装或操作游戏",
+  "cause": "旧直选/注视/回中入口要求Ctrl/Alt/Shift全部松开，直选只接收WM_KEYDOWN，未接收Alt路径的WM_SYSKEYDOWN。",
+  "changes": [
+    "武器直选、键盘保持注视、独立回中及单键Mod快捷键允许同时按住Shift/Ctrl/Alt；同一主键优先执行完全匹配的已配置组合快捷键，避免双触发。加速等原生修饰键继续交给游戏。组合快捷键仍按完整设置匹配，不忽略额外修饰键。",
+    "完整组合先于普通单键快捷键及注视/直选；单键回落排除系统切窗/关闭组合。",
+    "直选和修饰键仍透传原生；捕获、搜索文本、按压连发和许可门槛保留。",
+    "Lua根据已保存的三个快捷键生成8位占用表，镜头入口第六参数传给核心；独立回中避开同主键组合，仍更新边沿，松修饰键不补发。"
+  ],
+  "protocols": {
+    "management": 13,
+    "configuration": 12,
+    "tracking": 2,
+    "camera": 5,
+    "aircraft_change": 2,
+    "camera_arguments": 6,
+    "required_capability_both_dlls": "dualsp_keyboard_modifier_routing_supported"
+  },
+  "preserved": [
+    "2.21.1镜头/注视新配置默认关闭和既有个人选择",
+    "F6基础/视角分页及Mod换机搜索筛选",
+    "原生X轮切和L3/R3/双摇杆分流",
+    "正式main、旧发布/验收回执及安装文件"
+  ],
+  "verification": {
+    "method": "只读源码人工审阅与Git差异/保护文件核对；不执行测试或编译",
+    "diff_check": "通过，无空白错误",
+    "protected_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "built": false,
+    "tests_written_or_run": false,
+    "installed": false,
+    "game_controlled": false
+  },
+  "pending": [
+    "实机确认Shift加速同时按1/2/3/4，Ctrl/Alt持有时同类单键可用且不打断飞行操作",
+    "确认同主键的完整组合只执行组合，默认Ctrl+Alt+F6不误开管理页",
+    "确认保持注视、键盘/中键回中带修饰键及组合占用不双触发、不在松修饰键后补发",
+    "已有默认值/换机旧测试夹具须后续获授权后同步；本轮未改测试源码"
+  ],
+  "limits": [
+    "没有新的实机验证，不承诺解决键盘硬件冲突、原生同键绑定或其他Mod抢键",
+    "组合仍精确匹配完整修饰键；新Lua、核心和UI须成套构建"
+  ]
+}

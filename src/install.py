@@ -62,8 +62,8 @@ def main():
         if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
     settings = read_json(mod / 'profiles.json')
-    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12):
-        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至12，请先核对上一版启动后的配置')
+    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13):
+        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至13，请先核对上一版启动后的配置')
     sources = {'Scripts/' + name: root / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
@@ -71,7 +71,7 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动先备份再迁移至管理参数12；中央简称默认始终显示，X归还原生，L3保持注视及R3长按0.3秒回中默认开启，保留旧镜头保持开关、自定义键位和灵敏度',
+            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节，首次启动先备份再迁移至管理参数13；机炮齐射默认关闭，新快捷键冲突时留空，保留全部旧设置和个人方案',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}

@@ -137,11 +137,14 @@ void cameraHoldResolveRelease() {
     if(cameraHold.buttonReleasedAt-cameraHold.pressedAt<300)cameraHold.pendingView=true;
     else {cameraHold.longDone=true;cameraHoldCenter();} // 跨过阈值才松开时补回中，不能兼触短按。
 }
-void cameraHoldObserveCenterKey(int key) {
+void cameraHoldObserveCenterKey(int key,unsigned shortcutMask) {
     if(cameraHold.centerKey!=key){cameraHold.centerKey=key;cameraHold.centerKeySeeded=false;}
     const bool down=key && (GetAsyncKeyState(key)&0x8000)!=0;
-    const bool modifiers=(GetAsyncKeyState(VK_CONTROL)&0x8000) || (GetAsyncKeyState(VK_MENU)&0x8000) || (GetAsyncKeyState(VK_SHIFT)&0x8000);
-    if(cameraHold.centerKeySeeded && down && !cameraHold.centerKeyDown && !modifiers)cameraHoldCenter();
+    const int mods=((GetAsyncKeyState(VK_CONTROL)&0x8000)?1:0)|((GetAsyncKeyState(VK_MENU)&0x8000)?2:0)
+        |((GetAsyncKeyState(VK_SHIFT)&0x8000)?4:0);
+    // 回中在游戏线程观察，必须独立避开同主键的组合快捷键，不能只靠窗口消息被消费。
+    const bool eligible=dualsp::singleKeyMatches(key,key,mods)&&!(shortcutMask&(1u<<mods));
+    if(cameraHold.centerKeySeeded && down && !cameraHold.centerKeyDown && eligible)cameraHoldCenter();
     cameraHold.centerKeyDown=down;cameraHold.centerKeySeeded=true; // 恢复时先播种，不能把已按住的键当新按下。
 }
 void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
@@ -451,13 +454,15 @@ int cameraHoldLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==5,"镜头保持参数数量无效");
+        require(api->top(luaState)==6,"镜头保持参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));const auto allowed=api->readInteger(luaState,2);
         const auto centerKey=api->readInteger(luaState,3),sensitivity=api->readInteger(luaState,4);
         const auto replaceR3=api->readInteger(luaState,5);
+        const auto shortcutMask=api->readInteger(luaState,6);
         require(allowed==0 || allowed==1,"镜头保持设置无效");
         require(centerKey==0 || centerKey==VK_MBUTTON || dualsp::supportedShortcutKey(static_cast<int>(centerKey)),"镜头回正键位无效");
         require(centerKey>=0 && centerKey<=255 && sensitivity>=5 && sensitivity<=200 && (replaceR3==0 || replaceR3==1),"镜头保持参数超出范围");
+        require(shortcutMask>=0&&shortcutMask<=255,"镜头回中组合键占用信息无效");
         std::string reason;
         if(!allowed || !plane || !targetGazeFocused()){cameraHold.clear();cameraHold.error.clear();}
         else {
@@ -495,7 +500,7 @@ int cameraHoldLua(void* luaState) {
                     if(cameraHold.replaceR3!=(replaceR3==1))cameraHold.cancelGesture();
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
-                    cameraHoldObserveCenterKey(static_cast<int>(centerKey));
+                    cameraHoldObserveCenterKey(static_cast<int>(centerKey),static_cast<unsigned>(shortcutMask));
                     // 300毫秒按实际时间计，回中在游戏线程立即执行一次，松开不再换视角。
                     if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.longDone && !cameraHold.combo && GetTickCount64()-cameraHold.pressedAt>=300) {
                         cameraHold.longDone=true;cameraHoldCenter();

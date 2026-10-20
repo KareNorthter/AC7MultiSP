@@ -1,0 +1,115 @@
+{
+  "date": "2026-10-19",
+  "candidate": "2.21.1",
+  "branch": "codex/camera-defaults-tabs",
+  "base_commit": "7a0559dd1b360f73c84b8d2f9c57b5e1cdd0a49a",
+  "formal_release": "main / v2.21.0",
+  "installed_baseline": "evidence/2.20.3-installed.json",
+  "status": "源码和中英文正文完成；未编译、写/运行测试、安装或实机验证",
+  "requests": [
+    "镜头保持和保持注视默认关闭，F6第一页集中基础功能及兵装/Mod改键，第二页专放视角，日志保留。",
+    "后续追加：调试换机支持Mod机体，并为上百架设计方便的选择方式。"
+  ],
+  "defaults": {
+    "target_gaze_pad_l3": false,
+    "camera_hold_enabled": false,
+    "target_gaze_key": 0,
+    "camera_r3_enabled": true,
+    "camera_center_key": 4,
+    "camera_sensitivity": 100,
+    "migration": "配置10迁11首次补L3改false，R3子项原值true不变；已有配置的开关/改键/方案保留，未增加配置字段或版本，不修改本机个人配置。镜头保持关闭时其子项隐藏停用。"
+  },
+  "pages": {
+    "0": {
+      "name": "基础 / General",
+      "contents": "模组总开关、模型、中央简称、SP弹药比例、武器直选键及三个Mod快捷键；两个键位区默认展开。"
+    },
+    "1": {
+      "name": "视角 / Camera",
+      "contents": "L3保持注视、独立键盘注视、镜头保持、R3子开关、回中键及灵敏度。"
+    },
+    "2": {
+      "name": "日志 / Logs",
+      "contents": "原读取范围、刷新及页面流程保留。"
+    },
+    "3": {
+      "name": "调试 / Debug",
+      "contents": "保留换装与换机事务，按追加需求扩展机体目录和选择器。"
+    },
+    "retained": "稳定页ID/索引、Ctrl+Tab、改键槽号0至8、冲突校验、草稿/保存/暂停归属和底部保存区保持；中英帮助和旧页面指引已同步。"
+  },
+  "aircraft": {
+    "catalogue": "从实际已加载机体目录接入完整三SP数据的官方和Mod机体；不再只认47架官方映射。该映射仅用于来源与官方购买/DLC提示，Mod不套官方许可提示。",
+    "names": "优先现有名称表或目录名称，缺失回退代号；列表和当前选择显示数字编号，Mod单独标识，外观替换沿原条目。",
+    "picker": "名称/代号/编号多词搜索，忽略英文大小写和分隔符；官方/Mod筛选及A-Z/数字其他首字母筛选；显示匹配数，重置不改变选择，空结果有提示。",
+    "list": "候选最多4096条、编号集合去重，固定高度结果区用ImGuiListClipper只绘制可见行；无百架性能实测。",
+    "typing": "搜索文字不触发普通字母/数字Mod快捷键；功能键管理入口保留，Esc优先关闭弹出层。",
+    "transaction": "筛选/选择不派发重开，仅点击应用才请求；保留单人/会话/修订校验、重读候选、归还管理暂停、原生RestartLevel、等待新玩家类/世界/控制器和兵装匹配、失败回滚及超时停止。不写购买、DLC或检查点。",
+    "limits": "须机体已注册并有完整三SP数据；仅外观替换不单列，非标准玩家类路径或不完整Mod不保证可用。新Mod换机未实测，不代表所有第三方机体兼容。"
+  },
+  "protocols": {
+    "management": 13,
+    "configuration": 12,
+    "tracking": 2,
+    "camera": 4,
+    "debug_aircraft": 2,
+    "note": "仅换机子协议1升2，新增候选code/mod字段，Lua状态/请求与UI均校验；须成套更新。"
+  },
+  "read_only_catalogue_observation": {
+    "path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\catalogue.json",
+    "sha256": "2b40759c254c04f60dadbf27a10eac6ed8e0730c4ef86480527675277be2ee76",
+    "rows": 52,
+    "mod_rows_with_three_sp": [
+      {
+        "id": 165,
+        "code": "adlra"
+      },
+      {
+        "id": 166,
+        "code": "adlrb"
+      },
+      {
+        "id": 181,
+        "code": "j20a"
+      },
+      {
+        "id": 192,
+        "code": "pw01"
+      },
+      {
+        "id": 251,
+        "code": "vf1j"
+      }
+    ],
+    "scope": "仅既有目录文件证明Mod记录存在，不是新代码执行或换机验收。"
+  },
+  "review": "人工复核默认构造/迁移/草稿、分页调用/稳定槽号、ImGui本地1.92.9b声明、目录接入/筛选和原重开边界、跨组件换机协议，Git差异空白及保护核心摘要。",
+  "pending_validation": [
+    "新建配置及旧配置保留/逐级迁移、保存/改键/切页及窄窗口布局尚待验证。",
+    "新选择器的键鼠/手柄导航、多词/中文/空结果筛选和百架可见行性能尚未实测。",
+    "Mod与官方机体互换、重复名称/编号、数据不足或不标准Mod、原生重开失败/回滚及世界换代需后续授权验证。"
+  ],
+  "existing_tests": "按要求未修改或运行。runtime_services_test.py第42/141行仍期待旧默认true，换机夹具仍用子协议1；后续获授权构建检查前应同步预期，不把旧回执当作新代码检查通过。",
+  "compiled": false,
+  "tests_added_modified_or_run": false,
+  "installed": false,
+  "game_operated": false,
+  "live_memory_read_or_written": false,
+  "personal_configuration_modified": false,
+  "assets_or_animations_modified": false,
+  "historical_receipts_modified": false,
+  "pushed_or_uploaded": false,
+  "encoding": "新正文/回执UTF-8/LF；有功能改动的debug_aircraft.lua从CRLF统一LF，忽略行尾差异复核功能增量。其余未改运行源保留原字节。",
+  "source_sha256": {
+    "VERSION": "1f2daf59b2a3e0ade1bf221f22912099de3c48675ec250a3ffafeca47e6fad09",
+    "dist/DualSP/Scripts/config_store.lua": "5647638f788836c956ae4a7fcb23cfb3def6dae592c8df6f0c6b1330fd64d18d",
+    "dist/DualSP/Scripts/debug_aircraft.lua": "0243f58f5d4d38c5b08dade000e9e890945dfac705997185b10278137e2f4a46",
+    "dist/DualSP/Scripts/main.lua": "2ba22791e4f9d2ef823e8c1288065125dee8bf34ca8200bab1194c394cf2d641",
+    "src/management_panel.hpp": "b6b1d1c89e1b0d97f4cda3d6257bc856466f86da28f4e62c209253c7edda2b9d",
+    "src/overlay.cpp": "4d92de5e2726d5b8d1e89b3d8472ded116e271079dcc308f6ee2d2f4ea758c0a",
+    "src/install.py": "09e794f2f83bfd5c7e4b8e5114231dbecaf8daf006309fbcf920a1ebe9ba1451",
+    "src/product.json": "3641a8ce487c31edd278b48cd349f7c139e9d7078c8f03ae2a8dab750cfa9d48",
+    "src/ui_messages.hpp": "deadf3e0629f1919be8f11a6628cdea2b9578b45eed64ae640c8ac93fb8c2bad"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+}

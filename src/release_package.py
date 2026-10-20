@@ -9,7 +9,7 @@ import subprocess
 import uuid
 import zipfile
 
-from release_tools import ROOT, PWSH, contained, digest, read_json, verify_build
+from release_tools import ROOT, PWSH, contained, digest, read_json, verify_build, source_snapshot
 
 
 VERSION = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
@@ -111,7 +111,34 @@ def frozen_sources(build_dir):
     build_path = build_dir / 'build-receipt.json'
     test_path = build_dir / 'test-receipt.json'
     build = read_json(build_path)
-    info = verify_build(build, build_dir)
+    validation_path = ROOT / ('evidence/' + VERSION + '-user-validation.json')
+    validation = read_json(validation_path)
+    current_sources = source_snapshot()
+    metadata_transition = None
+    verification = build
+    if current_sources != build.get('source_files'):
+        # 同版本验收转正式只允许candidate由true变false；原冻结回执不改写。
+        before = build.get('source_files', {})
+        changed = {name for name in set(before) | set(current_sources)
+                   if before.get(name) != current_sources.get(name)}
+        if changed != {'src/product.json'} or validation.get('release_metadata_only_authorized') is not True:
+            raise ValueError('验收后来源变化超出发布状态元数据：' + repr(sorted(changed)))
+        commit = validation['validated_commit']
+        subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)
+        original = subprocess.check_output(['git', 'show', commit + ':src/product.json'], cwd=ROOT)
+        expected = json.loads(original)
+        if data_hash(original) != before['src/product.json'] or expected.get('candidate') is not True:
+            raise ValueError('验收提交的产品元数据与冻结来源不符')
+        expected['candidate'] = False
+        if read_json(ROOT / 'src/product.json') != expected:
+            raise ValueError('仅允许候选状态true转false，不能改其他产品字段')
+        # 临时校验视图只替换已精确证明的元数据摘要，其余源/对象/资源沿原严格检查。
+        verification = dict(build, source_files=dict(before, **{'src/product.json': current_sources['src/product.json']}))
+        metadata_transition = {'field': 'candidate', 'before': True, 'after': False,
+                               'original_sha256': before['src/product.json'],
+                               'release_sha256': current_sources['src/product.json'],
+                               'validated_commit': commit, 'original_build_receipt_unchanged': True}
+    info = verify_build(verification, build_dir)
     installed = read_json(ROOT / ('evidence/' + VERSION + '-installed.json'))
     tests = read_json(test_path)
     build_hash, test_hash = digest(build_path), digest(test_path)
@@ -123,9 +150,7 @@ def frozen_sources(build_dir):
             tests.get('name') != NAME or tests.get('version') != VERSION or
             tests.get('passed') is not True or tests.get('build_receipt_sha256') != build_hash):
         raise ValueError('当前构建、通过测试和安装回执未形成完整关联')
-    validation_path = ROOT / ('evidence/' + VERSION + '-user-validation.json')
     authorization_path = ROOT / ('evidence/' + VERSION + '-user-feedback-followup.json')
-    validation = read_json(validation_path)
     authorization = read_json(authorization_path)
     if (validation.get('version') != VERSION or validation.get('main_acceptance_authorized') is not True or
             validation.get('build_receipt_sha256') != build_hash or
@@ -140,8 +165,8 @@ def frozen_sources(build_dir):
     sources = {'Scripts/' + name: ROOT / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build_dir / 'DualSP.dll',
                     'bin/DualSPUI.dll': build_dir / 'DualSPUI.dll', 'VERSION': ROOT / 'VERSION'})
-    if len(sources) != 17 or set(sources) != set(installed['runtime_files']):
-        raise ValueError('当前运行文件必须恰为完整的 17 项')
+    if len(sources) != len(info['scripts']) + 3 or set(sources) != set(installed['runtime_files']):
+        raise ValueError('运行文件必须与产品Lua清单及已安装回执逐项一致')
     runtime = {}
     for name, path in sources.items():
         data = contained(path, ROOT).read_bytes()
@@ -152,13 +177,12 @@ def frozen_sources(build_dir):
     asset_record = installed.get('mount_assets', {})
     if (asset_record.get('path') != PAK or asset_record.get('sha256') != assets['sha256'] or
             asset_record.get('variant_count') != len(assets['variants']) or
-            asset_record.get('file_count') != assets['file_count'] or
-            len(assets['variants']) != 50 or assets['file_count'] != 100):
+            asset_record.get('file_count') != assets['file_count']):
         raise ValueError('当前挂架包与安装回执不符')
     pak = (build_dir / assets['file']).read_bytes()
     if data_hash(pak) != assets['sha256'].lower():
         raise ValueError('挂架包读取期间发生变化')
-    return runtime, pak, installed, build_hash, test_hash, digest(validation_path), digest(authorization_path)
+    return runtime, pak, dict(installed, release_metadata_transition=metadata_transition), build_hash, test_hash, digest(validation_path), digest(authorization_path)
 
 
 def version_label_sources(build_dir, accepted_dir):
@@ -237,7 +261,7 @@ def version_label_sources(build_dir, accepted_dir):
     runtime = {'Scripts/' + name: (ROOT / 'dist/DualSP/Scripts' / name).read_bytes() for name in info['scripts']}
     runtime.update({'bin/DualSP.dll': (build_dir / 'DualSP.dll').read_bytes(),
                     'bin/DualSPUI.dll': (build_dir / 'DualSPUI.dll').read_bytes(), 'VERSION': (ROOT / 'VERSION').read_bytes()})
-    if len(runtime) != 17 or set(runtime) != set(old_installed['runtime_files']):
+    if len(runtime) != len(info['scripts']) + 3 or set(runtime) != set(old_installed['runtime_files']):
         raise ValueError('运行文件集合不同于已验收版本')
     for name, data in runtime.items():
         if name not in ('bin/DualSP.dll', 'bin/DualSPUI.dll', 'VERSION', 'Scripts/main.lua'):
@@ -295,15 +319,16 @@ def main():
         payload[name] = data
     payload['GameFiles/ue4ss/Mods/mods.txt'] = b'DualSP : 1\r\n'
     payload['GameFiles/' + PAK] = pak
-    if len(payload) != 27:
-        raise ValueError('基础 GameFiles 白名单必须恰为 27 项')
+    if len(payload) != len(runtime) + len(legacy_sources) + 2:
+        raise ValueError('基础GameFiles必须与运行清单、固定依赖、启用列表及PAK逐项一致')
     # 保留小写 candidate 版本字段，供现有 install.py 的 --base-receipt 读取。
     install = {'Name': NAME, 'Version': VERSION, 'Candidate': False, 'Distribution': 'manual',
                'name': NAME, 'candidate': VERSION, 'runtime_files': installed['runtime_files'],
                'mount_assets': installed['mount_assets'], 'build_receipt_sha256': build_hash,
                'test_receipt_sha256': test_hash, 'user_validation_sha256': validation_hash,
                'release_authorization_sha256': authorization_hash,
-               'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(accepted_dir)}
+               'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(accepted_dir),
+               'release_metadata_transition': installed.get('release_metadata_transition')}
     payload[MOD + 'install-receipt.json'] = json_bytes(install)
     for name in ('README_zh-CN.txt', 'README_en.txt'):
         data = contained(ROOT / 'docs' / name, ROOT).read_bytes()
@@ -339,13 +364,15 @@ def main():
     result = {'name': NAME, 'version': VERSION, 'Candidate': False, 'Distribution': 'manual',
               'created_at': datetime.now(timezone.utc).isoformat(),
               'archive': output.relative_to(ROOT).as_posix(), 'size': output.stat().st_size,
-              'sha256': digest(output), 'member_count': len(payload), 'game_file_count': 28,
+              'sha256': digest(output), 'member_count': len(payload),
+              'game_file_count': sum(name.startswith('GameFiles/') for name in payload),
               'runtime_file_count': len(runtimes), 'all_members_verified': True,
               'test_modules_run': False, 'recompiled': False, 'game_started_by_agent': False,
               'build_receipt_sha256': build_hash, 'test_receipt_sha256': test_hash,
               'installed_receipt_sha256': digest(ROOT / actual_installed),
               'actual_installed_receipt': actual_installed, 'gameplay_validated_version': validated_version,
               'version_label_rebuild': bool(accepted_dir), 'new_version_installed': not bool(accepted_dir),
+              'release_metadata_transition': installed.get('release_metadata_transition'),
               'packager_sha256': digest(Path(__file__)),
               'user_validation_sha256': validation_hash, 'release_authorization_sha256': authorization_hash,
               'runtime_source': '完整核验 2.16.0 发布包及清单后复用的原始微软运行库，历史来源见2.16发布回执',

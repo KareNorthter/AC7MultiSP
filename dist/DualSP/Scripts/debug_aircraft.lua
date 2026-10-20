@@ -1,6 +1,6 @@
 -- 调试换机走原生整关重开；只在新的受控玩家机体真正就绪后确认成功。
 local Module={}
--- 本Steam构建的47架官方机体编号，防止第三方表行冒用官方简称。
+-- 官方编号仅用于区分来源和许可提示；候选来自实际加载目录，不再以此表排除Mod机体。
 local official={
     [100]="f04e",[101]="f15c",[102]="f15e",[103]="f18f",[104]="f15j",[105]="f35c",[106]="a10a",[107]="f02a",
     [108]="f14d",[109]="f16c",[110]="f22a",[111]="j39e",[112]="m21b",[113]="m29a",[114]="m31b",[115]="mr2k",
@@ -80,22 +80,30 @@ function Module.new(deps)
             local dlc=context.instance.DLCInformation
             for key,info in pairs(deps.catalogue()or{})do
                 local id=tonumber(key)
-                -- 用户明确要求列出未持有DLC的机体。这里只识别官方表行，不写购买或许可状态。
-                if integer(id)and official[id]==info.code and info.supported and deps.names[info.code]and #info.weapons==3 then
-                    local label=deps.names[info.code]
+                -- 只接入目录中有完整三SP数据的机体；Mod仍须走原生重开及新玩家类身份确认。
+                if integer(id)and id>=0 and id<=2147483647 and type(info)=="table"and type(info.code)=="string"
+                    and #info.code>0 and #info.code<=128 and not info.code:find("[/%c%.]")
+                    and info.supported==true and type(info.weapons)=="table"and #info.weapons==3 then
+                    local isMod=official[id]~=info.code
+                    local supplied=type(info.name)=="string"and info.name~=""and info.name or info.code:upper()
+                    local name=deps.names[info.code]or supplied
+                    local label=name
                     local licensed=nil
                     local extra=type(info.dlc_id)=="string"and info.dlc_id~=""and info.dlc_id~="Base"
-                    if extra then
+                    if not isMod and extra then
                         local checked,value=pcall(function()assert(valid(dlc));return dlc:IsDLCOwned(info.dlc_id)end)
                         if checked then licensed=value==true end
                         label=label..(licensed==false and "（无DLC许可）"or licensed==nil and "（DLC许可未知）"or "")
-                    elseif type(info.dlc_id)~="string"then label=label.."（许可资料未知）"
-                    elseif ownedKnown and not owned[id]then label=label.."（未购买）"end
-                    self.options[#self.options+1]={plane_id=id,name=deps.names[info.code],label=label,code=info.code,
+                    elseif not isMod and type(info.dlc_id)~="string"then label=label.."（许可资料未知）"
+                    elseif not isMod and ownedKnown and not owned[id]then label=label.."（未购买）"end
+                    self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
                         purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
                 end
             end
-            table.sort(self.options,function(a,b)return a.name<b.name end)
+            table.sort(self.options,function(a,b)
+                local left,right=a.name:lower(),b.name:lower()
+                return left==right and a.plane_id<b.plane_id or left<right
+            end)
         end)
         if not ok then self.options={};self.optionsError=tostring(err)end
     end
@@ -104,7 +112,7 @@ function Module.new(deps)
         if self.pending then allowed=false;reason="正在重开任务并等待目标机体。"end
         if allowed then self:refreshOptions(false)end
         if self.optionsError then allowed=false;reason=self.optionsError end
-        return {protocol=1,session=session,revision=revision,available=allowed==true,reason=reason or "",
+        return {protocol=2,session=session,revision=revision,available=allowed==true,reason=reason or "",
             options=self.options,response=self.response,ack=self.ack,status=self.status,mode="restart",notice=self.notice,error=self.error}
     end
     function self:request(action)
@@ -116,7 +124,7 @@ function Module.new(deps)
         end
         local pending=nil
         local ok,err=pcall(function()
-            assert(action.debug_aircraft_protocol==1,"换机界面协议不匹配")
+            assert(action.debug_aircraft_protocol==2,"换机界面协议不匹配")
             assert(deps.allowed(),"当前不是已启用Mod的单人任务")
             local allowed,reason=deps.canChange();assert(allowed,reason)
             local context=deps.context()
@@ -126,7 +134,7 @@ function Module.new(deps)
             assert(not self.optionsError,self.optionsError)
             local target=nil
             for _,option in ipairs(self.options)do if option.plane_id==action.target_plane_id then target=option end end
-            assert(target,"目标不是当前已加载目录中的官方三SP机体")
+            assert(target,"目标不是当前已加载目录中的可用三SP机体")
             for _,path in ipairs({"/Script/Engine.PlayerController:RestartLevel","/Script/Engine.Pawn:GetController",
                 "/Script/Engine.Controller:K2_GetPawn","/Script/Engine.Controller:IsLocalController",
                 "/Script/Engine.Controller:IsLocalPlayerController","/Script/Engine.GameplayStatics:GetGameInstance",

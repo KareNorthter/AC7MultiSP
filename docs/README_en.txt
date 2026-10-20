@@ -1,28 +1,25 @@
-AC7MultiSP 2.21.0
+AC7MultiSP 2.21.1
 
-What is new in 2.21.0 (since 2.20.0)
-• Central weapon abbreviations can remain visible (default) or appear for 1 second after switching. Pauses do not count; selecting the same weapon again does not extend the timer. Lower-right HUD information is retained.
-• X uses native weapon cycling. Release a short L3 press to toggle sustained tracking; release short R3 to change view or hold it for 0.3 seconds to recenter. Both sticks together only release countermeasures.
-• Fresh settings enable tracking, Camera hold and R3 hold-to-recenter. All remain optional in the second Bindings tab. Upgrades preserve existing Camera hold choices, custom bindings, sensitivity and loadouts; backups precede migration to configuration 12.
-• F6 has General, Bindings, Logs and Debug cards, contextual ? help, expandable advanced controls and a fixed Save footer below scrolling content.
-• While Camera hold is enabled, ordinary first-person, cockpit and third-person changes retain the progress and direction of sustained tracking on the same target instead of recentering first.
-• Avoids an identified F-22 preparation crash by retaining reflected field-name strings for page, weapon and mount queries. This is a mod-side workaround, not a global loader fix. Fully exit the game before upgrading.
-• XFA-27 SOD+MSTM retains brackets and two MSTM positions. MiG-35D dual-SP layouts use matched left/right pairs. The complete mount package contains 54 variants/108 members.
-
-The user tested 2.20.3 and reported no issues. 2.21.0 rebuilds the same functional sources with release labels and existing checks; this is not exhaustive validation of every aircraft, combination, mod or performance scenario.
+Changes in this version (since 2.21.0)
+• Added Gun salvo linking the native gun action to MGP/PLSL. Off by default; remappable Ctrl+Alt+F5. HGP and concurrent different SPs are unsupported.
+• Single-key actions now work while Shift/Ctrl/Alt is held; exact configured chords take priority to avoid duplicate actions.
+• F6 uses General, Camera, Logs and Debug. Tracking and Camera hold are off for fresh settings; upgrades retain saved choices.
+• Debug aircraft changes support loaded mod aircraft, with name/code/ID search and source/initial-letter filters.
+• Fixed CFA muzzle-record mismatch handling; F-15 S/MTD HPAA+FAEB and triple-SP layouts show two HPAA/two FAEB.
 
 Carry several special weapons on one aircraft and switch between them during a mission.
 For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, in single-player campaign and free missions.
 Other builds, VR and multiplayer are outside the supported scope. Mod features are automatically disabled in multiplayer.
 
 Features
+• Gun salvo links the native gun action to a loadout’s MGP or PLSL. Off by default; release attempts to restore the previous selection. Switching gaps remain possible. Pausing, opening Management, focus loss or manual selection cancels the action.
 • Select one to three SP weapons through the native preparation menus. Standard missiles remain available. You can change your SP loadout during resupply.
 • Each SP keeps its own ammunition and reload state. One SP uses full ammunition; defaults are 50% each for two SPs and 33% each for three. Adjust these percentages in the management panel.
 • HUD weapon and reload information, native weapon cycling, and direct selection of all four weapon slots.
-• In Management > Features & Parameters, choose Always visible (default) or Show for 1 second after switching for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
+• In Management > General, choose Always visible (default) or Show for 1 second after switching for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
 • Experimental simultaneous SP models retain selected external stores where supported. Layouts vary by aircraft; some internal bays retain native model switching.
 • Chinese/English management panel, configurable controls, ammunition settings, model toggle and logs.
-• Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. Unpurchased and unlicensed DLC aircraft are listed for testing. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
+• Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. The aircraft picker includes loaded mods with complete three-SP data, plus unpurchased/unlicensed official aircraft. Search by name/code/ID and filter by source or initial letter. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
 • Mission 13 uses its assigned weapons with Multi-SP takeover temporarily disabled. Features resume after leaving, without changing saved settings. Free flight on the same map is unaffected.
 
 Installation
@@ -44,11 +41,11 @@ Controls
 • Choose SP1, SP2 and SP3 in sequence; the latter two can be NO WEAPON. Use keyboard or controller in native preparation menus.
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
-• Optional toggle tracking: L3 is enabled by default in the second Bindings tab; press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
-• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 12. Older settings migrate in stages with backups retained.
-• Camera hold and Hold R3 to recenter are enabled by default for fresh configurations. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
+• Optional toggle tracking: L3 is off by default in the second Camera tab; enable it, then press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
+• Upgrades retain personal settings. Older configurations are backed up before each required migration; current configuration revision is 13. Migration backs up profiles.before-gun-salvo.json before adding Gun salvo, retaining saved switches, bindings and loadouts.
+• Camera hold is off for fresh settings. Hold R3 to recenter remains enabled as a suboption, available only while Camera hold is enabled. Short R3 release changes view; holding 0.3 seconds recenters, while both sticks only release countermeasures. Independent middle-mouse recenter and 5%–200% sensitivity remain. Disabling Camera hold restores native recentering; existing saved Camera hold choices are retained.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
-• Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. These bindings can be changed.
+• Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. Change these bindings and direct weapon keys in the first General tab.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
 • If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
 
@@ -94,7 +91,7 @@ Known issues and planned improvements
 • One identified preparation-cache crash is addressed by this mod-side workaround. Other hangar exits, custom-aircraft sorties and recovery paths still need their own evidence; they are not assumed to share that cause.
 
 Compatibility with other mods
-• Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. Those combinations have not received an exhaustive 2.21.0 retest.
+• Earlier versions were tested in selected scenarios with AC7MouseAim, FOV and proportional-guidance mods, and PW-MKI/Adler A replacement aircraft. This acceptance does not cover exhaustive testing of those combinations.
 • A J-20 replacement was previously checked for model/skin appearance with native single-SP behavior. This does not establish Multi-SP support for all custom aircraft.
 • Skin, model, HUD, weapon-table, firing and input mods may modify the same assets or interfaces. Changed skeletons or sockets can make simultaneous models unsupported or trigger a native-visual fallback.
 • Conflicting dwmapi.dll files, different UE4SS versions, or mods controlling the same weapon/input paths require individual checks. Rebind F6 if another mod uses it.
@@ -105,3 +102,44 @@ When reporting a problem, include aircraft, SP combination, mission, steps and a
 Third-party notices
 UE4SS, Dear ImGui, MinHook and nlohmann/json licenses are in the mod's licenses folder; json.lua retains its MIT notice.
 SP2.wav is a user-supplied, non-original sound. This project grants no additional rights to it. Microsoft runtimes are supplied as their original installers.
+
+Version history (2.xx)
+Includes test versions; historical features may have been replaced or withdrawn. Current instructions take precedence.
+2.0.0：Unified the AC7MultiSP project, build/install workflow and three-SP baseline.
+2.1.0：Intermediate test version.
+2.1.1：Intermediate test version.
+2.2.0：Added multi-SP model previews in hangars and resupply menus.
+2.2.1：Extended previews to other hangar pages and sortie transitions.
+2.2.2：Improved model rebuilding, sortie positioning and management options.
+2.3.0：Added in-mission loadout cycling and a model-toggle shortcut.
+2.3.1：Revised F-15E, F-35C and Su-30SM layouts and model toggling across scenes.
+2.4.0：Added custom shortcut chords and integrated mount/continuous-weapon work.
+2.5.0：Improved safe master-switch application, brief notifications and performance logging.
+2.6.0：Expanded static layouts to ten more aircraft and reduced preview overhead outside hangars.
+2.7.0：Fixed mount-asset loading and integrated ADF-11F continuous-weapon handling.
+2.7.1：Revised ADF-11F UAV capacity, F-2A switching and Rafale/Typhoon mount points.
+2.7.2：Moved F-2A LASM inside and HVAA outside; delivered with a later build.
+2.8.0：Trialed full-bay layouts for F-22A, Su-47 and Su-57 TGM; significant performance problems remained.
+2.8.1：Reduced repeated full-bay maintenance; these approaches were later archived.
+2.9.0：Prioritized external-store retention; restored native visuals for Su-47 and Su-57 TGM.
+2.10.0：Improved F-22A switching and added lightweight ADF-01, DarkStar, ADF-11F and CFA-44 layouts.
+2.11.0：Expanded ten more layouts and classified support approaches for 47 armed aircraft.
+2.12.0：Revised mount counts, lightweight animation and continuous lasers; trialed X-02S visuals.
+2.13.0：Added aircraft changes through mission restart, revised layouts and withdrew X-02S visual takeover.
+2.14.0：Prioritized three SPs for debug aircraft changes and refined loadouts and Su-30M2/CFA/ADF cleanup.
+2.15.0：Loaded assets per combination, reduced repeated parsing and refined loadout titles and preview rebinding.
+2.16.0：Integrated loading/preview optimizations, CFA dual layouts, cycling HUD fixes, English text and hangar-back handling.
+2.17.0：Added sustained tracking and revised CFA switching and ECM visuals.
+2.18.0：Restored native CFA visuals outside missions and corrected assigned-SP bypass to Mission 13.
+2.19.0：Optimized CFA muzzle lookup and switching; user feedback confirmed reduced stutter.
+2.19.1：Retained CFA opening progress across multi-SP switches and added Camera hold.
+2.19.2：Revised stale firing input and R3 routing; blocked switching during FALKEN laser activity.
+2.19.3：Cleared stale target registrations, reduced repeated memory checks and refined recenter bindings/sensitivity.
+2.19.4：Further reduced repeated CFA work and refined the R3 option and keyboard/mouse Camera hold.
+2.19.5：Improved view/tracking direction continuity and reduced controller tracking-toggle notifications.
+2.20.0：Released the integrated 2.19-series changes with aircraft support notes.
+2.20.1：Added timed weapon abbreviations, revised L3/R3 gestures, F6 cards and XFA-27/MiG-35D mount revisions.
+2.20.2：Preserved sustained tracking across view changes and improved local crash-capture tooling.
+2.20.3：Retained reflected field-name strings to avoid the identified F-22 preparation crash path.
+2.21.0：Released the integrated 2.20.1–2.20.3 changes with updated instructions and aircraft support tables.
+2.21.1：Added MGP/PLSL Gun salvo and mod-aircraft search; revised modifier input, F6, defaults, CFA handling and F-15 mounts.

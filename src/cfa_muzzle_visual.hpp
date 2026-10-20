@@ -110,9 +110,9 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
     if(found!=cfaMuzzleVisuals.end()) {
         if(!mountAlive(found->second.component))cfaMuzzleVisuals.erase(found);
         else {
-            // PSC被池重新分配或改挂时退出该记录，让本次原生显隐请求直接生效。
             if(mountCfaMuzzleCurrent(found->second))return &found->second;
-            cfaMuzzleVisuals.erase(found);return nullptr;
+            // 旧归属失配后只重新识别当前对象，避免仍符合左炮口条件时漏放本次请求。
+            cfaMuzzleVisuals.erase(found);
         }
     }
     const auto& rack=fixedMount.light->racks[1].component;

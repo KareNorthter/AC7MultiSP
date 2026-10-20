@@ -6,6 +6,22 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"目标不是当前已加载目录中的可用三SP机体","The target is not an available three-SP aircraft in the loaded catalogue."},
+    {"机炮齐射原生接口与当前构建不符","The native gun salvo interface does not match this game build."},
+    {"机炮齐射钩子初始化失败","Gun salvo hooks could not be initialized."},
+    {"机炮齐射钩子创建失败","Gun salvo hooks could not be created."},
+    {"机炮齐射钩子排队失败","Gun salvo hooks could not be scheduled."},
+    {"机炮齐射钩子启用失败","Gun salvo hooks could not be enabled."},
+    {"机炮齐射参数数量无效","The gun salvo interface does not match the controller."},
+    {"机炮齐射参数无效","Gun salvo parameters are invalid."},
+    {"机炮齐射不属于当前玩家会话","Gun salvo does not belong to the current player session."},
+    {"当前SP不支持机炮齐射","The current SP does not support gun salvo."},
+    {"机炮齐射核心调用失败","The gun salvo core call failed."},
+    {"机炮齐射开关必须为布尔值","Gun salvo must be on or off."},
+    {"缺少四个快捷键设置","Four mod shortcut settings are required."},
+    {"四个快捷键不能重复","The four mod shortcuts must be distinct."},
+    {"需要管理参数第 13 版","Management configuration revision 13 is required."},
+    {"旧配置含未知机炮齐射设置","The old configuration contains unexpected gun salvo settings."},
     {"镜头注视交接进度超出原生范围","The camera tracking transition is outside the native range."},
     {"镜头注视交接方向无效","The camera tracking transition direction is invalid."},
     {"镜头注视交接接口不匹配","The camera tracking transition interface does not match this game build."},
