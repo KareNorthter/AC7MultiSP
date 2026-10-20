@@ -1,0 +1,421 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "branch": "codex/five-aircraft-mount-review",
+  "baseline_source": "bf2fdeb",
+  "formal_baseline": "main / 2.21.1 / 0b75b21",
+  "user_instruction": "挂点数量有限时允许不对称，较大的4AGM优先内侧；LACM>LAGM/LASM>4AGM>LAAM/SAAM>4AAM/6AAM/8AAM/HVAA>QAAM/SASM/HPAA/HCAA。按此调整MiG35D。",
+  "code": "m35d",
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos",
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg"
+  ],
+  "plan_overrides": [
+    {
+      "mask": 5,
+      "expected_plan": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 5,
+        "variants": [
+          -1,
+          -1,
+          51
+        ]
+      },
+      "replacement_plan": {
+        "selected": [
+          [],
+          [],
+          [
+            2,
+            3
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          50,
+          52
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 0
+          },
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 1
+          }
+        ],
+        "full_borrowed_kinds": 1
+      }
+    },
+    {
+      "mask": 7,
+      "expected_plan": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "racks": 7,
+        "variants": [
+          -1,
+          37,
+          38
+        ]
+      },
+      "replacement_plan": {
+        "selected": [
+          [],
+          [
+            0
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          50,
+          52
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 1
+          }
+        ],
+        "full_borrowed_kinds": 1
+      }
+    }
+  ],
+  "layout": {
+    "SAAM+4AGM": "内侧4AGM左右各1；最外侧SAAM左右各1，借SWP2/sp21/22原生导轨和Socket。",
+    "SAAM+6AAM+4AGM": "内侧4AGM左右各1；左最外侧6AAM1，右最外侧SAAM1。SAAM借SWP2/sp22，该池自有6AAM只占sp21，不能重复占同一点。",
+    "unchanged": "三种单挂、SAAM+6AAM、6AAM+4AGM保持；后者原已是4AGM内侧、6AAM最外侧。"
+  },
+  "native_points": {
+    "four_agm_inner": [
+      "SWP3/sp33",
+      "SWP3/sp34"
+    ],
+    "saam_double_outer": [
+      "SWP2/sp21",
+      "SWP2/sp22"
+    ],
+    "saam_triple_outer": [
+      "SWP2/sp22"
+    ],
+    "six_aam_triple_outer": [
+      "SWP2/sp21"
+    ]
+  },
+  "runtime_contract": "仅新方案显式登记full_borrowed_kinds=1，允许SAAM全部借位及借已选供位池未占Socket；其他旧借位不放宽。完整核对池/Socket/父链/网格及NoCollision，显示与离架同点，原生SAAM池仍用于身份与原网格来源。",
+  "geometry_review": {
+    "schema": 1,
+    "method": "原生Socket完整旋转、三LOD弹体全部互配AABB分离及必要表面复核；原生最外导轨按既有完整分区提取",
+    "sources": {
+      "w_saam_r0_SM": {
+        "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_saam_r0_SM.json",
+        "json_sha256": "213eb77039557d7678d4201966314edb4a8954e7798b4c73153722a9c00ee8c5"
+      },
+      "w_4aam_r0_SM": {
+        "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_4aam_r0_SM.json",
+        "json_sha256": "46451366671a25902b6de182a9805c2ce7e9c6679d6b3aef778b557c95e539ad"
+      },
+      "w_4agm_r0_SM": {
+        "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001545-667577\\assets\\pakchunk0-WindowsNoEditor\\decoded\\w_4agm_r0_SM.json",
+        "json_sha256": "08ad6befc6ea552d00d120a1579ebd70b2e107fd5fe1cd80a6a4da7d25d5d7ac"
+      },
+      "m35d_SWP2_SM": {
+        "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001522-815449\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\m35d_SWP2_SM.json",
+        "json_sha256": "6629a2c83cf04e692a14127b720acf2c8851ef37cf987040f1f24af800f1824d"
+      },
+      "m35d_SWP3_SM": {
+        "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP\\Temp\\mount-assets-20261017-001522-815449\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\m35d_SWP3_SM.json",
+        "json_sha256": "5c628787ad385d6596a8f41d9b10da4a5e0e183e1c0a2b2f7b4cf3d204f8756e"
+      }
+    },
+    "ordnance": [
+      {
+        "mask": 5,
+        "cross_weapon_pairs": [
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp21",
+              "sp33"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 6.154860734939575,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp21",
+              "sp34"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 55.15481073493957,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp22",
+              "sp33"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 55.154860973358154,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp22",
+              "sp34"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 6.154910973358156,
+            "strict_surface_contacts": 0
+          }
+        ]
+      },
+      {
+        "mask": 7,
+        "cross_weapon_pairs": [
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4aam_r0_SM"
+            ],
+            "sockets": [
+              "sp22",
+              "sp21"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 72.60528588294983,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp22",
+              "sp33"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 55.154860973358154,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_saam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp22",
+              "sp34"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 6.154910973358156,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_4aam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp21",
+              "sp33"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 5.862877607345581,
+            "strict_surface_contacts": 0
+          },
+          {
+            "weapons": [
+              "w_4aam_r0_SM",
+              "w_4agm_r0_SM"
+            ],
+            "sockets": [
+              "sp21",
+              "sp34"
+            ],
+            "lod_pair_count": 9,
+            "minimum_signed_aabb_gap": 54.86282760734558,
+            "strict_surface_contacts": 0
+          }
+        ]
+      }
+    ],
+    "native_outer_support_contacts": [
+      {
+        "socket": "sp21",
+        "lod": 0,
+        "borrowed_saam_surface_contacts_with_outer_rack": 110,
+        "native_six_aam_surface_contacts_with_outer_rack": 12
+      },
+      {
+        "socket": "sp21",
+        "lod": 1,
+        "borrowed_saam_surface_contacts_with_outer_rack": 0,
+        "native_six_aam_surface_contacts_with_outer_rack": 0
+      },
+      {
+        "socket": "sp21",
+        "lod": 2,
+        "borrowed_saam_surface_contacts_with_outer_rack": 0,
+        "native_six_aam_surface_contacts_with_outer_rack": 0
+      },
+      {
+        "socket": "sp22",
+        "lod": 0,
+        "borrowed_saam_surface_contacts_with_outer_rack": 110,
+        "native_six_aam_surface_contacts_with_outer_rack": 12
+      },
+      {
+        "socket": "sp22",
+        "lod": 1,
+        "borrowed_saam_surface_contacts_with_outer_rack": 0,
+        "native_six_aam_surface_contacts_with_outer_rack": 0
+      },
+      {
+        "socket": "sp22",
+        "lod": 2,
+        "borrowed_saam_surface_contacts_with_outer_rack": 0,
+        "native_six_aam_surface_contacts_with_outer_rack": 0
+      }
+    ],
+    "boundary": "只读静态共同局部空间；接触数不代表严重穿模或完整支撑验收；实际贴合、父链世界变换、离架、补给和归还仍须实测",
+    "compiled": false,
+    "tests_run": false,
+    "game_process_access": false
+  },
+  "support_boundary": "复用原生最外6AAM导轨，不新增悬空坐标。SAAM与该导轨LOD0有110处表面接触，原生6AAM为12；接触数不证明严重穿模或贴合通过，借位贴合仍需实机观察。更低两LOD没有表面交叉。",
+  "local_analysis": {
+    "script": "Temp/m35d-size-priority/collect_geometry.py",
+    "sha256": "2edd26cf4648debdd2dc12a53f3d508d18ef44eb4aa8e8cffac15e53187f5350",
+    "report_sha256": "9e4dbabade3df83ea5259e11dd372a6e9c81d8d9ea01abf8cce5cc9f4d72b478"
+  },
+  "resource_policy": "复用已有54资源/108成员，最外双架和4AGM内双架副本均已有；旧资源不覆盖、不追加资源。Lua按新组合引用现有副本。",
+  "weapon_policy": "不改变SAAM/6AAM/4AGM的实际库存、配弹比例、窗口、锁定、齐射、冷却和真实武器类型；三挂SAAM一处物理位仍保原生两槽/窗口。F4十二模型、九枚实弹修订保持。",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "gameplay_verified": false,
+  "source_diff_review": {
+    "baseline": "bf2fdeb",
+    "changed_plans": [
+      [
+        "m35d",
+        5
+      ],
+      [
+        "m35d",
+        7
+      ]
+    ],
+    "other_plans_unchanged": true,
+    "asset_names_and_indices_unchanged": true,
+    "asset_count": 54,
+    "lua_changed_aircraft": [
+      "m35d"
+    ],
+    "f04e_model_capacity_mask_preserved": 1,
+    "protected_legacy_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "method": "只读比较HEAD与工作树生成表及Lua差异，人工审阅借位绑定、显隐和发射映射；未运行测试"
+  }
+}

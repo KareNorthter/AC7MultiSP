@@ -19,5 +19,5 @@ return {
     su34={{30,"MSP_su34_sffs_outer",1,168},{31,"MSP_su34_hcaa_inner",2,136},{32,"MSP_su34_4agm_belly",3,128},{41,"MSP_su34_4agm_inner_belly",3,96},{42,"MSP_su34_hcaa_outer",2,64}},
     m29a={{33,"MSP_m29a_hpaa_outer_neg",1,128},{35,"MSP_m29a_4aam_inner",3,32},{43,"MSP_m29a_hpaa_outer",1,40},{44,"MSP_m29a_lagm_inner",2,200},{48,"MSP_m29a_4aam_outer",3,64},{49,"MSP_m29a_4aam_outer_pos",3,128}},
     f16x={{36,"MSP_f16x_4agm_outer",3,160}},
-    m35d={{37,"MSP_m35d_6aam_outer_neg",2,128},{38,"MSP_m35d_4agm_middle_pos",3,128},{50,"MSP_m35d_6aam_outer_pair",2,72},{51,"MSP_m35d_4agm_middle_pair",3,32},{52,"MSP_m35d_4agm_inner_pair",3,64}},
+    m35d={{50,"MSP_m35d_6aam_outer_pair",2,232},{52,"MSP_m35d_4agm_inner_pair",3,224}},
 }

@@ -38,8 +38,13 @@ void mountExpansionPositions(FixedMountState& state) {
     }
     if(plan.contains("borrowed_positions"))for(const auto& borrowed:plan.at("borrowed_positions")) {
         const int kind=borrowed.at("kind").get<int>(),pool=borrowed.at("pool").get<int>(),socket=borrowed.at("socket").get<int>();
-        require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)) &&
-            !(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty(),"扩展借位：只能借用未选兵装的原生位置");
+        require(kind>=0 && kind<3 && pool>=0 && pool<3 && kind!=pool && (state.kindsMask&(1u<<kind)),
+            "扩展借位：逻辑兵装或供位池无效");
+        const bool fullBorrow=(plan.value("full_borrowed_kinds",0u)&(1u<<kind))!=0;
+        // 旧借位保持原门槛；整组迁位须显式登记，供位池可选中，但每个Socket只能分配一次。
+        require(fullBorrow?selected.at(kind).empty():
+            (!(state.kindsMask&(1u<<pool)) && !state.expansionPositions[kind].empty()),
+            "扩展借位：未登记整组迁位或原生来源位置缺失");
         const auto& provider=mountExpansionDefinition(state.aircraft).at("groups").at(pool);
         require(!provider.at("fixed").get<bool>() && !mountExpansionDefinition(state.aircraft).at("groups").at(kind).at("fixed").get<bool>() &&
             socket>=0 && socket<static_cast<int>(provider.at("sockets").size()),
@@ -128,8 +133,17 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         const Addr target=state.physical[state.expansionPositions[kind][index]];
         const auto identity=mountIdentity(target);
         mountRequireNoCollision(target); // 只读守卫；不改借用组件的碰撞设置。
-        const Addr source=state.physical[state.expansionPositions[kind].front()];
-        require(state.expansionPools[kind].front()==kind,"扩展借位：缺少本兵装原生弹体作为网格来源");
+        Addr source=0;
+        if((plan.value("full_borrowed_kinds",0u)&(1u<<kind))!=0) {
+            // 原生池仍完整绑定核验；即使本组不占显示位，也从其真实组件取原弹体网格。
+            for(const auto& visual:state.visuals)if(visual.pool==kind && visual.index>=0) {
+                source=visual.identity.address;break;
+            }
+            require(source!=0,"扩展借位：整组迁位缺少原生弹体网格来源");
+        } else {
+            source=state.physical[state.expansionPositions[kind].front()];
+            require(state.expansionPools[kind].front()==kind,"扩展借位：缺少本兵装原生弹体作为网格来源");
+        }
         const auto replacement=mountIdentity(mountBaselineMesh(mountIdentity(source),read<Addr>(source+0x728)));
         const auto original=mountIdentity(mountBaselineMesh(identity,read<Addr>(target+0x728)));
         require(!groups.at(kind).at("mesh").is_null() && mountName(replacement.address)==groups.at(kind).at("mesh").get<std::string>(),
