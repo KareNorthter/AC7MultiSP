@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "status": "user_confirmed_normal_scoped",
+  "user_quote": "mig31b，FA/18E,都正常了。",
+  "aircraft": [
+    {
+      "code": "m31b",
+      "name": "MiG-31B",
+      "status": "用户确认本轮正常",
+      "revision": "后腹SAAM r3"
+    },
+    {
+      "code": "f18e",
+      "name": "F/A-18E",
+      "status": "用户确认本轮正常",
+      "revision": "LAGM内侧、4AGM外侧r1"
+    }
+  ],
+  "installed_version": "2.25.1",
+  "installed_source_commit": "983f1c36a6ee08880d49d7a1df81e61ae84e17bf",
+  "installed_receipt": "evidence/2.25.1-installed.json",
+  "installed_receipt_sha256": "147cc6c50ac4156bc307f85c893ddd68459db874754125356af930cb2f8fc4ee",
+  "runtime_files_matched": 19,
+  "installed_mount_pak_matched": true,
+  "mount_pak_sha256": "c24112faaf1abbdcaed848b69b7bc000aee2a6c7dc9aca142d090f4af14f14c2",
+  "resource_count": 77,
+  "resource_members": 154,
+  "pending": [
+    {
+      "code": "f18etg",
+      "status": "完整借架的内GPB新布局尚未明确反馈通过"
+    },
+    {
+      "code": "asfx",
+      "status": "RKT相关继续暂缓"
+    }
+  ],
+  "scope": [
+    "正常是本轮用户反馈，不扩大为所有组合、任务、动画、离架、性能或零穿模全量验收",
+    "MiG-31B既有穿插静态证据保留历史含义，不回改旧验收或宣称所有几何问题均已消失",
+    "F-14A及此前四机的正常反馈保持"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed_by_this_turn": false,
+  "game_process_access": false,
+  "game_operated": false
+}
