@@ -17,7 +17,7 @@ def build(source, output):
     reports = {v['recipe']['name']:v for v in proof['variants']}
     for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json', 'static-expansion-2.13.0.json',
                      'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json',
-                     'local-four-mount-runtime.json'):
+                     'local-four-mount-runtime.json', 'm31b-saam-offset-r1.json'):
         extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
         for report in extra['resource_reports']:
             name = report['recipe']['name']

@@ -1,4 +1,9 @@
-AC7MultiSP 2.23.0 (candidate)
+AC7MultiSP 2.23.1 (candidate)
+
+2.23.1 candidate changes (since 2.23.0; observation pending)
+• MiG-31B SAAM+PLSL and triple-SP rear SAAM pairs move symmetrically 6 units aft and 2 down in model-local resource units. Y=±4.6, rotation and scale stay unchanged.
+• Visible and firing sockets share the offset. Other combinations, both PLSL pods and the four-aircraft runtime additions are retained. One new variant gives 74 variants/148 members; update the complete set.
+• Configuration 14 needs no new migration. Settings, loadouts and saves are preserved; clipping and belly clearance need in-game observation.
 
 2.23.0 candidate changes (since 2.22.0; user validation pending)
 • Added all seven nonempty SP combinations for F-14D, F/A-18F, Su-33 and F/A-18F Block III; single-SP visuals remain native.
@@ -85,7 +90,7 @@ F-4E | Adapted |
 F-14A | Candidate | Validation pending
 F/A-18E | Candidate | Validation pending
 F/A-18E TGM | Candidate | Validation pending
-MiG-31B | Observation | Known SAAM/rear-belly and triple-store intersections
+MiG-31B | Offset observation | Rear SAAM pair moved 6 aft/2 down in SAAM+PLSL and triple loadouts; clearance pending
 F-14D | Candidate | Native SWP3 mechanism; validation pending
 F/A-18F | Candidate | Native SWP3 mechanism; validation pending
 Su-33 | Candidate | Native SWP3 mechanism; validation pending
@@ -167,3 +172,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 
 2.22.0: Added threshold recentering, smooth stick look, R3 hold toggle, F-4E/MiG-35D revisions and four mount candidates; validation pending.
 2.23.0: Added four aircraft runtime mount candidates and eight variants; validation pending.
+2.23.1: Shifted MiG-31B rear SAAM sockets 6 aft/2 down; observation pending.
