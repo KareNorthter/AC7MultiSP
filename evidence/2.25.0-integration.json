@@ -7,15 +7,15 @@
   "sources": [
     {
       "thread": "01a1599c-1427-7ab2-8d61-0a6a0369edaa",
-      "commit": "39ec226"
+      "commit": "39ec226b8852ddb285c19071db0d9001a4095ff3"
     },
     {
       "thread": "01a14f83-b067-7ee3-a696-ac5b9b1efcc8",
-      "commit": "a4dd3c7"
+      "commit": "a4dd3c7ed47d40af048e5d4454035b9db210f499"
     },
     {
       "thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
-      "commit": "2ba1542",
+      "commit": "2ba154216e6f40882efbaa86fd2232fd438f804a",
       "includes": "6af68de"
     }
   ],
@@ -50,9 +50,9 @@
     "Y": 0.0,
     "Z": -2.0
   },
-  "compiled": false,
-  "tests_run": false,
-  "installed": false,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
@@ -62,5 +62,24 @@
     "与鼠标飞控并用时，新NEXT启用前须由用户关闭其F2 HMD；个人设置本次保留",
     "不扩展按涂装独立载量、飞行中热换武器类、Mod多SP挂架或未登记ECM/UAV",
     "SP1入场动画仍为研究，黑屏不宣称唯一根因已定"
-  ]
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "626c402e167bbdb669fc569315c5260fd988771f",
+  "build_dir": "Temp/build-2.25.0-candidate",
+  "build_receipt_sha256": "b15e3707b6002e691180b9b7a57b73f4759d28dc8b06b3eaab8ad035499a1df5",
+  "test_receipt_sha256": "ddc64c7743031374a9ef6872e824f4e5e77e3247a66027b6ba9b9a314342212f",
+  "install_receipt_sha256": "2537e829c4c32691753ab97fd11020d33c61b84331e0a8fa62ed575c025566e9",
+  "installed_at": "2026-10-20T23:28:25.775257+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.25.0\\backup\\AC7MultiSP-20261020-232825-775257",
+  "protected_files_verified": 358,
+  "runtime_files_verified": 19,
+  "preserved_mod_files_verified": 25,
+  "save_backup_file_count": 13,
+  "new_core_and_ui_exports_verified": true,
+  "installed_r3_resource_and_loader_verified": true,
+  "game_close_receipt": "evidence/2.25.0-game-close.json",
+  "game_close_receipt_sha256": "6274ae44125a029904d44aec577d229da26c6d4fa19066107eb78e82ee7c4634",
+  "game_remains_closed": true,
+  "game_close_method": "already_stopped",
+  "actual_profiles_revision_preserved": 14
 }

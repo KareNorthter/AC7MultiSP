@@ -2,6 +2,8 @@
 
 ## 当前2.25.0整合候选
 
+已成套构建、11项检查通过并安装，19运行文件及PAK一致；358项保护文件和完整Mod/存档备份核验通过。配置原字节保留，首次启动迁15；游戏未重启。
+
 接收目标切换`39ec226`、Mod机体兼容`a4dd3c7`及本体七机修订`2ba1542`（含`6af68de`），由实际已安装2.24.0升级。管理16/配置15/视角选目标1，19运行文件、74资源/148成员须成套。见[整合](2.25.0-integration.json)、[安装](2.25.0-installed.json)、[视角实现](view-target-implementation.json)、[Mod静态依据](mod-aircraft-compat-static.json)及[七机碰撞依据](native-seven-collision-preservation.json)。第二批第三方机体已有本机安装，本次不重复部署；旧验收/回执保留，正式main仍2.21.1。
 
 ## 当前2.24.0整合候选
