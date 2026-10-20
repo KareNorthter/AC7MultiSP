@@ -56,9 +56,9 @@
     "camera": 7,
     "aircraft": 2
   },
-  "compiled": false,
-  "tests_run": false,
-  "installed": false,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
   "game_started": false,
   "gameplay_validated": false,
   "merged_to_main": false,
@@ -67,5 +67,19 @@
     "本次仅后腹两处Socket偏移，支架本体不改形，支撑接触和净空待用户观察",
     "此前无报错不证明旧机库故障根因或所有场景通过",
     "四机外观、局部动画和性能等待用户实机反馈"
-  ]
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "2f2280a62b4fc4a79f131a4c9fa94de174bf3080",
+  "build_dir": "Temp/build-2.23.1-candidate",
+  "build_receipt_sha256": "25965aab95905b03f041202b4e0623b148ef89161b79c317a803f31f9f68a93f",
+  "test_receipt_sha256": "68e9263a6a7b83648f8a7af54587d3a6578dae4ea0b6fdb59137ba06338d9e0e",
+  "install_receipt_sha256": "2df943cc5a57d28008fb588a5d182dfe1d616c4dc4ab71d067411b952a28eb49",
+  "installed_at": "2026-10-20T20:25:49.608084+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1\\backup\\AC7MultiSP-20261020-202549-608084",
+  "protected_files_verified": 314,
+  "runtime_files_verified": 18,
+  "preserved_mod_files_verified": 25,
+  "save_backup_file_count": 13,
+  "offset_resource_members_verified": true,
+  "installed_loader_mask_verified": 192
 }
