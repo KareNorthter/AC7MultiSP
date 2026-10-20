@@ -96,15 +96,15 @@ void drawCameraSettings() {
         ImGui::Checkbox(tr("启用镜头保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
         panelHelp("默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
             "Off by default. When enabled, retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
+        ImGui::Checkbox(tr("R3长按回中/切换保持###CameraR3","R3 recenter / toggle hold###CameraR3"),&draftCameraR3);
+        panelHelp("默认开启，镜头保持关闭时也可使用。R3按住满0.2秒回中一次，继续按住满2秒切换镜头保持并保存设置；松开不换视角。短于0.2秒松开仍切换视角。双摇杆只释放干扰弹。关闭此项则R3使用原生功能。回中会结束模组注视，真实按住Y/F仍可原生注视。",
+            "On by default, including while camera hold is off. Hold R3 for 0.2 seconds to recenter once, then keep holding until 2 seconds to toggle and save camera hold. Release does not change view; release before 0.2 seconds changes view. Both sticks only release countermeasures. Disabling restores native R3. Recentering ends mod tracking; native Y/F hold-to-track remains.");
         if(!draftCameraHold&&captureSlot==8)captureSlot=-1;
         if(draftCameraHold) {
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("自动回正阈值###CameraAutoCenter","Auto recenter threshold###CameraAutoCenter"),&draftCameraAutoCenterDegrees,0,45,tr("%d 度","%d deg"),ImGuiSliderFlags_AlwaysClamp);
             panelHelp("默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
                 "Default 30 degrees; 0 disables. After releasing look input, smoothly recenters inside the center cone and retains direction outside. Target tracking takes priority. Uses a shared look reference of +/-180 degrees horizontally and +/-90 vertically; cockpit output retains native limits and animation. Save to apply.");
-            ImGui::Checkbox(tr("R3长按回中###CameraR3","Hold R3 to recenter###CameraR3"),&draftCameraR3);
-            panelHelp("默认开启。R3短按松开切换视角；长按满0.3秒立即回中，松开不切视角；双摇杆只释放干扰弹。关闭此项则R3完全使用原生功能。回中会停止模组注视，实际按住Y/F仍可原生注视。",
-                "On by default. Release a short R3 press to change view; holding for 0.3 seconds recenters immediately without changing view. Both sticks only release countermeasures. Disabling restores fully native R3 behavior. Recentering stops mod tracking; native Y/F hold-to-track remains.");
             ImGui::TextUnformatted(tr("独立回中键","Recenter shortcut"));ImGui::SameLine();
             bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
             ImGui::SameLine();if(ImGui::SmallButton(tr("中键###ResetCenterKey","Middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;}

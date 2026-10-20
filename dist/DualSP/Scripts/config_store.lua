@@ -213,6 +213,12 @@ function Config.new(options)
         end
         return config
     end
+    function self:setCameraHold(config,enabled)
+        local nextConfig=json.decode(json.encode(config));nextConfig.camera_hold_enabled=enabled
+        validateSettings(nextConfig) -- 开启后重新校验独立回中键冲突，不绕过管理页约束。
+        self:save(nextConfig)
+        return nextConfig
+    end
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))

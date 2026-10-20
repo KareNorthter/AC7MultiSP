@@ -707,6 +707,7 @@ void refreshState() {
     if(publishedGeneration.load(std::memory_order_acquire)==consumedGeneration)return;
     try {
         const bool wasManagement=state.value("management_protocol",0)==managementProtocol;
+        const bool wasCameraHold=state.value("camera_hold_enabled",false);
         const bool wasGunSalvo=state.value("gun_salvo_enabled",false);
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
@@ -734,7 +735,7 @@ void refreshState() {
             state.at("gun_salvo_enabled").get<bool>();
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
-            if(state.at("camera_hold").at("protocol").get<int>()!=6)throw std::runtime_error("镜头保持协议不匹配");
+            if(state.at("camera_hold").at("protocol").get<int>()!=7)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
@@ -758,6 +759,10 @@ void refreshState() {
         if(!panel && wasManagement && wasGunSalvo!=state.at("gun_salvo_enabled").get<bool>()) {
             draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
             showToast(draftGunSalvo?tr("机炮齐射：开启","Gun salvo: ON"):tr("机炮齐射：关闭","Gun salvo: OFF"));
+        }
+        if(!panel && wasManagement && wasCameraHold!=state.at("camera_hold_enabled").get<bool>()) {
+            draftCameraHold=state.at("camera_hold_enabled").get<bool>();
+            showToast(draftCameraHold?tr("镜头保持：开启","Camera hold: ON"):tr("镜头保持：关闭","Camera hold: OFF"));
         }
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
             notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
@@ -956,6 +961,7 @@ extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_r3_hold_toggle_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
