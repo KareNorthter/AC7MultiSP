@@ -34,7 +34,9 @@
 
 ## 后续开发流程
 
-本线程按用户要求继续使用`codex/five-aircraft-mount-review`，已合入main 2.21.0/`7a0559d`并保留F-15后续修订。F-4E新反馈限定UGB＋SASM左6右3，现有日志证实是UGB18枚按双SP50%缩为9枚，而非十二位布局缺件。用户已选择保持50%和9枚显示，此项关闭；完整布局仍保留左右各六位。以后按对称、支撑和净空设计布局，不以载量、配弹比例或待发数量限制设计容量。依据`evidence/f04e-ugb-sasm-stock-review.json`；本次仅更新规则/文档/记录，未修改代码、个人设置或游戏文件，未编译/运行测试/安装。旧F-4E暂缓记录保留历史含义。
+本线程按用户要求继续使用`codex/five-aircraft-mount-review`，已合入main 2.21.1/`0b75b21`。用户2026-10-20更正F-4E要求：UGB＋SASM显示左右各六枚UGB模型，实际仍50%配弹、九枚。此前把九枚弹药解释为九枚模型不准确，旧对照记录原字节保留，新依据为`evidence/f04e-ugb-model-capacity.json`。生成器精确核对旧十二位方案后只加`model_capacity_mask=1`；任务及预览共用该策略，不截断为九模型，投弹临时空位和装填恢复保留。仅改源码/生成表和说明，未编译、运行测试、安装或操作游戏，实际配弹、个人设置、54资源和Lua资源清单不变。
+
+接收线程只需收本次功能提交，沿用`Temp/mount-assets-2.20.1/source`的54资源/108成员成套构建；新策略JSON已纳入来源冻结，不用新网格或PAK。版本按后续补丁统一，不在此改写2.21.1冻结/安装回执。实测重点为准备/任务/补给均十二模型但库存九枚、正常扣弹、装填空位恢复、耗尽仍保独立外观容量，以及改单挂/组合/关闭模型后归还。
 
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 

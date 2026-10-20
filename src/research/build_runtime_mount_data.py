@@ -6,6 +6,22 @@ ROOT = Path(__file__).resolve().parents[2]
 CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn','su35','su37','f04e','f14atg','j39e','su30','su34','m29a','f16x','m35d']
 LAYOUT_REVIEW = 'evidence/static-mount-five-aircraft-review.json'
 LAYOUT_FEEDBACK = 'evidence/static-mount-five-aircraft-feedback.json'
+MODEL_CAPACITY = 'evidence/f04e-ugb-model-capacity.json'
+
+
+def apply_model_capacity(planes):
+    """登记用户明确要求的独立模型容量，不改站位、资源或实际配弹。"""
+    record = json.loads((ROOT/MODEL_CAPACITY).read_text(encoding='utf-8'))
+    item = record['override']
+    if record['schema'] != 1 or (item['code'], item['mask'], item['model_capacity_mask']) != ('f04e',5,1):
+        raise ValueError('独立模型容量登记超出F4的UGB＋SASM范围')
+    plane = next(p for p in planes if p['code'] == item['code'])
+    plan = plane['plans'][item['mask']]
+    if plan != item['expected_plan'] or plane['groups'][0]['sockets'] != item['expected_ugb_sockets']:
+        raise ValueError('F4独立模型容量的原生布局已变化，须先复核')
+    if len(plan['selected'][0]) != 12 or plane['groups'][0]['fixed'] or plane['groups'][0]['launcher']:
+        raise ValueError('F4独立模型容量必须对应十二个UGB原生弹体位置')
+    plan['model_capacity_mask'] = item['model_capacity_mask']
 
 
 def apply_layout_review(planes, assets, source, targets):
@@ -181,6 +197,7 @@ def build():
         raise ValueError('新增资源编号顺序与追加清单不符')
     apply_layout_review(planes, assets, LAYOUT_REVIEW, {('m35d',3),('m35d',5),('m35d',6),('fa27',3)})
     apply_layout_review(planes, assets, LAYOUT_FEEDBACK, {('f15m',3),('f15m',7)})
+    apply_model_capacity(planes)
     return {'planes':planes,'assets':assets}
 
 

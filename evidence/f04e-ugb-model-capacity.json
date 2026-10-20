@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "date": "2026-10-20",
+  "branch": "codex/five-aircraft-mount-review",
+  "baseline": "main / 2.21.1 / 0b75b21",
+  "status": "source_candidate_not_built",
+  "user_correction": "应该挂载12个UGB模型，左右各6个，但是弹药量还是9个。模型数量和弹药量是两码事，无需互相影响。模型上左右各6枚更加美观。",
+  "supersedes_interpretation": "此前将用户的9枚弹药理解成必须只显示9枚模型有误；旧调查日志及旧记录原字节保留，以本次明确更正为准。",
+  "override": {
+    "code": "f04e",
+    "mask": 5,
+    "model_capacity_mask": 1,
+    "expected_plan": {
+      "selected": [[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], [], [0, 1]],
+      "racks": 5,
+      "variants": [-1, -1, -1]
+    },
+    "expected_ugb_sockets": ["sp11", "sp13", "sp15", "sp17", "sp19", "sp21", "sp12", "sp14", "sp16", "sp18", "sp20", "sp22"]
+  },
+  "behavior": {
+    "models": "F4的UGB＋SASM中，UGB使用完整原生十二位，静止或装填完成时左右各六枚；库存不足十二枚或耗尽不再因此缩减UGB外观容量。",
+    "preview": "机库、准备和补给预览沿用同一独立模型容量登记，不受九枚配弹量限制。",
+    "firing_and_reload": "保留原生槽到显示/离架点的共同映射、投弹空位及原有装填计时；投弹中的临时空位仍可能使模型短暂不满十二。",
+    "ammo": "仍按原规则50%配弹：旧现场十八枚UGB分为九枚，HUD、库存、装填窗口、锁定、齐射和可发射数量不变。",
+    "scope": "只登记F4、组合mask5、UGB种类bit0；SASM、F4其他组合和其他机体沿用原策略。",
+    "lifecycle": "沿用既有单挂、关闭模型、换机、退出及失败归还，不新增持有对象或回调。"
+  },
+  "assets": "沿用54资源/108成员；不新增或改写PAK、网格、Lua资源清单和Socket。",
+  "version": "由接收线程按下一补丁号统一；本分支不回改2.21.1冻结或安装回执。",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "gameplay_verified": false
+}
