@@ -27,5 +27,10 @@ void mountRequireNoCollision(Addr component) {
         "静态分区：碰撞查询参数布局改变");
     alignas(16) std::array<unsigned char,256> params{};
     cached.api.invoke(identity,cached.function,params.data());
-    require(params[cached.result.offset]==cached.noCollision,"静态分区：原生挂架并非NoCollision，已停止外观接管");
+    if(params[cached.result.offset]!=cached.noCollision) {
+        nativeLog(Json{{"event","MOUNT_COLLISION_MISMATCH"},{"component",component},
+            {"index",identity.index},{"serial",identity.serial},{"actual",params[cached.result.offset]},
+            {"expected",cached.noCollision}}.dump());
+        throw std::runtime_error("静态分区：原生挂架并非NoCollision，已停止外观接管");
+    }
 }

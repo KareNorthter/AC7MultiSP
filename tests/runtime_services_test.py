@@ -699,6 +699,10 @@ local function loader(mode)
     local env=setmetatable({runtimeAllowed=true,runtimeModEnabled=true,runtimeFixedMountEnabled=true,
         expandedMountAssets={f16c={{0,'MSP_case',1}}},planeId=1,catalogue={['1']={code='f16c'}},plane=plane,
         valid=function(o)return o and o:IsValid()end,IsInGameThread=function()return true end,
+        checkMountCollision=function(address,pool)
+            assert(address==83 and pool>=1 and pool<=3)
+            return plane['SWP'..pool]:GetCollisionEnabled()==0,'扩展挂架要求原生组件关闭碰撞'
+        end,
         isSelectedPlane=function(o,code)return o==plane and code=='f16c' end,FName=function(s)return s end,
         previewWarning=function(message)assert(message:find('回退'));calls.warnings=calls.warnings+1 end,
         note=function(message)calls.logs[#calls.logs+1]=message end,

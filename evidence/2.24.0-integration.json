@@ -1,0 +1,48 @@
+{
+  "schema": 1,
+  "version": "2.24.0",
+  "candidate": true,
+  "formal_main": "0b75b21e4e29c817d193188e7326700507417dae",
+  "actual_install_baseline": "evidence/2.23.1-installed.json",
+  "sources": [
+    {
+      "thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
+      "commit": "93648387acbff3ad2c67d90ff40854bf04cfc23a"
+    },
+    {
+      "thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+      "commit": "d689895f7373f6c85645cc8f150293911a3fe905",
+      "includes": "f609530"
+    }
+  ],
+  "native_handoff_patch_sha256": "8e0808230a69d8afeebd60ca14e26d47f2f329d54350aad0c56d6483fdc6fd64",
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.24.0\\Temp\\mount-assets-2.24.0\\source",
+  "resource_variants": 74,
+  "resource_members": 148,
+  "unchanged_resource_members": 146,
+  "all_28_aircraft_plans_unchanged": true,
+  "resource_replacement": {
+    "index": 73,
+    "old": "MSP_m31b_saam_rear_lower_r1",
+    "new": "MSP_m31b_saam_rear_lower_r2"
+  },
+  "interfaces": {
+    "management": 15,
+    "configuration": 14,
+    "gaze": 2,
+    "camera": 7,
+    "aircraft": 2
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "四机路径修正、F14A预检重试、MiG31B r2及UI/暂停换机效果待用户实测",
+    "F14A首次失败的具体触发原因尚未完全证实",
+    "SP1进入卡顿和单SP页面闪现仅静态研究，未实作过渡动画"
+  ]
+}

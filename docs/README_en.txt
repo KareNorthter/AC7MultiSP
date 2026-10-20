@@ -1,4 +1,11 @@
-AC7MultiSP 2.23.1 (candidate)
+AC7MultiSP 2.24.0 (candidate)
+
+2.24.0 candidate changes (since 2.23.1; user validation pending)
+• SP1/SP2/SP3 show the focused weapon native long description in the game language. Preparation and resupply hide unpurchased SPs while retaining native IDs.
+• Toasts use AC7MultiSP: description. Open F6 while paused to change aircraft through Debug and restart the whole mission; closing management retains the original pause.
+• Corrected four aircraft AnimBP package paths. F-14A uses core NoCollision qualification and failed assets retry only at explicit setup/rebuild boundaries.
+• MiG-31B rear SAAM moves one further unit aft with unchanged height: native-local X minus 7/Z minus 2. Revision r2 replaces r1 at the same index; 74 variants/148 members.
+• Configuration 14 and personal loadouts are retained. SP1 entry stutter, flashes and transition animations remain research only.
 
 2.23.1 candidate changes (since 2.23.0; observation pending)
 • MiG-31B SAAM+PLSL and triple-SP rear SAAM pairs move symmetrically 6 units aft and 2 down in model-local resource units. Y=±4.6, rotation and scale stay unchanged.
@@ -90,7 +97,7 @@ F-4E | Adapted |
 F-14A | Candidate | Validation pending
 F/A-18E | Candidate | Validation pending
 F/A-18E TGM | Candidate | Validation pending
-MiG-31B | Offset observation | Rear SAAM pair moved 6 aft/2 down in SAAM+PLSL and triple loadouts; clearance pending
+MiG-31B | r2 observation | Rear SAAM pair moved 7 aft/2 down from native; clearance pending
 F-14D | Candidate | Native SWP3 mechanism; validation pending
 F/A-18F | Candidate | Native SWP3 mechanism; validation pending
 Su-33 | Candidate | Native SWP3 mechanism; validation pending
@@ -173,3 +180,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.22.0: Added threshold recentering, smooth stick look, R3 hold toggle, F-4E/MiG-35D revisions and four mount candidates; validation pending.
 2.23.0: Added four aircraft runtime mount candidates and eight variants; validation pending.
 2.23.1: Shifted MiG-31B rear SAAM sockets 6 aft/2 down; observation pending.
+2.24.0: Added native weapon descriptions, purchased-SP lists and paused F6 aircraft changes; fixed resource qualification and MiG-31B r2. Validation pending.

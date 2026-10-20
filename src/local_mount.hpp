@@ -89,7 +89,9 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
     const auto package="/Game/Vehicles/Aircraft/"+code+"/";
     mountAnimatedResource(lease->mesh.address,group.at("rack").get<std::string>(),package+code+"_SWP3","SkeletalMesh");
     mountAnimatedResource(lease->skeleton.address,group.at("skeleton").get<std::string>(),package+code+"_SWP3_Skeleton","Skeleton");
-    mountAnimatedResource(lease->anim.address,group.at("anim").get<std::string>(),package+code+"_SWP3_AnimBP","AnimBlueprintGeneratedClass");
+    // 原生AnimBP在Blueprint/Player/Body，不能按网格目录拼接其所属包。
+    mountAnimatedResource(lease->anim.address,group.at("anim").get<std::string>(),
+        "/Game/Blueprint/Player/Body/"+code+"_SWP3_AnimBP","AnimBlueprintGeneratedClass");
     auto& api=lease->reflection;api.bindSdk();
     const int extent=api.typeSize(lease->componentClass.address);
     const auto no=api.boolean(lease->componentClass.address,"bNoSkeletonUpdate",extent,true);
