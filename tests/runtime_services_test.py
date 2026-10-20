@@ -254,7 +254,7 @@ for _,mode in ipairs({'preparation','resupply','standby','parts'})do
     local page=Page.new(deps(mode))
     page.error='原有错误';page:reset{clearError=false,releaseInput=false};assert(page.error=='原有错误')
     page:reset{clearError=true,releaseInput=false};assert(not page.error and page.status=='waiting')
-    page:pump{getProfile=function()return nil end,getOptions=function()return {}end,now=0,inFlight=true,panelOpen=true}
+    page:pump{getProfile=function()return nil end,getOptions=function()return {}end,getVariantToken=function()return nil end,getSelectionToken=function()return nil end,now=0,inFlight=true,panelOpen=true}
     assert(not page.error,page.error) -- 禁用上下文不访问引擎对象。
 end
 local missing=deps('resupply');missing.takeoff=nil
@@ -299,10 +299,13 @@ local function previewCache()
     local flow=Flow.new(confirmed,options,nil,'resupply',function(zh)return zh end,function()return settings end)
     flow.stage='review';flow.cursor=1
     return {owner=owner,instance=instance,planeId=10,world=900,flow=flow,mountOwner=321,
+        variantToken='fixture-variant',selectionToken='fixture-selection',
+        getVariantToken=function()return 'fixture-variant'end,getSelectionToken=function()return 'fixture-selection'end,
         handedOff=true,moved={},masked={},added={},texts={}}
 end
 local context={instance=instance,planeId=10,getProfile=function()return confirmed end,
-    getOptions=function()return options end,now=1,inFlight=true,panelOpen=false}
+    getOptions=function()return options end,getVariantToken=function()return 'fixture-variant'end,
+    getSelectionToken=function()return 'fixture-selection'end,now=1,inFlight=true,panelOpen=false}
 local supplyPage=Page.new(previewDeps('resupply'))
 local supplyCache=previewCache();supplyPage.cache=supplyCache
 local transaction={planeId=10,profile=Profile.copy(confirmed),phase=901,finished=true}
@@ -762,7 +765,7 @@ assert(load()and calls.load==0 and calls.factory==2 and calls.register==2,'纯�
 env.currentProfile={a=0,b=1,c=-1}
 assert(load()and calls.load==0,'另一组合的资源失败不能锁死已正常加载的组合')
 ''')
-print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试及碰撞拒绝检查通过')
+print('挂架加载修复：直接返回、未登记备用路径、工厂元数据、失败缓存/显式重试、纯资源预载和按组合加载检查通过')
 
 # 只抽取选择/等待函数；齐射服务的装配需完整运行上下文，不属于本夹具。
 lua.globals().weapon_switch_source = (
