@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=14") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=15") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -76,12 +76,16 @@ weaponSwitch.gaze={invoke=loadExport("dualsp_target_gaze"),active=false,availabl
 loadExport("dualsp_target_gaze_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
 weaponSwitch.camera={invoke=loadExport("dualsp_camera_hold"),available=false,released=true}
 loadExport("dualsp_camera_hold_supported","DualSPUI.dll")
+loadExport("dualsp_camera_r3_hold_toggle_supported")
+loadExport("dualsp_camera_r3_hold_toggle_supported","DualSPUI.dll") -- 八参数/四返回值镜头接口须成套。
+loadExport("dualsp_camera_auto_center_supported")
+loadExport("dualsp_camera_auto_center_supported","DualSPUI.dll") -- 自动回正阈值设置须成套。
 loadExport("dualsp_camera_controls_supported")
 loadExport("dualsp_camera_controls_supported","DualSPUI.dll") -- 新回正键/灵敏度要求核心及管理页一起升级。
 loadExport("dualsp_camera_input_options_supported")
 loadExport("dualsp_camera_input_options_supported","DualSPUI.dll")
 loadExport("dualsp_keyboard_modifier_routing_supported")
-loadExport("dualsp_keyboard_modifier_routing_supported","DualSPUI.dll") -- 修饰键分流及六参数回中接口须成套。
+loadExport("dualsp_keyboard_modifier_routing_supported","DualSPUI.dll") -- 修饰键分流与回中接口须成套。
 loadExport("dualsp_controller_clicks_supported")
 loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
@@ -746,7 +750,7 @@ end
 -- 镜头保持只归还自己的轴作用域和R3计时，不改变兵装许可或原生暂停来源。
 function weaponSwitch.camera.release()
     local camera=weaponSwitch.camera
-    local called,ok,_,reason=pcall(camera.invoke,0,0,0,100,0,0)
+    local called,ok,_,reason=pcall(camera.invoke,0,0,0,100,0,0,0,0)
     camera.available=false;camera.released=true
     if not called or not ok then
         camera.failed=true;camera.error=tostring(called and reason or ok);note("CAMERA_HOLD_RELEASE_ERROR "..camera.error)
@@ -755,16 +759,25 @@ end
 function weaponSwitch.camera.update()
     local camera=weaponSwitch.camera
     if camera.failed then camera.available=false;return end
-    local allowed=config.camera_hold_enabled and runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
+    local allowed=(config.camera_hold_enabled or config.camera_r3_enabled)and runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
         and valid(plane.InputComponent)and plane.bEnableCameraInput and not panelOpen and not supplySession
         and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
-    if not allowed and camera.released then return end -- 默认关闭时不每20毫秒重复跨DLL清理。
+    if not allowed and camera.released then return end -- 两项均关闭或许可无效时，不重复跨DLL清理。
     local before=camera.available
-    local ok,available,reason=camera.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,config.camera_center_key,
-        config.camera_sensitivity,config.camera_r3_enabled and 1 or 0,ConfigStore.centerShortcutMask(config))
+    local ok,available,reason,toggle=camera.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,config.camera_center_key,
+        config.camera_sensitivity,config.camera_r3_enabled and 1 or 0,ConfigStore.centerShortcutMask(config),config.camera_auto_center_degrees,config.camera_hold_enabled and 1 or 0)
     camera.available=ok and available or false
     camera.released=not allowed or not ok
     if not ok then camera.failed=true;camera.error=tostring(reason);note("CAMERA_HOLD_ERROR "..camera.error);lastUIKey=nil end
+    if ok and toggle then
+        -- 先保存再替换运行设置；失败保留原开关，手势不在同次按压中重放。
+        local saved,err=pcall(function()
+            config=configStore:setCameraHold(config,not config.camera_hold_enabled);camera.error=nil
+            note("CAMERA_HOLD_R3_TOGGLED "..tostring(config.camera_hold_enabled))
+        end)
+        if not saved then camera.error=tostring(err);note("CAMERA_HOLD_TOGGLE_SAVE_ERROR "..camera.error)end
+        lastUIKey=nil
+    end
     if before~=camera.available then lastUIKey=nil end
 end
 
@@ -1284,13 +1297,13 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=14,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=15,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,
         target_gaze_pad_l3=config.target_gaze_pad_l3,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
-        camera_r3_enabled=config.camera_r3_enabled,
+        camera_r3_enabled=config.camera_r3_enabled,camera_auto_center_degrees=config.camera_auto_center_degrees,
         runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
         ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
         keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="percentage",
@@ -1307,7 +1320,7 @@ local function publishState()
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
     state.target_gaze={protocol=2,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,error=weaponSwitch.gaze.error}
-    state.camera_hold={protocol=5,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
+    state.camera_hold={protocol=7,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}

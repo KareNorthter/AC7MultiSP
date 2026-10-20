@@ -28,6 +28,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
 bool managementDirty() {
     return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
+        draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
         draftAmmoPercentTwo!=state.at("ammo_percent_two").get<int>() || draftAmmoPercentThree!=state.at("ammo_percent_three").get<int>() ||
@@ -95,11 +96,15 @@ void drawCameraSettings() {
         ImGui::Checkbox(tr("启用镜头保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
         panelHelp("默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
             "Off by default. When enabled, retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
+        ImGui::Checkbox(tr("R3长按回中/切换保持###CameraR3","R3 recenter / toggle hold###CameraR3"),&draftCameraR3);
+        panelHelp("默认开启，镜头保持关闭时也可使用。R3按住满0.2秒回中一次，继续按住满2秒切换镜头保持并保存设置；松开不换视角。短于0.2秒松开仍切换视角。双摇杆只释放干扰弹。关闭此项则R3使用原生功能。回中会结束模组注视，真实按住Y/F仍可原生注视。",
+            "On by default, including while camera hold is off. Hold R3 for 0.2 seconds to recenter once, then keep holding until 2 seconds to toggle and save camera hold. Release does not change view; release before 0.2 seconds changes view. Both sticks only release countermeasures. Disabling restores native R3. Recentering ends mod tracking; native Y/F hold-to-track remains.");
         if(!draftCameraHold&&captureSlot==8)captureSlot=-1;
         if(draftCameraHold) {
-            ImGui::Checkbox(tr("R3长按回中###CameraR3","Hold R3 to recenter###CameraR3"),&draftCameraR3);
-            panelHelp("默认开启。R3短按松开切换视角；长按满0.3秒立即回中，松开不切视角；双摇杆只释放干扰弹。关闭此项则R3完全使用原生功能。回中会停止模组注视，实际按住Y/F仍可原生注视。",
-                "On by default. Release a short R3 press to change view; holding for 0.3 seconds recenters immediately without changing view. Both sticks only release countermeasures. Disabling restores fully native R3 behavior. Recentering stops mod tracking; native Y/F hold-to-track remains.");
+            ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
+            ImGui::SliderInt(tr("自动回正阈值###CameraAutoCenter","Auto recenter threshold###CameraAutoCenter"),&draftCameraAutoCenterDegrees,0,45,tr("%d 度","%d deg"),ImGuiSliderFlags_AlwaysClamp);
+            panelHelp("默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
+                "Default 30 degrees; 0 disables. After releasing look input, smoothly recenters inside the center cone and retains direction outside. Target tracking takes priority. Uses a shared look reference of +/-180 degrees horizontally and +/-90 vertically; cockpit output retains native limits and animation. Save to apply.");
             ImGui::TextUnformatted(tr("独立回中键","Recenter shortcut"));ImGui::SameLine();
             bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
             ImGui::SameLine();if(ImGui::SmallButton(tr("中键###ResetCenterKey","Middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;}
@@ -108,8 +113,8 @@ void drawCameraSettings() {
                 "Click, then press a key or middle mouse; Esc cancels. Recenters once on press, including while Shift/Ctrl/Alt is held; exact configured chords take priority. Use a different key for native view switching.");
             ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
             ImGui::SliderInt(tr("摇杆灵敏度###CameraSensitivity","Stick sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-            panelHelp("默认100%，范围5%至200%。仅调整右摇杆普通环视移动速度，不扩大角度；回中、注视和单独键鼠操作保留原生速度。",
-                "Default 100%, range 5%–200%. Adjusts ordinary right-stick look speed without increasing angles. Recentering, tracking and keyboard/mouse-only look retain native speed.");
+            panelHelp("默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，平滑加速和转向，松开保持当前方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+                "Default 100%, range 5%–200%. Stick deflection controls turn speed with smooth acceleration and direction changes; release to hold the current direction. View limits stay unchanged. Recentering, tracking and keyboard/mouse-only look retain their existing response; cockpit output retains native limits and animation.");
         }
     }
     ImGui::EndChild();
