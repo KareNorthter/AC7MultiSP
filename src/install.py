@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import sys
 from release_tools import ROOT, digest, inventory, product, verify_build, require_stopped, contained, read_json
 
 
@@ -13,6 +14,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--verify-other-mods', action='store_true',
+                        help='额外全量核验其他UE4SS模组与PAK子目录；默认只严格核验本次安装范围及存档，不检查兼容性')
     parser.add_argument('--base-receipt', type=Path, help='已安装版本的完整 runtime_files 回执，默认读取产品清单')
     args = parser.parse_args()
     root = ROOT
@@ -74,7 +77,9 @@ def main():
             'name': info['name'], 'configuration_migration': '安装保留配置原字节；首次启动沿既有备份链迁配置18，含独立模型备份及profiles.before-camera-interaction-v2.json；个人键位、方案和视角保持保留，新锁定注视默认关闭',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
-            'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}
+            'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False,
+            'protection_scope': 'full_other_mod_audit' if args.verify_other_mods else 'install_scope',
+            'other_mod_verification': 'full_sha256' if args.verify_other_mods else 'not_requested'}
     if not args.apply:
         print(json.dumps({**plan, 'status': '预检通过，未安装'}, ensure_ascii=False))
         return
@@ -85,16 +90,21 @@ def main():
         raise ValueError('存档目录不存在')
     protected_paths = [game / name for name in ('Ace7Game.exe', 'dwmapi.dll', 'ue4ss/UE4SS.dll', 'ue4ss/Mods/mods.txt')]
     protected_paths += [path for path in saves.rglob('*') if path.is_file() and (path.suffix.lower() == '.sav' or path.name == 'GraphicsSetting.ini')]
-    for folder in (game / 'ue4ss/Mods').iterdir():
-        if folder.is_dir() and folder != mod:
-            for name in inventory(folder):
-                protected_paths.append(folder / name)
-    for folder in (game / 'Game/Content/Paks').glob('*'):
-        if folder.is_dir():
-            for name in inventory(folder):
-                if folder / name != asset_target:
-                    protected_paths.append(folder / name)
-    protected = {path: digest(path) for path in protected_paths}  # 仅校验摘要，公共证据不保存个人内容。
+    # 默认只保护本次直接安装范围、共享加载器关键文件与存档；不读取无关机体包。
+    # 本Mod全目录及自有PAK另有基线、暂存、备份和安装后核验，不因缩小外部范围而省略。
+    protected = {path: digest(path) for path in protected_paths}
+    if args.verify_other_mods:
+        print('额外核验其他Mod文件摘要；此项不判断兼容性，资源较多时会耗时。', file=sys.stderr, flush=True)
+        for parent in (game / 'ue4ss/Mods', game / 'Game/Content/Paks'):
+            for folder in parent.iterdir():
+                if folder.is_dir() and folder != mod:
+                    # inventory已计算摘要，直接复用，避免列目录时读完一遍又重新计算。
+                    for name, value in inventory(folder).items():
+                        path = folder / name
+                        if path != asset_target:
+                            protected[path] = value
+    else:
+        print('按安装范围核验本Mod、挂载包、加载器关键文件和存档；跳过其他Mod全量读取。', file=sys.stderr, flush=True)
     now = datetime.now(timezone(timedelta(hours=8)))
     batch = now.strftime('%Y%m%d-%H%M%S-%f')
     backup = root / 'backup' / ('AC7MultiSP-'  + batch)
@@ -128,6 +138,7 @@ def main():
     require_stopped()
     if inventory(mod) != before or any(digest(path) != value for path, value in protected.items()):
         raise ValueError('安装前文件发生并发变化，现有安装未改')
+    print('安装文件暂存已核对，正在备份旧版本与存档。', file=sys.stderr, flush=True)
     backup.mkdir(parents=True)
     shutil.copytree(saves, backup / 'SaveData')
     for path, value in protected.items():
@@ -160,11 +171,13 @@ def main():
         if old_asset:
             asset_backup.rename(asset_target)
         raise
+    print('文件已交换，正在核验安装结果与备份。', file=sys.stderr, flush=True)
     if digest(asset_target)!=asset_hash or inventory(mod) != expected or inventory(backup / 'DualSP') != before or any(digest(path) != value for path, value in protected.items()):
         raise RuntimeError('安装后校验失败，完整备份位于：' + str(backup))
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
               'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,
-              'other_mod_files_preserved': True, 'protected_files_verified': len(protected), 'gameplay_verified': False}
+              'other_mod_files_preserved': True if args.verify_other_mods else None,
+              'other_mod_files_touched': False, 'protected_files_verified': len(protected), 'gameplay_verified': False}
     with result_path.open('x', encoding='utf-8') as stream:
         json.dump(result, stream, ensure_ascii=False, indent=2)
         stream.write('\n')
