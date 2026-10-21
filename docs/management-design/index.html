@@ -30,7 +30,7 @@
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 <script id="designSeed" type="application/json">{
   "schema": "ac7-management-design-v1",
-  "storageKey": "ac7-design-2-26-1-accepted",
+  "storageKey": "ac7-design-approved-20261021-044327",
   "sourceVersion": "2.26.1",
   "sourceCommit": "824adb5 + 本轮界面调整",
   "pages": [
@@ -70,16 +70,6 @@
           "title": "功能设置",
           "items": [
             {
-              "id": "gun_salvo_enabled",
-              "label": "机炮齐射",
-              "kind": "toggle",
-              "value": "开启",
-              "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
               "id": "central_weapon_display",
               "label": "HUD中央始终显示当前武器名称",
               "kind": "toggle",
@@ -106,6 +96,26 @@
               "value": "33%",
               "description": "",
               "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "gun_salvo_enabled",
+              "label": "机炮齐射",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "shortcut_salvo",
+              "label": "机炮齐射",
+              "kind": "binding",
+              "value": "Ctrl + Alt + F5",
+              "description": "",
+              "help": "help",
               "hidden": false,
               "note": ""
             }
@@ -168,33 +178,6 @@
             }
           ],
           "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
-        },
-        {
-          "id": "shortcuts",
-          "title": "模组快捷键",
-          "items": [
-            {
-              "id": "shortcut_management",
-              "label": "管理界面",
-              "kind": "binding",
-              "value": "F6",
-              "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "shortcut_salvo",
-              "label": "机炮齐射",
-              "kind": "binding",
-              "value": "Ctrl + Alt + F5",
-              "description": "",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            }
-          ],
-          "description": ""
         }
       ]
     },
@@ -211,7 +194,7 @@
               "label": "目标选择模式",
               "kind": "select",
               "value": "原生模式 / 机头附近",
-              "description": "原生模式优先选择机头附近；VR模式优先选择当前视角中心附近。只改变NEXT排序参考，不启用VR设备。可能与鼠标飞控F2 HMD冲突。仅在管理页选择，L3不切换NEXT。",
+              "description": "原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -238,7 +221,7 @@
               "label": "长按手柄Y键 保持注视",
               "kind": "toggle",
               "value": "关闭",
-              "description": "默认关闭。启用后Y按满0.2秒开始持续注视，再长按一次停止；期间可短按Y切目标，镜头跟随新目标。手柄和键盘选项独立。",
+              "description": "启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -248,7 +231,7 @@
               "label": "按下键盘注视键 保持注视",
               "kind": "toggle",
               "value": "关闭",
-              "description": "默认关闭。使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。关闭时保留原生按住注视；与手柄选项独立。",
+              "description": "使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -265,7 +248,7 @@
               "label": "启用视角保持",
               "kind": "toggle",
               "value": "关闭",
-              "description": "启用后松开环视输入仍保持方向；L3按下并松开或键盘回中键回正。R3短按仍切视角，长按满0.3秒切换视角保持；双摇杆只干扰弹。L3不切换NEXT。",
+              "description": "启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -275,7 +258,7 @@
               "label": "视角灵敏度",
               "kind": "slider",
               "value": "100%",
-              "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+              "description": "",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -285,7 +268,7 @@
               "label": "视角回中 键盘快捷键",
               "kind": "binding",
               "value": "鼠标中键",
-              "description": "点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。与原生换视角使用不同键。",
+              "description": "",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -293,7 +276,7 @@
             {
               "id": "shortcut_camera_hold",
               "label": "启用视角保持快捷键",
-              "description": "默认Ctrl+Alt+F9，可改键。机炮齐射保留Ctrl+Alt+F5。",
+              "description": "",
               "kind": "binding",
               "value": "Ctrl + Alt + F9",
               "help": "help",
@@ -445,7 +428,17 @@
     "title": "AC7MultiSP",
     "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
     "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
-    "masterEnabled": true
+    "masterEnabled": true,
+    "managementBinding": {
+      "id": "shortcut_management",
+      "label": "管理界面",
+      "kind": "binding",
+      "value": "F6",
+      "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+      "help": "help",
+      "hidden": false,
+      "note": "这个快捷键的设置也移动到顶栏"
+    }
   },
   "overallNote": "已按反馈精简为三页；标题旁提供总开关。视角保持使用Ctrl+Alt+F9，机炮齐射保留Ctrl+Alt+F5。L3仅回中，不切换NEXT。",
   "baseline": {
@@ -486,16 +479,6 @@
             "title": "功能设置",
             "items": [
               {
-                "id": "gun_salvo_enabled",
-                "label": "机炮齐射",
-                "kind": "toggle",
-                "value": "开启",
-                "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
                 "id": "central_weapon_display",
                 "label": "HUD中央始终显示当前武器名称",
                 "kind": "toggle",
@@ -522,6 +505,26 @@
                 "value": "33%",
                 "description": "",
                 "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "gun_salvo_enabled",
+                "label": "机炮齐射",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "shortcut_salvo",
+                "label": "机炮齐射",
+                "kind": "binding",
+                "value": "Ctrl + Alt + F5",
+                "description": "",
+                "help": "help",
                 "hidden": false,
                 "note": ""
               }
@@ -584,33 +587,6 @@
               }
             ],
             "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
-          },
-          {
-            "id": "shortcuts",
-            "title": "模组快捷键",
-            "items": [
-              {
-                "id": "shortcut_management",
-                "label": "管理界面",
-                "kind": "binding",
-                "value": "F6",
-                "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "shortcut_salvo",
-                "label": "机炮齐射",
-                "kind": "binding",
-                "value": "Ctrl + Alt + F5",
-                "description": "",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              }
-            ],
-            "description": ""
           }
         ]
       },
@@ -627,7 +603,7 @@
                 "label": "目标选择模式",
                 "kind": "select",
                 "value": "原生模式 / 机头附近",
-                "description": "原生模式优先选择机头附近；VR模式优先选择当前视角中心附近。只改变NEXT排序参考，不启用VR设备。可能与鼠标飞控F2 HMD冲突。仅在管理页选择，L3不切换NEXT。",
+                "description": "原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -654,7 +630,7 @@
                 "label": "长按手柄Y键 保持注视",
                 "kind": "toggle",
                 "value": "关闭",
-                "description": "默认关闭。启用后Y按满0.2秒开始持续注视，再长按一次停止；期间可短按Y切目标，镜头跟随新目标。手柄和键盘选项独立。",
+                "description": "启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -664,7 +640,7 @@
                 "label": "按下键盘注视键 保持注视",
                 "kind": "toggle",
                 "value": "关闭",
-                "description": "默认关闭。使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。关闭时保留原生按住注视；与手柄选项独立。",
+                "description": "使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -681,7 +657,7 @@
                 "label": "启用视角保持",
                 "kind": "toggle",
                 "value": "关闭",
-                "description": "启用后松开环视输入仍保持方向；L3按下并松开或键盘回中键回正。R3短按仍切视角，长按满0.3秒切换视角保持；双摇杆只干扰弹。L3不切换NEXT。",
+                "description": "启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -691,7 +667,7 @@
                 "label": "视角灵敏度",
                 "kind": "slider",
                 "value": "100%",
-                "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+                "description": "",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -701,7 +677,7 @@
                 "label": "视角回中 键盘快捷键",
                 "kind": "binding",
                 "value": "鼠标中键",
-                "description": "点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。与原生换视角使用不同键。",
+                "description": "",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -709,7 +685,7 @@
               {
                 "id": "shortcut_camera_hold",
                 "label": "启用视角保持快捷键",
-                "description": "默认Ctrl+Alt+F9，可改键。机炮齐射保留Ctrl+Alt+F5。",
+                "description": "",
                 "kind": "binding",
                 "value": "Ctrl + Alt + F9",
                 "help": "help",
@@ -861,14 +837,24 @@
       "title": "AC7MultiSP",
       "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
       "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
-      "masterEnabled": true
+      "masterEnabled": true,
+      "managementBinding": {
+        "id": "shortcut_management",
+        "label": "管理界面",
+        "kind": "binding",
+        "value": "F6",
+        "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+        "help": "help",
+        "hidden": false,
+        "note": "这个快捷键的设置也移动到顶栏"
+      }
     }
   },
-  "updatedAt": "2026-10-21T04:23:31.362Z",
+  "updatedAt": "2026-10-21T04:43:27.101Z",
   "receivedFeedback": {
-    "sourceCommit": "e31df55",
-    "sha256": "519b92ebfa5d39e732c8a6a5bb7f0a0dd4dcfd6459ef97670c713819abca9706",
-    "name": "AC7管理界面设计稿-2026-10-21T04-23-31.html"
+    "sourceCommit": "e3fd099",
+    "name": "AC7管理界面设计稿-2026-10-21T04-43-27.html",
+    "sha256": "09584e92d7082c3df1021b9ac02513b70f8acf7b86c3a8a8eac4850f835351b5"
   }
 }</script>
 <script>
@@ -894,18 +880,18 @@ function remember(){history.push(clone(draft));if(history.length>60)history.shif
 function changed(){clearTimeout(saveTimer);status('有修改，正在保留草稿…');saveTimer=setTimeout(()=>{try{localStorage.setItem(draft.storageKey,JSON.stringify(draft));status('草稿已在本浏览器保留 · 交回前请保存网页')}catch(e){status('浏览器不能保留草稿，请点“保存可编辑网页”',true)}},200)}
 function currentPage(){return draft.pages.find(p=>p.id===pageId)||draft.pages[0]}
 function currentGroup(){return currentPage().groups.find(g=>g.id===groupId)||currentPage().groups[0]}
-function currentItem(){for(const p of draft.pages)for(const g of p.groups){const i=g.items.find(x=>x.id===itemId);if(i)return i}return null}
+function currentItem(){if(itemId===draft.chrome.managementBinding?.id)return draft.chrome.managementBinding;for(const p of draft.pages)for(const g of p.groups){const i=g.items.find(x=>x.id===itemId);if(i)return i}return null}
 function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
 function button(text,action,className=''){const node=el('button',className,text);node.type='button';node.addEventListener('click',action);return node}
 function options(select,values,selected){select.replaceChildren();for(const [value,label]of values){const o=el('option','',label);o.value=value;select.append(o)}select.value=selected??''}
-function normalizeSelection(){const p=currentPage();pageId=p.id;const g=currentGroup();groupId=g?.id;const i=currentItem();if(i&&!p.groups.some(g=>g.items.includes(i)))itemId=null}
+function normalizeSelection(){const p=currentPage();pageId=p.id;const g=currentGroup();groupId=g?.id;const i=currentItem();if(i&&i!==draft.chrome.managementBinding&&!p.groups.some(g=>g.items.includes(i)))itemId=null}
 function editorMode(mode){$('inspector').dataset.mode=mode;for(const [id,value]of [['editItemTab','item'],['editStructureTab','structure'],['editStyleTab','style']]){const active=mode===value;$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',active)}$('inspector').scrollTop=0}
 for(const [id,mode]of [['editItemTab','item'],['editStructureTab','structure'],['editStyleTab','style']])$(id).addEventListener('click',()=>editorMode(mode));
 function pickItem(p,g,i){pageId=p.id;groupId=g.id;itemId=i.id;editorMode('item');render()}
 function renderPreview(){
  normalizeSelection();const t=draft.theme,p=currentPage(),panel=$('gamePanel');
  panel.style.setProperty('--ac-accent',t.accent);panel.style.setProperty('--ac-font',t.font+'px');panel.style.setProperty('--ac-gap',({compact:7,normal:12,relaxed:18})[t.density]+'px');panel.style.setProperty('--ac-radius',t.radius+'px');$('stage').style.maxWidth=t.width+'px';$('panelShell').classList.toggle('side',t.layout==='side');document.body.classList.toggle('preview-only',preview);
- $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title,master,el('span','ac-language','语言：跟随游戏'));$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);
+ $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title,master,el('span','ac-language','语言：跟随游戏'));$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);const management=draft.chrome.managementBinding;if(management&&(!preview||!management.hidden)){const area=el('div','ac-row-name');area.append(el('span','',management.label),button(management.value,()=>{if(!preview){itemId=management.id;editorMode('item');render()}else status(management.description)}));$('panelHeader').append(area)}
  $('pageNav').replaceChildren();for(const other of draft.pages){const b=button(other.title,()=>{pageId=other.id;groupId=other.groups[0]?.id;itemId=null;render()},other.id===pageId?'active':'');b.setAttribute('aria-current',other.id===pageId?'page':'false');$('pageNav').append(b)}
  $('pageBody').replaceChildren();let visibleCount=0;
  for(const g of p.groups){const shown=g.items.filter(i=>!preview||!i.hidden);if(preview&&!shown.length)continue;visibleCount++;
@@ -928,7 +914,7 @@ function renderInspector(){
  for(const id of ['groupName','groupDescription','groupPage','groupUp','groupDown'])$(id).disabled=!g;
  $('itemEditor').hidden=!i;$('selectHint').hidden=!!i;$('selectedTag').textContent=i?.id||'未选择';
  if(i){$('itemLabel').value=i.label;$('itemDescription').value=i.description;$('itemHelp').value=i.help;$('itemKind').value=i.kind;$('itemValue').value=i.value;$('itemNote').value=i.note;$('itemHidden').checked=i.hidden;options($('itemPage'),draft.pages.map(p=>[p.id,p.title]),p.id);options($('itemGroup'),p.groups.map(g=>[g.id,g.title]),g.id)}
- $('overallNote').value=draft.overallNote;
+ for(const id of ['itemPage','itemGroup','itemUp','itemDown'])$(id).disabled=i===draft.chrome.managementBinding;$('overallNote').value=draft.overallNote;
 }
 function render(){renderPreview();renderInspector()}
 // 同一输入框的一轮编辑只生成一个撤销点，实时重绘左侧但不打断右侧输入。

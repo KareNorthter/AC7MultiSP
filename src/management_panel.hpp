@@ -37,30 +37,33 @@ void drawFeatureSettings() {
     if(panelCard("ModelOptions",tr("模型显示","Model display"))) {
         ImGui::TextWrapped("%s",tr("只影响模型显示，不影响游戏功能。","Affects model display only, not gameplay features."));
         ImGui::Checkbox(tr("任务中使用多SP模型挂载###TaskMount","Use multi-SP models in missions###TaskMount"),&draftTaskMountEnabled);
-        panelHelp("任务中用同时挂载多个SP的模型，减少切换SP时外观突变。已适配机体提供单、双、三SP共7种组合；Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。可能造成卡顿、帧数下降。覆盖飞行、补给及补给过渡；下次配装时应用。",
+        panelHelp("任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
             "Uses models carrying multiple SPs to reduce visual changes when switching weapons. Supported aircraft have seven single/double/triple-SP combinations; mod aircraft, some internal bays and RKT combinations depend on existing coverage. May reduce performance. Covers flight and resupply transitions; applies with the next loadout.");
         ImGui::Checkbox(tr("机库中使用多SP模型挂载###HangarMount","Use multi-SP models in the hangar###HangarMount"),&draftHangarMountEnabled);
-        panelHelp("出击前选择机体和SP时，机体预览也使用多SP模型。可能造成卡顿、帧数下降。关闭后展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿；与任务模型开关独立。",
+        panelHelp("出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
             "Uses multi-SP models in aircraft and SP previews before a sortie. May reduce frame rate. Disabling restores native hangar models and may improve performance. Independent of mission models.");
         if(state.at("task_mount_enabled")!=state.at("runtime_task_mount_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("任务模型设置将在下次配装时应用。","Mission model settings apply with the next loadout."));
         if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
     }
     ImGui::EndChild();
     if(panelCard("MainOptions",tr("功能设置","Feature settings"))) {
-        ImGui::Checkbox(tr("机炮齐射###GunSalvo","Gun salvo###GunSalvo"),&draftGunSalvo);
-        panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。暂停、管理、失焦或人工切武器会结束联动。",
-            "On for new configurations. Holding the native gun action also fires an equipped MGP or PLSL; release restores the previous selection. HGP and simultaneous different SPs remain unsupported; slot changes can cause gaps. Pause, management, focus loss or manual selection cancels it.");
-        if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
-            ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
         bool always=draftCentralWeaponDisplay=="always";
-        const bool narrow=ImGui::GetContentRegionAvail().x<500;
-        if(ImGui::Checkbox(narrow?tr("中央常显当前武器###CentralWeaponDisplay","Always show weapon at center###CentralWeaponDisplay"):tr("HUD中央始终显示当前武器名称###CentralWeaponDisplay","Always show the current weapon at HUD center###CentralWeaponDisplay"),&always))draftCentralWeaponDisplay=always?"always":"switch_1s";
+        if(ImGui::Checkbox("##CentralWeaponDisplay",&always))draftCentralWeaponDisplay=always?"always":"switch_1s";
+        ImGui::SameLine();ImGui::TextWrapped("%s",tr("HUD中央始终显示当前武器名称","Always show the current weapon at HUD center"));
+        if(ImGui::IsItemClicked())draftCentralWeaponDisplay=always?"switch_1s":"always";
         ImGui::TextWrapped("%s",tr("双SP时每个武器的弹药量","Ammo per weapon with two SPs"));
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x));
         ImGui::SliderInt("##AmmoTwo",&draftAmmoPercentTwo,50,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
         ImGui::TextWrapped("%s",tr("三SP时每个武器的弹药量","Ammo per weapon with three SPs"));
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x));
         ImGui::SliderInt("##AmmoThree",&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
+        ImGui::Checkbox(tr("机炮齐射###GunSalvo","Gun salvo###GunSalvo"),&draftGunSalvo);
+        panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+            "On for new configurations. Holding the native gun action also fires an equipped MGP or PLSL; release restores the previous selection. HGP and simultaneous different SPs remain unsupported; slot changes can cause gaps. Pause, management, focus loss or manual selection cancels it.");
+        if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
+            ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
+        ImGui::TextUnformatted(tr("机炮齐射","Gun salvo"));ImGui::SameLine();bindingButton(9,shortcutLabel(draftShortcuts[3]));
+        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
     }
     ImGui::EndChild();
     drawBasicBindings();
@@ -70,29 +73,27 @@ void drawCameraSettings() {
         int mode=draftViewTargetMode=="normal"?0:1;
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
         if(ImGui::Combo(tr("目标选择模式###NextMode","Target selection mode###NextMode"),&mode,tr("原生模式 / 机头附近\0VR模式 / 视角中心\0","Native / aircraft nose\0VR / view center\0")))draftViewTargetMode=mode==0?"normal":"vr";
-        panelHelp("默认原生模式，切换目标时优先选择机头附近；VR模式优先选择当前视角中心附近。只改变NEXT排序参考，不启用VR设备，不扩大导弹锁定范围。可能与鼠标飞控的F2 HMD冲突。模式仅在本页选择，L3不切换NEXT。",
+        panelHelp("原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
             "Native mode prioritizes the aircraft nose; VR mode prioritizes the current view center. Changes NEXT ranking only, without enabling VR hardware or extending missile lock range. May conflict with the mouse-flight mod's F2 HMD. Choose the mode here; L3 never changes NEXT.");
         ImGui::Checkbox(tr("显示视角中心定位白点###ViewCenterDot","Show the view-center dot###ViewCenterDot"),&draftViewCenterDot);
     }
     ImGui::EndChild();
     if(panelCard("TrackingOptions",tr("保持注视","Latched target tracking"))) {
-        ImGui::Checkbox(tr("长按手柄Y键保持注视###TargetGazePad","Hold controller Y to latch tracking###TargetGazePad"),&draftTargetGazePad);
-        panelHelp("默认关闭。游戏原本需要一直按住Y才注视；开启后按满0.2秒即可持续注视，再长按一次停止。期间短按Y仍可切目标，镜头跟随新目标；长按松开不会额外切目标。",
+        ImGui::Checkbox(tr("长按手柄Y键 保持注视###TargetGazePad","Hold controller Y to latch tracking###TargetGazePad"),&draftTargetGazePad);
+        panelHelp("启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
             "Off by default. Instead of holding Y throughout, hold it for 0.2 seconds to latch tracking and hold again to release. Short Y presses still select targets and tracking follows; releasing a long press does not select another target.");
-        ImGui::Checkbox(tr("按下键盘注视键保持注视###TargetGazeKeyboard","Press the native keyboard tracking key to latch###TargetGazeKeyboard"),&draftTargetGazeKeyboard);
-        panelHelp("默认关闭。沿用游戏中实际绑定的注视键，按一下持续注视，再按一下停止，无需一直按住。游戏的切换目标键保持原功能。两种注视选项独立；关闭的输入来源保留原生按住注视。暂停、管理、失焦、失去目标或离场时结束注视。",
+        ImGui::Checkbox(tr("按下键盘注视键 保持注视###TargetGazeKeyboard","Press the native keyboard tracking key to latch###TargetGazeKeyboard"),&draftTargetGazeKeyboard);
+        panelHelp("使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
             "Off by default. Uses the game's actual keyboard tracking binding: press once to latch and again to release. Native target selection is unchanged. Independent of the controller option; a disabled source keeps native hold-to-track. Stops on pause, management, focus loss, target loss or mission exit.");
     }
     ImGui::EndChild();
     if(panelCard("CameraOptions",tr("视角保持","Camera hold"))) {
         ImGui::Checkbox(tr("启用视角保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
-        panelHelp("启用后松开环视输入仍保持方向；可按下并松开L3，或使用键盘回中键回正。R3短按仍切第一/第三人称视角，长按满0.3秒切换视角保持；长按松开不再切视角。L3+R3只释放干扰弹，不切换NEXT。",
+        panelHelp("启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
             "Retains direction after releasing look input. Press and release L3 or use the recenter key to return to center. Short R3 changes native views; hold for 0.3 seconds to toggle camera hold without changing view on release. Both sticks only release countermeasures; NEXT is unchanged.");
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
         ImGui::SliderInt(tr("视角灵敏度###CameraSensitivity","View sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
-        panelHelp("默认100%，范围5%至200%。控制保持视角时右摇杆的转动速度，不扩大观察范围；座舱仍受原生边界和动画影响。",
-            "Default 100%, range 5% to 200%. Controls stick turn speed during camera hold without extending view limits; cockpit limits and animations remain.");
-        ImGui::TextUnformatted(tr("视角回中键盘快捷键","Keyboard recenter shortcut"));ImGui::SameLine();
+        ImGui::TextUnformatted(tr("视角回中 键盘快捷键","Keyboard recenter shortcut"));ImGui::SameLine();
         bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;}
         ImGui::TextUnformatted(tr("启用视角保持快捷键","Camera hold toggle shortcut"));ImGui::SameLine();
@@ -103,7 +104,7 @@ void drawCameraSettings() {
 }
 void drawBasicBindings() {
     if(panelCard("DirectKeys",tr("额外的武器切换方式","Additional weapon selection"))) {
-        ImGui::TextWrapped("%s",tr("游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键。",
+        ImGui::TextWrapped("%s",tr("游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键",
             "The native weapon action cycles through weapons. Use the D-pad or custom keyboard bindings for direct selection."));
         ImGui::Checkbox(tr("手柄十字键切换武器###DpadWeaponSwitch","Switch weapons with the controller D-pad###DpadWeaponSwitch"),&draftDpadWeaponSwitchEnabled);
         if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp|ImGuiTableFlags_RowBg)) {
@@ -117,14 +118,6 @@ void drawBasicBindings() {
             }
             ImGui::EndTable();
         }
-    }
-    ImGui::EndChild();
-    if(panelCard("ModKeys",tr("模组快捷键","Mod shortcuts"))) {
-        ImGui::TextUnformatted(tr("管理界面","Management"));ImGui::SameLine();bindingButton(4,shortcutLabel(draftShortcuts[0]));
-        panelHelp("手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
-            "Back+Y also toggles management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.");
-        ImGui::TextUnformatted(tr("机炮齐射","Gun salvo"));ImGui::SameLine();bindingButton(9,shortcutLabel(draftShortcuts[3]));
-        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
     }
     ImGui::EndChild();
 }
@@ -164,6 +157,9 @@ void drawPanel() {
     int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
     ImGui::SetNextItemWidth(210);
     if(ImGui::Combo("##Language",&language,tr("跟随游戏\0中文\0English\0","Game language\0Chinese\0English\0")))draftLanguage=language==0?"auto":language==1?"zh":"en";
+    ImGui::TextUnformatted(tr("管理界面","Management"));ImGui::SameLine();bindingButton(4,shortcutLabel(draftShortcuts[0]),150);
+    panelHelp("手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+        "Back+Y also toggles management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.");
     if(state.at("mod_enabled")!=state.at("runtime_mod_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("已保存，返回主菜单后应用总开关。","Saved; return to the main menu to apply the master switch."));
     if(state.contains("master_switch")&&state.at("master_switch").contains("error"))ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>()).c_str());
     if(state.contains("management_pause")) {
