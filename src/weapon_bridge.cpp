@@ -56,6 +56,7 @@ struct Slot {
 };
 struct Group {
     bool valid{};
+    bool fastReloadEligible{};
     Addr weaponClass{};
     std::array<unsigned char, 0x20> scalars{};
     std::vector<Slot> slots;
@@ -77,6 +78,7 @@ Session checkpoint;
 bool checkpointValid=false;
 double checkpointTime{};
 bool runtimeEnabled=false; // 未收到游戏线程的明确单人许可前，原生接口和钩子全部直通/拒绝修改。
+bool debugInfiniteAmmo=false,debugFastReload=false;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
 int fixedMountOrdinal(Addr weaponClass,int index); // 原型采样时保留重排前的挂点身份。
 float fixedMountElapsed(int index,float duration,float elapsed); // 区分实际冷却与重建用的一次性完成事件。
@@ -440,11 +442,29 @@ WeaponSlotArray weaponSlotArray(Addr group) {
     checkMemory(data,static_cast<size_t>(capacity)*0x60);
     return {data,count};
 }
+std::string mountNameIndex(unsigned index);
+bool debugReloadEligible(Addr group) {
+    const auto& cached=session.special[session.active];
+    if(cached.valid && cached.weaponClass==read<Addr>(group))return cached.fastReloadEligible;
+    const auto weapon=read<Addr>(group+0x40);
+    if(!weapon || read<unsigned char>(weapon+0x451))return false;
+    const auto id=read<unsigned char>(weapon+0x3b0);
+    const auto name=mountNameIndex(read<unsigned>(weapon+0x18));
+    return id!=17 && id!=22 && id!=25 && id!=26 && id!=31 &&
+        name.find("plwp_hgp")==std::string::npos;
+}
+float cachedReload(const Group& group,const Slot& slot,double dt,bool inWindow) {
+    float elapsed=slot.elapsed;
+    if(debugFastReload && group.fastReloadEligible && inWindow && elapsed>=0 && elapsed<slot.duration)
+        elapsed=std::max(elapsed,slot.duration-1.f);
+    return dualsp::advanceReload(slot.duration,elapsed,dt,inWindow);
+}
 // 逐槽保存冷却，包含原生未启用槽的负计时；不改变池数量和装填窗口。
 Group capture(Addr activator, bool special, double time) {
     const auto address=groupOf(activator,special);
     Group result;
     result.weaponClass=read<Addr>(address);
+    result.fastReloadEligible=special && debugReloadEligible(address);
     checkMemory(address+8,result.scalars.size());
     std::memcpy(result.scalars.data(),reinterpret_cast<void*>(address+8),result.scalars.size());
     const auto slots=weaponSlotArray(address); // 所有机型共用结构及内存校验。
@@ -500,7 +520,7 @@ bool hasReadyRound(const Group& group,double time) {
     const double delta=std::max(0.0,time-group.capturedTime);
     for(int index=0;index<window;++index) {
         const auto& slot=group.slots[(next+index)%count];
-        const float elapsed=dualsp::advanceReload(slot.duration,slot.elapsed,delta,true);
+        const float elapsed=cachedReload(group,slot,delta,true);
         if(elapsed>=slot.duration)return true;
     }
     return false;
@@ -528,7 +548,7 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
         std::array<float,2> native{};
         std::memcpy(native.data(),reinterpret_cast<const void*>(slotData+static_cast<size_t>(i)*0x60+0x48),sizeof(native));
         require(std::abs(native[0]-slot.duration)<0.001f,"Reload configuration changed");
-        const float logical=dualsp::advanceReload(slot.duration,slot.elapsed,dt,i<loadedCount);
+        const float logical=cachedReload(saved,slot,dt,i<loadedCount);
         reloads.push_back({logical,dualsp::rebuildReload(slot.duration,logical,native[1])});
     }
     // Only the current load window progresses. Advancing every physical hardpoint
@@ -577,7 +597,9 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
 #include "view_target.hpp"
+void debugWeaponsTick(Addr activator) noexcept;
 #include "gun_salvo.hpp"
+#include "debug_weapons.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
 struct CfaSwitchCost {
@@ -958,6 +980,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+            debugWeapons={};debugInfiniteAmmo=false;debugFastReload=false;
             viewTarget.clear();
             salvoNeedRelease=salvoNeedRelease || gunSalvo.gun;salvoStopExtra();gunSalvo={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -975,6 +998,8 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         return 0;
     }
 }
+
+extern "C" __declspec(dllexport) int dualsp_debug_weapons(void* luaState) {return debugWeaponsLua(luaState);}
 
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
@@ -1936,7 +1961,7 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
                 require(loaded>=0 && loaded<=static_cast<int>(g.slots.size()) && next>=0 && next<static_cast<int>(g.slots.size()),"Invalid HUD launch cursor");
                 for(int k=0;k<loaded;++k) {
                     const auto& s=g.slots[(next+k)%g.slots.size()];
-                    const float elapsed=dualsp::advanceReload(s.duration,s.elapsed,std::max(0.0,command.time-g.capturedTime),true);
+                    const float elapsed=cachedReload(g,s,std::max(0.0,command.time-g.capturedTime),true);
                     bars.push_back(dualsp::reloadProgress(s.duration,elapsed));
                 }
             }

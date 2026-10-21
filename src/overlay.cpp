@@ -55,7 +55,7 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=20; // 三页布局及独立注视输入，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=21; // 三页布局及独立注视输入，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
 bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
@@ -74,6 +74,8 @@ std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟�
 std::string draftCentralWeaponDisplay="switch_1s"; // 新配置默认只在切换后短显，保留右下HUD。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
+int debugWeaponsRequest=0,pendingDebugWeapons=0;
+bool pendingInfiniteAmmo=false,pendingFastReload=false;
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
 struct DebugAircraftOption { int planeId{};std::string name,code;bool mod{}; };
 std::vector<DebugAircraftOption> debugAircraftOptions; // 游戏线程从实际目录核准的官方及Mod机体。
@@ -735,6 +737,9 @@ void refreshState() {
             state.at("target_gaze_pad_enabled").get<bool>();state.at("target_gaze_keyboard_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
+            if(state.at("debug_weapons").at("protocol").get<int>()!=1)throw std::runtime_error("SP调试协议不匹配");
+            state.at("debug_weapons").at("infinite").get<bool>();state.at("debug_weapons").at("fast").get<bool>();
+            state.at("debug_weapons").at("available").get<bool>();
             const auto mode=state.at("view_target_mode").get<std::string>();
             if(mode!="normal"&&mode!="vr")throw std::runtime_error("NEXT模式必须为普通或VR模式");
             state.at("view_center_dot_enabled").get<bool>();
@@ -775,7 +780,8 @@ void refreshState() {
             pendingSave=0;
         }
         const auto& debug=state.at("debug_loadout"); // 回执只来自游戏线程完整提交。
-        if(debug.at("session").get<int>()!=debugSession||debug.at("revision").get<int>()!=debugRevision)loadDebugDraft();
+        if(pendingDebugWeapons>0 && state.at("debug_weapons").value("response",0)==pendingDebugWeapons)pendingDebugWeapons=0;
+        if(debug.at("session").get<int>()!=debugSession||debug.at("revision").get<int>()!=debugRevision) {pendingDebugWeapons=0;loadDebugDraft();}
         if(pendingDebug>0&&debug.at("response").get<int>()==pendingDebug) {
             debugNotice=debug.at("ack").get<int>()==pendingDebug?tr("SP 方案已应用并补满。关闭面板后继续测试。","SP loadout applied and refilled. Close the panel to continue testing."):
                 tr("换装未完成，请查看错误说明。","Loadout was not applied. See the error details.");
@@ -801,7 +807,7 @@ void refreshState() {
         Json errors=Json::object();
         for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
             if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
-        for(const char* field:{"debug_loadout","debug_aircraft","management_pause","master_switch","target_gaze","camera_hold","view_target"})
+        for(const char* field:{"debug_loadout","debug_weapons","debug_aircraft","management_pause","master_switch","target_gaze","camera_hold","view_target"})
             if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {

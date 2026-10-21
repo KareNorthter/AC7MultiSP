@@ -1,4 +1,4 @@
--- AC7MultiSP 2.26.1源码候选：用户设计稿三页布局、独立Y/键盘注视及视角保持快捷键；未编译安装。
+-- AC7MultiSP 2.27.0源码候选：注视静默及仅SP的即时调试选项；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -49,6 +49,7 @@ local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
+local nativeDebugWeapons=loadExport("dualsp_debug_weapons")
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
@@ -60,7 +61,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=20") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=21") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -167,6 +168,7 @@ local debugSession=0 -- 玩家实例换代后递增，拒绝上一任务排队�
 local debugResponse=0 -- 已处理请求编号，包含正常拒绝。
 local debugAck=0 -- 仅完成核心与 HUD 交接后确认成功。
 local debugError=nil -- 调试请求错误单独展示，不把输入拒绝当成控制器故障。
+local debugWeapons={infinite=false,fast=false,response=0,ack=0}
 local debugProfileActive=false -- 调试方案只属于本次任务，检查点恢复也不能写入个人配置。
 local aircraftDebug=nil -- 换机事务独立于兵装，允许跨整关载入等待新玩家实例。
 local checkpointDebugProfile=false -- 真实检查点是否捕获了调试方案。
@@ -785,8 +787,7 @@ function weaponSwitch.gaze.update(_,generation)
         if inputToggle then
             gaze.response=gaze.response+1
             gaze.noticeWarning=not ok or not allowed or reason=="no_target"
-            gaze.notice=reason=="no_target"and tr("没有可注视的目标。","No target is selected.")
-                or gaze.active and tr("锁定注视：开始","Target tracking: latched")or tr("锁定注视：结束","Target tracking: released")
+            gaze.notice=reason=="no_target"and tr("没有可注视的目标。","No target is selected.")or ""
             lastUIKey=nil
         end
     else gaze.active=false;gaze.available=false end
@@ -1351,6 +1352,32 @@ local function applyDebugHotkey(action)
     end
     note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
 end
+local function updateDebugWeapons()
+    local allowed=runtimeAllowed and runtimeModEnabled and runtimeReason~="mission13_fixed_sp"and isFlight and configured
+        and not supplySession and not internal and not restorePending and not checkpointPending and not errorText
+        and not(aircraftDebug and aircraftDebug:busy())and valid(plane)and valid(activator)
+    local ok,err=nativeDebugWeapons(allowed and plane:GetAddress()or 0,allowed and activator:GetAddress()or 0,allowed and 1 or 0,
+        debugWeapons.infinite and 1 or 0,debugWeapons.fast and 1 or 0,allowed and game:GetTimeSeconds(plane)or 0)
+    if not ok then
+        debugWeapons.infinite=false;debugWeapons.fast=false
+        if debugWeapons.error~=tostring(err)then note("DEBUG_WEAPONS_ERROR "..tostring(err))end
+        debugWeapons.error=tostring(err)
+    end
+    return ok,err
+end
+local function applyDebugWeapons(action)
+    debugWeapons.response=tonumber(action.request)or 0
+    local ok,err=pcall(function()
+        assert(action.protocol==1 and action.session==debugSession and action.revision==weaponRevision,"调试界面协议不匹配，请成套安装")
+        local allowed,reason=canDebugLoadout(false,true);assert(allowed,reason)
+        assert(type(action.infinite)=="boolean"and type(action.fast)=="boolean","SP调试参数无效")
+        debugWeapons.infinite=action.infinite;debugWeapons.fast=action.fast
+        local applied,detail=updateDebugWeapons();assert(applied,detail)
+        debugWeapons.ack=debugWeapons.response;debugWeapons.error=nil
+    end)
+    if not ok then debugWeapons.error=tostring(err);note("DEBUG_WEAPONS_REJECTED "..tostring(err))end
+    lastUIKey=nil
+end
 local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
@@ -1367,6 +1394,7 @@ local function applyAction(action)
             lastUIKey=nil
         end
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
+    elseif action.type=="debug_weapons"then applyDebugWeapons(action)
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="toggle_gun_salvo"then
         if runtimeAllowed and runtimeModEnabled then
@@ -1432,7 +1460,7 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=20,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=21,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
         hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
@@ -1454,6 +1482,9 @@ local function publishState()
     local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
+    local debugWeaponsAvailable=canDebugLoadout(false,true)
+    state.debug_weapons={protocol=1,available=debugWeaponsAvailable,infinite=debugWeapons.infinite,fast=debugWeapons.fast,
+        response=debugWeapons.response,ack=debugWeapons.ack,error=debugWeapons.error}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice,notice_warning=weaponSwitch.hotkeyWarning==true}
     state.target_gaze={protocol=4,switch_available=weaponSwitch.gaze.canSwitch(),active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,notice_warning=weaponSwitch.gaze.noticeWarning==true,error=weaponSwitch.gaze.error}
@@ -1749,6 +1780,7 @@ local function tick()
             for _,action in ipairs(batch)do applyAction(action)end
         end
     end
+    updateDebugWeapons()
     if aircraftDebug:busy()then publishState();return end -- 同一帧内也不继续维护原机体。
     if isFlight and configured and not supplySession and not errorText then
         if restorePending then
@@ -1936,7 +1968,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.26.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.27.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

@@ -1,3 +1,19 @@
+AC7MultiSP 2.27.0 (source candidate; not built or installed)
+
+2.27.0 source changes (since this branch's 2.26.1; in-game validation pending)
+• Starting or stopping latched tracking no longer shows an information toast. Existing no-target warnings and errors remain.
+• Debug adds Infinite ammo and Fast reload. Both default off and apply immediately when checked, without saving settings. They affect only SPs managed by this mod, not standard missiles, guns or countermeasures.
+• Infinite ammo preserves existing stock without refilling it. Fast reload reduces eligible SP reloads to at most 1 second; PLSL, HGP, MGP and other rapid-fire or continuous-effect SPs keep native behavior. Both options reset when the game restarts.
+• Management protocol 21 / configuration revision 19. Resources are unchanged. This source candidate has not been built, installed or tested; the installed baseline remains 2.26.0.
+
+2.26.1 source changes (since installed 2.26.0)
+• Management follows the user's design with General, Camera and Debug tabs. The master switch is beside the title; disabling it dims the pages. Logs are at the end of Debug.
+• Empty groups and reset buttons are removed. SP-combination cycling and mission-model shortcuts are configurable only in profiles.json. NEXT mode is selected only in Management; L3 and keyboard NEXT-mode switching are removed.
+• Holding controller Y for 0.2 seconds and pressing the game's actual keyboard tracking binding have independent latched-tracking options, both off by default. Disabled inputs retain native hold-to-track behavior.
+• L3 recenters. Short R3 changes view; holding R3 for 0.3 seconds toggles Camera hold. These controller actions are always enabled; both sticks retain countermeasures. Camera hold defaults to Ctrl+Alt+F6; Gun salvo keeps Ctrl+Alt+F5.
+• New configurations enable Gun salvo (MGP/PLSL; HGP and simultaneous different SPs remain unsupported). Always-visible central weapon text and the center dot default off. Upgrades retain existing personal display settings.
+• Configuration revision 19 / tracking protocol 4. Upgrades back up settings before migration. The 77 resources / 154 PAK members are unchanged. The following entries retain their historical version and installation status.
+
 AC7MultiSP 2.26.0 (candidate)
 
 2.26.0 candidate changes (since 2.25.1; user validation pending)
@@ -60,11 +76,11 @@ For Windows 10/11 64-bit and the Steam version of ACE COMBAT 7, build 9855922, i
 Other builds, VR and multiplayer are outside the supported scope. Mod features are automatically disabled in multiplayer.
 
 Features
-• Gun salvo links the native gun action to a loadout’s MGP or PLSL. Off by default; release attempts to restore the previous selection. Switching gaps remain possible. Pausing, opening Management, focus loss or manual selection cancels the action.
+• Gun salvo links the native gun action to a loadout’s MGP or PLSL. On for new configurations; release attempts to restore the previous selection. Switching gaps remain possible. Pausing, opening Management, focus loss or manual selection cancels the action.
 • Select one to three SP weapons through the native preparation menus. Standard missiles remain available. You can change your SP loadout during resupply.
 • Each SP keeps its own ammunition and reload state. One SP uses full ammunition; defaults are 50% each for two SPs and 33% each for three. Adjust these percentages in the management panel.
 • HUD weapon and reload information, native weapon cycling, and direct selection of all four weapon slots.
-• In Management > General, choose Always visible (default) or Show for 1 second after switching for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
+• In Management > General, choose Always visible or Show for 1 second after switching (default) for the central weapon abbreviation. Saving applies the setting. Timed mode starts hidden on mission entry; each actual switch restarts the timer, reselecting the same weapon does not extend it, and pauses do not count. Lower-right weapon information remains available.
 • Experimental simultaneous SP models retain selected external stores where supported. Layouts vary by aircraft; some internal bays retain native model switching.
 • Chinese/English management panel, configurable controls, ammunition settings, model toggle and logs.
 • Debug controls can temporarily rebuild/refill the SP loadout or change aircraft by restarting the entire mission. The aircraft picker includes loaded mods with complete three-SP data, plus unpurchased/unlicensed official aircraft. Search by name/code/ID and filter by source or initial letter. This does not grant purchases or DLC licenses, and spawning them is not guaranteed.
@@ -89,13 +105,13 @@ Controls
 • Choose SP1, SP2 and SP3 in sequence; the latter two can be NO WEAPON. Use keyboard or controller in native preparation menus.
 • Default keyboard 1/2/3/4: standard missiles / SP1 / SP2 / SP3.
 • Controller D-pad left/up/right/down: standard missiles / SP1 / SP2 / SP3. Native weapon cycling remains available.
-• Optional toggle tracking: L3 is off by default in the second Camera tab; enable it, then press and release to start/stop. An independent keyboard key is unbound by default. X cycles weapons; Y retains native actions. Both-stick countermeasures never toggle tracking. Pausing, management, focus loss or target loss stops tracking.
-• Upgrades preserve saved settings and loadouts. Current configuration revision is 14; upgrading revision 13 first saves the original bytes to profiles.before-camera-auto-center.json.
-• Camera hold is off by default. The independently enabled R3 gesture uses short release for view change, 0.2 seconds for recenter and 2 seconds for toggling and saving Camera hold; both sticks retain countermeasures. Hold mode offers a 0–45 degree auto-center threshold (30 default, 0 off), middle-mouse recenter and 5%–200% sensitivity.
+• Latched tracking has independent controller and keyboard options in Camera, both off by default. When enabled, hold Y for 0.2 seconds or press the game's actual keyboard tracking binding to start/stop. Short Y presses still change targets. Pausing, management, focus loss or target loss stops tracking.
+• Upgrades preserve personal settings and loadouts. Current configuration revision is 19; revision 18 is backed up to profiles.before-management-redesign.json before migration. Old default cycle/model shortcuts are cleared, custom bindings are retained, and a conflicting new camera-hold shortcut is left unassigned.
+• Camera hold is off by default. Release L3 or use the recenter binding (middle mouse by default) to recenter. Short R3 changes view; hold R3 for 0.3 seconds to toggle Camera hold. Both sticks retain countermeasures. Sensitivity ranges from 5% to 200%; angle-based auto recenter is removed.
 • F6 or controller Back+Y: management panel. It pauses an active mission and only releases the pause it created.
-• Default Ctrl+Alt+F6 cycles debug SP combinations and refills them; Ctrl+Alt+F7 toggles simultaneous models. Change these bindings and direct weapon keys in the first General tab.
+• F6 opens Management, Ctrl+Alt+F5 toggles Gun salvo, and Ctrl+Alt+F6 toggles Camera hold by default. Cycling SP combinations and toggling mission models have no default shortcut; configure them in profiles.json. Direct weapon keys are configured in General.
 • Saving normal settings does not refill the current mission. Changing aircraft through Debug restarts the entire mission.
-• If simultaneous models cause performance problems, disable that option. Multi-SP ammunition and switching remain available.
+• Mission and hangar multi-SP models have separate switches, both on by default. Disabling either affects visuals only; SP ammunition and switching remain available. D-pad selection is on by default and can be disabled independently of keyboard selection.
 
 Simultaneous SP-model support
 Adapted means a simultaneous-visual layout is implemented, not that every aircraft and combination has been individually playtested. Visible positions follow hardpoints, ammunition and reload state; they do not equal total ammunition. Aircraft without adapted visuals retain Multi-SP weapon functionality. Aircraft not listed below use native visuals.

@@ -69,6 +69,7 @@ void salvoMainTick(void* activator,float delta) {
             !continuousAlive(gunSalvo.weapon) || read<Addr>(groupOf(gunSalvo.activator.address,true)+0x40)!=gunSalvo.weapon.address)salvoFailure();
     }catch(...) {salvoFailure();}
     originalSalvoTick(activator,delta); // 心跳中断时也先停自有输入，不留下永久连射。
+    debugWeaponsTick(reinterpret_cast<Addr>(activator));
 }
 void installGunSalvo() {
     static bool installed=false;

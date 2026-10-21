@@ -30,8 +30,8 @@
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 <script id="designSeed" type="application/json">{
   "schema": "ac7-management-design-v1",
-  "storageKey": "ac7-design-approved-camera-hold-f6",
-  "sourceVersion": "2.26.1",
+  "storageKey": "ac7-design-sp-debug-2270",
+  "sourceVersion": "2.27.0",
   "sourceCommit": "824adb5 + 本轮界面调整",
   "pages": [
     {
@@ -296,6 +296,26 @@
           "id": "debug_loadout",
           "title": "任务兵装",
           "items": [
+            {
+              "id": "debug_infinite_ammo",
+              "label": "无限弹药",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "debug_fast_reload",
+              "label": "快速装填",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
             {
               "id": "debug_loadout_selection",
               "label": "临时SP组合",
@@ -705,6 +725,26 @@
             "id": "debug_loadout",
             "title": "任务兵装",
             "items": [
+              {
+                "id": "debug_infinite_ammo",
+                "label": "无限弹药",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "debug_fast_reload",
+                "label": "快速装填",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
               {
                 "id": "debug_loadout_selection",
                 "label": "临时SP组合",
