@@ -937,6 +937,7 @@ void execute(const Command& command) {
 // 仅声明候选核心支持新的补给协议，供 Lua 在重建兵装前核对版本。
 extern "C" __declspec(dllexport) int dualsp_target_gaze(void* luaState) {return targetGazeLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_gaze_latch_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_gaze_inputs_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo(void* luaState) {return gunSalvoLua(luaState);}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold(void* luaState) {return cameraHoldLua(luaState);}

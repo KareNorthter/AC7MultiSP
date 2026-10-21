@@ -16,6 +16,7 @@ struct TargetGaze {
     bool padSeeded{},padConnected{},yDown{},yCandidate{},yConsumed{},keyboardSeeded{},keyboardDown{},keyboardBlocked{},pendingToggle{};
     ULONGLONG yPressed{},yReleased{},started{};
     bool ready{};
+    int inputs{}; // 位1：手柄Y，位2：游戏实际键盘注视键；关闭的来源继续使用原生按住注视。
     std::string error,notice;
     void cancelGesture() {
         padSeeded=padConnected=yDown=yCandidate=yConsumed=keyboardSeeded=keyboardDown=keyboardBlocked=pendingToggle=false;
@@ -23,7 +24,7 @@ struct TargetGaze {
     }
     void clear() {
         allowed=false;active=false;component=0;axis=0;observed=0;heartbeat=0;
-        plane=input=selection=view={};bindings=0;count=capacity=0;started=0;cancelGesture();notice.clear();
+        plane=input=selection=view={};bindings=0;count=capacity=0;started=0;inputs=0;cancelGesture();notice.clear();
     }
 } targetGaze;
 using TargetGazeAxis=float(*)(void*,uint64_t);
@@ -85,7 +86,8 @@ void targetGazeObservePad(DWORD result,const XINPUT_STATE* state) {
     }
     if(y)targetGaze.keyboardBlocked=true;
     if(targetGaze.yCandidate&&(y||targetGaze.yDown)&&now-targetGaze.yPressed>=200) {
-        targetGaze.yCandidate=false;targetGaze.yConsumed=true;targetGazeToggle();
+        targetGaze.yCandidate=false;
+        if(targetGaze.inputs&1){targetGaze.yConsumed=true;targetGazeToggle();}
     }
     if(!y&&targetGaze.yDown) {targetGaze.yReleased=now;targetGaze.yCandidate=false;}
     targetGaze.yDown=y;
@@ -94,12 +96,14 @@ float targetGazeTrackValue(float native) {
     const bool down=std::isfinite(native)&&native>.5f;
     if(!targetGaze.keyboardSeeded) {targetGaze.keyboardSeeded=true;targetGaze.keyboardDown=down;}
     else {
-        if(!targetGaze.yDown&&!targetGaze.keyboardBlocked&&down&&!targetGaze.keyboardDown)targetGazeToggle();
+        if((targetGaze.inputs&2)&&!targetGaze.yDown&&!targetGaze.keyboardBlocked&&down&&!targetGaze.keyboardDown)targetGazeToggle();
         targetGaze.keyboardDown=down;
     }
     // 游戏自行解析实际键盘绑定；Y与键盘共用原生轴时，先等Y释放且原轴归零再接收键盘新边沿。
     if(!targetGaze.yDown&&!down)targetGaze.keyboardBlocked=false;
-    return targetGaze.active.load()?1.f:0.f;
+    const bool nativePad=!(targetGaze.inputs&1)&&targetGaze.yDown&&down;
+    const bool nativeKeyboard=!(targetGaze.inputs&2)&&!targetGaze.yDown&&!targetGaze.keyboardBlocked&&down;
+    return targetGaze.active.load()||nativePad||nativeKeyboard?1.f:0.f;
 }
 float targetGazeAxis(void* object,uint64_t name) {
     const float native=originalTargetGazeAxis(object,name);
@@ -116,7 +120,7 @@ float targetGazeAxis(void* object,uint64_t name) {
 }
 // 原生在Y释放时按0.5秒判断短按。已消费的0.2秒手势须避免再次切目标，不改释放入口或任何目标指针。
 Addr targetGazeSelect(void* object,bool force) {
-    if(targetGazeLive()&&!force&&reinterpret_cast<Addr>(object)==targetGaze.selection.address)try {
+    if(targetGazeLive()&&(targetGaze.inputs&1)&&!force&&reinterpret_cast<Addr>(object)==targetGaze.selection.address)try {
         require(targetGazeIdentities(),"锁定注视的玩家身份已变化");
         if(targetGazeOrdinary()) {
             XINPUT_STATE pad{};const auto result=originalTargetGazePad(0,&pad);targetGazeObservePad(result,&pad);
@@ -202,17 +206,17 @@ void bindTargetGaze(Addr plane) {
 }
 
 
-// 总开关由Lua配置控制；第四参数仅用于立即结束注视，不把配置快捷键当作注视动作。
+// 第三参数为两种输入的独立许可位；第四参数仅用于立即结束注视。
 int targetGazeLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
         require(api->top(luaState)==4,"目标注视参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
-        const auto allowed=api->readInteger(luaState,2),enabled=api->readInteger(luaState,3),stop=api->readInteger(luaState,4);
-        require((allowed==0||allowed==1)&&(enabled==0||enabled==1)&&(stop==0||stop==1),"目标注视设置无效");
+        const auto allowed=api->readInteger(luaState,2),inputs=api->readInteger(luaState,3),stop=api->readInteger(luaState,4);
+        require((allowed==0||allowed==1)&&inputs>=0&&inputs<=3&&(stop==0||stop==1),"目标注视设置无效");
         std::string reason;bool toggled=false;
-        if(!allowed||!enabled||!plane||!targetGazeFocused()){targetGaze.clear();targetGaze.error.clear();}
+        if(!allowed||!inputs||!plane||!targetGazeFocused()){targetGaze.clear();targetGaze.error.clear();}
         else {
             require(targetGaze.error.empty(),targetGaze.error.c_str());installTargetGaze();continuousIdentity(plane);
             const auto input=read<Addr>(plane+0x118);
@@ -222,6 +226,7 @@ int targetGazeLua(void* luaState) {
                 const bool same=targetGaze.plane.address==plane&&targetGazeIdentities()&&
                     read<Addr>(input+0x110)==targetGaze.bindings&&read<int>(input+0x118)==targetGaze.count&&read<int>(input+0x11c)==targetGaze.capacity;
                 if(!same)bindTargetGaze(plane);
+                if(targetGaze.inputs!=inputs){targetGaze.active=false;targetGaze.cancelGesture();targetGaze.inputs=static_cast<int>(inputs);}
                 if(!targetGazeOrdinary()){targetGaze.active=false;targetGaze.cancelGesture();targetGaze.allowed=false;reason="special_view";}
                 else {
                     const auto now=GetTickCount64();

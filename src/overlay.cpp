@@ -55,23 +55,23 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=19; // 双模式NEXT及新版镜头交互，核心/UI/Lua须成套部署。
-bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=false;
+constexpr int managementProtocol=20; // 三页布局及独立注视输入，核心/UI/Lua须成套部署。
+bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
-bool draftTargetGazeEnabled=false,draftCameraHold=false;
-bool draftCameraR3=true,draftViewCenterDot=true;
+bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
+bool draftViewCenterDot=false;
 std::string draftViewTargetMode="normal";
 std::atomic<bool> viewCenterDotVisible{false};
 std::atomic<ULONGLONG> viewCenterDotHeartbeat{0};
-int draftTargetGazeKey=0,targetGazeResponse=0;
+int targetGazeResponse=0;
 int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
 bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
-std::array<dualsp::Shortcut,5> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3},{VK_F8,3}}};
+std::array<dualsp::Shortcut,5> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3},{VK_F9,3}}};
 std::array<dualsp::Shortcut,5> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
-std::string draftCentralWeaponDisplay="always"; // 默认保留中央简称常驻。
+std::string draftCentralWeaponDisplay="switch_1s"; // 新配置默认只在切换后短显，保留右下HUD。
 std::array<bool,3> debugSelected{}; // 按原生配置顺序选择，连续组成 SP1 至 SP3。
 int debugRequest=0,pendingDebug=0,debugSession=-1,debugRevision=-1; // 请求回执与草稿身份。
 std::string debugNotice; // 换装成功、拒绝或失败的独立反馈。
@@ -112,8 +112,8 @@ void showToast(std::string message,ToastKind kind=ToastKind::Info) {
     hotkeyToast=prefix+message;toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
     hotkeyToastUntil=now+(kind==ToastKind::Info?1000:3000);
 }
-int managementTab=0,requestedTab=-1; // Ctrl+Tab 在四个管理分页间循环。
-bool focusManagement=false; // 每次打开把键盘焦点放到语言选择，不依赖鼠标点击。
+int managementTab=0,requestedTab=-1; // Ctrl+Tab 在三个管理分页间循环。
+bool focusManagement=false; // 每次打开把键盘焦点放到标题总开关，不依赖鼠标点击。
 // 日志只在页面打开或手动刷新时读取。
 bool logsLoaded=false;
 std::string modLogText,nativeLogText,logError;
@@ -130,7 +130,6 @@ bool shortcutModifierKey(int key) {
     return key==VK_CONTROL||key==VK_LCONTROL||key==VK_RCONTROL||key==VK_MENU||key==VK_LMENU||key==VK_RMENU||key==VK_SHIFT||key==VK_LSHIFT||key==VK_RSHIFT;
 }
 bool directInputEnabled();
-bool targetGazeInputEnabled();
 void enqueue(Json action) {std::lock_guard<std::mutex> guard(queueMutex);actions.push_back(std::move(action));}
 bool gameFocused() {return gameWindow && GetForegroundWindow()==GetAncestor(gameWindow,GA_ROOT);}
 HCURSOR WINAPI panelSetCursor(HCURSOR requested) {
@@ -222,7 +221,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
             if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
             if(index==0)togglePanel(!panel);
             else if(index==3){if(!panel)enqueue({{"type","toggle_gun_salvo"}});}
-            else if(index==4){if(!panel)enqueue({{"type","toggle_view_target"}});}
+            else if(index==4){if(!panel)enqueue({{"type","toggle_camera_hold"}});}
             else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."),ToastKind::Important);
             else if(state.contains("debug_hotkey")&&state["debug_hotkey"].value("protocol",0)==1&&state.contains("debug_loadout")) {
                 const auto& debug=state["debug_loadout"];
@@ -230,11 +229,6 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
                     {"session",debug.value("session",-1)},{"revision",debug.value("revision",-1)},
                     {"command",index==1?"cycle":"mount"}});
             }
-            return 0;
-        }
-        if(targetGazeInputEnabled()&&dualsp::singleKeyMatches(state.value("target_gaze_key",0),static_cast<int>(w),mods)) {
-            if(w<consumedShortcutKeys.size())consumedShortcutKeys[w]=true;
-            enqueue({{"type","toggle_target_gaze"},{"source","keyboard"},{"generation",state.at("target_gaze").value("generation",-1)}});
             return 0;
         }
         if(directInputEnabled()) {
@@ -255,7 +249,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         // Esc 先归还给下拉菜单；没有弹出层时才关闭整个管理面板。
         if(w==VK_ESCAPE&&panel&&!ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel)){togglePanel(false);return 0;}
         if(panel&&w==VK_TAB&&(GetKeyState(VK_CONTROL)&0x8000)) {
-            requestedTab=((requestedTab>=0?requestedTab:managementTab)+((GetKeyState(VK_SHIFT)&0x8000)?3:1))%4;
+            requestedTab=((requestedTab>=0?requestedTab:managementTab)+((GetKeyState(VK_SHIFT)&0x8000)?2:1))%3;
             return 0;
         }
     }
@@ -383,7 +377,7 @@ std::string shortcutLabel(dualsp::Shortcut value) {
 }
 std::array<dualsp::Shortcut,5> readShortcuts(const Json& data) {
     std::array<dualsp::Shortcut,5> values;
-    const char* names[]={"management","cycle","mount","salvo","view_target"};
+    const char* names[]={"management","cycle","mount","salvo","camera_hold"};
     for(int i=0;i<5;++i) {
         const auto& item=data.at(names[i]);
         if(!item.at("key").is_number_integer()||!item.at("mods").is_number_integer())throw std::runtime_error("快捷键格式无效");
@@ -393,12 +387,12 @@ std::array<dualsp::Shortcut,5> readShortcuts(const Json& data) {
     return values;
 }
 Json shortcutData(const std::array<dualsp::Shortcut,5>& values) {
-    Json data=Json::object();const char* names[]={"management","cycle","mount","salvo","view_target"};
+    Json data=Json::object();const char* names[]={"management","cycle","mount","salvo","camera_hold"};
     for(int i=0;i<5;++i)data[names[i]]={{"key",values[i].key},{"mods",values[i].mods}};
     return data;
 }
-bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)&&dualsp::validTargetGazeKey(draftTargetGazeKey,draftShortcuts,draftKeys)
-    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,draftTargetGazeKey,draftShortcuts,draftKeys); }
+bool bindingsValid() { return dualsp::validShortcuts(draftShortcuts,draftKeys)
+    &&dualsp::validCameraCenterKey(draftCameraCenterKey,draftCameraHold,0,draftShortcuts,draftKeys); }
 
 // 按键只产生请求，是否允许切换由游戏线程核对当前任务状态。
 bool directInputEnabled() {
@@ -406,30 +400,22 @@ bool directInputEnabled() {
         &&state.value("direct_selection_available",false);
 }
 bool dpadInputEnabled() {return directInputEnabled()&&state.value("dpad_weapon_switch_enabled",false);}
-bool targetGazeInputEnabled() {
-    return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
-        &&state.contains("target_gaze")&&state.at("target_gaze").value("switch_available",false);
-}
-
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
 void captureKeyboardKey(int key,int mods) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
-    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextGaze=draftTargetGazeKey,nextCenter=draftCameraCenterKey;
+    auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextCenter=draftCameraCenterKey;
     if(captureSlot<4) {
         if(mods!=0){notice=tr("武器直接选择只支持单键。","Direct weapon selection accepts single keys.");return;}
         nextKeys[captureSlot]=key;
-    } else if(captureSlot==7) {
-        if(mods!=0){notice=tr("锁定注视功能启闭键只支持单键。","The tracking feature shortcut accepts a single key.");return;}
-        nextGaze=key;
     } else if(captureSlot==8) {
         if(mods!=0){notice=tr("镜头回正只支持单键。","Camera recenter accepts a single key.");return;}
         nextCenter=key;
     } else nextShortcuts[captureSlot==10?4:(captureSlot==9?3:captureSlot-4)]={key,mods};
-    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)||!dualsp::validTargetGazeKey(nextGaze,nextShortcuts,nextKeys)
-        ||!dualsp::validCameraCenterKey(nextCenter,draftCameraHold,nextGaze,nextShortcuts,nextKeys)) {
+    if(!dualsp::validShortcuts(nextShortcuts,nextKeys)
+        ||!dualsp::validCameraCenterKey(nextCenter,draftCameraHold,0,nextShortcuts,nextKeys)) {
         notice=tr("键位不可用或重复；请换一个按键。Esc取消。","Unsupported or duplicate binding. Choose another key; Esc cancels.");return;
     }
-    draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftTargetGazeKey=nextGaze;draftCameraCenterKey=nextCenter;captureSlot=-1;notice.clear();
+    draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftCameraCenterKey=nextCenter;captureSlot=-1;notice.clear();
 }
 
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
@@ -442,12 +428,11 @@ void loadManagementDraft() {
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
     draftViewTargetMode=state.at("view_target_mode").get<std::string>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
-    draftTargetGazeEnabled=state.at("target_gaze_enabled").get<bool>();
+    draftTargetGazePad=state.at("target_gaze_pad_enabled").get<bool>();
+    draftTargetGazeKeyboard=state.at("target_gaze_keyboard_enabled").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
-    draftCameraR3=state.at("camera_r3_enabled").get<bool>();
     draftCameraCenterKey=state.at("camera_center_key").get<int>();
     draftCameraSensitivity=state.at("camera_sensitivity").get<int>();
-    draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
     draftAmmoPercentTwo=state.at("ammo_percent_two").get<int>();
@@ -629,8 +614,8 @@ void drawDebugAircraft() {
 void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
     ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),uiMessage(state.value("plane_name",std::string())).c_str());
-    panelHelp("按列表从上到下分配SP1/SP2/SP3。应用后按已保存比例补满SP并切回MSL；普通导弹、机炮、干扰弹保留，个人方案和已有检查点不改写。组合轮切及模型快捷键在基础页设置。",
-        "Checked weapons become SP1/SP2/SP3 from top to bottom. Applying refills SPs with saved percentages and selects MSL; standard missiles, gun, countermeasures, saved loadouts and checkpoints remain unchanged. Configure loadout/model shortcuts in General.");
+    panelHelp("按列表从上到下分配SP1/SP2/SP3。应用后按已保存比例补满SP并切回MSL；普通导弹、机炮、干扰弹保留，个人方案和已有检查点不改写。组合轮切及模型快捷键仅在配置文件设置。",
+        "Checked weapons become SP1/SP2/SP3 from top to bottom. Applying refills SPs with saved percentages and selects MSL; standard missiles, gun, countermeasures, saved loadouts and checkpoints remain unchanged. Loadout/model shortcuts are configurable in the configuration file.");
     const bool available=debug.value("available",false)&&pendingDebug==0&&!debugAircraftBusy(); // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
     const int count=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true)); // 实际选择数量。
@@ -703,9 +688,8 @@ void saveManagementSettings() {
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
-        {"target_gaze_enabled",draftTargetGazeEnabled},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
+        {"target_gaze_pad_enabled",draftTargetGazePad},{"target_gaze_keyboard_enabled",draftTargetGazeKeyboard},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
-        {"camera_r3_enabled",draftCameraR3},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -727,7 +711,6 @@ void refreshState() {
         const bool wasCameraHold=state.value("camera_hold_enabled",false);
         const bool wasGunSalvo=state.value("gun_salvo_enabled",false);
         const auto wasViewTarget=state.value("view_target_mode",std::string("normal"));
-        const bool wasGazeEnabled=state.value("target_gaze_enabled",false);
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
@@ -749,9 +732,8 @@ void refreshState() {
             state.at("direct_selection_available").get<bool>(); // 键盘直选与手柄开关分别核对。
             state.at("task_mount_enabled").get<bool>();state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
-            state.at("target_gaze_enabled").get<bool>();
+            state.at("target_gaze_pad_enabled").get<bool>();state.at("target_gaze_keyboard_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
-            state.at("camera_r3_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
             const auto mode=state.at("view_target_mode").get<std::string>();
             if(mode!="normal"&&mode!="vr")throw std::runtime_error("NEXT模式必须为普通或VR模式");
@@ -761,14 +743,11 @@ void refreshState() {
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
             if(state.at("camera_hold").at("protocol").get<int>()!=8)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
-                state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
+                state.at("camera_hold_enabled").get<bool>(),0,checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
             if(!state.at("camera_sensitivity").is_number_integer() || state.at("camera_sensitivity").get<int>()<5 || state.at("camera_sensitivity").get<int>()>200)
                 throw std::runtime_error("镜头灵敏度必须为5至200的整数");
-            if(!state.at("target_gaze_key").is_number_integer() ||
-                !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
-                throw std::runtime_error("目标注视键位无效或重复");
-            if(state.at("target_gaze").at("protocol").get<int>()!=3)throw std::runtime_error("目标注视协议不匹配");
+            if(state.at("target_gaze").at("protocol").get<int>()!=4)throw std::runtime_error("目标注视协议不匹配");
             shortcuts=checkedShortcuts;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
@@ -781,10 +760,6 @@ void refreshState() {
         if(!panel && wasManagement && wasViewTarget!=state.at("view_target_mode").get<std::string>()) {
             draftViewTargetMode=state.at("view_target_mode").get<std::string>();
             showToast(draftViewTargetMode=="vr"?tr("NEXT：VR模式／视角中心优先","NEXT: VR / view center"):tr("NEXT：普通模式／机头附近优先","NEXT: normal / aircraft nose"));
-        }
-        if(!panel&&wasManagement&&wasGazeEnabled!=state.at("target_gaze_enabled").get<bool>()) {
-            draftTargetGazeEnabled=state.at("target_gaze_enabled").get<bool>();
-            showToast(draftTargetGazeEnabled?tr("锁定注视功能：开启","Latched tracking feature: ON"):tr("锁定注视功能：关闭","Latched tracking feature: OFF"));
         }
         if(!panel && wasManagement && wasGunSalvo!=state.at("gun_salvo_enabled").get<bool>()) {
             draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
@@ -868,7 +843,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 static WORD previousPadButtons=0;
                 static ULONGLONG lastPadPoll{};
                 const auto padNow=GetTickCount64();
-                const ULONGLONG pollInterval=(dpadInputEnabled()||targetGazeInputEnabled())?20:100;
+                const ULONGLONG pollInterval=dpadInputEnabled()?20:100;
                 if(padNow-lastPadPoll>=pollInterval) {
                     lastPadPoll=padNow;
                     XINPUT_STATE pad{};
@@ -1002,6 +977,7 @@ extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gaze_latch_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_gaze_inputs_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_v2_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}

@@ -3,7 +3,7 @@ local Config={}
 -- 回中键与组合快捷键可共用主键；按修饰键状态编码，交给游戏线程避开双触发。
 function Config.centerShortcutMask(settings)
     local mask=0
-    for _,name in ipairs({"management","cycle","mount","salvo","view_target"})do
+    for _,name in ipairs({"management","cycle","mount","salvo","camera_hold"})do
         local chord=settings.shortcuts[name]
         if chord.key==settings.camera_center_key and chord.mods~=0 then mask=mask|(1<<chord.mods) end
     end
@@ -35,9 +35,9 @@ end
 local function validateSettings(settings)
     assert(type(settings.shortcuts)=="table","缺少五个快捷键设置")
     local chords={}
-    for _,name in ipairs({"management","cycle","mount","salvo","view_target"})do
+    for _,name in ipairs({"management","cycle","mount","salvo","camera_hold"})do
         local chord=settings.shortcuts[name]
-        assert(type(chord)=="table"and (supportedKey(chord.key)or((name=="salvo"or name=="view_target")and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
+        assert(type(chord)=="table"and (supportedKey(chord.key)or((name=="salvo"or name=="camera_hold")and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
         assert(type(chord.mods)=="number"and chord.mods%1==0 and chord.mods>=0 and chord.mods<=7,"快捷键修饰键无效")
         assert(not(chord.mods==3 and chord.key==46),"Ctrl+Alt+Delete不能用作模组快捷键")
         assert(not(chord.mods==2 and chord.key==115),"Alt+F4不能用作模组快捷键")
@@ -53,17 +53,14 @@ local function validateSettings(settings)
     assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
     assert(settings.view_target_mode=="normal"or settings.view_target_mode=="vr","NEXT模式必须为普通或VR模式")
     assert(type(settings.view_center_dot_enabled)=="boolean","视野中心白点开关必须为布尔值")
-    assert(type(settings.target_gaze_enabled)=="boolean","锁定注视功能开关必须为布尔值")
+    assert(type(settings.target_gaze_pad_enabled)=="boolean"and type(settings.target_gaze_keyboard_enabled)=="boolean","手柄和键盘注视开关必须为布尔值")
+    assert(settings.target_gaze_enabled==nil and settings.target_gaze_key==nil and settings.camera_r3_enabled==nil and settings.shortcuts.view_target==nil,"旧管理界面字段已退役")
     assert(settings.target_gaze_pad_l3==nil and settings.view_target_pad_l3==nil and settings.view_target_enabled==nil and settings.camera_auto_center_degrees==nil,"旧镜头交互设置已退役")
     assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
-    assert(type(settings.camera_r3_enabled)=="boolean","R3替换开关必须为布尔值")
-    local gazeKey=settings.target_gaze_key
-    assert(gazeKey==0 or supportedKey(gazeKey),"目标注视键位无效")
-    assert(gazeKey==0 or not chords["0:"..gazeKey],"目标注视键不能与模组快捷键重复")
     local centerKey=settings.camera_center_key
     assert(centerKey==0 or centerKey==4 or supportedKey(centerKey),"镜头回正键位无效")
     if settings.camera_hold_enabled and centerKey~=0 then
-        assert(not chords["0:"..centerKey]and centerKey~=gazeKey,"镜头回正键不能与其他模组键位重复")
+        assert(not chords["0:"..centerKey],"镜头回正键不能与其他模组键位重复")
     end
     local sensitivity=settings.camera_sensitivity
     assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=5 and sensitivity<=200,"镜头灵敏度必须为5至200的整数")
@@ -79,7 +76,6 @@ local function validateSettings(settings)
     for _,key in ipairs(settings.keyboard_keys)do
         assert(supportedKey(key),"不支持此武器选择键位")
         assert(not chords["0:"..key],"单键快捷键与武器选择键不能重复")
-        assert(gazeKey==0 or key~=gazeKey,"目标注视键不能与武器选择键重复")
         assert(not settings.camera_hold_enabled or centerKey==0 or key~=centerKey,"镜头回正键不能与其他模组键位重复")
         assert(not used[key],"四个武器选择键不能重复");used[key]=true
     end
@@ -98,8 +94,8 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=18,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=true,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,target_gaze_enabled=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
-            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},view_target={key=119,mods=3}}}
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=19,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=false,gun_salvo_enabled=true,central_weapon_display="switch_1s",profiles={},language="auto",mod_enabled=true,target_gaze_pad_enabled=false,target_gaze_keyboard_enabled=false,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},camera_hold={key=120,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
         assert(type(config.profiles)=="table"and (migrateSettings or config.schema==2),"不支持的配置版本")
@@ -223,10 +219,25 @@ function Config.new(options)
             config.target_gaze_pad_l3=nil;config.view_target_pad_l3=nil;config.view_target_enabled=nil
             config.camera_auto_center_degrees=nil;config.management_revision=18
         end
-        assert(config.management_revision==18,"需要管理参数第 18 版")
+        local migrateManagementDesign=config.management_revision==18
+        if migrateManagementDesign then
+            assert(type(config.target_gaze_enabled)=="boolean"and config.target_gaze_pad_enabled==nil and config.target_gaze_keyboard_enabled==nil and config.shortcuts.camera_hold==nil,"旧管理界面配置无效")
+            config.target_gaze_pad_enabled=config.target_gaze_enabled
+            config.target_gaze_keyboard_enabled=config.target_gaze_enabled
+            config.target_gaze_enabled=nil;config.target_gaze_key=nil;config.camera_r3_enabled=nil
+            config.shortcuts.view_target=nil -- 用户取消NEXT快捷键，模式只在管理页选择。
+            local conflict=false
+            for _,chord in pairs(config.shortcuts)do
+                if chord.key==120 and chord.mods==3 then conflict=true end
+            end
+            config.shortcuts.camera_hold=conflict and {key=0,mods=0}or {key=120,mods=3}
+            if conflict then note("CAMERA_HOLD_SHORTCUT_UNASSIGNED old_binding_preserved")end
+            config.management_revision=19 -- 旧开关、显示习惯和方案保留，新默认值只用于新配置。
+        end
+        assert(config.management_revision==19,"需要管理参数第 19 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateUiInputOptions or migrateIndependentModels or migrateCameraInteraction then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateUiInputOptions or migrateIndependentModels or migrateCameraInteraction or migrateManagementDesign then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","rb")))
             local backups={}
@@ -245,12 +256,13 @@ function Config.new(options)
             if migrateUiInputOptions then backups[#backups+1]="profiles.before-ui-input-options.json"end
             if migrateIndependentModels then backups[#backups+1]="profiles.before-independent-models.json"end
             if migrateCameraInteraction then backups[#backups+1]="profiles.before-camera-interaction-v2.json"end
+            if migrateManagementDesign then backups[#backups+1]="profiles.before-management-redesign.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=18")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=19")
         end
         return config
     end
@@ -263,9 +275,9 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==19,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==20,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_enabled","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_pad_enabled","target_gaze_keyboard_enabled","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

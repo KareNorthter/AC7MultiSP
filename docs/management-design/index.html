@@ -8,6 +8,7 @@
 :root{color-scheme:dark;font-family:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:#e6edf5;background:#0d121b;font-size:14px;line-height:1.55}
 *{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button,select,input,textarea{color:inherit;background:#192332;border:1px solid #344256;border-radius:5px}button{padding:7px 12px;cursor:pointer}button:hover{border-color:#76d8cc}button:disabled{opacity:.4;cursor:default}button.primary{background:#7ddacb;color:#102420;border-color:#7ddacb;font-weight:700}input,select,textarea{padding:7px 9px;max-width:100%}input[type=checkbox]{accent-color:#7ddacb;width:17px;height:17px}input[type=color]{padding:2px;width:54px;height:34px}input[type=range]{accent-color:var(--ac-accent,#7ddacb);padding:0}textarea{width:100%;resize:vertical;min-height:76px}label{display:block}a{color:#7ddacb}h1,h2,h3,p{margin:0}small,.muted{color:#9daec2}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #90e6db;outline-offset:3px}[hidden]{display:none!important}
 .desk-head{padding:20px 26px;border-bottom:1px solid #263244;background:#111a27;display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}.desk-head h1{font-size:20px;font-weight:650}.eyebrow{color:#7ddacb;font-size:11px;letter-spacing:2px;margin-bottom:4px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.instructions{padding:12px 26px;background:#14202d;color:#c5d2e3;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:calc(100vh - 140px)}.canvas{padding:26px;min-width:0;background:radial-gradient(ellipse at 35% 5%,#1a2d41 0,transparent 66%),#0b111b}.canvas-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:1080px;margin:0 auto 14px}.canvas-bar .spacer{flex:1}.stage{margin:0 auto;transition:max-width .15s;min-width:0}.game-panel{--ac-accent:#7ddacb;--ac-font:15px;--ac-gap:12px;--ac-radius:5px;background:#111b28;border:1px solid #3c5067;border-top:3px solid var(--ac-accent);box-shadow:0 22px 60px #0006;border-radius:var(--ac-radius);font-size:var(--ac-font);overflow:hidden;color:#e4edf7}.game-panel button,.game-panel select,.game-panel input{font-size:inherit}.ac-header{padding:20px 24px 14px;border-bottom:1px solid #293a4c;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}.ac-brand{color:var(--ac-accent);font-size:20px;font-weight:700;letter-spacing:.4px}.ac-subtitle{font-size:12px;color:#9fb0c5}.ac-language{font-size:12px;color:#b4c2d2;background:#1d2a39;border:1px solid #3b4c60;padding:6px 11px;border-radius:4px}.ac-shell{display:grid;grid-template-columns:1fr;min-width:0}.ac-nav{padding:0 20px;display:flex;gap:3px;border-bottom:1px solid #2b3c51;overflow:auto}.ac-nav button{border:0;border-radius:0;padding:13px 20px;background:transparent;color:#a9b9cd;white-space:nowrap}.ac-nav button.active{color:var(--ac-accent);box-shadow:inset 0 -2px var(--ac-accent);background:#182839}.ac-shell.side{grid-template-columns:145px minmax(0,1fr)}.ac-shell.side .ac-nav{flex-direction:column;padding:15px 10px;border-right:1px solid #2b3c51;border-bottom:0;gap:6px}.ac-shell.side .ac-nav button{text-align:left;padding:10px 13px;white-space:normal}.ac-shell.side .ac-nav button.active{box-shadow:inset 2px 0 var(--ac-accent)}.ac-body{padding:18px 22px;min-width:0}.ac-group{margin:0 0 var(--ac-gap);padding:14px 16px;background:#162333;border:1px solid #2a3c50;border-radius:var(--ac-radius)}.ac-group.selected{border-color:var(--ac-accent)}.ac-group-title{color:var(--ac-accent);font-size:1em;font-weight:650;margin-bottom:9px;padding:2px 0;background:transparent;border:0;text-align:left;width:100%}.ac-group-description{font-size:.86em;color:#b1c1d3;margin-bottom:12px;white-space:pre-wrap}.ac-row{padding:var(--ac-gap) 8px;border-top:1px solid #27394b;position:relative;border-radius:3px;cursor:pointer}.ac-row:first-of-type{border-top:0}.ac-row:hover{background:#203247}.ac-row.selected{background:#203a4b;outline:1px solid var(--ac-accent)}.ac-row-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.ac-row-name{display:flex;align-items:center;gap:9px;min-width:0;overflow-wrap:anywhere}.ac-row-desc{color:#a9bdd2;font-size:.85em;margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}.ac-row button{padding:4px 11px;white-space:normal;overflow-wrap:anywhere}.ac-value{max-width:45%;min-width:65px;color:#d4e4f3}.ac-value input[type=range]{width:110px;max-width:100%}.ac-help{border:1px solid #4a6179;background:#203248;border-radius:50%;font-size:11px;color:#a8ceda;min-width:20px;width:20px;height:20px;padding:0;line-height:18px}.ac-note{color:#e9c485;font-size:.8em;margin-top:6px}.ac-disabled{opacity:.45}.ac-empty{padding:28px;color:#9fb0c5;text-align:center}.ac-footer{border-top:1px solid #314156;padding:14px 24px;background:#111c2a}.ac-footer small{display:block;margin-bottom:9px}.ac-footer button{margin-right:9px}.ac-footer button:first-of-type{background:var(--ac-accent);color:#0c2326;border-color:var(--ac-accent)}.caption{max-width:1080px;margin:12px auto 0;color:#8297ae;font-size:12px}.inspector{border-left:1px solid #2b3a4c;background:#111b28;padding:18px;min-width:0}.inspector h2{font-size:15px;margin-bottom:12px}.inspector h3{font-size:13px;color:#c8dbed;margin:18px 0 10px}.field{margin-bottom:12px}.field>span{display:block;margin-bottom:5px;color:#aec1d5;font-size:12px}.field input:not([type=checkbox]):not([type=color]),.field select{width:100%}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two .field{min-width:0}.section{border-bottom:1px solid #2c3b4f;padding-bottom:18px;margin-bottom:18px}.hint{font-size:12px;color:#92a8bf;margin:8px 0;white-space:pre-wrap}.pill{font-size:11px;padding:3px 7px;background:#24354a;color:#b3cde3;border-radius:3px}.state{font-size:12px;color:#93c6bb}.error{color:#ffbb93}.guide{margin-top:16px;border-top:1px solid #2c3b4f;padding-top:12px}.guide summary{cursor:pointer;color:#afc9e0}.guide p{font-size:12px;margin:8px 0;color:#9eb2c8}body.preview-only .inspector{display:none}body.preview-only .workspace{grid-template-columns:1fr}body.preview-only .ac-row{cursor:default}body.preview-only .ac-row:hover{background:transparent}body.preview-only .ac-row.selected{outline:0;background:transparent}
+.ac-master{min-width:150px;background:#24564e!important;border-color:var(--ac-accent)!important;padding:10px!important}.ac-mod-disabled{opacity:.4}body.preview-only .ac-mod-disabled{pointer-events:none}
 .ac-body{max-height:650px;overflow:auto}.inspector{position:sticky;top:0;max-height:100vh;overflow:auto;align-self:start}.inspector-tabs{display:flex;gap:5px;margin-bottom:18px;position:sticky;top:-18px;background:#111b28;padding:10px 0;z-index:1}.inspector-tabs button{flex:1;padding:7px 5px}.inspector-tabs button.active{background:#254556;border-color:#7ddacb}.inspector:not([data-mode=style]) #styleEditor,.inspector:not([data-mode=structure]) #structureEditor,.inspector:not([data-mode=item]) #controlEditor{display:none}.pill{overflow-wrap:anywhere}
 @media(max-width:1100px){.workspace{grid-template-columns:minmax(0,1fr) 290px}.canvas{padding:18px}.ac-body{padding:14px}.ac-group{padding:10px}.ac-header{padding:16px}}
 @media(max-width:800px){.workspace{grid-template-columns:1fr}.inspector{border-left:0;border-top:1px solid #2b3a4c}.desk-head,.instructions{padding:14px 16px}.canvas{padding:14px}.ac-shell.side{grid-template-columns:105px minmax(0,1fr)}.ac-nav{padding:0 8px}.ac-nav button{padding:12px}.ac-row-head{flex-wrap:wrap}.ac-value{max-width:100%}.ac-footer{padding:14px}.ac-header{gap:8px}.ac-brand{font-size:17px}}
@@ -29,106 +30,82 @@
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 <script id="designSeed" type="application/json">{
   "schema": "ac7-management-design-v1",
-  "storageKey": "ac7-design-e31df55-initial",
-  "sourceVersion": "2.25.2",
-  "sourceCommit": "e31df55",
+  "storageKey": "ac7-design-2-26-1-accepted",
+  "sourceVersion": "2.26.1",
+  "sourceCommit": "824adb5 + 本轮界面调整",
   "pages": [
     {
       "id": "general",
-      "title": "基础",
+      "title": "基础功能",
       "groups": [
-        {
-          "id": "flight",
-          "title": "飞行设置",
-          "items": [
-            {
-              "id": "mod_enabled",
-              "label": "启用模组",
-              "kind": "toggle",
-              "value": "开启",
-              "description": "总开关在主菜单或单人任务选择页应用；在任务/机库保存后，回到这些菜单自动生效，无需重启。管理入口始终可用。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "gun_salvo_enabled",
-              "label": "机炮齐射",
-              "kind": "toggle",
-              "value": "关闭",
-              "description": "默认关闭。按住实际原生机枪键联动方案中的MGP或PLSL，松开后恢复先前选择；自定义机枪键同样生效。暂停、管理页、失焦或人工换武器会取消联动。不支持HGP及多种不同SP并发。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            }
-          ],
-          "description": ""
-        },
         {
           "id": "models",
           "title": "模型显示",
           "items": [
             {
               "id": "task_mount_enabled",
-              "label": "任务中显示多SP模型",
+              "label": "任务中使用多SP模型挂载",
               "kind": "toggle",
               "value": "开启",
-              "description": "默认开启，控制飞行、补给及补给过渡中的多SP模型；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试配装时应用。模型快捷键仅切换这一项，不影响机库。",
+              "description": "任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
               "id": "hangar_mount_enabled",
-              "label": "机库中显示多SP模型",
+              "label": "机库中使用多SP模型挂载",
               "kind": "toggle",
               "value": "开启",
-              "description": "若关闭，则机库中展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿。",
-              "help": "visible",
-              "hidden": false,
-              "note": ""
-            }
-          ],
-          "description": "两个开关独立生效，只影响模型显示，不影响多SP选择、切换、弹药或注视功能。"
-        },
-        {
-          "id": "hud",
-          "title": "中央武器简称",
-          "items": [
-            {
-              "id": "central_weapon_display",
-              "label": "中央武器简称显示方式",
-              "kind": "select",
-              "value": "始终显示",
-              "description": "默认始终显示；也可选择切换武器后显示1秒。实际切换成功后计时，重复选择不延长，暂停不计时；右下HUD持续保留。",
+              "description": "出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
               "help": "help",
               "hidden": false,
               "note": ""
             }
           ],
-          "description": ""
+          "description": "只影响模型显示，不影响游戏功能。"
         },
         {
-          "id": "ammo",
-          "title": "SP弹药量",
+          "id": "flight",
+          "title": "功能设置",
           "items": [
             {
+              "id": "gun_salvo_enabled",
+              "label": "机炮齐射",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "central_weapon_display",
+              "label": "HUD中央始终显示当前武器名称",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
               "id": "ammo_percent_two",
-              "label": "双SP，各自",
+              "label": "双SP时每个武器的弹药量",
               "kind": "slider",
               "value": "50%",
-              "description": "默认双SP各50%，可调至100%。先计部件，再按比例向上取整；下次出击、补给或调试配弹时生效，保存不会立即补弹。",
+              "description": "",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
               "id": "ammo_percent_three",
-              "label": "三SP，各自",
+              "label": "三SP时每个武器的弹药量",
               "kind": "slider",
               "value": "33%",
-              "description": "默认三SP各33%，可调至100%；单SP为100%。",
-              "help": "help",
+              "description": "",
+              "help": "none",
               "hidden": false,
               "note": ""
             }
@@ -137,7 +114,7 @@
         },
         {
           "id": "direct",
-          "title": "武器直选键",
+          "title": "额外的武器切换方式",
           "items": [
             {
               "id": "dpad_weapon_switch_enabled",
@@ -145,7 +122,7 @@
               "kind": "toggle",
               "value": "开启",
               "description": "默认开启。关闭并保存后，模组不响应十字键切换武器；键盘直选、X原生轮切和管理菜单导航保留。",
-              "help": "help",
+              "help": "none",
               "hidden": false,
               "note": ""
             },
@@ -155,7 +132,7 @@
               "kind": "binding",
               "value": "1 · 十字键左",
               "description": "点击后按新键，Esc取消；手柄方向固定。关闭十字键功能后不占用方向键。",
-              "help": "help",
+              "help": "none",
               "hidden": false,
               "note": ""
             },
@@ -165,7 +142,7 @@
               "kind": "binding",
               "value": "2 · 十字键上",
               "description": "按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先；未搭载或耗尽的SP不切换，装填中可选。",
-              "help": "help",
+              "help": "none",
               "hidden": false,
               "note": ""
             },
@@ -175,7 +152,7 @@
               "kind": "binding",
               "value": "3 · 十字键右",
               "description": "键盘直选与十字键开关独立。",
-              "help": "help",
+              "help": "none",
               "hidden": false,
               "note": ""
             },
@@ -185,22 +162,12 @@
               "kind": "binding",
               "value": "4 · 十字键下",
               "description": "键盘直选与十字键开关独立。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "reset_weapon_keys",
-              "label": "恢复默认武器键",
-              "kind": "action",
-              "value": "恢复1 / 2 / 3 / 4",
-              "description": "默认武器键与其他键位重复时，需要先调整。",
-              "help": "help",
+              "help": "none",
               "hidden": false,
               "note": ""
             }
           ],
-          "description": "X：原生轮切兵装"
+          "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
         },
         {
           "id": "shortcuts",
@@ -211,27 +178,7 @@
               "label": "管理界面",
               "kind": "binding",
               "value": "F6",
-              "description": "Back+Y也可开关管理界面。Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "shortcut_cycle",
-              "label": "轮切SP组合",
-              "kind": "binding",
-              "value": "Ctrl + Alt + F6",
-              "description": "点击后可改为单键或Ctrl/Alt/Shift组合；完整组合优先，一个按键只执行一个模组动作。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "shortcut_mount",
-              "label": "切换任务模型",
-              "kind": "binding",
-              "value": "Ctrl + Alt + F7",
-              "description": "只切换任务多SP模型，不改变机库模型开关。",
+              "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -241,45 +188,8 @@
               "label": "机炮齐射",
               "kind": "binding",
               "value": "Ctrl + Alt + F5",
-              "description": "可清除这项快捷键。",
+              "description": "",
               "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "shortcut_view_target",
-              "label": "视角中心选目标",
-              "kind": "binding",
-              "value": "Ctrl + Alt + F8",
-              "description": "可清除这项快捷键。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "reset_shortcuts",
-              "label": "恢复默认快捷键",
-              "kind": "action",
-              "value": "恢复默认快捷键",
-              "description": "默认键位与其他键位重复时，需要先调整。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            }
-          ],
-          "description": ""
-        },
-        {
-          "id": "guide",
-          "title": "使用提示",
-          "items": [
-            {
-              "id": "quick_guide",
-              "label": "机库选装与任务操作",
-              "kind": "text",
-              "value": "",
-              "description": "机库选择1至3种SP；任务中用X轮切，启用十字键后可直选。中央提示及右下HUD跟随游戏HUD显隐。镜头保持、保持注视及相关键位在“视角”页。",
-              "help": "visible",
               "hidden": false,
               "note": ""
             }
@@ -294,24 +204,24 @@
       "groups": [
         {
           "id": "view_center",
-          "title": "视野中心",
+          "title": "目标选择方式",
           "items": [
             {
-              "id": "view_target_enabled",
-              "label": "视角中心优先选目标",
-              "kind": "toggle",
-              "value": "关闭",
-              "description": "默认关闭。开启后原生NEXT按当前视野中心优先，保留游戏已有候选、目标资格和近期切换历史；按原生切目标键才选中，不扩大导弹锁定范围。默认Ctrl+Alt+F8切换，可在基础页改键。鼠标飞控的F2 HMD可能另行覆盖实际按键选择，使用本功能时请关闭该HMD。",
+              "id": "view_target_mode",
+              "label": "目标选择模式",
+              "kind": "select",
+              "value": "原生模式 / 机头附近",
+              "description": "原生模式优先选择机头附近；VR模式优先选择当前视角中心附近。只改变NEXT排序参考，不启用VR设备。可能与鼠标飞控F2 HMD冲突。仅在管理页选择，L3不切换NEXT。",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
               "id": "view_center_dot_enabled",
-              "label": "显示视野中心白点",
+              "label": "显示视角中心定位白点",
               "kind": "toggle",
-              "value": "开启",
-              "description": "白点默认开启，与选目标和镜头保持开关独立。普通飞行中，实际镜头朝向偏离机头超过10°时，在画面中央显示荧光小白点；10°以内隐藏。跟随游戏HUD显隐，暂停、管理界面、失焦和特殊镜头时隐藏。",
+              "value": "关闭",
+              "description": "",
               "help": "help",
               "hidden": false,
               "note": ""
@@ -324,65 +234,55 @@
           "title": "保持注视",
           "items": [
             {
-              "id": "target_gaze_pad_l3",
-              "label": "左摇杆按下切换注视",
+              "id": "target_gaze_pad_enabled",
+              "label": "长按手柄Y键 保持注视",
               "kind": "toggle",
               "value": "关闭",
-              "description": "默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
+              "description": "默认关闭。启用后Y按满0.2秒开始持续注视，再长按一次停止；期间可短按Y切目标，镜头跟随新目标。手柄和键盘选项独立。",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
-              "id": "target_gaze_key",
-              "label": "键盘注视键",
-              "kind": "binding",
-              "value": "未绑定",
-              "description": "键盘注视键与左摇杆选项独立，按下切换、按住不重复；可同时按住Shift/Ctrl/Alt，明确设置的组合快捷键优先。请避开原生操作键。",
+              "id": "target_gaze_keyboard_enabled",
+              "label": "按下键盘注视键 保持注视",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "默认关闭。使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。关闭时保留原生按住注视；与手柄选项独立。",
               "help": "help",
               "hidden": false,
               "note": ""
             }
           ],
-          "description": "让镜头持续跟随当前选中的目标，按一次保持、再按一次停止，无需一直按住；不会自动更换目标或修改武器锁定规则。\n手柄注视由下方L3开关控制；键盘绑定独立，默认未绑定。模型显示开关不影响注视。"
+          "description": ""
         },
         {
           "id": "camera_hold",
-          "title": "镜头保持",
+          "title": "视角保持",
           "items": [
             {
               "id": "camera_hold_enabled",
-              "label": "启用镜头保持",
+              "label": "启用视角保持",
               "kind": "toggle",
               "value": "关闭",
-              "description": "默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
+              "description": "启用后松开环视输入仍保持方向；L3按下并松开或键盘回中键回正。R3短按仍切视角，长按满0.3秒切换视角保持；双摇杆只干扰弹。L3不切换NEXT。",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
-              "id": "camera_r3_enabled",
-              "label": "R3长按回中/切换保持",
-              "kind": "toggle",
-              "value": "开启",
-              "description": "默认开启，镜头保持关闭时也可使用。R3按住满0.2秒回中一次，继续按住满2秒切换镜头保持并保存设置；松开不换视角。短于0.2秒松开仍切换视角。双摇杆只释放干扰弹。关闭此项则R3使用原生功能。回中会结束模组注视，真实按住Y/F仍可原生注视。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "camera_auto_center_degrees",
-              "label": "自动回正阈值",
+              "id": "camera_sensitivity",
+              "label": "视角灵敏度",
               "kind": "slider",
-              "value": "30°",
-              "description": "默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
+              "value": "100%",
+              "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
               "help": "help",
               "hidden": false,
               "note": ""
             },
             {
               "id": "camera_center_key",
-              "label": "独立回中键",
+              "label": "视角回中 键盘快捷键",
               "kind": "binding",
               "value": "鼠标中键",
               "description": "点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。与原生换视角使用不同键。",
@@ -391,55 +291,12 @@
               "note": ""
             },
             {
-              "id": "camera_sensitivity",
-              "label": "摇杆灵敏度",
-              "kind": "slider",
-              "value": "100%",
-              "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+              "id": "shortcut_camera_hold",
+              "label": "启用视角保持快捷键",
+              "description": "默认Ctrl+Alt+F9，可改键。机炮齐射保留Ctrl+Alt+F5。",
+              "kind": "binding",
+              "value": "Ctrl + Alt + F9",
               "help": "help",
-              "hidden": false,
-              "note": ""
-            }
-          ],
-          "description": "下面三个参数在游戏中启用镜头保持后显示；设计稿全部展开，方便你调整布局。\nL3 + R3：干扰弹"
-        }
-      ]
-    },
-    {
-      "id": "logs",
-      "title": "日志",
-      "groups": [
-        {
-          "id": "log_controls",
-          "title": "日志查看",
-          "items": [
-            {
-              "id": "refresh_logs",
-              "label": "读取最新日志",
-              "kind": "action",
-              "value": "刷新",
-              "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "log_file",
-              "label": "日志文件",
-              "kind": "select",
-              "value": "mod.log / native.log",
-              "description": "原界面以页签切换两份日志。",
-              "help": "help",
-              "hidden": false,
-              "note": ""
-            },
-            {
-              "id": "log_sample",
-              "label": "日志正文（示意）",
-              "kind": "text",
-              "value": "",
-              "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
-              "help": "visible",
               "hidden": false,
               "note": ""
             }
@@ -527,8 +384,45 @@
               "id": "aircraft_apply",
               "label": "确认换机",
               "kind": "action",
-              "value": "换机并重开整关",
-              "description": "暂停时按F6进入管理页即可换机；现有换机流程重开整关。普通关闭管理页会保留原暂停。",
+              "value": "换机并重开任务",
+              "description": "",
+              "help": "visible",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "log_controls",
+          "title": "日志查看",
+          "items": [
+            {
+              "id": "refresh_logs",
+              "label": "读取最新日志",
+              "kind": "action",
+              "value": "刷新",
+              "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "log_file",
+              "label": "日志文件",
+              "kind": "select",
+              "value": "mod.log / native.log",
+              "description": "原界面以页签切换两份日志。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "log_sample",
+              "label": "日志正文（示意）",
+              "kind": "text",
+              "value": "",
+              "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
               "help": "visible",
               "hidden": false,
               "note": ""
@@ -549,108 +443,85 @@
   },
   "chrome": {
     "title": "AC7MultiSP",
-    "subtitle": "飞行控制中心 · 2.25.2 结构设计稿",
-    "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。"
+    "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
+    "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
+    "masterEnabled": true
   },
-  "overallNote": "",
+  "overallNote": "已按反馈精简为三页；标题旁提供总开关。视角保持使用Ctrl+Alt+F9，机炮齐射保留Ctrl+Alt+F5。L3仅回中，不切换NEXT。",
   "baseline": {
     "pages": [
       {
         "id": "general",
-        "title": "基础",
+        "title": "基础功能",
         "groups": [
-          {
-            "id": "flight",
-            "title": "飞行设置",
-            "items": [
-              {
-                "id": "mod_enabled",
-                "label": "启用模组",
-                "kind": "toggle",
-                "value": "开启",
-                "description": "总开关在主菜单或单人任务选择页应用；在任务/机库保存后，回到这些菜单自动生效，无需重启。管理入口始终可用。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "gun_salvo_enabled",
-                "label": "机炮齐射",
-                "kind": "toggle",
-                "value": "关闭",
-                "description": "默认关闭。按住实际原生机枪键联动方案中的MGP或PLSL，松开后恢复先前选择；自定义机枪键同样生效。暂停、管理页、失焦或人工换武器会取消联动。不支持HGP及多种不同SP并发。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              }
-            ],
-            "description": ""
-          },
           {
             "id": "models",
             "title": "模型显示",
             "items": [
               {
                 "id": "task_mount_enabled",
-                "label": "任务中显示多SP模型",
+                "label": "任务中使用多SP模型挂载",
                 "kind": "toggle",
                 "value": "开启",
-                "description": "默认开启，控制飞行、补给及补给过渡中的多SP模型；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试配装时应用。模型快捷键仅切换这一项，不影响机库。",
+                "description": "任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
                 "id": "hangar_mount_enabled",
-                "label": "机库中显示多SP模型",
+                "label": "机库中使用多SP模型挂载",
                 "kind": "toggle",
                 "value": "开启",
-                "description": "若关闭，则机库中展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿。",
-                "help": "visible",
-                "hidden": false,
-                "note": ""
-              }
-            ],
-            "description": "两个开关独立生效，只影响模型显示，不影响多SP选择、切换、弹药或注视功能。"
-          },
-          {
-            "id": "hud",
-            "title": "中央武器简称",
-            "items": [
-              {
-                "id": "central_weapon_display",
-                "label": "中央武器简称显示方式",
-                "kind": "select",
-                "value": "始终显示",
-                "description": "默认始终显示；也可选择切换武器后显示1秒。实际切换成功后计时，重复选择不延长，暂停不计时；右下HUD持续保留。",
+                "description": "出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               }
             ],
-            "description": ""
+            "description": "只影响模型显示，不影响游戏功能。"
           },
           {
-            "id": "ammo",
-            "title": "SP弹药量",
+            "id": "flight",
+            "title": "功能设置",
             "items": [
               {
+                "id": "gun_salvo_enabled",
+                "label": "机炮齐射",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "central_weapon_display",
+                "label": "HUD中央始终显示当前武器名称",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
                 "id": "ammo_percent_two",
-                "label": "双SP，各自",
+                "label": "双SP时每个武器的弹药量",
                 "kind": "slider",
                 "value": "50%",
-                "description": "默认双SP各50%，可调至100%。先计部件，再按比例向上取整；下次出击、补给或调试配弹时生效，保存不会立即补弹。",
+                "description": "",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
                 "id": "ammo_percent_three",
-                "label": "三SP，各自",
+                "label": "三SP时每个武器的弹药量",
                 "kind": "slider",
                 "value": "33%",
-                "description": "默认三SP各33%，可调至100%；单SP为100%。",
-                "help": "help",
+                "description": "",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               }
@@ -659,7 +530,7 @@
           },
           {
             "id": "direct",
-            "title": "武器直选键",
+            "title": "额外的武器切换方式",
             "items": [
               {
                 "id": "dpad_weapon_switch_enabled",
@@ -667,7 +538,7 @@
                 "kind": "toggle",
                 "value": "开启",
                 "description": "默认开启。关闭并保存后，模组不响应十字键切换武器；键盘直选、X原生轮切和管理菜单导航保留。",
-                "help": "help",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               },
@@ -677,7 +548,7 @@
                 "kind": "binding",
                 "value": "1 · 十字键左",
                 "description": "点击后按新键，Esc取消；手柄方向固定。关闭十字键功能后不占用方向键。",
-                "help": "help",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               },
@@ -687,7 +558,7 @@
                 "kind": "binding",
                 "value": "2 · 十字键上",
                 "description": "按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先；未搭载或耗尽的SP不切换，装填中可选。",
-                "help": "help",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               },
@@ -697,7 +568,7 @@
                 "kind": "binding",
                 "value": "3 · 十字键右",
                 "description": "键盘直选与十字键开关独立。",
-                "help": "help",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               },
@@ -707,22 +578,12 @@
                 "kind": "binding",
                 "value": "4 · 十字键下",
                 "description": "键盘直选与十字键开关独立。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "reset_weapon_keys",
-                "label": "恢复默认武器键",
-                "kind": "action",
-                "value": "恢复1 / 2 / 3 / 4",
-                "description": "默认武器键与其他键位重复时，需要先调整。",
-                "help": "help",
+                "help": "none",
                 "hidden": false,
                 "note": ""
               }
             ],
-            "description": "X：原生轮切兵装"
+            "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
           },
           {
             "id": "shortcuts",
@@ -733,27 +594,7 @@
                 "label": "管理界面",
                 "kind": "binding",
                 "value": "F6",
-                "description": "Back+Y也可开关管理界面。Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "shortcut_cycle",
-                "label": "轮切SP组合",
-                "kind": "binding",
-                "value": "Ctrl + Alt + F6",
-                "description": "点击后可改为单键或Ctrl/Alt/Shift组合；完整组合优先，一个按键只执行一个模组动作。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "shortcut_mount",
-                "label": "切换任务模型",
-                "kind": "binding",
-                "value": "Ctrl + Alt + F7",
-                "description": "只切换任务多SP模型，不改变机库模型开关。",
+                "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -763,45 +604,8 @@
                 "label": "机炮齐射",
                 "kind": "binding",
                 "value": "Ctrl + Alt + F5",
-                "description": "可清除这项快捷键。",
+                "description": "",
                 "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "shortcut_view_target",
-                "label": "视角中心选目标",
-                "kind": "binding",
-                "value": "Ctrl + Alt + F8",
-                "description": "可清除这项快捷键。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "reset_shortcuts",
-                "label": "恢复默认快捷键",
-                "kind": "action",
-                "value": "恢复默认快捷键",
-                "description": "默认键位与其他键位重复时，需要先调整。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              }
-            ],
-            "description": ""
-          },
-          {
-            "id": "guide",
-            "title": "使用提示",
-            "items": [
-              {
-                "id": "quick_guide",
-                "label": "机库选装与任务操作",
-                "kind": "text",
-                "value": "",
-                "description": "机库选择1至3种SP；任务中用X轮切，启用十字键后可直选。中央提示及右下HUD跟随游戏HUD显隐。镜头保持、保持注视及相关键位在“视角”页。",
-                "help": "visible",
                 "hidden": false,
                 "note": ""
               }
@@ -816,24 +620,24 @@
         "groups": [
           {
             "id": "view_center",
-            "title": "视野中心",
+            "title": "目标选择方式",
             "items": [
               {
-                "id": "view_target_enabled",
-                "label": "视角中心优先选目标",
-                "kind": "toggle",
-                "value": "关闭",
-                "description": "默认关闭。开启后原生NEXT按当前视野中心优先，保留游戏已有候选、目标资格和近期切换历史；按原生切目标键才选中，不扩大导弹锁定范围。默认Ctrl+Alt+F8切换，可在基础页改键。鼠标飞控的F2 HMD可能另行覆盖实际按键选择，使用本功能时请关闭该HMD。",
+                "id": "view_target_mode",
+                "label": "目标选择模式",
+                "kind": "select",
+                "value": "原生模式 / 机头附近",
+                "description": "原生模式优先选择机头附近；VR模式优先选择当前视角中心附近。只改变NEXT排序参考，不启用VR设备。可能与鼠标飞控F2 HMD冲突。仅在管理页选择，L3不切换NEXT。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
                 "id": "view_center_dot_enabled",
-                "label": "显示视野中心白点",
+                "label": "显示视角中心定位白点",
                 "kind": "toggle",
-                "value": "开启",
-                "description": "白点默认开启，与选目标和镜头保持开关独立。普通飞行中，实际镜头朝向偏离机头超过10°时，在画面中央显示荧光小白点；10°以内隐藏。跟随游戏HUD显隐，暂停、管理界面、失焦和特殊镜头时隐藏。",
+                "value": "关闭",
+                "description": "",
                 "help": "help",
                 "hidden": false,
                 "note": ""
@@ -846,65 +650,55 @@
             "title": "保持注视",
             "items": [
               {
-                "id": "target_gaze_pad_l3",
-                "label": "左摇杆按下切换注视",
+                "id": "target_gaze_pad_enabled",
+                "label": "长按手柄Y键 保持注视",
                 "kind": "toggle",
                 "value": "关闭",
-                "description": "默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
+                "description": "默认关闭。启用后Y按满0.2秒开始持续注视，再长按一次停止；期间可短按Y切目标，镜头跟随新目标。手柄和键盘选项独立。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
-                "id": "target_gaze_key",
-                "label": "键盘注视键",
-                "kind": "binding",
-                "value": "未绑定",
-                "description": "键盘注视键与左摇杆选项独立，按下切换、按住不重复；可同时按住Shift/Ctrl/Alt，明确设置的组合快捷键优先。请避开原生操作键。",
+                "id": "target_gaze_keyboard_enabled",
+                "label": "按下键盘注视键 保持注视",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "默认关闭。使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。关闭时保留原生按住注视；与手柄选项独立。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               }
             ],
-            "description": "让镜头持续跟随当前选中的目标，按一次保持、再按一次停止，无需一直按住；不会自动更换目标或修改武器锁定规则。\n手柄注视由下方L3开关控制；键盘绑定独立，默认未绑定。模型显示开关不影响注视。"
+            "description": ""
           },
           {
             "id": "camera_hold",
-            "title": "镜头保持",
+            "title": "视角保持",
             "items": [
               {
                 "id": "camera_hold_enabled",
-                "label": "启用镜头保持",
+                "label": "启用视角保持",
                 "kind": "toggle",
                 "value": "关闭",
-                "description": "默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
+                "description": "启用后松开环视输入仍保持方向；L3按下并松开或键盘回中键回正。R3短按仍切视角，长按满0.3秒切换视角保持；双摇杆只干扰弹。L3不切换NEXT。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
-                "id": "camera_r3_enabled",
-                "label": "R3长按回中/切换保持",
-                "kind": "toggle",
-                "value": "开启",
-                "description": "默认开启，镜头保持关闭时也可使用。R3按住满0.2秒回中一次，继续按住满2秒切换镜头保持并保存设置；松开不换视角。短于0.2秒松开仍切换视角。双摇杆只释放干扰弹。关闭此项则R3使用原生功能。回中会结束模组注视，真实按住Y/F仍可原生注视。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "camera_auto_center_degrees",
-                "label": "自动回正阈值",
+                "id": "camera_sensitivity",
+                "label": "视角灵敏度",
                 "kind": "slider",
-                "value": "30°",
-                "description": "默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
+                "value": "100%",
+                "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
                 "help": "help",
                 "hidden": false,
                 "note": ""
               },
               {
                 "id": "camera_center_key",
-                "label": "独立回中键",
+                "label": "视角回中 键盘快捷键",
                 "kind": "binding",
                 "value": "鼠标中键",
                 "description": "点击后按单键或鼠标中键，Esc取消；按下回中、按住不重复。与原生换视角使用不同键。",
@@ -913,55 +707,12 @@
                 "note": ""
               },
               {
-                "id": "camera_sensitivity",
-                "label": "摇杆灵敏度",
-                "kind": "slider",
-                "value": "100%",
-                "description": "默认100%，范围5%至200%。右摇杆按偏转量控制转动速度，低延迟平滑加速和转向，松开后短暂平滑收尾再保持方向；不扩大观察范围。回中、注视和单独键鼠操作沿用原有响应；座舱仍受原生边界和动画影响。",
+                "id": "shortcut_camera_hold",
+                "label": "启用视角保持快捷键",
+                "description": "默认Ctrl+Alt+F9，可改键。机炮齐射保留Ctrl+Alt+F5。",
+                "kind": "binding",
+                "value": "Ctrl + Alt + F9",
                 "help": "help",
-                "hidden": false,
-                "note": ""
-              }
-            ],
-            "description": "下面三个参数在游戏中启用镜头保持后显示；设计稿全部展开，方便你调整布局。\nL3 + R3：干扰弹"
-          }
-        ]
-      },
-      {
-        "id": "logs",
-        "title": "日志",
-        "groups": [
-          {
-            "id": "log_controls",
-            "title": "日志查看",
-            "items": [
-              {
-                "id": "refresh_logs",
-                "label": "读取最新日志",
-                "kind": "action",
-                "value": "刷新",
-                "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "log_file",
-                "label": "日志文件",
-                "kind": "select",
-                "value": "mod.log / native.log",
-                "description": "原界面以页签切换两份日志。",
-                "help": "help",
-                "hidden": false,
-                "note": ""
-              },
-              {
-                "id": "log_sample",
-                "label": "日志正文（示意）",
-                "kind": "text",
-                "value": "",
-                "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
-                "help": "visible",
                 "hidden": false,
                 "note": ""
               }
@@ -1049,8 +800,45 @@
                 "id": "aircraft_apply",
                 "label": "确认换机",
                 "kind": "action",
-                "value": "换机并重开整关",
-                "description": "暂停时按F6进入管理页即可换机；现有换机流程重开整关。普通关闭管理页会保留原暂停。",
+                "value": "换机并重开任务",
+                "description": "",
+                "help": "visible",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "log_controls",
+            "title": "日志查看",
+            "items": [
+              {
+                "id": "refresh_logs",
+                "label": "读取最新日志",
+                "kind": "action",
+                "value": "刷新",
+                "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "log_file",
+                "label": "日志文件",
+                "kind": "select",
+                "value": "mod.log / native.log",
+                "description": "原界面以页签切换两份日志。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "log_sample",
+                "label": "日志正文（示意）",
+                "kind": "text",
+                "value": "",
+                "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
                 "help": "visible",
                 "hidden": false,
                 "note": ""
@@ -1071,9 +859,16 @@
     },
     "chrome": {
       "title": "AC7MultiSP",
-      "subtitle": "飞行控制中心 · 2.25.2 结构设计稿",
-      "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。"
+      "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
+      "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
+      "masterEnabled": true
     }
+  },
+  "updatedAt": "2026-10-21T04:23:31.362Z",
+  "receivedFeedback": {
+    "sourceCommit": "e31df55",
+    "sha256": "519b92ebfa5d39e732c8a6a5bb7f0a0dd4dcfd6459ef97670c713819abca9706",
+    "name": "AC7管理界面设计稿-2026-10-21T04-23-31.html"
   }
 }</script>
 <script>
@@ -1110,7 +905,7 @@ function pickItem(p,g,i){pageId=p.id;groupId=g.id;itemId=i.id;editorMode('item')
 function renderPreview(){
  normalizeSelection();const t=draft.theme,p=currentPage(),panel=$('gamePanel');
  panel.style.setProperty('--ac-accent',t.accent);panel.style.setProperty('--ac-font',t.font+'px');panel.style.setProperty('--ac-gap',({compact:7,normal:12,relaxed:18})[t.density]+'px');panel.style.setProperty('--ac-radius',t.radius+'px');$('stage').style.maxWidth=t.width+'px';$('panelShell').classList.toggle('side',t.layout==='side');document.body.classList.toggle('preview-only',preview);
- $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));$('panelHeader').append(title,el('span','ac-language','语言：跟随游戏'));
+ $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title,master,el('span','ac-language','语言：跟随游戏'));$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);
  $('pageNav').replaceChildren();for(const other of draft.pages){const b=button(other.title,()=>{pageId=other.id;groupId=other.groups[0]?.id;itemId=null;render()},other.id===pageId?'active':'');b.setAttribute('aria-current',other.id===pageId?'page':'false');$('pageNav').append(b)}
  $('pageBody').replaceChildren();let visibleCount=0;
  for(const g of p.groups){const shown=g.items.filter(i=>!preview||!i.hidden);if(preview&&!shown.length)continue;visibleCount++;
@@ -1164,7 +959,7 @@ function portable(){const data=clone(draft);data.updatedAt=new Date().toISOStrin
 function safeJson(value){return JSON.stringify(value,null,2).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029')}
 $('exportJson').addEventListener('click',()=>{download('AC7管理界面方案-'+dateTag()+'.json',JSON.stringify(portable(),null,2),'application/json;charset=utf-8');status('方案已生成下载，请保留文件并交给我')});
 $('exportHtml').addEventListener('click',()=>{const copy=document.documentElement.cloneNode(true);copy.querySelector('#designSeed').textContent=safeJson(portable());for(const id of ['panelHeader','pageNav','pageBody','panelFooter'])copy.querySelector('#'+id).replaceChildren();copy.querySelector('body').classList.remove('preview-only');download('AC7管理界面设计稿-'+dateTag()+'.html','<!doctype html>\n'+copy.outerHTML,'text/html;charset=utf-8');status('可编辑网页已生成下载，打开该文件可继续编辑')});
-function textReport(){const lines=['# AC7MultiSP 管理界面修改意见','',`结构来源：${draft.sourceVersion} / ${draft.sourceCommit}`,'','整体意见：'+(draft.overallNote||'未填写'),'','样式：'+JSON.stringify(draft.theme),'','界面标题：'+draft.chrome.title,'副标题：'+draft.chrome.subtitle,'底部说明：'+draft.chrome.footer,'','以下按设计稿中的最终顺序排列，控件与数值均为设计建议。'];for(const p of draft.pages){lines.push('','## '+p.title);for(const g of p.groups){lines.push('','### '+g.title,g.description);for(const i of g.items)lines.push('','- '+i.label+' ['+i.id+']'+(i.hidden?'（建议隐藏）':''),'  显示形式：'+i.kind+'；说明展示：'+i.help+'；预览值：'+i.value,'  说明：'+i.description,'  意见：'+(i.note||'未填写'))}}return lines.join('\n')}
+function textReport(){const lines=['# AC7MultiSP 管理界面修改意见','',`结构来源：${draft.sourceVersion} / ${draft.sourceCommit}`,'','整体意见：'+(draft.overallNote||'未填写'),'','样式：'+JSON.stringify(draft.theme),'','界面标题：'+draft.chrome.title,'副标题：'+draft.chrome.subtitle,'标题总开关示例：'+(draft.chrome.masterEnabled===false?'关闭':'开启'),'底部说明：'+draft.chrome.footer,'','以下按设计稿中的最终顺序排列，控件与数值均为设计建议。'];for(const p of draft.pages){lines.push('','## '+p.title);for(const g of p.groups){lines.push('','### '+g.title,g.description);for(const i of g.items)lines.push('','- '+i.label+' ['+i.id+']'+(i.hidden?'（建议隐藏）':''),'  显示形式：'+i.kind+'；说明展示：'+i.help+'；预览值：'+i.value,'  说明：'+i.description,'  意见：'+(i.note||'未填写'))}}return lines.join('\n')}
 $('exportText').addEventListener('click',()=>download('AC7管理界面修改意见-'+dateTag()+'.md',textReport(),'text/markdown;charset=utf-8'));
 $('importButton').addEventListener('click',()=>$('importFile').click());
 $('importFile').addEventListener('change',async()=>{const file=$('importFile').files[0];if(!file)return;try{if(file.size>3000000)throw Error('方案文件过大。');const incoming=validate(JSON.parse(await file.text()));mutate(()=>{draft=clone(incoming);draft.storageKey=newId('ac7-design');pageId=draft.pages[0].id;groupId=draft.pages[0].groups[0]?.id;itemId=null});status('已导入方案；可撤销或继续编辑')}catch(e){status('导入失败：'+e.message,true)}$('importFile').value=''});
