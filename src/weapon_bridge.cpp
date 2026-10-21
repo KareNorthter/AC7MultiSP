@@ -27,12 +27,14 @@
 #include <set>
 #include "common.hpp"
 #include "reload_timer.hpp"
+#include "ammo_count.hpp"
 #include "ue4ss_lua_api.hpp"
 #include "keyboard_shortcuts.hpp"
 #include "selection_wave.hpp"
 #include "common_bay_animation.hpp"
 #include "native_common_bay_parts.hpp"
 #include "owned_bone_refresh.hpp"
+#include "bounded_log.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -56,6 +58,7 @@ struct Slot {
 };
 struct Group {
     bool valid{};
+    bool fastReloadEligible{};
     Addr weaponClass{};
     std::array<unsigned char, 0x20> scalars{};
     std::vector<Slot> slots;
@@ -77,6 +80,7 @@ Session checkpoint;
 bool checkpointValid=false;
 double checkpointTime{};
 bool runtimeEnabled=false; // 未收到游戏线程的明确单人许可前，原生接口和钩子全部直通/拒绝修改。
+bool debugInfiniteAmmo=false,debugFastReload=false;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
 int fixedMountOrdinal(Addr weaponClass,int index); // 原型采样时保留重排前的挂点身份。
 float fixedMountElapsed(int index,float duration,float elapsed); // 区分实际冷却与重建用的一次性完成事件。
@@ -395,6 +399,7 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
+bool continuousElectronicClass(Addr cls); // 后文持续兵装模块定义，供TLS旧入口排除被重用的编号。
 // 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
 void finishPlayerTLS(Addr plane,Addr activator) {
     require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
@@ -410,6 +415,7 @@ void finishPlayerTLS(Addr plane,Addr activator) {
     for(int index=0;index<count;++index) {
         const auto weapon=read<Addr>(data+index*sizeof(Addr)); // 只读玩家激活器已经登记的武器。
         if(!weapon || read<unsigned char>(weapon+0x3b0)!=25 || read<Addr>(weapon+0x3b8)!=plane)continue;
+        if(continuousElectronicClass(read<Addr>(weapon+0x10)))continue;
         if(!read<unsigned char>(weapon+0x368) || read<unsigned char>(weapon+0x5c0))continue;
         // 玩家 plwp_tls_x2 继承 AttachedInstantWeapon，不能用 LaserWeapon 的 Tick 排除它。
         // 两者共享下面三个收尾入口；校验真正要调用的生命周期，不限定不同的更新函数。
@@ -440,11 +446,29 @@ WeaponSlotArray weaponSlotArray(Addr group) {
     checkMemory(data,static_cast<size_t>(capacity)*0x60);
     return {data,count};
 }
+std::string mountNameIndex(unsigned index);
+bool debugReloadEligible(Addr group) {
+    const auto& cached=session.special[session.active];
+    if(cached.valid && cached.weaponClass==read<Addr>(group))return cached.fastReloadEligible;
+    const auto weapon=read<Addr>(group+0x40);
+    if(!weapon || read<unsigned char>(weapon+0x451))return false;
+    const auto id=read<unsigned char>(weapon+0x3b0);
+    const auto name=mountNameIndex(read<unsigned>(weapon+0x18));
+    return id!=17 && id!=22 && id!=25 && id!=26 && id!=31 &&
+        name.find("plwp_hgp")==std::string::npos;
+}
+float cachedReload(const Group& group,const Slot& slot,double dt,bool inWindow) {
+    float elapsed=slot.elapsed;
+    if(debugFastReload && group.fastReloadEligible && inWindow && elapsed>=0 && elapsed<slot.duration)
+        elapsed=std::max(elapsed,slot.duration-1.f);
+    return dualsp::advanceReload(slot.duration,elapsed,dt,inWindow);
+}
 // 逐槽保存冷却，包含原生未启用槽的负计时；不改变池数量和装填窗口。
 Group capture(Addr activator, bool special, double time) {
     const auto address=groupOf(activator,special);
     Group result;
     result.weaponClass=read<Addr>(address);
+    result.fastReloadEligible=special && debugReloadEligible(address);
     checkMemory(address+8,result.scalars.size());
     std::memcpy(result.scalars.data(),reinterpret_cast<void*>(address+8),result.scalars.size());
     const auto slots=weaponSlotArray(address); // 所有机型共用结构及内存校验。
@@ -491,16 +515,15 @@ bool hasReadyRound(const Group& group,double time) {
     require(group.valid,"HUD 武器缓存未建立");
     const int ammo=scalarInt(group,0),window=scalarInt(group,8),next=scalarInt(group,12);
     const int count=static_cast<int>(group.slots.size());
-    // CASUAL-EASY 的原生无限弹药使用 -1；它仍需按真实装填队列判断就绪。
-    // 仅接受此已实机核对的特殊值，其他负数及无效队列继续明确报错。
-    require(ammo>=-1 && ammo<=100000 && window>=0 && window<=count && next>=0 && next<count,"HUD 武器队列无效");
+    // 原生难度/Mod的负弹药计数均视为无限；真实装填窗口、游标和计时仍须有效。
+    require(dualsp::validAmmoCount(ammo) && window>=0 && window<=count && next>=0 && next<count,"HUD 武器队列无效");
     require(std::isfinite(time) && time+0.001>=group.capturedTime,"HUD 游戏时间回退，需先恢复检查点");
     if(ammo==0)return false;
     // 未激活 SP 只推进本来允许装填的窗口；活动组捕获时间就是本次时间。
     const double delta=std::max(0.0,time-group.capturedTime);
     for(int index=0;index<window;++index) {
         const auto& slot=group.slots[(next+index)%count];
-        const float elapsed=dualsp::advanceReload(slot.duration,slot.elapsed,delta,true);
+        const float elapsed=cachedReload(group,slot,delta,true);
         if(elapsed>=slot.duration)return true;
     }
     return false;
@@ -528,7 +551,7 @@ void restore(Addr activator, bool special, const Group& saved, double time) {
         std::array<float,2> native{};
         std::memcpy(native.data(),reinterpret_cast<const void*>(slotData+static_cast<size_t>(i)*0x60+0x48),sizeof(native));
         require(std::abs(native[0]-slot.duration)<0.001f,"Reload configuration changed");
-        const float logical=dualsp::advanceReload(slot.duration,slot.elapsed,dt,i<loadedCount);
+        const float logical=cachedReload(saved,slot,dt,i<loadedCount);
         reloads.push_back({logical,dualsp::rebuildReload(slot.duration,logical,native[1])});
     }
     // Only the current load window progresses. Advancing every physical hardpoint
@@ -577,7 +600,9 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "target_gaze.hpp"
 #include "camera_hold.hpp"
 #include "view_target.hpp"
+void debugWeaponsTick(Addr activator) noexcept;
 #include "gun_salvo.hpp"
+#include "debug_weapons.hpp"
 
 // 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
 struct CfaSwitchCost {
@@ -654,7 +679,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     cfaSwitchCost.mark(0);
     ControlledWeaponSwitch controlled;
     ravenBeforeRebuild(command);
-    ContinuousRebuild continuous(command); // 保留已登记机型/真实类的持续发射体。
+    ContinuousRebuild continuous(command); // 电子战不限定机型，TLS/UAV沿用既有真实类限制。
     cfaSwitchCost.mark(1);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
@@ -683,6 +708,17 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #endif
     }
     cfaSwitchCost.mark(4);
+    if(command.count>1) {
+        const Addr cdo=read<Addr>(groupOf(command.activator,true)+0x40);
+        const auto support=continuousSupport(command.plane,cdo);
+        if(support.electronic && support.kind==ContinuousKind::None) {
+            nativeLog(Json{{"event","MOD_ELECTRONIC_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
+            require(false,"电子战兵装：当前原生回调或装填机制不支持多SP，详见native.log");
+        }
+        if(read<unsigned char>(cdo+0x3b0)==26 && !support.electronic)
+            require(support.kind==ContinuousKind::UAV && continuousRavenLoadout(command.activator),
+                "UAV多SP仍只支持已登记的原生配置");
+    }
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);
@@ -694,6 +730,12 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         write<int>(read<Addr>(command.activator+0x260)+0x10c,flares);
     }
     continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    if(command.op=="setup" && index==1 && fixedMountEnabled && !fixedMountFailed && command.count>=2 &&
+        std::find(command.configs.begin(),command.configs.begin()+command.count,0)!=command.configs.begin()+command.count &&
+        mountAircraft(command.plane)==MountAircraft::Fa44)
+        mountCfaMuzzlePrewarm(command.plane,command.request);
+#endif
     cfaSwitchCost.mark(5);
 }
 void keepArmed(const Command& command,bool armed) {
@@ -733,7 +775,11 @@ std::string snapshotJson(const Command& command) {
        <<",\"flares\":"<<read<int>(read<Addr>(command.activator+0x260)+0x10c)
        <<",\"armed\":"<<(read<unsigned char>(command.activator+0x2a1)!=0 ? "true":"false")
        <<",\"cached_sp\":[";
-    for(int i=0;i<session.count;++i) { if(i)out<<','; out<<(i==session.active ? scalarInt(special,0) : (session.special[i].valid ? scalarInt(session.special[i],0) : -999)); }
+    for(int i=0;i<session.count;++i) {
+        if(i)out<<',';
+        require(i==session.active || session.special[i].valid,"SP库存缓存未建立，不能生成弹药快照");
+        out<<(i==session.active?scalarInt(special,0):scalarInt(session.special[i],0)); // 缺失缓存不能再用负弹药占位。
+    }
     out<<']';
     return out.str();
 }
@@ -773,8 +819,8 @@ void scaleAmmo(Addr activator,int count,double ratio) {
     size_t index=0; // 对应两个弹药字段，而不是两个逻辑 SP。
     for(auto offset:{8,12}) {
         const int ammo=read<int>(group+offset);
-        require(ammo>=0 && ammo<=100000,"Invalid SP ammunition");
-        before[index]=ammo;after[index]=(ammo*percent+99)/100; // 整数运算避免 33% 等比例的浮点误差，零仍为零。
+        require(dualsp::validAmmoCount(ammo),"Invalid SP ammunition");
+        before[index]=ammo;after[index]=ammo<0?ammo:(ammo*percent+99)/100; // 无限保留原始负值；有限值向上取整，零仍为零。
         write<int>(group+offset,after[index]);++index;
     }
     nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"percent",percent},{"native",before},{"scaled",after}}.dump());
@@ -794,11 +840,11 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         for(int i=0;i<active.count;++i) {
             const Addr weapon=read<Addr>(active.data+i*sizeof(Addr));
             require(weapon && read<Addr>(weapon+0x3b8)==plane && read<unsigned char>(weapon+0x3b0)==26 &&
-                !read<unsigned char>(weapon+0x368) && continuousSupported(plane,weapon),
+                !read<unsigned char>(weapon+0x368) && continuousSupport(plane,weapon).kind==ContinuousKind::UAV,
                 "仍有已发射的活动武器，请等待结束后再调试换装");
         }
     }else require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
-    if(continuousPlane(plane)) {
+    { // 所有机型都检查电子战尾迹，不让未登记机型绕过调试换装的退场门槛。
         const auto spawned=continuousArray(activator+0x2e8);
         for(int i=0;i<spawned.count;++i) {
             const Addr weapon=read<Addr>(spawned.data+i*sizeof(Addr));
@@ -958,6 +1004,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         require(allowed==0 || allowed==1,"Invalid runtime gate value");
         runtimeEnabled=allowed!=0;
         if(!runtimeEnabled) {
+            debugWeapons={};debugInfiniteAmmo=false;debugFastReload=false;
             viewTarget.clear();
             salvoNeedRelease=salvoNeedRelease || gunSalvo.gun;salvoStopExtra();gunSalvo={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -976,11 +1023,32 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     }
 }
 
+extern "C" __declspec(dllexport) int dualsp_debug_weapons(void* luaState) {return debugWeaponsLua(luaState);}
+
+extern "C" __declspec(dllexport) bool dualsp_log_submit(unsigned source,const char* text,size_t length)noexcept {
+    try {return dualsp::asyncLog().submit(source,text,length);}catch(...) {return false;}
+}
+extern "C" __declspec(dllexport) int dualsp_log(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        size_t length{};const auto text=api->top(luaState)==1?api->readText(luaState,1,&length):nullptr;
+        if(!text)throw std::runtime_error("Invalid log message");
+        auto& logger=dualsp::asyncLog();logger.submit(0,text,length); // 压力丢弃由后台汇总，不反向干扰任务控制器。
+        api->boolean(luaState,logger.available());return 1;
+    }catch(...) {
+        if(api){api->boolean(luaState,false);return 1;}return 0;
+    }
+}
+
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_cfa_startup_prewarm_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_infinite_ammo_supported(void*) {return 0;} // 目录、预览、运行与Lua负数规则须成套。
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
-// 菜单用实际 CDO 核对实验可选性；新 Lua 因此也会拒绝旧核心混装。
+extern "C" __declspec(dllexport) int dualsp_mod_electronic_supported(void*) {return 0;} // 四返回值和通用电子战保有须成套。
+// 菜单按实际CDO核对通用电子战和已有TLS/UAV资格；返回原因以便诊断。
 extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -990,10 +1058,18 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
         require(api->top(luaState)==2,"持续兵装：选装检查参数无效");verifyVersion();
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
         const Addr cdo=static_cast<Addr>(api->readInteger(luaState,2));
-        continuousIdentity(cdo);
-        const bool supported=continuousSupported(plane,cdo) &&
-            (!continuousRaven(plane) || continuousRavenLoadout(read<Addr>(plane+0x11a8)));
-        api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
+        continuousIdentity(plane);continuousIdentity(cdo);
+        const Addr activator=read<Addr>(plane+0x11a8),cls=read<Addr>(cdo+0x10);
+        continuousIdentity(activator);
+        bool configured=false;
+        for(int i=0;i<3;++i)configured|=read<Addr>(activator+0x158+i*0x30)==cls;
+        require(configured,"持续兵装：默认对象不属于当前机体的三个真实配置");
+        const auto support=continuousSupport(plane,cdo);
+        const bool ravenAllowed=support.kind!=ContinuousKind::UAV || continuousRavenLoadout(activator);
+        const bool supported=support.kind!=ContinuousKind::None && ravenAllowed;
+        const char* reason=ravenAllowed?support.reason:"uav_loadout_changed";
+        api->boolean(luaState,true);api->boolean(luaState,supported);
+        api->boolean(luaState,support.electronic);api->string(luaState,reason,std::strlen(reason));return 4;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
@@ -1100,7 +1176,7 @@ extern "C" __declspec(dllexport) int dualsp_mount_preview(void* luaState) {
         std::array<int,3> configs{},ammo{};
         for(int slot=0;slot<3;++slot) {
             const auto config=api->readInteger(luaState,5+slot),amount=api->readInteger(luaState,8+slot);
-            require(config>=-1 && config<=2 && amount>=0 && amount<=100000,"模型预览配置或弹药参数越界");
+            require(config>=-1 && config<=2 && dualsp::validAmmoCount(amount),"模型预览配置或弹药参数越界");
             configs[slot]=static_cast<int>(config);ammo[slot]=static_cast<int>(amount);
         }
         if(mode==0)mountPreviewRelease(owner);
@@ -1586,11 +1662,14 @@ extern "C" __declspec(dllexport) int dualsp_parts_ammo_preview(void* luaState) {
             for(int i=0;i<3;++i) {
                 const auto weapon=api->readInteger(luaState,6+i*2); // 实际 WeaponID，不能使用 PWDT 配置序号。
                 const auto baseline=api->readInteger(luaState,7+i*2); // 不含任何已装或候选修正的基础载量。
-                require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"PART 兵装参数异常");
+                require(weapon>=0 && weapon<102 && dualsp::validAmmoCount(baseline),"PART 兵装参数异常");
                 int current=static_cast<int>(baseline),preview=current; // 两次计算分别从基础值开始。
+                if(current<0) { // 无限基础载量不参与部件加法、倍率或偶数修正。
+                    amounts.push_back({{"current",current},{"preview",preview},{"affects",false}});continue;
+                }
                 apply(static_cast<unsigned char>(weapon),&current,&installed,&empty);
                 const bool affects=apply(static_cast<unsigned char>(weapon),&preview,&installed,&candidate); // 取整相同也可为 true。
-                require(current>0 && current<=100000 && preview>0 && preview<=100000,"PART 原生载量结果异常");
+                require(dualsp::validAmmoCount(current) && dualsp::validAmmoCount(preview),"PART 原生载量结果异常");
                 amounts.push_back({{"current",current},{"preview",preview},{"affects",affects}});
             }
             result["candidate"]=context.candidate;result["mode"]=mode;result["amounts"]=std::move(amounts);
@@ -1629,10 +1708,10 @@ extern "C" __declspec(dllexport) int dualsp_loadout_ammo(void* luaState) {
         for(int i=0;i<3;++i) {
             const auto weapon=api->readInteger(luaState,3+i*2); // 原生 WeaponID，不是机体槽号。
             const auto baseline=api->readInteger(luaState,4+i*2); // 原机体数据表的完整载量。
-            require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"配弹预览兵装参数异常");
+            require(weapon>=0 && weapon<102 && dualsp::validAmmoCount(baseline),"配弹预览兵装参数异常");
             int amount=static_cast<int>(baseline); // 计算只影响这个局部变量。
-            reinterpret_cast<Apply>(base+0x84dc40)(static_cast<unsigned char>(weapon),&amount,&parts,&extra);
-            require(amount>0 && amount<=100000,"原生弹药预览结果异常");amounts.push_back(amount);
+            if(amount>=0)reinterpret_cast<Apply>(base+0x84dc40)(static_cast<unsigned char>(weapon),&amount,&parts,&extra);
+            require(dualsp::validAmmoCount(amount),"原生弹药预览结果异常");amounts.push_back(amount);
         }
         const auto encoded=amounts.dump(); // 小型结果走现有 Lua 字串接口。
         api->boolean(luaState,true);api->string(luaState,encoded.data(),encoded.size());return 2;
@@ -1936,7 +2015,7 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
                 require(loaded>=0 && loaded<=static_cast<int>(g.slots.size()) && next>=0 && next<static_cast<int>(g.slots.size()),"Invalid HUD launch cursor");
                 for(int k=0;k<loaded;++k) {
                     const auto& s=g.slots[(next+k)%g.slots.size()];
-                    const float elapsed=dualsp::advanceReload(s.duration,s.elapsed,std::max(0.0,command.time-g.capturedTime),true);
+                    const float elapsed=cachedReload(g,s,std::max(0.0,command.time-g.capturedTime),true);
                     bars.push_back(dualsp::reloadProgress(s.duration,elapsed));
                 }
             }
@@ -2096,13 +2175,14 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
                 }
                 const auto planeCode=unrealString(row+16);
                 require(!planeCode.empty() && planeCode.size()<=128,"机体目录：机体代号无效");
-                Json options=Json::array();bool supported=true;
+                Json options=Json::array();bool supported=true,infinite=false;std::array<int,3> maxima{};
                 for(int i=0;i<3;++i) {
                     const auto code=unrealString(row+96+i*24);
                     if(code=="-1") {supported=false;continue;}
                     if(!byCode.count(code))throw std::runtime_error("机体目录：兵装引用不存在 "+code);
                     const int maximum=read<int>(row+112+i*24);
-                    require(maximum>0 && maximum<=100000,"机体目录：槽位基础载量无效");
+                    require(dualsp::validAmmoCount(maximum),"机体目录：槽位基础载量无效");
+                    maxima[i]=maximum;infinite=infinite || maximum<0;
                     auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=maximum;options.push_back(option);
                 }
                 auto& entry=catalog[key];
@@ -2115,6 +2195,7 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
                     catch(const std::exception& error) {entry["reference_error"]=error.what();}
                 }
                 if(skinReferences.contains(planeCode))entry["skins"]=skinReferences[planeCode];
+                if(infinite)nativeLog(Json{{"event","MOD_AIRCRAFT_INFINITE_AMMO"},{"id",id},{"code",planeCode},{"sp_max",maxima}}.dump());
             }catch(const std::exception& error) {
                 if(id>=0)catalog[std::to_string(id)]={{"id",id},{"supported",false},{"compatibility_error",error.what()}};
                 nativeLog("MOD_AIRCRAFT_ROW_UNAVAILABLE "+std::to_string(id)+" "+error.what());

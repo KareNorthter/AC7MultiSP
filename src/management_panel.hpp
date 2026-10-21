@@ -38,10 +38,10 @@ void drawFeatureSettings() {
         ImGui::TextWrapped("%s",tr("只影响模型显示，不影响游戏功能。","Affects model display only, not gameplay features."));
         ImGui::Checkbox(tr("任务中使用多SP模型挂载###TaskMount","Use multi-SP models in missions###TaskMount"),&draftTaskMountEnabled);
         panelHelp("任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
-            "Uses models carrying multiple SPs to reduce visual changes when switching weapons. Supported aircraft have seven single/double/triple-SP combinations; mod aircraft, some internal bays and RKT combinations depend on existing coverage. May reduce performance. Covers flight and resupply transitions; applies with the next loadout.");
+            "Replaces native aircraft models with models carrying multiple SPs to avoid abrupt model changes when switching SPs.\nProvides seven single-, dual- and triple-SP loadouts. Most base-game and DLC aircraft are supported; mod aircraft, some internal bays and RKT combinations depend on existing support.\nMay cause stuttering or reduce frame rate.");
         ImGui::Checkbox(tr("机库中使用多SP模型挂载###HangarMount","Use multi-SP models in the hangar###HangarMount"),&draftHangarMountEnabled);
         panelHelp("出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
-            "Uses multi-SP models in aircraft and SP previews before a sortie. May reduce frame rate. Disabling restores native hangar models and may improve performance. Independent of mission models.");
+            "Uses multi-SP models in aircraft previews when choosing an aircraft and SPs before a sortie.\nMay cause stuttering or reduce frame rate.");
         if(state.at("task_mount_enabled")!=state.at("runtime_task_mount_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("任务模型设置将在下次配装时应用。","Mission model settings apply with the next loadout."));
         if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
     }
@@ -59,7 +59,7 @@ void drawFeatureSettings() {
         ImGui::SliderInt("##AmmoThree",&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
         ImGui::Checkbox(tr("机炮齐射###GunSalvo","Gun salvo###GunSalvo"),&draftGunSalvo);
         panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
-            "On for new configurations. Holding the native gun action also fires an equipped MGP or PLSL; release restores the previous selection. HGP and simultaneous different SPs remain unsupported; slot changes can cause gaps. Pause, management, focus loss or manual selection cancels it.");
+            "On for new configurations. With MGP or PLSL equipped, holding the actual game gun binding also fires that pod; releasing restores the previous selection. HGP and simultaneous firing of different SPs are currently unsupported; slot changes may cause gaps.");
         if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
             ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
         ImGui::TextUnformatted(tr("机炮齐射","Gun salvo"));ImGui::SameLine();bindingButton(9,shortcutLabel(draftShortcuts[3]));
@@ -74,23 +74,23 @@ void drawCameraSettings() {
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
         if(ImGui::Combo(tr("目标选择模式###NextMode","Target selection mode###NextMode"),&mode,tr("原生模式 / 机头附近\0VR模式 / 视角中心\0","Native / aircraft nose\0VR / view center\0")))draftViewTargetMode=mode==0?"normal":"vr";
         panelHelp("原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
-            "Native mode prioritizes the aircraft nose; VR mode prioritizes the current view center. Changes NEXT ranking only, without enabling VR hardware or extending missile lock range. May conflict with the mouse-flight mod's F2 HMD. Choose the mode here; L3 never changes NEXT.");
+            "Native mode prioritizes targets near the aircraft nose;\nVR mode prioritizes targets near the current view center.\nMay conflict with the mouse-flight mod F2 HMD.");
         ImGui::Checkbox(tr("显示视角中心定位白点###ViewCenterDot","Show the view-center dot###ViewCenterDot"),&draftViewCenterDot);
     }
     ImGui::EndChild();
     if(panelCard("TrackingOptions",tr("保持注视","Latched target tracking"))) {
         ImGui::Checkbox(tr("长按手柄Y键 保持注视###TargetGazePad","Hold controller Y to latch tracking###TargetGazePad"),&draftTargetGazePad);
         panelHelp("启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
-            "Off by default. Instead of holding Y throughout, hold it for 0.2 seconds to latch tracking and hold again to release. Short Y presses still select targets and tracking follows; releasing a long press does not select another target.");
+            "When enabled, hold controller Y to latch tracking; hold it again to stop. Short Y presses can still change targets while tracking.");
         ImGui::Checkbox(tr("按下键盘注视键 保持注视###TargetGazeKeyboard","Press the native keyboard tracking key to latch###TargetGazeKeyboard"),&draftTargetGazeKeyboard);
         panelHelp("使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
-            "Off by default. Uses the game's actual keyboard tracking binding: press once to latch and again to release. Native target selection is unchanged. Independent of the controller option; a disabled source keeps native hold-to-track. Stops on pause, management, focus loss, target loss or mission exit.");
+            "Uses the game's actual tracking binding: press once to latch tracking and again to stop.");
     }
     ImGui::EndChild();
     if(panelCard("CameraOptions",tr("视角保持","Camera hold"))) {
         ImGui::Checkbox(tr("启用视角保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
         panelHelp("启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
-            "Retains direction after releasing look input. Press and release L3 or use the recenter key to return to center. Short R3 changes native views; hold for 0.3 seconds to toggle camera hold without changing view on release. Both sticks only release countermeasures; NEXT is unchanged.");
+            "When enabled, the view retains its direction after look input is released.\nPress and release L3 or use the keyboard recenter binding to recenter. Hold R3 to turn this feature on or off.");
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
         ImGui::SliderInt(tr("视角灵敏度###CameraSensitivity","View sensitivity###CameraSensitivity"),&draftCameraSensitivity,5,200,"%d%%",ImGuiSliderFlags_AlwaysClamp);
         ImGui::TextUnformatted(tr("视角回中 键盘快捷键","Keyboard recenter shortcut"));ImGui::SameLine();
@@ -124,12 +124,12 @@ void drawBasicBindings() {
 void drawManagementErrors() {
     const char* fields[]={"error","menu_error","hud_error","central_error","settings_error"};
     bool errors=false;for(const char* field:fields)errors=errors||state.contains(field);
-    for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
+    for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
     if(errors) {
         ImGui::TextColored({1,.65f,.4f,1},"%s",tr("有功能或保存异常，请展开查看。","A feature or save operation needs attention."));
         if(ImGui::CollapsingHeader(tr("查看异常详情###ManagementErrors","View error details###ManagementErrors"))) {
             for(const char* field:fields)if(state.contains(field))ImGui::TextWrapped("%s",uiMessage(state.at(field).get<std::string>()).c_str());
-            for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target"})if(state.contains(field)&&state.at(field).contains("error"))
+            for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})if(state.contains(field)&&state.at(field).contains("error"))
                 ImGui::TextWrapped("%s",uiMessage(state.at(field).at("error").get<std::string>()).c_str());
         }
     }
@@ -139,7 +139,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.22.1");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.22.2 alpha1");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());
@@ -178,7 +178,23 @@ void drawPanel() {
         if(beginManagementTab(tr("基础功能###Features","General###Features"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
         if(beginManagementTab(tr("视角###Bindings","Camera###Bindings"),1)) {drawCameraSettings();ImGui::EndTabItem();}
         if(beginManagementTab(tr("调试###Debug","Debug###Debug"),2)) {
-            if(ImGui::CollapsingHeader(tr("任务兵装###DebugLoadout","Mission loadout###DebugLoadout"),ImGuiTreeNodeFlags_DefaultOpen))drawDebugLoadout(requestedTab==2);
+            if(ImGui::CollapsingHeader(tr("任务兵装###DebugLoadout","Mission loadout###DebugLoadout"),ImGuiTreeNodeFlags_DefaultOpen)) {
+                const auto& options=state.at("debug_weapons");
+                bool infinite=pendingDebugWeapons>0?pendingInfiniteAmmo:options.at("infinite").get<bool>();
+                bool fast=pendingDebugWeapons>0?pendingFastReload:options.at("fast").get<bool>();
+                ImGui::BeginDisabled(!options.at("available").get<bool>()||pendingDebugWeapons>0);
+                const bool changedInfinite=ImGui::Checkbox(tr("无限弹药###InfiniteAmmo","Infinite ammo###InfiniteAmmo"),&infinite);
+                const bool changedFast=ImGui::Checkbox(tr("快速装填###FastReload","Fast reload###FastReload"),&fast);
+                if(changedInfinite || changedFast) {
+                    pendingDebugWeapons=++debugWeaponsRequest;
+                    pendingInfiniteAmmo=infinite;pendingFastReload=fast;
+                    enqueue({{"type","debug_weapons"},{"protocol",1},{"request",pendingDebugWeapons},
+                        {"session",state.at("debug_loadout").at("session")},{"revision",state.at("debug_loadout").at("revision")},
+                        {"infinite",infinite},{"fast",fast}});
+                }
+                ImGui::EndDisabled();
+                drawDebugLoadout(requestedTab==2);
+            }
             if(ImGui::CollapsingHeader(tr("更换机体###DebugAircraft","Change aircraft###DebugAircraft")))drawDebugAircraft();
             if(ImGui::CollapsingHeader(tr("日志###Logs","Logs###Logs"))) {
                 if(!logsLoaded)refreshLogs();

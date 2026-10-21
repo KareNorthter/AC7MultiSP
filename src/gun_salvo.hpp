@@ -69,6 +69,7 @@ void salvoMainTick(void* activator,float delta) {
             !continuousAlive(gunSalvo.weapon) || read<Addr>(groupOf(gunSalvo.activator.address,true)+0x40)!=gunSalvo.weapon.address)salvoFailure();
     }catch(...) {salvoFailure();}
     originalSalvoTick(activator,delta); // 心跳中断时也先停自有输入，不留下永久连射。
+    debugWeaponsTick(reinterpret_cast<Addr>(activator));
 }
 void installGunSalvo() {
     static bool installed=false;
@@ -138,7 +139,9 @@ int gunSalvoLua(void* luaState) {
                     originalSalvoGun(reinterpret_cast<void*>(plane),true);
                 if(action==1 && salvoLive() && gunSalvo.gun && !gunSalvo.blocked && !gunSalvo.extra && read<unsigned char>(activator+0x2a4)) {
                     require(read<unsigned char>(activator+0x2a1) && salvoCurrentSupported(),"当前SP不支持机炮齐射");
-                    if(read<int>(groupOf(activator,true)+8)>0) {
+                    const int ammo=read<int>(groupOf(activator,true)+8);
+                    require(dualsp::validAmmoCount(ammo),"机炮齐射：弹药数量无效");
+                    if(ammo!=0) { // 负数无限库存也可发射，实际节奏仍由原生处理。
                         gunSalvo.weapon=continuousIdentity(read<Addr>(groupOf(activator,true)+0x40));
                         if(!gunSalvo.main)originalSalvoMain(reinterpret_cast<void*>(plane),true);
                         gunSalvo.extra=read<unsigned char>(activator+0x2a5)!=0; // 原生拒绝时不冒充已接管。

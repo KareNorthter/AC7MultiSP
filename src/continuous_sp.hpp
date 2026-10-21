@@ -1,10 +1,17 @@
-// 已登记机型的持续兵装；在核心私有命名空间内使用，仅限 build 9855922。
+// 电子战兵装按原生实现识别，TLS/UAV沿用已登记机型；仅限 build 9855922。
 #pragma once
 
 struct ContinuousIdentity { Addr address{}; int index{},serial{}; };
+enum class ContinuousKind { None, Electronic, TLS, UAV };
+struct ContinuousSupport {
+    ContinuousKind kind{ContinuousKind::None};
+    bool electronic{};
+    const char* reason{"not_registered"};
+};
 struct ContinuousEffect {
     ContinuousIdentity actor,plane,activator,level;
     Addr weaponClass{};
+    ContinuousKind kind{ContinuousKind::None}; // 真实实现类型；Mod可把电子战兵装改为其他WeaponID。
     int source{};
     float age{};
     uint64_t retirement{}; // 原生退场标记按位比较，不推断其数值类型。
@@ -77,6 +84,15 @@ bool continuousClass(Addr cls,const char* name,const char* package,const NativeR
 bool continuousClass(Addr cls,const char* name,const char* package) {
     const NativeReadBatch memory;return continuousClass(cls,name,package,memory);
 }
+// 接受直接继承原生类和任意合法包中的蓝图派生，不按菜单简称、文件名或机型放行。
+bool continuousClassDerived(Addr cls,const char* name,const char* package) {
+    const NativeReadBatch memory;
+    for(int i=0;cls && i<64;++i,cls=memory.read<Addr>(cls+0x30))
+        if(continuousClass(cls,name,package,memory))return true;
+    require(!cls,"持续兵装：类继承链无效或过长");
+    return false;
+}
+bool continuousElectronicClass(Addr cls) {return continuousClassDerived(cls,"ElectronicSupportMeasures","/Script/Nimbus");}
 bool continuousPlaneClass(Addr plane,const char* name,const char* package) {
     const ContinuousReadBatch memory;memory.identity(plane);
     Addr cls=memory.read<Addr>(plane+0x10);
@@ -97,6 +113,8 @@ bool continuousRavenLoadout(Addr activator) {
     for(int i=0;i<3;++i) {
         const Addr cls=read<Addr>(activator+0x158+i*0x30); // PlayerSpecialWeaponConfig.WeaponClass。
         if(!cls || !continuousClass(cls,names[i],packages[i]))return false;
+        if(i<2 && continuousElectronicClass(cls))return false;
+        if(i==2 && !continuousClassDerived(cls,"WeaponUAV","/Script/Nimbus"))return false;
     }
     return true;
 }
@@ -136,33 +154,44 @@ bool continuousFalkenTLSBusy(Addr plane,Addr activator) {
         for(int i=0;i<count;++i) {
             const Addr weapon=read<Addr>(data+i*sizeof(Addr));
             if(weapon && read<unsigned char>(weapon+0x3b0)==25 && read<Addr>(weapon+0x3b8)==plane &&
-                read<unsigned char>(weapon+0x368))return true;
+                read<unsigned char>(weapon+0x368) && !continuousElectronicClass(read<Addr>(weapon+0x10)))return true;
         }
     }
     return false;
 }
-bool continuousPlane(Addr plane) {return continuousCfa44(plane) || continuousMorgan(plane) || continuousRaven(plane) ||
+bool continuousLegacyPlane(Addr plane) {return continuousCfa44(plane) || continuousMorgan(plane) || continuousRaven(plane) ||
     continuousXfa27(plane) || continuousSu37(plane);} // CFA已有弱身份机型缓存，先命中，避免先遍历另外三架的类链。
-// 名称、包、原生虚表与冷却契约一起核对；不支持结束时才装填的替换兵装。
-bool continuousSupported(Addr plane,Addr weapon) {
+// 电子战识别与具体WeaponID解耦；仍逐次核对原生回调和发射即装填契约。
+ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
+    const bool electronic=continuousElectronicClass(cls);
+    if(electronic) {
+        if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))
+            return {ContinuousKind::None,true,"electronic_reload_contract_changed"};
+        if(read<Addr>(table+0x648)!=base+0x894850 || read<Addr>(table+0x628)!=base+0x895fd0 ||
+            read<Addr>(table+0x680)!=base+0x86bf90)
+            return {ContinuousKind::None,true,"electronic_native_callbacks_changed"};
+        return {ContinuousKind::Electronic,true,"native_electronic"};
+    }
     const int id=read<unsigned char>(weapon+0x3b0);
+    if(id!=25 && id!=26)return {ContinuousKind::None,false,id==31?"electronic_class_unrecognized":"not_continuous"};
     const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
         (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")) ||
         (continuousSu37(plane) && continuousClass(cls,"plwp_tls_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0")));
-    const bool ecm=id==31 && ((morgan && continuousClass(cls,"plwp_esm_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0")) ||
-        (!raven && continuousXfa27(plane) && continuousClass(cls,"plwp_ecmp_x2_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2")) ||
-        (!raven && continuousCfa44(plane) && continuousClass(cls,"plwp_ecmp_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1")));
     const bool uav=raven && id==26 && continuousClass(cls,"plwp_WeaponUAV_C","/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV");
-    if(!(tls || ecm || uav) || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return false;
-    if(uav)return !read<unsigned char>(weapon+0x45d) && read<float>(weapon+0x518)==0 && read<Addr>(table+0x618)==base+0x8a6bf0 &&
+    if(!(tls || uav) || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return {};
+    if(uav) {
+        const bool supported=!read<unsigned char>(weapon+0x45d) && read<float>(weapon+0x518)==0 && read<Addr>(table+0x618)==base+0x8a6bf0 &&
         read<Addr>(table+0x628)==base+0x8779a0 && read<Addr>(table+0x648)==base+0x8a5260 &&
         read<Addr>(table+0x668)==base+0x878d40 && read<Addr>(table+0x680)==base+0x878eb0;
-    return read<Addr>(table+0x648)==base+0x894850 &&
-        read<Addr>(table+0x628)==base+(tls?0x85f1c0:0x895fd0) &&
-        read<Addr>(table+0x680)==base+(tls?0x861490:0x86bf90);
+        return {supported?ContinuousKind::UAV:ContinuousKind::None,false,supported?"native_uav":"uav_contract_changed"};
+    }
+    const bool supported=read<Addr>(table+0x648)==base+0x894850 && read<Addr>(table+0x628)==base+0x85f1c0 &&
+        read<Addr>(table+0x680)==base+0x861490;
+    return {supported?ContinuousKind::TLS:ContinuousKind::None,false,supported?"native_tls":"tls_contract_changed"};
 }
+bool continuousSupported(Addr plane,Addr weapon) {return continuousSupport(plane,weapon).kind!=ContinuousKind::None;}
 struct ContinuousArray {Addr header{},data{};int count{},capacity{};};
 ContinuousArray continuousArray(Addr header) {
     const NativeReadBatch memory;
@@ -313,7 +342,7 @@ void continuousInstall() {
     }
 }
 void continuousAttachment(ContinuousEffect& e) {
-    if(read<unsigned char>(e.actor.address+0x3b0)!=25)return;
+    if(e.kind!=ContinuousKind::TLS)return;
     Addr component=read<Addr>(e.actor.address+0x160);
     for(int i=0;component && i<8;++i) {
         e.attachment.push_back(continuousIdentity(component));component=read<Addr>(component+0x100);
@@ -369,33 +398,49 @@ struct ContinuousRebuild {
     bool committed=false;
     bool rebuilding=false;
     explicit ContinuousRebuild(const Command& command,bool strict=true) {
-        if(command.op!="switch" || !continuousPlane(command.plane))return;
+        if(command.op!="switch")return;
         plane=command.plane;activator=command.activator;
-        continuousInstall();continuousSweep();
-        if(continuousRaven(plane))continuousInstallUav();
+        require(read<Addr>(plane+0x11a8)==activator,"持续兵装：激活器不属于当前机体");
+        continuousSweep();
+        const bool legacy=continuousLegacyPlane(plane);
         const auto active=continuousArray(activator+0x338),spawned=continuousArray(activator+0x2e8);
         // 活动数组已移除的尾迹，从现有弱身份记录保留，不恢复历史已退场对象。
         std::vector<ContinuousEffect> additions;
         const auto candidates=continuousCandidates(active,spawned);
         for(const Addr w:candidates) {
             if(!w || read<Addr>(w+0x3b8)!=plane || !read<unsigned char>(w+0x368))continue;
-            const int id=read<unsigned char>(w+0x3b0);if(id!=25 && id!=31 && id!=26)continue;
-            if(!continuousSupported(plane,w)) {
-                require(!strict,"持续兵装：只保留已登记机型的原生 TLS/IEWS/UAV 与发射即装填机制");continue;
+            const int id=read<unsigned char>(w+0x3b0);
+            const auto support=continuousSupport(plane,w);
+            if(!support.electronic && (!legacy || (id!=25 && id!=26 && id!=31)))continue;
+            if(support.kind==ContinuousKind::None) {
+                if(strict)nativeLog(Json{{"event","CONTINUOUS_UNSUPPORTED"},{"weapon",continuousName(w)},
+                    {"weapon_id",id},{"electronic",support.electronic},{"reason",support.reason}}.dump());
+                require(!strict,"持续兵装：当前兵装的原生回调或装填机制尚不支持，已拒绝本次换槽");continue;
             }
             if(std::any_of(continuousEffects.begin(),continuousEffects.end(),[w](const auto& e){return e.actor.address==w;}))continue;
             require(read<unsigned char>(w+0x5c0) || continuousContains(active,w),"持续兵装：发射对象缺少活动登记");
             ContinuousEffect e;e.actor=continuousIdentity(w);e.plane=continuousIdentity(plane);e.activator=continuousIdentity(activator);
-            e.level=continuousIdentity(read<Addr>(plane+0x20));e.weaponClass=read<Addr>(w+0x10);e.source=-1;
-            for(int slot=0;slot<session.count;++slot)if(session.special[slot].valid && session.special[slot].weaponClass==e.weaponClass)e.source=slot;
-            require(e.source>=0,"持续兵装：找不到发射源逻辑槽");
+            e.level=continuousIdentity(read<Addr>(plane+0x20));e.weaponClass=read<Addr>(w+0x10);e.kind=support.kind;e.source=-1;
+            // 同一真实类可被多个配置槽复用，先记录当前槽；电子战附加效果也可不属于选中的三SP。
+            if(session.plane==plane && session.activator==activator) {
+                if(session.active>=0 && session.active<session.count && session.special[session.active].valid &&
+                    session.special[session.active].weaponClass==e.weaponClass)e.source=session.active;
+                else for(int slot=0;slot<session.count;++slot)if(session.special[slot].valid && session.special[slot].weaponClass==e.weaponClass)e.source=slot;
+            }
+            require(e.source>=0 || e.kind==ContinuousKind::Electronic,"持续兵装：找不到发射源逻辑槽");
             e.age=read<float>(w+0x610);e.retirement=read<uint64_t>(w+0x370);e.released=read<unsigned char>(w+0x5c0)!=0;
             require(std::isfinite(e.age) && e.age>=0,"持续兵装：对象时间无效");continuousAttachment(e);additions.push_back(std::move(e));
         }
         require(continuousEffects.size()+additions.size()<=64,"持续兵装：待退场对象过多");
+        const bool retained=std::any_of(continuousEffects.begin(),continuousEffects.end(),[this](const auto& e){
+            return e.plane.address==plane && e.activator.address==activator;});
+        if(additions.empty() && !retained){plane=activator=0;return;}
+        continuousInstall();
+        if(std::any_of(additions.begin(),additions.end(),[](const auto& e){return e.kind==ContinuousKind::UAV;}) ||
+            std::any_of(continuousEffects.begin(),continuousEffects.end(),[this](const auto& e){
+                return e.plane.address==plane && e.activator.address==activator && e.kind==ContinuousKind::UAV;}))continuousInstallUav();
         // 有在途效果时先核对分配后端；不能等原生重建已清空引用后才发现接口缺失。
-        if(!additions.empty() || std::any_of(continuousEffects.begin(),continuousEffects.end(),[this](const auto& e){
-            return e.plane.address==plane && e.activator.address==activator;}))continuousAllocator();
+        continuousAllocator();
         continuousEffects.reserve(continuousEffects.size()+additions.size());
         roots.reserve(continuousEffects.size()+additions.size());
         // 先完成所有可失败的校验/保有，再登记新对象，避免构造失败改变现有收尾政策。
@@ -404,7 +449,8 @@ struct ContinuousRebuild {
         }
         for(const auto& e:additions)roots.emplace_back(e.actor);
         for(auto& e:additions){nativeLog(Json{{"event","CONTINUOUS_CAPTURED"},{"index",e.actor.index},{"serial",e.actor.serial},
-            {"source",e.source},{"age",e.age},{"tail",e.released},{"attachment_count",e.attachment.size()}}.dump());
+            {"source",e.source},{"electronic",e.kind==ContinuousKind::Electronic},
+            {"age",e.age},{"tail",e.released},{"attachment_count",e.attachment.size()}}.dump());
             continuousEffects.push_back(std::move(e));}
     }
     void restoreReferences() {
@@ -415,7 +461,7 @@ struct ContinuousRebuild {
             require(continuousSameShot(e),"持续兵装：重建改变了活动对象身份或发射代次");
             require(continuousAttachmentIntact(e),"持续兵装：重建破坏 TLS 附着");
             // UAV 由 ActiveWeapons 保有，SpawnedWeapons 会被新 MSL 覆盖，且新 SP 的小池未必容得下两架 UAV。
-            if(read<unsigned char>(e.actor.address+0x3b0)!=26 && !continuousContains(spawned,e.actor.address))addSpawned.push_back(e.actor.address);
+            if(e.kind!=ContinuousKind::UAV && !continuousContains(spawned,e.actor.address))addSpawned.push_back(e.actor.address);
             if(!e.released && !read<unsigned char>(e.actor.address+0x5c0) && !continuousContains(active,e.actor.address))addActive.push_back(e.actor.address);
         }
         const size_t neededActive=active.count+addActive.size(),neededSpawned=spawned.count+addSpawned.size();

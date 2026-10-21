@@ -51,20 +51,54 @@ void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field,con
 void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field) {
     const MountIdentityBatch identities;mountCfaMuzzleFieldCurrent(field,identities);
 }
-const CfaMuzzleMetadata& mountCfaMuzzleFields(Addr object) {
+// 四个字段共用一次完整遍历；保留父类重名、链长度、身份及字段布局检查。
+std::array<MountAnimationReflection::Field,4> mountCfaMuzzleFieldSet(MountAnimationReflection& api,Addr type,int limit) {
+    const std::array<const char*,4> names={"AttachParent","AttachSocketName","Template","bVisible"};
+    const std::array<const char*,4> kinds={"ObjectProperty","NameProperty","ObjectProperty","BoolProperty"};
+    const std::array<int,4> sizes={8,8,8,1};
+    std::array<Addr,4> found{};
+    {
+        const MountIdentityBatch memory; // 纯读取，不跨引擎调用保存可读区间。
+        for(int depth=0;type && depth<32;++depth) {
+            require(memory.alive(mountIdentity(type)),"CFA预热：类身份失效");
+            Addr field=memory.read<Addr>(type+0x38);
+            for(int n=0;field && n<1024;++n,field=memory.read<Addr>(field+0x28)) {
+                require(memory.alive(mountIdentity(field)),"CFA预热：字段身份失效");
+                const auto name=mountName(field);
+                for(size_t i=0;i<names.size();++i)if(name==names[i]) {
+                    require(!found[i],"CFA预热：字段重名");found[i]=field;
+                }
+            }
+            require(!field,"CFA预热：字段链过长或成环");type=memory.read<Addr>(type+0x30);
+        }
+        require(!type,"CFA预热：继承链过长或成环");
+    }
+    std::array<MountAnimationReflection::Field,4> result;
+    for(size_t i=0;i<found.size();++i) {
+        const Addr p=found[i];
+        require(p && mountName(read<Addr>(p+0x10))==kinds[i] &&
+            MountAnimationReflection::refValue<int>(api.arrayDim,p)==1,"CFA预热：字段类型或维数不符");
+        const int size=read<int>(p+0x34),offset=read<int>(p+0x44);
+        require(size==sizes[i] && offset>=0 && offset<=limit && size<=limit-offset,"CFA预热：字段尺寸或范围不符");
+        result[i]={mountIdentity(p),offset,size};
+    }
+    return result;
+}
+const CfaMuzzleMetadata& mountCfaMuzzleFields(Addr object,MountAnimationReflection& api) {
     const auto cls=mountIdentity(read<Addr>(object+0x10));
     auto& cached=cfaMuzzleMetadata;
     if(!mountMeshIdentityEqual(cls,cached.componentClass) || !mountAlive(cached.componentClass)) {
         require(mountClassIs(object,"ParticleSystemComponent","/Script/Engine"),"CFA炮口：粒子组件类型改变");
-        auto& api=fixedMount.light->reflection;
         const int size=api.typeSize(cls.address);
+        const auto fields=mountCfaMuzzleFieldSet(api,cls.address,size);
         CfaMuzzleMetadata next;next.componentClass=cls;
-        next.parent=api.field(cls.address,"AttachParent","ObjectProperty",8,size,true);
-        next.socket=api.field(cls.address,"AttachSocketName","NameProperty",8,size,true);
-        next.particle=api.field(cls.address,"Template","ObjectProperty",8,size,true);
-        const auto visible=api.boolean(cls.address,"bVisible",size,true);next.visible=visible.field;
+        next.parent=fields[0];next.socket=fields[1];next.particle=fields[2];next.visible=fields[3];
+        const Addr visible=next.visible.identity.address;
+        const auto byte=MountAnimationReflection::refValue<unsigned char>(api.byteMask,visible);
+        const auto mask=MountAnimationReflection::refValue<unsigned char>(api.fieldMask,visible);
         require(next.parent.offset==0x100 && next.socket.offset==0x108 &&
-            next.visible.offset==0x1bc && visible.byteOffset==0 && visible.fieldMask==0x10,
+            next.visible.offset==0x1bc && MountAnimationReflection::refValue<unsigned char>(api.byteOffset,visible)==0 &&
+            MountAnimationReflection::refValue<unsigned char>(api.fieldSize,visible)==1 && byte && mask==0x10 && !(byte&~mask),
             "CFA炮口：原生附着或可见字段改变");
         cached=next;
     }
@@ -82,6 +116,47 @@ bool mountCfaMuzzleTemplate(Addr particle) {
     const bool matches=mountClassIs(particle,"ParticleSystem","/Script/Engine") && mountName(particle)=="FX_EML_Muzzleflash02";
     if(cfaMuzzleTemplates.size()>=32)cfaMuzzleTemplates.clear(); // 只丢资格缓存，不涉及对象归还。
     cfaMuzzleTemplates[particle]={identity,matches};return matches;
+}
+// 复用setup本来就会执行的EML初始化，只预热元数据；不取得显隐所有权、不激活或发射。
+void mountCfaMuzzlePrewarm(Addr plane,uint64_t request) noexcept {
+    static uint64_t attempted{};
+    if(attempted==request)return;
+    attempted=request; // 同一setup回到SP1时不重试；失败仍由首次实际使用按原规则识别。
+    const auto started=CfaMuzzleCost::now();
+    const char* status="no_matching_component";
+    int matched=0;std::string error;
+    try {
+        mountInstallHooks();
+        MountAnimationReflection api;api.bindSdk();
+        const auto player=mountIdentity(plane);
+        const auto rack=mountIdentity(read<Addr>(plane+mountProperty(plane,"SWP2","ObjectProperty",8)));
+        require(mountClassIs(rack.address,"SkeletalMeshComponent","/Script/Engine") && mountOuterContains(rack.address,plane),
+            "CFA预热：挂架归属或类型不符");
+        const auto cls=mountIdentity(read<Addr>(rack.address+0x10));
+        const auto children=api.field(cls.address,"AttachChildren","ArrayProperty",16,api.typeSize(cls.address),true);
+        const Addr array=rack.address+children.offset,data=read<Addr>(array);
+        const int count=read<int>(array+8),capacity=read<int>(array+12);
+        require(count>=0 && count<=256 && capacity>=count && capacity<=4096 && (!count || data),"CFA预热：子组件列表无效");
+        if(count)checkMemory(data,static_cast<size_t>(count)*8);
+        for(int i=0;i<count;++i) {
+            const Addr child=read<Addr>(data+static_cast<Addr>(i)*8);if(!child)continue;
+            mountIdentity(child);
+            if(read<Addr>(child+0x100)!=rack.address || read<unsigned>(child+0x10c)!=0 ||
+                mountNameIndex(read<unsigned>(child+0x108))!="sp21" || !mountClassIs(child,"ParticleSystemComponent","/Script/Engine"))continue;
+            require(mountOuterContains(child,plane),"CFA预热：粒子不属于当前玩家");
+            const auto& fields=mountCfaMuzzleFields(child,api);
+            if(mountCfaMuzzleTemplate(read<Addr>(child+fields.particle.offset)))++matched;
+        }
+        require(mountAlive(player) && mountAlive(rack) && read<Addr>(array)==data && read<int>(array+8)==count &&
+            read<int>(array+12)==capacity,"CFA预热：读取期间对象或数组改变");
+        cfaChildrenMetadata={cls,children};
+        if(matched)status="ready";
+    }catch(const std::exception& failure) {status="deferred";error=failure.what();}
+    try {
+        LARGE_INTEGER frequency{};QueryPerformanceFrequency(&frequency);
+        nativeLog(Json{{"event","CFA_MUZZLE_PREWARM"},{"request",request},{"status",status},{"matched",matched},
+            {"ms",frequency.QuadPart>0?double(CfaMuzzleCost::now()-started)*1000.0/frequency.QuadPart:0.0},{"error",error}}.dump());
+    }catch(...) { } // 可选预热失败不改变既有武器事务，也不反复重试。
 }
 void mountCfaMuzzleHide(const CfaMuzzleVisual& item) {
     // EML持续取位会多次经过这里；已经不可见就不再通知渲染和传播显隐。
@@ -124,7 +199,7 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
     // 非目标模板先快速退出；Outer和反射字段不再随每个持续特效请求从头扫描。
     if((!mountAlive(cfaMuzzleMetadata.componentClass) || read<Addr>(object+0x10)!=cfaMuzzleMetadata.componentClass.address) &&
        !mountClassIs(object,"ParticleSystemComponent","/Script/Engine"))return nullptr;
-    const auto& fields=mountCfaMuzzleFields(object);
+    const auto& fields=mountCfaMuzzleFields(object,fixedMount.light->reflection);
     const size_t offset=fields.particle.offset;
     const Addr particle=read<Addr>(object+offset);
     if(!mountCfaMuzzleTemplate(particle))return nullptr;

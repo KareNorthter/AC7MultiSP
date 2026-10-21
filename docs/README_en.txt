@@ -1,4 +1,12 @@
-AC7MultiSP 2.22.1
+AC7MultiSP 2.22.2 alpha1
+
+Internal test candidate; official main/release remains 2.22.1 until user acceptance.
+• Debug: Infinite ammo and Fast reload default off, apply immediately and affect only managed SPs. They do not alter standard missiles, guns or countermeasures. Infinite ammo preserves current stock; eligible reloads take at most one second. PLSL/HGP/MGP and continuous effects retain native reload behavior. Options reset on game restart.
+• Ordinary tracking start/stop is silent. English UI follows the approved Chinese text.
+• A shared background writer caps four mod and six native/UI log segments at 1,000,000 bytes each (10 MB total). Bounded queues, background priority, batching and rate limits favor responsiveness; congested queues drop records. Pending final records may be lost. Performance remains to be validated in game.
+• Qualified mod-aircraft ECM/ESM/IEWS are recognized by their actual classes/callbacks; existing TLS/UAV restrictions remain. Signed negative SP stock means unlimited and displays ∞, retaining original values without ratio reduction. Array, ready-slot and timer checks remain bounded.
+• CFA warms muzzle metadata during the existing startup EML initialization. With mission multi-SP models enabled, a loading notice is presented before preparation and lasts until completion, for at least one second. The minimum notice time does not delay weapon readiness. Model resources/layouts remain unchanged.
+• Valid revision 19 settings and personal bindings are retained. This is an internal alpha; the official version will be chosen only after the user confirms acceptance.
 
 Changes since official 2.22.0
 • Three management tabs: General, Camera and Debug; logs expand in Debug. Controller and keyboard tracking have separate options, both off by default.

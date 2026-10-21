@@ -1,5 +1,7 @@
 -- 机炮齐射只使用同一方案中的一个已核对SP；不把快速轮切当成并发。
 local Salvo={}
+local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local Profile=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/loadout_profile.lua")
 function Salvo.new(options)
     local self={available=false,ownedCall=false,seen="0",bound=false}
     local function invoke(c,action,resume)
@@ -59,7 +61,7 @@ function Salvo.new(options)
             end
             if a.phase=="firing" then
                 if c.revision~=a.revision or c.logical~=a.target then self:cancel("manual_selection");return end
-                if not held or not c.enabled or (c.ammo[a.target]or 0)<=0 then
+                if not held or not c.enabled or not Profile.hasAmmo(c.ammo[a.target]or 0)then
                     invoke(c,0);a.phase="restoring";a.untilTime=c.time+1
                 else
                     invoke(c,1,a.resume);a.resume=false;return
@@ -79,7 +81,7 @@ function Salvo.new(options)
         if not c.enabled or not held or main or c.pending then return end
         if #c.eligible~=1 then self.reason=#c.eligible>1 and "multiple_supported_sp"or "no_supported_sp";return end
         local target=c.eligible[1]
-        if (c.ammo[target]or 0)<=0 then self.reason="empty_ammo";return end
+        if not Profile.hasAmmo(c.ammo[target]or 0)then self.reason="empty_ammo";return end
         self.reason=nil
         self.active={key=c.key,press=press,target=target,original=c.logical,revision=c.revision,
             phase=c.logical==target and "firing"or "waiting",started=c.time}

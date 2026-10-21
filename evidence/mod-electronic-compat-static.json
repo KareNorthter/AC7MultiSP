@@ -1,0 +1,890 @@
+{
+  "任务": "所有Mod机型ECM/ESM/IEWS的通用源码适配",
+  "记录时间": "2026-10-21T15:38:18.258134+08:00",
+  "分支": "codex/mod-aircraft-compat",
+  "基线": {
+    "正式主线": "main / 0b75b21 / 2.21.1",
+    "此前机体兼容提交": "a4dd3c7"
+  },
+  "授权边界": "延续独立分支静态修改；未编译、进行Lua语法执行、编写/运行测试、安装、启动或关闭游戏、推送或上传。",
+  "完成状态": "通用候选源码及对应设计正文完成；不是全部Mod运行兼容验收。",
+  "范围": {
+    "不按机体白名单": true,
+    "不按ECM菜单简称或文件名": true,
+    "不要求实际编号31": true,
+    "识别依据": "实际WeaponClass继承链包含/Script/Nimbus.ElectronicSupportMeasures，且保留现有原生回调/装填契约",
+    "直接原生派生与蓝图多级派生": true,
+    "按当前涂装和实例重读资格": true,
+    "普通Mod继承已适配DLC机体": "电子战不因DLC机型身份整机拒绝；选中真实UAV仍保留原配置约束。",
+    "修改作者资源或脚本": false,
+    "修改已有TLS或UAV支持范围": false,
+    "武库鸟负载量目录问题": "本次未处理",
+    "RX78机库模型问题": "本次未处理"
+  },
+  "静态资料范围": {
+    "下载清单": "E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/download-paks.json",
+    "完整临时分析": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\electronic-inheritance.json",
+    "读取相关蓝图头部": 2977,
+    "提供电子战资源的ZIP数": 19,
+    "电子战资源变体数": 24,
+    "不同Mod电子战资源路径数": 20,
+    "直接导入电子战资源的机体蓝图数": 50,
+    "含上述机体蓝图的ZIP数": 29,
+    "边界": "按真实父类及完整包导入路径扩展扫描，不以名字筛选作为最终依据；包含可选和替换包。导入引用不等于可选SP，未遍历任意其它目录脚本或模拟运行时生成。不是当前安装清单。"
+  },
+  "电子战资源静态摘要": [
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_dt.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\24\\Blueprint\\Weapons\\Player\\Variation\\plwp_esm_dt.json",
+      "json_sha256": "481e4142c24bb9c0dbee3fb55c726ef0cb851db2ac145aa8f929c04d0a235ff1",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_zp.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_zp",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\24\\Blueprint\\Weapons\\Player\\Variation\\plwp_esm_zp.json",
+      "json_sha256": "069ace57a170d7ed0afc95b81d112bab17b937a620a1c118f282e92dbecebde3",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Arkbird 2584.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_iews_x0.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_iews_x0",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\37\\Blueprint\\Weapons\\Player\\Variation\\arkb\\plwp_iews_x0.json",
+      "json_sha256": "bff31c8d84f61e16a139cb3f0e72c778659040e7649b99ce3c89b5d948037359",
+      "functions": [],
+      "explicit_fields": {},
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\010\\~AIAS_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arsb/plwp_iews_arsb.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/arsb/plwp_iews_arsb",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\39\\Blueprint\\Weapons\\Player\\Variation\\arsb\\plwp_iews_arsb.json",
+      "json_sha256": "407a1b7f330407604b95bc7e62127ec9f53cc4d69f4fffb2ad15ef526956b474",
+      "functions": [],
+      "explicit_fields": {},
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\013\\~~MQ-90L Quox bis Wingman UAV_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/QuoxRange/plwp_iews_zburator.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/QuoxRange/plwp_iews_zburator",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\44\\Blueprint\\Weapons\\Player\\Variation\\QuoxRange\\plwp_iews_zburator.json",
+      "json_sha256": "9121f4c19548337eb2cd7e71a09b58fb85ae6a868e9b9aa748d3d3ae484750b2",
+      "functions": [
+        "ExecuteUbergraph_plwp_iews_zburator",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 20.0,
+        "LoadTime": 3.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\013\\~~~CFA-50 Base file_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_fa50.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_fa50",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\45\\Blueprint\\Weapons\\Player\\Variation\\plwp_ecmp_fa50.json",
+      "json_sha256": "1600d912c4fc3eca7d460e2c41147ec38673cee1cd5adce59167db26ca996217",
+      "functions": [
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LoadTime": 30.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-06B 2244.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\015\\~~~~~Prowler_AddOn_MainModule_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/e06b/plwp_ecm_x0.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/e06b/plwp_ecm_x0",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\50\\Blueprint\\Weapons\\Player\\e06b\\plwp_ecm_x0.json",
+      "json_sha256": "bfb18cbb8af4a889246ce02e0b5b491aa95cee30f77298255d63ed6e395b136f",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 30.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-06B 2244.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\015\\~~~~~Prowler_AddOn_MainModule_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/e06b/plwp_esm_x0.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/e06b/plwp_esm_x0",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\50\\Blueprint\\Weapons\\Player\\e06b\\plwp_esm_x0.json",
+      "json_sha256": "913d67e98d3d3b3b12a7deed7b75157e62d46c8c6f5f83b51d247549770e1601",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 30.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_AddOn_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\51\\Blueprint\\Weapons\\Player\\Variation\\plwp_ecmp_a99.json",
+      "json_sha256": "e087ffc2fb01b3e6bebee83f136156e45c6a96ce267be7614ed1abf1ae76ad89",
+      "functions": [],
+      "explicit_fields": {},
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_TypeB_Replacer_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\53\\Blueprint\\Weapons\\Player\\Variation\\plwp_ecmp_a99.json",
+      "json_sha256": "e087ffc2fb01b3e6bebee83f136156e45c6a96ce267be7614ed1abf1ae76ad89",
+      "functions": [],
+      "explicit_fields": {},
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_dt.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\62\\Blueprint\\Weapons\\Player\\Variation\\plwp_esm_dt.json",
+      "json_sha256": "481e4142c24bb9c0dbee3fb55c726ef0cb851db2ac145aa8f929c04d0a235ff1",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_dt.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\86\\Blueprint\\Weapons\\Player\\Variation\\plwp_esm_dt.json",
+      "json_sha256": "481e4142c24bb9c0dbee3fb55c726ef0cb851db2ac145aa8f929c04d0a235ff1",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-35A 3212.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\033\\~~~~~~F-35A_ADDON_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_ecmp_FEN.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ecmp_FEN",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\90\\Blueprint\\Weapons\\Player\\Base\\plwp_ecmp_FEN.json",
+      "json_sha256": "038759318e72619d0a501830d392dd9f1d2ee90994cd863385fed30b5ca889b9",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 60.0,
+        "LoadTime": 60.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/FA-27S 3404.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\047\\~FA-27S Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/fa27s/plwp_iews_fa27s.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/fa27s/plwp_iews_fa27s",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\113\\Blueprint\\Weapons\\Player\\Variation\\fa27s\\plwp_iews_fa27s.json",
+      "json_sha256": "84794a141423d10f4ff411716c3c83c4342569263387b96d2a4c0082e7405818",
+      "functions": [
+        "ExecuteUbergraph_plwp_iews_fa27s",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 15.0,
+        "LoadTime": 15.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/GAF-1 1922.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\050\\GAF1_Add-On_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_ecm_varcolac.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ecm_varcolac",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\116\\Blueprint\\Weapons\\Player\\Base\\plwp_ecm_varcolac.json",
+      "json_sha256": "bcd8c6592326bb87c6831d97e96190d8b3e092d7fd7b664e0679515ae48e3daa",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 15.0,
+        "LoadTime": 20.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_ecm_31m.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecm_31m",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\143\\Blueprint\\Weapons\\Player\\Variation\\plwp_ecm_31m.json",
+      "json_sha256": "782864c1d8f72ff74f7b318b0c07c3c0e690263d125f380bd08de21ea3c8ea2d",
+      "functions": [],
+      "explicit_fields": {
+        "LifeTime": 240.0,
+        "LoadTime": 150.0,
+        "MaxLoadedCount": 2,
+        "bReloadOnFire": true,
+        "bReloadAfterAllFired": false
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_esm_r172.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_r172",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\157\\Blueprint\\Weapons\\Player\\Base\\plwp_esm_r172.json",
+      "json_sha256": "3da40db26c8432075dca87f678b594845e7af4a7e9114afd144d5442d3cc8f80",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_droptank",
+        "LifeTime": 127.0,
+        "LoadTime": 5.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/S-32 2524.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\070\\~~S32_Prototype_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_esm_s32.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_s32",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\159\\Blueprint\\Weapons\\Player\\Base\\plwp_esm_s32.json",
+      "json_sha256": "04ef46678388a9c3162b1087f01cf3e765db30099c981d95f996727af35d0fde",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 30.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/S-44 3728.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superECM_s44.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superECM_s44",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\160\\Blueprint\\Weapons\\Player\\Variation\\s44\\DPTK\\plwp_superECM_s44.json",
+      "json_sha256": "e9173e5680bb14c8df66ffbcf4644148e01724b384eeccea05f3bc2b0da18193",
+      "functions": [
+        "ExecuteUbergraph_plwp_superECM_s44",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 10.0,
+        "LoadTime": "+0"
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/S-44 3728.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superESM_s44.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superESM_s44",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\160\\Blueprint\\Weapons\\Player\\Variation\\s44\\DPTK\\plwp_superESM_s44.json",
+      "json_sha256": "02fce635a1fce80fb0e572ff19af54829097f1d4093a4af4740ee9673ce54bfc",
+      "functions": [
+        "ExecuteUbergraph_plwp_superESM_s44",
+        "OnInitialized",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": "+0",
+        "LoadTime": "+0"
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/SU-35SX 3007.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\085\\~~Su-35SX Base file_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_hyperiews_z1.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_hyperiews_z1",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\190\\Blueprint\\Weapons\\Player\\Variation\\plwp_hyperiews_z1.json",
+      "json_sha256": "e1bbe69948d3e6d546bfca0a43eba36d215a4947173f93670ded6cb4e350fd4d",
+      "functions": [
+        "ExecuteUbergraph_plwp_hyperiews_z1",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 30.5,
+        "LoadTime": 31.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UF-37SM S.Flanker.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\092\\SuperFlanker_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_dt.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+      "super": "/Script/Nimbus.ElectronicSupportMeasures",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\217\\Blueprint\\Weapons\\Player\\Variation\\plwp_esm_dt.json",
+      "json_sha256": "481e4142c24bb9c0dbee3fb55c726ef0cb851db2ac145aa8f929c04d0a235ff1",
+      "functions": [],
+      "explicit_fields": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 30.0,
+        "LoadTime": 42.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UI-4054 3465.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\093\\~~UI-4054 Aurora Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_iews_ui4054.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_iews_ui4054",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\219\\Blueprint\\Weapons\\Player\\Variation\\plwp_iews_ui4054.json",
+      "json_sha256": "2321c1a73449cab311ff1d2027cafda352f32757f60696790524c39e37bc2a39",
+      "functions": [
+        "ExecuteUbergraph_plwp_iews_ui4054",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 15.0,
+        "LoadTime": 15.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/X-02R 3266.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\097\\~~~~~~X-02R_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_iews_zburator.uasset",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_iews_zburator",
+      "super": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\Temp\\ew-compat-20261021\\all-assets\\225\\Blueprint\\Weapons\\Player\\Variation\\plwp_iews_zburator.json",
+      "json_sha256": "3218ab243c8a0d58f6165e912deb34857f933c667c548a422f2627b1cb9504ad",
+      "functions": [
+        "ExecuteUbergraph_plwp_iews_zburator",
+        "OnInitialized",
+        "UserConstructionScript"
+      ],
+      "explicit_fields": {
+        "LifeTime": 10.0,
+        "LoadTime": 11.0
+      },
+      "boundary": "未显式覆盖的值由父类/原生默认值决定；字段和脚本名不证明运行回调和CDO契约已通过。"
+    }
+  ],
+  "机体直接导入记录": [
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_zx01.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_zp"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_zx02.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_zx03.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_zx04.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Arkbird 2584.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_arkb.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_iews_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\013\\~~~CFA-50 Base file_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa50.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_fa50"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Darken J.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\014\\Draken_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_j35j.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Darken J.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\014\\Draken_Hotfix_A1_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_j35j.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-06B 2244.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\015\\~~~~~Prowler_AddOn_MainModule_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_e06b.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/e06b/plwp_ecm_x0",
+        "/Game/Blueprint/Weapons/Player/e06b/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_AddOn_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_ea18g.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_AddOn_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_ea18g1.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_TypeA_Replacer_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18x.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_TypeB_Replacer_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f18x.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iatg2.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-15EX 3318.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\023\\~~~~F15EX_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15ex1.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-15EX 3318.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\023\\~~~~F15EX_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15ex2.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-15EX 3318.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\023\\~~~~F15EX_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15ex3.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-15S-MT 3517.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\026\\~~F-15SMT Eagle Plus_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15smt.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-15SXF.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f15x.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-16F 3720.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\029\\F-16F_Desert_Falcon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f16f.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dptk.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f17v1.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f17v2.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f17zoe.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-35A 3212.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\033\\~~~~~~F-35A_ADDON_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f35ch.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_ecmp_FEN"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-35D 2902.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\035\\~~~~F35D_Addon_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dptk.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/FA-27S 3404.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\047\\~FA-27S Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa27s.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/fa27s/plwp_iews_fa27s"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/GAF-1 1922.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\050\\GAF1_Add-On_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_gaf1v1.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_ecm_varcolac"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~J20A_Addon_P.pak",
+      "asset": "../../../Nimbus/content/blueprint/player/pawn/aceplayerpawn_j20x2.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~EOM_EG_J20APatch_P.pak",
+      "asset": "../../../nimbus/content/blueprint/player/pawn/aceplayerpawn_j20x2.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_m31m.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecm_31m"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/Skin/AcePlayerPawn_m31m_s08.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecm_31m"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_r172.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_r172"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_r172_dptk_ecm.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_r172"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/Skin/AcePlayerPawn_r172_type02.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_r172"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/Skin/AcePlayerPawn_r172_Z60.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_r172"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/RX-78-2.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\069\\RX-78-2_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_rx78.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/S-32 2524.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\070\\~~S32_Prototype_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_s32.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_s32"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/S-44 3728.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_s44.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superECM_s44",
+        "/Game/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superESM_s44"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Su-27M 2930.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\077\\~~LZ_Su-27M_Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su27mks.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Su-30M3.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\079\\_~~~~~~Su-30M3_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30m3.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/Su-33UBM 2737.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\083\\~~Su33UBM_Base_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su33ubm.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/SU-35SX 3007.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\085\\~~Su-35SX Base file_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su35sx.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_hyperiews_z1"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\PlayableDronesAddon_P.pak",
+      "asset": "../../../Nimbus/content/blueprint/player/pawn/aceplayerpawn_adf11.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\PlayableDronesAddon_P.pak",
+      "asset": "../../../Nimbus/content/blueprint/player/pawn/aceplayerpawn_uavp.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~UAV45_Playable_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_ua45.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~WeaponUAV_Playable_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_wuav.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~ADFX10_Addon_Expanded_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_uavp.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UF-37SM S.Flanker.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\092\\SuperFlanker_Base_Files_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_uf37.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt"
+      ]
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/UI-4054 3465.zip",
+      "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\093\\~~UI-4054 Aurora Addon_P.pak",
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_ui4054.uasset",
+      "references": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_iews_ui4054"
+      ]
+    }
+  ],
+  "核心契约": {
+    "类继承链": "完整/Script/Nimbus原生类，最多64层；非法或过长明确失败",
+    "原生虚方法": {
+      "0x648": "游戏基址+0x894850",
+      "0x628": "游戏基址+0x895fd0",
+      "0x680": "游戏基址+0x86bf90"
+    },
+    "现有装填校验": "weapon+0x458为1，+0x459为0，+0x5d8为空；未放宽",
+    "菜单": "对当前实例三槽实际CDO逐项核对，确认CDO类属于实际配置；新能力标记要求成套核心。",
+    "运行": "初始化后的实际默认对象再核资格；换槽前对实际效果对象核回调/装填、玩家归属和发射代次。",
+    "效果": "使用原生数组、游戏分配器和原有临时Root窗口保有引用；按真实类型区分电子战/TLS/UAV；不改作者计时、增益、伤害、重放蓝图脚本或伪造弹药槽。",
+    "附加效果": "仅处理同玩家原生ActiveWeapons/SpawnedWeapons中的真实电子战；无逻辑来源记为-1供诊断，不向虚构槽写回冷却。",
+    "边界": "原有补给/检查点/失败原生收尾保留，调试换装对所有机型检查活动电子战/尾迹。未知机制明确拒绝，不能删除写入安全检查。"
+  },
+  "能力标记": "dualsp_mod_electronic_supported",
+  "选装接口": "dualsp_continuous_sp_option：成功、可多挂、是否电子战、原因；失败仍返回false和错误文字。",
+  "诊断": {
+    "mod.log": [
+      "MOD_ELECTRONIC_SUPPORTED",
+      "MOD_ELECTRONIC_UNAVAILABLE"
+    ],
+    "native.log": [
+      "MOD_ELECTRONIC_RUNTIME_REJECTED",
+      "CONTINUOUS_UNSUPPORTED",
+      "CONTINUOUS_CAPTURED（electronic/source字段）",
+      "既有CONTINUOUS_RELEASE_ISOLATED/CONTINUOUS_RETIRE_ISOLATED"
+    ],
+    "原因": [
+      "native_electronic",
+      "electronic_class_unrecognized",
+      "electronic_reload_contract_changed",
+      "electronic_native_callbacks_changed"
+    ],
+    "去重边界": "只按机体/类/原因去重Lua诊断；不缓存资格结论。"
+  },
+  "待实机验证": [
+    "原生Morgan/XFA27/CFA44及Mod电子战激活后切MSL、其它SP，再切回；计时、装填和自然结束。",
+    "EA06/EA18、F16F等直接复用原生类，及Rh172改用droptank编号。",
+    "MiG31M2长寿命/双待发及多个电子战效果；叠加增益仍受原生优先级和作者脚本控制。",
+    "涂装改SP及DLC派生机的替换兵装，原生Raven三SP不回归。",
+    "S44附加ECM/ESM和回血、FA27S/Su35SX/UI4054/X02R等自定义初始化脚本。",
+    "补给、检查点、暂停、结束任务、换玩家/世界及中途调试换装的退场检查。"
+  ],
+  "源码摘要": {
+    "src/continuous_sp.hpp": "1ab1b2d79f0e73068982cb2d64642be8611a56e134b7afa371283da77f28eff8",
+    "src/weapon_bridge.cpp": "c9c3e54a97d40b6fe5e3b0bc615b1a4ae149ffd322d5a1fc9579bfaa21fde85f",
+    "src/raven_sp.hpp": "ac7079a19e40d32fc99f1296e2bda8e32330d9ce595b986379b03619ecb893d7",
+    "dist/DualSP/Scripts/main.lua": "925ef88eb3094e363c1b854dd112b0e31d1d6e387e66de127ddf8c1411b4e1d0"
+  },
+  "受保护旧核心": {
+    "文件": "dist/DualSP/bin/DualSP.dll",
+    "sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "本轮修改": false
+  },
+  "旧回执": "此前静态记录和正式冻结/安装/验收/发布回执均未回改；本机2.23.0等安装不由此候选代表。",
+  "静态复核": "人工审阅菜单许可、真实类/编号分离、Raven与TLS交叉路径、原生引用保有/通知隔离、同玩家来源、补给/检查点/调试边界；Git差异格式检查通过。未执行编译、Lua语法或运行测试。"
+}

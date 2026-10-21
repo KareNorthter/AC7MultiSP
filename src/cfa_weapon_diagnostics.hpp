@@ -52,7 +52,10 @@ void cfaObserveWeapons(Addr plane,Addr activator,const Group& main,const Group& 
                     {"volley_fired",read<int>(activator+0x2dc)},{"volley_total",read<int>(activator+0x2e0)},
                     {"tick_weapon_group",read<unsigned char>(activator+0x2e4)}}},
                 {"main",group(false,main)},{"special",group(true,special)}};
-            if(same) {record["main_consumed"]=last.mainAmmo-mainAmmo;record["special_consumed"]=last.specialAmmo-specialAmmo;}
+            if(same) { // 无限标记不是可相减的数量，跨有限/无限边界也不估算扣弹量。
+                record["main_consumed"]=last.mainAmmo>=0 && mainAmmo>=0?Json(last.mainAmmo-mainAmmo):Json(nullptr);
+                record["special_consumed"]=last.specialAmmo>=0 && specialAmmo>=0?Json(last.specialAmmo-specialAmmo):Json(nullptr);
+            }
             if(last.admmObserved) {
                 record["since_admm_consumption_ms"]=(time-last.lastAdmmTime)*1000;
                 record["last_admm_interval_consumed"]=last.lastAdmmConsumed;
