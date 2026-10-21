@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "version": "2.22.2 alpha1",
+  "candidate": true,
+  "created_at": "2026-10-21T17:13:54.905807+08:00",
+  "source_commit": "e7b3cffbad833db653bcf58f6475e14622f17395",
+  "branch": "codex/integration-2.22.2-alpha1",
+  "official_main_commit": "a96cde63e64438d4553cdb4e4b6b9ece0e4331f2",
+  "official_main_version": "2.22.1",
+  "source_intake": "evidence/2.22.2-alpha1-source-intake.json",
+  "build_dir": "Temp/build-2.22.2-alpha1",
+  "build_receipt_sha256": "ffa685597180f6d4ce4a3f570c187ddeedc4c120a6b59990cc201e756c5995cc",
+  "test_receipt_sha256": "bbe5ecb77c897a7d5da41b7fef2c5330120b17626679db3fad13aae1f3559e5c",
+  "installed_receipt": "evidence/2.22.2-alpha1-installed.json",
+  "installed_receipt_sha256": "d02dd47af69017348b38a9fe5cdd6841ccd98cbfedb86e7b6cd4ee0b1a77b21c",
+  "runtime_files_verified": 19,
+  "core_sha256": "9fbe200d54d264bb28a2746cc1a4034b4eebc94aba0c7a3659f5863698b65f6f",
+  "ui_sha256": "719f85e177c2e26d502af27b26269231f5e2e80464767fedc53d427ec3804820",
+  "mount_asset_count": 77,
+  "mount_member_count": 154,
+  "mount_pak_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "mount_pak_same_as_accepted": true,
+  "automated_checks_passed": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "gameplay_verified": false,
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "profiles_preserved_exact_bytes": true,
+  "local_shortcuts_preserved": [
+    "-",
+    "="
+  ],
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\backup\\AC7MultiSP-20261021-171248-721655",
+  "protected_files_verified": 6,
+  "other_mod_files_touched": false,
+  "other_mod_full_scan": false,
+  "game_stopped": true,
+  "game_started_by_agent": false,
+  "main_updated": false,
+  "formal_tag_created": false,
+  "release_archive_created": false,
+  "version_policy": "按用户要求保持2.22.2 alpha1内部测试；用户确认后再定正式2.22.2或2.23，不自行升版。",
+  "integration_corrections": [
+    "Lua局部变量上限：日志闭包与SP调试表归并，构建语法通过",
+    "管理21/配置19，现有服务夹具更新协议、限定抽取快捷操作函数并提供真实Profile依赖"
+  ],
+  "earlier_attempts": [
+    {
+      "stage": "build_lua_syntax",
+      "result": "rejected_before_output",
+      "reason": "合并后活动局部变量超过200，修正后原目录首次完整构建通过"
+    },
+    {
+      "stage": "service_fixture",
+      "result": "failed_then_corrected",
+      "reason": "旧夹具的协议、函数抽取边界及Profile依赖落后，最终11项全通过；失败输出保留构建目录"
+    },
+    {
+      "stage": "install",
+      "result": "rejected_before_staging",
+      "reason": "新工作树尚无backup父目录；补建后安装通过，首轮输出保留Temp/install-apply-attempt1.stderr.txt"
+    }
+  ]
+}
