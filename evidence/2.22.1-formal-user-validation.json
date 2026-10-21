@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "version": "2.22.1",
+  "validated_version": "2.23.0",
+  "validated_commit": "cd852fd25e4a021def493957da1a4354414617aa",
+  "validated_build_dir": "Temp/build-2.23.0-refresh-accepted",
+  "validated_build_receipt_sha256": "5cf70121734de9a105b2f76e8722886b5ad489adf2f0b311187eb784f3bb7fc8",
+  "validated_test_receipt_sha256": "9e0ccfc3f2b96bb665e1f1b3a28842f62dc97920a22598ba5289583a10932b87",
+  "validated_installed_receipt": "evidence/2.23.0-refresh-installed.json",
+  "validated_installed_receipt_sha256": "03ca97ac178e1a5101e5f838123441fea41d3b0578c22f1a1547a1d6ad91e29c",
+  "user_message": "没问题，合并入main，版本号2.22.1，然后制作发布包。然后帮我修改本地的配置文件，启用多SP模型 快捷键设置为-   切换SP组合快捷键设置为=  。",
+  "recorded_at": "2026-10-21T14:31:41.934852+08:00",
+  "main_acceptance_authorized": true,
+  "version_label_only_authorized": true,
+  "approved_tooling_commit": "cd852fd25e4a021def493957da1a4354414617aa",
+  "approved_tooling_files": [],
+  "scope": "用户验收本机2.23.0-refresh成果，授权合main并正式发布2.22.1；不扩大为所有飞机、组合、Mod或固定性能保证。",
+  "new_version_installed": false,
+  "new_version_gameplay_tested": false,
+  "historical_receipts_preserved": true
+}

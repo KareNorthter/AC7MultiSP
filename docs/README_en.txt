@@ -1,21 +1,13 @@
-AC7MultiSP 2.23.0 (candidate)
+AC7MultiSP 2.22.1
 
 Changes since official 2.22.0
-• Three management tabs, independent controller/keyboard tracking options and Ctrl+Alt+F6 Camera hold. Loadout-cycle/model shortcuts default unbound; NEXT mode is selected in management.
-• Gun salvo defaults on; permanent central text and the dot default off. Old settings/profiles are backed up and reset without migration; first launch creates revision 19 defaults.
-• F/A-18E TGM uses r2 to fix a cooked Socket reference. All 77 variants require matching offline qualification; the other 152 members are unchanged.
+• Three management tabs: General, Camera and Debug; logs expand in Debug. Controller and keyboard tracking have separate options, both off by default.
+• Ctrl+Alt+F6 toggles Camera hold. SP-combination cycling and mission-model shortcuts default unbound and can be set in the configuration. NEXT mode is selected in management.
+• New settings default to Gun salvo on, center dot off and weapon text for one second after switching. Camera hold defaults off; L3/R3 actions remain available.
+• Revision 19 does not migrate older settings/loadouts: back up their original bytes before resetting to new defaults. Valid revision 19 settings are retained normally.
+• Fixed the F/A-18E TGM cooked Socket reference with r2 assets. All 77 variants/154 members are bound to offline qualification; the other 152 members and 28-aircraft/196 layouts are unchanged.
 
-
-What is new in 2.22.0 (since official 2.21.1)
-• NEXT targeting offers Normal (aircraft nose) and VR (current view center) ranking. This does not enable VR hardware. The optional center dot appears beyond 5 degrees.
-• Release L3 alone to recenter. Short R3 changes ordinary views; hold for 0.3 seconds to toggle and save Camera hold. Both sticks retain countermeasures.
-• Latched tracking defaults off. When enabled, hold Y for 0.2 seconds or tap the game's actual keyboard tracking binding to latch/release. The custom feature shortcut only enables/disables this option.
-• Independent mission/hangar model switches and optional D-pad weapon selection. Ordinary notices last 1 second; warnings, errors and important notices last 3 seconds.
-• Improved native SP descriptions, purchased-SP filtering, mod-aircraft/skin SP catalogues and paused aircraft switching. Switching closes the native pause menu before restarting the entire mission.
-• Integrated F-4E stock/alternating visuals, MiG-35D and additional native-aircraft layouts, local moving racks and native collision preservation. Update core, Lua and all 77 variants/154 members together.
-• The local maintenance installer now limits default integrity checking to this mod, its mount PAK, critical loader files and saves. A full audit of other mods is optional; it does not assess compatibility.
-
-The user tested the installed research candidate 2.26.0 and reported no problems. This release adopts official version 2.22.0; gameplay sources, core and resources retain accepted bytes with release labels updated. Intermediate research numbers remain internal history.
+The user accepted the installed candidate. This official release uses version 2.22.1, retaining accepted core/resource bytes and changing only equal-length UI version text. Research identifiers are not official release numbers.
 
 Carry one to three special weapons in single-player campaign/free missions, preserving separate ammunition, reloads, HUD and selection. Multiplayer is disabled. Supported native build: Steam 9855922, Windows 10/11 x64.
 
@@ -25,9 +17,10 @@ Installation
 3. If needed, run Runtimes\VC_redist.x64.exe and Runtimes\DirectX\DXSETUP.exe with all adjacent CAB files. Existing equal/newer runtimes need no uninstall.
 4. Merge the contents of GameFiles into the game root. Do not copy the GameFiles folder itself. Mount PAK: Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak.
 5. If mods.txt contains other mods, preserve it and add/retain DualSP : 1. This package uses the AC7-specific UE4SS loader; review shared loader files before merging.
-6. Launch through Steam. F6 opens management. No Python or compiler is needed. This update backs up and resets old settings and loadouts without migration; first launch creates revision 19 defaults.
+6. Launch through Steam. F6 opens management. No Python or compiler is needed. Older settings/loadouts are backed up and reset to revision 19 without migration. Valid revision 19 settings are retained.
 
 Controls
+• New settings default to Gun salvo on, center dot off and weapon text for one second after switching; controller/keyboard tracking and Camera hold each default off.
 • Choose SP1/SP2/SP3 in the native preparation pages; SP2/SP3 can be NO WEAPON. Unpurchased SPs are excluded from ordinary loadout selection; the lower-left panel shows the native description in the game language.
 • Keys 1/2/3/4 select missile/SP1/SP2/SP3. D-pad left/up/right/down does the same and can be disabled separately. X retains native cycling.
 • F6 or Back+Y opens General, Camera and Debug; logs expand within Debug. In missions, management borrows pause and releases only its own pause on closing.
@@ -35,7 +28,7 @@ Controls
 • Ctrl+Alt+F6 toggles Camera hold. Debug SP cycling defaults unbound. Ctrl+Alt+F5 toggles native-gun linkage to MGP/PLSL; HGP and true concurrent firing of different SP types are unsupported.
 • Select Native/VR NEXT ranking in management; its shortcut is removed. Disable the mouse-flight mod's F2 HMD targeting when using VR ranking to avoid competing target selection. Dot, tracking and Camera hold are independent.
 • Camera hold defaults off; L3/R3 camera actions are always retained. Release L3 to recenter and release latched tracking. Short R3 changes ordinary views; hold for 0.3 seconds to toggle/save Camera hold, without switching views on release. Both sticks retain countermeasures. Recenter binding and 5%–200% sensitivity are configurable. Angle-based auto recenter and its slider are removed.
-• Latched tracking defaults off. With it enabled, hold Y for 0.2 seconds to latch/release; short Y selects a target while tracking follows. Tap the game's actual keyboard tracking binding to latch/release. The custom feature toggle defaults unbound and only enables/disables the feature. Pause, management, focus/target loss, special cameras and mission exit release tracking.
+• Controller and keyboard latched tracking each default off. Enable the corresponding option, then hold Y for 0.2 seconds to latch/release, or tap the game's actual keyboard tracking binding. Short Y selects a target while tracking follows. The separate feature-toggle shortcut is removed. Pause, management, focus/target loss, special cameras and mission exit release tracking.
 • Saving ordinary settings does not refill ammunition. Debug aircraft switching restarts the whole mission. The catalogue searches official/custom aircraft with complete three-SP data and uses current skin references; it does not grant purchases or DLC licenses.
 • Mission 13 (113) retains its assigned SP, restoring multi-SP on leaving. Free flight 213 is unaffected. Missions 12/14 retain multi-SP.
 
@@ -129,3 +122,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.21.0：Released the integrated 2.20.1–2.20.3 changes with updated instructions and aircraft support tables.
 2.21.1：Added MGP/PLSL Gun salvo and mod-aircraft search; revised modifier input, F6, defaults, CFA handling and F-15 mounts.
 2.22.0: Integrated NEXT modes, tracking/camera controls, independent model/D-pad options, loadout/mod compatibility, paused switching and additional SP layouts; simplified local installation integrity scope.
+2.22.1: Refined three-tab management and separate tracking options, shortcuts and defaults; back up/reset older settings; fixed F/A-18E TGM references and offline asset qualification.

@@ -287,7 +287,8 @@ def accepted_label_sources(label_dir, accepted_dir, evidence_prefix):
         raise ValueError('版本标识发布缺少对应验收与授权')
     old = read_json(accepted_dir / 'build-receipt.json')
     tests = read_json(accepted_dir / 'test-receipt.json')
-    installed_path = ROOT / ('evidence/' + old_version + '-installed.json')
+    installed_path = contained(ROOT / validation.get('validated_installed_receipt',
+                               'evidence/' + old_version + '-installed.json'), ROOT / 'evidence')
     installed = read_json(installed_path)
     build_hash, test_hash = digest(accepted_dir / 'build-receipt.json'), digest(accepted_dir / 'test-receipt.json')
     if (old.get('version') != old_version or not tests.get('passed') or not installed.get('installed') or
@@ -310,7 +311,7 @@ def accepted_label_sources(label_dir, accepted_dir, evidence_prefix):
     changed = {name for name in set(current) | set(old['source_files']) if current.get(name) != old['source_files'].get(name)}
     labels = {'VERSION', 'src/product.json', 'dist/DualSP/Scripts/main.lua', 'src/management_panel.hpp'}
     tooling = set(validation['approved_tooling_files'])
-    if tooling != {'src/install.py'} or changed != labels | tooling:
+    if tooling not in (set(), {'src/install.py'}) or changed != labels | tooling:
         raise ValueError('来源变化超出标识和已授权安装工具：' + repr(sorted(changed)))
     for name in labels:
         before = subprocess.check_output(['git', 'show', commit + ':' + name], cwd=ROOT)
@@ -319,7 +320,9 @@ def accepted_label_sources(label_dir, accepted_dir, evidence_prefix):
         after = (ROOT / name).read_bytes()
         if name == 'src/product.json':
             expected = json.loads(before)
-            expected.update(candidate=False, upgrade_receipt='evidence/' + old_version + '-installed.json')
+            expected.update(candidate=False, upgrade_receipt=installed_path.relative_to(ROOT).as_posix())
+            if 'receipt_prefix' in expected:
+                expected['receipt_prefix'] = VERSION
             equal = json.loads(after) == expected
         else:
             equal = after == before.replace(old_version.encode(), VERSION.encode())

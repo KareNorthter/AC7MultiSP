@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "version": "2.22.1",
+  "user_message": "没问题，合并入main，版本号2.22.1，然后制作发布包。然后帮我修改本地的配置文件，启用多SP模型 快捷键设置为-   切换SP组合快捷键设置为=  。",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "install_requested": false,
+  "local_configuration_change_authorized": true
+}
