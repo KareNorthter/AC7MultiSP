@@ -1,0 +1,488 @@
+{
+  "date": "2026-10-21",
+  "branch": "codex/f14ia-ircm-compat",
+  "base_commit": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "status": "无限库存显示源码已改；IRCM静态研究完成，崩溃根因未定位，未构建安装",
+  "user_report": {
+    "aircraft": "F-14IA",
+    "crash_stage": "选择机体或进入任务时",
+    "multi_sp_enabled_at_crash": "用户未明确"
+  },
+  "display_change": {
+    "function": "dist/DualSP/Scripts/loadout_profile.lua:Profile.ammoText",
+    "before": "∞",
+    "after": "---",
+    "scope": "合法有符号32位负库存；零与正数显示及原负库存语义保持；机库与HUD共用"
+  },
+  "author_sources": [
+    {
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3751",
+      "finding": "作者列IRCM于Droptank/DPTK，长按Weapon Switch启用；SAAM/QAAM、LAGM、12AAM才是三个SP。原页旧前置警告不作为当前不兼容结论。"
+    },
+    {
+      "url": "https://www.moddb.com/games/ace-combat-7/addons/compatibility-between-add-on-plane-mods",
+      "finding": "后续兼容目录更新已列入F-14IA Ruscat；不能用作者最初警告直接定因。"
+    }
+  ],
+  "source_paks": [
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+      "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+      "sha256": "cdfb3e549221e065e6464597b5e308cff081e0eec03e53714f4800a6a6a59540",
+      "member_count": 393
+    },
+    {
+      "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+      "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~~~~~F14IA_DataTable_Localization_P.pak",
+      "sha256": "10be1bf2d51c6db43b6dc74eb4962162cb0448bd788c4e27d2800063500c521b",
+      "member_count": 20
+    }
+  ],
+  "classes": [
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.uasset",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_dptk_ircm_C",
+          "parent": "/Script/Nimbus.PlayerPlane"
+        }
+      ],
+      "selected_defaults": {
+        "Default__AcePlayerPawn_dptk_ircm_C": {
+          "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+        },
+        "PlayerWeaponActivator": {
+          "SpecialWeaponConfig1": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0.plwp_qaam_a0_C",
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP1"
+          },
+          "SpecialWeaponConfig2": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0.plwp_qaam_a0_C",
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP2"
+          },
+          "SpecialWeaponConfig3": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0.plwp_qaam_a0_C",
+            "MaxWeaponCount": 28,
+            "WeaponPylonMeshName": "SWP3"
+          }
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14ia.uasset",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_f14ia_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+        }
+      ],
+      "selected_defaults": {
+        "Default__AcePlayerPawn_f14ia_C": {
+          "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+        },
+        "PlayerWeaponActivator": {
+          "SpecialWeaponConfig1": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_f14ia.plwp_saam_f14ia_C"
+          },
+          "SpecialWeaponConfig2": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia.plwp_lagm_f14ia_C"
+          },
+          "SpecialWeaponConfig3": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1.plwp_12aam_r1_C"
+          }
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iacp.uasset",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_f14iacp_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+        }
+      ],
+      "selected_defaults": {
+        "Default__AcePlayerPawn_f14iacp_C": {
+          "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+        },
+        "PlayerWeaponActivator": {
+          "SpecialWeaponConfig1": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_f14ia.plwp_saam_f14ia_C"
+          },
+          "SpecialWeaponConfig2": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia.plwp_lagm_f14ia_C"
+          },
+          "SpecialWeaponConfig3": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1.plwp_12aam_r1_C"
+          }
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iatg.uasset",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_f14iatg_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+        }
+      ],
+      "selected_defaults": {
+        "Default__AcePlayerPawn_f14iatg_C": {
+          "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+        },
+        "PlayerWeaponActivator": {
+          "SpecialWeaponConfig1": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0.plwp_qaam_r0_C"
+          },
+          "SpecialWeaponConfig2": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia.plwp_lagm_f14ia_C"
+          },
+          "SpecialWeaponConfig3": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1.plwp_12aam_r1_C"
+          }
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iatg2.uasset",
+      "classes": [
+        {
+          "name": "AcePlayerPawn_f14iatg2_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+        }
+      ],
+      "selected_defaults": {
+        "Default__AcePlayerPawn_f14iatg2_C": {
+          "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt.plwp_esm_dt_C"
+        },
+        "PlayerWeaponActivator": {
+          "SpecialWeaponConfig1": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0.plwp_qaam_r0_C"
+          },
+          "SpecialWeaponConfig2": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia.plwp_lagm_f14ia_C"
+          },
+          "SpecialWeaponConfig3": {
+            "WeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1.plwp_12aam_r1_C"
+          }
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_ircm_s32.uasset",
+      "classes": [
+        {
+          "name": "plwp_ircm_s32_C",
+          "parent": "/Script/Nimbus.LaserInterceptor"
+        }
+      ],
+      "selected_defaults": {
+        "Default__plwp_ircm_s32_C": {
+          "RayDistance": 9000.0,
+          "RayRadius": 360.0,
+          "WeaponID": "EWeaponID::WID_ecm",
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "MaxLoadedCount": 1
+        }
+      }
+    },
+    {
+      "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_esm_dt.uasset",
+      "classes": [
+        {
+          "name": "plwp_esm_dt_C",
+          "parent": "/Script/Nimbus.ElectronicSupportMeasures"
+        }
+      ],
+      "selected_defaults": {
+        "Default__plwp_esm_dt_C": {
+          "WeaponID": "EWeaponID::WID_ecm",
+          "LifeTime": 30.0,
+          "LoadTime": 42.0
+        }
+      }
+    }
+  ],
+  "author_skin_mapping": {
+    "scope": "作者包SkinDataTable与22个皮肤蓝图父类，不把编号当界面名称，不保证全局目录未覆盖",
+    "skin_no_0_to_12_and_17_to_19_and_22": {
+      "base": "f14ia",
+      "drop_tank": "plwp_ircm_s32",
+      "sp1": "SAAM"
+    },
+    "skin_no_13_to_16": {
+      "base": "f14iacp",
+      "drop_tank": "plwp_ircm_s32",
+      "sp1": "SAAM"
+    },
+    "skin_no_20": {
+      "base": "f14iatg",
+      "drop_tank": "plwp_ircm_s32",
+      "sp1": "QAAM"
+    },
+    "skin_no_21": {
+      "base": "f14iatg2",
+      "drop_tank": "plwp_esm_dt",
+      "sp1": "QAAM"
+    },
+    "skin_specific_crash_reproduction": "用户未明确皮肤；未验证21能否避开崩溃。"
+  },
+  "implementation": {
+    "player_parent": "/Script/Nimbus.PlayerPlane",
+    "f14_variants": [
+      "f14ia",
+      "f14iacp",
+      "f14iatg",
+      "f14iatg2"
+    ],
+    "shared_parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm",
+    "drop_tank_class": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32",
+    "ircm_parent": "/Script/Nimbus.LaserInterceptor",
+    "esm_parent": "/Script/Nimbus.ElectronicSupportMeasures",
+    "both_weapon_id": "EWeaponID::WID_ecm (31)",
+    "consequence": "IRCM/ESM附加功能在三SP之外；SkinNo21覆盖IRCM为ESM。不能按编号31当普通电子战，也不把VR派生Actor的Spawn误认为IRCM生成。"
+  },
+  "installed_direct_dependencies": {
+    "pak_indexes_read": 218,
+    "index_errors": [],
+    "direct_game_package_count": 134,
+    "additional_lookup_packages": [
+      "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+      "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm"
+    ],
+    "missing": [
+      "/Game/Blueprint/VR/VRTickActor"
+    ],
+    "vr_comparison": [
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+        "vr_imports": [
+          "VRTickActor_C",
+          "/Game/Blueprint/VR/VRTickActor",
+          "Default__VRTickActor_C"
+        ]
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+        "vr_imports": [
+          "VRTickActor_C",
+          "/Game/Blueprint/VR/VRTickActor",
+          "Default__VRTickActor_C"
+        ]
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\!EOM_EnhancedGunplay_A5_P.pak",
+        "vr_imports": [
+          "VRTickActor_C",
+          "/Game/Blueprint/VR/VRTickActor",
+          "Default__VRTickActor_C"
+        ]
+      }
+    ],
+    "vr_interpretation": "原生基础及补丁版本和EOM也保留相同VR引用；不能认定缺失VR资源为F-14IA独有错误或崩溃根因。",
+    "ircm_fx_not_in_f14_pak": true,
+    "ircm_fx_current_providers": [
+      "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\GAF1_Add-On_P.pak",
+      "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\~~S32_Prototype_P.pak",
+      "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\TR-6_Woundwort_P.pak",
+      "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~SKIES_OF_DECEPTION_P.pak"
+    ],
+    "limits": "只核对直接/Game包名与四项共享资源字节，不证明递归依赖、运行时挂载顺序、功能效果或全组合兼容。"
+  },
+  "shared_resources": [
+    {
+      "package": "/Game/Vehicles/Weapons/w_ircm_x0/w_ircm_x0_SM",
+      "providers": [
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\GAF1_Add-On_P.pak",
+          "payload_sha256": {
+            ".uasset": "44264fbcb187a6a2656a0bb4708b01fa849509b09ed41c6278cd7455fb488763",
+            ".uexp": "1678bbe28ed19edc7420f9be5c06df3174913400733da8e409b52c5a6d798339"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\~~S32_Prototype_P.pak",
+          "payload_sha256": {
+            ".uasset": "44264fbcb187a6a2656a0bb4708b01fa849509b09ed41c6278cd7455fb488763",
+            ".uexp": "1678bbe28ed19edc7420f9be5c06df3174913400733da8e409b52c5a6d798339"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\TR-6_Woundwort_P.pak",
+          "payload_sha256": {
+            ".uasset": "44264fbcb187a6a2656a0bb4708b01fa849509b09ed41c6278cd7455fb488763",
+            ".uexp": "1678bbe28ed19edc7420f9be5c06df3174913400733da8e409b52c5a6d798339"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~SKIES_OF_DECEPTION_P.pak",
+          "payload_sha256": {
+            ".uasset": "44264fbcb187a6a2656a0bb4708b01fa849509b09ed41c6278cd7455fb488763",
+            ".uexp": "1678bbe28ed19edc7420f9be5c06df3174913400733da8e409b52c5a6d798339"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~F14IA_Addon_Base_P.pak",
+          "payload_sha256": {
+            ".uasset": "44264fbcb187a6a2656a0bb4708b01fa849509b09ed41c6278cd7455fb488763",
+            ".uexp": "1678bbe28ed19edc7420f9be5c06df3174913400733da8e409b52c5a6d798339"
+          }
+        }
+      ],
+      "identical": true
+    },
+    {
+      "package": "/Game/VFX/Environment/ircm/FX_ircm",
+      "providers": [
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\GAF1_Add-On_P.pak",
+          "payload_sha256": {
+            ".uasset": "0e3977321ebed2274dc8b248d26101b8df60eabadc4b61888b31de7b12e3a510",
+            ".uexp": "2bb1ac5d4823d9e1bcb0bc57427f000694b8cd7394b09b576b2ede4c83a04f09"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\~~S32_Prototype_P.pak",
+          "payload_sha256": {
+            ".uasset": "0e3977321ebed2274dc8b248d26101b8df60eabadc4b61888b31de7b12e3a510",
+            ".uexp": "2bb1ac5d4823d9e1bcb0bc57427f000694b8cd7394b09b576b2ede4c83a04f09"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\TR-6_Woundwort_P.pak",
+          "payload_sha256": {
+            ".uasset": "0e3977321ebed2274dc8b248d26101b8df60eabadc4b61888b31de7b12e3a510",
+            ".uexp": "2bb1ac5d4823d9e1bcb0bc57427f000694b8cd7394b09b576b2ede4c83a04f09"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~SKIES_OF_DECEPTION_P.pak",
+          "payload_sha256": {
+            ".uasset": "0e3977321ebed2274dc8b248d26101b8df60eabadc4b61888b31de7b12e3a510",
+            ".uexp": "2bb1ac5d4823d9e1bcb0bc57427f000694b8cd7394b09b576b2ede4c83a04f09"
+          }
+        }
+      ],
+      "identical": true
+    },
+    {
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32",
+      "providers": [
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\~~S32_Prototype_P.pak",
+          "payload_sha256": {
+            ".uasset": "0800d452f1e6eb0afd3e76968347126598240d8f61bf218cdfb2642e8895b04c",
+            ".uexp": "a8520e6caf1e5841b09ff0fb56b36b7f98fe279ab5dea75f8997f78e29ba4656"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~F14IA_Addon_Base_P.pak",
+          "payload_sha256": {
+            ".uasset": "0800d452f1e6eb0afd3e76968347126598240d8f61bf218cdfb2642e8895b04c",
+            ".uexp": "a8520e6caf1e5841b09ff0fb56b36b7f98fe279ab5dea75f8997f78e29ba4656"
+          }
+        }
+      ],
+      "identical": true
+    },
+    {
+      "package": "/Game/Blueprint/Weapons/AI/Base/Data/CUR_LaserInterceptorSwingRate",
+      "providers": [
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk4-WindowsNoEditor.pak",
+          "payload_sha256": {
+            ".uasset": "31a37e4ae003e1b099e769cc406075a3a63f428f747d377503c5d2712ac75d22",
+            ".uexp": "98a74bd2503ff5726af7172ced6b94053eecfcbcc010e346563815e469909de9"
+          }
+        },
+        {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\!EOM_EnhancedGunplay_A5_P.pak",
+          "payload_sha256": {
+            ".uasset": "a8faea4aadb93bc1d8d5187af034248febd8dae0a7e6a3c8f93a7e7c1a1aacbc",
+            ".uexp": "c9e92bb050bfe5ad28f7186b4cd531cfad90a40f9742218efae2fc5fe67e1a93"
+          }
+        }
+      ],
+      "identical": false
+    }
+  ],
+  "curve_comparison": [
+    {
+      "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk4-WindowsNoEditor.pak",
+      "class": "CurveFloat",
+      "keys": [
+        {
+          "InterpMode": "RCIM_Cubic",
+          "Time": "+0",
+          "Value": "+0"
+        },
+        {
+          "InterpMode": "RCIM_Linear",
+          "Time": 1.0,
+          "Value": 1.0
+        }
+      ]
+    },
+    {
+      "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\!EOM_EnhancedGunplay_A5_P.pak",
+      "class": "CurveFloat",
+      "keys": [
+        {
+          "InterpMode": "RCIM_Cubic",
+          "Time": "+0",
+          "Value": "+0"
+        },
+        {
+          "InterpMode": "RCIM_Linear",
+          "Time": 1.0,
+          "Value": 1.0
+        }
+      ]
+    }
+  ],
+  "logs": {
+    "matched_f14_crash_stack": false,
+    "scope": [
+      "当前DualSP mod.log/native.log",
+      "backup/aircraft-feedback-20261021-145857/DualSP日志"
+    ],
+    "unrelated_event": "XR-302的plwp_ircm_xr302_C被electronic_class_unrecognized拒绝，不是F-14IA崩溃样本。",
+    "other_captures": "未将其他机体/调试会话的现成转储当作F-14IA证据，未读取巨型转储。"
+  },
+  "conclusion": "确认作者IRCM用途、触发方式和真实类型；未发现已核对关键IRCM重复资源字节冲突，当前直接依赖未发现F-14IA独有缺件。无匹配异常栈，不能认定IRCM或多SP为直接根因。",
+  "next_step": "后续先记录复现时点及对应日志/异常栈；如获用户授权，再分别做仅替换DPTK的候选与EOM开关对照，三SP保持，避免同时改变多个变量。",
+  "raw_local_records": [
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP\\Temp\\f14ia-ircm-20261021\\asset-summary.json",
+      "sha256": "007745faa732f7a7a490e6fbaab9cb85e49d3eae9ba8b6adcfbe1d8b7c3c5048"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP\\Temp\\f14ia-ircm-20261021\\dependency-check.json",
+      "sha256": "7caee383f5d68ff6d5bf928b70a643dac7ee4cdcf39554a1084db760c9a5d875"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP\\Temp\\f14ia-ircm-20261021\\shared-resource-check.json",
+      "sha256": "ac382f62a77afaaa0007de22c03330726bc8e26a4d2688f37028600c5791d16a"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP\\Temp\\f14ia-ircm-20261021\\original-comparison.json",
+      "sha256": "e4096c5c44f007fa272d66d615b4d4e8973ea78ef72f01a30d04375e0a063302"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP\\Temp\\f14ia-ircm-20261021\\pawn-readable-functions.json",
+      "sha256": "ec61282d0d43a9b345c0432a47c7ba727fb990b5b46e22059bce031cb6a9acbb"
+    }
+  ],
+  "actions": {
+    "compiled": false,
+    "tests_written_or_run": false,
+    "installed": false,
+    "game_operated": false,
+    "third_party_paks_modified": false,
+    "version_changed": false,
+    "protected_dll_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  }
+}
