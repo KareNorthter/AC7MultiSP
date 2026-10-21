@@ -1,0 +1,216 @@
+{
+  "任务": "其他用户Su-35SX预览身份超时反馈核对",
+  "时间": "2026-10-21T22:25:29.351514+08:00",
+  "分支": "codex/mod-aircraft-compat",
+  "基线": "ef70cdf",
+  "用户补充": [
+    "直接选择Su-35SX也报错",
+    "对方未购买CFA-44 DLC，但安装了CFA-50 Mod"
+  ],
+  "日志来源": [
+    {
+      "source": "E:\\反馈\\SU35SX\\mod (1).log",
+      "snapshot": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\backup\\su35sx-feedback-20261021-222529\\mod (1).log",
+      "sha256": "bfd53dd0d2c8af43e1d05a9994a2ac6d0a2c369c76b5f1cd0b80a2ee85aea968",
+      "bytes": 1207721
+    },
+    {
+      "source": "E:\\反馈\\SU35SX\\native (1).log",
+      "snapshot": "C:\\Users\\83717\\.codex\\worktrees\\mod-aircraft-compat\\AC7_MultiSP\\backup\\su35sx-feedback-20261021-222529\\native (1).log",
+      "sha256": "25d3833fc4b61f559370d016c61ebb9741597f72dadae891a3d8c0961c14329a",
+      "bytes": 307547
+    }
+  ],
+  "启动版本": [
+    {
+      "line": 2,
+      "text": "2026-10-20T12:11:33Z DUALSP_LOADED 2.21.1 MANAGEMENT_UI"
+    },
+    {
+      "line": 7705,
+      "text": "2026-10-21T11:53:55Z DUALSP_LOADED 2.22.1 MANAGEMENT_UI"
+    },
+    {
+      "line": 11139,
+      "text": "2026-10-21T13:52:21Z DUALSP_LOADED 2.22.1 MANAGEMENT_UI"
+    },
+    {
+      "line": 11468,
+      "text": "2026-10-21T13:57:46Z DUALSP_LOADED 2.22.1 MANAGEMENT_UI"
+    },
+    {
+      "line": 11626,
+      "text": "2026-10-21T14:11:29Z DUALSP_LOADED 2.22.1 MANAGEMENT_UI"
+    }
+  ],
+  "已确认日志事实": {
+    "报错会话版本": "2.22.1（两份日志混有2.21.1旧会话，不将旧记录当作本次版本）",
+    "Su35SX等待次数": 9,
+    "实际预览类分布": {
+      "BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s07.AcePlayerPawn_fa50_s07_C": 1,
+      "BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s09.AcePlayerPawn_fa50_s09_C": 2,
+      "BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_x02rv2_s13.AcePlayerPawn_x02rv2_s13_C": 1,
+      "BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C": 5
+    },
+    "Su35SX就绪记录": [],
+    "等待事件": [
+      {
+        "line": 9576,
+        "text": "2026-10-21T12:42:46Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s07.AcePlayerPawn_fa50_s07_C"
+      },
+      {
+        "line": 11162,
+        "text": "2026-10-21T13:53:19Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s09.AcePlayerPawn_fa50_s09_C"
+      },
+      {
+        "line": 11254,
+        "text": "2026-10-21T13:54:05Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_x02rv2_s13.AcePlayerPawn_x02rv2_s13_C"
+      },
+      {
+        "line": 11345,
+        "text": "2026-10-21T13:55:11Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s09.AcePlayerPawn_fa50_s09_C"
+      },
+      {
+        "line": 11383,
+        "text": "2026-10-21T13:55:28Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C"
+      },
+      {
+        "line": 11430,
+        "text": "2026-10-21T13:56:34Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C"
+      },
+      {
+        "line": 11491,
+        "text": "2026-10-21T13:58:41Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C"
+      },
+      {
+        "line": 11548,
+        "text": "2026-10-21T14:00:08Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C"
+      },
+      {
+        "line": 11654,
+        "text": "2026-10-21T14:12:32Z NATIVE_MODEL_WAIT plane=239 preview_changing selected=su35sx expected=/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su27mks_s06.AcePlayerPawn_su27mks_s06_C"
+      }
+    ],
+    "F85B同类事件": [
+      {
+        "line": 11209,
+        "text": "2026-10-21T13:53:32Z NATIVE_MODEL_WAIT plane=208 preview_changing selected=f85b expected=/Game/Blueprint/Player/Pawn/AcePlayerPawn_f85b.AcePlayerPawn_f85b_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s09.AcePlayerPawn_fa50_s09_C"
+      },
+      {
+        "line": 11216,
+        "text": "2026-10-21T13:53:42Z NATIVE_LOADOUT_ERROR ...CE COMBAT 7/ue4ss/Mods/DualSP/Scripts/native_loadout.lua:438: 机体兵装等待超过 10 秒，请检查模型并重新选机：preview_changing selected=f85b expected=/Game/Blueprint/Player/Pawn/AcePlayerPawn_f85b.AcePlayerPawn_f85b_C actual=BlueprintGeneratedClass /Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s09.AcePlayerPawn_fa50_s09_C"
+      }
+    ],
+    "界面发布缺代号错误次数": 29,
+    "缺代号错误首条": [
+      {
+        "line": 8260,
+        "text": "2026-10-21T12:08:44Z UI_PUBLISH_ERROR ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:1435: attempt to index a nil value (field 'code')"
+      }
+    ],
+    "原生目录问题": [
+      "198266375 MOD_AIRCRAFT_REFERENCE_ERROR 动画访问：字段缺失、类型或数组维数不符",
+      "198266390 MOD_AIRCRAFT_ROW_UNAVAILABLE 210 机体目录：槽位基础载量无效",
+      "198266390 MOD_AIRCRAFT_ROW_UNAVAILABLE 252 机体目录：槽位基础载量无效",
+      "198266390 MOD_AIRCRAFT_ROW_UNAVAILABLE 255 机体目录：槽位基础载量无效"
+    ],
+    "边界": "仅当前两份Mod日志；没有加载器/游戏资源加载日志、对方生效目录、PAK清单或完整原文件，无法定位底层加载失败原因。"
+  },
+  "本地参考资源": {
+    "PPDT": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\tables\\000-~~~~~~~~~!Compatibility_Add-Ons-PPDT_P\\PlayerPlaneDataTable.json",
+    "rows": [
+      {
+        "PlaneID": 140,
+        "PlaneStringID": "fa44",
+        "DLCID": "ITEM_A_014",
+        "Reference": {
+          "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+          "AssetPath": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+            "PackageName": null,
+            "AssetName": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_fa44.AcePlayerPawn_fa44_C"
+          },
+          "SubPathString": null
+        }
+      },
+      {
+        "PlaneID": 208,
+        "PlaneStringID": "f85b",
+        "DLCID": "Patch",
+        "Reference": {
+          "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+          "AssetPath": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+            "PackageName": null,
+            "AssetName": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f85b.AcePlayerPawn_f85b_C"
+          },
+          "SubPathString": null
+        }
+      },
+      {
+        "PlaneID": 239,
+        "PlaneStringID": "su35sx",
+        "DLCID": "Patch",
+        "Reference": {
+          "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+          "AssetPath": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+            "PackageName": null,
+            "AssetName": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_su35sx_s00.AcePlayerPawn_su35sx_s00_C"
+          },
+          "SubPathString": null
+        }
+      },
+      {
+        "PlaneID": 241,
+        "PlaneStringID": "fa50",
+        "DLCID": "Patch",
+        "Reference": {
+          "$type": "UAssetAPI.PropertyTypes.Objects.FSoftObjectPath, UAssetAPI",
+          "AssetPath": {
+            "$type": "UAssetAPI.PropertyTypes.Objects.FTopLevelAssetPath, UAssetAPI",
+            "PackageName": null,
+            "AssetName": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s00.AcePlayerPawn_fa50_s00_C"
+          },
+          "SubPathString": null
+        }
+      }
+    ],
+    "classes": [
+      "su35sx_s00 -> su35sx -> /Game/Blueprint/Player/Pawn/AcePlayerPawn",
+      "fa50_s07 -> fa50 -> /Game/Blueprint/Player/Pawn/AcePlayerPawn",
+      "f85b -> /Game/Blueprint/Player/Pawn/AcePlayerPawn"
+    ],
+    "DLC判断": "本地参考PPDT的Su35SX/CFA50/F85B为Patch，官方CFA44为ITEM_A_014；Su35SX与CFA50基础类均未直接继承CFA44 Pawn。CFA50有CFA44摄像头/音效资源引用，但不能仅由资源引用推出购买要求。两份日志未见授权拒绝证据。",
+    "边界": "本地参考包不等于对方安装，不证明全部传递依赖、授权行为或资源优先级。"
+  },
+  "当前判断": [
+    "选择编号已为Su35SX，但本Mod读到的预览实例分别来自CFA50、X02R和Su27MKS，显示/选择状态不同步；不是单纯Su35SX涂装后缀误判。",
+    "F85B也出现相同预览滞留，不能仅归因于CFA50或缺少CFA44授权；不建议据此购买DLC，也不能证明DLC绝对无关。",
+    "现有证据不能区分资源/前置表/覆盖导致加载失败与本Mod选错预览源或等待时序；不能把不同机体直接视为同机。",
+    "另有确定的坏目录行缺少code导致管理页发布异常，已静态补齐显示降级；该缺陷不作为Su35SX错位根因已证明。"
+  ],
+  "本次源码修改": {
+    "位置": "dist/DualSP/Scripts/main.lua::publishState",
+    "内容": "code缺失/空/非字符串时显示机体资料未就绪；目录项不存在时仍显示请选择机体，不再调用nil的upper。",
+    "不改变": [
+      "机体身份/世界/涂装核对",
+      "兵装读写资格",
+      "10秒等待上限",
+      "DLC许可判断",
+      "预览对象选择",
+      "游戏安装"
+    ],
+    "未解决": "Su35SX预览对象滞留的根因尚未定位，未声称修复。"
+  },
+  "待补充": [
+    "完全停用多SP后Su35SX是否能正常机库/出击",
+    "报错时画面实际显示Su35SX、旧机体还是无模型",
+    "同次启动UE4SS.log（若资源加载错误不在其中，再取对应游戏日志）",
+    "对方生效catalogue.json及~mods内PAK文件清单"
+  ],
+  "验证边界": "仅只读日志/本地资源静态核对、人工源码审阅和Git差异格式检查；未编译、执行Lua语法、写或运行测试、安装或操作游戏，未修改反馈原文件。",
+  "源码摘要": {
+    "dist/DualSP/Scripts/main.lua": "373f02ae9c879e81b0971ac8c1f3aeab72befa8fda27dde43cb1830bfc2c3a4d"
+  }
+}

@@ -1296,8 +1296,12 @@ end
 local function publishState()
     publishSequence=publishSequence+1
     local info=catalogue and catalogue[tostring(planeId)]
+    local code=info and info.code
+    local planeName=type(code)=="string"and code~=""and (names[code]or code:upper())or
+        (info and tr("机体资料未就绪","Aircraft information unavailable")or tr("请选择机体","Select an aircraft"))
+    -- 坏目录行仅含编号/原因时仍可发布错误状态，不能因显示名称缺失打断整个管理页。
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
-    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
+    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=planeName,
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=14,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
