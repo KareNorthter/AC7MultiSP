@@ -1,5 +1,9 @@
 # 开发与恢复
 
+2026-10-21 F-4E补给现场核对：用户调试换机后投UGB遭组合轮切拦截；补给SP1仅UGB，确认后SP2仅NO WEAPON。当前选项`owned=[true,false,false]`（UGB/LAGM/SASM），三项`available`均为true。调试明确允许未购买兵装，补给仍按购买记录筛选；SP1仅列owned，SP2再排除已选UGB，故只剩无兵装，属于现有规则差异，不是活动兵装或兼容资格拦截。未修改购买/许可记录、存档或补给规则。
+
+当前UGB继承`/Script/Nimbus.Bomb`，轮切提示命中与F18相同的活动兵装检查；若为停用残留，则类型上受9314f8a覆盖。但落地后的3次采样ActiveWeapons/SpawnedWeapons均为空，不能证明投弹拒绝瞬间是残留而非真实在途。源码修正仍未构建安装，补给中的现场不作为修复验收。完整记录见[evidence/f4e-ugb-switch-resupply-choices-20261021.json](../evidence/f4e-ugb-switch-resupply-choices-20261021.json)。本轮未新增产品代码、编译、运行产品测试、安装、改版本或操作起飞；无需用户现在起飞重做。
+
 2026-10-21 F/A-18E TGM任务内切组合误拦截：当前玩家ActiveWeapons里持续保留两枚`plwp_gpb_a1_C`，均继承`/Script/Nimbus.Bomb`、属于当前玩家、对象表身份有效且活动标记0。126次只读采样身份一致；用户恢复游戏不发射、等待10秒再按=仍被拒绝。两项SP调试均关闭。根因是非Raven/UAV路径仅判断数组Num必须为0，将已停用残留也当作在途兵装；残留首次产生的原生/切槽路径尚未定位。
 
 候选源码已将`requireDebugLoadoutReady`改为逐项核验：只有身份有效、属于当前玩家、活动标记0且继承原生Bomb的对象才可忽略；保留原UAV资格、持续效果及SpawnedWeapons尾迹门槛，未知/失效引用和真正活动兵装继续拒绝。不清数组、不结束对象、不改普通弹药/配弹比例/个人设置或旧检查点。新增低频诊断`DEBUG_LOADOUT_INACTIVE_BOMBS`。两个核心入口（预检查及debug_setup实际重建）共用该函数。

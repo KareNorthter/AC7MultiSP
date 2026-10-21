@@ -1,0 +1,123 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T21:42:07.849033+08:00",
+  "version": "2.22.2 alpha1",
+  "status": "causes_checked_no_new_product_change",
+  "user_report": "调试选择F-4E后投UGB无法切SP；降落补给后SP1列表仅UGB，确认后SP2仅NO WEAPON，尚未起飞。",
+  "capture": {
+    "directory": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\f4e-resupply-20261021-214044",
+    "pid": 7836,
+    "samples": 3,
+    "state_sha256": "bbee2a883a9f5c9297a305b3893bb644e17b02b1c0948c0b96acb2952046db2e",
+    "ui_state_sha256": "bde4bf5b0f24909ffafa386df2d9d57c6d981a77f668b184f747a9eb24b9134a",
+    "read_only": true,
+    "memory_written": false,
+    "game_functions_called": false
+  },
+  "current_scene": {
+    "plane_id": 100,
+    "class": "AcePlayerPawn_f04e_C",
+    "native_resupply": "sp2",
+    "active_weapons": 0,
+    "spawned_weapons": 0,
+    "infinite": 0,
+    "fast": 0
+  },
+  "flight_switch": {
+    "current_hotkey_response": 46,
+    "previous_f18tg_hotkey_response": 21,
+    "last_notice": "...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:1362: 仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试",
+    "guard": "main.lua applyDebugHotkey -> debugLoadoutReady -> requireDebugLoadoutReady",
+    "ugb_class_chain": [
+      {
+        "class": "plwp_ugb_a0_C",
+        "package": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0"
+      },
+      {
+        "class": "Bomb_BaseClass_C",
+        "package": "/Game/Blueprint/Weapons/Bomb_BaseClass"
+      },
+      {
+        "class": "Bomb",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "ExplosiveWeapon",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "WeaponBase",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "NimbusObjectPoolItem",
+        "package": "/Script/Nimbus"
+      },
+      {
+        "class": "Actor",
+        "package": "/Script/Engine"
+      },
+      {
+        "class": "Object",
+        "package": "/Script/CoreUObject"
+      }
+    ],
+    "confirmed": "UGB轮切请求命中与F18 TGM相同的活动兵装门槛；当前UGB继承/Script/Nimbus.Bomb。",
+    "not_confirmed": "取证时已在补给，活动及生成数组均为空；未取得投弹失败瞬间的UGB活动标记，不能证明当时也是停用残留，也不能排除炸弹当时确实仍在途。",
+    "existing_fix": "9314f8a对身份有效、当前玩家所属且已停用的原生Bomb派生对象放行，因此类型条件覆盖本次UGB；尚未编译安装或实机验证，真正活动的炸弹仍拒绝。"
+  },
+  "resupply_choices": {
+    "runtime_options": [
+      {
+        "index": 0,
+        "code": "ugb",
+        "owned": true,
+        "available": true
+      },
+      {
+        "index": 1,
+        "code": "lagm",
+        "owned": false,
+        "available": true
+      },
+      {
+        "index": 2,
+        "code": "sasm",
+        "owned": false,
+        "available": true
+      }
+    ],
+    "debug_allow_unowned": true,
+    "aircraft_debug_status": {
+      "plane_id": 100,
+      "code": "f04e",
+      "purchased": null,
+      "dlc_owned": false
+    },
+    "ownership_limit": "这里只记录Mod读到的状态，不把UI许可字段当成独立账户或平台许可审计。",
+    "confirmed_cause": "ownedWeapons按SigmaSaveGame.CommonData.PurchasedWeapons建立集合；首项index0沿用免费默认兵装规则，另两项检查1001和1002。任务调试明确allowUnowned=true，普通补给仍传真实owned。Flow在SP1只列owned，SP2又排除SP1，所以仅UGB后仅NO WEAPON。三项available都为true，不是多挂兼容资格失败。",
+    "design": "现有设计明确普通选装/补给校验购买，任务调试可尝试未购买SP；没有调试权限自动延续到补给的现有约定。",
+    "not_related_to_active_array": true,
+    "configuration_save_and_ownership_changed": false,
+    "source_references": [
+      "dist/DualSP/Scripts/main.lua:ownedWeapons/readOptionsFor/configureFlight/OnStartSupplyPhaseHandler",
+      "dist/DualSP/Scripts/loadout_flow.lua:Flow.rows",
+      "dist/DualSP/Scripts/loadout_profile.lua:Profile.validate",
+      "docs/architecture.md:普通选装/补给与任务调试购买规则"
+    ]
+  },
+  "pending": [
+    "若仍需确认F4E投弹后是否误拦截，应在落地补给前抓活动数组；不要求用户现在起飞重新复现。",
+    "9314f8a仍待用户授权构建安装及实机验收；CFA44无限队列和此前暂停崩溃仍是独立待办。"
+  ],
+  "product_source_changed_this_investigation": false,
+  "compiled": false,
+  "product_tests_written_or_run": false,
+  "installed": false,
+  "version_changed": false,
+  "formal_main_changed": false,
+  "memory_written": false,
+  "configuration_changed": false,
+  "game_controlled_by_agent": false,
+  "scope": "仅取证和说明，未修改购买或DLC记录、未改补给筛选规则、未起飞。原始状态和日志只留Temp。"
+}
