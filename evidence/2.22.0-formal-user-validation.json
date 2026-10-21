@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "version": "2.22.0",
+  "validated_version": "2.26.0",
+  "validated_commit": "9a906bf09dcc0766c9f5f52fc926dad3768e7eef",
+  "validated_build_dir": "Temp/build-2.26.0-accepted",
+  "validated_build_receipt_sha256": "86927e1a96b4b5383edca4d27f5722910f19d91779833392784ba2ac95d46076",
+  "validated_test_receipt_sha256": "d39131a5578326e22b5f158d40c141fa55270dfcfb81bd27b72f6dcffd046a4b",
+  "validated_installed_receipt_sha256": "b75d6966439f11d49dd6128e264c34cbc461b54b9df304fd31326b0f64e3abf3",
+  "user_message": "测试了，没问题。正式版本号从2.21.1更新到2.22.0，提供一个发布包",
+  "recorded_at": "2026-10-21T10:49:20.368453+08:00",
+  "main_acceptance_authorized": true,
+  "version_label_only_authorized": true,
+  "approved_tooling_commit": "a62ea25acf33edf4c7ebc150ccbca62d3bb9183a",
+  "approved_tooling_files": [
+    "src/install.py"
+  ],
+  "scope": "用户确认当前安装2.26.0测试无误，正式2.22.0接收其功能及安装核验简化；不扩大为所有飞机、组合、Mod或固定性能保证。",
+  "new_version_installed": false,
+  "new_version_gameplay_tested": false,
+  "historical_receipts_preserved": true
+}

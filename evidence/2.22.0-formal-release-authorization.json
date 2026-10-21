@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "version": "2.22.0",
+  "user_message": "测试了，没问题。正式版本号从2.21.1更新到2.22.0，提供一个发布包",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "upload_authorized": false,
+  "install_requested": false
+}

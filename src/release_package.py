@@ -9,13 +9,13 @@ import subprocess
 import uuid
 import zipfile
 
-from release_tools import ROOT, PWSH, contained, digest, read_json, verify_build, source_snapshot
+from release_tools import ROOT, PWSH, contained, digest, read_json, verify_build, source_snapshot, product
 
 
 VERSION = (ROOT / 'VERSION').read_text(encoding='utf-8').strip()
 NAME = 'AC7MultiSP'
-OLD_NAME = 'AC7MultiSP-2.16.0'
-OLD_ARCHIVE_HASH = '5381a990515fcca8662505d1538384fa640ce3ea3108477da745be63dc18183a'
+OLD_NAME = 'AC7MultiSP-2.21.1'
+OLD_ARCHIVE_HASH = '09ba966a0baab3ba82bd552a3a3a4f31e5e887167b35534e1853706f5343b7d4'
 MOD = 'GameFiles/ue4ss/Mods/DualSP/'
 PAK = 'Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak'
 LICENSES = ('UE4SS.txt', 'DearImGui.txt', 'MinHook.txt', 'nlohmann-json.txt')
@@ -71,12 +71,12 @@ def microsoft_signature(path):
 
 def legacy_payload(archive_path):
     """整包和旧清单都可信后，仅收取固定的运行库集合。"""
-    receipt = read_json(ROOT / 'evidence/2.16.0-release.json')
-    if (receipt.get('name') != NAME or receipt.get('version') != '2.16.0' or
+    receipt = read_json(ROOT / 'evidence/2.21.1-release.json')
+    if (receipt.get('name') != NAME or receipt.get('version') != '2.21.1' or
             receipt.get('all_members_verified') is not True or
             receipt.get('sha256', '').lower() != OLD_ARCHIVE_HASH or
             digest(archive_path) != OLD_ARCHIVE_HASH or archive_path.stat().st_size != receipt['size']):
-        raise ValueError('旧 2.16.0 发布包或来源回执不符')
+        raise ValueError('旧 2.21.1 发布包或来源回执不符')
     records = receipt['files']
     with zipfile.ZipFile(archive_path) as archive:
         names = archive_names(archive)
@@ -84,7 +84,7 @@ def legacy_payload(archive_path):
         if names != expected or len(names) != receipt['member_count']:
             raise ValueError('旧包成员与发布回执不符')
         manifest = json.loads(archive.read(OLD_NAME + '/文件清单.json').decode('utf-8-sig'))
-        if (manifest.get('name') != NAME or manifest.get('version') != '2.16.0' or
+        if (manifest.get('name') != NAME or manifest.get('version') != '2.21.1' or
                 manifest.get('files') != records):
             raise ValueError('旧包内外文件清单不一致')
         runtimes = {}
@@ -273,6 +273,115 @@ def version_label_sources(build_dir, accepted_dir):
     return runtime, (build_dir / assets['file']).read_bytes(), manifest, build_hash, test_hash, digest(validation_path), digest(authorization_path)
 
 
+
+def accepted_label_sources(label_dir, accepted_dir, evidence_prefix):
+    """复用已测字节，仅改等长版本文本；不伪造新编译/测试/安装回执。"""
+    import pefile
+    validation_path = ROOT / ('evidence/' + evidence_prefix + '-user-validation.json')
+    authorization_path = ROOT / ('evidence/' + evidence_prefix + '-release-authorization.json')
+    validation, authorization = read_json(validation_path), read_json(authorization_path)
+    old_version = validation['validated_version']
+    if (validation.get('version') != VERSION or not validation.get('main_acceptance_authorized') or
+            not validation.get('version_label_only_authorized') or not authorization.get('release_authorized') or
+            accepted_dir != contained(ROOT / validation['validated_build_dir'], ROOT / 'Temp').resolve(strict=True)):
+        raise ValueError('版本标识发布缺少对应验收与授权')
+    old = read_json(accepted_dir / 'build-receipt.json')
+    tests = read_json(accepted_dir / 'test-receipt.json')
+    installed_path = ROOT / ('evidence/' + old_version + '-installed.json')
+    installed = read_json(installed_path)
+    build_hash, test_hash = digest(accepted_dir / 'build-receipt.json'), digest(accepted_dir / 'test-receipt.json')
+    if (old.get('version') != old_version or not tests.get('passed') or not installed.get('installed') or
+            tests.get('build_receipt_sha256') != build_hash or installed.get('build_receipt_sha256') != build_hash or
+            installed.get('test_receipt_sha256') != test_hash or validation['validated_build_receipt_sha256'] != build_hash or
+            validation['validated_test_receipt_sha256'] != test_hash or validation['validated_installed_receipt_sha256'] != digest(installed_path)):
+        raise ValueError('已测构建、测试、安装及用户验收关联不符')
+    for name, expected in old['protected_files'].items():
+        if digest(contained(ROOT / name, ROOT)) != expected:
+            raise ValueError('保护旧核心改变：' + name)
+    for name, expected in tests['test_sources'].items():
+        if digest(contained(ROOT / name, ROOT)) != expected:
+            raise ValueError('原检查源码改变：' + name)
+    for name, expected in old['objects'].items():
+        if digest(contained(accepted_dir / name, accepted_dir)) != expected:
+            raise ValueError('原构建中间文件改变：' + name)
+    commit = validation['validated_commit']
+    subprocess.run(['git', 'merge-base', '--is-ancestor', commit, 'HEAD'], cwd=ROOT, check=True)
+    current = source_snapshot()
+    changed = {name for name in set(current) | set(old['source_files']) if current.get(name) != old['source_files'].get(name)}
+    labels = {'VERSION', 'src/product.json', 'dist/DualSP/Scripts/main.lua', 'src/management_panel.hpp'}
+    tooling = set(validation['approved_tooling_files'])
+    if tooling != {'src/install.py'} or changed != labels | tooling:
+        raise ValueError('来源变化超出标识和已授权安装工具：' + repr(sorted(changed)))
+    for name in labels:
+        before = subprocess.check_output(['git', 'show', commit + ':' + name], cwd=ROOT)
+        if data_hash(before) != old['source_files'][name]:
+            raise ValueError('验收提交和冻结来源不符：' + name)
+        after = (ROOT / name).read_bytes()
+        if name == 'src/product.json':
+            expected = json.loads(before)
+            expected.update(candidate=False, upgrade_receipt='evidence/' + old_version + '-installed.json')
+            equal = json.loads(after) == expected
+        else:
+            equal = after == before.replace(old_version.encode(), VERSION.encode())
+        if not equal:
+            raise ValueError('标识文件含其他变化：' + name)
+    tooling_commit = validation['approved_tooling_commit']
+    subprocess.run(['git', 'merge-base', '--is-ancestor', tooling_commit, 'HEAD'], cwd=ROOT, check=True)
+    for name in tooling:
+        expected = subprocess.check_output(['git', 'show', tooling_commit + ':' + name], cwd=ROOT)
+        if (ROOT / name).read_bytes() != expected:
+            raise ValueError('安装工具不同于已批准简化提交：' + name)
+    runtime = {'Scripts/' + name: (ROOT / 'dist/DualSP/Scripts' / name).read_bytes() for name in product()['scripts']}
+    runtime.update({'VERSION': (ROOT / 'VERSION').read_bytes()})
+    section_proofs = {}
+    for filename, field in (('DualSP.dll', 'candidate_sha256'), ('DualSPUI.dll', 'ui_sha256')):
+        original = (accepted_dir / filename).read_bytes()
+        if data_hash(original) != old[field] or data_hash(original) != installed['runtime_files']['bin/' + filename]:
+            raise ValueError('已测DLL不同于安装回执：' + filename)
+        if filename == 'DualSPUI.dll':
+            before_label, after_label = b'\0' + old_version.encode() + b'\0', b'\0' + VERSION.encode() + b'\0'
+            if len(before_label) != len(after_label) or original.count(before_label) != 1:
+                raise ValueError('UI版本必须是唯一等长独立文本')
+            expected = original.replace(before_label, after_label)
+        else:
+            expected = original
+        actual = (label_dir / filename).read_bytes()
+        if actual != expected:
+            raise ValueError('发布DLL超出精确版本文字变换：' + filename)
+        with pefile.PE(data=original) as a, pefile.PE(data=actual) as b:
+            sections_a = {section.Name: section.get_data() for section in a.sections}
+            sections_b = {section.Name: section.get_data() for section in b.sections}
+            differences = [name.decode().rstrip('\0') for name in sections_a if sections_a[name] != sections_b[name]]
+            if set(sections_a) != set(sections_b) or sections_a[b'.text\0\0\0'] != sections_b[b'.text\0\0\0']:
+                raise ValueError('DLL指令段变化：' + filename)
+            if set(differences) - ({'.rdata'} if filename == 'DualSPUI.dll' else set()):
+                raise ValueError('DLL变化超出只读版本文本节：' + filename)
+            if filename == 'DualSPUI.dll':
+                offset = original.index(before_label) + 1
+                owner = next(section for section in a.sections if section.PointerToRawData <= offset < section.PointerToRawData + section.SizeOfRawData)
+                if owner.Name.rstrip(b'\0') != b'.rdata' or owner.Characteristics & 0x20000000:
+                    raise ValueError('UI版本文字不位于不可执行只读节')
+        section_proofs[filename] = differences
+        runtime['bin/' + filename] = actual
+    if set(runtime) != set(installed['runtime_files']):
+        raise ValueError('发布运行文件集合改变')
+    for name, data in runtime.items():
+        if name not in ('VERSION', 'Scripts/main.lua', 'bin/DualSPUI.dll') and data_hash(data) != installed['runtime_files'][name]:
+            raise ValueError('非标识运行文件变化：' + name)
+    pak = (accepted_dir / old['mount_assets']['file']).read_bytes()
+    if data_hash(pak) != old['mount_assets']['sha256'] or data_hash(pak) != installed['mount_assets']['sha256']:
+        raise ValueError('已测资源包改变')
+    proof = read_json(label_dir / 'label-receipt.json')
+    if (proof['accepted_build_receipt_sha256'] != build_hash or proof['accepted_test_receipt_sha256'] != test_hash or
+            proof['source_files'] != current or proof['runtime_files'] != {name: data_hash(data) for name, data in runtime.items()} or
+            proof['dll_changed_sections'] != section_proofs):
+        raise ValueError('标识变换回执不同于实际字节')
+    manifest = {'runtime_files': {name: data_hash(data) for name, data in runtime.items()},
+                'mount_assets': installed['mount_assets'], 'validated_version': old_version,
+                'actual_installed_receipt': installed_path.relative_to(ROOT).as_posix(),
+                'label_receipt_sha256': digest(label_dir / 'label-receipt.json'), 'version_label_only': True}
+    return runtime, pak, manifest, build_hash, test_hash, digest(validation_path), digest(authorization_path)
+
 def verify_package(path, prefix, payload):
     """完整解压回读每个白名单成员，包括文件清单自身。"""
     with zipfile.ZipFile(path) as archive:
@@ -287,18 +396,27 @@ def verify_package(path, prefix, payload):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
+    parser.add_argument('--evidence-prefix', default=VERSION, help='证据前缀；正式版与旧同号候选分别留档')
+    parser.add_argument('--accepted-label-only-build', type=Path, help='复用已测DLL，仅替换等长UI版本文本，不编译或伪造新测试')
     parser.add_argument('--validated-build-dir', type=Path, help='仅版本标识重建时，显式给出已获用户验收的旧冻结构建')
-    parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7MultiSP-2.16.0.zip')
+    parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7MultiSP-2.21.1.zip')
     parser.add_argument('--output', type=Path, default=ROOT / ('Release/' + NAME + '-' + VERSION + '.zip'))
     args = parser.parse_args()
     build_dir = contained(args.build_dir, ROOT / 'Temp').resolve(strict=True)
     archive_path = contained(args.runtime_archive, ROOT).resolve(strict=True)
     output = contained(args.output, ROOT / 'Release')
-    receipt_path = ROOT / ('evidence/' + VERSION + '-release.json')
+    if not args.evidence_prefix or any(c not in '0123456789abcdefghijklmnopqrstuvwxyz.-' for c in args.evidence_prefix):
+        raise ValueError('证据前缀无效')
+    receipt_path = ROOT / ('evidence/' + args.evidence_prefix + '-release.json')
     if output.exists() or receipt_path.exists() or output.suffix.lower() != '.zip':
         raise ValueError('发布包或发布回执已存在，或输出不是 ZIP；拒绝覆盖')
-    accepted_dir = contained(args.validated_build_dir, ROOT / 'Temp').resolve(strict=True) if args.validated_build_dir else None
+    if args.validated_build_dir and args.accepted_label_only_build:
+        raise ValueError('两种标识换版方式不能混用')
+    accepted_arg = args.accepted_label_only_build or args.validated_build_dir
+    accepted_dir = contained(accepted_arg, ROOT / 'Temp').resolve(strict=True) if accepted_arg else None
     def sources():
+        if args.accepted_label_only_build:
+            return accepted_label_sources(build_dir, accepted_dir, args.evidence_prefix)
         return version_label_sources(build_dir, accepted_dir) if accepted_dir else frozen_sources(build_dir)
     runtime, pak, installed, build_hash, test_hash, validation_hash, authorization_hash = sources()
     actual_installed = installed.get('actual_installed_receipt', 'evidence/' + VERSION + '-installed.json')
@@ -327,11 +445,12 @@ def main():
                'mount_assets': installed['mount_assets'], 'build_receipt_sha256': build_hash,
                'test_receipt_sha256': test_hash, 'user_validation_sha256': validation_hash,
                'release_authorization_sha256': authorization_hash,
-               'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(accepted_dir),
+               'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(args.validated_build_dir),
+               'version_label_only': bool(args.accepted_label_only_build), 'label_receipt_sha256': installed.get('label_receipt_sha256'),
                'release_metadata_transition': installed.get('release_metadata_transition')}
     payload[MOD + 'install-receipt.json'] = json_bytes(install)
-    for name in ('README_zh-CN.txt', 'README_en.txt'):
-        data = contained(ROOT / 'docs' / name, ROOT).read_bytes()
+    for name in ('README_zh-CN.txt', 'README_en.txt', '安装说明.txt', '版本说明.txt'):
+        data = contained(ROOT / 'docs' / ('release.txt' if name == '版本说明.txt' else name), ROOT).read_bytes()
         if not data.decode('utf-8-sig').strip():
             raise ValueError('发布说明为空：' + name)
         payload[name] = data
@@ -371,11 +490,12 @@ def main():
               'build_receipt_sha256': build_hash, 'test_receipt_sha256': test_hash,
               'installed_receipt_sha256': digest(ROOT / actual_installed),
               'actual_installed_receipt': actual_installed, 'gameplay_validated_version': validated_version,
-              'version_label_rebuild': bool(accepted_dir), 'new_version_installed': not bool(accepted_dir),
+              'version_label_rebuild': bool(args.validated_build_dir),
+               'version_label_only': bool(args.accepted_label_only_build), 'label_receipt_sha256': installed.get('label_receipt_sha256'), 'new_version_installed': not bool(accepted_dir),
               'release_metadata_transition': installed.get('release_metadata_transition'),
               'packager_sha256': digest(Path(__file__)),
               'user_validation_sha256': validation_hash, 'release_authorization_sha256': authorization_hash,
-              'runtime_source': '完整核验 2.16.0 发布包及清单后复用的原始微软运行库，历史来源见2.16发布回执',
+              'runtime_source': '完整核验 2.21.1 发布包及清单后复用的原始微软运行库，历史来源见2.16发布回执',
               'runtime_archive_sha256': OLD_ARCHIVE_HASH,
               'microsoft_signatures': signatures, 'files': records}
     with receipt_path.open('x', encoding='utf-8') as stream:
