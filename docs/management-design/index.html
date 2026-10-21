@@ -14,6 +14,7 @@
 @media(max-width:800px){.workspace{grid-template-columns:1fr}.inspector{border-left:0;border-top:1px solid #2b3a4c}.desk-head,.instructions{padding:14px 16px}.canvas{padding:14px}.ac-shell.side{grid-template-columns:105px minmax(0,1fr)}.ac-nav{padding:0 8px}.ac-nav button{padding:12px}.ac-row-head{flex-wrap:wrap}.ac-value{max-width:100%}.ac-footer{padding:14px}.ac-header{gap:8px}.ac-brand{font-size:17px}}
 @media(prefers-reduced-motion:reduce){.stage{transition:none}}
 @media print{.desk-head,.instructions,.canvas-bar,.inspector,.caption{display:none}.workspace{display:block}.canvas{padding:0}.game-panel{box-shadow:none}body{background:white}.stage{max-width:none!important}}
+.ac-header-controls{display:flex;align-items:center;gap:12px;flex-wrap:wrap;width:100%}.ac-language-label{margin-left:auto}.ac-inline-binding{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -30,9 +31,9 @@
 <input id="importFile" type="file" accept=".json,application/json" hidden>
 <script id="designSeed" type="application/json">{
   "schema": "ac7-management-design-v1",
-  "storageKey": "ac7-design-sp-debug-2270",
-  "sourceVersion": "2.27.1",
-  "sourceCommit": "824adb5 + 本轮界面调整",
+  "storageKey": "ac7-design-flat-2272",
+  "sourceVersion": "2.27.2",
+  "sourceCommit": "85c46c0",
   "pages": [
     {
       "id": "general",
@@ -111,13 +112,14 @@
             },
             {
               "id": "shortcut_salvo",
-              "label": "机炮齐射",
+              "label": "快捷键",
               "kind": "binding",
               "value": "Ctrl + Alt + F5",
               "description": "",
               "help": "help",
               "hidden": false,
-              "note": ""
+              "note": "",
+              "inlineAfter": "gun_salvo_enabled"
             }
           ],
           "description": ""
@@ -275,13 +277,14 @@
             },
             {
               "id": "shortcut_camera_hold",
-              "label": "启用视角保持快捷键",
+              "label": "快捷键",
               "description": "",
               "kind": "binding",
               "value": "Ctrl + Alt + F6",
               "help": "help",
               "hidden": false,
-              "note": ""
+              "note": "",
+              "inlineAfter": "camera_hold_enabled"
             }
           ],
           "description": ""
@@ -540,13 +543,14 @@
               },
               {
                 "id": "shortcut_salvo",
-                "label": "机炮齐射",
+                "label": "快捷键",
                 "kind": "binding",
                 "value": "Ctrl + Alt + F5",
                 "description": "",
                 "help": "help",
                 "hidden": false,
-                "note": ""
+                "note": "",
+                "inlineAfter": "gun_salvo_enabled"
               }
             ],
             "description": ""
@@ -704,13 +708,14 @@
               },
               {
                 "id": "shortcut_camera_hold",
-                "label": "启用视角保持快捷键",
+                "label": "快捷键",
                 "description": "",
                 "kind": "binding",
                 "value": "Ctrl + Alt + F6",
                 "help": "help",
                 "hidden": false,
-                "note": ""
+                "note": "",
+                "inlineAfter": "camera_hold_enabled"
               }
             ],
             "description": ""
@@ -931,14 +936,15 @@ function pickItem(p,g,i){pageId=p.id;groupId=g.id;itemId=i.id;editorMode('item')
 function renderPreview(){
  normalizeSelection();const t=draft.theme,p=currentPage(),panel=$('gamePanel');
  panel.style.setProperty('--ac-accent',t.accent);panel.style.setProperty('--ac-font',t.font+'px');panel.style.setProperty('--ac-gap',({compact:7,normal:12,relaxed:18})[t.density]+'px');panel.style.setProperty('--ac-radius',t.radius+'px');$('stage').style.maxWidth=t.width+'px';$('panelShell').classList.toggle('side',t.layout==='side');document.body.classList.toggle('preview-only',preview);
- $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title,master,el('span','ac-language','语言：跟随游戏'));$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);const management=draft.chrome.managementBinding;if(management&&(!preview||!management.hidden)){const area=el('div','ac-row-name');area.append(el('span','',management.label),button(management.value,()=>{if(!preview){itemId=management.id;editorMode('item');render()}else status(management.description)}));$('panelHeader').append(area)}
+ $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title);const controls=el('div','ac-header-controls');controls.append(master);$('panelHeader').append(controls);$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);const management=draft.chrome.managementBinding;if(management&&(!preview||!management.hidden)){const area=el('div','ac-row-name');area.append(el('span','',management.label),button(management.value,()=>{if(!preview){itemId=management.id;editorMode('item');render()}else status(management.description)}));controls.append(area)}controls.append(el('span','ac-language-label','语言/Language'),el('span','ac-language','跟随游戏'));
  $('pageNav').replaceChildren();for(const other of draft.pages){const b=button(other.title,()=>{pageId=other.id;groupId=other.groups[0]?.id;itemId=null;render()},other.id===pageId?'active':'');b.setAttribute('aria-current',other.id===pageId?'page':'false');$('pageNav').append(b)}
  $('pageBody').replaceChildren();let visibleCount=0;
  for(const g of p.groups){const shown=g.items.filter(i=>!preview||!i.hidden);if(preview&&!shown.length)continue;visibleCount++;
-  const group=el('section','ac-group'+(!preview&&g.id===groupId?' selected':''));group.append(button(g.title,()=>{if(!preview){groupId=g.id;itemId=null;editorMode('structure');render()}},'ac-group-title'));if(g.description)group.append(el('p','ac-group-description',g.description));
-  for(const i of shown){const row=el('div','ac-row'+(!preview&&i.id===itemId?' selected':'')+(i.hidden?' ac-disabled':''));if(!preview){row.tabIndex=0;row.setAttribute('role','group');row.setAttribute('aria-label','编辑：'+i.label);row.addEventListener('keydown',event=>{if(event.target===row&&(event.key==='Enter'||event.key===' ')){event.preventDefault();pickItem(p,g,i)}})}row.addEventListener('click',()=>{if(!preview)pickItem(p,g,i)});const head=el('div','ac-row-head'),name=el('div','ac-row-name');
+  const group=el('section','ac-group'+(!preview&&g.id===groupId?' selected':''));group.append(button(g.title,()=>{if(!preview){groupId=g.id;itemId=null;editorMode('structure');render()}},'ac-group-title'));if(g.id==='log_controls'){group.append(button(expanded.has('log-card')?'收起':'展开',()=>{expanded.has('log-card')?expanded.delete('log-card'):expanded.add('log-card');renderPreview()}));if(!expanded.has('log-card')){$('pageBody').append(group);continue}}if(g.description)group.append(el('p','ac-group-description',g.description));
+  for(const i of shown){if(i.inlineAfter&&shown.some(other=>other.id===i.inlineAfter))continue;const row=el('div','ac-row'+(!preview&&i.id===itemId?' selected':'')+(i.hidden?' ac-disabled':''));if(!preview){row.tabIndex=0;row.setAttribute('role','group');row.setAttribute('aria-label','编辑：'+i.label);row.addEventListener('keydown',event=>{if(event.target===row&&(event.key==='Enter'||event.key===' ')){event.preventDefault();pickItem(p,g,i)}})}row.addEventListener('click',()=>{if(!preview)pickItem(p,g,i)});const head=el('div','ac-row-head'),name=el('div','ac-row-name');
    if(i.kind==='toggle'){const c=el('input');c.type='checkbox';c.checked=i.value==='开启';c.setAttribute('aria-label',i.label+'（示例状态）');c.addEventListener('click',event=>{event.stopPropagation();if(!preview)pickItem(p,g,i)});name.append(c)}
    name.append(el('span','',i.label));if(i.description&&i.help==='help'){const h=button('?',event=>{event.stopPropagation();expanded.has(i.id)?expanded.delete(i.id):expanded.add(i.id);renderPreview()},'ac-help');h.setAttribute('aria-label','查看'+i.label+'说明');h.setAttribute('aria-expanded',expanded.has(i.id));name.append(h)}head.append(name);
+   const inline=shown.find(other=>other.inlineAfter===i.id);if(inline){const area=el('div','ac-inline-binding');area.append(el('span','',inline.label),button(inline.value,e=>{e.stopPropagation();if(!preview)pickItem(p,g,inline)}));head.append(area)}
    if(i.kind!=='toggle'&&i.kind!=='text'){const value=el('div','ac-value');if(i.kind==='slider'){const slider=el('input');slider.type='range';slider.min='0';slider.max='200';slider.value=parseInt(i.value)||0;slider.setAttribute('aria-label',i.label+'（示例）');slider.addEventListener('click',e=>e.stopPropagation());slider.addEventListener('input',()=>{output.textContent=slider.value+'（示例）'});const output=el('small','',i.value);value.append(slider,el('br'),output)}else value.append(button(i.value||'选择',e=>{e.stopPropagation();if(!preview)pickItem(p,g,i);else status('预览操作：'+i.label+'。不会操作游戏。')}));head.append(value)}row.append(head);
    if(i.description&&(i.help==='visible'||(i.help==='help'&&expanded.has(i.id))))row.append(el('p','ac-row-desc',i.description));if(!preview&&i.note)row.append(el('p','ac-note','设计意见：'+i.note));if(!preview&&i.hidden)row.append(el('small','ac-note','建议隐藏 · 纯预览不显示'));group.append(row)
   }$('pageBody').append(group)

@@ -68,8 +68,8 @@ void salvoMainTick(void* activator,float delta) {
         if(!salvoLive() || !salvoIdentities() || !read<unsigned char>(gunSalvo.activator.address+0x2a1) ||
             !continuousAlive(gunSalvo.weapon) || read<Addr>(groupOf(gunSalvo.activator.address,true)+0x40)!=gunSalvo.weapon.address)salvoFailure();
     }catch(...) {salvoFailure();}
+    debugWeaponsTick(reinterpret_cast<Addr>(activator)); // 在原生装填前修正当前窗口，弹体仍由原生Tick创建。
     originalSalvoTick(activator,delta); // 心跳中断时也先停自有输入，不留下永久连射。
-    debugWeaponsTick(reinterpret_cast<Addr>(activator));
 }
 void installGunSalvo() {
     static bool installed=false;

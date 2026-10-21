@@ -38,3 +38,6 @@ __pycache__/
 
 # 会话附件的选定参考图已归档到 references，不提交传输目录。
 /.codex-remote-attachments/
+
+# 暂停静音恢复记录及原子写入中间文件属于个人运行状态。
+/dist/DualSP/management-audio-state.json*

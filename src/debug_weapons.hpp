@@ -5,6 +5,7 @@ struct DebugWeapons {
     DWORD thread{};
     ULONGLONG heartbeat{};
     bool allowed{};
+    Addr repairPool{};int repairCursor{-1},repairAmmo{},repairWindow{}; // 无限弹药单独开启时仅在队列变更后检查窗口。
     std::string error;
 } debugWeapons;
 using DebugConsume=void(*)(void*,unsigned char,int,void*,bool);
@@ -22,22 +23,32 @@ void debugWeaponsFailure(const char* error) noexcept {
     debugWeapons.allowed=false;debugInfiniteAmmo=false;debugFastReload=false;
     try {debugWeapons.error=error;nativeLog(std::string("DEBUG_WEAPONS_ERROR ")+error);}catch(...) {}
 }
+bool debugQueueNeedsRepair() {
+    return session.active>=0 && session.active<session.count && session.special[session.active].debugRecycled;
+}
 void debugBoostReload(Addr activator) {
-    if(!debugFastReload)return;
+    const bool recycle=debugInfiniteAmmo || debugQueueNeedsRepair();
+    if(!debugFastReload && !recycle)return;
     const Addr group=groupOf(activator,true);
     if(!debugReloadEligible(group))return;
-    const auto slots=weaponSlotArray(group);
-    const int window=read<int>(group+0x10),next=read<int>(group+0x14);
+    const int ammo=read<int>(group+8),window=read<int>(group+0x10),next=read<int>(group+0x14);
+    const Addr pool=read<Addr>(group+0x58);
+    if(!debugFastReload && pool==debugWeapons.repairPool && next==debugWeapons.repairCursor && ammo==debugWeapons.repairAmmo && window==debugWeapons.repairWindow)return;
+    const auto slots=weaponSlotArray(group); // 一次验证完整数组，窗口内直接读写，避免每槽查页。
     for(int i=0;i<window;++i) {
         const Addr timer=slots.data+static_cast<size_t>((next+i)%slots.count)*0x60+0x48;
-        const float duration=read<float>(timer),elapsed=read<float>(timer+4);
+        std::array<float,2> values{};std::memcpy(values.data(),reinterpret_cast<void*>(timer),sizeof(values));
+        const float duration=values[0];float elapsed=values[1];
         dualsp::validateReload(duration,elapsed);
-        // 负值仍归原生生命周期处理；保留至少一次跨过完成点的原生更新。
-        if(duration>1 && elapsed>=0 && elapsed<duration-1)write<float>(timer+4,duration-1);
+        // 只激活当前装填窗口里的精确-1；不预装整池，不改-2待发状态或负延迟。
+        if(recycle && ammo!=0 && elapsed==-1.f)elapsed=0;
+        if(debugFastReload && duration>1 && elapsed>=0 && elapsed<duration-1)elapsed=duration-1;
+        if(elapsed!=values[1])std::memcpy(reinterpret_cast<void*>(timer+4),&elapsed,sizeof(elapsed));
     }
+    debugWeapons.repairPool=pool;debugWeapons.repairCursor=next;debugWeapons.repairAmmo=ammo;debugWeapons.repairWindow=window;
 }
 void debugWeaponsTick(Addr activator) noexcept {
-    if(!debugFastReload)return;
+    if(!debugInfiniteAmmo && !debugFastReload && !debugQueueNeedsRepair())return;
     try {if(debugWeaponsLive(activator))debugBoostReload(activator);}
     catch(const std::exception& error){debugWeaponsFailure(error.what());}
 }
@@ -69,8 +80,8 @@ void installDebugWeapons() {
     if(MH_EnableHook(target)!=MH_OK) {MH_RemoveHook(target);throw std::runtime_error("SP调试钩子启用失败");}
     installed=true;
 }
-void debugSetFastReload(bool enabled,double time) {
-    if(enabled==debugFastReload)return;
+void debugSetOptions(bool infinite,bool fast,double time) {
+    if(infinite==debugInfiniteAmmo && fast==debugFastReload)return;
     for(int index=0;index<session.count;++index) {
         auto& group=session.special[index];
         if(index==session.active || !group.valid)continue;
@@ -83,7 +94,7 @@ void debugSetFastReload(bool enabled,double time) {
         }
         group.capturedTime=time;
     }
-    debugFastReload=enabled;
+    debugFastReload=fast;debugInfiniteAmmo=infinite;debugWeapons.repairPool=0;
 }
 int debugWeaponsLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
@@ -95,16 +106,20 @@ int debugWeaponsLua(void* luaState) {
         const double time=api->readNumber(luaState,6);
         require((allowed==0 || allowed==1) && (infinite==0 || infinite==1) && (fast==0 || fast==1) && std::isfinite(time) && time>=0,"SP调试参数无效");
         require(debugWeapons.error.empty(),debugWeapons.error.c_str());
-        if(!allowed || (!infinite && !fast && !debugInfiniteAmmo && !debugFastReload))debugWeapons.allowed=false;
+        if(!allowed || (!infinite && !fast && !debugInfiniteAmmo && !debugFastReload &&
+            !std::any_of(session.special.begin(),session.special.end(),[](const Group& group){return group.debugRecycled;})))debugWeapons.allowed=false;
         else {
             require(runtimeEnabled && session.plane==plane && session.activator==activator && session.gameThread==GetCurrentThreadId(),"SP调试不属于当前玩家会话");
             const auto player=continuousIdentity(plane),component=continuousIdentity(activator);
             require(continuousAlive(player) && continuousAlive(component) && read<Addr>(plane+0x11a8)==activator && read<Addr>(activator+0x250)==plane,"SP调试玩家身份已改变");
             if(infinite || fast)installDebugWeapons();
-            debugSetFastReload(fast!=0,time);debugInfiniteAmmo=infinite!=0;
+            debugSetOptions(infinite!=0,fast!=0,time);
+            // 检查点/换装可重建Group而开关保持不变；每次有效续约同步三槽资格。
+            if(infinite)for(int index=0;index<session.count;++index)
+                if(session.special[index].fastReloadEligible)session.special[index].debugRecycled=true;
             debugWeapons.plane=player;debugWeapons.activator=component;debugWeapons.thread=GetCurrentThreadId();
             debugWeapons.heartbeat=GetTickCount64();debugWeapons.allowed=true;
-            debugBoostReload(activator);
+            // 原生Tick在下一次装填更新前处理窗口；心跳不重复扫描物理槽。
         }
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     }catch(const std::exception& error) {

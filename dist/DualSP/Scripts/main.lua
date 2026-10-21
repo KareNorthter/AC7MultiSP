@@ -1,4 +1,4 @@
--- AC7MultiSP 2.27.1源码候选：有上限的后台日志，保留注视静默和SP调试；未编译安装。
+-- AC7MultiSP 2.27.2源码候选：管理布局与暂停静音、SP装填队列修复；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -47,6 +47,7 @@ loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧�
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
 loadExport("dualsp_async_logging_supported","DualSPUI.dll")
+loadExport("dualsp_flat_management_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
@@ -56,6 +57,8 @@ local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上�
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
 local nativeDebugWeapons=loadExport("dualsp_debug_weapons")
+local nativeManagementAudio=loadExport("dualsp_management_audio")
+assert(nativeManagementAudio(0)) -- 仅启动后台并恢复可能遗留的静音，不在游戏线程枚举设备。
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
@@ -687,6 +690,8 @@ local function acquireManagementPause()
         managementPause.pauser=valid(pauser)and pauser:GetAddress()or nil
         assert(accepted==true and managementPause.owned,"管理界面未能取得原生暂停")
     end
+    local audioOK,audioError=nativeManagementAudio(1)
+    assert(audioOK,audioError)
     note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
 end
 -- 只核对打开F6前的同一原生暂停；普通关闭保留，明确换机另行交接。
@@ -700,11 +705,15 @@ local function existingManagementPauseValid(lease)
 end
 -- 只释放本面板创建且仍属于同一世界/拥有者的暂停；其他暂停不重写、不强制清零。
 local function releaseManagementPause()
-    if not managementPause then return end
+    local function resumeAudio()
+        local audioOK,audioError=nativeManagementAudio(0)
+        assert(audioOK,audioError)
+    end
+    if not managementPause then resumeAudio();return end
     local lease=managementPause -- 完成核验前保留会话，失败由控制器明确报告。
     if not valid(lease.settings)then
         note("MANAGEMENT_PAUSE_WORLD_DESTROYED") -- 世界已销毁，无须向新世界发送解除请求。
-        managementPause=nil;return
+        resumeAudio();managementPause=nil;return
     end
     if lease.owned then
         local world=lease.settings:GetWorld() -- 退出任务时旧玩家可能先销毁，使用暂停所属世界作为上下文。
@@ -718,7 +727,7 @@ local function releaseManagementPause()
         end
     end
     note("MANAGEMENT_PAUSE_RELEASED owned="..tostring(lease.owned).." remaining="..tostring(valid(lease.settings)and valid(lease.settings.Pauser)))
-    managementPause=nil
+    resumeAudio();managementPause=nil -- 暂停交接成功后归还静音；失败留在面板内时继续静音。
 end
 local function setPanel(open)
     if open and not runtimeAllowed then return end
@@ -1981,7 +1990,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.27.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.27.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

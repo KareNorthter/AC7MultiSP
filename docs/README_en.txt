@@ -1,4 +1,10 @@
-AC7MultiSP 2.27.1 (source candidate; not built or installed)
+AC7MultiSP 2.27.2 (source candidate; not built or installed)
+
+2.27.2 source changes (since this branch's 2.27.1; in-game validation pending)
+• Management pauses now request muting of this game's audio sessions in a background worker and restore the original unmuted sessions when closed. Previously muted sessions stay muted. A recovery record permits a later startup to attempt recovery after a crash; changed devices/session identifiers may prevent recovery. No game volume settings or other applications are changed.
+• Debug groups are displayed as flat cards. Logs alone have an Expand/Collapse button. Management binding is beside the master switch; Gun salvo and Camera hold bindings are beside their checkboxes, labeled Shortcut. Language selection is preceded by 语言/Language. Existing approved Chinese descriptions and notes are retained.
+• Infinite ammo now recycles finite-initialization disabled slots only inside the current eligible SP reload window. Pending-fire markers remain intact, and the native engine still creates projectiles. Cache, option changes and checkpoint handling use the same queue rules; switching infinite ammo off resumes finite consumption without refilling. Rapid-fire/continuous SP reload behavior remains unchanged.
+• Audio enumeration and recovery-file writes run off the game/render threads. Infinite-only window scans are skipped when the queue has not changed. These are implementation limits, not a verified zero-overhead guarantee. No build, installation, test run or game operation was performed. Management 21 / configuration 19 and resources remain unchanged; matching core/UI/Lua are required.
 
 2.27.1 source changes (since this branch's 2.27.0; in-game validation pending)
 • Mod-owned logs use one background writer. Four mod log segments and six native/UI segments are capped at 1,000,000 bytes each, totaling at most 10 MB. Full segments overwrite the oldest fixed archive slot.
