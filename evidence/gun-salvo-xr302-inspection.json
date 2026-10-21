@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "status": "原因确认，最小源码修订未构建或实机验证",
+  "request": "用户反馈XR302的PLSL没有跟随GUN齐射；允许只读采集，并已手动暂停",
+  "source_base": {
+    "branch": "main",
+    "commit": "a96cde63e64438d4553cdb4e4b6b9ece0e4331f2",
+    "version": "2.22.1",
+    "change_branch": "codex/gun-salvo-xr302"
+  },
+  "observed_install": {
+    "version_label": "2.22.2 alpha1",
+    "version_path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/VERSION",
+    "lua_path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/main.lua",
+    "lua_sha256": "7294BC47FF9A6D9DDC2632CD924B8AAA5BC53FEDA170345679FA28A1E5FC2C38",
+    "lua_filter_lines": [342, 343, 344],
+    "note": "已装Lua仍仅登记原版MGP和PLSL；不以版本文字证明已装核心的完整源码来源，源码修订仅取两处增量供后续整合"
+  },
+  "capture": {
+    "pid": 18580,
+    "build": 9855922,
+    "access": "OpenProcess 0x410，仅查询与读取",
+    "raw_path": "E:/AC7_MultiSP/Temp/gun-salvo-xr302-live-20261021/capture.json",
+    "raw_sha256": "14E939C05B8195CF1371245CBDD7F04ADEC8FE7D01B556053EBDD2F04EFDB8FF",
+    "script_path": "E:/AC7_MultiSP/Temp/inspect_xr302_live.py",
+    "script_sha256": "40ADEA4D8AB7B0FD8B0FDA9DF9E75BBF60078D2E012C0856A9A5BD02D9F10191",
+    "identity_checks": [
+      "读取当前对象登记表，按XR302玩家类及PlayerPlane父链筛选",
+      "实际Controller.Pawn回指当前玩家，候选唯一",
+      "玩家与PlayerWeaponActivator双向归属一致",
+      "反射读取三个SpecialWeaponConfig及WeaponClass，默认对象与实际类一致",
+      "结束前复核弱身份、Controller.Pawn与激活器归属"
+    ],
+    "process_write": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "raw_committed": false,
+    "initial_attempt": "旧采集入口引用过期native-command.txt中的F-22地址，读取被系统拒绝；已停止使用该地址。随后独立定位当前XR302。过期ui-state.json不作为当前齐射开关状态证据"
+  },
+  "observation": {
+    "player_class": "AcePlayerPawn_xr302_C",
+    "plsl_config_index_zero_based": 1,
+    "weapon_class": "plwp_plsl_xr302_C",
+    "default_object": "Default__plwp_plsl_xr302_C",
+    "class_chain": ["plwp_plsl_xr302_C", "Plsl_Bullet", "Bullet", "WeaponBase", "NimbusObjectPoolItem", "Actor", "Object"],
+    "weapon_id": 22,
+    "bAutoFireOnHold": true,
+    "bGunReaction": true,
+    "load_time_seconds": 0.2,
+    "max_loaded_count": 2,
+    "bFireAllInOneShot": false,
+    "volley_rest_interval_seconds": 0.1,
+    "other_configs": [
+      {"index": 0, "class": "plwp_ircm_xr302_C", "weapon_id": 31, "bAutoFireOnHold": false},
+      {"index": 2, "class": "plwp_rktl_xr302_C", "weapon_id": 19, "bAutoFireOnHold": false}
+    ],
+    "armed": false,
+    "gun_held": false,
+    "main_held": false
+  },
+  "diagnosis": {
+    "lua": "readOptionsFor将ID22限定为Default__plwp_plsl_x0_C；XR302自定义默认对象不匹配，salvo_supported为false，不能成为联动候选",
+    "core_source": "salvoCurrentSupported对ID22重复限定同一原版默认对象；只改Lua会在核心执行阶段再次被拒绝",
+    "conclusion": "类名白名单足以解释当前未联动；无需把原生连发能力或按键失效作为原因",
+    "not_claimed": "未从过期状态文件判断当前开关，未验证修订后发射，也未将IRCM独立限制纳入本修复"
+  },
+  "source_change": {
+    "files": ["dist/DualSP/Scripts/main.lua", "src/gun_salvo.hpp"],
+    "rule": "两层同时增加精确Default__plwp_plsl_xr302_C，保留ID22和bAutoFireOnHold条件",
+    "unchanged": ["输入记账与原生动作入口", "单一合格逻辑SP限制", "原生弹药、装填和射速", "暂停与失焦等收尾", "其他MGP和PLSL资格", "协议、配置、版本标识及资源"],
+    "integration": "从实际待交付来源精确接收两处资格判断增量；核心与Lua成套，不能用本分支整套覆盖更新中的Mod"
+  },
+  "validation": {
+    "method": "人工审阅源码差异、两层条件一致性及Git差异格式检查",
+    "protected_dll_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "installed": false,
+    "game_operated_by_agent": false,
+    "runtime_fix_verified": false,
+    "pending": "后续授权成套构建与实机确认XR302起按、松开、人工切换及暂停收尾"
+  }
+}

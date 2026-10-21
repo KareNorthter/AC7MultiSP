@@ -299,7 +299,8 @@ local function readOptionsFor(id)
         local name=weaponDefault:GetFullName()
         salvoOptions[i]=weaponDefault.bAutoFireOnHold and
             ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
-             (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
+             (weaponIds[i]==22 and(name:match("Default__plwp_plsl_x0_C$")~=nil or
+                name:match("Default__plwp_plsl_xr302_C$")~=nil)))
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)

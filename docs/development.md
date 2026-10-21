@@ -242,6 +242,12 @@ EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再
 
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 
+### XR302齐射识别修订（2026-10-21）
+
+`codex/gun-salvo-xr302`从main `a96cde6`建立，独立工作区`C:/Users/83717/.codex/worktrees/gun-salvo-xr302/AC7_MultiSP`。用户暂停XR302并授权只读采集；从当前对象登记表定位实际Controller.Pawn，再核对激活器双向归属，确认其PLSL为自定义`plwp_plsl_xr302_C`、ID22、可按住连发。原Lua和核心两处原版类名白名单都将它排除，现同步登记该精确类；不改发射、切换、弹药或输入记账。
+
+接收只取`main.lua`的候选资格判断及`gun_salvo.hpp`的执行资格判断两处增量和对应文档/证据；现场安装标识`2.22.2 alpha1`与源码基线main/2.22.1分开记录，不以此分支整套覆盖更新中的Mod。保留版本号、协议、配置和资源，由整合方统一后续版本；核心与Lua必须成套。只作人工差异与格式核对，未编译、编写或运行测试、安装、合main、推送或上传，功能效果待后续授权构建和实机确认。详见[架构](architecture.md#xr302机炮齐射识别修订源码未构建)及[现场记录](../evidence/gun-salvo-xr302-inspection.json)。
+
 ### 机炮齐射源码候选（2.21.1）
 
 独立分支`codex/gun-salvo`从main `7a0559d`建立，工作区`C:/Users/83717/.codex/worktrees/gun-salvo/AC7_MultiSP`。先提交纯静态记录`3f9badc`；用户随后明确授权只读采集并手动操作，首架更正为MiG-21bis，另采普通Su-57，要求暂不研究Adler/HGP。本轮据此完成MGP/PLSL源码候选；正式2.21.0、已装已测2.20.3及旧回执保持。
