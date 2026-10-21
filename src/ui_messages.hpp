@@ -6,6 +6,10 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"机库多SP模型开关必须为布尔值","The hangar multi-SP model option must be a boolean."},
+    {"手柄十字键切换武器开关必须为布尔值","The D-pad weapon switch option must be a boolean."},
+    {"旧配置含未知机库或十字键开关","The old configuration contains unknown hangar or D-pad options."},
+    {"需要管理参数第 16 版","Management configuration revision 16 is required."},
     {"视角选目标的相机数据无效","View-center targeting received invalid camera data."},
     {"视角选目标的目标位置无效","View-center targeting received an invalid target position."},
     {"视角选目标的候选表在调用期间改变","The target candidate array changed during native selection."},

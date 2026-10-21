@@ -26,7 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+    return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
@@ -48,6 +48,9 @@ void drawFeatureSettings() {
         ImGui::Checkbox(tr("多SP挂载模型###FixedMount","Multi-SP weapon models###FixedMount"),&draftFixedMountEnabled);
         panelHelp("同时显示已适配机体的多SP模型，并控制机库/补给预览；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试换装时应用。失败恢复原生外观，不影响兵装选择。适配机体见安装说明。",
             "Shows supported multi-SP models and controls hangar/resupply previews. Some internal bays remain native. Applies on sortie, mission/checkpoint retry, resupply or debug loadout. Visual failures restore native models without affecting selection. See installation notes for aircraft coverage.");
+        ImGui::Checkbox(tr("机库中使用多SP武器模型共同挂载###HangarMount","Show multiple SP weapon models in the hangar###HangarMount"),&draftHangarMountEnabled);
+        ImGui::TextWrapped("%s",tr("若关闭，则机库中展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿。",
+            "When disabled, the hangar shows the game's original aircraft and SP models, which may improve low frame rates and stuttering in the hangar."));
         if(state.at("mod_enabled")!=state.at("runtime_mod_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("已保存，返回主菜单后应用总开关。","Saved; return to the main menu to apply the master switch."));
         if(state.at("fixed_mount_enabled")!=state.at("runtime_fixed_mount_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("模型设置将在下次配装时应用。","Model settings apply with the next loadout."));
         if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
@@ -75,7 +78,7 @@ void drawFeatureSettings() {
     ImGui::EndChild();
     drawBasicBindings(); // 基础设置、兵装键位和模组快捷键集中在第一页。
     if(ImGui::CollapsingHeader(tr("使用提示###FeatureHelp","Quick guide###FeatureHelp"))) {
-        ImGui::BulletText("%s",tr("机库直接选择1至3种SP，任务中用X轮切或十字键直选。","Select 1–3 SPs in the hangar; cycle with X or select with the D-pad."));
+        ImGui::BulletText("%s",tr("机库直接选择1至3种SP，任务中用X轮切；启用十字键后可直选。","Select 1–3 SPs in the hangar; cycle with X or enable D-pad selection."));
         ImGui::BulletText("%s",tr("中央兵装提示及右下HUD跟随游戏HUD显隐。","Weapon hints and the lower-right HUD follow game HUD visibility."));
         ImGui::BulletText("%s",tr("镜头保持、保持注视及相关键位在“视角”页。","Find camera hold, toggle tracking and their bindings in Camera."));
     }
@@ -131,6 +134,9 @@ void drawCameraSettings() {
 }
 void drawBasicBindings() {
     if(ImGui::CollapsingHeader(tr("武器直选键###DirectKeys","Direct weapon keys###DirectKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
+        ImGui::Checkbox(tr("手柄十字键切换武器###DpadWeaponSwitch","Switch weapons with the controller D-pad###DpadWeaponSwitch"),&draftDpadWeaponSwitchEnabled);
+        panelHelp("默认开启。关闭并保存后，模组不响应十字键切换武器；键盘直选、X原生轮切和管理菜单导航保留。",
+            "On by default. Disable and save to stop mod weapon selection with the D-pad. Keyboard selection, native X cycling and menu navigation remain available.");
         ImGui::TextDisabled("%s",tr("X：原生轮切兵装","X: native weapon cycling"));
         if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp|ImGuiTableFlags_RowBg)) {
             ImGui::TableSetupColumn(tr("兵装","Weapon"));ImGui::TableSetupColumn(tr("键盘","Keyboard"));ImGui::TableSetupColumn(tr("手柄","Controller"));ImGui::TableHeadersRow();
@@ -139,7 +145,7 @@ void drawBasicBindings() {
             for(int i=0;i<4;++i) {
                 ImGui::TableNextRow();ImGui::TableNextColumn();ImGui::TextUnformatted(weapons[i]);
                 ImGui::TableNextColumn();bindingButton(i,keyLabel(draftKeys[i]),150);
-                ImGui::TableNextColumn();ImGui::TextUnformatted(pads[i]);
+                ImGui::TableNextColumn();if(draftDpadWeaponSwitchEnabled)ImGui::TextUnformatted(pads[i]);else ImGui::TextDisabled("%s",tr("未占用","Not assigned"));
             }
             ImGui::EndTable();
         }
@@ -187,7 +193,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.25.1");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.25.2");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());

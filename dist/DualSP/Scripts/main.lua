@@ -1,4 +1,4 @@
--- AC7MultiSP 2.25.1候选：F-4E库存交替显隐、双F/A-18E布局及原生暂停换机修订，待实测。
+-- AC7MultiSP 2.25.2源码候选：机库模型及十字键独立开关，通知分级为1/3秒；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=16") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=17") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -367,6 +367,7 @@ local mountAssetStatus={} -- 按实际资源记成功/失败；组合变化只�
 local mountAssetFailureOwner={} -- 失败只属于当时的机体实例，不阻断后来换机产生的新实例。
 ensureMountAssets=function(code,sourcePlane,retry,profile)
     if not(runtimeAllowed and runtimeModEnabled and (runtimeFixedMountEnabled or retry))then return true end
+    if not isFlight and not supplySession and not config.hangar_mount_enabled then return true end -- 机库关闭时不预加载模型，任务/补给照旧。
     local info=catalogue and catalogue[tostring(planeId)]
     code=code or info and info.code
     local entries=code and expandedMountAssets[code]
@@ -466,10 +467,16 @@ end
 local function mountPreview(context)
     -- 视觉失败只返回警告，不能冒泡为页面或兵装事务错误。
     local called,ok,warning=pcall(function()
-        lastMountPreviewContext=context
         local supply=context.mode=="resupply"or context.mode=="resupply_transition"
         local flight=context.mode=="flight"
         if not supply and not flight then scenePreviewRequested=true end
+        if not supply and not flight and not config.hangar_mount_enabled then
+            if scenePreviewPlane or lastMountPreviewContext then
+                lastMountPreviewContext=nil;return releaseMountPreview(0)
+            end
+            return true,"" -- 已归还后不逐帧重复调用核心，也不建立机库候选缓存。
+        end
+        lastMountPreviewContext=context
         local owner=supply and context.owner or context.instance
         if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)or errorText then
             return releaseMountPreview(0)
@@ -522,6 +529,10 @@ end
 -- 所有机库页面共用这一层；武器页当轮提供草稿时优先，其他页面展示已保存方案。
 local function maintainScenePreview()
     if scenePreviewRequested or isFlight or supplySession or panelOpen or errorText then return end
+    if not config.hangar_mount_enabled then
+        if scenePreviewPlane or lastMountPreviewContext then releaseMountPreview(0);lastMountPreviewContext=nil end
+        return
+    end
     if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)then return end
     if not runtimeContext.hangarVisible then
         if scenePreviewPlane or lastMountPreviewContext then releaseMountPreview(0);lastMountPreviewContext=nil end
@@ -767,6 +778,7 @@ function weaponSwitch.gaze.update(toggle,generation,quiet)
         if not ok then gaze.failed=true;gaze.error=tostring(reason);note("TARGET_GAZE_ERROR "..gaze.error)end
         if toggle or padToggle then
             gaze.response=gaze.response+1
+            gaze.noticeWarning=not ok or not allowed or reason=="no_target"
             gaze.notice=not ok and gaze.error or not allowed and tr("当前不能使用目标注视。","Target tracking is currently unavailable.")
                 or reason=="no_target"and tr("没有可注视的目标。","No target is selected.")
                 or gaze.active and tr("目标注视：开启","Target tracking: ON")or tr("目标注视：关闭","Target tracking: OFF")
@@ -1274,6 +1286,7 @@ end
 local function applyDebugHotkey(action)
     if type(action.request)~="number"or action.request%1~=0 or action.request<=hotkeyResponse then return end
     hotkeyResponse=action.request;lastUIKey=nil
+    weaponSwitch.hotkeyWarning=true -- 拒绝/失败默认归为警告，明确成功后才降为普通提示。
     if runtimeReason=="mission13_fixed_sp"then
         hotkeyNotice=tr("第13关使用任务指定SP，多SP功能暂时停用。","Mission 13 uses its assigned SP. Multi-SP is temporarily disabled.");return
     end
@@ -1298,6 +1311,7 @@ local function applyDebugHotkey(action)
         local names={}
         for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=flightOptions[profile[field]+1].code:upper()end end
         hotkeyNotice="SP："..table.concat(names," + ")..tr("（已补满）"," (refilled)")
+        weaponSwitch.hotkeyWarning=false
     else
         local nextConfig=json.decode(json.encode(config));nextConfig.fixed_mount_enabled=not config.fixed_mount_enabled
         local saved,err=pcall(saveConfig,nextConfig)
@@ -1326,6 +1340,7 @@ local function applyDebugHotkey(action)
             mountWarning="多 SP 挂载已回退为原生单 SP："..tostring(err)
         end
         hotkeyNotice=mountWarning or (config.fixed_mount_enabled and tr("多 SP 模型：开启","Multi-SP models: ON")or tr("多 SP 模型：关闭","Multi-SP models: OFF"))
+        weaponSwitch.hotkeyWarning=mountWarning~=nil
         if not runtimeModEnabled then hotkeyNotice=hotkeyNotice..tr("（总开关关闭，仅保存设置）"," (saved; mod disabled)")end
     end
     note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
@@ -1333,7 +1348,8 @@ end
 local function applyAction(action)
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
-    elseif action.type=="select_weapon"then if runtimeModEnabled then directSelect(action.target)end
+    elseif action.type=="select_weapon"then
+        if runtimeModEnabled and (action.source=="keyboard"or action.source=="dpad"and config.dpad_weapon_switch_enabled)then directSelect(action.target)end
     elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.update(true,action.generation,action.source=="pad_l3")
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
@@ -1364,6 +1380,9 @@ local function applyAction(action)
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             config=configStore:applySettings(config,action)
+            if not isFlight and not supplySession and not config.hangar_mount_enabled then
+                releaseMountPreview(0);lastMountPreviewContext=nil -- 保存成功后立即归还机库模型，不触碰任务/补给预览。
+            end
             weaponSwitch.salvo.service.failed=false;weaponSwitch.salvo.service.error=nil
             weaponSwitch.gaze.failed=false;weaponSwitch.gaze.error=nil;weaponSwitch.gaze.update(false)
             weaponSwitch.camera.release();weaponSwitch.camera.failed=false;weaponSwitch.camera.error=nil;weaponSwitch.camera.update()
@@ -1407,9 +1426,10 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=16,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=17,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
+        hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
         view_target_enabled=config.view_target_enabled,view_center_dot_enabled=config.view_center_dot_enabled,
         view_target={protocol=1,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,
@@ -1429,9 +1449,9 @@ local function publishState()
     local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
-    state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice}
+    state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice,notice_warning=weaponSwitch.hotkeyWarning==true}
     state.target_gaze={protocol=2,active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
-        generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,error=weaponSwitch.gaze.error}
+        generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,notice_warning=weaponSwitch.gaze.noticeWarning==true,error=weaponSwitch.gaze.error}
     state.camera_hold={protocol=7,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
@@ -1909,7 +1929,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.25.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.25.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

@@ -55,8 +55,9 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=16; // 手柄布局与HUD选项整合，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=17; // 机库模型与十字键独立开关，UI/Lua须成套部署。
 bool draftModEnabled=true,draftFixedMountEnabled=true,draftGunSalvo=false;
+bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
 bool draftTargetGazePadL3=false,draftCameraHold=false;
 bool draftCameraR3=true,draftViewTarget=false,draftViewCenterDot=true;
 std::atomic<bool> viewCenterDotVisible{false};
@@ -86,13 +87,15 @@ std::array<bool,256> consumedShortcutKeys{};
 std::string hotkeyToast;
 ULONGLONG hotkeyToastUntil{};
 bool toastIsError=false;
+enum class ToastKind {Info,Important,Warning,Error};
+ToastKind toastKind=ToastKind::Info;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
 const char* tr(const char* zh,const char* en);
 void panelHelp(const char* zh,const char* en);
 std::string uiMessage(const std::string& message,
     const char* zh="操作未完成，请在日志页查看详细原因。",
     const char* en="The operation could not be completed. See Logs for details.");
-void showToast(std::string message,bool error=false) {
+void showToast(std::string message,ToastKind kind=ToastKind::Info) {
     const std::string prefix="AC7MultiSP: ";
     if(message.rfind(prefix,0)==0)message.erase(0,prefix.size()); // 统一入口只添加一次前缀。
     message=uiMessage(message);
@@ -103,8 +106,10 @@ void showToast(std::string message,bool error=false) {
         message.resize(end);message+="…";
     }
     if(message.empty())return;
-    hotkeyToast=prefix+message;toastIsError=error;
-    hotkeyToastUntil=GetTickCount64()+(error?6500:4500);
+    const auto now=GetTickCount64();
+    if(kind==ToastKind::Info&&toastKind!=ToastKind::Info&&now<hotkeyToastUntil)return; // 普通消息不截断尚未到时的重要提示。
+    hotkeyToast=prefix+message;toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
+    hotkeyToastUntil=now+(kind==ToastKind::Info?1000:3000);
 }
 int managementTab=0,requestedTab=-1; // Ctrl+Tab 在四个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到语言选择，不依赖鼠标点击。
@@ -217,7 +222,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
             if(index==0)togglePanel(!panel);
             else if(index==3){if(!panel)enqueue({{"type","toggle_gun_salvo"}});}
             else if(index==4){if(!panel)enqueue({{"type","toggle_view_target"}});}
-            else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."));
+            else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."),ToastKind::Important);
             else if(state.contains("debug_hotkey")&&state["debug_hotkey"].value("protocol",0)==1&&state.contains("debug_loadout")) {
                 const auto& debug=state["debug_loadout"];
                 enqueue({{"type","debug_hotkey"},{"hotkey_protocol",1},{"request",++hotkeyRequest},
@@ -234,7 +239,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         if(directInputEnabled()) {
             const auto& keys=state.at("keyboard_keys"); // 使用已保存值，管理草稿不影响飞行。
             for(int slot=0;slot<4;++slot)if(dualsp::singleKeyMatches(keys.at(slot).get<int>(),static_cast<int>(w),mods)) {
-                enqueue({{"type","select_weapon"},{"target",slot}});break;
+                enqueue({{"type","select_weapon"},{"source","keyboard"},{"target",slot}});break;
             }
             // 直选键和修饰键继续交给原生输入，不打断加速等持续操作。
         }
@@ -399,6 +404,7 @@ bool directInputEnabled() {
     return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
         &&state.value("direct_selection_available",false);
 }
+bool dpadInputEnabled() {return directInputEnabled()&&state.value("dpad_weapon_switch_enabled",false);}
 bool targetGazeInputEnabled() {
     return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
         &&state.contains("target_gaze")&&state.at("target_gaze").value("available",false);
@@ -430,6 +436,8 @@ void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
+    draftDpadWeaponSwitchEnabled=state.at("dpad_weapon_switch_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
     draftViewTarget=state.at("view_target_enabled").get<bool>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
@@ -516,17 +524,17 @@ void loadDebugAircraftDraft() noexcept {
                 tr("请求已接受，正在重开任务；换机尚待生效。","Request accepted; restarting the mission. Aircraft change is not applied yet.")):
                 tr("换机请求未完成，请查看错误说明。","Aircraft change was not completed; see the error details.");
             const auto message=data.value("notice",std::string());if(!message.empty())aircraftNotice=message;
-            pendingAircraft=0;showToast(aircraftNotice,!accepted);
+            pendingAircraft=0;showToast(aircraftNotice,accepted?ToastKind::Important:ToastKind::Error);
         } else if(appliedNow) {
             aircraftNotice=data.value("notice",std::string());
             if(aircraftNotice.empty())aircraftNotice=tr("换机已在重开的任务中生效。","Aircraft change applied in the restarted mission.");
-            showToast(aircraftNotice);
+            showToast(aircraftNotice,ToastKind::Important);
         } else if(data.contains("notice")&&!data.at("notice").get<std::string>().empty())aircraftNotice=data.at("notice").get<std::string>();
         else if(changedSession&&status=="idle"&&pendingAircraft==0)aircraftNotice.clear();
     }catch(const std::exception& error) {
         aircraftSupported=aircraftAvailable=false;debugAircraftOptions.clear();
         if(aircraftDataError!=error.what()) {
-            showToast(std::string(tr("换机状态错误：","Aircraft state error: "))+error.what(),true);
+            showToast(std::string(tr("换机状态错误：","Aircraft state error: "))+error.what(),ToastKind::Error);
             nativeLog(std::string("DEBUG_AIRCRAFT_DATA_ERROR ")+error.what());
         }
         aircraftDataError=error.what();
@@ -693,7 +701,7 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
-        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
+        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
@@ -737,7 +745,8 @@ void refreshState() {
             for(size_t index=0;index<checkedKeys.size();++index)
                 for(size_t prior=0;prior<index;++prior)if(checkedKeys[index]==checkedKeys[prior])
                     throw std::runtime_error("Management keyboard bindings must be distinct");
-            state.at("direct_selection_available").get<bool>(); // 固定启用，但仍校验当前场景是否允许操作。
+            state.at("direct_selection_available").get<bool>(); // 键盘直选与手柄开关分别核对。
+            state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
             state.at("target_gaze_pad_l3").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
@@ -795,18 +804,18 @@ void refreshState() {
         loadDebugAircraftDraft();
         const auto& gaze=state.at("target_gaze");
         if(gaze.value("response",0)!=targetGazeResponse) {
-            targetGazeResponse=gaze.value("response",0);showToast(gaze.value("notice",std::string()));
+            targetGazeResponse=gaze.value("response",0);showToast(gaze.value("notice",std::string()),gaze.value("notice_warning",false)?ToastKind::Warning:ToastKind::Info);
         }
         const auto& hotkey=state.at("debug_hotkey");
         hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
         if(hotkey.at("response").get<int>()!=hotkeyResponse) {
-            hotkeyResponse=hotkey.at("response").get<int>();showToast(hotkey.value("notice",std::string()));
+            hotkeyResponse=hotkey.at("response").get<int>();showToast(hotkey.value("notice",std::string()),hotkey.value("notice_warning",false)?ToastKind::Warning:ToastKind::Info);
             draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
         }
         if(state.contains("master_switch")) {
             const auto& master=state.at("master_switch");
             if(master.value("response",0)!=masterResponse) {
-                masterResponse=master.value("response",0);showToast(master.value("notice",std::string()));
+                masterResponse=master.value("response",0);showToast(master.value("notice",std::string()),master.contains("error")?ToastKind::Error:ToastKind::Important);
             }
         }
         Json errors=Json::object();
@@ -821,12 +830,12 @@ void refreshState() {
                 const auto detail=visual?uiMessage(item.value().get<std::string>(),"多挂外观已回退原生，请查看日志。",
                     "Multi-SP models reverted to native visuals. See Logs for details."):
                     uiMessage(item.value().get<std::string>());
-                showToast(detail,true);break;
+                showToast(detail,visual?ToastKind::Warning:ToastKind::Error);break;
             }
         }
         reportedToastErrors=std::move(errors);
     }catch(const std::exception& error) {
-        if(managementError!=error.what())showToast(std::string(tr("管理状态错误：","Management state error: "))+error.what(),true);
+        if(managementError!=error.what())showToast(std::string(tr("管理状态错误：","Management state error: "))+error.what(),ToastKind::Error);
         managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());
     }
 }
@@ -854,7 +863,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 static WORD previousPadButtons=0;
                 static ULONGLONG lastPadPoll{};
                 const auto padNow=GetTickCount64();
-                const ULONGLONG pollInterval=(directInputEnabled()||targetGazeInputEnabled())?20:100;
+                const ULONGLONG pollInterval=(dpadInputEnabled()||targetGazeInputEnabled())?20:100;
                 if(padNow-lastPadPoll>=pollInterval) {
                     lastPadPoll=padNow;
                     XINPUT_STATE pad{};
@@ -864,11 +873,11 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(reseedPad.exchange(false)){chordWas=chord;previousPadButtons=buttons;padWasConnected=connected;}
                     if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
                     const WORD pressed=buttons&~previousPadButtons;
-                    if(connected&&padWasConnected&&directInputEnabled()) {
+                    if(connected&&padWasConnected&&dpadInputEnabled()) {
                         const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
                         int desired=-1,count=0; // 同时按下多个方向不猜测目标。
                         for(int slot=0;slot<4;++slot)if(pressed&keys[slot]){desired=slot;++count;}
-                        if(count==1)enqueue({{"type","select_weapon"},{"target",desired}});
+                        if(count==1)enqueue({{"type","select_weapon"},{"source","dpad"},{"target",desired}});
                         else if(count>1)nativeLog("DIRECT_SELECTION_AMBIGUOUS_PAD: 多个方向同时按下，未切换");
                     }
                     previousPadButtons=buttons;padWasConnected=connected;
@@ -911,7 +920,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         if(toastIsError)ImGui::PopStyleColor();
                         ImGui::PopTextWrapPos();ImGui::End();ImGui::PopFont();
                     }
-                }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),true);nativeLog(std::string("UI_ERROR ")+e.what());}
+                }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),ToastKind::Error);nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&!popupAtFrameStart&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight)&&
                     !ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel))togglePanel(false);
                 ImGui::Render();
