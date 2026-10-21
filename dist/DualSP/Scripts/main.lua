@@ -340,7 +340,8 @@ local function readOptionsFor(id)
         weaponIds[i]=weaponDefault.WeaponID
         local name=weaponDefault:GetFullName()
         salvoOptions[i]=weaponDefault.bAutoFireOnHold and
-            ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
+            ((weaponIds[i]==17 and(name:match("Default__plwp_mgp_r0_C$")~=nil or
+                name:match("Default__plwp_mgp_va_C$")~=nil or name:match("Default__plwp_mgp_vb_C$")~=nil))or
              (weaponIds[i]==22 and(name:match("Default__plwp_plsl_x0_C$")~=nil or
                 name:match("Default__plwp_plsl_xr302_C$")~=nil)))
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)

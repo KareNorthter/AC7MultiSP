@@ -1,0 +1,249 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "status": "静态源码候选；等待HGP现场确认，未构建或安装",
+  "authorization": "用户要求先静态研究所给Adler压缩包并尝试接入，和XR302的PLSL修正一起；资料不足可由用户启动游戏协助",
+  "branch": "codex/gun-salvo-xr302",
+  "latest_main_base": "3119d52",
+  "main_version": "2.23.0",
+  "xr302_change": "ebb2dd0",
+  "main_sync_commit": "b82ed12",
+  "archive": {
+    "path": "F:\\下载\\AC7MOD\\ADA-01 Adler - Standalone-1770-1-0-1693016489.rar",
+    "bytes": 139803450,
+    "sha256": "4d1a75e23e9adf1999f86911339d93f131590e71cfc40fc87b1d423ca2f88126"
+  },
+  "packages": [
+    {
+      "name": "ADA01_AddOn_Standalone_P.pak",
+      "bytes": 143673050,
+      "sha256": "7af63314ae6570f72676a2af708554b8aef8b5edcfae41fcb02eece171dffa52"
+    },
+    {
+      "name": "~~~~ADA01_AddOn_Localization_Datatables_P.pak",
+      "bytes": 6038037,
+      "sha256": "a8fea56d4276c41e9230afe97573a6a49521e15eb76f2865775cfba918f56d41"
+    }
+  ],
+  "raw_directory": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo-xr302\\AC7_MultiSP\\Temp\\adler-hgp-static-20261021",
+  "raw_committed": false,
+  "analysis_scripts": [
+    {
+      "name": "inspect_static.py",
+      "sha256": "c1ccb006dd203f610cb676d275f6359e2c81f7ce3a546b35ed32d01dfdb64fb4"
+    },
+    {
+      "name": "inspect_labels.py",
+      "sha256": "f84d7eb8f2580b4e9b62b2a27f0b15e0fa90a6dd9e26277332931a65b58bceb8"
+    },
+    {
+      "name": "summarize.py",
+      "sha256": "9dfe016e3de23a65252d64a799a1eef7e205e214fe707b50df86e46c7c32e33b"
+    },
+    {
+      "name": "make_evidence.py",
+      "sha256": "0e44be4f458fe7b59be69a1eb7a73dbef4404a634482bbe16cd43bd14a94116b"
+    }
+  ],
+  "parser": {
+    "program": "本机UAssetGUI / UAssetAPI 1.1.0 (8b8687a)",
+    "engine": "VER_UE4_18",
+    "method": "只读原压缩包，解包副本后按PAK v4索引提取选定资源；识别ACE7头时只解码副本，导出JSON而不运行蓝图",
+    "program_sha256": "b7d75c0893f1a60e565853ae638bc21f2416cd12c2d9d854e297abb87ceb3263",
+    "index_sha256": "2b71614c674d0b065434ca7fe1cfdf987ad5bccdbc5e4ec99f0ec2a8abbdc4ca",
+    "manifest_sha256": "869c03ad7aa80c708eda7ed93d2ed8e49c90baa31373bac30bd42f58c5e3fa7d"
+  },
+  "aircraft": [
+    {
+      "asset": "Blueprint/Player/Pawn/AcePlayerPawn_adlra.uasset",
+      "asset_sha256": "a60ee776c3d79ea93a058ce25f63ce896ab5929f3ef6cb478771456afccd1848",
+      "export_sha256": "5deeff7aea4c63d7e348c0700b1d40fb572746befecccb055e00a35cb7740e24",
+      "parsed_json_sha256": "729b02be7e64c1777168f71d74975cba669b2fa225f3e90b9145e932a3d1c8a3",
+      "class_name": "AcePlayerPawn_adlra_C",
+      "parent": "AcePlayerPawn_C",
+      "default_object": "Default__AcePlayerPawn_adlra_C",
+      "functions": [
+        {
+          "name": "ExecuteUbergraph_AcePlayerPawn_zoef",
+          "bytecode_bytes": 165,
+          "calls": [
+            "ReceiveBeginPlay",
+            "K2_AttachToComponent",
+            "K2_AttachToComponent"
+          ]
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytecode_bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_AcePlayerPawn_zoef"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytecode_bytes": 13,
+          "calls": [
+            "UserConstructionScript"
+          ]
+        }
+      ],
+      "special_weapon_configs": {
+        "SpecialWeaponConfig1": "plwp_sdbm_x0_C",
+        "SpecialWeaponConfig2": "plwp_mgp_va_C",
+        "SpecialWeaponConfig3": "plwp_mstm_adlr_C"
+      }
+    },
+    {
+      "asset": "Blueprint/Player/Pawn/AcePlayerPawn_adlrb.uasset",
+      "asset_sha256": "7a035bebd2837444cd730214707bcd7de8677424db168f1d18756f8892bef060",
+      "export_sha256": "5deeff7aea4c63d7e348c0700b1d40fb572746befecccb055e00a35cb7740e24",
+      "parsed_json_sha256": "361cfa9416940ed6c0864b77544debc5f173fe669a5e927e1258a99dd52ba3cd",
+      "class_name": "AcePlayerPawn_adlrb_C",
+      "parent": "AcePlayerPawn_C",
+      "default_object": "Default__AcePlayerPawn_adlrb_C",
+      "functions": [
+        {
+          "name": "ExecuteUbergraph_AcePlayerPawn_zoef",
+          "bytecode_bytes": 165,
+          "calls": [
+            "ReceiveBeginPlay",
+            "K2_AttachToComponent",
+            "K2_AttachToComponent"
+          ]
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytecode_bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_AcePlayerPawn_zoef"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytecode_bytes": 13,
+          "calls": [
+            "UserConstructionScript"
+          ]
+        }
+      ],
+      "special_weapon_configs": {
+        "SpecialWeaponConfig1": "plwp_mpbm_adlr_C",
+        "SpecialWeaponConfig2": "plwp_mgp_vb_C",
+        "SpecialWeaponConfig3": "plwp_4agm_a0_C"
+      }
+    }
+  ],
+  "weapons": [
+    {
+      "asset": "Blueprint/Weapons/Player/Base/plwp_mgp_va.uasset",
+      "asset_sha256": "3dca0a9cb2f7be5cab9ef840c4a585c993b0c5760338d5d38ae632bcd148b2e1",
+      "export_sha256": "bfd3c362383e80ca8203ba436a8a3749314d06c8cd2ec25817d504de74938d2d",
+      "parsed_json_sha256": "bd83f7397792f1ebe7d6c00a12e863b2bf5b7f8167ca67ed01f58230bb13f95c",
+      "class_name": "plwp_mgp_va_C",
+      "parent": "Artillery",
+      "default_object": "Default__plwp_mgp_va_C",
+      "functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytecode_bytes": 3,
+          "calls": []
+        }
+      ],
+      "serialized_defaults": {
+        "WeaponID": "EWeaponID::WID_mgp",
+        "bAutoFireOnHold": true,
+        "LoadTime": 0.20000000298023224,
+        "MaxLoadedCount": 4,
+        "bFireAllInOneShot": true,
+        "bReloadOnFire": false,
+        "bReloadAfterAllFired": true,
+        "bShouldTreatAsOneWeapon": true
+      },
+      "bGunReaction_serialized": false,
+      "bGunReaction_effective": "未从资源中得出；继承值待现场核对，不假定为真"
+    },
+    {
+      "asset": "Blueprint/Weapons/Player/Base/plwp_mgp_vb.uasset",
+      "asset_sha256": "cdaad67b78d52f72ead789bf3cba348d4cafb4d77c4a4da2ab24c85057dabaf5",
+      "export_sha256": "dadafd2a0d32434e0151c4e6e92d17749add3b3c2778d56a2f708191f7a6a060",
+      "parsed_json_sha256": "571a4d52cf9db23f78bf013436434f8326a1c6fe0231d8f1f63494cd2de19db8",
+      "class_name": "plwp_mgp_vb_C",
+      "parent": "Bullet",
+      "default_object": "Default__plwp_mgp_vb_C",
+      "functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_mgp_r0",
+          "bytecode_bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytecode_bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_mgp_r0"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytecode_bytes": 3,
+          "calls": []
+        }
+      ],
+      "serialized_defaults": {
+        "WeaponID": "EWeaponID::WID_mgp",
+        "bAutoFireOnHold": true,
+        "LoadTime": 0.05000000074505806,
+        "MaxLoadedCount": 4,
+        "bFireAllInOneShot": true,
+        "bReloadOnFire": false,
+        "bReloadAfterAllFired": true,
+        "bShouldTreatAsOneWeapon": true
+      },
+      "bGunReaction_serialized": false,
+      "bGunReaction_effective": "未从资源中得出；继承值待现场核对，不假定为真"
+    }
+  ],
+  "findings": [
+    "两架Adler的SpecialWeaponConfig2分别引用plwp_mgp_va_C和plwp_mgp_vb_C，两者枚举均为EWeaponID::WID_mgp（现有原生枚举编号17）",
+    "va直接继承Artillery，装填时间约0.2秒；vb直接继承Bullet，装填时间约0.05秒；两者MaxLoadedCount均4、整组发射及按住连发均true",
+    "va仅有空构造脚本；vb的BeginPlay与Ubergraph只分发后返回，构造为空；没有导出的额外开火或松开脚本。玩家的BeginPlay调用父级并处理组件附着，不实现自定义发射循环",
+    "包内两个玩家表行SpWeaponID2均mgp，库存分别500和4000。不得据此将所有HGP显示名一概认作MGP",
+    "Localization/Game/*.dat不是明文资源；本轮未解码其内容，不能确认va/vb与画面HGP文字的具体对应关系",
+    "主武器原生按住路径及bAutoFireOnHold入口沿用此前gun-salvo-static-research.json依据；静态配置足以尝试原通道接入，不等于运行行为已验证"
+  ],
+  "candidate": {
+    "files": [
+      "dist/DualSP/Scripts/main.lua",
+      "src/gun_salvo.hpp"
+    ],
+    "rule": "Lua与核心两层同时登记Default__plwp_mgp_va_C、Default__plwp_mgp_vb_C，仅在ID17且bAutoFireOnHold为真时放行；保留XR302 PLSL精确类修正",
+    "unchanged": [
+      "原生输入入口与输入责任合并",
+      "原生射速、装填、扣弹及整组发射",
+      "唯一合格逻辑SP限制",
+      "暂停、管理、失焦、人工切换及身份失效收尾",
+      "配置、协议、资源与版本标识"
+    ],
+    "ui": "现有界面文案未改；HGP仍属静态候选，不宣称支持验收。后续确认范围后再按现有文案审核约定提交具体改文",
+    "integration": "本分支已接续2.23.0主线；只接收本分支相对main的齐射增量，核心与Lua须成套交付"
+  },
+  "limits": [
+    "资源未显式序列化bGunReaction，不能将缺失等同false或true",
+    "尚无Adler实际受控玩家、运行CDO、正常按住和松开时序；也未验证原生炮口、音效、暂停及切换后的停止行为",
+    "静态仅登记该压缩包两类；其他同名显示或变更版本仍需各自证据"
+  ],
+  "validation": {
+    "method": "人工审阅资源默认值、引用与蓝图字节码，以及源码差异/格式；不是产品测试",
+    "protected_dll_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "game_process_opened_for_hgp": false,
+    "memory_written": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "installed": false,
+    "runtime_verified": false
+  },
+  "pending": "用户选择画面上带HGP的Adler方案并暂停后，只读核对实际玩家/CDO及字段；必要时由用户手动完成原生机枪/SP交错操作"
+}

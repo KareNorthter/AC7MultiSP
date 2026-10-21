@@ -329,6 +329,14 @@ EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再
 
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 
+### Adler HGP静态候选与XR302合并接续（2026-10-21）
+
+用户要求先研究`F:/下载/AC7MOD/ADA-01 Adler - Standalone-1770-1-0-1693016489.rar`并尝试接入，与XR302 PLSL修正一起交付。本分支保留`ebb2dd0`，通过`b82ed12`接续main/2.23.0（`3119d52`），避免覆盖主线内存交接、无限弹药及装填修订。合并仅手工保留evidence索引两边条目；旧回执原字节不变，其既有CRLF格式提示不在本轮重写。
+
+离线提取与解析结果保留在本工作区`Temp/adler-hgp-static-20261021`，原包SHA256为`4d1a75e23e9adf1999f86911339d93f131590e71cfc40fc87b1d423ca2f88126`。两架Adler的第二项SP分别为`plwp_mgp_va_C`和`plwp_mgp_vb_C`，静态默认值均明确允许按住连发；两层资格判断在原版MGP及XR302修订基础上仅增加这两个精确类，核心与Lua仍须成套交付。只接收本分支相对最新main的齐射增量和对应文档/证据，不整套回退已更新的Mod。版本、协议、配置、资源及UI文案不改，由整合方统一后续候选版本。
+
+本轮未编译、编写或运行测试、安装、操作或附加游戏；仅对原包及临时副本静态分析和人工审阅。静态条件足够准备试用源码，但尚不能确认画面HGP对应类及实际发射/停止行为；已请用户选择HGP方案进入单人任务暂停，以既有只读授权核对。现场核对与修订后的实机验收须单独记录，不能将静态解析或旧MGP/PLSL反馈冒充HGP验收。详见[架构](architecture.md#adler吊舱齐射静态候选2026-10-21)及[静态记录](../evidence/gun-salvo-adler-hgp-static.json)。
+
 ### XR302齐射识别修订（2026-10-21）
 
 `codex/gun-salvo-xr302`从main `a96cde6`建立，独立工作区`C:/Users/83717/.codex/worktrees/gun-salvo-xr302/AC7_MultiSP`。用户暂停XR302并授权只读采集；从当前对象登记表定位实际Controller.Pawn，再核对激活器双向归属，确认其PLSL为自定义`plwp_plsl_xr302_C`、ID22、可按住连发。原Lua和核心两处原版类名白名单都将它排除，现同步登记该精确类；不改发射、切换、弹药或输入记账。

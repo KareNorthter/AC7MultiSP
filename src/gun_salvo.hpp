@@ -102,7 +102,7 @@ bool salvoCurrentSupported() {
     const auto name=mountNameIndex(read<unsigned>(weapon+0x18));
     const auto id=read<unsigned char>(weapon+0x3b0);
     return continuousAlive(identity) && read<unsigned char>(weapon+0x451)==1 &&
-        ((id==17 && name=="Default__plwp_mgp_r0_C") ||
+        ((id==17 && (name=="Default__plwp_mgp_r0_C" || name=="Default__plwp_mgp_va_C" || name=="Default__plwp_mgp_vb_C")) ||
          (id==22 && (name=="Default__plwp_plsl_x0_C" || name=="Default__plwp_plsl_xr302_C")));
 }
 // action=-1只读状态，0归还额外输入，1按住当前合格SP；resume仅供本次自动切换后恢复真实机枪按住。

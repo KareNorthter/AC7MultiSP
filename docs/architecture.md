@@ -203,6 +203,14 @@ F-14D、F/A-18F、Su-33、F/A-18F Block III通过常规七组合表接入静态�
 
 核心的回中轮询另收Lua从已保存快捷键生成的8位组合占用表，避免相同主键的组合动作兼触回中；松开修饰键不补发。镜头六参数/子协议5、核心及UI新能力标记成套，管理13/配置12/注视2/换机2不变。旧正式版与下文来源阶段的镜头4仍是历史事实。仅源码人工复核，未编译、写/运行测试或实机验证，见[修订记录](../evidence/keyboard-modifier-routing.json)。
 
+## Adler吊舱齐射静态候选（2026-10-21）
+
+本分支已接续正式main/2.23.0（`3119d52`），同时保留下节XR302的PLSL修订。用户提供的Adler 1.0独立版中，`AcePlayerPawn_adlra_C`的第二项SP引用`plwp_mgp_va_C`，`AcePlayerPawn_adlrb_C`的第二项SP引用`plwp_mgp_vb_C`。两者均为`WID_mgp`（17）、`bAutoFireOnHold=true`、`MaxLoadedCount=4`、`bFireAllInOneShot=true`；va直接继承`Artillery`、装填约0.2秒，vb直接继承`Bullet`、装填约0.05秒。武器导出蓝图没有额外开火循环。资源未显式保存`bGunReaction`，其继承后的实际值不能从缺失字段推定。
+
+Lua候选筛选与核心执行筛选同步增加精确默认对象`Default__plwp_mgp_va_C`及`Default__plwp_mgp_vb_C`，仍要求ID17及原生按住连发字段。沿用现有机枪/主武器输入合并、临时选择及恢复事务，发射整组、速度、伤害、扣弹和装填都交给该Mod原生配置。保留最新主线的无限弹药判断及装填处理；不改第三方PAK，不按HGP显示名或任意MGP编号通用放行，同方案多个合格逻辑SP仍拒绝联动。
+
+这是静态源码候选，未构建、测试、安装或实机验证。编码后的本地化资料未在本轮解析，va/vb与画面HGP文字的对应关系、运行默认对象及持续按住/松开行为待用户现场协助确认；不能宣称已经支持所有HGP。现有界面文案保留，后续确认支持范围后再按既有审核约定提交改文。原始资源与解析JSON仅留Temp，来源、散列和导出函数摘要见[静态记录](../evidence/gun-salvo-adler-hgp-static.json)。
+
 ## XR302机炮齐射识别修订（源码，未构建）
 
 2026-10-21只读现场确认，实际受控玩家为`AcePlayerPawn_xr302_C`，第二项原生SP为`plwp_plsl_xr302_C`，直接继承`Plsl_Bullet`；默认对象`Default__plwp_plsl_xr302_C`的WeaponID为22，`bAutoFireOnHold`和`bGunReaction`均为真。原Lua候选筛选与核心执行筛选只登记原版`Default__plwp_plsl_x0_C`，故XR302在进入齐射事务前即被排除。这能解释用户反馈，不作为修订后的开火验收。
