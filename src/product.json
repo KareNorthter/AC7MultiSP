@@ -4,7 +4,7 @@
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
   "upgrade_receipt": "evidence/2.23.0-refresh-installed.json",
-  "candidate": false,
+  "candidate": true,
   "scripts": [
     "config_store.lua",
     "debug_aircraft.lua",
@@ -23,5 +23,5 @@
     "mount_assets.lua",
     "mod_aircraft.lua"
   ],
-  "receipt_prefix": "2.22.1"
+  "receipt_prefix": "2.22.2"
 }

@@ -37,6 +37,26 @@ IDXGISwapChain* mainSwap{};HWND gameWindow{};WNDPROC originalWindowProc{};
 std::recursive_mutex renderMutex;
 std::mutex queueMutex;
 std::mutex publishedMutex;
+// 游戏线程只提交状态，不等待渲染锁；短锁内不调用游戏、绘制或文件接口。
+struct MountLoadingNotice {
+    uint64_t token{};
+    ULONGLONG requestedAt{},presentedAt{};
+    bool active{};
+} mountLoadingNotice;
+std::mutex mountLoadingMutex;
+std::atomic<bool> mountLoadingPending{false};
+MountLoadingNotice mountLoadingSnapshot() {
+    if(!mountLoadingPending.load(std::memory_order_acquire))return {}; // 平时不加锁、不绘制。
+    std::lock_guard<std::mutex> guard(mountLoadingMutex);
+    if(!mountLoadingNotice.active && mountLoadingNotice.presentedAt &&
+        GetTickCount64()-mountLoadingNotice.presentedAt>=1000) {
+        mountLoadingNotice={};mountLoadingPending.store(false,std::memory_order_release);
+    }
+    return mountLoadingNotice;
+}
+void mountLoadingCancel() {
+    std::lock_guard<std::mutex> guard(mountLoadingMutex);mountLoadingNotice={};mountLoadingPending.store(false,std::memory_order_release);
+}
 Json publishedState=Json::object();
 std::atomic<uint64_t> publishedGeneration{0};
 std::vector<Json> actions;
@@ -821,6 +841,7 @@ void refreshState() {
 }
 
 HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
+    uint64_t loadingDrawn{};
     {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         if(!initialized)init(swap);
@@ -864,9 +885,11 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 }
                 // 平时仍跳过整个绘制；只有管理面板或短暂通知可见时提交ImGui帧。
                 const bool toastVisible=foreground&&!hotkeyToast.empty()&&GetTickCount64()<hotkeyToastUntil;
+                const auto loading=mountLoadingSnapshot();
+                const bool loadingVisible=foreground&&loading.token!=0;
                 const bool dotVisible=foreground&&!panel&&managementError.empty()&&viewCenterDotVisible.load(std::memory_order_acquire)&&
                     GetTickCount64()-viewCenterDotHeartbeat.load(std::memory_order_acquire)<=150;
-                if(panel||toastVisible||dotVisible) {
+                if(panel||toastVisible||dotVisible||loadingVisible) {
                 ImGui_ImplDX11_NewFrame();
                 ImGui::GetIO().WantSetMousePos=false;
                 ImGui_ImplWin32_NewFrame();
@@ -881,6 +904,15 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 ImGui::GetIO().MouseDrawCursor=panel&&foreground;ImGui::NewFrame();
                 try {
                     if(panel)drawPanel();
+                    if(loadingVisible) {
+                        ImGui::PushFont(nullptr,32.f);
+                        ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,ImGui::GetIO().DisplaySize.y*.22f},ImGuiCond_Always,{.5f,0});
+                        ImGui::SetNextWindowBgAlpha(.9f);
+                        ImGui::Begin("##MultiSPStartupLoading",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|
+                            ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
+                        ImGui::TextUnformatted(tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."));
+                        ImGui::End();ImGui::PopFont();loadingDrawn=loading.token;
+                    }
                     if(dotVisible) {
                         const auto size=ImGui::GetIO().DisplaySize;const ImVec2 center{size.x*.5f,size.y*.5f};
                         auto* draw=ImGui::GetForegroundDrawList();
@@ -911,7 +943,14 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
             }
         }
     }
-    return originalPresent(swap,interval,flags);
+    const HRESULT result=originalPresent(swap,interval,flags);
+    // 只有真正提交显示后才允许开场重任务开始；绘制命令入队不等于用户已经能看到。
+    if(loadingDrawn && result==S_OK && !(flags&DXGI_PRESENT_TEST)) {
+        std::lock_guard<std::mutex> guard(mountLoadingMutex);
+        if(mountLoadingNotice.token==loadingDrawn && !mountLoadingNotice.presentedAt)
+            mountLoadingNotice.presentedAt=GetTickCount64();
+    }
+    return result;
 }
 HRESULT __stdcall onResize(IDXGISwapChain* swap,UINT count,UINT width,UINT height,DXGI_FORMAT format,UINT flags) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
@@ -948,6 +987,38 @@ DWORD WINAPI startThread(void*) {
 }
 }
 // 新版管理协议标记，Lua 与安装程序都据此拒绝旧界面混装。
+// action：1开始、0查询、2完成、3取消。token由Lua按开场代次递增，旧回执不能结束新提示。
+extern "C" __declspec(dllexport) int dualsp_mount_loading(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        if(api->top(luaState)!=2)throw std::runtime_error("模型加载提示参数数量无效");
+        const auto action=api->readInteger(luaState,1),token=api->readInteger(luaState,2);
+        if(action<0 || action>3 || token<=0)throw std::runtime_error("模型加载提示请求无效");
+        bool ready=false;const char* status="";
+        {
+            std::lock_guard<std::mutex> guard(mountLoadingMutex);
+            auto& notice=mountLoadingNotice;
+            if(action==1) {
+                if(!runtimeEnabled.load())throw std::runtime_error("当前场景禁止模型加载提示");
+                notice={static_cast<uint64_t>(token),GetTickCount64(),0,true};
+                mountLoadingPending.store(true,std::memory_order_release);
+            } else if(notice.token==static_cast<uint64_t>(token)) {
+                ready=notice.presentedAt!=0;
+                if(action==0 && !ready && GetTickCount64()-notice.requestedAt>=5000) {
+                    ready=true;status="render_unavailable"; // 最小化/设备异常时不无限推迟兵装初始化。
+                }
+                if(action==2) {notice.active=false;if(!notice.presentedAt)notice={};}
+                else if(action==3)notice={};
+                if(!notice.token)mountLoadingPending.store(false,std::memory_order_release);
+            } else if(action==0)throw std::runtime_error("模型加载提示代次已失效");
+        }
+        api->boolean(luaState,true);api->boolean(luaState,ready);api->string(luaState,status,std::strlen(status));return 3;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 3;}
+        return 0;
+    }
+}
 // 游戏线程直接同步许可，不依赖每秒发布的 UI 文件；关闭后所有窗口输入直通。
 extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 先禁用再报告接口错误。
@@ -959,6 +1030,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         runtimeEnabled.store(enabled!=0);reseedPad.store(true);
         if(!enabled) {
+            mountLoadingCancel();
             viewCenterDotVisible.store(false);viewCenterDotHeartbeat.store(0);
             if(panel)togglePanel(false);
             captureSlot=-1;suppressedCaptureKey=0;pendingSave=0;notice.clear();

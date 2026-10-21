@@ -694,6 +694,12 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         write<int>(read<Addr>(command.activator+0x260)+0x10c,flares);
     }
     continuous.restoreReferences(); // 原生强引用恢复后，同栈释放临时 root。
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    if(command.op=="setup" && index==1 && fixedMountEnabled && !fixedMountFailed && command.count>=2 &&
+        std::find(command.configs.begin(),command.configs.begin()+command.count,0)!=command.configs.begin()+command.count &&
+        mountAircraft(command.plane)==MountAircraft::Fa44)
+        mountCfaMuzzlePrewarm(command.plane,command.request);
+#endif
     cfaSwitchCost.mark(5);
 }
 void keepArmed(const Command& command,bool armed) {
@@ -978,6 +984,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_cfa_startup_prewarm_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
 // 菜单用实际 CDO 核对实验可选性；新 Lua 因此也会拒绝旧核心混装。

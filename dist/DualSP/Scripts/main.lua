@@ -1,4 +1,4 @@
--- AC7MultiSP 2.22.1源码候选：用户设计稿三页布局、独立Y/键盘注视及视角保持快捷键；未编译安装。
+-- AC7MultiSP 2.22.2源码候选：CFA开场预热及共用模型加载提示；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -38,6 +38,8 @@ local function loadExport(name,dll)
 end
 -- The validated weapon core and the rebuilt menu renderer are separate modules.
 local bridge=loadExport("lab_native_execute")
+loadExport("dualsp_cfa_startup_prewarm_supported") -- 预热、Lua开场和提示界面须成套。
+local mountStartup={serial=0,invoke=loadExport("dualsp_mount_loading","DualSPUI.dll")}
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
@@ -196,6 +198,34 @@ local lastSaveScan=-1
 local saveObjects={}
 -- 菜单性能诊断候选：只累计耗时，每15秒随既有统计输出，不逐次写日志。
 local performanceStages={}
+-- 仅开场分帧等一次真实呈现，不在游戏线程Sleep或等待渲染锁。
+function mountStartup.cancel()
+    if mountStartup.token then
+        local called,ok,_,err=pcall(mountStartup.invoke,3,mountStartup.token)
+        if not called or not ok then note("MOUNT_LOADING_CANCEL_ERROR "..tostring(called and err or ok))end
+    end
+    mountStartup.token=nil;mountStartup.key=nil;mountStartup.ready=false;mountStartup.finished=false
+end
+function mountStartup.prepare(key)
+    if key~=mountStartup.key then
+        mountStartup.cancel();mountStartup.serial=mountStartup.serial+1
+        mountStartup.token=mountStartup.serial;mountStartup.key=key
+        local ok,_,err=mountStartup.invoke(1,mountStartup.token);assert(ok,err)
+        return false -- 交还游戏循环，让渲染线程先把提示送上屏幕。
+    end
+    if mountStartup.ready then return true end
+    local ok,ready,err=mountStartup.invoke(0,mountStartup.token);assert(ok,err)
+    if ready then
+        mountStartup.ready=true
+        if err~=""then note("MOUNT_LOADING_PRESENT_FALLBACK "..err)end
+    end
+    return ready
+end
+function mountStartup.finish()
+    if not mountStartup.token or mountStartup.finished then return end
+    local ok,_,err=mountStartup.invoke(2,mountStartup.token);assert(ok,err)
+    mountStartup.finished=true -- 界面按实际首次呈现时间补足一秒，不延迟武器就绪。
+end
 local function recordStage(name,started)
     local row=performanceStages[name]
     if not row then row={count=0,total=0,peak=0};performanceStages[name]=row end
@@ -204,6 +234,7 @@ local function recordStage(name,started)
 end
 -- 只清理本次玩家的运行缓存，不触碰页面、原生输入或补给确认事务。
 local function resetFlightTracking()
+    mountStartup.cancel()
     configured=false;lastArmed=nil;nativeState=nil;internal=false;hudSamplingError=nil;inputNotice=nil
     weaponSwitch.pending=nil
     flightOptions=nil;lastUIKey=nil;lastHUD=-1;previewOptions=nil;lastPreviewHUD=-1
@@ -1594,17 +1625,19 @@ local function tick()
     recordStage("context",contextStarted)
     -- 载入时单人许可可能短暂消失；换机只保留数据，不在过渡世界调用机体接口。
     if aircraftDebug:pump(runtimeReason)then
+        mountStartup.cancel()
         weaponSwitch.view.release()
         if allowed and (not lastUIKey or os.clock()-lastPublish>=.25)then lastPublish=os.clock();lastUIKey="aircraft_restart";publishState()end
         return
     end
-    if not allowed then return end
+    if not allowed then mountStartup.cancel();return end
     tryApplyMasterSwitch(false)
     if runtimeContext.updateLanguage(os.clock())then
         lastUIKey=nil;note("GAME_TEXT_CULTURE "..runtimeContext.culture)
         nativeLoadout:languageChanged();nativeSupply:languageChanged()
     end
     if not runtimeModEnabled or runtimeReason=="mission13_fixed_sp"then
+        mountStartup.cancel()
         releaseMountPreview(0)
         -- 停用时只留下重新启用所需的管理入口，不接入页面、武器、HUD 或模型。
         if not game then game=StaticFindObject("/Script/Engine.Default__GameplayStatics")end
@@ -1709,6 +1742,15 @@ local function tick()
                 end
             end
         end
+    end
+    -- 所有机型共用开场提示：在选项、HUD和模型预建之前先显示；任务模型关闭不提示。
+    if not config.task_mount_enabled or not isFlight or supplySession or errorText then
+        mountStartup.cancel()
+    elseif not configured and valid(activator)then
+        local startupProfile=profileFor(planeId)
+        local key=currentWorld..":"..tostring(planeAddress)..":"..activator:GetAddress()..":"..planeId..":"..
+            startupProfile.a..":"..startupProfile.b..":"..startupProfile.c
+        if not mountStartup.prepare(key)then return end
     end
     -- 玩家对象与 HUD 在 START MISSION 前已经生成；先建立显示，不提前初始化武器或消耗冷却。
     if isFlight and not configured and not supplySession and not errorText and valid(activator)and os.clock()-lastPreviewHUD>=.05 then
@@ -1820,6 +1862,7 @@ local function tick()
         lastPublish=now;lastUIKey=uiKey;publishState()
         recordStage("publish",publishStarted)
     end
+    if configured then mountStartup.finish()end -- 本轮模型维护、HUD及状态发布也已完成。
 end
 RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,selectedPlane,selectedWeapon)
     if not runtimeModEnabled then return end
@@ -1938,7 +1981,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.22.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.22.2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
@@ -1991,6 +2034,7 @@ LoopInGameThreadWithDelay(20,function()
             tick();weaponSwitch.salvo.service:update();recordTickCost(started)
         end,debug.traceback)
         if not ok then
+            mountStartup.cancel() -- 错误退出不能留下永不消失的加载提示。
             errorText=tostring(err);note("ERROR "..errorText)
             aircraftDebug:failed(errorText)
             releaseMountPreview(0)
