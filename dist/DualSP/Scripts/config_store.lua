@@ -49,14 +49,12 @@ local function validateSettings(settings)
     assert(type(settings.mod_enabled)=="boolean","模组总开关必须为布尔值")
     assert(type(settings.fixed_mount_enabled)=="boolean","多 SP 挂载模型开关必须为布尔值")
     assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
-    assert(type(settings.view_target_pad_l3)=="boolean","左摇杆视角选目标快捷开关必须为布尔值")
-    assert(type(settings.view_target_enabled)=="boolean","视角选目标开关必须为布尔值")
+    assert(settings.view_target_mode=="normal"or settings.view_target_mode=="vr","NEXT模式必须为普通或VR模式")
     assert(type(settings.view_center_dot_enabled)=="boolean","视野中心白点开关必须为布尔值")
-    assert(type(settings.target_gaze_pad_l3)=="boolean","左摇杆保持注视开关必须为布尔值")
+    assert(type(settings.target_gaze_enabled)=="boolean","锁定注视功能开关必须为布尔值")
+    assert(settings.target_gaze_pad_l3==nil and settings.view_target_pad_l3==nil and settings.view_target_enabled==nil and settings.camera_auto_center_degrees==nil,"旧镜头交互设置已退役")
     assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
     assert(type(settings.camera_r3_enabled)=="boolean","R3替换开关必须为布尔值")
-    local autoCenter=settings.camera_auto_center_degrees
-    assert(type(autoCenter)=="number"and autoCenter%1==0 and autoCenter>=0 and autoCenter<=45,"自动回正阈值必须为0至45的整数")
     local gazeKey=settings.target_gaze_key
     assert(gazeKey==0 or supportedKey(gazeKey),"目标注视键位无效")
     assert(gazeKey==0 or not chords["0:"..gazeKey],"目标注视键不能与模组快捷键重复")
@@ -98,7 +96,7 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=16,view_target_pad_l3=false,view_target_enabled=false,view_center_dot_enabled=true,camera_auto_center_degrees=30,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=17,view_target_mode="normal",view_center_dot_enabled=true,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_enabled=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},view_target={key=119,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
@@ -207,10 +205,19 @@ function Config.new(options)
             assert(config.view_target_pad_l3==nil,"旧配置含未知左摇杆视角选目标设置")
             config.view_target_pad_l3=false;config.management_revision=16
         end
-        assert(config.management_revision==16,"需要管理参数第 16 版")
+        local migrateCameraInteraction=config.management_revision==16
+        if migrateCameraInteraction then
+            assert(config.target_gaze_enabled==nil and config.view_target_mode==nil,"旧配置含未知新版镜头交互设置")
+            assert(type(config.view_target_enabled)=="boolean","旧NEXT设置无效")
+            config.view_target_mode=config.view_target_enabled and "vr"or "normal"
+            config.target_gaze_enabled=false -- 旧L3注视设置不自动开启新的Y/键盘交互。
+            config.target_gaze_pad_l3=nil;config.view_target_pad_l3=nil;config.view_target_enabled=nil
+            config.camera_auto_center_degrees=nil;config.management_revision=17
+        end
+        assert(config.management_revision==17,"需要管理参数第 17 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateViewTargetPad then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateViewTargetPad or migrateCameraInteraction then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","rb")))
             local backups={}
@@ -227,12 +234,13 @@ function Config.new(options)
             if migrateCameraAutoCenter then backups[#backups+1]="profiles.before-camera-auto-center.json"end
             if migrateViewTarget then backups[#backups+1]="profiles.before-view-target.json"end
             if migrateViewTargetPad then backups[#backups+1]="profiles.before-view-target-pad.json"end
+            if migrateCameraInteraction then backups[#backups+1]="profiles.before-camera-interaction-v2.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes,"wb")end -- Windows也保留原换行字节。
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=16")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=17")
         end
         return config
     end
@@ -245,9 +253,9 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==17,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==18,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","gun_salvo_enabled","view_target_enabled","view_target_pad_l3","view_center_dot_enabled","central_weapon_display","target_gaze_pad_l3","target_gaze_key","camera_hold_enabled","camera_auto_center_degrees","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_enabled","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

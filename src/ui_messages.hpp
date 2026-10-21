@@ -6,6 +6,16 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"需要管理参数第 17 版","Management configuration revision 17 is required."},
+    {"NEXT模式必须为普通或VR模式","NEXT mode must be normal or VR."},
+    {"锁定注视功能开关必须为布尔值","Latched tracking must be enabled or disabled."},
+    {"旧镜头交互设置已退役","Legacy camera interaction settings have been retired."},
+    {"旧配置含未知新版镜头交互设置","The old configuration contains unexpected camera interaction settings."},
+    {"旧NEXT设置无效","The old NEXT setting is invalid."},
+    {"锁定注视组件不属于当前飞机","Latched tracking components do not belong to the current aircraft."},
+    {"锁定注视的玩家身份已变化","The latched tracking player identity changed."},
+    {"锁定注视的选择入口不匹配","The native latched tracking selection interface does not match."},
+    {"目标注视输入接入失败","Target tracking input hooks could not be created."},
     {"视角选目标的相机数据无效","View-center targeting received invalid camera data."},
     {"视角选目标的目标位置无效","View-center targeting received an invalid target position."},
     {"视角选目标的候选表在调用期间改变","The target candidate array changed during native selection."},

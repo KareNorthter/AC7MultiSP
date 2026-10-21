@@ -26,9 +26,8 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewTargetPadL3!=state.at("view_target_pad_l3").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
-        draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
-        draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
+    return draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTargetMode!=state.at("view_target_mode").get<std::string>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+        draftTargetGazeEnabled!=state.at("target_gaze_enabled").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
         draftAmmoPercentTwo!=state.at("ammo_percent_two").get<int>() || draftAmmoPercentThree!=state.at("ammo_percent_three").get<int>() ||
@@ -77,46 +76,40 @@ void drawFeatureSettings() {
     if(ImGui::CollapsingHeader(tr("使用提示###FeatureHelp","Quick guide###FeatureHelp"))) {
         ImGui::BulletText("%s",tr("机库直接选择1至3种SP，任务中用X轮切或十字键直选。","Select 1–3 SPs in the hangar; cycle with X or select with the D-pad."));
         ImGui::BulletText("%s",tr("中央兵装提示及右下HUD跟随游戏HUD显隐。","Weapon hints and the lower-right HUD follow game HUD visibility."));
-        ImGui::BulletText("%s",tr("镜头保持、保持注视及相关键位在“视角”页。","Find camera hold, toggle tracking and their bindings in Camera."));
+        ImGui::BulletText("%s",tr("视角保持、锁定注视及相关键位在“视角”页。","Find camera hold, toggle tracking and their bindings in Camera."));
     }
 }
 void drawCameraSettings() {
-    if(panelCard("ViewTargetOptions",tr("视野中心","View center"))) {
-        ImGui::Checkbox(tr("视角中心优先选目标###ViewTarget","Prefer view center for NEXT###ViewTarget"),&draftViewTarget);
-        panelHelp("默认关闭。开启后原生NEXT按当前视野中心优先，保留游戏已有候选、目标资格和近期切换历史；按原生切目标键才选中，不扩大导弹锁定范围。默认Ctrl+Alt+F8切换，可在基础页改键。鼠标飞控的F2 HMD可能另行覆盖实际按键选择，使用本功能时请关闭该HMD。",
-            "Off by default. Prioritizes the current view center for native NEXT while retaining existing candidates, eligibility and recent selection history. The native target key still commits selection; missile lock limits stay unchanged. Toggle with Ctrl+Alt+F8; rebind in General. Disable the mouse-flight mod's F2 HMD to avoid its separate selection override.");
-        ImGui::Checkbox(tr("L3长按2秒切换选目标方式###ViewTargetPadL3","Hold L3 for 2s to toggle view-center NEXT###ViewTargetPadL3"),&draftViewTargetPadL3);
-        panelHelp("默认关闭。启用后单独按住左摇杆满2秒，与Ctrl+Alt+F8一样切换并保存视角中心优先NEXT；该NEXT开关关闭时也可长按开启。按住不重复，长按松开不再切换注视；短按仍由保持注视选项控制。双摇杆组合取消本次操作，暂停、管理、失焦、断连或重连时已按住均不补发。",
-            "Off by default. Hold L3 alone for 2 seconds to toggle and save view-center NEXT, like Ctrl+Alt+F8, even while NEXT priority is off. Fires once per hold; releasing a long hold does not toggle tracking. Short presses follow the tracking option. Both sticks cancel this gesture; pause, management, focus loss, disconnect or reconnect never replay a held press.");
+    if(panelCard("ViewTargetOptions",tr("NEXT选目标模式","NEXT targeting mode"))) {
+        if(ImGui::RadioButton(tr("普通模式：机头附近优先###NextNormal","Normal: near aircraft nose###NextNormal"),draftViewTargetMode=="normal"))draftViewTargetMode="normal";
+        if(ImGui::RadioButton(tr("VR模式：视角中心优先###NextVR","VR: near view center###NextVR"),draftViewTargetMode=="vr"))draftViewTargetMode="vr";
+        panelHelp("默认普通模式。普通模式按机头附近优先，VR模式按当前视野中心优先；这里只切换NEXT的排序参考，不会启用VR设备。保留原生候选、目标资格和近期历史，按原生切目标键才选中。仅管理界面或默认Ctrl+Alt+F8切换，可在基础页改键；L3不切模式。可能与鼠标飞控F2 HMD功能冲突，使用VR模式时请关闭该HMD。",
+            "Normal mode is the default and prioritizes the aircraft nose. VR mode prioritizes the current view center; it changes NEXT ranking without enabling VR hardware. Native candidates, eligibility and history remain; use the native target key to select. Switch here or with Ctrl+Alt+F8, rebindable in General. L3 never changes mode. May conflict with the mouse-flight mod's F2 HMD; disable that HMD for VR mode.");
         ImGui::Checkbox(tr("显示视野中心白点###ViewCenterDot","Show view-center dot###ViewCenterDot"),&draftViewCenterDot);
-        panelHelp("白点默认开启，与选目标和镜头保持开关独立。普通飞行中，实际镜头朝向偏离机头超过15°时，在画面中央显示荧光小白点；15°以内隐藏。跟随游戏HUD显隐，暂停、管理界面、失焦和特殊镜头时隐藏。",
-            "On by default, independent of targeting and camera hold. A small glowing white dot marks the screen center when the actual camera direction differs from the aircraft nose by more than 15 degrees. Hidden within 15 degrees, with HUD hidden, while paused or managing settings, without focus, or during special cameras.");
+        panelHelp("白点默认开启，与NEXT模式和视角保持独立。镜头偏离机头超过5°时显示放大的荧光白点，5°以内及边界隐藏。跟随游戏HUD显隐；暂停、管理、失焦及特殊镜头时隐藏。",
+            "On by default, independent of NEXT mode and camera hold. The enlarged glowing dot appears beyond 5 degrees from the aircraft nose and is hidden at or within 5 degrees. Follows the game HUD; hidden during pause, management, focus loss or special cameras.");
     }
     ImGui::EndChild();
-    if(panelCard("TrackingOptions",tr("保持注视","Toggle tracking"))) {
-        ImGui::Checkbox(tr("左摇杆按下切换注视###TargetGazePadL3","L3 toggles tracking###TargetGazePadL3"),&draftTargetGazePadL3);
-        panelHelp("默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视；若启用L3长按切换NEXT，长按松开不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
-            "Off by default. When enabled, press and release L3 to start/stop tracking; the two-stick countermeasure gesture never toggles tracking. When L3 long-hold NEXT is enabled, releasing a long hold also skips tracking. X cycles weapons; Y selection and native hold-to-track remain. Stops on pause, management, focus loss, target loss or mission exit; also works in Mission 13.");
-        ImGui::TextUnformatted(tr("键盘注视键","Keyboard tracking key"));ImGui::SameLine();
+    if(panelCard("TrackingOptions",tr("锁定注视目标","Latched target tracking"))) {
+        ImGui::Checkbox(tr("启用锁定注视目标###TargetGazeEnabled","Enable latched target tracking###TargetGazeEnabled"),&draftTargetGazeEnabled);
+        panelHelp("默认关闭。启用后Y按满0.2秒开始持续注视，再长按一次结束；按住只触发一次，松开不切目标。短按Y仍切目标，持续注视随新目标移动。键盘沿用游戏实际绑定的注视目标键，按一下开始、再按一下结束；原生切目标键保持。关闭后恢复按住才注视。L3不切注视，R3长按只切视角保持。暂停、管理、失焦、目标消失或离场时结束注视。",
+            "Off by default. Hold Y for 0.2 seconds to latch tracking, then hold again to release. Fires once per hold; release does not select another target. Short Y presses switch targets while tracking follows. The game's actual keyboard tracking binding toggles tracking on each press; the native selection binding remains. Disabled restores hold-to-track. L3 never toggles tracking; long R3 only toggles camera hold. Tracking stops on pause, management, focus loss, target loss or mission exit.");
+        ImGui::TextUnformatted(tr("功能启闭快捷键","Feature toggle shortcut"));ImGui::SameLine();
         bindingButton(7,draftTargetGazeKey?keyLabel(draftTargetGazeKey):tr("未绑定","Unassigned"),180);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearGazeKey","Clear###ClearGazeKey"))){draftTargetGazeKey=0;captureSlot=-1;}
-        panelHelp("键盘注视键与左摇杆选项独立，按下切换、按住不重复；可同时按住Shift/Ctrl/Alt，明确设置的组合快捷键优先。请避开原生操作键。",
-            "Independent of L3. Press to toggle without repetition; works while Shift/Ctrl/Alt is held. An exact configured mod chord takes priority. Avoid native action keys.");
+        panelHelp("此自定义键只切换本功能是否启用并保存，不直接开始注视；请与游戏原生注视键使用不同按键。默认未绑定，功能默认关闭。Shift/Ctrl/Alt可同时按住，已设置的完整组合快捷键优先。",
+            "This shortcut only enables/disables and saves the feature; it does not start tracking. Use a different key from the game's tracking binding. Unassigned by default; the feature starts disabled. Works with Shift/Ctrl/Alt held, while exact configured mod chords take priority.");
     }
     ImGui::EndChild();
-    if(panelCard("CameraOptions",tr("镜头保持","Camera hold"))) {
-        ImGui::Checkbox(tr("启用镜头保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
+    if(panelCard("CameraOptions",tr("视角保持","Camera hold"))) {
+        ImGui::Checkbox(tr("启用视角保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
         panelHelp("默认关闭。启用后松开摇杆/视点模式键、短按切目标或切换普通视角可保持方向；注视从当前方向衔接，停止后返回保持方向。关闭后恢复原生自动回正。暂停、管理、失焦和特殊镜头期间归还原生。",
             "Off by default. When enabled, retains direction after releasing the stick/viewpoint mode key, briefly selecting a target or changing ordinary views. Tracking starts from and returns to that direction. Disabling restores native recentering. Pause, management, focus loss and special cameras restore native behavior.");
-        ImGui::Checkbox(tr("R3长按回中/切换保持###CameraR3","R3 recenter / toggle hold###CameraR3"),&draftCameraR3);
-        panelHelp("默认开启，镜头保持关闭时也可使用。R3按住满0.2秒回中一次，继续按住满2秒切换镜头保持并保存设置；松开不换视角。短于0.2秒松开仍切换视角。双摇杆只释放干扰弹。关闭此项则R3使用原生功能。回中会结束模组注视，真实按住Y/F仍可原生注视。",
-            "On by default, including while camera hold is off. Hold R3 for 0.2 seconds to recenter once, then keep holding until 2 seconds to toggle and save camera hold. Release does not change view; release before 0.2 seconds changes view. Both sticks only release countermeasures. Disabling restores native R3. Recentering ends mod tracking; native Y/F hold-to-track remains.");
+        ImGui::Checkbox(tr("手柄镜头快捷操作###CameraR3","Controller camera shortcuts###CameraR3"),&draftCameraR3);
+        panelHelp("默认开启，视角保持关闭时也可操作。L3单独按下并松开：视角回正并结束锁定注视。R3短按松开：原生切换第一/第三人称等普通视角；R3按满0.3秒：切换视角保持并保存，松开不再换视角，也不回正。按住不重复。双摇杆组合只释放干扰弹。关闭此项则摇杆按键使用原生功能。",
+            "On by default, including while camera hold is off. Press and release L3 alone to recenter and release latched tracking. Short R3 switches native ordinary views; hold R3 for 0.3 seconds to toggle and save camera hold without view switching or recentering on release. No repeats while held. Both sticks only release countermeasures. Disabling restores native stick clicks.");
         if(!draftCameraHold&&captureSlot==8)captureSlot=-1;
         if(draftCameraHold) {
-            ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
-            ImGui::SliderInt(tr("自动回正阈值###CameraAutoCenter","Auto recenter threshold###CameraAutoCenter"),&draftCameraAutoCenterDegrees,0,45,tr("%d 度","%d deg"),ImGuiSliderFlags_AlwaysClamp);
-            panelHelp("默认30°，0°关闭。松开环视输入后，方向进入中心阈值内则平滑回正，范围外继续保持；目标注视优先。按水平±180°、垂直±90°的统一环视参考角计算，座舱画面仍受原生边界和动画影响。保存后生效。",
-                "Default 30 degrees; 0 disables. After releasing look input, smoothly recenters inside the center cone and retains direction outside. Target tracking takes priority. Uses a shared look reference of +/-180 degrees horizontally and +/-90 vertically; cockpit output retains native limits and animation. Save to apply.");
             ImGui::TextUnformatted(tr("独立回中键","Recenter shortcut"));ImGui::SameLine();
             bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
             ImGui::SameLine();if(ImGui::SmallButton(tr("中键###ResetCenterKey","Middle mouse###ResetCenterKey"))){draftCameraCenterKey=VK_MBUTTON;captureSlot=-1;}
@@ -156,7 +149,7 @@ void drawBasicBindings() {
             "Click, then press a new key; Esc cancels. D-pad bindings are fixed. Direct selection works while Shift/Ctrl/Alt is held; exact configured mod chords take priority. Empty or depleted SPs cannot be selected; reloading weapons can.");
     }
     if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
-        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo"),tr("视角中心选目标","View-center targeting")};
+        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo"),tr("NEXT选目标模式","NEXT targeting mode")};
         for(int i=0;i<5;++i) {
             ImGui::TextUnformatted(names[i]);ImGui::SameLine(std::min(260.f,ImGui::GetContentRegionAvail().x*.45f));
             bindingButton(i==4?10:(i==3?9:i+4),shortcutLabel(draftShortcuts[i]));

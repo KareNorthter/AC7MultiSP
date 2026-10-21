@@ -1,0 +1,129 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "branch": "codex/target-selection-research",
+  "source_parent_before_this_change": "525a4312cd0e3e5c11eb24c602f58f9ba4d692a6",
+  "status": "源码修改完成；未编译、编写/运行测试、安装或操作游戏",
+  "authorization": "用户最终确认L3松开回正、R3短按切视角/0.3秒长按切视角保持；并要求按已讨论方案修改、移除角度自动回正和滑条",
+  "interfaces": {
+    "management": 18,
+    "configuration": 17,
+    "gaze": 3,
+    "camera": 8,
+    "view_target": 3,
+    "gaze_entry": "dualsp_target_gaze(plane, allowed, enabled, stop) -> ok, active, reason, input_toggle",
+    "camera_entry": "dualsp_camera_hold(plane, allowed, center_key, sensitivity, controller_shortcuts, shortcut_mask, hold_enabled) -> ok, active, reason, toggle_hold",
+    "view_entry": "dualsp_view_target(plane, allowed, vr_mode, dot) -> ok, available, dot_visible, error",
+    "capabilities": [
+      "dualsp_gaze_latch_supported",
+      "dualsp_camera_controls_v2_supported",
+      "dualsp_view_target_modes_supported"
+    ]
+  },
+  "controller": {
+    "l3": "单独按下并松开回正、结束当前模组注视，不切NEXT或注视总开关",
+    "r3_short": "短于300毫秒松开只派发一次原生普通视角切换",
+    "r3_hold": "满300毫秒切换并保存视角保持，一次按住只触发一次，不回正，松开不换视角",
+    "combo": "保留完整原生干扰弹，取消尚未消费的镜头事件，锁到两键全松；已完成切换不撤销",
+    "cancel": "失焦、暂停、管理、特殊镜头、换机、断连、500毫秒心跳过期后取消；恢复时已按住不补发",
+    "controller_shortcuts_setting": "camera_r3_enabled沿用并在UI明确控制L3/R3整组，默认开启"
+  },
+  "gaze": {
+    "feature_setting": "target_gaze_enabled",
+    "feature_default": false,
+    "feature_switch": "仅管理页或target_gaze_key自定义单键，默认未绑定；保留旧个人键位，意义改为功能启闭",
+    "pad_action": "Y满200毫秒切换持续注视，松开重按才可再次触发；短按仍切目标并跟随新目标",
+    "keyboard_action": "读取游戏实际INP_CameraTrackTarget原生轴正沿，不写死F/R；功能关闭时完整归还原生按住注视",
+    "keyboard_y_overlap": "Y优先；Y释放且原生轴归零后重新接收键盘正沿，防止尾值误触",
+    "select_guard": {
+      "rva": "0x4c90b0",
+      "body_bytes": 629,
+      "fnv1a64": "aecb3aa29797d7a0",
+      "source_body_sha256": "e3347d6c3255ae813bbe4d34a14b5c0797e662fc6d3595e2924b0c56406a4af2",
+      "source": "Temp/target-native-20261020/4c90b0.bin（旧只读采集，不提交原件）",
+      "scope": "本玩家且非强制选择、本轮Y已消费；返回当前目标而不写目标指针，解决原生0.5秒短按门槛与0.2秒注视冲突",
+      "release_grace_ms": 150,
+      "boundary": "新Y按下解除旧交接；混合键鼠在150毫秒交接同时到来的非强制选择也可能被归为本轮Y；待实机核对"
+    },
+    "hmd": "不改鼠标飞控释放入口；其F2 HMD仍可能另行提交目标，UI明确提示冲突"
+  },
+  "next": {
+    "setting": "view_target_mode",
+    "values": [
+      "normal",
+      "vr"
+    ],
+    "default": "normal",
+    "ui": "两项模式单选，普通/机头附近优先，VR/视角中心优先；并非启用VR设备",
+    "switch": "仅管理页或Ctrl+Alt+F8（可改键），已移除L3长按切换"
+  },
+  "dot": {
+    "hidden_degrees": 5,
+    "boundary_hidden": true,
+    "core_radius_at_1080": 2.5,
+    "glow_radii_at_1080": [
+      5.5,
+      9
+    ],
+    "scope": "实际机头与相机前向三维夹角；沿用HUD/前台/暂停/特殊镜头及发布心跳规则"
+  },
+  "removed": "角度自动回正逻辑、核心接口参数、滑条、草稿/保存/校验及运行配置字段；仅保留旧配置迁移与历史回执",
+  "migration": {
+    "from": 16,
+    "to": 17,
+    "backup": "profiles.before-camera-interaction-v2.json",
+    "byte_preserving": true,
+    "next_conversion": "旧view_target_enabled true转vr，false转normal",
+    "retired_fields": [
+      "target_gaze_pad_l3",
+      "view_target_pad_l3",
+      "view_target_enabled",
+      "camera_auto_center_degrees"
+    ],
+    "preserved": "个人键位、机体方案、视角保持与手柄快捷操作原开关；新锁定注视默认关闭"
+  },
+  "review": {
+    "performed": [
+      "人工逐段审阅输入边沿/长短按互斥/组合与恢复清理",
+      "人工核对核心/UI/Lua配置和能力接口",
+      "既有原生629字节片段指纹对照",
+      "git diff --check格式核对",
+      "保护DLL哈希核对"
+    ],
+    "not_performed": [
+      "编译",
+      "新增测试模块",
+      "运行测试",
+      "安装",
+      "操作游戏",
+      "实机验收"
+    ],
+    "remaining": [
+      "0.2/0.3秒边界和快速按键",
+      "键盘实际改键与混合输入交接",
+      "双摇杆组合及失焦/断连/暂停恢复",
+      "实际注视与新目标衔接",
+      "配置迁移",
+      "5度白点及尺寸",
+      "不同帧率手感"
+    ]
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "source_sha256": {
+    "README.md": "f57d5a005430d544b3f1eb3b99a3f74b6360d651e19f4eb110798fc4204f1f44",
+    "docs/architecture.md": "4aa434ae1941d1d26974cc407c2146c1597963172b1c344c6b671341c33ee627",
+    "docs/development.md": "3161aa06dbd714c704676cbfb85b57cf6a391541c13738685a040da86f77ad60",
+    "evidence/README.md": "b02bb2e65da665a11326cc9b6952db7a6684c5d20fca0381d99f6e61fcb9be3f",
+    "src/target_gaze.hpp": "9b6a5ebe5ec6e40591228bae8908e86901f9f4dbc478927e50e8191da6dc69ff",
+    "src/camera_hold.hpp": "ee3a00800111e6cc84d4c27ee3c95d9e976dbaba48ba1ceacf3bbd5c4492c36b",
+    "src/view_target.hpp": "71661405d6c18789dd5f5d758209e3245d35ff3afe51db7debc46070012e22f7",
+    "src/overlay.cpp": "831b482f75f164f7ba8f4bf534f2bc9fcbf637078b29dda171829492fb25a0dc",
+    "src/management_panel.hpp": "864a36ef4ab4e35b14ed094f4f56f6e4b2ed94522dc0675937bbf7c677392648",
+    "src/weapon_bridge.cpp": "eabb3715fac7caab65fb15740451d61af0b8c961d65739c7ca60110eb90ef083",
+    "src/ui_messages.hpp": "67bd402b3bfbda238088e119e635b61e9a3ecd411af7708b69d0a2cc80155122",
+    "src/install.py": "538828f3330132b4082dad071b5d2883e58aa50e74042177579b15c0eb4022c4",
+    "dist/DualSP/Scripts/main.lua": "8c0bdb7b4433c33d9edcbeb8fc2fe34de3440e85683c3e4b8e6d41c64a61baa5",
+    "dist/DualSP/Scripts/config_store.lua": "d11804c63d8f89af64f49f0ecbaa40bb3ddba870dd52ef5d8215307ffe56a068"
+  },
+  "delivery": "当前研究分支源码，未改正式版本、旧回执、安装产物或其他任务工作区；需精确接入较新整合候选统一补丁版本后再授权构建/实机验证"
+}
