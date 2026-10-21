@@ -56,10 +56,11 @@ uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int
     uint64_t result=0;
     for(int slot=0;slot<count;++slot) {
         const int kind=kinds[slot];
-        require(kind>=0 && kind<3 && ammo[slot]>=0 && ammo[slot]<=100000,"模型预览：配弹参数无效");
+        require(kind>=0 && kind<3 && dualsp::validAmmoCount(ammo[slot]),"模型预览：配弹参数无效");
         if((state.aircraft==MountAircraft::F15e && kind==2) || mountFixedEmitter(state.aircraft,kind))continue; // TLS 的空网格不是导弹，炮体由挂架显示。
         const int limit=mountShowReserve(state.aircraft,state.kindsMask,kind)?specification.logicalCounts[kind]:specification.loadedCounts[kind];
-        for(int ordinal=0;ordinal<std::min(limit,ammo[slot]);++ordinal)result|=uint64_t{1}<<mountPhysical(state,kind,ordinal);
+        const int available=ammo[slot]<0?limit:std::min(limit,ammo[slot]); // 无限库存只填现有布局位置，不扩大模型池。
+        for(int ordinal=0;ordinal<available;++ordinal)result|=uint64_t{1}<<mountPhysical(state,kind,ordinal);
     }
     return result;
 }

@@ -683,7 +683,7 @@ function NativeLoadout.new(dependencies)
             local entry=parts and option and not pending and c.partsPreview.amounts[weapon+1]or nil -- 当前实际 WeaponID 对应结果。
             local amount=option and not pending and Profile.ammo(entry and entry.preview or option.max,count,preview.ratio)or 0
             local affects=entry and entry.affects or false -- 不能用“整数变大”替代原生候选影响标记。
-            local ammoText=option and not pending and tostring(amount)or "---" -- EMPTY 与未就绪均不展示猜测数量。
+            local ammoText=option and not pending and Profile.ammoText(amount)or "---" -- 无限显示∞；EMPTY与未就绪不猜数量。
             local ammoSignature=ammoText..":"..tostring(affects)..":"..tostring(pending) -- 数字相同也能立即切换黄色。
             if c.ammo and not supply and not standby then
                 local focused=i==focusedSlot -- 槽位变更也要重画颜色，即使简称和弹数恰好相同。

@@ -1,5 +1,17 @@
 -- 1 至 3 个 SP 共用方案规则；逻辑槽与原生配置编号分开。
 local Profile={fields={"a","b","c"}}
+-- 只解释弹药计数；配置编号、数组长度和装填计时不能套用“负数无限”。
+function Profile.validAmmo(amount)
+    return type(amount)=="number"and amount%1==0 and amount>=-2147483648 and amount<=100000
+end
+function Profile.hasAmmo(amount)
+    assert(Profile.validAmmo(amount),"弹药数量无效")
+    return amount~=0 -- 所有合法负值均为无限，只有零是空弹。
+end
+function Profile.ammoText(amount)
+    assert(Profile.validAmmo(amount),"弹药数量无效")
+    return amount<0 and "∞"or tostring(amount)
+end
 -- 校验连续槽位和不重复配置；空槽只允许出现在末尾。
 function Profile.count(profile)
     local count=0 -- 实际搭载数决定采用单、双或三 SP 的配弹参数。
@@ -76,8 +88,10 @@ function Profile.debugDefault(options,settings)
     return Profile.withSettings(candidate,settings)
 end
 function Profile.ammo(full,count,ratio)
-    assert(type(full)=="number"and full>=0 and full%1==0,"完整载量无效")
+    assert(Profile.validAmmo(full),"完整载量无效")
     assert(count>=1 and count<=3,"SP 数量无效")
-    return math.floor((full*Profile.percent(count,ratio)+99)/100)
+    local percent=Profile.percent(count,ratio) -- 无限载量也必须先核对方案和比例参数。
+    if full<0 then return full end -- 保留作者/原生的负值，不按比例计算或变成一个大数。
+    return math.floor((full*percent+99)/100)
 end
 return Profile

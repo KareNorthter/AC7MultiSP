@@ -790,7 +790,7 @@ void fixedMountRefresh(double time) {
         const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon]; // 当前或缓存队列。
         const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
         const int count=fixedMount.logicalCounts[fixedMount.weaponKinds[weapon]]; // 槽数与模型池一一核对。
-        require(group.slots.size()==static_cast<size_t>(count) && ammo>=-1 && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
+        require(group.slots.size()==static_cast<size_t>(count) && dualsp::validAmmoCount(ammo) && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
         require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
         const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
         const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 显示实际库存中的备用弹，不表示同时可发射。

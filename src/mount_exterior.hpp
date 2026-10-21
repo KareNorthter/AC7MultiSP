@@ -130,7 +130,7 @@ void mountExteriorInherit(FixedMountState& next,const FixedMountState& prior) {
 }
 uint64_t mountExteriorPreviewMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
     if(state.aircraft!=MountAircraft::F22a)return 0;
-    int available=0;for(int slot=0;slot<count;++slot)if(kinds[slot]==2)available=std::min(14,ammo[slot]);
+    int available=0;for(int slot=0;slot<count;++slot)if(kinds[slot]==2)available=ammo[slot]<0?14:std::min(14,ammo[slot]);
     return available?((uint64_t{1}<<available)-1):0;
 }
 void mountExteriorRefresh(double time) {
@@ -145,7 +145,7 @@ void mountExteriorRefresh(double time) {
         for(int weapon=0;weapon<session.count;++weapon)if(state.weaponKinds[weapon]==2) {
             const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon];
             const int count=static_cast<int>(group.slots.size()),ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12);
-            require(count==14 && window>=0 && window<=count && cursor>=0 && cursor<count && ammo>=-1 &&
+            require(count==14 && window>=0 && window<=count && cursor>=0 && cursor<count && dualsp::validAmmoCount(ammo) &&
                 time+.001>=group.capturedTime,"机外保留：8AAM队列或游戏时间改变");
             const int available=ammo<0?count:std::min(count,ammo);const double delta=std::max(0.,time-group.capturedTime);
             uint64_t ready=0,vacant=0;

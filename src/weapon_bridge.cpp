@@ -27,6 +27,7 @@
 #include <set>
 #include "common.hpp"
 #include "reload_timer.hpp"
+#include "ammo_count.hpp"
 #include "ue4ss_lua_api.hpp"
 #include "keyboard_shortcuts.hpp"
 #include "selection_wave.hpp"
@@ -493,9 +494,8 @@ bool hasReadyRound(const Group& group,double time) {
     require(group.valid,"HUD 武器缓存未建立");
     const int ammo=scalarInt(group,0),window=scalarInt(group,8),next=scalarInt(group,12);
     const int count=static_cast<int>(group.slots.size());
-    // CASUAL-EASY 的原生无限弹药使用 -1；它仍需按真实装填队列判断就绪。
-    // 仅接受此已实机核对的特殊值，其他负数及无效队列继续明确报错。
-    require(ammo>=-1 && ammo<=100000 && window>=0 && window<=count && next>=0 && next<count,"HUD 武器队列无效");
+    // 原生难度/Mod的负弹药计数均视为无限；真实装填窗口、游标和计时仍须有效。
+    require(dualsp::validAmmoCount(ammo) && window>=0 && window<=count && next>=0 && next<count,"HUD 武器队列无效");
     require(std::isfinite(time) && time+0.001>=group.capturedTime,"HUD 游戏时间回退，需先恢复检查点");
     if(ammo==0)return false;
     // 未激活 SP 只推进本来允许装填的窗口；活动组捕获时间就是本次时间。
@@ -745,7 +745,11 @@ std::string snapshotJson(const Command& command) {
        <<",\"flares\":"<<read<int>(read<Addr>(command.activator+0x260)+0x10c)
        <<",\"armed\":"<<(read<unsigned char>(command.activator+0x2a1)!=0 ? "true":"false")
        <<",\"cached_sp\":[";
-    for(int i=0;i<session.count;++i) { if(i)out<<','; out<<(i==session.active ? scalarInt(special,0) : (session.special[i].valid ? scalarInt(session.special[i],0) : -999)); }
+    for(int i=0;i<session.count;++i) {
+        if(i)out<<',';
+        require(i==session.active || session.special[i].valid,"SP库存缓存未建立，不能生成弹药快照");
+        out<<(i==session.active?scalarInt(special,0):scalarInt(session.special[i],0)); // 缺失缓存不能再用负弹药占位。
+    }
     out<<']';
     return out.str();
 }
@@ -785,8 +789,8 @@ void scaleAmmo(Addr activator,int count,double ratio) {
     size_t index=0; // 对应两个弹药字段，而不是两个逻辑 SP。
     for(auto offset:{8,12}) {
         const int ammo=read<int>(group+offset);
-        require(ammo>=0 && ammo<=100000,"Invalid SP ammunition");
-        before[index]=ammo;after[index]=(ammo*percent+99)/100; // 整数运算避免 33% 等比例的浮点误差，零仍为零。
+        require(dualsp::validAmmoCount(ammo),"Invalid SP ammunition");
+        before[index]=ammo;after[index]=ammo<0?ammo:(ammo*percent+99)/100; // 无限保留原始负值；有限值向上取整，零仍为零。
         write<int>(group+offset,after[index]);++index;
     }
     nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"percent",percent},{"native",before},{"scaled",after}}.dump());
@@ -985,6 +989,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_infinite_ammo_supported(void*) {return 0;} // 目录、预览、运行与Lua负数规则须成套。
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
 extern "C" __declspec(dllexport) int dualsp_mod_electronic_supported(void*) {return 0;} // 四返回值和通用电子战保有须成套。
 // 菜单按实际CDO核对通用电子战和已有TLS/UAV资格；返回原因以便诊断。
@@ -1089,7 +1094,7 @@ extern "C" __declspec(dllexport) int dualsp_mount_preview(void* luaState) {
         std::array<int,3> configs{},ammo{};
         for(int slot=0;slot<3;++slot) {
             const auto config=api->readInteger(luaState,5+slot),amount=api->readInteger(luaState,8+slot);
-            require(config>=-1 && config<=2 && amount>=0 && amount<=100000,"模型预览配置或弹药参数越界");
+            require(config>=-1 && config<=2 && dualsp::validAmmoCount(amount),"模型预览配置或弹药参数越界");
             configs[slot]=static_cast<int>(config);ammo[slot]=static_cast<int>(amount);
         }
         if(mode==0)mountPreviewRelease(owner);
@@ -1575,11 +1580,14 @@ extern "C" __declspec(dllexport) int dualsp_parts_ammo_preview(void* luaState) {
             for(int i=0;i<3;++i) {
                 const auto weapon=api->readInteger(luaState,6+i*2); // 实际 WeaponID，不能使用 PWDT 配置序号。
                 const auto baseline=api->readInteger(luaState,7+i*2); // 不含任何已装或候选修正的基础载量。
-                require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"PART 兵装参数异常");
+                require(weapon>=0 && weapon<102 && dualsp::validAmmoCount(baseline),"PART 兵装参数异常");
                 int current=static_cast<int>(baseline),preview=current; // 两次计算分别从基础值开始。
+                if(current<0) { // 无限基础载量不参与部件加法、倍率或偶数修正。
+                    amounts.push_back({{"current",current},{"preview",preview},{"affects",false}});continue;
+                }
                 apply(static_cast<unsigned char>(weapon),&current,&installed,&empty);
                 const bool affects=apply(static_cast<unsigned char>(weapon),&preview,&installed,&candidate); // 取整相同也可为 true。
-                require(current>0 && current<=100000 && preview>0 && preview<=100000,"PART 原生载量结果异常");
+                require(dualsp::validAmmoCount(current) && dualsp::validAmmoCount(preview),"PART 原生载量结果异常");
                 amounts.push_back({{"current",current},{"preview",preview},{"affects",affects}});
             }
             result["candidate"]=context.candidate;result["mode"]=mode;result["amounts"]=std::move(amounts);
@@ -1618,10 +1626,10 @@ extern "C" __declspec(dllexport) int dualsp_loadout_ammo(void* luaState) {
         for(int i=0;i<3;++i) {
             const auto weapon=api->readInteger(luaState,3+i*2); // 原生 WeaponID，不是机体槽号。
             const auto baseline=api->readInteger(luaState,4+i*2); // 原机体数据表的完整载量。
-            require(weapon>=0 && weapon<102 && baseline>0 && baseline<=100000,"配弹预览兵装参数异常");
+            require(weapon>=0 && weapon<102 && dualsp::validAmmoCount(baseline),"配弹预览兵装参数异常");
             int amount=static_cast<int>(baseline); // 计算只影响这个局部变量。
-            reinterpret_cast<Apply>(base+0x84dc40)(static_cast<unsigned char>(weapon),&amount,&parts,&extra);
-            require(amount>0 && amount<=100000,"原生弹药预览结果异常");amounts.push_back(amount);
+            if(amount>=0)reinterpret_cast<Apply>(base+0x84dc40)(static_cast<unsigned char>(weapon),&amount,&parts,&extra);
+            require(dualsp::validAmmoCount(amount),"原生弹药预览结果异常");amounts.push_back(amount);
         }
         const auto encoded=amounts.dump(); // 小型结果走现有 Lua 字串接口。
         api->boolean(luaState,true);api->string(luaState,encoded.data(),encoded.size());return 2;
@@ -2085,13 +2093,14 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
                 }
                 const auto planeCode=unrealString(row+16);
                 require(!planeCode.empty() && planeCode.size()<=128,"机体目录：机体代号无效");
-                Json options=Json::array();bool supported=true;
+                Json options=Json::array();bool supported=true,infinite=false;std::array<int,3> maxima{};
                 for(int i=0;i<3;++i) {
                     const auto code=unrealString(row+96+i*24);
                     if(code=="-1") {supported=false;continue;}
                     if(!byCode.count(code))throw std::runtime_error("机体目录：兵装引用不存在 "+code);
                     const int maximum=read<int>(row+112+i*24);
-                    require(maximum>0 && maximum<=100000,"机体目录：槽位基础载量无效");
+                    require(dualsp::validAmmoCount(maximum),"机体目录：槽位基础载量无效");
+                    maxima[i]=maximum;infinite=infinite || maximum<0;
                     auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=maximum;options.push_back(option);
                 }
                 auto& entry=catalog[key];
@@ -2104,6 +2113,7 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
                     catch(const std::exception& error) {entry["reference_error"]=error.what();}
                 }
                 if(skinReferences.contains(planeCode))entry["skins"]=skinReferences[planeCode];
+                if(infinite)nativeLog(Json{{"event","MOD_AIRCRAFT_INFINITE_AMMO"},{"id",id},{"code",planeCode},{"sp_max",maxima}}.dump());
             }catch(const std::exception& error) {
                 if(id>=0)catalog[std::to_string(id)]={{"id",id},{"supported",false},{"compatibility_error",error.what()}};
                 nativeLog("MOD_AIRCRAFT_ROW_UNAVAILABLE "+std::to_string(id)+" "+error.what());

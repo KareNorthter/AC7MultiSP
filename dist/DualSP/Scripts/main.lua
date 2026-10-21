@@ -40,6 +40,7 @@ end
 local bridge=loadExport("lab_native_execute")
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
+loadExport("dualsp_infinite_ammo_supported") -- 负弹药数按无限处理，拒绝旧预览/核心混装。
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
@@ -1052,7 +1053,7 @@ function weaponSwitch.pump()
     pending.lastCheck=time
     if pending.desired>0 then
         local ammo=pending.desired==active+1 and activator:GetSpecialWeaponCount()or nativeState.cached_sp[pending.desired]
-        if not ammo or ammo<=0 then weaponSwitch.clear("empty_ammo");inputNotice="empty_ammo";return end
+        if not ammo or not Profile.hasAmmo(ammo)then weaponSwitch.clear("empty_ammo");inputNotice="empty_ammo";return end
     end
     selectLogicalWeapon(pending.desired,true)
 end
@@ -1072,7 +1073,7 @@ local function directSelect(desired)
     if desired>0 then
         -- 活动 SP 读取真实弹药，未活动 SP 使用切换时保存的核心计数。
         local ammo=desired==active+1 and activator:GetSpecialWeaponCount()or nativeState.cached_sp[desired]
-        if ammo<=0 then inputNotice="empty_ammo";note("DIRECT_SELECTION_REJECTED EMPTY_AMMO "..desired);return end
+        if not Profile.hasAmmo(ammo)then inputNotice="empty_ammo";note("DIRECT_SELECTION_REJECTED EMPTY_AMMO "..desired);return end
     end
     note("DIRECT_SELECTION_REQUESTED "..desired)
     selectLogicalWeapon(desired)
