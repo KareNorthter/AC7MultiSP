@@ -90,6 +90,8 @@ def source_snapshot(root=ROOT):
         'src/research/qualify_native_mount_collisions.py',
         'evidence/native-seven-collision-preservation.json',
         'evidence/native-seven-collision-feedback.json',
+        'src/research/f18e_layout_feedback_data.py','src/research/prepare_f18e_layout_feedback.py',
+        'evidence/f18e-layout-feedback-r1.json','evidence/native-batch-user-feedback-20261020.json',
         'evidence/mount-resource-qualification-fix.json',
         'evidence/view-target-implementation.json','evidence/target-selection-research.json',
         'evidence/mod-aircraft-compat-static.json',
@@ -104,6 +106,8 @@ def source_snapshot(root=ROOT):
         'evidence/static-mount-five-aircraft-review.json',
         'evidence/static-mount-five-aircraft-feedback.json',
         'evidence/f04e-ugb-model-capacity.json',
+        'evidence/f04e-ugb-alternating-stock.json',
+        'evidence/aircraft-repeat-pause-restart.json',
         'evidence/m35d-inner-4agm-layout.json',
         'evidence/sp-combination-static-split-experiment.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}

@@ -1,4 +1,4 @@
--- AC7MultiSP 2.25.1源码候选：暂停换机走原生关菜单/恢复入口，避免菜单暂停原因跨重开残留；未编译安装。
+-- AC7MultiSP 2.25.1候选：F-4E库存交替显隐、双F/A-18E布局及原生暂停换机修订，待实测。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"

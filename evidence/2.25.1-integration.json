@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "version": "2.25.1",
+  "candidate": true,
+  "formal_main": "0b75b21e4e29c817d193188e7326700507417dae",
+  "actual_install_baseline": "evidence/2.25.0-installed.json",
+  "sources": [
+    {
+      "thread": "01a15180-e665-7a82-a7e4-6584e0ab6342",
+      "commit": "65c52b6001de979ff81d16437983ce87655a7c68"
+    },
+    {
+      "thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
+      "commit": "98ca6aa8423ea35485157f8f62c3d0cfcdc320bd"
+    },
+    {
+      "thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+      "commit": "1ddcc617888cd4a61cf7d937712ea9511de05b5f"
+    }
+  ],
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.25.1\\Temp\\mount-assets-2.25.1\\source",
+  "resource_variants": 77,
+  "resource_members": 154,
+  "unchanged_resource_members": 148,
+  "changed_layouts": [
+    [
+      "f04e",
+      5
+    ],
+    [
+      "f18e",
+      6
+    ],
+    [
+      "f18e",
+      7
+    ],
+    [
+      "f18etg",
+      6
+    ],
+    [
+      "f18etg",
+      7
+    ]
+  ],
+  "other_191_layouts_preserved": true,
+  "collision_preservation_assets": 22,
+  "interfaces": {
+    "management": 16,
+    "configuration": 15,
+    "gaze": 2,
+    "camera": 7,
+    "aircraft": 2,
+    "view_target": 1
+  },
+  "runtime_files": 19,
+  "compiled": true,
+  "tests_run": true,
+  "installed": true,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "九枚/十枚与耗尽、连续投放装填、两机挂架净空和实际离架、各暂停入口及连续换机待用户测试",
+    "其他既有待办与验收范围保持，不扩大用户此前认可"
+  ],
+  "checks_passed": 11,
+  "candidate_source_commit": "134a0f9707aca902eafbe3243bc43dd455eb7252",
+  "build_dir": "Temp/build-2.25.1-candidate",
+  "build_receipt_sha256": "129263d19fcaf6b9ec4b8ee9fc42d1184f2d30f0809e3b1e3e740803148bdfc4",
+  "test_receipt_sha256": "217d260597f8ae785b5a0e1b50d176df6d347a6fed2e4451afa9e5970bc7bc8b",
+  "install_receipt_sha256": "147cc6c50ac4156bc307f85c893ddd68459db874754125356af930cb2f8fc4ee",
+  "installed_at": "2026-10-21T00:15:50.894475+08:00",
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.25.1\\backup\\AC7MultiSP-20261021-001550-894475",
+  "protected_files_verified": 361,
+  "runtime_files_verified": 19,
+  "preserved_mod_files_verified": 26,
+  "save_backup_file_count": 13,
+  "game_close_receipt": "evidence/2.25.1-game-close.json",
+  "game_close_receipt_sha256": "36f208259103106151a1e22e6e609399f8d75273ec3f93fad0efcbb8b718ddd8",
+  "game_remains_closed": true,
+  "game_close_method": "already_stopped",
+  "actual_profiles_revision_preserved": 15,
+  "old_148_frozen_members_preserved": true
+}

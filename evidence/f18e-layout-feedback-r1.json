@@ -1,0 +1,1915 @@
+{
+  "schema": 1,
+  "status": "user_requested_layout_runtime_candidate",
+  "baseline_commit": "6dec7d0",
+  "baseline_assets": [
+    "MSP_f02a_lasm_inner",
+    "MSP_f02a_hvaa_outer",
+    "MSP_f02a_rocket_outer",
+    "MSP_f02a_hvaa_inner",
+    "MSP_f02a_lasm_inner_neg",
+    "MSP_f02a_hvaa_inner_pos",
+    "MSP_f16c_missile_outer",
+    "MSP_f16c_sasm_outer",
+    "MSP_mr2k_aam_rear",
+    "MSP_mr2k_gpb_neg_aux",
+    "MSP_mr2k_lasm_pos",
+    "MSP_rflm_hcaa_belly",
+    "MSP_rflm_hcaa_outer",
+    "MSP_rflm_laam_belly",
+    "MSP_rflm_hcaa_belly_neg",
+    "MSP_rflm_laam_belly_pos",
+    "MSP_su35_lasm_belly",
+    "MSP_su37_4aam_inner",
+    "MSP_f04e_ugb_neg",
+    "MSP_f04e_lagm_pos",
+    "MSP_f14atg_laam_belly",
+    "MSP_f14atg_saam_neg",
+    "MSP_f14atg_hpaa_pos",
+    "MSP_j39e_missile_outer",
+    "MSP_j39e_aam_outer",
+    "MSP_j39e_sasm_outer_neg",
+    "MSP_j39e_6aam_outer_pos",
+    "MSP_su30_hpaa_tips",
+    "MSP_su30_4agm_outer",
+    "MSP_su30_4aam_inner_belly",
+    "MSP_su34_sffs_outer",
+    "MSP_su34_hcaa_inner",
+    "MSP_su34_4agm_belly",
+    "MSP_m29a_hpaa_outer_neg",
+    "MSP_m29a_lagm_outer_pos",
+    "MSP_m29a_4aam_inner",
+    "MSP_f16x_4agm_outer",
+    "MSP_m35d_6aam_outer_neg",
+    "MSP_m35d_4agm_middle_pos",
+    "MSP_su37_hpaa_tips",
+    "MSP_su30_4agm_wings",
+    "MSP_su34_4agm_inner_belly",
+    "MSP_su34_hcaa_outer",
+    "MSP_m29a_hpaa_outer",
+    "MSP_m29a_lagm_inner",
+    "MSP_m29a_lagm_outer",
+    "MSP_su30_4agm_belly",
+    "MSP_su30_4aam_wings",
+    "MSP_m29a_4aam_outer",
+    "MSP_m29a_4aam_outer_pos",
+    "MSP_m35d_6aam_outer_pair",
+    "MSP_m35d_4agm_middle_pair",
+    "MSP_m35d_4agm_inner_pair",
+    "MSP_fa27_mstm_neg",
+    "MSP_f14a_laam_belly",
+    "MSP_f14a_laam_wings",
+    "MSP_f14a_laam_front",
+    "MSP_f14a_sffs_belly",
+    "MSP_f14a_sffs_rear",
+    "MSP_f18e_hcaa_tips",
+    "MSP_f18e_agm_inner",
+    "MSP_f18e_lagm_outer",
+    "MSP_f18etg_hcaa_tips",
+    "MSP_f18etg_hvaa_neg",
+    "MSP_f18etg_gpb_pos_sensor",
+    "MSP_f14d_laam_wing_rear",
+    "MSP_f14d_laam_belly",
+    "MSP_f14d_laam_rear",
+    "MSP_f14d_gpb_front",
+    "MSP_f18f_lasm_inner",
+    "MSP_su33_hvaa_outer",
+    "MSP_f18x_lacm_outer",
+    "MSP_f18x_agm_inner_tips_sensor",
+    "MSP_m31b_saam_rear_lower_r3"
+  ],
+  "appended_assets": [
+    "MSP_f18e_agm_outer_r1",
+    "MSP_f18e_lagm_inner_r1",
+    "MSP_f18etg_gpb_inner_whole_r1"
+  ],
+  "changes": [
+    {
+      "code": "f18e",
+      "mask": 6,
+      "previous": {
+        "selected": [
+          [],
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          60,
+          61
+        ]
+      },
+      "replacement": {
+        "selected": [
+          [],
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          74,
+          75
+        ]
+      }
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "previous": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 7,
+        "variants": [
+          59,
+          60,
+          61
+        ]
+      },
+      "replacement": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "racks": 7,
+        "variants": [
+          59,
+          74,
+          75
+        ]
+      }
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "previous": {
+        "selected": [
+          [],
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          63,
+          64
+        ]
+      },
+      "replacement": {
+        "selected": [
+          [],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          76
+        ]
+      }
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "previous": {
+        "selected": [
+          [
+            0,
+            1
+          ],
+          [
+            0
+          ],
+          [
+            1
+          ]
+        ],
+        "racks": 7,
+        "variants": [
+          62,
+          63,
+          64
+        ]
+      },
+      "replacement": {
+        "selected": [
+          [],
+          [
+            0
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          76
+        ],
+        "full_borrowed_kinds": 1,
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 1
+          }
+        ]
+      }
+    }
+  ],
+  "resource_reports": [
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f18e_SWP2_SM",
+      "json_sha256": "30a94ce2ec675b1bc5d81306e8b7c1c0b1f44097849ff407cdcb79ae08f0cdca",
+      "extras_sha256": "e76691ad2eae5b8c4c13bf2383d49df7b2ac76f65f875619a29a3d5035b73591",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          3.814697265625e-06,
+          0,
+          0
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 14181,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 7882,
+                "min": 0,
+                "max": 14180,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                28.38937759399414
+              ],
+              [
+                -36.54923629760742,
+                36.54914093017578
+              ],
+              [
+                -11.263330459594727,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 7882,
+              "reversed": 0,
+              "depth": 7882,
+              "reversed_depth": 0,
+              "adjacency": 7882
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 3419,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 2499,
+                "min": 0,
+                "max": 3418,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                28.38937759399414
+              ],
+              [
+                -36.54909133911133,
+                36.54899597167969
+              ],
+              [
+                -11.214079856872559,
+                2.4407293796539307
+              ]
+            ],
+            "buffers": {
+              "main": 2499,
+              "reversed": 0,
+              "depth": 2499,
+              "reversed_depth": 0,
+              "adjacency": 2499
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 935,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 562,
+                "min": 0,
+                "max": 934,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                28.381351470947266
+              ],
+              [
+                -36.54909133911133,
+                36.54899597167969
+              ],
+              [
+                -11.214079856872559,
+                2.413461923599243
+              ]
+            ],
+            "buffers": {
+              "main": 562,
+              "reversed": 0,
+              "depth": 562,
+              "reversed_depth": 0,
+              "adjacency": 562
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f18e_agm_outer_r1",
+        "aircraft": "f18e",
+        "source_asset": "f18e_SWP2_SM",
+        "source_extras_sha256": "e76691ad2eae5b8c4c13bf2383d49df7b2ac76f65f875619a29a3d5035b73591",
+        "keep_boxes": [
+          [
+            -1000,
+            -1000,
+            -1000,
+            1000,
+            -30,
+            1000
+          ],
+          [
+            -1000,
+            30,
+            -1000,
+            1000,
+            1000,
+            1000
+          ]
+        ],
+        "reason": "用户反馈：较大的LAGM改内侧，4AGM改外侧；保留原生各自安装点与支撑"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f18e_agm_outer_r1",
+      "candidate_extras_sha256": "1e01c029714d488aa29020c0b7586e4fed7fef835974a924e5889f88015ee183",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 3148,
+              "degenerated": 4734
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 3148,
+              "degenerated": 4734
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 3148,
+              "degenerated": 4734
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 1000,
+              "degenerated": 1499
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 1000,
+              "degenerated": 1499
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 1000,
+              "degenerated": 1499
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 156,
+              "degenerated": 406
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 156,
+              "degenerated": 406
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 156,
+              "degenerated": 406
+            }
+          }
+        }
+      ],
+      "changed_bytes": 103603,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "b398013271dd1f19aab41ceae56d3e3686f4a6f164e36d02d33473a406656fe0",
+        ".uexp": "a31528f9ea440e32ff442f6899950305ac69ac3de4062656b3af78f82253a105"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "069048c7453cdbf02344261125e504a189f00cf9dbf6d4405c99984e535c12f6",
+        ".uexp": "43377ef21d4973fab21918706f7488a1b226622ead8d42b98b2fac52ebb9a654"
+      }
+    },
+    {
+      "schema": 1,
+      "status": "offline_geometry_only",
+      "source": "f18e_SWP3_SM",
+      "json_sha256": "1b826cbaa483757e1e220366eb550d118b3c80809a7ff972a6ff55e3ba189ac1",
+      "extras_sha256": "41c857cbc79612a39b1efebb692b353ddaba4f0651be18fa2a3ab1e13331c094",
+      "structure": {
+        "socket_count": 4,
+        "original_lod_bounds_overflow": [
+          3.814697265625e-06,
+          7.62939453125e-06,
+          2.384185791015625e-07
+        ],
+        "lods": [
+          {
+            "lod": 0,
+            "vertices": 10964,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 5232,
+                "min": 0,
+                "max": 10963,
+                "collision": 1,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.507766723632812
+              ],
+              [
+                -36.37105178833008,
+                36.37104797363281
+              ],
+              [
+                -7.0675554275512695,
+                2.461151123046875
+              ]
+            ],
+            "buffers": {
+              "main": 5232,
+              "reversed": 0,
+              "depth": 5232,
+              "reversed_depth": 0,
+              "adjacency": 5232
+            }
+          },
+          {
+            "lod": 1,
+            "vertices": 2244,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 1864,
+                "min": 0,
+                "max": 2243,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.507766723632812
+              ],
+              [
+                -36.37105178833008,
+                36.37105178833008
+              ],
+              [
+                -7.067555904388428,
+                2.461151361465454
+              ]
+            ],
+            "buffers": {
+              "main": 1864,
+              "reversed": 0,
+              "depth": 1864,
+              "reversed_depth": 0,
+              "adjacency": 1864
+            }
+          },
+          {
+            "lod": 2,
+            "vertices": 572,
+            "sections": [
+              {
+                "material": 0,
+                "first": 0,
+                "triangles": 336,
+                "min": 0,
+                "max": 571,
+                "collision": 0,
+                "shadow": 1
+              }
+            ],
+            "bounds": [
+              [
+                -8.81374740600586,
+                26.507766723632812
+              ],
+              [
+                -36.362361907958984,
+                36.362361907958984
+              ],
+              [
+                -7.041573524475098,
+                2.461151361465454
+              ]
+            ],
+            "buffers": {
+              "main": 336,
+              "reversed": 0,
+              "depth": 336,
+              "reversed_depth": 0,
+              "adjacency": 336
+            }
+          }
+        ]
+      },
+      "compiled": false,
+      "installed": false,
+      "game_verified": false,
+      "recipe": {
+        "name": "MSP_f18e_lagm_inner_r1",
+        "aircraft": "f18e",
+        "source_asset": "f18e_SWP3_SM",
+        "source_extras_sha256": "41c857cbc79612a39b1efebb692b353ddaba4f0651be18fa2a3ab1e13331c094",
+        "keep_boxes": [
+          [
+            -1000,
+            -30,
+            -1000,
+            1000,
+            30,
+            1000
+          ]
+        ],
+        "reason": "用户反馈：较大的LAGM改内侧，4AGM改外侧；保留原生各自安装点与支撑"
+      },
+      "package": "/Game/AC7MultiSP/Research/MSP_f18e_lagm_inner_r1",
+      "candidate_extras_sha256": "45bd3bd41c4cb770deea7ddfca181872fb3a41077747cd021f5ba82e6296d4c0",
+      "per_lod": [
+        {
+          "lod": 0,
+          "buffers": {
+            "main": {
+              "kept": 2616,
+              "degenerated": 2616
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 2616,
+              "degenerated": 2616
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 2616,
+              "degenerated": 2616
+            }
+          }
+        },
+        {
+          "lod": 1,
+          "buffers": {
+            "main": {
+              "kept": 932,
+              "degenerated": 932
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 932,
+              "degenerated": 932
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 932,
+              "degenerated": 932
+            }
+          }
+        },
+        {
+          "lod": 2,
+          "buffers": {
+            "main": {
+              "kept": 168,
+              "degenerated": 168
+            },
+            "reversed": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "depth": {
+              "kept": 168,
+              "degenerated": 168
+            },
+            "reversed_depth": {
+              "kept": 0,
+              "degenerated": 0
+            },
+            "adjacency": {
+              "kept": 168,
+              "degenerated": 168
+            }
+          }
+        }
+      ],
+      "changed_bytes": 59994,
+      "byte_length_preserved": true,
+      "non_index_bytes_preserved": true,
+      "sockets_and_materials_preserved": true,
+      "asset_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "output_hashes": {
+        ".uasset": "32cc84f9bac0384fec3055f657f441748cff71aa01e2c3587b30ead36df04f0b",
+        ".uexp": "3c530a40673a519156b4f879a0717bc554c35dbd9cc4fc7f7ff7d92c71b974bc"
+      },
+      "source_ac7_encoding_reproduced": true,
+      "renamed_ac7_roundtrip": true,
+      "encoded_hashes": {
+        ".uasset": "94fb6686db2bbfa6cca71e0c1f05e6eca466d0730cdcfe78e8fc4b5bd81b7406",
+        ".uexp": "372c4b33b8c891a55dc2f152d35f119a3db414fe7a49c5f7709ab7a02c368bdc"
+      }
+    },
+    {
+      "source": "f18etg_SWP3_SM",
+      "json_sha256": "1016daac22f31e4b2f03bcad7a13824c246104e5ca3476128da90bbfde4c333f",
+      "recipe": {
+        "name": "MSP_f18etg_gpb_inner_whole_r1",
+        "aircraft": "f18etg",
+        "source_asset": "f18etg_SWP3_SM",
+        "whole_geometry_donor": "f18e_SWP2_SM",
+        "whole_geometry_donor_json_sha256": "30a94ce2ec675b1bc5d81306e8b7c1c0b1f44097849ff407cdcb79ae08f0cdca"
+      },
+      "asset_roundtrip": true,
+      "renamed_ac7_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "source_ac7_encoding_reproduced": true,
+      "complete_donor_geometry_bytes_preserved": true,
+      "donor_lods": 3,
+      "donor_triangle_counts": [
+        7882,
+        2499,
+        562
+      ],
+      "donor_materials_preserved": true,
+      "collision_and_navigation_preserved": true,
+      "socket_changes": [
+        {
+          "socket": "sp31",
+          "before": {
+            "X": 18.269407272338867,
+            "Y": -34.861358642578125,
+            "Z": -7.4979095458984375
+          },
+          "after": {
+            "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+            "X": 20.38025665283203,
+            "Y": -23.07478904724121,
+            "Z": -7.097089767456055
+          }
+        },
+        {
+          "socket": "sp32",
+          "before": {
+            "X": 18.269407272338867,
+            "Y": 34.861358642578125,
+            "Z": -7.4979095458984375
+          },
+          "after": {
+            "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+            "X": 20.38025665283203,
+            "Y": 23.07478904724121,
+            "Z": -7.097089767456055
+          }
+        }
+      ],
+      "socket_rotations_and_scales_preserved": true,
+      "encoded_hashes": {
+        ".uasset": "e77a15f6ad50320bab13b1e44a54f8601d94a101f1e52dbe38d341ab1d50ee21",
+        ".uexp": "7b83772323e3e96e0a1d6cd9e210249cfa1afa8378ba2b836c8398e8cfd58984"
+      }
+    }
+  ],
+  "collision_preservation": [
+    {
+      "asset": "MSP_f18e_agm_outer_r1",
+      "aircraft": "f18e",
+      "source": "f18e_SWP2_SM",
+      "source_package": "/Game/Vehicles/Aircraft/f18e/f18e_SWP2_SM",
+      "body_name": "BodySetup",
+      "body_number": 1,
+      "body_guid": [
+        48,
+        145,
+        155,
+        92,
+        162,
+        141,
+        71,
+        69,
+        134,
+        111,
+        144,
+        245,
+        239,
+        250,
+        210,
+        171
+      ],
+      "collision_references_unchanged": true,
+      "complete_body_and_nav_exports_unchanged": true,
+      "body_export_sha256": "2e678fc3f5339826560f016de6b015fac70fff2d293941e2557837bd828d89f5",
+      "nav_export_sha256": "8ebb898a0e7d434152e8392a7e7ae1312eb5f292f590b92d0171d209f706a200",
+      "source_json_sha256": "30a94ce2ec675b1bc5d81306e8b7c1c0b1f44097849ff407cdcb79ae08f0cdca",
+      "candidate_json_sha256": "395c8b74a9b891f64499db2d843b2b399fe734cd15d81620b970799823e7afaa",
+      "encoded_hashes": {
+        ".uasset": "069048c7453cdbf02344261125e504a189f00cf9dbf6d4405c99984e535c12f6",
+        ".uexp": "43377ef21d4973fab21918706f7488a1b226622ead8d42b98b2fac52ebb9a654"
+      }
+    },
+    {
+      "asset": "MSP_f18e_lagm_inner_r1",
+      "aircraft": "f18e",
+      "source": "f18e_SWP3_SM",
+      "source_package": "/Game/Vehicles/Aircraft/f18e/f18e_SWP3_SM",
+      "body_name": "BodySetup",
+      "body_number": 1,
+      "body_guid": [
+        224,
+        22,
+        34,
+        86,
+        7,
+        71,
+        138,
+        70,
+        182,
+        135,
+        197,
+        122,
+        69,
+        153,
+        30,
+        94
+      ],
+      "collision_references_unchanged": true,
+      "complete_body_and_nav_exports_unchanged": true,
+      "body_export_sha256": "524f916dfac1dd1e276bd6025d0e0b29fb6d91118aecbd5ad03e3d0f7abc075a",
+      "nav_export_sha256": "8ebb898a0e7d434152e8392a7e7ae1312eb5f292f590b92d0171d209f706a200",
+      "source_json_sha256": "1b826cbaa483757e1e220366eb550d118b3c80809a7ff972a6ff55e3ba189ac1",
+      "candidate_json_sha256": "6be6ebeef5aa75165d5dfa76361234f8be27236bee877c4d043d41be1ff808b3",
+      "encoded_hashes": {
+        ".uasset": "94fb6686db2bbfa6cca71e0c1f05e6eca466d0730cdcfe78e8fc4b5bd81b7406",
+        ".uexp": "372c4b33b8c891a55dc2f152d35f119a3db414fe7a49c5f7709ab7a02c368bdc"
+      }
+    },
+    {
+      "asset": "MSP_f18etg_gpb_inner_whole_r1",
+      "aircraft": "f18etg",
+      "source": "f18etg_SWP3_SM",
+      "source_package": "/Game/Vehicles/Aircraft/f18etg/f18etg_SWP3_SM",
+      "body_name": "BodySetup",
+      "body_number": 1,
+      "body_guid": [
+        189,
+        100,
+        121,
+        135,
+        160,
+        69,
+        202,
+        72,
+        170,
+        254,
+        159,
+        134,
+        72,
+        174,
+        223,
+        251
+      ],
+      "collision_references_unchanged": true,
+      "complete_body_and_nav_exports_unchanged": true,
+      "body_export_sha256": "c93fea4ef04a2d1de824469a0589a8fbd0e797ccd632d8af85630401bb41bff7",
+      "nav_export_sha256": "043a8d3a789480fec088693f64c6cae1c92166fc3c21dc98d8e29548af4218a5",
+      "source_json_sha256": "1016daac22f31e4b2f03bcad7a13824c246104e5ca3476128da90bbfde4c333f",
+      "candidate_json_sha256": "0da612905aadd8d96fdba807252764518260fc370326ad8660272026691aa4dc",
+      "encoded_hashes": {
+        ".uasset": "e77a15f6ad50320bab13b1e44a54f8601d94a101f1e52dbe38d341ab1d50ee21",
+        ".uexp": "7b83772323e3e96e0a1d6cd9e210249cfa1afa8378ba2b836c8398e8cfd58984"
+      }
+    }
+  ],
+  "geometry": [
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        1,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 62.791980703829026,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 5.580054985089575,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 50.0763360265221,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 50.07633650335926,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 5.580055461926735,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 6,
+      "first": [
+        2,
+        2,
+        2
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_lagm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 37.04278054113466,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        0
+      ],
+      "second": [
+        0,
+        0,
+        1
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 81.60224827942373,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        0
+      ],
+      "second": [
+        1,
+        1,
+        0
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 4.673909135931398,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        0
+      ],
+      "second": [
+        1,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 72.92931227820584,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 15.672506681550324,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 59.89964256594174,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        1
+      ],
+      "second": [
+        1,
+        1,
+        0
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 72.92920724522314,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        1
+      ],
+      "second": [
+        1,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 4.673899948780754,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 59.89953800719942,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        0,
+        0,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4aam_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 15.672390694498546,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        1,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_4agm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 62.791980703829026,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 5.580054985089575,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 50.0763360265221,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        2
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 50.07633650335926,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_4agm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 5.580055461926735,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18e",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        2
+      ],
+      "second": [
+        2,
+        2,
+        3
+      ],
+      "meshes": [
+        "w_lagm_a0_SM",
+        "w_lagm_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 37.04278054113466,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        1,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_saam_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 59.85258808837714,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 4.455662210303018,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 0.33720131667203823,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 48.38440849186901,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 44.25287274762441,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 48.38440849186901,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 44.25287274762441,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 4.455662210303018,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        1,
+        1,
+        1
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 0.33720131667203823,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_closed_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 1,
+      "minimum_margin": 36.65522451204409,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 6,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 28.419848550643838,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 4.455662210303018,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        0
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 0.33720131667203823,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 48.38440849186901,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 44.25287274762441,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        1,
+        1,
+        0
+      ],
+      "second": [
+        0,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_saam_a0_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 62.03305085746601,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_closed_SM",
+        "w_gpb_a1_closed_SM"
+      ],
+      "lod_pairs": 1,
+      "minimum_margin": 36.65522451204409,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        2,
+        2,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_SM",
+        "w_gpb_a1_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 28.419848550643838,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        0,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_closed_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 50.53927327306971,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        0
+      ],
+      "second": [
+        0,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 46.42081237943873,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        1
+      ],
+      "second": [
+        0,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_closed_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 3,
+      "minimum_margin": 6.621543128805827,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": false
+    },
+    {
+      "code": "f18etg",
+      "mask": 7,
+      "first": [
+        2,
+        2,
+        1
+      ],
+      "second": [
+        0,
+        1,
+        1
+      ],
+      "meshes": [
+        "w_gpb_a1_SM",
+        "w_4aam_a0_SM"
+      ],
+      "lod_pairs": 9,
+      "minimum_margin": 2.503082235174846,
+      "obb_overlap": false,
+      "expanded_at_mount_hypothesis": true
+    }
+  ],
+  "source_fingerprints": {
+    "f18e_SWP2_SM": {
+      "json_sha256": "30a94ce2ec675b1bc5d81306e8b7c1c0b1f44097849ff407cdcb79ae08f0cdca"
+    },
+    "f18e_SWP3_SM": {
+      "json_sha256": "1b826cbaa483757e1e220366eb550d118b3c80809a7ff972a6ff55e3ba189ac1"
+    },
+    "f18etg_SWP3_SM": {
+      "json_sha256": "1016daac22f31e4b2f03bcad7a13824c246104e5ca3476128da90bbfde4c333f"
+    },
+    "w_4aam_a0_SM": {
+      "json_sha256": "c910b7cb6432fbbd3919a3974f3331ce731a9ebfc0c0422b47de4a61aba3c590"
+    },
+    "w_4agm_a0_SM": {
+      "json_sha256": "bf22273d1f0a69c8bf04842d6a8909ed9c6b152f87a22f5711c816655ca23250"
+    },
+    "w_gpb_a1_SM": {
+      "json_sha256": "db300d706a84c74420b6a119d420fef91ec5cb18c500ffea200496518ba44313"
+    },
+    "w_gpb_a1_closed_SM": {
+      "json_sha256": "82b43cc51accf29f54932c17710cbf5ec688c84ac3085b3cfb2dda48448d896a"
+    },
+    "w_lagm_a0_SM": {
+      "json_sha256": "f745d221167c5b1c47d4db3e097b34b0586837d2714e0f91e5e112b535de815d"
+    },
+    "w_saam_a0_SM": {
+      "json_sha256": "1ba0843c763bb8f4d46138a443035fd136aa43f86eaa9851fefa5d977ee3587a"
+    }
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "limits": [
+    "只修改两机mask6/7，单挂及其他双挂不变",
+    "TGM整套借普通E的4AGM挂架，三个LOD全部几何原样，不拆分、不缩放",
+    "GPB只平移原生两个挂点至内侧，保留旋转；三挂HCAA借外侧一个HVAA点",
+    "供体与TGM机身对接、弹体与挂架/机身净空、实际离架及显隐归还仍需用户观察",
+    "OBB重叠不等于模型穿插，展开网格放在挂点不代表真实展开时序"
+  ]
+}

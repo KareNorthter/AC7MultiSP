@@ -7,6 +7,7 @@ CODES = ['f02a','f15c','f15j','f15m','f16c','fa27','mr2k','mrgn','rflm','typn','
 LAYOUT_REVIEW = 'evidence/static-mount-five-aircraft-review.json'
 LAYOUT_FEEDBACK = 'evidence/static-mount-five-aircraft-feedback.json'
 MODEL_CAPACITY = 'evidence/f04e-ugb-model-capacity.json'
+F04E_ALTERNATING_STOCK = 'evidence/f04e-ugb-alternating-stock.json'
 M35D_INNER_AGM = 'evidence/m35d-inner-4agm-layout.json'
 
 
@@ -38,7 +39,7 @@ def apply_m35d_size_priority(planes, assets):
 
 
 def apply_model_capacity(planes):
-    """登记用户明确要求的独立模型容量，不改站位、资源或实际配弹。"""
+    """核对并重现历史独立容量来源，最终由库存与左右交替修订覆盖撤销。"""
     record = json.loads((ROOT/MODEL_CAPACITY).read_text(encoding='utf-8'))
     item = record['override']
     if record['schema'] != 1 or (item['code'], item['mask'], item['model_capacity_mask']) != ('f04e',5,1):
@@ -50,6 +51,27 @@ def apply_model_capacity(planes):
     if len(plan['selected'][0]) != 12 or plane['groups'][0]['fixed'] or plane['groups'][0]['launcher']:
         raise ValueError('F4独立模型容量必须对应十二个UGB原生弹体位置')
     plan['model_capacity_mask'] = item['model_capacity_mask']
+
+
+def apply_f04e_alternating_stock(planes):
+    """精确替换旧十二模型特例，保完整布局并按库存左右交替占位。"""
+    record = json.loads((ROOT/F04E_ALTERNATING_STOCK).read_text(encoding='utf-8'))
+    item = record['override']
+    if record['schema'] != 1 or (item['code'], item['mask']) != ('f04e',5):
+        raise ValueError('左右交替修订超出F4的UGB＋SASM范围')
+    plane = next(p for p in planes if p['code'] == item['code'])
+    group = plane['groups'][0]
+    sockets = ['sp11','sp13','sp15','sp17','sp19','sp21','sp12','sp14','sp16','sp18','sp20','sp22']
+    if (plane['plans'][5] != item['expected_plan'] or group['sockets'] != sockets or
+            item['expected_ugb_sockets'] != sockets or group['fixed'] or group['launcher']):
+        raise ValueError('F4左右交替的旧方案或原生弹体位置已变化，须先复核')
+    # 原生表按整侧分组；只交替使用顺序，不改变Socket身份、模型池或逻辑队列。
+    order = [position for pair in zip(range(6),range(6,12)) for position in pair]
+    replacement = {'selected':[order,[],[0,1]],'racks':5,'variants':[-1,-1,-1]}
+    if (item['replacement_plan'] != replacement or
+            item['alternating_ugb_sockets'] != [sockets[i] for i in order]):
+        raise ValueError('F4左右交替必须保十二原生位置且不得登记独立模型容量')
+    plane['plans'][5] = replacement
 
 
 def apply_layout_review(planes, assets, source, targets):
@@ -227,6 +249,7 @@ def build():
     apply_layout_review(planes, assets, LAYOUT_FEEDBACK, {('f15m',3),('f15m',7)})
     apply_model_capacity(planes)
     apply_m35d_size_priority(planes, assets)
+    apply_f04e_alternating_stock(planes)
     if __package__:
         from .native_static_batch_data import append_native_static_batch
     else:
@@ -265,6 +288,12 @@ def build():
         preserved.append({k:entry[k] for k in ('asset','source','source_package','body_name','body_number','body_guid')})
     if collision['body_layout']['size']!=0x3a0 or collision['body_layout']['guid_offset']!=0x2e0:
         raise ValueError('原生BodySetup布局依据改变')
+    # 在旧19项原始资格核验完成后追加反馈；旧资源即使不再使用也保留编号与字节。
+    if __package__:
+        from .f18e_layout_feedback_data import apply_f18e_layout_feedback
+    else:
+        from f18e_layout_feedback_data import apply_f18e_layout_feedback
+    apply_f18e_layout_feedback(planes, assets, preserved, ROOT)
     return {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
 

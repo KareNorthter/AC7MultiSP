@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "status": "user_feedback_scoped_not_exhaustive",
+  "installed_version": "2.25.0",
+  "installed_receipt": "evidence/2.25.0-installed.json",
+  "installed_receipt_sha256": "2537e829c4c32691753ab97fd11020d33c61b84331e0a8fa62ed575c025566e9",
+  "runtime_files_matched": 19,
+  "installed_pak_matched": true,
+  "feedback": [
+    {
+      "aircraft": "f14a",
+      "quote": "F14A正常。",
+      "status": "用户确认正常，范围未逐项列举"
+    },
+    {
+      "aircraft": [
+        "f18e",
+        "f18etg"
+      ],
+      "quote": "FA18E和FA18E-TGM可以出击了",
+      "status": "可以出击；布局按本次反馈修订，新布局待观察"
+    },
+    {
+      "aircraft": [
+        "su33",
+        "f18f",
+        "f18x",
+        "f14d"
+      ],
+      "quote": "经过测试，SU33,FA18F,FA18F BLOCKIII,F14D均正常，剩下的我马上测试",
+      "status": "此前用户确认正常；不扩大为每组合、任务和性能全量验收"
+    }
+  ],
+  "layout_feedback": "普通E在LAGM＋4AGM及三挂时将大弹LAGM置内侧；TGM双挂内GPB2外HVAA2，三挂内GPB2外HVAA1/HCAA1；TGM不拆挂架，允许空架和借架",
+  "limits": [
+    "新布局尚未由用户观察",
+    "MiG-31B整体设计认可与r3后移待观察状态不变",
+    "旧回执不回改"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false
+}

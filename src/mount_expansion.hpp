@@ -142,7 +142,7 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         mountRequireNoCollision(target); // 只读守卫；不改借用组件的碰撞设置。
         Addr source{};
         if((plan.value("full_borrowed_kinds",0u)&(1u<<kind))!=0) {
-            // MiG-35D整组迁位仍从已核验的本兵装原生组件取网格。
+            // 显式登记的整组迁位仍从已核验的本兵装原生组件取网格；含TGM单枚HCAA借位。
             for(const auto& visual:state.visuals)if(visual.pool==kind && visual.index>=0) {
                 source=visual.identity.address;break;
             }
