@@ -1,0 +1,25 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T22:45:39.024353+08:00",
+  "version": "2.22.2 alpha1",
+  "delivery": "evidence/2.22.2-alpha1-r3-integration.json",
+  "user_statement": "各项功能都正常。另外CFA44的切换SP似乎卡顿感比之前的版本减少了，你能读取到耗时数据分析吗",
+  "basis": "用户针对上一条六项简明测试列表的整体反馈，不虚构每项独立次数或仪器记录",
+  "scope": [
+    "CFA44 ADMM无限/快装、切SP及关闭无限",
+    "频繁切SP与帧率感受",
+    "投弹后切组合",
+    "多SP模型与动画",
+    "暂停与管理页",
+    "补给与重开"
+  ],
+  "user_reported_pass": true,
+  "performance_report": "CFA44切SP主观卡顿减轻；对应日志统计另见性能记录",
+  "formal_version_renamed": false,
+  "merged_to_main": false,
+  "release_created": false,
+  "limitations": [
+    "反馈只覆盖本轮用户测试，不扩大为全机全组合或固定FPS保证",
+    "此前暂停崩溃此次未报告重现，原根因仍未证明"
+  ]
+}
