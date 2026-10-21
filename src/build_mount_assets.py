@@ -18,7 +18,7 @@ def build(source, output):
     for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json', 'static-expansion-2.13.0.json',
                      'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json',
                      'local-four-mount-runtime.json', 'm31b-saam-offset-r1.json', 'm31b-saam-offset-r2.json',
-                     'm31b-saam-offset-r3.json', 'f18e-layout-feedback-r1.json'):
+                     'm31b-saam-offset-r3.json', 'f18e-layout-feedback-r1.json', 'f18etg-whole-rack-socket-r2.json'):
         extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
         for report in extra['resource_reports']:
             name = report['recipe']['name']
@@ -39,6 +39,13 @@ def build(source, output):
     for entry in feedback['collision_preservation']:
         if reports[entry['asset']]['encoded_hashes']!=entry['encoded_hashes']:
             raise ValueError('两机反馈碰撞依据与实际资源字节不符：'+entry['asset'])
+    fixed=json.loads((ROOT/'evidence/f18etg-whole-rack-socket-r2.json').read_text(encoding='utf-8'))
+    report,=fixed['resource_reports']
+    entry,=fixed['collision_preservation']
+    if (fixed['previous_asset'] in names or fixed['asset'] not in names or
+            not report['cooked_socket_references_verified'] or report['cooked_socket_references']!=[4,5] or
+            entry['encoded_hashes']!=report['encoded_hashes']):
+        raise ValueError('TGM错误旧资源仍在打包白名单或新引用资格不完整')
     for name in names:
         report = reports[name]
         if not all(report.get(k) is True for k in ('asset_roundtrip','renamed_ac7_roundtrip','all_exports_payload_preserved')):

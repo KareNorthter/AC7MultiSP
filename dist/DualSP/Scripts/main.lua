@@ -422,6 +422,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
             local objectPath=package.."."..entry[2]
             local object=StaticFindObject(objectPath)
             if not valid(object)then
+                note("MOUNT_ASSET_PATH_BEGIN aircraft="..code.." mask="..tostring(mask).." path="..objectPath)
                 -- 本PAK的自有资源在登记表中未命中；先用已验证的原生精确路径，避免逐份重复失败搜索。
                 -- 原生工厂建立完整AssetData；来源或接口未就绪时仍可尝试原加载器入口。
                 local pathStarted=os.clock()
@@ -445,6 +446,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
                 note("MOUNT_ASSET_PATH_RESULT path="..objectPath.." valid="..tostring(valid(object)))
                 if not valid(object)then
                     local registryStarted=os.clock()
+                    note("MOUNT_ASSET_REGISTRY_BEGIN path="..objectPath)
                     local loaded,registered,didLoad=LoadAsset(objectPath)
                     registryElapsed=(os.clock()-registryStarted)*1000
                     object=valid(loaded)and loaded or StaticFindObject(objectPath)

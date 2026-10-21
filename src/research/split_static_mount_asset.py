@@ -62,7 +62,29 @@ def load_mesh(path):
     if cls >= 0 or document['Imports'][-cls-1]['ObjectName'] != 'StaticMesh':
         raise ValueError("只支持 StaticMesh，不处理活动骨架")
     raw = base64.b64decode(export['Extras'], validate=True)
-    return document, export, raw, parse_mesh(raw)
+    mesh = parse_mesh(raw)
+    validate_socket_references(document, export, mesh)
+    return document, export, raw, mesh
+
+
+def validate_socket_references(document, export, mesh):
+    """Extras中的Socket数组也会被引擎读取；不能只核对属性或依赖通用转换器回读。"""
+    props = [p for p in export.get('Data', []) if p['Name'] == 'Sockets']
+    if len(props) > 1:
+        raise ValueError('静态挂架Sockets属性重复')
+    declared = [p['Value'] for p in props[0]['Value']] if props else []
+    refs = mesh['socket_references']
+    if refs != declared or len(set(refs)) != len(refs):
+        raise ValueError(f'cooked Socket引用与Sockets属性不一致：{refs} != {declared}')
+    owner = document['Exports'].index(export)+1
+    for index in refs:
+        if type(index) is not int or not 1 <= index <= len(document['Exports']):
+            raise ValueError('cooked Socket引用越过本地导出边界')
+        socket = document['Exports'][index-1]
+        cls = socket['ClassIndex']
+        if (not -len(document['Imports']) <= cls < 0 or
+                document['Imports'][-cls-1]['ObjectName'] != 'StaticMeshSocket' or socket['OuterIndex'] != owner):
+            raise ValueError('cooked Socket导出类型或所属网格不符')
 
 
 def parse_mesh(raw):
@@ -72,7 +94,8 @@ def parse_mesh(raw):
         raise ValueError("要求已去编辑器数据、未去服务端数据的 cooked 网格")
     r.take(8 + 16)  # BodySetup、NavCollision 引用与 LightingGuid 原样保留。
     socket_count = r.integer(0, 1000)
-    r.take(socket_count * 4)
+    socket_references = list(r.unpack('i'*socket_count))
+    geometry_offset = r.pos  # 包含4字节数量字段；不能再用不含数量的固定头长计算边界。
     lod_count = r.integer(1, 8)
     lods = []
     for index in range(lod_count):
@@ -157,7 +180,8 @@ def parse_mesh(raw):
     overflow = [max(0, max(abs(p[a]-bounds[a])-bounds[3+a] for p in lod['points'] for a in range(3))) for lod in lods]
     if overflow[0] > 0.005:
         raise ValueError(f"LOD0 超出原包围范围：{overflow[0]}")
-    return {'socket_count': socket_count, 'lods': lods, 'tail_start': tail_start,
+    return {'socket_count': socket_count, 'socket_references': socket_references,
+            'geometry_offset': geometry_offset, 'lods': lods, 'tail_start': tail_start,
             'bounds': bounds, 'original_lod_bounds_overflow': overflow}
 
 

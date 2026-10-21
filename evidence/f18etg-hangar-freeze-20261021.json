@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "user_report": "TGM机库选第二个HVAA时卡死，是否确认不记得；约凌晨00:30",
+  "observed_local_time": "2026-10-21 00:39:20 Asia/Shanghai",
+  "observed_log_utc": "2026-10-20T16:39:20Z",
+  "installed_version": "2.25.1",
+  "installed_receipt_sha256": "147cc6c50ac4156bc307f85c893ddd68459db874754125356af930cb2f8fc4ee",
+  "runtime_files_matched": 19,
+  "installed_pak_matched": true,
+  "installed_pak_sha256": "c24112faaf1abbdcaed848b69b7bc000aee2a6c7dc9aca142d090f4af14f14c2",
+  "frozen_pak_r1_member_hashes_match": true,
+  "log_sources": [
+    {
+      "file": "mod.log",
+      "sha256": "eed5935f5f98fd227c38fa4671f7a69b0d3de4cff260251679e296fcbfdcb1f6"
+    },
+    {
+      "file": "native.log",
+      "sha256": "6aa36e1ff2819db6152c21d9ce231525995d380b8c20ccfe9bc14eeab26401da"
+    }
+  ],
+  "timeline": [
+    {
+      "time": "00:39:11–00:39:12",
+      "event": "publishState界面发布info.code为空；随后日志继续",
+      "causality": "没有证据为本次卡死原因"
+    },
+    {
+      "time": "00:39:19",
+      "event": "进入TGM机库SP页，记录sp1、sp2阶段"
+    },
+    {
+      "time": "00:39:20",
+      "event": "HCAA翼尖副本加载成功；随后记录sp3阶段；本会话日志终止，无完整GPB借架资源加载成功记录"
+    },
+    {
+      "time": "00:42:59",
+      "event": "下次游戏会话开始"
+    }
+  ],
+  "confirmed_defect": {
+    "asset": "MSP_f18etg_gpb_inner_whole_r1",
+    "cooked_refs": [
+      4,
+      7
+    ],
+    "property_refs": [
+      4,
+      5
+    ],
+    "export_count": 5,
+    "cause": "整架拼接遗漏4字节数量字段，供体导出7被带入受体第二个Socket",
+    "link_to_freeze": "高度相关的确定资源错误；未取得卡死线程栈，不能证明唯一根因"
+  },
+  "fix": {
+    "asset": "MSP_f18etg_gpb_inner_whole_r2",
+    "changed_int32_offset": 38,
+    "cooked_refs": [
+      4,
+      5
+    ],
+    "layout_unchanged": true,
+    "original_other_76_assets_unchanged": true,
+    "offline_checked": [
+      {
+        "asset": "MSP_f18e_agm_outer_r1",
+        "refs": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "valid": true
+      },
+      {
+        "asset": "MSP_f18e_lagm_inner_r1",
+        "refs": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "valid": true
+      },
+      {
+        "asset": "MSP_f18etg_gpb_inner_whole_r2",
+        "refs": [
+          4,
+          5
+        ],
+        "valid": true
+      }
+    ],
+    "legacy_rejected": "cooked Socket引用与Sockets属性不一致：[4, 7] != [4, 5]",
+    "resource_count": 77,
+    "resource_members": 154,
+    "logging": "新增资源加载路径与备用入口调用前日志，逐项刷新；成功缓存不增加逐帧日志"
+  },
+  "limits": [
+    "日志阶段说明已到sp3预览，不等于用户已经确认第三项",
+    "未修改或解释其他线程的UI报错，未将Steam的独立APPCRASH当作游戏卡死栈",
+    "新资源加载、预览、投放和归还仍待用户实机反馈"
+  ],
+  "compiled": false,
+  "pak_built": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "game_operated": false
+}

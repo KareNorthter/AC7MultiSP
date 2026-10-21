@@ -294,6 +294,11 @@ def build():
     else:
         from f18e_layout_feedback_data import apply_f18e_layout_feedback
     apply_f18e_layout_feedback(planes, assets, preserved, ROOT)
+    if __package__:
+        from .f18etg_socket_r2_data import apply_f18etg_socket_r2
+    else:
+        from f18etg_socket_r2_data import apply_f18etg_socket_r2
+    apply_f18etg_socket_r2(planes, assets, preserved, ROOT)
     return {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
 

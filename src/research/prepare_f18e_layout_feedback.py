@@ -58,18 +58,19 @@ def collision_entry(source, candidate, report):
                 encoded_hashes=report['encoded_hashes'])
 
 
-def whole_rack(source, donor, output, tools):
+def whole_rack(source, donor, output, tools, name=NAMES[2]):
     """借用普通E完整4AGM挂架：全部LOD/索引/材质原样；保留TGM碰撞及两个Socket身份。"""
-    name = NAMES[2]
+    if name == NAMES[2]:
+        raise ValueError('r1存在已知cooked Socket引用错误，禁止同名重建；请生成新名r2')
     original, ex, raw, mesh = load_mesh(source)
     dd, de, dr, dm = load_mesh(donor)
     if mesh['socket_count'] != 2 or dm['socket_count'] != 4:
         raise ValueError('供受挂架Socket结构改变')
     result = copy.deepcopy(original)
     target = next(e for e in result['Exports'] if e['ObjectName'] == source.stem)
-    # cooked头为30字节，再接本地Socket引用；不搬入供体BodySetup或Socket引用。
-    prefix = 30+4*mesh['socket_count']
-    donor_prefix = 30+4*dm['socket_count']
+    # 解析器边界包含Socket数量字段和全部引用，不搬入供体BodySetup或Socket引用。
+    prefix = mesh['geometry_offset']
+    donor_prefix = dm['geometry_offset']
     changed_raw = raw[:prefix]+dr[donor_prefix:]
     target['Extras'] = base64.b64encode(changed_raw).decode('ascii')
     fields = {p['Name']: p for p in target['Data']}
@@ -104,6 +105,7 @@ def whole_rack(source, donor, output, tools):
     target['ObjectName'] = name
     output.mkdir()
     converted = output/(name+'.json'); write(converted, result)
+    load_mesh(converted)  # 编码前即核对cooked与属性Socket引用、导出边界、类型和父链。
     asset = output/(name+'.uasset')
     run_converter(tools, ['fromjson', converted, asset], asset)
     reread = output/'roundtrip'/(name+'.json'); reread.parent.mkdir()
@@ -136,6 +138,8 @@ def whole_rack(source, donor, output, tools):
                 source_ac7_encoding_reproduced=True, complete_donor_geometry_bytes_preserved=True,
                 donor_lods=len(actual_mesh['lods']), donor_triangle_counts=[len(l['buffers'][0]['values'])//3 for l in dm['lods']],
                 donor_materials_preserved=True, collision_and_navigation_preserved=True,
+                cooked_socket_references_verified=True, cooked_socket_references=actual_mesh['socket_references'],
+                geometry_offset=actual_mesh['geometry_offset'], donor_geometry_offset=dm['geometry_offset'],
                 socket_changes=changes, socket_rotations_and_scales_preserved=True,
                 encoded_hashes={s:digest(encoded/(name+s)) for s in ('.uasset','.uexp')})
 
@@ -250,4 +254,5 @@ if __name__ == '__main__':
     p.add_argument('--evidence',type=Path,required=True)
     p.add_argument('--tools-root',type=Path,required=True)
     p.add_argument('--baseline',required=True)
-    main(p.parse_args())
+    p.parse_args()
+    p.error('r1研究入口已停用；旧交付保留。请使用prepare_f18etg_socket_r2.py生成新名修正版')
