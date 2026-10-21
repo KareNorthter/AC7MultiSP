@@ -1,4 +1,4 @@
--- AC7MultiSP 2.27.0源码候选：注视静默及仅SP的即时调试选项；未编译安装。
+-- AC7MultiSP 2.27.1源码候选：有上限的后台日志，保留注视静默和SP调试；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -15,8 +15,13 @@ local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面
 local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
 local runtimeFailed=false -- 模式识别出错后明确停用到重启，不不断重试或沿用旧许可。
 local syncRuntime=nil -- 完整状态清理函数在各模块定义之后建立。
-local log=assert(io.open(root.."mod.log","a"))
-local function note(message)log:write(os.date("!%Y-%m-%dT%H:%M:%SZ ")..tostring(message).."\n");log:flush()end
+local nativeNote=assert(package.loadlib(root.."bin/DualSP.dll","dualsp_log"))
+local logUnavailable=false
+local function note(message)
+    if nativeNote(tostring(message))==false and not logUnavailable then
+        logUnavailable=true;print("[AC7MultiSP] Background logging unavailable; mission control remains active.")
+    end
+end
 local nativeHud=nil -- 核心剪影刷新接口加载后再建立 HUD 模块。
 -- 中央简称独立管理，右下角 MSL/单 SP/多 SP 名称由固定行模块统一处理。
 local weaponPresentation=dofile(root.."Scripts/weapon_presentation.lua").new(note)
@@ -41,6 +46,7 @@ local bridge=loadExport("lab_native_execute")
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
+loadExport("dualsp_async_logging_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
@@ -788,6 +794,7 @@ function weaponSwitch.gaze.update(_,generation)
             gaze.response=gaze.response+1
             gaze.noticeWarning=not ok or not allowed or reason=="no_target"
             gaze.notice=reason=="no_target"and tr("没有可注视的目标。","No target is selected.")or ""
+            note("TARGET_GAZE_TOGGLED active="..tostring(gaze.active).." allowed="..tostring(allowed).." reason="..tostring(reason))
             lastUIKey=nil
         end
     else gaze.active=false;gaze.available=false end
@@ -1374,6 +1381,8 @@ local function applyDebugWeapons(action)
         debugWeapons.infinite=action.infinite;debugWeapons.fast=action.fast
         local applied,detail=updateDebugWeapons();assert(applied,detail)
         debugWeapons.ack=debugWeapons.response;debugWeapons.error=nil
+        note("DEBUG_WEAPONS_APPLIED request="..debugWeapons.ack.." plane="..planeId.." session="..debugSession
+            .." revision="..weaponRevision.." infinite="..tostring(debugWeapons.infinite).." fast="..tostring(debugWeapons.fast))
     end)
     if not ok then debugWeapons.error=tostring(err);note("DEBUG_WEAPONS_REJECTED "..tostring(err))end
     lastUIKey=nil
@@ -1423,7 +1432,11 @@ local function applyAction(action)
             tryApplyMasterSwitch(true)
             if not isFlight and not supplySession then applyFixedMountSetting(config.hangar_mount_enabled)end
             settingsAck=action.request;settingsError=nil;inputNotice=nil
-            lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED "..settingsAck)
+            lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED request="..settingsAck.." "..json.encode({
+                language=config.language,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
+                dpad=config.dpad_weapon_switch_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
+                gaze_keyboard=config.target_gaze_keyboard_enabled,camera_hold=config.camera_hold_enabled,view_target=config.view_target_mode,
+                ammo_two=config.ammo_percent_two,ammo_three=config.ammo_percent_three}))
         end,debug.traceback)
         settingsResponse=action.request
         if not ok then settingsError=tostring(err);lastUIKey=nil;note("MANAGEMENT_SETTINGS_ERROR "..settingsError)end
@@ -1968,7 +1981,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.27.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.27.1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

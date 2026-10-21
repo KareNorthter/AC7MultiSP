@@ -1,4 +1,10 @@
-AC7MultiSP 2.27.0 (source candidate; not built or installed)
+AC7MultiSP 2.27.1 (source candidate; not built or installed)
+
+2.27.1 source changes (since this branch's 2.27.0; in-game validation pending)
+• Mod-owned logs use one background writer. Four mod log segments and six native/UI segments are capped at 1,000,000 bytes each, totaling at most 10 MB. Full segments overwrite the oldest fixed archive slot.
+• Game and rendering threads only attempt a bounded queue submission; busy queues drop records without waiting for disk. Background CPU/I/O priority, batching, duplicate suppression and rate limits put gameplay responsiveness first. Existing oversized files are trimmed in the background on first use.
+• Logs share UTC timestamps, event sequences and thread/source details. Only event-driven settings and debug context are expanded; no additional per-frame game-state sampling is added. Management still reads at most 64 KiB per log stream on demand, including recent archives.
+• Queued tail records can be lost on a crash or forced exit. Zero performance overhead has not been verified; this remains unbuilt and untested source. Management protocol 21, configuration revision 19 and resources are unchanged; core/UI/Lua must match.
 
 2.27.0 source changes (since this branch's 2.26.1; in-game validation pending)
 • Starting or stopping latched tracking no longer shows an information toast. Existing no-target warnings and errors remain.

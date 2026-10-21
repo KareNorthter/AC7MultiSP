@@ -661,19 +661,38 @@ void drawDebugLoadout(bool focus) {
     if(debug.contains("error"))ImGui::TextWrapped("%s",uiMessage(debug.at("error").get<std::string>(),"调试换装未完成，请查看日志。","The debug loadout failed. See Logs for details.").c_str());
 }
 
-// 最多读取每份日志最后 64 KiB；超出时丢掉截断首行，不在飞行中读日志。
+// 每类合计最多读取64 KiB，接续最近轮换文件；只在日志页打开或手动刷新时读取。
 std::string readLogTail(const char* filename) {
-    const auto file=modRoot()/filename; // 路径限定为模组自己的两份日志。
-    std::ifstream input(file,std::ios::binary);
-    if(!input)throw std::runtime_error(std::string("Cannot read log: ")+filename);
-    input.seekg(0,std::ios::end);
-    const std::streamoff end=input.tellg(); // 负数表示读取定位失败，不能冒充空日志。
-    if(end<0)throw std::runtime_error(std::string("Cannot locate log end: ")+filename);
-    const std::streamoff start=std::max<std::streamoff>(0,end-65536);
-    input.seekg(start);
-    if(start>0){std::string partial;std::getline(input,partial);}
-    std::string result((std::istreambuf_iterator<char>(input)),std::istreambuf_iterator<char>());
-    if(input.bad())throw std::runtime_error(std::string("Cannot read log contents: ")+filename);
+    const bool mod=std::string(filename)=="mod.log";
+    if(!mod && std::string(filename)!="native.log")throw std::runtime_error("Invalid log stream");
+    const std::string stem=mod?"mod":"native";
+    size_t remaining=65536;bool cut=false;
+    std::string result;
+    auto readPart=[&](const std::filesystem::path& file) {
+        std::ifstream input(file,std::ios::binary);
+        if(!input)throw std::runtime_error(std::string("Cannot read log: ")+file.filename().string());
+        input.seekg(0,std::ios::end);const std::streamoff end=input.tellg();
+        if(end<0)throw std::runtime_error(std::string("Cannot locate log end: ")+filename);
+        const auto length=static_cast<size_t>(std::min<std::streamoff>(end,remaining));
+        const auto start=end-static_cast<std::streamoff>(length);input.seekg(start);
+        std::string part(length,'\0');input.read(part.data(),static_cast<std::streamsize>(length));
+        part.resize(static_cast<size_t>(input.gcount()));
+        if(input.bad())throw std::runtime_error(std::string("Cannot read log contents: ")+filename);
+        remaining-=part.size();result.insert(0,part);cut=start>0;
+    };
+    readPart(modRoot()/filename);
+    // 当前文件已经足够时不查询历史文件，保持通常刷新路径的读取量。
+    if(remaining) {
+        std::vector<std::pair<std::filesystem::file_time_type,std::filesystem::path>> archived;
+        for(unsigned i=1;i<=(mod?3u:5u);++i) {
+            const auto file=modRoot()/(stem+"."+std::to_string(i)+".log");
+            std::error_code error;const auto time=std::filesystem::last_write_time(file,error);
+            if(!error)archived.push_back({time,file});
+        }
+        std::sort(archived.begin(),archived.end(),[](const auto& a,const auto& b){return a.first>b.first;});
+        for(const auto& archive:archived) {if(!remaining)break;readPart(archive.second);}
+    }
+    if(cut) {const auto newline=result.find('\n');if(newline!=std::string::npos)result.erase(0,newline+1);else result.clear();}
     return result;
 }
 
@@ -981,6 +1000,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 // 保留已有具名握手；新控制器同时要求第 5 版参数能力。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_async_logging_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gaze_latch_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gaze_inputs_supported(void*) {return 0;}

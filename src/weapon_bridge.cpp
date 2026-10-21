@@ -33,6 +33,7 @@
 #include "common_bay_animation.hpp"
 #include "native_common_bay_parts.hpp"
 #include "owned_bone_refresh.hpp"
+#include "bounded_log.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -1000,6 +1001,22 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 }
 
 extern "C" __declspec(dllexport) int dualsp_debug_weapons(void* luaState) {return debugWeaponsLua(luaState);}
+
+extern "C" __declspec(dllexport) bool dualsp_log_submit(unsigned source,const char* text,size_t length)noexcept {
+    try {return dualsp::asyncLog().submit(source,text,length);}catch(...) {return false;}
+}
+extern "C" __declspec(dllexport) int dualsp_log(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        size_t length{};const auto text=api->top(luaState)==1?api->readText(luaState,1,&length):nullptr;
+        if(!text)throw std::runtime_error("Invalid log message");
+        auto& logger=dualsp::asyncLog();logger.submit(0,text,length); // 压力丢弃由后台汇总，不反向干扰任务控制器。
+        api->boolean(luaState,logger.available());return 1;
+    }catch(...) {
+        if(api){api->boolean(luaState,false);return 1;}return 0;
+    }
+}
 
 // 具名导出作为安装与 Lua 启动握手；旧核心没有此接口。
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}

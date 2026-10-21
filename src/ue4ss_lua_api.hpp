@@ -67,5 +67,16 @@ struct LuaApi {
         if(!valid)throw std::runtime_error("HUD 内存接口需要游戏时间参数");
         return value;
     }
+    const char* readText(void* state,int index,size_t* length)const {
+        using Reader=const char*(*)(void*,int,size_t*);
+        static const auto reader=[] {
+            // 只借用已核对的字符串getter内第一个调用；不执行其后面的弹栈操作。
+            constexpr unsigned char prefix[]={0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x20,
+                0x41,0x8b,0xd8,0x48,0x8b,0xf2,0x48,0x8b,0xf9,0x8b,0xd3,0x48,0x8b,0x09,0x45,0x33,0xc0};
+            return reinterpret_cast<Reader>(target(GetModuleHandleW(L"UE4SS.dll"),
+                "?get_string@Lua@LuaMadeSimple@RC@@QEBA?AV?$basic_string_view@DU?$char_traits@D@std@@@std@@H@Z",prefix,sizeof(prefix),0xe8));
+        }();
+        return reader(state,index,length);
+    }
 };
 }
