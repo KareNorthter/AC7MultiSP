@@ -211,6 +211,8 @@ Lua候选筛选与核心执行筛选同步增加精确默认对象`Default__plwp
 
 这是静态源码候选，未构建、测试、安装或实机验证。编码后的本地化资料未在本轮解析，va/vb与画面HGP文字的对应关系、运行默认对象及持续按住/松开行为待用户现场协助确认；不能宣称已经支持所有HGP。现有界面文案保留，后续确认支持范围后再按既有审核约定提交改文。原始资源与解析JSON仅留Temp，来源、散列和导出函数摘要见[静态记录](../evidence/gun-salvo-adler-hgp-static.json)。
 
+随后用户要求在不暂停、不配合按键的状态重试。只读核对当前实际玩家`AcePlayerPawn_adlra_C`及第二项SP的`Default__plwp_mgp_va_C`，ID17、可按住连发、4发整组及0.2秒装填均与静态结果相符；运行`bGunReaction=false`。候选没有把该字段作为准入条件，沿用主武器通道而不改写原生属性，因此无需追加产品修改。此现场只证明Adler A配置，未确认画面HGP文字、B/vb或任何实际发射/松开效果；候选仍未编译安装。原始资料留Temp，见[现场记录](../evidence/gun-salvo-adler-hgp-live.json)。
+
 ## XR302机炮齐射识别修订（源码，未构建）
 
 2026-10-21只读现场确认，实际受控玩家为`AcePlayerPawn_xr302_C`，第二项原生SP为`plwp_plsl_xr302_C`，直接继承`Plsl_Bullet`；默认对象`Default__plwp_plsl_xr302_C`的WeaponID为22，`bAutoFireOnHold`和`bGunReaction`均为真。原Lua候选筛选与核心执行筛选只登记原版`Default__plwp_plsl_x0_C`，故XR302在进入齐射事务前即被排除。这能解释用户反馈，不作为修订后的开火验收。

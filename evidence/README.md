@@ -1,5 +1,7 @@
 # 证据分类索引
 
+[Adler A只读运行配置](gun-salvo-adler-hgp-live.json)：用户不暂停并要求重试，确认实际受控adlra的va吊舱为ID17、按住连发开启、4发整组、bGunReaction关闭，与静态候选一致；无需追加产品修改。未要求按键，未验证实际齐射，B/vb及画面名称未核对，候选未构建安装。
+
 [Adler HGP静态候选](gun-salvo-adler-hgp-static.json)：所给独立版包含va/Artillery及vb/Bullet两款MGP编号吊舱，均显式开启按住连发；Lua和核心同步登记精确类，并接续2.23.0主线保留XR302修正。未构建、测试或安装，实际HGP名称映射和发射行为待用户现场协助；原包、资源及解析JSON不入Git。
 
 [XR302齐射识别现场](gun-salvo-xr302-inspection.json)：用户暂停后只读核对真实玩家及兵装，确认自定义PLSL类被Lua/核心两层原版类名白名单排除；补入精确类的源码尚未构建、测试或安装，不作为实机修复验收。现场安装标识2.22.2 alpha1，修订基于main/2.22.1，旧验收与发布回执保留。
