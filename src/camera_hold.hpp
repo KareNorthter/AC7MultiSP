@@ -11,10 +11,11 @@ struct CameraHold {
     std::atomic<DWORD> thread{0};
     std::atomic<ULONGLONG> heartbeat{0};
     bool ready{},seeded{},rightDown{},nativePress{},longDone{},combo{},pendingView{},centering{},waitNeutral{},armed{};
+    bool leftDown{},leftCandidate{},pendingCenter{};
     bool r3Gesture{},releaseHandled{}; // 整次按压及释放交接都接管，不能只吞第一个原生回调。
     bool centerKeySeeded{},centerKeyDown{};
     bool replaceR3{},padConnected{},holdEnabled{},toggleDone{},pendingToggle{};
-    int centerKey{},sensitivity{100},autoCenterDegrees{30};
+    int centerKey{},sensitivity{100};
     unsigned nativeRequests{};
     bool frozenX{},frozenY{};
     bool poseValid{},viewTransfer{};
@@ -35,13 +36,13 @@ struct CameraHold {
     }
     void cancelGesture() {
         seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
-        toggleDone=pendingToggle=false;
+        toggleDone=pendingToggle=leftDown=leftCandidate=pendingCenter=false;
         pressedAt=buttonReleasedAt=0;nativeRequests=0;
     }
     void clear() {
         allowed=false;heartbeat=0;plane={};input={};view={};focus={};cameras={};bindings=0;count=capacity=0;
         right=up=track=0;viewType=-1;cancelGesture();
-        centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;autoCenterDegrees=30;
+        centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;
         replaceR3=padConnected=holdEnabled=false;
         padX=padY=0;resetPose();
     }
@@ -130,7 +131,7 @@ void cameraHoldChangeView(int view) {
 }
 void cameraHoldCenter() {
     cameraHold.resetPose();cameraHold.centering=true;cameraHold.waitNeutral=true;
-    // 明确回正会结束模组保持的目标注视；真实按住Y/F仍按原生轴优先。
+    // 明确回正结束模组锁定注视；功能关闭时原生按住注视仍由游戏处理。
     targetGaze.active=false;
 }
 // 右摇杆在保持模式下控制相对角速度，不能继续把偏转量当作绝对目标角。
@@ -166,18 +167,18 @@ void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float d
     // 松杆时重新采集实际姿态，包括原生飞行状态边界的钳位，不能保持预估姿态。
     cameraHold.frozenX=cameraHold.frozenY=false;
 }
-// 两级长按分别触发一次；200毫秒回中不终止2秒切换的计时。
+// R3满0.3秒只切换保持，不回正；本轮按住不重复。
 void cameraHoldResolveHold(ULONGLONG duration) {
-    if(cameraHold.combo)return;
-    if(duration>=200 && !cameraHold.longDone){cameraHold.longDone=true;cameraHoldCenter();}
-    if(duration>=2000 && !cameraHold.toggleDone){cameraHold.toggleDone=true;cameraHold.pendingToggle=true;}
+    if(!cameraHold.combo&&duration>=300&&!cameraHold.toggleDone) {
+        cameraHold.toggleDone=cameraHold.longDone=true;cameraHold.pendingToggle=true;
+    }
 }
 void cameraHoldResolveRelease() {
     if(!cameraHold.r3Gesture || cameraHold.rightDown || !cameraHold.buttonReleasedAt || cameraHold.releaseHandled)return;
     cameraHold.releaseHandled=true;
     if(cameraHold.combo)return;
     const auto duration=cameraHold.buttonReleasedAt-cameraHold.pressedAt;
-    if(duration<200 && !cameraHold.longDone)cameraHold.pendingView=true;
+    if(duration<300 && !cameraHold.longDone)cameraHold.pendingView=true;
     else cameraHoldResolveHold(duration); // 跨过阈值才松开时补触发，不能兼触短按。
 }
 void cameraHoldObserveCenterKey(int key,unsigned shortcutMask) {
@@ -200,13 +201,14 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
     }
     const WORD buttons=state->Gamepad.wButtons;
     const bool right=(buttons&XINPUT_GAMEPAD_RIGHT_THUMB)!=0;
-    const bool both=right && (buttons&XINPUT_GAMEPAD_LEFT_THUMB)!=0;
+    const bool left=(buttons&XINPUT_GAMEPAD_LEFT_THUMB)!=0;
+    const bool both=right&&left;
     cameraHold.padX=state->Gamepad.sThumbRX;cameraHold.padY=state->Gamepad.sThumbRY;
     cameraHold.padConnected=true;
-    if(!cameraHold.replaceR3){cameraHold.cancelGesture();return;} // 保持仍可用，仅归还R3原生动作。
+    if(!cameraHold.replaceR3){cameraHold.cancelGesture();return;} // 保持仍可用，L3/R3均归还原生。
     const auto now=GetTickCount64();
     if(!cameraHold.seeded) {
-        cameraHold.seeded=true;cameraHold.rightDown=right;
+        cameraHold.seeded=true;cameraHold.rightDown=right;cameraHold.leftDown=left;cameraHold.leftCandidate=false;
         cameraHold.nativePress=false;cameraHold.longDone=cameraHold.toggleDone=right; // 已按住的旧边沿不补发。
         cameraHold.r3Gesture=right;cameraHold.releaseHandled=right;cameraHold.combo=right || (buttons&XINPUT_GAMEPAD_LEFT_THUMB);
         return;
@@ -215,15 +217,20 @@ void cameraHoldObservePad(DWORD result,const XINPUT_STATE* state) {
         cameraHold.pressedAt=now;cameraHold.nativePress=false;cameraHold.longDone=cameraHold.toggleDone=false;cameraHold.pendingView=false;
         cameraHold.r3Gesture=true;cameraHold.releaseHandled=false;cameraHold.buttonReleasedAt=0;cameraHold.nativeRequests=0;
     }
+    if(left&&!cameraHold.leftDown&&!cameraHold.combo)cameraHold.leftCandidate=!right;
     if(both && !cameraHold.combo) {
-        cameraHold.combo=true;cameraHold.pendingView=cameraHold.pendingToggle=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
+        cameraHold.combo=true;cameraHold.leftCandidate=cameraHold.pendingCenter=false;cameraHold.pendingView=cameraHold.pendingToggle=false;cameraHold.releaseHandled=true; // 双摇杆只交给原生干扰弹，不切视角、不回中。
     }
+    if(!left&&cameraHold.leftDown&&cameraHold.leftCandidate&&!cameraHold.combo) {
+        cameraHold.pendingCenter=true;cameraHold.leftCandidate=false;
+    }
+    cameraHold.leftDown=left;
     if(!right && cameraHold.rightDown)cameraHold.buttonReleasedAt=now;
     cameraHold.rightDown=right;
     cameraHoldResolveRelease(); // 释放后的重复回调仍属于同次按压。
     if(!right && !(buttons&XINPUT_GAMEPAD_LEFT_THUMB))cameraHold.combo=false; // 组合锁定至两边都松开。
 }
-// 整次R3按压的视角请求隔离；短按松开只派发一次原生换视角，满200毫秒回中，满2秒另请求切换保持开关。
+// 整次R3按压的视角请求隔离；短按松开派发一次原生换视角，满300毫秒只切换保持。
 // 原生动作没有FKey，按压期间及短暂释放交接中的混合换视角输入也归本次R3处理。
 void cameraHoldViewPressed(void* object) {
     if(!cameraHoldLive() || !cameraHold.replaceR3 || reinterpret_cast<Addr>(object)!=cameraHold.plane.address) {
@@ -290,22 +297,6 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
                     const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
                     // 键鼠也从原生环视轴建立保持；模式键松开、轴归零后保存实际平滑姿态，不写死Alt。
-                    // 输入完全释放、尾值交接结束后再判断；不能在从中心向外环视时吸住镜头。
-                    // 三种普通视角共用环视参考角：水平±180°、垂直±90°，保持切视角语义一致。
-                    // 座舱最终输出还会经过原生机型边界/动画，此处不把归一化轴当作最终画面欧拉角。
-                    if(cameraHold.autoCenterDegrees>0 && cameraHold.armed && !cameraHold.centering &&
-                        !cameraHold.viewTransfer && !stick && !axes && !targetTracking &&
-                        !(index==1 && (read<unsigned char>(reinterpret_cast<Addr>(component)+0x370) || read<Addr>(reinterpret_cast<Addr>(component)+0x378))) &&
-                        (!cameraHold.releasedAt || now-cameraHold.releasedAt>50)) {
-                        const float trackingWeight=read<float>(reinterpret_cast<Addr>(component)+(index==1?0x39c:0x3e0));
-                        constexpr float pi=3.14159265358979323846f;
-                        const float yaw=std::clamp(x,-1.f,1.f)*pi,pitch=std::clamp(y,-1.f,1.f)*(pi*.5f);
-                        // 前向夹角使用圆锥判定，避免水平/垂直各小于阈值而对角线超界仍吸附。
-                        if(std::isfinite(trackingWeight) && trackingWeight>=0 && trackingWeight<=.0001f &&
-                            std::cos(yaw)*std::cos(pitch)>=std::cos(cameraHold.autoCenterDegrees*pi/180.f))
-                            cameraHoldCenter();
-                    }
-                    float outX=rawX,outY=rawY;
                     if(cameraHold.centering) {
                         outX=outY=0;
                         if(std::abs(x)<.0001f && std::abs(y)<.0001f && !cameraHold.waitNeutral)cameraHold.centering=false;
@@ -524,19 +515,17 @@ int cameraHoldLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==8,"镜头保持参数数量无效");
+        require(api->top(luaState)==7,"镜头保持参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));const auto allowed=api->readInteger(luaState,2);
         const auto centerKey=api->readInteger(luaState,3),sensitivity=api->readInteger(luaState,4);
         const auto replaceR3=api->readInteger(luaState,5);
         const auto shortcutMask=api->readInteger(luaState,6);
-        const auto autoCenterDegrees=api->readInteger(luaState,7);
-        const auto holdEnabled=api->readInteger(luaState,8);
+        const auto holdEnabled=api->readInteger(luaState,7);
         require(holdEnabled==0 || holdEnabled==1,"镜头保持设置无效");
         require(allowed==0 || allowed==1,"镜头保持设置无效");
         require(centerKey==0 || centerKey==VK_MBUTTON || dualsp::supportedShortcutKey(static_cast<int>(centerKey)),"镜头回正键位无效");
         require(centerKey>=0 && centerKey<=255 && sensitivity>=5 && sensitivity<=200 && (replaceR3==0 || replaceR3==1),"镜头保持参数超出范围");
         require(shortcutMask>=0&&shortcutMask<=255,"镜头回中组合键占用信息无效");
-        require(autoCenterDegrees>=0 && autoCenterDegrees<=45,"自动回正阈值必须为0至45的整数");
         std::string reason;
         if(!allowed || !plane || !targetGazeFocused()){cameraHold.clear();cameraHold.error.clear();}
         else {
@@ -573,10 +562,10 @@ int cameraHoldLua(void* luaState) {
                     cameraHoldChangeView(view);
                     cameraHold.heartbeat=now;cameraHold.allowed=true;
                     cameraHold.sensitivity=static_cast<int>(sensitivity);
-                    cameraHold.autoCenterDegrees=static_cast<int>(autoCenterDegrees);
                     if(cameraHold.replaceR3!=(replaceR3==1))cameraHold.cancelGesture();
                     cameraHold.replaceR3=replaceR3==1;
                     XINPUT_STATE state{};const auto result=originalTargetGazePad(0,&state);cameraHoldObservePad(result,&state);
+                    if(cameraHold.pendingCenter&&!cameraHold.combo) {cameraHold.pendingCenter=false;cameraHoldCenter();}
                     if(cameraHold.holdEnabled)cameraHoldObserveCenterKey(static_cast<int>(centerKey),static_cast<unsigned>(shortcutMask));
                     else cameraHold.centerKeySeeded=false;
                     if(cameraHold.replaceR3 && cameraHold.rightDown && !cameraHold.combo)

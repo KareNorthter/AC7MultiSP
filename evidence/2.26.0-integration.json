@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "version": "2.26.0",
+  "candidate": true,
+  "formal_main": "0b75b21e4e29c817d193188e7326700507417dae",
+  "actual_install_baseline": "evidence/2.25.1-installed.json",
+  "sources": [
+    {
+      "thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+      "commit": "e31df55b8feebed49f94b9d8673aba3bfd9b97eb"
+    },
+    {
+      "thread": "01a1599c-1427-7ab2-8d61-0a6a0369edaa",
+      "commit": "21f2074b8afdd2b2c050f9debdb39367359fc13a"
+    }
+  ],
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.26.0\\Temp\\mount-assets-2.26.0\\source",
+  "resource_variants": 77,
+  "resource_members": 154,
+  "unchanged_resource_members": 154,
+  "all_28_aircraft_196_layouts_preserved": true,
+  "collision_preservation_assets": 22,
+  "interfaces": {
+    "management": 19,
+    "configuration": 18,
+    "gaze": 3,
+    "camera": 8,
+    "aircraft": 2,
+    "view_target": 3
+  },
+  "runtime_files": 19,
+  "merge_resolutions": [
+    "保留独立任务/机库、十字键请求来源和1/3秒通知",
+    "同号异义的研究协议统一管理19/配置18，实际配置15沿UI两段迁移再迁新镜头交互",
+    "旧L3注视文案按最新Y/键盘交互更新，已取消L3长按NEXT与自动回正",
+    "不接收其他研究线程新的挂载成果，不重复第三方Mod部署"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "四种模型开关组合跨场景、十字键关闭/按住、通知时长待实测",
+    "Y的0.2秒、R3的0.3秒、L3与双摇杆、键鼠混用、暂停恢复和实际镜头效果待实测",
+    "与鼠标飞控F2 HMD的已知冲突保持，不自行修改其个人设置"
+  ]
+}

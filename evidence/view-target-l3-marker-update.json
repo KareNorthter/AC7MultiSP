@@ -1,0 +1,96 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "branch": "codex/target-selection-research",
+  "source_parent_before_this_change": "39ec226b8852ddb285c19071db0d9001a4095ff3",
+  "previous_stage": "evidence/view-target-implementation.json",
+  "status": "源码增量已实现；未编译、编写或运行测试、安装、操作游戏",
+  "authorization": "用户要求可选L3长按2秒切换视角中心优先NEXT，等同Ctrl+Alt+F8；白点增大，15度内隐藏",
+  "interfaces": {
+    "management": 17,
+    "configuration": 16,
+    "view_target": 2,
+    "camera": 7,
+    "gaze": 2,
+    "required_capability": "dualsp_view_target_pad_supported（核心与UI）",
+    "core_entry": "dualsp_view_target(plane, allowed, enabled, dot, pad_l3) -> ok, available, dot_visible, error, pad_toggle"
+  },
+  "controller": {
+    "setting": "view_target_pad_l3",
+    "default": false,
+    "hold_ms": 2000,
+    "can_enable_when_next_and_dot_disabled": true,
+    "once_per_hold": true,
+    "shared_save_function": "weaponSwitch.view.toggle",
+    "apply": "L3事件消费并保存后，下次20毫秒调度应用；键盘保持立即调度",
+    "short_press": "沿用原注视开关；本轮长按、组合及取消均不在松开时补发注视",
+    "combo": "L3+R3取消未消费事件，锁到两键全松；完整XInput返回，已完成切换不撤销",
+    "cancel_conditions": [
+      "暂停",
+      "管理页",
+      "特殊镜头",
+      "失焦",
+      "断连",
+      "玩家身份变化",
+      "500毫秒心跳超时"
+    ],
+    "resume": "先记录当前按住状态；须松开重按，不补发恢复前的动作",
+    "migration": {
+      "from": 15,
+      "to": 16,
+      "backup": "profiles.before-view-target-pad.json",
+      "preserve": "先备份原字节，只补默认关闭的选项，保留旧开关、键位和个人方案"
+    }
+  },
+  "marker": {
+    "hidden_cone_degrees": 15,
+    "boundary_hidden": true,
+    "angle_basis": "机体RootComponent四元数前向与实际相机缓存前向的三维夹角",
+    "radius_at_height_1080": {
+      "core": 2.5,
+      "inner_glow": 5.5,
+      "outer_glow": 9
+    },
+    "previous_radius_at_height_1080": {
+      "core": 1.5,
+      "inner_glow": 3.5,
+      "outer_glow": 6
+    },
+    "hud_focus_pause_rules": "沿用初始候选规则"
+  },
+  "smoothing": "沿用39ec226的平滑修订，本增量不再修改响应参数",
+  "review": {
+    "performed": [
+      "人工静态审阅L3边沿/共享观察顺序/短按避让/组合与重连取消",
+      "人工核对Lua、UI、配置字段及成套接口",
+      "git diff --check无格式错误",
+      "保护DLL SHA256核对"
+    ],
+    "not_performed": [
+      "编译",
+      "编写测试模块",
+      "运行测试",
+      "安装",
+      "操作游戏",
+      "实机手感或白点效果验收"
+    ],
+    "remaining": "L3单次、2秒边界、短按注视、双键组合、失焦/重连、配置迁移、15度边界与可见大小仍待获授权后实机核对"
+  },
+  "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "source_sha256": {
+    "README.md": "ebf47128b26d18c8b13fdefb430288d7611883d84af39fd03fb2a78e1d8e3d13",
+    "docs/architecture.md": "9bad9334fc7d980c0aa86261e6c599c68ffed102893c745de9e25ac136329114",
+    "docs/development.md": "af964063779e28af688d3de764eea77f9f119d51ccc4ed5b6939dd7b6603be8d",
+    "evidence/README.md": "ad65a8056eaea041c1984f39ca0020f56b34db90fc4e2e40c4f03e68b5c9f3e5",
+    "src/target_gaze.hpp": "a229168fd3fea2943fdefccbbcf82c1eeca62e00ff8ba88017e2305d3993d9ab",
+    "src/view_target.hpp": "4a6d8f99af9c3ac66343c99ea3122cad84a28e1f59fe9e0921ffbcdf0c2ddce6",
+    "src/overlay.cpp": "2c798b55ec5e9b16a1884e96ee58363809e309e77675e4e75f2cd0f890bcf2e1",
+    "src/management_panel.hpp": "8d820e9e660063033f4b539c7c1b44fdfece6d97da6a720099b905687ec86c39",
+    "src/weapon_bridge.cpp": "26f62455905d876c4fad983fc63944e1d3628c7fccdee897fcff31fea1b10488",
+    "src/ui_messages.hpp": "65bbc6b1336065742b49f3676b4d2f4812564e2be488ec49d2a617986878ab7d",
+    "src/install.py": "1189a44e0cf51df1ec6d4e294311759a36257acd8390f10132ebd6ffb6ea3b07",
+    "dist/DualSP/Scripts/main.lua": "9e68772cf16820f3547393306fb5ba916b1292d0a5e93b3cf3ceb997c9b30cbc",
+    "dist/DualSP/Scripts/config_store.lua": "8971efc50689a1f430ddc39429790da5329714411def8f76bdb30b373a5ce84c"
+  },
+  "delivery": "独立研究分支源码；未改正式版本、旧回执、已验收产物或其他线程工作区，后续精确接入较新整合候选再统一版本"
+}

@@ -298,14 +298,12 @@ int main() {
             assert(actual.slots[slot].mountOrdinal==prior.slots[slot].mountOrdinal);
         }
     }
-    // 两级R3阈值各触发一次，组合手势不派发回中或切换保持。
-    cameraHold.clear();cameraHoldResolveHold(199);
-    assert(!cameraHold.longDone && !cameraHold.pendingToggle);
-    cameraHoldResolveHold(200);assert(cameraHold.longDone && cameraHold.centering && !cameraHold.pendingToggle);
-    cameraHoldResolveHold(1999);assert(!cameraHold.pendingToggle);
-    cameraHoldResolveHold(2000);assert(cameraHold.toggleDone && cameraHold.pendingToggle);
-    cameraHold.pendingToggle=false;cameraHoldResolveHold(2500);assert(!cameraHold.pendingToggle);
-    cameraHold.clear();cameraHold.combo=true;cameraHoldResolveHold(2500);
+    // R3在300毫秒切保持且不回正，单次按住不重复，组合不派发。
+    cameraHold.clear();cameraHoldResolveHold(299);
+    assert(!cameraHold.longDone && !cameraHold.pendingToggle && !cameraHold.centering);
+    cameraHoldResolveHold(300);assert(cameraHold.longDone && cameraHold.pendingToggle && !cameraHold.centering);
+    cameraHold.pendingToggle=false;cameraHoldResolveHold(2000);assert(!cameraHold.pendingToggle);
+    cameraHold.clear();cameraHold.combo=true;cameraHoldResolveHold(300);
     assert(!cameraHold.longDone && !cameraHold.pendingToggle && !cameraHold.centering);
     cameraHold.clear();
     // F-4E保十二位置，库存决定可见量；左右顺序与真实离架映射共用。
