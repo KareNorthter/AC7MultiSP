@@ -297,6 +297,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
                     const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
                     // 键鼠也从原生环视轴建立保持；模式键松开、轴归零后保存实际平滑姿态，不写死Alt。
+                    float outX=rawX,outY=rawY; // 保留原生轴作为默认输出，手动回正与保持按需覆盖。
                     if(cameraHold.centering) {
                         outX=outY=0;
                         if(std::abs(x)<.0001f && std::abs(y)<.0001f && !cameraHold.waitNeutral)cameraHold.centering=false;

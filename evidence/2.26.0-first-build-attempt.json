@@ -1,0 +1,11 @@
+{
+  "version": "2.26.0",
+  "attempt": "Temp/build-2.26.0-candidate",
+  "success": false,
+  "stage": "core_compile",
+  "reason": "来源21f2074移除角度自动回正块时一并移除了局部outX/outY声明，后续代码仍使用",
+  "repair": "补回与2.25.1一致的float outX=rawX,outY=rawY默认输出声明，不恢复已取消的自动回正",
+  "installed": false,
+  "previous_install_preserved": "2.25.1",
+  "retry": "Temp/build-2.26.0-candidate-r2"
+}
