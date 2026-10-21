@@ -395,6 +395,7 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
+bool continuousElectronicClass(Addr cls); // 后文持续兵装模块定义，供TLS旧入口排除被重用的编号。
 // 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
 void finishPlayerTLS(Addr plane,Addr activator) {
     require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
@@ -410,6 +411,7 @@ void finishPlayerTLS(Addr plane,Addr activator) {
     for(int index=0;index<count;++index) {
         const auto weapon=read<Addr>(data+index*sizeof(Addr)); // 只读玩家激活器已经登记的武器。
         if(!weapon || read<unsigned char>(weapon+0x3b0)!=25 || read<Addr>(weapon+0x3b8)!=plane)continue;
+        if(continuousElectronicClass(read<Addr>(weapon+0x10)))continue;
         if(!read<unsigned char>(weapon+0x368) || read<unsigned char>(weapon+0x5c0))continue;
         // 玩家 plwp_tls_x2 继承 AttachedInstantWeapon，不能用 LaserWeapon 的 Tick 排除它。
         // 两者共享下面三个收尾入口；校验真正要调用的生命周期，不限定不同的更新函数。
@@ -653,7 +655,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     cfaSwitchCost.mark(0);
     ControlledWeaponSwitch controlled;
     ravenBeforeRebuild(command);
-    ContinuousRebuild continuous(command); // 保留已登记机型/真实类的持续发射体。
+    ContinuousRebuild continuous(command); // 电子战不限定机型，TLS/UAV沿用既有真实类限制。
     cfaSwitchCost.mark(1);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
@@ -682,6 +684,17 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
 #endif
     }
     cfaSwitchCost.mark(4);
+    if(command.count>1) {
+        const Addr cdo=read<Addr>(groupOf(command.activator,true)+0x40);
+        const auto support=continuousSupport(command.plane,cdo);
+        if(support.electronic && support.kind==ContinuousKind::None) {
+            nativeLog(Json{{"event","MOD_ELECTRONIC_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
+            require(false,"电子战兵装：当前原生回调或装填机制不支持多SP，详见native.log");
+        }
+        if(read<unsigned char>(cdo+0x3b0)==26 && !support.electronic)
+            require(support.kind==ContinuousKind::UAV && continuousRavenLoadout(command.activator),
+                "UAV多SP仍只支持已登记的原生配置");
+    }
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     fixedMountAfterRebuild(mountRebuild);
@@ -793,11 +806,11 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
         for(int i=0;i<active.count;++i) {
             const Addr weapon=read<Addr>(active.data+i*sizeof(Addr));
             require(weapon && read<Addr>(weapon+0x3b8)==plane && read<unsigned char>(weapon+0x3b0)==26 &&
-                !read<unsigned char>(weapon+0x368) && continuousSupported(plane,weapon),
+                !read<unsigned char>(weapon+0x368) && continuousSupport(plane,weapon).kind==ContinuousKind::UAV,
                 "仍有已发射的活动武器，请等待结束后再调试换装");
         }
     }else require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
-    if(continuousPlane(plane)) {
+    { // 所有机型都检查电子战尾迹，不让未登记机型绕过调试换装的退场门槛。
         const auto spawned=continuousArray(activator+0x2e8);
         for(int i=0;i<spawned.count;++i) {
             const Addr weapon=read<Addr>(spawned.data+i*sizeof(Addr));
@@ -973,7 +986,8 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
-// 菜单用实际 CDO 核对实验可选性；新 Lua 因此也会拒绝旧核心混装。
+extern "C" __declspec(dllexport) int dualsp_mod_electronic_supported(void*) {return 0;} // 四返回值和通用电子战保有须成套。
+// 菜单按实际CDO核对通用电子战和已有TLS/UAV资格；返回原因以便诊断。
 extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -983,10 +997,18 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
         require(api->top(luaState)==2,"持续兵装：选装检查参数无效");verifyVersion();
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
         const Addr cdo=static_cast<Addr>(api->readInteger(luaState,2));
-        continuousIdentity(cdo);
-        const bool supported=continuousSupported(plane,cdo) &&
-            (!continuousRaven(plane) || continuousRavenLoadout(read<Addr>(plane+0x11a8)));
-        api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
+        continuousIdentity(plane);continuousIdentity(cdo);
+        const Addr activator=read<Addr>(plane+0x11a8),cls=read<Addr>(cdo+0x10);
+        continuousIdentity(activator);
+        bool configured=false;
+        for(int i=0;i<3;++i)configured|=read<Addr>(activator+0x158+i*0x30)==cls;
+        require(configured,"持续兵装：默认对象不属于当前机体的三个真实配置");
+        const auto support=continuousSupport(plane,cdo);
+        const bool ravenAllowed=support.kind!=ContinuousKind::UAV || continuousRavenLoadout(activator);
+        const bool supported=support.kind!=ContinuousKind::None && ravenAllowed;
+        const char* reason=ravenAllowed?support.reason:"uav_loadout_changed";
+        api->boolean(luaState,true);api->boolean(luaState,supported);
+        api->boolean(luaState,support.electronic);api->string(luaState,reason,std::strlen(reason));return 4;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
