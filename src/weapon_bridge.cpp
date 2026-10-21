@@ -36,7 +36,6 @@
 #include "native_common_bay_parts.hpp"
 #include "owned_bone_refresh.hpp"
 #include "bounded_log.hpp"
-#include "management_audio.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -1076,7 +1075,6 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
-            dualsp::managementAudio().request(false);
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
             session={};checkpoint={};checkpointValid=false;checkpointTime=0;ravenVisual={};
         }
@@ -2261,18 +2259,3 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
 }
 // 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。
 extern "C" __declspec(dllexport) int dualsp_mod_aircraft_catalogue_supported(void*) {return 0;}
-
-// 音频许可由游戏线程提交；后台只接触Windows音频会话，不读取游戏对象。
-extern "C" __declspec(dllexport) int dualsp_management_audio(void* luaState) {
-    const dualsp::LuaApi* api=nullptr;
-    try {
-        static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==1,"管理音频参数数量无效");
-        const auto muted=api->readInteger(luaState,1);
-        require(muted==0 || (muted==1 && runtimeEnabled),"管理音频许可无效");
-        dualsp::managementAudio().request(muted!=0);
-        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
-    }catch(const std::exception& error) {
-        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}return 0;
-    }
-}

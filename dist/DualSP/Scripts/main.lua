@@ -45,8 +45,6 @@ end
 local bridge=loadExport("dualsp_execute_memory_v1")
 loadExport("dualsp_cfa_startup_prewarm_supported") -- 预热、Lua开场和提示界面须成套。
 local mountStartup={serial=0,invoke=loadExport("dualsp_mount_loading","DualSPUI.dll")}
-mountStartup.managementAudio=loadExport("dualsp_management_audio")
-assert(mountStartup.managementAudio(0)) -- 后台恢复可能遗留的静音，不在游戏线程枚举设备。
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_infinite_ammo_supported") -- 负弹药数按无限处理，拒绝旧预览/核心混装。
@@ -734,8 +732,6 @@ local function acquireManagementPause()
         managementPause.pauser=valid(pauser)and pauser:GetAddress()or nil
         assert(accepted==true and managementPause.owned,"管理界面未能取得原生暂停")
     end
-    local audioOK,audioError=mountStartup.managementAudio(1)
-    assert(audioOK,audioError)
     note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
 end
 -- 只核对打开F6前的同一原生暂停；普通关闭保留，明确换机另行交接。
@@ -749,15 +745,11 @@ local function existingManagementPauseValid(lease)
 end
 -- 只释放本面板创建且仍属于同一世界/拥有者的暂停；其他暂停不重写、不强制清零。
 local function releaseManagementPause()
-    local function resumeAudio()
-        local audioOK,audioError=mountStartup.managementAudio(0)
-        assert(audioOK,audioError)
-    end
-    if not managementPause then resumeAudio();return end
+    if not managementPause then return end
     local lease=managementPause -- 完成核验前保留会话，失败由控制器明确报告。
     if not valid(lease.settings)then
         note("MANAGEMENT_PAUSE_WORLD_DESTROYED") -- 世界已销毁，无须向新世界发送解除请求。
-        resumeAudio();managementPause=nil;return
+        managementPause=nil;return
     end
     if lease.owned then
         local world=lease.settings:GetWorld() -- 退出任务时旧玩家可能先销毁，使用暂停所属世界作为上下文。
@@ -771,7 +763,7 @@ local function releaseManagementPause()
         end
     end
     note("MANAGEMENT_PAUSE_RELEASED owned="..tostring(lease.owned).." remaining="..tostring(valid(lease.settings)and valid(lease.settings.Pauser)))
-    resumeAudio();managementPause=nil -- 暂停交接成功后归还静音；失败留在面板内时继续静音。
+    managementPause=nil
 end
 local function setPanel(open)
     if open and not runtimeAllowed then return end

@@ -22,7 +22,9 @@ class SelectionWave {
     static constexpr float gain_=0.175f; // 0.1.9 按用户要求在候选 9 基础上再减半；原始 WAV 不变。
     float volume_{}; // 游戏当前 SFXVolume，取值 0..1。
     WAVEFORMATEX format_{}; // 用户 WAV 的 PCM 格式，校验后才创建声源。
-    std::vector<BYTE> samples_; // 整段音频常驻会话内存，声源销毁后才释放。
+    std::vector<BYTE> samples_; // 已校验短音频跨任务复用；设备仍按原会话释放。
+    std::filesystem::path samplePath_;
+    bool samplesLoaded_{}; // 只缓存完整校验成功的PCM；更换文件内容须重启游戏。
 
     // 所有音频 API 失败均明确报告，不改播其他提示音。
     static void checked(HRESULT result,const char* operation) {
@@ -34,6 +36,8 @@ class SelectionWave {
     }
     // 只接受完整 PCM16 短 WAV；跳过合法未知块，损坏文件直接拒绝。
     void load(const std::filesystem::path& path) {
+        if(samplesLoaded_ && samplePath_==path)return; // 纯内存比较，不查询文件属性或修改时间。
+        samplesLoaded_=false;samples_.clear();
         std::ifstream file(path,std::ios::binary|std::ios::ate); // 本地安装资源，不依赖提取目录。
         if(!file)throw std::runtime_error("无法读取 Audio/SP2.wav");
         const auto length=file.tellg(); // 限制短提示文件大小，避免错误文件占用大量内存。
@@ -62,18 +66,19 @@ class SelectionWave {
             format_.nBlockAlign!=format_.nChannels*2 || format_.nAvgBytesPerSec!=format_.nSamplesPerSec*format_.nBlockAlign ||
             samples_.size()%format_.nBlockAlign || samples_.size()>format_.nAvgBytesPerSec*5)
             throw std::runtime_error("SP2 WAV 必须是 5 秒以内的单声道或立体声 PCM16");
+        samplePath_=path;samplesLoaded_=true;
     }
 public:
-    // 解绑时先销毁声源，保证异步音频线程不再读取样本，再释放引擎与模块。
+    // 解绑先销毁声源，再释放引擎与模块；仅保留有上限的纯PCM和格式，不保留播放状态。
     void close() noexcept {
         if(voice_){voice_->DestroyVoice();voice_=nullptr;}
         if(output_){output_->DestroyVoice();output_=nullptr;}
         if(engine_){engine_->Release();engine_=nullptr;}
         if(library_){FreeLibrary(library_);library_=nullptr;}
         if(comOwned_){CoUninitialize();comOwned_=false;}
-        samples_.clear();allowed_=false;volume_=0;
+        allowed_=false;volume_=0;
     }
-    // 每次会话只读取一次 WAV；初始化失败同样释放已取得的资源。
+    // 同一路径成功加载后跨会话复用WAV；初始化失败仍释放设备，解析失败不缓存。
     void open(const std::filesystem::path& path) {
         if(engine_)return;
         try {
