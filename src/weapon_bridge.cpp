@@ -825,25 +825,34 @@ void scaleAmmo(Addr activator,int count,double ratio) {
     }
     nativeLog(Json{{"event","SP_AMMO_SCALED"},{"count",count},{"percent",percent},{"native",before},{"scaled",after}}.dump());
 }
-// 调试换装只能重建当前会话；发射体还在活动数组时要求先恢复游戏等待结束。
+// 调试换装只能重建当前会话；在途发射体必须结束，已确认停用的残留炸弹不算在途。
 void requireDebugLoadoutReady(Addr plane,Addr activator) {
     require(session.plane==plane && session.activator==activator,"调试换装的玩家会话已经改变");
     require(read<Addr>(plane+0x11a8)==activator,"调试换装的武器组件不属于当前机体");
     continuousSweep();
     require(std::none_of(continuousEffects.begin(),continuousEffects.end(),[plane,activator](const auto& e){
         return e.plane.address==plane && e.activator.address==activator;}),"持续效果或 TLS 尾迹尚未退场，请等待后再调试换装");
-    const int count=read<int>(activator+0x340),capacity=read<int>(activator+0x344); // 原生 ActiveWeapons 有效数量。
-    require(count>=0 && count<=capacity,"调试换装的活动武器数组无效");
-    if(continuousRaven(plane) && continuousRavenLoadout(activator)) {
-        // 原生 UAV 结束后可留重复项；只豁免已确认不活动的原生 UAV，其余仍拒绝。
-        const auto active=continuousArray(activator+0x338);
-        for(int i=0;i<active.count;++i) {
-            const Addr weapon=read<Addr>(active.data+i*sizeof(Addr));
-            require(weapon && read<Addr>(weapon+0x3b8)==plane && read<unsigned char>(weapon+0x3b0)==26 &&
-                !read<unsigned char>(weapon+0x368) && continuousSupport(plane,weapon).kind==ContinuousKind::UAV,
-                "仍有已发射的活动武器，请等待结束后再调试换装");
+    const auto active=continuousArray(activator+0x338);
+    const bool raven=continuousRaven(plane) && continuousRavenLoadout(activator);
+    int inactiveBombs=0;
+    for(int i=0;i<active.count;++i) {
+        const Addr weapon=read<Addr>(active.data+i*sizeof(Addr));
+        if(weapon) {
+            continuousIdentity(weapon); // 先确认对象表身份，失效或未知引用不能当作已经结束。
+            if(read<Addr>(weapon+0x3b8)==plane && !read<unsigned char>(weapon+0x368)) {
+                // F/A-18E TGM 的 GPB 退场后仍可留在 ActiveWeapons；不改数组或执行收尾。
+                if(continuousClassDerived(read<Addr>(weapon+0x10),"Bomb","/Script/Nimbus")) {
+                    ++inactiveBombs;continue;
+                }
+                // 保留原生 UAV 的既有豁免，不扩展到其他未知兵装。
+                if(raven && read<unsigned char>(weapon+0x3b0)==26 &&
+                    continuousSupport(plane,weapon).kind==ContinuousKind::UAV)continue;
+            }
         }
-    }else require(count==0,"仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
+        require(false,raven?"仍有已发射的活动武器，请等待结束后再调试换装":
+            "仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试");
+    }
+    if(inactiveBombs)nativeLog(Json{{"event","DEBUG_LOADOUT_INACTIVE_BOMBS"},{"count",inactiveBombs}}.dump());
     { // 所有机型都检查电子战尾迹，不让未登记机型绕过调试换装的退场门槛。
         const auto spawned=continuousArray(activator+0x2e8);
         for(int i=0;i<spawned.count;++i) {

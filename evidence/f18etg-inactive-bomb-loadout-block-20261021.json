@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T21:31:57.235996+08:00",
+  "version": "2.22.2 alpha1",
+  "status": "source_fix_pending_build_and_game_validation",
+  "user_report": "F/A-18E TGM任务内切换SP组合被提示仍有活动兵装；用户认为已经没有，目前暂停。",
+  "user_followup": "恢复游戏、不发射任何武器、等待10秒，再按=切组合，仍提示有活动兵装。",
+  "pid": 7836,
+  "plane_class": "AcePlayerPawn_f18etg_C",
+  "configs": [
+    0,
+    1,
+    2
+  ],
+  "active": 2,
+  "debug_flags": {
+    "infinite": false,
+    "fast": false
+  },
+  "sampling": {
+    "read_only": true,
+    "samples": 126,
+    "start": "2026-10-21T21:28:41.889764+08:00",
+    "end": "2026-10-21T21:31:13.911517+08:00",
+    "memory_written": false,
+    "debugger_attached": false,
+    "game_functions_called": false,
+    "artifacts": [
+      {
+        "directory": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\f18tg-active-block-20261021-212841",
+        "state_sha256": "76b926130977c17e1c9eaaeb514a7cbdfd67a754a902d66117a05ada75594c41",
+        "samples": 3
+      },
+      {
+        "directory": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\f18tg-active-block-20261021-212934",
+        "state_sha256": "2951349da6213315f180e9dfd688ea8ebeed7c2bfe380fbf99e8c4d494e6d6ab",
+        "samples": 120
+      },
+      {
+        "directory": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\f18tg-active-block-20261021-213113",
+        "state_sha256": "68106164578a33593b1bbaa3a86dbed1cc2cdb30bb866bf3335be82dd82974a0",
+        "samples": 3
+      }
+    ],
+    "same_plane_and_activator": true,
+    "same_weapon_identity": true
+  },
+  "active_array": {
+    "count": 2,
+    "capacity": 4,
+    "objects": [
+      {
+        "address": "0x25645ca8100",
+        "name": "plwp_gpb_a1_C",
+        "index": 89631,
+        "identity": {
+          "matches": true,
+          "flags": "0x0",
+          "serial": 318136
+        },
+        "class_chain": [
+          "plwp_gpb_a1_C",
+          "plwp_gpb_a0_C",
+          "Bomb",
+          "ExplosiveWeapon",
+          "WeaponBase",
+          "NimbusObjectPoolItem",
+          "Actor",
+          "Object"
+        ],
+        "class_packages": [
+          {
+            "class": "plwp_gpb_a1_C",
+            "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_a1"
+          },
+          {
+            "class": "plwp_gpb_a0_C",
+            "package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0"
+          },
+          {
+            "class": "Bomb",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "ExplosiveWeapon",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "WeaponBase",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "NimbusObjectPoolItem",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "Actor",
+            "package": "/Script/Engine"
+          },
+          {
+            "class": "Object",
+            "package": "/Script/CoreUObject"
+          }
+        ],
+        "weapon_id": 8,
+        "owner_plane": "0x2560c0eaab0",
+        "active_368": 0,
+        "retirement_370": "0x528f4",
+        "state_5c0": 0,
+        "vtable_rva": "0x273b3d0"
+      },
+      {
+        "address": "0x25645caa8b0",
+        "name": "plwp_gpb_a1_C",
+        "index": 89594,
+        "identity": {
+          "matches": true,
+          "flags": "0x0",
+          "serial": 318145
+        },
+        "class_chain": [
+          "plwp_gpb_a1_C",
+          "plwp_gpb_a0_C",
+          "Bomb",
+          "ExplosiveWeapon",
+          "WeaponBase",
+          "NimbusObjectPoolItem",
+          "Actor",
+          "Object"
+        ],
+        "class_packages": [
+          {
+            "class": "plwp_gpb_a1_C",
+            "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_a1"
+          },
+          {
+            "class": "plwp_gpb_a0_C",
+            "package": "/Game/Blueprint/Weapons/Player/Base/plwp_gpb_a0"
+          },
+          {
+            "class": "Bomb",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "ExplosiveWeapon",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "WeaponBase",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "NimbusObjectPoolItem",
+            "package": "/Script/Nimbus"
+          },
+          {
+            "class": "Actor",
+            "package": "/Script/Engine"
+          },
+          {
+            "class": "Object",
+            "package": "/Script/CoreUObject"
+          }
+        ],
+        "weapon_id": 8,
+        "owner_plane": "0x2560c0eaab0",
+        "active_368": 0,
+        "retirement_370": "0x5291b",
+        "state_5c0": 0,
+        "vtable_rva": "0x273b3d0"
+      }
+    ]
+  },
+  "cause": "requireDebugLoadoutReady对非Raven/UAV直接要求ActiveWeapons的Num等于0。现场两个已停用、身份有效且属于当前玩家的原生Bomb派生GPB仍留在数组，因此被计数判断误报为活动兵装。用户等待10秒后仍被拒绝；不是仅因暂停未推进。",
+  "limits": [
+    "尚未定位GPB残留首次由哪条原生回调或切槽交接产生；本修正解决已核实停用对象造成的误拦截，不擅自清理原生数组。",
+    "不推定所有导弹或所有Mod兵装的残留都可豁免。",
+    "本轮两项调试关闭，不把问题归到CFA44的无限ADMM队列缺陷；前次暂停崩溃是否有关仍未证明。"
+  ],
+  "source_fix": {
+    "file": "src/weapon_bridge.cpp",
+    "function": "requireDebugLoadoutReady",
+    "before": "非Raven/UAV必须整个活动数组为空。",
+    "after": "逐项确认对象表身份；仅当前玩家所属、活动标记为0且继承/Script/Nimbus.Bomb的对象可忽略；保留原UAV资格判断。真正活动、空项、失效身份、其他归属和未知兵装继续拒绝。",
+    "arrays_changed": false,
+    "end_callbacks_called": false,
+    "continuous_effect_and_spawned_tail_guards_retained": true,
+    "ordinary_ammo_checkpoint_and_personal_config_changed": false,
+    "diagnostic_event": "DEBUG_LOADOUT_INACTIVE_BOMBS",
+    "sha256": "121391aee8acf74aabbe93cb2399a3317207102dff3d0cf12c7fd35e9073a199"
+  },
+  "validation": "人工审阅差异与调用点；原生类包名、对象身份和活动标记经只读采样核对。未编译、编写或运行产品测试，也未把旧安装上的复现记成修复验收。",
+  "pending_acceptance": [
+    "GPB退场后切组合成功；炸弹实际在途时仍拒绝。",
+    "普通导弹在途、持续效果/TLS尾迹仍拒绝；原UAV停用例外保持。",
+    "普通弹药、SP补满比例、检查点和个人设置保留。"
+  ],
+  "product_source_changed": true,
+  "compiled": false,
+  "product_tests_written_or_run": false,
+  "installed": false,
+  "version_changed": false,
+  "formal_main_changed": false,
+  "memory_written": false,
+  "configuration_changed": false,
+  "game_controlled_by_agent": false,
+  "scope": "源码修正待构建和实机验收；本机当前安装仍会误报。原始日志和完整个人状态只留Temp。"
+}
