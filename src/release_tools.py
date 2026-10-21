@@ -95,6 +95,7 @@ def source_snapshot(root=ROOT):
         'src/research/split_static_mount_asset.py',
         'src/research/prepare_f18etg_socket_r2.py','src/research/f18etg_socket_r2_data.py',
         'evidence/f18etg-whole-rack-socket-r2.json','evidence/f18etg-hangar-freeze-20261021.json',
+        'src/research/audit_mount_socket_references.py','evidence/mount-socket-reference-audit-20261021.json',
         'evidence/mount-resource-qualification-fix.json',
         'evidence/view-target-implementation.json','evidence/target-selection-research.json',
         'evidence/mod-aircraft-compat-static.json',

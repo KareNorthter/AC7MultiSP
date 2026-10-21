@@ -13,6 +13,14 @@ PAK_NAME = 'AC7MultiSP_Mounts_P.pak'
 def build(source, output):
     from research.build_runtime_mount_data import build as runtime_data
     names = runtime_data()['assets']
+    audit=json.loads((ROOT/'evidence/mount-socket-reference-audit-20261021.json').read_text(encoding='utf-8'))
+    qualified=[row for row in audit['rows'] if row['candidate']]
+    if (audit['schema']!=1 or audit['status']!='completed' or audit['candidate_failures'] or
+            audit['candidate_asset_names']!=names or len(qualified)!=len(names) or
+            len({row['asset'] for row in qualified})!=len(names) or
+            {row['asset'] for row in qualified}!=set(names) or any(not row['passed'] or row['errors'] for row in qualified)):
+        raise ValueError('整套资源缺少与当前白名单一致的离线引用资格，须先复核再打包')
+    qualified={row['asset']:row for row in qualified}
     proof = json.loads((ROOT/'evidence/sp-combination-static-split-experiment.json').read_text(encoding='utf-8'))
     reports = {v['recipe']['name']:v for v in proof['variants']}
     for evidence in ('static-expansion-2.11.0.json', 'static-expansion-2.12.0.json', 'static-expansion-2.13.0.json',
@@ -52,7 +60,8 @@ def build(source, output):
             raise ValueError('资源副本缺少完整离线依据：'+name)
         for suffix in ('.uasset','.uexp'):
             path = source/(name+suffix)
-            if digest(path)!=report['encoded_hashes'][suffix]:
+            if (digest(path)!=report['encoded_hashes'][suffix] or
+                    report['encoded_hashes'][suffix]!=qualified[name]['encoded_hashes'][suffix]):
                 raise ValueError('本地派生资源与已核对回执不符：'+name+suffix)
             files['Nimbus/Content/AC7MultiSP/Research/'+name+suffix] = path.read_bytes()
 
