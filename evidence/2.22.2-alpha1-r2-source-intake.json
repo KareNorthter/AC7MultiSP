@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "version": "2.22.2 alpha1",
+  "receipt_prefix": "2.22.2-alpha1-r2",
+  "source_thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+  "source_title": "迭代多SP界面交互",
+  "previous_received_commit": "85c46c0d5374702784e130439d3affa1373d944a",
+  "received_commit": "f5aeb840437a805c3fc046307b81bee97da5f76c",
+  "integration_base": "88327836e35719e89d80096da990d6f867d14989",
+  "received": "精确src/dist及管理设计稿增量；研究2.27.2不进入产品版本；说明整合到原正文",
+  "resolutions": [
+    "撤回本线程补给未购买SP放行，恢复9182f82相关规则",
+    "保留内存IPC及采样优化，音频恢复写入限定后台专用函数",
+    "ADMM采用研究曾无限标记、原生Tick前修复及重复扫描抑制，保留本线程检查点结算和稀疏日志",
+    "新增Lua音频函数并入既有表，避免顶层局部变量上限"
+  ],
+  "candidate": true,
+  "main_unchanged": true,
+  "release_created": false,
+  "gameplay_verified": false
+}

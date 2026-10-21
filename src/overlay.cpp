@@ -138,7 +138,7 @@ void showToast(std::string message,ToastKind kind=ToastKind::Info) {
 int managementTab=0,requestedTab=-1; // Ctrl+Tab 在三个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到标题总开关，不依赖鼠标点击。
 // 日志只在页面打开或手动刷新时读取。
-bool logsLoaded=false;
+bool logsLoaded=false,logsExpanded=false;
 std::string modLogText,nativeLogText,logError;
 // 输入函数声明供窗口消息使用；实现与管理页集中在后文。
 void loadManagementDraft();
@@ -1165,3 +1165,6 @@ extern "C" __declspec(dllexport) int dualsp_drain_actions_memory_v1(void* luaSta
         const auto result=Json(batch).dump();api.string(luaState,result.data(),result.size());return 1;
     }catch(const std::exception& e){nativeLog(std::string("UI_DRAIN_ERROR ")+e.what());return 0;}
 }
+
+// 平铺调试页及新顶栏须与本轮Lua成套。
+extern "C" __declspec(dllexport) int dualsp_flat_management_supported(void*) {return 0;}

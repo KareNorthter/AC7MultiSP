@@ -1015,8 +1015,7 @@ function NativeLoadout.new(dependencies)
     local function attachSupply(owner,instance,planeId,profile,options)
         assert(self.phase and valid(self.phaseObject),"补给菜单缺少原生阶段绑定")
         local c={owner=owner,instance=instance,planeId=planeId,added={},masked={},moved={},texts={},repositioned={},lastPaint=nil,
-            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr,ammoSettings,
-                dependencies.allowUnowned and dependencies.allowUnowned()==true),phase=self.phase,phaseWorld=self.phaseWorld,
+            originalControl=owner:IsEnableControl(),flow=Flow.new(profile,options,nil,"resupply",tr,ammoSettings),phase=self.phase,phaseWorld=self.phaseWorld,
             takeoffPending=false,visualRestored=false}
         self.cache=c
         c.controller=owner:GetOwningPlayer();assert(valid(c.controller),"补给页所属输入控制器缺失")

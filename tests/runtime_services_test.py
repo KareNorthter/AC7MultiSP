@@ -70,7 +70,7 @@ assert(currentStore:applySettings(nextConfig,candidate).shortcuts.mount.key==0)
 candidate.shortcuts.management={key=0,mods=0};rejects(function()currentStore:applySettings(nextConfig,candidate)end)
 candidate.shortcuts=json.decode(json.encode(action.shortcuts));candidate.shortcuts.camera_hold=candidate.shortcuts.salvo
 rejects(function()currentStore:applySettings(nextConfig,candidate)end,'不能重复')
-saved=readText(fixture..'current-profiles.json');writeFail=true
+saved=readText(fixture..'current-profiles.json');action.language='zh';writeFail=true
 rejects(function()currentStore:applySettings(nextConfig,action)end,'模拟写盘失败')
 assert(readText(fixture..'current-profiles.json')==saved);writeFail=false
 local cyclic={};cyclic.self=cyclic;rejects(function()Config.writeJson(fixture..'current-profiles.json',cyclic,json)end)
@@ -102,11 +102,11 @@ local broken=Config.defaults();broken.target_gaze_pad_enabled=1;writeJson(fixtur
 rejects(function()store('broken-'):load()end,'手柄和键盘注视')
 -- 旧响应、原生拒绝均不能被当作成功；失败后请求号继续递增。
 local replyMode='ok';local requestCount=0
-local client=Bridge.new{root=fixture,profile=Profile,readJson=readJson,execute=function()
+local client=Bridge.new{profile=Profile,json=json,execute=function(op,plane,activator,target,time,count,a,b,c,request,ratio)
     requestCount=requestCount+1
-    local command=readText(fixture..'native-command.txt')
-    assert(command=='switch 10 20 1 1.250000000 4 3 2 0 1 '..requestCount..' 0.67',command)
-    writeJson(fixture..'native-status.json',{request=replyMode=='stale' and 0 or requestCount,
+    assert(op=='switch' and plane==16 and activator==32 and target==1 and time==1.25)
+    assert(count==3 and a==2 and b==0 and c==1 and request==requestCount and ratio==.67)
+    return json.encode({request=replyMode=='stale' and 0 or requestCount,
         ok=replyMode~='rejected',error='原生拒绝',active=1})
 end}
 local command={op='switch',plane=16,activator=32,target=1,time=1.25,profile={a=2,b=0,c=1,ratio=.67}}

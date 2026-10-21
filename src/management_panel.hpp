@@ -58,12 +58,13 @@ void drawFeatureSettings() {
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x));
         ImGui::SliderInt("##AmmoThree",&draftAmmoPercentThree,33,100,"%d%%",ImGuiSliderFlags_AlwaysClamp);
         ImGui::Checkbox(tr("机炮齐射###GunSalvo","Gun salvo###GunSalvo"),&draftGunSalvo);
+        ImGui::SameLine();ImGui::TextUnformatted(tr("快捷键","Shortcut"));ImGui::SameLine();
+        bindingButton(9,shortcutLabel(draftShortcuts[3]),170);
+        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
         panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
             "On for new configurations. With MGP or PLSL equipped, holding the actual game gun binding also fires that pod; releasing restores the previous selection. HGP and simultaneous firing of different SPs are currently unsupported; slot changes may cause gaps.");
         if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
             ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
-        ImGui::TextUnformatted(tr("机炮齐射","Gun salvo"));ImGui::SameLine();bindingButton(9,shortcutLabel(draftShortcuts[3]));
-        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
     }
     ImGui::EndChild();
     drawBasicBindings();
@@ -89,6 +90,9 @@ void drawCameraSettings() {
     ImGui::EndChild();
     if(panelCard("CameraOptions",tr("视角保持","Camera hold"))) {
         ImGui::Checkbox(tr("启用视角保持###CameraHold","Keep camera direction###CameraHold"),&draftCameraHold);
+        ImGui::SameLine();ImGui::TextUnformatted(tr("快捷键","Shortcut"));ImGui::SameLine();
+        bindingButton(10,shortcutLabel(draftShortcuts[4]),170);
+        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCameraHoldKey","Clear###ClearCameraHoldKey"))){draftShortcuts[4]={0,0};captureSlot=-1;}
         panelHelp("启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
             "When enabled, the view retains its direction after look input is released.\nPress and release L3 or use the keyboard recenter binding to recenter. Hold R3 to turn this feature on or off.");
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));
@@ -96,9 +100,6 @@ void drawCameraSettings() {
         ImGui::TextUnformatted(tr("视角回中 键盘快捷键","Keyboard recenter shortcut"));ImGui::SameLine();
         bindingButton(8,draftCameraCenterKey?keyLabel(draftCameraCenterKey):tr("未绑定","Unassigned"),180);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCenterKey","Clear###ClearCenterKey"))){draftCameraCenterKey=0;captureSlot=-1;}
-        ImGui::TextUnformatted(tr("启用视角保持快捷键","Camera hold toggle shortcut"));ImGui::SameLine();
-        bindingButton(10,shortcutLabel(draftShortcuts[4]),210);
-        ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearCameraHoldKey","Clear###ClearCameraHoldKey"))){draftShortcuts[4]={0,0};captureSlot=-1;}
     }
     ImGui::EndChild();
 }
@@ -146,20 +147,23 @@ void drawPanel() {
         if(ImGui::Button(tr("关闭","Close")))togglePanel(false);
         ImGui::End();return;
     }
-    if(width>550)ImGui::SameLine();
+    // 标题单独一行；主开关、管理改键及语言依次排列，窄窗口允许语言换行。
     ImGui::PushStyleColor(ImGuiCol_Button,draftModEnabled?ImVec4{.13f,.43f,.39f,1}:ImVec4{.37f,.20f,.20f,1});
     if(focusManagement){ImGui::SetKeyboardFocusHere();focusManagement=false;}
     if(ImGui::Button(draftModEnabled?tr("模组：开启###ModEnabled","Mod: ON###ModEnabled"):tr("模组：关闭###ModEnabled","Mod: OFF###ModEnabled"),{176,38})) {draftModEnabled=!draftModEnabled;captureSlot=-1;}
     ImGui::PopStyleColor();
     panelHelp("总开关在保存后，于主菜单或单人任务选择页生效。关闭时下方页面变灰；标题开关、保存和关闭始终可用。",
         "Save to apply at the main menu or single-player mission selection. Disabled pages are dimmed; this switch, Save and Close remain available.");
-    if(width>700)ImGui::SameLine(width-240);
-    int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
-    ImGui::SetNextItemWidth(210);
-    if(ImGui::Combo("##Language",&language,tr("跟随游戏\0中文\0English\0","Game language\0Chinese\0English\0")))draftLanguage=language==0?"auto":language==1?"zh":"en";
-    ImGui::TextUnformatted(tr("管理界面","Management"));ImGui::SameLine();bindingButton(4,shortcutLabel(draftShortcuts[0]),150);
+    ImGui::SameLine();ImGui::TextUnformatted(tr("管理界面","Management"));ImGui::SameLine();bindingButton(4,shortcutLabel(draftShortcuts[0]),150);
     panelHelp("手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
         "Back+Y also toggles management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.");
+    const float languageWidth=ImGui::CalcTextSize("语言/Language").x+ImGui::GetStyle().ItemSpacing.x+150;
+    const float languageStart=ImGui::GetWindowContentRegionMax().x-languageWidth;
+    if(ImGui::GetItemRectMax().x-ImGui::GetWindowPos().x+ImGui::GetStyle().ItemSpacing.x<languageStart)ImGui::SameLine(languageStart);
+    ImGui::TextUnformatted("语言/Language");ImGui::SameLine();
+    int language=draftLanguage=="auto"?0:draftLanguage=="zh"?1:2;
+    ImGui::SetNextItemWidth(150);
+    if(ImGui::Combo("##Language",&language,tr("跟随游戏\0中文\0English\0","Game language\0Chinese\0English\0")))draftLanguage=language==0?"auto":language==1?"zh":"en";
     if(state.at("mod_enabled")!=state.at("runtime_mod_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("已保存，返回主菜单后应用总开关。","Saved; return to the main menu to apply the master switch."));
     if(state.contains("master_switch")&&state.at("master_switch").contains("error"))ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>()).c_str());
     if(state.contains("management_pause")) {
@@ -178,7 +182,7 @@ void drawPanel() {
         if(beginManagementTab(tr("基础功能###Features","General###Features"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
         if(beginManagementTab(tr("视角###Bindings","Camera###Bindings"),1)) {drawCameraSettings();ImGui::EndTabItem();}
         if(beginManagementTab(tr("调试###Debug","Debug###Debug"),2)) {
-            if(ImGui::CollapsingHeader(tr("任务兵装###DebugLoadout","Mission loadout###DebugLoadout"),ImGuiTreeNodeFlags_DefaultOpen)) {
+            if(panelCard("DebugLoadout",tr("任务兵装","Mission loadout"))) {
                 const auto& options=state.at("debug_weapons");
                 bool infinite=pendingDebugWeapons>0?pendingInfiniteAmmo:options.at("infinite").get<bool>();
                 bool fast=pendingDebugWeapons>0?pendingFastReload:options.at("fast").get<bool>();
@@ -195,21 +199,27 @@ void drawPanel() {
                 ImGui::EndDisabled();
                 drawDebugLoadout(requestedTab==2);
             }
-            if(ImGui::CollapsingHeader(tr("更换机体###DebugAircraft","Change aircraft###DebugAircraft")))drawDebugAircraft();
-            if(ImGui::CollapsingHeader(tr("日志###Logs","Logs###Logs"))) {
-                if(!logsLoaded)refreshLogs();
-                if(ImGui::Button(tr("刷新###RefreshLogs","Refresh###RefreshLogs")))refreshLogs();
-                panelHelp("每份只显示末尾64 KiB，点击刷新更新；日志正文保留原始语言。","Shows the last 64 KiB of each log. Refresh to update; log contents retain their original language.");
-                if(!logError.empty())ImGui::TextWrapped("%s",uiMessage(logError).c_str());
-                if(ImGui::BeginTabBar("LogFiles")) {
-                    const char* files[]={"mod.log","native.log"};const std::string* text[]={&modLogText,&nativeLogText};
-                    for(int i=0;i<2;++i)if(ImGui::BeginTabItem(files[i])) {
-                        ImGui::BeginChild(files[i],{0,std::max(160.f,height-330)},ImGuiChildFlags_Borders,ImGuiWindowFlags_HorizontalScrollbar);
-                        ImGui::TextUnformatted(text[i]->c_str());ImGui::EndChild();ImGui::EndTabItem();
+            ImGui::EndChild();
+            if(panelCard("DebugAircraft",tr("更换机体","Change aircraft")))drawDebugAircraft();
+            ImGui::EndChild();
+            if(panelCard("Logs",tr("日志","Logs"))) {
+                if(ImGui::SmallButton(logsExpanded?tr("收起###ToggleLogs","Collapse###ToggleLogs"):tr("展开###ToggleLogs","Expand###ToggleLogs")))logsExpanded=!logsExpanded;
+                if(logsExpanded) {
+                    if(!logsLoaded)refreshLogs();
+                    if(ImGui::Button(tr("刷新###RefreshLogs","Refresh###RefreshLogs")))refreshLogs();
+                    panelHelp("每份只显示末尾64 KiB，点击刷新更新；日志正文保留原始语言。","Shows the last 64 KiB of each log. Refresh to update; log contents retain their original language.");
+                    if(!logError.empty())ImGui::TextWrapped("%s",uiMessage(logError).c_str());
+                    if(ImGui::BeginTabBar("LogFiles")) {
+                        const char* files[]={"mod.log","native.log"};const std::string* text[]={&modLogText,&nativeLogText};
+                        for(int i=0;i<2;++i)if(ImGui::BeginTabItem(files[i])) {
+                            ImGui::BeginChild(files[i],{0,std::max(160.f,height-330)},ImGuiChildFlags_Borders,ImGuiWindowFlags_HorizontalScrollbar);
+                            ImGui::TextUnformatted(text[i]->c_str());ImGui::EndChild();ImGui::EndTabItem();
+                        }
+                        ImGui::EndTabBar();
                     }
-                    ImGui::EndTabBar();
                 }
             }
+            ImGui::EndChild();
             ImGui::EndTabItem();
         }
         ImGui::EndTabBar();if(requestedTab==managementTab)requestedTab=-1;

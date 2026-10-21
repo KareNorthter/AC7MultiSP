@@ -36,6 +36,7 @@
 #include "native_common_bay_parts.hpp"
 #include "owned_bone_refresh.hpp"
 #include "bounded_log.hpp"
+#include "management_audio.hpp"
 
 namespace {
 using Addr = uintptr_t;
@@ -60,6 +61,7 @@ struct Slot {
 struct Group {
     bool valid{};
     bool fastReloadEligible{};
+    bool debugRecycled{}; // 本SP曾启用无限弹药，关闭后仍允许剩余库存使用完整队列。
     Addr weaponClass{};
     std::array<unsigned char, 0x20> scalars{};
     std::vector<Slot> slots;
@@ -460,9 +462,12 @@ bool debugReloadEligible(Addr group) {
 }
 float cachedReload(const Group& group,const Slot& slot,double dt,bool inWindow) {
     float elapsed=slot.elapsed;
-    int ammo{};std::memcpy(&ammo,group.scalars.data(),sizeof(ammo));
-    // 无限只唤醒普通消耗型SP当前装填窗口的停用槽，空库存和-2等待标记不变。
-    if(debugInfiniteAmmo && group.fastReloadEligible && ammo>0 && inWindow && elapsed==-1.f)elapsed=0;
+    if(group.fastReloadEligible && (elapsed==-1.f || elapsed==-2.f)) {
+        int ammo{};std::memcpy(&ammo,group.scalars.data(),sizeof(ammo));
+        // 曾经无限的SP关闭开关后仍可用完真实库存，停用/等待标记不积累离开时长。
+        if(elapsed==-1.f && inWindow && (group.debugRecycled || debugInfiniteAmmo) && ammo!=0)elapsed=0;
+        else return elapsed;
+    }
     if(debugFastReload && group.fastReloadEligible && inWindow && elapsed>=0 && elapsed<slot.duration)
         elapsed=std::max(elapsed,slot.duration-1.f);
     return dualsp::advanceReload(slot.duration,elapsed,dt,inWindow);
@@ -473,6 +478,11 @@ Group capture(Addr activator, bool special, double time) {
     Group result;
     result.weaponClass=read<Addr>(address);
     result.fastReloadEligible=special && debugReloadEligible(address);
+    if(special) {
+        const auto& previous=session.special[session.active];
+        result.debugRecycled=result.fastReloadEligible && (debugInfiniteAmmo ||
+            (previous.valid && previous.weaponClass==result.weaponClass && previous.debugRecycled));
+    }
     checkMemory(address+8,result.scalars.size());
     std::memcpy(result.scalars.data(),reinterpret_cast<void*>(address+8),result.scalars.size());
     const auto slots=weaponSlotArray(address); // 所有机型共用结构及内存校验。
@@ -916,6 +926,7 @@ const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
     return nullptr;
 }
 void execute(const Command& command) {
+    if(command.op!="snapshot" && command.op!="checkpoint_save")debugWeapons.repairPool=0;
     verifyVersion();
     require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
     require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
@@ -1065,6 +1076,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
+            dualsp::managementAudio().request(false);
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
             session={};checkpoint={};checkpointValid=false;checkpointTime=0;ravenVisual={};
         }
@@ -2249,3 +2261,18 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
 }
 // 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。
 extern "C" __declspec(dllexport) int dualsp_mod_aircraft_catalogue_supported(void*) {return 0;}
+
+// 音频许可由游戏线程提交；后台只接触Windows音频会话，不读取游戏对象。
+extern "C" __declspec(dllexport) int dualsp_management_audio(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1,"管理音频参数数量无效");
+        const auto muted=api->readInteger(luaState,1);
+        require(muted==0 || (muted==1 && runtimeEnabled),"管理音频许可无效");
+        dualsp::managementAudio().request(muted!=0);
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}return 0;
+    }
+}

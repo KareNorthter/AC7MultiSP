@@ -1,4 +1,4 @@
--- AC7MultiSP 2.22.2 alpha1内部测试候选：整合SP调试、后台日志、Mod兵装兼容及开场预热提示。
+-- AC7MultiSP 2.22.2 alpha1内部测试候选：内存交接、装填队列修正及管理页调整；补给保持已购筛选。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -45,11 +45,14 @@ end
 local bridge=loadExport("dualsp_execute_memory_v1")
 loadExport("dualsp_cfa_startup_prewarm_supported") -- 预热、Lua开场和提示界面须成套。
 local mountStartup={serial=0,invoke=loadExport("dualsp_mount_loading","DualSPUI.dll")}
+mountStartup.managementAudio=loadExport("dualsp_management_audio")
+assert(mountStartup.managementAudio(0)) -- 后台恢复可能遗留的静音，不在游戏线程枚举设备。
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_infinite_ammo_supported") -- 负弹药数按无限处理，拒绝旧预览/核心混装。
 loadExport("dualsp_management_options_supported","DualSPUI.dll")
 loadExport("dualsp_async_logging_supported","DualSPUI.dll")
+loadExport("dualsp_flat_management_supported","DualSPUI.dll")
 local setFixedMountEnabled=loadExport("dualsp_set_fixed_mount_enabled")
 local registerMountAsset=loadExport("dualsp_mount_asset")
 local expandedMountAssets=dofile(root.."Scripts/mount_assets.lua")
@@ -678,11 +681,9 @@ nativeParts=NativeLoadout.new{note=note,mode="parts",keyboardNavigation=preparat
 nativeSupply=NativeLoadout.new{note=note,mode="resupply",commit=function(id,profile)
     assert(supplySession and id==supplySession.planeId,"补给确认期间机体已变化")
     assert(not supplySession.confirmed,"本次补给方案已确认")
-    Profile.validate(profile,supplySession.options,supplySession.debugProfile)
     supplySession.confirmed=copyProfile(profile)
     note("RESUPPLY_PROFILE_STAGED "..id.." "..json.encode(profile))
-end,allowUnowned=function()return supplySession and supplySession.debugProfile==true end,
-keyboardNavigation=preparationNavigation,takeoff=function(owner)
+end,keyboardNavigation=preparationNavigation,takeoff=function(owner)
     assert(IsInGameThread(),"补给起飞必须在游戏线程执行")
     assert(supplySession and valid(plane)and valid(activator),"补给起飞缺少当前玩家")
     assert(owner:GetWorld():GetAddress()==plane:GetWorld():GetAddress(),"补给页面与玩家不在同一世界")
@@ -733,6 +734,8 @@ local function acquireManagementPause()
         managementPause.pauser=valid(pauser)and pauser:GetAddress()or nil
         assert(accepted==true and managementPause.owned,"管理界面未能取得原生暂停")
     end
+    local audioOK,audioError=mountStartup.managementAudio(1)
+    assert(audioOK,audioError)
     note("MANAGEMENT_PAUSE_ACQUIRED owned="..tostring(managementPause.owned).." effective="..tostring(game:IsGamePaused(plane)))
 end
 -- 只核对打开F6前的同一原生暂停；普通关闭保留，明确换机另行交接。
@@ -746,11 +749,15 @@ local function existingManagementPauseValid(lease)
 end
 -- 只释放本面板创建且仍属于同一世界/拥有者的暂停；其他暂停不重写、不强制清零。
 local function releaseManagementPause()
-    if not managementPause then return end
+    local function resumeAudio()
+        local audioOK,audioError=mountStartup.managementAudio(0)
+        assert(audioOK,audioError)
+    end
+    if not managementPause then resumeAudio();return end
     local lease=managementPause -- 完成核验前保留会话，失败由控制器明确报告。
     if not valid(lease.settings)then
         note("MANAGEMENT_PAUSE_WORLD_DESTROYED") -- 世界已销毁，无须向新世界发送解除请求。
-        managementPause=nil;return
+        resumeAudio();managementPause=nil;return
     end
     if lease.owned then
         local world=lease.settings:GetWorld() -- 退出任务时旧玩家可能先销毁，使用暂停所属世界作为上下文。
@@ -764,7 +771,7 @@ local function releaseManagementPause()
         end
     end
     note("MANAGEMENT_PAUSE_RELEASED owned="..tostring(lease.owned).." remaining="..tostring(valid(lease.settings)and valid(lease.settings.Pauser)))
-    managementPause=nil
+    resumeAudio();managementPause=nil -- 暂停交接成功后归还静音；失败留在面板内时继续静音。
 end
 local function setPanel(open)
     if open and not runtimeAllowed then return end
@@ -1007,8 +1014,7 @@ local function configureFlight(profile,reason)
         assert(supported,"补给重选需要支持 resupply_setup 的独立候选核心，当前正式 DLL 不支持")
     end
     local options=optionsFor(planeId)
-    local debugResupply=resupply and supplySession.debugProfile==true
-    Profile.validate(profile,options,debugLoadout or debugAircraft or debugResupply)
+    Profile.validate(profile,options,debugLoadout or debugAircraft)
     currentProfile=profile
     flightOptions=options
     selectionAudio(0,0) -- 重建前先隔离中间态选择音，不影响锁定音收尾。
@@ -1026,7 +1032,7 @@ local function configureFlight(profile,reason)
     native(debugLoadout and "debug_setup"or resupply and "resupply_setup"or "setup",0)
     if not resupply and not debugLoadout then native("checkpoint_save",0)end
     configured=true;active=0;lastArmed=plane:IsSpecialWeaponArmed();note("LOADOUT "..planeId.." "..json.encode(profile))
-    debugProfileActive=debugLoadout or debugAircraft or debugResupply
+    debugProfileActive=debugLoadout or debugAircraft
     if not resupply and not debugLoadout then checkpointProfile=copyProfile(profile);checkpointDebugProfile=debugAircraft end
     if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
@@ -1044,7 +1050,7 @@ local function completeSupplyHandoff()
     instance:SetPlaneAndSWP(planeId,profile.a)
     assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
     configureFlight(profile,"resupply")
-    if not debugProfileActive then config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()end
+    config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
     nativeSupply:reset{clearError=false,releaseInput=false};ownSupplyInput(false);supplySession=nil;lastUIKey=nil
     refreshHUD(os.clock())
     note("RESUPPLY_LOADOUT_APPLIED "..planeId.." "..json.encode(profile))
@@ -1996,7 +2002,7 @@ RegisterHook("/Script/Nimbus.Mission:OnStartSupplyPhaseHandler",function()end,su
     ownSupplyInput(true) -- 页面生成前已隔离两个原生输入入口，避免第一帧穿透。
     -- 任务和原机体绑定用于排除其他任务、菜单或机体触发的事件。
     supplySession={mission=ctx:get():GetAddress(),world=currentWorld,planeId=planeId,profile=copyProfile(currentProfile),
-        options=optionsFor(planeId),debugProfile=debugProfileActive,menuActive=false,menuClosed=false,confirmed=nil,success=false}
+        options=optionsFor(planeId),menuActive=false,menuClosed=false,confirmed=nil,success=false}
     -- 现有右下多 SP 行留在原生 HUD 树中，过场显隐由祖先控制，不露回单 SP 源。
     weaponPresentation:reset();note("RESUPPLY_STARTED "..planeId)
 end))
