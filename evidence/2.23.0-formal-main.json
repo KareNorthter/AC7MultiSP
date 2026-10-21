@@ -1,0 +1,122 @@
+{
+  "schema": 1,
+  "formal_version": "2.23.0",
+  "requested_version": "2.23",
+  "candidate": false,
+  "authorized_at": "2026-10-21T22:52:57.115498+08:00",
+  "user_instruction": "合并到main，版本记2.23，因为本次有重大性能优化。此次优化的经验也记录到项目中。",
+  "previous_main": "a96cde63e64438d4553cdb4e4b6b9ece0e4331f2",
+  "accepted_integration_commit": "998dd73ff7c87ebdbb1b7c86c925b6c9fbd9ab33",
+  "functional_source_commit": "46076bbfb0ac344d9da608b49ff37259e39f0ea8",
+  "formal_branch": "codex/formal-2.23.0",
+  "main_merge_method": "fast-forward",
+  "functional_source_unchanged": true,
+  "version_text_transformations": {
+    "VERSION": {
+      "before": "7129c260dd7ec482187578079850dc5ccbe4218d260277fccb4828774b34b8f2",
+      "after": "579c058e1ec7bd869f31186152dcce04324a5db3e6b81ec599f159ad3e1c3070",
+      "replacements": {
+        "2.22.2 alpha1": "2.23.0"
+      }
+    },
+    "dist/DualSP/Scripts/main.lua": {
+      "before": "7294bc47ff9a6d9ddc2632cd924b8aaa5bc53feda170345679fa28a1e5fc2c38",
+      "after": "8254b94d2ff08b05fa349ffe2d1adc4e6ef96abc7247b11522484c40f0109f21",
+      "replacements": {
+        "2.22.2 alpha1内部测试候选": "2.23.0正式版",
+        "DUALSP_LOADED 2.22.2 alpha1": "DUALSP_LOADED 2.23.0"
+      }
+    },
+    "src/management_panel.hpp": {
+      "before": "3a34012b6be2ad89e0323e343933478acd41bdbd16f37e6ae4baa2138bace8ed",
+      "after": "db1be8f2c0edd8dddc547cc709d7710ce1929e48ed2335c557c2afd80bddbbe7",
+      "replacements": {
+        "ImGui::TextDisabled(\"2.22.2 alpha1\")": "ImGui::TextDisabled(\"2.23.0\")"
+      }
+    },
+    "src/bounded_log.hpp": {
+      "before": "7b8b144f29ce090d8fa33fb12ba56955c84a6561b7718ba827adcd5be38dda7d",
+      "after": "f6a7f32433a7c2f65ac0f5d69292e97b9f861bf39fb79ee0d1839c23ece736db",
+      "replacements": {
+        "LOG_SESSION version=2.22.2 alpha1 ": "LOG_SESSION version=2.23.0 "
+      }
+    }
+  },
+  "product_metadata": {
+    "before": {
+      "name": "AC7MultiSP",
+      "internal_name": "DualSP",
+      "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
+      "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+      "upgrade_receipt": "evidence/2.22.2-alpha1-r2-installed.json",
+      "candidate": true,
+      "scripts": [
+        "config_store.lua",
+        "debug_aircraft.lua",
+        "gun_salvo.lua",
+        "json.lua",
+        "loadout_flow.lua",
+        "loadout_profile.lua",
+        "main.lua",
+        "native_bridge.lua",
+        "native_hud.lua",
+        "native_loadout.lua",
+        "runtime_context.lua",
+        "weapon_cycle.lua",
+        "weapon_names.lua",
+        "weapon_presentation.lua",
+        "mount_assets.lua",
+        "mod_aircraft.lua"
+      ],
+      "receipt_prefix": "2.22.2-alpha1-r3"
+    },
+    "after": {
+      "name": "AC7MultiSP",
+      "internal_name": "DualSP",
+      "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
+      "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
+      "upgrade_receipt": "evidence/2.22.2-alpha1-r3-installed.json",
+      "candidate": false,
+      "scripts": [
+        "config_store.lua",
+        "debug_aircraft.lua",
+        "gun_salvo.lua",
+        "json.lua",
+        "loadout_flow.lua",
+        "loadout_profile.lua",
+        "main.lua",
+        "native_bridge.lua",
+        "native_hud.lua",
+        "native_loadout.lua",
+        "runtime_context.lua",
+        "weapon_cycle.lua",
+        "weapon_names.lua",
+        "weapon_presentation.lua",
+        "mount_assets.lua",
+        "mod_aircraft.lua"
+      ],
+      "receipt_prefix": "2.23.0-formal"
+    }
+  },
+  "validated_build_dir": "Temp/build-2.22.2-alpha1-r3",
+  "validated_build_receipt_sha256": "2c9247d62fcadc1adae10e9922a567e88d4365244371cd458bee00311a047f8e",
+  "validated_test_receipt_sha256": "a9459c035f78adb2d94786b2eca595fcbfbaa7fa99b67bee5cf787e13ecaa2f9",
+  "existing_checks_verified": 11,
+  "validated_installed_receipt": "evidence/2.22.2-alpha1-r3-installed.json",
+  "validated_installed_receipt_sha256": "46d91ce6010c29964386fed0347ba3cd0bc35374781e6fad02d5242f10111ade",
+  "user_validation": "evidence/2.22.2-alpha1-r3-user-validation.json",
+  "performance_evidence": "evidence/cfa44-switch-cost-alpha1-r3-20261021.json",
+  "lessons": [
+    "docs/development.md#性能优化经验2026-10-21",
+    "docs/multi-sp-mount-design.md#已验证经验与踩坑",
+    "docs/architecture.md"
+  ],
+  "core_recompiled": false,
+  "test_modules_run": false,
+  "game_reinstalled": false,
+  "game_operated": false,
+  "release_package_created": false,
+  "installed_label": "2.22.2 alpha1",
+  "main_label": "2.23.0",
+  "artifacts_note": "正式号仅应用于当前源码。旧冻结与实机安装未改；此记录不是正式2.23.0二进制构建/安装/发布回执，不替代未来产物标识核验。"
+}

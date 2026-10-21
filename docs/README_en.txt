@@ -1,12 +1,13 @@
-AC7MultiSP 2.22.2 alpha1
+AC7MultiSP 2.23.0
 
-Internal test candidate; official main/release remains 2.22.1 until user acceptance.
-• Debug: Infinite ammo and Fast reload default off, apply immediately and affect only managed SPs. They do not alter standard missiles, guns or countermeasures. Infinite ammo preserves current stock; eligible reloads take at most one second. PLSL/HGP/MGP and continuous effects retain native reload behavior. Options reset on game restart.
-• Ordinary tracking start/stop is silent. English UI follows the approved Chinese text.
-• A shared background writer caps four mod and six native/UI log segments at 1,000,000 bytes each (10 MB total). Bounded queues, background priority, batching and rate limits favor responsiveness; congested queues drop records. Pending final records may be lost. Performance remains to be validated in game.
-• Qualified mod-aircraft ECM/ESM/IEWS are recognized by their actual classes/callbacks; existing TLS/UAV restrictions remain. Signed negative SP stock means unlimited and displays ∞, retaining original values without ratio reduction. Array, ready-slot and timer checks remain bounded.
-• CFA warms muzzle metadata during the existing startup EML initialization. With mission multi-SP models enabled, a loading notice is presented before preparation and lasts until completion, for at least one second. The minimum notice time does not delay weapon readiness. Model resources/layouts remain unchanged.
-• Valid revision 19 settings and personal bindings are retained. This is an internal alpha; the official version will be chosen only after the user confirms acceptance.
+Changes since 2.22.1
+• Commands/results, the catalogue, UI state and action queues now pass through memory. Consecutive pending direct selections are coalesced; duplicate JSON work, weapon-pool copies and HUD sampling are reduced.
+• Logs use bounded background queues and batching. Unchanged settings skip saving; validated short selection audio is retained across missions.
+• Fixed inactive ADMM pool slots with unlimited ammunition, cached reload markers and checkpoint/mode changes. Native projectile creation and continuous-effect lifetimes remain authoritative.
+• Ignore verified inactive bomb remnants when changing combinations; resupply continues to list purchased weapons only.
+• Added qualified mod electronic/unlimited-ammo support, SP debug controls, management refinements and CFA startup prewarming/loading feedback. Management muting has been removed.
+• CFA44 with three SPs and models enabled: median core switching time 22.74→17.66 ms (about 22% lower), P95 25.87→20.20 ms. One 88.31 ms spike remains. These are uncontrolled log comparisons, not frame-rate guarantees.
+• User-accepted alpha1 r3 is the functional baseline. Main is now 2.23.0; installed binaries retain their accepted alpha label. Formal artifacts and packaging are separate delivery steps.
 
 Changes since official 2.22.0
 • Three management tabs: General, Camera and Debug; logs expand in Debug. Controller and keyboard tracking have separate options, both off by default.
@@ -15,7 +16,7 @@ Changes since official 2.22.0
 • Revision 19 does not migrate older settings/loadouts: back up their original bytes before resetting to new defaults. Valid revision 19 settings are retained normally.
 • Fixed the F/A-18E TGM cooked Socket reference with r2 assets. All 77 variants/154 members are bound to offline qualification; the other 152 members and 28-aircraft/196 layouts are unchanged.
 
-The user accepted the installed candidate. This official release uses version 2.22.1, retaining accepted core/resource bytes and changing only equal-length UI version text. Research identifiers are not official release numbers.
+2.22.1 historical record: The user accepted that installed candidate. That release used version 2.22.1, retaining accepted core/resource bytes and changing only equal-length UI version text. Research identifiers are not official release numbers.
 
 Carry one to three special weapons in single-player campaign/free missions, preserving separate ammunition, reloads, HUD and selection. Multiplayer is disabled. Supported native build: Steam 9855922, Windows 10/11 x64.
 
@@ -131,3 +132,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.21.1：Added MGP/PLSL Gun salvo and mod-aircraft search; revised modifier input, F6, defaults, CFA handling and F-15 mounts.
 2.22.0: Integrated NEXT modes, tracking/camera controls, independent model/D-pad options, loadout/mod compatibility, paused switching and additional SP layouts; simplified local installation integrity scope.
 2.22.1: Refined three-tab management and separate tracking options, shortcuts and defaults; back up/reset older settings; fixed F/A-18E TGM references and offline asset qualification.
+2.23.0: Moved runtime IPC to memory, added background logging and reduced repeated sampling; fixed unlimited ADMM queues and inactive-bomb blocking, refined mod compatibility/debug/management, and removed management muting. Comparable CFA median switching time fell by about 22%.
