@@ -55,8 +55,8 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=17; // 机库模型与十字键独立开关，UI/Lua须成套部署。
-bool draftModEnabled=true,draftFixedMountEnabled=true,draftGunSalvo=false;
+constexpr int managementProtocol=18; // 任务/机库模型平级独立，UI/Lua须成套部署。
+bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=false;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
 bool draftTargetGazePadL3=false,draftCameraHold=false;
 bool draftCameraR3=true,draftViewTarget=false,draftViewCenterDot=true;
@@ -435,7 +435,7 @@ void captureKeyboardKey(int key,int mods) {
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
-    draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+    draftTaskMountEnabled=state.at("task_mount_enabled").get<bool>();
     draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
     draftDpadWeaponSwitchEnabled=state.at("dpad_weapon_switch_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
@@ -455,7 +455,7 @@ void loadManagementDraft() {
     if(draftAmmoPercentTwo<50||draftAmmoPercentTwo>100||draftAmmoPercentThree<33||draftAmmoPercentThree>100)
         throw std::runtime_error("SP 弹药百分比超出范围");
     state.at("runtime_mod_enabled").get<bool>();
-    state.at("runtime_fixed_mount_enabled").get<bool>();
+    state.at("runtime_task_mount_enabled").get<bool>();
     const auto keys=state.value("keyboard_keys",Json::array()); // 控制器负责验证配置，界面也拒绝不匹配的协议。
     if(keys.size()!=4)throw std::runtime_error("Management keyboard binding data is invalid");
     for(int slot=0;slot<4;++slot)draftKeys[slot]=keys.at(slot).get<int>();
@@ -701,7 +701,7 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
-        {"mod_enabled",draftModEnabled},{"fixed_mount_enabled",draftFixedMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
+        {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
@@ -746,7 +746,7 @@ void refreshState() {
                 for(size_t prior=0;prior<index;++prior)if(checkedKeys[index]==checkedKeys[prior])
                     throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 键盘直选与手柄开关分别核对。
-            state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
+            state.at("task_mount_enabled").get<bool>();state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
             state.at("target_gaze_pad_l3").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
@@ -810,7 +810,7 @@ void refreshState() {
         hotkeyRequest=std::max(hotkeyRequest,hotkey.at("response").get<int>());
         if(hotkey.at("response").get<int>()!=hotkeyResponse) {
             hotkeyResponse=hotkey.at("response").get<int>();showToast(hotkey.value("notice",std::string()),hotkey.value("notice_warning",false)?ToastKind::Warning:ToastKind::Info);
-            draftFixedMountEnabled=state.at("fixed_mount_enabled").get<bool>();
+            draftTaskMountEnabled=state.at("task_mount_enabled").get<bool>();
         }
         if(state.contains("master_switch")) {
             const auto& master=state.at("master_switch");

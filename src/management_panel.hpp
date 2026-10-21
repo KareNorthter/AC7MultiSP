@@ -26,7 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
-    return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftFixedMountEnabled!=state.at("fixed_mount_enabled").get<bool>() ||
+    return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTarget!=state.at("view_target_enabled").get<bool>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftTaskMountEnabled!=state.at("task_mount_enabled").get<bool>() ||
         draftTargetGazePadL3!=state.at("target_gaze_pad_l3").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraAutoCenterDegrees!=state.at("camera_auto_center_degrees").get<int>() ||
         draftCameraR3!=state.at("camera_r3_enabled").get<bool>() || draftTargetGazeKey!=state.at("target_gaze_key").get<int>() ||
@@ -45,17 +45,22 @@ void drawFeatureSettings() {
             ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，本候选不支持它们同时发射。","This loadout has multiple eligible SPs; this candidate cannot fire them simultaneously."));
         panelHelp("默认关闭。按住实际原生机枪键联动方案中的MGP或PLSL，松开后恢复先前选择；自定义机枪键同样生效。暂停、管理页、失焦或人工换武器会取消联动。不支持HGP及多种不同SP并发。",
             "Off by default. Hold your native gun action to also fire the selected loadout’s MGP or PLSL; release to restore the prior selection. Native remapping is respected. Pause, management, focus loss or manual weapon selection cancels the action. HGP and simultaneous different SPs are unsupported.");
-        ImGui::Checkbox(tr("多SP挂载模型###FixedMount","Multi-SP weapon models###FixedMount"),&draftFixedMountEnabled);
-        panelHelp("同时显示已适配机体的多SP模型，并控制机库/补给预览；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试换装时应用。失败恢复原生外观，不影响兵装选择。适配机体见安装说明。",
-            "Shows supported multi-SP models and controls hangar/resupply previews. Some internal bays remain native. Applies on sortie, mission/checkpoint retry, resupply or debug loadout. Visual failures restore native models without affecting selection. See installation notes for aircraft coverage.");
-        ImGui::Checkbox(tr("机库中使用多SP武器模型共同挂载###HangarMount","Show multiple SP weapon models in the hangar###HangarMount"),&draftHangarMountEnabled);
-        ImGui::TextWrapped("%s",tr("若关闭，则机库中展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿。",
-            "When disabled, the hangar shows the game's original aircraft and SP models, which may improve low frame rates and stuttering in the hangar."));
         if(state.at("mod_enabled")!=state.at("runtime_mod_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("已保存，返回主菜单后应用总开关。","Saved; return to the main menu to apply the master switch."));
-        if(state.at("fixed_mount_enabled")!=state.at("runtime_fixed_mount_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("模型设置将在下次配装时应用。","Model settings apply with the next loadout."));
-        if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
         if(state.contains("master_switch")&&state.at("master_switch").contains("error"))
             ImGui::TextWrapped("%s",uiMessage(state.at("master_switch").at("error").get<std::string>(),"总开关应用失败，请查看日志。","The master switch could not be applied; see Logs.").c_str());
+    }
+    ImGui::EndChild();
+    if(panelCard("ModelOptions",tr("模型显示","Model display"))) {
+        ImGui::TextWrapped("%s",tr("两个开关独立生效，只影响模型显示，不影响多SP选择、切换、弹药或注视功能。",
+            "These switches are independent and affect models only, not SP selection, switching, ammunition or target tracking."));
+        ImGui::Checkbox(tr("任务中显示多SP模型###TaskMount","Show multi-SP models in missions###TaskMount"),&draftTaskMountEnabled);
+        panelHelp("默认开启，控制飞行、补给及补给过渡中的多SP模型；部分内舱保持原生。下次出击、任务/检查点重试、补给或调试配装时应用。模型快捷键仅切换这一项，不影响机库。",
+            "On by default. Controls multi-SP models in flight, resupply and resupply transitions; some internal bays remain native. Applies at the next sortie, mission/checkpoint retry, resupply or debug loadout. The model shortcut changes this option only, leaving hangar models unchanged.");
+        ImGui::Checkbox(tr("机库中显示多SP模型###HangarMount","Show multi-SP models in the hangar###HangarMount"),&draftHangarMountEnabled);
+        ImGui::TextWrapped("%s",tr("若关闭，则机库中展示游戏原本的机体和SP模型，可改善机库中的低帧卡顿。",
+            "When disabled, the hangar shows the game's original aircraft and SP models, which may improve low frame rates and stuttering in the hangar."));
+        if(state.at("task_mount_enabled")!=state.at("runtime_task_mount_enabled"))ImGui::TextColored({1,.76f,.38f,1},"%s",tr("任务模型设置将在下次配装时应用。","Mission model settings apply with the next loadout."));
+        if(state.contains("mount_warning"))ImGui::TextWrapped("%s",uiMessage(state.at("mount_warning").get<std::string>(),"挂载外观已回退，请查看日志。","Models reverted to native visuals; see Logs.").c_str());
     }
     ImGui::EndChild();
     if(panelCard("HudOptions",tr("中央武器简称","Central weapon abbreviation"))) {
@@ -94,6 +99,10 @@ void drawCameraSettings() {
     }
     ImGui::EndChild();
     if(panelCard("TrackingOptions",tr("保持注视","Toggle tracking"))) {
+        ImGui::TextWrapped("%s",tr("让镜头持续跟随当前选中的目标，按一次保持、再按一次停止，无需一直按住；不会自动更换目标或修改武器锁定规则。",
+            "Keeps the camera following the selected target. Press once to start and again to stop, without holding the key. It does not select another target or modify weapon lock-on rules."));
+        ImGui::TextWrapped("%s",tr("手柄注视由下方L3开关控制；键盘绑定独立，默认未绑定。模型显示开关不影响注视。",
+            "The L3 option below controls controller tracking. The keyboard binding is independent and unassigned by default. Model display switches do not affect tracking."));
         ImGui::Checkbox(tr("左摇杆按下切换注视###TargetGazePadL3","L3 toggles tracking###TargetGazePadL3"),&draftTargetGazePadL3);
         panelHelp("默认关闭。启用后左摇杆短按松开开始/停止注视；双摇杆组合不触发注视。X保留轮切兵装，Y保留选目标和原生长按注视。暂停、管理、失焦、失去目标或离场时停止。第13关也可使用。",
             "Off by default. When enabled, press and release L3 to start/stop tracking; the two-stick countermeasure gesture never toggles tracking. X cycles weapons; Y selection and native hold-to-track remain. Stops on pause, management, focus loss, target loss or mission exit; also works in Mission 13.");
@@ -159,7 +168,7 @@ void drawBasicBindings() {
             "Click, then press a new key; Esc cancels. D-pad bindings are fixed. Direct selection works while Shift/Ctrl/Alt is held; exact configured mod chords take priority. Empty or depleted SPs cannot be selected; reloading weapons can.");
     }
     if(ImGui::CollapsingHeader(tr("模组快捷键###ModKeys","Mod shortcuts###ModKeys"),ImGuiTreeNodeFlags_DefaultOpen)) {
-        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换挂载模型","Toggle models"),tr("机炮齐射","Gun salvo"),tr("视角中心选目标","View-center targeting")};
+        const char* names[]={tr("管理界面","Management"),tr("轮切SP组合","Cycle SP loadouts"),tr("切换任务模型","Toggle mission models"),tr("机炮齐射","Gun salvo"),tr("视角中心选目标","View-center targeting")};
         for(int i=0;i<5;++i) {
             ImGui::TextUnformatted(names[i]);ImGui::SameLine(std::min(260.f,ImGui::GetContentRegionAvail().x*.45f));
             bindingButton(i==4?10:(i==3?9:i+4),shortcutLabel(draftShortcuts[i]));

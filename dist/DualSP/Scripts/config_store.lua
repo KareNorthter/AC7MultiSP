@@ -47,7 +47,7 @@ local function validateSettings(settings)
     assert(settings.management_key==settings.shortcuts.management.key,"管理入口旧字段与快捷键不一致")
     assert(settings.language=="auto"or settings.language=="zh"or settings.language=="en","Language must be auto, zh or en")
     assert(type(settings.mod_enabled)=="boolean","模组总开关必须为布尔值")
-    assert(type(settings.fixed_mount_enabled)=="boolean","多 SP 挂载模型开关必须为布尔值")
+    assert(type(settings.task_mount_enabled)=="boolean"and settings.fixed_mount_enabled==nil,"任务多SP模型开关必须为布尔值，旧总模型开关已退役")
     assert(type(settings.hangar_mount_enabled)=="boolean","机库多SP模型开关必须为布尔值")
     assert(type(settings.dpad_weapon_switch_enabled)=="boolean","手柄十字键切换武器开关必须为布尔值")
     assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
@@ -99,7 +99,7 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=16,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_enabled=false,view_center_dot_enabled=true,camera_auto_center_degrees=30,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,fixed_mount_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+        local config=readJson(root.."profiles.json")or {schema=2,management_revision=17,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_enabled=false,view_center_dot_enabled=true,camera_auto_center_degrees=30,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,target_gaze_pad_l3=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},view_target={key=119,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
@@ -208,10 +208,17 @@ function Config.new(options)
             assert(config.hangar_mount_enabled==nil and config.dpad_weapon_switch_enabled==nil,"旧配置含未知机库或十字键开关")
             config.hangar_mount_enabled=true;config.dpad_weapon_switch_enabled=true;config.management_revision=16
         end
-        assert(config.management_revision==16,"需要管理参数第 16 版")
+        local migrateIndependentModels=config.management_revision==16
+        if migrateIndependentModels then
+            assert(type(config.fixed_mount_enabled)=="boolean"and type(config.hangar_mount_enabled)=="boolean"and config.task_mount_enabled==nil,"旧模型开关配置无效")
+            config.task_mount_enabled=config.fixed_mount_enabled
+            config.hangar_mount_enabled=config.fixed_mount_enabled and config.hangar_mount_enabled -- 按旧的实际显示结果迁移，原总开关关闭不突然启用机库模型。
+            config.fixed_mount_enabled=nil;config.management_revision=17
+        end
+        assert(config.management_revision==17,"需要管理参数第 17 版")
         for _,saved in pairs(config.profiles)do Profile.count(saved)end
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateUiInputOptions then
+        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateUiInputOptions or migrateIndependentModels then
             -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
             local bytes=readAll(assert(io.open(root.."profiles.json","rb")))
             local backups={}
@@ -228,12 +235,13 @@ function Config.new(options)
             if migrateCameraAutoCenter then backups[#backups+1]="profiles.before-camera-auto-center.json"end
             if migrateViewTarget then backups[#backups+1]="profiles.before-view-target.json"end
             if migrateUiInputOptions then backups[#backups+1]="profiles.before-ui-input-options.json"end
+            if migrateIndependentModels then backups[#backups+1]="profiles.before-independent-models.json"end
             for _,name in ipairs(backups)do
                 local existing=io.open(root..name,"r")
                 if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
             end
             for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=16")
+            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=17")
         end
         return config
     end
@@ -246,9 +254,9 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==17,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==18,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","fixed_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_enabled","view_center_dot_enabled","central_weapon_display","target_gaze_pad_l3","target_gaze_key","camera_hold_enabled","camera_auto_center_degrees","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_enabled","view_center_dot_enabled","central_weapon_display","target_gaze_pad_l3","target_gaze_key","camera_hold_enabled","camera_auto_center_degrees","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

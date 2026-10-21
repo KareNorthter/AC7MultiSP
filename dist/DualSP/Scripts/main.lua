@@ -1,4 +1,4 @@
--- AC7MultiSP 2.25.2源码候选：机库模型及十字键独立开关，通知分级为1/3秒；未编译安装。
+-- AC7MultiSP 2.25.2源码候选：任务/机库模型平级独立、十字键开关、通知1/3秒及注视说明；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=17") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=18") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -118,15 +118,16 @@ local config=configStore:load()
 local runtimeModEnabled=config.mod_enabled
 local masterSwitch={lastCheck=-1,failed=false,error=nil,response=0,notice=nil}
 local tryApplyMasterSwitch=nil -- 页面和原生接口都建立后，再定义安全菜单中的完整清理/启用。
-local runtimeFixedMountEnabled=config.fixed_mount_enabled
+local runtimeFixedMountEnabled=config.task_mount_enabled -- 核心共用入口当前实际使用的场景开关，不再作为模型总开关。
 local mountOptionsApplied=false
 local mountWarning=nil
 local previewMountWarning=nil -- 预览警告独立保存，任务周期刷新不能覆盖。
-local function applyFixedMountSetting()
-    if mountOptionsApplied and runtimeFixedMountEnabled==config.fixed_mount_enabled then return end
-    local ok,err=setFixedMountEnabled(runtimeModEnabled and config.fixed_mount_enabled and 1 or 0)
+local function applyFixedMountSetting(enabled)
+    if enabled==nil then enabled=config.task_mount_enabled end -- 任务/补给重建默认用任务开关；机库调用方显式传机库开关。
+    if mountOptionsApplied and runtimeFixedMountEnabled==enabled then return end
+    local ok,err=setFixedMountEnabled(runtimeModEnabled and enabled and 1 or 0)
     assert(ok,err)
-    runtimeFixedMountEnabled=config.fixed_mount_enabled
+    runtimeFixedMountEnabled=enabled
     mountOptionsApplied=true
     mountWarning=err and err~=""and err or nil
     note("FIXED_MOUNT_SETTING_APPLIED "..tostring(runtimeFixedMountEnabled))
@@ -478,9 +479,11 @@ local function mountPreview(context)
         end
         lastMountPreviewContext=context
         local owner=supply and context.owner or context.instance
-        if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)or errorText then
+        if not(runtimeAllowed and runtimeModEnabled)or errorText then
             return releaseMountPreview(0)
         end
+        if supply or flight then applyFixedMountSetting()else applyFixedMountSetting(config.hangar_mount_enabled)end
+        if not runtimeFixedMountEnabled then return releaseMountPreview(0)end
         if not valid(owner)or not valid(context.instance)then return false,""end
         local sourcePlane=plane
         if not supply and not flight then
@@ -533,7 +536,7 @@ local function maintainScenePreview()
         if scenePreviewPlane or lastMountPreviewContext then releaseMountPreview(0);lastMountPreviewContext=nil end
         return
     end
-    if not(runtimeAllowed and runtimeModEnabled and runtimeFixedMountEnabled)then return end
+    if not(runtimeAllowed and runtimeModEnabled)then return end -- 机库是否启用只读机库开关，不受任务开关影响。
     if not runtimeContext.hangarVisible then
         if scenePreviewPlane or lastMountPreviewContext then releaseMountPreview(0);lastMountPreviewContext=nil end
         return -- 评分/任务选择页即使保留了隐藏机体，也不刷新它的挂载、部件与配弹。
@@ -1313,7 +1316,7 @@ local function applyDebugHotkey(action)
         hotkeyNotice="SP："..table.concat(names," + ")..tr("（已补满）"," (refilled)")
         weaponSwitch.hotkeyWarning=false
     else
-        local nextConfig=json.decode(json.encode(config));nextConfig.fixed_mount_enabled=not config.fixed_mount_enabled
+        local nextConfig=json.decode(json.encode(config));nextConfig.task_mount_enabled=not config.task_mount_enabled
         local saved,err=pcall(saveConfig,nextConfig)
         if not saved then hotkeyNotice=tostring(err);note("DEBUG_HOTKEY_REJECTED "..hotkeyNotice);return end
         config=nextConfig
@@ -1323,11 +1326,12 @@ local function applyDebugHotkey(action)
                 and not internal and not restorePending and not errorText
                 and valid(plane)and valid(activator)and valid(instance)
                 and instance:GetWorld():GetAddress()==plane:GetWorld():GetAddress()then
-                if config.fixed_mount_enabled and ensureMountAssets then ensureMountAssets(nil,plane,true,currentProfile)end
-                local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.fixed_mount_enabled and 1 or 0)
+                if config.task_mount_enabled and ensureMountAssets then ensureMountAssets(nil,plane,true,currentProfile)end
+                local ok,warning=debugFixedMount(plane:GetAddress(),activator:GetAddress(),game:GetTimeSeconds(plane),config.task_mount_enabled and 1 or 0)
                 assert(ok,warning)
-                runtimeFixedMountEnabled=config.fixed_mount_enabled;mountOptionsApplied=true
+                runtimeFixedMountEnabled=config.task_mount_enabled;mountOptionsApplied=true
                 mountWarning=warning and warning~=""and warning or nil
+            elseif not isFlight and not supplySession then applyFixedMountSetting(config.hangar_mount_enabled)
             else applyFixedMountSetting()end
             previewMountWarning=nil;supplyPreviewActive=false
             if runtimeFixedMountEnabled and lastMountPreviewContext and not isFlight then mountPreview(lastMountPreviewContext)end
@@ -1339,7 +1343,7 @@ local function applyDebugHotkey(action)
             runtimeFixedMountEnabled=false;mountOptionsApplied=true
             mountWarning="多 SP 挂载已回退为原生单 SP："..tostring(err)
         end
-        hotkeyNotice=mountWarning or (config.fixed_mount_enabled and tr("多 SP 模型：开启","Multi-SP models: ON")or tr("多 SP 模型：关闭","Multi-SP models: OFF"))
+        hotkeyNotice=mountWarning or (config.task_mount_enabled and tr("任务多SP模型：开启","Mission multi-SP models: ON")or tr("任务多SP模型：关闭","Mission multi-SP models: OFF"))
         weaponSwitch.hotkeyWarning=mountWarning~=nil
         if not runtimeModEnabled then hotkeyNotice=hotkeyNotice..tr("（总开关关闭，仅保存设置）"," (saved; mod disabled)")end
     end
@@ -1389,7 +1393,7 @@ local function applyAction(action)
             weaponSwitch.view.release(true);weaponSwitch.view.failed=false;weaponSwitch.view.error=nil;weaponSwitch.view.update()
             masterSwitch.failed=false;masterSwitch.error=nil;masterSwitch.lastCheck=-1
             tryApplyMasterSwitch(true)
-            if not isFlight and not supplySession then applyFixedMountSetting()end
+            if not isFlight and not supplySession then applyFixedMountSetting(config.hangar_mount_enabled)end
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED "..settingsAck)
         end,debug.traceback)
@@ -1422,13 +1426,15 @@ local function locatePlane()
 end
 local function publishState()
     publishSequence=publishSequence+1
+    local appliedTaskMount=config.task_mount_enabled
+    if isFlight or supplySession then appliedTaskMount=runtimeFixedMountEnabled end -- 机库核心状态不能冒充任务开关的应用状态。
     local info=catalogue and catalogue[tostring(planeId)]
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=17,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=18,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
-        mod_enabled=config.mod_enabled,fixed_mount_enabled=config.fixed_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
+        mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
         hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
         view_target_enabled=config.view_target_enabled,view_center_dot_enabled=config.view_center_dot_enabled,
         view_target={protocol=1,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
@@ -1436,7 +1442,7 @@ local function publishState()
         target_gaze_pad_l3=config.target_gaze_pad_l3,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
         camera_r3_enabled=config.camera_r3_enabled,camera_auto_center_degrees=config.camera_auto_center_degrees,
-        runtime_mod_enabled=runtimeModEnabled,runtime_fixed_mount_enabled=runtimeFixedMountEnabled,
+        runtime_mod_enabled=runtimeModEnabled,runtime_task_mount_enabled=appliedTaskMount,
         ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
         keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="percentage",
         mount_warning=previewMountWarning and (mountWarning and mountWarning.." / "..previewMountWarning or previewMountWarning)or mountWarning,
@@ -1563,7 +1569,7 @@ tryApplyMasterSwitch=function(force)
         debugError=nil;inputNotice=nil;settingsError=nil;mountOptionsApplied=false
         runtimeModEnabled=target
         local enabled,why=nativeRuntimeGate(target and 1 or 0);assert(enabled,why)
-        applyFixedMountSetting()
+        applyFixedMountSetting(config.hangar_mount_enabled)
     end,debug.traceback)
     if not ok then
         runtimeModEnabled=false;pcall(nativeRuntimeGate,0);pcall(setFixedMountEnabled,0)
@@ -1579,7 +1585,9 @@ tryApplyMasterSwitch=function(force)
 end
 local function tick()
     if not valid(instance)then instance=FindFirstOf("NimbusGameInstance")end
-    if not mountOptionsApplied then applyFixedMountSetting()end
+    if not mountOptionsApplied then
+        if isFlight or supplySession then applyFixedMountSetting()else applyFixedMountSetting(config.hangar_mount_enabled)end
+    end
     local contextStarted=os.clock()
     local allowed=syncRuntime()
     recordStage("context",contextStarted)
