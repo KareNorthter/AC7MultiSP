@@ -55,15 +55,16 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=18; // 任务/机库模型平级独立，UI/Lua须成套部署。
+constexpr int managementProtocol=19; // 双模式NEXT及新版镜头交互，核心/UI/Lua须成套部署。
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=false;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
-bool draftTargetGazePadL3=false,draftCameraHold=false;
-bool draftCameraR3=true,draftViewTarget=false,draftViewCenterDot=true;
+bool draftTargetGazeEnabled=false,draftCameraHold=false;
+bool draftCameraR3=true,draftViewCenterDot=true;
+std::string draftViewTargetMode="normal";
 std::atomic<bool> viewCenterDotVisible{false};
 std::atomic<ULONGLONG> viewCenterDotHeartbeat{0};
 int draftTargetGazeKey=0,targetGazeResponse=0;
-int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100,draftCameraAutoCenterDegrees=30;
+int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
 bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
@@ -407,7 +408,7 @@ bool directInputEnabled() {
 bool dpadInputEnabled() {return directInputEnabled()&&state.value("dpad_weapon_switch_enabled",false);}
 bool targetGazeInputEnabled() {
     return runtimeEnabled.load()&&!panel&&managementError.empty()&&gameFocused()&&state.value("management_protocol",0)==managementProtocol
-        &&state.contains("target_gaze")&&state.at("target_gaze").value("available",false);
+        &&state.contains("target_gaze")&&state.at("target_gaze").value("switch_available",false);
 }
 
 // 捕获单次按键；错误显式提示，保持等待，不把无效输入换成其他键。
@@ -418,7 +419,7 @@ void captureKeyboardKey(int key,int mods) {
         if(mods!=0){notice=tr("武器直接选择只支持单键。","Direct weapon selection accepts single keys.");return;}
         nextKeys[captureSlot]=key;
     } else if(captureSlot==7) {
-        if(mods!=0){notice=tr("目标注视只支持单键。","Target tracking accepts a single key.");return;}
+        if(mods!=0){notice=tr("锁定注视功能启闭键只支持单键。","The tracking feature shortcut accepts a single key.");return;}
         nextGaze=key;
     } else if(captureSlot==8) {
         if(mods!=0){notice=tr("镜头回正只支持单键。","Camera recenter accepts a single key.");return;}
@@ -439,14 +440,13 @@ void loadManagementDraft() {
     draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
     draftDpadWeaponSwitchEnabled=state.at("dpad_weapon_switch_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
-    draftViewTarget=state.at("view_target_enabled").get<bool>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
+    draftViewTargetMode=state.at("view_target_mode").get<std::string>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
-    draftTargetGazePadL3=state.at("target_gaze_pad_l3").get<bool>();
+    draftTargetGazeEnabled=state.at("target_gaze_enabled").get<bool>();
     draftCameraHold=state.at("camera_hold_enabled").get<bool>();
     draftCameraR3=state.at("camera_r3_enabled").get<bool>();
     draftCameraCenterKey=state.at("camera_center_key").get<int>();
     draftCameraSensitivity=state.at("camera_sensitivity").get<int>();
-    draftCameraAutoCenterDegrees=state.at("camera_auto_center_degrees").get<int>();
     draftTargetGazeKey=state.at("target_gaze_key").get<int>();
     if(!state.at("ammo_percent_two").is_number_integer()||!state.at("ammo_percent_three").is_number_integer())
         throw std::runtime_error("SP 弹药百分比必须为整数");
@@ -701,11 +701,11 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
-        {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_enabled",draftViewTarget},{"view_center_dot_enabled",draftViewCenterDot},
+        {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
-        {"target_gaze_pad_l3",draftTargetGazePadL3},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
+        {"target_gaze_enabled",draftTargetGazeEnabled},{"target_gaze_key",draftTargetGazeKey},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
-        {"camera_r3_enabled",draftCameraR3},{"camera_auto_center_degrees",draftCameraAutoCenterDegrees},
+        {"camera_r3_enabled",draftCameraR3},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
     notice=tr("正在保存…","Saving...");
 }
@@ -726,7 +726,8 @@ void refreshState() {
         const bool wasManagement=state.value("management_protocol",0)==managementProtocol;
         const bool wasCameraHold=state.value("camera_hold_enabled",false);
         const bool wasGunSalvo=state.value("gun_salvo_enabled",false);
-        const bool wasViewTarget=state.value("view_target_enabled",false);
+        const auto wasViewTarget=state.value("view_target_mode",std::string("normal"));
+        const bool wasGazeEnabled=state.value("target_gaze_enabled",false);
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
@@ -748,15 +749,17 @@ void refreshState() {
             state.at("direct_selection_available").get<bool>(); // 键盘直选与手柄开关分别核对。
             state.at("task_mount_enabled").get<bool>();state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
-            state.at("target_gaze_pad_l3").get<bool>();
+            state.at("target_gaze_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("camera_r3_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
-            state.at("view_target_enabled").get<bool>();state.at("view_center_dot_enabled").get<bool>();
-            if(state.at("view_target").at("protocol").get<int>()!=1)throw std::runtime_error("视角选目标协议不匹配");
+            const auto mode=state.at("view_target_mode").get<std::string>();
+            if(mode!="normal"&&mode!="vr")throw std::runtime_error("NEXT模式必须为普通或VR模式");
+            state.at("view_center_dot_enabled").get<bool>();
+            if(state.at("view_target").at("protocol").get<int>()!=3)throw std::runtime_error("视角选目标协议不匹配");
             const auto centralDisplay=state.at("central_weapon_display").get<std::string>();
             if(centralDisplay!="always"&&centralDisplay!="switch_1s")throw std::runtime_error("中央武器简称显示方式无效");
-            if(state.at("camera_hold").at("protocol").get<int>()!=7)throw std::runtime_error("镜头保持协议不匹配");
+            if(state.at("camera_hold").at("protocol").get<int>()!=8)throw std::runtime_error("镜头保持协议不匹配");
             if(!state.at("camera_center_key").is_number_integer() || !dualsp::validCameraCenterKey(state.at("camera_center_key").get<int>(),
                 state.at("camera_hold_enabled").get<bool>(),state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("镜头回正键位无效或重复");
@@ -765,9 +768,7 @@ void refreshState() {
             if(!state.at("target_gaze_key").is_number_integer() ||
                 !dualsp::validTargetGazeKey(state.at("target_gaze_key").get<int>(),checkedShortcuts,checkedKeys))
                 throw std::runtime_error("目标注视键位无效或重复");
-            if(state.at("target_gaze").at("protocol").get<int>()!=2)throw std::runtime_error("目标注视协议不匹配");
-            if(!state.at("camera_auto_center_degrees").is_number_integer() || state.at("camera_auto_center_degrees").get<int>()<0 || state.at("camera_auto_center_degrees").get<int>()>45)
-                throw std::runtime_error("自动回正阈值必须为0至45的整数");
+            if(state.at("target_gaze").at("protocol").get<int>()!=3)throw std::runtime_error("目标注视协议不匹配");
             shortcuts=checkedShortcuts;
         }
         const int sequence=state.value("sequence",0); // 状态序号用于记录控制器最近更新。
@@ -777,9 +778,13 @@ void refreshState() {
         if(close!=lastClose){lastClose=close;if(close>0)togglePanel(false);}
         if(!wasManagement&&panel&&state.value("management_protocol",0)==managementProtocol)loadManagementDraft();
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
-        if(!panel && wasManagement && wasViewTarget!=state.at("view_target_enabled").get<bool>()) {
-            draftViewTarget=state.at("view_target_enabled").get<bool>();
-            showToast(draftViewTarget?tr("视角中心选目标：开启","View-center targeting: ON"):tr("视角中心选目标：关闭","View-center targeting: OFF"));
+        if(!panel && wasManagement && wasViewTarget!=state.at("view_target_mode").get<std::string>()) {
+            draftViewTargetMode=state.at("view_target_mode").get<std::string>();
+            showToast(draftViewTargetMode=="vr"?tr("NEXT：VR模式／视角中心优先","NEXT: VR / view center"):tr("NEXT：普通模式／机头附近优先","NEXT: normal / aircraft nose"));
+        }
+        if(!panel&&wasManagement&&wasGazeEnabled!=state.at("target_gaze_enabled").get<bool>()) {
+            draftTargetGazeEnabled=state.at("target_gaze_enabled").get<bool>();
+            showToast(draftTargetGazeEnabled?tr("锁定注视功能：开启","Latched tracking feature: ON"):tr("锁定注视功能：关闭","Latched tracking feature: OFF"));
         }
         if(!panel && wasManagement && wasGunSalvo!=state.at("gun_salvo_enabled").get<bool>()) {
             draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
@@ -905,9 +910,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         const auto size=ImGui::GetIO().DisplaySize;const ImVec2 center{size.x*.5f,size.y*.5f};
                         auto* draw=ImGui::GetForegroundDrawList();
                         const float scale=std::clamp(size.y/1080.f,.75f,2.f);
-                        draw->AddCircleFilled(center,6.f*scale,IM_COL32(240,250,255,18),24);
-                        draw->AddCircleFilled(center,3.5f*scale,IM_COL32(245,252,255,55),20);
-                        draw->AddCircleFilled(center,1.5f*scale,IM_COL32(255,255,255,245),16);
+                        draw->AddCircleFilled(center,9.f*scale,IM_COL32(240,250,255,18),24);
+                        draw->AddCircleFilled(center,5.5f*scale,IM_COL32(245,252,255,55),20);
+                        draw->AddCircleFilled(center,2.5f*scale,IM_COL32(255,255,255,245),16);
                     }
                     if(toastVisible) {
                         ImGui::PushFont(nullptr,32.f); // 通知独立加大，不挤压管理面板。
@@ -996,16 +1001,15 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_target_gaze_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_camera_r3_hold_toggle_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_camera_auto_center_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_gaze_latch_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_camera_controls_v2_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_hold_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_input_options_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_keyboard_modifier_routing_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_controller_clicks_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gun_salvo_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_view_target_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_view_target_modes_supported(void*) {return 0;}
 // 游戏线程只发布小白点显隐与心跳；渲染线程不读取游戏对象，也不逐帧读取状态文件。
 extern "C" __declspec(dllexport) int dualsp_view_center_marker(void* luaState) {
     const dualsp::LuaApi* api=nullptr;

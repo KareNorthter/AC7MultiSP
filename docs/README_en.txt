@@ -1,4 +1,12 @@
-AC7MultiSP 2.25.1 (candidate)
+AC7MultiSP 2.26.0 (candidate)
+
+2.26.0 candidate changes (since 2.25.1; user validation pending)
+
+• Independent mission/hangar model switches and optional D-pad weapon switching. Keyboard selection remains independent.
+• Ordinary notices last 1 second; warnings, errors and important messages last 3 seconds.
+• Release L3 to recenter. Short R3 changes view; hold for 0.3 seconds to toggle camera hold. Both sticks retain countermeasures.
+• Latched tracking defaults off; when enabled, hold Y for 0.2 seconds or tap the actual native keyboard tracking binding to latch/release. NEXT has Normal/VR ranking modes; the center dot hides within 5 degrees. Angle-based auto recenter is removed.
+• Configuration upgrades to revision 18 after byte-preserving backups on first launch. Personal bindings, profiles and camera hold remain. Update the complete core/Lua and 77 variants/154 members.
 
 2.25.1 candidate changes (since 2.25.0; validation pending)
 
@@ -199,3 +207,5 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.25.0: Added view-center NEXT/dot, smoother hold and mod-aircraft skin-SP support; integrated native collision preservation, pause handoff and MiG-31B r3. Validation pending.
 
 2.25.1: Fixed F-4E stock/alternating visuals, two F/A-18E layouts and native menu pause during aircraft switching; validation pending.
+
+2.26.0: Added independent model/D-pad options and integrated NEXT modes, latched tracking, camera controls and notice durations; validation pending.

@@ -232,7 +232,7 @@ int viewTargetLua(void* luaState) {
                 const double x=q[0],y=q[1],z=q[2],w=q[3],length=x*x+y*y+z*z+w*w;
                 require(std::isfinite(length)&&length>.9&&length<1.1,"视角选目标的机头方向无效");
                 const double cosine=((1.-2.*(y*y+z*z)/length)*forward.x+2.*(x*y+w*z)/length*forward.y+2.*(x*z-w*y)/length*forward.z);
-                visible=cosine<std::cos(10.*3.14159265358979323846/180.); // 10度边界也隐藏，不用归一化环视轴代替实际画面方向。
+                visible=cosine<std::cos(5.*3.14159265358979323846/180.); // 5度边界也隐藏，不用归一化环视轴代替实际画面方向。
             }
         }
         api->boolean(luaState,true);api->boolean(luaState,available);api->boolean(luaState,visible);api->string(luaState,"",0);return 4;

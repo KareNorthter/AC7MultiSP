@@ -62,8 +62,8 @@ def main():
         if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
     settings = read_json(mod / 'profiles.json')
-    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17):
-        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至17，请先核对上一版启动后的配置')
+    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18):
+        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至18，请先核对上一版启动后的配置')
     sources = {'Scripts/' + name: root / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
@@ -71,7 +71,7 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留个人配置原字节；首次启动时先备份旧配置再迁至17，模型开关按旧显示效果拆分，其他个人设置、快捷键与方案保留',
+            'name': info['name'], 'configuration_migration': '安装保留配置原字节；首次启动沿既有备份链迁配置18，含独立模型备份及profiles.before-camera-interaction-v2.json；个人键位、方案和视角保持保留，新锁定注视默认关闭',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False}
