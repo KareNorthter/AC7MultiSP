@@ -86,6 +86,7 @@ def main():
             raise ValueError("候选核心不是 Windows x64")
     main_source = (root / "dist/DualSP/Scripts/main.lua").read_text(encoding="utf-8")
     required = set(re.findall(r'loadExport\("([^"]+)"\)', main_source))  # 排除明确指定 UI DLL 的接口。
+    required.update({"dualsp_log", "dualsp_log_submit"})  # Lua早期日志绑定和跨DLL投递也必须成套。
     if "dualsp_fixed_mount_update" not in required or required - exports:
         raise ValueError("候选核心接口不完整：" + repr(sorted(required - exports)))
     ui_required = set(re.findall(r'loadExport\("([^"]+)","DualSPUI.dll"\)', main_source))

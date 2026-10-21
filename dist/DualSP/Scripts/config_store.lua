@@ -90,13 +90,25 @@ end
 function Config.new(options)
     local root,note,json,Profile=options.root,options.note,options.json,options.profile
     local readJson=options.readJson
-    local writeJson=options.writeJson or function(path,value)Config.writeJson(path,value,json)end
+    local savedConfig=nil -- 已成功持久化的独立值快照，不持有调用方会继续修改的表。
+    local function same(a,b)
+        if type(a)~=type(b)then return false end
+        if type(a)~="table"then return a==b end
+        for key,value in pairs(a)do if not same(value,b[key])then return false end end
+        for key in pairs(b)do if a[key]==nil then return false end end
+        return true
+    end
     local self={}
     function self:save(value)
+        local encoded=json.encode(value) -- 先发现编码错误，不能截断旧配置。
+        local snapshot=json.decode(encoded)
+        if savedConfig and same(snapshot,savedConfig)then return false end
         -- 覆盖配置前保留上一份，读写失败仍向调用者报告。
         local old=io.open(root.."profiles.json","rb")
         if old then writeText(root.."profiles.previous.json",readAll(old))end
-        writeJson(root.."profiles.json",value)
+        if options.writeJson then options.writeJson(root.."profiles.json",value)
+        else writeText(root.."profiles.json",encoded)end
+        savedConfig=snapshot;return true
     end
     function self:load()
         local loaded,config=pcall(readJson,root.."profiles.json")
@@ -104,6 +116,7 @@ function Config.new(options)
             assert(type(config.profiles)=="table","不支持的配置版本")
             for _,saved in pairs(config.profiles)do Profile.count(saved)end
             validateSettings(config)
+            savedConfig=json.decode(json.encode(config))
             return config
         end
         -- 本轮用户明确不兼容旧配置：先按原字节留档，再使用完整新默认值，不迁移旧字段/方案。
@@ -135,7 +148,7 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==20,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==21,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
         for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_pad_enabled","target_gaze_keyboard_enabled","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]

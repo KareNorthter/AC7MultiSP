@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "version": "2.22.2 alpha1",
+  "candidate": true,
+  "installed_at": "2026-10-21T22:22:53.524906+08:00",
+  "source_commit": "46076bbfb0ac344d9da608b49ff37259e39f0ea8",
+  "build_dir": "Temp/build-2.22.2-alpha1-r3",
+  "build_receipt_sha256": "2c9247d62fcadc1adae10e9922a567e88d4365244371cd458bee00311a047f8e",
+  "test_receipt_sha256": "a9459c035f78adb2d94786b2eca595fcbfbaa7fa99b67bee5cf787e13ecaa2f9",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed_receipt": "evidence/2.22.2-alpha1-r3-installed.json",
+  "installed_receipt_sha256": "46d91ce6010c29964386fed0347ba3cd0bc35374781e6fad02d5242f10111ade",
+  "runtime_files_verified": 19,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+    "variant_count": 77,
+    "file_count": 154
+  },
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\backup\\AC7MultiSP-20261021-222253-524906",
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "profiles_preserved_exact_bytes": true,
+  "protected_files_verified": 6,
+  "other_mod_files_touched": false,
+  "game_running_after_install": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "formal_main_unchanged": true,
+  "release_created": false,
+  "management_mute_removed": true,
+  "removed_export_checked": "dualsp_management_audio",
+  "io_audit": "evidence/mount-animation-file-io-20261021.json",
+  "changes": [
+    "移除管理页静音调用、核心导出、音频线程和恢复文件机制",
+    "跨任务复用已校验SP2提示音PCM，保持原设备释放与音量逻辑"
+  ],
+  "remaining": [
+    "模型/动画控制未发现文件通信，但首次资源加载、设置持久化与后台日志仍保留",
+    "帧率、连续ADMM、切换与提示音仍待用户实测",
+    "原暂停崩溃未证明已修复"
+  ]
+}

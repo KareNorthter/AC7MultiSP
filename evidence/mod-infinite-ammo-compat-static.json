@@ -1,0 +1,148 @@
+{
+  "任务": "弹药负数按无限处理，解除Mod机体负载量的错误拒绝",
+  "记录时间": "2026-10-21T16:13:28.021838+08:00",
+  "用户确认": "arkbird这种，在原生游戏中，弹药数被识别为无限。我们应该把负数认为是无限",
+  "分支": "codex/mod-aircraft-compat",
+  "前一提交": "09c4dcc",
+  "正式基线": "main / 0b75b21 / v2.21.1",
+  "范围": {
+    "静态修改": true,
+    "编译": false,
+    "执行Lua语法": false,
+    "编写或运行测试": false,
+    "安装": false,
+    "操作游戏": false,
+    "推送上传": false
+  },
+  "原始表": {
+    "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\tables\\000-~~~~~~~~~!Compatibility_Add-Ons-PPDT_P\\PlayerPlaneDataTable.json",
+    "sha256": "115aee3c844f2aeea5fb44abe5c54d5beb21d3d264eb00be942dc7232c678696",
+    "rows": 195,
+    "带负弹药计数的行": [
+      {
+        "PlaneID": 210,
+        "PlaneStringID": "arkb",
+        "MainWeaponLoadCount": -1,
+        "GunLoadCount": -1,
+        "SpWeaponLoadCount1": -1,
+        "SpWeaponLoadCount2": -1,
+        "SpWeaponLoadCount3": -1,
+        "sp_codes": [
+          "tls",
+          "mpbm",
+          "uav"
+        ]
+      },
+      {
+        "PlaneID": 244,
+        "PlaneStringID": "b01r",
+        "MainWeaponLoadCount": 120,
+        "GunLoadCount": -1,
+        "SpWeaponLoadCount1": 352,
+        "SpWeaponLoadCount2": 36,
+        "SpWeaponLoadCount3": 6,
+        "sp_codes": [
+          "ugb",
+          "lacm",
+          "mpbm"
+        ]
+      },
+      {
+        "PlaneID": 252,
+        "PlaneStringID": "gleip",
+        "MainWeaponLoadCount": -1,
+        "GunLoadCount": -1,
+        "SpWeaponLoadCount1": -1,
+        "SpWeaponLoadCount2": -1,
+        "SpWeaponLoadCount3": -1,
+        "sp_codes": [
+          "shcn",
+          "swbm",
+          "hpm"
+        ]
+      },
+      {
+        "PlaneID": 255,
+        "PlaneStringID": "arsb",
+        "MainWeaponLoadCount": 240,
+        "GunLoadCount": -1,
+        "SpWeaponLoadCount1": -1,
+        "SpWeaponLoadCount2": -1,
+        "SpWeaponLoadCount3": -1,
+        "sp_codes": [
+          "tls",
+          "plsl",
+          "admm"
+        ]
+      }
+    ],
+    "boundary": "表中静态配置事实，不是当前游戏内存或全部机体运行验收；B-1R只有机炮为负，未因SP正数检查被排除。"
+  },
+  "原问题": "此前a4dd3c7目录校验maximum>0错误排除arkb/210、gleip/252、arsb/255；仅改目录仍会被预览、缩放、直选/轮切等旧非负判断拒绝。",
+  "统一语义": {
+    "弹药字段范围": "原生有符号32位计数，负数无限，零为空弹，正数保留100000上限",
+    "负值": "保留来源中的原始负数，不取绝对值、不强改-1、不换成大正数、不参与比例/加法/倍率/偶数取整",
+    "零": "不算无限；运行中按空弹处理，有限基础值的部件计算仍由原生算法决定",
+    "正值": "原生部件一次后按整数百分比向上取整，规则保持",
+    "库存与装填": "无限库存仍按真实待发窗口、游标和冷却判断就绪，不修改装填计时或队列规模",
+    "其它负字段": "配置-1仍为空槽，编号/数组长度/容量/游标/物理池等不采用无限语义，原有检查保持"
+  },
+  "修改路径": {
+    "目录": "接受负SP载量及零；保留原始值并记MOD_AIRCRAFT_INFINITE_AMMO",
+    "机库补给预览": "负基础载量直接返回，有限基础值继续原生部件算法；合法负结果可展示",
+    "PART预览": "负基础载量current/preview原样返回、affects=false，不误标部件增加无限库存",
+    "比例": "Lua Profile.ammo和核心scaleAmmo保留原始负值，仍先核对比例参数；当前与最大库存分别处理",
+    "快照恢复": "沿用原Group原字节缓存、换槽、补给和检查点事务，不新建弹药字段或改原生内存布局；缺失缓存明确报错，不再用-999作弹药占位",
+    "选择": "直选、等待中的直选、轮切、已支持的MGP/PLSL齐射把合法负值视为有弹；齐射Lua与核心均同步",
+    "显示": "机库/补给及多SP HUD用∞，pending/EMPTY沿用原占位",
+    "模型": "负库存只解除数量限制，用现有布局/物理池和装填队列计算可见位置，不新增模型或挂点",
+    "诊断": "CFA扣弹差值遇任意端为无限时记null，避免跨无限/有限差值误判或溢出"
+  },
+  "共享实现": {
+    "C++": "src/ammo_count.hpp::validAmmoCount",
+    "Lua": "loadout_profile.lua::validAmmo/hasAmmo/ammoText/ammo"
+  },
+  "能力标记": "dualsp_infinite_ammo_supported；新Lua要求新核心，拒绝只换脚本",
+  "保持": [
+    "原生入口和版本校验",
+    "对象身份/归属",
+    "武器/配置编号范围",
+    "数组与装填队列/计时校验",
+    "有限库存上限和配弹比例",
+    "购买与多挂资格",
+    "ECM原生回调/冷却契约",
+    "未登记UAV限制",
+    "现有挂载布局和物理池",
+    "个人配置/版本号/UI及配置协议",
+    "原始第三方PAK/数据表和游戏安装",
+    "旧静态反馈/安装/验收/发布回执"
+  ],
+  "静态复核": "人工检查目录、预览、整数缩放、保留原字节、选择、显示、就绪、模型位图、诊断差值及新能力标记；Git差异格式检查。未执行功能代码或测试。",
+  "待后续验证": [
+    "Arkbird/Arsenal Bird/Gleipnir机库、出击及可组合SP；其它兵装资格分别判断",
+    "原生有限弹、CASUAL-EASY无限弹、负标记及有限/无限混合方案",
+    "部件预览、33%/50%/100%设置、直选/轮切、已支持齐射",
+    "真实装填、模型空位、补给、检查点、换玩家及负标记跨事务保留",
+    "∞字形和原生待定占位；现有离线检查若有旧正数假设，获授权测试前需同步"
+  ],
+  "非结论": "不表示全部Mod已兼容或已实测，不解除自定义TLS/UAV等独立限制；RX-78-2机库展示问题仍待查。",
+  "源码摘要": {
+    "src/ammo_count.hpp": "9c53c5ecd394676334b0f9097c0469d968bcede9a97138ecd5c230572071c453",
+    "src/weapon_bridge.cpp": "3a37890b0925accbc4578174b2bdfbfdc22076dc79f0e748d2a89098f0746f0d",
+    "src/cfa_weapon_diagnostics.hpp": "575d951f70f491f79e2ce6644b63e0667e4d587188521a776208a45edcfee858",
+    "src/mount_exterior.hpp": "f27aab292256273a51d6b47f0a4382a1d8453357a4775a18e70fa69d849593d2",
+    "src/mount_preview.hpp": "89e8b80907c4d73093f60bc941f528ee6adc003edcfee8f0a5732afaf5677bad",
+    "src/su30sm_fixed_mount.hpp": "303088295f1142e252682e859d706a48e1401c968845d35edfd6bae53f135076",
+    "dist/DualSP/Scripts/loadout_profile.lua": "c924e027188a0fc0f1697b75eb6255cdd3c187427d18b907aeeb71338a48392e",
+    "dist/DualSP/Scripts/main.lua": "c732c79f4a50af97992749263418a6d58bfaecb2faa026635695c596c257dcac",
+    "dist/DualSP/Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "dist/DualSP/Scripts/native_hud.lua": "0ce41b317914ecd6d4fb0a52d2dbf0240e95d94035dd0ad41d43cc2c3da2aa8a",
+    "dist/DualSP/Scripts/native_loadout.lua": "6d242227eef4cae0057103afa07dec5195a278d95b6a0d7d7bcd3869710b3b19",
+    "dist/DualSP/Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "src/gun_salvo.hpp": "2602fee1c087f0ef05cd29333ded21858cb7b4d145e8c8122a515cfd66be61d2"
+  },
+  "受保护旧核心": {
+    "sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "修改": false
+  }
+}

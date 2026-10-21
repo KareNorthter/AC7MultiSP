@@ -4,10 +4,8 @@
 #include <stdexcept>
 
 namespace dualsp {
-// The engine field is elapsed time, not a normalized progress value. Keep
-// signed offsets (a delayed start) and completed-timer overshoot in the cache.
-// Only the HUD normalizes to [0,1]. Never reset a signed timer to zero, as doing
-// so would shorten a cooldown. Non-finite values still stop native mutations.
+// 计时不是百分比。-1为停用、-2为等待原生实体，不能用离开时长自动推进。
+// 其他有符号偏移和完成后的超量值仍保留；HUD才归一化到[0,1]。
 inline void validateReload(float duration, float elapsed) {
     if (!std::isfinite(duration) || duration < 0 || duration > 300)
         throw std::runtime_error("Invalid reload duration");
@@ -17,6 +15,7 @@ inline void validateReload(float duration, float elapsed) {
 inline float advanceReload(float duration, float elapsed, double dt, bool inLoadWindow) {
     validateReload(duration, elapsed);
     if (!std::isfinite(dt) || dt < 0) throw std::runtime_error("Invalid reload time delta");
+    if (elapsed == -1.f || elapsed == -2.f) return elapsed;
     return inLoadWindow ? static_cast<float>(std::min<double>(duration, double(elapsed) + dt)) : elapsed;
 }
 inline float rebuildReload(float duration, float elapsed, float rebuiltElapsed) {

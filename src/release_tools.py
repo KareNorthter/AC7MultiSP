@@ -2,6 +2,7 @@
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 
@@ -57,8 +58,8 @@ def inventory(directory):
 def product(root=ROOT):
     value = read_json(root / 'src/product.json')
     value['version'] = (root / 'VERSION').read_text(encoding='utf-8').strip()
-    if not value['version'] or any(c not in '0123456789.' for c in value['version']):
-        raise ValueError('VERSION 必须是点分数字版本')
+    if not re.fullmatch(r'\d+\.\d+\.\d+(?: alpha[1-9]\d*)?', value['version']):
+        raise ValueError('VERSION 必须是三位数字版本，可附加内部测试标识 alphaN')
     expected = value['scripts']
     script_dir = root / 'dist/DualSP/Scripts'
     actual = sorted(p.relative_to(script_dir).as_posix() for p in script_dir.rglob('*.lua'))
@@ -99,6 +100,7 @@ def source_snapshot(root=ROOT):
         'evidence/mount-resource-qualification-fix.json',
         'evidence/view-target-implementation.json','evidence/target-selection-research.json',
         'evidence/mod-aircraft-compat-static.json',
+        'evidence/mod-electronic-compat-static.json','evidence/mod-infinite-ammo-compat-static.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',
         'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',

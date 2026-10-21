@@ -1,0 +1,404 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T21:53:46.754736+08:00",
+  "version": "2.22.2 alpha1",
+  "status": "performance_hotspots_and_response_publish_failure_confirmed_pending_fix",
+  "user_report": "正常飞行频繁切SP，任务多SP模型开或关均掉帧，约120fps降到50后恢复；本轮关闭模型对照中频繁切武器出现弹窗、Mod失效。用户确认使用键盘武器直选键。",
+  "pid": 7836,
+  "plane_id": 118,
+  "aircraft": "Su-33",
+  "installed_source_commit": "e7b3cffbad833db653bcf58f6475e14622f17395",
+  "sampling": {
+    "total": 109,
+    "controlled_switch_samples": 10,
+    "collector_median_ms": 60.8,
+    "collector_max_ms": 99.51,
+    "first": {
+      "at": "2026-10-21T21:47:28.736364+08:00",
+      "uobject_count": 175451,
+      "nonnull": 162648,
+      "pending_or_unreachable": 7,
+      "changed_slots": null,
+      "private_bytes": 6794661888,
+      "game_thread_cpu_delta_ms": null,
+      "process_cpu_delta_ms": null,
+      "task_mount": true,
+      "revision": 684,
+      "paused": true,
+      "collector_ms": 59.731
+    },
+    "pre_switch": {
+      "at": "2026-10-21T21:48:35.767806+08:00",
+      "uobject_count": 175451,
+      "nonnull": 164203,
+      "pending_or_unreachable": 223,
+      "changed_slots": 97,
+      "private_bytes": 6851182592,
+      "game_thread_cpu_delta_ms": 859.375,
+      "process_cpu_delta_ms": 2593.75,
+      "task_mount": false,
+      "revision": 684,
+      "paused": false,
+      "collector_ms": 71.568
+    },
+    "peak_private": {
+      "at": "2026-10-21T21:48:55.777297+08:00",
+      "uobject_count": 175451,
+      "nonnull": 165540,
+      "pending_or_unreachable": 439,
+      "changed_slots": 0,
+      "private_bytes": 6866661376,
+      "game_thread_cpu_delta_ms": 500.0,
+      "process_cpu_delta_ms": 1625.0,
+      "task_mount": false,
+      "revision": 832,
+      "paused": true,
+      "collector_ms": 55.48
+    },
+    "peak_pending": {
+      "at": "2026-10-21T21:48:52.775938+08:00",
+      "uobject_count": 175451,
+      "nonnull": 165540,
+      "pending_or_unreachable": 439,
+      "changed_slots": 6,
+      "private_bytes": 6866006016,
+      "game_thread_cpu_delta_ms": 890.625,
+      "process_cpu_delta_ms": 2218.75,
+      "task_mount": false,
+      "revision": 832,
+      "paused": false,
+      "collector_ms": 67.103
+    },
+    "last": {
+      "at": "2026-10-21T21:49:16.786016+08:00",
+      "uobject_count": 175451,
+      "nonnull": 163915,
+      "pending_or_unreachable": 7,
+      "changed_slots": 0,
+      "private_bytes": 6841229312,
+      "game_thread_cpu_delta_ms": 562.5,
+      "process_cpu_delta_ms": 1671.875,
+      "task_mount": false,
+      "revision": 832,
+      "paused": true,
+      "collector_ms": 68.983
+    },
+    "object_header_high_water_constant": true,
+    "folder": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\switch-performance-20261021-214728",
+    "samples_sha256": "8a8153590c6f8e00c12ae48fbc51543405c30cc7139f4c37ad5d1056d95c6016",
+    "read_only_process_access": "PROCESS_QUERY_INFORMATION | PROCESS_VM_READ；GetProcessTimes/GetThreadTimes/GetProcessMemoryInfo查询。",
+    "game_thread_suspended": false,
+    "game_functions_called": false,
+    "memory_written": false,
+    "native_status_reader": "定时采样读取ui-state.json，未轮询native-status.json；native-status仅在采样开始前及结束后复制。故障发生在中间21:48:46，保留这一时序但不宣称外部采样完全无观测开销。",
+    "limits": "每秒一次聚合对象表及进程统计；采集器自身外部处理中位60.8ms，最高99.51ms。未采集Present/GPU逐帧时间，不能将Lua计时当FPS；UObject表头是高水位计数，不等于当前活动对象总数。"
+  },
+  "controlled_switches": {
+    "count": 149,
+    "first": "2026-10-21T13:48:35.956Z",
+    "last": "2026-10-21T13:48:46.131Z",
+    "span_seconds": 10.175,
+    "median_core_ms": 3.0,
+    "max_core_ms": 4.0,
+    "models_off": true
+  },
+  "historical_su33_models_on_core": {
+    "scope": "Su33绑定后、首次关闭任务模型前的日志配对；不是受控FPS测量",
+    "count": 142,
+    "median_ms": 10.0,
+    "max_ms": 12.0
+  },
+  "performance_windows": [
+    {
+      "at": "2026-10-21T13:48:12.769Z",
+      "scene": "flight",
+      "samples": 533,
+      "average_ms": 3.398,
+      "peak_ms": 29.0,
+      "native_switch": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "max_ms": null
+      },
+      "direct_requests": 0,
+      "hud_commits": 0,
+      "mount_toggles": []
+    },
+    {
+      "at": "2026-10-21T13:48:27.780Z",
+      "scene": "flight",
+      "samples": 508,
+      "average_ms": 4.583,
+      "peak_ms": 163.0,
+      "native_switch": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "max_ms": null
+      },
+      "direct_requests": 0,
+      "hud_commits": 1,
+      "mount_toggles": [
+        "DEBUG_HOTKEY_APPLIED mount 任务多SP模型：关闭"
+      ]
+    },
+    {
+      "at": "2026-10-21T13:48:42.827Z",
+      "scene": "flight",
+      "samples": 458,
+      "average_ms": 9.26,
+      "peak_ms": 51.0,
+      "native_switch": {
+        "count": 102,
+        "median_ms": 3.0,
+        "p95_ms": 4.0,
+        "max_ms": 4.0
+      },
+      "direct_requests": 138,
+      "hud_commits": 138,
+      "mount_toggles": []
+    },
+    {
+      "at": "2026-10-21T13:48:57.832Z",
+      "scene": "flight",
+      "samples": 623,
+      "average_ms": 2.835,
+      "peak_ms": 124.0,
+      "native_switch": {
+        "count": 47,
+        "median_ms": 3.0,
+        "p95_ms": 3.0,
+        "max_ms": 4.0
+      },
+      "direct_requests": 64,
+      "hud_commits": 63,
+      "mount_toggles": []
+    },
+    {
+      "at": "2026-10-21T13:49:12.851Z",
+      "scene": "flight",
+      "samples": 707,
+      "average_ms": 0.584,
+      "peak_ms": 14.0,
+      "native_switch": {
+        "count": 0,
+        "median_ms": null,
+        "p95_ms": null,
+        "max_ms": null
+      },
+      "direct_requests": 0,
+      "hud_commits": 0,
+      "mount_toggles": []
+    }
+  ],
+  "earlier_dense_window": {
+    "at_local": "2026-10-21T21:45:12.618+08:00",
+    "window_seconds_approximate": 15,
+    "native_switches": 184,
+    "direct_requests": 250,
+    "lua_tick_average_ms": 22.587,
+    "lua_tick_peak_ms": 97,
+    "mixed_model_states": true
+  },
+  "performance_interpretation": [
+    "关闭任务模型后仍走initialize -> 原生InitializeWeaponSystem -> 恢复队列 -> HUD，不关闭实际武器重建。",
+    "本轮关闭模型约10.175秒内完成149次重建，NATIVE_BEGIN到DONE中位3ms/最高4ms；该范围不包含此前Lua命令落盘及此后回执发布，不能当端到端总成本。",
+    "21:48:42.827对应约15秒统计窗口Mod周期平均9.260ms、峰值51ms；窗口内102次重建。此前模型开启的Su33段142次重建中位10ms/最高12ms，属于历史日志观察，不是受控FPS对比。",
+    "管理状态publish阶段平时每次约9～14ms，本轮失败附近峰值86ms；publishState仍同步编码写文件，UI入口再读回解析后交给内存状态。后台日志异步不代表这些业务交接也异步。",
+    "此前1259ms尖峰的统计窗口包含重新开启任务模型，不能把它定为纯SP切换耗时。",
+    "键盘WM_KEYDOWN检查先前按下位，未发现长按自动重复路径；每50ms取出的动作批次仍逐条立即执行，存在合并连续过时直选目标的候选空间，不能把GetTickCount时间刻度误当游戏帧编号。",
+    "观察到待回收/不可达标记7到439再回7、私有内存阶段上涨且表头高水位不变；包含原生任务对象、暂停及错误清理，未证明泄漏或垃圾回收就是50fps的直接根因。",
+    "对照在错误处提前中止，之后Mod进入错误状态；不能用之后Lua平均0.584ms证明正常停止切换后性能恢复。"
+  ],
+  "response_failure": {
+    "at_local": "2026-10-21T21:48:46.134+08:00",
+    "request": 849,
+    "native_done": {
+      "ok": true,
+      "active": 0
+    },
+    "temporary_file": {
+      "name": "native-status.json.tmp",
+      "request": 849,
+      "ok": true,
+      "active": 0,
+      "sha256": "b37a7afcb7b6e8c01bb7f4e0c3db7adb8bc3657eb6a94088bf87a7002dcede17"
+    },
+    "published_file": {
+      "name": "native-status.json",
+      "request": 848,
+      "ok": true,
+      "active": 2,
+      "sha256": "26a904e914adac60656a8245b70675e9db7dc14cd8ebe74ce3620d8909cd0111"
+    },
+    "command_sha256": "b8f768ce6bcfca6a19fec14b10c35a01fb1710b5dc5862a899e4aceeca980402",
+    "core_error": "NATIVE_RESPONSE_WRITE_ERROR Cannot publish mod data",
+    "lua_error": "Native response does not match the current request",
+    "failure_stage": "atomicJson已写好.tmp，MoveFileExW替换正式回执失败；Lua读取旧848而拒绝849，进入错误停用路径。",
+    "reason_limit": "现有错误没有记录GetLastError，不能判定具体占用者、杀毒/索引器、权限或其他文件系统原因；捕获时两文件均Archive而非只读，也不能反推失败瞬间状态。",
+    "transient_switch_already_not_durable": true,
+    "replay_warning": "实际兵装已切换，不能为补回执盲目重跑整个原生事务或接受旧响应。",
+    "game_crashed": false
+  },
+  "optimization_candidates_not_implemented": [
+    {
+      "priority": 1,
+      "proposal": "同进程同步命令直接传参并返回当前结果；文件只作尽力诊断，保留请求号、游戏线程及玩家身份校验，避免成功事务被诊断文件替换失败割裂。"
+    },
+    {
+      "priority": 2,
+      "proposal": "管理状态直接传给已有UI内存状态，减少热路径JSON落盘、读回和重复序列化；诊断文件交后台或降频。"
+    },
+    {
+      "priority": 3,
+      "proposal": "仅合并同批连续直选中已过时的目标，不跨越开火、管理操作、换机、检查点及其他有副作用动作；保留最后目标和既有生命周期间隔。"
+    },
+    {
+      "priority": 4,
+      "proposal": "细分原生重建、重复capture/恢复及HUD提交开销；先去同事务重复工作，再验证是否能减少整套重建，不盲目缓存原生弹体、页面或解除活动兵装门槛。"
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "after\\mod.1.log",
+      "sha256": "4acb33bebc44f026f1fc27aa049dd2d5111a070e6d086e22f3a60166a2b7d5e3",
+      "bytes": 999960
+    },
+    {
+      "file": "after\\mod.log",
+      "sha256": "9b9b219752c72f4859212dd8a04e14f1355f6463bca48c2d9911fc83ee8ce10b",
+      "bytes": 898285
+    },
+    {
+      "file": "after\\native-status.json",
+      "sha256": "26a904e914adac60656a8245b70675e9db7dc14cd8ebe74ce3620d8909cd0111",
+      "bytes": 269
+    },
+    {
+      "file": "after\\native.1.log",
+      "sha256": "896f4945f1107e4ef7f2197bb63ef173c28e67745edeae7f1230e50cde0438ee",
+      "bytes": 999985
+    },
+    {
+      "file": "after\\native.2.log",
+      "sha256": "e645dbe84c77320ada888ca5cef8f6373f9b97e43b8164e5ba8d7a0cdfd6b7db",
+      "bytes": 996304
+    },
+    {
+      "file": "after\\native.log",
+      "sha256": "8e89f78fa3768545148ae2fc732403c5141689b6dedb8a413ba27e623bf82ff8",
+      "bytes": 639600
+    },
+    {
+      "file": "after\\ui-state.json",
+      "sha256": "1bf1ee71f9abeeb9617442733af2b10ac3b8521a27b71390f29f011729e59233",
+      "bytes": 20612
+    },
+    {
+      "file": "after\\VERSION",
+      "sha256": "7129c260dd7ec482187578079850dc5ccbe4218d260277fccb4828774b34b8f2",
+      "bytes": 14
+    },
+    {
+      "file": "analysis-after.json",
+      "sha256": "0c8b2406e6d1094bc0841352100b54db3eeb6a24ae2eb4ee37021dc6c4dffce6",
+      "bytes": 9318
+    },
+    {
+      "file": "analysis-before.json",
+      "sha256": "d175e214f1a2853e6707a8c4dae7fb8f99c6e34d5a776de499c4b594d29e445a",
+      "bytes": 9332
+    },
+    {
+      "file": "before\\mod.1.log",
+      "sha256": "4acb33bebc44f026f1fc27aa049dd2d5111a070e6d086e22f3a60166a2b7d5e3",
+      "bytes": 999960
+    },
+    {
+      "file": "before\\mod.log",
+      "sha256": "0ed7024fd868592e02d5d193cb1eef6cf4c38f3c24f281dc0b53979883d464ce",
+      "bytes": 811868
+    },
+    {
+      "file": "before\\native-status.json",
+      "sha256": "d23451711ad75248db28dec0b53d3262b0bd6e3bdcfe753bad89c4e71f47da42",
+      "bytes": 293
+    },
+    {
+      "file": "before\\native.1.log",
+      "sha256": "896f4945f1107e4ef7f2197bb63ef173c28e67745edeae7f1230e50cde0438ee",
+      "bytes": 999985
+    },
+    {
+      "file": "before\\native.2.log",
+      "sha256": "e645dbe84c77320ada888ca5cef8f6373f9b97e43b8164e5ba8d7a0cdfd6b7db",
+      "bytes": 996304
+    },
+    {
+      "file": "before\\native.log",
+      "sha256": "615d0e1aebdbf79b9f4f4ad7532c83f76fdeeb4293000b7afcc030d84db659e8",
+      "bytes": 545907
+    },
+    {
+      "file": "before\\ui-state.json",
+      "sha256": "fb4184e619c0a6666d869dc472277eb7aef7ff8861eec8466d919b890a3c8332",
+      "bytes": 19737
+    },
+    {
+      "file": "before\\VERSION",
+      "sha256": "7129c260dd7ec482187578079850dc5ccbe4218d260277fccb4828774b34b8f2",
+      "bytes": 14
+    },
+    {
+      "file": "failure\\mod.log",
+      "sha256": "19fc0d366df96a0123aebb85ccc052df401fa24800bdf0e3b91ec0d05fa264c9",
+      "bytes": 902437
+    },
+    {
+      "file": "failure\\native-command.txt",
+      "sha256": "b8f768ce6bcfca6a19fec14b10c35a01fb1710b5dc5862a899e4aceeca980402",
+      "bytes": 64
+    },
+    {
+      "file": "failure\\native-status.json",
+      "sha256": "26a904e914adac60656a8245b70675e9db7dc14cd8ebe74ce3620d8909cd0111",
+      "bytes": 269
+    },
+    {
+      "file": "failure\\native-status.json.tmp",
+      "sha256": "b37a7afcb7b6e8c01bb7f4e0c3db7adb8bc3657eb6a94088bf87a7002dcede17",
+      "bytes": 316
+    },
+    {
+      "file": "failure\\native.log",
+      "sha256": "8e89f78fa3768545148ae2fc732403c5141689b6dedb8a413ba27e623bf82ff8",
+      "bytes": 639600
+    },
+    {
+      "file": "failure\\ui-state.json",
+      "sha256": "29584f7dd1e65387577a8654d8d59977f02970a69dd1fb07d27b0fe2fbac8f08",
+      "bytes": 20612
+    },
+    {
+      "file": "incident-summary.json",
+      "sha256": "5e57b86f68b600a8054aaddf84c5bf13574c1a5a34ddc3932d63c09a58246ba3",
+      "bytes": 11387
+    },
+    {
+      "file": "samples.jsonl",
+      "sha256": "8a8153590c6f8e00c12ae48fbc51543405c30cc7139f4c37ad5d1056d95c6016",
+      "bytes": 64385
+    }
+  ],
+  "product_source_changed": false,
+  "compiled": false,
+  "product_tests_written_or_run": false,
+  "installed": false,
+  "version_changed": false,
+  "formal_main_changed": false,
+  "memory_written": false,
+  "configuration_changed_by_agent": false,
+  "game_controlled_by_agent": false,
+  "scope": "只读性能排查与用户手动复现；未执行产品修复或重新安装。先停止压力复现，保留错误现场；alpha1不能据此验收。"
+}

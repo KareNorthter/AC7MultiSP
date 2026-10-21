@@ -1,0 +1,562 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T22:45:39.024353+08:00",
+  "version": "2.22.2 alpha1",
+  "delivery": "evidence/2.22.2-alpha1-r3-integration.json",
+  "source_commit": "46076bbfb0ac344d9da608b49ff37259e39f0ea8",
+  "runtime_files_match_r3": true,
+  "raw_snapshot_dir": "Temp/cfa-cost-20261021-224352",
+  "raw_log_files": {
+    "mod.1.log": {
+      "sha256": "4acb33bebc44f026f1fc27aa049dd2d5111a070e6d086e22f3a60166a2b7d5e3",
+      "bytes": 999960
+    },
+    "mod.2.log": {
+      "sha256": "302daf6b42b57781329e95ebb839fdefe21ac9f971025e08574ea954c675f762",
+      "bytes": 999606
+    },
+    "mod.log": {
+      "sha256": "6191d43ed1e2e2207d54d8039db78a1a7b2b14d1789220659c70af8bea4c7fa9",
+      "bytes": 272952
+    },
+    "native.1.log": {
+      "sha256": "896f4945f1107e4ef7f2197bb63ef173c28e67745edeae7f1230e50cde0438ee",
+      "bytes": 999985
+    },
+    "native.2.log": {
+      "sha256": "e645dbe84c77320ada888ca5cef8f6373f9b97e43b8164e5ba8d7a0cdfd6b7db",
+      "bytes": 996304
+    },
+    "native.3.log": {
+      "sha256": "cba87f8958d912b62456c1d955e4af8fa8d64f5bddd39260fe6bd5e9c57faadf",
+      "bytes": 996846
+    },
+    "native.log": {
+      "sha256": "2b8422adc74300d3d50c8610aa40e9ae3197ba1a5bd65153ef17fbfedb26e1a5",
+      "bytes": 446118
+    }
+  },
+  "analysis_sha256": "5029eb210ccff766619bd9ab8e1d182d4ef1e526381f25c1ec013cd9f01fda21",
+  "details_sha256": "e66be9d24cbb3656d2ff22924dc37cdca93eb820218c91da06cffa6657d06dae",
+  "method": "按UTC前缀、PID、请求号关联NATIVE_BEGIN/CFA_SWITCH_COST；区分r3安装前后，只对比CFA44三SP且模型开启、profile_revision=4。P95用最近秩；保留所有尖峰。只读日志，不运行游戏内采样或帧率工具。",
+  "previous": {
+    "total_ms": {
+      "n": 253,
+      "median": 22.7395,
+      "p95": 25.8701,
+      "max": 92.6438,
+      "mean": 23.3302,
+      "over_33ms": 2,
+      "over_50ms": 2
+    },
+    "first": "2026-10-21T12:20:44.980000+00:00",
+    "last": "2026-10-21T13:01:50.582000+00:00",
+    "by_target": {
+      "0": {
+        "n": 83,
+        "median": 22.309,
+        "p95": 25.1337,
+        "max": 92.6438,
+        "mean": 23.7342,
+        "over_33ms": 2,
+        "over_50ms": 2
+      },
+      "1": {
+        "n": 100,
+        "median": 24.3703,
+        "p95": 26.3235,
+        "max": 28.2961,
+        "mean": 24.0832,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "2": {
+        "n": 70,
+        "median": 21.5414,
+        "p95": 24.7688,
+        "max": 25.5734,
+        "mean": 21.7755,
+        "over_33ms": 0,
+        "over_50ms": 0
+      }
+    },
+    "stages": {
+      "audio_selection": {
+        "n": 253,
+        "median": 0.6105,
+        "p95": 0.8067,
+        "max": 1.0453,
+        "mean": 0.6417,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "capture": {
+        "n": 253,
+        "median": 0.8362,
+        "p95": 1.1106,
+        "max": 1.3723,
+        "mean": 0.826,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "mount_before": {
+        "n": 253,
+        "median": 2.8654,
+        "p95": 3.2252,
+        "max": 4.1711,
+        "mean": 2.8861,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "mount_commit": {
+        "n": 253,
+        "median": 11.4883,
+        "p95": 12.7857,
+        "max": 15.0368,
+        "mean": 11.5741,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "native_init": {
+        "n": 253,
+        "median": 4.0745,
+        "p95": 5.9402,
+        "max": 6.5158,
+        "mean": 4.6453,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "reload_armed": {
+        "n": 253,
+        "median": 0.1708,
+        "p95": 0.6332,
+        "max": 0.7166,
+        "mean": 0.2792,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "response_publish": {
+        "n": 253,
+        "median": 0.6203,
+        "p95": 0.9228,
+        "max": 0.9836,
+        "mean": 0.6792,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "restore_effects": {
+        "n": 253,
+        "median": 0.4811,
+        "p95": 0.7408,
+        "max": 1.1504,
+        "mean": 0.469,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "retain_effects": {
+        "n": 253,
+        "median": 1.0881,
+        "p95": 1.3686,
+        "max": 70.8137,
+        "mean": 1.3295,
+        "over_33ms": 2,
+        "over_50ms": 2
+      }
+    },
+    "slowest": [
+      {
+        "at": "2026-10-21T12:21:16.482000+00:00",
+        "request": 5,
+        "target": 0,
+        "ms": 92.6438,
+        "stages": {
+          "audio_selection": 0.6362,
+          "capture": 0.8078000000000001,
+          "mount_before": 3.2356000000000003,
+          "mount_commit": 11.2179,
+          "native_init": 4.3039000000000005,
+          "reload_armed": 0.1645,
+          "response_publish": 0.9645,
+          "restore_effects": 0.49970000000000003,
+          "retain_effects": 70.8137
+        }
+      },
+      {
+        "at": "2026-10-21T12:42:24.269000+00:00",
+        "request": 91,
+        "target": 0,
+        "ms": 80.32480000000001,
+        "stages": {
+          "audio_selection": 0.5755,
+          "capture": 1.1369,
+          "mount_before": 2.8679,
+          "mount_commit": 10.5271,
+          "native_init": 3.9177000000000004,
+          "reload_armed": 0.1572,
+          "response_publish": 0.8298000000000001,
+          "restore_effects": 0.49970000000000003,
+          "retain_effects": 59.8127
+        }
+      },
+      {
+        "at": "2026-10-21T12:21:58.694000+00:00",
+        "request": 128,
+        "target": 1,
+        "ms": 28.296100000000003,
+        "stages": {
+          "audio_selection": 0.8367,
+          "capture": 1.0485,
+          "mount_before": 3.1971000000000003,
+          "mount_commit": 15.036800000000001,
+          "native_init": 6.2591,
+          "reload_armed": 0.5188,
+          "response_publish": 0.6327,
+          "restore_effects": 0.3543,
+          "retain_effects": 0.41190000000000004
+        }
+      },
+      {
+        "at": "2026-10-21T12:21:16.601000+00:00",
+        "request": 6,
+        "target": 1,
+        "ms": 27.4008,
+        "stages": {
+          "audio_selection": 0.7741,
+          "capture": 1.2317,
+          "mount_before": 2.9442,
+          "mount_commit": 12.9677,
+          "native_init": 6.2526,
+          "reload_armed": 0.7013,
+          "response_publish": 0.6116,
+          "restore_effects": 0.5035000000000001,
+          "retain_effects": 1.4138000000000002
+        }
+      },
+      {
+        "at": "2026-10-21T12:42:31.161000+00:00",
+        "request": 95,
+        "target": 1,
+        "ms": 26.591700000000003,
+        "stages": {
+          "audio_selection": 0.6175,
+          "capture": 0.9452,
+          "mount_before": 2.6378,
+          "mount_commit": 11.408700000000001,
+          "native_init": 5.6896,
+          "reload_armed": 0.5756,
+          "response_publish": 0.6022000000000001,
+          "restore_effects": 0.4988,
+          "retain_effects": 3.6163000000000003
+        }
+      }
+    ]
+  },
+  "current": {
+    "total_ms": {
+      "n": 153,
+      "median": 17.6577,
+      "p95": 20.2003,
+      "max": 88.3068,
+      "mean": 18.448,
+      "over_33ms": 1,
+      "over_50ms": 1
+    },
+    "first": "2026-10-21T14:39:13.024000+00:00",
+    "last": "2026-10-21T14:41:39.205000+00:00",
+    "by_target": {
+      "0": {
+        "n": 43,
+        "median": 16.9115,
+        "p95": 18.4438,
+        "max": 88.3068,
+        "mean": 18.6934,
+        "over_33ms": 1,
+        "over_50ms": 1
+      },
+      "1": {
+        "n": 55,
+        "median": 18.9354,
+        "p95": 20.8961,
+        "max": 25.8326,
+        "mean": 19.2827,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "2": {
+        "n": 55,
+        "median": 17.3054,
+        "p95": 18.6433,
+        "max": 19.171,
+        "mean": 17.4214,
+        "over_33ms": 0,
+        "over_50ms": 0
+      }
+    },
+    "stages": {
+      "audio_selection": {
+        "n": 153,
+        "median": 0.492,
+        "p95": 0.6669,
+        "max": 0.8261,
+        "mean": 0.5216,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "capture": {
+        "n": 153,
+        "median": 0.4163,
+        "p95": 0.5797,
+        "max": 0.8691,
+        "mean": 0.4243,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "mount_before": {
+        "n": 153,
+        "median": 2.5473,
+        "p95": 2.816,
+        "max": 3.5664,
+        "mean": 2.566,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "mount_commit": {
+        "n": 153,
+        "median": 9.4136,
+        "p95": 9.9646,
+        "max": 10.4394,
+        "mean": 9.408,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "native_init": {
+        "n": 153,
+        "median": 3.3895,
+        "p95": 4.9013,
+        "max": 5.0596,
+        "mean": 3.8521,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "reload_armed": {
+        "n": 153,
+        "median": 0.3654,
+        "p95": 0.4832,
+        "max": 0.6104,
+        "mean": 0.2896,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "response_publish": {
+        "n": 153,
+        "median": 0.0368,
+        "p95": 0.0424,
+        "max": 0.0554,
+        "mean": 0.0375,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "restore_effects": {
+        "n": 153,
+        "median": 0.3007,
+        "p95": 0.6243,
+        "max": 0.8698,
+        "mean": 0.3911,
+        "over_33ms": 0,
+        "over_50ms": 0
+      },
+      "retain_effects": {
+        "n": 153,
+        "median": 0.3061,
+        "p95": 1.1898,
+        "max": 71.595,
+        "mean": 0.9577,
+        "over_33ms": 1,
+        "over_50ms": 1
+      }
+    },
+    "slowest": [
+      {
+        "at": "2026-10-21T14:40:15.032000+00:00",
+        "request": 319,
+        "target": 0,
+        "ms": 88.30680000000001,
+        "stages": {
+          "audio_selection": 0.528,
+          "capture": 0.45230000000000004,
+          "mount_before": 2.7009000000000003,
+          "mount_commit": 8.838000000000001,
+          "native_init": 3.5379,
+          "reload_armed": 0.1298,
+          "response_publish": 0.0359,
+          "restore_effects": 0.4887,
+          "retain_effects": 71.595
+        }
+      },
+      {
+        "at": "2026-10-21T14:40:28.034000+00:00",
+        "request": 320,
+        "target": 1,
+        "ms": 25.832600000000003,
+        "stages": {
+          "audio_selection": 0.6664,
+          "capture": 0.5797,
+          "mount_before": 2.3815,
+          "mount_commit": 9.5707,
+          "native_init": 4.7138,
+          "reload_armed": 0.5156000000000001,
+          "response_publish": 0.0408,
+          "restore_effects": 0.41540000000000005,
+          "retain_effects": 6.948600000000001
+        }
+      },
+      {
+        "at": "2026-10-21T14:40:40.354000+00:00",
+        "request": 338,
+        "target": 1,
+        "ms": 21.2731,
+        "stages": {
+          "audio_selection": 0.5095000000000001,
+          "capture": 0.5803,
+          "mount_before": 2.3843,
+          "mount_commit": 9.810500000000001,
+          "native_init": 4.776400000000001,
+          "reload_armed": 0.4697,
+          "response_publish": 0.0361,
+          "restore_effects": 0.4708,
+          "retain_effects": 2.2353
+        }
+      },
+      {
+        "at": "2026-10-21T14:40:05.870000+00:00",
+        "request": 317,
+        "target": 1,
+        "ms": 20.8961,
+        "stages": {
+          "audio_selection": 0.49500000000000005,
+          "capture": 0.3549,
+          "mount_before": 2.4074,
+          "mount_commit": 9.608500000000001,
+          "native_init": 4.6827000000000005,
+          "reload_armed": 0.3604,
+          "response_publish": 0.0378,
+          "restore_effects": 0.2676,
+          "retain_effects": 2.6816
+        }
+      },
+      {
+        "at": "2026-10-21T14:40:48.445000+00:00",
+        "request": 341,
+        "target": 1,
+        "ms": 20.6631,
+        "stages": {
+          "audio_selection": 0.5528000000000001,
+          "capture": 0.41300000000000003,
+          "mount_before": 2.424,
+          "mount_commit": 9.7451,
+          "native_init": 4.8314,
+          "reload_armed": 0.3982,
+          "response_publish": 0.035500000000000004,
+          "restore_effects": 0.2843,
+          "retain_effects": 1.9787000000000001
+        }
+      }
+    ]
+  },
+  "median_reduction_percent": 22.347896831504656,
+  "p95_reduction_percent": 21.916420887433762,
+  "current_quarters": [
+    {
+      "n": 38,
+      "median_ms": 17.13645,
+      "p95_ms": 18.915200000000002,
+      "max_ms": 19.171
+    },
+    {
+      "n": 38,
+      "median_ms": 18.25875,
+      "p95_ms": 25.832600000000003,
+      "max_ms": 88.30680000000001
+    },
+    {
+      "n": 38,
+      "median_ms": 17.4634,
+      "p95_ms": 19.4057,
+      "max_ms": 19.7523
+    },
+    {
+      "n": 39,
+      "median_ms": 17.6067,
+      "p95_ms": 19.374000000000002,
+      "max_ms": 20.2851
+    }
+  ],
+  "current_successful_switches": 153,
+  "first_current_switch_ms": 18.9093,
+  "current_prewarm": [
+    {
+      "at": "2026-10-21T14:39:05.974Z",
+      "error": "",
+      "event": "CFA_MUZZLE_PREWARM",
+      "matched": 1,
+      "ms": 182.2847,
+      "request": 276,
+      "status": "ready"
+    }
+  ],
+  "peak_context": {
+    "local_time": "2026-10-21 22:40:15",
+    "request": 319,
+    "total_ms": 88.3068,
+    "retain_effects_ms": 71.595,
+    "electronic_effect_captured": true,
+    "source_config": 2,
+    "target_config": 0,
+    "meaning": "尖峰位于持续兵装保留阶段，日志同时捕获ECM效果；不是结果回传或普通挂载提交阶段。缺少该阶段内部细分，不能指定单一函数或排除系统调度影响。"
+  },
+  "publish_windows": {
+    "previous": {
+      "windows": 99,
+      "weighted_mean_ms": 10.355238095238095,
+      "median_window_mean_ms": 10.4,
+      "max_window_peak_ms": 80.0
+    },
+    "current": {
+      "windows": 10,
+      "weighted_mean_ms": 2.246794871794872,
+      "median_window_mean_ms": 2.2775,
+      "max_window_peak_ms": 5.0
+    }
+  },
+  "other_findings": [
+    {
+      "at": "2026-10-21T14:24:01.080000+00:00",
+      "body": "MOD_AIRCRAFT_REFERENCE_ERROR 动画访问：字段缺失、类型或数组维数不符"
+    },
+    {
+      "at": "2026-10-21T14:28:20.102000+00:00",
+      "body": "MOD_AIRCRAFT_REFERENCE_ERROR 动画访问：字段缺失、类型或数组维数不符"
+    },
+    {
+      "at": "2026-10-21T14:35:32.048000+00:00",
+      "body": "LOG_PRESSURE normal_dropped=0 important_dropped=0 duplicates_suppressed=1"
+    },
+    {
+      "at": "2026-10-21T14:37:30.900000+00:00",
+      "body": "LOG_PRESSURE normal_dropped=0 important_dropped=0 duplicates_suppressed=1"
+    },
+    {
+      "at": "2026-10-21T14:39:09.917000+00:00",
+      "body": "LOG_PRESSURE normal_dropped=0 important_dropped=0 duplicates_suppressed=1"
+    }
+  ],
+  "limitations": [
+    "前后场景、射击/ECM状态及切换节奏不同，不是严格受控A/B；样本保留范围也不同",
+    "核心计时不等于按键到画面延迟，不含全部Lua/HUD/渲染，新增Lua字符串返回发生在finish之后",
+    "本轮模型关闭CFA样本为空，不推导关闭模型后的提升",
+    "UI发布窗口分别为99/10个，飞行状态筛选但无同场景控制，不与核心耗时简单相加",
+    "不存在新的Present帧时间或FPS数据，不声称稳定120fps；不能将全部改进归因于文件IO",
+    "日志中的MOD_AIRCRAFT_REFERENCE_ERROR为启动目录兼容参考资格错误，独立于本次153个成功CFA事务，未擅自展开研究"
+  ],
+  "conclusion": "当前中位17.6577ms、P95 20.2003ms，较此前22.7395/25.8701ms降低约22%；各切入SP方向均降低，分段无单调增长，支持用户卡顿减轻反馈。仍有1次ECM保留阶段88.3068ms峰值。"
+}

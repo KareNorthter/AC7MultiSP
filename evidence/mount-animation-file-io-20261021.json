@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "version": "2.22.2 alpha1",
+  "scope": "本Mod模型/动画/骨架控制与相邻加载、配置、提示音、日志的静态调用路径审阅",
+  "game_io_traced": false,
+  "frame_rate_measured": false,
+  "source_hashes": {
+    "dist/DualSP/Scripts/main.lua": "7294bc47ff9a6d9ddc2632cd924b8aaa5bc53feda170345679fa28a1e5fc2c38",
+    "dist/DualSP/Scripts/config_store.lua": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517",
+    "src/weapon_bridge.cpp": "65f6c8cee970afd4a4d4673811e326486d1063ac513c66b84ba217ee414c883e",
+    "src/su30sm_fixed_mount.hpp": "1f293f74bee84daef19473c34ddeb10143f8dc9d8c24dc1a21e3c3e26282266c",
+    "src/light_mount.hpp": "859c283e5285f330c57964a1b8d6031a9196d296adfa6eeb25e0332edcdc4862",
+    "src/light_mount_animation.hpp": "aa2a4ca0e8d1d486ef56f8b0f8e7f4aee9c5c8629719a9321b03f3c60be03415",
+    "src/cfa_muzzle_visual.hpp": "f0056e5c7df0d4dd12fd77d53b80f0cc462172cfab37e710b3a3853150151d53",
+    "src/mount_animation_host.hpp": "b50696079a2292485fc1d20c71cab248e67d80fd3eb19e58bb70c949c893167b",
+    "src/mount_animation_runtime.hpp": "55cc49cfb1c08244c717c7149839d29a56ebc845389efd6e7bdda10eaf7b9cd8",
+    "src/mount_animation_product_access.hpp": "1baead7bf8d2648530040d85b954b7a6817c0cd74299aa1883f92915d0dc542b",
+    "src/common_bay_animation.hpp": "709fbbe87726e80b118928f82d2ba478ce9fce4b04a7dad1ac580a7f29e14123",
+    "src/native_common_bay_parts.hpp": "083a545a8b497526c516caaafa17a5873347f38effd9dce4d4623842e1c5ffd6",
+    "src/owned_bone_refresh.hpp": "ba74e78c6c704fa6108bcb8609c74017f26242757e2bc852e0ca348c4e1cc00f",
+    "src/mount_expansion.hpp": "11ecb735fc74578b4f64bd039aacc60cb595d9baa2aa62297c5cfa0ad414e625",
+    "src/mount_expansion_data.hpp": "11c1818fd75c9f1ce5857972e1eb9b1ce5be35d96e05924cb79a1c71dae79ac5",
+    "src/animated_mount_data.hpp": "977d5359f939349ad6d11c3108ed09d121872e78999a9aafc375bfaa59881e68",
+    "src/selection_wave.hpp": "554ab23440ee5d1c5c9c1b50e2feef95dcd6ed34179177d3bb70a431d69fee38",
+    "src/common.hpp": "4d4f27b411b686215c1384e68df759ee8b09d3b24b5765b5517411054327008a",
+    "src/bounded_log.hpp": "7b8b144f29ce090d8fa33fb12ba56955c84a6561b7718ba827adcd5be38dda7d"
+  },
+  "findings": [
+    "运行布局表编入DLL，JSON解析来自内存常量",
+    "挂架只有首次缺失加载可能由引擎读PAK，成功状态和核心RootSet保有跨实例复用",
+    "CFA44 Parts/骨架/炮口与原始代码核验均为内存读写，无文件控制环节",
+    "实际模型开关变更保存配置；普通切SP不保存；后台日志保留",
+    "相邻SP2.wav原来每任务首次读取，本轮按已校验PCM跨任务复用，替换WAV后须重启游戏"
+  ],
+  "changes": [
+    "移除管理页静音全部接线、导出、线程及恢复文件机制，源码文件移到回收站",
+    "SelectionWave关闭时保留已校验PCM和格式，设备仍释放；失败不缓存"
+  ],
+  "boundaries": [
+    "引擎InitializeWeaponSystem等内部可能加载资源，不以源码搜索承诺整个游戏零IO",
+    "无需以去掉对象身份、线程或动画归还校验换取性能",
+    "原暂停崩溃未证明已修复"
+  ],
+  "installed_before_this_change": "evidence/2.22.2-alpha1-r2-installed.json",
+  "next_receipt_prefix": "2.22.2-alpha1-r3"
+}

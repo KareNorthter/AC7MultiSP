@@ -152,7 +152,14 @@ void ravenClearQueues() {
 }
 void ravenBeforeRebuild(const Command& command) {
     if(!continuousRaven(command.plane))return;
-    if(command.count>1)require(continuousRavenLoadout(command.activator),"ADF-11F 三 SP 实验只支持原生 TLS / QAAM / UAV 配置");
+    if(command.count>1 && !continuousRavenLoadout(command.activator)) {
+        // Mod/涂装换成电子战等兵装时不因Raven身份整机拒绝；选中真实UAV仍保留原配置约束。
+        for(int i=0;i<command.count;++i) {
+            const Addr cls=read<Addr>(command.activator+0x158+command.configs[i]*0x30);
+            require(!continuousClassDerived(cls,"WeaponUAV","/Script/Nimbus"),
+                "ADF-11F 的多SP UAV仍只支持原生 TLS / QAAM / UAV 配置");
+        }
+    }
     if(!continuousRavenLoadout(command.activator))return;
     if(!ravenSameVisual(command.plane,command.activator)) {
         ravenVisual={};return; // 新任务先让原生创建持久模型池，再在 AfterRebuild 记录原位。

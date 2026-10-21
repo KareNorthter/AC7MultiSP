@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "version": "2.22.2 alpha1",
+  "base": "a96cde63e64438d4553cdb4e4b6b9ece0e4331f2",
+  "sources": [
+    {
+      "thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+      "commits": [
+        "063717a3f00c12fbe71c2be59b4d2fc491a3145f",
+        "85c46c0d5374702784e130439d3affa1373d944a"
+      ]
+    },
+    {
+      "thread": "01a14f83-b067-7ee3-a696-ac5b9b1efcc8",
+      "commits": [
+        "09c4dcc6913ad132f8e85cd16ba885c35a3f0a47",
+        "ef70cdf50576ec385d8575623517e8edc488b863"
+      ]
+    },
+    {
+      "thread": "01a14a78-4b1d-7951-93f3-afaddb2f36c3",
+      "commits": [
+        "89ce978b115d3690da8e30da74e20f97bcef2840",
+        "002ef589a28f9b8930bf749989425a9fb1f48182"
+      ]
+    }
+  ],
+  "received": "精确接收各提交src/dist增量、管理设计稿及两份兼容证据；不覆盖主工作区个人兼容资料。研究版本标识统一替换。",
+  "conflicts_resolved": [
+    "main.lua及管理页版本标识统一；其余代码三方合并",
+    "mount_preview.hpp沿用当前挂点规则，负库存显示现有布局容量"
+  ],
+  "official_main_version": "2.22.1",
+  "candidate": true,
+  "formal_version_pending_user_acceptance": true,
+  "requested_formal_choices": [
+    "2.22.2",
+    "2.23"
+  ],
+  "install_authorized": true,
+  "release_authorized": false,
+  "configuration_revision": 19,
+  "preserve_existing_configuration": true,
+  "preserve_local_shortcuts": [
+    "-",
+    "="
+  ],
+  "scope": "静态来源记录；编译、安装与游戏效果分别以对应后续回执和用户实测为准。",
+  "management_protocol": 21,
+  "integration_fixes": [
+    "Lua入口局部变量超过200，日志状态局部闭包化、SP调试方法归入既有表，减少五个顶层局部变量",
+    "现有配置服务夹具接收管理21并拒绝旧20；配置19保留",
+    "版本校验显式支持三段数字加alphaN，不自动增加正式版本"
+  ]
+}

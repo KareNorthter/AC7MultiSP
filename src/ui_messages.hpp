@@ -6,6 +6,14 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"SP调试协议不匹配","The SP debug protocol does not match."},
+    {"SP调试原生接口与当前构建不符","The SP debug interface does not match this game build."},
+    {"SP调试钩子创建失败","The SP debug hook could not be created."},
+    {"SP调试钩子启用失败","The SP debug hook could not be enabled."},
+    {"SP调试参数数量无效","The SP debug argument count is invalid."},
+    {"SP调试参数无效","The SP debug parameters are invalid."},
+    {"SP调试不属于当前玩家会话","SP debugging does not belong to the current player session."},
+    {"SP调试玩家身份已改变","The SP debug player identity has changed."},
     {"手柄和键盘注视开关必须为布尔值","Controller and keyboard tracking options must be booleans."},
     {"旧管理界面字段已退役","The old management fields have been retired."},
     {"旧管理界面配置无效","The old management configuration is invalid."},

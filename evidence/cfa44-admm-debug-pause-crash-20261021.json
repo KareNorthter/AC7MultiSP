@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-21T20:37:35.465624+08:00",
+  "version": "2.22.2 alpha1",
+  "source_commit": "e7b3cffbad833db653bcf58f6475e14622f17395",
+  "incident_pid": 30864,
+  "user_report": "CFA44三SP，开启无限弹药和快速装填；初期可用，之后ADMM库存不减但装填呈红色，偶尔能发射部分，未达到每秒装填；期间切换ADMM/EML/ECM。随后按手柄菜单键，菜单未出现、冻结并崩溃。",
+  "status": "investigated_not_fixed",
+  "gameplay_validation": "failed",
+  "formal_release_blocked_for_this_candidate": true,
+  "snapshot_dir": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Temp\\cfa-admm-incident-20261021-202756",
+  "capture_dir": "E:/AC7_MultiSP/Temp/crash-capture-20261021-201607-327",
+  "installed_runtime_differences": [],
+  "facts": {
+    "enabled_at_local": [
+      "2026-10-21 20:22:17.384",
+      "2026-10-21 20:22:17.649"
+    ],
+    "last_mod_log_local": "2026-10-21 20:25:27.533",
+    "fatal_messagebox_local": "2026-10-21 20:25:28.082",
+    "last_admm_stock": 22,
+    "admm_window": 12,
+    "admm_cached_pool_slots": 126,
+    "admm_captured_game_time": 317.613769531,
+    "admm_cached_duration": 22.0,
+    "admm_first_12_cached_elapsed": 21.288389205932617,
+    "admm_remaining_114_cached_elapsed": 0.0,
+    "active_sp_at_dump": "EML",
+    "debug_flags_at_dump": {
+      "infinite": true,
+      "fast": true,
+      "allowed": true
+    },
+    "debug_weapons_error_logged": false,
+    "infinite_stock_preservation_observed": true,
+    "native_consume_reset_timer": -2.0,
+    "native_exhausted_timer": -1.0,
+    "fast_reload_boosts_only_nonnegative_timer": true,
+    "saved_caches_are_not_stall_time_series": true
+  },
+  "reload_assessment": {
+    "confirmed": "无限库存仍有效；快速装填未达到用户要求。现实现只加速非负计时，不处理原生发射后-2等待状态。未激活SP另走缓存计时和重新建池恢复。",
+    "open_hypotheses": [
+      "负计时转正/原生待发池准备没有被1秒加速覆盖",
+      "切槽后逻辑计时、原生待发索引和实体池准备不同步",
+      "快速连续ADMM发射的实体池回收节奏限制"
+    ],
+    "not_proven": "转储时ADMM已非当前SP，不能凭一次缓存证明等待队列失配、实体池耗尽或永久计时停滞；未认定-2可以直接改为就绪。",
+    "next_capture": "再次出现红色且不能稳定发射时，在切离ADMM或按暂停前只读取得当前SP原生126槽计时、待发索引、游标、活动弹体及调试心跳的短时序列。"
+  },
+  "crash_assessment": {
+    "original_exception": "0xC0000005 execute access violation",
+    "original_fault_address": "0x2253374cae0",
+    "original_context": "primary dump thread0 .exr 0x7ef82cd670; .cxr 0x7ef82cd180",
+    "caller": "UE4SS.dll+0x3adc15 indirect call through hook metadata+0x20",
+    "trampoline_continuation_game_rva": "0xbeeb88",
+    "constructor_arguments": {
+      "class": "Image",
+      "outer": "MiniMapBattleWidget / MiniMapBattle_C"
+    },
+    "confirmed": "进入致命错误框之前，在UE4SS原生对象创建转接原函数跳板处发生执行访问违规。当前调用正在为小地图界面创建Image对象。",
+    "memory_protection_at_dump": "0x40 PAGE_EXECUTE_READWRITE；这是错误框阶段的页面状态，不能反推异常瞬间状态，也不能据此认定简单缺少执行权限或已释放。",
+    "not_proven": "尚未定位跳板为何在调用时不可执行；不能确认由SP调试、其他Mod、加载器自身或内存破坏导致。暂停崩溃和装填异常是否同源未定。",
+    "secondary_exit_exception": "0x80000004 at ntdll!ZwTerminateProcess, termination status3; after fatal messagebox",
+    "capture_observer_effect": "5,286,580,913字节完整转储在20:25:28至20:26:13写盘，暂停进程约46秒；不能将整段冻结都当作原始业务死锁。",
+    "capture_status": "incomplete, but primary dump MDMP/header/hash available and original exception recovered",
+    "primary_dump_sha256": "43ef97e4f77591027817740ebf185d87fb6bc02d098410618be048177c1458d9"
+  },
+  "actions": {
+    "logs_and_dumps_preserved": true,
+    "analysis": "只读分析已退出进程转储与日志，未注入或执行游戏函数",
+    "source_changed": false,
+    "tests_written_or_run": false,
+    "compiled": false,
+    "installed": false,
+    "configuration_changed": false,
+    "version_changed": false,
+    "game_started_or_closed": false,
+    "other_mods_disabled": false
+  },
+  "source_references": [
+    "src/debug_weapons.hpp:debugBoostReload/debugConsume",
+    "src/weapon_bridge.cpp:cachedReload/capture/restore",
+    "src/reload_timer.hpp:rebuildReload"
+  ],
+  "raw_artifacts_not_committed": true
+}
