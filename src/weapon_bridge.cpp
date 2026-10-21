@@ -1,5 +1,5 @@
 // DualSP's in-process weapon bridge for Steam AC7 build 9855922.
-// Called by UE4SS package.loadlib on the GAME THREAD. No Lua ABI dependency.
+// 通过已核对的Lua栈接口在游戏线程直接交接命令和结果。
 // Offsets below were derived from native getters and verified against live shots.
 // Early playable version. Reject unsupported executable layouts before access.
 #define WIN32_LEAN_AND_MEAN
@@ -11,6 +11,7 @@
 #include <atomic>
 #include <bitset>
 #include <cmath>
+#include <climits>
 #include <cstdint>
 #include <cstring>
 #include <cwchar>
@@ -459,6 +460,9 @@ bool debugReloadEligible(Addr group) {
 }
 float cachedReload(const Group& group,const Slot& slot,double dt,bool inWindow) {
     float elapsed=slot.elapsed;
+    int ammo{};std::memcpy(&ammo,group.scalars.data(),sizeof(ammo));
+    // 无限只唤醒普通消耗型SP当前装填窗口的停用槽，空库存和-2等待标记不变。
+    if(debugInfiniteAmmo && group.fastReloadEligible && ammo>0 && inWindow && elapsed==-1.f)elapsed=0;
     if(debugFastReload && group.fastReloadEligible && inWindow && elapsed>=0 && elapsed<slot.duration)
         elapsed=std::max(elapsed,slot.duration-1.f);
     return dualsp::advanceReload(slot.duration,elapsed,dt,inWindow);
@@ -510,6 +514,18 @@ Group capture(Addr activator, bool special, double time) {
 }
 int scalarInt(const Group& group, size_t offset) { int value; std::memcpy(&value,group.scalars.data()+offset,sizeof(value)); return value; }
 
+// 在调试开关变化或保存检查点时结算缓存，避免新开关追溯改变过去的装填。
+void settleCachedReload(Group& group,double time) {
+    require(group.valid && std::isfinite(time) && time+0.001>=group.capturedTime,"缓存装填时间无效");
+    const int next=scalarInt(group,12),window=scalarInt(group,8),count=static_cast<int>(group.slots.size());
+    require(count>0 && next>=0 && next<count && window>=0 && window<=count,"Invalid cached launch cursor");
+    const double delta=std::max(0.0,time-group.capturedTime);
+    for(int i=0;i<window;++i) {
+        auto& slot=group.slots[(next+i)%count];slot.elapsed=cachedReload(group,slot,delta,true);
+    }
+    group.capturedTime=time;
+}
+
 // 判断允许装填的逻辑窗口内是否至少一发就绪；装填窗口数量不是就绪数量。
 bool hasReadyRound(const Group& group,double time) {
     require(group.valid,"HUD 武器缓存未建立");
@@ -527,6 +543,25 @@ bool hasReadyRound(const Group& group,double time) {
         if(elapsed>=slot.duration)return true;
     }
     return false;
+}
+// 活动组只做就绪采样，不为HUD分配/复制完整Group和槽向量。
+// 同步读取期间不调用引擎，仍核验数组、库存及每个槽的有限计时。
+bool liveHasReadyRound(Addr activator,bool special) {
+    const Addr address=groupOf(activator,special);
+    const auto slots=weaponSlotArray(address);
+    const int ammo=read<int>(address+8),window=read<int>(address+0x10),next=read<int>(address+0x14);
+    require(dualsp::validAmmoCount(ammo),"HUD弹药计数无效");
+    bool ready=false;
+    for(int i=0;i<slots.count;++i) {
+        std::array<float,2> timer{};
+        std::memcpy(timer.data(),reinterpret_cast<void*>(slots.data+static_cast<size_t>(i)*0x60+0x48),sizeof(timer));
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+        if(special)timer[1]=fixedMountElapsed(i,timer[0],timer[1]);
+#endif
+        dualsp::validateReload(timer[0],timer[1]);
+        if(ammo!=0 && (i-next+slots.count)%slots.count<window && timer[1]>=timer[0])ready=true;
+    }
+    return ready;
 }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
 #include "su30sm_fixed_mount.hpp"
@@ -763,35 +798,41 @@ void keepArmed(const Command& command,bool armed) {
     animationCompletion.completed=true;
 #endif
 }
-std::string snapshotJson(const Command& command) {
-    const auto main=capture(command.activator,false,command.time);
-    const auto special=capture(command.activator,true,command.time);
-    std::ostringstream out;
-    out << std::setprecision(9) << "\"active\":" << session.active << ",\"main_ammo\":" << scalarInt(main,0)
-        << ",\"special_ammo\":" << scalarInt(special,0) << ",\"reload\":[";
-    for(size_t i=0;i<special.slots.size();++i) { if(i)out<<','; out<<'['<<special.slots[i].duration<<','<<special.slots[i].elapsed<<']'; }
-    out<<']';
-    out<<",\"gun_ammo\":"<<read<int>(stateOf(command.activator)+8)
-       <<",\"flares\":"<<read<int>(read<Addr>(command.activator+0x260)+0x10c)
-       <<",\"armed\":"<<(read<unsigned char>(command.activator+0x2a1)!=0 ? "true":"false")
-       <<",\"cached_sp\":[";
+// 回执只读实际需要的库存标量，不为回执复制弹池，也不来回解析JSON。
+Json snapshotState(const Command& command) {
+    const int mainAmmo=read<int>(groupOf(command.activator,false)+8),specialAmmo=read<int>(groupOf(command.activator,true)+8);
+    require(dualsp::validAmmoCount(mainAmmo) && dualsp::validAmmoCount(specialAmmo),"回执库存无效");
+    require(session.count>=1 && session.count<=3 && session.active>=0 && session.active<session.count,"回执会话无效");
+    Json state={{"active",session.active},{"main_ammo",mainAmmo},
+        {"special_ammo",specialAmmo},{"gun_ammo",read<int>(stateOf(command.activator)+8)},
+        {"flares",read<int>(read<Addr>(command.activator+0x260)+0x10c)},
+        {"armed",read<unsigned char>(command.activator+0x2a1)!=0}};
+    state["cached_sp"]=Json::array();
     for(int i=0;i<session.count;++i) {
-        if(i)out<<',';
-        require(i==session.active || session.special[i].valid,"SP库存缓存未建立，不能生成弹药快照");
-        out<<(i==session.active?scalarInt(special,0):scalarInt(session.special[i],0)); // 缺失缓存不能再用负弹药占位。
+        require(i==session.active || session.special[i].valid,"SP库存缓存未建立");
+        const int ammo=i==session.active?specialAmmo:scalarInt(session.special[i],0);
+        require(dualsp::validAmmoCount(ammo),"缓存SP库存无效");state["cached_sp"].push_back(ammo);
     }
-    out<<']';
-    return out.str();
+    return state;
 }
-Command readCommand() {
-    std::ifstream file(modRoot()/"native-command.txt");
+Command readCommand(const dualsp::LuaApi& api,void* state) {
+    require(api.top(state)==11,"原生内存命令参数数量不符");
     Command command;
-    file>>command.op>>std::hex>>command.plane>>command.activator>>std::dec>>command.target>>command.time;
-    require(static_cast<bool>(file),"Malformed command");
-    // 协议 4 显式携带配弹比例；旧核心与新 Lua 不能混装。
-    int protocol{}; // 独立于管理 UI 协议的核心命令标记。
-    file>>protocol>>command.count>>command.configs[0]>>command.configs[1]>>command.configs[2]>>command.request>>command.ratio;
-    require(static_cast<bool>(file) && protocol==4,"需要配弹比例核心命令协议 4");
+    size_t size{};const char* op=api.readText(state,1,&size);
+    require(op && size>0 && size<=32,"原生命令名称无效");command.op.assign(op,size);
+    require(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup" ||
+        command.op=="switch" || command.op=="checkpoint_save" || command.op=="checkpoint_restore" ||
+        command.op=="resupply" || command.op=="snapshot","未知原生命令");
+    command.plane=static_cast<Addr>(api.readInteger(state,2));
+    command.activator=static_cast<Addr>(api.readInteger(state,3));
+    auto integer=[&](int index) {
+        const auto value=api.readInteger(state,index);
+        require(value>=INT_MIN && value<=INT_MAX,"原生命令整数越界");return static_cast<int>(value);
+    };
+    command.target=integer(4);command.time=api.readNumber(state,5);command.count=integer(6);
+    for(int i=0;i<3;++i)command.configs[i]=integer(7+i);
+    const auto request=api.readInteger(state,10);require(request>0,"原生命令序号无效");
+    command.request=static_cast<uint64_t>(request);command.ratio=api.readNumber(state,11);
     require(command.count>=1 && command.count<=3,"SP 数量必须为 1 至 3");
     const double minimum=command.count==1?1:command.count==2?.5:.33;
     require(std::isfinite(command.ratio) && command.ratio>=minimum && command.ratio<=1,"SP 配弹比例越界");
@@ -876,6 +917,7 @@ const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
 }
 void execute(const Command& command) {
     verifyVersion();
+    require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
     require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
     if(command.op!="snapshot" && command.op!="checkpoint_save") {
@@ -937,6 +979,8 @@ void execute(const Command& command) {
         require(session.plane==command.plane && session.activator==command.activator,"A new plane requires setup");
         session.main=capture(command.activator,false,command.time);
         session.special[session.active]=capture(command.activator,true,command.time);
+        for(int index=0;index<session.count;++index)
+            if(index!=session.active)settleCachedReload(session.special[index],command.time);
         session.gun=read<int>(stateOf(command.activator)+8);
         session.flares=read<int>(read<Addr>(command.activator+0x260)+0x10c);
         checkpoint=session; checkpointTime=command.time; checkpointValid=true;
@@ -1964,14 +2008,13 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         require(std::isfinite(time) && time>=0,"HUD 游戏时间无效");
         verifyVersion();
         require(read<Addr>(plane+0x11a8)==activator,"HUD 激活器不属于当前玩家机体");
-        const auto main=capture(activator,false,time),special=capture(activator,true,time);
-        const bool mainReady=hasReadyRound(main,time);
+        const bool mainReady=liveHasReadyRound(activator,false);
         std::array<bool,3> spReady{}; // 未搭载槽固定不就绪。
         require(session.plane==plane && session.activator==activator && session.count==count,"HUD SP 会话不匹配");
         require(session.active>=0 && session.active<count,"HUD 活动 SP 无效");
-        cfaObserveWeapons(plane,activator,main,special,time);
+        cfaObserveWeapons(plane,activator,time);
         for(int index=0;index<count;++index)
-            spReady[index]=hasReadyRound(index==session.active ? special : session.special[index],time);
+            spReady[index]=index==session.active?liveHasReadyRound(activator,true):hasReadyRound(session.special[index],time);
         api->boolean(luaState,true);api->boolean(luaState,mainReady);
         for(bool ready:spReady)api->boolean(luaState,ready);
         api->string(luaState,"",0);return 6;
@@ -1988,7 +2031,8 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
     }
 }
 
-extern "C" __declspec(dllexport) int lab_native_execute(void*) {
+extern "C" __declspec(dllexport) int dualsp_execute_memory_v1(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
     std::lock_guard<std::mutex> guard(nativeExecutionMutex);
     continuousRebuildStarted=false;
     cfaSwitchCost.begin(false);
@@ -1996,7 +2040,8 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
     bool transientSwitch=false,completed=false;
     std::string result;
     try {
-        const auto command=readCommand();
+        static const dualsp::LuaApi bound;api=&bound;
+        const auto command=readCommand(*api,luaState);
         request=command.request;
         require(runtimeEnabled,"Mod disabled outside single-player");
         transientSwitch=command.op=="switch";
@@ -2009,27 +2054,13 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
             {"target",command.target},{"configs",command.configs},{"count",command.count},{"thread",GetCurrentThreadId()}}.dump());
         execute(command);
-        Json state=Json::parse("{"+snapshotJson(command)+"}");
+        Json state=snapshotState(command);
         state["count"]=session.count;state["configs"]=session.configs;state["ok"]=true;state["request"]=request;state["maximum"]=session.maximum;
         state["ratio"]=session.ratio;
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         state["fixed_mount_warning"]=fixedMountWarning; // 降级提示不伪装成兵装事务失败。
 #endif
-        state["slots"]=Json::array();
-        for(int index=0;index<session.count;++index) {
-            const auto g=index==session.active?capture(command.activator,true,command.time):session.special[index];
-            Json bars=Json::array();
-            if(g.valid) {
-                const int next=scalarInt(g,12),loaded=scalarInt(g,8);
-                require(loaded>=0 && loaded<=static_cast<int>(g.slots.size()) && next>=0 && next<static_cast<int>(g.slots.size()),"Invalid HUD launch cursor");
-                for(int k=0;k<loaded;++k) {
-                    const auto& s=g.slots[(next+k)%g.slots.size()];
-                    const float elapsed=cachedReload(g,s,std::max(0.0,command.time-g.capturedTime),true);
-                    bars.push_back(dualsp::reloadProgress(s.duration,elapsed));
-                }
-            }
-            state["slots"].push_back(bars);
-        }
+        // HUD已有独立就绪接口；不再发送无人读取的完整计时数组和进度条。
         result=state.dump();
         completed=true;
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_DONE"},{"op",command.op},{"request",request},
@@ -2044,12 +2075,9 @@ extern "C" __declspec(dllexport) int lab_native_execute(void*) {
 #endif
         result=Json{{"ok",false},{"request",request},{"error",error.what()}}.dump();nativeLog(result);
     }
-    // A reader must see an entire response. Include the request ID so an I/O
-    // failure cannot cause the controller to accept a previous successful reply.
-    // 切换回执是同进程即时交接，不需要断电持久化；仍原子替换，并由Lua核对请求编号。
-    try {atomicJson(modRoot()/"native-status.json",Json::parse(result),!transientSwitch);}
-    catch(const std::exception& e){completed=false;nativeLog(std::string("NATIVE_RESPONSE_WRITE_ERROR ")+e.what());}
+    // Lua得到本次调用的结果；回执发布不再有磁盘失败或旧文件冒充成功的路径。
     cfaSwitchCost.mark(8);cfaSwitchCost.finish(request,completed);
+    if(api){api->string(luaState,result.data(),result.size());return 1;}
     return 0;
 }
 
@@ -2072,12 +2100,14 @@ std::string unrealString(Addr address) {
     const int size=WideCharToMultiByte(CP_UTF8,0,wide,n-1,nullptr,0,nullptr,nullptr);
     std::string result(size,0);WideCharToMultiByte(CP_UTF8,0,wide,n-1,result.data(),size,nullptr,nullptr);return result;
 }
-extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
+extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    std::string result;
     try {
-        verifyVersion();Addr planes{},weapons{},skins{};
-        std::ifstream cmd(modRoot()/"catalogue-command.txt");cmd>>std::hex>>planes>>weapons;
-        require(static_cast<bool>(cmd),"Invalid catalogue command");
-        cmd>>skins; // 旧调用仍可读取基础目录；新Lua通过能力标记要求本版核心。
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==3,"机体目录内存接口参数数量不符");
+        verifyVersion();
+        const Addr planes=api->readInteger(luaState,1),weapons=api->readInteger(luaState,2),skins=api->readInteger(luaState,3);
         int dlcOffset=-1;std::string dlcError;
         try {
             require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体目录需要在游戏线程读取");
@@ -2212,8 +2242,9 @@ extern "C" __declspec(dllexport) int dualsp_catalogue(void*) {
         }
         const auto planeCount=catalog.size();
         catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError}};
-        atomicJson(modRoot()/"catalogue.json",catalog);nativeLog("Catalogue loaded: "+std::to_string(planeCount)+" planes");
-    }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());atomicJson(modRoot()/"catalogue.json",Json{{"error",e.what()}});}
+        result=catalog.dump();nativeLog("Catalogue loaded: "+std::to_string(planeCount)+" planes");
+    }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());result=Json{{"error",e.what()}}.dump();}
+    if(api){api->string(luaState,result.data(),result.size());return 1;}
     return 0;
 }
 // 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。

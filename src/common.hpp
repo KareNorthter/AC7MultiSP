@@ -38,8 +38,3 @@ inline void nativeLog(const std::string& line) noexcept {
     }();
     submit(source,line.data(),line.size()); // 核心和UI只投递，不在调用线程访问磁盘。
 }
-inline void atomicJson(const std::filesystem::path& file,const Json& value,bool durable=true) {
-    auto pending=file;pending+=L".tmp";
-    {std::ofstream out(pending,std::ios::binary|std::ios::trunc);out<<value.dump();if(!out)throw std::runtime_error("Cannot write mod data");}
-    if(!MoveFileExW(pending.c_str(),file.c_str(),MOVEFILE_REPLACE_EXISTING|(durable?MOVEFILE_WRITE_THROUGH:0)))throw std::runtime_error("Cannot publish mod data");
-}

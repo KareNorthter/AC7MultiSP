@@ -23,21 +23,32 @@ void debugWeaponsFailure(const char* error) noexcept {
     try {debugWeapons.error=error;nativeLog(std::string("DEBUG_WEAPONS_ERROR ")+error);}catch(...) {}
 }
 void debugBoostReload(Addr activator) {
-    if(!debugFastReload)return;
+    if(!debugFastReload && !debugInfiniteAmmo)return;
     const Addr group=groupOf(activator,true);
     if(!debugReloadEligible(group))return;
+    const bool replenish=debugInfiniteAmmo && read<int>(group+8)>0;
+    if(!debugFastReload && !replenish)return;
     const auto slots=weaponSlotArray(group);
     const int window=read<int>(group+0x10),next=read<int>(group+0x14);
+    int awakened=0;
     for(int i=0;i<window;++i) {
         const Addr timer=slots.data+static_cast<size_t>((next+i)%slots.count)*0x60+0x48;
-        const float duration=read<float>(timer),elapsed=read<float>(timer+4);
+        // 完整数组已核验，当前同步块不调用引擎；避免每个计时字段重复查页。
+        std::array<float,2> values{};std::memcpy(values.data(),reinterpret_cast<void*>(timer),sizeof(values));
+        const float duration=values[0],elapsed=values[1];
         dualsp::validateReload(duration,elapsed);
-        // 负值仍归原生生命周期处理；保留至少一次跨过完成点的原生更新。
-        if(duration>1 && elapsed>=0 && elapsed<duration-1)write<float>(timer+4,duration-1);
+        float nextElapsed=replenish && elapsed==-1.f?0.f:elapsed;
+        if(nextElapsed!=elapsed)++awakened;
+        // -2仍归原生生命周期；唤醒后从零装填，快装也保留原生跨门槛生成实体。
+        if(debugFastReload && duration>1 && nextElapsed>=0 && nextElapsed<duration-1)nextElapsed=duration-1;
+        if(nextElapsed!=elapsed)std::memcpy(reinterpret_cast<void*>(timer+4),&nextElapsed,sizeof(nextElapsed));
     }
+    // 只在实际恢复停用槽时记录，正常逐帧装填不写诊断。
+    if(awakened)nativeLog(Json{{"event","DEBUG_RELOAD_POOL_ACTIVATED"},{"slot",session.active},
+        {"cursor",next},{"count",awakened},{"pool",slots.count}}.dump());
 }
 void debugWeaponsTick(Addr activator) noexcept {
-    if(!debugFastReload)return;
+    if(!debugFastReload && !debugInfiniteAmmo)return;
     try {if(debugWeaponsLive(activator))debugBoostReload(activator);}
     catch(const std::exception& error){debugWeaponsFailure(error.what());}
 }
@@ -69,21 +80,15 @@ void installDebugWeapons() {
     if(MH_EnableHook(target)!=MH_OK) {MH_RemoveHook(target);throw std::runtime_error("SP调试钩子启用失败");}
     installed=true;
 }
-void debugSetFastReload(bool enabled,double time) {
-    if(enabled==debugFastReload)return;
+void debugSetModes(bool infinite,bool fast,double time) {
+    if(infinite==debugInfiniteAmmo && fast==debugFastReload)return;
+    // 先按旧开关结算离开的SP，再切新开关；开启不能追溯加速，关闭也不补弹或倒退已装进度。
     for(int index=0;index<session.count;++index) {
         auto& group=session.special[index];
         if(index==session.active || !group.valid)continue;
-        require(time+0.001>=group.capturedTime,"Game time rewound; checkpoint restoration required");
-        const int next=scalarInt(group,12),window=scalarInt(group,8),count=static_cast<int>(group.slots.size());
-        require(count>0 && next>=0 && next<count && window>=0 && window<=count,"Invalid cached launch cursor");
-        const double delta=std::max(0.0,time-group.capturedTime);
-        for(int i=0;i<window;++i) {
-            auto& slot=group.slots[(next+i)%count];slot.elapsed=cachedReload(group,slot,delta,true);
-        }
-        group.capturedTime=time;
+        settleCachedReload(group,time);
     }
-    debugFastReload=enabled;
+    debugFastReload=fast;debugInfiniteAmmo=infinite;
 }
 int debugWeaponsLua(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
@@ -101,7 +106,7 @@ int debugWeaponsLua(void* luaState) {
             const auto player=continuousIdentity(plane),component=continuousIdentity(activator);
             require(continuousAlive(player) && continuousAlive(component) && read<Addr>(plane+0x11a8)==activator && read<Addr>(activator+0x250)==plane,"SP调试玩家身份已改变");
             if(infinite || fast)installDebugWeapons();
-            debugSetFastReload(fast!=0,time);debugInfiniteAmmo=infinite!=0;
+            debugSetModes(infinite!=0,fast!=0,time);
             debugWeapons.plane=player;debugWeapons.activator=component;debugWeapons.thread=GetCurrentThreadId();
             debugWeapons.heartbeat=GetTickCount64();debugWeapons.allowed=true;
             debugBoostReload(activator);

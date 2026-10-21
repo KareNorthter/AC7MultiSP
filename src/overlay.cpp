@@ -11,6 +11,7 @@
 #include <unordered_set>
 #include <sstream>
 #include <iterator>
+#include <memory>
 #include <cmath>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
@@ -57,7 +58,7 @@ MountLoadingNotice mountLoadingSnapshot() {
 void mountLoadingCancel() {
     std::lock_guard<std::mutex> guard(mountLoadingMutex);mountLoadingNotice={};mountLoadingPending.store(false,std::memory_order_release);
 }
-Json publishedState=Json::object();
+std::shared_ptr<const Json> publishedState=std::make_shared<const Json>(Json::object());
 std::atomic<uint64_t> publishedGeneration{0};
 std::vector<Json> actions;
 ImGuiContext* imguiContext{};
@@ -152,7 +153,15 @@ bool shortcutModifierKey(int key) {
     return key==VK_CONTROL||key==VK_LCONTROL||key==VK_RCONTROL||key==VK_MENU||key==VK_LMENU||key==VK_RMENU||key==VK_SHIFT||key==VK_LSHIFT||key==VK_RSHIFT;
 }
 bool directInputEnabled();
-void enqueue(Json action) {std::lock_guard<std::mutex> guard(queueMutex);actions.push_back(std::move(action));}
+void enqueue(Json action) {
+    std::lock_guard<std::mutex> guard(queueMutex);
+    // 同一来源、尚未领取的连续直选只保留最后目标；管理/配置等其他动作自然截断合并。
+    // 已领取动作不回写，不合并原生轮切或齐射；游戏线程仍重新检查忙碌与玩家身份。
+    if(action.value("type","")=="select_weapon" && !actions.empty() &&
+        actions.back().value("type","")=="select_weapon" &&
+        actions.back().value("source","")==action.value("source",""))actions.back()=std::move(action);
+    else actions.push_back(std::move(action));
+}
 bool gameFocused() {return gameWindow && GetForegroundWindow()==GetAncestor(gameWindow,GA_ROOT);}
 HCURSOR WINAPI panelSetCursor(HCURSOR requested) {
     return originalSetCursor(cursorOwned.load()&&gameFocused()?nullptr:requested);
@@ -752,10 +761,12 @@ void refreshState() {
         const bool wasCameraHold=state.value("camera_hold_enabled",false);
         const bool wasGunSalvo=state.value("gun_salvo_enabled",false);
         const auto wasViewTarget=state.value("view_target_mode",std::string("normal"));
+        std::shared_ptr<const Json> snapshot;
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
-            state=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
+            snapshot=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
         }
+        state=*snapshot; // 大对象复制在锁外，游戏线程只需交换快照指针。
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
         if(state.value("management_protocol",0)==managementProtocol) {
             const auto checkedShortcuts=readShortcuts(state.at("shortcuts"));
@@ -1124,21 +1135,33 @@ extern "C" __declspec(dllexport) int dualsp_overlay_start(void*) {
     if(!startup.exchange(true)){HANDLE thread=CreateThread(nullptr,0,startThread,nullptr,0,nullptr);if(thread)CloseHandle(thread);else nativeLog("OVERLAY_START_ERROR: worker thread");}
     return 0;
 }
-extern "C" __declspec(dllexport) int dualsp_publish(void*) {
-    const auto pending=modRoot()/"ui-state.pending.json",file=modRoot()/"ui-state.json";
+// JSON只在Lua和C++边界编码一次；渲染侧沿用内存快照，不再读写交接文件。
+extern "C" __declspec(dllexport) int dualsp_publish_memory_v1(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
     try {
-        std::ifstream input(pending);Json fresh;input>>fresh;input.close();
+        static const dualsp::LuaApi bound;api=&bound;
+        if(api->top(luaState)!=1)throw std::runtime_error("UI状态内存接口参数数量不符");
+        size_t size{};const char* text=api->readText(luaState,1,&size);
+        if(!text || !size || size>4*1024*1024)throw std::runtime_error("UI状态长度无效");
+        Json fresh=Json::parse(text,text+size);
+        if(!fresh.is_object())throw std::runtime_error("UI状态格式无效");
+        auto snapshot=std::make_shared<const Json>(std::move(fresh));
         {std::lock_guard<std::mutex> guard(publishedMutex);
-            publishedState=std::move(fresh);publishedGeneration.fetch_add(1,std::memory_order_release);}
-        // Retain a low-frequency diagnostic snapshot, not a render-thread IPC.
-        if(!MoveFileExW(pending.c_str(),file.c_str(),MOVEFILE_REPLACE_EXISTING))throw std::runtime_error("UI diagnostic publish failed");
-    }catch(const std::exception& e){nativeLog(std::string("UI_PUBLISH_ERROR ")+e.what());}
-    return 0;
+            publishedState.swap(snapshot);publishedGeneration.fetch_add(1,std::memory_order_release);}
+        api->boolean(luaState,true);api->string(luaState,"",0);return 2;
+    }catch(const std::exception& e){
+        nativeLog(std::string("UI_PUBLISH_ERROR ")+e.what());
+        if(api){api->boolean(luaState,false);api->string(luaState,e.what(),std::strlen(e.what()));return 2;}
+        return 0;
+    }
 }
-extern "C" __declspec(dllexport) int dualsp_drain_actions(void*) {
-    std::vector<Json> batch;{std::lock_guard<std::mutex> guard(queueMutex);batch.swap(actions);}
-    if(batch.empty())return 0;
-    // Only actual user actions need a file. This ephemeral handoff must be
-    // atomically complete, but need not force a durable storage flush.
-    try {atomicJson(modRoot()/"ui-actions.json",batch,false);}catch(const std::exception& e){nativeLog(e.what());}return 0;
+extern "C" __declspec(dllexport) int dualsp_drain_actions_memory_v1(void* luaState) {
+    try {
+        static const dualsp::LuaApi api;
+        std::vector<Json> batch;
+        {std::lock_guard<std::mutex> guard(queueMutex);batch.swap(actions);}
+        // 空队列直接返回常量，省去JSON容器与序列化分配。
+        if(batch.empty()){api.string(luaState,"",0);return 1;}
+        const auto result=Json(batch).dump();api.string(luaState,result.data(),result.size());return 1;
+    }catch(const std::exception& e){nativeLog(std::string("UI_DRAIN_ERROR ")+e.what());return 0;}
 }

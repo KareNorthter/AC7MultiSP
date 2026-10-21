@@ -38,14 +38,11 @@ local function readJson(path)
     local file=io.open(path,"r");if not file then return nil end
     local text=file:read("*a");file:close();return json.decode(text)
 end
-local function writeJson(path,value)
-    ConfigStore.writeJson(path,value,json)
-end
 local function loadExport(name,dll)
     local fn,err=package.loadlib(root.."bin/"..(dll or "DualSP.dll"),name);assert(fn,err);return fn
 end
 -- The validated weapon core and the rebuilt menu renderer are separate modules.
-local bridge=loadExport("lab_native_execute")
+local bridge=loadExport("dualsp_execute_memory_v1")
 loadExport("dualsp_cfa_startup_prewarm_supported") -- 预热、Lua开场和提示界面须成套。
 local mountStartup={serial=0,invoke=loadExport("dualsp_mount_loading","DualSPUI.dll")}
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
@@ -72,7 +69,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=21") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=21") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -107,11 +104,11 @@ loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界�
 loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
-local catalogExport=loadExport("dualsp_catalogue")
+local catalogExport=loadExport("dualsp_catalogue_memory_v1")
 loadExport("dualsp_mod_aircraft_catalogue_supported") -- 新Lua依赖真实机体/涂装目录，拒绝旧核心混装。
 local modAircraft=dofile(root.."Scripts/mod_aircraft.lua").new(note)
-local publish=loadExport("dualsp_publish","DualSPUI.dll")
-local drain=loadExport("dualsp_drain_actions","DualSPUI.dll")
+local publish=loadExport("dualsp_publish_memory_v1","DualSPUI.dll")
+local drain=loadExport("dualsp_drain_actions_memory_v1","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
 -- 管理版 Lua 必须搭配新版界面，防止旧 F8 再次提交兵装配置。
 local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll")
@@ -268,7 +265,7 @@ local names={f04e="F-4E Phantom II",f15c="F-15C Eagle",f15e="F-15E Strike Eagle"
 
 local function valid(object)return object and object:IsValid()end
 local nativeClient=dofile(root.."Scripts/native_bridge.lua").new{
-    root=root,execute=bridge,readJson=readJson,profile=Profile}
+    execute=bridge,json=json,profile=Profile}
 local function native(op,target)
     if weaponSwitch.salvo.service and op~="switch"and op~="snapshot"then weaponSwitch.salvo.service:release()end
     if ensureMountAssets and runtimeFixedMountEnabled then
@@ -681,9 +678,11 @@ nativeParts=NativeLoadout.new{note=note,mode="parts",keyboardNavigation=preparat
 nativeSupply=NativeLoadout.new{note=note,mode="resupply",commit=function(id,profile)
     assert(supplySession and id==supplySession.planeId,"补给确认期间机体已变化")
     assert(not supplySession.confirmed,"本次补给方案已确认")
+    Profile.validate(profile,supplySession.options,supplySession.debugProfile)
     supplySession.confirmed=copyProfile(profile)
     note("RESUPPLY_PROFILE_STAGED "..id.." "..json.encode(profile))
-end,keyboardNavigation=preparationNavigation,takeoff=function(owner)
+end,allowUnowned=function()return supplySession and supplySession.debugProfile==true end,
+keyboardNavigation=preparationNavigation,takeoff=function(owner)
     assert(IsInGameThread(),"补给起飞必须在游戏线程执行")
     assert(supplySession and valid(plane)and valid(activator),"补给起飞缺少当前玩家")
     assert(owner:GetWorld():GetAddress()==plane:GetWorld():GetAddress(),"补给页面与玩家不在同一世界")
@@ -1008,7 +1007,8 @@ local function configureFlight(profile,reason)
         assert(supported,"补给重选需要支持 resupply_setup 的独立候选核心，当前正式 DLL 不支持")
     end
     local options=optionsFor(planeId)
-    Profile.validate(profile,options,debugLoadout or debugAircraft)
+    local debugResupply=resupply and supplySession.debugProfile==true
+    Profile.validate(profile,options,debugLoadout or debugAircraft or debugResupply)
     currentProfile=profile
     flightOptions=options
     selectionAudio(0,0) -- 重建前先隔离中间态选择音，不影响锁定音收尾。
@@ -1026,7 +1026,7 @@ local function configureFlight(profile,reason)
     native(debugLoadout and "debug_setup"or resupply and "resupply_setup"or "setup",0)
     if not resupply and not debugLoadout then native("checkpoint_save",0)end
     configured=true;active=0;lastArmed=plane:IsSpecialWeaponArmed();note("LOADOUT "..planeId.." "..json.encode(profile))
-    debugProfileActive=debugLoadout or debugAircraft
+    debugProfileActive=debugLoadout or debugAircraft or debugResupply
     if not resupply and not debugLoadout then checkpointProfile=copyProfile(profile);checkpointDebugProfile=debugAircraft end
     if resupply then supplySession.applied=true end -- 数据就绪后立即展示，事务清理不再撤销刚接管的 HUD。
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
@@ -1044,7 +1044,7 @@ local function completeSupplyHandoff()
     instance:SetPlaneAndSWP(planeId,profile.a)
     assert(instance:GetSelectedPlaneSWP()==profile.a,"补给 SP1 原生选择未生效")
     configureFlight(profile,"resupply")
-    config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()
+    if not debugProfileActive then config.profiles[tostring(planeId)]=copyProfile(profile);saveConfig()end
     nativeSupply:reset{clearError=false,releaseInput=false};ownSupplyInput(false);supplySession=nil;lastUIKey=nil
     refreshHUD(os.clock())
     note("RESUPPLY_LOADOUT_APPLIED "..planeId.." "..json.encode(profile))
@@ -1569,7 +1569,7 @@ local function publishState()
     if nativeHud.error or hudSamplingError then state.hud_error=nativeHud.error or hudSamplingError end
     if weaponPresentation.error then state.central_error=weaponPresentation.error end
     if errorText then state.error=errorText;state.state=nil end
-    writeJson(root.."ui-state.pending.json",state);publish()
+    local ok,err=publish(json.encode(state));assert(ok,err)
 end
 -- 禁用先关闭原生与渲染侧入口，再释放自己的控件和事务；不改多人兵装或配置。
 local function checkRuntime(activatedWidget)
@@ -1603,8 +1603,7 @@ local function checkRuntime(activatedWidget)
         cachedPlane=nil;cachedWorld="";plane=nil;activator=nil;planeAddress=nil;currentWorld=""
         resetFlightTracking();isFlight=false;lastPlaneScan=-1
         -- 已生成但未消费的动作属于上一模式，只丢弃，不在返回单人后重放。
-        local stale=io.open(root.."ui-actions.json","r")
-        if stale then stale:close();assert(os.remove(root.."ui-actions.json"),"Cannot discard stale UI actions")end
+        drain() -- 领取并丢弃内存队列，不留旧模式动作。
     else
         local coreOK,coreErr=nativeRuntimeGate(runtimeModEnabled and 1 or 0)
         assert(coreOK,coreErr);errorText=nil;lastUIKey=nil
@@ -1708,10 +1707,10 @@ local function tick()
         end
         weaponSwitch.gaze.update(false);weaponSwitch.camera.update();weaponSwitch.view.update()
         if now-lastActions>=.05 then
-            lastActions=now;drain()
-            local batch=readJson(root.."ui-actions.json")
-            if batch then
-                assert(os.remove(root.."ui-actions.json"),"Cannot acknowledge UI actions")
+            lastActions=now
+            local encoded=assert(drain(),"动作内存接口没有返回结果")
+            if encoded~=""then
+                local batch=json.decode(encoded)
                 for _,action in ipairs(batch)do applyAction(action)end
             end
         end
@@ -1734,8 +1733,9 @@ local function tick()
     if not catalogue then
         local info=instance.GameInformation;if not valid(info)or not valid(info.PlaneDataTable)or not valid(info.WeaponDataTable)then return end
         local skinTable=info.SkinDataTable
-        local f=assert(io.open(root.."catalogue-command.txt","w"));f:write(string.format("%X %X %X",info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress(),valid(skinTable)and skinTable:GetAddress()or 0));f:close()
-        catalogExport();catalogue=assert(readJson(root.."catalogue.json"));assert(not catalogue.error,catalogue.error)
+        catalogue=json.decode(assert(catalogExport(info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress(),
+            valid(skinTable)and skinTable:GetAddress()or 0),"机体目录内存接口没有返回结果"))
+        assert(not catalogue.error,catalogue.error)
         assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
     end
     -- A live player actor remains valid for its world. Registry searches are
@@ -1842,12 +1842,11 @@ local function tick()
     end
     local now=os.clock()
     if now-lastActions>=.05 then
-        lastActions=now;drain()
-        local batch=readJson(root.."ui-actions.json")
-        if batch then
-            -- The renderer only writes nonempty batches. Remove before applying
-            -- to acknowledge once, so idle ticks cannot replay an old action.
-            assert(os.remove(root.."ui-actions.json"),"Cannot acknowledge UI actions")
+        lastActions=now
+        local encoded=assert(drain(),"动作内存接口没有返回结果")
+        if encoded~=""then
+            local batch=json.decode(encoded)
+            -- 内存领取已经移走本批动作，后续空闲周期不会重放。
             for _,action in ipairs(batch)do applyAction(action)end
         end
     end
@@ -1997,7 +1996,7 @@ RegisterHook("/Script/Nimbus.Mission:OnStartSupplyPhaseHandler",function()end,su
     ownSupplyInput(true) -- 页面生成前已隔离两个原生输入入口，避免第一帧穿透。
     -- 任务和原机体绑定用于排除其他任务、菜单或机体触发的事件。
     supplySession={mission=ctx:get():GetAddress(),world=currentWorld,planeId=planeId,profile=copyProfile(currentProfile),
-        options=optionsFor(planeId),menuActive=false,menuClosed=false,confirmed=nil,success=false}
+        options=optionsFor(planeId),debugProfile=debugProfileActive,menuActive=false,menuClosed=false,confirmed=nil,success=false}
     -- 现有右下多 SP 行留在原生 HUD 树中，过场显隐由祖先控制，不露回单 SP 源。
     weaponPresentation:reset();note("RESUPPLY_STARTED "..planeId)
 end))

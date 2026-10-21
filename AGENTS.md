@@ -1,5 +1,7 @@
 # AC7MultiSP
 
+2026-10-21当前源码：用户授权修复实测问题与性能重构，整合分支已改内存命令/结果/UI动作与状态、无限ADMM队列和缓存计时、调试任务补给资格，保留停用Bomb修正；未编译、运行测试、安装或操作游戏。标识仍2.22.2 alpha1，正式main不变。旧11项检查及安装回执只对应原alpha1。本轮新内存导出必须核心/UI/Lua成套；旧native-command/native-status/ui-state/ui-actions文件不再是实时状态。原暂停对象创建崩溃独立待查。详情以docs/development.md和docs/architecture.md顶部为准，下面保留旧交付事实。
+
 交付状态：2.22.2 alpha1已成套编译，11项现有检查通过并安装。19运行文件与77资源/154成员PAK核验一致，PAK保持已验收字节。有效配置19及本机-和=快捷键原字节保留，完整旧版本与存档备份已核验。默认仅核验6项关键保护文件，不全量扫描其他Mod；没有改动其他Mod。游戏保持关闭、未重启，真实效果待用户验收。交付见evidence/2.22.2-alpha1-integration.json与evidence/2.22.2-alpha1-installed.json。正式main/v2.22.1及发布包不改；本次不创建正式标签或发布包。
 
 当前内部测试版 **2.22.2 alpha1**，位于`Temp/integration-2.22.2-alpha1` / `codex/integration-2.22.2-alpha1`。从正式main/2.22.1接收三个研究线程的精确增量。用户授权编译安装，正式main、v2.22.1与已有发布包保持；待用户实测确认后才定名2.22.2或2.23，不自行递增。

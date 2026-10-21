@@ -3,7 +3,7 @@ local Flow={}
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 共用连续槽与百分比配弹规则。
 -- 出击与补给共用多槽选择规则，最终确认文字由原生页面用途决定。
-function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
+function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings,allowUnowned)
     -- 未确认草稿读取最新管理比例；profile() 返回独立快照，之后交接不再变化。
     local settings=ammoSettings or {ammo_percent_two=50,ammo_percent_three=33}
     local copy=function(value)return Profile.withSettings(value,type(settings)=="function"and settings()or settings)end
@@ -11,16 +11,17 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
     assert(#options==3,"Native loadout requires the aircraft's three SP options")
     local self={stage="sp1",cursor=1,draft=copy(profile),options=options,message=nil,lastStage=2}
     local takeoffReview=mode=="resupply" -- 补给保留 YES/NO；出击完成当前数量后直接交接。
+    local temporary=takeoffReview and allowUnowned==true -- 仅已绑定调试任务的补给继承临时资格。
     function self:rows()
         local rows={}
         if self.stage=="sp1" then
             for index,option in ipairs(self.options)do
-                if option.owned then rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}end
+                if option.owned or temporary then rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}end
             end
         elseif self.stage=="sp2"or self.stage=="sp3"then
             local first=self.options[self.draft.a+1]
             for index,option in ipairs(self.options)do
-                if option.owned and index-1~=self.draft.a and (self.stage~="sp3"or index-1~=self.draft.b)and first.available and option.available then
+                if (option.owned or temporary)and index-1~=self.draft.a and (self.stage~="sp3"or index-1~=self.draft.b)and first.available and option.available then
                     rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}
                 end
             end
@@ -65,7 +66,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
             if second then self.draft.c=-1 end
             self.draft=copy(self.draft)
             if second and row.weapon>=0 then self.stage="sp3";self:selectFirstAvailable();return "sp3"end
-            Profile.validate(self.draft,self.options)
+            Profile.validate(self.draft,self.options,temporary)
             self.lastStage=second and 2 or 3;self.stage="review";self.cursor=takeoffReview and 2 or 1
             return takeoffReview and "review"or "continue"
         elseif self.stage=="review"then
@@ -84,7 +85,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
     end
     function self:profile()
         assert(self.stage=="review","尚未完成兵装确认")
-        Profile.validate(self.draft,self.options);return copy(self.draft)
+        Profile.validate(self.draft,self.options,temporary);return copy(self.draft)
     end
     -- 当前候选覆盖对应槽，后续槽不展示旧配置；预览与最终配弹使用同一算法。
     function self:preview()
