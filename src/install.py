@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
     parser.add_argument('--apply', action='store_true')
+    parser.add_argument('--reset-config', action='store_true', help='按本轮用户授权备份并隔离旧配置，首次启动使用新默认值')
     parser.add_argument('--verify-other-mods', action='store_true',
                         help='额外全量核验其他UE4SS模组与PAK子目录；默认只严格核验本次安装范围及存档，不检查兼容性')
     parser.add_argument('--base-receipt', type=Path, help='已安装版本的完整 runtime_files 回执，默认读取产品清单')
@@ -39,7 +40,7 @@ def main():
         raise ValueError('升级基线必须包含完整运行文件，不能使用局部回执')
     if not {'dualsp_fixed_mount_update', 'dualsp_mount_preview', 'dualsp_three_sp_supported', 'dualsp_refresh_weapon_icons'} <= set(receipt['required_exports_verified']):
         raise ValueError('核心缺少当前必需接口')
-    result_path = root / 'evidence' / (version + '-installed.json')
+    result_path = root / 'evidence' / (info.get('receipt_prefix', version) + '-installed.json')
     if args.apply and result_path.exists():
         raise ValueError('此版本已有安装回执，请先核对，不能覆盖历史')
     game = Path('E:/SteamLibrary/steamapps/common/ACE COMBAT 7')
@@ -64,9 +65,10 @@ def main():
     for name, expected in expected_old.items():
         if digest(contained(mod / name, mod)) != expected.lower():
             raise ValueError('当前安装与指定基线不符，停止覆盖：' + name)
-    settings = read_json(mod / 'profiles.json')
-    if settings.get('schema') != 2 or settings.get('management_revision') not in (5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18):
-        raise ValueError('本机升级要求已有 schema 2 / management_revision 5至18，请先核对上一版启动后的配置')
+    if not args.reset_config:
+        settings = read_json(mod / 'profiles.json')
+        if settings.get('schema') != 2 or settings.get('management_revision') != 19:
+            raise ValueError('本轮不迁移旧配置，请使用--reset-config先备份并采用新默认值')
     sources = {'Scripts/' + name: root / 'dist/DualSP/Scripts' / name for name in info['scripts']}
     sources.update({'bin/DualSP.dll': build / 'DualSP.dll', 'bin/DualSPUI.dll': build / 'DualSPUI.dll', 'VERSION': root / 'VERSION'})
     hashes = {name: digest(path) for name, path in sources.items()}  # 安装白名单不含个人配置。
@@ -74,10 +76,11 @@ def main():
             'mount_assets': {'path':asset_relative,'sha256':asset_hash,
                              'variant_count':len(receipt['mount_assets']['variants']),
                              'file_count':receipt['mount_assets']['file_count']},
-            'name': info['name'], 'configuration_migration': '安装保留配置原字节；首次启动沿既有备份链迁配置18，含独立模型备份及profiles.before-camera-interaction-v2.json；个人键位、方案和视角保持保留，新锁定注视默认关闭',
+            'name': info['name'], 'configuration_migration': '旧配置完整备份并隔离，首次启动生成配置19，不迁移旧字段、键位或方案' if args.reset_config else '保留现有配置19原字节',
             'base_receipt': base_path.relative_to(root).as_posix(), 'base_receipt_sha256': digest(base_path),
             'build_receipt_sha256': digest(build / 'build-receipt.json'), 'test_receipt_sha256': digest(build / 'test-receipt.json'),
             'game_started_by_agent': False, 'test_modules_run': True, 'gameplay_verified': False,
+            'configuration_reset': args.reset_config,
             'protection_scope': 'full_other_mod_audit' if args.verify_other_mods else 'install_scope',
             'other_mod_verification': 'full_sha256' if args.verify_other_mods else 'not_requested'}
     if not args.apply:
@@ -117,6 +120,13 @@ def main():
     contained(backup, root / "backup")
     contained(staging, root / "Temp")
     shutil.copytree(mod, staging)
+    reset_backup = None
+    if args.reset_config and 'profiles.json' in before:
+        reset_backup = 'profiles.before-' + version + '-reset-' + batch + '.json'
+        reset_target = contained(staging / reset_backup, staging)
+        (staging / 'profiles.json').rename(reset_target)  # 保留旧原字节，完整旧目录另入backup，不删除用户配置。
+        if digest(reset_target) != before['profiles.json']:
+            raise ValueError('旧配置隔离备份核验失败，现有安装未改')
     asset_staging = staging.parent / asset_source.name
     shutil.copy2(asset_source, asset_staging)
     if digest(asset_staging)!=asset_hash:
@@ -130,8 +140,9 @@ def main():
                    CandidateCoreSHA256=receipt['candidate_sha256'], BackupPath=str(backup), GameStartedByAgent=False)
     (staging / 'install-receipt.json').write_text(json.dumps(install, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
     expected = inventory(staging)
-    allowed = set(sources) | {'install-receipt.json'}  # 仅允许明确的运行文件与安装回执变化。
-    if set(expected) != set(before) | set(sources) or any(expected[name] != value for name, value in before.items() if name not in allowed):
+    allowed = set(sources) | {'install-receipt.json'} | ({'profiles.json', reset_backup} if reset_backup else set())  # 仅允许明确的运行文件与安装回执变化。
+    expected_names = (set(before) - ({'profiles.json'} if reset_backup else set())) | set(sources) | ({reset_backup} if reset_backup else set())
+    if set(expected) != expected_names or any(expected[name] != value for name, value in before.items() if name not in allowed):
         raise ValueError('暂存包含计划外变化，现有安装未改')
     if any(expected[name] != value for name, value in hashes.items()):
         raise ValueError('暂存运行文件核验失败')
@@ -175,7 +186,8 @@ def main():
     if digest(asset_target)!=asset_hash or inventory(mod) != expected or inventory(backup / 'DualSP') != before or any(digest(path) != value for path, value in protected.items()):
         raise RuntimeError('安装后校验失败，完整备份位于：' + str(backup))
     result = {**plan, 'installed': True, 'installed_at': now.isoformat(), 'backup': str(backup),
-              'full_backup_verified': True, 'profiles_preserved': True, 'save_backup_verified': True,
+              'full_backup_verified': True, 'profiles_preserved': not args.reset_config, 'save_backup_verified': True,
+              'old_profiles_backed_up': True, 'reset_profiles_backup': reset_backup,
               'other_mod_files_preserved': True if args.verify_other_mods else None,
               'other_mod_files_touched': False, 'protected_files_verified': len(protected), 'gameplay_verified': False}
     with result_path.open('x', encoding='utf-8') as stream:

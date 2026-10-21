@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "version": "2.23.0",
+  "receipt_prefix": "2.23.0-refresh",
+  "candidate": true,
+  "formal_main": "391f46dabb92cbfb55a6d8af255cf8737e8c32cc",
+  "actual_install_baseline": "evidence/2.26.0-installed.json",
+  "sources": [
+    {
+      "thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+      "commit": "40176bd970d94473aed36fa0b150357ed8f4e055"
+    },
+    {
+      "thread": "01a158fc-75bd-7b73-a9eb-22fd88cf1b9e",
+      "commit": "7b89fc8c3aba36e76cd2d5b9c58f295d74a7bdbf"
+    }
+  ],
+  "resource_input": "E:\\AC7_MultiSP\\Temp\\integration-2.23.0-refresh\\Temp\\mount-assets-2.23.0-refresh\\source",
+  "resource_variants": 77,
+  "resource_members": 154,
+  "unchanged_resource_members": 152,
+  "all_28_aircraft_196_layouts_preserved": true,
+  "collision_preservation_assets": 22,
+  "interfaces": {
+    "management": 20,
+    "configuration": 19,
+    "gaze": 4,
+    "camera": 8,
+    "aircraft": 2,
+    "view_target": 3
+  },
+  "runtime_files": 19,
+  "configuration_policy": "用户授权不兼容旧配置；安装器备份并隔离，首次启动全新默认值；不迁移旧键位、设置或个人方案",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "gameplay_validated": false,
+  "merged_to_main": false,
+  "pushed_or_uploaded": false,
+  "known_limits": [
+    "管理新布局及四种注视来源组合待用户体验",
+    "TGM r2离线资格已通过，机库/实际离架与时序仍待实机观察"
+  ]
+}

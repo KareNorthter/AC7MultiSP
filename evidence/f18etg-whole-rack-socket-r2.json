@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "status": "cooked_socket_reference_fixed_runtime_unverified",
+  "baseline_commit": "983f1c36a6ee08880d49d7a1df81e61ae84e17bf",
+  "baseline_version": "2.25.1",
+  "previous_evidence": "evidence/f18e-layout-feedback-r1.json",
+  "previous_evidence_sha256": "cf851753c3789e4d6e95d2c94987ec6f299a30c4b41f4f72335073552e4007cc",
+  "previous_asset": "MSP_f18etg_gpb_inner_whole_r1",
+  "asset": "MSP_f18etg_gpb_inner_whole_r2",
+  "asset_index": 76,
+  "masks": [
+    6,
+    7
+  ],
+  "layout_changed": false,
+  "previous_candidate_json_sha256": "0da612905aadd8d96fdba807252764518260fc370326ad8660272026691aa4dc",
+  "resource_reports": [
+    {
+      "source": "f18etg_SWP3_SM",
+      "json_sha256": "1016daac22f31e4b2f03bcad7a13824c246104e5ca3476128da90bbfde4c333f",
+      "recipe": {
+        "name": "MSP_f18etg_gpb_inner_whole_r2",
+        "aircraft": "f18etg",
+        "source_asset": "f18etg_SWP3_SM",
+        "whole_geometry_donor": "f18e_SWP2_SM",
+        "whole_geometry_donor_json_sha256": "30a94ce2ec675b1bc5d81306e8b7c1c0b1f44097849ff407cdcb79ae08f0cdca"
+      },
+      "asset_roundtrip": true,
+      "renamed_ac7_roundtrip": true,
+      "all_exports_payload_preserved": true,
+      "source_ac7_encoding_reproduced": true,
+      "complete_donor_geometry_bytes_preserved": true,
+      "donor_lods": 3,
+      "donor_triangle_counts": [
+        7882,
+        2499,
+        562
+      ],
+      "donor_materials_preserved": true,
+      "collision_and_navigation_preserved": true,
+      "cooked_socket_references_verified": true,
+      "cooked_socket_references": [
+        4,
+        5
+      ],
+      "geometry_offset": 42,
+      "donor_geometry_offset": 50,
+      "socket_changes": [
+        {
+          "socket": "sp31",
+          "before": {
+            "X": 18.269407272338867,
+            "Y": -34.861358642578125,
+            "Z": -7.4979095458984375
+          },
+          "after": {
+            "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+            "X": 20.38025665283203,
+            "Y": -23.07478904724121,
+            "Z": -7.097089767456055
+          }
+        },
+        {
+          "socket": "sp32",
+          "before": {
+            "X": 18.269407272338867,
+            "Y": 34.861358642578125,
+            "Z": -7.4979095458984375
+          },
+          "after": {
+            "$type": "UAssetAPI.UnrealTypes.FVector, UAssetAPI",
+            "X": 20.38025665283203,
+            "Y": 23.07478904724121,
+            "Z": -7.097089767456055
+          }
+        }
+      ],
+      "socket_rotations_and_scales_preserved": true,
+      "encoded_hashes": {
+        ".uasset": "a57f78b2f08f65cee3021b970ea0f49eae5796582ff7ae072978ddf9259db750",
+        ".uexp": "3962972f09bd39cd3b136e97d8c63e43eb8bdafcc3b24aabfb5e4fc538246566"
+      },
+      "previous_encoded_hashes": {
+        ".uasset": "e77a15f6ad50320bab13b1e44a54f8601d94a101f1e52dbe38d341ab1d50ee21",
+        ".uexp": "7b83772323e3e96e0a1d6cd9e210249cfa1afa8378ba2b836c8398e8cfd58984"
+      },
+      "only_socket_reference_and_own_name_changed": true,
+      "all_lod_geometry_and_mount_transforms_unchanged": true,
+      "old_cooked_references": [
+        4,
+        7
+      ],
+      "new_cooked_references": [
+        4,
+        5
+      ],
+      "corrected_int32_offset": 38
+    }
+  ],
+  "collision_preservation": [
+    {
+      "asset": "MSP_f18etg_gpb_inner_whole_r2",
+      "aircraft": "f18etg",
+      "source": "f18etg_SWP3_SM",
+      "source_package": "/Game/Vehicles/Aircraft/f18etg/f18etg_SWP3_SM",
+      "body_name": "BodySetup",
+      "body_number": 1,
+      "body_guid": [
+        189,
+        100,
+        121,
+        135,
+        160,
+        69,
+        202,
+        72,
+        170,
+        254,
+        159,
+        134,
+        72,
+        174,
+        223,
+        251
+      ],
+      "collision_references_unchanged": true,
+      "complete_body_and_nav_exports_unchanged": true,
+      "body_export_sha256": "c93fea4ef04a2d1de824469a0589a8fbd0e797ccd632d8af85630401bb41bff7",
+      "nav_export_sha256": "043a8d3a789480fec088693f64c6cae1c92166fc3c21dc98d8e29548af4218a5",
+      "source_json_sha256": "1016daac22f31e4b2f03bcad7a13824c246104e5ca3476128da90bbfde4c333f",
+      "candidate_json_sha256": "f5ee43e986517abd9b1f9be57c0fbb8cb41b29c4ae740d917bc7dc1b216d0cf5",
+      "encoded_hashes": {
+        ".uasset": "a57f78b2f08f65cee3021b970ea0f49eae5796582ff7ae072978ddf9259db750",
+        ".uexp": "3962972f09bd39cd3b136e97d8c63e43eb8bdafcc3b24aabfb5e4fc538246566"
+      }
+    }
+  ],
+  "defect": {
+    "cooked_references": [
+      4,
+      7
+    ],
+    "property_references": [
+      4,
+      5
+    ],
+    "export_count": 5,
+    "cause": "拼接少计4字节Socket数量字段，将供体末项导出7混入受体第二项；通用Extras回读不能发现此错误",
+    "source_geometry_offset": 42,
+    "donor_geometry_offset": 50
+  },
+  "resource_input": "Temp\\f18etg-socket-r2\\source",
+  "compiled": false,
+  "pak_built": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "game_operated": false,
+  "limits": [
+    "该资源错误已静态确认；是否为本次卡死唯一原因尚无卡死栈证明",
+    "模型布局、GPB内侧位置、完整借架、弹药和运行借位规则保持",
+    "新资源游戏加载、预览、离架和还原仍待构建安装后由用户观察"
+  ]
+}

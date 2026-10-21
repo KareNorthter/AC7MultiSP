@@ -1,4 +1,10 @@
-AC7MultiSP 2.22.0
+AC7MultiSP 2.23.0 (candidate)
+
+Changes since official 2.22.0
+• Three management tabs, independent controller/keyboard tracking options and Ctrl+Alt+F6 Camera hold. Loadout-cycle/model shortcuts default unbound; NEXT mode is selected in management.
+• Gun salvo defaults on; permanent central text and the dot default off. Old settings/profiles are backed up and reset without migration; first launch creates revision 19 defaults.
+• F/A-18E TGM uses r2 to fix a cooked Socket reference. All 77 variants require matching offline qualification; the other 152 members are unchanged.
+
 
 What is new in 2.22.0 (since official 2.21.1)
 • NEXT targeting offers Normal (aircraft nose) and VR (current view center) ranking. This does not enable VR hardware. The optional center dot appears beyond 5 degrees.
@@ -19,16 +25,16 @@ Installation
 3. If needed, run Runtimes\VC_redist.x64.exe and Runtimes\DirectX\DXSETUP.exe with all adjacent CAB files. Existing equal/newer runtimes need no uninstall.
 4. Merge the contents of GameFiles into the game root. Do not copy the GameFiles folder itself. Mount PAK: Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak.
 5. If mods.txt contains other mods, preserve it and add/retain DualSP : 1. This package uses the AC7-specific UE4SS loader; review shared loader files before merging.
-6. Launch through Steam. F6 opens management. No Python or compiler is needed. Old settings are backed up before staged migration to revision 18; personal bindings, profiles and Camera hold are retained.
+6. Launch through Steam. F6 opens management. No Python or compiler is needed. This update backs up and resets old settings and loadouts without migration; first launch creates revision 19 defaults.
 
 Controls
 • Choose SP1/SP2/SP3 in the native preparation pages; SP2/SP3 can be NO WEAPON. Unpurchased SPs are excluded from ordinary loadout selection; the lower-left panel shows the native description in the game language.
 • Keys 1/2/3/4 select missile/SP1/SP2/SP3. D-pad left/up/right/down does the same and can be disabled separately. X retains native cycling.
-• F6 or Back+Y opens General, Camera, Logs and Debug. In missions, management borrows pause and releases only its own pause on closing.
-• Mission/hangar model options affect visuals only. Ctrl+Alt+F7 toggles mission models. Disabling hangar models restores native previews and may reduce hangar stutter.
-• Ctrl+Alt+F6 cycles debug SP combinations and refills. Ctrl+Alt+F5 toggles native-gun linkage to MGP/PLSL; HGP and true concurrent firing of different SP types are unsupported.
-• Ctrl+Alt+F8 switches Normal/VR NEXT ranking. Disable the mouse-flight mod's F2 HMD targeting when using VR ranking to avoid competing target selection. Dot, tracking and Camera hold are independent.
-• Camera hold defaults off; controller camera shortcuts default on. Release L3 to recenter and release latched tracking. Short R3 changes ordinary views; hold for 0.3 seconds to toggle/save Camera hold, without switching views on release. Both sticks retain countermeasures. Recenter binding and 5%–200% sensitivity are configurable. Angle-based auto recenter and its slider are removed.
+• F6 or Back+Y opens General, Camera and Debug; logs expand within Debug. In missions, management borrows pause and releases only its own pause on closing.
+• Mission/hangar model options affect visuals only. The mission-model shortcut defaults unbound. Disabling hangar models restores native previews and may reduce hangar stutter.
+• Ctrl+Alt+F6 toggles Camera hold. Debug SP cycling defaults unbound. Ctrl+Alt+F5 toggles native-gun linkage to MGP/PLSL; HGP and true concurrent firing of different SP types are unsupported.
+• Select Native/VR NEXT ranking in management; its shortcut is removed. Disable the mouse-flight mod's F2 HMD targeting when using VR ranking to avoid competing target selection. Dot, tracking and Camera hold are independent.
+• Camera hold defaults off; L3/R3 camera actions are always retained. Release L3 to recenter and release latched tracking. Short R3 changes ordinary views; hold for 0.3 seconds to toggle/save Camera hold, without switching views on release. Both sticks retain countermeasures. Recenter binding and 5%–200% sensitivity are configurable. Angle-based auto recenter and its slider are removed.
 • Latched tracking defaults off. With it enabled, hold Y for 0.2 seconds to latch/release; short Y selects a target while tracking follows. Tap the game's actual keyboard tracking binding to latch/release. The custom feature toggle defaults unbound and only enables/disables the feature. Pause, management, focus/target loss, special cameras and mission exit release tracking.
 • Saving ordinary settings does not refill ammunition. Debug aircraft switching restarts the whole mission. The catalogue searches official/custom aircraft with complete three-SP data and uses current skin references; it does not grant purchases or DLC licenses.
 • Mission 13 (113) retains its assigned SP, restoring multi-SP on leaving. Free flight 213 is unaffected. Missions 12/14 retain multi-SP.

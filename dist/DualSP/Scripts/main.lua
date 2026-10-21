@@ -1,4 +1,4 @@
--- AC7MultiSP 2.22.0候选：独立任务/机库模型、十字键开关、NEXT模式、锁定注视与镜头操作整合，待实测。
+-- AC7MultiSP 2.23.0源码候选：用户设计稿三页布局、独立Y/键盘注视及视角保持快捷键；未编译安装。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -60,7 +60,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=19") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_protocol=4 management_protocol=20") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 核对已登记机型的原生持续武器。
@@ -73,8 +73,8 @@ local prepareWeaponRebuild=loadExport("dualsp_prepare_weapon_rebuild") -- 丢弃
 local weaponSwitch={read=loadExport("dualsp_switch_ready"),takeCycle=loadExport("dualsp_take_cycle_switch"),
     press=loadExport("dualsp_controlled_weapon_switch"),prepareCfa=loadExport("dualsp_prepare_cfa_switch")} -- 新Lua与核心须成套。
 weaponSwitch.gaze={invoke=loadExport("dualsp_target_gaze"),active=false,available=false,generation=0,response=0}
-loadExport("dualsp_gaze_latch_supported")
-loadExport("dualsp_gaze_latch_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
+loadExport("dualsp_gaze_inputs_supported")
+loadExport("dualsp_gaze_inputs_supported","DualSPUI.dll") -- 防止旧管理页丢失新设置。
 weaponSwitch.camera={invoke=loadExport("dualsp_camera_hold"),available=false,released=true}
 weaponSwitch.view={invoke=loadExport("dualsp_view_target"),marker=loadExport("dualsp_view_center_marker","DualSPUI.dll"),available=false,released=true}
 loadExport("dualsp_view_target_modes_supported")
@@ -423,6 +423,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
             local objectPath=package.."."..entry[2]
             local object=StaticFindObject(objectPath)
             if not valid(object)then
+                note("MOUNT_ASSET_PATH_BEGIN aircraft="..code.." mask="..tostring(mask).." path="..objectPath)
                 -- 本PAK的自有资源在登记表中未命中；先用已验证的原生精确路径，避免逐份重复失败搜索。
                 -- 原生工厂建立完整AssetData；来源或接口未就绪时仍可尝试原加载器入口。
                 local pathStarted=os.clock()
@@ -446,6 +447,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
                 note("MOUNT_ASSET_PATH_RESULT path="..objectPath.." valid="..tostring(valid(object)))
                 if not valid(object)then
                     local registryStarted=os.clock()
+                    note("MOUNT_ASSET_REGISTRY_BEGIN path="..objectPath)
                     local loaded,registered,didLoad=LoadAsset(objectPath)
                     registryElapsed=(os.clock()-registryStarted)*1000
                     object=valid(loaded)and loaded or StaticFindObject(objectPath)
@@ -762,36 +764,23 @@ local function setPanel(open)
 end
 local function ready()return valid(plane) and plane.bEnableWeaponInput and not plane:IsWeaponSystemDisabled()end
 
--- 功能总开关与当前注视状态分开；键盘快捷键只切换总开关。
+-- 两种输入独立启用，共用原生目标注视轴；L3仅回中，不切NEXT或注视。
 function weaponSwitch.gaze.canSwitch()
     return runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
         and valid(plane.InputComponent)and plane.bEnableCameraInput and not panelOpen and not supplySession
         and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
 end
-function weaponSwitch.gaze.toggleEnabled(generation)
-    local gaze=weaponSwitch.gaze
-    if generation and generation~=gaze.generation then return end
-    if not gaze.canSwitch()then return end
-    local saved,err=pcall(function()
-        local nextConfig=json.decode(json.encode(config));nextConfig.target_gaze_enabled=not config.target_gaze_enabled
-        configStore:save(nextConfig);config=nextConfig
-        local ok,_,reason=gaze.invoke(0,0,0,0);assert(ok,reason)
-        gaze.failed=false;gaze.error=nil;gaze.update(false)
-        note("TARGET_GAZE_FEATURE_TOGGLED "..tostring(config.target_gaze_enabled))
-    end)
-    if not saved then gaze.error=tostring(err);note("TARGET_GAZE_TOGGLE_SAVE_ERROR "..gaze.error)end
-    lastUIKey=nil
-end
 function weaponSwitch.gaze.update(_,generation)
     local gaze=weaponSwitch.gaze
     if generation and generation~=gaze.generation then return end
-    local allowed=config.target_gaze_enabled and gaze.canSwitch()
+    local inputs=(config.target_gaze_pad_enabled and 1 or 0)|(config.target_gaze_keyboard_enabled and 2 or 0)
+    local allowed=inputs~=0 and gaze.canSwitch()
     local address=allowed and plane:GetAddress()or 0
     if gaze.address~=address then gaze.generation=gaze.generation+1;gaze.address=address;lastUIKey=nil end
     if gaze.failed then allowed=false;address=0 end
     local oldActive,oldAvailable=gaze.active,gaze.available
     if not gaze.failed then
-        local ok,active,reason,inputToggle=gaze.invoke(address,allowed and 1 or 0,config.target_gaze_enabled and 1 or 0,0)
+        local ok,active,reason,inputToggle=gaze.invoke(address,allowed and 1 or 0,inputs,0)
         gaze.active=ok and active or false
         gaze.available=ok and allowed and reason~="waiting_input"and reason~="special_view"or false
         if not ok then gaze.failed=true;gaze.error=tostring(reason);note("TARGET_GAZE_ERROR "..gaze.error)end
@@ -818,13 +807,13 @@ end
 function weaponSwitch.camera.update()
     local camera=weaponSwitch.camera
     if camera.failed then camera.available=false;return end
-    local allowed=(config.camera_hold_enabled or config.camera_r3_enabled)and runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
+    local allowed=runtimeAllowed and runtimeModEnabled and not errorText and isFlight and valid(plane)
         and valid(plane.InputComponent)and plane.bEnableCameraInput and not panelOpen and not supplySession
         and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
-    if not allowed and camera.released then return end -- 两项均关闭或许可无效时，不重复跨DLL清理。
+    if not allowed and camera.released then return end -- 许可无效时，不重复跨DLL清理。
     local before=camera.available
     local ok,available,reason,toggle=camera.invoke(allowed and plane:GetAddress()or 0,allowed and 1 or 0,config.camera_center_key,
-        config.camera_sensitivity,config.camera_r3_enabled and 1 or 0,ConfigStore.centerShortcutMask(config),config.camera_hold_enabled and 1 or 0)
+        config.camera_sensitivity,1,ConfigStore.centerShortcutMask(config),config.camera_hold_enabled and 1 or 0)
     camera.available=ok and available or false
     camera.released=not allowed or not ok
     if not ok then camera.failed=true;camera.error=tostring(reason);note("CAMERA_HOLD_ERROR "..camera.error);lastUIKey=nil end
@@ -849,21 +838,7 @@ function weaponSwitch.view.release(force)
     end
     view.available=false;view.released=true
 end
--- NEXT只在管理页选择模式或由键盘切换，不再观察L3。
-function weaponSwitch.view.toggle()
-    if not runtimeAllowed or not runtimeModEnabled then return false end
-    local view=weaponSwitch.view
-    local saved,err=pcall(function()
-        local nextConfig=json.decode(json.encode(config));nextConfig.view_target_mode=config.view_target_mode=="vr"and "normal"or "vr"
-        configStore:save(nextConfig);config=nextConfig
-        if view.failed then view.release(true)end
-        view.failed=false;view.error=nil
-        note("VIEW_TARGET_TOGGLED "..config.view_target_mode)
-    end)
-    if not saved then view.error=tostring(err);note("VIEW_TARGET_TOGGLE_SAVE_ERROR "..view.error)end
-    lastUIKey=nil
-    return saved
-end
+-- NEXT仅在管理页选择模式，不再接收键盘或L3模式切换。
 function weaponSwitch.view.update()
     local view=weaponSwitch.view
     if view.failed then view.marker(0);return end
@@ -1383,7 +1358,16 @@ local function applyAction(action)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then
         if runtimeModEnabled and (action.source=="keyboard"or action.source=="dpad"and config.dpad_weapon_switch_enabled)then directSelect(action.target)end
-    elseif action.type=="toggle_target_gaze"then weaponSwitch.gaze.toggleEnabled(action.generation)
+    elseif action.type=="toggle_camera_hold"then
+        if weaponSwitch.gaze.canSwitch()then
+            local saved,err=pcall(function()
+                config=configStore:setCameraHold(config,not config.camera_hold_enabled)
+                weaponSwitch.camera.error=nil;weaponSwitch.camera.update()
+                note("CAMERA_HOLD_KEY_TOGGLED "..tostring(config.camera_hold_enabled))
+            end)
+            if not saved then weaponSwitch.camera.error=tostring(err);note("CAMERA_HOLD_TOGGLE_SAVE_ERROR "..tostring(err))end
+            lastUIKey=nil
+        end
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="toggle_gun_salvo"then
@@ -1397,8 +1381,6 @@ local function applyAction(action)
             if not saved then weaponSwitch.salvo.service.error=tostring(err)end
             lastUIKey=nil
         end
-    elseif action.type=="toggle_view_target"then
-        if weaponSwitch.view.toggle()then weaponSwitch.view.update()end
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
@@ -1452,16 +1434,15 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=19,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=20,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
         hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
         view_target_mode=config.view_target_mode,view_center_dot_enabled=config.view_center_dot_enabled,
         view_target={protocol=3,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,
-        target_gaze_enabled=config.target_gaze_enabled,target_gaze_key=config.target_gaze_key,camera_hold_enabled=config.camera_hold_enabled,
+        target_gaze_pad_enabled=config.target_gaze_pad_enabled,target_gaze_keyboard_enabled=config.target_gaze_keyboard_enabled,camera_hold_enabled=config.camera_hold_enabled,
         camera_center_key=config.camera_center_key,camera_sensitivity=config.camera_sensitivity,
-        camera_r3_enabled=config.camera_r3_enabled,
         runtime_mod_enabled=runtimeModEnabled,runtime_task_mount_enabled=appliedTaskMount,
         ammo_percent_two=config.ammo_percent_two,ammo_percent_three=config.ammo_percent_three,
         keyboard_keys=config.keyboard_keys,management_key=config.management_key,ammo_mode="percentage",
@@ -1476,7 +1457,7 @@ local function publishState()
     state.debug_loadout={protocol=1,session=debugSession,revision=weaponRevision,available=debugAvailable,reason=debugReason,
         response=debugResponse,ack=debugAck,error=debugError,allow_unowned=true,profile=configured and currentProfile or nil,options=flightOptions}
     state.debug_hotkey={protocol=1,response=hotkeyResponse,notice=hotkeyNotice,notice_warning=weaponSwitch.hotkeyWarning==true}
-    state.target_gaze={protocol=3,switch_available=weaponSwitch.gaze.canSwitch(),active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
+    state.target_gaze={protocol=4,switch_available=weaponSwitch.gaze.canSwitch(),active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,notice_warning=weaponSwitch.gaze.noticeWarning==true,error=weaponSwitch.gaze.error}
     state.camera_hold={protocol=8,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
@@ -1957,7 +1938,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.22.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.23.0 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

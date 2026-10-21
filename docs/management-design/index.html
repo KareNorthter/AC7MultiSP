@@ -1,0 +1,956 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AC7MultiSP · 管理界面设计稿</title>
+<style>
+:root{color-scheme:dark;font-family:"Microsoft YaHei UI","Microsoft YaHei",sans-serif;color:#e6edf5;background:#0d121b;font-size:14px;line-height:1.55}
+*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button,select,input,textarea{color:inherit;background:#192332;border:1px solid #344256;border-radius:5px}button{padding:7px 12px;cursor:pointer}button:hover{border-color:#76d8cc}button:disabled{opacity:.4;cursor:default}button.primary{background:#7ddacb;color:#102420;border-color:#7ddacb;font-weight:700}input,select,textarea{padding:7px 9px;max-width:100%}input[type=checkbox]{accent-color:#7ddacb;width:17px;height:17px}input[type=color]{padding:2px;width:54px;height:34px}input[type=range]{accent-color:var(--ac-accent,#7ddacb);padding:0}textarea{width:100%;resize:vertical;min-height:76px}label{display:block}a{color:#7ddacb}h1,h2,h3,p{margin:0}small,.muted{color:#9daec2}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #90e6db;outline-offset:3px}[hidden]{display:none!important}
+.desk-head{padding:20px 26px;border-bottom:1px solid #263244;background:#111a27;display:flex;justify-content:space-between;gap:18px;align-items:center;flex-wrap:wrap}.desk-head h1{font-size:20px;font-weight:650}.eyebrow{color:#7ddacb;font-size:11px;letter-spacing:2px;margin-bottom:4px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.instructions{padding:12px 26px;background:#14202d;color:#c5d2e3;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 320px;min-height:calc(100vh - 140px)}.canvas{padding:26px;min-width:0;background:radial-gradient(ellipse at 35% 5%,#1a2d41 0,transparent 66%),#0b111b}.canvas-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;max-width:1080px;margin:0 auto 14px}.canvas-bar .spacer{flex:1}.stage{margin:0 auto;transition:max-width .15s;min-width:0}.game-panel{--ac-accent:#7ddacb;--ac-font:15px;--ac-gap:12px;--ac-radius:5px;background:#111b28;border:1px solid #3c5067;border-top:3px solid var(--ac-accent);box-shadow:0 22px 60px #0006;border-radius:var(--ac-radius);font-size:var(--ac-font);overflow:hidden;color:#e4edf7}.game-panel button,.game-panel select,.game-panel input{font-size:inherit}.ac-header{padding:20px 24px 14px;border-bottom:1px solid #293a4c;display:flex;gap:18px;align-items:center;justify-content:space-between;flex-wrap:wrap}.ac-brand{color:var(--ac-accent);font-size:20px;font-weight:700;letter-spacing:.4px}.ac-subtitle{font-size:12px;color:#9fb0c5}.ac-language{font-size:12px;color:#b4c2d2;background:#1d2a39;border:1px solid #3b4c60;padding:6px 11px;border-radius:4px}.ac-shell{display:grid;grid-template-columns:1fr;min-width:0}.ac-nav{padding:0 20px;display:flex;gap:3px;border-bottom:1px solid #2b3c51;overflow:auto}.ac-nav button{border:0;border-radius:0;padding:13px 20px;background:transparent;color:#a9b9cd;white-space:nowrap}.ac-nav button.active{color:var(--ac-accent);box-shadow:inset 0 -2px var(--ac-accent);background:#182839}.ac-shell.side{grid-template-columns:145px minmax(0,1fr)}.ac-shell.side .ac-nav{flex-direction:column;padding:15px 10px;border-right:1px solid #2b3c51;border-bottom:0;gap:6px}.ac-shell.side .ac-nav button{text-align:left;padding:10px 13px;white-space:normal}.ac-shell.side .ac-nav button.active{box-shadow:inset 2px 0 var(--ac-accent)}.ac-body{padding:18px 22px;min-width:0}.ac-group{margin:0 0 var(--ac-gap);padding:14px 16px;background:#162333;border:1px solid #2a3c50;border-radius:var(--ac-radius)}.ac-group.selected{border-color:var(--ac-accent)}.ac-group-title{color:var(--ac-accent);font-size:1em;font-weight:650;margin-bottom:9px;padding:2px 0;background:transparent;border:0;text-align:left;width:100%}.ac-group-description{font-size:.86em;color:#b1c1d3;margin-bottom:12px;white-space:pre-wrap}.ac-row{padding:var(--ac-gap) 8px;border-top:1px solid #27394b;position:relative;border-radius:3px;cursor:pointer}.ac-row:first-of-type{border-top:0}.ac-row:hover{background:#203247}.ac-row.selected{background:#203a4b;outline:1px solid var(--ac-accent)}.ac-row-head{display:flex;justify-content:space-between;gap:12px;align-items:center}.ac-row-name{display:flex;align-items:center;gap:9px;min-width:0;overflow-wrap:anywhere}.ac-row-desc{color:#a9bdd2;font-size:.85em;margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}.ac-row button{padding:4px 11px;white-space:normal;overflow-wrap:anywhere}.ac-value{max-width:45%;min-width:65px;color:#d4e4f3}.ac-value input[type=range]{width:110px;max-width:100%}.ac-help{border:1px solid #4a6179;background:#203248;border-radius:50%;font-size:11px;color:#a8ceda;min-width:20px;width:20px;height:20px;padding:0;line-height:18px}.ac-note{color:#e9c485;font-size:.8em;margin-top:6px}.ac-disabled{opacity:.45}.ac-empty{padding:28px;color:#9fb0c5;text-align:center}.ac-footer{border-top:1px solid #314156;padding:14px 24px;background:#111c2a}.ac-footer small{display:block;margin-bottom:9px}.ac-footer button{margin-right:9px}.ac-footer button:first-of-type{background:var(--ac-accent);color:#0c2326;border-color:var(--ac-accent)}.caption{max-width:1080px;margin:12px auto 0;color:#8297ae;font-size:12px}.inspector{border-left:1px solid #2b3a4c;background:#111b28;padding:18px;min-width:0}.inspector h2{font-size:15px;margin-bottom:12px}.inspector h3{font-size:13px;color:#c8dbed;margin:18px 0 10px}.field{margin-bottom:12px}.field>span{display:block;margin-bottom:5px;color:#aec1d5;font-size:12px}.field input:not([type=checkbox]):not([type=color]),.field select{width:100%}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two .field{min-width:0}.section{border-bottom:1px solid #2c3b4f;padding-bottom:18px;margin-bottom:18px}.hint{font-size:12px;color:#92a8bf;margin:8px 0;white-space:pre-wrap}.pill{font-size:11px;padding:3px 7px;background:#24354a;color:#b3cde3;border-radius:3px}.state{font-size:12px;color:#93c6bb}.error{color:#ffbb93}.guide{margin-top:16px;border-top:1px solid #2c3b4f;padding-top:12px}.guide summary{cursor:pointer;color:#afc9e0}.guide p{font-size:12px;margin:8px 0;color:#9eb2c8}body.preview-only .inspector{display:none}body.preview-only .workspace{grid-template-columns:1fr}body.preview-only .ac-row{cursor:default}body.preview-only .ac-row:hover{background:transparent}body.preview-only .ac-row.selected{outline:0;background:transparent}
+.ac-master{min-width:150px;background:#24564e!important;border-color:var(--ac-accent)!important;padding:10px!important}.ac-mod-disabled{opacity:.4}body.preview-only .ac-mod-disabled{pointer-events:none}
+.ac-body{max-height:650px;overflow:auto}.inspector{position:sticky;top:0;max-height:100vh;overflow:auto;align-self:start}.inspector-tabs{display:flex;gap:5px;margin-bottom:18px;position:sticky;top:-18px;background:#111b28;padding:10px 0;z-index:1}.inspector-tabs button{flex:1;padding:7px 5px}.inspector-tabs button.active{background:#254556;border-color:#7ddacb}.inspector:not([data-mode=style]) #styleEditor,.inspector:not([data-mode=structure]) #structureEditor,.inspector:not([data-mode=item]) #controlEditor{display:none}.pill{overflow-wrap:anywhere}
+@media(max-width:1100px){.workspace{grid-template-columns:minmax(0,1fr) 290px}.canvas{padding:18px}.ac-body{padding:14px}.ac-group{padding:10px}.ac-header{padding:16px}}
+@media(max-width:800px){.workspace{grid-template-columns:1fr}.inspector{border-left:0;border-top:1px solid #2b3a4c}.desk-head,.instructions{padding:14px 16px}.canvas{padding:14px}.ac-shell.side{grid-template-columns:105px minmax(0,1fr)}.ac-nav{padding:0 8px}.ac-nav button{padding:12px}.ac-row-head{flex-wrap:wrap}.ac-value{max-width:100%}.ac-footer{padding:14px}.ac-header{gap:8px}.ac-brand{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.stage{transition:none}}
+@media print{.desk-head,.instructions,.canvas-bar,.inspector,.caption{display:none}.workspace{display:block}.canvas{padding:0}.game-panel{box-shadow:none}body{background:white}.stage{max-width:none!important}}
+</style>
+</head>
+<body>
+<header class="desk-head"><div><div class="eyebrow">AC7MULTISP / 界面设计工作台</div><h1>管理界面 · 可编辑设计稿</h1></div><div class="actions"><button id="importButton">导入方案</button><button id="exportJson">导出方案 JSON</button><button id="exportHtml" class="primary">保存可编辑网页</button></div></header>
+<div class="instructions"><span>① 点击界面中的功能 → ② 在右侧修改或移动 → ③ 保存网页后交给我</span><span id="saveState" class="state" role="status" aria-live="polite">正在载入设计稿</span></div>
+<main class="workspace"><section class="canvas" aria-label="管理界面预览"><div class="canvas-bar"><button id="modeButton" aria-pressed="false">查看纯预览</button><button id="undoButton">撤销</button><span class="spacer"></span><span id="sourceTag" class="pill"></span></div><div id="stage" class="stage"><div id="gamePanel" class="game-panel"><header id="panelHeader" class="ac-header"></header><div id="panelShell" class="ac-shell"><nav id="pageNav" class="ac-nav" aria-label="管理页面"></nav><div id="pageBody" class="ac-body"></div></div><footer id="panelFooter" class="ac-footer"></footer></div></div><p class="caption">依据当前源码重建的结构示意，非游戏截图。所有开关、数值与日志都是预览样例；此网页只记录设计意见，不读取或写入游戏。</p></section>
+<aside id="inspector" class="inspector" data-mode="item" aria-label="设计编辑器">
+<nav class="inspector-tabs" aria-label="编辑内容"><button id="editItemTab" class="active">选中项</button><button id="editStructureTab">页面分组</button><button id="editStyleTab">整体样式</button></nav>
+<section id="styleEditor" class="section"><h2>整体样式</h2><label class="field"><span>界面标题</span><input id="titleField"></label><label class="field"><span>副标题</span><input id="subtitleField"></label><div class="two"><label class="field"><span>导航方式</span><select id="layoutField"><option value="top">顶部页签</option><option value="side">左侧导航</option></select></label><label class="field"><span>内容密度</span><select id="densityField"><option value="compact">紧凑</option><option value="normal">标准</option><option value="relaxed">宽松</option></select></label></div><div class="two"><label class="field"><span>预览宽度</span><select id="widthField"><option value="1080">1080 px</option><option value="900">900 px</option><option value="720">720 px</option><option value="480">480 px</option></select></label><label class="field"><span>文字大小</span><select id="fontField"><option value="13">13 px</option><option value="15">15 px</option><option value="17">17 px</option><option value="19">19 px</option></select></label></div><div class="two"><label class="field"><span>强调色</span><input id="accentField" type="color"></label><label class="field"><span>卡片圆角</span><select id="radiusField"><option value="0">直角</option><option value="5">小圆角</option><option value="12">圆角</option></select></label></div><label class="field"><span>底部说明</span><input id="footerField"></label></section>
+<section id="structureEditor" class="section"><h2>页面与分组</h2><label class="field"><span>当前页面名称</span><input id="pageName"></label><div class="actions"><button id="pageLeft">页面前移</button><button id="pageRight">页面后移</button><button id="addPage">新增页</button></div><label class="field" style="margin-top:12px"><span>当前分组</span><select id="groupPicker"></select></label><label class="field"><span>分组标题</span><input id="groupName"></label><label class="field"><span>分组说明</span><textarea id="groupDescription" rows="2"></textarea></label><div class="actions"><button id="groupUp">分组上移</button><button id="groupDown">分组下移</button><button id="addGroup">新增组</button></div><label class="field" style="margin-top:12px"><span>把此分组移到页面</span><select id="groupPage"></select></label></section>
+<section id="controlEditor" class="section"><h2>选中的功能 <span id="selectedTag" class="pill"></span></h2><p id="selectHint" class="hint">点击左侧任意功能，再修改它的名称、说明或位置。</p><div id="itemEditor" hidden><label class="field"><span>显示名称</span><input id="itemLabel"></label><label class="field"><span>说明文字</span><textarea id="itemDescription" rows="5"></textarea></label><label class="field"><span>说明如何展示</span><select id="itemHelp"><option value="visible">直接显示</option><option value="help">点击问号展开</option><option value="none">暂不显示</option></select></label><label class="field"><span>显示形式（设计建议）</span><select id="itemKind"><option value="toggle">开关</option><option value="binding">按键按钮</option><option value="slider">滑块</option><option value="select">下拉选项</option><option value="action">操作按钮</option><option value="text">纯文字</option></select></label><label class="field"><span>预览值 / 按钮文字</span><input id="itemValue"></label><label class="field"><span>所属页面</span><select id="itemPage"></select></label><label class="field"><span>所属分组</span><select id="itemGroup"></select></label><div class="actions"><button id="itemUp">上移</button><button id="itemDown">下移</button></div><label class="field" style="margin-top:12px"><input id="itemHidden" type="checkbox"> 建议从界面隐藏</label><label class="field"><span>给我的具体意见</span><textarea id="itemNote" placeholder="例如：这个选项与注视放在一组；只显示一行说明。"></textarea></label></div><button id="addItem">新增说明 / 功能建议</button></section>
+<label class="field"><span>整体修改意见</span><textarea id="overallNote" rows="5" placeholder="例如：希望像游戏原生菜单；减少文字；把常用功能集中到第一页。"></textarea></label><div class="actions"><button id="exportText">导出文字意见</button><button id="resetButton">恢复起始稿</button></div><details class="guide"><summary>保存与使用说明</summary><p>本浏览器会尝试自动保留草稿，但正式交回前请点“保存可编辑网页”。下载后的 HTML 包含你的全部修改，双击还能继续编辑。</p><p>也可导出 JSON，之后用“导入方案”继续编辑。导入替换当前草稿；可用“撤销”恢复。文字意见会同时列出分组、文案和隐藏建议。</p><p>灰色的功能表示建议隐藏，编辑模式仍保留，纯预览不显示。点击问号能展开说明。纯预览中的操作只展示样例反馈。</p><p>布局、默认值和控件变化都只是设计建议。游戏内实现时，我会检查键鼠、手柄和小分辨率的实际限制。</p></details>
+</aside></main>
+<input id="importFile" type="file" accept=".json,application/json" hidden>
+<script id="designSeed" type="application/json">{
+  "schema": "ac7-management-design-v1",
+  "storageKey": "ac7-design-approved-camera-hold-f6",
+  "sourceVersion": "2.26.1",
+  "sourceCommit": "824adb5 + 本轮界面调整",
+  "pages": [
+    {
+      "id": "general",
+      "title": "基础功能",
+      "groups": [
+        {
+          "id": "models",
+          "title": "模型显示",
+          "items": [
+            {
+              "id": "task_mount_enabled",
+              "label": "任务中使用多SP模型挂载",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "hangar_mount_enabled",
+              "label": "机库中使用多SP模型挂载",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": "只影响模型显示，不影响游戏功能。"
+        },
+        {
+          "id": "flight",
+          "title": "功能设置",
+          "items": [
+            {
+              "id": "central_weapon_display",
+              "label": "HUD中央始终显示当前武器名称",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "ammo_percent_two",
+              "label": "双SP时每个武器的弹药量",
+              "kind": "slider",
+              "value": "50%",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "ammo_percent_three",
+              "label": "三SP时每个武器的弹药量",
+              "kind": "slider",
+              "value": "33%",
+              "description": "",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "gun_salvo_enabled",
+              "label": "机炮齐射",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "shortcut_salvo",
+              "label": "机炮齐射",
+              "kind": "binding",
+              "value": "Ctrl + Alt + F5",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "direct",
+          "title": "额外的武器切换方式",
+          "items": [
+            {
+              "id": "dpad_weapon_switch_enabled",
+              "label": "手柄十字键切换武器",
+              "kind": "toggle",
+              "value": "开启",
+              "description": "默认开启。关闭并保存后，模组不响应十字键切换武器；键盘直选、X原生轮切和管理菜单导航保留。",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "weapon_msl",
+              "label": "MSL",
+              "kind": "binding",
+              "value": "1 · 十字键左",
+              "description": "点击后按新键，Esc取消；手柄方向固定。关闭十字键功能后不占用方向键。",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "weapon_sp1",
+              "label": "SP1",
+              "kind": "binding",
+              "value": "2 · 十字键上",
+              "description": "按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先；未搭载或耗尽的SP不切换，装填中可选。",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "weapon_sp2",
+              "label": "SP2",
+              "kind": "binding",
+              "value": "3 · 十字键右",
+              "description": "键盘直选与十字键开关独立。",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "weapon_sp3",
+              "label": "SP3",
+              "kind": "binding",
+              "value": "4 · 十字键下",
+              "description": "键盘直选与十字键开关独立。",
+              "help": "none",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
+        }
+      ]
+    },
+    {
+      "id": "camera",
+      "title": "视角",
+      "groups": [
+        {
+          "id": "view_center",
+          "title": "目标选择方式",
+          "items": [
+            {
+              "id": "view_target_mode",
+              "label": "目标选择模式",
+              "kind": "select",
+              "value": "原生模式 / 机头附近",
+              "description": "原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "view_center_dot_enabled",
+              "label": "显示视角中心定位白点",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "tracking",
+          "title": "保持注视",
+          "items": [
+            {
+              "id": "target_gaze_pad_enabled",
+              "label": "长按手柄Y键 保持注视",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "target_gaze_keyboard_enabled",
+              "label": "按下键盘注视键 保持注视",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "camera_hold",
+          "title": "视角保持",
+          "items": [
+            {
+              "id": "camera_hold_enabled",
+              "label": "启用视角保持",
+              "kind": "toggle",
+              "value": "关闭",
+              "description": "启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "camera_sensitivity",
+              "label": "视角灵敏度",
+              "kind": "slider",
+              "value": "100%",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "camera_center_key",
+              "label": "视角回中 键盘快捷键",
+              "kind": "binding",
+              "value": "鼠标中键",
+              "description": "",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "shortcut_camera_hold",
+              "label": "启用视角保持快捷键",
+              "description": "",
+              "kind": "binding",
+              "value": "Ctrl + Alt + F6",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        }
+      ]
+    },
+    {
+      "id": "debug",
+      "title": "调试",
+      "groups": [
+        {
+          "id": "debug_loadout",
+          "title": "任务兵装",
+          "items": [
+            {
+              "id": "debug_loadout_selection",
+              "label": "临时SP组合",
+              "kind": "select",
+              "value": "SP1 / SP2 / SP3",
+              "description": "任务中选择当前机体可用兵装；此处只展示布局占位，不列假造的可用兵装。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "debug_loadout_apply",
+              "label": "应用临时兵装方案",
+              "kind": "action",
+              "value": "应用 SP 方案并补满",
+              "description": "这是任务内显式调试操作，区别于底部的“保存设置”。设计稿按钮不执行操作。",
+              "help": "visible",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "debug_aircraft",
+          "title": "更换机体",
+          "items": [
+            {
+              "id": "aircraft_search",
+              "label": "搜索机体",
+              "kind": "binding",
+              "value": "搜索名称 / 代号 / 编号",
+              "description": "可筛选官方机体或Mod机体，并按首字母筛选。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "aircraft_source",
+              "label": "机体来源",
+              "kind": "select",
+              "value": "全部机体",
+              "description": "官方机体 / Mod机体",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "aircraft_initial",
+              "label": "首字母筛选",
+              "kind": "select",
+              "value": "全部",
+              "description": "按名称首字母缩小候选范围。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "aircraft_target",
+              "label": "目标机体",
+              "kind": "select",
+              "value": "请选择机体",
+              "description": "真实候选由游戏中已识别的机体及兵装目录决定。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "aircraft_apply",
+              "label": "确认换机",
+              "kind": "action",
+              "value": "换机并重开任务",
+              "description": "",
+              "help": "visible",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        },
+        {
+          "id": "log_controls",
+          "title": "日志查看",
+          "items": [
+            {
+              "id": "refresh_logs",
+              "label": "读取最新日志",
+              "kind": "action",
+              "value": "刷新",
+              "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "log_file",
+              "label": "日志文件",
+              "kind": "select",
+              "value": "mod.log / native.log",
+              "description": "原界面以页签切换两份日志。",
+              "help": "help",
+              "hidden": false,
+              "note": ""
+            },
+            {
+              "id": "log_sample",
+              "label": "日志正文（示意）",
+              "kind": "text",
+              "value": "",
+              "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
+              "help": "visible",
+              "hidden": false,
+              "note": ""
+            }
+          ],
+          "description": ""
+        }
+      ]
+    }
+  ],
+  "theme": {
+    "layout": "top",
+    "density": "normal",
+    "width": 1080,
+    "font": 15,
+    "radius": 5,
+    "accent": "#7ddacb"
+  },
+  "chrome": {
+    "title": "AC7MultiSP",
+    "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
+    "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
+    "masterEnabled": true,
+    "managementBinding": {
+      "id": "shortcut_management",
+      "label": "管理界面",
+      "kind": "binding",
+      "value": "F6",
+      "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+      "help": "help",
+      "hidden": false,
+      "note": "这个快捷键的设置也移动到顶栏"
+    }
+  },
+  "overallNote": "已按反馈精简为三页；标题旁提供总开关。视角保持使用Ctrl+Alt+F6，机炮齐射保留Ctrl+Alt+F5。L3仅回中，不切换NEXT。",
+  "baseline": {
+    "pages": [
+      {
+        "id": "general",
+        "title": "基础功能",
+        "groups": [
+          {
+            "id": "models",
+            "title": "模型显示",
+            "items": [
+              {
+                "id": "task_mount_enabled",
+                "label": "任务中使用多SP模型挂载",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "任务中使用挂载多个SP武器的机体模型替代游戏原本机体模型，避免切换SP武器时，模型突变。\n提供单SP、双SP、三SP 共7种挂载方案。已适配大部分游戏本体和DLC机体，Mod机体、部分内置弹舱及RKT组合按现有适配范围生效。\n可能会造成卡顿、帧数下降。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "hangar_mount_enabled",
+                "label": "机库中使用多SP模型挂载",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "出击前选择机体和SP时的机体预览也使用多SP模型挂载。\n可能造成卡顿、帧数下降。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": "只影响模型显示，不影响游戏功能。"
+          },
+          {
+            "id": "flight",
+            "title": "功能设置",
+            "items": [
+              {
+                "id": "central_weapon_display",
+                "label": "HUD中央始终显示当前武器名称",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "ammo_percent_two",
+                "label": "双SP时每个武器的弹药量",
+                "kind": "slider",
+                "value": "50%",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "ammo_percent_three",
+                "label": "三SP时每个武器的弹药量",
+                "kind": "slider",
+                "value": "33%",
+                "description": "",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "gun_salvo_enabled",
+                "label": "机炮齐射",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "shortcut_salvo",
+                "label": "机炮齐射",
+                "kind": "binding",
+                "value": "Ctrl + Alt + F5",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "direct",
+            "title": "额外的武器切换方式",
+            "items": [
+              {
+                "id": "dpad_weapon_switch_enabled",
+                "label": "手柄十字键切换武器",
+                "kind": "toggle",
+                "value": "开启",
+                "description": "默认开启。关闭并保存后，模组不响应十字键切换武器；键盘直选、X原生轮切和管理菜单导航保留。",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "weapon_msl",
+                "label": "MSL",
+                "kind": "binding",
+                "value": "1 · 十字键左",
+                "description": "点击后按新键，Esc取消；手柄方向固定。关闭十字键功能后不占用方向键。",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "weapon_sp1",
+                "label": "SP1",
+                "kind": "binding",
+                "value": "2 · 十字键上",
+                "description": "按住Shift/Ctrl/Alt也可直选，明确设置的组合快捷键优先；未搭载或耗尽的SP不切换，装填中可选。",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "weapon_sp2",
+                "label": "SP2",
+                "kind": "binding",
+                "value": "3 · 十字键右",
+                "description": "键盘直选与十字键开关独立。",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "weapon_sp3",
+                "label": "SP3",
+                "kind": "binding",
+                "value": "4 · 十字键下",
+                "description": "键盘直选与十字键开关独立。",
+                "help": "none",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键"
+          }
+        ]
+      },
+      {
+        "id": "camera",
+        "title": "视角",
+        "groups": [
+          {
+            "id": "view_center",
+            "title": "目标选择方式",
+            "items": [
+              {
+                "id": "view_target_mode",
+                "label": "目标选择模式",
+                "kind": "select",
+                "value": "原生模式 / 机头附近",
+                "description": "原生模式优先选择机头附近；\nVR模式优先选择当前视角中心附近。\n可能与鼠标飞控F2 HMD冲突。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "view_center_dot_enabled",
+                "label": "显示视角中心定位白点",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "tracking",
+            "title": "保持注视",
+            "items": [
+              {
+                "id": "target_gaze_pad_enabled",
+                "label": "长按手柄Y键 保持注视",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "启用后长按手柄Y键切换到持续注视，再长按一次停止；期间可短按Y切目标。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "target_gaze_keyboard_enabled",
+                "label": "按下键盘注视键 保持注视",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "使用游戏中实际绑定的注视键，按一下持续注视，再按一下停止。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "camera_hold",
+            "title": "视角保持",
+            "items": [
+              {
+                "id": "camera_hold_enabled",
+                "label": "启用视角保持",
+                "kind": "toggle",
+                "value": "关闭",
+                "description": "启用后松开环视输入仍保持方向。\nL3按下并松开或键盘回中键回正。长按R3可以开启/关闭此功能。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "camera_sensitivity",
+                "label": "视角灵敏度",
+                "kind": "slider",
+                "value": "100%",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "camera_center_key",
+                "label": "视角回中 键盘快捷键",
+                "kind": "binding",
+                "value": "鼠标中键",
+                "description": "",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "shortcut_camera_hold",
+                "label": "启用视角保持快捷键",
+                "description": "",
+                "kind": "binding",
+                "value": "Ctrl + Alt + F6",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          }
+        ]
+      },
+      {
+        "id": "debug",
+        "title": "调试",
+        "groups": [
+          {
+            "id": "debug_loadout",
+            "title": "任务兵装",
+            "items": [
+              {
+                "id": "debug_loadout_selection",
+                "label": "临时SP组合",
+                "kind": "select",
+                "value": "SP1 / SP2 / SP3",
+                "description": "任务中选择当前机体可用兵装；此处只展示布局占位，不列假造的可用兵装。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "debug_loadout_apply",
+                "label": "应用临时兵装方案",
+                "kind": "action",
+                "value": "应用 SP 方案并补满",
+                "description": "这是任务内显式调试操作，区别于底部的“保存设置”。设计稿按钮不执行操作。",
+                "help": "visible",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "debug_aircraft",
+            "title": "更换机体",
+            "items": [
+              {
+                "id": "aircraft_search",
+                "label": "搜索机体",
+                "kind": "binding",
+                "value": "搜索名称 / 代号 / 编号",
+                "description": "可筛选官方机体或Mod机体，并按首字母筛选。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "aircraft_source",
+                "label": "机体来源",
+                "kind": "select",
+                "value": "全部机体",
+                "description": "官方机体 / Mod机体",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "aircraft_initial",
+                "label": "首字母筛选",
+                "kind": "select",
+                "value": "全部",
+                "description": "按名称首字母缩小候选范围。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "aircraft_target",
+                "label": "目标机体",
+                "kind": "select",
+                "value": "请选择机体",
+                "description": "真实候选由游戏中已识别的机体及兵装目录决定。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "aircraft_apply",
+                "label": "确认换机",
+                "kind": "action",
+                "value": "换机并重开任务",
+                "description": "",
+                "help": "visible",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          },
+          {
+            "id": "log_controls",
+            "title": "日志查看",
+            "items": [
+              {
+                "id": "refresh_logs",
+                "label": "读取最新日志",
+                "kind": "action",
+                "value": "刷新",
+                "description": "每份只显示末尾64 KiB；日志正文保留原始语言。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "log_file",
+                "label": "日志文件",
+                "kind": "select",
+                "value": "mod.log / native.log",
+                "description": "原界面以页签切换两份日志。",
+                "help": "help",
+                "hidden": false,
+                "note": ""
+              },
+              {
+                "id": "log_sample",
+                "label": "日志正文（示意）",
+                "kind": "text",
+                "value": "",
+                "description": "这里只预留日志正文的位置。\n没有读取当前游戏日志，也没有连接游戏。",
+                "help": "visible",
+                "hidden": false,
+                "note": ""
+              }
+            ],
+            "description": ""
+          }
+        ]
+      }
+    ],
+    "theme": {
+      "layout": "top",
+      "density": "normal",
+      "width": 1080,
+      "font": 15,
+      "radius": 5,
+      "accent": "#7ddacb"
+    },
+    "chrome": {
+      "title": "AC7MultiSP",
+      "subtitle": "飞行控制中心 · 2.26.1 界面调整稿",
+      "footer": "关闭会丢弃未保存的更改。语言和按键保存后应用；总开关等待安全菜单，弹药比例等待下一次配弹。",
+      "masterEnabled": true,
+      "managementBinding": {
+        "id": "shortcut_management",
+        "label": "管理界面",
+        "kind": "binding",
+        "value": "F6",
+        "description": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+        "help": "help",
+        "hidden": false,
+        "note": "这个快捷键的设置也移动到顶栏"
+      }
+    }
+  },
+  "updatedAt": "2026-10-21T04:43:27.101Z",
+  "receivedFeedback": {
+    "sourceCommit": "e3fd099",
+    "name": "AC7管理界面设计稿-2026-10-21T04-43-27.html",
+    "sha256": "09584e92d7082c3df1021b9ac02513b70f8acf7b86c3a8a8eac4850f835351b5"
+  }
+}</script>
+<script>
+'use strict';
+// 设计数据与游戏配置完全分离；导出时把当前稿写入新网页，避免只保存到浏览器缓存。
+const $=id=>document.getElementById(id), clone=value=>JSON.parse(JSON.stringify(value));
+const embedded=JSON.parse($('designSeed').textContent);
+let draft=clone(embedded), pageId=draft.pages[0].id, groupId=draft.pages[0].groups[0]?.id, itemId=null, preview=false, expanded=new Set(), history=[], saveTimer;
+const kinds=['toggle','binding','slider','select','action','text'];
+function status(message,error=false){$('saveState').textContent=message;$('saveState').classList.toggle('error',error)}
+function validate(data){
+ if(!data||data.schema!=='ac7-management-design-v1'||typeof data.storageKey!=='string'||!data.theme||!data.chrome||!Array.isArray(data.pages)||!data.pages.length||data.pages.length>30)throw Error('这不是支持的管理界面设计方案。');
+ if(!['top','side'].includes(data.theme.layout)||!['compact','normal','relaxed'].includes(data.theme.density)||!/^#[0-9a-f]{6}$/i.test(data.theme.accent)||![13,15,17,19].includes(data.theme.font)||![480,720,900,1080].includes(data.theme.width)||![0,5,12].includes(data.theme.radius))throw Error('样式数据不完整或超出范围。');
+ for(const key of ['title','subtitle','footer'])if(typeof data.chrome[key]!=='string')throw Error('缺少界面文字。');
+ if(typeof data.overallNote!=='string'||!data.baseline||!Array.isArray(data.baseline.pages))throw Error('缺少起始稿或整体意见。');
+ const ids=new Set();let count=0;
+ function unique(obj){if(typeof obj.id!=='string'||ids.has(obj.id))throw Error('方案中的标识缺失或重复。');ids.add(obj.id)}
+ for(const p of data.pages){unique(p);if(typeof p.title!=='string'||!Array.isArray(p.groups)||p.groups.length>50)throw Error('页面数据不完整。');for(const g of p.groups){unique(g);if(typeof g.title!=='string'||typeof g.description!=='string'||!Array.isArray(g.items))throw Error('分组数据不完整。');for(const i of g.items){unique(i);if(++count>500||!kinds.includes(i.kind)||!['visible','help','none'].includes(i.help)||typeof i.label!=='string'||typeof i.description!=='string'||typeof i.value!=='string'||typeof i.note!=='string'||typeof i.hidden!=='boolean')throw Error('功能数据不完整或超出范围。')}}}
+ return data;
+}
+try{const saved=localStorage.getItem(draft.storageKey);if(saved)draft=validate(JSON.parse(saved));status(saved?'已恢复此浏览器的草稿':'点击功能开始编辑')}catch(e){status('自动草稿不可用，请用“保存可编辑网页”保留修改',true)}
+function remember(){history.push(clone(draft));if(history.length>60)history.shift();$('undoButton').disabled=false}
+function changed(){clearTimeout(saveTimer);status('有修改，正在保留草稿…');saveTimer=setTimeout(()=>{try{localStorage.setItem(draft.storageKey,JSON.stringify(draft));status('草稿已在本浏览器保留 · 交回前请保存网页')}catch(e){status('浏览器不能保留草稿，请点“保存可编辑网页”',true)}},200)}
+function currentPage(){return draft.pages.find(p=>p.id===pageId)||draft.pages[0]}
+function currentGroup(){return currentPage().groups.find(g=>g.id===groupId)||currentPage().groups[0]}
+function currentItem(){if(itemId===draft.chrome.managementBinding?.id)return draft.chrome.managementBinding;for(const p of draft.pages)for(const g of p.groups){const i=g.items.find(x=>x.id===itemId);if(i)return i}return null}
+function el(tag,className,text){const node=document.createElement(tag);if(className)node.className=className;if(text!==undefined)node.textContent=text;return node}
+function button(text,action,className=''){const node=el('button',className,text);node.type='button';node.addEventListener('click',action);return node}
+function options(select,values,selected){select.replaceChildren();for(const [value,label]of values){const o=el('option','',label);o.value=value;select.append(o)}select.value=selected??''}
+function normalizeSelection(){const p=currentPage();pageId=p.id;const g=currentGroup();groupId=g?.id;const i=currentItem();if(i&&i!==draft.chrome.managementBinding&&!p.groups.some(g=>g.items.includes(i)))itemId=null}
+function editorMode(mode){$('inspector').dataset.mode=mode;for(const [id,value]of [['editItemTab','item'],['editStructureTab','structure'],['editStyleTab','style']]){const active=mode===value;$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',active)}$('inspector').scrollTop=0}
+for(const [id,mode]of [['editItemTab','item'],['editStructureTab','structure'],['editStyleTab','style']])$(id).addEventListener('click',()=>editorMode(mode));
+function pickItem(p,g,i){pageId=p.id;groupId=g.id;itemId=i.id;editorMode('item');render()}
+function renderPreview(){
+ normalizeSelection();const t=draft.theme,p=currentPage(),panel=$('gamePanel');
+ panel.style.setProperty('--ac-accent',t.accent);panel.style.setProperty('--ac-font',t.font+'px');panel.style.setProperty('--ac-gap',({compact:7,normal:12,relaxed:18})[t.density]+'px');panel.style.setProperty('--ac-radius',t.radius+'px');$('stage').style.maxWidth=t.width+'px';$('panelShell').classList.toggle('side',t.layout==='side');document.body.classList.toggle('preview-only',preview);
+ $('panelHeader').replaceChildren();const title=el('div');title.append(el('div','ac-brand',draft.chrome.title),el('div','ac-subtitle',draft.chrome.subtitle));const master=button(draft.chrome.masterEnabled===false?'模组：关闭':'模组：开启',()=>mutate(()=>{draft.chrome.masterEnabled=draft.chrome.masterEnabled===false}),'ac-master');master.setAttribute('aria-pressed',draft.chrome.masterEnabled!==false);$('panelHeader').append(title,master,el('span','ac-language','语言：跟随游戏'));$('panelShell').classList.toggle('ac-mod-disabled',draft.chrome.masterEnabled===false);const management=draft.chrome.managementBinding;if(management&&(!preview||!management.hidden)){const area=el('div','ac-row-name');area.append(el('span','',management.label),button(management.value,()=>{if(!preview){itemId=management.id;editorMode('item');render()}else status(management.description)}));$('panelHeader').append(area)}
+ $('pageNav').replaceChildren();for(const other of draft.pages){const b=button(other.title,()=>{pageId=other.id;groupId=other.groups[0]?.id;itemId=null;render()},other.id===pageId?'active':'');b.setAttribute('aria-current',other.id===pageId?'page':'false');$('pageNav').append(b)}
+ $('pageBody').replaceChildren();let visibleCount=0;
+ for(const g of p.groups){const shown=g.items.filter(i=>!preview||!i.hidden);if(preview&&!shown.length)continue;visibleCount++;
+  const group=el('section','ac-group'+(!preview&&g.id===groupId?' selected':''));group.append(button(g.title,()=>{if(!preview){groupId=g.id;itemId=null;editorMode('structure');render()}},'ac-group-title'));if(g.description)group.append(el('p','ac-group-description',g.description));
+  for(const i of shown){const row=el('div','ac-row'+(!preview&&i.id===itemId?' selected':'')+(i.hidden?' ac-disabled':''));if(!preview){row.tabIndex=0;row.setAttribute('role','group');row.setAttribute('aria-label','编辑：'+i.label);row.addEventListener('keydown',event=>{if(event.target===row&&(event.key==='Enter'||event.key===' ')){event.preventDefault();pickItem(p,g,i)}})}row.addEventListener('click',()=>{if(!preview)pickItem(p,g,i)});const head=el('div','ac-row-head'),name=el('div','ac-row-name');
+   if(i.kind==='toggle'){const c=el('input');c.type='checkbox';c.checked=i.value==='开启';c.setAttribute('aria-label',i.label+'（示例状态）');c.addEventListener('click',event=>{event.stopPropagation();if(!preview)pickItem(p,g,i)});name.append(c)}
+   name.append(el('span','',i.label));if(i.description&&i.help==='help'){const h=button('?',event=>{event.stopPropagation();expanded.has(i.id)?expanded.delete(i.id):expanded.add(i.id);renderPreview()},'ac-help');h.setAttribute('aria-label','查看'+i.label+'说明');h.setAttribute('aria-expanded',expanded.has(i.id));name.append(h)}head.append(name);
+   if(i.kind!=='toggle'&&i.kind!=='text'){const value=el('div','ac-value');if(i.kind==='slider'){const slider=el('input');slider.type='range';slider.min='0';slider.max='200';slider.value=parseInt(i.value)||0;slider.setAttribute('aria-label',i.label+'（示例）');slider.addEventListener('click',e=>e.stopPropagation());slider.addEventListener('input',()=>{output.textContent=slider.value+'（示例）'});const output=el('small','',i.value);value.append(slider,el('br'),output)}else value.append(button(i.value||'选择',e=>{e.stopPropagation();if(!preview)pickItem(p,g,i);else status('预览操作：'+i.label+'。不会操作游戏。')}));head.append(value)}row.append(head);
+   if(i.description&&(i.help==='visible'||(i.help==='help'&&expanded.has(i.id))))row.append(el('p','ac-row-desc',i.description));if(!preview&&i.note)row.append(el('p','ac-note','设计意见：'+i.note));if(!preview&&i.hidden)row.append(el('small','ac-note','建议隐藏 · 纯预览不显示'));group.append(row)
+  }$('pageBody').append(group)
+ }if(!visibleCount)$('pageBody').append(el('div','ac-empty','此页还没有分组或可显示的功能'));
+ $('panelFooter').replaceChildren(el('small','muted',draft.chrome.footer),button('保存设置',()=>status('这是界面样例。请用顶部“保存可编辑网页”保存设计。')),button('关闭',()=>status('这是界面样例，当前网页仍可继续编辑。')));
+ $('modeButton').textContent=preview?'返回编辑':'查看纯预览';$('modeButton').setAttribute('aria-pressed',preview);$('sourceTag').textContent='结构基线 '+draft.sourceVersion+' · '+draft.sourceCommit;$('undoButton').disabled=!history.length;
+}
+function renderInspector(){
+ const p=currentPage(),g=currentGroup(),i=currentItem(),t=draft.theme;
+ for(const [id,key]of [['titleField','title'],['subtitleField','subtitle'],['footerField','footer']])$(id).value=draft.chrome[key];
+ for(const [id,key]of [['layoutField','layout'],['densityField','density'],['widthField','width'],['fontField','font'],['accentField','accent'],['radiusField','radius']])$(id).value=t[key];
+ $('pageName').value=p.title;options($('groupPicker'),p.groups.map(g=>[g.id,g.title]),g?.id);$('groupName').value=g?.title||'';$('groupDescription').value=g?.description||'';options($('groupPage'),draft.pages.map(p=>[p.id,p.title]),p.id);
+ for(const id of ['groupName','groupDescription','groupPage','groupUp','groupDown'])$(id).disabled=!g;
+ $('itemEditor').hidden=!i;$('selectHint').hidden=!!i;$('selectedTag').textContent=i?.id||'未选择';
+ if(i){$('itemLabel').value=i.label;$('itemDescription').value=i.description;$('itemHelp').value=i.help;$('itemKind').value=i.kind;$('itemValue').value=i.value;$('itemNote').value=i.note;$('itemHidden').checked=i.hidden;options($('itemPage'),draft.pages.map(p=>[p.id,p.title]),p.id);options($('itemGroup'),p.groups.map(g=>[g.id,g.title]),g.id)}
+ for(const id of ['itemPage','itemGroup','itemUp','itemDown'])$(id).disabled=i===draft.chrome.managementBinding;$('overallNote').value=draft.overallNote;
+}
+function render(){renderPreview();renderInspector()}
+// 同一输入框的一轮编辑只生成一个撤销点，实时重绘左侧但不打断右侧输入。
+function bindEdit(id,apply,eventName='input'){const node=$(id);node.addEventListener('focus',()=>{node.dataset.editing=''});node.addEventListener(eventName,()=>{if(node.dataset.editing!=='yes'){remember();node.dataset.editing='yes'}apply(node);changed();renderPreview()});node.addEventListener('blur',()=>{node.dataset.editing='';renderInspector()})}
+for(const [id,key]of [['titleField','title'],['subtitleField','subtitle'],['footerField','footer']])bindEdit(id,n=>draft.chrome[key]=n.value);
+for(const [id,key]of [['layoutField','layout'],['densityField','density'],['widthField','width'],['fontField','font'],['accentField','accent'],['radiusField','radius']])bindEdit(id,n=>draft.theme[key]=['width','font','radius'].includes(key)?Number(n.value):n.value);
+bindEdit('pageName',n=>currentPage().title=n.value);bindEdit('groupName',n=>{if(currentGroup())currentGroup().title=n.value});bindEdit('groupDescription',n=>{if(currentGroup())currentGroup().description=n.value});bindEdit('overallNote',n=>draft.overallNote=n.value);
+for(const [id,key]of [['itemLabel','label'],['itemDescription','description'],['itemHelp','help'],['itemKind','kind'],['itemValue','value'],['itemNote','note']])bindEdit(id,n=>{if(currentItem())currentItem()[key]=n.value});
+bindEdit('itemHidden',n=>{if(currentItem())currentItem().hidden=n.checked},'change');
+function mutate(action){remember();action();changed();render()}
+function move(array,index,step){const next=index+step;if(index>=0&&next>=0&&next<array.length)[array[index],array[next]]=[array[next],array[index]]}
+function newId(prefix){return prefix+'-'+(globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(16).slice(2))}
+$('groupPicker').addEventListener('change',()=>{groupId=$('groupPicker').value;itemId=null;render()});
+$('groupPage').addEventListener('change',()=>{const g=currentGroup(),target=draft.pages.find(p=>p.id===$('groupPage').value);if(g&&target&&target!==currentPage())mutate(()=>{const p=currentPage();p.groups.splice(p.groups.indexOf(g),1);target.groups.push(g);pageId=target.id;groupId=g.id})});
+$('itemPage').addEventListener('change',()=>{const i=currentItem(),g=currentGroup(),target=draft.pages.find(p=>p.id===$('itemPage').value);if(i&&target&&target!==currentPage())mutate(()=>{if(!target.groups.length)target.groups.push({id:newId('group'),title:'新分组',description:'',items:[]});g.items.splice(g.items.indexOf(i),1);target.groups[0].items.push(i);pageId=target.id;groupId=target.groups[0].id})});
+$('itemGroup').addEventListener('change',()=>{const i=currentItem(),g=currentGroup(),target=currentPage().groups.find(g=>g.id===$('itemGroup').value);if(i&&target&&target!==g)mutate(()=>{g.items.splice(g.items.indexOf(i),1);target.items.push(i);groupId=target.id})});
+for(const [id,step]of [['pageLeft',-1],['pageRight',1]])$(id).addEventListener('click',()=>mutate(()=>move(draft.pages,draft.pages.indexOf(currentPage()),step)));
+for(const [id,step]of [['groupUp',-1],['groupDown',1]])$(id).addEventListener('click',()=>mutate(()=>move(currentPage().groups,currentPage().groups.indexOf(currentGroup()),step)));
+for(const [id,step]of [['itemUp',-1],['itemDown',1]])$(id).addEventListener('click',()=>{if(currentItem())mutate(()=>move(currentGroup().items,currentGroup().items.indexOf(currentItem()),step))});
+$('addPage').addEventListener('click',()=>mutate(()=>{const p={id:newId('page'),title:'新页面',groups:[]};draft.pages.push(p);pageId=p.id;groupId=null;itemId=null}));
+$('addGroup').addEventListener('click',()=>mutate(()=>{const g={id:newId('group'),title:'新分组',description:'',items:[]};currentPage().groups.push(g);groupId=g.id;itemId=null}));
+$('addItem').addEventListener('click',()=>mutate(()=>{if(!currentGroup()){const g={id:newId('group'),title:'新分组',description:'',items:[]};currentPage().groups.push(g);groupId=g.id}const i={id:newId('suggestion'),label:'新增建议',description:'在右侧填写希望增加的说明或功能。',kind:'text',value:'',help:'visible',hidden:false,note:''};currentGroup().items.push(i);itemId=i.id}));
+$('modeButton').addEventListener('click',()=>{preview=!preview;renderPreview()});
+$('undoButton').addEventListener('click',()=>{if(history.length){draft=history.pop();itemId=null;changed();render()}});
+function download(name,data,type){const url=URL.createObjectURL(new Blob([data],{type}));const a=el('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function dateTag(){return new Date().toISOString().replace(/[:.]/g,'-').slice(0,19)}
+function portable(){const data=clone(draft);data.updatedAt=new Date().toISOString();data.storageKey=newId('ac7-design');return data}
+function safeJson(value){return JSON.stringify(value,null,2).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029')}
+$('exportJson').addEventListener('click',()=>{download('AC7管理界面方案-'+dateTag()+'.json',JSON.stringify(portable(),null,2),'application/json;charset=utf-8');status('方案已生成下载，请保留文件并交给我')});
+$('exportHtml').addEventListener('click',()=>{const copy=document.documentElement.cloneNode(true);copy.querySelector('#designSeed').textContent=safeJson(portable());for(const id of ['panelHeader','pageNav','pageBody','panelFooter'])copy.querySelector('#'+id).replaceChildren();copy.querySelector('body').classList.remove('preview-only');download('AC7管理界面设计稿-'+dateTag()+'.html','<!doctype html>\n'+copy.outerHTML,'text/html;charset=utf-8');status('可编辑网页已生成下载，打开该文件可继续编辑')});
+function textReport(){const lines=['# AC7MultiSP 管理界面修改意见','',`结构来源：${draft.sourceVersion} / ${draft.sourceCommit}`,'','整体意见：'+(draft.overallNote||'未填写'),'','样式：'+JSON.stringify(draft.theme),'','界面标题：'+draft.chrome.title,'副标题：'+draft.chrome.subtitle,'标题总开关示例：'+(draft.chrome.masterEnabled===false?'关闭':'开启'),'底部说明：'+draft.chrome.footer,'','以下按设计稿中的最终顺序排列，控件与数值均为设计建议。'];for(const p of draft.pages){lines.push('','## '+p.title);for(const g of p.groups){lines.push('','### '+g.title,g.description);for(const i of g.items)lines.push('','- '+i.label+' ['+i.id+']'+(i.hidden?'（建议隐藏）':''),'  显示形式：'+i.kind+'；说明展示：'+i.help+'；预览值：'+i.value,'  说明：'+i.description,'  意见：'+(i.note||'未填写'))}}return lines.join('\n')}
+$('exportText').addEventListener('click',()=>download('AC7管理界面修改意见-'+dateTag()+'.md',textReport(),'text/markdown;charset=utf-8'));
+$('importButton').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async()=>{const file=$('importFile').files[0];if(!file)return;try{if(file.size>3000000)throw Error('方案文件过大。');const incoming=validate(JSON.parse(await file.text()));mutate(()=>{draft=clone(incoming);draft.storageKey=newId('ac7-design');pageId=draft.pages[0].id;groupId=draft.pages[0].groups[0]?.id;itemId=null});status('已导入方案；可撤销或继续编辑')}catch(e){status('导入失败：'+e.message,true)}$('importFile').value=''});
+$('resetButton').addEventListener('click',()=>{if(confirm('恢复当前文件内的起始设计？当前草稿可通过“撤销”找回。'))mutate(()=>{const base=clone(draft.baseline);draft.pages=base.pages;draft.theme=base.theme;draft.chrome=base.chrome;draft.overallNote='';pageId=draft.pages[0].id;groupId=draft.pages[0].groups[0]?.id;itemId=null})});
+render();
+</script>
+</body>
+</html>

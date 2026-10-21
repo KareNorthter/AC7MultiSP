@@ -22,7 +22,7 @@ return {
     m35d={{50,"MSP_m35d_6aam_outer_pair",2,232},{52,"MSP_m35d_4agm_inner_pair",3,224}},
     f14a={{54,"MSP_f14a_laam_belly",1,8},{55,"MSP_f14a_laam_wings",1,32},{56,"MSP_f14a_laam_front",1,128},{57,"MSP_f14a_sffs_belly",3,96},{58,"MSP_f14a_sffs_rear",3,128}},
     f18e={{59,"MSP_f18e_hcaa_tips",1,168},{74,"MSP_f18e_agm_outer_r1",2,192},{75,"MSP_f18e_lagm_inner_r1",3,192}},
-    f18etg={{62,"MSP_f18etg_hcaa_tips",1,40},{76,"MSP_f18etg_gpb_inner_whole_r1",3,192}},
+    f18etg={{62,"MSP_f18etg_hcaa_tips",1,40},{76,"MSP_f18etg_gpb_inner_whole_r2",3,192}},
     m31b={{73,"MSP_m31b_saam_rear_lower_r3",1,192}},
     f14d={{65,"MSP_f14d_laam_wing_rear",1,8},{66,"MSP_f14d_laam_belly",1,32},{67,"MSP_f14d_laam_rear",1,128},{68,"MSP_f14d_gpb_front",2,200}},
     f18f={{69,"MSP_f18f_lasm_inner",2,136}},

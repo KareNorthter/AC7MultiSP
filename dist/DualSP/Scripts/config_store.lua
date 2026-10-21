@@ -1,9 +1,9 @@
--- 个人配置的加载、迁移、校验和保存；不持有玩家、页面或武器状态。
+-- 个人配置的加载、原字节备份、校验和保存；不持有玩家、页面或武器状态。
 local Config={}
 -- 回中键与组合快捷键可共用主键；按修饰键状态编码，交给游戏线程避开双触发。
 function Config.centerShortcutMask(settings)
     local mask=0
-    for _,name in ipairs({"management","cycle","mount","salvo","view_target"})do
+    for _,name in ipairs({"management","cycle","mount","salvo","camera_hold"})do
         local chord=settings.shortcuts[name]
         if chord.key==settings.camera_center_key and chord.mods~=0 then mask=mask|(1<<chord.mods) end
     end
@@ -35,9 +35,9 @@ end
 local function validateSettings(settings)
     assert(type(settings.shortcuts)=="table","缺少五个快捷键设置")
     local chords={}
-    for _,name in ipairs({"management","cycle","mount","salvo","view_target"})do
+    for _,name in ipairs({"management","cycle","mount","salvo","camera_hold"})do
         local chord=settings.shortcuts[name]
-        assert(type(chord)=="table"and (supportedKey(chord.key)or((name=="salvo"or name=="view_target")and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
+        assert(type(chord)=="table"and (supportedKey(chord.key)or(name~="management"and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
         assert(type(chord.mods)=="number"and chord.mods%1==0 and chord.mods>=0 and chord.mods<=7,"快捷键修饰键无效")
         assert(not(chord.mods==3 and chord.key==46),"Ctrl+Alt+Delete不能用作模组快捷键")
         assert(not(chord.mods==2 and chord.key==115),"Alt+F4不能用作模组快捷键")
@@ -53,17 +53,14 @@ local function validateSettings(settings)
     assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
     assert(settings.view_target_mode=="normal"or settings.view_target_mode=="vr","NEXT模式必须为普通或VR模式")
     assert(type(settings.view_center_dot_enabled)=="boolean","视野中心白点开关必须为布尔值")
-    assert(type(settings.target_gaze_enabled)=="boolean","锁定注视功能开关必须为布尔值")
+    assert(type(settings.target_gaze_pad_enabled)=="boolean"and type(settings.target_gaze_keyboard_enabled)=="boolean","手柄和键盘注视开关必须为布尔值")
+    assert(settings.target_gaze_enabled==nil and settings.target_gaze_key==nil and settings.camera_r3_enabled==nil and settings.shortcuts.view_target==nil,"旧管理界面字段已退役")
     assert(settings.target_gaze_pad_l3==nil and settings.view_target_pad_l3==nil and settings.view_target_enabled==nil and settings.camera_auto_center_degrees==nil,"旧镜头交互设置已退役")
     assert(type(settings.camera_hold_enabled)=="boolean","镜头保持开关必须为布尔值")
-    assert(type(settings.camera_r3_enabled)=="boolean","R3替换开关必须为布尔值")
-    local gazeKey=settings.target_gaze_key
-    assert(gazeKey==0 or supportedKey(gazeKey),"目标注视键位无效")
-    assert(gazeKey==0 or not chords["0:"..gazeKey],"目标注视键不能与模组快捷键重复")
     local centerKey=settings.camera_center_key
     assert(centerKey==0 or centerKey==4 or supportedKey(centerKey),"镜头回正键位无效")
     if settings.camera_hold_enabled and centerKey~=0 then
-        assert(not chords["0:"..centerKey]and centerKey~=gazeKey,"镜头回正键不能与其他模组键位重复")
+        assert(not chords["0:"..centerKey],"镜头回正键不能与其他模组键位重复")
     end
     local sensitivity=settings.camera_sensitivity
     assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=5 and sensitivity<=200,"镜头灵敏度必须为5至200的整数")
@@ -79,11 +76,15 @@ local function validateSettings(settings)
     for _,key in ipairs(settings.keyboard_keys)do
         assert(supportedKey(key),"不支持此武器选择键位")
         assert(not chords["0:"..key],"单键快捷键与武器选择键不能重复")
-        assert(gazeKey==0 or key~=gazeKey,"目标注视键不能与武器选择键重复")
         assert(not settings.camera_hold_enabled or centerKey==0 or key~=centerKey,"镜头回正键不能与其他模组键位重复")
         assert(not used[key],"四个武器选择键不能重复");used[key]=true
     end
     assert(settings.ammo_ratio==nil,"旧弹药比例字段已移除")
+end
+
+function Config.defaults()
+    return {schema=2,management_revision=19,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=false,gun_salvo_enabled=true,central_weapon_display="switch_1s",profiles={},language="auto",mod_enabled=true,target_gaze_pad_enabled=false,target_gaze_keyboard_enabled=false,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+            shortcuts={management={key=117,mods=0},cycle={key=0,mods=0},mount={key=0,mods=0},salvo={key=116,mods=3},camera_hold={key=117,mods=3}}}
 end
 
 function Config.new(options)
@@ -98,160 +99,31 @@ function Config.new(options)
         writeJson(root.."profiles.json",value)
     end
     function self:load()
-        local config=readJson(root.."profiles.json")or {schema=2,management_revision=18,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=true,gun_salvo_enabled=false,central_weapon_display="always",profiles={},language="auto",mod_enabled=true,target_gaze_enabled=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=true,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
-            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},view_target={key=119,mods=3}}}
-        local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
-        local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
-        assert(type(config.profiles)=="table"and (migrateSettings or config.schema==2),"不支持的配置版本")
-        if migrateSettings then
-            assert(config.management_revision==nil or config.management_revision==2,"旧管理参数版本无效")
-            for id,saved in pairs(config.profiles)do
-                assert(saved.c==nil,"旧版方案含未知第三槽，停止迁移")
-                saved.c=-1;saved.ratio=nil;config.profiles[id]=Profile.copy(saved)
+        local loaded,config=pcall(readJson,root.."profiles.json")
+        if loaded and type(config)=="table"and config.schema==2 and config.management_revision==19 then
+            assert(type(config.profiles)=="table","不支持的配置版本")
+            for _,saved in pairs(config.profiles)do Profile.count(saved)end
+            validateSettings(config)
+            return config
+        end
+        -- 本轮用户明确不兼容旧配置：先按原字节留档，再使用完整新默认值，不迁移旧字段/方案。
+        local old=io.open(root.."profiles.json","rb")
+        if old then
+            local bytes=readAll(old)
+            local stem="profiles.before-2.23.0-reset-"..tostring(os.time())
+            local backup=stem..".json";local serial=0
+            while true do
+                local existing=io.open(root..backup,"rb")
+                if not existing then break end
+                existing:close();serial=serial+1;backup=stem.."-"..serial..".json"
             end
-            config.keyboard_keys=config.keyboard_keys or {49,50,51}
-            assert(#config.keyboard_keys==3,"旧版键位数量无效")
-            -- 默认 4 与旧自定义键冲突时明确要求处理，不能偷偷改掉用户键位。
-            for _,key in ipairs(config.keyboard_keys)do assert(key~=52,"旧键位已占用 4，请先在 1.0.2 调整后迁移")end
-            config.keyboard_keys[4]=52
-            config.schema=2;config.management_revision=3;config.ammo_ratio=nil
-            config.language=config.language or "auto"
-            config.management_key=config.management_key or 117
-            config.hud=nil;config.direct_select=nil;config.ignore_unlocks=nil;config.hud_scale=nil;config.native_loadout=nil
-            note("THREE_SP_MIGRATION schema=2 management=5 ammo=percentage_ceil")
+            writeText(root..backup,bytes)
+            note("CONFIGURATION_RESET_BACKUP "..backup)
         end
-        if migrateOptions then
-            config.management_revision=5;config.central_hint=nil
-            config.mod_enabled=true;config.fixed_mount_enabled=true
-            config.ammo_percent_two=50;config.ammo_percent_three=33
-            -- 旧三挂的 1/3 改为明确的 33%；原始配置字节由迁移备份保留。
-            for id,saved in pairs(config.profiles)do config.profiles[id]=Profile.withSettings(saved,config)end
-        end
-        local migrateShortcuts=config.management_revision==5
-        if migrateShortcuts then
-            assert(config.shortcuts==nil,"旧配置包含未知快捷键字段")
-            local key=config.management_key
-            assert(type(key)=="number"and key%1==0 and key>=112 and key<=135,"旧管理快捷键须为F1至F24")
-            config.shortcuts={management={key=key,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}}
-            config.management_revision=6
-        end
-        local migrateGaze=config.management_revision==6
-        if migrateGaze then
-            assert(config.target_gaze_pad_x==nil and config.target_gaze_key==nil,"旧配置含未知目标注视设置")
-            config.target_gaze_pad_x=false;config.target_gaze_key=0;config.management_revision=7
-        end
-        local migrateCamera=config.management_revision==7
-        if migrateCamera then
-            assert(config.camera_hold_enabled==nil,"旧配置含未知镜头保持设置")
-            config.camera_hold_enabled=false;config.management_revision=8
-        end
-        local migrateCameraControls=config.management_revision==8
-        if migrateCameraControls then
-            assert(config.camera_center_key==nil and config.camera_sensitivity==nil,"旧配置含未知镜头控制设置")
-            config.camera_center_key=4;config.camera_sensitivity=100;config.management_revision=9
-        end
-        local migrateCameraInput=config.management_revision==9
-        if migrateCameraInput then
-            assert(config.camera_r3_enabled==nil,"旧配置含未知R3替换设置")
-            local sensitivity=config.camera_sensitivity
-            assert(type(sensitivity)=="number"and sensitivity%1==0 and sensitivity>=25 and sensitivity<=300,"旧镜头灵敏度无效")
-            config.camera_r3_enabled=false;config.camera_sensitivity=math.min(sensitivity,200);config.management_revision=10
-            if sensitivity>200 then note("CAMERA_SENSITIVITY_MIGRATION old="..sensitivity.." new=200")end
-        end
-        local migrateControllerClicks=config.management_revision==10
-        if migrateControllerClicks then
-            assert(type(config.target_gaze_pad_x)=="boolean"and config.target_gaze_pad_l3==nil,"旧手柄注视配置无效")
-            -- X归还原生；L3新选项默认关闭。已有镜头保持开关和自定义键位保留。
-            config.target_gaze_pad_x=nil;config.target_gaze_pad_l3=false
-            config.camera_r3_enabled=true;config.management_revision=11
-        end
-        local migrateCentralDisplay=config.management_revision==11
-        if migrateCentralDisplay then
-            assert(config.central_weapon_display==nil,"旧配置含未知中央武器简称设置")
-            config.central_weapon_display="always";config.management_revision=12
-        end
-        local migrateGunSalvo=config.management_revision==12
-        if migrateGunSalvo then
-            assert(config.gun_salvo_enabled==nil and config.shortcuts.salvo==nil,"旧配置含未知机炮齐射设置")
-            config.gun_salvo_enabled=false
-            local conflict=false
-            for _,name in ipairs({"management","cycle","mount"})do
-                local chord=config.shortcuts[name]
-                if chord.key==116 and chord.mods==3 then conflict=true end
-            end
-            config.shortcuts.salvo=conflict and {key=0,mods=0}or {key=116,mods=3}
-            if conflict then note("GUN_SALVO_SHORTCUT_UNASSIGNED old_binding_preserved")end
-            config.management_revision=13
-        end
-        local migrateCameraAutoCenter=config.management_revision==13
-        if migrateCameraAutoCenter then
-            assert(config.camera_auto_center_degrees==nil,"旧配置含未知自动回正阈值")
-            config.camera_auto_center_degrees=30;config.management_revision=14
-        end
-        assert(config.target_gaze_pad_x==nil,"手柄X替换设置已退役")
-        local migrateViewTarget=config.management_revision==14
-        if migrateViewTarget then
-            assert(config.view_target_enabled==nil and config.view_center_dot_enabled==nil and config.shortcuts.view_target==nil,"旧配置含未知视角选目标设置")
-            config.view_target_enabled=false;config.view_center_dot_enabled=true
-            local conflict=false
-            for _,name in ipairs({"management","cycle","mount","salvo"})do
-                local chord=config.shortcuts[name]
-                if chord.key==119 and chord.mods==3 then conflict=true end
-            end
-            config.shortcuts.view_target=conflict and {key=0,mods=0}or {key=119,mods=3}
-            config.management_revision=15
-            if conflict then note("VIEW_TARGET_SHORTCUT_UNASSIGNED old_binding_preserved")end
-        end
-        local migrateUiInputOptions=config.management_revision==15
-        if migrateUiInputOptions then
-            assert(config.hangar_mount_enabled==nil and config.dpad_weapon_switch_enabled==nil,"旧配置含未知机库或十字键开关")
-            config.hangar_mount_enabled=true;config.dpad_weapon_switch_enabled=true;config.management_revision=16
-        end
-        local migrateIndependentModels=config.management_revision==16
-        if migrateIndependentModels then
-            assert(type(config.fixed_mount_enabled)=="boolean"and type(config.hangar_mount_enabled)=="boolean"and config.task_mount_enabled==nil,"旧模型开关配置无效")
-            config.task_mount_enabled=config.fixed_mount_enabled
-            config.hangar_mount_enabled=config.fixed_mount_enabled and config.hangar_mount_enabled -- 按旧的实际显示结果迁移，原总开关关闭不突然启用机库模型。
-            config.fixed_mount_enabled=nil;config.management_revision=17
-        end
-        local migrateCameraInteraction=config.management_revision==17
-        if migrateCameraInteraction then
-            assert(config.target_gaze_enabled==nil and config.view_target_mode==nil,"旧配置含未知新版镜头交互设置")
-            assert(type(config.view_target_enabled)=="boolean","旧NEXT设置无效")
-            config.view_target_mode=config.view_target_enabled and "vr"or "normal"
-            config.target_gaze_enabled=false -- 旧L3注视设置不自动开启新的Y/键盘交互。
-            config.target_gaze_pad_l3=nil;config.view_target_pad_l3=nil;config.view_target_enabled=nil
-            config.camera_auto_center_degrees=nil;config.management_revision=18
-        end
-        assert(config.management_revision==18,"需要管理参数第 18 版")
-        for _,saved in pairs(config.profiles)do Profile.count(saved)end
+        config=Config.defaults()
         validateSettings(config)
-        if migrateOptions or migrateShortcuts or migrateGaze or migrateCamera or migrateCameraControls or migrateCameraInput or migrateControllerClicks or migrateCentralDisplay or migrateGunSalvo or migrateCameraAutoCenter or migrateViewTarget or migrateUiInputOptions or migrateIndependentModels or migrateCameraInteraction then
-            -- 独立永久备份保留原始字节；备份失败时禁止覆盖原配置。
-            local bytes=readAll(assert(io.open(root.."profiles.json","rb")))
-            local backups={}
-            if migrateOptions then backups[#backups+1]="profiles.before-management-options.json"end
-            if migrateShortcuts then backups[#backups+1]="profiles.before-custom-shortcuts.json"end
-            if migrateGaze then backups[#backups+1]="profiles.before-target-gaze.json"end
-            if migrateCamera then backups[#backups+1]="profiles.before-camera-hold.json"end
-            if migrateCameraControls then backups[#backups+1]="profiles.before-camera-controls.json"end
-            if migrateCameraInput then backups[#backups+1]="profiles.before-camera-input-options.json"end
-            if migrateControllerClicks then backups[#backups+1]="profiles.before-controller-clicks.json"end
-            if migrateCentralDisplay then backups[#backups+1]="profiles.before-central-weapon-display.json"end
-            if migrateSettings then backups[#backups+1]="profiles.before-three-sp.json"end
-            if migrateGunSalvo then backups[#backups+1]="profiles.before-gun-salvo.json"end
-            if migrateCameraAutoCenter then backups[#backups+1]="profiles.before-camera-auto-center.json"end
-            if migrateViewTarget then backups[#backups+1]="profiles.before-view-target.json"end
-            if migrateUiInputOptions then backups[#backups+1]="profiles.before-ui-input-options.json"end
-            if migrateIndependentModels then backups[#backups+1]="profiles.before-independent-models.json"end
-            if migrateCameraInteraction then backups[#backups+1]="profiles.before-camera-interaction-v2.json"end
-            for _,name in ipairs(backups)do
-                local existing=io.open(root..name,"r")
-                if existing then existing:close();error("迁移备份已存在，请核对上次迁移状态："..name)end
-            end
-            for _,name in ipairs(backups)do writeText(root..name,bytes)end
-            self:save(config);note("MANAGEMENT_MIGRATION_SAVED revision=18")
-        end
+        self:save(config)
+        note("CONFIGURATION_DEFAULTS_SAVED revision=19")
         return config
     end
     function self:setCameraHold(config,enabled)
@@ -263,9 +135,9 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==19,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==20,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_enabled","target_gaze_key","camera_hold_enabled","camera_r3_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_pad_enabled","target_gaze_keyboard_enabled","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key

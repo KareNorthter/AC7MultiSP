@@ -6,6 +6,10 @@
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
+    {"手柄和键盘注视开关必须为布尔值","Controller and keyboard tracking options must be booleans."},
+    {"旧管理界面字段已退役","The old management fields have been retired."},
+    {"旧管理界面配置无效","The old management configuration is invalid."},
+    {"需要管理参数第 19 版","Management configuration revision 19 is required."},
     {"机库多SP模型开关必须为布尔值","The hangar multi-SP model option must be a boolean."},
     {"手柄十字键切换武器开关必须为布尔值","The D-pad weapon switch option must be a boolean."},
     {"旧配置含未知机库或十字键开关","The old configuration contains unknown hangar or D-pad options."},

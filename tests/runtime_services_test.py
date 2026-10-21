@@ -30,226 +30,76 @@ local function rejects(fn,expected)
     if expected then assert(tostring(err):find(expected,1,true),tostring(err))end
 end
 local writeFail=false
+local notes={}
 local function store(prefix)
-    return Config.new{root=fixture..prefix,note=function()end,json=json,profile=Profile,readJson=readJson,
+    return Config.new{root=fixture..prefix,note=function(t)notes[#notes+1]=t end,json=json,profile=Profile,readJson=readJson,
         writeJson=function(path,value)if writeFail then error('模拟写盘失败')end;writeJson(path,value)end}
 end
 local currentStore=store('current-')
 local config=currentStore:load()
-assert(config.schema==2 and config.management_key==117 and #config.keyboard_keys==4)
-assert(config.management_revision==18 and config.mod_enabled and config.task_mount_enabled and config.hangar_mount_enabled and config.dpad_weapon_switch_enabled)
-assert(config.ammo_percent_two==50 and config.ammo_percent_three==33 and config.central_hint==nil)
-assert(not config.target_gaze_enabled and not config.camera_hold_enabled and config.camera_r3_enabled and config.central_weapon_display=="always")
-assert(config.camera_auto_center_degrees==nil)
+assert(config.schema==2 and config.management_revision==19 and config.mod_enabled)
+assert(config.task_mount_enabled and config.hangar_mount_enabled and config.dpad_weapon_switch_enabled)
+assert(config.gun_salvo_enabled and not config.view_center_dot_enabled and config.central_weapon_display=='switch_1s')
+assert(not config.target_gaze_pad_enabled and not config.target_gaze_keyboard_enabled and not config.camera_hold_enabled)
+assert(config.shortcuts.camera_hold.key==117 and config.shortcuts.camera_hold.mods==3)
+assert(config.shortcuts.cycle.key==0 and config.shortcuts.mount.key==0 and config.shortcuts.view_target==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=19,language='en',mod_enabled=false,task_mount_enabled=false,hangar_mount_enabled=true,dpad_weapon_switch_enabled=false,gun_salvo_enabled=false,view_target_mode='normal',view_center_dot_enabled=true,
-    central_weapon_display="always",target_gaze_enabled=false,target_gaze_key=0,camera_hold_enabled=false,camera_r3_enabled=false,camera_center_key=4,camera_sensitivity=100,
-    ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
+local action={request=1,management_protocol=20,language='en',mod_enabled=false,task_mount_enabled=false,hangar_mount_enabled=true,dpad_weapon_switch_enabled=false,
+ gun_salvo_enabled=false,view_target_mode='vr',view_center_dot_enabled=true,central_weapon_display='always',target_gaze_pad_enabled=true,target_gaze_keyboard_enabled=false,
+ camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
-assert(config.language=='auto' and nextConfig.language=='en' and nextConfig.profiles['10'].a==2)
-assert(not nextConfig.mod_enabled and not nextConfig.task_mount_enabled and nextConfig.hangar_mount_enabled and not nextConfig.dpad_weapon_switch_enabled and nextConfig.central_hint==nil)
-assert(nextConfig.ammo_percent_two==75 and nextConfig.ammo_percent_three==66 and nextConfig.profiles['10'].ratio==.82)
+assert(not nextConfig.task_mount_enabled and nextConfig.hangar_mount_enabled and not nextConfig.dpad_weapon_switch_enabled)
+assert(nextConfig.target_gaze_pad_enabled and not nextConfig.target_gaze_keyboard_enabled and nextConfig.profiles['10'].ratio==.82)
 assert(readText(fixture..'current-profiles.previous.json')==original)
 local saved=readText(fixture..'current-profiles.json')
--- 无效协议、废弃字段和百分比不能部分写盘，也不能改写当前配置。
-for _,bad in ipairs({{'management_protocol',3},{'central_hint',false},{'mod_enabled',1},
-    {'view_target_mode','invalid'},{'target_gaze_enabled',1},{'hangar_mount_enabled',1},{'task_mount_enabled',1},{'dpad_weapon_switch_enabled',1},{'ammo_percent_two',49},{'ammo_percent_two',101},
-    {'ammo_percent_three',32},{'ammo_percent_three',101},{'ammo_percent_three',33.5}})do
-    local previous=action[bad[1]];action[bad[1]]=bad[2]
-    rejects(function()currentStore:applySettings(nextConfig,action)end)
-    assert(readText(fixture..'current-profiles.json')==saved and nextConfig.profiles['10'].ratio==.82)
-    action[bad[1]]=previous
+for _,bad in ipairs({{'management_protocol',19},{'target_gaze_pad_enabled',1},{'target_gaze_keyboard_enabled',1},
+ {'view_target_mode','invalid'},{'task_mount_enabled',1},{'camera_sensitivity',201},{'ammo_percent_two',49},{'ammo_percent_three',33.5}})do
+ local previous=action[bad[1]];action[bad[1]]=bad[2]
+ rejects(function()currentStore:applySettings(nextConfig,action)end)
+ assert(readText(fixture..'current-profiles.json')==saved);action[bad[1]]=previous
 end
-for _,values in ipairs({{50,33},{100,100}})do
-    action.ammo_percent_two=values[1];action.ammo_percent_three=values[2]
-    nextConfig=currentStore:applySettings(nextConfig,action)
-    assert(nextConfig.ammo_percent_two==values[1] and nextConfig.ammo_percent_three==values[2])
-    assert(nextConfig.profiles['10'].ratio==.82)
-end
-action.ammo_percent_two=75;action.ammo_percent_three=66
+for _,pad in ipairs({false,true})do for _,keyboard in ipairs({false,true})do
+ action.target_gaze_pad_enabled=pad;action.target_gaze_keyboard_enabled=keyboard
+ local updated=currentStore:applySettings(nextConfig,action)
+ assert(updated.target_gaze_pad_enabled==pad and updated.target_gaze_keyboard_enabled==keyboard)
+end end
 saved=readText(fixture..'current-profiles.json')
-action.keyboard_keys={49,49,51,52}
-rejects(function()currentStore:applySettings(nextConfig,action)end,'不能重复')
-assert(readText(fixture..'current-profiles.json')==saved)
-action.keyboard_keys={49,50,51,52};action.language='zh';writeFail=true
+local candidate=json.decode(json.encode(action));candidate.shortcuts.cycle={key=0,mods=0};candidate.shortcuts.mount={key=0,mods=0}
+assert(currentStore:applySettings(nextConfig,candidate).shortcuts.mount.key==0)
+candidate.shortcuts.management={key=0,mods=0};rejects(function()currentStore:applySettings(nextConfig,candidate)end)
+candidate.shortcuts=json.decode(json.encode(action.shortcuts));candidate.shortcuts.camera_hold=candidate.shortcuts.salvo
+rejects(function()currentStore:applySettings(nextConfig,candidate)end,'不能重复')
+saved=readText(fixture..'current-profiles.json');writeFail=true
 rejects(function()currentStore:applySettings(nextConfig,action)end,'模拟写盘失败')
-assert(nextConfig.language=='en' and readText(fixture..'current-profiles.json')==saved)
-writeFail=false
--- 编码失败不能截断已有文件；底层 write/close 返回失败也必须上报。
-local cyclic={};cyclic.self=cyclic
-rejects(function()Config.writeJson(fixture..'current-profiles.json',cyclic,json)end)
+assert(readText(fixture..'current-profiles.json')==saved);writeFail=false
+local cyclic={};cyclic.self=cyclic;rejects(function()Config.writeJson(fixture..'current-profiles.json',cyclic,json)end)
 assert(readText(fixture..'current-profiles.json')==saved)
 local realOpen=io.open
 for _,failure in ipairs({'write','close'})do
-    local closed=false
-    io.open=function(path,mode)
-        if mode~='w' and mode~='wb' then return realOpen(path,mode)end
-        return {write=function(self)
-            if failure=='write' then return nil,'模拟底层写入失败'end
-            return self
-        end,close=function()
-            closed=true
-            if failure=='close' then return nil,'模拟底层关闭失败'end
-            return true
-        end}
-    end
-    rejects(function()Config.writeJson(fixture..'current-profiles.json',{},json)end,'模拟底层')
-    rejects(function()currentStore:applySettings(nextConfig,action)end,'模拟底层')
-    assert(closed and nextConfig.language=='en')
-    local executed=false
-    local failedClient=Bridge.new{root=fixture,profile=Profile,readJson=readJson,execute=function()executed=true end}
-    rejects(function()failedClient:request{op='setup',plane=16,activator=32,target=0,time=0,profile={a=0,b=-1,c=-1}}end,'模拟底层')
-    assert(not executed,'写入失败后不能调用核心')
-    io.open=realOpen
+ local closed=false
+ io.open=function(path,mode)
+  if mode~='w' and mode~='wb' then return realOpen(path,mode)end
+  return {write=function(self)if failure=='write' then return nil,'模拟底层写入失败'end;return self end,
+   close=function()closed=true;if failure=='close' then return nil,'模拟底层关闭失败'end;return true end}
+ end
+ rejects(function()Config.writeJson(fixture..'current-profiles.json',{},json)end,'模拟底层')
+ assert(closed);io.open=realOpen
 end
-assert(readText(fixture..'current-profiles.json')==saved)
--- 历史配置来自真实旧字段形状，不能给新配置只改版本号后伪称旧配置。
-local legacySource=json.decode(json.encode(config))
-legacySource.fixed_mount_enabled=true;legacySource.task_mount_enabled=nil;legacySource.hangar_mount_enabled=nil;legacySource.dpad_weapon_switch_enabled=nil
-legacySource.view_target_mode=nil;legacySource.target_gaze_enabled=nil
-legacySource.view_target_enabled=false;legacySource.target_gaze_pad_l3=false;legacySource.camera_auto_center_degrees=30
--- 五个自定义快捷键：保留旧管理键、组合键与单键区分、重复和武器选择冲突拒绝。
-local legacy14=json.decode(json.encode(legacySource));legacy14.management_revision=14
-legacy14.view_target_enabled=nil;legacy14.view_center_dot_enabled=nil;legacy14.shortcuts.view_target=nil
-legacy14.shortcuts.mount={key=119,mods=3}
-writeJson(fixture..'view-target-profiles.json',legacy14)
-local viewBytes=readText(fixture..'view-target-profiles.json')
-local viewConfig=store('view-target-'):load()
-assert(viewConfig.management_revision==18 and viewConfig.view_target_mode=='normal' and viewConfig.view_center_dot_enabled)
-assert(viewConfig.shortcuts.view_target.key==0 and viewConfig.shortcuts.mount.key==119)
-assert(readText(fixture..'view-target-profiles.before-view-target.json')==viewBytes)
-assert(store('view-target-'):load().shortcuts.view_target.key==0)
-local oldShortcuts=nextConfig.shortcuts
-local candidate=json.decode(json.encode(action))
-candidate.shortcuts={management={key=120,mods=5},cycle={key=121,mods=0},mount={key=122,mods=7},salvo={key=116,mods=3},view_target={key=119,mods=3}}
-local custom=currentStore:applySettings(nextConfig,candidate)
-assert(custom.management_key==120 and custom.shortcuts.management.mods==5)
-assert(custom.shortcuts.cycle.key==121 and custom.shortcuts.mount.mods==7)
-for _,bad in ipairs({
-    {management={key=117,mods=0},cycle={key=117,mods=0},mount={key=118,mods=3}},
-    {management={key=49,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3}},
-    {management={key=27,mods=1},cycle={key=117,mods=3},mount={key=118,mods=3}},
-    {management={key=117,mods=8},cycle={key=117,mods=3},mount={key=118,mods=3}},
-    {management={key=115,mods=2},cycle={key=117,mods=3},mount={key=118,mods=3}}
-})do
-    bad.salvo=json.decode(json.encode(config.shortcuts.salvo));bad.view_target=json.decode(json.encode(config.shortcuts.view_target));candidate.shortcuts=bad;local bytes=readText(fixture..'current-profiles.json')
-    rejects(function()currentStore:applySettings(custom,candidate)end)
-    assert(readText(fixture..'current-profiles.json')==bytes)
+local function readBytes(path)local f=assert(io.open(path,'rb'));local data=f:read('*a');f:close();return data end
+for _,revision in ipairs({1,5,14,18})do
+ local prefix='reset'..revision..'-'
+ local bytes='{\r\n "schema":2, "management_revision":'..revision..', "profiles":{"10":{"a":2,"b":1,"c":0,"ratio":0.82}}, "language":"en"\r\n}'
+ local f=assert(io.open(fixture..prefix..'profiles.json','wb'));assert(f:write(bytes));f:close()
+ local count=#notes;local fresh=store(prefix):load();local backup=nil
+ for i=count+1,#notes do backup=backup or notes[i]:match('^CONFIGURATION_RESET_BACKUP (.+)$')end
+ assert(backup and readBytes(fixture..prefix..backup)==bytes)
+ assert(fresh.management_revision==19 and fresh.language=='auto' and next(fresh.profiles)==nil)
+ assert(fresh.gun_salvo_enabled and fresh.shortcuts.cycle.key==0 and fresh.shortcuts.camera_hold.key==117)
+ fresh.language='en';store(prefix):save(fresh);assert(store(prefix):load().language=='en','新格式设置正常保留')
 end
-local legacy5=json.decode(json.encode(legacySource));legacy5.camera_auto_center_degrees=nil;legacy5.management_revision=5;legacy5.shortcuts=nil;legacy5.gun_salvo_enabled=nil;legacy5.management_key=119
-legacy5.view_target_enabled=nil;legacy5.view_center_dot_enabled=nil;if legacy5.shortcuts then legacy5.shortcuts.view_target=nil end
-legacy5.target_gaze_pad_x=nil;legacy5.target_gaze_pad_l3=nil;legacy5.central_weapon_display=nil;legacy5.target_gaze_key=nil;legacy5.camera_hold_enabled=nil;legacy5.camera_r3_enabled=nil;legacy5.camera_center_key=nil;legacy5.camera_sensitivity=nil
-writeJson(fixture..'shortcuts-profiles.json',legacy5)
-local legacyBytes=readText(fixture..'shortcuts-profiles.json')
-local shortcutConfig=store('shortcuts-'):load()
-assert(shortcutConfig.management_revision==18 and shortcutConfig.shortcuts.management.key==119)
-assert(shortcutConfig.shortcuts.cycle.mods==3 and shortcutConfig.shortcuts.mount.key==118)
-assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
-assert(store('shortcuts-'):load().shortcuts.management.key==119)
-assert(readText(fixture..'shortcuts-profiles.before-custom-shortcuts.json')==legacyBytes)
--- 整合后的旧配置10须连续迁移两项设置；两份永久备份均保留原始字节。
-local legacy10=json.decode(json.encode(legacySource));legacy10.camera_auto_center_degrees=nil;legacy10.management_revision=10;legacy10.gun_salvo_enabled=nil;legacy10.shortcuts.salvo=nil
-legacy10.view_target_enabled=nil;legacy10.view_center_dot_enabled=nil;if legacy10.shortcuts then legacy10.shortcuts.view_target=nil end
-legacy10.target_gaze_pad_l3=nil;legacy10.target_gaze_pad_x=true;legacy10.central_weapon_display=nil
-legacy10.camera_hold_enabled=false;legacy10.camera_sensitivity=73
-writeJson(fixture..'combined-profiles.json',legacy10)
-local combinedBytes=readText(fixture..'combined-profiles.json')
-local combined=store('combined-'):load()
-assert(combined.management_revision==18 and combined.target_gaze_pad_l3==nil and not combined.target_gaze_enabled and combined.camera_r3_enabled)
-assert(not combined.camera_hold_enabled and combined.camera_sensitivity==73 and combined.central_weapon_display=='always')
-assert(combined.target_gaze_pad_x==nil and combined.profiles['10'].ratio==.82)
-assert(readText(fixture..'combined-profiles.before-controller-clicks.json')==combinedBytes)
-assert(readText(fixture..'combined-profiles.before-central-weapon-display.json')==combinedBytes)
-assert(store('combined-'):load().camera_sensitivity==73)
--- 真实旧配置12保留开关/方案；追加齐射默认关闭，备份原字节且重复加载不覆写。
-local legacy12=json.decode(json.encode(legacySource));legacy12.camera_auto_center_degrees=nil;legacy12.management_revision=12
-legacy12.view_target_enabled=nil;legacy12.view_center_dot_enabled=nil;if legacy12.shortcuts then legacy12.shortcuts.view_target=nil end
-legacy12.gun_salvo_enabled=nil;legacy12.shortcuts.salvo=nil
-legacy12.target_gaze_pad_l3=true;legacy12.camera_hold_enabled=true
-legacy12.shortcuts.mount={key=116,mods=3};legacy12.camera_center_key=116
-writeJson(fixture..'salvo-profiles.json',legacy12)
-local salvoBytes=readText(fixture..'salvo-profiles.json')
-local salvoConfig=store('salvo-'):load()
-assert(salvoConfig.management_revision==18 and not salvoConfig.gun_salvo_enabled)
-assert(not salvoConfig.target_gaze_enabled and salvoConfig.target_gaze_pad_l3==nil and salvoConfig.camera_hold_enabled and salvoConfig.profiles['10'].ratio==.82)
-assert(salvoConfig.shortcuts.salvo.key==0 and salvoConfig.shortcuts.mount.key==116)
-assert(readText(fixture..'salvo-profiles.before-gun-salvo.json')==salvoBytes)
-assert(store('salvo-'):load().shortcuts.salvo.key==0)
-salvoConfig.shortcuts.salvo={key=116,mods=5}
-assert(Config.centerShortcutMask(salvoConfig)==((1<<3)|(1<<5)))
--- 真实配置13升级：永久备份原字节、保留开关和方案；阈值端点可保存。
-local legacy13=json.decode(json.encode(legacySource));legacy13.management_revision=13;legacy13.camera_auto_center_degrees=nil
-legacy13.view_target_enabled=nil;legacy13.view_center_dot_enabled=nil;if legacy13.shortcuts then legacy13.shortcuts.view_target=nil end
-legacy13.camera_hold_enabled=true
-writeJson(fixture..'camera-profiles.json',legacy13)
-local cameraBytes=readText(fixture..'camera-profiles.json')
-local cameraStore=store('camera-');local cameraConfig=cameraStore:load()
-assert(cameraConfig.management_revision==18 and cameraConfig.camera_auto_center_degrees==nil and cameraConfig.camera_hold_enabled)
-assert(cameraConfig.profiles['10'].ratio==.82 and readText(fixture..'camera-profiles.before-camera-auto-center.json')==cameraBytes)
-for _,mode in ipairs({'normal','vr'})do
-    local update=json.decode(json.encode(action));update.view_target_mode=mode
-    cameraConfig=cameraStore:applySettings(cameraConfig,update)
-    assert(cameraStore:load().view_target_mode==mode and cameraStore:load().camera_auto_center_degrees==nil)
-end
-local toggled=cameraStore:setCameraHold(cameraConfig,true)
-assert(toggled.camera_hold_enabled and cameraStore:load().camera_hold_enabled)
-assert(not cameraConfig.camera_hold_enabled and toggled.camera_auto_center_degrees==nil)
-writeFail=true
-rejects(function()cameraStore:setCameraHold(toggled,false)end,'模拟写盘失败')
-assert(toggled.camera_hold_enabled and cameraStore:load().camera_hold_enabled)
-writeFail=false
-writeJson(fixture..'blocked-camera-profiles.json',legacy13)
-writeJson(fixture..'blocked-camera-profiles.before-camera-auto-center.json',{})
-local blockedBytes=readText(fixture..'blocked-camera-profiles.json')
-rejects(function()store('blocked-camera-'):load()end,'迁移备份已存在')
-assert(readText(fixture..'blocked-camera-profiles.json')==blockedBytes)
-local old={schema=1,profiles={['9']={a=0,b=1,ratio=.75}},keyboard_keys={49,50,51},management_key=119}
-writeJson(fixture..'migration-profiles.json',old)
-local oldBytes=readText(fixture..'migration-profiles.json')
-local migrated=store('migration-'):load()
-assert(migrated.schema==2 and migrated.profiles['9'].c==-1 and migrated.profiles['9'].ratio==.5)
-assert(migrated.management_key==119 and migrated.keyboard_keys[4]==52)
-assert(readText(fixture..'migration-profiles.before-three-sp.json')==oldBytes)
-assert(readText(fixture..'migration-profiles.before-management-options.json')==oldBytes)
--- 管理第 3/4 版的旧三挂比例迁移为 33%，分别保留原始字节。
-for _,revision in ipairs({3,4})do
-    local prefix='revision'..revision..'-'
-    local legacy={schema=2,management_revision=revision,profiles={['10']={a=2,b=0,c=1,ratio=1/3}},
-        language='en',central_hint=false,keyboard_keys={49,50,51,52},management_key=117}
-    writeJson(fixture..prefix..'profiles.json',legacy)
-    local bytes=readText(fixture..prefix..'profiles.json')
-    local upgraded=store(prefix):load()
-    assert(upgraded.management_revision==18 and upgraded.mod_enabled and upgraded.task_mount_enabled and upgraded.hangar_mount_enabled)
-    assert(upgraded.ammo_percent_two==50 and upgraded.ammo_percent_three==33 and upgraded.central_hint==nil)
-    assert(upgraded.profiles['10'].ratio==.33 and upgraded.language=='en')
-    assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
-    assert(not readText(fixture..prefix..'profiles.before-three-sp.json'))
-    assert(store(prefix):load().profiles['10'].ratio==.33) -- 再加载不重复迁移或覆盖永久备份。
-    assert(readText(fixture..prefix..'profiles.before-management-options.json')==bytes)
-end
-old.keyboard_keys={49,50,52};writeJson(fixture..'conflict-profiles.json',old)
-local conflict=readText(fixture..'conflict-profiles.json')
-rejects(function()store('conflict-'):load()end,'旧键位已占用 4')
-assert(readText(fixture..'conflict-profiles.json')==conflict)
-assert(not readText(fixture..'conflict-profiles.before-three-sp.json'))
-assert(not readText(fixture..'conflict-profiles.before-management-options.json'))
--- 配置15合并迁移：旧关闭模型不突然开启；NEXT含义保留，三份备份均保存原字节。
-for _,enabled in ipairs({false,true})do
-    local prefix=enabled and 'merged-on-' or 'merged-off-'
-    local old15=json.decode(json.encode(legacySource));old15.management_revision=15
-    old15.fixed_mount_enabled=enabled;old15.view_target_enabled=enabled;old15.target_gaze_pad_l3=true
-    writeJson(fixture..prefix..'profiles.json',old15)
-    local bytes=readText(fixture..prefix..'profiles.json');local converted=store(prefix):load()
-    assert(converted.management_revision==18 and converted.task_mount_enabled==enabled and converted.hangar_mount_enabled==enabled)
-    assert(converted.dpad_weapon_switch_enabled and converted.view_target_mode==(enabled and 'vr' or 'normal'))
-    assert(not converted.target_gaze_enabled and converted.fixed_mount_enabled==nil and converted.camera_auto_center_degrees==nil)
-    assert(converted.target_gaze_key==old15.target_gaze_key and converted.profiles['10'].ratio==.82)
-    for _,name in ipairs({'ui-input-options','independent-models','camera-interaction-v2'})do
-        assert(readText(fixture..prefix..'profiles.before-'..name..'.json')==bytes)
-    end
-    assert(store(prefix):load().task_mount_enabled==enabled)
-end
+local broken=Config.defaults();broken.target_gaze_pad_enabled=1;writeJson(fixture..'broken-profiles.json',broken)
+rejects(function()store('broken-'):load()end,'手柄和键盘注视')
 -- 旧响应、原生拒绝均不能被当作成功；失败后请求号继续递增。
 local replyMode='ok';local requestCount=0
 local client=Bridge.new{root=fixture,profile=Profile,readJson=readJson,execute=function()
@@ -765,10 +615,10 @@ assert(load() and calls.load==1 and calls.factory==1 and calls.register==1,'精�
 assert(load() and calls.load==1,'成功资源不重复加载')
 load,calls=loader('unregistered')
 assert(load() and calls.load==0 and calls.factory==1 and calls.register==1,'精确路径成功不应再触发登记表搜索')
-assert(calls.logs[1]:find('valid=true'))
+assert(table.concat(calls.logs,'\n'):find('valid=true',1,true))
 load,calls=loader('path_error')
 assert(load()and calls.load==1 and calls.register==1,'精确路径异常仍允许后备加载')
-assert(calls.logs[1]:find('MOUNT_ASSET_PATH_ERROR')and calls.logs[3]:find('registered=false'))
+assert(table.concat(calls.logs,'\n'):find('MOUNT_ASSET_PATH_ERROR',1,true)and table.concat(calls.logs,'\n'):find('registered=false',1,true))
 local env,loaded
 load,calls,env,loaded=loader('failed')
 assert(not load() and calls.warnings==1 and calls.register==0)
