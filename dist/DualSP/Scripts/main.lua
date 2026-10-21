@@ -15,11 +15,14 @@ local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面
 local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
 local runtimeFailed=false -- 模式识别出错后明确停用到重启，不不断重试或沿用旧许可。
 local syncRuntime=nil -- 完整状态清理函数在各模块定义之后建立。
-local nativeNote=assert(package.loadlib(root.."bin/DualSP.dll","dualsp_log"))
-local logUnavailable=false
-local function note(message)
-    if nativeNote(tostring(message))==false and not logUnavailable then
-        logUnavailable=true;print("[AC7MultiSP] Background logging unavailable; mission control remains active.")
+local note
+do -- 日志私有状态限于闭包，避免三线程整合后超出Lua入口局部变量上限。
+    local nativeNote=assert(package.loadlib(root.."bin/DualSP.dll","dualsp_log"))
+    local logUnavailable=false
+    note=function(message)
+        if nativeNote(tostring(message))==false and not logUnavailable then
+            logUnavailable=true;print("[AC7MultiSP] Background logging unavailable; mission control remains active.")
+        end
     end
 end
 local nativeHud=nil -- 核心剪影刷新接口加载后再建立 HUD 模块。
@@ -58,7 +61,6 @@ local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
-local nativeDebugWeapons=loadExport("dualsp_debug_weapons")
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
@@ -178,7 +180,7 @@ local debugSession=0 -- 玩家实例换代后递增，拒绝上一任务排队�
 local debugResponse=0 -- 已处理请求编号，包含正常拒绝。
 local debugAck=0 -- 仅完成核心与 HUD 交接后确认成功。
 local debugError=nil -- 调试请求错误单独展示，不把输入拒绝当成控制器故障。
-local debugWeapons={infinite=false,fast=false,response=0,ack=0}
+local debugWeapons={infinite=false,fast=false,response=0,ack=0,invoke=loadExport("dualsp_debug_weapons")}
 local debugProfileActive=false -- 调试方案只属于本次任务，检查点恢复也不能写入个人配置。
 local aircraftDebug=nil -- 换机事务独立于兵装，允许跨整关载入等待新玩家实例。
 local checkpointDebugProfile=false -- 真实检查点是否捕获了调试方案。
@@ -1404,11 +1406,11 @@ local function applyDebugHotkey(action)
     end
     note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
 end
-local function updateDebugWeapons()
+function debugWeapons.update()
     local allowed=runtimeAllowed and runtimeModEnabled and runtimeReason~="mission13_fixed_sp"and isFlight and configured
         and not supplySession and not internal and not restorePending and not checkpointPending and not errorText
         and not(aircraftDebug and aircraftDebug:busy())and valid(plane)and valid(activator)
-    local ok,err=nativeDebugWeapons(allowed and plane:GetAddress()or 0,allowed and activator:GetAddress()or 0,allowed and 1 or 0,
+    local ok,err=debugWeapons.invoke(allowed and plane:GetAddress()or 0,allowed and activator:GetAddress()or 0,allowed and 1 or 0,
         debugWeapons.infinite and 1 or 0,debugWeapons.fast and 1 or 0,allowed and game:GetTimeSeconds(plane)or 0)
     if not ok then
         debugWeapons.infinite=false;debugWeapons.fast=false
@@ -1417,14 +1419,14 @@ local function updateDebugWeapons()
     end
     return ok,err
 end
-local function applyDebugWeapons(action)
+function debugWeapons.apply(action)
     debugWeapons.response=tonumber(action.request)or 0
     local ok,err=pcall(function()
         assert(action.protocol==1 and action.session==debugSession and action.revision==weaponRevision,"调试界面协议不匹配，请成套安装")
         local allowed,reason=canDebugLoadout(false,true);assert(allowed,reason)
         assert(type(action.infinite)=="boolean"and type(action.fast)=="boolean","SP调试参数无效")
         debugWeapons.infinite=action.infinite;debugWeapons.fast=action.fast
-        local applied,detail=updateDebugWeapons();assert(applied,detail)
+        local applied,detail=debugWeapons.update();assert(applied,detail)
         debugWeapons.ack=debugWeapons.response;debugWeapons.error=nil
         note("DEBUG_WEAPONS_APPLIED request="..debugWeapons.ack.." plane="..planeId.." session="..debugSession
             .." revision="..weaponRevision.." infinite="..tostring(debugWeapons.infinite).." fast="..tostring(debugWeapons.fast))
@@ -1448,7 +1450,7 @@ local function applyAction(action)
             lastUIKey=nil
         end
     elseif action.type=="debug_loadout"then if runtimeModEnabled then applyDebugLoadout(action)end
-    elseif action.type=="debug_weapons"then applyDebugWeapons(action)
+    elseif action.type=="debug_weapons"then debugWeapons.apply(action)
     elseif action.type=="debug_aircraft"then aircraftDebug:request(action)
     elseif action.type=="toggle_gun_salvo"then
         if runtimeAllowed and runtimeModEnabled then
@@ -1849,7 +1851,7 @@ local function tick()
             for _,action in ipairs(batch)do applyAction(action)end
         end
     end
-    updateDebugWeapons()
+    debugWeapons.update()
     if aircraftDebug:busy()then publishState();return end -- 同一帧内也不继续维护原机体。
     if isFlight and configured and not supplySession and not errorText then
         if restorePending then

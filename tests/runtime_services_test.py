@@ -45,7 +45,7 @@ assert(config.shortcuts.camera_hold.key==117 and config.shortcuts.camera_hold.mo
 assert(config.shortcuts.cycle.key==0 and config.shortcuts.mount.key==0 and config.shortcuts.view_target==nil)
 config.profiles['10']={a=2,b=1,c=0,ratio=.82};currentStore:save(config)
 local original=readText(fixture..'current-profiles.json')
-local action={request=1,management_protocol=20,language='en',mod_enabled=false,task_mount_enabled=false,hangar_mount_enabled=true,dpad_weapon_switch_enabled=false,
+local action={request=1,management_protocol=21,language='en',mod_enabled=false,task_mount_enabled=false,hangar_mount_enabled=true,dpad_weapon_switch_enabled=false,
  gun_salvo_enabled=false,view_target_mode='vr',view_center_dot_enabled=true,central_weapon_display='always',target_gaze_pad_enabled=true,target_gaze_keyboard_enabled=false,
  camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=75,ammo_percent_three=66,keyboard_keys={49,50,51,52},shortcuts=json.decode(json.encode(config.shortcuts))}
 local nextConfig=currentStore:applySettings(config,action)
@@ -53,7 +53,7 @@ assert(not nextConfig.task_mount_enabled and nextConfig.hangar_mount_enabled and
 assert(nextConfig.target_gaze_pad_enabled and not nextConfig.target_gaze_keyboard_enabled and nextConfig.profiles['10'].ratio==.82)
 assert(readText(fixture..'current-profiles.previous.json')==original)
 local saved=readText(fixture..'current-profiles.json')
-for _,bad in ipairs({{'management_protocol',19},{'target_gaze_pad_enabled',1},{'target_gaze_keyboard_enabled',1},
+for _,bad in ipairs({{'management_protocol',20},{'target_gaze_pad_enabled',1},{'target_gaze_keyboard_enabled',1},
  {'view_target_mode','invalid'},{'task_mount_enabled',1},{'camera_sensitivity',201},{'ammo_percent_two',49},{'ammo_percent_three',33.5}})do
  local previous=action[bad[1]];action[bad[1]]=bad[2]
  rejects(function()currentStore:applySettings(nextConfig,action)end)
@@ -418,7 +418,7 @@ assert(locate()==nil and scans==1 and env.lastPlaneScan==1.5)
 world.GetFullName=function()return 'World /Game/Maps/Menu/Hangar.Hangar' end
 assert(locate()==nil and scans==1,'菜单不查找任务玩家')
 ''')
-lua.globals().hotkey_source = main_source[main_source.index('local function applyDebugHotkey('):main_source.index('local function applyAction(')]
+lua.globals().hotkey_source = main_source[main_source.index('local function applyDebugHotkey('):main_source.index('function debugWeapons.update(')]
 lua.execute(r'''
 -- 执行真实调试快捷操作：拒绝过期/忙碌请求；模型开关不能调用补弹换装。
 local json=dofile(script_dir..'/json.lua')
@@ -659,7 +659,7 @@ local function switchCase()
     local env=setmetatable({weaponSwitch={salvo={},read=function()return true,not state.busy,'native_busy' end,
         press=function(p,a)assert(p==100 and a==200);plane:OnWeaponSwitchPressed();plane:OnWeaponSwitchReleased();return true end},
         plane=plane,activator=activator,currentWorld={},weaponRevision=1,active=0,configured=true,isFlight=true,
-        nativeState={cached_sp={20,20,20}},
+        nativeState={cached_sp={20,20,20}},Profile=dofile(script_dir..'/loadout_profile.lua'),
         game={GetTimeSeconds=function()return state.time end,IsGamePaused=function()return state.paused end},
         valid=function(o)return o~=nil end,ready=function()return true end,IsInGameThread=function()return true end,
         note=function()end,refreshHUD=function()calls.hud=calls.hud+1 end,
