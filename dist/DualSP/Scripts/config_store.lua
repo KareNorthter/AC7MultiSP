@@ -37,7 +37,7 @@ local function validateSettings(settings)
     local chords={}
     for _,name in ipairs({"management","cycle","mount","salvo","camera_hold"})do
         local chord=settings.shortcuts[name]
-        assert(type(chord)=="table"and (supportedKey(chord.key)or((name=="salvo"or name=="camera_hold")and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
+        assert(type(chord)=="table"and (supportedKey(chord.key)or(name~="management"and chord.key==0 and chord.mods==0)),"快捷键需要一个常用键盘键，Esc和独立修饰键不可绑定")
         assert(type(chord.mods)=="number"and chord.mods%1==0 and chord.mods>=0 and chord.mods<=7,"快捷键修饰键无效")
         assert(not(chord.mods==3 and chord.key==46),"Ctrl+Alt+Delete不能用作模组快捷键")
         assert(not(chord.mods==2 and chord.key==115),"Alt+F4不能用作模组快捷键")
@@ -95,7 +95,7 @@ function Config.new(options)
     end
     function self:load()
         local config=readJson(root.."profiles.json")or {schema=2,management_revision=19,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=false,gun_salvo_enabled=true,central_weapon_display="switch_1s",profiles={},language="auto",mod_enabled=true,target_gaze_pad_enabled=false,target_gaze_keyboard_enabled=false,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
-            shortcuts={management={key=117,mods=0},cycle={key=117,mods=3},mount={key=118,mods=3},salvo={key=116,mods=3},camera_hold={key=120,mods=3}}}
+            shortcuts={management={key=117,mods=0},cycle={key=0,mods=0},mount={key=0,mods=0},salvo={key=116,mods=3},camera_hold={key=117,mods=3}}}
         local migrateSettings=config.schema==1 -- 旧版方案只补空 SP3，弹药参数迁至新版默认值。
         local migrateOptions=migrateSettings or config.management_revision==3 or config.management_revision==4
         assert(type(config.profiles)=="table"and (migrateSettings or config.schema==2),"不支持的配置版本")
@@ -226,11 +226,13 @@ function Config.new(options)
             config.target_gaze_keyboard_enabled=config.target_gaze_enabled
             config.target_gaze_enabled=nil;config.target_gaze_key=nil;config.camera_r3_enabled=nil
             config.shortcuts.view_target=nil -- 用户取消NEXT快捷键，模式只在管理页选择。
+            if config.shortcuts.cycle.key==117 and config.shortcuts.cycle.mods==3 then config.shortcuts.cycle={key=0,mods=0}end
+            if config.shortcuts.mount.key==118 and config.shortcuts.mount.mods==3 then config.shortcuts.mount={key=0,mods=0}end
             local conflict=false
             for _,chord in pairs(config.shortcuts)do
-                if chord.key==120 and chord.mods==3 then conflict=true end
+                if chord.key==117 and chord.mods==3 then conflict=true end
             end
-            config.shortcuts.camera_hold=conflict and {key=0,mods=0}or {key=120,mods=3}
+            config.shortcuts.camera_hold=conflict and {key=0,mods=0}or {key=117,mods=3}
             if conflict then note("CAMERA_HOLD_SHORTCUT_UNASSIGNED old_binding_preserved")end
             config.management_revision=19 -- 旧开关、显示习惯和方案保留，新默认值只用于新配置。
         end

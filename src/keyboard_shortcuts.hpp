@@ -31,7 +31,7 @@ template<std::size_t N> inline int matchingShortcut(const std::array<Shortcut,N>
 }
 template<std::size_t N> inline bool validShortcuts(const std::array<Shortcut,N>& values,const std::array<int,4>& direct) {
     for(std::size_t i=0;i<values.size();++i) {
-        if(i>=3 && values[i].key==0 && values[i].mods==0)continue; // 新键冲突时允许未绑定。
+        if(i>0 && values[i].key==0 && values[i].mods==0)continue; // 新键冲突时允许未绑定。
         if(!validShortcut(values[i]))return false;
         for(std::size_t j=0;j<i;++j)if(sameShortcut(values[i],values[j]))return false;
         for(int key:direct)if(values[i].mods==0&&values[i].key==key)return false;

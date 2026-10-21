@@ -68,7 +68,7 @@ int draftCameraCenterKey=VK_MBUTTON,draftCameraSensitivity=100;
 bool suppressedCaptureMouse=false;
 int draftAmmoPercentTwo=50,draftAmmoPercentThree=33;
 std::array<int,4> draftKeys{49,50,51,52};
-std::array<dualsp::Shortcut,5> shortcuts{{{VK_F6,0},{VK_F6,3},{VK_F7,3},{VK_F5,3},{VK_F9,3}}};
+std::array<dualsp::Shortcut,5> shortcuts{{{VK_F6,0},{0,0},{0,0},{VK_F5,3},{VK_F6,3}}};
 std::array<dualsp::Shortcut,5> draftShortcuts=shortcuts;
 std::string draftLanguage="auto",notice,managementError; // 新草稿默认跟随游戏文本语言。
 std::string draftCentralWeaponDisplay="switch_1s"; // 新配置默认只在切换后短显，保留右下HUD。
@@ -382,7 +382,7 @@ std::array<dualsp::Shortcut,5> readShortcuts(const Json& data) {
         const auto& item=data.at(names[i]);
         if(!item.at("key").is_number_integer()||!item.at("mods").is_number_integer())throw std::runtime_error("快捷键格式无效");
         values[i]={item.at("key").get<int>(),item.at("mods").get<int>()};
-        if(!(i>=3&&values[i].key==0&&values[i].mods==0)&&!dualsp::validShortcut(values[i]))throw std::runtime_error("快捷键不可用");
+        if(!(i>0&&values[i].key==0&&values[i].mods==0)&&!dualsp::validShortcut(values[i]))throw std::runtime_error("快捷键不可用");
     }
     return values;
 }
