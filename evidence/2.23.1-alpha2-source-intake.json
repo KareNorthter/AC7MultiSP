@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T10:54:06.940639+08:00",
+  "version": "2.23.1 alpha2",
+  "candidate": true,
+  "base_main": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "previous_candidate": "b0a2010c4078ad6b4c8548e14af7d986e85e12e1",
+  "source_thread": "01a15f12-100b-7640-9d2b-2c54ef825a45",
+  "source_commit": "7c61044a928d60a3a1b3b1710338823f6036f4ba",
+  "received_delta_base": "d5bc568f357d0d2fa42a71f4f484c7a153778041",
+  "base_installed_receipt": "evidence/2.23.1-alpha1-installed.json",
+  "preserve_personal_configuration": true,
+  "main_unchanged": true,
+  "install_authorized": true,
+  "release_authorized": false,
+  "integration_fix": "原生暂停关闭后跨调度等待归还，唯一恢复/重开，身份核对及超时安全回滚",
+  "gameplay_verified": false
+}

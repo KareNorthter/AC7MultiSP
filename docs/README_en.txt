@@ -1,4 +1,10 @@
-AC7MultiSP 2.23.1 alpha1
+AC7MultiSP 2.23.1 alpha2
+
+2.23.1 alpha2 changes since alpha1
+• Qualify mod UAV/HPM by actual native classes/callbacks and lifecycle contracts, including S-44 and Arkbird. Improve base-slot weapon names and detect external class changes before reading cached stock.
+• Aircraft restart from a native pause menu waits across callbacks for native resume, up to three seconds. Resume/restart are each requested once; timeout or identity changes roll back safely.
+• Retain settings/bindings, alpha1 cannon salvo and --- display, accepted mount assets and F-14IA hiding. Gameplay acceptance is pending.
+
 
 Internal test candidate 2.23.1 alpha1 (since official 2.23.0)
 • Skip redundant weapon probing during hangar browsing; inspect only existing, fully loaded default objects.

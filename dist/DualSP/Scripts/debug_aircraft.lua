@@ -166,7 +166,12 @@ function Module.new(deps)
             self.ack=action.request;self.status="restarting";self.error=nil
             self.notice="正在重开任务，等待 "..target.name.." 实际生成。"
             deps.note("DEBUG_AIRCRAFT_RESTART request="..action.request.." from="..context.id.." to="..target.plane_id)
-            restart(owner) -- 目标选择完成后才交接原生暂停并重开，不自行生成Pawn。
+            if restart(owner)==false then
+                -- 原生关菜单可能跨调度完成，保存唯一事务，等待归还后才发出一次重开。
+                pending.resume=restart;pending.resumeOwner=address(owner)
+                self.notice="正在等待原生暂停菜单归还，随后重开任务。"
+                waiting(pending,"waiting_native_resume");changed()
+            end
         end)
         if not ok then
             local recovered=not pending or rollback(pending)
@@ -205,6 +210,23 @@ function Module.new(deps)
             return false
         end
         if not deps.allowed()or not valid(world)then waiting(pending,"waiting_world");return true end
+        if pending.resume then
+            local ok,err=pcall(function()
+                assert(address(world)==pending.world and address(context.plane)==pending.plane,
+                    "等待暂停归还时原世界或玩家已变化，未重开任务")
+                assert(context.instance:GetSelectedPlaneID()==pending.target and context.instance:GetSelectedPlaneSWP()==0
+                    and context.instance:GetSelectedPlaneSkinNo()==0,"等待暂停归还时目标选择已变化，未重开任务")
+                local owner=controller(context,context.plane)
+                assert(address(owner)==pending.resumeOwner,"等待暂停归还时控制器已变化，未重开任务")
+                if pending.resume(owner)~=false then
+                    pending.resume=nil;pending.resumeOwner=nil;pending.started=os.clock()
+                    self.notice="正在重开任务，等待 "..pending.name.." 实际生成。"
+                    waiting(pending,"waiting_new_pawn");changed()
+                end
+            end)
+            if not ok then local recovered=rollback(pending);fail(err,not recovered);return false end
+            return true -- 本轮不重建旧玩家兵装，也不在同一调度重复执行重开。
+        end
         local pawn=deps.game():GetPlayerPawn(context.instance,0)
         if valid(pawn)and not pawn:IsA(StaticFindObject("/Script/Nimbus.PlayerPlane"))then waiting(pending,"waiting_player_plane");return true end
         if not valid(pawn)or (address(world)==pending.world and address(pawn)==pending.plane)then

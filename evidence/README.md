@@ -1,5 +1,7 @@
 # 证据分类索引
 
+- 当前alpha2来源见`2.23.1-alpha2-source-intake.json`；暂停换机现场与修订见`aircraft-native-pause-handoff-alpha2.json`，构建/安装见本版integration和installed回执。
+
 - 当前2.23.1 alpha1已成套编译、通过11项现有检查并安装，个人配置原字节保持，游戏效果待用户验收。接收与交付见`2.23.1-alpha1-source-intake.json`、`2.23.1-alpha1-integration.json`及`2.23.1-alpha1-installed.json`；以下来源记录的未编译/安装保留其当时含义。
 
 - [特殊机体原生退让及机库浏览保护](special-aircraft-native-fallback-20261022.json)：接收“vortex管理更新”线程两次IRCM异步依赖创建断言证据；候选取消无活动页面的CDO探测，F-14IA提前退让，其他机体接入错误在本会话内隔离并归还原生输入/显示。原生资源加载仍有独立风险，未宣称修复引擎断言，未编译、测试、安装或操作游戏。
@@ -10,6 +12,8 @@
 [Adler HGP静态候选](gun-salvo-adler-hgp-static.json)：所给独立版包含va/Artillery及vb/Bullet两款MGP编号吊舱，均显式开启按住连发；Lua和核心同步登记精确类，并接续2.23.0主线保留XR302修正。未构建、测试或安装，实际HGP名称映射和发射行为待用户现场协助；原包、资源及解析JSON不入Git。
 
 [XR302齐射识别现场](gun-salvo-xr302-inspection.json)：用户暂停后只读核对真实玩家及兵装，确认自定义PLSL类被Lua/核心两层原版类名白名单排除；补入精确类的源码尚未构建、测试或安装，不作为实机修复验收。现场安装标识2.22.2 alpha1，修订基于main/2.22.1，旧验收与发布回执保留。
+- [Mod机体UAV/HPM多挂与名称来源](mod-special-sp-contract-20261022.json)：S-44的HPM复用ECM编号31、Arkbird的UAV遭Raven白名单限制；按真实UAV类与既有回调/装填契约开放候选，保留IRCM及未知机制拒绝。缺Reference时沿真实父链恢复同槽展示来源，另防作者外部换装导致缓存串槽。未编译、产品测试、安装或操作游戏。
+
 
 - [正式主线2.23.0定名](2.23.0-formal-main.json)：用户验收alpha1 r3后授权合main、因性能优化定名2.23.0；功能源码不变，仅更新五处版本/元数据输入及说明。优化经验入原开发/架构/挂载正文；本机已验收alpha1与旧构建回执保留，正式产物和发布包另记。
 

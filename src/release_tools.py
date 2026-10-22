@@ -121,7 +121,9 @@ def source_snapshot(root=ROOT):
         'evidence/special-aircraft-native-fallback-20261022.json',
         'evidence/gun-salvo-xr302-inspection.json','evidence/gun-salvo-adler-hgp-static.json',
         'evidence/gun-salvo-adler-hgp-live.json','evidence/gun-salvo-mod-pod-survey.json',
-        'src/research/survey_gun_pods.py'))
+        'src/research/survey_gun_pods.py',
+        'evidence/mod-special-sp-contract-20261022.json',
+        'evidence/aircraft-native-pause-handoff-alpha2.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
 

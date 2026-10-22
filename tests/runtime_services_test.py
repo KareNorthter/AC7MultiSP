@@ -782,6 +782,27 @@ s.module:configured(120,{a=0,b=1,c=-1,ratio=.5});assert(s.module:profile(120).b=
 temporary.a=2;assert(s.module:profile(120).a==0,'外部副本不能改写任务临时方案')
 s:menu();s.module:pump('singleplayer_menu');assert(not s.module:profile(120),'返回菜单不保留临时换机方案')
 
+-- 关闭原生暂停菜单可以跨调度完成；等待中只保留一个事务，失败仍恢复原选择。
+s=scenario();local resumeReady=false;local resumeCalls=0
+s.deps.prepare=function()return function(owner)
+    resumeCalls=resumeCalls+1
+    if not resumeReady then return false end
+    owner:RestartLevel()
+end end
+s:request(1);assert(s.restart==0 and s.module:busy()and s.module.pending.stage=='waiting_native_resume')
+s:request(2);assert(resumeCalls==1,'等待归还时重复申请不能重发恢复或重开')
+assert(s.module:pump('singleplayer')and s.restart==0)
+resumeReady=true;s.module:pump('singleplayer');assert(s.restart==1)
+s.module:pump('singleplayer');assert(s.restart==1,'恢复完成后只能重开一次')
+s=scenario();s.deps.prepare=function()return function()return false end end
+s:request(1);s.selected=130;s.module:pump('singleplayer')
+assert(not s.module:busy()and s.module.status=='failed'and s.selected==110 and s.restart==0)
+s=scenario();local calls=0;s.deps.prepare=function()return function()
+    calls=calls+1;if calls>1 then error('模拟暂停归还超时')end;return false
+end end
+s:request(1);s.module:pump('singleplayer')
+assert(not s.module:busy()and s.selected==110 and s.weapon==2 and s.skin==3 and s.restart==0)
+
 s=scenario();s.throwRestart=true;s:request(1)
 assert(s.restart==1 and not s.module:busy()and s.module.status=='failed' and s.selected==110 and s.weapon==2)
 assert(s.skin==3 and s.emblem==4 and s.module:profile(110).a==2 and s.blocked==0,'同一原世界失败须恢复选择及临时原方案')
@@ -805,3 +826,44 @@ os.clock=originalClock
 StaticFindObject=originalFind
 ''')
 print('原生重开换机：官方编号/许可标记、未持有DLC可尝试、过期拒绝、代次等待、实际玩家确认、临时方案与失败/退出隔离检查通过')
+
+# 运行真实暂停交接闭包，检查原生恢复只请求一次、跨调度等待和超时边界。
+pause_start = main_source.index('    prepare=function()', main_source.index('aircraftDebug=dofile'))
+pause_end = main_source.index('\n    end}\n-- 用户明确应用才换装', pause_start)
+lua.globals().pause_prepare_source = 'return ' + main_source[pause_start + len('    prepare='):pause_end] + '\nend'
+lua.execute(r'''
+local function scenario()
+    local state={paused=true,closes=0,restarts=0,now=0,selected=120,weapon=0}
+    local function object(id)return {IsValid=function()return true end,GetAddress=function()return id end}end
+    local world=object(900);local pauser=object(501);local settings=object(502)
+    settings.GetWorld=function()return world end;settings.Pauser=pauser
+    local plane=object(200);plane.GetWorld=function()return world end
+    local lease={world=900,settings=settings,existing=true,owned=false,pauser=501}
+    local manager=object(600);manager.GetWorld=function()return world end
+    manager.GetCurrentUIManagerActor=function()return manager end
+    manager.CloseMenuAndResumePlay=function()state.closes=state.closes+1 end
+    local owner=object(300);owner.RestartLevel=function()state.restarts=state.restarts+1 end
+    local instance={GetSelectedPlaneID=function()return state.selected end,GetSelectedPlaneSWP=function()return state.weapon end}
+    local env=setmetatable({managementPause=lease,panelOpen=true,instance=instance,plane=plane,
+        valid=function(o)return o and o:IsValid()end,
+        StaticFindObject=function()return manager end,
+        existingManagementPauseValid=function(value)return value==lease and settings.Pauser==pauser and state.paused end,
+        game={IsGamePaused=function()return state.paused end},note=function()end,requestClose=0,
+        releaseWeaponInput=function()end,releaseRuntimeOwnership=function()end,
+        nativeHud={reset=function()end},weaponPresentation={reset=function()end},
+        nativeRuntimeGate=function()return true end,resetCheckpointState=function()end,resetFlightTracking=function()end,
+        os={clock=function()return state.now end}}, {__index=_G})
+    env.setPanel=function()env.panelOpen=false;env.managementPause=nil end
+    local prepare=assert(load(pause_prepare_source,'真实换机暂停交接','t',env))()
+    state.resume=prepare();state.owner=owner;state.settings=settings;return state
+end
+local s=scenario();assert(s.resume(s.owner)==false and s.closes==1 and s.restarts==0)
+s.now=.02;assert(s.resume(s.owner)==false and s.closes==1,'等待不能重发原生关闭调用')
+s.settings.Pauser=nil;s.paused=false;s.now=.04;s.resume(s.owner)
+assert(s.restarts==1 and not pcall(s.resume,s.owner),'原生恢复后重开一次，拒绝重复调用')
+s=scenario();s.resume(s.owner);s.now=3.1
+assert(not pcall(s.resume,s.owner)and s.closes==1 and s.restarts==0,'未归还的其他暂停不得强清或强行重开')
+s=scenario();s.resume(s.owner);s.settings.Pauser=nil;s.paused=false;s.selected=130
+assert(not pcall(s.resume,s.owner)and s.restarts==0,'原生回调改变目标选择必须拒绝重开')
+''')
+print('原生暂停换机：真实闭包跨调度归还、唯一恢复/重开、超时和目标变化边界检查通过')

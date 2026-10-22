@@ -123,9 +123,25 @@ function ModAircraft.new(note)
         error("机体类继承链过长或成环")
     end
     -- 只有基础蓝图同一槽的实际WeaponClass一致，才保留其自定义PWDT代号（如2eml）。
-    function self:baseWeapons(info)
+    function self:baseWeapons(info,actor)
         local path=classPath(info.reference)
         local class=path and StaticFindObject(path)or nil
+        if not valid(class)and not path and valid(actor)and type(info.code)=="string"and info.code:match("^[%w_%-]+$")then
+            -- 部分本机目录未能导出Reference。只接受真实实例父链中的完整标准路径，
+            -- 不加载类，也不把“猜到同名类”当作机体身份或写入许可。
+            local expected=classPath("/Game/Blueprint/Player/Pawn/AcePlayerPawn_"..info.code):lower()
+            local candidate=actor:GetClass()
+            for _=1,64 do
+                if not self:readyObject(candidate)then break end
+                local actual=candidate:GetFullName():match("^[^ ]+ (.+)$")
+                if actual and actual:lower()==expected then
+                    class=candidate
+                    self:warn("base_reference/"..info.code,"plane="..info.code.." 基础引用不可用，展示资料沿已核对的实际父类读取")
+                    break
+                end
+                candidate=candidate:GetSuperStruct()
+            end
+        end
         local default=self:existingDefault(class)
         local activator=valid(default)and default.PlayerWeaponActivator or nil
         if not self:readyObject(activator)then return nil end

@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T10:54:06.940639+08:00",
+  "observed_version": "2.23.1 alpha1",
+  "user_report": "暂停任务时打开F6管理界面换机，提示原生菜单暂停没有完成归还。",
+  "log_evidence": {
+    "pid": 28828,
+    "request": 6,
+    "from": 140,
+    "to": 106,
+    "local_time": "2026-10-22 10:04:10 +08:00",
+    "failure": "main.lua:1334: 原生菜单暂停没有完成归还，未重开任务",
+    "same_dispatch": true,
+    "effective_pause_at_open": true,
+    "management_owned_pause": false
+  },
+  "finding": "旧路径请求原生CloseMenuAndResumePlay后同调度立即断言Pauser和实际暂停已清，日志证实该断言失败；不证明其他原生暂停原因已定位或会在固定时长消失。",
+  "changes": [
+    "仅明确换机发送一次原生恢复请求，先让出当前调度；后续仅在该换机事务中检查暂停归还",
+    "等待最多3秒，每次核对原世界、玩家持有和控制器、目标机体/SP及基础涂装；归还后只重开一次",
+    "超时或身份/目标变化走现有安全回滚；不重发恢复、不写Pauser或暂停原因、不强行解除其他系统暂停",
+    "普通关闭F6仍保留原暂停，普通直接F6换机沿原有路径"
+  ],
+  "raw_files": [
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Temp\\native-pause-failure-alpha1\\mod.log",
+      "sha256": "1f5a14de8a9342a4c74549f950a3414a782c927dcd8c6ca17e347936ecd31fa7"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Temp\\native-pause-failure-alpha1\\native.log",
+      "sha256": "d71f42db6cf431de38fa229c8d244693b8ec3b20ab54d83df3043475296b8904"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Temp\\native-pause-failure-alpha1\\VERSION",
+      "sha256": "a5b4fdf9535eebe4be098649f898d4295c5638a090b369b8ad1a23647ce3cfe1"
+    }
+  ],
+  "process_memory_read_or_written": false,
+  "game_functions_called": false,
+  "validation_scope": "新增场景扩展现有runtime_services_test，包括真实prepare闭包和换机状态机；实机效果待用户验收。",
+  "gameplay_verified": false
+}

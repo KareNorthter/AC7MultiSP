@@ -1,4 +1,4 @@
--- AC7MultiSP 2.23.1 alpha1候选：特殊机体原生退让、机库访问保护及Mod炮类SP齐射适配。
+-- AC7MultiSP 2.23.1 alpha2候选：Mod UAV/HPM契约适配、名称来源修正及暂停换机分阶段交接。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -74,7 +74,8 @@ note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 managemen
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
-local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 按真实类检查电子战；TLS/UAV保留原范围。
+loadExport("dualsp_mod_uav_supported") -- UAV/HPM按真实类型与原生契约；选装新增第五返回值。
+local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 按真实类检查电子战/UAV，TLS保留原范围。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却前核对持续策略，已登记原生TLS交给保有事务。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
 local nativeLoadoutAmmo=loadExport("dualsp_loadout_ammo") -- 三页统一读取部件加成后的完整载量。
@@ -260,7 +261,7 @@ local descriptions={
     lasm="远程反舰导弹",lagm="远程空对地导弹",lacm="远程巡航导弹",["4agm"]="四目标空对地导弹",["8agm"]="八目标空对地导弹",
     ugb="无制导炸弹",gpb="精确制导炸弹",xsdb="小直径炸弹",sffs="自锻破片子母弹",sod="远距撒布弹药",faeb="燃料空气炸弹",
     eml="电磁轨道炮",plsl="脉冲激光炮",tls="战术激光系统",rkt="火箭弹",grkt="制导火箭弹",mgp="机炮吊舱",mpbm="多用途爆炸导弹",uav="无人机",ecm="电子干扰",mstm="多目标导弹",admm="全向多用途导弹"}
-local unsupportedDual={[26]=true,[31]=true} -- 保留未知31/26的门槛；真实电子战类由核心判断，不限机型或编号。
+local unsupportedDual={[26]=true,[31]=true} -- 未知31/26仍拒绝；电子战/UAV真实类及生命周期由核心核对。
 local electronicDecisionSeen={} -- 仅去重诊断日志，不缓存资格；换涂装后仍读取当前真实类。
 local names={f04e="F-4E Phantom II",f15c="F-15C Eagle",f15e="F-15E Strike Eagle",f18f="F/A-18F Super Hornet",f16c="F-16C Fighting Falcon",f22a="F-22A Raptor",f35c="F-35C Lightning II",a10a="A-10C Thunderbolt II",f14d="F-14D Super Tomcat",f02a="F-2A",f15j="F-15J",j39e="Gripen E",m21b="MiG-21bis",m29a="MiG-29A",m31b="MiG-31B",mr2k="Mirage 2000-5",rflm="Rafale M",typn="Typhoon",pkfa="Su-57",su30="Su-30M2",su30sm="Su-30SM",su33="Su-33",su34="Su-34",su35="Su-35S",su37="Su-37",su47="Su-47",x02s="X-02S Strike Wyvern",adf11f="ADF-11F Raven",zoef="ADF-01 FALKEN",mrgn="ADFX-01 Morgan",dark="DarkStar",f18e="F/A-18E",f18etg="F/A-18E Top Gun",f14a="F-14A",f14atg="F-14A Top Gun",su57tg="Su-57 Top Gun",f104="F-104C",asfx="ASF-X Shinden II",fa27="XFA-27",fa44="CFA-44 Nosferatu",f15m="F-15 S/MTD",f16x="F-16XL",fb22="FB-22",f18x="F/A-18F Block III",f02x="F-2A Super Kai",m35d="MiG-35D",yf23="YF-23"}
 
@@ -334,7 +335,7 @@ local function readOptionsFor(id)
     local continuousOptions={}
     local salvoOptions={}
     local presentation={}
-    local baseWeapons=modAircraft:baseWeapons(info)
+    local baseWeapons=modAircraft:baseWeapons(info,sourcePlane) -- 目录软引用缺失时只沿实际父类补齐展示来源。
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     -- 仅登记静态配置已核对的炮类SP；编号0也是有效编号，不能当成缺失。
     local salvoClasses={
@@ -364,16 +365,17 @@ local function readOptionsFor(id)
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
-        local ok,supported,electronic,reason=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
+        local ok,supported,electronic,reason,uav=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
         assert(ok,supported)
-        assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string","持续兵装资格回执不完整")
-        if electronic or unsupportedDual[weaponIds[i]]then continuousOptions[i]=supported
+        assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string"and type(uav)=="boolean","持续兵装资格回执不完整")
+        if electronic or uav or unsupportedDual[weaponIds[i]]then continuousOptions[i]=supported
         else continuousOptions[i]=true end
-        if electronic or weaponIds[i]==31 then
+        if electronic or uav or unsupportedDual[weaponIds[i]]then
             local key=info.code.."/"..name.."/"..reason
             if not electronicDecisionSeen[key]then
                 electronicDecisionSeen[key]=true
-                note((supported and "MOD_ELECTRONIC_SUPPORTED"or "MOD_ELECTRONIC_UNAVAILABLE")..
+                note((uav and (supported and "MOD_UAV_SUPPORTED"or "MOD_UAV_UNAVAILABLE")or
+                    (supported and "MOD_ELECTRONIC_SUPPORTED"or "MOD_ELECTRONIC_UNAVAILABLE"))..
                     " plane="..info.code.." config="..i.." weapon_id="..weaponIds[i].." class="..name.." reason="..reason)
             end
         end
@@ -1321,24 +1323,38 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         local ok,err=nativeRuntimeGate(0);assert(ok,err)
         ok,err=nativeRuntimeGate(1);assert(ok,err)
         resetCheckpointState();resetFlightTracking()
+        local targetId,targetWeapon,resumeRequestedAt=nil,nil,nil
+        local restartIssued=false
         return function(owner)
-            local targetId,targetWeapon=instance:GetSelectedPlaneID(),instance:GetSelectedPlaneSWP()
+            assert(not restartIssued,"换机重开请求已发出，拒绝重复执行")
+            if not targetId then targetId,targetWeapon=instance:GetSelectedPlaneID(),instance:GetSelectedPlaneSWP()end
             if fromNativePause then
                 -- 仅明确换机才消费原生暂停菜单；普通关闭F6仍保留原菜单和暂停。
-                assert(existingManagementPauseValid(pause),"重开前原生暂停身份已变化")
-                assert(valid(resumeManager)and valid(resumeManager:GetWorld())
-                    and resumeManager:GetWorld():GetAddress()==pause.world,"重开前原生暂停菜单身份已变化")
-                resumeManager:CloseMenuAndResumePlay()
+                if not resumeRequestedAt then
+                    assert(existingManagementPauseValid(pause),"重开前原生暂停身份已变化")
+                    assert(valid(resumeManager)and valid(resumeManager:GetWorld())
+                        and resumeManager:GetWorld():GetAddress()==pause.world,"重开前原生暂停菜单身份已变化")
+                    resumeRequestedAt=os.clock()
+                    resumeManager:CloseMenuAndResumePlay()
+                    note("DEBUG_AIRCRAFT_NATIVE_RESUME_REQUESTED world="..pause.world)
+                    return false -- 让原生菜单完成本轮关闭/动画回调，下一次调度再核对。
+                end
                 assert(valid(pause.settings)and valid(pause.settings:GetWorld())
                     and pause.settings:GetWorld():GetAddress()==pause.world,"关闭暂停菜单时任务世界已变化，未重开任务")
-                assert(not valid(pause.settings.Pauser)and not game:IsGamePaused(pause.settings),
-                    "原生菜单暂停没有完成归还，未重开任务") -- 其他暂停原因仍存在时拒绝，不强行清除。
+                assert(not panelOpen and not managementPause and not managementPauseError,
+                    "等待暂停归还时管理面板状态已变化，未重开任务")
+                local pauser=pause.settings.Pauser
+                assert(not valid(pauser)or pauser:GetAddress()==pause.pauser,"原生暂停拥有者已变化，未重开任务")
+                if valid(pauser)or game:IsGamePaused(pause.settings)then
+                    assert(os.clock()-resumeRequestedAt<3,"原生菜单暂停归还超时，未重开任务；请先恢复游戏后重试")
+                    return false -- 不重发关闭命令，不清其他系统的暂停原因。
+                end
                 note("DEBUG_AIRCRAFT_NATIVE_MENU_RESUMED world="..pause.world)
             end
             assert(instance:GetSelectedPlaneID()==targetId and instance:GetSelectedPlaneSWP()==targetWeapon,
                 "关闭暂停菜单时目标机体选择已变化，未重开任务") -- 原生关菜单可能同步回调，不能让它撤回已核对的目标。
             -- 原生菜单已恢复后，重开失败交给外层恢复原机体选择；不能只用SetGamePaused(true)伪造旧菜单。
-            owner:RestartLevel()
+            restartIssued=true;owner:RestartLevel()
         end
     end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
@@ -2083,7 +2099,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.23.1 alpha1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.23.1 alpha2 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
