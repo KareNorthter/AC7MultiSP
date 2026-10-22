@@ -1,5 +1,7 @@
 AC7MultiSP 2.24.0 alpha1
 
+Build completed and all 11 existing checks passed. Installation is pending the deployment choice because the current game files are Vortex symbolic links. Gameplay validation is pending.
+
 Internal test changes since 2.23.1
 • Add Version and updates: one background check, out-of-mission notice, browser download links and bilingual credits. Failure does not interrupt gameplay.
 • Add author contact email karenorthterofchina@gmail.com and test feedback QQ group 1072924682.

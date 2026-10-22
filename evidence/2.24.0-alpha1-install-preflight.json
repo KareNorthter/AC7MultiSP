@@ -1,0 +1,137 @@
+{
+  "recorded_at": "2026-10-22T08:38:12.389275+00:00",
+  "version": "2.24.0 alpha1",
+  "installed": false,
+  "failure_phase": "preflight",
+  "reason": "当前安装为Vortex文件符号链接，严格手动安装入口拒绝越界写入；等待用户选择部署方式",
+  "runtime_files_match_baseline": true,
+  "mount_assets_match_baseline": true,
+  "linked_files": {
+    "ue4ss/Mods/DualSP/enabled.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\enabled.txt",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "ue4ss/Mods/DualSP/install-receipt.json": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\install-receipt.json",
+      "sha256": "5e55b5abb60d2d3339eaa1f523144b7416b75245c0ba3c4b7764388a9ed7a847"
+    },
+    "ue4ss/Mods/DualSP/VERSION": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\VERSION",
+      "sha256": "d8d4e6724775d85815323d3fc5cc384d3141937b51ab6ae8e377d640942a20f1"
+    },
+    "ue4ss/Mods/DualSP/vortex-package.json": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\vortex-package.json",
+      "sha256": "67e70c480206244274f9faf8b83f23ab486597fe454529f07b5b586cb1b139b6"
+    },
+    "ue4ss/Mods/DualSP/Audio/SP2.wav": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Audio\\SP2.wav",
+      "sha256": "278b8f8815823522ed5f121711a1a12eda2ae8e89991f8522d1fff22832d9640"
+    },
+    "ue4ss/Mods/DualSP/bin/DualSP.dll": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\bin\\DualSP.dll",
+      "sha256": "b0f50143c043c7a19ce78225aeb162f7479b0e912012c5c53b09a872f61b2e1d"
+    },
+    "ue4ss/Mods/DualSP/bin/DualSPUI.dll": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\bin\\DualSPUI.dll",
+      "sha256": "fb0e9920f169f10143d2f908008fb4993fcd2eff6c79275d31eb9e2b245d18fb"
+    },
+    "ue4ss/Mods/DualSP/docs/Original_README_en.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\docs\\Original_README_en.txt",
+      "sha256": "08de792256d5c7f56b6d345ce70e1c0010a58a422f4d00750ff4ab9fb3c214f8"
+    },
+    "ue4ss/Mods/DualSP/docs/Original_README_zh-CN.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\docs\\Original_README_zh-CN.txt",
+      "sha256": "4c21976a9228cd69871ceb4155db197ea06b76befa53a0b123af9affe2adc984"
+    },
+    "ue4ss/Mods/DualSP/docs/Vortex_Test_Readme.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\docs\\Vortex_Test_Readme.txt",
+      "sha256": "4a72102ab868229c185d47698be28d4b3b2303af6233c9beca85c0474a23b4b9"
+    },
+    "ue4ss/Mods/DualSP/licenses/DearImGui.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\licenses\\DearImGui.txt",
+      "sha256": "173506a2d6f7fb67990d257fb2507f188690eca39060c39469ae7bef43aae2a3"
+    },
+    "ue4ss/Mods/DualSP/licenses/MinHook.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\licenses\\MinHook.txt",
+      "sha256": "d5c2224982b0b95a16b098a561335fa93f3eaf4d0aa964b7843edb986df78dc8"
+    },
+    "ue4ss/Mods/DualSP/licenses/nlohmann-json.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\licenses\\nlohmann-json.txt",
+      "sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603"
+    },
+    "ue4ss/Mods/DualSP/licenses/UE4SS.txt": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\licenses\\UE4SS.txt",
+      "sha256": "ddc030e25d0ea87aca4ae84c0ed3f868d69273c00c0c12ea1e26f1c6130f5d2e"
+    },
+    "ue4ss/Mods/DualSP/Scripts/config_store.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\config_store.lua",
+      "sha256": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517"
+    },
+    "ue4ss/Mods/DualSP/Scripts/debug_aircraft.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\debug_aircraft.lua",
+      "sha256": "ca79576751710a0862a2d5953c1df07d66e09a044d84ff6e4209c287d14516c3"
+    },
+    "ue4ss/Mods/DualSP/Scripts/gun_salvo.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\gun_salvo.lua",
+      "sha256": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce"
+    },
+    "ue4ss/Mods/DualSP/Scripts/json.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\json.lua",
+      "sha256": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e"
+    },
+    "ue4ss/Mods/DualSP/Scripts/loadout_flow.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\loadout_flow.lua",
+      "sha256": "010aa0e221ede8c4e2c50a9cf66a311db47494c31c2c99bf9203fd3214e83dcf"
+    },
+    "ue4ss/Mods/DualSP/Scripts/loadout_profile.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\loadout_profile.lua",
+      "sha256": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c"
+    },
+    "ue4ss/Mods/DualSP/Scripts/main.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua",
+      "sha256": "9ec73768af5aac95d2b2381009c6c03d37f147f6833fef383b230e44d8141450"
+    },
+    "ue4ss/Mods/DualSP/Scripts/mod_aircraft.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\mod_aircraft.lua",
+      "sha256": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03"
+    },
+    "ue4ss/Mods/DualSP/Scripts/mount_assets.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\mount_assets.lua",
+      "sha256": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1"
+    },
+    "ue4ss/Mods/DualSP/Scripts/native_bridge.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\native_bridge.lua",
+      "sha256": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392"
+    },
+    "ue4ss/Mods/DualSP/Scripts/native_hud.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\native_hud.lua",
+      "sha256": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd"
+    },
+    "ue4ss/Mods/DualSP/Scripts/native_loadout.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\native_loadout.lua",
+      "sha256": "eae4c49fa6fd018a07411554c90f538ba1039e313cf7cd7377cb62e879223ec7"
+    },
+    "ue4ss/Mods/DualSP/Scripts/runtime_context.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\runtime_context.lua",
+      "sha256": "e1d97e37c82fe670caf9ccbef4ec9f82e0aa6cb591d8f60acc0ec7178f65adaf"
+    },
+    "ue4ss/Mods/DualSP/Scripts/weapon_cycle.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\weapon_cycle.lua",
+      "sha256": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807"
+    },
+    "ue4ss/Mods/DualSP/Scripts/weapon_names.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\weapon_names.lua",
+      "sha256": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada"
+    },
+    "ue4ss/Mods/DualSP/Scripts/weapon_presentation.lua": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\ue4ss\\Mods\\DualSP\\Scripts\\weapon_presentation.lua",
+      "sha256": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be"
+    },
+    "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak": {
+      "target": "C:\\Users\\83717\\AppData\\Roaming\\Vortex\\acecombat7skiesunknown\\mods\\AC7MultiSP 2.23.1 Vortex Test2 3797 2.23.1-Test2 2026-10-22T05-55Z M0A2U62pG\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Mounts_P.pak",
+      "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1"
+    }
+  },
+  "game_files_changed": false,
+  "vortex_source_changed": false
+}

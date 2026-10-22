@@ -1,6 +1,6 @@
 # 证据分类索引
 
-- 2.24.0 alpha1接收与交付：`2.24.0-alpha1-source-intake.json`、`2.24.0-alpha1-integration.json`、`2.24.0-alpha1-installed.json`；仅候选，未更新正式main或线上文件。
+- 2.24.0 alpha1接收与交付：`2.24.0-alpha1-source-intake.json`、`2.24.0-alpha1-integration.json`。完整构建和11项检查通过；Vortex文件链接使手动安装预检停止，未改游戏文件，待用户选择部署方式，见`2.24.0-alpha1-install-preflight.json`。仅候选，未更新正式main或线上文件。
 
 - [2.23.1正式main与本地包位置](2.23.1-formal-main.json)：已快进合入，记录原冻结/标识产物绝对位置，三处本地ZIP摘要一致；包不含运行库。
 
