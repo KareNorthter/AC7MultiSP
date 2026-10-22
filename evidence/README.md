@@ -1,5 +1,7 @@
 # 证据分类索引
 
+- 2.24.1正式交付：用户明确授权合main、发布且不安装，网页操作取消。见[交付核验](2.24.1-integration.json)、[无运行库发布包](2.24.1-release.json)和[明确授权](2.24.1-release-authorization.json)。11项检查、35个ZIP成员核验通过；游戏仍为2.24.0 alpha1，新增项实机验收待用户完成。独立说明见`docs/Pages与R2发布更新说明.md`。
+
 - 2.24.0 alpha1已完整构建、通过11项检查并手动安装，见[安装完成与独立回读](2.24.0-alpha1-install-completion.json)及`2.24.0-alpha1-installed.json`。用户选择保留Vortex原包，原游戏端链接完整备份，转换见`2.24.0-alpha1-manual-transition.json`；先前预检停止的历史见`2.24.0-alpha1-install-preflight.json`。来源与构建见`2.24.0-alpha1-source-intake.json`、`2.24.0-alpha1-integration.json`。仅候选，正式main和线上文件保持，待实机验收。
 
 - [2.23.1正式main与本地包位置](2.23.1-formal-main.json)：已快进合入，记录原冻结/标识产物绝对位置，三处本地ZIP摘要一致；包不含运行库。

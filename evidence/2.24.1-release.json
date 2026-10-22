@@ -1,0 +1,175 @@
+{
+  "name": "AC7MultiSP",
+  "version": "2.24.1",
+  "Candidate": false,
+  "Distribution": "manual",
+  "created_at": "2026-10-22T09:18:47.351223+00:00",
+  "archive": "Release/AC7MultiSP-2.24.1.zip",
+  "size": 28348417,
+  "sha256": "b09f1300d67840a54a06bdea5f0e5a1f1bf859a6f350f623bd63742faee1146f",
+  "member_count": 35,
+  "game_file_count": 30,
+  "runtime_file_count": 0,
+  "bundled_runtimes": false,
+  "all_members_verified": true,
+  "test_modules_run": false,
+  "recompiled": false,
+  "game_started_by_agent": false,
+  "build_receipt_sha256": "ac8cd8bb5115ca1392072ede500a56660534e61cc7cf931dc9806c2dd2876f3e",
+  "test_receipt_sha256": "cda8d00595a1922b16c64c4d24402d6bee3d9d37265370e530c610a91ea4d514",
+  "installed_receipt_sha256": "dd8d0acdc8a863c3e40ae21e04d904dffac498d232d40ac93f567191ac02c4cf",
+  "actual_installed_receipt": "evidence/2.24.0-alpha1-installed.json",
+  "gameplay_validated_version": null,
+  "version_label_rebuild": false,
+  "version_label_only": false,
+  "label_receipt_sha256": null,
+  "new_version_installed": false,
+  "released_without_install": true,
+  "gameplay_validation_pending": true,
+  "release_metadata_transition": null,
+  "packager_sha256": "8650bccd30483aa82b5f02ac2e666474ca927eb78837248fd294fd29ee8640e3",
+  "user_validation_sha256": null,
+  "release_authorization_sha256": "adf8b41256d0c564b6f1c5a831e0d59dad6eef397a50203a3f46af7d5f341945",
+  "runtime_source": "按用户要求不附带DirectX/VC运行库；固定加载器、音频及许可证仍完整核验旧包来源",
+  "runtime_archive_sha256": null,
+  "legacy_archive_sha256": "09ba966a0baab3ba82bd552a3a3a4f31e5e887167b35534e1853706f5343b7d4",
+  "microsoft_signatures": {},
+  "files": {
+    "GameFiles/Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak": {
+      "size": 18939998,
+      "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1"
+    },
+    "GameFiles/dwmapi.dll": {
+      "size": 61440,
+      "sha256": "ea3cdbb755dd61b9f4de70590b78a15974be65ba5fb3837ea2e1799d78d4c116"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Audio/SP2.wav": {
+      "size": 115972,
+      "sha256": "278b8f8815823522ed5f121711a1a12eda2ae8e89991f8522d1fff22832d9640"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/config_store.lua": {
+      "size": 10853,
+      "sha256": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/debug_aircraft.lua": {
+      "size": 18568,
+      "sha256": "ca79576751710a0862a2d5953c1df07d66e09a044d84ff6e4209c287d14516c3"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/gun_salvo.lua": {
+      "size": 5410,
+      "sha256": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/json.lua": {
+      "size": 9638,
+      "sha256": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/loadout_flow.lua": {
+      "size": 6076,
+      "sha256": "010aa0e221ede8c4e2c50a9cf66a311db47494c31c2c99bf9203fd3214e83dcf"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/loadout_profile.lua": {
+      "size": 5303,
+      "sha256": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/main.lua": {
+      "size": 148665,
+      "sha256": "643a7472bc497176672b223df699e80b33adbb6c8229cf276d6403d4dfb2f4ad"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/mod_aircraft.lua": {
+      "size": 9957,
+      "sha256": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/mount_assets.lua": {
+      "size": 2573,
+      "sha256": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/native_bridge.lua": {
+      "size": 900,
+      "sha256": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/native_hud.lua": {
+      "size": 30754,
+      "sha256": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/native_loadout.lua": {
+      "size": 107081,
+      "sha256": "eae4c49fa6fd018a07411554c90f538ba1039e313cf7cd7377cb62e879223ec7"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/runtime_context.lua": {
+      "size": 11712,
+      "sha256": "bb5516db92852b1d290d40e95d2fbea25e40836fb1152f492c417fbce93d46c0"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/weapon_cycle.lua": {
+      "size": 573,
+      "sha256": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/weapon_names.lua": {
+      "size": 758,
+      "sha256": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/Scripts/weapon_presentation.lua": {
+      "size": 13994,
+      "sha256": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/VERSION": {
+      "size": 7,
+      "sha256": "ebf1768ccb1ae0be52707565e3ec2cafc76415d97ab30c4229fa8b7a3544ede4"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/bin/DualSP.dll": {
+      "size": 2782720,
+      "sha256": "039edc2ece1f2cc7c5598239c08c849f013fa0121dc8f06d59d5dd66b39da560"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/bin/DualSPUI.dll": {
+      "size": 3086848,
+      "sha256": "b28e37e33251c7e4748b689eeb1f844fca59f2973b2b1b574bbdece69b553644"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/install-receipt.json": {
+      "size": 2825,
+      "sha256": "f7ca9804671d4918a41741e070b47e27dcd7db3b7a445ea4c3174ebb03bcb5ad"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/licenses/DearImGui.txt": {
+      "size": 1083,
+      "sha256": "173506a2d6f7fb67990d257fb2507f188690eca39060c39469ae7bef43aae2a3"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/licenses/MinHook.txt": {
+      "size": 4365,
+      "sha256": "d5c2224982b0b95a16b098a561335fa93f3eaf4d0aa964b7843edb986df78dc8"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/licenses/UE4SS.txt": {
+      "size": 1064,
+      "sha256": "ddc030e25d0ea87aca4ae84c0ed3f868d69273c00c0c12ea1e26f1c6130f5d2e"
+    },
+    "GameFiles/ue4ss/Mods/DualSP/licenses/nlohmann-json.txt": {
+      "size": 1076,
+      "sha256": "46a65cffd1ea955132d95a8dd921640714a8d6b537d2e4e482d31145ae95b603"
+    },
+    "GameFiles/ue4ss/Mods/mods.txt": {
+      "size": 12,
+      "sha256": "ecf6ff8c94670228fb00afc3348e3885dfdbf0fdaf293175776068590120f2d6"
+    },
+    "GameFiles/ue4ss/UE4SS-settings.ini": {
+      "size": 7632,
+      "sha256": "4fae00d921a9d54cde9d64ddf8fa22c20ab99575da419a790c2cb19c2d4b5fa5"
+    },
+    "GameFiles/ue4ss/UE4SS.dll": {
+      "size": 16213504,
+      "sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd"
+    },
+    "README_en.txt": {
+      "size": 18685,
+      "sha256": "48980782fc03c1c04dd2b36663ec57a2af7808416c3c0eaf4f5f54ad6ce50070"
+    },
+    "README_zh-CN.txt": {
+      "size": 16157,
+      "sha256": "0338363702e9addc45883c5c73458cbeb87724fce10951afcb3f5452b4619bd8"
+    },
+    "安装说明.txt": {
+      "size": 1238,
+      "sha256": "f98a0a4b99d4cca59f51ec59948795e17b22ecba33793a646d41d9be137c40ac"
+    },
+    "版本说明.txt": {
+      "size": 3865,
+      "sha256": "486cf36d40a58579bac33029e5d620fa9385740de5e28a234f2856cdc7d8958e"
+    }
+  }
+}
