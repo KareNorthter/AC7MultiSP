@@ -10,7 +10,7 @@ function Profile.hasAmmo(amount)
 end
 function Profile.ammoText(amount)
     assert(Profile.validAmmo(amount),"弹药数量无效")
-    return amount<0 and "∞"or tostring(amount)
+    return amount<0 and "---"or tostring(amount) -- 无限库存只改显示，原始负标记继续保留。
 end
 -- 校验连续槽位和不重复配置；空槽只允许出现在末尾。
 function Profile.count(profile)

@@ -1,0 +1,161 @@
+{
+  "date": "2026-10-22",
+  "branch": "codex/special-aircraft-safe-fallback",
+  "base_commit": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "status": "源码候选与人工审阅完成，未构建安装或实测，不宣称引擎断言已修复",
+  "user_priority": "不要求当前兼容特殊机体，优先安全退回原生和机库浏览不崩溃",
+  "prior_display_change": {
+    "source_commit": "9cc7f36",
+    "intake": "精确保留负库存显示---及两处注释，不改变库存或装填规则；旧IRCM研究分支保留"
+  },
+  "thread_source": {
+    "id": "01a158f4-1efc-7e00-bd92-821a4f0dd2c5",
+    "title": "vortex管理更新",
+    "turns": [
+      "01a15ef9-75b3-7560-aa8e-e04e55861cf3",
+      "01a15f09-10f2-7e70-a6b8-5193fe27c9fa"
+    ],
+    "read_only": true,
+    "message_sent": false,
+    "finding": "两次原生IRCM异步依赖创建断言；第二次Gunplay停用，用户确认F-14IA为浏览入口；不证明本Mod或该PAK单独为唯一原因",
+    "assertion": {
+      "source": "CoreUObject/Private/Serialization/AsyncLoading.cpp",
+      "line": 3007,
+      "message": "Missing Dependency, request for /Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C but it was still waiting for creation."
+    },
+    "incidents": [
+      {
+        "pid": 26564,
+        "gunplay_active": true,
+        "time": "2026-10-21 22:58:21 +08:00",
+        "source": "完整转储中读取的断言文本，复用对方保存的fatal-detail.log，不重新读取巨型转储"
+      },
+      {
+        "pid": 35504,
+        "gunplay_active": false,
+        "source": "对方以0x410只读进程读取断言文本，原记录readonly-assert-text.json"
+      }
+    ],
+    "isolation_at_source": "原目录173项中隐藏F-14IA/287，其他172项与共享资源保留；属于对方线程已完成隔离，本轮未变更"
+  },
+  "implementation": {
+    "page_observation": "NativeLoadout先判断inFlight/panelOpen、已有页面/交接或当前可见且可控制的登记页面，随后才读取涂装签名；签名不再访问CDO/WeaponID",
+    "default_object_access": "ModAircraft.existingDefault按精确包路径查找已有默认对象，验证就绪、CDO标记与实际类，不调用GetCDO/LoadAsset或修改加载标记",
+    "pending_object_flags": [
+      "RF_NeedInitialization",
+      "RF_NeedLoad",
+      "RF_NeedPostLoad",
+      "RF_NeedPostLoadSubobjects",
+      "RF_BeginDestroyed",
+      "RF_FinishDestroyed",
+      "RF_BeingRegenerated",
+      "RF_WillBeLoaded"
+    ],
+    "unsafe_internal_flags": [
+      "AsyncLoading",
+      "Unreachable",
+      "PendingKill"
+    ],
+    "native_only_policy": [
+      "F-14IA代号/明确引用及其已知皮肤类",
+      "dptk_ircm基础类引用",
+      "目录明确标记supported=false",
+      "当前会话的按机体接入错误隔离"
+    ],
+    "not_used_as_policy": [
+      "本机编号287",
+      "武器编号31",
+      "ECM/ESM名称",
+      "任意模糊机体名称"
+    ],
+    "scope": "已知F-14IA全部皮肤提前退让；普通机体等原生对象完成加载，机库错误或未配置任务初次接入错误可安全退让",
+    "cleanup": "同轮同步关闭核心及UI许可，归还原生准备页输入/自有模型与显示，释放镜头等控制，清除旧事务及动作，不卸载DLL或加载器，不结束第三方Mod",
+    "recovery": "换到其他机体按原个人总开关恢复；错误机体隔离只存内存直到游戏重启；不改个人总开关、保存方案或原生机体目录",
+    "debug_aircraft": "调试换机列表排除原生退让机体，并在提交时沿现有刷新核对；不经调试主动加载已知风险机体",
+    "configured_flight_or_resupply": "保留既有错误冻结/停止写入边界，不伪装成原生单SP配装；不保证已改装任务内热撤回"
+  },
+  "official_api_sources": [
+    "https://github.com/UE4SS-RE/RE-UE4SS/blob/main/docs/lua-api.md",
+    "https://github.com/UE4SS-RE/RE-UE4SS/blob/main/assets/Mods/shared/Types.lua",
+    "https://github.com/UE4SS-RE/RE-UE4SS/blob/main/UE4SS/src/LuaType/LuaUClass.cpp"
+  ],
+  "api_boundary": "官方上游提供标记/API说明；不把当前上游实现直接视为本机加载器字节验证，不断言GetCDO必然创建对象或就是本次致命断言根因",
+  "manual_review": [
+    "已知F-14IA在目录首次导出后及每次运行许可检查中均先退让；不依赖当前安装的隐藏编号",
+    "纯浏览没有活动兵装/部件/准备页时，不建立包含兵装字段的签名",
+    "已有页面和确认交接仍沿原身份/世界校验，不因早退丢掉待保存事务",
+    "菜单对象或CDO加载未完成时先等待，超时错误退让而非强制加载",
+    "各机库适配器错误回调及原生提交/激活回调后检查隔离请求，同轮停止后续页面接入",
+    "原生退让不改用户总开关，离开后恢复；多人原禁用规则保持",
+    "已配置任务及补给错误不走未经证明的完整原生回退",
+    "未新增Lua入口局部变量，辅助状态放入既有ModAircraft闭包"
+  ],
+  "remaining_limits": [
+    "引擎异步加载的致命断言无法由Lua pcall捕获；提前停用本Mod不等于修复第三方包的原生依赖顺序",
+    "若原生机库本身就会在加载F-14IA时出错，单靠此候选仍不能保证浏览或任务正常",
+    "当前未解除对方已安装的F-14IA隐藏隔离，未承诺游戏当前已经可以浏览它",
+    "本机现有加载器的标记方法、普通机体CDO精确查找、菜单归还及离开后恢复尚待真实运行验证",
+    "未知第三方原生崩溃无法全部预知；可捕获适配错误有退让，致命资源错误仍须单独修理或隔离"
+  ],
+  "future_validation": "经用户授权后再构建/安装候选；保留隔离备份，分别核对普通浏览、F-14IA浏览及原生SP/DPTK、其他皮肤和返回普通机体。若原生断言仍在，单独修理第三方依赖，不跳过断言或同时改多个变量。",
+  "actions": {
+    "compiled": false,
+    "tests_written_or_run": false,
+    "game_operated": false,
+    "installed": false,
+    "third_party_paks_modified": false,
+    "configuration_modified": false,
+    "formal_version_changed": false,
+    "main_modified": false
+  },
+  "local_evidence": [
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\vortex-research-20261021\\compatibility-downloads\\manual-analysis\\gunplay-hangar-crash-20261021-225956\\结论与隔离记录.json",
+      "sha256": "d1df1ef21c5a8d42374152a6c5ecd71b928f9d41765b63aad02c2bcc72913dd9"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\vortex-research-20261021\\compatibility-downloads\\manual-analysis\\gunplay-hangar-crash-20261021-225956\\fatal-detail.log",
+      "sha256": "af64547bc7e2a7fc1e1453d764d790e4ffdd8d03dddd6344f0629571d2ee94ab"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\vortex-research-20261021\\compatibility-downloads\\manual-analysis\\f14ia-without-gunplay-20261021-231649\\结论.json",
+      "sha256": "6bb4393e8cf3e8eed78d60ab8e158761475424a6330625223a0c8d6b13906ebf"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\vortex-research-20261021\\compatibility-downloads\\manual-analysis\\f14ia-without-gunplay-20261021-231649\\readonly-assert-text.json",
+      "sha256": "9fd4c5530c499fb9b6bfc487e7a1edb25afabd34f0965965020236a8bd7a1fb6"
+    }
+  ],
+  "candidate_sources": [
+    {
+      "path": "dist/DualSP/Scripts/debug_aircraft.lua",
+      "sha256": "7d4ce2c6cbf36da94adc306ae85bfdb362f9deaf5b7f018cd18cc791ee094bf2"
+    },
+    {
+      "path": "dist/DualSP/Scripts/loadout_profile.lua",
+      "sha256": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c"
+    },
+    {
+      "path": "dist/DualSP/Scripts/main.lua",
+      "sha256": "948effbb95a44f814eda7cd9e715c2d2bf7f72129a914e7a7c2c7bc43477e77c"
+    },
+    {
+      "path": "dist/DualSP/Scripts/mod_aircraft.lua",
+      "sha256": "14b60b92f9515334dfc506e0ad88629357947fc061848a4c8ba6486b2031dd0a"
+    },
+    {
+      "path": "dist/DualSP/Scripts/native_hud.lua",
+      "sha256": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd"
+    },
+    {
+      "path": "dist/DualSP/Scripts/native_loadout.lua",
+      "sha256": "eae4c49fa6fd018a07411554c90f538ba1039e313cf7cd7377cb62e879223ec7"
+    }
+  ],
+  "protected_old_dll": {
+    "expected_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "actual_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "unchanged": true
+  },
+  "verification": "仅人工差异/调用路径审阅、JSON读取、Git差异格式检查和受保护DLL摘要核对；未执行Lua脚本或语法编译，未编写/运行产品测试"
+}

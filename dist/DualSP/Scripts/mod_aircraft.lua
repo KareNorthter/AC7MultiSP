@@ -2,6 +2,9 @@
 -- 不按短名/任意后缀放行身份，也不授予核心写入权限。
 local ModAircraft={}
 local fields={"SpecialWeaponConfig1","SpecialWeaponConfig2","SpecialWeaponConfig3"}
+-- UE4.18对象生命周期标记；只读，不清除标记或强行完成异步加载。
+local pendingFlags=0x200|0x400|0x1000|0x2000|0x8000|0x10000|0x20000|0x04000000
+local unsafeInternalFlags=0x08000000|0x10000000|0x20000000
 local function valid(o)return o and o:IsValid()end
 local function classPath(reference)
     if type(reference)~="string"then return nil end
@@ -12,10 +15,51 @@ local function classPath(reference)
     return path
 end
 function ModAircraft.new(note)
-    local self={warnings={},lastMenu=nil}
+    local self={warnings={},lastMenu=nil,quarantined={},safetyPending=false}
     function self:warn(key,message)
         if self.warnings[key]then return end
         self.warnings[key]=true;note("MOD_AIRCRAFT_FALLBACK "..message)
+    end
+    function self:readyObject(object)
+        return valid(object)and not object:HasAnyFlags(pendingFlags)
+            and not object:HasAnyInternalFlags(unsafeInternalFlags)
+    end
+    -- 只查已经存在且完成加载的默认对象；菜单观察不得请求创建/加载任何蓝图。
+    function self:existingDefault(class)
+        if not self:readyObject(class)then return nil end
+        local path=class:GetFullName():match("^[^ ]+ (.+)$")
+        if not path then return nil end
+        local package,name=path:match("^(.+)%.([^%.]+)$")
+        if not package or not name then return nil end
+        local object=StaticFindObject(package..".Default__"..name)
+        if not self:readyObject(object)or not object:HasAnyFlags(0x10)then return nil end
+        if object:GetClass():GetAddress()~=class:GetAddress()then return nil end
+        return object
+    end
+    -- 已知F-14IA整族暂交原生，包含以皮肤替换副油箱为ESM的派生类。
+    -- 按目录代号/真实引用判断，不依赖本机287编号，也不按ECM编号31误伤其他机体。
+    function self:nativeOnlyReason(id,info)
+        if self.quarantined[tostring(id)]then return "adapter_error"end
+        if not info then return nil end
+        local code=type(info.code)=="string"and info.code:lower()or ""
+        local reference=classPath(info.reference)
+        local base=reference and reference:lower():match("/aceplayerpawn_([^/%.]+)%.")or ""
+        if code=="f14ia"or code=="f14iacp"or code=="f14iatg"or code=="f14iatg2"
+            or base=="f14ia"or base=="f14iacp"or base=="f14iatg"or base=="f14iatg2"or base=="dptk_ircm"
+            or base:match("^f14ia_s%d+$")then
+            return "ircm_async_dependency"
+        end
+        if info.supported==false then return "incomplete_weapon_catalogue"end
+        return nil
+    end
+    function self:quarantine(id,message)
+        if type(id)~="number"or id<0 or id%1~=0 then return end
+        local key=tostring(id)
+        if not self.quarantined[key]then
+            self.quarantined[key]=tostring(message)
+            note("MOD_AIRCRAFT_NATIVE_FALLBACK plane="..id.." reason=adapter_error "..tostring(message))
+        end
+        self.safetyPending=true -- 当前调度末尾同步关闭核心及UI入口，不等下一次接入重试。
     end
     function self:skin(instance)
         if self.skinAPI==nil then
@@ -35,22 +79,20 @@ function ModAircraft.new(note)
         local parts={self:selection(instance)}
         local hangar=instance.HangarManager
         local actor=valid(hangar)and hangar.LoadedPlayerPlane or nil
-        if valid(actor)then
+        if self:readyObject(actor)then
             parts[#parts+1]=actor:GetAddress();parts[#parts+1]=actor:GetClass():GetFullName()
             local activator=actor.PlayerWeaponActivator
-            if valid(activator)then
+            if self:readyObject(activator)then
                 parts[#parts+1]=activator:GetAddress()
                 for _,field in ipairs(fields)do
                     local weapon=activator[field].WeaponClass
                     parts[#parts+1]=valid(weapon)and weapon:GetAddress()or "missing"
-                    if valid(weapon)then
-                        local default=weapon:GetCDO()
-                        parts[#parts+1]=valid(default)and tostring(default.WeaponID)or "missing_default"
-                    end
+                    -- 类身份已足够辨认皮肤换SP；不为签名访问兵装CDO或其字段。
+                    parts[#parts+1]=self:readyObject(weapon)and "ready"or "loading"
                 end
             end
         end
-        return table.concat(parts,"|"),valid(actor)==true
+        return table.concat(parts,"|"),self:readyObject(actor)==true
     end
     function self:reference(info,instance)
         local skin=self:skin(instance)
@@ -84,9 +126,9 @@ function ModAircraft.new(note)
     function self:baseWeapons(info)
         local path=classPath(info.reference)
         local class=path and StaticFindObject(path)or nil
-        local default=valid(class)and class:GetCDO()or nil
+        local default=self:existingDefault(class)
         local activator=valid(default)and default.PlayerWeaponActivator or nil
-        if not valid(activator)then return nil end
+        if not self:readyObject(activator)then return nil end
         local result={}
         for i,field in ipairs(fields)do
             local weapon=activator[field].WeaponClass
