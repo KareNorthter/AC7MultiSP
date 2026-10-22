@@ -135,6 +135,7 @@ void drawManagementErrors() {
         }
     }
 }
+#include "version_updates_panel.hpp"
 void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize;
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
@@ -222,6 +223,7 @@ void drawPanel() {
             ImGui::EndChild();
             ImGui::EndTabItem();
         }
+        if(beginManagementTab(tr("版本和更新###VersionUpdates","Version and updates###VersionUpdates"),3)) {drawVersionUpdatesPage();ImGui::EndTabItem();}
         ImGui::EndTabBar();if(requestedTab==managementTab)requestedTab=-1;
     }
     ImGui::EndDisabled();

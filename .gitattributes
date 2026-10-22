@@ -20,3 +20,6 @@ payload/** -text
 vendor/** -text
 # 机器回执互相引用文件摘要，Git 恢复必须保留原始字节与行尾。
 evidence/*.json -text
+
+# 用户提供的授权原件保留UTF-8字节及行尾。
+docs/授权.txt -text whitespace=cr-at-eol

@@ -21,6 +21,8 @@
 #include "keyboard_shortcuts.hpp"
 #include "ue4ss_lua_api.hpp"
 #include "ui_messages.hpp"
+#include "version_updates.hpp"
+#include "version_update_credits.hpp"
 #pragma comment(lib,"d3d11.lib")
 #pragma comment(lib,"dxgi.lib")
 #pragma comment(lib,"xinput.lib")
@@ -111,6 +113,7 @@ std::array<bool,256> consumedShortcutKeys{};
 std::string hotkeyToast;
 ULONGLONG hotkeyToastUntil{};
 bool toastIsError=false;
+bool updateToastActive=false; // 进入任务立即隐藏更新提醒，其他通知沿用原有规则。
 enum class ToastKind {Info,Important,Warning,Error};
 ToastKind toastKind=ToastKind::Info;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
@@ -132,10 +135,10 @@ void showToast(std::string message,ToastKind kind=ToastKind::Info) {
     if(message.empty())return;
     const auto now=GetTickCount64();
     if(kind==ToastKind::Info&&toastKind!=ToastKind::Info&&now<hotkeyToastUntil)return; // 普通消息不截断尚未到时的重要提示。
-    hotkeyToast=prefix+message;toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
+    updateToastActive=false;hotkeyToast=prefix+message;toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
     hotkeyToastUntil=now+(kind==ToastKind::Info?1000:3000);
 }
-int managementTab=0,requestedTab=-1; // Ctrl+Tab 在三个管理分页间循环。
+int managementTab=0,requestedTab=-1; // Ctrl+Tab在四个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到标题总开关，不依赖鼠标点击。
 // 日志只在页面打开或手动刷新时读取。
 bool logsLoaded=false,logsExpanded=false;
@@ -280,7 +283,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
         // Esc 先归还给下拉菜单；没有弹出层时才关闭整个管理面板。
         if(w==VK_ESCAPE&&panel&&!ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel)){togglePanel(false);return 0;}
         if(panel&&w==VK_TAB&&(GetKeyState(VK_CONTROL)&0x8000)) {
-            requestedTab=((requestedTab>=0?requestedTab:managementTab)+((GetKeyState(VK_SHIFT)&0x8000)?2:1))%3;
+            requestedTab=((requestedTab>=0?requestedTab:managementTab)+((GetKeyState(VK_SHIFT)&0x8000)?3:1))%4;
             return 0;
         }
     }
@@ -920,7 +923,18 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     previousPadButtons=buttons;padWasConnected=connected;
                 }
                 // 平时仍跳过整个绘制；只有管理面板或短暂通知可见时提交ImGui帧。
-                const bool toastVisible=foreground&&!hotkeyToast.empty()&&GetTickCount64()<hotkeyToastUntil;
+                // 不抢已有提示；检查结果仅在前台、任务外且面板关闭时消费一次。
+                if(foreground && !panel && managementError.empty() && GetTickCount64()>=hotkeyToastUntil) {
+                    if(const auto update=dualsp::updates::service().claimNotice()) {
+                        const auto binding=shortcutLabel(shortcuts[0]);
+                        const auto message=std::string(tr("发现新版本 ","Version "))+update->latest+
+                            tr("。请按 "," is available. Open ")+binding+
+                            tr("，在“版本和更新”页选择下载入口。"," > Version and updates and choose a download link.");
+                        showToast(message,ToastKind::Important);updateToastActive=true;
+                    }
+                }
+                const bool toastVisible=foreground && (!updateToastActive || dualsp::updates::service().outsideMission()) &&
+                    !hotkeyToast.empty() && GetTickCount64()<hotkeyToastUntil;
                 const auto loading=mountLoadingSnapshot();
                 const bool loadingVisible=foreground&&loading.token!=0;
                 const bool dotVisible=foreground&&!panel&&managementError.empty()&&viewCenterDotVisible.load(std::memory_order_acquire)&&
@@ -1066,6 +1080,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         runtimeEnabled.store(enabled!=0);reseedPad.store(true);
         if(!enabled) {
+            dualsp::updates::service().context(0);
             mountLoadingCancel();
             viewCenterDotVisible.store(false);viewCenterDotHeartbeat.store(0);
             if(panel)togglePanel(false);
@@ -1168,3 +1183,14 @@ extern "C" __declspec(dllexport) int dualsp_drain_actions_memory_v1(void* luaSta
 
 // 平铺调试页及新顶栏须与本轮Lua成套。
 extern "C" __declspec(dllexport) int dualsp_flat_management_supported(void*) {return 0;}
+
+// 游戏线程只提交已有模式识别结果；联网失败不向Lua抛错，不牵连武器和管理入口。
+extern "C" __declspec(dllexport) int dualsp_updates_context_v1(void* luaState) {
+    try {
+        static const dualsp::LuaApi api;
+        if(api.top(luaState)!=1)return 0;
+        const auto context=api.readInteger(luaState,1);
+        if(context>=0 && context<=3)dualsp::updates::service().context(static_cast<int>(context));
+    }catch(...) {nativeLog("UPDATE_CONTEXT_IGNORED");}
+    return 0;
+}

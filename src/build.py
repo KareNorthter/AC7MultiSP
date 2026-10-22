@@ -72,13 +72,14 @@ def main():
         "backends/imgui_impl_win32.cpp", "backends/imgui_impl_dx11.cpp")]
     run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-c",
                     "-I", str(root / "vendor"), "-I", str(minhook / "include"),
-                    "-I", str(imgui), "-I", str(imgui / "backends"), *map(str, ui_sources)],
+                    "-I", str(imgui), "-I", str(imgui / "backends"),
+                    '-DAC7MULTISP_VERSION="' + info["version"] + '"', *map(str, ui_sources)],
                    cwd=output, env=environment, check=True)
     ui = output / "DualSPUI.dll"  # 不覆盖工作区中任何已验证的二进制。
     run([str(compiler / "clang++.exe"), "-shared", "-static",
                     *[path.stem + ".o" for path in ui_sources],
                     "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-o", str(ui),
-                    "-ld3d11", "-ldxgi", "-lxinput", "-ld3dcompiler", "-lgdi32", "-ldwmapi"],
+                    "-ld3d11", "-ldxgi", "-lxinput", "-ld3dcompiler", "-lgdi32", "-ldwmapi", "-lwinhttp", "-lshell32", "-lole32"],
                    cwd=output, env=environment, check=True)
     with pefile.PE(str(candidate)) as library:
         exports = {item.name.decode("ascii") for item in library.DIRECTORY_ENTRY_EXPORT.symbols if item.name}

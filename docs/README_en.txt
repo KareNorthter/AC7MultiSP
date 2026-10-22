@@ -1,5 +1,12 @@
 AC7MultiSP 2.23.1
 
+Development source: Version and updates (based on main 2.23.1; not built or installed)
+• Adds a fourth F6 tab with author information first, release notes below the new-version status, browser download buttons, and expandable license information without an inner scrollbar.
+• Page text, notices and credits support Chinese and English through the management language setting. Author and contributor names are retained.
+• Checks one small stable manifest in a low-priority background thread after reaching the main menu. Failure ends the check without an error popup or retries. A new-version notice appears once outside missions, using the existing three-second important-notice rule.
+• An explicit click opens the default Windows browser. Players download manually, exit the game, then extract and install according to the archive instructions. The mod does not download or install packages.
+• New-version links and a ready stable manifest are still pending. Existing preview links point to old test packages. No build, installation, test run, game operation or Cloudflare publication was performed. Formal main/release remains 2.23.1; this branch is a source candidate.
+
 Changes since 2.23.0
 • Reduce hangar browsing probes and inspect existing, fully loaded weapon objects. Special aircraft defer to native behavior; catchable first-admission errors isolate that aircraft for the session, with recovery on other aircraft.
 • With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun. Registered Adler A/B, XR302 and other mod cannon SPs are included; multiple eligible cannon SPs in one loadout remain unlinked.
