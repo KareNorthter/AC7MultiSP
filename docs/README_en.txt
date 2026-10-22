@@ -7,6 +7,8 @@ Internal test candidate 2.23.1 alpha1 (since official 2.23.0)
 • Unlimited ammunition displays ---. Stock/reload rules and valid revision 19 settings, loadouts and bindings are retained.
 • Build/install verification and user gameplay acceptance are separate. No public package or upload is created.
 
+Delivery: built, all 11 existing checks passed, and 19 runtime files installed. All 77 mount variants/154 members and original revision 19 settings are verified. The game remains closed; gameplay acceptance is pending.
+
 Historical release notes follow.
 
 Changes since 2.22.1
