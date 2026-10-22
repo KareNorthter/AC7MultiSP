@@ -4,6 +4,20 @@
 
 本次主线定版仅变更版本文字、正式元数据和说明，冻结构建Temp/build-2.22.2-alpha1-r3、11项既有检查及安装/用户验收回执保持原字节。当前本机仍运行已验收2.22.2 alpha1标识；本次未重新编译、运行测试、重装、制作发布包或上传。后续交付2.23.0产物须沿用该验收来源并另做明确的标识变换/构建核验，不能把旧构建回执直接冒充正式2.23.0构建。
 
+## Mod机体UAV/HPM多挂及名称来源（2026-10-22，独立源码候选）
+
+`codex/mod-special-sp-contract`从main/3119d52建立，先以ba8804e精确接收上一轮特殊机体安全退让，再修订本节功能。用户反馈S-44默认皮肤的“ECM”不能混选、Arkbird不能三选及两处菜单名称不一致。本轮只做资源解码、日志和源码人工审阅；未编译、编写/运行产品测试、安装或操作游戏，未改版本、正式main及第三方PAK。本机只读VERSION为2.23.1 alpha1，与本候选不能混同。
+
+- **S-44**：日志明确拒绝`plwp_RetargetHPM_s44_C / weapon_id=31 / electronic_class_unrecognized`。该武器真实继承WeaponUAV，是HPM；作者的ECM/ESM是另一个附加通道。基础三SP为HPM/MIRV/Trinity，默认皮肤未改装。不能因其复用ECM编号就强行走电子战生命周期。
+- **Arkbird（方舟鸟）**：库存为-1，已有无限库存规则接受；默认TLS/MPBM/UAV中的UAV被旧Raven机型及三配置白名单拦截。它与Arsenal Bird（武库鸟）不同，不把本修正推为武库鸟的自有兵装系统已兼容。
+- **共同修正**：按完整`/Script/Nimbus.WeaponUAV`派生关系判断，沿用原UAV的五个原生回调、发射即装填、非全发射后装填、结束装填归属为空及原有字段契约。合格者不再限定机型、其他两项SP或编号26。活动效果沿既有弱身份、发射代次、归属、数组分配器、临时Root及完整收尾保有；仍限制最多64项效果，未知契约拒绝。真正Raven本体仍保留专用两模型回收布局门槛，TLS附着范围不变。LaserInterceptor/IRCM不借编号31获得放行。
+- **其他同类候选**：ADF-11X的激光UAV、QFA-36的UAV、Gleipnir的HPM及J-20S包内多个皮肤UAV变体命中同一静态类型；须运行时通过上述契约，不宣称已实测或全部已安装。真实ElectronicSupportMeasures的ECM/ESM/IEWS沿已有适配。
+- **名称来源**：本机目录缺少基础Reference后，旧展示回退按真实WeaponID查PWDT；S-44三项表码/编号HPM70、MIRV58、Trinity89与真实31、33、14不同，日志确认发生编号回退。新增只沿已加载实际机体父链核对完整标准基础类路径，再查已存在且就绪的CDO；只有基础同槽WeaponClass一致才保留作者资料。皮肤换SP仍按实际类判断，不读任意同名类、不加载蓝图、不放宽Reference反射内存检查。未就绪仍保守回退；不能保证所有名称一致，也不替换全局汉化。
+
+Arkbird作者蓝图另会写PlaneSWP并调用InitializeWeaponSystem。本候选在切槽、保存检查点和状态采样前核对当前SP类与活动槽缓存；不同类时以`EXTERNAL_SP_CHANGE`拒绝该事务，沿既有错误边界停止控制，避免库存串槽。此保护不主动接管作者换装键，也不检测同类兵装内部所有蓝图状态；不能将已配置多SP直接冒充恢复原生。后续实测应避免同时使用作者自有换装和本Mod切槽。
+
+新增`dualsp_mod_uav_supported`握手，`dualsp_continuous_sp_option`增加第五个布尔返回值；Lua/核心必须成套接收，不能只放开菜单。诊断关键字：`MOD_UAV_SUPPORTED`、`MOD_UAV_UNAVAILABLE`、`MOD_UAV_RUNTIME_REJECTED`及`EXTERNAL_SP_CHANGE`。待用户授权构建安装后，优先核对S-44默认三选/名称、HPM发射后跨槽与自然结束、Arkbird三选/UAV回收及检查点/补给；这里只记录待验证范围，不新增测试模块。证据见[evidence/mod-special-sp-contract-20261022.json](../evidence/mod-special-sp-contract-20261022.json)。
+
 ## 特殊机体退回原生与机库浏览保护（2026-10-22，独立源码候选）
 
 `codex/special-aircraft-safe-fallback`从main/3119d52建立。用户本轮优先要求不支持的特殊机体安全退让，不要求现在兼容；只改源码和说明，未编译、编写/运行测试、安装或操作游戏。先前9cc7f36的无限库存显示`---`精确保留，库存语义不变；正式版本及已验收安装保持。

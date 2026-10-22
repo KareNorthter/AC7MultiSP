@@ -6,6 +6,16 @@
 
 优化约定：运行通信与动态控制留在内存，必要日志异步、配置按实际变化持久化；资源和PCM缓存限定在已校验纯数据。不得为省时放松线程、身份、原生实体与归还边界。完整经验见development.md“性能优化经验”，以下alpha1实现与交付文字保留原阶段含义。
 
+## Mod派生UAV/HPM的资格与展示（2026-10-22，源码待验证）
+
+`codex/mod-special-sp-contract`以ba8804e保留特殊机体原生退让，再扩展`ContinuousSupport.uav`。识别基于完整WeaponUAV原生父类，资格保留旧UAV的五个回调及装填/结束归属契约，不以WeaponID、PWDT名称、机体名或同机其他SP作替代。S-44/Gleipnir的HPM复用31仍走UAV，真实ElectronicSupportMeasures继续走电子战；LaserInterceptor明确不支持。非Raven机体不再受原生TLS/QAAM/UAV组合限制；真正Raven的专用回收模型和TLS附着检查不变。
+
+菜单五返回值`(ok,supported,electronic,reason,uav)`与`dualsp_mod_uav_supported`握手要求Lua/核心成套。初始化再次检查实际CDO契约；跨槽捕获将真实UAV纳入既有持续效果保有，原生引用数组、分配器、弱身份、发射代次、64项上限及收尾隔离不放松。作者蓝图可外部重建兵装，因此切槽/检查点保存/状态采样在捕获或显示前核对当前SP类与缓存，变化时明确报`EXTERNAL_SP_CHANGE`，不把新武器库存覆盖到旧逻辑槽；不同类检测不是完整外部蓝图兼容协议。
+
+目录缺少Reference时，展示资料仅可从已加载实例父链匹配完整标准基础类路径，再只读已存在且就绪的默认对象；基础同槽WeaponClass吻合才沿用作者PWDT。皮肤替换SP仍以当前类为准；未就绪不强制加载。此回退不授予核心写许可，不改Reference反射或全局汉化。S-44旧名称错配有本机编号回退日志依据，其他机体仍可能有独立文案缺项。
+
+范围及证据见[evidence/mod-special-sp-contract-20261022.json](../evidence/mod-special-sp-contract-20261022.json)和development.md对应正文。仅静态源码候选，未编译、运行产品测试、安装或操作游戏；不把资源派生类型检查称为运行契约已通过。
+
 ## 特殊机体的原生退让边界（2026-10-22，源码待验证）
 
 `ModAircraft.nativeOnlyReason`仅用内存目录的代号/引用及本会话隔离记录判断；F-14IA整族和三SP资料不完整者在读取预览兵装前退出。`checkRuntime`把它映射为`aircraft_native_only`，复用核心/UI许可门关闭入口，归还原生准备页输入与自有显示、清除本Mod事务，不修改个人总开关。换到其他机体后按原设置恢复；已隔离机体在本会话内不再重试，调试换机同样排除。

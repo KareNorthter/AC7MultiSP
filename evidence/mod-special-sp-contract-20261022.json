@@ -1,0 +1,670 @@
+{
+  "日期": "2026-10-22",
+  "状态": "独立源码候选，运行效果待验证",
+  "分支": "codex/mod-special-sp-contract",
+  "主线基准": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "前置接收": {
+    "提交": "ba8804e",
+    "原研究提交": "d5bc568",
+    "内容": "特殊机体原生退让、机库就绪访问及无限库存---显示"
+  },
+  "用户补充": "S-44和Arkbird未改皮肤，可能默认；原生机库SP列表与3SP列表名称可能不一致。",
+  "执行范围": [
+    "读取本机日志与目录",
+    "解码下载包内蓝图",
+    "人工审阅源码",
+    "修改源码与设计说明",
+    "git diff --check"
+  ],
+  "未执行": [
+    "编译",
+    "编写或运行产品测试",
+    "安装",
+    "启动或操作游戏",
+    "修改第三方PAK",
+    "合main",
+    "推送或上传"
+  ],
+  "本机只读版本": "2.23.1 alpha1；不是本候选产物",
+  "日志依据": {
+    "路径": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP",
+    "S44拒绝": [
+      "2026-10-21T15:22:28.862Z",
+      "2026-10-22T01:52:53.488Z",
+      "MOD_ELECTRONIC_UNAVAILABLE plane=s44 config=1 weapon_id=31 class=plwp_RetargetHPM_s44_C reason=electronic_class_unrecognized"
+    ],
+    "名称回退": "MOD_AIRCRAFT_FALLBACK plane=s44 slot=1/2/3 weapon_id=31/33/14 使用编号对应的展示资料",
+    "目录软引用异常": "MOD_AIRCRAFT_REFERENCE_ERROR 动画访问：字段缺失、类型或数组维数不符；本候选不猜测偏移或放宽反射写入检查",
+    "Arkbird": "目录id210/arkb三项库存均-1，supported=true；无限库存不是本轮UAV门槛。"
+  },
+  "结论": {
+    "S44": "默认三SP是HPM/MIRV/Trinity；真实ID31/33/14，表编号70/58/89。HPM直接继承WeaponUAV，真正ECM/ESM来自作者DPTK附加通道。",
+    "Arkbird": "默认TLS/MPBM/UAV；UAV继承原生WeaponUAV，旧Raven机型/三配置白名单排除它。不同于Arsenal Bird。",
+    "其他候选": [
+      "ADF-11X激光UAV",
+      "QFA-36 UAV",
+      "Gleipnir HPM",
+      "J-20S包内皮肤UAV变体；不等于全部已启用"
+    ],
+    "名称": "缺少Reference时按复用ID取名是明确因素，不能全部归因汉化；新回退只在已加载实际父链匹配完整基础路径与同槽兵装类。",
+    "作者换装": "Arkbird蓝图写PlaneSWP并调用InitializeWeaponSystem；新增当前SP类核对，拒绝库存串槽，不接管作者快捷键。"
+  },
+  "保留边界": [
+    "五个UAV原生回调、装填及结束归属字段契约；静态父类相同不代表运行契约已通过",
+    "弱身份、玩家归属、发射代次、64项持续效果上限、真实数组分配器与原生完整收尾",
+    "真正Raven的专用回收模型布局，现有TLS附着范围",
+    "LaserInterceptor/IRCM不作为ECM或UAV放行；F-14IA先前整机退让保留",
+    "Reference反射错误未修复；对象未就绪则不加载、不创建CDO，文案仍可能保守回退",
+    "外部换装检测只覆盖不同SP类的切槽/检查点保存/状态采样入口，不证明所有作者蓝图内部状态兼容"
+  ],
+  "成套要求": "新增dualsp_mod_uav_supported及第五个uav返回值，Lua/核心必须一起接收。",
+  "待运行验证": [
+    "S-44默认三选与名称",
+    "HPM发射后切槽及自然结束",
+    "Arkbird三选与UAV生命周期",
+    "检查点/补给",
+    "皮肤换SP及其他候选"
+  ],
+  "资源审阅数量": {
+    "主集": 106,
+    "其他候选": 96,
+    "说明": "候选资源非全部已安装清单，不是全机型兼容证明"
+  },
+  "资源摘录": [
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_arkb.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "5051f2183f3b28b76bcc51ea2df55f8f1a9ec295640eee6443ebe31258ab731a",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_arkb_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_arkb_parent.AcePlayerPawn_arkb_parent_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_AcePlayerPawn_arkb",
+        "Reload SWP",
+        "Reload Missile",
+        "OnActivate",
+        "ReceiveBeginPlay",
+        "ReceiveTick",
+        "InpActEvt_INP_FireMissile_K2Node_InputActionEvent_1",
+        "InpActEvt_INP_FireMissile_K2Node_InputActionEvent_2",
+        "InpActEvt_INP_RadioOptionOn_K2Node_InputActionEvent_0",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_arkb_parent.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "be870b55ce74db4128c404d5ec781f5ab900887ac3ae3498a7761547b6453382",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_arkb_parent_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_gtls_x1.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "f95468c51b512679ddd96e139578314084d25de090a0ef845cce3c2fbb5934c8",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_gtls_x1_C",
+          "parent": "/Script/Nimbus.LaserWeapon"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_LaserWeapon_BaseClass",
+        "OnCreateWeaponEnd",
+        "OnWeaponDestroyed",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_mpbm_x0.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "8f100c75b7beca50d6b23e94e51e31744a09f718f9f963271dba9998976a0f7b",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_mpbm_x0_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_mpbm_base.plwp_mpbm_base_C"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_base.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "291b4f2863afc6d68eb47f60ae3eb48710437228b2cb96809eb5ad65549a0e55",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_WeaponUAV_base_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV.plwp_WeaponUAV_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_WeaponUAV_base",
+        "OnInitialized",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_m101.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "79bbac7e2bd22f40e0071b19dedc4abd136df98096087647e347f09fe184e8d3",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_WeaponUAV_m101_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_base.plwp_WeaponUAV_base_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Mods/SWP_Swap/SWP_Switch.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "bb4aa16f72f4216abab2644f4a312364173ced75cc573e9f702b2698d6c28458",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "SWP_Switch_C",
+          "parent": "/Script/Engine.ActorComponent"
+        }
+      ],
+      "蓝图函数": [
+        "UpdateAmmoCount",
+        "MakeStatusSWP",
+        "ShowSWPMesh",
+        "GetStatusSWP",
+        "ShowSWPMeshes"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_arsb.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\010\\~AIAS_Base_P.pak",
+      "解码JSON_SHA256": "9eeabb1b7925f7a1df5b2ec6e84ec5bd1bd5ef6c02bce339a454851f9f6699bb",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_arsb_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_AcePlayerPawn_arsb",
+        "InpActEvt_INP_Radar_K2Node_InputActionEvent_2",
+        "InpActEvt_INP_Radar_K2Node_InputActionEvent_3",
+        "InpActEvt_INP_SwitchWeapon_K2Node_InputActionEvent_0",
+        "InpActEvt_INP_SwitchWeapon_K2Node_InputActionEvent_1",
+        "ReceiveBeginPlay",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_gleip.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\051\\~~~Gleipnir_P.pak",
+      "解码JSON_SHA256": "ae47c1c93d15a16fd831b7c67ae1cc26e1e138f93e0596a98f5335815e3e2378",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_gleip_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_AcePlayerPawn_gleip",
+        "ReceiveTick",
+        "ReceiveBeginPlay",
+        "InpActEvt_AnyKey_K2Node_InputKeyEvent_0",
+        "InpActEvt_AnyKey_K2Node_InputKeyEvent_1",
+        "InpActEvt_INP_RadioOptionOn_K2Node_InputActionEvent_0",
+        "InpActEvt_INP_RadioOptionOn_K2Node_InputActionEvent_1",
+        "InpActEvt_INP_Radar_K2Node_InputActionEvent_2",
+        "InpActEvt_INP_Radar_K2Node_InputActionEvent_3",
+        "Camouflage_Effect_Time__PlayOpticamoSound__EventFunc",
+        "Camouflage_Effect_Time__UpdateFunc",
+        "Camouflage_Effect_Time__FinishedFunc",
+        "UserConstructionScript",
+        "RescaleMeshes",
+        "Init and Set MIDs",
+        "Init Emblems",
+        "Init MID variable",
+        "Set MIDs"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_MultiHPM_gleip.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\051\\~~~Gleipnir_P.pak",
+      "解码JSON_SHA256": "647de4ac4554a0392579bb62642eda3474f5802b629a97bc53b7d28ac696e24e",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_MultiHPM_gleip_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "41ce3e66482039dc40b10ef86b2f1eb633bfe11bfb2501b26bb82dd3d7e6e827",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_s44_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_AcePlayerPawn_s44",
+        "InpActEvt_INP_RadioOptionDown_K2Node_InputActionEvent_0",
+        "InpActEvt_INP_RadioOptionUp_K2Node_InputActionEvent_1",
+        "ReceiveBeginPlay",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/skin/AcePlayerPawn_s44_s00.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "05e186520f0d958a8bda54247f9a985815137fa9fc89576fc514c2fbc7e507be",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_s44_s00_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_s44.AcePlayerPawn_s44_C"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superECM_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "e9173e5680bb14c8df66ffbcf4644148e01724b384eeccea05f3bc2b0da18193",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_superECM_s44_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_superECM_s44",
+        "OnInitialized",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/DPTK/plwp_superESM_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "02fce635a1fce80fb0e572ff19af54829097f1d4093a4af4740ee9673ce54bfc",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_superESM_s44_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_superESM_s44",
+        "OnInitialized",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/MIRV1/plwp_mirv1_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "c7a3124ccea79573225906e6bd2026a7fc204eb8ba69e89af2969c546943747e",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_mirv1_s44_C",
+          "parent": "/Script/Nimbus.Missile_FinallySpawnWeapon"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_mirv1_s44",
+        "OnInitialized",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/plwp_RetargetHPM_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "76cab1de0dba73bddb3662d52b45ffa70a7aa953a37692ed3ba5da847abf7370",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_RetargetHPM_s44_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_RetargetHPM_s44",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/plwp_trinity_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "3f17fd9d75f4b8cd7c59b8991f6cad88f2abb06926ca42b54fe4313400ad8496",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_trinity_s44_C",
+          "parent": "/Script/Nimbus.Missile_FinallySpawnWeapon"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_trinity_s44",
+        "OnInitialized",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_adf11x.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\005\\~~ADF-11X Base File_P.pak",
+      "解码JSON_SHA256": "9c7c1cf52cd923674698b7d93ac7eabf392221bca71026a2d280cb982244b222",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_adf11x_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/adf11x/Variation/plwp_laserUAV_z1.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\005\\~~ADF-11X Base File_P.pak",
+      "解码JSON_SHA256": "882f5c01b4ec4bdad200529cb10290bad58f703a2454b9c62222bf1e3d7b3a45",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_laserUAV_z1_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV.plwp_WeaponUAV_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_base.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "291b4f2863afc6d68eb47f60ae3eb48710437228b2cb96809eb5ad65549a0e55",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_WeaponUAV_base_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV.plwp_WeaponUAV_C"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_WeaponUAV_base",
+        "OnInitialized",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_m101.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+      "解码JSON_SHA256": "79bbac7e2bd22f40e0071b19dedc4abd136df98096087647e347f09fe184e8d3",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_WeaponUAV_m101_C",
+          "parent": "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_WeaponUAV_base.plwp_WeaponUAV_base_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_MultiHPM_gleip.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\051\\~~~Gleipnir_P.pak",
+      "解码JSON_SHA256": "647de4ac4554a0392579bb62642eda3474f5802b629a97bc53b7d28ac696e24e",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_MultiHPM_gleip_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s00.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "ff43dc9c5373bfabaea43cb74dba27a369690f030eb0db86a39064c122d47f56",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s00_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s03.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "57930369bdcd7422de464766ba4a1d07b9a0c131fdd67b07b65c6b92a0ae5f11",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s03_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s05.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "ef057f1de4875e7d2e3a6dfb9d0e6b1242d9c469f96621945ca6ddc07ff5d1d2",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s05_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s06.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "63b84f35ad0605699923b895f3a04f4df26b1cd2d6c66e0c3655901066ffeeb8",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s06_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s07.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "4aa1451e0505a94beb603f4ca788191744904f82e353076609b4153ad17fd41e",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s07_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s09.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "17c36997fe1cc6d937f8677506fb1b03266e64cd2fc6c6e8171c88315bb9d21d",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s09_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s10.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "f7b86708719d3caefd95e506c997fb77df95ce4814403c144aa0aaa235dd0457",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s10_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s11.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "a61ce00681ac5e87e46c79f5c8a3b92f9d84c39c47d39463c161678e3ec90b08",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s11_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s12.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "15d6c9b7361a3e9308d28b1cdc351cb05dd4665f5bde52a3f0a5edd6d30ffc91",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s12_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s13.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "42990192b54537f631af3ada7c3bba0911a48fa60b8ba415d136172995fc0ce5",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s13_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s16.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "78a6f171081d58a8b570a9396c17d5a813a27fe922c5cff47bc1e03f8206fa1f",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s16_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_c11_s17.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+      "解码JSON_SHA256": "dc007a75fe49c3f913f46387894eb84d7c0e6d64a15294b53a11c2b9f8ef7f8e",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_c11_s17_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/s44/plwp_RetargetHPM_s44.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+      "解码JSON_SHA256": "76cab1de0dba73bddb3662d52b45ffa70a7aa953a37692ed3ba5da847abf7370",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_RetargetHPM_s44_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": [
+        "ExecuteUbergraph_plwp_RetargetHPM_s44",
+        "ReceiveTick",
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_qfa36.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\101\\~~~~Memory_Error_AddonPack_P.pak",
+      "解码JSON_SHA256": "e87b75b97d2a2cb002addc73e86625f0b63058377693fffad21c79c0c6ef348b",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "AcePlayerPawn_qfa36_C",
+          "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn.AcePlayerPawn_C"
+        }
+      ],
+      "蓝图函数": [
+        "UserConstructionScript"
+      ]
+    },
+    {
+      "资源": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_uav_fa36.uasset",
+      "来源PAK": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\101\\~~~~Memory_Error_AddonPack_P.pak",
+      "解码JSON_SHA256": "13b55bdf5a9a3d0073815f5a4fe63f8ad4a50711bb635434ee0d5d25cb5eea5f",
+      "说明": "哈希对应Temp中UAssetAPI导出JSON，非原PAK或原资源字节",
+      "类与父类": [
+        {
+          "name": "plwp_uav_fa36_C",
+          "parent": "/Script/Nimbus.WeaponUAV"
+        }
+      ],
+      "蓝图函数": []
+    }
+  ],
+  "源码SHA256": {
+    "src/continuous_sp.hpp": "f8d8640db433fa771398bfe92b2f1bc6554ffb8e278347d508efcc8d6d476005",
+    "src/weapon_bridge.cpp": "028fc6cd17220b3db73e4c43da6c59acd0b279a8f9184cac2dd17baba51da377",
+    "dist/DualSP/Scripts/main.lua": "042bb3b5e430a192a1b8d8bd8a01c538572b8fd00faf9d6d0e6cdeb7e6a5345a",
+    "dist/DualSP/Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03"
+  },
+  "受保护旧DLL_SHA256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "作者资料": [
+    "https://www.nexusmods.com/acecombat7skiesunknown/mods/3728?tab=description",
+    "https://www.nexusmods.com/acecombat7skiesunknown/mods/2584?tab=files"
+  ]
+}

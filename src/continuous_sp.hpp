@@ -1,4 +1,4 @@
-// 电子战兵装按原生实现识别，TLS/UAV沿用已登记机型；仅限 build 9855922。
+// 电子战和UAV按原生实现识别，TLS保留既有附着范围；仅限 build 9855922。
 #pragma once
 
 struct ContinuousIdentity { Addr address{}; int index{},serial{}; };
@@ -7,6 +7,7 @@ struct ContinuousSupport {
     ContinuousKind kind{ContinuousKind::None};
     bool electronic{};
     const char* reason{"not_registered"};
+    bool uav{}; // 按真实WeaponUAV类识别，不以菜单名称或编号26代替。
 };
 struct ContinuousEffect {
     ContinuousIdentity actor,plane,activator,level;
@@ -93,6 +94,7 @@ bool continuousClassDerived(Addr cls,const char* name,const char* package) {
     return false;
 }
 bool continuousElectronicClass(Addr cls) {return continuousClassDerived(cls,"ElectronicSupportMeasures","/Script/Nimbus");}
+bool continuousUavClass(Addr cls) {return continuousClassDerived(cls,"WeaponUAV","/Script/Nimbus");}
 bool continuousPlaneClass(Addr plane,const char* name,const char* package) {
     const ContinuousReadBatch memory;memory.identity(plane);
     Addr cls=memory.read<Addr>(plane+0x10);
@@ -161,7 +163,7 @@ bool continuousFalkenTLSBusy(Addr plane,Addr activator) {
 }
 bool continuousLegacyPlane(Addr plane) {return continuousCfa44(plane) || continuousMorgan(plane) || continuousRaven(plane) ||
     continuousXfa27(plane) || continuousSu37(plane);} // CFA已有弱身份机型缓存，先命中，避免先遍历另外三架的类链。
-// 电子战识别与具体WeaponID解耦；仍逐次核对原生回调和发射即装填契约。
+// 电子战/UAV均与WeaponID解耦；仍逐次核对原生回调和发射即装填契约。
 ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
     const bool electronic=continuousElectronicClass(cls);
@@ -173,20 +175,24 @@ ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
             return {ContinuousKind::None,true,"electronic_native_callbacks_changed"};
         return {ContinuousKind::Electronic,true,"native_electronic"};
     }
+    if(continuousUavClass(cls)) {
+        if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8) ||
+            read<unsigned char>(weapon+0x45d) || read<float>(weapon+0x518)!=0)
+            return {ContinuousKind::None,false,"uav_reload_contract_changed",true};
+        const bool supported=read<Addr>(table+0x618)==base+0x8a6bf0 && read<Addr>(table+0x628)==base+0x8779a0 &&
+            read<Addr>(table+0x648)==base+0x8a5260 && read<Addr>(table+0x668)==base+0x878d40 && read<Addr>(table+0x680)==base+0x878eb0;
+        return {supported?ContinuousKind::UAV:ContinuousKind::None,false,
+            supported?"native_uav":"uav_native_callbacks_changed",true};
+    }
     const int id=read<unsigned char>(weapon+0x3b0);
+    if(continuousClassDerived(cls,"LaserInterceptor","/Script/Nimbus"))
+        return {ContinuousKind::None,false,"interceptor_lifecycle_not_supported"};
     if(id!=25 && id!=26)return {ContinuousKind::None,false,id==31?"electronic_class_unrecognized":"not_continuous"};
     const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
         (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")) ||
         (continuousSu37(plane) && continuousClass(cls,"plwp_tls_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0")));
-    const bool uav=raven && id==26 && continuousClass(cls,"plwp_WeaponUAV_C","/Game/Blueprint/Weapons/Player/Base/plwp_WeaponUAV");
-    if(!(tls || uav) || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return {};
-    if(uav) {
-        const bool supported=!read<unsigned char>(weapon+0x45d) && read<float>(weapon+0x518)==0 && read<Addr>(table+0x618)==base+0x8a6bf0 &&
-        read<Addr>(table+0x628)==base+0x8779a0 && read<Addr>(table+0x648)==base+0x8a5260 &&
-        read<Addr>(table+0x668)==base+0x878d40 && read<Addr>(table+0x680)==base+0x878eb0;
-        return {supported?ContinuousKind::UAV:ContinuousKind::None,false,supported?"native_uav":"uav_contract_changed"};
-    }
+    if(!tls || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return {};
     const bool supported=read<Addr>(table+0x648)==base+0x894850 && read<Addr>(table+0x628)==base+0x85f1c0 &&
         read<Addr>(table+0x680)==base+0x861490;
     return {supported?ContinuousKind::TLS:ContinuousKind::None,false,supported?"native_tls":"tls_contract_changed"};
@@ -411,7 +417,7 @@ struct ContinuousRebuild {
             if(!w || read<Addr>(w+0x3b8)!=plane || !read<unsigned char>(w+0x368))continue;
             const int id=read<unsigned char>(w+0x3b0);
             const auto support=continuousSupport(plane,w);
-            if(!support.electronic && (!legacy || (id!=25 && id!=26 && id!=31)))continue;
+            if(!support.electronic && !support.uav && (!legacy || (id!=25 && id!=26 && id!=31)))continue;
             if(support.kind==ContinuousKind::None) {
                 if(strict)nativeLog(Json{{"event","CONTINUOUS_UNSUPPORTED"},{"weapon",continuousName(w)},
                     {"weapon_id",id},{"electronic",support.electronic},{"reason",support.reason}}.dump());

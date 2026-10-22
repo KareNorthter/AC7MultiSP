@@ -723,7 +723,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     cfaSwitchCost.mark(0);
     ControlledWeaponSwitch controlled;
     ravenBeforeRebuild(command);
-    ContinuousRebuild continuous(command); // 电子战不限定机型，TLS/UAV沿用既有真实类限制。
+    ContinuousRebuild continuous(command); // 电子战/UAV按真实类及原生契约，TLS保留既有附着限制。
     cfaSwitchCost.mark(1);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
@@ -759,9 +759,13 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
             nativeLog(Json{{"event","MOD_ELECTRONIC_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
             require(false,"电子战兵装：当前原生回调或装填机制不支持多SP，详见native.log");
         }
-        if(read<unsigned char>(cdo+0x3b0)==26 && !support.electronic)
-            require(support.kind==ContinuousKind::UAV && continuousRavenLoadout(command.activator),
-                "UAV多SP仍只支持已登记的原生配置");
+        if(support.uav && support.kind==ContinuousKind::None) {
+            nativeLog(Json{{"event","MOD_UAV_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
+            require(false,"UAV/HPM兵装：当前原生回调或装填机制不支持多SP，详见native.log");
+        }
+        const int weaponId=read<unsigned char>(cdo+0x3b0);
+        if((weaponId==26 || weaponId==31) && !support.electronic)
+            require(support.kind==ContinuousKind::UAV,"复用UAV/ECM编号的未知兵装尚不支持多SP");
     }
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -894,9 +898,8 @@ void requireDebugLoadoutReady(Addr plane,Addr activator) {
                 if(continuousClassDerived(read<Addr>(weapon+0x10),"Bomb","/Script/Nimbus")) {
                     ++inactiveBombs;continue;
                 }
-                // 保留原生 UAV 的既有豁免，不扩展到其他未知兵装。
-                if(raven && read<unsigned char>(weapon+0x3b0)==26 &&
-                    continuousSupport(plane,weapon).kind==ContinuousKind::UAV)continue;
+                // 仅忽略已停用且满足同一原生契约的UAV/HPM；活动对象及未知派生仍拒绝。
+                if(continuousSupport(plane,weapon).kind==ContinuousKind::UAV)continue;
             }
         }
         require(false,raven?"仍有已发射的活动武器，请等待结束后再调试换装":
@@ -930,6 +933,17 @@ void execute(const Command& command) {
     require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
     require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
+    if(command.op=="switch" || command.op=="checkpoint_save" || command.op=="snapshot") {
+        require(session.plane==command.plane && session.activator==command.activator &&
+            session.active>=0 && session.active<session.count && session.count<=3,"当前兵装缓存会话不符");
+        const auto& cached=session.special[session.active];
+        const auto actual=read<Addr>(groupOf(command.activator,true));
+        // 作者蓝图可自行调用InitializeWeaponSystem；捕获前先拒绝外部换装，避免库存串槽。
+        if(!cached.valid || cached.weaponClass!=actual)
+            throw std::runtime_error(Json{{"event","EXTERNAL_SP_CHANGE"},{"active",session.active},
+                {"expected_class",cached.weaponClass},{"actual_class",actual},
+                {"error","兵装已被其他Mod切换，停止多SP缓存读写；请重开任务后避免同时使用两套换装功能"}}.dump());
+    }
     if(command.op!="snapshot" && command.op!="checkpoint_save") {
         cfaWeaponDiagnostic.sampled=false;
         if(command.op!="switch")cfaWeaponDiagnostic.admmObserved=false; // 换装/补给/检查点不沿用旧发射历史。
@@ -1111,7 +1125,8 @@ extern "C" __declspec(dllexport) int dualsp_ammo_ratio_supported(void*) {return 
 extern "C" __declspec(dllexport) int dualsp_infinite_ammo_supported(void*) {return 0;} // 目录、预览、运行与Lua负数规则须成套。
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
 extern "C" __declspec(dllexport) int dualsp_mod_electronic_supported(void*) {return 0;} // 四返回值和通用电子战保有须成套。
-// 菜单按实际CDO核对通用电子战和已有TLS/UAV资格；返回原因以便诊断。
+extern "C" __declspec(dllexport) int dualsp_mod_uav_supported(void*) {return 0;} // 第五返回值标识真实UAV，Lua/核心须成套。
+// 菜单按实际CDO核对通用电子战/UAV和已有TLS资格；返回真实UAV标记及拒绝原因。
 extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1128,11 +1143,14 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
         for(int i=0;i<3;++i)configured|=read<Addr>(activator+0x158+i*0x30)==cls;
         require(configured,"持续兵装：默认对象不属于当前机体的三个真实配置");
         const auto support=continuousSupport(plane,cdo);
-        const bool ravenAllowed=support.kind!=ContinuousKind::UAV || continuousRavenLoadout(activator);
+        // Raven本体仍有专用两槽回收模型修正，不能把通用UAV资格当作未知回收布局的写许可。
+        // 其他机体不再被要求伪装成Raven的TLS/QAAM/UAV三配置。
+        const bool ravenAllowed=!support.uav || !continuousRaven(plane) || continuousRavenLoadout(activator);
         const bool supported=support.kind!=ContinuousKind::None && ravenAllowed;
-        const char* reason=ravenAllowed?support.reason:"uav_loadout_changed";
+        const char* reason=ravenAllowed?support.reason:"uav_raven_visual_layout_changed";
         api->boolean(luaState,true);api->boolean(luaState,supported);
-        api->boolean(luaState,support.electronic);api->string(luaState,reason,std::strlen(reason));return 4;
+        api->boolean(luaState,support.electronic);api->string(luaState,reason,std::strlen(reason));
+        api->boolean(luaState,support.uav);return 5;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
