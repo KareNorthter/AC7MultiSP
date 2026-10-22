@@ -1,0 +1,11 @@
+{
+  "schema": 1,
+  "version": "2.23.1",
+  "user_message": "都正常了，合并到main，版本号2.23.1。制作发布包。发布包里不要打包 directX和vc库。",
+  "recorded_at": "2026-10-22T11:46:42.647037+08:00",
+  "release_authorized": true,
+  "distribution": "local_manual_package",
+  "bundle_runtimes": false,
+  "upload_authorized": false,
+  "install_requested": false
+}

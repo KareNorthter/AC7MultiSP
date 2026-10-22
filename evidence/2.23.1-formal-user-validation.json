@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "version": "2.23.1",
+  "validated_version": "2.23.1 alpha2",
+  "validated_commit": "5d9bedd6ae9668b527c1b8bdaa6b061949746b6b",
+  "validated_build_dir": "Temp/build-2.23.1-alpha2",
+  "validated_build_receipt_sha256": "b10c9a83a755431dfa8807d275ee5513b431b75fb663ade9e2b189171e04c6e5",
+  "validated_test_receipt_sha256": "0e465e20f8388bd56eb2b42ea9bc2697af600224fd0eeff6a1881ea0efaaaf0a",
+  "validated_installed_receipt": "evidence/2.23.1-alpha2-installed.json",
+  "validated_installed_receipt_sha256": "cae973bb0be0487df40177f4666d5ef245a8cb14dee449fc3ab5444887daa80f",
+  "user_message": "都正常了，合并到main，版本号2.23.1。制作发布包。发布包里不要打包 directX和vc库。",
+  "recorded_at": "2026-10-22T11:46:42.647037+08:00",
+  "main_acceptance_authorized": true,
+  "version_label_only_authorized": true,
+  "approved_tooling_commit": "5d9bedd6ae9668b527c1b8bdaa6b061949746b6b",
+  "approved_tooling_files": [],
+  "approved_receipt_prefix": "2.23.1-formal",
+  "approved_packager_sha256": "fda228cf3d11f2196e66704e1a3dcd99bdad5248a552149919139dc72dcea453",
+  "scope": [
+    "本轮alpha2建议的暂停换机、连续换机、关闭F6保留原暂停、S-44混选及Arkbird三SP/发射轮切/名称"
+  ],
+  "scope_basis": "用户对上一条测试建议整体反馈都正常，不虚构各项次数或扩大到所有Mod/机体/组合。",
+  "new_version_installed": false,
+  "new_version_gameplay_tested": false,
+  "historical_receipts_preserved": true
+}

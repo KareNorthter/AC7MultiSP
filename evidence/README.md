@@ -1,5 +1,7 @@
 # 证据分类索引
 
+- 正式2.23.1：用户验收alpha2并授权合main和本地无运行库包，见`2.23.1-formal-user-validation.json`、`2.23.1-formal-version-label.json`及`2.23.1-formal-release.json`。原安装/构建回执保持；以下待验收文字保留来源阶段含义。
+
 - 当前alpha2已成套编译、通过11项现有检查并安装，游戏效果待验收。来源见`2.23.1-alpha2-source-intake.json`；暂停换机现场与修订见`aircraft-native-pause-handoff-alpha2.json`，构建/安装见本版integration和installed回执。
 
 - 当前2.23.1 alpha1已成套编译、通过11项现有检查并安装，个人配置原字节保持，游戏效果待用户验收。接收与交付见`2.23.1-alpha1-source-intake.json`、`2.23.1-alpha1-integration.json`及`2.23.1-alpha1-installed.json`；以下来源记录的未编译/安装保留其当时含义。

@@ -1,9 +1,9 @@
-AC7MultiSP 2.22.1
+AC7MultiSP 2.23.1
 
 安装
 1. 完整解压，先退出游戏。Steam→游戏→管理→浏览本地文件，找到Ace7Game.exe所在目录。
 2. 备份已有dwmapi.dll、ue4ss及同名挂载包。升级保留ue4ss\Mods\DualSP\profiles.json，不删除整个DualSP目录。
-3. 需要时运行Runtimes\VC_redist.x64.exe和Runtimes\DirectX\DXSETUP.exe，保留DirectX同目录CAB；已有同版或更新运行库无需卸载。
+3. 本包不附带DirectX和VC运行库；需要时另行安装微软官方运行库，已有同版或更新组件无需卸载。
 4. 将GameFiles内的dwmapi.dll、ue4ss和Game合并复制到游戏根目录，不要复制GameFiles文件夹本身。挂载包路径为Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak。
 5. 原mods.txt若还有其他Mod，不覆盖整个文件，只保留或补入DualSP : 1。本包使用AC7专用UE4SS加载器，共享加载器须核对后合并。
 6. 通过Steam启动，默认F6打开管理界面；无需Python或编译工具。旧格式配置和个人方案先完整备份，再重置为配置19，不做迁移；已有有效配置19正常保留。

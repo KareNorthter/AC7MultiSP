@@ -1,32 +1,21 @@
-AC7MultiSP 2.23.1 alpha2
+AC7MultiSP 2.23.1
 
-Delivery: complete build, all 11 existing checks and installation passed. Settings/bindings and accepted mount bytes are retained. Gameplay acceptance is pending.
+Changes since 2.23.0
+• Reduce hangar browsing probes and inspect existing, fully loaded weapon objects. Special aircraft defer to native behavior; catchable first-admission errors isolate that aircraft for the session, with recovery on other aircraft.
+• With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun. Registered Adler A/B, XR302 and other mod cannon SPs are included; multiple eligible cannon SPs in one loadout remain unlinked.
+• Native unlimited stock displays ---, retaining stock and reload rules.
+• Fix qualified mod UAV/HPM admission and base-slot weapon names, including S-44 and Arkbird. Class, callback, lifecycle and cache-identity checks remain.
+• Aircraft changes from a native pause menu wait for native resume before a single restart; timeout rolls back safely. Closing management normally preserves the original pause menu.
 
-2.23.1 alpha2 changes since alpha1
-• Qualify mod UAV/HPM by actual native classes/callbacks and lifecycle contracts, including S-44 and Arkbird. Improve base-slot weapon names and detect external class changes before reading cached stock.
-• Aircraft restart from a native pause menu waits across callbacks for native resume, up to three seconds. Resume/restart are each requested once; timeout or identity changes roll back safely.
-• Retain settings/bindings, alpha1 cannon salvo and --- display, accepted mount assets and F-14IA hiding. Gameplay acceptance is pending.
+The user accepted alpha2. This package changes version labels while preserving accepted functionality and instruction bytes. The local installation retains its accepted alpha2 label. DirectX and Visual C++ runtimes are not bundled; install official Microsoft runtimes separately if needed. Existing F-14IA hiding remains; its native resource-dependency crash is outside this acceptance.
 
-
-Internal test candidate 2.23.1 alpha1 (since official 2.23.0)
-• Skip redundant weapon probing during hangar browsing; inspect only existing, fully loaded default objects.
-• F-14IA variants defer to native behavior. Catchable first-admission errors quarantine that aircraft for this session; other aircraft can recover. Existing F-14IA hiding remains; native third-party resource assertions are not guaranteed fixed.
-• With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun. Registered Adler A/B, XR302 and other mod cannon SPs are included. Multiple eligible cannon SPs in one loadout remain unlinked.
-• Unlimited ammunition displays ---. Stock/reload rules and valid revision 19 settings, loadouts and bindings are retained.
-• Build/install verification and user gameplay acceptance are separate. No public package or upload is created.
-
-Delivery: built, all 11 existing checks passed, and 19 runtime files installed. All 77 mount variants/154 members and original revision 19 settings are verified. The game remains closed; gameplay acceptance is pending.
-
-Historical release notes follow.
-
-Changes since 2.22.1
+2.23.0 changes (historical)
 • Commands/results, the catalogue, UI state and action queues now pass through memory. Consecutive pending direct selections are coalesced; duplicate JSON work, weapon-pool copies and HUD sampling are reduced.
 • Logs use bounded background queues and batching. Unchanged settings skip saving; validated short selection audio is retained across missions.
 • Fixed inactive ADMM pool slots with unlimited ammunition, cached reload markers and checkpoint/mode changes. Native projectile creation and continuous-effect lifetimes remain authoritative.
 • Ignore verified inactive bomb remnants when changing combinations; resupply continues to list purchased weapons only.
 • Added qualified mod electronic/unlimited-ammo support, SP debug controls, management refinements and CFA startup prewarming/loading feedback. Management muting has been removed.
 • CFA44 with three SPs and models enabled: median core switching time 22.74→17.66 ms (about 22% lower), P95 25.87→20.20 ms. One 88.31 ms spike remains. These are uncontrolled log comparisons, not frame-rate guarantees.
-• User-accepted alpha1 r3 is the functional baseline. Main is now 2.23.0; installed binaries retain their accepted alpha label. Formal artifacts and packaging are separate delivery steps.
 
 Changes since official 2.22.0
 • Three management tabs: General, Camera and Debug; logs expand in Debug. Controller and keyboard tracking have separate options, both off by default.
@@ -42,7 +31,7 @@ Carry one to three special weapons in single-player campaign/free missions, pres
 Installation
 1. Exit the game and extract the whole package. Use Steam > Manage > Browse local files to find Ace7Game.exe.
 2. Back up the existing loader, ue4ss directory and same-named mount PAK. Preserve ue4ss\Mods\DualSP\profiles.json when upgrading.
-3. If needed, run Runtimes\VC_redist.x64.exe and Runtimes\DirectX\DXSETUP.exe with all adjacent CAB files. Existing equal/newer runtimes need no uninstall.
+3. DirectX and Visual C++ runtimes are not bundled. Install official Microsoft runtimes separately if needed; existing equal/newer components need no uninstall.
 4. Merge the contents of GameFiles into the game root. Do not copy the GameFiles folder itself. Mount PAK: Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak.
 5. If mods.txt contains other mods, preserve it and add/retain DualSP : 1. This package uses the AC7-specific UE4SS loader; review shared loader files before merging.
 6. Launch through Steam. F6 opens management. No Python or compiler is needed. Older settings/loadouts are backed up and reset to revision 19 without migration. Valid revision 19 settings are retained.
@@ -107,7 +96,7 @@ Su-47, Su-57 TGM and X-02S retain multi-SP gameplay with native SP visuals. Ordi
 Known limits
 Initial loading, loadout navigation and result-screen arrows may still stutter. F-2A model performance and occasional exits need their own evidence. The F-22 field-name lifetime workaround covers identified paths in this mod, not every loader/custom-aircraft problem. Acceptance is not an all-aircraft, all-combination, all-mod or fixed-performance guarantee. FALKEN switches are ignored during laser/trail activity; press again afterward. MGP/PLSL linkage may have slot-switch gaps.
 
-The package contains no personal settings, saves, logs, dumps or third-party aircraft mods. Remove DualSP and its mount PAK to uninstall; remove shared loaders only when no other mods need them. SP2.wav is user-provided third-party audio with no additional rights granted. Microsoft runtimes remain unchanged; licenses are included.
+The package contains no personal settings, saves, logs, dumps or third-party aircraft mods. Remove DualSP and its mount PAK to uninstall; remove shared loaders only when no other mods need them. SP2.wav is user-provided third-party audio with no additional rights granted. DirectX/Visual C++ runtimes are not bundled; mod/dependency licenses are included.
 
 Version history (2.xx)
 Includes test versions; historical features may have been replaced or withdrawn. Current instructions take precedence.
@@ -152,4 +141,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.22.0: Integrated NEXT modes, tracking/camera controls, independent model/D-pad options, loadout/mod compatibility, paused switching and additional SP layouts; simplified local installation integrity scope.
 2.22.1: Refined three-tab management and separate tracking options, shortcuts and defaults; back up/reset older settings; fixed F/A-18E TGM references and offline asset qualification.
 2.23.0: Moved runtime IPC to memory, added background logging and reduced repeated sampling; fixed unlimited ADMM queues and inactive-bomb blocking, refined mod compatibility/debug/management, and removed management muting. Comparable CFA median switching time fell by about 22%.
-2.23.1 alpha1: Hangar admission/fallback protection, registered mod cannon-SP salvo support and unlimited-ammo display ---.
+2.23.1: Improve hangar admission/fallback, registered cannon salvo, UAV/HPM compatibility, weapon names and paused aircraft restart; native unlimited stock displays ---.
