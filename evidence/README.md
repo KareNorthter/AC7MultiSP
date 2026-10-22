@@ -1,6 +1,6 @@
 # 证据分类索引
 
-- 当前alpha2来源见`2.23.1-alpha2-source-intake.json`；暂停换机现场与修订见`aircraft-native-pause-handoff-alpha2.json`，构建/安装见本版integration和installed回执。
+- 当前alpha2已成套编译、通过11项现有检查并安装，游戏效果待验收。来源见`2.23.1-alpha2-source-intake.json`；暂停换机现场与修订见`aircraft-native-pause-handoff-alpha2.json`，构建/安装见本版integration和installed回执。
 
 - 当前2.23.1 alpha1已成套编译、通过11项现有检查并安装，个人配置原字节保持，游戏效果待用户验收。接收与交付见`2.23.1-alpha1-source-intake.json`、`2.23.1-alpha1-integration.json`及`2.23.1-alpha1-installed.json`；以下来源记录的未编译/安装保留其当时含义。
 

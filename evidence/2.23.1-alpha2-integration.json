@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T10:57:21.889071+08:00",
+  "version": "2.23.1 alpha2",
+  "candidate": true,
+  "source_commit": "b4bc170887d02d9a82c7702aa49e9de28bcb39ab",
+  "source_intake": "evidence/2.23.1-alpha2-source-intake.json",
+  "build_dir": "Temp/build-2.23.1-alpha2",
+  "build_receipt_sha256": "b10c9a83a755431dfa8807d275ee5513b431b75fb663ade9e2b189171e04c6e5",
+  "test_receipt_sha256": "0e465e20f8388bd56eb2b42ea9bc2697af600224fd0eeff6a1881ea0efaaaf0a",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed_receipt": "evidence/2.23.1-alpha2-installed.json",
+  "installed_receipt_sha256": "cae973bb0be0487df40177f4666d5ef245a8cb14dee449fc3ab5444887daa80f",
+  "installed_at": "2026-10-22T10:57:17.767745+08:00",
+  "runtime_files_verified": 19,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+    "variant_count": 77,
+    "file_count": 154
+  },
+  "profiles_preserved_exact_bytes": true,
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\backup\\AC7MultiSP-20261022-105717-767745",
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "protected_files_verified": 6,
+  "other_mod_files_touched": false,
+  "f14ia_isolation_preserved": true,
+  "main_unchanged": true,
+  "release_created": false,
+  "game_started_by_agent": false,
+  "game_running_after_install": false,
+  "gameplay_verified": false,
+  "pause_fix": "原生恢复一次，跨调度等待最多3秒；身份/目标核对后只重开一次，失败安全回滚",
+  "regression_scope": "沿用11项既有检查；runtime_services_test增加真实prepare闭包及换机状态机的分阶段、重复点击、超时和目标变化场景",
+  "limitations": [
+    "暂停故障日志证明旧同调度断言失败，未知原生暂停原因未定位，不能保证所有暂停均能归还",
+    "S-44/Arkbird等Mod的实际多选、发射、切槽及名称仍待用户游戏内验收"
+  ]
+}

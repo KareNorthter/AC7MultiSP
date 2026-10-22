@@ -9,6 +9,8 @@
 
 用户已授权本轮完整编译、必要现有检查及安装。构建/安装事实分别见`evidence/2.23.1-alpha2-integration.json`与`evidence/2.23.1-alpha2-installed.json`；游戏效果待验收。
 
+交付状态（2026-10-22）：**2.23.1 alpha2已成套编译、通过11项现有检查并安装**。19运行文件及77资源/154成员核验一致；个人配置19、快捷键和方案原字节保留，旧alpha1完整备份及存档备份通过，6项关键保护文件一致。游戏保持关闭、未自动启动。来源`b4bc170`；见`evidence/2.23.1-alpha2-integration.json`及`evidence/2.23.1-alpha2-installed.json`。真实游戏效果待用户验收，main保持2.23.0。
+
 以下为2.23.0正式主线、alpha1及来源阶段历史，保留当时含义。
 
 
