@@ -101,9 +101,22 @@ bool salvoCurrentSupported() {
     const auto identity=continuousIdentity(weapon);
     const auto name=mountNameIndex(read<unsigned>(weapon+0x18));
     const auto id=read<unsigned char>(weapon+0x3b0);
-    return continuousAlive(identity) && read<unsigned char>(weapon+0x451)==1 &&
-        ((id==17 && (name=="Default__plwp_mgp_r0_C" || name=="Default__plwp_mgp_va_C" || name=="Default__plwp_mgp_vb_C")) ||
-         (id==22 && (name=="Default__plwp_plsl_x0_C" || name=="Default__plwp_plsl_xr302_C")));
+    if(!continuousAlive(identity) || read<unsigned char>(weapon+0x451)!=1)return false;
+    // 与Lua保持同一精确类/编号清单，不按名称前缀或编号单独放行。
+    static constexpr struct {const char* name;unsigned char id;} supported[]={
+        {"Default__plwp_cgp_f15smt_C",17},{"Default__plwp_gplsl_arsb_C",22},
+        {"Default__plwp_gun_adf11_C",0},{"Default__plwp_hgn_adf11_C",0},{"Default__plwp_hgp_x0_C",17},
+        {"Default__plwp_mgp_31m_C",17},{"Default__plwp_mgp_31ma_C",17},{"Default__plwp_mgp_C",17},
+        {"Default__plwp_mgp_active_C",17},{"Default__plwp_mgp_fa36_C",17},{"Default__plwp_mgp_qh66_C",17},
+        {"Default__plwp_mgp_r0_C",17},{"Default__plwp_mgp_rmq4_brc_C",17},{"Default__plwp_mgp_uavcx_C",0},
+        {"Default__plwp_mgp_va_C",17},{"Default__plwp_mgp_vb_C",17},
+        {"Default__plwp_plsl_8m_C",22},{"Default__plwp_plsl_qh66_C",32},
+        {"Default__plwp_plsl_rmq4_C",32},{"Default__plwp_plsl_ua45_C",32},
+        {"Default__plwp_plsl_x0_C",22},{"Default__plwp_plsl_x1_C",22},
+        {"Default__plwp_plsl_x308_C",22},{"Default__plwp_plsl_xr302_C",22},{"Default__plwp_rgun_zp_C",17}
+    };
+    for(const auto& item:supported)if(id==item.id && name==item.name)return true;
+    return false;
 }
 // action=-1只读状态，0归还额外输入，1按住当前合格SP；resume仅供本次自动切换后恢复真实机枪按住。
 int gunSalvoLua(void* luaState) {

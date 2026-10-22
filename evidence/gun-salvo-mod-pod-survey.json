@@ -1,0 +1,2939 @@
+{
+  "schema": 1,
+  "date": "2026-10-22",
+  "status": "批量静态源码候选，未构建、测试、安装或逐机验证",
+  "user_request": "根据mod机兼容性 (2)会话研究的约百余Mod资源，筛查炮类吊舱并与Adler/XR302修正一起适配",
+  "reference_thread": {
+    "id": "01a15f12-100b-7640-9d2b-2c54ef825a45",
+    "title": "mod机兼容性 (2)",
+    "read_only": true,
+    "messaged": false
+  },
+  "source": {
+    "index": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\download-paks.json",
+    "index_sha256": "212b3b38bb011696ab76fb6a7c5078ef4c5f4a8233d0229b71032ca53d8d8c40",
+    "original_static_plan": "E:/AC7_MultiSP/evidence/compatibility-aircraft-ace7-static-plan.json",
+    "aircraft_archives_from_source_plan": 103,
+    "all_archive_count": 105,
+    "pak_count": 236,
+    "pak_source_policy": "复用旧会话已提取的PAK，逐文件长度与旧索引一致；逐提取条目校验PAK载荷SHA1，并记录解压文件SHA256。本轮未重新全量计算28GB PAK的SHA256",
+    "source_paks": [
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\000\\~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak",
+        "archive": "兼容模组更新目录/解压到~Preset mods.zip",
+        "sha256_from_prior_index": "ddbaf7df93ba8ee89da805ddcee803940f132f5f5a2dc972c6b075b9e636eb53"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\000\\~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak",
+        "archive": "兼容模组更新目录/解压到~Preset mods.zip",
+        "sha256_from_prior_index": "a656afc50025339426c217d7cfc94b7a62586e6567c58a8f038b5e24adc7e60a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\000\\~~~~~~~~~!since_Localisation_AVDT_P.pak",
+        "archive": "兼容模组更新目录/解压到~Preset mods.zip",
+        "sha256_from_prior_index": "a3df2cf83d1c874c2250035eae44384abd7fc05b8f27d8058f1966ed1c76a51d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\000\\~~~~~~~~~!since_SDT_Add-On-ASS_P.pak",
+        "archive": "兼容模组更新目录/解压到~Preset mods.zip",
+        "sha256_from_prior_index": "c89acaacb4c431bd383c4638462cd6faffa4777be544a410bb5413e782c9befe"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\Additional_Skin_Slots_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "f0fbc17c78d0e9d214341522cba963748e9e2d79333f241b5460a4f4135034fc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\Custom Plane Pawns for Per-Campaign (for Flat Screen)_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "e363f2cc817f70b9f655c902067648e90a83d11d7036f9b13a0bde2e7b4cd7bf"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\Skin Pawn 00 for Add-On Planes_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "4529ccf89ce2521f8e04af2091ec434d9b0d0b7273ff172322bcfc3d3dfb7008"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\Skin Pawn 00 for Default Planes_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "8f6d6820014bd7af20881a1ff186b55ed302403a4849d3da4c5aafa32acea604"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~Add-On Data Merge (PPDT APS+PC)_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "cb0742ae6f26dc544661da0921b5e3a19aa7ee8a97538f5e14fcbc5cd1587fc0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~Add-On Data Merge (SDT ASS+APS+s00)_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "1d9090ce5c7838c0c3240b5e24aa5b78a6ec424dddb77799682003f21d918424"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~Add-On Data Merge (VR Data Tables PC)_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "36c468fdd2937f576f1072aa8cd792d20b41175f09bd0101b5f428bfd30e09fc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~~ExtremelyExpandedLimitsOfBones_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "90e45080c3c958ae6680a94f7a051da5f6e9f73f44eac399093a6fce388dbb5d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~~~~~~~~!Compatibility_Add-Ons-PPDT_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "3030b39d5e4bc19aacab8710a1de9c2ea6d9b4c3b01655c741a68117db2c5555"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~~~~~~~~!Compatibility_Add-Ons-PWDT_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "c6243b7c10e280cf2e9459e52ef9a6291682c682fe1573662b57b9c9a004979f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~~~~~~~~!since_Localisation_AVDT_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "b110e2521fbd419fdff7374013853a7e074b7d09cf01818c1322fe1a5b0ce578"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\001\\~~~~~~~~~!since_SDT_Add-On-ASS_P.pak",
+        "archive": "模组/前置模组（必下）/~Preset mods.zip",
+        "sha256_from_prior_index": "608204b10ae3c9a3ccc9a9e674d0a4141902d1cf2984fb77691445b93936ad6b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\002\\~Skyhawk_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/A-4NK 2563.zip",
+        "sha256_from_prior_index": "7dc0fffb904a17beaca098742f06b406ad7af42a67cdce2f0392d1532c2bfd22"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\002\\~~Skyhawk_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/A-4NK 2563.zip",
+        "sha256_from_prior_index": "cbc81166b80fac58c445ad5cfeea09c7d17b3f9a632ee7d0d0d706236787c1e9"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\003\\~~SKIES_OF_DECEPTION_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Ace Combat-X 2479.zip",
+        "sha256_from_prior_index": "ad1edc9dee09e57627a491140ab47e32eec213c816b0b18bbca6551bd59e5617"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\004\\ADA01_AddOn_Standalone_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADA-01 1770.zip",
+        "sha256_from_prior_index": "7af63314ae6570f72676a2af708554b8aef8b5edcfae41fcb02eece171dffa52"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\004\\~~~~ADA01_AddOn_Localization_Datatables_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADA-01 1770.zip",
+        "sha256_from_prior_index": "a8fea56d4276c41e9230afe97573a6a49521e15eb76f2865775cfba918f56d41"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\005\\~~ADF-11X Base File_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADF-11X 2850.zip",
+        "sha256_from_prior_index": "0b00e751f976cb3b7e639c83582d7813a54ba2f15bd66eb1a5843f8af3f9cd90"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\005\\~~~ADF-11X Addon module File_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADF-11X 2850.zip",
+        "sha256_from_prior_index": "d85d71ef1eff6f0e831b2497aa7f5814930b79ec718389a576b860c11e171a34"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\005\\~~~~~~~~~~~~~~~~!ADF-11X_Addon Compability_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADF-11X 2850.zip",
+        "sha256_from_prior_index": "aa1a1e04353a1faa52c2bdf401702ed2554f8f2b32512178630ef4b85af95d51"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "35bbcf26effc21ede8d0d2b0c1e420a38a7b12be5e0ff77576374bc5eaca1c29"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_0-Dummy_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "488e83c268dc3799c146976f1c0ceca70376445c5a3c3cf05989762540db4586"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_10-AggressorPhoenix_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "a1190c5ac4bc97a2b7dbc4282e1080f8f4fa9e38aa072636d3c64593b8d1b915"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_11-AggressorScarface_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "5cdb17f5a8391af1f1581e00300cf9c1f3df64de7711aeedc73a7528a80ee943"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_12-LuftT1_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "57664d6b5834cc6596b01782e4c37b8773e8b263a08b39f15bb92261bc7ffbca"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_13-SplinterFanmade_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "05d3e846d285a1cb1d30655c39883234239df40f5712280538ed6bbf6091b923"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_14-RavenProspect_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "02888f6b9486d5cb4e0110968e73101c35bea0451bfd213a6a40ceea6c4d0063"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_7-ProductionGrey_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "5fc622488550517e9cf7fef364e9cffd67763245d68cf06562377b4515e4a33c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_8-ProductionGhost_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "32e71e5d5df4bbf915e20bb2280900c6677d99baa2e1cb1729a2c44a9d4151c1"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Default_Skin_9-ZOE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "be0d22154896ae5f0cf1a9b1b22f6e790132ee5add05671fdf164552f585a5dc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFX-00.zip",
+        "sha256_from_prior_index": "676241afda2760e81e9d86083d313a6ebda81ce8125b2042a8c2bf827bef3cde"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\007\\~~~~~ADFY00 Geier Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/ADFY-00 2895.zip",
+        "sha256_from_prior_index": "ac7df1aadfc797db9b46b790937d9ebb1c50ee71bb2e537f982a0295f5292f6e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\008\\~AQH-66_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/AQH-66 2997.zip",
+        "sha256_from_prior_index": "4591813a030b23eb308f1fba0b64fb1b684a0a09a16eca7d3bdcef16c72223c3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\009\\Arkbird_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Arkbird 2584.zip",
+        "sha256_from_prior_index": "b784b71b92d5297b1e5bb5acbbe90a904389126050f4d6b369a6e6e7e5ada2be"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\010\\~AIAS_AddonFiles_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip",
+        "sha256_from_prior_index": "ed22fc08ad736afa369663d9ece98b38ab7881a2612a2626053cb3bd9a5a47f0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\010\\~AIAS_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip",
+        "sha256_from_prior_index": "0a796ccdff8a2d7ccb1bb7ea6751b596fc5068166f563baaa8b0238ce7656101"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\011\\~Lancer_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/B-1R 2706.zip",
+        "sha256_from_prior_index": "8ac1101e29103c51c562e69d414aa6a6a8c17d80eb8d480a72ad20256e7d0e1e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\011\\~Lancer_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/B-1R 2706.zip",
+        "sha256_from_prior_index": "76b9f192ff55fc3f46e941ca423bc849be56c8d63e7ae82eadedee46f97f8b0c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\012\\~B-2M_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/B-2M 3643.zip",
+        "sha256_from_prior_index": "dd37fc94ced87027492353e29ee209aa7d316be60fdd005ca61ef7f21ed2fa23"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\012\\~~B-2M_AccurateCollisionHitbox_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/B-2M 3643.zip",
+        "sha256_from_prior_index": "d27bab652f6c01d37f5021bbf00e2df200e20747a1dfce253acfd5995e2a36d2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\013\\~~MQ-90L Quox bis Wingman UAV_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip",
+        "sha256_from_prior_index": "da9fc30dd3c60e73d788f0f1d85d3ab997a8d819c3aa9e8a4cbe5d2a2a202d03"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\013\\~~~CFA-50 Base file_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip",
+        "sha256_from_prior_index": "d2ba2e61ee3e5af6c3f27c8375b3ce10fb59e4d2cf368d2afbdfe0242e80dd27"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\014\\Draken_Base_Files_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Darken J.zip",
+        "sha256_from_prior_index": "eb82b1a84506a4dad3d9549b8a58163c839de65df0b77ef2b074654a3203bca8"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\014\\Draken_Hotfix_A1_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Darken J.zip",
+        "sha256_from_prior_index": "77a34c39ee401ce9b5a10cfd52616f824cd07d7a9e03a5a574f15d237e23b755"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\014\\Draken_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Darken J.zip",
+        "sha256_from_prior_index": "f5313b026128fab02a737955726131fe86d8adc5f1ce0dd64d959b83c7d0fad3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\015\\~~~~~Prowler_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/EA-06B 2244.zip",
+        "sha256_from_prior_index": "34f65595d60ef92dd59c5649e1535133fee1ea18e574d9706852f5e2a50ea4b1"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\015\\~~~~~Prowler_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/EA-06B 2244.zip",
+        "sha256_from_prior_index": "b657804f81709ae5e2c03abe905f4b93d1f9d3fb480faf3846fb88bf8f8371a2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_AddOn_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+        "sha256_from_prior_index": "95907848a363a799a6796f630ba590fac5e640c817f0f1f0ef1e54b7d77b2f86"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_TypeA_Replacer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+        "sha256_from_prior_index": "bdae3f83b2c8e4eecd2466c7e9f140c1354fa71507ec73ba9f2e5ca3287b1f9e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\016\\~~LZ_EA-18G_TypeB_Replacer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip",
+        "sha256_from_prior_index": "192f7f29978a2d67f0d15bdfedf5dfdeffc9e82da1a60a5dcd367c02b45a904a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~Nighthawk_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "1d1f5270db6392012e336397c233e48cca7686d3a6e2f80b035f29d4b5f22903"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~Nighthawk_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "7c468fbd5a7f016f1bd2b467088627115b140f66303cd9fb8021b51a87efb06f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~~Nighthawk_AddOn_MoreSkinSlots_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "1d01b1eae708e78728cccb3e371e61c1aceb749efd7e185f7e42de636fa03d9b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~~~Nighthawk_AddOn_Skin_2_Desert_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "feda0f53e9e927b4968dd98e462b9e88b2f590179c39f9ce24fdc38c45800d25"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~~~Nighthawk_AddOn_Skin_3_Razorback_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "aa19acfce8aa51fa93c61e7a358ca06eaa1130552b06a3d0e0fb27199cb86d42"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~~~Nighthawk_AddOn_Skin_7_StarsAndStripes_Warwolf_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "eadd0c1a47f6f5ee88bc5f5f3d6b6a06dfcb724629bbf36fb5cd9e38bed8ddd5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\017\\~~~~~~~Nighthawk_AddOn_Skin_8_Idolmaster_Vector_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-117 2245.zip",
+        "sha256_from_prior_index": "471787688fe5dcb54772881f7aad7454c2821b11a83e35be1ab5054edb349060"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\018\\~~LZ_F-14B_AddOn_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-14B 2219.zip",
+        "sha256_from_prior_index": "d4656f95b1e30b3d56789a419f0c8efdf493eaf91c4c840691ba3386bad1bc83"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+        "sha256_from_prior_index": "cdfb3e549221e065e6464597b5e308cff081e0eec03e53714f4800a6a6a59540"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~~~~~F14IA_DataTable_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip",
+        "sha256_from_prior_index": "10be1bf2d51c6db43b6dc74eb4962162cb0448bd788c4e27d2800063500c521b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\020\\~~F-15_ACTIVE_Prototype_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15 ACTIVE 2548.zip",
+        "sha256_from_prior_index": "fd384895bb313b4030cf04f1baeeb2c630991ca7d947e2eaeca302f2442061db"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\021\\~~~~F-15CX_BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15CX 2671.zip",
+        "sha256_from_prior_index": "cd12057f0981dc7651995e7fc9d80f1470780bad86c1d765c2efd95036a2ccd9"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\021\\~~~~~~F-15CX_Alt-Pixy_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15CX 2671.zip",
+        "sha256_from_prior_index": "5bdac74cc96a6e61208c3026f7d63e75bf0b4bf6e74c732cec66c42735ecfe0a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\021\\~~~~~~F-15CX_SPWDroptanks_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15CX 2671.zip",
+        "sha256_from_prior_index": "8766e15fed909210a3418634daf3d686a8e8744634274b8b1c7a07e0e49c7664"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\021\\~~~~~~~F-15CX_Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15CX 2671.zip",
+        "sha256_from_prior_index": "9bcc5cf505a79e7caaa3d7ec45bb4901175bd7c8a51fd36e282fca6a152ee917"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\022\\~~~F-15D_BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15D 2957.zip",
+        "sha256_from_prior_index": "46a0151d1829c6bda6ab2886d61edcd1403a52b85ed375f9bc8781b8dfa42a52"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\022\\~~~~~F-15D_Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15D 2957.zip",
+        "sha256_from_prior_index": "a995bcfc07890ddae6d75fbf3356ffcf5ef5581ec13cb733816ebea54ab8600f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\023\\~~~~F15EX_Addon_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15EX 3318.zip",
+        "sha256_from_prior_index": "cb90e90832342c5ac2301dc65bf38dde502592cc77c867ef76717b8e45c2ef16"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\023\\~~~~~~F15EX_DataTable_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15EX 3318.zip",
+        "sha256_from_prior_index": "45bdcde615b3fd6d19963f49a5c99884d344a7aee15ff21d0d65e1b6d346231d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\024\\~~~~F-15M_BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15M 3592.zip",
+        "sha256_from_prior_index": "6a9888d9ff7d02371c92d6c5b716b1ed7a8383a314a10a3cc71b9393c7d9e909"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\024\\~~~~~~~~F-15M_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15M 3592.zip",
+        "sha256_from_prior_index": "2f4704d0e2f1282fce0a2f71fa7eb8f9d7b8e8b42df2145780d4eb8af71ac064"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\025\\~~~~F-15N_ADDON-BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15N 2382.zip",
+        "sha256_from_prior_index": "7c082cd900118222bb2a3c7e3728391aa6259f4b2c739c7769f8a6c3a3cae62d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\025\\~~~~~F-15N_ADDON-Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15N 2382.zip",
+        "sha256_from_prior_index": "711be3dedb15b55fb6ba9b44bfb194977b269c5a942d1e01d61155a431626284"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\026\\~~F-15SMT Eagle Plus_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15S-MT 3517.zip",
+        "sha256_from_prior_index": "78c8101b0fe9ebcae8540e01d8d8662d15b6f011e63da923d3abb6b93f94d45f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\027\\~~LZ_F-15SE_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15SE 2595.zip",
+        "sha256_from_prior_index": "0f54c2949ce96839899fa3e440f7c7ba4214b99351014f257e7b8be025dd30d7"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Base_Files_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15SXF.zip",
+        "sha256_from_prior_index": "8e0f174e17f5beb7a26c2b4dca6ddb9a4f149d8c1e4242cfca4838cbdd1bdf66"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Skin_1_GRDF_Nemo_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15SXF.zip",
+        "sha256_from_prior_index": "a45a31e16a611f217c4e61b4c8082eaaf8e59cc3a3acf511c3ac389e69992986"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Skin_2_GRDF_Dision_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15SXF.zip",
+        "sha256_from_prior_index": "4b5a666bf637df2610f3b72884d0fc172d5352fb7e9ab2608911034ddcff579c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Skin_3_Prototype_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-15SXF.zip",
+        "sha256_from_prior_index": "d3eba8484e5c03002e77defb84dbdab0f91cddd3e168ea4b8a9a64e18e45fedf"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\029\\F-16F_Desert_Falcon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-16F 3720.zip",
+        "sha256_from_prior_index": "7cb7b6bd8b4b402bfa7ae055dc35438cdfbfe5fadcf3f1b90f5fc2bf36f6ed04"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\030\\~~~~~~F16VX_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-16VX 2347.zip",
+        "sha256_from_prior_index": "91a8cf016fd5aed1909a30ec24541e6628ba6348b28603fb6aa46ba8f352884c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\030\\~~~~~~F16VX_Module_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-16VX 2347.zip",
+        "sha256_from_prior_index": "1192efd59d1bf86fa1be4b7d8c8dd2cdee3c76cc3586005fd97d30ffeee29f74"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~F17V_Addon_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+        "sha256_from_prior_index": "06ad23a25bc8be69e731f7cbc3076257b1fe792326060b5e4c240f00ea7ddbc8"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\031\\~~~~~~F17V_DataTable&Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-17V 3600.zip",
+        "sha256_from_prior_index": "dcce1059201b02598655c3356a224e1f38907339cc007c14ab4aeeff615fdf0c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\032\\~~~~~~F-32A_ADDONBASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-32A 3319.zip",
+        "sha256_from_prior_index": "1e6b2bdede5b1f5298c236431bade5f3cf61da4782e61ad42936de6fda02ae39"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\032\\~~~~~~~~~F-32A_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-32A 3319.zip",
+        "sha256_from_prior_index": "16c19de780c1197a542a9c1f1877831a5fadba04721ab5d452bf81d7204481d7"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\033\\~~~~~~F-35A_ADDON_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35A 3212.zip",
+        "sha256_from_prior_index": "2bfea5cb31f613e96c55365edfb802da2c8a61ab8eb299f5f309b8f99881e645"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\033\\~~~~~~~~~F-35A_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35A 3212.zip",
+        "sha256_from_prior_index": "d267e023cee70b4d15703e464c691d37c2906b89dbfdd450aaf2e13b9d54d340"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\034\\~~~F-35B_ADDON-BASEMODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35B 2821.zip",
+        "sha256_from_prior_index": "403b436a88289ee9ad066cefb17d27f63813fcf65a2407855a4774b939d7b070"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\034\\~~~~~F-35B_SKINMODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35B 2821.zip",
+        "sha256_from_prior_index": "cdfb377857988d2c50a3756c5d216148351bbc6f944e66168245bf383dfb4ea6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\035\\~~~~F35D_Addon_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35D 2902.zip",
+        "sha256_from_prior_index": "d4eb95c4741a9e42cb901ad7007957cf4cd87ffe9d3dedb1f0c6d27649068d25"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\035\\~~~~~~F35D_DataTable_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-35D 2902.zip",
+        "sha256_from_prior_index": "019e3674f1f108cd62c19029d99c273091c1f42feeeaffb64b7bcf77917e99d0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\036\\~~~~~TigerPack_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-5 2246.zip",
+        "sha256_from_prior_index": "621fd886c04125a72d183b3ca83433b46d4f5ff034da26606d50eb62f56a5718"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\036\\~~~~~TigerPack_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-5 2246.zip",
+        "sha256_from_prior_index": "c31e7f0a09c8927498c0fd6b5f8418d2635cfaa232afb8345b9fd0b7b3993724"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\037\\F-52_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-52 2416.zip",
+        "sha256_from_prior_index": "aa58e74b77c08fca1854f26e216c7ae2b54b080045b1bdf4bff8470cf6ef1162"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\038\\F-7_Arashi_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-7 2805.zip",
+        "sha256_from_prior_index": "383125f8846edfc9fc80f3b94cab7f8f21fb70b9472c8deb5339b22424bae978"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\039\\~~~~~F-85B Bullshark_BASE(Pilot)_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-85B 2552.zip",
+        "sha256_from_prior_index": "525dcd41267befa82a4121c3fde16649048e55d068c6d98f9f4e6df038e52a5d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\039\\~~~~~~~F-85B Bullshark_Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-85B 2552.zip",
+        "sha256_from_prior_index": "3af7a848dd171d6aef0a9a8f05f75331d6e2d73d55c384ba1825987f50b696d0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\040\\F-8E Crusader Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-8E Crusader 3213.zip",
+        "sha256_from_prior_index": "f1e32f9103c9ef23bd4fcacd4a0cc7a7509742d6424e20e585ce280cd0601140"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\041\\~~~F-CK-1C_ADDONMODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-CK-1C 2870.zip",
+        "sha256_from_prior_index": "045f22fdf02870e61ed1de5d0ac89a5ab20fdced0139b5ab46472a7d2e82e4aa"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\041\\~~~~~F-CK-1C_SKINMODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/F-CK-1C 2870.zip",
+        "sha256_from_prior_index": "04f5321c4f8e05bc046505d5bc387d6e152327c53992718f394d0eed9cf01cc3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\042\\~~~~FA18CPlus_ADDON MODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18C 3065.zip",
+        "sha256_from_prior_index": "52097562c4a620f65e5b2b80b70935decdb486f30d157f4152d260dbb3152695"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\042\\~~~~~~~~FA18CPlus_SKIN MODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18C 3065.zip",
+        "sha256_from_prior_index": "ed51ae536411d858f45d03dad42dee9c71393914140093eac8d3f74301af4859"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\043\\~~~~FA-18E_B3-BASE_(ADDON)_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18E 3518.zip",
+        "sha256_from_prior_index": "5d3696afeaf4c7fea98822c7d91996d79d77b395eb80ea1698fbc8f6720b6ab5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\043\\~~~~~~~~FA-18E_B3-Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18E 3518.zip",
+        "sha256_from_prior_index": "2a95acf3734f3f22a3fa2433a9ba2fe390c43c6ea605b5d88edddcb59455e52e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\044\\FA-18R_Bourdon_Main_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18R 2203.zip",
+        "sha256_from_prior_index": "9e6c695d7cc3902b0097dc76b4c961457e2c2638f703a88d916f31a929618670"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\044\\~~~~FA-18R_Bourdon_Type_B_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-18R 2203.zip",
+        "sha256_from_prior_index": "1d25016a822d6175d00b620972cc86530987bfbeb7e400a0d0e05634b92f34d8"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\045\\FA-22C_BASE(XSDB) - ADDON_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-22C 2239.zip",
+        "sha256_from_prior_index": "aa36b30c19549461675cdd595ee654dc2e5ebaa73f2dfff072a1b7a1854cae1f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\046\\~~~~ProjectSnowWind_FA-27C_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-27C 2676.zip",
+        "sha256_from_prior_index": "557bfb420cae2587dabb4c4f5e7fe50c4132948c0851288e9cd2ac9cfac71966"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\047\\~FA-27S Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-27S 3404.zip",
+        "sha256_from_prior_index": "2cc5ba49a87c3602ac067c30c3acd86bd69c4a3269f86586fe788ca33e9dc4f3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\048\\FA-32C_Erne_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FA-32C 2210.zip",
+        "sha256_from_prior_index": "e141088a17559453190cb38fb4ea55ae78fe34a4cf03ebc010874bc1ea13f2cc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\049\\FF-X29A_G-Parts_[Hrududu]_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/FF-X29A 3303.zip",
+        "sha256_from_prior_index": "89032f3f9b6cad75689d5aaccfc62871570fab01a5a7f0411ddb4d79e998f797"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\050\\GAF1_Add-On_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/GAF-1 1922.zip",
+        "sha256_from_prior_index": "c24615200bd550d9ea4cf13c169a19e40abf9cfd539244d93a21388cc7719f16"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\051\\~~~Gleipnir_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip",
+        "sha256_from_prior_index": "2cbd9440898c4deaab57d3ae906519e449a2c965b759c3dc96767de7cef05a89"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\051\\~~~~~Gleipnir_Addon_DTs_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip",
+        "sha256_from_prior_index": "96a13c4967f14d5fef8b6d87d370ca0c7a208ca407e94529803d438ad5dedeca"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\052\\~~~J-15T_BASE-ADDON_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-15T 3738.zip",
+        "sha256_from_prior_index": "ba362caceb855ddc20f42fa22601469d6203a2cdc00a84b98633de83e37c3337"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\052\\~~~~~~J-15T_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-15T 3738.zip",
+        "sha256_from_prior_index": "3afb93c3ff7bcba411bccfd9523c55a7857bd23da37919d1c36ab15c9213f058"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\052\\~~~~~~~~J-15T_ALT-AlienWar_Trigger_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-15T 3738.zip",
+        "sha256_from_prior_index": "49dd0c4c31f2ca7f468fffca347b341262cac26d54d83bfbe179af2f31477f7c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\J20A_MainFiles_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "8f2c43c3ac25e7fd477afe07ba8dc054ae930f3ec57a65364abf2ccaac1be7a0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~J20A_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "b22c0c71efd4c4a71f0a3b227fb73e9cf3ff5e9f165cb50748438b40c0d9da63"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~EOM_EG_J20APatch_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "558a6f7ed63299398b13d0000699c58bee28f809d806b060fa8cf133e0368d87"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~J20A+PlayableDrones_CompatibilityPatch_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "b13f5d3142660d1f17048b9c4b68f602314e31a533a8ff26861ab335aa8cd7af"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~J20A_4AAMHunterMode_AddonVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "1dabc644b152ca2577cce8187ea05d60a88f3cdb32931f5e0621091e0533d011"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~J20A_SemiRealFlightStats_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "d15a7b6c9c104ae4ed6dbc3ef63b4686d3b269aa610caee06c992cb0a4be9663"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~~~~~~~~~~J-20B_BASE-ADDON_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "b5008aab851b5cf9a2c01fb56c3647b1654c4242f5cef62a18330bbe69686fb6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\053\\~~~~~~~~~~~~J-20B_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20.zip",
+        "sha256_from_prior_index": "af97ff3ed7595dcf0b2a473a1ee663526471794567e6e2361f954db5308492de"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\054\\~~LZ_J-20S_AddOn_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/J-20S Fagin - Addon 3765.zip",
+        "sha256_from_prior_index": "227f25c40402fef61a2951a404e991df099fa7c4c664b23c025789c417dee8b6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\055\\~~KF38_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/KF-38 3305.zip",
+        "sha256_from_prior_index": "972b8d3cf943428be733b1d9345fa22d92f32a2fb1e07e46595c797fb6320064"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\055\\~~KF38_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/KF-38 3305.zip",
+        "sha256_from_prior_index": "47a1e5e2189ce318cc895c1d5282c6aec665fb04a766e15ecd308e072401d866"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\056\\~Lightning_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Lightning F-6 2652.zip",
+        "sha256_from_prior_index": "dd38ece224ee25fc77fdde0f2b6af7caf94002ac7b033ae7167d36755eb4e4a6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\056\\~~Lightning_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Lightning F-6 2652.zip",
+        "sha256_from_prior_index": "b407bc793bf1b72df764c945d00484a5f9a0f9f037f446d7e2953e41722adf88"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\057\\~~~Flatpack_Add-On_Skin_1_Flatpack_RuAF_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-1.44 2231.zip",
+        "sha256_from_prior_index": "addfaa86439c735cc420804180a0cbb2e90ad41ed4aa947a4c2bae864b74571f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\057\\~~~Flatpack_Add-On_Skin_2_3ToneFlora_RuAF_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-1.44 2231.zip",
+        "sha256_from_prior_index": "2344159aad766df0978b31b930f25a5f31f54edeff4e8b3127dd5f91421bd010"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\057\\~~~Flatpack_Add-On_Skin_3_511_RuAF_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-1.44 2231.zip",
+        "sha256_from_prior_index": "5a20376b13e88bf899da83006cdc38923e79e7f136b7b4d283cfe107e21ea35b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\057\\~~~~~Flatpack_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-1.44 2231.zip",
+        "sha256_from_prior_index": "8b3c10035a58d8311d4049fc8df3bd343e25e7c605bd15b499c3674c9e1d02f6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\057\\~~~~~Flatpack_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-1.44 2231.zip",
+        "sha256_from_prior_index": "38d88630e5804eed6384f71081ec3a180a402516a9b2608ed119ecdc4ff3cea2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\058\\~FloggerK_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-23MLD 2787.zip",
+        "sha256_from_prior_index": "d035e49857e038870046e454fed877b418a02b9865d6c430a1ef4292bfa6d14b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\058\\~~FloggerK_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-23MLD 2787.zip",
+        "sha256_from_prior_index": "0799ccdc2cc99141497d9968ef72c537d3cf8efc46e09415ff96722090d29243"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\059\\~~MiG-29TK - Aircraft Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-29TK King Fulcrum 3775.zip",
+        "sha256_from_prior_index": "2f7b91774c61957b7007a093be80a9f4b3c5ca7a0774817db37fee79185c39df"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip",
+        "sha256_from_prior_index": "5acde423022593ad7b3e55bf0e298e92a349da6f1430f596263d5ba7ad6688f2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\061\\MiG-41MKS_Fulmar-BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-41MKS 2331.zip",
+        "sha256_from_prior_index": "9b1fe36893c55dcc8cb6596c1ff53bc207a16fa3d231a46c1735b5be8ee6089d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\061\\MiG-41MKS_Fulmar-SkinsBASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG-41MKS 2331.zip",
+        "sha256_from_prior_index": "2a1a087496a32c1d91f5a09d491d7ceea510e064ea3903096df1f6cb531d4f5c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\062\\~~~~~MiG_Alley_Pack_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG15+F86F 3461.zip",
+        "sha256_from_prior_index": "60eac64183b42a7d7a57aec13034aeeffce252458cf551a8167714f08df392ef"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\062\\~~~~~~~~F-86F_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG15+F86F 3461.zip",
+        "sha256_from_prior_index": "e47158df0a9c3e3e469210c9e074ec3e80cade985e7df9bc9b1cc35fffd58e34"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\062\\~~~~~~~~MiG-15bis_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/MiG15+F86F 3461.zip",
+        "sha256_from_prior_index": "53599d9ffb9438482b6d98d0316d06d59268bac54ea192dd5146572779e3686a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\063\\PWMKI_Add-On_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/PW-MKI 1565.zip",
+        "sha256_from_prior_index": "f28106000d18cff7c9cb96c666843887d2ca5dc81517ab380343c9bbef4daa64"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\064\\QFA-308_Volkihar_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/QFA-308 3368.zip",
+        "sha256_from_prior_index": "85d428efedb00f615c4316e42cc1dc566547b5e44443bacb86a379e7e6df7654"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\065\\R-101_Add-On_Main_Module_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/R-101 1584.zip",
+        "sha256_from_prior_index": "7e6cb7fa7161fb581ddf4f6ca446b5badd3f5e5549097d13e365d96b82eb90d0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\065\\~R-101_Add-On_INF_Trigger_NoCamo_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/R-101 1584.zip",
+        "sha256_from_prior_index": "f71872b4c4bd58192e684801c510390d475ac57d9b229ce27d22ce60122f4d1e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\065\\~R-101_Add-On_Localisation-DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/R-101 1584.zip",
+        "sha256_from_prior_index": "f4d00fa14d535efd93ad7aa8bbfaee7544e46468c5b2353a7193a2e8c2d6c749"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\066\\~~~Rafale C_ADDON MODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Rafale C 3035.zip",
+        "sha256_from_prior_index": "e782b398e70ff7b0fd53689fb6a0b417ffed0a7fda5467a938f25a0149c9ce20"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\066\\~~~~~~Rafale C_SKINS MODULE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Rafale C 3035.zip",
+        "sha256_from_prior_index": "bd8855183600e13c28a50116d19c452186d2f18f9e007394bc8a0ccb1691b14c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\067\\~~~RF71_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/RF-71 3270.zip",
+        "sha256_from_prior_index": "cf7bcb512aa72c54fa1b8a78e4db3792c1ce49c81e8cf94d317cf75ff4bf610b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\068\\Rh-172_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip",
+        "sha256_from_prior_index": "43563c3ead89637c3af1ec54f7a399f913bead0ec9b0ca3b2e374fce381f6f2e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\069\\RX-78-2_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/RX-78-2.zip",
+        "sha256_from_prior_index": "2a54c2029b9b3a619ce2ad8835ee502b5b1693119f7c4769411b365bfbde9c84"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\070\\~~S32_Prototype_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/S-32 2524.zip",
+        "sha256_from_prior_index": "a4b9ab5bf89acac4205c29a0778a7eca4461daacb7024781a9f5506108f93a16"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\071\\~~~S44_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/S-44 3728.zip",
+        "sha256_from_prior_index": "6a351e2957ca621f028b3fb0eddfa45bf8f25badcb2513d90a17729f3750e726"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\072\\S-75_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/S-75 3586.zip",
+        "sha256_from_prior_index": "7df0a59d0ff1eef7277030926eee6cb000ba71280df3db3fd512be1a6ee08602"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\073\\~~Viggen_AddonStandalone_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Saab-37 2934.zip",
+        "sha256_from_prior_index": "1a5ff992dacbcd08825726135756b21d7385c4c47550c2faf8292946702e6306"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\073\\~~Viggen_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Saab-37 2934.zip",
+        "sha256_from_prior_index": "03729da408ff284164bac6643b9a9ce6aad024b82f19616c22395816ded5d0d5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\074\\~~~SLUAV_Playable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/SLUAV 3064.zip",
+        "sha256_from_prior_index": "aa2945ca3e1b77797640ba89971f0172d3422244411f238186eaeab40d5ce0c0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\075\\~~~~~Rook_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip",
+        "sha256_from_prior_index": "f82c617a01b23939414da049c7f989cc9ff623bc0605e1a7e85d78b570971c74"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\075\\~~~~~Rook_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip",
+        "sha256_from_prior_index": "01bdafeaa1d6c6375d82b6f97d29abacfb00f00240ef98cd23b996547f659031"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~FlankerB_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "6d810aee17800c266aedad9d807de2ef04e6776f1e2861c3328eaea6676643df"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Additional_BlinkingNavLights_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "89e5af105efc8eb98746b0f6ee32d8ac1d6a7d676e7183a0363ea4ac747e25bc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Additional_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "e9189efde26462b9c5964f22726ca395145ea01cefb778c4efc6ca7e0275b4b6"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Additional_Parachute_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "6b3ac764ea770fab127926c01a4b624ea1d0c289b39e96870530901b33218c0b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Additional_Tweaks_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "125d7acec595865e560c60b63e2a8236c201fd11c9afca82107f608ca7c7aa79"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "78fee0fa79eb4072c7a01c44671f1f01083c75c21cf04faf3cf28cffe3c4aa79"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_1_BoneArrow_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "d4b84ba88652fb5b4381ea735f030e8dc8febf68dff53b6a3a9f9f193e4f0f7b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_2_Erusea_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "b76f9b41c9ee94ff2afa714ed5a8d810d147bdd08a25314f930f56f144813b4f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_3_Yuktobania_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "b6b213b6fb135a96c9e011a354633614806ddaef7ce8e84d2d760de617395162"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_7_GrauKater_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "e8b1be5acded80fabcf33f381ace8b93d93e7e820047d403f8b4587f3169bda5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_8_Galm_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "f81ec7277a1a3ea860815b0fb86cb28e5f7d07112233ba1e468ce7d67e8e7d3e"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\076\\~~FlankerB_Skin_9_Russia_CleanVer_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27 2139.zip",
+        "sha256_from_prior_index": "0a4090e1ffc3985d8c3cb6ab843a80e31921f6707994765e128c27d3facbf185"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\077\\~~LZ_Su-27M_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27M 2930.zip",
+        "sha256_from_prior_index": "01ad5cfad5eee769ec4f15215ea9ceef14758aeac7681c99b1e0d3cdf0725f83"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\078\\Su-27UB_Flanker-C_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-27UB 3345.zip",
+        "sha256_from_prior_index": "9a1e2719c52b4c8a593817c2dd26acbe7b7b7904cb38cbe8f8547d574182416a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\079\\_~~~~~~Su-30M3_Add-On_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30M3.zip",
+        "sha256_from_prior_index": "1e80839b840696a0939398041afa53fa1706f49168030bf613f7e02b85bbd625"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\079\\_~~~~~~Su-30M3_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30M3.zip",
+        "sha256_from_prior_index": "5f232f82dff473f524690e7f6f4f172254d06c07e67b3dcff4901db8082344f9"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\080\\~~Su-30MKI Flanker-H Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30MKI 3626.zip",
+        "sha256_from_prior_index": "0e44850c975c7e4b14d3bce99841b503480abaf31ceac7a3ae8e849069aea6f1"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\080\\~~~Su-30MKI Indian Switchable Loadout_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30MKI 3626.zip",
+        "sha256_from_prior_index": "e976750325a97d129b813bc676323ffe22ae585d5b1a59efa0f5d2611424d6ae"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\081\\~~LZ_Su-30MKM_AddOn_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30MKM 3585.zip",
+        "sha256_from_prior_index": "479ea79063ebf46369dd1f8763fb5a76bd93750dca00d76f1c76273fe2911687"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\082\\The Eightman_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-30U 3363.zip",
+        "sha256_from_prior_index": "4210f6aacb46408482e41bdb91488fc90b81c12eba221e5a0eee8a5c6c6d3fd0"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\083\\~~Su33UBM_AddonStandalone_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-33UBM 2737.zip",
+        "sha256_from_prior_index": "3eaef0fbc0280bf0af6828a39e8ae504467cc87f612f0c21731c7ae01d5ea4c2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\083\\~~Su33UBM_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-33UBM 2737.zip",
+        "sha256_from_prior_index": "b8a9284199f95647e44c66b933f57bbfa23ee68617ef18a3e49951966c02665c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\084\\Su-34K_Fullhouse_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-34K 2879.zip",
+        "sha256_from_prior_index": "b7bfc2452747304491d580034bc68e70d848e3e3ae30e6af40cc263ec5a2ea4c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\085\\~~Su-35SX Base file_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/SU-35SX 3007.zip",
+        "sha256_from_prior_index": "402e0f3c4f762ddcf98403cfac80ad62cc0d88653f6626a1befa229177769c0f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\086\\Su-37U_Super_Flanker_Ver.CG_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-37U 3380.zip",
+        "sha256_from_prior_index": "c6441e9630a0992f0cdbe6588b62c8b0ec90c85de982ca3820b19ba8737343e5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_1_Checkmate_Osea_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "8caa25a7e392f7b858106f9e4e402d011481b9903f104d479156d48b49e06eec"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_2_Splinter_Erusea_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "bbcfa273d5c806889deaea2b63a032adac9f98b9f3c416247c45209e47a7c830"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_3_3ToneFlora_Erusea_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "1f9bcaa221742b910a6e7b7e4b6c73494d7b1c8fa33edccae3ac50ef9d1b288c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_4_Serdyukov_TriggerMage_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "b54b01bfef1f228c0bc41e2faf2076c222c642b575d7a2af75be05f18d25046b"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_5_Serdyukov_TriggerSpare_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "9d3bbcb4fbcf09d145632846360f5e01affb12863b29bd12fdd7a0b7b11e22c2"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~Checkmate_Add-On_Skin_6_Serdyukov_TriggerStrider_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "55fa70c18a6083f9cf7d08121a5b618255ea3cfd96bfb7aa4fe5cce5c0ce2401"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~~~Checkmate_AddOn_DataTable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "64acf4c926d351b6c27dde0b374696d5886ac5a29819893eeb0c398029e5723f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\087\\~~~~~Checkmate_AddOn_MainModule_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Su-75 2242.zip",
+        "sha256_from_prior_index": "17790687af72f2b8efaecaec39d6986746761353e7609c3bd11bd17ad5b37d7d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\088\\Tornado_F3_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Tornado F3 2424.zip",
+        "sha256_from_prior_index": "0b668c90c87a0b7f471acfd44830186efbb9c57b983b820814943d0870085526"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\089\\Tornado_GR.4_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Tornado GR.4 2415.zip",
+        "sha256_from_prior_index": "be90add305a7f69276b5b39d3a5969f713da37f4b36f5ef3c2715049daba1c31"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\090\\TR-6_Woundwort_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/TR-6 2641.zip",
+        "sha256_from_prior_index": "dde68b042c9ad72ec7e26b6ee7279dc7e916816a1e75b37e58747efad1a11e1f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\PlayableDronesAOLocalization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "1f4472db47ed715d89e471d08c00555bb349c98863456bceda6fc46d8746b8b4"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\PlayableDronesAddon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "172b8bda5b38a28746f56646b6b2b61f8e205854956f916e98c6b8aa239fe68f"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~PlayableDronesEGGunPatch_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "80af43e3fe1a027606d73574ff95493cf73435fbd864f6b33d42d8cd5e2bf127"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~UAV45_Playable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "4dccbacbaf3c26a965620b9784ebf9d67b900f5f1cd98b6ad587913be2c4d009"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~AMQ-20_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "8c72460b0fa753e694f0d0f7f6c27f4ce6e21af4bbcccabe81e321400a82ad21"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~RMQ-21_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "4160784607945bee3040d6585290116ab93c5a6fdd66c0f3efb9e44b475695f4"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~RMQ-4_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "273c7947237c9a33c0b58a01297ce001cb874cde5f2a1b145fcd764c1f49071c"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~WeaponUAV_Playable_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "4453f6177a2bab78383fc28f9446abf4e79549fd9cbb962447bfb593d5bdcf7d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~MQ99_AddonAnimated_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "e34d51a6fe9c9932fed5fdefb3b70456531e6a82835ae15c8e9dd5b3fd9716c3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~RMQ-4_AccurateCollisionHitbox_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "04632ca343f6212124eb50f029dc71054b0f37bf4f312fc4b735f04919e7329d"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~MQ101_AddonAnimated_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "344a6dfca6afb6202d016dc41c11da200ee16d71c543e6583b76cd203072c018"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~ADFX10_Addon_Expanded_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "5b6d0a3a407c06be6e00b1e618b1be0854bc6859d7c4c31b59dc1d73f64b9b49"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~MQ99_AfterburnerVFX_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "72bc4d64b836d4c7930a83695b357d9995bef24438890ec3bf897515e38c5706"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~~ADF11_Readjusted_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UAV.zip",
+        "sha256_from_prior_index": "c830730d5b27f7828c5e1775a1a9e4ae2988b7b3bdf7eee2a535f96905176b35"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\092\\SuperFlanker_Base_Files_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UF-37SM S.Flanker.zip",
+        "sha256_from_prior_index": "d533a26c5c8e117a3bdb97dce9f90cdccd6550c5f3c69ab6d9e0c2a627f0916a"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\092\\SuperFlanker_Localization_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UF-37SM S.Flanker.zip",
+        "sha256_from_prior_index": "b3d406af1853557ad2090d59c5fcd18acf9d7301c7b8b4032cc0ac12a93790f7"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\093\\~~UI-4054 Aurora Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UI-4054 3465.zip",
+        "sha256_from_prior_index": "a38e0cb138f358ac34be068dd462b2135bce92402f15b5806dbdbece3f42a147"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\093\\~~~~~UI-4054 Aeon Engine effect_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/UI-4054 3465.zip",
+        "sha256_from_prior_index": "c28da4722fb1c45175e405ff98f97e969b8c79733af0e220ff4fbffd02e848f1"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\094\\~~~V-55_ADDONBASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/V-55 3615.zip",
+        "sha256_from_prior_index": "a4f7cb0d012c5683444d0b4ef97905924a50f5badb6da8dd2934c9f3816cfeaf"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\094\\~~~~~~V-55_SKINS_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/V-55 3615.zip",
+        "sha256_from_prior_index": "7b5cc22813a2acae1261ff436f342be895980d731da00564075faf9f58a2f0d4"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\095\\VF-1 Valkyrie (ADDON)_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/VF-1 2576.zip",
+        "sha256_from_prior_index": "2366aa3ba2f83f257be2ab6c8868c3d8a4243e568d9e46b4428e371429080a92"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\096\\~~~~X02A_OGWyvern_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-02A 2772.zip",
+        "sha256_from_prior_index": "10699c6261304b2c3352e0de37403769465dd7eaca39d0badb9404972de0dd29"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\097\\~~~~~~X-02R_Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-02R 3266.zip",
+        "sha256_from_prior_index": "a6b3b9668f1f860bd2ecb550b22b17d9064b20445c8437c30c0f1c10dfe2c8f3"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\098\\~~X-02S Block.1(ADDON) BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-02S Block.1 2623.zip",
+        "sha256_from_prior_index": "e41bb180e780205558b3221bbc7cbfb4b1cfa4408dc46673d913642163d1e698"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\098\\~~~~X-02S Block.1 Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-02S Block.1 2623.zip",
+        "sha256_from_prior_index": "9d04d0ec84dc8fc6f3048287d3a4e6c14b03fd89c8521c64cf8790c72cd427d1"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\099\\~NightRaven_Base_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-49 1913.zip",
+        "sha256_from_prior_index": "acacdbb758157edb2b3eb3aa73ae57868e6d12119c59185a6afe7590b6332fa5"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\099\\~~NightRaven_StandaloneAddon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/X-49 1913.zip",
+        "sha256_from_prior_index": "702878e1bdb8c95680bbc76e3ae5bbfc6b4d74a4021ccacf4fabfa28f3ca8087"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\100\\~~~~~XA-20_Razorback_BASE_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/XA-20 2734.zip",
+        "sha256_from_prior_index": "0f8e1a989aad368d00119ff6ff3cfbd74bd5284ccddc5aca96198b055fc4cb72"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\100\\~~~~~~XA-20_Razorback_Skins_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/XA-20 2734.zip",
+        "sha256_from_prior_index": "acb692c500d92cdc7198312446c97a542ac45a80625021c95bc3fee2147833ca"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\101\\~~~~Memory_Error_AddonPack_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/XFA-36A 3520.zip",
+        "sha256_from_prior_index": "7adcf29e8a9ca4530af3e53228feb5935431254e179af7ad33c231f9cf01bea9"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\102\\Yak-141_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/Yak-141 2724.zip",
+        "sha256_from_prior_index": "0bd8c3b3fce8d2ddf91ab66f07f4dfc3c7a5ffe28dc2e658c96c59b1911667dc"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\103\\YF-30_Chronos_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/YF-30 3653.zip",
+        "sha256_from_prior_index": "5ffc09f81b6ddcc3f7a3eeae1d710db230f882408a565668db701af825c40749"
+      },
+      {
+        "path": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\104\\YF-4E Addon_P.pak",
+        "archive": "模组/机体模组（可自选）/Body mods/YF-4E Phantom II - Addon 3752.zip",
+        "sha256_from_prior_index": "fdc3f9a35bddd757793aa27d3822ef73c26ae3340263ec763c0299dce287dc8f"
+      }
+    ],
+    "scan_script": "src/research/survey_gun_pods.py",
+    "scan_script_sha256": "7044fda6b69dc8fe54aaee3de7b95da74c8537148437df14db4b96ccca4a03eb"
+  },
+  "coverage": {
+    "indexed_resource_versions": 2921,
+    "weapon_versions": 720,
+    "pawn_versions": 2201,
+    "statuses": {
+      "皮肤头部未见兵装引用或覆盖标记": 1792,
+      "已解析": 1079,
+      "非蓝图类资源": 50
+    },
+    "missing_export": 0,
+    "unparsed_errors": 0,
+    "note": "所有目标资源头部读取并按需解码；蓝图武器与非皮肤玩家解析JSON。皮肤若未出现SP/WeaponClass/plwp等覆盖标记则不解析正文；只证明此静态范围，不保证所有运行脚本/外部覆盖的完整语义"
+  },
+  "raw": {
+    "root": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo-xr302\\AC7_MultiSP\\Temp\\mod-gun-pod-survey-20261022",
+    "survey_sha256": "174f60fc62ad30775304546f761fab8e40a935c83c9fda708479ed558ed99ce7",
+    "decisions_sha256": "96ee299787704c1c47e597f5f7b3a8c6d11ffbf8e644c78f89a5cfed157bcd52",
+    "original_paks_and_parsed_assets_committed": false,
+    "first_attempt": "parsed-v1将压缩PAK的摘要误按解压数据比较；单条目核对压缩载荷后修正口径，parsed-v2无解析错误，未改旧索引或原PAK"
+  },
+  "vanilla_parents": [
+    {
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_x0.uasset",
+      "encrypted_sha256": "a920d4dee4b16fd3383f6ce54a4119af0adc9727c88f1f89cd5adac87570da00",
+      "decoded_sha256": "8a494b87eb8c13b73ffd83df657a6873fa250a6dc71b86051642e0c0a5877e84",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo-xr302\\AC7_MultiSP\\Temp\\mount-assets-20261022-091700-296598\\assets\\pakchunk0-WindowsNoEditor\\decoded\\plwp_plsl_x0.json",
+      "json_sha256": "e71e7c7101e2435488cfddb7ba32025a7f6c3be1240cd7041c2210b8ff82705b"
+    },
+    {
+      "asset": "Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_r0.uasset",
+      "encrypted_sha256": "1859311ad781402b9c0bdf4d35fe665996b610a1c55fd9efc9c50d46bb8df1b1",
+      "decoded_sha256": "3ccc5988a3884550e7a69cd73e0dea3ff74e48837aa4d6c9a588acacbceeae2d",
+      "json": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo-xr302\\AC7_MultiSP\\Temp\\mount-assets-20261022-091700-296598\\assets\\pakchunk0-WindowsNoEditor\\decoded\\plwp_mgp_r0.json",
+      "json_sha256": "1c8e671216a0ee5662626681c9b8af0b267758313eb1119854897e87b04ea921"
+    }
+  ],
+  "weapon_enum": {
+    "executable": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Ace7Game.exe",
+    "sha256": "c7da97f5f8a807d4f1264adbb074146fcffe9bdc2ffa98791b822cd28e558f4f",
+    "entries": {
+      "mg": [
+        {
+          "string_rva": "0x2900038",
+          "entry_rva": "0x2901090",
+          "value": 0
+        }
+      ],
+      "pgun": [
+        {
+          "string_rva": "0x2900338",
+          "entry_rva": "0x2901290",
+          "value": 32
+        }
+      ],
+      "mgp": [
+        {
+          "string_rva": "0x29001d0",
+          "entry_rva": "0x29011a0",
+          "value": 17
+        }
+      ],
+      "plsl": [
+        {
+          "string_rva": "0x2900248",
+          "entry_rva": "0x29011f0",
+          "value": 22
+        }
+      ]
+    }
+  },
+  "counts": {
+    "custom_registered_classes": 23,
+    "prior_adler_xr302_classes": 3,
+    "new_classes_this_survey": 20,
+    "total_registered_classes": 25,
+    "qualifying_source_definitions": 24,
+    "qualifying_archives": 16,
+    "directly_bound_pawn_variants": 27,
+    "excluded_gun_like_definitions": 48
+  },
+  "registry": {
+    "Default__plwp_cgp_f15smt_C": 17,
+    "Default__plwp_gplsl_arsb_C": 22,
+    "Default__plwp_gun_adf11_C": 0,
+    "Default__plwp_hgn_adf11_C": 0,
+    "Default__plwp_hgp_x0_C": 17,
+    "Default__plwp_mgp_31m_C": 17,
+    "Default__plwp_mgp_31ma_C": 17,
+    "Default__plwp_mgp_C": 17,
+    "Default__plwp_mgp_active_C": 17,
+    "Default__plwp_mgp_fa36_C": 17,
+    "Default__plwp_mgp_qh66_C": 17,
+    "Default__plwp_mgp_r0_C": 17,
+    "Default__plwp_mgp_rmq4_brc_C": 17,
+    "Default__plwp_mgp_uavcx_C": 0,
+    "Default__plwp_mgp_va_C": 17,
+    "Default__plwp_mgp_vb_C": 17,
+    "Default__plwp_plsl_8m_C": 22,
+    "Default__plwp_plsl_qh66_C": 32,
+    "Default__plwp_plsl_rmq4_C": 32,
+    "Default__plwp_plsl_ua45_C": 32,
+    "Default__plwp_plsl_x0_C": 22,
+    "Default__plwp_plsl_x1_C": 22,
+    "Default__plwp_plsl_x308_C": 22,
+    "Default__plwp_plsl_xr302_C": 22,
+    "Default__plwp_rgun_zp_C": 17
+  },
+  "qualifying_sources": [
+    {
+      "default_object": "Default__plwp_mgp_va_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_va.plwp_mgp_va_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_adlra",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADA-01 1770.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_va.uasset",
+      "source_asset_sha256": "3dca0a9cb2f7be5cab9ef840c4a585c993b0c5760338d5d38ae632bcd148b2e1",
+      "source_export_sha256": "bfd3c362383e80ca8203ba436a8a3749314d06c8cd2ec25817d504de74938d2d",
+      "source_json_sha256": "bd83f7397792f1ebe7d6c00a12e863b2bf5b7f8167ca67ed01f58230bb13f95c",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\004\\ADA01_AddOn_Standalone_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 4.5,
+      "load_time": 0.20000000298023224,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_vb_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_vb.plwp_mgp_vb_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_adlrb",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADA-01 1770.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_vb.uasset",
+      "source_asset_sha256": "cdaad67b78d52f72ead789bf3cba348d4cafb4d77c4a4da2ab24c85057dabaf5",
+      "source_export_sha256": "dadafd2a0d32434e0151c4e6e92d17749add3b3c2778d56a2f708191f7a6a060",
+      "source_json_sha256": "571a4d52cf9db23f78bf013436434f8326a1c6fe0231d8f1f63494cd2de19db8",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\004\\ADA01_AddOn_Standalone_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.5,
+      "load_time": 0.05000000074505806,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_mgp_r0",
+          "bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_mgp_r0"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_rgun_zp_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_rgun_zp.plwp_rgun_zp_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_zx01",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADFX-00.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_rgun_zp.uasset",
+      "source_asset_sha256": "506cc6f9760412fb8009c6184f84cda1662bbaed1cb91ec50750c41b33bc538d",
+      "source_export_sha256": "9f90e28386e02cf376cf6290b7791403ed3882164c51b6e6b10bad39b95982ba",
+      "source_json_sha256": "2c71fa9f66f56d3003edafcbb95d9687e3a30c086d0c540e04d3f126ffab6a6d",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\006\\ADFX-00_Base_Files_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.2239999771118164,
+      "load_time": 0.05000000074505806,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_rgun_zp",
+          "bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_rgun_zp"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_qh66_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_mgp_qh66.plwp_mgp_qh66_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_mgp_r0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_qh66",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/AQH-66 2997.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_mgp_qh66.uasset",
+      "source_asset_sha256": "c0b13b4124bbd8181c20f258a14ab62afcae370a61d0804e5835ff5097d523e1",
+      "source_export_sha256": "9a3727502a06651e2f4252d60364cbeee4e736968d66944b89f97c46c927cd80",
+      "source_json_sha256": "35d086881e94d892e6ea5b73d55880360044310f390f562dda103267138e70d9",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\008\\~AQH-66_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.0,
+      "load_time": null,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_plsl_qh66_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_qh66.plwp_plsl_qh66_C",
+      "weapon_id": 32,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_plsl_x0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_qh66_s12",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/AQH-66 2997.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_plsl_qh66.uasset",
+      "source_asset_sha256": "45caeba9db0507c1dad5ecc42b4fd310c7f3f8ea6d3be9606d6e64a47ceed9bf",
+      "source_export_sha256": "fbf69cd1c4fb499b248c7b334baa86e07240203bedcfb90cae136e8b5de353f8",
+      "source_json_sha256": "2abb99910e83de9855e5e0a3cba254f189d3744bbe86424a9dd13b54d9fdeddc",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\008\\~AQH-66_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": null,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_plsl_xr302_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_xr302.plwp_plsl_xr302_C",
+      "weapon_id": 22,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Plsl_Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_xr302",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Ace Combat-X 2479.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_xr302.uasset",
+      "source_asset_sha256": "5460eca1f47728f539431cf196bdc506d0bfc97c8a25139ae5b1c8d75978f9f1",
+      "source_export_sha256": "5f6a822a0b7001d71ee667629466274e25840a7bdbfbb9996f22d800d2f9d696",
+      "source_json_sha256": "4ecf25dba1912999e10c06291af570918aedb1ddf35f6c30ac3b3ce8e87e6d9b",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\003\\~~SKIES_OF_DECEPTION_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 2.5,
+      "load_time": 0.20000000298023224,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_gplsl_arsb_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/arsb/plwp_gplsl_arsb.plwp_gplsl_arsb_C",
+      "weapon_id": 22,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "LaserWeapon",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_arsb",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_arsb1",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_arsb2",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_arsb3",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/arsb/plwp_gplsl_arsb.uasset",
+      "source_asset_sha256": "9b7884f38d3ebc2c75140d051099d3e869863e83026c38a28fb794286b361589",
+      "source_export_sha256": "2e150fef74123cc342d0509a0e2420e4201dee1df8d84858ecba90c8d66687d4",
+      "source_json_sha256": "3ee7d82949e8fa04b2ddec6d60e98b7325066cdba76a66d6d03e5a68d123b6cd",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\010\\~AIAS_Base_P.pak"
+      ],
+      "native_laser": true,
+      "life_time": 0.4000000059604645,
+      "load_time": 0.4000000059604645,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_LaserWeapon_BaseClass",
+          "bytes": 744,
+          "calls": [
+            "MakeVector",
+            "SetVectorParameter",
+            "MakeVector",
+            "SetVectorParameter",
+            "IsDestroyed",
+            "Subtract_FloatFloat",
+            "Divide_FloatFloat",
+            "FClamp",
+            "SetActive",
+            "SetVisibility",
+            "SetActorTickEnabled",
+            "SetActive",
+            "SetActive",
+            "SetVisibility"
+          ]
+        },
+        {
+          "name": "OnCreateWeaponEnd",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_LaserWeapon_BaseClass"
+          ]
+        },
+        {
+          "name": "OnWeaponDestroyed",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_LaserWeapon_BaseClass"
+          ]
+        },
+        {
+          "name": "ReceiveTick",
+          "bytes": 40,
+          "calls": [
+            "ExecuteUbergraph_LaserWeapon_BaseClass"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_active_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_active.plwp_mgp_active_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_active",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-15 ACTIVE 2548.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_active.uasset",
+      "source_asset_sha256": "eb9e10a8cfc92660c99956ddc00bdff5902124d66d116321892289bf692d4ad2",
+      "source_export_sha256": "ba933aae54f4e5348b05fac417dd6e3fe98d7d38b9e87e4dc4e4d28e7e65a4eb",
+      "source_json_sha256": "053407e46380b3384a13b7ac491b6f88107bca460698e5a59af38267af9927db",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\020\\~~F-15_ACTIVE_Prototype_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.5,
+      "load_time": 0.05000000074505806,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_mgp_active",
+          "bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_mgp_active"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_cgp_f15smt_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_cgp_f15smt.plwp_cgp_f15smt_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_mgp_r0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_f15smt",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-15S-MT 3517.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_cgp_f15smt.uasset",
+      "source_asset_sha256": "275bf5c5aa2a748e37d9f300ecb8aa8b6b8f899504cb996e799baebd80ce2c59",
+      "source_export_sha256": "c4ab8b810b8f17a1ecb12a0a21a1b9c58e1e6065b7ffa06c6f6bcded10fc460c",
+      "source_json_sha256": "ec2d95467048205c5f6e98866777d6291ad418218582a60fd2b961baad2ba799",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\026\\~~F-15SMT Eagle Plus_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.0,
+      "load_time": 0.20000000298023224,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_plsl_x1_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x1.plwp_plsl_x1_C",
+      "weapon_id": 22,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_f15x",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-15SXF.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_x1.uasset",
+      "source_asset_sha256": "c061d5a24e0bd354a42aebda3d449b7c06844359df0100d27f24e1e276503c68",
+      "source_export_sha256": "0c22dc4e5b2d46c0ed48a77aa147a07e4e1069d69dbfd60fedda8dcf357c0a85",
+      "source_json_sha256": "5e88bd023d78525ad6a64b8fe91080fd7a823afcfb436bada0e16f862d257db5",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\028\\F-15SXF_EaglePlus_Base_Files_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.5,
+      "load_time": 0.05000000074505806,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_gun_x0",
+          "bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_gun_x0"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_31m_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_mgp_31m.plwp_mgp_31m_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_mgp_r0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_m31m",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_mgp_31m.uasset",
+      "source_asset_sha256": "2d79b16fed1a709099aff3ef206357384f3b65b8cf0eb12a8d70e36607928ed7",
+      "source_export_sha256": "5aa9bcd6214cda14320de5a5cbb28248cf1ca98f67e50a7ccd27c44f383d36f6",
+      "source_json_sha256": "fa32e12061b0ae8dfad1609fdaebed384e85cb4337666b358b563ecba38237ba",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": null,
+      "load_time": null,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_mgp_31ma_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_31ma.plwp_mgp_31ma_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_m31m_s08",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_31ma.uasset",
+      "source_asset_sha256": "0f5debe308f898443f8b1de23ed265d988d63e0a06d8248175fb779a5cfd490c",
+      "source_export_sha256": "5b4e5d50c73980847b305d4a6188476dd73b5e6569aae73bbe04072ca26e1234",
+      "source_json_sha256": "43a0da68e6cec1edc5d4a3dceaeb0ff34471bff3f8af99f1c84b068be8e7d8a1",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\060\\~~~~MiG31M2_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": 0.20000000298023224,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_plsl_x308_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x308.plwp_plsl_x308_C",
+      "weapon_id": 22,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Plsl_Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_fa308",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/QFA-308 3368.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_plsl_x308.uasset",
+      "source_asset_sha256": "46196483613acb030e44df9fe3051c47cd76c46764c9a9fb3658b3e79fdc02b0",
+      "source_export_sha256": "d53f0927363612a7800643779870b76068079a2adaf3917b99d7a4849c23734d",
+      "source_json_sha256": "a953459d78dfa631746f4f2cd157576bd88bdf39041aedf03c8fcd62dcfd945d",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\064\\QFA-308_Volkihar_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 2.0999999046325684,
+      "load_time": 0.10000000149011612,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/su25/plwp_mgp.plwp_mgp_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Bullet",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_su25b",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/su25/plwp_mgp.uasset",
+      "source_asset_sha256": "958b2cdde4920abbede72d1a0d23dd2ea89a46c4838723786e83f3372fe5bc35",
+      "source_export_sha256": "2bd76df55e7fa8c20119c497bbc8ee314dbb28a2b2b773b70c59420c96d35fa0",
+      "source_json_sha256": "862287385100538a127f6364d43fdb42029d8113f17cba8534eae6321b4f8402",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\075\\~~~~~Rook_AddOn_MainModule_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 1.2239999771118164,
+      "load_time": 0.019999999552965164,
+      "script_functions": [
+        {
+          "name": "ExecuteUbergraph_plwp_mgp",
+          "bytes": 13,
+          "calls": []
+        },
+        {
+          "name": "ReceiveBeginPlay",
+          "bytes": 22,
+          "calls": [
+            "ExecuteUbergraph_plwp_mgp"
+          ]
+        },
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_plsl_8m_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/8man/plwp_plsl_8m.plwp_plsl_8m_C",
+      "weapon_id": 22,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_plsl_x0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_8man",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Su-30U 3363.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/8man/plwp_plsl_8m.uasset",
+      "source_asset_sha256": "275d7b74f6a8161fcc3ad385fafb0fa320a8cda346265d5299e36e4b49779f2a",
+      "source_export_sha256": "b065a88e0861ac8d0b06e64fbee47071dd379a3f95f1b8e94fd2799b549d03cb",
+      "source_json_sha256": "89db817f0f56fc49a6d6342661eb92676f30b12b74bff2ccb318b92e3fec8540",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\082\\The Eightman_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": null,
+      "load_time": 0.10000000149011612,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_hgp_x0_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_hgp_x0.plwp_hgp_x0_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_su37u",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_su37u_s11",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Su-37U 3380.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_hgp_x0.uasset",
+      "source_asset_sha256": "fc665ed2c0356cd8d4bc2a8e97b659804e48854b75623caa3859de2aec6895e0",
+      "source_export_sha256": "4e7810ab336328369ef834083011c0aad2c98ea30734faf901a2bb5b17d11cdd",
+      "source_json_sha256": "a7b15808610df5aee268f9a84e7ca310a20856c45c7c883d8a4bf91a17b24e01",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\086\\Su-37U_Super_Flanker_Ver.CG_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 4.5,
+      "load_time": 0.125,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_gun_adf11_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_gun_adf11.plwp_gun_adf11_C",
+      "weapon_id": 0,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_mgp_r0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_adf11",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_gun_adf11.uasset",
+      "source_asset_sha256": "21a0c2608f9e363f4698033f452f31cfcc2d3f24f714346229c40fcc04f74e63",
+      "source_export_sha256": "0e461fdc784177db5dd765b6be2429f842dca98f1279796b6568231481643ddf",
+      "source_json_sha256": "55a1313c7ea62916abb7ebfb3fcec1d02edbc5786e992f6d2d75615dfc37fdf5",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~~ADF11_Readjusted_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.0,
+      "load_time": null,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_hgn_adf11_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_hgn_adf11.plwp_hgn_adf11_C",
+      "weapon_id": 0,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_adf11",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_hgn_adf11.uasset",
+      "source_asset_sha256": "41f14155878a555a04aadc61a96cc4f2dc5c5154482f2f591ccd8a6709a6bf7a",
+      "source_export_sha256": "dbfc79c1cba9c5274029db94c758ca53cd53b6052c2ede9e7c242d31f15a54f7",
+      "source_json_sha256": "2f50b01b72a89be2247303ea4ed1cec7282698ead19b9c19923a32008c8e1721",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~~~~ADF11_Readjusted_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": 0.125,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_rmq4_brc_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_rmq4_brc.plwp_mgp_rmq4_brc_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_rmq4_s07",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_rmq4_brc.uasset",
+      "source_asset_sha256": "7d501e3246c8c60637633228b37591b1486d33fcad56b370b94dcfbb32eaffcf",
+      "source_export_sha256": "2a51f00a2d390a63f0755ff3da7c744a6a230a1d083730771c56a9ff52b8c68b",
+      "source_json_sha256": "227e69ddec874513adaaefdb865dbad6cfb4672327dbe78ae280cafd595c25a8",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~RMQ-4_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 4.25,
+      "load_time": 0.20000000298023224,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_mgp_uavcx_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_uavcx.plwp_mgp_uavcx_C",
+      "weapon_id": 0,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_uavcx",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_uavcx.uasset",
+      "source_asset_sha256": "3e7b4d9be9d247937f5fd8c5c09e381b9f09f4809714a38067777295cb27fcb1",
+      "source_export_sha256": "84217c3a5c9184b44c692566d1b8ca1b9a50091ab07cf232543e100033fda14e",
+      "source_json_sha256": "17042c826f657e1bd2e5a2ede779b3ec3bcd2dc03a9853efe64b2eec21cd6afc",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~~MQ99_AddonAnimated_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": 0.125,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_plsl_rmq4_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_rmq4.plwp_plsl_rmq4_C",
+      "weapon_id": 32,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_plsl_x0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_rmq4",
+          "slot": "SpecialWeaponConfig3"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_plsl_rmq4.uasset",
+      "source_asset_sha256": "96e295a8f7310011f7ac89c6575a35b58125b88fe0523326ed1897726adbd472",
+      "source_export_sha256": "6a6db662a0a33615bdf2e56a6de350d5878187e32bdc93013a23355529b5c461",
+      "source_json_sha256": "5962b2b0ff1ed6d0f207ef8d61c1037e783d1b3a648b934655acc63b4fe1782b",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~~~RMQ-4_Addon_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": 0.1599999964237213,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_plsl_ua45_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_ua45.plwp_plsl_ua45_C",
+      "weapon_id": 32,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": true,
+      "parent": "plwp_plsl_x0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_ua45",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Variation/plwp_plsl_ua45.uasset",
+      "source_asset_sha256": "c2d272e1ba63a30fe359c54785629837c08e755eecc9203d704b52c971382dfc",
+      "source_export_sha256": "c17a73d810d3a2f3d7ef138ec364e1eb336f0f8267ceb45ebcf16f2d084b033f",
+      "source_json_sha256": "f86d5a9cc5174050062472c5b2ac41d913e21c90e8c80daea8f33eec0651483b",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\091\\~UAV45_Playable_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 3.5,
+      "load_time": null,
+      "script_functions": []
+    },
+    {
+      "default_object": "Default__plwp_mgp_fa36_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_fa36.plwp_mgp_fa36_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_fa36",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/XFA-36A 3520.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_mgp_fa36.uasset",
+      "source_asset_sha256": "655ab24560c9bde637a6ec5cd7f963773f5c7f3c5bdc301a88724aad686ea911",
+      "source_export_sha256": "235e010d72863f2e43dc90e7f5ff9289ca6ba182b9293138241e3dfa76dce005",
+      "source_json_sha256": "240d034fb4963e20c5c4619d3331d10d668cfb391274405d6fdf50c23313d2d1",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\101\\~~~~Memory_Error_AddonPack_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 4.5,
+      "load_time": 0.25,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    },
+    {
+      "default_object": "Default__plwp_hgp_x0_C",
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_hgp_x0.plwp_hgp_x0_C",
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "auto_fire_inherited": false,
+      "parent": "Artillery",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_y141",
+          "slot": "SpecialWeaponConfig2"
+        }
+      ],
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Yak-141 2724.zip"
+      ],
+      "source_asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_hgp_x0.uasset",
+      "source_asset_sha256": "31cfdcc7786bade55c61a5ac954231a1ad2f56989a0803ec69dadf78eb7c374e",
+      "source_export_sha256": "863c77090890ac75bd64ddf3668c622066afcdda0ca1a29bfedae687c52b0a0f",
+      "source_json_sha256": "ea68fbaa85a535d7f98d9a600555731afcc7024226211a723758655e4cdbf9a7",
+      "source_paks": [
+        "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\102\\Yak-141_P.pak"
+      ],
+      "native_laser": false,
+      "life_time": 4.5,
+      "load_time": 0.25,
+      "script_functions": [
+        {
+          "name": "UserConstructionScript",
+          "bytes": 3,
+          "calls": []
+        }
+      ]
+    }
+  ],
+  "package_coverage": {
+    "模组/机体模组（可自选）/Body mods/ADA-01 1770.zip": [
+      {
+        "default_object": "Default__plwp_mgp_va_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_adlra",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_mgp_vb_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_adlrb",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/ADFX-00.zip": [
+      {
+        "default_object": "Default__plwp_rgun_zp_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_zx01",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/AQH-66 2997.zip": [
+      {
+        "default_object": "Default__plwp_mgp_qh66_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_qh66",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_plsl_qh66_C",
+        "weapon_id": 32,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_qh66_s12",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Ace Combat-X 2479.zip": [
+      {
+        "default_object": "Default__plwp_plsl_xr302_C",
+        "weapon_id": 22,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_xr302",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip": [
+      {
+        "default_object": "Default__plwp_gplsl_arsb_C",
+        "weapon_id": 22,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_arsb",
+            "slot": "SpecialWeaponConfig2"
+          },
+          {
+            "pawn": "AcePlayerPawn_arsb1",
+            "slot": "SpecialWeaponConfig2"
+          },
+          {
+            "pawn": "AcePlayerPawn_arsb2",
+            "slot": "SpecialWeaponConfig2"
+          },
+          {
+            "pawn": "AcePlayerPawn_arsb3",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/F-15 ACTIVE 2548.zip": [
+      {
+        "default_object": "Default__plwp_mgp_active_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_active",
+            "slot": "SpecialWeaponConfig1"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/F-15S-MT 3517.zip": [
+      {
+        "default_object": "Default__plwp_cgp_f15smt_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_f15smt",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/F-15SXF.zip": [
+      {
+        "default_object": "Default__plwp_plsl_x1_C",
+        "weapon_id": 22,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_f15x",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/MiG-31M2 2381.zip": [
+      {
+        "default_object": "Default__plwp_mgp_31m_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_m31m",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_mgp_31ma_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_m31m_s08",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/QFA-308 3368.zip": [
+      {
+        "default_object": "Default__plwp_plsl_x308_C",
+        "weapon_id": 22,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_fa308",
+            "slot": "SpecialWeaponConfig1"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip": [
+      {
+        "default_object": "Default__plwp_mgp_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_su25b",
+            "slot": "SpecialWeaponConfig1"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Su-30U 3363.zip": [
+      {
+        "default_object": "Default__plwp_plsl_8m_C",
+        "weapon_id": 22,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_8man",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Su-37U 3380.zip": [
+      {
+        "default_object": "Default__plwp_hgp_x0_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_su37u",
+            "slot": "SpecialWeaponConfig2"
+          },
+          {
+            "pawn": "AcePlayerPawn_su37u_s11",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/UAV.zip": [
+      {
+        "default_object": "Default__plwp_gun_adf11_C",
+        "weapon_id": 0,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_adf11",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_hgn_adf11_C",
+        "weapon_id": 0,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_adf11",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_mgp_rmq4_brc_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_rmq4_s07",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_mgp_uavcx_C",
+        "weapon_id": 0,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_uavcx",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_plsl_rmq4_C",
+        "weapon_id": 32,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_rmq4",
+            "slot": "SpecialWeaponConfig3"
+          }
+        ]
+      },
+      {
+        "default_object": "Default__plwp_plsl_ua45_C",
+        "weapon_id": 32,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_ua45",
+            "slot": "SpecialWeaponConfig1"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/XFA-36A 3520.zip": [
+      {
+        "default_object": "Default__plwp_mgp_fa36_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_fa36",
+            "slot": "SpecialWeaponConfig1"
+          }
+        ]
+      }
+    ],
+    "模组/机体模组（可自选）/Body mods/Yak-141 2724.zip": [
+      {
+        "default_object": "Default__plwp_hgp_x0_C",
+        "weapon_id": 17,
+        "bindings": [
+          {
+            "pawn": "AcePlayerPawn_y141",
+            "slot": "SpecialWeaponConfig2"
+          }
+        ]
+      }
+    ]
+  },
+  "original_classes_reused": [
+    {
+      "default_object": "Default__plwp_mgp_r0_C",
+      "bindings": []
+    },
+    {
+      "default_object": "Default__plwp_plsl_x0_C",
+      "bindings": [
+        {
+          "pawn": "AcePlayerPawn_f16vx",
+          "slot": "SpecialWeaponConfig3"
+        },
+        {
+          "pawn": "AcePlayerPawn_hrud_s02",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_rx78",
+          "slot": "SpecialWeaponConfig2"
+        },
+        {
+          "pawn": "AcePlayerPawn_xa20b",
+          "slot": "SpecialWeaponConfig1"
+        }
+      ]
+    }
+  ],
+  "excluded": [
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/adf11x/Base/plwp_pgun_adf11x.plwp_pgun_adf11x_C",
+      "default_name": "Default__plwp_pgun_adf11x_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADF-11X 2850.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_rgun_zp - Copia (2).plwp_rgun_zp_C",
+      "default_name": "Default__plwp_rgun_zp_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADFX-00.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_rgun_zp - Copia.plwp_rgun_zp_C",
+      "default_name": "Default__plwp_rgun_zp_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/ADFX-00.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/arkb/plwp_pgun_x0.plwp_pgun_x0_C",
+      "default_name": "Default__plwp_pgun_x0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Arkbird 2584.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/arsb/plwp_WeaponSwitch.plwp_WeaponSwitch_C",
+      "default_name": "Default__plwp_WeaponSwitch_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Arsenal Bird 3317.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/b01r/plwp_b01r_gun_null.plwp_b01r_gun_null_C",
+      "default_name": "Default__plwp_b01r_gun_null_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/B-1R 2706.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_gun_fa50.plwp_gun_fa50_C",
+      "default_name": "Default__plwp_gun_fa50_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/CFA-50 3038.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gun_ea18g.plwp_gun_ea18g_C",
+      "default_name": "Default__plwp_gun_ea18g_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/EA-18G 2172.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgun_x0.plwp_mgun_x0_C",
+      "default_name": "Default__plwp_mgun_x0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-14IA Ruscat Mod Files 3751.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgun_x0.plwp_mgun_x0_C",
+      "default_name": "Default__plwp_mgun_x0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-35D 2902.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gun_c0.plwp_gun_c0_C",
+      "default_name": "Default__plwp_gun_c0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/F-8E Crusader 3213.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_bsbr_x0.plwp_bsbr_x0_C",
+      "default_name": "Default__plwp_bsbr_x0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/FA-18R 2203.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gun_f27c.plwp_gun_f27c_C",
+      "default_name": "Default__plwp_gun_f27c_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/FA-27C 2676.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/fa27s/plwp_gun_fa27s.plwp_gun_fa27s_C",
+      "default_name": "Default__plwp_gun_fa27s_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/FA-27S 3404.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/fa27s/plwp_lasercannon_fa27s.plwp_lasercannon_fa27s_C",
+      "default_name": "Default__plwp_lasercannon_fa27s_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/FA-27S 3404.zip"
+      ],
+      "reason": "编号不是本轮炮类范围；TLS/冲击炮保留原逻辑"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_hrud.plwp_pgun_hrud_C",
+      "default_name": "Default__plwp_pgun_hrud_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/FF-X29A 3303.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/ShockCannon/Explosion_ShockCannon.Explosion_ShockCannon_C",
+      "default_name": "Default__Explosion_ShockCannon_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/ShockCannon/Explosion_ShockCannon_child.Explosion_ShockCannon_child_C",
+      "default_name": "Default__Explosion_ShockCannon_child_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/ShockCannon/plwp_ShockCannon_gleip.plwp_ShockCannon_gleip_C",
+      "default_name": "Default__plwp_ShockCannon_gleip_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有唯一确认的原生按住连发配置"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/ShockCannon/plwp_ShockCannon_pulse.plwp_ShockCannon_pulse_C",
+      "default_name": "Default__plwp_ShockCannon_pulse_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/ShockCannon/plwp_ShockCannon_pulse_base.plwp_ShockCannon_pulse_base_C",
+      "default_name": "Default__plwp_ShockCannon_pulse_base_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_gleip.plwp_pgun_gleip_C",
+      "default_name": "Default__plwp_pgun_gleip_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Gleipnir 3301.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_zl.plwp_pgun_zl_C",
+      "default_name": "Default__plwp_pgun_zl_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/MiG-29TK King Fulcrum 3775.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_23mm_s0.plwp_23mm_s0_C",
+      "default_name": "Default__plwp_23mm_s0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/MiG15+F86F 3461.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_r172.plwp_pgun_r172_C",
+      "default_name": "Default__plwp_pgun_r172_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Rh-172 2345.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_s75.plwp_plsl_s75_C",
+      "default_name": "Default__plwp_plsl_s75_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/S-75 3586.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_gun_mira.plwp_gun_mira_C",
+      "default_name": "Default__plwp_gun_mira_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/SU-35SX 3007.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/su25/plwp_gun_a10a.plwp_gun_a10a_C",
+      "default_name": "Default__plwp_gun_a10a_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/su25/plwp_gun_m21b.plwp_gun_m21b_C",
+      "default_name": "Default__plwp_gun_m21b_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Su-25TM 2216.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/dronegun_x1.dronegun_x1_C",
+      "default_name": "Default__dronegun_x1_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gun_dummy.plwp_gun_dummy_C",
+      "default_name": "Default__plwp_gun_dummy_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_gun_uavp2.plwp_gun_uavp2_C",
+      "default_name": "Default__plwp_gun_uavp2_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_uavc.plwp_mgp_uavc_C",
+      "default_name": "Default__plwp_mgp_uavc_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_pgun_adf11.plwp_pgun_adf11_C",
+      "default_name": "Default__plwp_pgun_adf11_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_pgun_wuav.plwp_pgun_wuav_C",
+      "default_name": "Default__plwp_pgun_wuav_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_rm21.plwp_plsl_rm21_C",
+      "default_name": "Default__plwp_plsl_rm21_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_rm21_brc.plwp_plsl_rm21_brc_C",
+      "default_name": "Default__plwp_plsl_rm21_brc_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_plsl_uavcx.plwp_plsl_uavcx_C",
+      "default_name": "Default__plwp_plsl_uavcx_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UAV.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_pgun_ui4054.plwp_pgun_ui4054_C",
+      "default_name": "Default__plwp_pgun_ui4054_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/UI-4054 3465.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_v55.plwp_pgun_v55_C",
+      "default_name": "Default__plwp_pgun_v55_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/V-55 3615.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_z1.plwp_pgun_z1_C",
+      "default_name": "Default__plwp_pgun_z1_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/X-02R 3266.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Variation/plwp_pgun_x10.plwp_pgun_x10_C",
+      "default_name": "Default__plwp_pgun_x10_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/X-49 1913.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_mgun_fa36.plwp_mgun_fa36_C",
+      "default_name": "Default__plwp_mgun_fa36_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/XFA-36A 3520.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_pgun_yf30.plwp_pgun_yf30_C",
+      "default_name": "Default__plwp_pgun_yf30_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/YF-30 3653.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gundummy_yf4e.plwp_gundummy_yf4e_C",
+      "default_name": "Default__plwp_gundummy_yf4e_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/YF-4E Phantom II - Addon 3752.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gundummy_yf4e_base.plwp_gundummy_yf4e_base_C",
+      "default_name": "Default__plwp_gundummy_yf4e_base_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/YF-4E Phantom II - Addon 3752.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_gundummy_yf4e_tls.plwp_gundummy_yf4e_tls_C",
+      "default_name": "Default__plwp_gundummy_yf4e_tls_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/YF-4E Phantom II - Addon 3752.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    },
+    {
+      "class_path": "/Game/Blueprint/Weapons/Player/Base/plwp_hgp_x0_old.plwp_hgp_x0_C",
+      "default_name": "Default__plwp_hgp_x0_C",
+      "archives": [
+        "模组/机体模组（可自选）/Body mods/Yak-141 2724.zip"
+      ],
+      "reason": "没有精确包路径对应的SP配置引用；不把原生机枪、辅助或未用资源重复登记"
+    }
+  ],
+  "special_cases": [
+    "AQH-66特定皮肤与部分UAV的炮类SP使用ID32（pgun），ADF-11与UAVCX部分SP使用ID0（mg）；依据磁盘映像枚举注册表交叉核对原版17/22后登记，不把0当作缺失，也不把所有0/32自动视为支持",
+    "ADF-11的SpecialWeaponConfig2/3分别为两个合格炮类SP；若同一方案同时携带，两者仍按现有规则拒绝联动。单炮类SP方案可进入候选事务",
+    "武库鸟GPLSL为LaserWeapon，ID22、可按住连发、LifeTime约0.4秒且已有创建/退场视觉回调。登记为静态候选，沿用原生短寿命与退场，不新增强制销毁或改生命周期；发射、松开、切槽及尾迹仍须实机确认",
+    "Su-37U/Yak-141共用hgp_x0路径的两个有效来源均17/可连发；Yak旧hgp_x0_old虽然导出同短类名，但其包路径无对应SP引用且ID0，未登记该旧来源",
+    "原生GUN、辅助弹体、未用旧包及TLS/冲击波类不因枪炮名称或编号而重复接入；Arkbird、Gleipnir等原生PGUN保持原生输入"
+  ],
+  "implementation": {
+    "files": [
+      "dist/DualSP/Scripts/main.lua",
+      "src/gun_salvo.hpp"
+    ],
+    "rule": "两层使用相同25项精确默认对象/实际编号名单，并再次要求原生bAutoFireOnHold；Lua提取完整对象名的末段后精确比对",
+    "unchanged": [
+      "原生GUN/SP两个输入通道与责任合并",
+      "同方案唯一合格SP限制",
+      "原生弹药/装填/射速及多炮口规则",
+      "暂停/管理/失焦/人工选择/会话失效收尾",
+      "配置、协议、资源与版本标识"
+    ],
+    "ui": "已提交中英文帮助替换方案等待用户审核；未收到回复前不改产品文案",
+    "integration": "接收本分支相对main的齐射增量，核心/Lua成套；先前XR302与Adler候选包含在本名单中"
+  },
+  "validation": {
+    "method": "静态资源解析、引用/父链/默认值与脚本人工审阅、源码差异及Git格式检查；不是游戏或产品测试",
+    "protected_dll_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "game_process_opened": false,
+    "memory_written": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "installed": false,
+    "runtime_verified": false,
+    "pending": "成套构建安装后按炮类与皮肤逐项实测；尤其ID0/32、武库鸟LaserWeapon及同方案双炮类SP拒绝边界"
+  }
+}

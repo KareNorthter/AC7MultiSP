@@ -203,6 +203,36 @@ F-14D、F/A-18F、Su-33、F/A-18F Block III通过常规七组合表接入静态�
 
 核心的回中轮询另收Lua从已保存快捷键生成的8位组合占用表，避免相同主键的组合动作兼触回中；松开修饰键不补发。镜头六参数/子协议5、核心及UI新能力标记成套，管理13/配置12/注视2/换机2不变。旧正式版与下文来源阶段的镜头4仍是历史事实。仅源码人工复核，未编译、写/运行测试或实机验证，见[修订记录](../evidence/keyboard-modifier-routing.json)。
 
+## Mod炮类SP批量识别（2026-10-22源码候选）
+
+按用户指定的“mod机兼容性 (2)”会话，复用`E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/download-paks.json`。来源覆盖103个机体压缩包（连同前置共105包）、236份PAK；逐条读取2921个资源版本（兵装720、玩家2201），解析1079份相关蓝图。1792份皮肤资源头部未见兵装覆盖标记，另50份为非蓝图辅助资源；没有缺失uexp或剩余解析错误。不把这项静态覆盖当成所有运行脚本、外部Mod覆盖或逐机实测通过。
+
+通过精确包路径的`SpecialWeaponConfig`引用、父类继承、实际WeaponID及`bAutoFireOnHold`交叉确认，23个自定义类需要登记，来自16个机体包，直接涉及27个玩家/皮肤变体。其中包含已做的Adler两类和XR302一类，本轮再补20类；连同原版两类，Lua与核心共用25项精确名单。原版MGP/PLSL父类直接从原游戏PAK解析；ID0（mg）、17（mgp）、22（plsl）、32（pgun）来自磁盘映像枚举注册表，17/22与旧现场交叉吻合。0是有效编号，不能用真假判断把它当缺失。
+
+| 资源包/机体 | 候选覆盖 |
+|---|---|
+| ADA-01 Adler A/B | va、vb两个吊舱，ID17 |
+| ADFX-00 / zx01 | rgun，SP3、ID17 |
+| AQH-66 | 原机MGP及s12皮肤PLSL，SP3、ID17/32 |
+| Ace Combat-X / XR302 | 自定义PLSL，SP2、ID22 |
+| Arsenal Bird | arsb及arsb1～3的GPLSL，SP2、ID22 |
+| F-15 ACTIVE | MGP，SP1、ID17 |
+| F-15S-MT | CGP，SP3、ID17 |
+| F-15SXF | 自定义PLSL，SP3、ID22 |
+| MiG-31M2 | 普通及s08皮肤两种吊舱，SP3、ID17 |
+| QFA-308 | 自定义PLSL，SP1、ID22 |
+| Su-25TM / su25b | 自定义MGP，SP1、ID17 |
+| Su-30U / 8man | 自定义PLSL，SP3、ID22 |
+| Su-37U与Yak-141 | 共用hgp_x0的有效来源，ID17 |
+| UAV集合 | ADF-11两炮类SP、RMQ-4与s07、UA-45、UAVCX，共6类，ID0/17/32 |
+| XFA-36A | 自定义MGP，SP1、ID17 |
+
+名单只改变资格识别：Lua在建立兵装选项时精确匹配默认对象名及编号，核心在追加输入前重复核对，并仍要求实际按住连发为真。不因显示名称、编号或父类单独放行。0/32只是兵装编号，SP依旧通过原生主武器通道追加，与玩家GUN输入分开记账；没有新增游戏对象扫描、模拟按键、补弹、改射速或改原生开关。
+
+ADF-11的SP2和SP3均合格，同时携带时仍按既有“唯一合格SP”规则拒绝联动；单炮类SP方案才进入事务，不快速轮切伪装并发。武库鸟GPLSL实际继承`LaserWeapon`，静态寿命约0.4秒，已有创建/退场视觉脚本；本次仅登记精确类，保留其原生寿命和自然退场，不强行销毁，实际松开、切槽与尾迹仍待验证。Yak旧`hgp_x0_old`虽导出同短类名，但包路径无对应SP引用且为ID0，未登记该旧来源。
+
+原生GUN、辅助/未用资源和TLS/冲击波不因名称带gun/plsl/cannon而接入；例如Arkbird、Gleipnir等的原生PGUN保持原生行为。使用原版PLSL类的F-16VX、FF-X29A的相关皮肤、RX-78、XA-20B沿用原资格，无需再登记类。两层名单与输入收尾一起成套交付；本次没有编译、运行测试、安装或游戏操作，界面帮助改文已提交用户审核。完整类/编号/槽位及原包散列见[批量记录](../evidence/gun-salvo-mod-pod-survey.json)。以下保留此前阶段依据。
+
 ## Adler吊舱齐射静态候选（2026-10-21）
 
 本分支已接续正式main/2.23.0（`3119d52`），同时保留下节XR302的PLSL修订。用户提供的Adler 1.0独立版中，`AcePlayerPawn_adlra_C`的第二项SP引用`plwp_mgp_va_C`，`AcePlayerPawn_adlrb_C`的第二项SP引用`plwp_mgp_vb_C`。两者均为`WID_mgp`（17）、`bAutoFireOnHold=true`、`MaxLoadedCount=4`、`bFireAllInOneShot=true`；va直接继承`Artillery`、装填约0.2秒，vb直接继承`Bullet`、装填约0.05秒。武器导出蓝图没有额外开火循环。资源未显式保存`bGunReaction`，其继承后的实际值不能从缺失字段推定。

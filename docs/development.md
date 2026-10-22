@@ -329,6 +329,16 @@ EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再
 
 本分支`codex/five-aircraft-mount-review`从main `66cc725`建立，首批`e622f86`修订MiG-35D三个双挂及XFA-27的SOD＋MSTM，已由其他线程接收并随2.20.1安装。用户本次反馈其余挂载验证通过；后续只补F-15 S/MTD的HPAA＋FAEB及三SP为HPAA2/FAEB2。F-4E左六右三UGB的观察单列，用户明确暂不处理、后续再测，本轮不改。新源码未编译、运行测试、安装或操作游戏，版本由接收线程统一，不在本分支改正式标识。原方案/资源回执`evidence/static-mount-five-aircraft-review.json`原字节保留，新反馈和精确覆盖在`evidence/static-mount-five-aircraft-feedback.json`，两份均纳入来源冻结。
 
+### Mod炮类SP批量适配（2026-10-22源码候选）
+
+用户指定读取“mod机兼容性 (2)”会话及其中百余机体资源。本分支在main/2.23.0和此前Adler/XR302修订上继续，仅接收齐射增量；没有向该会话发送消息或指挥其工作。复用既有236份PAK及索引，新增离线工具`src/research/survey_gun_pods.py`，只写指定的新Temp目录：校对PAK长度及条目压缩载荷SHA1、解包/解码副本、按资源头部判断是否需解析蓝图，再导出字段和函数引用。首次将PAK压缩条目摘要错按解压字节比较，独立核对一条记录后修正，保留失败目录；最终parsed-v2无解析错误，不改旧索引或回执。解压文件另记SHA256，本轮未重新遍历计算28GB PAK全量摘要。
+
+资源中确认23个自定义炮类SP，涵盖16个机体包、27个直接配置变体；相比此前Adler/XR302再补20类，与原版两类组成25项名单。先核对完整包路径引用，避免把同短类名的旧文件误配；沿原版MGP/PLSL资源继承解析缺省字段。读取磁盘枚举注册表确认mg=0、mgp=17、plsl=22、pgun=32，不将菜单显示用的编号替代实际WeaponID。Lua和核心同步登记精确默认对象/编号并保留实际可连发门槛，编号0显式按非nil判断；不增加顶层Lua局部变量，不改配置、协议、版本、资源或第三方文件。完整名单和特殊边界见[架构](architecture.md#mod炮类sp批量识别2026-10-22源码候选)。
+
+可重现离线读取：`python -X utf8 src/research/survey_gun_pods.py --index E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/download-paks.json --tools-root E:/AC7_MultiSP/tools --output Temp/mod-gun-pod-survey-新批次`。本机本轮结果为`Temp/mod-gun-pod-survey-20261022/parsed-v2/survey.json`，候选汇总、枚举及原版父类副本也留Temp。摘要与来源见[批量记录](../evidence/gun-salvo-mod-pod-survey.json)，不提交第三方资源、JSON正文或原游戏映像。
+
+仅人工审阅资源、引用、继承、脚本与源码差异，未编译、编写/运行产品测试、安装、附加或操作游戏。ID0/32、武库鸟的LaserWeapon及原生寿命、ADF-11双炮类方案拒绝边界需后续成套实测，所有候选不以静态结果宣称已支持验收。现帮助仍写“HGP暂不支持”，已按既有文案审核约定提交具体中英文替换方案；用户答复前不改界面。接收时同时取两层资格表、离线工具、说明与新证据，不整套覆盖其他更新，后续版本标识由整合方统一。
+
 ### Adler HGP静态候选与XR302合并接续（2026-10-21）
 
 用户要求先研究`F:/下载/AC7MOD/ADA-01 Adler - Standalone-1770-1-0-1693016489.rar`并尝试接入，与XR302 PLSL修正一起交付。本分支保留`ebb2dd0`，通过`b82ed12`接续main/2.23.0（`3119d52`），避免覆盖主线内存交接、无限弹药及装填修订。合并仅手工保留evidence索引两边条目；旧回执原字节不变，其既有CRLF格式提示不在本轮重写。
