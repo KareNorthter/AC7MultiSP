@@ -1,5 +1,7 @@
 # 证据分类索引
 
+- [2.23.1正式main与本地包位置](2.23.1-formal-main.json)：已快进合入，记录原冻结/标识产物绝对位置，三处本地ZIP摘要一致；包不含运行库。
+
 - 正式2.23.1：用户验收alpha2并授权合main和本地无运行库包，见`2.23.1-formal-user-validation.json`、`2.23.1-formal-version-label.json`及`2.23.1-formal-release.json`。原安装/构建回执保持；以下待验收文字保留来源阶段含义。
 
 - 当前alpha2已成套编译、通过11项现有检查并安装，游戏效果待验收。来源见`2.23.1-alpha2-source-intake.json`；暂停换机现场与修订见`aircraft-native-pause-handoff-alpha2.json`，构建/安装见本版integration和installed回执。

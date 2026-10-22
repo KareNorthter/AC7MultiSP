@@ -12,6 +12,8 @@
 
 开工先看Git状态，按需读README.md、docs/development.md、docs/architecture.md；挂载先读docs/multi-sp-mount-design.md。只在验收来源上接收精确差异。
 
+发布工作区为`E:/AC7_MultiSP/Temp/integration-2.23.1-alpha2`；原验收冻结位于该目录的`Temp/build-2.23.1-alpha2`，版本标识产物为`Temp/release-2.23.1-label-only`。相关原回执相对路径以该发布工作区为基准，不把main工作区中的同名相对目录当成已存在。绝对位置及main合入见`evidence/2.23.1-formal-main.json`。
+
 ## 工作规则
 
 1. 中文交流、注释和文档，通俗简洁。资料或环境受阻及时报告，不反复试错。

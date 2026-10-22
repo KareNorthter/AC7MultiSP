@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T11:50:16.132801+08:00",
+  "version": "2.23.1",
+  "candidate": false,
+  "previous_main": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "merged_release_commit": "67f40f1982a34cd6a298cae480114682274ee5f6",
+  "merge_method": "fast-forward",
+  "accepted_integration_commit": "5d9bedd6ae9668b527c1b8bdaa6b061949746b6b",
+  "formal_release_worktree": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2",
+  "main_worktree": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1",
+  "validated_build_absolute": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Temp\\build-2.23.1-alpha2",
+  "version_label_directory_absolute": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Temp\\release-2.23.1-label-only",
+  "relative_receipt_paths_base": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2",
+  "local_archives": [
+    "E:\\AC7_MultiSP\\Release\\AC7MultiSP-2.23.1.zip",
+    "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1\\Release\\AC7MultiSP-2.23.1.zip",
+    "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2\\Release\\AC7MultiSP-2.23.1.zip"
+  ],
+  "archive_sha256": "5cb9bfeea0d4c4885b1e78e7701ee6231d99460bae8aadbf652c70e74150f853",
+  "archive_bytes": 28304871,
+  "members": 35,
+  "bundled_runtimes": false,
+  "runtime_members": 0,
+  "all_members_verified": true,
+  "new_version_installed": false,
+  "installed_label": "2.23.1 alpha2",
+  "core_recompiled": false,
+  "tests_run_again": false,
+  "upload_performed": false,
+  "old_receipts_preserved": true
+}
