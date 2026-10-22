@@ -470,6 +470,7 @@ function NativeLoadout.new(dependencies)
         local ok,why=pcall(restore);if not ok then note("NATIVE_LOADOUT_RESTORE_ERROR "..tostring(why))end
         local released,releaseErr=pcall(releaseClosedRoot)
         if not released then note("NATIVE_LOADOUT_ROOT_RESTORE_ERROR "..tostring(releaseErr))end
+        if not supply and self.onFailure then self.onFailure(self.contextPlane,self.error)end
     end
     local function bindings(c)
         local settings=StaticFindObject("/Script/Engine.Default__InputSettings")
@@ -704,7 +705,7 @@ function NativeLoadout.new(dependencies)
             local entry=parts and option and not pending and c.partsPreview.amounts[weapon+1]or nil -- 当前实际 WeaponID 对应结果。
             local amount=option and not pending and Profile.ammo(entry and entry.preview or option.max,count,preview.ratio)or 0
             local affects=entry and entry.affects or false -- 不能用“整数变大”替代原生候选影响标记。
-            local ammoText=option and not pending and Profile.ammoText(amount)or "---" -- 无限显示∞；EMPTY与未就绪不猜数量。
+            local ammoText=option and not pending and Profile.ammoText(amount)or "---" -- 无限显示---；EMPTY与未就绪不猜数量。
             local ammoSignature=ammoText..":"..tostring(affects)..":"..tostring(pending) -- 数字相同也能立即切换黄色。
             if c.ammo and not supply and not standby then
                 local focused=i==focusedSlot -- 槽位变更也要重画颜色，即使简称和弹数恰好相同。
@@ -1308,7 +1309,23 @@ function NativeLoadout.new(dependencies)
     function self:pump(context)
         local ok,err=xpcall(function()
             assert(type(context)=="table"and type(context.getProfile)=="function"and type(context.getOptions)=="function","页面更新缺少具名上下文")
+            self.contextPlane=context.planeId -- 仅存编号，错误退让不再查询旧机体或蓝图。
             assert(type(context.inFlight)=="boolean"and type(context.panelOpen)=="boolean","页面更新缺少飞行/管理状态")
+            if not supply then
+                -- 先处理离页/管理状态；浏览列表时没有活动兵装页，不能先读取预览兵装CDO。
+                if context.inFlight or context.panelOpen then
+                    (standby and pumpStandby or pump)(context.instance,context.planeId,context.getProfile,context.getOptions,context.now,context.inFlight,context.panelOpen)
+                    return
+                end
+                local active=self.cache~=nil or self.modelWait~=nil
+                if not active and not self.error and (not standby or context.getProfile()~=nil)then
+                    for _,owner in ipairs(owners(context.instance,context.now))do
+                        if valid(owner)and owner:IsVisible()and owner:IsEnableControl()and valid(owner:GetWorld())
+                            and owner:GetWorld():GetAddress()==context.instance:GetWorld():GetAddress()then active=true;break end
+                    end
+                end
+                if not active then return end
+            end
             if not supply then
                 self.getVariantToken=context.getVariantToken;self.getSelectionToken=context.getSelectionToken
                 assert(type(self.getVariantToken)=="function"and type(self.getSelectionToken)=="function","页面缺少机体涂装上下文")
