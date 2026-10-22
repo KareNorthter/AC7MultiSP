@@ -1,4 +1,4 @@
--- AC7MultiSP 2.23.0正式版：内存交接、装填队列修正及管理页调整；补给保持已购筛选。
+-- AC7MultiSP 2.23.1 alpha1候选：特殊机体原生退让、机库访问保护及Mod炮类SP齐射适配。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -336,6 +336,19 @@ local function readOptionsFor(id)
     local presentation={}
     local baseWeapons=modAircraft:baseWeapons(info)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
+    -- 仅登记静态配置已核对的炮类SP；编号0也是有效编号，不能当成缺失。
+    local salvoClasses={
+        Default__plwp_cgp_f15smt_C=17,Default__plwp_gplsl_arsb_C=22,
+        Default__plwp_gun_adf11_C=0,Default__plwp_hgn_adf11_C=0,Default__plwp_hgp_x0_C=17,
+        Default__plwp_mgp_31m_C=17,Default__plwp_mgp_31ma_C=17,Default__plwp_mgp_C=17,
+        Default__plwp_mgp_active_C=17,Default__plwp_mgp_fa36_C=17,Default__plwp_mgp_qh66_C=17,
+        Default__plwp_mgp_r0_C=17,Default__plwp_mgp_rmq4_brc_C=17,Default__plwp_mgp_uavcx_C=0,
+        Default__plwp_mgp_va_C=17,Default__plwp_mgp_vb_C=17,
+        Default__plwp_plsl_8m_C=22,Default__plwp_plsl_qh66_C=32,
+        Default__plwp_plsl_rmq4_C=32,Default__plwp_plsl_ua45_C=32,
+        Default__plwp_plsl_x0_C=22,Default__plwp_plsl_x1_C=22,
+        Default__plwp_plsl_x308_C=22,Default__plwp_plsl_xr302_C=22,Default__plwp_rgun_zp_C=17
+    }
     for i=1,3 do
         local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
         assert(valid(weaponClass),"当前机体兵装类缺失："..info.code.."/"..i)
@@ -346,9 +359,8 @@ local function readOptionsFor(id)
         end
         weaponIds[i]=weaponDefault.WeaponID
         local name=weaponDefault:GetFullName()
-        salvoOptions[i]=weaponDefault.bAutoFireOnHold and
-            ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
-             (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
+        local salvoId=salvoClasses[name:match("([^%.%s]+)$")]
+        salvoOptions[i]=weaponDefault.bAutoFireOnHold and salvoId~=nil and weaponIds[i]==salvoId
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
@@ -2071,7 +2083,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.23.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.23.1 alpha1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "date": "2026-10-21",
+  "captured_utc": "2026-10-21T15:42:53.824318+00:00",
+  "status": "Adler A运行配置已确认；齐射源码未构建、未安装、未验证发射效果",
+  "authorization": "用户此前允许只读采集；本轮明确不暂停、要测试其他功能，随后要求重新尝试。不要求用户按键、换机或暂停",
+  "branch": "codex/gun-salvo-xr302",
+  "candidate_commit": "53b17b1",
+  "static_reference": "evidence/gun-salvo-adler-hgp-static.json",
+  "capture": {
+    "pid": 19224,
+    "raw_path": "C:/Users/83717/.codex/worktrees/gun-salvo-xr302/AC7_MultiSP/Temp/adler-hgp-live-20261021-234253/capture.json",
+    "raw_sha256": "D2DCCCDD941AF8ABBC80676F03E9583FBFAEEF18B0901FA11E422C8AC4A68C73",
+    "script_path": "C:/Users/83717/.codex/worktrees/gun-salvo-xr302/AC7_MultiSP/Temp/inspect_adler_live_once.py",
+    "script_sha256": "8696CE8C9610D3A429CD956C206AE03BC30848C91B4573739C3B6552C52F91F9",
+    "access": "OpenProcess 0x410，只查询与读取；未附加调试器",
+    "checks": [
+      "核对Ace7Game.exe路径和已登记构建接口指纹",
+      "从当前对象登记表筛选Adler实例，实际Controller.Pawn回指唯一玩家",
+      "玩家与PlayerWeaponActivator双向归属一致",
+      "反射读取三项原生配置、实际WeaponClass与唯一默认对象",
+      "对象存活检查读取登记项内部PendingKill/Unreachable位0x30000000；默认对象标记不作为死亡标记",
+      "结束前重新核对玩家、控制器及激活器弱身份和双向归属"
+    ],
+    "atomic_snapshot": false,
+    "pause_requested": false,
+    "process_write": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "raw_committed": false,
+    "prior_attempts": [
+      "上一进程PID23080在枚举模块时返回WinError299，未取得HGP数据；未据此断言永久权限问题",
+      "本进程首次读取到Adler后，临时采集器错误地将默认对象标记0x10混入实例排除条件，导致默认对象数量为零；修正登记项存活检查和CDO分类后成功，不修改产品逻辑或目标进程"
+    ]
+  },
+  "observation": {
+    "player_class": "AcePlayerPawn_adlra_C",
+    "configs": [
+      {"index_zero_based": 0, "class": "plwp_sdbm_x0_C", "weapon_id": 30, "bAutoFireOnHold": false},
+      {"index_zero_based": 1, "class": "plwp_mgp_va_C", "weapon_id": 17, "bAutoFireOnHold": true},
+      {"index_zero_based": 2, "class": "plwp_mstm_adlr_C", "weapon_id": 33, "bAutoFireOnHold": false}
+    ],
+    "pod": {
+      "default_object": "Default__plwp_mgp_va_C",
+      "class_chain": ["plwp_mgp_va_C", "Artillery", "ExplosiveWeapon", "WeaponBase", "NimbusObjectPoolItem", "Actor", "Object"],
+      "weapon_id": 17,
+      "bAutoFireOnHold": true,
+      "bGunReaction": false,
+      "max_loaded_count": 4,
+      "bFireAllInOneShot": true,
+      "load_time_seconds": 0.2,
+      "volley_rest_interval_seconds": 0.0
+    },
+    "instantaneous_input_state": {"armed": true, "gun_held": false, "main_held": false}
+  },
+  "conclusion": [
+    "实际加载的Adler A第二项SP与所给压缩包va类及静态默认值一致，候选已有的精确类、ID17及可按住连发条件无需追加修改",
+    "运行bGunReaction=false；候选沿用原生主武器按住通道，不把此字段设为资格条件，也不改写为true",
+    "只确认配置和当前瞬时输入字段；未要求用户手动复现，不能据此证明开火、连发、松开、音效或暂停停止正常",
+    "没有采到Adler B/vb，也没有读取画面上的HGP显示名称，不把当前A现场扩大为所有HGP或两变体实机支持"
+  ],
+  "delivery": {
+    "product_source_changed_this_retry": false,
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "installed": false,
+    "runtime_salvo_verified": false,
+    "pending": "候选后续成套构建/安装和用户方便时的发射、松开及边界实测另行处理；本轮不打断用户其他测试"
+  }
+}

@@ -117,6 +117,11 @@ def source_snapshot(root=ROOT):
         'evidence/camera-interaction-v2-source.json','evidence/view-target-l3-marker-update.json',
         'evidence/m35d-inner-4agm-layout.json',
         'evidence/sp-combination-static-split-experiment.json'))
+    paths.update(root / name for name in (
+        'evidence/special-aircraft-native-fallback-20261022.json',
+        'evidence/gun-salvo-xr302-inspection.json','evidence/gun-salvo-adler-hgp-static.json',
+        'evidence/gun-salvo-adler-hgp-live.json','evidence/gun-salvo-mod-pod-survey.json',
+        'src/research/survey_gun_pods.py'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
 
