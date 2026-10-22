@@ -71,6 +71,7 @@ end
 -- 每次调度和修改型事件都核对当前世界，不缓存上一世界的许可。
 function Context.allowed(instance)
     Context.observedMenu="none"
+    Context.mainMenuVisible=false;Context.outsideMission=false -- 复用现有页面遍历，不增加反射或全局搜索。
     Context.hangarVisible=false
     if not valid(instance)then return false,"waiting_instance"end
     initialize()
@@ -103,7 +104,13 @@ function Context.allowed(instance)
                 end
                 if widget:IsEnableControl()then
                     if Context.isMultiplayerWidget(widget,true)then multiplayer=true end
-                    for _,class in ipairs(singleEntryClasses)do if widget:IsA(class)then singleEntry=true;break end end
+                    for index,class in ipairs(singleEntryClasses)do
+                        if widget:IsA(class)then
+                            singleEntry=true
+                            if index==1 then Context.mainMenuVisible=true end -- 原有列表第一项为MainMenuWidget。
+                            break
+                        end
+                    end
                 end
             end
         end)
@@ -115,6 +122,7 @@ function Context.allowed(instance)
         if not singleEntry then return false,"multiplayer_menu_transition"end
         multiplayerMenuWorld=nil
     end
+    Context.outsideMission=sharedMenu and currentManager and true or false
     -- 自有MissionDataTable：ms13=113；213是同地图自由飞行，不属于固定SP任务。
     -- 只在已确认的任务世界或机库生效；保留管理入口，不改个人总开关和保存方案。
     if ((valid(mode)and name:find("/Game/Maps/Mission/",1,true))or

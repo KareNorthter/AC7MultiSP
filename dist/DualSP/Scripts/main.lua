@@ -59,6 +59,7 @@ local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
+local versionUpdates={invoke=loadExport("dualsp_updates_context_v1","DualSPUI.dll"),context=-1,failed=false}
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
@@ -1627,6 +1628,12 @@ local function checkRuntime(activatedWidget)
         end
     end
     modAircraft.safetyPending=false
+    local updateContext=not allowed and 0 or runtimeContext.mainMenuVisible and 3 or runtimeContext.outsideMission and 1 or 2
+    if not versionUpdates.failed and updateContext~=versionUpdates.context then
+        versionUpdates.context=updateContext -- 仅模式变化时提交整数；不在20ms循环内读取清单或构造JSON。
+        local updateOK=pcall(versionUpdates.invoke,updateContext)
+        if not updateOK then versionUpdates.failed=true;note("UPDATE_CONTEXT_ABANDONED")end
+    end
     if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
     runtimeChanging=true
     runtimeAllowed=allowed;runtimeReason=reason
