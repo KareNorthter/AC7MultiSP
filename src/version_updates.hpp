@@ -2,6 +2,7 @@
 #include "common.hpp"
 #include <winhttp.h>
 #include <shellapi.h>
+#include <objbase.h>
 #include <algorithm>
 #include <array>
 #include <cwctype>
