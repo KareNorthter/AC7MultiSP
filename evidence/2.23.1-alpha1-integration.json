@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "version": "2.23.1 alpha1",
+  "candidate": true,
+  "recorded_at": "2026-10-22T09:44:16.149632+08:00",
+  "source_commit": "09031baaf2ce42b41632ad4d55b26f4debc18f0e",
+  "source_intake": "evidence/2.23.1-alpha1-source-intake.json",
+  "build_dir": "Temp/build-2.23.1-alpha1",
+  "build_receipt_sha256": "88c16e645eca2b5bb2b8ae4a8808f0c3741e87183cb95b9accffb1cfcb23a84e",
+  "test_receipt_sha256": "3aa7425e9b50ec2195e698d3d1efb51ed52d320b6d7637560658ad2f041336a3",
+  "checks": [
+    "release_pipeline_test",
+    "current_runtime_test",
+    "runtime_services_test",
+    "reload_timer_test_compile",
+    "reload_timer_test",
+    "panel_pointer_test_compile",
+    "panel_pointer_test",
+    "weapon_group_test_compile",
+    "weapon_group_test",
+    "DualSP.dll_loaded_exports",
+    "DualSPUI.dll_loaded_exports"
+  ],
+  "installed_receipt": "evidence/2.23.1-alpha1-installed.json",
+  "installed_receipt_sha256": "d9ad56977fc2ffd0a7dfac5c65f7c407958bb59d443491ad6d4f55cceda0adab",
+  "installed_at": "2026-10-22T09:42:59.877086+08:00",
+  "runtime_files_verified": 19,
+  "mount_assets": {
+    "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+    "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+    "variant_count": 77,
+    "file_count": 154
+  },
+  "mount_assets_unchanged_from_accepted": true,
+  "backup": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha1\\backup\\AC7MultiSP-20261022-094259-877086",
+  "full_backup_verified": true,
+  "save_backup_verified": true,
+  "profiles_preserved_exact_bytes": true,
+  "protected_files_verified": 6,
+  "other_mod_files_touched": false,
+  "game_running_after_install": false,
+  "game_started_by_agent": false,
+  "gameplay_verified": false,
+  "main_unchanged": true,
+  "release_created": false,
+  "f14ia_isolation_preserved": true,
+  "manual_verification": {
+    "lua_core_salvo_exact_class_id_lists_equal": true,
+    "salvo_entries": 25,
+    "accepted_mount_members_verified": 154,
+    "loader_method_names_present": [
+      "HasAnyFlags",
+      "HasAnyInternalFlags"
+    ],
+    "loader_api_gameplay_verified": false
+  },
+  "remaining": [
+    "机库普通页面、不同涂装、已有CDO路径及退让后返回普通机体的真实行为待验收",
+    "Adler A/B、XR302及其他新增炮类的真实齐射、松键与人工切换待验收",
+    "F-14IA仍隐藏；未修改第三方资源，不能认定其原生异步依赖断言已经修复",
+    "性能改善无本轮游戏计量；既有检查不代替实机兼容和稳定性测试"
+  ]
+}

@@ -61,8 +61,8 @@ void drawFeatureSettings() {
         ImGui::SameLine();ImGui::TextUnformatted(tr("快捷键","Shortcut"));ImGui::SameLine();
         bindingButton(9,shortcutLabel(draftShortcuts[3]),170);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
-        panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
-            "On for new configurations. With MGP or PLSL equipped, holding the actual game gun binding also fires that pod; releasing restores the previous selection. HGP and simultaneous firing of different SPs are currently unsupported; slot changes may cause gaps.");
+        panelHelp("携带MGP/HGP/PLSL吊舱时，按住机炮发射键会联动该武器齐射。",
+            "With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun.");
         if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
             ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
     }
@@ -140,7 +140,7 @@ void drawPanel() {
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
     ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.23.0");
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.23.1 alpha1");
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",tr("管理组件版本不匹配，请完整安装同一版本。","Management components do not match. Install a complete matching version."));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiMessage(managementError).c_str());

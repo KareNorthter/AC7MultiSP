@@ -742,6 +742,7 @@ local function scenario()
     local deps={json=json,copy=Profile.copy,names={f22a='F-22A',su35='Su-35S',zoef='ADF-01'},note=function()end,changed=function()end,
         context=function()return context end,game=function()return game end,catalogue=function()return catalog end,
         owned=function()return true,'[110,120]'end,allowed=function()return state.allowed end,
+        nativeOnly=function()return false end,
         canChange=function()return state.allowed,'当前不可换机' end,
         prepare=function()state.prepared=state.prepared+1;assert(state.module:busy());return function(controller)controller:RestartLevel()end end,
         matches=function(value,code)return value.code==code end,

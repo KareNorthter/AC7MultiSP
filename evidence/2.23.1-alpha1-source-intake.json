@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "version": "2.23.1 alpha1",
+  "candidate": true,
+  "base": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+  "sources": [
+    {
+      "thread": "01a15f12-100b-7640-9d2b-2c54ef825a45",
+      "commit": "d5bc568f357d0d2fa42a71f4f484c7a153778041",
+      "duplicate_link_received_once": true
+    },
+    {
+      "thread": "01a1532a-e99f-74f2-a89e-70ef7d40aa9a",
+      "commit": "16a78a352453f7bd08c57316fb0e1b960dde9590"
+    }
+  ],
+  "integration_branch": "codex/integration-2.23.1-alpha1",
+  "received": "从main合并两支精确增量，证据索引同位置冲突保留双方内容；产品标识统一alpha1，新增研究依据纳入冻结，既有夹具补齐具名依赖。",
+  "management_protocol": 21,
+  "configuration_revision": 19,
+  "preserve_existing_configuration": true,
+  "base_installed_receipt": "evidence/2.22.2-alpha1-r3-installed.json",
+  "base_installed_receipt_sha256": "46d91ce6010c29964386fed0347ba3cd0bc35374781e6fad02d5242f10111ade",
+  "install_authorized": true,
+  "release_authorized": false,
+  "main_unchanged": true,
+  "f14ia_isolation_preserved": true,
+  "gameplay_verified": false
+}

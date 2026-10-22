@@ -1,4 +1,15 @@
-AC7MultiSP 2.23.0
+AC7MultiSP 2.23.1 alpha1
+
+Internal test candidate 2.23.1 alpha1 (since official 2.23.0)
+• Skip redundant weapon probing during hangar browsing; inspect only existing, fully loaded default objects.
+• F-14IA variants defer to native behavior. Catchable first-admission errors quarantine that aircraft for this session; other aircraft can recover. Existing F-14IA hiding remains; native third-party resource assertions are not guaranteed fixed.
+• With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun. Registered Adler A/B, XR302 and other mod cannon SPs are included. Multiple eligible cannon SPs in one loadout remain unlinked.
+• Unlimited ammunition displays ---. Stock/reload rules and valid revision 19 settings, loadouts and bindings are retained.
+• Build/install verification and user gameplay acceptance are separate. No public package or upload is created.
+
+Delivery: built, all 11 existing checks passed, and 19 runtime files installed. All 77 mount variants/154 members and original revision 19 settings are verified. The game remains closed; gameplay acceptance is pending.
+
+Historical release notes follow.
 
 Changes since 2.22.1
 • Commands/results, the catalogue, UI state and action queues now pass through memory. Consecutive pending direct selections are coalesced; duplicate JSON work, weapon-pool copies and HUD sampling are reduced.
@@ -34,7 +45,7 @@ Controls
 • Keys 1/2/3/4 select missile/SP1/SP2/SP3. D-pad left/up/right/down does the same and can be disabled separately. X retains native cycling.
 • F6 or Back+Y opens General, Camera and Debug; logs expand within Debug. In missions, management borrows pause and releases only its own pause on closing.
 • Mission/hangar model options affect visuals only. The mission-model shortcut defaults unbound. Disabling hangar models restores native previews and may reduce hangar stutter.
-• Ctrl+Alt+F6 toggles Camera hold. Debug SP cycling defaults unbound. Ctrl+Alt+F5 toggles native-gun linkage to MGP/PLSL; HGP and true concurrent firing of different SP types are unsupported.
+• Ctrl+Alt+F6 toggles Camera hold. Debug SP cycling defaults unbound. Ctrl+Alt+F5 toggles native-gun linkage to registered MGP/HGP/PLSL pods; loadouts with multiple eligible cannon SPs remain unlinked.
 • Select Native/VR NEXT ranking in management; its shortcut is removed. Disable the mouse-flight mod's F2 HMD targeting when using VR ranking to avoid competing target selection. Dot, tracking and Camera hold are independent.
 • Camera hold defaults off; L3/R3 camera actions are always retained. Release L3 to recenter and release latched tracking. Short R3 changes ordinary views; hold for 0.3 seconds to toggle/save Camera hold, without switching views on release. Both sticks retain countermeasures. Recenter binding and 5%–200% sensitivity are configurable. Angle-based auto recenter and its slider are removed.
 • Controller and keyboard latched tracking each default off. Enable the corresponding option, then hold Y for 0.2 seconds to latch/release, or tap the game's actual keyboard tracking binding. Short Y selects a target while tracking follows. The separate feature-toggle shortcut is removed. Pause, management, focus/target loss, special cameras and mission exit release tracking.
@@ -133,3 +144,4 @@ Includes test versions; historical features may have been replaced or withdrawn.
 2.22.0: Integrated NEXT modes, tracking/camera controls, independent model/D-pad options, loadout/mod compatibility, paused switching and additional SP layouts; simplified local installation integrity scope.
 2.22.1: Refined three-tab management and separate tracking options, shortcuts and defaults; back up/reset older settings; fixed F/A-18E TGM references and offline asset qualification.
 2.23.0: Moved runtime IPC to memory, added background logging and reduced repeated sampling; fixed unlimited ADMM queues and inactive-bomb blocking, refined mod compatibility/debug/management, and removed management muting. Comparable CFA median switching time fell by about 22%.
+2.23.1 alpha1: Hangar admission/fallback protection, registered mod cannon-SP salvo support and unlimited-ammo display ---.

@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T09:44:16.149632+08:00",
+  "phase": "首次apply",
+  "preflight_passed": true,
+  "installed": false,
+  "game_files_changed": false,
+  "reason": "新集成工作区尚无backup根目录，contained严格解析父目录时停止，发生在暂存和交换之前。",
+  "resolution": "建立已被.gitignore忽略的backup目录后，重新预检并安装成功；未修改安装工具或保护规则。",
+  "original_logs": [
+    "Temp/install-apply-first.stdout.txt",
+    "Temp/install-apply-first.stderr.txt"
+  ],
+  "successful_receipt": "evidence/2.23.1-alpha1-installed.json"
+}

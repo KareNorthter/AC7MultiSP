@@ -1,4 +1,4 @@
--- AC7MultiSP 2.23.0正式版：内存交接、装填队列修正及管理页调整；补给保持已购筛选。
+-- AC7MultiSP 2.23.1 alpha1候选：特殊机体原生退让、机库访问保护及Mod炮类SP齐射适配。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -307,6 +307,7 @@ local function readOptionsFor(id)
     if configured and isFlight and id==planeId and flightOptions then return flightOptions end
     local info=catalogue and catalogue[tostring(id)]
     if not info or not info.supported then return {} end
+    if modAircraft:nativeOnlyReason(id,info)then return {},"native_only"end
     assert(IsInGameThread()and valid(instance),"弹药预览需要当前游戏线程与机体选择")
     -- 菜单直接读取机库当前展示的实例，任务读取玩家实例；不假定蓝图默认对象已具备完整组件。
     local sourcePlane=plane -- 任务实例已由现有世界/生命周期检查确定。
@@ -315,7 +316,7 @@ local function readOptionsFor(id)
         assert(valid(hangar),"当前机库管理器未就绪")
         sourcePlane=hangar.LoadedPlayerPlane
         -- 选择编号先改变、预览模型后加载属于原生异步换机；返回显式等待原因，不能记成永久接入错误。
-        if not valid(sourcePlane)then return {},"preview_missing selected="..info.code end
+        if not modAircraft:readyObject(sourcePlane)then return {},"preview_missing_or_loading selected="..info.code end
         if instance:GetSelectedPlaneID()~=id or not isSelectedPlane(sourcePlane,info.code)then
             return {},"preview_changing selected="..info.code.." expected="..modAircraft:reference(info,instance).." actual="..sourcePlane:GetClass():GetFullName()
         end
@@ -326,22 +327,40 @@ local function readOptionsFor(id)
     -- 菜单分支刚核对过同一实例的类链，避免重复遍历；任务实例仍在这里独立核对。
     if isFlight then assert(isSelectedPlane(sourcePlane,info.code),"任务机体与当前选择不符："..info.code)end
     local sourceActivator=sourcePlane.PlayerWeaponActivator -- 使用原生构造完成并应用蓝图覆盖的组件。
-    assert(valid(sourceActivator),"当前机体实例兵装配置缺失："..info.code)
+    if not modAircraft:readyObject(sourceActivator)then
+        if not isFlight then return {},"weapon_activator_loading selected="..info.code end
+        error("当前机体实例兵装配置未就绪："..info.code)
+    end
     local continuousOptions={}
     local salvoOptions={}
     local presentation={}
     local baseWeapons=modAircraft:baseWeapons(info)
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
+    -- 仅登记静态配置已核对的炮类SP；编号0也是有效编号，不能当成缺失。
+    local salvoClasses={
+        Default__plwp_cgp_f15smt_C=17,Default__plwp_gplsl_arsb_C=22,
+        Default__plwp_gun_adf11_C=0,Default__plwp_hgn_adf11_C=0,Default__plwp_hgp_x0_C=17,
+        Default__plwp_mgp_31m_C=17,Default__plwp_mgp_31ma_C=17,Default__plwp_mgp_C=17,
+        Default__plwp_mgp_active_C=17,Default__plwp_mgp_fa36_C=17,Default__plwp_mgp_qh66_C=17,
+        Default__plwp_mgp_r0_C=17,Default__plwp_mgp_rmq4_brc_C=17,Default__plwp_mgp_uavcx_C=0,
+        Default__plwp_mgp_va_C=17,Default__plwp_mgp_vb_C=17,
+        Default__plwp_plsl_8m_C=22,Default__plwp_plsl_qh66_C=32,
+        Default__plwp_plsl_rmq4_C=32,Default__plwp_plsl_ua45_C=32,
+        Default__plwp_plsl_x0_C=22,Default__plwp_plsl_x1_C=22,
+        Default__plwp_plsl_x308_C=22,Default__plwp_plsl_xr302_C=22,Default__plwp_rgun_zp_C=17
+    }
     for i=1,3 do
         local weaponClass=sourceActivator[weaponFieldNames.config[i]].WeaponClass -- 每槽可被替换模组独立改写。
         assert(valid(weaponClass),"当前机体兵装类缺失："..info.code.."/"..i)
-        local weaponDefault=weaponClass:GetCDO() -- 原生枚举仍受核心范围校验保护。
-        assert(valid(weaponDefault),"当前机体兵装默认对象缺失："..info.code.."/"..i)
+        local weaponDefault=modAircraft:existingDefault(weaponClass)
+        if not weaponDefault then
+            if not isFlight then return {},"weapon_default_loading selected="..info.code.." config="..i end
+            error("当前机体兵装默认对象未就绪："..info.code.."/"..i)
+        end
         weaponIds[i]=weaponDefault.WeaponID
         local name=weaponDefault:GetFullName()
-        salvoOptions[i]=weaponDefault.bAutoFireOnHold and
-            ((weaponIds[i]==17 and name:match("Default__plwp_mgp_r0_C$")~=nil)or
-             (weaponIds[i]==22 and name:match("Default__plwp_plsl_x0_C$")~=nil))
+        local salvoId=salvoClasses[name:match("([^%.%s]+)$")]
+        salvoOptions[i]=weaponDefault.bAutoFireOnHold and salvoId~=nil and weaponIds[i]==salvoId
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
@@ -688,6 +707,11 @@ end,keyboardNavigation=preparationNavigation,takeoff=function(owner)
     local ok,err=nativeTakeoff(owner:GetAddress(),plane:GetAddress(),activator:GetAddress()) -- 原生负责关闭页面并通知任务。
     assert(ok,err or "原生补给 YES 接口未返回成功状态")
 end,confirmSound=menuConfirm,translate=tr,ammoSettings=ammoSettings,mountPreview=mountPreview,releaseMountPreview=releaseMountPreview}
+for _,adapter in ipairs({nativeLoadout,nativeStandby,nativeParts})do
+    adapter.onFailure=function(id,message)
+        if not isFlight and not supplySession and not configured then modAircraft:quarantine(id,message)end
+    end
+end
 local function pageContext(context)
     context.instance=instance
     if context.mode=="resupply"then
@@ -1253,6 +1277,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     owned=loadExport("dualsp_debug_owned_aircraft"),
     changed=function()lastUIKey=nil end,
     game=function()return game end,catalogue=function()return catalogue end,
+    nativeOnly=function(id,info)return modAircraft:nativeOnlyReason(id,info)end,
     allowed=function()return runtimeAllowed and runtimeModEnabled and runtimeReason~="mission13_fixed_sp"end,
     matches=isSelectedPlane,
     bind=function(pawn,map)cachedPlane=pawn;cachedWorld=map end,
@@ -1576,6 +1601,16 @@ local function checkRuntime(activatedWidget)
     if activatedWidget and runtimeContext.isMultiplayerWidget(activatedWidget)then
         runtimeContext.enterMultiplayerMenu(instance);allowed=false;reason="multiplayer_menu"
     end
+    if allowed then
+        local id=instance:GetSelectedPlaneID()
+        local info=catalogue and catalogue[tostring(id)]
+        local passive=modAircraft:nativeOnlyReason(id,info)
+        if passive then
+            allowed=false;reason="aircraft_native_only"
+            modAircraft:warn("native_only/"..id,"plane="..id.." code="..tostring(info and info.code).." reason="..passive)
+        end
+    end
+    modAircraft.safetyPending=false
     if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
     runtimeChanging=true
     runtimeAllowed=allowed;runtimeReason=reason
@@ -1587,6 +1622,7 @@ local function checkRuntime(activatedWidget)
     assert(uiOK,uiErr)
     if not allowed or reason=="mission13_fixed_sp"then
         if reason=="mission13_fixed_sp"then aircraftDebug:cancel("第13关使用任务指定SP，已取消调试换机")end
+        if reason=="aircraft_native_only"then aircraftDebug:cancel("当前机体暂由游戏原生处理，已取消调试换机")end
         if reason=="network_world"or reason=="multiplayer_mode"or reason=="multiplayer_menu"or reason=="multiplayer_menu_transition"then
             aircraftDebug:cancel("已离开单人任务，换机请求已取消")
         end
@@ -1594,7 +1630,7 @@ local function checkRuntime(activatedWidget)
         local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
         assert(coreOK,coreErr)
         if panelOpen then setPanel(false)end
-        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission13_fixed_sp"};nativeSupply:reset{clearError=true,releaseInput=false}
+        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission13_fixed_sp"or reason=="aircraft_native_only"};nativeSupply:reset{clearError=true,releaseInput=false}
         nativeStandby:reset{clearError=true,releaseInput=false};nativeParts:reset{clearError=true,releaseInput=false}
         nativeHud:reset();weaponPresentation:reset()
         supplySession=nil;resetCheckpointState()
@@ -1735,6 +1771,7 @@ local function tick()
             valid(skinTable)and skinTable:GetAddress()or 0),"机体目录内存接口没有返回结果"))
         assert(not catalogue.error,catalogue.error)
         assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
+        if not syncRuntime()then return end -- 目录刚就绪也先按纯数据退让，不先碰特殊机体/兵装对象。
     end
     -- A live player actor remains valid for its world. Registry searches are
     -- needed while acquiring a new actor, not four times per second in flight.
@@ -1905,9 +1942,12 @@ local function tick()
         if nativeSupply.error then error(nativeSupply.error)end
     elseif not isFlight and not supplySession then
         nativeLoadout:pump(pageContext{mode="preparation",now=now,inFlight=not runtimeContext.hangarVisible,panelOpen=panelOpen})
+        if modAircraft.safetyPending and not syncRuntime()then return end
     end
     nativeStandby:pump(pageContext{mode="saved",now=now,inFlight=isFlight or supplySession~=nil or not runtimeContext.hangarVisible,panelOpen=panelOpen})
+    if modAircraft.safetyPending and not syncRuntime()then return end
     nativeParts:pump(pageContext{mode="saved",now=now,inFlight=isFlight or supplySession~=nil or not runtimeContext.hangarVisible,panelOpen=panelOpen})
+    if modAircraft.safetyPending and not syncRuntime()then return end
     recordStage("pages",pagesStarted)
     local previewStarted=os.clock()
     maintainScenePreview()
@@ -1925,6 +1965,7 @@ RegisterHook("/Script/Nimbus.NimbusGameInstance:SetPlaneAndSWP",function(ctx,sel
     if aircraftDebug:busy()then return end
     if not syncRuntime()or runtimeReason=="mission13_fixed_sp"then return end
     nativeLoadout:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
+    if modAircraft.safetyPending and not syncRuntime()then return end
     nativeSupply:beforeNativeCommit(ctx,selectedPlane,selectedWeapon)
 end,function()end)
 -- 原生页面可能复用同一对象；真实输入激活事件作为新一轮准备的边界。
@@ -1933,6 +1974,7 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
     if runtimeChanging then return end
     if not syncRuntime(enabled:get()and ctx:get()or nil)or runtimeReason=="mission13_fixed_sp"then return end
     nativeLoadout:onControlChanged(ctx,enabled)
+    if modAircraft.safetyPending and not syncRuntime()then return end
     -- 激活事件内完成双栏，原生第一次绘制前即可使用模组文字；自身输入操作不重入。
     if not enabled:get()or nativeLoadout.controlDepth>0 or nativeSupply.controlDepth>0
         or not valid(instance)or not catalogue or panelOpen then return end
@@ -1951,9 +1993,13 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
             and owner:IsA(StaticFindObject("/Script/Nimbus.MissionResupplyWidget"))then
             nativeSupply:activate(owner,pageContext{mode="resupply",now=os.clock(),inFlight=isFlight,panelOpen=false})
         end
+        if modAircraft.safetyPending then syncRuntime();return end
         maintainScenePreview() -- 页面激活事件内完成兜底，避免SKIN/EMBLEM先绘制一帧原生状态。
     end,debug.traceback)
-    if not ok then errorText=tostring(err);note("NATIVE_MENU_ACTIVATION_ERROR "..errorText);releaseRuntimeOwnership()end
+    if not ok then
+        errorText=tostring(err);note("NATIVE_MENU_ACTIVATION_ERROR "..errorText);releaseRuntimeOwnership()
+        if not isFlight and not supplySession then modAircraft:quarantine(instance:GetSelectedPlaneID(),errorText);syncRuntime()end
+    end
 end)
 -- These reflected entry points cover normal dynamic mission events. Their
 -- checkpoint/resupply coverage remains experimental and is logged explicitly.
@@ -2037,7 +2083,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.23.0 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.23.1 alpha1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
@@ -2102,6 +2148,11 @@ LoopInGameThreadWithDelay(20,function()
                 return false
             end
             releaseRuntimeOwnership()
+            -- 尚未重建兵装时可完整交回原生；已配置/补给中的错误保留既有冻结边界，不能伪装成原生配装。
+            if not configured and not supplySession and valid(instance)and catalogue then
+                modAircraft:quarantine(instance:GetSelectedPlaneID(),errorText)
+                if not syncRuntime()then return false end
+            end
             -- Report once, freeze weapon mutations, and keep the UI/error visible.
             -- A user closes the panel to resume the game; no hidden loadout retry.
             local published,publishErr=pcall(publishState)
