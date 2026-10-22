@@ -1,3 +1,13 @@
+AC7MultiSP 2.24.0 alpha2
+
+Internal changes since alpha1
+• Add a manual background update check; repeated clicks are disabled while checking.
+• Place all transient notices at the top with the ACMultiSP: prefix and stack simultaneous notices.
+• Recognize preparing manifests as unpublished information, retain manual retries after failures, and log detailed HTTP/WinHTTP errors.
+• Retain accepted functionality, personal settings and the Vortex source package. Delivery status and gameplay acceptance are pending.
+
+Earlier alpha1 and release notes follow.
+
 AC7MultiSP 2.24.0 alpha1
 
 Build completed, all 11 existing checks passed, and the candidate was installed manually. Settings and saves were preserved; the Vortex source package was retained. A later Vortex deployment may replace this candidate. Gameplay validation is pending.

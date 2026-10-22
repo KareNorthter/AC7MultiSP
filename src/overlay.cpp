@@ -127,9 +127,7 @@ std::string uiMessage(const std::string& message,
     const char* zh="操作未完成，请在日志页查看详细原因。",
     const char* en="The operation could not be completed. See Logs for details.");
 void showToast(std::string message,ToastKind kind=ToastKind::Info) {
-    const std::string prefix="AC7MultiSP: ";
-    if(message.rfind(prefix,0)==0)message.erase(0,prefix.size()); // 统一入口只添加一次前缀。
-    message=uiMessage(message);
+    message=uiMessage(dualsp::noticeBody(std::move(message)));
     // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
     if(message.size()>240) {
         size_t end=240;
@@ -139,8 +137,22 @@ void showToast(std::string message,ToastKind kind=ToastKind::Info) {
     if(message.empty())return;
     const auto now=GetTickCount64();
     if(kind==ToastKind::Info&&toastKind!=ToastKind::Info&&now<hotkeyToastUntil)return; // 普通消息不截断尚未到时的重要提示。
-    updateToastActive=false;hotkeyToast=prefix+message;toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
+    updateToastActive=false;hotkeyToast=dualsp::noticeText(message);toastKind=kind;toastIsError=kind==ToastKind::Warning||kind==ToastKind::Error;
     hotkeyToastUntil=now+(kind==ToastKind::Info?1000:3000);
+}
+// 所有短暂通知共用上方居中区域；同帧通知顺排，避免模型提示与操作反馈重叠。
+void drawNotice(const char* id,const std::string& message,bool warning,float& y) {
+    ImGui::PushFont(nullptr,32.f);
+    ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,y},ImGuiCond_Always,{.5f,0});
+    ImGui::SetNextWindowBgAlpha(.9f);
+    ImGui::Begin(id,nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|
+        ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
+    ImGui::PushTextWrapPos(std::min(ImGui::GetFontSize()*36,std::max(80.f,ImGui::GetIO().DisplaySize.x-80)));
+    if(warning)ImGui::PushStyleColor(ImGuiCol_Text,{1,.65f,.4f,1});
+    ImGui::TextUnformatted(dualsp::noticeText(message).c_str());
+    if(warning)ImGui::PopStyleColor();
+    y+=ImGui::GetCursorPosY()+ImGui::GetStyle().WindowPadding.y+8.f; // 按本帧实际文字高度顺排，首帧也不依赖旧窗口尺寸。
+    ImGui::PopTextWrapPos();ImGui::End();ImGui::PopFont();
 }
 int managementTab=0,requestedTab=-1; // Ctrl+Tab在四个管理分页间循环。
 bool focusManagement=false; // 每次打开把键盘焦点放到标题总开关，不依赖鼠标点击。
@@ -979,16 +991,12 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 ImGui::GetIO().MouseDrawCursor=panel&&foreground;ImGui::NewFrame();
                 try {
                     if(panel)drawPanel();
+                    float noticeY=std::max(24.f,ImGui::GetIO().DisplaySize.y*(72.f/1080.f));
                     if(loadingVisible) {
-                        ImGui::PushFont(nullptr,32.f);
-                        ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,ImGui::GetIO().DisplaySize.y*.22f},ImGuiCond_Always,{.5f,0});
-                        ImGui::SetNextWindowBgAlpha(.9f);
-                        ImGui::Begin("##MultiSPStartupLoading",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|
-                            ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
-                        ImGui::TextUnformatted(loading.unsupported?
+                        drawNotice("##MultiSPStartupLoading",loading.unsupported?
                             tr("此机体暂无多SP模型方案适配","No multi-SP model layout is available for this aircraft."):
-                            tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."));
-                        ImGui::End();ImGui::PopFont();loadingDrawn=loading.token;
+                            tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."),false,noticeY);
+                        loadingDrawn=loading.token;
                     }
                     if(dotVisible) {
                         const auto size=ImGui::GetIO().DisplaySize;const ImVec2 center{size.x*.5f,size.y*.5f};
@@ -999,15 +1007,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         draw->AddCircleFilled(center,2.5f*scale,IM_COL32(255,255,255,245),16);
                     }
                     if(toastVisible) {
-                        ImGui::PushFont(nullptr,32.f); // 通知独立加大，不挤压管理面板。
-                        ImGui::SetNextWindowPos({ImGui::GetIO().DisplaySize.x*.5f,72},ImGuiCond_Always,{.5f,0});
-                        ImGui::SetNextWindowBgAlpha(.8f);
-                        ImGui::Begin("##DebugHotkeyNotice",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
-                        ImGui::PushTextWrapPos(std::min(ImGui::GetFontSize()*36,ImGui::GetIO().DisplaySize.x-80));
-                        if(toastIsError)ImGui::PushStyleColor(ImGuiCol_Text,{1,.65f,.4f,1});
-                        ImGui::TextUnformatted(hotkeyToast.c_str());
-                        if(toastIsError)ImGui::PopStyleColor();
-                        ImGui::PopTextWrapPos();ImGui::End();ImGui::PopFont();
+                        drawNotice("##DebugHotkeyNotice",hotkeyToast,toastIsError,noticeY);
                     }
                 }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),ToastKind::Error);nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&!popupAtFrameStart&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight)&&

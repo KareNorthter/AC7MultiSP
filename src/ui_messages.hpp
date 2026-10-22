@@ -5,6 +5,14 @@
 // 管理与通知的中英资源；先替换完整长句，再处理组合状态的前后缀。
 // 原生日志保留原文，不能以显示翻译改写错误证据。
 namespace dualsp {
+inline std::string noticeBody(std::string message) {
+    for(;;) {
+        if(message.rfind("AC7MultiSP: ",0)==0)message.erase(0,12);
+        else if(message.rfind("ACMultiSP: ",0)==0)message.erase(0,11);
+        else return message;
+    }
+}
+inline std::string noticeText(const std::string& message) {return "ACMultiSP: "+noticeBody(message);}
 inline constexpr std::pair<const char*,const char*> uiMessages[]={
     {"SP调试协议不匹配","The SP debug protocol does not match."},
     {"SP调试原生接口与当前构建不符","The SP debug interface does not match this game build."},

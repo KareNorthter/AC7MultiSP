@@ -11,7 +11,7 @@
 #include <vector>
 
 #ifndef AC7MULTISP_VERSION
-#define AC7MULTISP_VERSION "2.23.1"
+#define AC7MULTISP_VERSION "2.24.0 alpha2"
 #endif
 
 namespace dualsp::updates {
@@ -20,7 +20,7 @@ inline constexpr char currentVersion[]=AC7MULTISP_VERSION;
 inline constexpr wchar_t manifestHost[]=L"ac7multisp-updates.pages.dev";
 inline constexpr wchar_t manifestPath[]=L"/stable.json";
 inline constexpr size_t manifestLimit=32768;
-enum class Status {Waiting,Checking,Current,Newer,Failed};
+enum class Status {Waiting,Checking,Current,Newer,Unpublished,Failed};
 enum class BrowserStatus {Idle,Opening,Opened,Failed};
 struct Download {std::string id,zh,en,url;};
 struct Snapshot {
@@ -93,8 +93,17 @@ inline Snapshot parse(const std::string& body) {
         else if(event==Json::parse_event_t::object_end){ensure(!keys.empty(),"更新清单对象无效");keys.pop_back();}
         return true;
     });
-    ensure(data.is_object() && data.at("schema").is_number_integer() && data.at("schema")==1 &&
-        data.at("product")=="AC7MultiSP" && data.at("channel")=="stable" && data.at("status")=="ready","更新清单尚未就绪或不受支持");
+    ensure(data.is_object() && data.value("product",std::string())=="AC7MultiSP" &&
+        data.value("channel",std::string())=="stable","更新清单产品或渠道不匹配");
+    const bool currentSchema=data.contains("schema") && data.at("schema").is_number_integer() && data.at("schema")==1;
+    const bool legacyPreparing=!data.contains("schema") && data.contains("schema_version") &&
+        data.at("schema_version").is_number_integer() && data.at("schema_version")==1 &&
+        data.contains("package") && data.at("package").is_null();
+    if(data.value("status",std::string())=="preparing" && (currentSchema || legacyPreparing)) {
+        Snapshot result;result.status=Status::Unpublished;return result; // 不把旧清单的版本和下载入口当作可用更新。
+    }
+    ensure(currentSchema,"更新清单格式不匹配：需要schema=1");
+    ensure(data.value("status",std::string())=="ready","更新清单状态不受支持");
     Snapshot result;result.latest=text(data.at("latest_version"),14);
     result.status=newerThanCurrent(result.latest)?Status::Newer:Status::Current;
     const auto& notes=data.at("release_notes");
@@ -120,6 +129,12 @@ struct HttpHandle {
     HttpHandle(const HttpHandle&)=delete;
     ~HttpHandle(){WinHttpCloseHandle(value);}
 };
+inline void httpCheck(BOOL accepted,const char* message) {
+    if(!accepted) {
+        const auto code=GetLastError();
+        throw std::runtime_error(std::string(message)+" (WinHTTP "+std::to_string(code)+")");
+    }
+}
 inline std::string fetch() {
     // 使用WinHTTP已配置的静态代理；不执行PAC/WPAD发现、不读取浏览器Cookie。
     const auto agent=wide(std::string("AC7MultiSP/")+currentVersion+" version-check");
@@ -136,10 +151,11 @@ inline std::string fetch() {
     DWORD logon=WINHTTP_AUTOLOGON_SECURITY_LEVEL_HIGH;
     ensure(WinHttpSetOption(request.value,WINHTTP_OPTION_AUTOLOGON_POLICY,&logon,sizeof(logon))!=FALSE,"更新匿名请求设置失败");
     const auto start=GetTickCount64();
-    ensure(WinHttpSendRequest(request.value,WINHTTP_NO_ADDITIONAL_HEADERS,0,WINHTTP_NO_REQUEST_DATA,0,0,0)!=FALSE,"更新请求发送失败");
-    ensure(WinHttpReceiveResponse(request.value,nullptr)!=FALSE,"更新清单响应失败");
+    httpCheck(WinHttpSendRequest(request.value,WINHTTP_NO_ADDITIONAL_HEADERS,0,WINHTTP_NO_REQUEST_DATA,0,0,0),"更新请求发送失败");
+    httpCheck(WinHttpReceiveResponse(request.value,nullptr),"更新清单响应失败");
     DWORD code{},length=sizeof(code);
-    ensure(WinHttpQueryHeaders(request.value,WINHTTP_QUERY_STATUS_CODE|WINHTTP_QUERY_FLAG_NUMBER,WINHTTP_HEADER_NAME_BY_INDEX,&code,&length,WINHTTP_NO_HEADER_INDEX)!=FALSE && code==200,"更新清单HTTP状态无效");
+    httpCheck(WinHttpQueryHeaders(request.value,WINHTTP_QUERY_STATUS_CODE|WINHTTP_QUERY_FLAG_NUMBER,WINHTTP_HEADER_NAME_BY_INDEX,&code,&length,WINHTTP_NO_HEADER_INDEX),"更新清单HTTP状态读取失败");
+    ensure(code==200,("更新清单HTTP状态无效："+std::to_string(code)).c_str());
     wchar_t type[128]{};length=sizeof(type);
     ensure(WinHttpQueryHeaders(request.value,WINHTTP_QUERY_CONTENT_TYPE,WINHTTP_HEADER_NAME_BY_INDEX,type,&length,WINHTTP_NO_HEADER_INDEX)!=FALSE &&
         std::wstring(type).find(L"application/json")==0,"更新清单不是JSON响应");
@@ -150,7 +166,7 @@ inline std::string fetch() {
     for(;;) {
         ensure(GetTickCount64()-start<=8000,"更新检查总读取时间超限");
         std::array<char,4096> chunk{};DWORD bytes{};
-        ensure(WinHttpReadData(request.value,chunk.data(),static_cast<DWORD>(std::min(chunk.size(),manifestLimit+1-body.size())),&bytes)!=FALSE,"更新清单读取失败");
+        httpCheck(WinHttpReadData(request.value,chunk.data(),static_cast<DWORD>(std::min(chunk.size(),manifestLimit+1-body.size())),&bytes),"更新清单读取失败");
         if(!bytes)break;
         body.append(chunk.data(),bytes);ensure(body.size()<=manifestLimit,"更新清单体积超限");
     }
@@ -158,7 +174,7 @@ inline std::string fetch() {
 }
 class Service {
     std::atomic<int> context_{0}; // 0停用，1任务外，2任务内，3主菜单。
-    std::atomic<bool> started_{false},claimed_{false},browserBusy_{false};
+    std::atomic<bool> started_{false},claimed_{false},browserBusy_{false},checkBusy_{false};
     std::atomic<Status> status_{Status::Waiting};
     std::atomic<BrowserStatus> browser_{BrowserStatus::Idle};
     std::shared_ptr<const Snapshot> snapshot_;
@@ -173,21 +189,27 @@ class Service {
         std::atomic_store_explicit(&snapshot_,std::move(shared),std::memory_order_release);
         status_.store(status,std::memory_order_release);
     }
+    struct CheckRequest {Service* owner;bool automatic;};
     static DWORD WINAPI checkEntry(void* pointer) noexcept {
-        auto& self=*static_cast<Service*>(pointer);
+        std::unique_ptr<CheckRequest> request(static_cast<CheckRequest*>(pointer));
+        auto& self=*request->owner;
         SetThreadPriority(GetCurrentThread(),THREAD_MODE_BACKGROUND_BEGIN);
         try {
             // 延后两秒避开首次主菜单加载；只等待本线程，不让游戏线程等联网。
-            const HANDLE delay=CreateEventW(nullptr,TRUE,FALSE,nullptr);
-            ensure(delay!=nullptr,"无法安排后台版本检查");
-            WaitForSingleObject(delay,2000);CloseHandle(delay);
-            self.finish(parse(fetch()));
-            nativeLog("UPDATE_CHECK_FINISHED");
+            if(request->automatic) {
+                const HANDLE delay=CreateEventW(nullptr,TRUE,FALSE,nullptr);
+                ensure(delay!=nullptr,"无法安排后台版本检查");
+                WaitForSingleObject(delay,2000);CloseHandle(delay);
+            }
+            auto result=parse(fetch());
+            const auto status=result.status;
+            self.finish(std::move(result));
+            nativeLog(status==Status::Unpublished?"UPDATE_CHECK_UNPUBLISHED":"UPDATE_CHECK_FINISHED");
         }catch(const std::exception& error) {
             self.status_.store(Status::Failed,std::memory_order_release);
             try {nativeLog(std::string("UPDATE_CHECK_ABANDONED ")+error.what());}catch(...) {}
         }catch(...) {self.status_.store(Status::Failed,std::memory_order_release);}
-        return 0;
+        self.checkBusy_.store(false,std::memory_order_release);return 0;
     }
     struct BrowserRequest {Service* owner;std::wstring url;};
     static DWORD WINAPI browserEntry(void* pointer) noexcept {
@@ -208,12 +230,32 @@ class Service {
 public:
     void context(int value) noexcept {
         context_.store(value,std::memory_order_release);
-        if(value!=3 || started_.exchange(true))return; // 每次进程生命周期只申请一次，失败也不重试。
-        status_.store(Status::Checking,std::memory_order_release);
-        if(!pin()){status_.store(Status::Failed,std::memory_order_release);return;}
-        const HANDLE thread=CreateThread(nullptr,0,checkEntry,this,0,nullptr);
-        if(thread)CloseHandle(thread);else status_.store(Status::Failed,std::memory_order_release);
+        if(value!=3 || started_.exchange(true))return; // 自动检查只申请一次；额外请求必须由用户点击。
+        requestCheck(false);
     }
+    bool requestCheck(bool manual=true) noexcept {
+        if(!context_.load(std::memory_order_acquire) || checkBusy_.exchange(true))return false;
+        started_.store(true,std::memory_order_release);
+        status_.store(Status::Checking,std::memory_order_release);
+        std::atomic_store_explicit(&snapshot_,std::shared_ptr<const Snapshot>{},std::memory_order_release);
+        try {
+            ensure(pin(),"无法保持版本检查模块有效");
+            auto request=std::make_unique<CheckRequest>();request->owner=this;request->automatic=!manual;
+            const HANDLE thread=CreateThread(nullptr,0,checkEntry,request.get(),0,nullptr);
+            if(!thread)throw std::runtime_error("版本检查线程创建失败："+std::to_string(GetLastError()));
+            request.release();CloseHandle(thread);
+            nativeLog(manual?"UPDATE_CHECK_STARTED manual":"UPDATE_CHECK_STARTED automatic");return true;
+        }catch(const std::exception& error) {
+            status_.store(Status::Failed,std::memory_order_release);
+            checkBusy_.store(false,std::memory_order_release);
+            try {nativeLog(std::string("UPDATE_CHECK_ABANDONED ")+error.what());}catch(...) {}
+            return false;
+        }catch(...) {
+            status_.store(Status::Failed,std::memory_order_release);
+            checkBusy_.store(false,std::memory_order_release);return false;
+        }
+    }
+    bool checking()const noexcept{return checkBusy_.load(std::memory_order_acquire);}
     Status status()const noexcept{return status_.load(std::memory_order_acquire);}
     bool outsideMission()const noexcept {const int value=context_.load(std::memory_order_acquire);return value==1 || value==3;}
     BrowserStatus browserStatus()const noexcept{return browser_.load(std::memory_order_acquire);}

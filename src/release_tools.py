@@ -124,7 +124,8 @@ def source_snapshot(root=ROOT):
         'src/research/survey_gun_pods.py',
         'evidence/mod-special-sp-contract-20261022.json',
         'evidence/aircraft-native-pause-handoff-alpha2.json',
-        'docs/授权.txt','evidence/2.24.0-alpha1-source-intake.json'))
+        'docs/授权.txt','evidence/2.24.0-alpha1-source-intake.json',
+        'evidence/2.24.0-alpha2-source-intake.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
 

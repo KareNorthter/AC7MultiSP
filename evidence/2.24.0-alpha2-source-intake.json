@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "version": "2.24.0 alpha2",
+  "candidate": true,
+  "recorded_at": "2026-10-22T08:59:39.354388+00:00",
+  "base_commit": "3ffa32ae900ecf512368f7c0eb4e04b3e07310fa",
+  "base_installed_receipt": "evidence/2.24.0-alpha1-installed.json",
+  "base_installed_receipt_sha256": "dd8d0acdc8a863c3e40ae21e04d904dffac498d232d40ac93f567191ac02c4cf",
+  "user_feedback": "其他功能都没问题；新增手动检查、上方统一提示及ACMultiSP:前缀，并检查更新失败",
+  "prior_validation_scope": "用户实际所测功能，更新检查失败除外；不推定全组合兼容",
+  "observed_failure_log": "2026-10-22T08:46:13.082Z tick=144287375 seq=23 pid=12708 tid=26900 UI UPDATE_CHECK_ABANDONED [json.exception.out_of_range.403] key 'schema' not found",
+  "failure_proven": "游戏获得JSON后读取schema字段失败；非此条记录中的网络发送超时",
+  "legacy_manifest_reference": "C:/Users/83717/.codex/worktrees/update-preview/AC7_MultiSP/docs/update-preview.md:124",
+  "legacy_manifest_reference_sha256": "b52129aebeb3fa7abc10d175f6df3607dfde6ed22751220695e0dc6458d27d96",
+  "legacy_format": "schema_version=1, status=preparing, package=null",
+  "current_http_probe": "网页读取工具不可访问，本机urllib单次核查返回HTTP403；未继续重试，不能据此把游戏中的缺字段失败改判为403",
+  "changes": [
+    "后台手动检查及单次并发保护",
+    "未发布状态识别及可定位的HTTP/WinHTTP日志",
+    "所有短暂通知统一上方居中顺排与ACMultiSP:前缀"
+  ],
+  "install_authorized_in_continued_task": true,
+  "preserve_vortex_source": true,
+  "preserve_profiles": true,
+  "online_files_changed": false,
+  "download_archives_checked": false,
+  "uploaded": false,
+  "gameplay_verified": false
+}

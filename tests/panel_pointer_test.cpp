@@ -1,6 +1,7 @@
 #include "../src/panel_pointer.hpp"
 #include "../src/keyboard_shortcuts.hpp"
 #include "../src/version_updates.hpp"
+#include "../src/ui_messages.hpp"
 #include <cassert>
 #include <iostream>
 
@@ -13,11 +14,19 @@ int main() {
     assert(newerThanCurrent("2.25.0","2.24.0"));
     const std::string manifest=R"({"schema":1,"product":"AC7MultiSP","channel":"stable","status":"ready","latest_version":"9.0.0","release_notes":{"zh":"离线样本","en":"Offline fixture"},"downloads":[{"id":"r2","label":{"zh":"下载","en":"Download"},"url":"https://downloads.iot-node-service-api.online/offline.zip"}]})";
     assert(parse(manifest).status==Status::Newer && parse(manifest).downloads.size()==1);
+    const auto legacy=R"({"schema_version":1,"product":"AC7MultiSP","channel":"stable","status":"preparing","latest_version":"2.21.1","package":null})";
+    assert(parse(legacy).status==Status::Unpublished && parse(legacy).latest.empty() && parse(legacy).downloads.empty());
+    assert(parse(R"({"schema":1,"product":"AC7MultiSP","channel":"stable","status":"preparing"})").status==Status::Unpublished);
+    Service idle;assert(!idle.requestCheck() && !idle.checking() && idle.status()==Status::Waiting);
+    assert(dualsp::noticeText("提示")=="ACMultiSP: 提示");
+    assert(dualsp::noticeText("ACMultiSP: 提示")=="ACMultiSP: 提示");
+    assert(dualsp::noticeText("AC7MultiSP: ACMultiSP: 提示")=="ACMultiSP: 提示");
     const auto rejects=[](auto callback){try {callback();return false;}catch(const std::exception&) {return true;}};
     assert(rejects([&]{parse("{\"schema\":1,"+manifest.substr(1));}));
     assert(rejects([&]{checkedUrl("file:///C:/Windows/notepad.exe");}));
     assert(rejects([&]{checkedUrl("https://unregistered.invalid/offline.zip");}));
     assert(rejects([&]{newerThanCurrent("2.24.0 alpha2","2.24.0");}));
+    assert(rejects([&]{parse(R"({"schema_version":1,"product":"AC7MultiSP","channel":"stable","status":"ready","package":null})");}));
     // 四个动作共用组合优先规则；新功能键可清除，不能遮挡既有键位。
     std::array<dualsp::Shortcut,4> chords{{{117,0},{117,3},{118,3},{116,3}}};
     const std::array<int,4> direct{49,50,51,52};

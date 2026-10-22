@@ -18,16 +18,23 @@ void drawVersionUpdatesPage() {
     ImGui::EndChild();
     if(ImGui::BeginChild("UpdateVersions",{0,0},ImGuiChildFlags_Borders|ImGuiChildFlags_AutoResizeY)) {
         ImGui::Text("%s  %s",tr("当前版本","Current version"),dualsp::updates::currentVersion);
-        ImGui::Text("%s  %s",tr("最新版本","Latest version"),snapshot?snapshot->latest.c_str():"—");
+        ImGui::Text("%s  %s",tr("最新版本","Latest version"),snapshot && !snapshot->latest.empty()?snapshot->latest.c_str():"—");
+        ImGui::BeginDisabled(updates.checking());
+        if(ImGui::Button(tr("手动检测更新","Check for updates")))updates.requestCheck();
+        ImGui::EndDisabled();
         const char* title="—",*hint="";
         if(status==dualsp::updates::Status::Checking) {
             title=tr("正在检查更新…","Checking for updates...");hint=tr("你可以继续游戏。","You can continue playing.");
         }else if(status==dualsp::updates::Status::Current) {
             title=tr("已是最新版本","Already up to date");hint=tr("无需更新。","No update is needed.");
         }else if(status==dualsp::updates::Status::Newer)title=tr("发现新版本","A newer version is available");
+        else if(status==dualsp::updates::Status::Unpublished) {
+            title=tr("更新信息尚未发布","Update information has not been published yet");
+            hint=tr("你可以继续游戏，稍后手动检测更新。","You can continue playing and check again later.");
+        }
         else if(status==dualsp::updates::Status::Failed) {
             title=tr("暂时无法检查更新","Unable to check for updates at the moment");
-            hint=tr("本次检查已结束，不影响继续游戏。","This check has ended. You can continue playing.");
+            hint=tr("本次检查已结束，不影响继续游戏。可稍后手动检测更新，详细原因见日志。","This check has ended. You can continue playing and check again later. See Logs for details.");
         }
         ImGui::Separator();ImGui::TextWrapped("%s",title);
         if(status==dualsp::updates::Status::Newer && snapshot)
@@ -37,8 +44,9 @@ void drawVersionUpdatesPage() {
     ImGui::EndChild();
     if(panelCard("UpdateDownloads",tr("下载更新","Download update"))) {
         const bool opening=updates.browserStatus()==dualsp::updates::BrowserStatus::Opening;
-        ImGui::BeginDisabled(!snapshot || opening);
-        if(snapshot) {
+        const bool available=snapshot && !snapshot->downloads.empty();
+        ImGui::BeginDisabled(!available || opening);
+        if(available) {
             for(size_t i=0;i<snapshot->downloads.size();++i) {
                 const auto& link=snapshot->downloads[i];
                 const char* label=link.id=="lanzou"?tr("蓝奏云下载","Lanzou download"):
