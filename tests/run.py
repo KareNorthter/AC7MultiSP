@@ -45,6 +45,8 @@ def main():
         command = [compiler, '-std=c++17', '-O2', '-static', '-D' + info['core_define'],
                    '-I', ROOT / 'vendor', '-I', ROOT / 'vendor/minhook-1.3.4/include',
                    ROOT / 'tests' / (name + '.cpp'), '-o', output / (name + '.exe')]
+        if name == 'panel_pointer_test':
+            command += ['-lwinhttp', '-lole32']  # 仅解析离线更新清单；不联网、不启动后台服务。
         if name == 'weapon_group_test':
             command += [build / (n + '.o') for n in ('buffer', 'hook', 'trampoline', 'hde64')]
             command += ['-lole32']

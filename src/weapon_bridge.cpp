@@ -1243,6 +1243,24 @@ extern "C" __declspec(dllexport) int dualsp_set_fixed_mount_enabled(void* luaSta
     }
 }
 
+// 开场只读资格共用实际类父链与原生回退规则，不加载模型、不按机体编号猜测支持。
+extern "C" __declspec(dllexport) int dualsp_task_mount_plan_supported(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==1,"机体模型资格需要一个玩家参数");
+        require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体模型资格须在游戏线程读取");
+        const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
+        const auto identity=mountIdentity(plane);
+        require(mountAlive(identity) && mountClassIs(plane,"PlayerPlane","/Script/Nimbus"),"机体模型资格缺少有效玩家机体");
+        const auto aircraft=mountAircraft(plane);
+        const bool supported=aircraft!=MountAircraft::Unsupported && !mountNativeOnly(aircraft);
+        api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
+    }catch(const std::exception& error) {
+        if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
+        return 0;
+    }
+}
 // 仅更新经过校验的展示模型；警告与兵装事务独立。
 extern "C" __declspec(dllexport) int dualsp_mount_preview(void* luaState) {
     const dualsp::LuaApi* api=nullptr;

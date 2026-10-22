@@ -1,9 +1,23 @@
 #include "../src/panel_pointer.hpp"
 #include "../src/keyboard_shortcuts.hpp"
+#include "../src/version_updates.hpp"
 #include <cassert>
 #include <iostream>
 
 int main() {
+    // 使用离线清单验证稳定版/alpha比较、重复字段和链接边界，不发起网络或浏览器操作。
+    using namespace dualsp::updates;
+    assert(newerThanCurrent("2.24.0","2.24.0 alpha1"));
+    assert(!newerThanCurrent("2.23.1","2.24.0 alpha1"));
+    assert(!newerThanCurrent("2.24.0","2.24.0"));
+    assert(newerThanCurrent("2.25.0","2.24.0"));
+    const std::string manifest=R"({"schema":1,"product":"AC7MultiSP","channel":"stable","status":"ready","latest_version":"9.0.0","release_notes":{"zh":"离线样本","en":"Offline fixture"},"downloads":[{"id":"r2","label":{"zh":"下载","en":"Download"},"url":"https://downloads.iot-node-service-api.online/offline.zip"}]})";
+    assert(parse(manifest).status==Status::Newer && parse(manifest).downloads.size()==1);
+    const auto rejects=[](auto callback){try {callback();return false;}catch(const std::exception&) {return true;}};
+    assert(rejects([&]{parse("{\"schema\":1,"+manifest.substr(1));}));
+    assert(rejects([&]{checkedUrl("file:///C:/Windows/notepad.exe");}));
+    assert(rejects([&]{checkedUrl("https://unregistered.invalid/offline.zip");}));
+    assert(rejects([&]{newerThanCurrent("2.24.0 alpha2","2.24.0");}));
     // 四个动作共用组合优先规则；新功能键可清除，不能遮挡既有键位。
     std::array<dualsp::Shortcut,4> chords{{{117,0},{117,3},{118,3},{116,3}}};
     const std::array<int,4> direct{49,50,51,52};

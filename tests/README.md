@@ -58,3 +58,5 @@ python -X utf8 .\tests\native_loadout_test.py
 2.23.1 alpha1沿用完整构建对应的11项现有检查；调试换机夹具仅补齐nativeOnly具名依赖。引擎异步对象、原生退让恢复及Mod炮类实际发射仍须用户游戏内验证。
 
 2.23.1 alpha2在既有runtime_services_test中加入暂停归还跨调度、重复请求、真实prepare闭包、超时和目标变化回归；不新建测试模块，不模拟真实引擎异步加载成功。
+
+2.24.0 alpha1沿用11项检查，在既有panel_pointer_test加入离线版本/alpha比较、清单重复字段及链接边界；runtime_services_test加入未适配模型提示不阻塞/不重复、适配呈现等待和取消。检查不联网、不启动更新后台或浏览器；真实退格消息链及模型分类仍待游戏验收。

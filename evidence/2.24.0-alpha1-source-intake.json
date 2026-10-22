@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-22T16:31:33.799446+08:00",
+  "version": "2.24.0 alpha1",
+  "candidate": true,
+  "base_main": "42b87c0559b37ea2fcc0a65b6bc6e364c86c402f",
+  "source_thread": "01a15948-324d-7691-a926-adeb6d1ba076",
+  "source_commit": "d9d3dabd3fe46ec07cc607574ebf1c8467e4491a",
+  "base_installed_receipt": "evidence/2.23.1-formal-observed-installed-20261022.json",
+  "base_installed_receipt_sha256": "83b24b5f3aa09ba03e8735bf5a9f9ec6768d5759c4f9dc401ddab13519dccf10",
+  "changes": [
+    "双语版本更新页及单次后台检查",
+    "作者邮箱和QQ联系方式",
+    "线程级退格消息隔离",
+    "实际机体模型方案查询及无适配提示"
+  ],
+  "online_version_check_performed": false,
+  "online_files_changed": false,
+  "browser_opened": false,
+  "upload_authorized": false,
+  "configuration_revision": 19,
+  "management_protocol": 21,
+  "install_authorized": true,
+  "preserve_personal_configuration": true,
+  "keyboard_api_reference": "https://learn.microsoft.com/en-us/windows/win32/winmsg/keyboardproc",
+  "license_source_sha256": "af084e448736582eb43976f3bb4cf9560eb9e049d98ffc79c90d62aa2e9c8c5e",
+  "design_source_sha256": "adad86c085feb98af1294356f71bbda2f9718d98d00f08314b89bf742b8fcb47",
+  "gameplay_verified": false
+}

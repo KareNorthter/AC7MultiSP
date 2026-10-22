@@ -867,3 +867,23 @@ s=scenario();s.resume(s.owner);s.settings.Pauser=nil;s.paused=false;s.selected=1
 assert(not pcall(s.resume,s.owner)and s.restarts==0,'原生回调改变目标选择必须拒绝重开')
 ''')
 print('原生暂停换机：真实闭包跨调度归还、唯一恢复/重开、超时和目标变化边界检查通过')
+
+# 运行真实开场提示状态机，未适配路径不得阻塞初始化或重复发送加载提示。
+startup_begin=main_source.index('function mountStartup.cancel()')
+startup_end=main_source.index('local function recordStage(',startup_begin)
+lua.globals().startup_notice_source=main_source[startup_begin:startup_end]
+lua.execute(r'''
+local calls={};local presented=false
+local state={serial=0,invoke=function(action,token)
+    calls[#calls+1]={action=action,token=token};return true,presented,''
+end}
+assert(load(startup_notice_source,'实际模型开场提示','t',{mountStartup=state,pcall=pcall,assert=assert,tostring=tostring,note=function()end}))()
+assert(state.prepare('unsupported',false)==true and #calls==1 and calls[1].action==4)
+assert(state.prepare('unsupported',false)==true and #calls==1,'未适配机体不重复提示或等待渲染')
+state.finish();assert(calls[#calls].action==2)
+assert(state.prepare('supported',true)==false and calls[#calls].action==1)
+assert(state.prepare('supported',true)==false,'适配机体仍等待第一次真实呈现')
+presented=true;assert(state.prepare('supported',true)==true)
+state.cancel();assert(not state.token and calls[#calls].action==3)
+''')
+print('模型开场提示：未适配不等待/不重复，适配等待呈现及离场取消检查通过')

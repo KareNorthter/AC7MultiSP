@@ -3,7 +3,7 @@
   "internal_name": "DualSP",
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
-  "upgrade_receipt": "evidence/2.23.1-alpha2-installed.json",
+  "upgrade_receipt": "evidence/2.23.1-formal-observed-installed-20261022.json",
   "candidate": true,
   "scripts": [
     "config_store.lua",
@@ -23,5 +23,5 @@
     "mount_assets.lua",
     "mod_aircraft.lua"
   ],
-  "receipt_prefix": "2.23.1-formal"
+  "receipt_prefix": "2.24.0-alpha1"
 }

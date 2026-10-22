@@ -12,6 +12,8 @@ void drawVersionUpdatesPage() {
     if(panelCard("UpdateAuthor",tr("作者信息","Author information"))) {
         ImGui::TextUnformatted(tr("NexusMod：Northter","NexusMod: Northter"));
         ImGui::TextUnformatted(tr("bilibili：班德慕","bilibili: 班德慕"));
+        ImGui::TextWrapped("%s",tr("邮箱：karenorthterofchina@gmail.com","Email: karenorthterofchina@gmail.com"));
+        ImGui::TextWrapped("%s",tr("测试反馈QQ群：1072924682","Test feedback QQ group: 1072924682"));
     }
     ImGui::EndChild();
     if(ImGui::BeginChild("UpdateVersions",{0,0},ImGuiChildFlags_Borders|ImGuiChildFlags_AutoResizeY)) {

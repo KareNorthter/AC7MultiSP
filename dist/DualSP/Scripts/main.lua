@@ -1,4 +1,4 @@
--- AC7MultiSP 2.23.1候选：Mod UAV/HPM契约适配、名称来源修正及暂停换机分阶段交接。
+-- AC7MultiSP 2.24.0 alpha1候选：版本和更新页、联系方式、退格输入隔离及未适配模型提示。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -45,6 +45,8 @@ end
 local bridge=loadExport("dualsp_execute_memory_v1")
 loadExport("dualsp_cfa_startup_prewarm_supported") -- 预热、Lua开场和提示界面须成套。
 local mountStartup={serial=0,invoke=loadExport("dualsp_mount_loading","DualSPUI.dll")}
+mountStartup.supports=loadExport("dualsp_task_mount_plan_supported")
+loadExport("dualsp_mount_loading_eligibility_supported","DualSPUI.dll")
 loadExport("dualsp_three_sp_supported") -- 在读取或迁移配置前拒绝旧核心。
 loadExport("dualsp_ammo_ratio_supported") -- 比例命令必须与新核心成套部署。
 loadExport("dualsp_infinite_ammo_supported") -- 负弹药数按无限处理，拒绝旧预览/核心混装。
@@ -218,11 +220,12 @@ function mountStartup.cancel()
     end
     mountStartup.token=nil;mountStartup.key=nil;mountStartup.ready=false;mountStartup.finished=false
 end
-function mountStartup.prepare(key)
+function mountStartup.prepare(key,supported)
     if key~=mountStartup.key then
         mountStartup.cancel();mountStartup.serial=mountStartup.serial+1
         mountStartup.token=mountStartup.serial;mountStartup.key=key
-        local ok,_,err=mountStartup.invoke(1,mountStartup.token);assert(ok,err)
+        local ok,_,err=mountStartup.invoke(supported==false and 4 or 1,mountStartup.token);assert(ok,err)
+        if supported==false then mountStartup.ready=true;return true end -- 无模型不等待呈现，继续原生外观和兵装初始化。
         return false -- 交还游戏循环，让渲染线程先把提示送上屏幕。
     end
     if mountStartup.ready then return true end
@@ -251,6 +254,7 @@ local function resetFlightTracking()
     weaponSwitch.pending=nil
     flightOptions=nil;lastUIKey=nil;lastHUD=-1;previewOptions=nil;lastPreviewHUD=-1
     currentProfile=nil;lastSelected=-1
+    mountStartup.supportKey=nil;mountStartup.supported=nil
 end
 local function resetCheckpointState()
     checkpointPending=false;restorePending=false;checkpointProfile=nil
@@ -1859,14 +1863,19 @@ local function tick()
             end
         end
     end
-    -- 所有机型共用开场提示：在选项、HUD和模型预建之前先显示；任务模型关闭不提示。
+    -- 先判断实际玩家是否有适配方案；未适配只提示原因，不显示“加载中”或延后初始化。
     if not config.task_mount_enabled or not isFlight or supplySession or errorText then
         mountStartup.cancel()
     elseif not configured and valid(activator)then
         local startupProfile=profileFor(planeId)
         local key=currentWorld..":"..tostring(planeAddress)..":"..activator:GetAddress()..":"..planeId..":"..
             startupProfile.a..":"..startupProfile.b..":"..startupProfile.c
-        if not mountStartup.prepare(key)then return end
+        if mountStartup.supportKey~=key then
+            local ok,supported=mountStartup.supports(plane:GetAddress());assert(ok,supported)
+            mountStartup.supportKey=key;mountStartup.supported=supported==true
+            if not supported then note("MOUNT_STARTUP_NO_PLAN plane="..planeId)end
+        end
+        if not mountStartup.prepare(key,mountStartup.supported)then return end
     end
     -- 玩家对象与 HUD 在 START MISSION 前已经生成；先建立显示，不提前初始化武器或消耗冷却。
     if isFlight and not configured and not supplySession and not errorText and valid(activator)and os.clock()-lastPreviewHUD>=.05 then
@@ -2106,7 +2115,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.23.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.24.0 alpha1 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring

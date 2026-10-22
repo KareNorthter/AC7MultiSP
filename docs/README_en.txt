@@ -1,3 +1,13 @@
+AC7MultiSP 2.24.0 alpha1
+
+Internal test changes since 2.23.1
+• Add Version and updates: one background check, out-of-mission notice, browser download links and bilingual credits. Failure does not interrupt gameplay.
+• Add author contact email karenorthterofchina@gmail.com and test feedback QQ group 1072924682.
+• Route Backspace to management editing before native pause/message handlers; actual input behavior awaits gameplay validation.
+• Aircraft without a multi-SP model layout show an unsupported-layout notice instead of loading; weapon initialization continues immediately. Supported aircraft keep their loading notice.
+• Retain revision 19 settings/bindings and accepted mount assets. Official main/release remains 2.23.1. No online files are checked or uploaded in this delivery; gameplay acceptance is pending.
+
+以下为正式历史说明。
 AC7MultiSP 2.23.1
 
 Development source: Version and updates (based on main 2.23.1; not built or installed)

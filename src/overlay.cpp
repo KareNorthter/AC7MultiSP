@@ -45,6 +45,7 @@ struct MountLoadingNotice {
     uint64_t token{};
     ULONGLONG requestedAt{},presentedAt{};
     bool active{};
+    bool unsupported{};
 } mountLoadingNotice;
 std::mutex mountLoadingMutex;
 std::atomic<bool> mountLoadingPending{false};
@@ -52,7 +53,7 @@ MountLoadingNotice mountLoadingSnapshot() {
     if(!mountLoadingPending.load(std::memory_order_acquire))return {}; // 平时不加锁、不绘制。
     std::lock_guard<std::mutex> guard(mountLoadingMutex);
     if(!mountLoadingNotice.active && mountLoadingNotice.presentedAt &&
-        GetTickCount64()-mountLoadingNotice.presentedAt>=1000) {
+        GetTickCount64()-mountLoadingNotice.presentedAt>=(mountLoadingNotice.unsupported?3000:1000)) {
         mountLoadingNotice={};mountLoadingPending.store(false,std::memory_order_release);
     }
     return mountLoadingNotice;
@@ -68,6 +69,9 @@ Json state=Json::object();
 ULONGLONG lastControllerUpdate{};
 int lastSequence=-1;
 bool panel=false,initialized=false;
+HHOOK panelKeyboardHook{};
+bool panelBackspaceHeld=false; // 关闭面板后仍消费本次按压的尾沿，避免长按落回原生暂停。
+bool panelBackspaceCaptured=false;
 std::atomic<bool> cursorOwned{false};
 std::mutex cursorMutex;
 RECT restoreClip{};
@@ -215,7 +219,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};}
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceHeld=false;panelBackspaceCaptured=false;}
     // 回正键捕获也接受真实鼠标中键；原生可能只交付RAWINPUT，所以两条消息路径都处理。
     if(gameFocused() && (msg==WM_MBUTTONDOWN || msg==WM_MBUTTONUP) && (suppressedCaptureMouse || (panel && captureSlot==8))) {
         if(msg==WM_MBUTTONDOWN && !suppressedCaptureMouse){suppressedCaptureMouse=true;captureKeyboardKey(VK_MBUTTON,shortcutModifiers());}
@@ -326,6 +330,25 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(panel && ((msg>=WM_KEYFIRST && msg<=WM_KEYLAST)||(msg>=WM_MOUSEFIRST && msg<=WM_MOUSELAST)||msg==WM_INPUT))return 0;
     return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
 }
+// 先于游戏/加载器的消息分发处理退格，交给ImGui编辑；不安装全局低级键盘钩子。
+LRESULT CALLBACK panelKeyboardProc(int code,WPARAM key,LPARAM flags) {
+    if(code!=HC_ACTION || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
+    try {
+        std::lock_guard<std::recursive_mutex> guard(renderMutex);
+        const bool down=(flags&(1LL<<31))==0;
+        const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
+        if(!active && !panelBackspaceHeld)return CallNextHookEx(panelKeyboardHook,code,key,flags);
+        const bool wasHeld=panelBackspaceHeld;panelBackspaceHeld=down;
+        if(imguiContext) {
+            ImGui::SetCurrentContext(imguiContext);
+            if(active && down && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
+            if(active && down && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
+            else if(!down || (active && !panelBackspaceCaptured))ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,down);
+        }
+        if(!down){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
+        return 1; // HC_NOREMOVE及其他键始终直通；只消费已实际取出的退格按下/释放。
+    }catch(...) {return CallNextHookEx(panelKeyboardHook,code,key,flags);}
+}
 void makeTarget(IDXGISwapChain* swap) {
     ID3D11Texture2D* buffer{};
     if(SUCCEEDED(swap->GetBuffer(0,IID_PPV_ARGS(&buffer)))) {
@@ -369,6 +392,8 @@ bool init(IDXGISwapChain* swap) {
     s.Colors[ImGuiCol_NavCursor]={.39f,.84f,.79f,1};
     ImGui_ImplWin32_Init(gameWindow);ImGui_ImplDX11_Init(device,context);
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
+    panelKeyboardHook=SetWindowsHookExW(WH_KEYBOARD,panelKeyboardProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
+    if(!panelKeyboardHook)nativeLog("MANAGEMENT_BACKSPACE_GATE_UNAVAILABLE");
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
 // 管理界面的文字按用户选择显示；日志正文保留记录时的原文。
@@ -960,7 +985,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         ImGui::SetNextWindowBgAlpha(.9f);
                         ImGui::Begin("##MultiSPStartupLoading",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_AlwaysAutoResize|
                             ImGuiWindowFlags_NoInputs|ImGuiWindowFlags_NoNav|ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoFocusOnAppearing);
-                        ImGui::TextUnformatted(tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."));
+                        ImGui::TextUnformatted(loading.unsupported?
+                            tr("此机体暂无多SP模型方案适配","No multi-SP model layout is available for this aircraft."):
+                            tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."));
                         ImGui::End();ImGui::PopFont();loadingDrawn=loading.token;
                     }
                     if(dotVisible) {
@@ -1037,28 +1064,28 @@ DWORD WINAPI startThread(void*) {
 }
 }
 // 新版管理协议标记，Lua 与安装程序都据此拒绝旧界面混装。
-// action：1开始、0查询、2完成、3取消。token由Lua按开场代次递增，旧回执不能结束新提示。
+// action：1加载开始、0查询、2完成、3取消、4未适配提示；未适配不等待渲染或推迟兵装。
 extern "C" __declspec(dllexport) int dualsp_mount_loading(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
         if(api->top(luaState)!=2)throw std::runtime_error("模型加载提示参数数量无效");
         const auto action=api->readInteger(luaState,1),token=api->readInteger(luaState,2);
-        if(action<0 || action>3 || token<=0)throw std::runtime_error("模型加载提示请求无效");
+        if(action<0 || action>4 || token<=0)throw std::runtime_error("模型加载提示请求无效");
         bool ready=false;const char* status="";
         {
             std::lock_guard<std::mutex> guard(mountLoadingMutex);
             auto& notice=mountLoadingNotice;
-            if(action==1) {
+            if(action==1 || action==4) {
                 if(!runtimeEnabled.load())throw std::runtime_error("当前场景禁止模型加载提示");
-                notice={static_cast<uint64_t>(token),GetTickCount64(),0,true};
+                notice={static_cast<uint64_t>(token),GetTickCount64(),0,action==1,action==4};
                 mountLoadingPending.store(true,std::memory_order_release);
             } else if(notice.token==static_cast<uint64_t>(token)) {
                 ready=notice.presentedAt!=0;
                 if(action==0 && !ready && GetTickCount64()-notice.requestedAt>=5000) {
                     ready=true;status="render_unavailable"; // 最小化/设备异常时不无限推迟兵装初始化。
                 }
-                if(action==2) {notice.active=false;if(!notice.presentedAt)notice={};}
+                if(action==2) {notice.active=false;if(!notice.presentedAt && !notice.unsupported)notice={};}
                 else if(action==3)notice={};
                 if(!notice.token)mountLoadingPending.store(false,std::memory_order_release);
             } else if(action==0)throw std::runtime_error("模型加载提示代次已失效");
@@ -1069,6 +1096,7 @@ extern "C" __declspec(dllexport) int dualsp_mount_loading(void* luaState) {
         return 0;
     }
 }
+extern "C" __declspec(dllexport) int dualsp_mount_loading_eligibility_supported(void*) {return 0;}
 // 游戏线程直接同步许可，不依赖每秒发布的 UI 文件；关闭后所有窗口输入直通。
 extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 先禁用再报告接口错误。
