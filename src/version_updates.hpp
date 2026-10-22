@@ -11,7 +11,7 @@
 #include <vector>
 
 #ifndef AC7MULTISP_VERSION
-#define AC7MULTISP_VERSION "2.24.0 alpha2"
+#define AC7MULTISP_VERSION "2.24.1"
 #endif
 
 namespace dualsp::updates {

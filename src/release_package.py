@@ -420,6 +420,42 @@ def verify_package(path, prefix, payload):
                 raise ValueError('新包完整回读失败：' + name)
 
 
+def uninstalled_release_sources(build_dir, evidence_prefix):
+    """仅在用户明确要求不安装而发布时使用，不虚构新安装或实机验收。"""
+    authorization_path = ROOT / ('evidence/' + evidence_prefix + '-release-authorization.json')
+    authorization = read_json(authorization_path)
+    if (authorization.get('version') != VERSION or authorization.get('release_authorized') is not True or
+            authorization.get('release_without_install') is not True or
+            authorization.get('gameplay_validation_pending') is not True or authorization.get('install_requested') is not False):
+        raise ValueError('缺少本版本不安装发布的明确授权')
+    subprocess.run(['git', 'merge-base', '--is-ancestor', authorization['approved_source_commit'], 'HEAD'], cwd=ROOT, check=True)
+    build_path, test_path = build_dir / 'build-receipt.json', build_dir / 'test-receipt.json'
+    build, tests = read_json(build_path), read_json(test_path)
+    info = verify_build(build, build_dir)
+    if (info.get('candidate') is not False or tests.get('version') != VERSION or tests.get('passed') is not True or
+            tests.get('build_receipt_sha256') != digest(build_path) or len(tests.get('checks', [])) != 11 or
+            not tests.get('test_sources')):
+        raise ValueError('正式冻结构建和完整通过检查未形成关联')
+    for name, expected in tests['test_sources'].items():
+        if digest(contained(ROOT / name, ROOT)) != expected:
+            raise ValueError('检查来源已改变：' + name)
+    sources = {'Scripts/' + name: ROOT / 'dist/DualSP/Scripts' / name for name in info['scripts']}
+    sources.update({'bin/DualSP.dll': build_dir / 'DualSP.dll', 'bin/DualSPUI.dll': build_dir / 'DualSPUI.dll', 'VERSION': ROOT / 'VERSION'})
+    runtime = {name: contained(path, ROOT).read_bytes() for name, path in sources.items()}
+    assets = build['mount_assets']
+    pak = (build_dir / assets['file']).read_bytes()
+    if data_hash(pak) != assets['sha256']:
+        raise ValueError('冻结挂架包读取期间改变')
+    # 只引用本机原安装，不能把待发布新版本写成已安装。
+    previous = contained(ROOT / info['upgrade_receipt'], ROOT / 'evidence')
+    manifest = {'runtime_files': {name: data_hash(data) for name, data in runtime.items()},
+        'mount_assets': {'path': PAK, 'sha256': assets['sha256'],
+                         'variant_count': len(assets['variants']), 'file_count': assets['file_count']},
+        'actual_installed_receipt': previous.relative_to(ROOT).as_posix(),
+        'validated_version': None, 'released_without_install': True}
+    return runtime, pak, manifest, digest(build_path), digest(test_path), None, digest(authorization_path)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--build-dir', type=Path, required=True)
@@ -428,6 +464,7 @@ def main():
     parser.add_argument('--validated-build-dir', type=Path, help='仅版本标识重建时，显式给出已获用户验收的旧冻结构建')
     parser.add_argument('--runtime-archive', type=Path, default=ROOT / 'Release/AC7MultiSP-2.21.1.zip')
     parser.add_argument('--without-runtimes', action='store_true', help='不附带DirectX/VC运行库；须与本轮发布授权一致')
+    parser.add_argument('--uninstalled-release', action='store_true', help='用户明确要求不安装而发布：使用完整冻结及检查回执，保留未实测状态')
     parser.add_argument('--output', type=Path, default=ROOT / ('Release/' + NAME + '-' + VERSION + '.zip'))
     args = parser.parse_args()
     build_dir = contained(args.build_dir, ROOT / 'Temp').resolve(strict=True)
@@ -440,9 +477,13 @@ def main():
         raise ValueError('发布包或发布回执已存在，或输出不是 ZIP；拒绝覆盖')
     if args.validated_build_dir and args.accepted_label_only_build:
         raise ValueError('两种标识换版方式不能混用')
+    if args.uninstalled_release and (args.validated_build_dir or args.accepted_label_only_build):
+        raise ValueError('不安装发布不能混用已验收标识换版路径')
     accepted_arg = args.accepted_label_only_build or args.validated_build_dir
     accepted_dir = contained(accepted_arg, ROOT / 'Temp').resolve(strict=True) if accepted_arg else None
     def sources():
+        if args.uninstalled_release:
+            return uninstalled_release_sources(build_dir, args.evidence_prefix)
         if args.accepted_label_only_build:
             return accepted_label_sources(build_dir, accepted_dir, args.evidence_prefix)
         return version_label_sources(build_dir, accepted_dir) if accepted_dir else frozen_sources(build_dir)
@@ -482,6 +523,7 @@ def main():
                'release_authorization_sha256': authorization_hash,
                'gameplay_validated_version': validated_version, 'version_label_rebuild': bool(args.validated_build_dir),
                'version_label_only': bool(args.accepted_label_only_build), 'label_receipt_sha256': installed.get('label_receipt_sha256'),
+               'released_without_install': args.uninstalled_release, 'gameplay_validation_pending': args.uninstalled_release,
                'release_metadata_transition': installed.get('release_metadata_transition')}
     payload[MOD + 'install-receipt.json'] = json_bytes(install)
     for name in ('README_zh-CN.txt', 'README_en.txt', '安装说明.txt', '版本说明.txt'):
@@ -528,7 +570,8 @@ def main():
               'installed_receipt_sha256': digest(ROOT / actual_installed),
               'actual_installed_receipt': actual_installed, 'gameplay_validated_version': validated_version,
               'version_label_rebuild': bool(args.validated_build_dir),
-               'version_label_only': bool(args.accepted_label_only_build), 'label_receipt_sha256': installed.get('label_receipt_sha256'), 'new_version_installed': not bool(accepted_dir),
+               'version_label_only': bool(args.accepted_label_only_build), 'label_receipt_sha256': installed.get('label_receipt_sha256'), 'new_version_installed': not bool(accepted_dir) and not args.uninstalled_release,
+              'released_without_install': args.uninstalled_release, 'gameplay_validation_pending': args.uninstalled_release,
               'release_metadata_transition': installed.get('release_metadata_transition'),
               'packager_sha256': digest(Path(__file__)),
               'user_validation_sha256': validation_hash, 'release_authorization_sha256': authorization_hash,

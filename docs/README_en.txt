@@ -1,3 +1,17 @@
+AC7MultiSP 2.24.1
+
+Changes since 2.23.1
+• Add bilingual Version and updates, author contacts, credits and browser links for Lanzou and R2.
+• Check once after reaching the main menu and provide a manual check button. Repeated clicks are disabled during a check.
+• Recognize preparing manifests as unpublished information; use schema in the current manifest and retain detailed failure logs.
+• Place all transient notices at the top center with the ACMultiSP: prefix, stacking simultaneous notices.
+• Prevent Backspace in management search from triggering native pause. Aircraft without a multi-SP model layout show an explanatory notice.
+• Retain revision 19 settings, bindings, profiles and existing assets. DirectX and VC redistributables are not bundled.
+
+Released at the author's request without installation on the integration machine. The in-game update and both download workflows await later acceptance.
+
+Earlier development and release notes follow.
+
 AC7MultiSP 2.24.0 alpha2
 
 Internal changes since alpha1

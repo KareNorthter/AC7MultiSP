@@ -77,7 +77,7 @@ def source_snapshot(root=ROOT):
     paths.update(p for p in (root / 'vendor').rglob('*') if p.is_file())
     paths.update(root / 'dist/DualSP/Scripts' / name for name in info['scripts'])
     paths.update(root / 'src' / name for name in (
-        'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py',
+        'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py', 'release_package.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
         'src/research/native_static_batch_data.py',
@@ -125,7 +125,8 @@ def source_snapshot(root=ROOT):
         'evidence/mod-special-sp-contract-20261022.json',
         'evidence/aircraft-native-pause-handoff-alpha2.json',
         'docs/授权.txt','evidence/2.24.0-alpha1-source-intake.json',
-        'evidence/2.24.0-alpha2-source-intake.json'))
+        'evidence/2.24.0-alpha2-source-intake.json',
+        'evidence/2.24.1-release-authorization.json'))
     return {p.relative_to(root).as_posix(): digest(contained(p, root)) for p in sorted(paths)}
 
 

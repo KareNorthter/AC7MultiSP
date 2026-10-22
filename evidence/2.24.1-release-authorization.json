@@ -1,0 +1,20 @@
+{
+  "schema": 1,
+  "version": "2.24.1",
+  "recorded_at": "2026-10-22T09:14:46.346778+00:00",
+  "approved_source_commit": "2346cdb1ce8de9e39392ea1befa1b84eb68f84f7",
+  "user_request": "完成alpha2后合main，定名2.24.1，不安装，制作发布包；网页操作取消，提供Pages和R2单独Markdown操作说明",
+  "release_authorized": true,
+  "main_merge_authorized": true,
+  "release_without_install": true,
+  "gameplay_validation_pending": true,
+  "install_requested": false,
+  "distribution": "local_manual_package",
+  "bundle_runtimes": false,
+  "upload_authorized": false,
+  "pages_deployment_authorized": false,
+  "manual_guide_requested": true,
+  "previous_install": "2.24.0 alpha1",
+  "prior_gameplay_feedback": "用户确认alpha1其他功能正常；本轮新增手动检查、通知和清单识别仍待实机测试",
+  "old_frozen_builds_and_receipts_preserved": true
+}
