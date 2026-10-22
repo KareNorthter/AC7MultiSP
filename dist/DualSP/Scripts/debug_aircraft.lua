@@ -89,7 +89,8 @@ function Module.new(deps)
                 -- 只接入目录中有完整三SP数据的机体；Mod仍须走原生重开及新玩家类身份确认。
                 if integer(id)and id>=0 and id<=2147483647 and type(info)=="table"and type(info.code)=="string"
                     and #info.code>0 and #info.code<=128 and not info.code:find("[/%c%.]")
-                    and info.supported==true and type(info.weapons)=="table"and #info.weapons==3 then
+                    and info.supported==true and type(info.weapons)=="table"and #info.weapons==3
+                    and not deps.nativeOnly(id,info)then
                     local isMod=official[id]~=info.code
                     local supplied=type(info.name)=="string"and info.name~=""and info.name or info.code:upper()
                     local name=deps.names[info.code]or supplied

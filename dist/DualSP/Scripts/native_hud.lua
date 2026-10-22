@@ -427,7 +427,7 @@ function NativeHUD.new(note,refreshIcons)
         for group=1,c.countSP do
             local weaponIndex=profile[Profile.fields[group]]
             local label=weaponNames.special(options,weaponIndex)
-            local count=state.pending and "—"or Profile.ammoText(state.cached_sp[group]) -- 无限显示∞；初始化前不猜数量。
+            local count=state.pending and "—"or Profile.ammoText(state.cached_sp[group]) -- 无限显示---；初始化前不猜数量。
             local nameWidget,countWidget=c.columns[1].rows[group],c.columns[2].rows[group]
             if label~=c.lastNames[group]then nameWidget:SetText(FText(label));c.lastNames[group]=label;self.writeCount=self.writeCount+1 end
             if count~=c.lastCounts[group]then countWidget:SetText(FText(count));c.lastCounts[group]=count;self.writeCount=self.writeCount+1 end
