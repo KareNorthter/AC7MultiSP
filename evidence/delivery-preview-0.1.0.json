@@ -1,0 +1,607 @@
+{
+  "schema": 1,
+  "date": "2026-10-22",
+  "product": "AC7MultiSP",
+  "delivery_version": "0.1.0",
+  "payload_version": "2.24.1",
+  "branch": "codex/delivery-installation",
+  "base_commit": "39141fd",
+  "authorization": "用户授权编译、测试及本机 AC7 安装；后要求不用 Computer Use，界面操作由用户完成。未上传或发布。",
+  "source_release_sha256": "b09f1300d67840a54a06bdea5f0e5a1f1bf859a6f350f623bd63742faee1146f",
+  "nexus_ue4ss": {
+    "schema": 1,
+    "nexus_mod_id": 2474,
+    "nexus_file_id": 8453,
+    "version": "3.0.1.7",
+    "basis": "用户从 Nexus 条目2474下载文件8453；整包与官方镜像一致，24个登记运行成员逐一核对通过。",
+    "mirror_sha256": "8a9574f8c0ddd79b709213547f4ac4d927c14cf0d02be2c503ac9885aa096f13",
+    "nexus_archive_sha256": "8a9574f8c0ddd79b709213547f4ac4d927c14cf0d02be2c503ac9885aa096f13",
+    "nexus_archive_bytes": 21403706,
+    "nexus_archive_root": "PM-UE4SS-ZR1903/",
+    "nexus_archive_verified": true
+  },
+  "artifacts": {
+    "AC7MultiSP-2.24.1-Setup-preview-0.1.0.exe": {
+      "bytes": 41720320,
+      "sha256": "46fb369d8df71f1b572f6083cc70ebe7874d71bc9a3e4d0b78b11a8b30de93a7"
+    },
+    "AC7MultiSP-2.24.1-Universal-preview-0.1.0.zip": {
+      "bytes": 21253668,
+      "sha256": "efc68959534953986557369d179bbbfd0121b76fc4468d69b3917af1462aa812"
+    },
+    "AC7MultiSP-Vortex-Support-0.1.0-preview.zip": {
+      "bytes": 19381,
+      "sha256": "ae4cbf39782bbeafcf92bd8f8715bfef65dbaeba720d992f416110345170fc0f"
+    }
+  },
+  "artifact_directory": "E:\\AC7_MultiSP\\Temp\\delivery-preview-0.1.0-r5",
+  "validation_directory": "E:\\AC7_MultiSP\\Temp\\delivery-live-validation-20261022",
+  "live_game": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7",
+  "final_game_manager": "exe",
+  "final_game_version": "2.24.1",
+  "gui_started": true,
+  "game_launched": false,
+  "vortex_extension_loaded": true,
+  "vortex_web_handoff_verified": false,
+  "uploaded": false,
+  "merged_main": false,
+  "passed_counts": {
+    "live": 33,
+    "fresh": 7,
+    "upgrade": 5,
+    "r4-audit": 6,
+    "vortex-logic": 12,
+    "vortex-logic-r5": 13,
+    "r5-audit": 6
+  },
+  "passed": {
+    "live": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "本机安装并逐文件回读",
+      "同版修复损坏文件",
+      "阻止降级：本包版本低于已安装版本，请下载新版安装器。",
+      "卸载移出启用标记、程序和 PAK",
+      "中断时保留待恢复事务：操作未完成，自动恢复也未完成。请保留备份：E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7MultiSP-backup\\20261022-224709-743aae8503164b10a14f7d393f5588f2\\transaction.json\r\n文件“E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Mounts_P.pak”正由另一进程使用，因此该进程无法访问此文件。",
+      "识别唯一未完成事务",
+      "解锁后恢复全部原文件摘要",
+      "恢复后重新安装",
+      "保留：ue4ss/Mods/DualSP/profiles.before-2.23.0-reset-20261021-140448-883296.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-camera-auto-center.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-camera-controls.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-camera-hold.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-camera-input-options.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-camera-interaction-v2.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-central-weapon-display.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-controller-clicks.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-custom-shortcuts.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-gun-salvo.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-independent-models.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-management-options.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-target-gaze.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-three-sp.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-ui-input-options.json",
+      "保留：ue4ss/Mods/DualSP/profiles.before-view-target.json",
+      "保留：ue4ss/Mods/DualSP/profiles.json",
+      "保留：ue4ss/Mods/DualSP/profiles.previous.json",
+      "保留：ue4ss/Mods/DualSP/ui-state.json",
+      "保留：dwmapi.dll",
+      "保留：ue4ss/UE4SS.dll",
+      "保留：ue4ss/UE4SS-settings.ini",
+      "保留：ue4ss/Mods/mods.txt"
+    ],
+    "fresh": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "拒绝覆盖未知加载器：已有未知或不完整的 UE4SS，已保留。请核对 AC7 专用前置。",
+      "空目录首装含共享 UE4SS",
+      "自定义 Mod 路径停止覆盖：现有 UE4SS 设置缺失或使用自定义 Mod 路径，请先核对。",
+      "已有 Vortex 部署时拒绝接管：此 Mod 已由 Vortex 管理，请在 Vortex 更新，或使用“导出通用 ZIP”。",
+      "卸载保留共享 UE4SS"
+    ],
+    "upgrade": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "旧正式 2.23.1 输入",
+      "真实旧正式版升级到内置 2.24.1",
+      "升级后版本文件"
+    ],
+    "r4-audit": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "核对全部内嵌资源摘要",
+      "当前游戏安装记录与全部已登记文件一致",
+      "成品审计未改游戏文件",
+      "实际更新清单读取和解析"
+    ],
+    "vortex-logic": [
+      "扩展注册与事件挂接",
+      "限定 AC7 通用主包识别",
+      "识别 Nexus UE4SS 原包外层目录",
+      "主包映射、前置摘要和首次配置生成",
+      "缺前置但已安装并启用正确暂存前置时允许部署",
+      "卸载后仅剩个人配置不阻止 Vortex 迁移",
+      "旧手装程序残留阻止直接覆盖",
+      "已有 Vortex 管理记录允许后续部署",
+      "主包启用时阻止单独停用共享前置",
+      "未知加载器阻止部署",
+      "阻止归档路径越界",
+      "阻止大小写重复成员"
+    ],
+    "vortex-logic-r5": [
+      "扩展注册与事件挂接",
+      "限定 AC7 通用主包识别",
+      "识别 Nexus UE4SS 原包外层目录",
+      "本地导入的主包登记 Nexus 来源与版本，多个属性不相互覆盖",
+      "主包映射、前置摘要和首次配置生成",
+      "缺前置但已安装并启用正确暂存前置时允许部署",
+      "卸载后仅剩个人配置不阻止 Vortex 迁移",
+      "旧手装程序残留阻止直接覆盖",
+      "已有 Vortex 管理记录允许后续部署",
+      "主包启用时阻止单独停用共享前置",
+      "未知加载器阻止部署",
+      "阻止归档路径越界",
+      "阻止大小写重复成员"
+    ],
+    "r5-audit": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "核对全部内嵌资源摘要",
+      "当前游戏安装记录与全部已登记文件一致",
+      "成品审计未改游戏文件",
+      "实际更新清单读取和解析"
+    ]
+  },
+  "export_zip_member_content_identical": true,
+  "export_member_count": 34,
+  "r2_r4_frozen_installer_sources_and_all_embedded_inputs_identical": true,
+  "protected_old_core_unchanged": true,
+  "verification_source_sha256": {
+    "verify_setup.cs": "59e97936b5c90cf84530edc92f2b67cc3485f4a1f54a333d70aceff16b687f08",
+    "verify_vortex.cjs": "0d0d32c783c5b0ae471055ddedbf1834b450bce767afb7f240414a244630dff6"
+  },
+  "limitations": [
+    "内置下载慢，Nexus下载完成自动接续仍未验证；浏览器ZIP导入安装已打通。",
+    "用户要求路线打通即可，暂不扩大Vortex细节测试；r5元数据修订不冒充已在Vortex重装。",
+    "游戏内更新页仅源码修改，未编入沿用的正式2.24.1载荷。",
+    "未启动游戏或验证游玩，未核验全机所有第三方Mod。"
+  ],
+  "verification_host_notes": [
+    "首次验证宿主未带Win10清单导致OSVersion兼容值，随后用相同应用清单编译验证宿主。",
+    "第二次只读检查时用户已完成Vortex清除，原先预期的管理冲突不再存在；未因此写游戏。",
+    "Vortex管理冲突、未知前置等保护分支另在临时目录完成核验。"
+  ],
+  "vortex_extension_index_sha256": "4808340118a4c1dd483349432088097f33b30bb02c562600b40edf93cb176e85",
+  "vortex_handoff": {
+    "passed": [
+      "本机运行库初筛",
+      "调用成品内置资源导出 ZIP",
+      "迁移前移出 EXE 管理的程序和安装记录",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-2.23.0-reset-20261021-140448-883296.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-camera-auto-center.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-camera-controls.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-camera-hold.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-camera-input-options.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-camera-interaction-v2.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-central-weapon-display.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-controller-clicks.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-custom-shortcuts.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-gun-salvo.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-independent-models.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-management-options.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-target-gaze.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-three-sp.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-ui-input-options.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.before-view-target.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.json",
+      "迁移保留：ue4ss/Mods/DualSP/profiles.previous.json",
+      "迁移保留：ue4ss/Mods/DualSP/ui-state.json",
+      "迁移保留：dwmapi.dll",
+      "迁移保留：ue4ss/UE4SS.dll",
+      "迁移保留：ue4ss/UE4SS-settings.ini",
+      "迁移保留：ue4ss/Mods/mods.txt"
+    ],
+    "installer_sha256": "1a2f37b1c1767d246a58653aa97b7e025884d3c81ab66ed5c38e978ef7c89c79",
+    "mode": "uninstall",
+    "game": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7",
+    "game_launched": false
+  },
+  "vortex_main_deployment_verified": true,
+  "vortex_main_deployed_file_count": 31,
+  "vortex_existing_ue4ss_reused": true,
+  "vortex_main_deployment": [
+    {
+      "path": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Audio/SP2.wav",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/config_store.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/debug_aircraft.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/gun_salvo.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/json.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/loadout_flow.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/loadout_profile.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/main.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/mod_aircraft.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/mount_assets.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/native_bridge.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/native_hud.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/native_loadout.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/runtime_context.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/weapon_cycle.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/weapon_names.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/Scripts/weapon_presentation.lua",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/VERSION",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/bin/DualSP.dll",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/bin/DualSPUI.dll",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/docs/README_en.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/docs/README_zh-CN.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/docs/版本说明.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/enabled.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/install-receipt.json",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/licenses/DearImGui.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/licenses/MinHook.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/licenses/UE4SS.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/licenses/nlohmann-json.txt",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    },
+    {
+      "path": "ue4ss/Mods/DualSP/vortex-package.json",
+      "exists": true,
+      "hash_ok": true,
+      "symlink": true
+    }
+  ],
+  "game_environment_temporary_backup": "E:/AC7_MultiSP/Temp/delivery-live-validation-20261022/ue4ss-original-environment",
+  "game_environment_original_file_count": 283,
+  "game_environment_original_bytes": 1160845434,
+  "game_environment_restored": true,
+  "vortex_missing_ue4ss_notification_verified": true,
+  "vortex_nexus_download_page_opened": true,
+  "vortex_first_install_notes": "缺前置提示和指定网页跳转通过；Vortex内置下载慢，用户浏览器下载ZIP后导入Vortex。真实ac7multisp-loader安装、25个链接、两份DLL、首次设置及启用列表核对通过。自动下载完成接续未验收。",
+  "restored_original_file_count": 283,
+  "restored_original_all_hashes_match": true,
+  "vortex_fresh_ue4ss_installed_and_deployed": true,
+  "vortex_fresh_ue4ss_deployed_file_count": 25,
+  "vortex_web_download_auto_install_verified": false,
+  "vortex_fresh_details": {
+    "files": [
+      {
+        "path": "dwmapi.dll",
+        "size": 61440,
+        "sha256": "ea3cdbb755dd61b9f4de70590b78a15974be65ba5fb3837ea2e1799d78d4c116",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\mods.json",
+        "size": 149,
+        "sha256": "2a5478c041aced03c58379f24269aea1268b5e895e951c5a7395e5957d36bf4d",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\ac7multisp-ue4ss.json",
+        "size": 102,
+        "sha256": "13307293c3315e34228c2bddcc57f383a6019bf4254c57a533ddc9f3907bb182",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\mods.txt",
+        "size": 101,
+        "sha256": "bda4e7c67d22cdf4cbfe97febd6092f56c1194529e83c566da3f84d26ae62a19",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\UE4SS.dll",
+        "size": 16213504,
+        "sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\UE4SS-settings.ini",
+        "size": 7632,
+        "sha256": "4fae00d921a9d54cde9d64ddf8fa22c20ab99575da419a790c2cb19c2d4b5fa5",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\BPModLoaderMod\\load_order.txt",
+        "size": 265,
+        "sha256": "e260b9b0d8d472ee3ebab77204c838f3d2aad8a9d5f08b9b8cb6b42b7b5418b9",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\shared\\UEHelpers\\UEHelpers.lua",
+        "size": 10237,
+        "sha256": "7476f02eef0c87bfeab169f2ffe2e704363faeaae4bf9f1bda574b1e34f4a0e9",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\shared\\jsbProfiler\\jsbProfi.lua",
+        "size": 14548,
+        "sha256": "a6c51686e582a819a2376ee7e452d7f847d997c32bc3dd9f9814b24d74dff968",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\shared\\Types.lua",
+        "size": 56079,
+        "sha256": "85f67b2e34ab228320a118ec30c5b372e6da27761e68dc21269986869e27c758",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\BPModLoaderMod\\Scripts\\main.lua",
+        "size": 13971,
+        "sha256": "dfdb999434876e8426187f8a5323b83ea5173a1915c4a878188744918f020c14",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ConsoleCommandsMod\\Scripts\\main.lua",
+        "size": 297,
+        "sha256": "5bf33cd4ef9f6a155fe5f7842218a6486c2c227858ffd99806e75d81d0da9f27",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ConsoleCommandsMod\\Scripts\\summon_unloaded_assets.lua",
+        "size": 489,
+        "sha256": "194b557404b6078767f8b57b836aa44d084cf6f3f2cbde71a6831857567f8103",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ConsoleCommandsMod\\Scripts\\dump_object.lua",
+        "size": 13093,
+        "sha256": "365b7e8a803f8ae917f54f6c852854c681e388227dd1f94b0ea3f6fb938b5086",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ConsoleCommandsMod\\Scripts\\set.lua",
+        "size": 2056,
+        "sha256": "876e7de49f0e30a4329c081472bc7d5e1948459c774b7abbb8be4b6323f16ec8",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ActorDumperMod\\Scripts\\main.lua",
+        "size": 605,
+        "sha256": "2fbf6d1cbc68ce4d600103e9b641d34dfa4ba0d04fa737b100663ec7629bc3ca",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\LineTraceMod\\Scripts\\main.lua",
+        "size": 2743,
+        "sha256": "d17abd9c9c6b28266075e04699c56e629a48890a42f6afbbc3a357df39d1d3cd",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\CheatManagerEnablerMod\\Scripts\\main.lua",
+        "size": 1439,
+        "sha256": "15c7722168eb8966ed454e900e04de4b0ade42657905d8016c0e0660c119cd9e",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\jsbLuaProfilerMod\\Scripts\\main.lua",
+        "size": 579,
+        "sha256": "abc04f3dfa1d8bb2be81999d0560272f5156b3643dc892b2d0d071a18bc585a3",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\BPML_GenericFunctions\\Scripts\\main.lua",
+        "size": 2950,
+        "sha256": "df87c361cdfc231ac8017ff9b930c323fac09f436ca4c41d48e952ff4b38d38f",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\ConsoleEnablerMod\\Scripts\\main.lua",
+        "size": 3238,
+        "sha256": "e30ea7650c7807683bd0b0a6da22aaa12c20e0b8d356820a550e7ad9e1488079",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\EventViewerMod\\dlls\\main.dll",
+        "size": 609280,
+        "sha256": "1079351b1dd5d0f56904b59b7bf9ab7fb5f5b294d10ace75e91f32fc4fa70a07",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\SplitScreenMod\\Scripts\\main.lua",
+        "size": 4380,
+        "sha256": "a1fa43ee3c6a9ac1680b47a665dd3e1b29353d0663a6e242f82e8d4a1bb09484",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\Keybinds\\Scripts\\main.lua",
+        "size": 4025,
+        "sha256": "560e8ffffe3b7e0378c63db8a8f8da6465397a098d554b3a1d38e95794e3eb48",
+        "linked": true
+      },
+      {
+        "path": "ue4ss\\Mods\\KismetDebuggerMod\\dlls\\main.dll",
+        "size": 724480,
+        "sha256": "7134eea30e045ede4ab58fcf7bfe55cbcf4f247fdc56c9ab6fd588a53027cd61",
+        "linked": true
+      }
+    ],
+    "settings_match": true,
+    "enabled_builtin_mods": [
+      {
+        "mod_name": "BPML_GenericFunctions",
+        "mod_enabled": true
+      },
+      {
+        "mod_name": "BPModLoaderMod",
+        "mod_enabled": true
+      },
+      {
+        "mod_name": "Keybinds",
+        "mod_enabled": true
+      }
+    ],
+    "source": "用户浏览器下载Nexus原包，手动导入Vortex；由ac7multisp-loader安装器识别并部署",
+    "web_download_auto_install_verified": false
+  },
+  "previous_r4_artifacts": {
+    "AC7MultiSP-2.24.1-Setup-preview-0.1.0.exe": {
+      "bytes": 41719808,
+      "sha256": "1a2f37b1c1767d246a58653aa97b7e025884d3c81ab66ed5c38e978ef7c89c79"
+    },
+    "AC7MultiSP-2.24.1-Universal-preview-0.1.0.zip": {
+      "bytes": 21253578,
+      "sha256": "c6bdc2c4d910f6459d6a07941abe93a0c386d0dd41f110477fa7df0beca99b08"
+    },
+    "AC7MultiSP-Vortex-Support-0.1.0-preview.zip": {
+      "bytes": 18628,
+      "sha256": "ffda897d631f941d07a9c537da7c5f6947e96bbbf6dddec0348fb3984263aa14"
+    }
+  },
+  "r5_changes": "补Nexus source/modId/downloadGame/version元数据，修复多attribute覆盖和部署后旧通知；游戏功能字节保持。r4实际Vortex证据保持；r5 GUI安装由用户确认正常。",
+  "user_gui_install_validated": true,
+  "user_gui_validation": "用户反馈：游戏目录自动识别、界面及点击安装均正常。",
+  "final_owned_file_count": 31,
+  "final_owned_hashes_verified": true,
+  "original_283_files_after_gui_install_unchanged": true,
+  "gui_installer_path": "F:\\下载\\AC7MultiSP-2.24.1-Setup-preview-0.1.0.exe",
+  "gui_installer_sha256": "46fb369d8df71f1b572f6083cc70ebe7874d71bc9a3e4d0b78b11a8b30de93a7",
+  "r5_export_zip_content_identical": true,
+  "r5_export_member_count": 34
+}

@@ -45,6 +45,16 @@ void drawVersionUpdatesPage() {
     if(panelCard("UpdateDownloads",tr("下载更新","Download update"))) {
         const bool opening=updates.browserStatus()==dualsp::updates::BrowserStatus::Opening;
         const bool available=snapshot && !snapshot->downloads.empty();
+        ImGui::TextWrapped("%s",tr("方法1：已使用 Vortex 安装的玩家，在 Vortex 中检查并更新。",
+            "Method 1: If installed with Vortex, check for updates and update in Vortex."));
+        ImGui::BeginDisabled(opening);
+        if(ImGui::Button(tr("前往 Nexus / Vortex 更新","Open Nexus / Vortex updates")))updates.openNexus();
+        ImGui::EndDisabled();
+        ImGui::TextWrapped("%s",tr("方法2：下载最新安装包，退出游戏后运行。",
+            "Method 2: Download the latest installer and run it after exiting the game."));
+        if(snapshot && !snapshot->installerDownloads)ImGui::TextWrapped("%s",tr(
+            "当前发布入口仍为 ZIP，请按包内说明安装；EXE 发布后会自动使用安装包入口。",
+            "The current release is a ZIP. Follow its instructions; installer links will appear once published."));
         ImGui::BeginDisabled(!available || opening);
         if(available) {
             for(size_t i=0;i<snapshot->downloads.size();++i) {
@@ -63,8 +73,8 @@ void drawVersionUpdatesPage() {
         ImGui::EndDisabled();
         ImGui::TextWrapped("%s",tr("点击下载按钮，将使用 Windows 默认浏览器打开对应入口。",
             "Download buttons open the corresponding link in your default Windows browser."));
-        ImGui::TextWrapped("%s",tr("下载完成后，请先退出游戏，再按压缩包内的说明解压安装。",
-            "After downloading, exit the game, then extract and install the update as described in the archive."));
+        ImGui::TextWrapped("%s",tr("安装、升级及部署前，请先完整退出游戏。",
+            "Fully exit the game before installation, updating or deployment."));
     }
     ImGui::EndChild();
     if(panelCard("UpdateLicense",tr("授权信息","License information"))) {

@@ -19,6 +19,7 @@ namespace dualsp::updates {
 inline constexpr char currentVersion[]=AC7MULTISP_VERSION;
 inline constexpr wchar_t manifestHost[]=L"ac7multisp-updates.pages.dev";
 inline constexpr wchar_t manifestPath[]=L"/stable.json";
+inline constexpr char nexusUrl[]="https://www.nexusmods.com/acecombat7skiesunknown/mods/3797";
 inline constexpr size_t manifestLimit=32768;
 enum class Status {Waiting,Checking,Current,Newer,Unpublished,Failed};
 enum class BrowserStatus {Idle,Opening,Opened,Failed};
@@ -27,6 +28,7 @@ struct Snapshot {
     Status status{Status::Waiting};
     std::string latest,notesZh,notesEn;
     std::vector<Download> downloads;
+    bool installerDownloads{false};
 };
 inline void ensure(bool accepted,const char* message) {if(!accepted)throw std::runtime_error(message);}
 inline std::wstring wide(const std::string& text) {
@@ -81,7 +83,7 @@ inline std::wstring checkedUrl(const std::string& url) {
     std::transform(host.begin(),host.end(),host.begin(),[](wchar_t ch){return std::towlower(ch);});
     // 只放行作者已配置的发布域名；新增来源须在源码中明确接收。
     ensure(host==L"wwbru.lanzoue.com" || host==L"downloads.iot-node-service-api.online" ||
-        host==manifestHost,"下载链接域名未登记");
+        host==manifestHost || url==nexusUrl,"下载链接域名未登记");
     return value;
 }
 inline Snapshot parse(const std::string& body) {
@@ -110,10 +112,15 @@ inline Snapshot parse(const std::string& body) {
     ensure(notes.is_object(),"更新内容格式无效");
     result.notesZh=text(notes.at("zh"),8192,true);result.notesEn=text(notes.at("en"),8192,true);
     ensure(!result.notesZh.empty() && !result.notesEn.empty(),"更新内容缺少中文或英文");
-    const auto& downloads=data.at("downloads");
+    // 保留旧 ZIP 清单兼容；发布 EXE 后增加独立字段，旧客户端仍能读取原入口。
+    const bool installers=data.contains("installer_downloads") && data.at("installer_downloads").is_array() &&
+        !data.at("installer_downloads").empty();
+    const auto& downloads=installers?data.at("installer_downloads"):data.at("downloads");
+    result.installerDownloads=installers;
     ensure(downloads.is_array() && !downloads.empty() && downloads.size()<=4,"更新下载入口数量无效");
     std::set<std::string> ids;
     for(const auto& entry:downloads) {
+        if(installers)ensure(entry.value("format",std::string())=="exe","安装包入口必须明确标记format=exe");
         Download link;link.id=text(entry.at("id"),32);link.url=text(entry.at("url"),2048);
         ensure(!link.id.empty() && ids.insert(link.id).second,"更新下载入口重复或缺少标识");
         for(unsigned char ch:link.id)ensure((ch>='a' && ch<='z') || (ch>='0' && ch<='9') || ch=='_' || ch=='-',"下载入口标识无效");
@@ -272,6 +279,16 @@ public:
             const auto link=std::find_if(data->downloads.begin(),data->downloads.end(),[&](const Download& entry){return entry.id==id;});
             ensure(link!=data->downloads.end(),"下载入口不属于当前清单");
             auto request=std::make_unique<BrowserRequest>();request->owner=this;request->url=checkedUrl(link->url);
+            ensure(pin(),"无法保持浏览器接口模块有效");
+            browser_.store(BrowserStatus::Opening,std::memory_order_release);
+            const HANDLE thread=CreateThread(nullptr,0,browserEntry,request.get(),0,nullptr);
+            ensure(thread!=nullptr,"浏览器接口线程创建失败");request.release();CloseHandle(thread);return true;
+        }catch(...) {browser_.store(BrowserStatus::Failed,std::memory_order_release);browserBusy_.store(false,std::memory_order_release);return false;}
+    }
+    bool openNexus() noexcept {
+        if(!context_.load(std::memory_order_acquire) || browserBusy_.exchange(true))return false;
+        try {
+            auto request=std::make_unique<BrowserRequest>();request->owner=this;request->url=checkedUrl(nexusUrl);
             ensure(pin(),"无法保持浏览器接口模块有效");
             browser_.store(BrowserStatus::Opening,std::memory_order_release);
             const HANDLE thread=CreateThread(nullptr,0,browserEntry,request.get(),0,nullptr);
