@@ -337,7 +337,9 @@ EML两机炮口在固定Body骨，可先研究局部SWP3呈现，F-14D的8AAM再
 
 可重现离线读取：`python -X utf8 src/research/survey_gun_pods.py --index E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/download-paks.json --tools-root E:/AC7_MultiSP/tools --output Temp/mod-gun-pod-survey-新批次`。本机本轮结果为`Temp/mod-gun-pod-survey-20261022/parsed-v2/survey.json`，候选汇总、枚举及原版父类副本也留Temp。摘要与来源见[批量记录](../evidence/gun-salvo-mod-pod-survey.json)，不提交第三方资源、JSON正文或原游戏映像。
 
-仅人工审阅资源、引用、继承、脚本与源码差异，未编译、编写/运行产品测试、安装、附加或操作游戏。ID0/32、武库鸟的LaserWeapon及原生寿命、ADF-11双炮类方案拒绝边界需后续成套实测，所有候选不以静态结果宣称已支持验收。现帮助仍写“HGP暂不支持”，已按既有文案审核约定提交具体中英文替换方案；用户答复前不改界面。接收时同时取两层资格表、离线工具、说明与新证据，不整套覆盖其他更新，后续版本标识由整合方统一。
+仅人工审阅资源、引用、继承、脚本与源码差异，未编译、编写/运行产品测试、安装、附加或操作游戏。ID0/32、武库鸟的LaserWeapon及原生寿命、ADF-11双炮类方案拒绝边界需后续成套实测，所有候选不以静态结果宣称已支持验收。接收时同时取两层资格表、离线工具、说明与新证据，不整套覆盖其他更新，后续版本标识由整合方统一。
+
+用户随后明确指定中文帮助为“携带MGP/HGP/PLSL吊舱时，按住机炮发射键会联动该武器齐射。”并要求英文按此翻译。`management_panel.hpp`按该原文更新，英文为“With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun.”；不追加默认值、恢复选择或并发限制的帮助句子，既有多合格SP运行提示及功能规则保持。此后续只改文案和正文，未编译、测试或安装，旧批量记录的待审状态不回写。
 
 ### Adler HGP静态候选与XR302合并接续（2026-10-21）
 

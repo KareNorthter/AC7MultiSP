@@ -61,8 +61,8 @@ void drawFeatureSettings() {
         ImGui::SameLine();ImGui::TextUnformatted(tr("快捷键","Shortcut"));ImGui::SameLine();
         bindingButton(9,shortcutLabel(draftShortcuts[3]),170);
         ImGui::SameLine();if(ImGui::SmallButton(tr("清除###ClearSalvoKey","Clear###ClearSalvoKey"))){draftShortcuts[3]={0,0};captureSlot=-1;}
-        panelHelp("新配置默认开启。携带MGP或PLSL时，按住游戏实际机炮键会联动该吊舱，松开后恢复先前选择。HGP及不同SP真正并发暂不支持；切槽可能有间隙。",
-            "On for new configurations. With MGP or PLSL equipped, holding the actual game gun binding also fires that pod; releasing restores the previous selection. HGP and simultaneous firing of different SPs are currently unsupported; slot changes may cause gaps.");
+        panelHelp("携带MGP/HGP/PLSL吊舱时，按住机炮发射键会联动该武器齐射。",
+            "With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun.");
         if(state.contains("gun_salvo")&&state.at("gun_salvo").value("reason",std::string())=="multiple_supported_sp")
             ImGui::TextWrapped("%s",tr("当前方案含多种合格SP，暂不支持它们同时发射。","This loadout has multiple eligible SPs; simultaneous firing is unsupported."));
     }
