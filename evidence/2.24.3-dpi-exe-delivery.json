@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "version": "2.24.3",
+  "installer_version": "2.24.3",
+  "candidate": true,
+  "revision": "system-dpi",
+  "created_at": "2026-10-23T23:47:01.864577+00:00",
+  "source_commit": "050dc3d5f265f9ba22f565f5314c186d3c533eb0",
+  "source_workspace": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\worktree",
+  "authorization": "用户2026-10-24要求修复2K/125%字体模糊并重编译交付EXE；不安装、不操作游戏",
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\build-2.24.3-r1",
+    "receipt_sha256": "d151bd5a4c1e806740d5f0dc2d0ab3a8926ee5d9480f1e31134f96baca45698f",
+    "reused": true,
+    "game_dlls_recompiled_this_revision": false
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\delivery-2.24.3-dpi-r1",
+    "receipt_sha256": "c1fc6fff487c04bd2044e88753c10b041045f80107f36064bb5b4908fa1513d9",
+    "exe_receipt_sha256": "a17a9bc6def96eaaa8e6b5c2c171e445e04d048dccfcc60fd9b25c9ac6e29eb4",
+    "source_verified": true,
+    "internal_zip_sha256": "a21340b303f7c4da2c27dafda89ecf870d10642d61468f8fac6a9ea8480a20e7",
+    "payload_byte_equal_to_previous": true,
+    "standalone_zip_delivered": false
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.24.3-dpi\\AC7MultiSP_Installer.exe",
+    "size": 63222272,
+    "sha256": "6b87342a45c2191d8edd187a94f8b68dcf4dc30bc7a50f7adfa835a17a3a2113",
+    "file_version": "2.24.3.0",
+    "product_version": "2.24.3",
+    "x64": true,
+    "embedded_dpi_awareness": "system",
+    "manifest_checked_from_exe": true
+  },
+  "ui_preview": {
+    "run": true,
+    "method": "安装器内置离线预览，仅绘制页面，不联网或搜索游戏",
+    "applied_dpi_registry": 120,
+    "system_scale_percent": 125,
+    "images": {
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\dpi-r1-zh-CN-home.png": {
+        "sha256": "c19925c3843f8cf13992d900f7d8b84a8608782a40e61324629339776d53ad4b",
+        "size": [
+          1243,
+          972
+        ]
+      },
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\dpi-r1-zh-CN-direct.png": {
+        "sha256": "56156bd2fef903e4e6428a1d16d074c21411b62d5ae1c603ce943640ff74768d",
+        "size": [
+          1243,
+          972
+        ]
+      },
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\dpi-r1-en-home.png": {
+        "sha256": "efdb63098a4e5318a4a96f7c3a906d0c64088565f2ef4102d685fef0ba2f75d6",
+        "size": [
+          1243,
+          972
+        ]
+      },
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\dpi-r1-en-direct.png": {
+        "sha256": "203120ef60c533e49b5751cee468304fbbfa0cd405705c5487dfffd7e5f91752",
+        "size": [
+          1243,
+          972
+        ]
+      }
+    },
+    "visually_reviewed": true,
+    "scope": "中英文首页及未选择游戏目录的直接安装页，无明显裁切；未验证实际安装确认框和不同缩放显示器之间拖动"
+  },
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "tests_run": false,
+  "installer_normal_mode_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "game_closed": false,
+  "uploaded": false,
+  "pending": [
+    "用户实际打开修订版确认字体清晰度",
+    "实际确认框与切页/切语言交互",
+    "不同缩放显示器或更改系统缩放后需重新启动安装器"
+  ]
+}
