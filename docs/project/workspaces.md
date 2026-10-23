@@ -7,6 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
+| F6启动更新选项，源码已接收、待编译验证 | 本聊天；基线97fbdbb；沿用codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 默认开启的启动检查选项、草稿保存、配置兼容及联网前许可已接入；管理协议22，配置19仅补缺失字段，不重置已有设置。双语文字生成及静态差异核对完成；未编译、测试、安装或上传，现有EXE不包含此选项 |
 | 安装器与F6易用性调整，DPI修订已保存、停止后续编译 | 本聊天；游戏源码锚5a33e3a、DPI修订050dc3d；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 安装器系统DPI感知、96 DPI基准及动态控件缩放已修复，复用2.24.3载荷；完成本机125%双语离线预览和EXE生成后，用户要求无需继续编译。[DPI回执](../../evidence/2.24.3-dpi-exe-delivery.json)及Release/2.24.3-dpi保留；旧回执不覆盖，不再构建、安装、操作游戏或上传。以后优先单代理，减少拆分 |
 | 双语文档与通用交付，待游戏验证 | 本管理聊天；基线85ab3a0；codex/integrate-bilingual-delivery完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 接收根目录九份人工文档，生成英文并集中游戏/安装器词条；本地候选2.24.2、安装器0.3.0，独占docs/user、游戏文字调用、构建封装及对应正文。[交付回执](../../evidence/2.24.2-delivery.json)记录具体核对，不安装或操作游戏 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改 |

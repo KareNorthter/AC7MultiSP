@@ -472,7 +472,9 @@
     "changelog.fd31c92d": "Changelog",
     "collapse.changelogtoggle.6286d892": "Collapse###ChangelogToggle",
     "expand.changelogtoggle.d2b52d09": "Expand###ChangelogToggle",
-    "author.and.license.5de4e76d": "Author and license"
+    "author.and.license.5de4e76d": "Author and license",
+    "updates.check_on_startup": "Check for updates when the game starts",
+    "updates.startup_setting_invalid": "Startup update check setting must be a boolean"
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",
@@ -741,7 +743,8 @@
     "punctuation.8ce1b17b",
     "punctuation.89d1a37e",
     "pause.state.changed.close.and.ad215909",
-    "waiting.for.the.native.pause.1135f7ad"
+    "waiting.for.the.native.pause.1135f7ad",
+    "updates.startup_setting_invalid"
   ],
   "message_matches": {
     "the.sp.debug.protocol.does.89e22130": {
@@ -1807,6 +1810,10 @@
     "waiting.for.the.native.pause.1135f7ad": {
       "zh": "正在等待原生暂停菜单归还，随后重开任务。",
       "en": "Waiting for the native pause menu to close before restarting the mission."
+    },
+    "updates.startup_setting_invalid": {
+      "zh": "启动更新检查开关必须为布尔值",
+      "en": "Startup update check setting must be a boolean"
     }
   }
 }

@@ -61,7 +61,7 @@ local ensureMountAssets=nil
 local nativeMountPreview=loadExport("dualsp_mount_preview") -- 独立视觉上下文，不参与兵装事务。
 loadExport("dualsp_three_sp_supported","DualSPUI.dll") -- 四键管理协议必须成套安装。
 local nativeRuntimeGate=loadExport("dualsp_runtime_gate") -- 原生核心独立检查功能许可。
-local versionUpdates={invoke=loadExport("dualsp_updates_context_v1","DualSPUI.dll"),context=-1,failed=false}
+local versionUpdates={invoke=loadExport("dualsp_updates_context_v1","DualSPUI.dll"),context=-1,automatic=nil,failed=false}
 local uiRuntimeGate=loadExport("dualsp_runtime_gate","DualSPUI.dll") -- F8、窗口消息与手柄同时禁用。
 -- 候选核心直接返回就绪值，周期 HUD 不执行文件快照事务。
 local readReadiness=loadExport("dualsp_hud_readiness")
@@ -73,7 +73,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=21") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=22") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -1524,7 +1524,7 @@ local function applyAction(action)
             if not isFlight and not supplySession then applyFixedMountSetting(config.hangar_mount_enabled)end
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED request="..settingsAck.." "..json.encode({
-                language=config.language,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
+                language=config.language,startup_updates=config.startup_update_check_enabled,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
                 dpad=config.dpad_weapon_switch_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
                 gaze_keyboard=config.target_gaze_keyboard_enabled,camera_hold=config.camera_hold_enabled,view_target=config.view_target_mode,
                 ammo_two=config.ammo_percent_two,ammo_three=config.ammo_percent_three}))
@@ -1564,7 +1564,8 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=21,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=22,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        startup_update_check_enabled=config.startup_update_check_enabled,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
         hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
@@ -1633,9 +1634,10 @@ local function checkRuntime(activatedWidget)
     end
     modAircraft.safetyPending=false
     local updateContext=not allowed and 0 or runtimeContext.mainMenuVisible and 3 or runtimeContext.outsideMission and 1 or 2
-    if not versionUpdates.failed and updateContext~=versionUpdates.context then
-        versionUpdates.context=updateContext -- 仅模式变化时提交整数；不在20ms循环内读取清单或构造JSON。
-        local updateOK=pcall(versionUpdates.invoke,updateContext)
+    if not versionUpdates.failed and (updateContext~=versionUpdates.context or config.startup_update_check_enabled~=versionUpdates.automatic)then
+        versionUpdates.context=updateContext;versionUpdates.automatic=config.startup_update_check_enabled
+        -- 仅模式或保存后的选项变化时提交整数；启动配置先交给服务，避免关闭选项仍先联网。
+        local updateOK=pcall(versionUpdates.invoke,updateContext,config.startup_update_check_enabled and 1 or 0)
         if not updateOK then versionUpdates.failed=true;note("UPDATE_CONTEXT_ABANDONED")end
     end
     if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
