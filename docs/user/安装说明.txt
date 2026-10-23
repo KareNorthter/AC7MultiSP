@@ -1,25 +1,37 @@
-AC7MultiSP 2.24.1 安装参考
+AC7MultiSP 安装说明
 
-当前正式基线
-正式主线与本地发布为2.24.1，适用Windows 10/11 x64、Steam build9855922，仅单人战役和自由任务。现有正式ZIP为AC7MultiSP-2.24.1.zip，不附带DirectX/VC运行库，需要时另行安装微软官方运行库。
+准备工作
+• 先退出游戏。同一套Mod只使用一种方式管理，更新和卸载也沿用该方式。
+• 游戏文件夹可通过Steam中的“管理→浏览本地文件”找到，其中应有Ace7Game.exe。
+• 升级前备份个人设置：ue4ss/Mods/DualSP/profiles.json。不要直接删除整个旧Mod文件夹。
+• 本Mod需要《皇牌空战7》专用UE4SS；普通版UE4SS不能直接代替。
 
-现有ZIP的固定路径
-• 游戏根目录：由Steam→游戏→管理→浏览本地文件找到，包含Ace7Game.exe。
-• GameFiles内的dwmapi.dll、ue4ss、Game合并到游戏根目录，不复制GameFiles文件夹本身。
-• 模组目录：ue4ss\Mods\DualSP；内部目录和启用名称DualSP请勿改名。
-• 模型包：Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak。
-• 启用列表：ue4ss\Mods\mods.txt，保留或补入DualSP : 1，不覆盖其他Mod的启用项。
-• 个人配置与方案：ue4ss\Mods\DualSP\profiles.json，升级时保留，不删除整个DualSP目录。
+一、通过Vortex安装
+1. 在Vortex中启用《皇牌空战7》的游戏支持扩展及“AC7MultiSP安装支持”扩展。
+2. 导入配套的Vortex通用ZIP，安装并启用。手动下载后可使用“Install From File”导入。
+3. 按提示安装所需的AC7专用UE4SS，然后部署Mod。
+4. 启动游戏，按F6检查是否出现管理界面。
 
-安装、升级与卸载
-1. 完整解压并退出游戏，先备份同名DLL、ue4ss及挂载包，再合并文件。本项目使用AC7专用UE4SS加载器；已有加载器或同名代理DLL时先核对，普通UE4SS不能直接替代。
-2. 有效配置19、个人键位及方案正常保留。更早格式不迁移：先完整备份旧配置和个人方案，再生成配置19默认值。通过Steam启动，默认F6打开管理界面；无需Python或编译工具。
-3. 卸载时移出DualSP和上述模型包，移除DualSP : 1；共享加载器只在确认其他Mod不再使用时移出。保留个人配置备份。
+也可用EXE中的“通过Vortex安装和更新”导出通用ZIP。免费Nexus账户可能需要在网页确认下载。以后通过Vortex更新、停用和卸载。
 
-交付重做待办
-• 安装交付方式后续统一整理，本次不修改打包器或重新制作安装包。
-• 另分支的AC7MultiSP_Installer.exe是工具0.2.0预览（来源a99a404），游戏载荷仍为2.24.1，尚未整合为正式ZIP的安装方式。旧0.1.0实测不代表0.2.0交互已验收。
-• EXE导出的通用ZIP根目录直接是ue4ss和Game，不含共享UE4SS前置，与现有正式GameFiles ZIP布局不同；暂按各自产物说明使用，不混套安装步骤。
-• 唯一历史正文为仓库docs/releases/版本更新说明.md，目前未接入现有包；后续统一生成安装界面和发布摘要所需内容。
+二、通过EXE安装包安装
+1. 运行AC7MultiSP_Installer.exe，进入后选择“直接安装”。
+2. 确认游戏文件夹；未自动找到时，手动选择含Ace7Game.exe的文件夹。
+3. 点击“安装”或“更新”，完成后启动游戏，按F6检查。
 
-功能、默认值和机体适配见README_zh-CN.txt；英文见README_en.txt。
+程序会安装所需的专用UE4SS，或复用兼容的现有版本。如果提示文件冲突或环境不受支持，请按提示处理，不要强行覆盖。卸载也使用该程序；个人设置和共享UE4SS会保留。
+
+三、手动安装ZIP
+先解压。手动升级时，先将旧ue4ss/Mods/DualSP文件夹移到游戏目录外备份，避免新旧程序混用。随后按压缩包里的目录结构复制：
+
+• 有GameFiles文件夹：把其中的dwmapi.dll、ue4ss、Game合并到游戏文件夹，不复制GameFiles文件夹本身。
+• 根目录直接是ue4ss和Game：这是通用ZIP。先准备好AC7专用UE4SS，再将这两个文件夹合并到游戏文件夹；根目录的其他说明文件无需复制。
+
+已有同名加载器或其他Mod时，先备份并确认兼容。保留自己的profiles.json，不覆盖其他Mod的启用列表。通用ZIP已带启用文件；旧GameFiles包需确认ue4ss/Mods/mods.txt中有“DualSP : 1”。
+升级后，将备份中的profiles.json复制回新Mod文件夹。很早版本的设置可能需要重新调整。
+启动游戏后按F6检查。手动卸载时移出ue4ss/Mods/DualSP及Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak，并移除对应启用项；其他Mod仍使用的共享加载器不要移除。
+
+注意
+• 当前正式2.24.1 ZIP采用GameFiles结构；EXE及其配套Vortex方式仍为预览方案，以实际提供的安装文件为准。
+• 改用另一种管理方式前，先用原方式卸载本Mod并保留设置，避免重复部署。
+• 安装包不附带微软DirectX／VC++运行库；若系统缺少，需另行安装微软官方版本。

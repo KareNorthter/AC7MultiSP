@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 文档目录与旧产物归档，已接收/已关闭 | 本管理聊天；基线c353e79；完成锚archive/20261023/artifact-cleanup | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 文档分目录、Release历史产物和7份历史核心归档已合main，codex/chore-artifact-archive关闭；[归档回执](../../evidence/artifact-archive-20261023.json)记录范围，不改功能源码或其他聊天 |
+| 文档治理，四份草稿已接收、待人工审核 | 本管理聊天；基线59e02c3；完成锚archive/20261023/player-docs；codex/docs-player-guide已关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；detached保留 | 四份玩家正文及索引规范已合main，等待用户修改；功能代码、磁盘大资产和安装器线程未改。[文档复用](player-docs.md)记录后续接入边界；此前产物归档见[回执](../../evidence/artifact-archive-20261023.json) |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
 | 原根目录资料，封存待甄别 | codex/aircraft-mod-static-plan；原兼容资料工作 | E:/AC7_MultiSP/Temp/preserved-local-20261023；0b75b21 | 原27项未提交变动逐文件保留；核对后按需接收独有结论，不整套覆盖main |
 | 旧更新实现，封存待续 | codex/update-feature | C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP | 11项未提交变动，已做快照；与现行更新页比较后再接收 |
@@ -56,6 +56,6 @@
 
 在适合的表中更新一行：任务目的｜责任聊天｜基线main提交｜分支/工作树｜独占修改范围｜状态｜来源/验收链接。状态用进行中、待接收、待验证、已接收、封存待续、已关闭。不要只写“最新”或用版本目录名代替提交。
 
-首次正文整理以d2653ce合入main并关闭分支。整理工作树因当前置顶聊天受应用保护，自动归档被拒绝；本管理聊天核对干净后从main复用于上表归档任务，完成后回到detached状态。不为清理而更改用户置顶设置，其他任务仍须独立工作树。
+首次正文整理以d2653ce合入main并关闭分支。整理工作树因当前置顶聊天受应用保护，自动归档被拒绝；本管理聊天核对干净后从main复用于上表文档任务，完成后回到detached状态。不为清理而更改用户置顶设置，其他任务仍须独立工作树。
 
 本次收尾后保留23个分支和39条有效工作树登记；其中多数为封存原料或旧研究，并非39个活动开发任务。日后新增任务不得从已封存整合目录直接继续，也不要把文档维护再拆成多个无人负责的版本。

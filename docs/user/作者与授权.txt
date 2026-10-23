@@ -1,0 +1,22 @@
+AC7MultiSP 作者与授权
+
+作者与反馈
+• Nexus Mods：Northter
+• bilibili：班德慕
+• 邮箱：karenorthterofchina@gmail.com
+• 测试反馈QQ群：1072924682
+
+本Mod授权声明
+待作者补充：本Mod的转载、修改、二次发布及其他使用条件。
+
+第三方组件与素材
+本Mod使用的第三方组件分别遵循各自的许可证，完整文本随包提供，位于ue4ss/Mods/DualSP/licenses。
+SP2.wav提示音为用户提供的非原创音频，本项目不授予该音频的额外使用权。
+
+致谢
+• UE4SS：Narknon及UE4SS-RE贡献者，提供脚本运行支持。
+• PM-UE4SS：Playmore-ModdingConcepts，提供《皇牌空战7》专用适配。
+• Dear ImGui：Omar Cornut及贡献者，提供游戏内界面库。
+• MinHook：Tsuda Kageyu；其中HDE组件由Vyacheslav Patkov开发。
+• nlohmann/json：Niels Lohmann及贡献者，提供数据处理库。
+• PROJECT ACES / Bandai Namco：感谢《皇牌空战7》原作。

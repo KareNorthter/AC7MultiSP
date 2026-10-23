@@ -9,6 +9,7 @@
 | archive/20261023/pre-governance-main / 39141fd | 本次整理前正式2.24.1全部源码、文档和证据，含三个before-2.16全文 |
 | archive/20261023/pre-governance-root / 0b75b21 | 原根目录已提交2.21.1基线；未提交内容另见下表 |
 | archive/20261023/pre-artifact-cleanup / c353e79 | 文档分目录及旧核心归档前的已提交状态；恢复原路径和历史DLL |
+| archive/20261023/pre-player-docs / 59e02c3 | 玩家文档重写前的中英README、安装说明、本版摘要和详细版本记录 |
 | archive/project-before-2.16-release / 92690a7 | 更早整理前完整主树 |
 | archive/20261016/*、archive/20261017/* | 早期研究tip与文档归档；名称映射可从上述标签中的旧archive/README查看 |
 | archive/20261023/* | 本次关闭的52个已被main包含的分支tip；逐项映射见[治理回执](../../evidence/project-governance-20261023.json) |
@@ -17,6 +18,8 @@
 读取历史用 `git show 标签:仓库相对路径`，例如 `git show archive/20261023/pre-governance-main:docs/development.md`。恢复研究从当前main新建分支后取精确差异，不整支合回旧核心/Lua/配置。
 
 本次移出日常树的三个长篇旧正文为docs/archive/architecture-before-2.16.txt、development-before-2.16.txt、multi-sp-mount-design-before-2.16.txt；还有已退役的docs/research/three-sp-candidate.txt占位说明。旧原文在上述标签和回收站可恢复；原研究源码、原始证据和未用动画文件没有删除。退役脚本若仍引用旧说明，未来恢复时从标签取回，不为它保留日常重复全文。
+
+玩家文档重写后，原双语[授权与致谢原件](legal/授权与致谢原文.txt)按原字节保留；[开发版本旧记录](development-history.md)保留来源与编号对照，停止追加。旧中英README与release.txt不再放日常目录，必要时从pre-player-docs标签恢复。当前四份正文及EXE／ZIP／F6复用方式见[玩家文档维护](../project/player-docs.md)。
 
 ## 未提交内容与本机备份
 
