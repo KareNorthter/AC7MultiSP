@@ -13,6 +13,7 @@
 | 崩溃与诊断现场 | Temp/crash-capture-*、Temp/pw01-*及其他诊断目录 | 完整转储和现场原位保留，按回执定位；不能把普通退出记录当作已找到根因 |
 | 安装器、Vortex与兼容研究 | Temp/delivery-*、Temp/vortex-*、Temp/compatibility-*等 | 保留现有来源与现场；安装器代码仍在独立分支，本轮未接收 |
 | Mod机体分组续研 | Temp/tasks/20261023-mod-aircraft-compat/、backup/aircraft-mod-profiles-*；游戏根AC7AircraftProfiles/ | 本轮分组原料、未解析引用清单、安装快照和切换事务；按[续研正文](../research/mod-aircraft-compatibility.md)恢复，不清理分组库或把临时名称当可删依据 |
+| Mod机体长按兼容静态原料 | Temp/tasks/20261024-mod-hold-switch-static/ | 作者附加类索引、历史按下/松开采样的离线反汇编及摘要；不含本轮进程采集，原始历史采样仍在归档位置，见[续研正文](../research/mod-aircraft-compatibility.md#长按武器切换键的附加功能) |
 | 已归组的散落脚本、报告和附件 | backup/local-assets-20261023/maintenance-scripts、reports、notes、misc等 | 保留原文件名，按下节清单从原路径或新路径检索；属于历史材料，不作为现行构建入口 |
 | 旧检查、安装暂存与编译中间件 | 同归档根verification-fixtures、empty-staging、build-output | 集中保存旧检查副本、空暂存目录及build-ui对象文件；不是源码，也不表示本轮运行过检查 |
 | 个人资料、安装保护与历史恢复 | backup/内原有各目录 | 保持原位，不合并覆盖不同次备份；项目级恢复入口见[归档说明](README.md) |
