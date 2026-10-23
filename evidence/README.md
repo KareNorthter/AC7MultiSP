@@ -15,6 +15,7 @@
 | Mod机体分组安装 | [20261023安装](aircraft-mod-profiles-installed-20261023.json) | 用户选择原作者资源分组启用、部署范围和缺项保留；不代表实机通过 |
 | CFA-50与机库名称 | [20261023核对](cfa50-visibility-review-20261023.json) | 呼号包名称覆盖、用户授权禁用、CFA-50两包同字节及当前目录核对；显示仍待用户重启确认 |
 | XFA-33独立替换组 | [20261023入库](fenrir-profile-installed-20261023.json) | 三型替换关系、与Su-35SX隔离、保持A组、CFA-50机库已找到的后续反馈；未启用或实机验证新组 |
+| CFA-50的EML与十字键 | [20261023现场](cfa50-eml-runtime-review-20261023.json) | 炮体资源完整而已发布姿态仍收纳、舱门域残留；关闭多SP十字键后未发现输入拦截，僚机响应待用户稍后测试；EML根因待原生出击对照 |
 | 动画半成品 | [产品访问](sp-animation-product-access.json)、[早期动画](mount-expansion-animated.json) | 研究依据与尚未成立的运行条件 |
 | 仓库整理 | [20261023治理回执](project-governance-20261023.json) | 删除的分支tip、封存工作树、快照及本轮核对范围 |
 | 文档与旧产物归档 | [20261023归档回执](artifact-archive-20261023.json) | 文档路径映射、旧包和DLL归档位置、仍保留依赖及核对范围 |

@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| Mod机体兼容性续研，已安装待实机确认 | 本聊天；续接01a15f12-100b-7640-9d2b-2c54ef825a45；基线main/85ab3a0 | codex/research-mod-aircraft-compat；C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 独占[续研正文](../research/mod-aircraft-compatibility.md)、安装/反馈回执、src/research/aircraft_mod_profiles.py及索引登记；10包分组及XFA-33独立替换组已入库，当前A不切换。呼号包已禁用，名称和CFA-50可见性均获用户确认；CFA-50出击与代理关闭请求相邻的异常留证，用户要求先安装。S-44/Arkbird此前问题已解决；未编译、测试、启动游戏或推送 |
+| Mod机体兼容性续研，已安装待实机确认 | 本聊天；续接01a15f12-100b-7640-9d2b-2c54ef825a45；基线main/85ab3a0 | codex/research-mod-aircraft-compat；C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 独占[续研正文](../research/mod-aircraft-compatibility.md)、安装/反馈回执、src/research/aircraft_mod_profiles.py及索引登记；10包分组及XFA-33独立替换组已入库，当前A不切换。名称和CFA-50可见性已确认；EML暂停现场显示炮体资源完整但未展开，待关闭本Mod后全新单EML出击对照；十字键代码未发现拦截，用户稍后实测。S-44/Arkbird此前问题已解决；未编译、运行测试、启动游戏或推送 |
 | 文档治理，中文基本认可、英文待补齐 | 本管理聊天；四份中文完成锚archive/20261023/player-docs；安装说明基于79a90e4重写，codex/docs-universal-install完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 安装说明仅按未来通用ZIP及配套EXE编写，三种安装方式共用；根目录人工修改的功能说明、更新日志保留，不混入提交。双语及程序接入继续待用户安排；[文档复用](player-docs.md)记录边界 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改，双语及界面接入由用户稍后安排 |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
