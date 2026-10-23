@@ -1,5 +1,0 @@
-历史入口，已退役。
-
-此路径仅保留旧 prepare-three-sp-candidate.py 的文档依赖，不用于当前 1.1.0 构建或安装。
-有效入口见 ../development.md。原候选说明需从 Git 历史定向读取：
-git show archive/20261016/docs-before-prune:docs/archive/research/three-sp-candidate.txt

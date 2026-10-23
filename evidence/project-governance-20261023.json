@@ -1,0 +1,509 @@
+{
+  "date": "2026-10-23",
+  "scope": "文档与开发规范整理、分支和工作树管理；不改功能代码，不编译/测试/安装/发布；交付流程后续重做",
+  "baseline_main": "39141fdcdcd4b2596ca31ac9335fdfc1f0b74f9c",
+  "preserved_root_head": "0b75b21e4e29c817d193188e7326700507417dae",
+  "root_now": "main",
+  "backup_directory": "E:\\AC7_MultiSP\\backup\\project-governance-20261023",
+  "bundle_sha256": "ee410b187cc8db76f90dab7e846ba5baa822be307f4331e0a5a85a6cbc465aa8",
+  "root_pending_location": "E:\\AC7_MultiSP\\Temp\\preserved-local-20261023",
+  "dirty_snapshots": [
+    {
+      "worktree": "E:/AC7_MultiSP",
+      "HEAD": "0b75b21e4e29c817d193188e7326700507417dae",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\root.zip",
+      "snapshot_sha256": "8d237d692b5f7bfa3a2c7f3dba6d6045c381ff58d2fc8cbce3ccd3707532909e",
+      "snapshot_file_count": 27
+    },
+    {
+      "worktree": "C:/Users/83717/.codex/worktrees/release-1-0-2-f6/AC7_MultiSP",
+      "HEAD": "b6b697941055e79da6c874b05e3aab0773a6fbc5",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\release-1-0-2-f6.zip",
+      "snapshot_sha256": "23006163fc56a6249b531a96302f1e8a31b3315ccacaedbe04cad720f58c55ba",
+      "snapshot_file_count": 1
+    },
+    {
+      "worktree": "C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP",
+      "HEAD": "42b87c0559b37ea2fcc0a65b6bc6e364c86c402f",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\update-feature.zip",
+      "snapshot_sha256": "2f50d633f62246c2cb79ca776026f2b3a6b1693dfa5da09ff88419f533e0b9b4",
+      "snapshot_file_count": 11
+    },
+    {
+      "worktree": "C:/Users/83717/.codex/worktrees/update-preview/AC7_MultiSP",
+      "HEAD": "391f46dabb92cbfb55a6d8af255cf8737e8c32cc",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\update-preview.zip",
+      "snapshot_sha256": "796b400e434b3736ce35a89d0ba0b3f28c282b3abcb3f240f68db127d7c8bb9a",
+      "snapshot_file_count": 16
+    },
+    {
+      "worktree": "E:/AC7_MultiSP/Temp/adf11f-uav-research",
+      "HEAD": "8f600e4c42e9b1967bcae991a06c504dc81d330c",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\adf11f-uav-research.zip",
+      "snapshot_sha256": "f0f2642cf1d339bd06d6faf197396d9b6bbbc7e97f5b14299d277953b0976d91",
+      "snapshot_file_count": 13
+    },
+    {
+      "worktree": "E:/AC7_MultiSP/Temp/ecm-tls-persistence",
+      "HEAD": "4e626e347556b8e7502e2b940a65505e2486a6d4",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\ecm-tls-persistence.zip",
+      "snapshot_sha256": "eada5333742733062e061db8fa671f367b866b18dc67bcc651328c9b6a3b55a7",
+      "snapshot_file_count": 13
+    },
+    {
+      "worktree": "E:/AC7_MultiSP/Temp/persistent-sp-research",
+      "HEAD": "b0f4acc528bde83169cdd4bb6d978cf53806a03f",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\persistent-sp-research.zip",
+      "snapshot_sha256": "6233b28187d70f99d696960deeb8be1d2536781d9b0279a4c142b1d7c3a37b65",
+      "snapshot_file_count": 1
+    },
+    {
+      "worktree": "E:/AC7_MultiSP/Temp/su30sm-dual-mount-research",
+      "HEAD": "c44e3b9ae19a2dded4a40389d839fa76e56a9119",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\su30sm-dual-mount-research.zip",
+      "snapshot_sha256": "c1eb60d03e6d13f77a37af8844efb7d4af2920ba25fa451c5f8f6b938567ebcd",
+      "snapshot_file_count": 1
+    },
+    {
+      "worktree": "E:/AC7_MultiSP/Temp/su30sm-fixed-mount-prototype",
+      "HEAD": "d2f2221bf06b3f0bd5d7c4c5d8466162ff4085eb",
+      "snapshot": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\su30sm-fixed-mount-prototype.zip",
+      "snapshot_sha256": "7b845a288d42240e8fc3d40d085fcd0c7473bfad2bb51d8f6b794c1cff61b14e",
+      "snapshot_file_count": 1
+    }
+  ],
+  "actions": [
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/camera-defaults-tabs",
+      "commit": "effa304a04f6e5da73ee1ee7a23508d2506766af",
+      "tag": "archive/20261023/camera-defaults-tabs"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/camera-view-continuity",
+      "commit": "9ee18831469684b679bc0b7d403dcf0057af550b",
+      "tag": "archive/20261023/camera-view-continuity"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-fire-switch-audit",
+      "commit": "0c1d35a116af1de49def485c9e24ae5ab99d3436",
+      "tag": "archive/20261023/cfa44-fire-switch-audit"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-hotpath-audit",
+      "commit": "f4bb86ce8a8efbeccc784c9adfff28cb521b0ad5",
+      "tag": "archive/20261023/cfa44-hotpath-audit"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-live-fire-residue",
+      "commit": "4b5c1b51f6c720952e985935f240cf42e44b6bcf",
+      "tag": "archive/20261023/cfa44-live-fire-residue"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-sp-animation",
+      "commit": "66ed7ec1469946820c4076e540778183720604b9",
+      "tag": "archive/20261023/cfa44-sp-animation"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-switch-ecm",
+      "commit": "ec2738bc5751fd0264fa265ac8f33bb1a629b21b",
+      "tag": "archive/20261023/cfa44-switch-ecm"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/cfa44-switch-performance",
+      "commit": "2da223a069bb6a20adf405fd4a3a18844bc86cb3",
+      "tag": "archive/20261023/cfa44-switch-performance"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/compatibility-pwmki-standalone",
+      "commit": "66cc725918c283a23f0ee3da2deb8e03260828ae",
+      "tag": "archive/20261023/compatibility-pwmki-standalone"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/f22-preparation-hang",
+      "commit": "eabc53d74d7fbf1f3ed49376efbd832095ba4a31",
+      "tag": "archive/20261023/f22-preparation-hang"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/formal-2.23.0",
+      "commit": "3119d52619d9ede9f80cec7207f0a6418196d8ac",
+      "tag": "archive/20261023/formal-2.23.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.17.0",
+      "commit": "fcccc0a195e8c6df9f585a4a3b4766407565e38d",
+      "tag": "archive/20261023/integration-2.17.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.18.0",
+      "commit": "0991906a8d4528178fe567b6bbfa35b1ef341303",
+      "tag": "archive/20261023/integration-2.18.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.0",
+      "commit": "9f3a9527d3f78bbf40024692f6e876f81627a550",
+      "tag": "archive/20261023/integration-2.19.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.1",
+      "commit": "a970ca44ad8a79ee5a372542f81356d89e9e6a75",
+      "tag": "archive/20261023/integration-2.19.1"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.2",
+      "commit": "9fafb7871e76351e4890d9512529ab5434022de0",
+      "tag": "archive/20261023/integration-2.19.2"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.3",
+      "commit": "3b4bdce6111243dbdf249e3c82b54e39bf4b959e",
+      "tag": "archive/20261023/integration-2.19.3"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.4",
+      "commit": "9bb6bd28763b706b49de14435e5179790140701f",
+      "tag": "archive/20261023/integration-2.19.4"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.19.5",
+      "commit": "29027057a8406ae1a792370ac88b6d5eaaee5954",
+      "tag": "archive/20261023/integration-2.19.5"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.20.1",
+      "commit": "3ec3325fdc9fe9d0018cd80e98ca3e1d7e837d58",
+      "tag": "archive/20261023/integration-2.20.1"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.20.2",
+      "commit": "b05eb8b216f61bcdaf0fcca69f367e8f9a431921",
+      "tag": "archive/20261023/integration-2.20.2"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.20.3",
+      "commit": "b72d36dea2c8e2936c36369af3aeec8e6cfeba46",
+      "tag": "archive/20261023/integration-2.20.3"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.21.1",
+      "commit": "cddea06be581a9f2663599c7eecdf677229050d0",
+      "tag": "archive/20261023/integration-2.21.1"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.22.2-alpha1",
+      "commit": "998dd73ff7c87ebdbb1b7c86c925b6c9fbd9ab33",
+      "tag": "archive/20261023/integration-2.22.2-alpha1"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/integration-2.23.1-alpha2",
+      "commit": "5d9bedd6ae9668b527c1b8bdaa6b061949746b6b",
+      "tag": "archive/20261023/integration-2.23.1-alpha2"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/keyboard-modifier-routing",
+      "commit": "66e75f91cb5a0bf2fcc872a9259faa12a8abed5f",
+      "tag": "archive/20261023/keyboard-modifier-routing"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/mig29-hangar-stability",
+      "commit": "cddea06be581a9f2663599c7eecdf677229050d0",
+      "tag": "archive/20261023/mig29-hangar-stability"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/mouse-flight-0-7",
+      "commit": "0b75b21e4e29c817d193188e7326700507417dae",
+      "tag": "archive/20261023/mouse-flight-0-7"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/release-2.19.0",
+      "commit": "a8a6b779854a2d72fe96137a4a6b880b2d8c1dd7",
+      "tag": "archive/20261023/release-2.19.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/release-2.20.0",
+      "commit": "66cc725918c283a23f0ee3da2deb8e03260828ae",
+      "tag": "archive/20261023/release-2.20.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/release-2.21.0",
+      "commit": "7a0559dd1b360f73c84b8d2f9c57b5e1cdd0a49a",
+      "tag": "archive/20261023/release-2.21.0"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/release-2.21.1",
+      "commit": "0b75b21e4e29c817d193188e7326700507417dae",
+      "tag": "archive/20261023/release-2.21.1"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/special-aircraft-safe-fallback",
+      "commit": "d5bc568f357d0d2fa42a71f4f484c7a153778041",
+      "tag": "archive/20261023/special-aircraft-safe-fallback"
+    },
+    {
+      "action": "remove-merged-branch",
+      "branch": "codex/tracking-view-continuity",
+      "commit": "03684fb758b4fbd998030a99752c2a7cfbef7d4d",
+      "tag": "archive/20261023/tracking-view-continuity"
+    },
+    {
+      "action": "recycle-clean-checkout",
+      "branch": "codex/cfa44-muzzle-notes",
+      "commit": "3ecdfd8d2fa251a5fffea91d8c265e7b3efbf89b",
+      "tag": "archive/20261023/cfa44-muzzle-notes",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\cfa44-muzzle-notes\\AC7_MultiSP",
+      "ignored_count": 0
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/mod-special-sp-contract",
+      "commit": "7c61044a928d60a3a1b3b1710338823f6036f4ba",
+      "tag": "archive/20261023/mod-special-sp-contract",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\f14ia-ircm-compat\\AC7_MultiSP",
+      "ignored_count": 742
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/gun-salvo",
+      "commit": "90891aa79302f7f456bae408b24ba061d0f62bff",
+      "tag": "archive/20261023/gun-salvo",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo\\AC7_MultiSP",
+      "ignored_count": 104
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/gun-salvo-xr302",
+      "commit": "16a78a352453f7bd08c57316fb0e1b960dde9590",
+      "tag": "archive/20261023/gun-salvo-xr302",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\gun-salvo-xr302\\AC7_MultiSP",
+      "ignored_count": 8476
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/version-updates",
+      "commit": "d9d3dabd3fe46ec07cc607574ebf1c8467e4491a",
+      "tag": "archive/20261023/version-updates",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\version-updates\\AC7_MultiSP",
+      "ignored_count": 7
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/install-verification-scope",
+      "commit": "a62ea25acf33edf4c7ebc150ccbca62d3bb9183a",
+      "tag": "archive/20261023/install-verification-scope",
+      "path": "E:\\AC7_MultiSP\\Temp\\install-verification-scope",
+      "ignored_count": 1
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.23.0",
+      "commit": "629af57d5e2d98723980c6fde7cc8f31bddb2bc1",
+      "tag": "archive/20261023/integration-2.23.0",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.23.0",
+      "ignored_count": 886
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.23.0-refresh",
+      "commit": "e7524df9bd67e3e068a3feb435604839a17498b2",
+      "tag": "archive/20261023/integration-2.23.0-refresh",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.23.0-refresh",
+      "ignored_count": 928
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.23.1",
+      "commit": "d639084c71108aa2bc68d34f5f020217a6e54c60",
+      "tag": "archive/20261023/integration-2.23.1",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1",
+      "ignored_count": 895
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.23.1-alpha1",
+      "commit": "b0a2010c4078ad6b4c8548e14af7d986e85e12e1",
+      "tag": "archive/20261023/integration-2.23.1-alpha1",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha1",
+      "ignored_count": 965
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/release-2.23.1",
+      "commit": "67f40f1982a34cd6a298cae480114682274ee5f6",
+      "tag": "archive/20261023/release-2.23.1",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.23.1-alpha2",
+      "ignored_count": 990
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.24.0",
+      "commit": "fc84af28b12941fcabcd56bc5bdb13994027d799",
+      "tag": "archive/20261023/integration-2.24.0",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.24.0",
+      "ignored_count": 896
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.24.0-alpha1",
+      "commit": "39141fdcdcd4b2596ca31ac9335fdfc1f0b74f9c",
+      "tag": "archive/20261023/integration-2.24.0-alpha1",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.24.0-alpha1",
+      "ignored_count": 2413
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.25.0",
+      "commit": "6dec7d0e819cae0fad712a78185699eee04d072f",
+      "tag": "archive/20261023/integration-2.25.0",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.25.0",
+      "ignored_count": 2051
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.25.1",
+      "commit": "983f1c36a6ee08880d49d7a1df81e61ae84e17bf",
+      "tag": "archive/20261023/integration-2.25.1",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.25.1",
+      "ignored_count": 942
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/integration-2.26.0",
+      "commit": "824adb57bfa70f0dfe6798b5c2497b807ff67420",
+      "tag": "archive/20261023/integration-2.26.0",
+      "path": "E:\\AC7_MultiSP\\Temp\\integration-2.26.0",
+      "ignored_count": 1585
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/release-2.22.0",
+      "commit": "391f46dabb92cbfb55a6d8af255cf8737e8c32cc",
+      "tag": "archive/20261023/release-2.22.0",
+      "path": "E:\\AC7_MultiSP\\Temp\\release-2.22.0",
+      "ignored_count": 198
+    },
+    {
+      "action": "seal-in-place",
+      "branch": "codex/release-2.22.1",
+      "commit": "a96cde63e64438d4553cdb4e4b6b9ece0e4331f2",
+      "tag": "archive/20261023/release-2.22.1",
+      "path": "E:\\AC7_MultiSP\\Temp\\release-2.22.1",
+      "ignored_count": 199
+    },
+    {
+      "action": "retire-worktree-registration",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\three-sp-ui-polish\\AC7_MultiSP",
+      "metadata": "E:\\AC7_MultiSP\\.git\\worktrees\\AC7_MultiSP1",
+      "backup": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\worktree-metadata-AC7_MultiSP1.zip",
+      "directory_was_missing": true
+    },
+    {
+      "action": "retire-worktree-registration",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\cfa44-muzzle-notes\\AC7_MultiSP",
+      "metadata": "E:\\AC7_MultiSP\\.git\\worktrees\\AC7_MultiSP11",
+      "backup": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\worktree-metadata-AC7_MultiSP11.zip",
+      "directory_was_missing": false
+    },
+    {
+      "action": "retire-worktree-registration",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-layout-research\\AC7_MultiSP",
+      "metadata": "E:\\AC7_MultiSP\\.git\\worktrees\\AC7_MultiSP2",
+      "backup": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\worktree-metadata-AC7_MultiSP2.zip",
+      "directory_was_missing": true
+    },
+    {
+      "action": "retire-worktree-registration",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\mount-expansion\\AC7_MultiSP",
+      "metadata": "E:\\AC7_MultiSP\\.git\\worktrees\\AC7_MultiSP3",
+      "backup": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\worktree-metadata-AC7_MultiSP3.zip",
+      "directory_was_missing": true
+    },
+    {
+      "action": "retire-worktree-registration",
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\sp-combination-technology\\AC7_MultiSP",
+      "metadata": "E:\\AC7_MultiSP\\.git\\worktrees\\AC7_MultiSP4",
+      "backup": "E:\\AC7_MultiSP\\backup\\project-governance-20261023\\worktree-metadata-AC7_MultiSP4.zip",
+      "directory_was_missing": true
+    }
+  ],
+  "old_main_sealed": "E:\\AC7_MultiSP\\Temp\\integration-2.22.2-alpha1",
+  "before_branch_count": 75,
+  "removed_merged_branch_count": 52,
+  "before_worktree_count": 42,
+  "unadopted_research_preserved": true,
+  "ignored_assets_deleted": false,
+  "existing_receipts_modified": false,
+  "limitations": [
+    "本轮差异快照不包含ignored资源，其原位置保持",
+    "缺目录工作树的ignored原料未恢复，仅保存登记元数据和Git恢复锚",
+    "不核实游戏实时状态，不用历史验收代替安装器新交互验收"
+  ],
+  "retired_duplicate_documents": [
+    {
+      "path": "docs/archive/architecture-before-2.16.txt",
+      "sha256": "f4a2f48be4a9a50f8cdabcaba8123c39d65c0888de756660c3193efe068e4274",
+      "recovery": "archive/20261023/pre-governance-main:docs/archive/architecture-before-2.16.txt"
+    },
+    {
+      "path": "docs/archive/development-before-2.16.txt",
+      "sha256": "ddd9af37d8716a4d35b55974fefbab5423676c247d0e8e670ee1cf6117727e89",
+      "recovery": "archive/20261023/pre-governance-main:docs/archive/development-before-2.16.txt"
+    },
+    {
+      "path": "docs/archive/multi-sp-mount-design-before-2.16.txt",
+      "sha256": "efff62c0a4cbbc0437d60655db04071e414dbbdc1b218452dbec85bcf07ff327",
+      "recovery": "archive/20261023/pre-governance-main:docs/archive/multi-sp-mount-design-before-2.16.txt"
+    },
+    {
+      "path": "docs/research/three-sp-candidate.txt",
+      "sha256": "57b3c624d0491b54adf7c3ed4c1376e5fa39209080163c77a450430f51c7ab22",
+      "recovery": "archive/20261023/pre-governance-main:docs/research/three-sp-candidate.txt"
+    }
+  ],
+  "verification": {
+    "dirty_worktrees_preserved": 9,
+    "root_pending_entries_preserved": 27,
+    "removed_branch_tags_verified": 52,
+    "preexisting_tags_unchanged": true,
+    "delivery_branch_unchanged": true,
+    "protected_old_core_unchanged": true,
+    "document_relative_links_checked": 284,
+    "broken_relative_links": 0,
+    "functional_source_changes": false,
+    "compiled": false,
+    "tests_run": false,
+    "game_operated": false,
+    "uploaded": false
+  }
+}

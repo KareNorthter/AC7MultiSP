@@ -1,13 +1,25 @@
-AC7MultiSP 2.23.1
+AC7MultiSP 2.24.1 安装参考
 
-安装
-1. 完整解压，先退出游戏。Steam→游戏→管理→浏览本地文件，找到Ace7Game.exe所在目录。
-2. 备份已有dwmapi.dll、ue4ss及同名挂载包。升级保留ue4ss\Mods\DualSP\profiles.json，不删除整个DualSP目录。
-3. 本包不附带DirectX和VC运行库；需要时另行安装微软官方运行库，已有同版或更新组件无需卸载。
-4. 将GameFiles内的dwmapi.dll、ue4ss和Game合并复制到游戏根目录，不要复制GameFiles文件夹本身。挂载包路径为Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak。
-5. 原mods.txt若还有其他Mod，不覆盖整个文件，只保留或补入DualSP : 1。本包使用AC7专用UE4SS加载器，共享加载器须核对后合并。
-6. 通过Steam启动，默认F6打开管理界面；无需Python或编译工具。旧格式配置和个人方案先完整备份，再重置为配置19，不做迁移；已有有效配置19正常保留。
+当前正式基线
+正式主线与本地发布为2.24.1，适用Windows 10/11 x64、Steam build9855922，仅单人战役和自由任务。现有正式ZIP为AC7MultiSP-2.24.1.zip，不附带DirectX/VC运行库，需要时另行安装微软官方运行库。
 
-卸载时移出DualSP目录及上述挂载包，并移除启用项；共享加载器仅在其他Mod不再使用时移出。本包不含个人配置、存档、日志、转储、诊断工具或第三方机体Mod。
+现有ZIP的固定路径
+• 游戏根目录：由Steam→游戏→管理→浏览本地文件找到，包含Ace7Game.exe。
+• GameFiles内的dwmapi.dll、ue4ss、Game合并到游戏根目录，不复制GameFiles文件夹本身。
+• 模组目录：ue4ss\Mods\DualSP；内部目录和启用名称DualSP请勿改名。
+• 模型包：Game\Content\Paks\~mods\AC7MultiSP_Mounts_P.pak。
+• 启用列表：ue4ss\Mods\mods.txt，保留或补入DualSP : 1，不覆盖其他Mod的启用项。
+• 个人配置与方案：ue4ss\Mods\DualSP\profiles.json，升级时保留，不删除整个DualSP目录。
 
-具体操作、适配表及历史日志见README_zh-CN.txt。
+安装、升级与卸载
+1. 完整解压并退出游戏，先备份同名DLL、ue4ss及挂载包，再合并文件。本项目使用AC7专用UE4SS加载器；已有加载器或同名代理DLL时先核对，普通UE4SS不能直接替代。
+2. 有效配置19、个人键位及方案正常保留。更早格式不迁移：先完整备份旧配置和个人方案，再生成配置19默认值。通过Steam启动，默认F6打开管理界面；无需Python或编译工具。
+3. 卸载时移出DualSP和上述模型包，移除DualSP : 1；共享加载器只在确认其他Mod不再使用时移出。保留个人配置备份。
+
+交付重做待办
+• 安装交付方式后续统一整理，本次不修改打包器或重新制作安装包。
+• 另分支的AC7MultiSP_Installer.exe是工具0.2.0预览（来源a99a404），游戏载荷仍为2.24.1，尚未整合为正式ZIP的安装方式。旧0.1.0实测不代表0.2.0交互已验收。
+• EXE导出的通用ZIP根目录直接是ue4ss和Game，不含共享UE4SS前置，与现有正式GameFiles ZIP布局不同；暂按各自产物说明使用，不混套安装步骤。
+• 唯一历史正文为仓库docs/版本更新说明.md，目前未接入现有包；后续统一生成安装界面和发布摘要所需内容。
+
+功能、默认值和机体适配见README_zh-CN.txt；英文见README_en.txt。

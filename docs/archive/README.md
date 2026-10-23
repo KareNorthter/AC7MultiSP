@@ -1,49 +1,38 @@
-# 研究与历史归档
+# 归档与恢复
 
-日常开发从main/v2.16.0开始，不通读旧流水。这里保存恢复位置、放弃原因和重要证据，不改变现行功能。
+这里维护恢复位置和覆盖范围；关键结论见[工程经验](../engineering-lessons.md)，未完成方案见[研究索引](../research/README.md)，当前工作入口见[工作区索引](../workspaces.md)。不把历史全文再次复制成另一套可编辑正文。
 
-## 重要回退方案
+## 文本与源码恢复锚
 
-| 研究 | 恢复锚 | 为什么不作为当前方案 |
-|---|---|---|
-| F22/Su47/Su57 TGM完整内舱与共舱动画 | `archive/full-bay-mount-2.8.1` / `57fd5d3` | 几何思路可行，但Su47/TGM严重掉帧、空架/重复开合；转向机外明显模型保留 |
-| F22腹部骨显隐 | `archive/f22-belly-bones-2.11` / `9c5d3d2`；研究`8c83e00` | 高频骨操作代价，后来撤去；保侧8AAM、腹舱原生 |
-| X02 EML与腹舱姿态 | `archive/x02s-eml-2.12` / `0b11a26` | 炮体与舱门冲突影响观感；`4005e1d`撤销外观适配 |
-| CFA保开度、阻止ADMM/EML互切动画 | `archive/cfa-animation-2.15` / `a4f7d1b` | 旧强收ECM公共进度阻断原生发射阶段；2.16恢复原生，性能/隐藏仍待优化 |
-| CFA/ADF轻量缓存与原生取舍 | `8413328`，合并成品`92690a7` | 当前发布来源；仍保留已记录卡顿和ECM模型问题 |
+| 恢复锚 | 内容与用途 |
+|---|---|
+| archive/20261023/pre-governance-main / 39141fd | 本次整理前正式2.24.1全部源码、文档和证据，含三个before-2.16全文 |
+| archive/20261023/pre-governance-root / 0b75b21 | 原根目录已提交2.21.1基线；未提交内容另见下表 |
+| archive/project-before-2.16-release / 92690a7 | 更早整理前完整主树 |
+| archive/20261016/*、archive/20261017/* | 早期研究tip与文档归档；名称映射可从上述标签中的旧archive/README查看 |
+| archive/20261023/* | 本次关闭的52个已被main包含的分支tip；逐项映射见[治理回执](../../evidence/project-governance-20261023.json) |
+| archive/full-bay-mount-2.8.1、archive/f22-belly-bones-2.11、archive/x02s-eml-2.12、archive/cfa-animation-2.15 | 弹舱/动画/布局等重要未采用或撤回方案，继续条件见研究索引 |
 
-完整旧论证分别在[旧挂载研究](multi-sp-mount-design-before-2.16.txt)、[旧架构](architecture-before-2.16.txt)、[旧开发记录](development-before-2.16.txt)。这些文本按整理前原字节保留，里面的“当前”、路径和旧链接属于当时状态；当前规则以正文为准。
+读取历史用 `git show 标签:仓库相对路径`，例如 `git show archive/20261023/pre-governance-main:docs/development.md`。恢复研究从当前main新建分支后取精确差异，不整支合回旧核心/Lua/配置。
 
-## Git与工作树
+本次移出日常树的三个长篇旧正文为docs/archive/architecture-before-2.16.txt、development-before-2.16.txt、multi-sp-mount-design-before-2.16.txt；还有已退役的docs/research/three-sp-candidate.txt占位说明。旧原文在上述标签和回收站可恢复；原研究源码、原始证据和未用动画文件没有删除。退役脚本若仍引用旧说明，未来恢复时从标签取回，不为它保留日常重复全文。
 
-整理前完整主树标签：`archive/project-before-2.16-release`，指向`92690a7`。老分支tip均转为下表标签；Git bundle、HEAD/二进制差异/未跟踪文件快照及清单在本机`backup/project-archive-20261017/`。12个历史工作树转detached并锁定；8处存在的改动先压缩、逐成员核验，再去掉旧分支名。未删除这些工作树。
+## 未提交内容与本机备份
 
-**普通Git快照不包含ignored资源。** 各工作树Temp中的原模型、几何、工具和构建继续原位保留，完整恢复须连同它们；锁定不等于文件权限只读。个人安装/存档备份没有清理。
+| 本机位置 | 保存内容及边界 |
+|---|---|
+| E:/AC7_MultiSP/backup/project-governance-20261023/ | 整理前all-refs.bundle、refs-before.txt、inventory-before.json；9个脏工作树的HEAD、工作区/暂存二进制差异、未跟踪文件ZIP及摘要 |
+| E:/AC7_MultiSP/Temp/preserved-local-20261023 | 原根目录27项变动的可编辑保留副本，原分支codex/aircraft-mod-static-plan；独立ZIP同时保留。根目录ignored资产仍在原位置，没有搬进该副本 |
+| 同备份目录worktree-metadata-*.zip | 4条缺目录登记及1个干净旧工作树的Git元数据；回读核对后原登记送回收站。记录缺失不证明其原料已找回 |
+| E:/AC7_MultiSP/backup/project-archive-20261017/ | 早期Git bundle、工作树ZIP、git-archive-manifest.json、historical-evidence-and-references.zip、historical-builds.zip及materials-archive-manifest.json；覆盖范围按旧清单，不凭名字推断 |
+| E:/AC7_MultiSP/backup/fov-editor-archive-20261019-081507.zip | 原版/仅键盘FOV尝试、诊断脚本与日志等；功能未通过，旧说明曾记录70成员核验，本轮未重复解包验收 |
 
-唯一保留的活动研究分支`codex/2.15-hud-mission14-localization`来自线程“修复切换与机库提示”，现在研究新的手柄注视功能；它的旧a07dfe6成果已合入发布，新研究不属于2.16，不因本轮清理而删除。
+FOV卸载件在backup/compatibility-pwmki-standalone-20261019-081643/removed/；对应本机回执随preserved-local-20261023保留。恢复前先备份后续个人资料，不拿旧多SP核心覆盖当前版本。
 
-| 旧分支 | 归档标签 | 提交 |
-|---|---|---|
-| `codex/adf11f-uav-research` | `archive/20261017/adf11f-uav-research` | `8f600e4` |
-| `codex/cfa44-eml-effect-fix` | `archive/20261017/cfa44-eml-effect-fix` | `4005e1d` |
-| `codex/ecm-tls-persistence` | `archive/20261017/ecm-tls-persistence` | `4e626e3` |
-| `codex/investigate-hangar-exit` | `archive/20261017/investigate-hangar-exit` | `8f600e4` |
-| `codex/maintenance-2-0-0` | `archive/20261017/maintenance-2-0-0` | `4e626e3` |
-| `codex/management-mount-options` | `archive/20261017/management-mount-options` | `8f600e4` |
-| `codex/menu-diagnostics-controls` | `archive/20261017/menu-diagnostics-controls` | `92690a7` |
-| `codex/mount-expansion` | `archive/20261017/mount-expansion` | `9cefa43` |
-| `codex/mount-layout-research` | `archive/20261017/mount-layout-research` | `10d6301` |
-| `codex/pending-ui-polish` | `archive/20261017/pending-ui-polish` | `7e2fe4a` |
-| `codex/release-2-0-tooling` | `archive/20261017/release-2-0-tooling` | `3c00f3e` |
-| `codex/sp-combination-technology` | `archive/20261017/sp-combination-technology` | `e35ff09` |
-| `codex/sp-switch-animation-research` | `archive/20261017/sp-switch-animation-research` | `8c83e00` |
+## 原料与冻结目录
 
-恢复某项研究时，在主工作区从main新建codex分支，用`git show 标签:路径`查看历史，再挑需要的差异；不要整支合并旧的核心/Lua/文档。若Git仓库损坏，可通过本地all-refs.bundle恢复refs，再按git-archive-manifest.json和worktree ZIP核对未提交内容。
+普通Git和本轮差异ZIP均不包含ignored模型、游戏资源、工具、完整构建或转储。17个已接收旧工作树及旧main工作树本轮原位封存，保留路径依赖，名单见工作区索引和治理回执；锁定只防误清理，不代表文件权限只读。
 
-## 压缩资料
+本轮没有清理Temp大资产、backup个人资料或旧发布包。原完整内舱、动画、旧TGM资源、未接收更新器继续保留。后续恢复依次核对提交、未提交快照、ignored原料、工具和摘要；缺少任一层就明确缺项。
 
-本机`backup/project-archive-20261017/historical-evidence-and-references.zip`保存早期0.x/1.x候选、旧native/integration取证与历史截图，按原路径附SHA256；整理前标签也能恢复Git内原文。`1.1.0-release.json`作为运行库来源校验仍原位保留。
-
-`historical-builds.zip`压缩旧构建，保留当前2.16、CFA旧2.15、X02旧2.12、完整舱2.8.1及旧正式2.4原目录。压缩档逐成员核验后，收集的原件送回收站，未永久删除；详见materials-archive-manifest.json。
-
-当前生成器依赖的11份证据、全部研究脚本/配方以及50副本模型输入原位保留，不能只为目录整齐移走。ZIP不进Git或公开发布包；从其他机器恢复时，可用Git归档标签先还原文本/证据，本机游戏资源另备。
+旧Vortex链接备份中的部分链接目标已不存在，不能凭备份目录存在宣称可恢复。先区分链接本身和实际字节，必要时按原包或物化备份恢复，不自动跟随覆盖游戏目录。
