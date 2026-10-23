@@ -1,0 +1,253 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "timezone": "Asia/Shanghai",
+  "pid": 38108,
+  "authorization": "用户操作游戏，助手只读观察；未授权安装、游戏函数调用或内存修改。",
+  "installed_version_record": "2.24.2",
+  "runtime_source_main_at_start": "bba1bb938aa3ce82ec0410dceb1a6ed994524c2f",
+  "process_write": false,
+  "game_functions_called": false,
+  "debugger_attached": false,
+  "game_input_sent": false,
+  "game_files_written": false,
+  "compiled": false,
+  "tests_run": false,
+  "table": {
+    "object": "/Game/Blueprint/Information/MissionDataTable.MissionDataTable",
+    "row_count": 72,
+    "selected_tasks": [
+      {
+        "code": "ms01",
+        "mission_id": 101,
+        "dlc_id": "Base",
+        "free_flight_id": 201
+      },
+      {
+        "code": "ms02",
+        "mission_id": 102,
+        "dlc_id": "Base",
+        "free_flight_id": 202
+      },
+      {
+        "code": "ms03",
+        "mission_id": 103,
+        "dlc_id": "Base",
+        "free_flight_id": 203
+      },
+      {
+        "code": "ms04",
+        "mission_id": 104,
+        "dlc_id": "Base",
+        "free_flight_id": 204
+      },
+      {
+        "code": "ms05",
+        "mission_id": 105,
+        "dlc_id": "Base",
+        "free_flight_id": 205
+      },
+      {
+        "code": "ms06",
+        "mission_id": 106,
+        "dlc_id": "Base",
+        "free_flight_id": 206
+      },
+      {
+        "code": "ms07",
+        "mission_id": 107,
+        "dlc_id": "Base",
+        "free_flight_id": 207
+      },
+      {
+        "code": "ms08",
+        "mission_id": 108,
+        "dlc_id": "Base",
+        "free_flight_id": 208
+      },
+      {
+        "code": "ms09",
+        "mission_id": 109,
+        "dlc_id": "Base",
+        "free_flight_id": 209
+      },
+      {
+        "code": "ms10",
+        "mission_id": 110,
+        "dlc_id": "Base",
+        "free_flight_id": 210
+      },
+      {
+        "code": "ms11",
+        "mission_id": 111,
+        "dlc_id": "Base",
+        "free_flight_id": 211
+      },
+      {
+        "code": "ms12",
+        "mission_id": 112,
+        "dlc_id": "Base",
+        "free_flight_id": 212
+      },
+      {
+        "code": "ms13",
+        "mission_id": 113,
+        "dlc_id": "Base",
+        "free_flight_id": 213
+      },
+      {
+        "code": "ms14",
+        "mission_id": 114,
+        "dlc_id": "Base",
+        "free_flight_id": 214
+      },
+      {
+        "code": "ms15",
+        "mission_id": 115,
+        "dlc_id": "Base",
+        "free_flight_id": 215
+      },
+      {
+        "code": "ms16",
+        "mission_id": 116,
+        "dlc_id": "Base",
+        "free_flight_id": 216
+      },
+      {
+        "code": "ms17",
+        "mission_id": 117,
+        "dlc_id": "Base",
+        "free_flight_id": 217
+      },
+      {
+        "code": "ms18",
+        "mission_id": 118,
+        "dlc_id": "Base",
+        "free_flight_id": 218
+      },
+      {
+        "code": "ms19",
+        "mission_id": 119,
+        "dlc_id": "Base",
+        "free_flight_id": 219
+      },
+      {
+        "code": "ms20",
+        "mission_id": 120,
+        "dlc_id": "Base",
+        "free_flight_id": 220
+      },
+      {
+        "code": "ex01",
+        "mission_id": 2101,
+        "dlc_id": "MISSION_C_001",
+        "free_flight_id": 2201
+      },
+      {
+        "code": "ex02",
+        "mission_id": 2102,
+        "dlc_id": "MISSION_C_002",
+        "free_flight_id": 2202
+      },
+      {
+        "code": "ex03",
+        "mission_id": 2103,
+        "dlc_id": "MISSION_C_003",
+        "free_flight_id": 2203
+      }
+    ]
+  },
+  "observed_logs": [
+    "2026-10-23T23:26:42.266Z tick=283509593 seq=7 pid=38108 tid=7704 LUA RUNTIME_MODE enabled singleplayer_menu world=World /Game/UI/Menu/Boot.Boot mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceUIGameMode.AceUIGameMode_C",
+    "2026-10-23T23:27:00.190Z tick=283527515 seq=20 pid=38108 tid=7704 LUA RUNTIME_MODE disabled multiplayer_mode world=World /Game/Maps/Transition/Transition.Transition mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceTransitionGameMode.AceTransitionGameMode_C",
+    "2026-10-23T23:27:00.283Z tick=283527609 seq=21 pid=38108 tid=7704 LUA RUNTIME_MODE enabled singleplayer_menu world=World /Game/UI/Menu/Menu.Menu mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceUIGameMode.AceUIGameMode_C",
+    "2026-10-23T23:28:14.736Z tick=283602062 seq=51 pid=38108 tid=7704 LUA MASTER_SWITCH_APPLIED false",
+    "2026-10-23T23:28:49.765Z tick=283637093 seq=61 pid=38108 tid=7704 LUA RUNTIME_MODE disabled multiplayer_mode world=World /Game/Maps/Transition/Transition.Transition mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceTransitionGameMode.AceTransitionGameMode_C",
+    "2026-10-23T23:29:07.814Z tick=283655140 seq=64 pid=38108 tid=7704 LUA RUNTIME_MODE enabled singleplayer world=World /Game/Maps/Mission/ms06/ms06.ms06 mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceGameMode.AceGameMode_C",
+    "[2026-10-24 07:29:08.3036814] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_fa50_s00_C /Game/Maps/Mission/ms06/ms06.ms06:PersistentLevel.AcePlayerPawn_fa50_s00_C_0 model=241",
+    "2026-10-23T23:30:15.082Z tick=283722406 seq=73 pid=38108 tid=7704 LUA RUNTIME_MODE disabled multiplayer_mode world=World /Game/Maps/Transition/Transition.Transition mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceTransitionGameMode.AceTransitionGameMode_C",
+    "2026-10-23T23:30:20.873Z tick=283728203 seq=74 pid=38108 tid=7704 LUA RUNTIME_MODE enabled singleplayer_menu world=World /Game/UI/Menu/Menu.Menu mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceUIGameMode.AceUIGameMode_C",
+    "2026-10-23T23:31:04.535Z tick=283771859 seq=81 pid=38108 tid=7704 LUA RUNTIME_MODE disabled multiplayer_mode world=World /Game/Maps/Transition/Transition.Transition mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceTransitionGameMode.AceTransitionGameMode_C",
+    "[2026-10-24 07:32:38.3498843] [Lua] [AC7FullControl] ACQUIRE AcePlayerPawn_wuav_s00_C /Game/Maps/Mission/ex02/ex02.ex02:PersistentLevel.AcePlayerPawn_wuav_s00_C_0 model=235",
+    "2026-10-23T23:32:38.337Z tick=283865656 seq=94 pid=38108 tid=7704 LUA RUNTIME_MODE enabled singleplayer world=World /Game/Maps/Mission/ex02/ex02.ex02 mode=BlueprintGeneratedClass /Game/Blueprint/GameModes/AceGameMode.AceGameMode_C"
+  ],
+  "dlc_controlled_flight": {
+    "observed_local_time": "2026-10-24T07:33:16.548563+08:00",
+    "selection": {
+      "mission_id": 2102,
+      "plane_id": 235,
+      "swp": 0
+    },
+    "actual_player_class": "AcePlayerPawn_wuav_s00_C",
+    "actual_player_path": "/Game/Maps/Mission/ex02/ex02.ex02.PersistentLevel.AcePlayerPawn_wuav_s00_C_0",
+    "plane_type_id": 235,
+    "weapon_input_enabled_raw": "01",
+    "controller_path": "/Game/Maps/Mission/ex02/ex02.ex02.PersistentLevel.NimbusPlayerControllerBP_C_0"
+  },
+  "limits": [
+    "用户在普通任务出击前关闭Mod总开关；两次飞行观察不能作为本Mod兵装初始化或自动启动验收。",
+    "只读轮询和现有日志没有函数调用跟踪，不能确定完整出击调用次序。",
+    "未调用SetIsSkipIGC、SkipMiniGame、OpenLevel或其他启动/跳过函数，未验证自动跳过CG。",
+    "只观察M6和DLC特殊任务2的实际飞行，未逐关运行23关；其余任务ID来自本次实际任务表。",
+    "场景对象可在采样过程中销毁；有一段补定位因身份变化终止，之后仅在稳定飞行时取得新快照。",
+    "未最小化或激活游戏窗口；最小化期间不采信旧画面。",
+    "原始代码片段、反射明细和完整日志只保留Temp，不提交或上传。"
+  ],
+  "local_artifacts": [
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\gi-functions-38108.json",
+      "bytes": 45217,
+      "sha256": "faff61cc734ad37601bb60f2dc71c537602882afdd843225304bc7c66a8d939a"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\inspect_entry.py",
+      "bytes": 4624,
+      "sha256": "3c6d5beef23ae4d4d58ce2f05fce133d263da79440c8f3edab27ae5016768db1"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\live-logs.jsonl",
+      "bytes": 127179,
+      "sha256": "55fa6b274fd3610c94d4fca5ed907d3969267f76700cd9220acc1edb06237828"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\mission-table-38108.json",
+      "bytes": 120652,
+      "sha256": "35ed298d1d4c656de4452d5a22160c13df97feb35e7728187f0c00902718a60a"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\state-38108-1792798104.jsonl",
+      "bytes": 137581,
+      "sha256": "0f1701539b94df3fbd36bbdea16e53ccdf44fad616fae605869c002419e22fe6"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\state-38108-1792798292.jsonl",
+      "bytes": 12098,
+      "sha256": "e84623120649db3cdd291159bb3b6d1720ae3f856d99655872812fdd123b2775"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\state-38108-1792798396.jsonl",
+      "bytes": 48726,
+      "sha256": "5726fc9006837708ee8fe92a4a138cd1a4f1dea5610e5a461575d8512219583d"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\state-38108.jsonl",
+      "bytes": 22724,
+      "sha256": "668b045485bc63185038fb0d89a088a30235b278ef8ee5949b07984f2e399390"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\summarize.py",
+      "bytes": 4096,
+      "sha256": "742811b2d2a20c7c2fa11685af449d32f41c685df1fb43b962f6ca8797c29355"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\watch_logs.py",
+      "bytes": 1922,
+      "sha256": "7e1112f3d03fad2c62dc1cbbe4ab1c7105461ecb4eb1a99d91f51795c2eaba9d"
+    },
+    {
+      "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-observation\\watch_state.py",
+      "bytes": 12241,
+      "sha256": "3146a16daafa1fa8055a2724ba328c1e898335e413d102565d24b7c588341c2b"
+    }
+  ]
+}

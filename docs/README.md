@@ -40,7 +40,7 @@
 | 文档 | 内容与维护边界 |
 |---|---|
 | [架构](engineering/architecture.md) | 当前模块、跨语言接口、生命周期与保护机制，不写逐轮交付 |
-| [快速进入测试任务设计](engineering/quick-mission-launch.md) | 指定任务、机体和SP的快速入口方案；未实现，含原生启动链缺口与继续条件 |
+| [快速进入测试任务设计](engineering/quick-mission-launch.md) | 快速入口方案及M6/DLC2只读观察结论；已核23关任务ID，功能未实现，含启动链缺口与继续条件 |
 | [开发与恢复](engineering/development.md) | 源码/原料路径、工具依赖、接收恢复和未解决事项 |
 | [挂载设计](engineering/multi-sp-mount-design.md) | 挂点、净空、布局、配弹、显隐及当前取舍 |
 | [工程经验](engineering/engineering-lessons.md) | 重要故障与性能经验，含证据和适用边界 |

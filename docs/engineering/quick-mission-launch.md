@@ -1,12 +1,12 @@
 # 快速进入测试任务设计
 
-状态：方案已保存，未实现、未发布。2026-10-23用户明确本次只保存方案，暂不操作游戏；本轮没有编译、编写或运行测试、安装、启动游戏。正式状态仍见[项目入口](../../README.md)。
+状态：设计与首轮只读观察已保存，功能未实现、未发布。2026-10-23用户要求只保存方案；2026-10-24用户自行启动并操作游戏，授权助手观察。助手未编译、编写或运行测试、安装、发送游戏输入、调用游戏函数或写进程内存。正式状态仍见[项目入口](../../README.md)。
 
 ## 目标与入口
 
 用户希望参考任务内换机，指定机体、SP和任务，一键进入M1—M20及三个DLC特殊任务，跳过选任务、选机、选装交互和CG，用于快速测试。优先游戏启动后直接进入；若原生启动条件不允许，至少支持主菜单F6管理页启动。
 
-从main `85ab3a0` 建立 `codex/feat-quick-mission-launch`，工作树为 `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`。本任务只保存设计与静态接口核对，不将现有换机当成跨任务启动实现，不改功能版本。
+从main `85ab3a0` 建立 `codex/feat-quick-mission-launch`，工作树为 `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`。本任务维护本设计与观察摘要，不将现有换机当成跨任务启动实现，不改功能版本。继续修改正式运行源码前须与届时main比较；本轮观察时main已有双语资源及后续独立交互改动，不能把本分支旧运行源码覆盖回去。
 
 ## 拟定交互
 
@@ -24,13 +24,13 @@
 
 自动启动优先探索原生初始化完成后的直入路径；若只能在主菜单就绪后触发，界面必须如实说明，不能称已跳过标题、存档选择或所有启动交互。必须保留取消/停用入口，自动启动失败不无限重试。
 
-所有按钮、说明、禁用原因、状态和错误均提供中英文。玩家功能说明与主要更新待实现后在各自唯一正文同步，当前不向正式玩家正文写入尚不存在的功能。
+所有按钮、说明、禁用原因、状态和错误均提供中英文。固定词条接入main现有 `docs/user/interface/` 文字资源，不手改生成表。玩家功能说明与主要更新待实现后在各自唯一正文同步，当前不向正式玩家正文写入尚不存在的功能。
 
 ## 原生边界与待核实依据
 
 现有换机在 `dist/DualSP/Scripts/debug_aircraft.lua` 通过 `SetPlaneAndSWP` 选择机体、`PlayerController:RestartLevel` 重开当前任务。它会核对新世界、本地受控Pawn、实际类和兵装初始化；临时方案不覆盖个人方案。这些事务约束可复用，但RestartLevel不能负责选择另一任务。现有机制见[架构](architecture.md#选装与调试换机)。
 
-本轮只读核对本机 `E:/AC7_MultiSP/Temp/experience-object-index.json`。索引是单行数组，可按 `outer/cls` 重建函数和属性；记录参数名称、类型，不包含完整启动调用链、参数偏移或任务表行数据。下表数组位置为零基，不能把子项排列顺序当函数参数顺序或ABI。
+前期静态核对使用本机 `E:/AC7_MultiSP/Temp/experience-object-index.json`。索引是单行数组，可按 `outer/cls` 重建函数和属性；记录参数名称、类型，不包含完整启动调用链、参数偏移或任务表行数据。下表数组位置为零基，不能把子项排列顺序当函数参数顺序或ABI。本次实时读取另确认了GI函数参数偏移，见下节。
 
 | 已核对候选 | 参数资料 | 能说明什么，尚缺什么 |
 |---|---|---|
@@ -43,9 +43,33 @@
 
 该索引中的原生 `CampaignHangarSortieWidget`、`CampaignMissionLoadWidget` 类没有反射函数，`CampaignFreeMissionWidget` 只有属性；这些原生类的清单不能代替其蓝图流程。尚未找到已证实的单人/自由任务模式设置和完整出击入口，不能用 `SetMissionID + OpenLevel` 拼接后宣称可用。
 
-任务表实际对象为 `/Game/Blueprint/Information/MissionDataTable.MissionDataTable`，位置47365；结构为 `/Script/Nimbus.MissionDataTable`，已见 `MissionID`、`MissionStringID`、`StageNo`、`Category`、`Rule`、`DLCID`、`FreeFlightMissionID`、`NextMissionID`、`HangarPersistentLongName` 等字段。索引没有23关的真实行值，不能猜M1—M20为连续ID或猜三个DLC的ID、地图名、DLC编号。
+任务表实际对象为 `/Game/Blueprint/Information/MissionDataTable.MissionDataTable`，位置47365；结构为 `/Script/Nimbus.MissionDataTable`，已见 `MissionID`、`MissionStringID`、`StageNo`、`Category`、`Rule`、`DLCID`、`FreeFlightMissionID`、`NextMissionID`、`HangarPersistentLongName` 等字段。旧索引本身没有真实行值；2026-10-24已从当前进程取得72行，23个目标任务的实值见下节，不再以编号猜测作为依据。
 
-现有 `runtime_context.lua` 的记录仅能明确 `ms13=113`、同图自由飞行 `213`。任务和自由飞行必须分别识别，不能以地图相同混用规则。DLC许可查询 `NimbusDLCInformation:IsDLCOwned(DLCID:string)->bool` 已有本机资料 `E:/AC7_MultiSP/Temp/plane-switch-native-research/ownership-query-supplement.json`；任务许可须用任务表自己的DLCID，不能套用机体DLC编号。
+现有 `runtime_context.lua` 的 `ms13=113`、同图自由飞行 `213` 与本次表行一致。任务和自由飞行必须分别识别，不能以地图相同混用规则；原生“自由任务”选择普通任务不等于“自由飞行”。DLC许可查询 `NimbusDLCInformation:IsDLCOwned(DLCID:string)->bool` 已有本机资料 `E:/AC7_MultiSP/Temp/plane-switch-native-research/ownership-query-supplement.json`；任务许可须用任务表自己的DLCID，不能套用机体DLC编号。
+
+## 2026-10-24只读观察结论
+
+用户自行操作普通任务M6和DLC特殊任务2。当前安装记录及加载日志为2.24.2；用户在普通任务出击前关闭了Mod总开关，因此本轮不是多SP初始化、快速启动或自动跳过CG的验收。[观察摘要](../../evidence/quick-mission-observation-20261024.json)保存目标任务行、关键日志、观测边界和本机原件摘要；完整日志、任务表、反射和代码片段仅留 `E:/AC7_MultiSP/Temp/tasks/20261024-quick-mission-observation/`，不入Git。
+
+从本轮实际加载的任务表逐行核对：
+
+| 目标 | MissionID | MissionStringID | DLCID | 对应自由飞行ID |
+|---|---|---|---|---|
+| M1—M20 | 101—120，每关对应关系已逐行读取 | ms01—ms20 | Base | 201—220 |
+| DLC特殊任务1 | 2101 | ex01 | MISSION_C_001 | 2201 |
+| DLC特殊任务2 | 2102 | ex02 | MISSION_C_002 | 2202 |
+| DLC特殊任务3 | 2103 | ex03 | MISSION_C_003 | 2203 |
+
+现场时间为北京时间：M6于07:28:49进入 `/Game/Maps/Transition/Transition`，07:29:07切至 `/Game/Maps/Mission/ms06/ms06`，画面随后显示START MISSION及飞行；现有鼠标飞控日志确认其实际机体为 `AcePlayerPawn_fa50_s00_C`、编号241。返回主菜单后，07:31:04再次进入过渡世界，07:32:38才切至 `/Game/Maps/Mission/ex02/ex02`。DLC2稳定飞行快照确认GI选择任务2102、机体235、SP配置0；真实机体 `AcePlayerPawn_wuav_s00_C` 的 `PlaneTypeID=235`、`bEnableWeaponInput=1`，并持有当前任务的 `NimbusPlayerControllerBP_C`。画面确认已实际飞行。
+
+有两项直接影响启动事务：
+
+- 过渡世界被现有运行许可标记为 `multiplayer_mode` 并关闭核心；这是本轮单人出击的实际过渡，不是用户进入多人。快速启动须在“本次已接受请求＋已核对单机过渡世界”下保留等待数据，同时保持核心禁用；不能直接复用换机中遇到该reason就取消的规则，也不能因此全局放开过渡/多人许可。
+- 07:31:32已能只读看到ex02的MissionActor，07:32:38才有当前任务许可与实际玩家。加载中的目标对象存在不能作为世界交接完成依据，仍须核对GI当前世界、受控玩家和飞控输入。窗口最小化期间不采信旧画面；本轮耗时不能作为正常加载性能结论。
+
+实时反射确认 `SetMissionID` 的int参数偏移0；`SetPlaneAndSWP` 的机体int参数偏移0、SP int参数偏移4。当前进程getter原码确认GI任务ID、机体ID、SP分别读 `+0x4d8/+0x4dc/+0x4e0`；观察脚本逐条核对getter签名后只读这些值，正式功能仍应使用反射接口，不能直接照抄偏移写入。
+
+本轮只读轮询没有记录函数调用事件，因此未证实完整出击调用次序、单人/自由任务模式与难度的设置入口、完整地图选择规则或CG跳过契约。没有调用 `OpenLevel`、`SetIsSkipIGC`、`SkipMiniGame` 或其他游戏函数；不能把用户手动完成出击当成快速入口已可用。场景瞬时对象变化导致一段补定位停止，随后在稳定飞行状态取得新快照；只采信核对身份成功的记录。
 
 ## 启动事务设计
 
@@ -61,13 +85,13 @@
 ## 特殊任务与限制
 
 - **第13关：** 现行Mod使用任务指定SP并旁路多SP接管。用户目标包含M13，但“任意指定SP进入M13”目前没有依据，不能把保留任务兵装当成已实现指定SP。需先确认是否有保持任务脚本正常的方案；若最终仅支持任务指定SP，界面禁用自选SP并明确说明，仍标出该项与原目标的差距。
-- **DLC三关：** 必须获得真实任务表行和地图对应，分别核对任务DLC许可。不购买、不伪造许可；未拥有或许可无法确认时明确禁用。
+- **DLC三关：** 真实任务ID与DLC标记已取得，已实际观察ex02地图交接；ex01/ex03完整地图交接仍待核对。分别核对任务DLC许可，不购买、不伪造许可；未拥有或许可无法确认时明确禁用。
 - **开场及阶段CG：** 跳过视觉播放不能跳掉任务初始化或必要事件；不能因接口名含Skip就保证覆盖全部CG。起飞、任务阶段、结尾需分别确认范围。
 - **第三方机体：** 目录完整不是运行保证，沿用现有原生退让和真实类核对。所选SP的持续效果/多挂限制保持，不为快速入口绕过。
 - **进度与方案：** 以独立测试出击为设计方向，优先复用自由任务规则；模式初始化尚未证实，不承诺已隔离战役进度。个人方案与旧检查点不跨任务复用。
 
 ## 后续继续条件
 
-用户另行授权后，先观察一次普通自由任务和一次DLC任务的原生“选择任务→出击→过场→玩家生成”流程，并只读取得23关真实表行，确认模式、难度、地图和许可。核对实际函数参数顺序、前置状态及CG状态恢复，再实现F6手动入口；在同一启动链稳定后增加每进程一次的自动入口。M13及其他特殊关卡单独确认，不用M1的一次成功推定全部通过。
+本次已完成普通任务和DLC2的手动出击观察，以及23关真实表行核对。下一步依据本轮反射和状态原件继续确认原生出击入口、模式/难度及CG状态恢复，补齐ex01/ex03地图交接；只读资料不能代替调用效果。获得相应执行授权后再实现并验证F6手动入口；同一启动链稳定后增加每进程一次的自动入口。M13及其他特殊关卡单独确认，不用两关的手动成功推定23关自动启动通过。
 
-后续验收范围包括23关映射、真实机体/SP、多挂限制、可操控状态、CG与必要脚本事件、DLC缺许可、M13、取消/超时/重复点击、自动启动仅一次、主菜单返回、多人隔离、中英文和个人方案保持。这里只列需要确认的行为，不构成编译、测试、安装或操作游戏授权。本次用户选择只保存方案，等待新指令继续。
+后续验收范围包括23关映射、真实机体/SP、多挂限制、可操控状态、CG与必要脚本事件、DLC缺许可、M13、取消/超时/重复点击、自动启动仅一次、主菜单返回、多人隔离、中英文和个人方案保持。本次授权是观察用户操作，不扩展为编译、安装、调用游戏函数、修改内存或自动控制游戏。后续优先由当前主代理直接处理，按用户要求尽量少用子代理。
