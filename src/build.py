@@ -15,15 +15,20 @@ def main():
     """整套构建，全部产物放在主工作区的新 Temp 子目录。"""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--tools-root", type=Path, default=ROOT / "tools")
-    parser.add_argument("--mount-assets-dir", type=Path, default=ROOT / "Temp/mount-assets-2.14.0/source",
-                        help="按研究回执核对的AC7编码资源对，仅使用本地自有资源")
+    parser.add_argument("--temp-root", type=Path, default=ROOT / "Temp",
+                        help="本轮显式临时根；独立工作树可使用主工作区E盘Temp，不写游戏目录")
+    parser.add_argument("--mount-assets-dir", type=Path, required=True,
+                        help="显式指定当前完整挂载资源来源；不再沿用旧54资源阶段默认目录")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "Temp" / ("build-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")))
     args = parser.parse_args()
     root = ROOT
+    from user_texts import generate
+    generate()
     info = product()
     source_before = source_snapshot()
-    output = contained(args.output_dir, root / "Temp").resolve()  # 不覆盖此前候选或正式 DLL。
-    temporary = (root / "Temp").resolve()
+    args.temp_root.mkdir(parents=True, exist_ok=True)
+    output = contained(args.output_dir, args.temp_root).resolve()  # 不覆盖此前候选或正式 DLL。
+    temporary = args.temp_root.resolve()
     if output == temporary or not output.is_relative_to(temporary):
         raise ValueError("候选输出必须是主工作区 Temp 下的全新子目录")
     compiler = args.tools_root.resolve() / info["toolchain"] / "bin"

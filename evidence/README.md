@@ -7,6 +7,7 @@
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
 | 正式2.24.1 | [integration](2.24.1-integration.json)、[release](2.24.1-release.json)、[授权](2.24.1-release-authorization.json) | 当次来源、检查、发布成员与授权；不证明后续实际安装 |
+| 2.24.2双语交付候选 | [交付核对](2.24.2-delivery.json) | 人工正文接收、双语词条、冻结构建、ZIP及EXE摘要和无安装预览；不代表游戏实测或已上传 |
 | 2.23.1验收/标识 | [用户验收](2.23.1-formal-user-validation.json)、[标识变换](2.23.1-formal-version-label.json) | 已测功能和正式标识的关系 |
 | alpha1安装 | [预检](2.24.0-alpha1-install-preflight.json)、[完成](2.24.0-alpha1-install-completion.json) | 当时Vortex链接处置、个人资料与实际交换；不当作实时安装状态 |
 | 更新模块 | [alpha1来源](2.24.0-alpha1-source-intake.json)、[alpha2来源](2.24.0-alpha2-source-intake.json) | UI、更新清单和通知的接收范围 |

@@ -1,0 +1,49 @@
+{
+  "scope": "游戏侧用户文字；不含安装器",
+  "baseline": "85ab3a0",
+  "original_literal_bilingual_calls": {
+    "src/overlay.cpp:tr": 61,
+    "src/overlay.cpp:panelHelp": 2,
+    "src/management_panel.hpp:tr": 75,
+    "src/management_panel.hpp:panelHelp": 12,
+    "src/version_updates_panel.hpp:tr": 28,
+    "dist/DualSP/Scripts/main.lua:tr": 20,
+    "dist/DualSP/Scripts/native_loadout.lua:tr": 13,
+    "dist/DualSP/Scripts/loadout_flow.lua:tr": 3,
+    "src/overlay.cpp:fallback": 9,
+    "src/management_panel.hpp:fallback": 1
+  },
+  "original_message_replacements": 265,
+  "original_message_replacements_unique": 264,
+  "catalog_entries_per_language": 467,
+  "sources": [
+    "docs/user/interface/game.zh-CN.json",
+    "docs/user/interface/game.en.json"
+  ],
+  "generated": [
+    "src/generated/user_texts.hpp",
+    "dist/DualSP/Scripts/user_texts.lua"
+  ],
+  "included": [
+    "F6控件、帮助、状态、通知、异常摘要",
+    "本项目写入原生选装页的标题、空槽、分类及提示",
+    "换机通知和机体许可附注",
+    "原uiMessages有序显示转换表",
+    "四份中英文玩家正文；F6展示更新日志和作者与授权",
+    "语言/Language标签，管理页各异常字段、禁用原因与日志读取失败均已有本项目双语说明；品牌、符号及按键标准名保留必要原样"
+  ],
+  "excluded": [
+    "纯开发日志与原始异常证据，日志页保留原语言并提供双语说明",
+    "游戏或Mod提供的机体/兵装正式名称、原生说明及第三方法定许可",
+    "机体/兵装代号、按键标准名、路径、协议字段与错误码",
+    "远端更新清单的双语摘要及下载名称属于外部数据，保留动态选语"
+  ],
+  "validation": "本盘点记录文字提取与静态差异核对；构建、封装及预览完成情况见evidence/2.24.2-delivery.json，不代表运行测试或游戏验收",
+  "original_default_fallback": 1,
+  "original_literal_bilingual_total_excluding_language_sentinel": 214,
+  "resources_id_rule": "初次提取以英文短语和摘要生成稳定ID；后续修改中英文值时保留ID，禁止按新文字重建ID。",
+  "stable_diagnostic_match_keys": 266,
+  "language_boundary": "原生选装页跟随游戏语言；F6界面、状态通知和文档按管理页语言。状态桥的原中文片段只作匹配键，两种显示正文均来自catalog。",
+  "current_message_replacements": 267,
+  "additional_bridge_messages": 2
+}

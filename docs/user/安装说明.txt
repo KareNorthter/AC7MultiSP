@@ -1,38 +1,18 @@
 AC7MultiSP 安装说明
 
-本说明适用于通用ZIP及配套EXE安装程序。以下三种方式任选一种，更新和卸载也沿用同一种方式。
+本说明适用于通用ZIP及配套EXE安装程序。vortex安装和exe安装请任选一种，更新和卸载也沿用同一种方式，不要混用。
 
-安装前
-• 完全退出游戏。通过Steam中的“管理→浏览本地文件”找到游戏文件夹，其中应有Ace7Game.exe。
-• 本Mod需要《皇牌空战7》专用UE4SS，普通版UE4SS不能直接代替。通用ZIP不包含这个前置组件。
-• 更新前备份个人设置：ue4ss/Mods/DualSP/profiles.json。
-
-一、Vortex安装
-1. 在Vortex中安装并启用《皇牌空战7》游戏支持扩展和“AC7MultiSP安装支持”扩展。
-2. 导入通用ZIP，安装并启用。手动下载的文件可通过“Install From File”导入。
-3. 按提示安装AC7专用UE4SS，然后部署Mod。
-
-以后通过Vortex更新、停用和卸载。也可运行配套EXE，选择“通过Vortex安装和更新”，导出同一套通用ZIP后再导入。
-
-二、EXE安装
+一、EXE安装
 1. 运行AC7MultiSP_Installer.exe，选择“直接安装”。
 2. 确认游戏文件夹；未自动找到时，选择含Ace7Game.exe的文件夹。
 3. 点击“安装”或“更新”，等待完成。
 
-安装程序会准备所需的AC7专用UE4SS，或复用兼容的现有版本。遇到冲突时按提示处理，不要强行覆盖。以后也通过该程序更新和卸载；卸载会保留个人设置及共享UE4SS。
+二、Vortex安装
+1. 在Vortex中管理《皇牌空战7》，启用对应的游戏支持扩展。并安装AC7专用UE4SS：https://www.nexusmods.com/acecombat7skiesunknown/mods/2474
+2. 从Nexus通过“Mod Manager Download”下载通用ZIP，或用“Install From File”导入已下载的ZIP。
+3. 安装后确认Mod类型为“Engine Injector”；如显示为其他类型，先改为此类型。
+4. 启用Mod并部署，再通过Steam启动游戏。
 
 三、手动安装
-1. 按本Mod下载页的前置要求，先安装AC7专用UE4SS。
-2. 解压通用ZIP，将其中的ue4ss和Game两个文件夹合并复制到游戏文件夹。不要复制ZIP外层文件夹，其他说明及管理文件无需复制。
-3. 通用ZIP已带启用文件，不需要修改或覆盖mods.txt。
-
-手动更新：先把旧ue4ss/Mods/DualSP文件夹移到游戏目录外备份，再复制新版，并将备份中的profiles.json复制回来，避免新旧程序混用。很早版本的设置可能需要重新调整。
-
-手动卸载：移出ue4ss/Mods/DualSP文件夹及Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak。其他Mod仍在使用的共享UE4SS请保留。
-
-安装完成后
-通过Steam启动游戏，按F6；能打开AC7MultiSP管理界面即表示Mod已启动。
-
-注意
-• 切换安装方式前，先用原方式卸载本Mod并保留设置，避免重复安装。Vortex管理的文件不要用EXE或手动方式直接覆盖。
-• 本Mod不附带微软DirectX／VC++运行库；系统缺少时，请另行安装微软官方版本。
+1. 安装AC7专用UE4SS。
+2. 将ZIP中的ue4ss和Game两个文件夹合并复制到游戏文件夹。不要复制ZIP外层文件夹，其他说明及管理文件无需复制。

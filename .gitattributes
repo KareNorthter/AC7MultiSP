@@ -23,3 +23,5 @@ evidence/*.json -text
 
 # 用户提供的授权原件保留UTF-8字节及行尾。
 docs/archive/legal/授权与致谢原文.txt -text whitespace=cr-at-eol
+# 玩家人工正文按原字节分发，中文和英文均不因Git转换行尾。
+docs/user/*.txt -text whitespace=-blank-at-eol,cr-at-eol

@@ -1,0 +1,1808 @@
+{
+  "schema": 1,
+  "language": "en",
+  "texts": {
+    "aircraft.change.is.pending.wait.0963cbb0": "Aircraft change is pending; wait for the mission restart.",
+    "numpad.2fae4464": "Numpad ",
+    "middle.mouse.5581bb76": "Middle mouse",
+    "space.def1441f": "Space",
+    "left.arrow.c1cc20cd": "Left Arrow",
+    "up.arrow.f36f38a7": "Up Arrow",
+    "right.arrow.673752aa": "Right Arrow",
+    "down.arrow.6c65987e": "Down Arrow",
+    "unsupported.key.a2f46db7": "Unsupported key",
+    "unassigned.5dc2dd7c": "Unassigned",
+    "direct.weapon.selection.accepts.single.6aef719b": "Direct weapon selection accepts single keys.",
+    "camera.recenter.accepts.a.single.6fd0ed44": "Camera recenter accepts a single key.",
+    "unsupported.or.duplicate.binding.choose.e7262915": "Unsupported or duplicate binding. Choose another key; Esc cancels.",
+    "aircraft.change.applied.in.the.8802c6d6": "Aircraft change applied in the restarted mission.",
+    "aircraft.selected.restart.the.mission.9a8553aa": "Aircraft selected; restart the mission to apply it.",
+    "request.accepted.restarting.the.mission.f342df8c": "Request accepted; restarting the mission. Aircraft change is not applied yet.",
+    "aircraft.change.was.not.completed.dd99cdf8": "Aircraft change was not completed; see the error details.",
+    "aircraft.state.error.780cbde3": "Aircraft state error: ",
+    "aircraft.change.88b94e64": "Aircraft change",
+    "aircraft.changes.are.available.while.32a3a8bb": "Aircraft changes are available while paused. Closing management returns to the pause menu.",
+    "select.an.aircraft.then.manually.9ed31c02": "Select an aircraft, then manually restart this mission to apply it. The current aircraft is not replaced immediately.",
+    "choose.an.aircraft.and.use.cc75b2be": "Choose an aircraft and use the button below to restart this mission with it. Current mission progress will reset.",
+    "includes.official.and.mod.aircraft.6ae8b80f": "Includes official and mod aircraft with complete three-SP data in the loaded catalogue, including unpurchased or unlicensed official aircraft. Missing mod names fall back to codes. Visual replacements use the base aircraft entry. Purchase records stay unchanged; spawning depends on the game and the installed mod.",
+    "no.available.aircraft.3b7a7e51": "No available aircraft",
+    "target.aircraft.e872d0ff": "Target aircraft",
+    "search.name.code.id.a15a68b4": "Search name / code / ID",
+    "reset.0f237974": "Reset",
+    "all.aircraft.official.aircraft.mod.6b744b3e": "All aircraft\u0000Official aircraft\u0000Mod aircraft\u0000",
+    "all.initials.a.b.c.96d7741e": "All initials\u0000A\u0000B\u0000C\u0000D\u0000E\u0000F\u0000G\u0000H\u0000I\u0000J\u0000K\u0000L\u0000M\u0000N\u0000O\u0000P\u0000Q\u0000R\u0000S\u0000T\u0000U\u0000V\u0000W\u0000X\u0000Y\u0000Z\u0000Digits / Other\u0000",
+    "matches.d.d.cce538e2": "Matches %d / %d",
+    "no.matching.aircraft.change.the.d1d5ac6f": "No matching aircraft. Change the search or reset filters.",
+    "this.is.the.current.aircraft.991bd752": "This is the current aircraft; choose another.",
+    "the.controller.does.not.provide.7d885be5": "The controller does not provide mission aircraft changes.",
+    "an.sp.loadout.is.being.3b941d11": "An SP loadout is being applied; wait for it to finish.",
+    "select.aircraft.for.next.restart.6ec2b993": "Select aircraft for next restart###ApplyAircraft",
+    "change.aircraft.and.restart.mission.cdc35890": "Change aircraft and restart mission###ApplyAircraft",
+    "aircraft.change.submitted.waiting.for.dfc92e72": "Aircraft change submitted; waiting for the game thread...",
+    "current.aircraft.s.b550b075": "Current aircraft: %s",
+    "checked.weapons.become.sp1.sp2.4395e57c": "Checked weapons become SP1/SP2/SP3 from top to bottom. Applying refills SPs with saved percentages and selects MSL; standard missiles, gun, countermeasures, saved loadouts and checkpoints remain unchanged. Loadout/model shortcuts are configurable in the configuration file.",
+    "not.purchased.mission.debug.allowed.541d53c7": "Not purchased (mission debug allowed)",
+    "single.sp.only.23e61794": "Single SP only",
+    "choose.1.3.sp.weapons.717c3572": "Choose 1–3 SP weapons. Single-only weapons cannot be combined.",
+    "apply.sp.loadout.and.refill.47b451be": "Apply SP loadout and refill###ApplyDebug",
+    "applying.waiting.for.the.game.3f8f6870": "Applying; waiting for the game thread...",
+    "saving.2a26d205": "Saving...",
+    "next.vr.view.center.e592c191": "NEXT: VR / view center",
+    "next.normal.aircraft.nose.a3ea4063": "NEXT: normal / aircraft nose",
+    "gun.salvo.on.ff42b867": "Gun salvo: ON",
+    "gun.salvo.off.2b40a562": "Gun salvo: OFF",
+    "camera.hold.on.43a9820d": "Camera hold: ON",
+    "camera.hold.off.5641503e": "Camera hold: OFF",
+    "settings.saved.ce3bf5a0": "Settings saved.",
+    "save.failed.see.the.error.cfdce700": "Save failed; see the error and logs.",
+    "sp.loadout.applied.and.refilled.3910f2ee": "SP loadout applied and refilled. Close the panel to continue testing.",
+    "loadout.was.not.applied.see.164255b7": "Loadout was not applied. See the error details.",
+    "management.state.error.5a0c194c": "Management state error: ",
+    "version.29bc0009": "Version ",
+    "is.available.open.e79f34f1": " is available. Open ",
+    "version.and.updates.and.choose.cd6e7a78": " > Version and updates and choose a download link.",
+    "no.multi.sp.model.layout.9b7d944c": "No multi-SP model layout is available for this aircraft.",
+    "loading.multi.sp.models.please.b6555bf0": "Loading multi-SP models, please wait...",
+    "ui.error.bb1191fe": "UI error: ",
+    "press.a.key.432290b7": "Press a key...",
+    "model.display.0bf20428": "Model display",
+    "affects.model.display.only.not.b3a3f2f9": "Affects model display only, not gameplay features.",
+    "use.multi.sp.models.in.f85ff7cd": "Use multi-SP models in missions###TaskMount",
+    "replaces.native.aircraft.models.with.d5984a98": "Replaces native aircraft models with models carrying multiple SPs to avoid abrupt model changes when switching SPs.\nProvides seven single-, dual- and triple-SP loadouts. Most base-game and DLC aircraft are supported; mod aircraft, some internal bays and RKT combinations depend on existing support.\nMay cause stuttering or reduce frame rate.",
+    "use.multi.sp.models.in.b06eb8b1": "Use multi-SP models in the hangar###HangarMount",
+    "uses.multi.sp.models.in.903bf914": "Uses multi-SP models in aircraft previews when choosing an aircraft and SPs before a sortie.\nMay cause stuttering or reduce frame rate.",
+    "mission.model.settings.apply.with.b4148632": "Mission model settings apply with the next loadout.",
+    "feature.settings.540ec6f5": "Feature settings",
+    "always.show.the.current.weapon.84c597b0": "Always show the current weapon at HUD center",
+    "ammo.per.weapon.with.two.fe1030b7": "Ammo per weapon with two SPs",
+    "ammo.per.weapon.with.three.3eca43e5": "Ammo per weapon with three SPs",
+    "gun.salvo.gunsalvo.acda2ffc": "Gun salvo###GunSalvo",
+    "shortcut.51cb85e1": "Shortcut",
+    "clear.clearsalvokey.b6037c97": "Clear###ClearSalvoKey",
+    "with.an.mgp.hgp.plsl.873e6dbb": "With an MGP/HGP/PLSL pod equipped, holding the gun fire button fires it together with the gun.",
+    "this.loadout.has.multiple.eligible.ccfbf8de": "This loadout has multiple eligible SPs; simultaneous firing is unsupported.",
+    "target.selection.8ff0d833": "Target selection",
+    "target.selection.mode.nextmode.160bd5fc": "Target selection mode###NextMode",
+    "native.aircraft.nose.vr.view.d567d9ac": "Native / aircraft nose\u0000VR / view center\u0000",
+    "native.mode.prioritizes.targets.near.e00f5e88": "Native mode prioritizes targets near the aircraft nose;\nVR mode prioritizes targets near the current view center.\nMay conflict with the mouse-flight mod F2 HMD.",
+    "show.the.view.center.dot.80e497f3": "Show the view-center dot###ViewCenterDot",
+    "latched.target.tracking.11a27755": "Latched target tracking",
+    "hold.controller.y.to.latch.8a3a68d5": "Hold controller Y to latch tracking###TargetGazePad",
+    "when.enabled.hold.controller.y.3329cb01": "When enabled, hold controller Y to latch tracking; hold it again to stop. Short Y presses can still change targets while tracking.",
+    "press.the.native.keyboard.tracking.21d621bc": "Press the native keyboard tracking key to latch###TargetGazeKeyboard",
+    "uses.the.game.s.actual.c7dce5e6": "Uses the game's actual tracking binding: press once to latch tracking and again to stop.",
+    "camera.hold.202916ec": "Camera hold",
+    "keep.camera.direction.camerahold.70008ef1": "Keep camera direction###CameraHold",
+    "clear.clearcameraholdkey.f782cd6c": "Clear###ClearCameraHoldKey",
+    "when.enabled.the.view.retains.446f23c3": "When enabled, the view retains its direction after look input is released.\nPress and release L3 or use the keyboard recenter binding to recenter. Hold R3 to turn this feature on or off.",
+    "view.sensitivity.camerasensitivity.6d7158ee": "View sensitivity###CameraSensitivity",
+    "keyboard.recenter.shortcut.27495edb": "Keyboard recenter shortcut",
+    "clear.clearcenterkey.d7b5b5b8": "Clear###ClearCenterKey",
+    "additional.weapon.selection.3cf00ef8": "Additional weapon selection",
+    "the.native.weapon.action.cycles.48a65ba7": "The native weapon action cycles through weapons. Use the D-pad or custom keyboard bindings for direct selection.",
+    "switch.weapons.with.the.controller.80495bbe": "Switch weapons with the controller D-pad###DpadWeaponSwitch",
+    "weapon.f84ecfb3": "Weapon",
+    "keyboard.1725fafc": "Keyboard",
+    "controller.90ab65bf": "Controller",
+    "d.pad.left.c0c98dc7": "D-pad Left",
+    "d.pad.up.27c3b621": "D-pad Up",
+    "d.pad.right.df4b76a1": "D-pad Right",
+    "d.pad.down.42a7c73b": "D-pad Down",
+    "not.assigned.51fe00e3": "Not assigned",
+    "a.feature.or.save.operation.2aa58920": "A feature or save operation needs attention.",
+    "view.error.details.managementerrors.3daf489c": "View error details###ManagementErrors",
+    "management.components.do.not.match.9ae559c4": "Management components do not match. Install a complete matching version.",
+    "close.f09d5099": "Close",
+    "mod.on.modenabled.bbe2f274": "Mod: ON###ModEnabled",
+    "mod.off.modenabled.000955e4": "Mod: OFF###ModEnabled",
+    "save.to.apply.at.the.3d03eef2": "Save to apply at the main menu or single-player mission selection. Disabled pages are dimmed; this switch, Save and Close remain available.",
+    "management.6009aa3c": "Management",
+    "back.y.also.toggles.management.b588258e": "Back+Y also toggles management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.",
+    "game.language.chinese.english.c0b892a6": "Game language\u0000Chinese\u0000English\u0000",
+    "saved.return.to.the.main.4b8dc61e": "Saved; return to the main menu to apply the master switch.",
+    "game.is.paused.48376114": "Game is paused",
+    "close.to.resume.flight.ddb47cd0": "Close to resume flight",
+    "save.to.apply.settings.222ac713": "Save to apply settings",
+    "management.releases.only.its.own.d4015e85": "Management releases only its own pause when closed; any pre-existing game pause remains. Tab moves focus; Ctrl+Tab changes pages. Hover, focus or activate ? to read help.",
+    "mission.13.assigned.sp.camera.6fa3a5e0": "Mission 13: assigned SP; camera features remain available.",
+    "general.features.d6795dc0": "General###Features",
+    "camera.bindings.291ded16": "Camera###Bindings",
+    "debug.debug.3211ed36": "Debug###Debug",
+    "mission.loadout.682b8e9c": "Mission loadout",
+    "infinite.ammo.infiniteammo.6a8db67a": "Infinite ammo###InfiniteAmmo",
+    "fast.reload.fastreload.645bd7ab": "Fast reload###FastReload",
+    "change.aircraft.6b159313": "Change aircraft",
+    "logs.2c322bb4": "Logs",
+    "collapse.togglelogs.01eaf7d4": "Collapse###ToggleLogs",
+    "expand.togglelogs.85549964": "Expand###ToggleLogs",
+    "refresh.refreshlogs.423e6a9d": "Refresh###RefreshLogs",
+    "shows.the.last.64.kib.4ded2bc8": "Shows the last 64 KiB of each log. Refresh to update; log contents retain their original language.",
+    "version.and.updates.versionupdates.f6da021a": "Version and updates###VersionUpdates",
+    "waiting.for.a.key.esc.0bd06836": "Waiting for a key · Esc cancels",
+    "unsaved.changes.82a5cd03": "Unsaved changes",
+    "settings.saved.d104ef7d": "Settings saved",
+    "cancel.capture.1c5192e2": "Cancel capture",
+    "save.settings.savesettings.b8bcac13": "Save settings###SaveSettings",
+    "close.closemanagement.542d61d9": "Close###CloseManagement",
+    "closing.discards.unsaved.changes.language.585b36b5": "Closing discards unsaved changes. Language and bindings apply after saving; the master switch waits for safe menus and ammunition percentages for the next loadout.",
+    "a.binding.is.invalid.or.8eccbcf5": "A binding is invalid or conflicts; adjust it before saving.",
+    "this.sp.is.empty.selection.92f6b119": "This SP is empty; selection unchanged.",
+    "this.sp.is.depleted.selection.c47a85ad": "This SP is depleted; selection unchanged.",
+    "current.version.16c8badf": "Current version",
+    "latest.version.51f76219": "Latest version",
+    "check.for.updates.840f7526": "Check for updates",
+    "checking.for.updates.a6e73905": "Checking for updates...",
+    "you.can.continue.playing.3acf66f6": "You can continue playing.",
+    "already.up.to.date.9c218466": "Already up to date",
+    "no.update.is.needed.f6dc0c26": "No update is needed.",
+    "a.newer.version.is.available.274799a7": "A newer version is available",
+    "update.information.has.not.been.4e698d95": "Update information has not been published yet",
+    "you.can.continue.playing.and.5cfb85ee": "You can continue playing and check again later.",
+    "unable.to.check.for.updates.f4fdc2e6": "Unable to check for updates at the moment",
+    "this.check.has.ended.you.137d7d95": "This check has ended. You can continue playing and check again later. See Logs for details.",
+    "download.update.22da3701": "Download update",
+    "lanzou.download.edd106d4": "Lanzou download",
+    "cloudflarer2.download.1a0af643": "CloudFlareR2 download",
+    "download.buttons.open.the.corresponding.687ea42f": "Download buttons open the corresponding link in your default Windows browser.",
+    "after.downloading.exit.the.game.aaa43341": "After downloading, exit the game, then extract and install the update as described in the archive.",
+    "collapse.updatelicensetoggle.aa7b68a7": "Collapse###UpdateLicenseToggle",
+    "expand.updatelicensetoggle.ebfd8718": "Expand###UpdateLicenseToggle",
+    "no.target.is.selected.2d02fc46": "No target is selected.",
+    "mission.13.uses.its.assigned.779cb0af": "Mission 13 uses its assigned SP. Multi-SP is temporarily disabled.",
+    "enter.a.configured.single.player.fcec4959": "Enter a configured single-player mission first.",
+    "controller.or.pause.handoff.failed.bcb5bee9": "Controller or pause handoff failed; see the error above.",
+    "resupply.or.a.mission.transition.08301ced": "Resupply or a mission transition is in progress.",
+    "flight.controls.are.not.ready.e80dfbd9": "Flight controls are not ready.",
+    "close.the.pause.menu.first.a3e85342": "Close the pause menu first.",
+    "waiting.for.management.to.pause.c8f3d30e": "Waiting for management to pause the mission.",
+    "pause.state.changed.close.and.ad215909": "Pause state changed. Close and reopen management to change aircraft.",
+    "restarting.with.another.aircraft.please.09280b7c": "Restarting with another aircraft; please wait.",
+    "refilled.89f913d7": " (refilled)",
+    "mission.multi.sp.models.on.79af0eb7": "Mission multi-SP models: ON",
+    "mission.multi.sp.models.off.f4fb65f0": "Mission multi-SP models: OFF",
+    "saved.mod.disabled.40bf1a5a": " (saved; mod disabled)",
+    "select.an.aircraft.7809e2b7": "Select an aircraft",
+    "return.to.the.main.menu.e01e801c": "Return to the main menu or single-player mission selection; the saved master switch will apply automatically.",
+    "mod.enabled.059ed7da": "Mod: enabled",
+    "mod.disabled.ddc732b7": "Mod: disabled",
+    "no.special.weapon.equipped.00df4341": "No special weapon equipped.",
+    "no.description.was.provided.for.d3334f5d": "No description was provided for this mod weapon.",
+    "punctuation.474f2af4": " ",
+    "loading.weapons.please.wait.6a0c0149": "Loading weapons. Please wait...",
+    "confirm.take.off.back.edit.9f37546a": "Confirm: take off. Back: edit the last choice.",
+    "confirm.reselect.special.weapons.from.3bb995e4": "Confirm: reselect special weapons from SP1.",
+    "confirm.select.sp1.6229917b": "Confirm: select SP1.",
+    "confirm.this.sp.or.no.4a8836e0": "Confirm this SP, or NO WEAPON to finish. Back: edit the previous slot.",
+    "punctuation.d0866a43": ". ",
+    "change.special.weapons.eda77ad4": "Change special weapons.",
+    "take.off.with.the.selected.96c58c73": "Take off with the selected one to three SP weapons.",
+    "leave.this.and.later.slots.56be6c3c": "Leave this and later slots empty. Ammunition follows management percentages.",
+    "finish.selecting.your.sp.loadout.e9d00cb5": "Finish selecting your SP loadout before confirming takeoff",
+    "no.weapon.f5499408": "NO WEAPON",
+    "yes.b8b3902a": "YES",
+    "no.be52ce60": "NO",
+    "the.sp.debug.protocol.does.89e22130": "The SP debug protocol does not match.",
+    "the.sp.debug.interface.does.024ebcbd": "The SP debug interface does not match this game build.",
+    "the.sp.debug.hook.could.6d9f31f8": "The SP debug hook could not be created.",
+    "the.sp.debug.hook.could.ebd410d8": "The SP debug hook could not be enabled.",
+    "the.sp.debug.argument.count.40238093": "The SP debug argument count is invalid.",
+    "the.sp.debug.parameters.are.72f3a922": "The SP debug parameters are invalid.",
+    "sp.debugging.does.not.belong.773ac020": "SP debugging does not belong to the current player session.",
+    "the.sp.debug.player.identity.98253e25": "The SP debug player identity has changed.",
+    "controller.and.keyboard.tracking.options.5a09ef52": "Controller and keyboard tracking options must be booleans.",
+    "the.old.management.fields.have.d270012c": "The old management fields have been retired.",
+    "the.old.management.configuration.is.5a2e369b": "The old management configuration is invalid.",
+    "management.configuration.revision.19.is.f8683818": "Management configuration revision 19 is required.",
+    "the.hangar.multi.sp.model.69e69a4b": "The hangar multi-SP model option must be a boolean.",
+    "the.d.pad.weapon.switch.a3cb85be": "The D-pad weapon switch option must be a boolean.",
+    "the.old.configuration.contains.unknown.b42f0294": "The old configuration contains unknown hangar or D-pad options.",
+    "management.configuration.revision.16.is.d786d33b": "Management configuration revision 16 is required.",
+    "management.configuration.revision.18.is.c6705a71": "Management configuration revision 18 is required.",
+    "management.configuration.revision.17.is.bbf76656": "Management configuration revision 17 is required.",
+    "the.mission.multi.sp.model.49da3e85": "The mission multi-SP model option must be a boolean; the old master model switch is retired.",
+    "the.old.model.option.configuration.7ca83177": "The old model option configuration is invalid.",
+    "next.mode.must.be.normal.82f6f57d": "NEXT mode must be normal or VR.",
+    "latched.tracking.must.be.enabled.ecca309d": "Latched tracking must be enabled or disabled.",
+    "legacy.camera.interaction.settings.have.0110293a": "Legacy camera interaction settings have been retired.",
+    "the.old.configuration.contains.unexpected.8991f095": "The old configuration contains unexpected camera interaction settings.",
+    "the.old.next.setting.is.0b565bd7": "The old NEXT setting is invalid.",
+    "latched.tracking.components.do.not.fbe2fcc3": "Latched tracking components do not belong to the current aircraft.",
+    "the.latched.tracking.player.identity.f12201e7": "The latched tracking player identity changed.",
+    "the.native.latched.tracking.selection.32af8de5": "The native latched tracking selection interface does not match.",
+    "target.tracking.input.hooks.could.8a7036d2": "Target tracking input hooks could not be created.",
+    "view.center.targeting.received.invalid.a8f17e92": "View-center targeting received invalid camera data.",
+    "view.center.targeting.received.an.7d82e8d0": "View-center targeting received an invalid target position.",
+    "the.target.candidate.array.changed.126ea576": "The target candidate array changed during native selection.",
+    "the.target.candidate.array.is.840b6e99": "The target candidate array is invalid.",
+    "the.view.center.targeting.player.f16ea9a6": "The view-center targeting player identity changed.",
+    "the.native.view.center.targeting.7d27ffe3": "The native view-center targeting interface does not match this game build.",
+    "view.center.targeting.hooks.could.f33ff639": "View-center targeting hooks could not be initialized.",
+    "view.center.targeting.hooks.could.e6d2c75d": "View-center targeting hooks could not be created.",
+    "view.center.targeting.hooks.could.f0044b85": "View-center targeting hooks could not be scheduled.",
+    "view.center.targeting.hooks.could.c9c39d2c": "View-center targeting hooks could not be enabled.",
+    "view.center.targeting.requires.the.9c8ab615": "View-center targeting requires the current player aircraft.",
+    "view.center.targeting.is.outside.10c7bdfc": "View-center targeting is outside the player game thread.",
+    "view.center.targeting.received.an.4417a22f": "View-center targeting received an invalid aircraft orientation.",
+    "the.view.center.targeting.interface.ec69bfa8": "The view-center targeting interface does not match the controller.",
+    "view.center.targeting.parameters.are.3c5b60f8": "View-center targeting parameters are invalid.",
+    "the.view.center.targeting.protocol.2528d1a6": "The view-center targeting protocol does not match.",
+    "view.center.targeting.must.be.bab51561": "View-center targeting must be on or off.",
+    "the.view.center.dot.must.ab0b51f5": "The view-center dot must be on or off.",
+    "view.center.dot.parameters.are.97f9526b": "View-center dot parameters are invalid.",
+    "the.view.center.dot.could.2c021e84": "The view-center dot could not be published.",
+    "five.mod.shortcut.settings.are.9cb470e9": "Five mod shortcut settings are required.",
+    "the.five.mod.shortcuts.must.8502d932": "The five mod shortcuts must be distinct.",
+    "the.l3.view.center.next.d9073877": "The L3 view-center NEXT shortcut must be on or off.",
+    "the.old.configuration.contains.unexpected.711dd585": "The old configuration contains unexpected L3 view-center NEXT settings.",
+    "management.configuration.revision.15.is.fc217c4d": "Management configuration revision 15 is required.",
+    "the.old.configuration.contains.unexpected.59602d69": "The old configuration contains unexpected view-center targeting settings.",
+    "the.target.is.not.an.f114857f": "The target is not an available three-SP aircraft in the loaded catalogue.",
+    "the.native.gun.salvo.interface.75cb636e": "The native gun salvo interface does not match this game build.",
+    "gun.salvo.hooks.could.not.0e7bc757": "Gun salvo hooks could not be initialized.",
+    "gun.salvo.hooks.could.not.9f5b7708": "Gun salvo hooks could not be created.",
+    "gun.salvo.hooks.could.not.62f44715": "Gun salvo hooks could not be scheduled.",
+    "gun.salvo.hooks.could.not.6c57f8a1": "Gun salvo hooks could not be enabled.",
+    "the.gun.salvo.interface.does.c7ff3f70": "The gun salvo interface does not match the controller.",
+    "gun.salvo.parameters.are.invalid.1fc7dcb7": "Gun salvo parameters are invalid.",
+    "gun.salvo.does.not.belong.97d98412": "Gun salvo does not belong to the current player session.",
+    "the.current.sp.does.not.eaea4b56": "The current SP does not support gun salvo.",
+    "the.gun.salvo.core.call.35d4d7fa": "The gun salvo core call failed.",
+    "gun.salvo.must.be.on.ee49edb3": "Gun salvo must be on or off.",
+    "four.mod.shortcut.settings.are.c750592f": "Four mod shortcut settings are required.",
+    "the.four.mod.shortcuts.must.c3204c19": "The four mod shortcuts must be distinct.",
+    "management.configuration.revision.13.is.745a4ffd": "Management configuration revision 13 is required.",
+    "the.old.configuration.contains.unexpected.b9a16239": "The old configuration contains unexpected gun salvo settings.",
+    "the.camera.tracking.transition.is.5a14c704": "The camera tracking transition is outside the native range.",
+    "the.camera.tracking.transition.direction.e49f196c": "The camera tracking transition direction is invalid.",
+    "the.camera.tracking.transition.interface.9a8b9af7": "The camera tracking transition interface does not match this game build.",
+    "the.old.controller.tracking.configuration.0d1bad80": "The old controller tracking configuration is invalid.",
+    "the.controller.x.replacement.setting.ec82dec4": "The controller X replacement setting is no longer supported.",
+    "management.configuration.revision.11.is.ce70814c": "Management configuration revision 11 is required.",
+    "the.l3.tracking.setting.must.45c18f4f": "The L3 tracking setting must be on or off.",
+    "the.camera.tracking.state.check.8a3f0b36": "The camera tracking state check does not match this game build.",
+    "the.camera.tracking.component.identity.559abec6": "The camera tracking component identity changed.",
+    "the.camera.recenter.key.is.0ba64092": "The camera recenter key is invalid or conflicts with another mod binding.",
+    "the.camera.recenter.key.conflicts.83f48605": "The camera recenter key conflicts with another mod binding.",
+    "auto.recenter.threshold.must.be.791ecd17": "Auto recenter threshold must be a whole number from 0 to 45.",
+    "the.old.configuration.contains.an.0fd1ee13": "The old configuration contains an unexpected auto recenter threshold.",
+    "management.configuration.revision.14.is.1ad56332": "Management configuration revision 14 is required.",
+    "camera.sensitivity.must.be.a.932941ac": "Camera sensitivity must be a whole number from 5 to 200.",
+    "the.r3.replacement.setting.must.0553b672": "The R3 replacement setting must be on or off.",
+    "the.old.configuration.contains.an.0ddb7131": "The old configuration contains an unexpected R3 replacement setting.",
+    "the.old.camera.sensitivity.is.76152ac9": "The old camera sensitivity is invalid.",
+    "management.configuration.revision.10.is.c0bf20ee": "Management configuration revision 10 is required.",
+    "camera.hold.parameters.are.outside.4e586655": "Camera hold parameters are outside the supported range.",
+    "the.camera.recenter.key.is.7c168451": "The camera recenter key is invalid.",
+    "the.camera.hold.interface.does.f0f5db36": "The camera hold interface does not match the controller.",
+    "the.camera.hold.setting.is.bb26b5ce": "The camera hold setting is invalid.",
+    "the.old.configuration.contains.unexpected.e0d9586a": "The old configuration contains unexpected camera control settings.",
+    "management.configuration.revision.9.is.86706bf7": "Management configuration revision 9 is required.",
+    "the.special.camera.check.does.3c6ecd3b": "The special camera check does not match this game build.",
+    "the.camera.hold.interface.does.545c0cad": "The camera hold interface does not match this game build.",
+    "the.native.camera.hold.interface.d3616826": "The native camera hold interface could not be connected.",
+    "camera.hold.hooks.could.not.fed9e7ee": "Camera hold hooks could not be scheduled.",
+    "camera.hold.hooks.could.not.83b61e41": "Camera hold hooks could not be enabled.",
+    "camera.hold.requires.the.current.39d95850": "Camera hold requires the current player aircraft.",
+    "the.player.camera.component.is.75a4af83": "The player camera component is unsupported.",
+    "the.camera.does.not.belong.b683334b": "The camera does not belong to the current aircraft.",
+    "the.camera.input.identity.changed.a875f9f8": "The camera input identity changed.",
+    "the.camera.input.axis.list.eccd6f4e": "The camera input axis list is invalid.",
+    "the.camera.axis.identity.changed.6d157b8d": "The camera axis identity changed.",
+    "the.native.camera.look.axes.a58e20e7": "The native camera look axes are unavailable.",
+    "camera.hold.received.an.invalid.3bd75f71": "Camera hold received an invalid look axis.",
+    "the.camera.hold.state.is.31dda00b": "The camera hold state is outside the native range.",
+    "the.camera.hold.interface.does.9118a424": "The camera hold interface does not match the controller.",
+    "the.camera.hold.setting.must.d92e838a": "The camera hold setting must be on or off.",
+    "native.target.tracking.was.not.b1c3b963": "Native target tracking was not observed. Toggle tracking has been stopped.",
+    "the.target.tracking.interface.does.b3cfccf8": "The target tracking interface does not match this game build.",
+    "the.game.s.xinput.interface.5bcb8eb2": "The game's XInput interface is unavailable.",
+    "target.tracking.input.could.not.b2da0043": "Target tracking input could not be initialized.",
+    "the.native.target.tracking.axis.d49de3e0": "The native target tracking axis could not be connected.",
+    "controller.input.observation.could.not.6b8fd206": "Controller input observation could not be connected.",
+    "target.tracking.input.could.not.34ec8827": "Target tracking input could not be enabled.",
+    "the.player.input.component.is.8577924b": "The player input component is unsupported.",
+    "the.player.input.axis.list.abdde7e8": "The player input axis list is invalid.",
+    "the.target.tracking.axis.identity.24e3bef9": "The target tracking axis identity changed.",
+    "this.aircraft.has.no.native.694c2c79": "This aircraft has no native target tracking axis.",
+    "the.target.tracking.key.is.1e2676d3": "The target tracking key is invalid or conflicts with another mod binding.",
+    "the.target.tracking.interface.does.2047a405": "The target tracking interface does not match the controller.",
+    "the.tracking.key.conflicts.with.3308e777": "The tracking key conflicts with a mod shortcut.",
+    "the.central.weapon.abbreviation.display.24ebe3db": "The central weapon abbreviation display mode is invalid.",
+    "the.tracking.key.conflicts.with.3a07c985": "The tracking key conflicts with a direct weapon key.",
+    "target.tracking.is.currently.unavailable.83446d36": "Target tracking is currently unavailable.",
+    "target.tracking.on.7e430432": "Target tracking: ON",
+    "target.tracking.off.f41f765a": "Target tracking: OFF",
+    "select.this.sp.or.no.60f6116c": "Select this SP, or NO WEAPON to finish. Ammunition follows management percentages, rounded up.",
+    "this.mission.kept.the.original.fb25dbf2": "This mission kept the original aircraft. Change aircraft in the hangar.",
+    "close.management.and.wait.for.404be1fe": "Close management and wait for fired weapons to finish before retrying.",
+    "wait.for.active.effects.and.420ee36f": "Wait for active effects and TLS trails to finish before rebuilding the loadout.",
+    "close.the.game.s.pause.54dd92e9": "Close the game's pause menu, then open management directly to change aircraft.",
+    "wait.for.fired.weapons.to.a80d2c8b": "Wait for fired weapons to finish before rebuilding the loadout.",
+    "mission.restart.timed.out.return.9f16cd80": "Mission restart timed out. Return to the hangar to change aircraft.",
+    "the.restart.did.not.create.62c8d9be": "The restart did not create a new player aircraft. Return to the hangar.",
+    "aircraft.debugging.cancelled.because.mission.52c17de9": "Aircraft debugging cancelled because Mission 13 uses its assigned SP.",
+    "multi.sp.models.reverted.to.722e9a2e": "Multi-SP models reverted to native visuals: ",
+    "the.hangar.did.not.receive.bd63c71b": "The hangar did not receive the action. Reopen the weapon selection page.",
+    "the.management.pause.was.not.3f065b9f": "The management pause was not released. The restart was not sent.",
+    "the.native.pause.changed.the.02f07ba9": "The native pause changed. The restart was not sent.",
+    "the.native.menu.pause.was.bb49de2f": "The native menu pause was not released. The mission was not restarted.",
+    "the.native.pause.menu.changed.b858c0ab": "The native pause menu changed before restart.",
+    "the.native.pause.menu.does.dff011dc": "The native pause menu does not belong to the current mission world.",
+    "the.mission.world.changed.while.01c99147": "The mission world changed while closing the pause menu. The mission was not restarted.",
+    "the.selected.aircraft.changed.while.777fa237": "The selected aircraft changed while closing the pause menu. The mission was not restarted.",
+    "the.mission.or.loadout.changed.0940dd1c": "The mission or loadout changed. Reopen Debug.",
+    "another.game.action.changed.the.63bcfe84": "Another game action changed the selected aircraft during restart.",
+    "close.the.native.pause.menu.35129884": "Close the native pause menu before changing aircraft.",
+    "wait.for.fired.weapons.to.43e8701c": "Wait for fired weapons to finish before rebuilding the loadout.",
+    "wait.for.the.current.weapon.671b9287": "Wait for the current weapon burst to finish before changing SP.",
+    "aircraft.debugging.requires.an.enabled.23e7a896": "Aircraft debugging requires an enabled single-player mission.",
+    "the.game.session.changed.select.5cc7abc3": "The game session changed. Select an aircraft again.",
+    "aircraft.change.cancelled.after.leaving.b95b7c12": "Aircraft change cancelled after leaving single-player.",
+    "aircraft.change.cancelled.after.entering.a6847795": "Aircraft change cancelled after entering another mission.",
+    "the.mission.or.loadout.changed.15cce088": "The mission or loadout changed. Press the shortcut again.",
+    "restarting.the.mission.and.waiting.996bed6e": "Restarting the mission and waiting for the selected aircraft.",
+    "the.player.session.changed.reopen.0d67b4d9": "The player session changed. Reopen Debug.",
+    "sp.weapons.loadout.debugging.is.321c05be": " SP weapons; loadout debugging is available).",
+    "aircraft.change.cancelled.after.returning.673d7ea8": "Aircraft change cancelled after returning to the menu.",
+    "sp.ammunition.percentages.must.be.6a2470ee": "SP ammunition percentages must be whole numbers.",
+    "the.aircraft.list.contains.duplicate.557431f4": "The aircraft list contains duplicate identifiers or missing names.",
+    "no.other.sp.combination.is.b18e7e0f": "No other SP combination is available.",
+    "sp.ammunition.percentages.are.out.2a7c419e": "SP ammunition percentages are out of range.",
+    "select.your.first.special.weapon.c9ff003e": "Select your first special weapon.",
+    "multi.sp.models.on.10e704f5": "Multi-SP models: ON",
+    "multi.sp.models.off.ca0b9e2a": "Multi-SP models: OFF",
+    "restarting.the.mission.waiting.for.492c291f": "Restarting the mission; waiting for ",
+    "the.player.aircraft.is.not.b286c3d6": "The player aircraft is not ready.",
+    "dlc.ownership.unknown.f1a7fac5": " (DLC ownership unknown)",
+    "semi.active.air.to.air.05bd83f5": "Semi-Active Air-to-Air Missile",
+    "the.debug.loadout.interface.does.5f45d573": "The debug loadout interface does not match the controller.",
+    "dlc.not.owned.8f080e7d": " (DLC not owned)",
+    "ownership.data.unavailable.b02bb5c3": " (Ownership data unavailable)",
+    "quick.maneuver.air.to.air.145f9fea": "Quick Maneuver Air-to-Air Missile",
+    "high.capacity.air.to.air.75f05f08": "High-Capacity Air-to-Air Missile",
+    "high.power.air.to.air.d23d5a2b": "High-Power Air-to-Air Missile",
+    "label.4.target.air.to.air.c9acc93f": "4-Target Air-to-Air Missile",
+    "label.6.target.air.to.air.4e4a127c": "6-Target Air-to-Air Missile",
+    "label.8.target.air.to.air.b8d8ae6a": "8-Target Air-to-Air Missile",
+    "label.4.target.air.to.ground.8d2581a5": "4-Target Air-to-Ground Missile",
+    "label.8.target.air.to.ground.917df009": "8-Target Air-to-Ground Missile",
+    "the.game.is.still.loading.8883f81e": "The game is still loading.",
+    "shortcut.bindings.must.be.distinct.f04bf29f": "Shortcut bindings must be distinct.",
+    "the.debug.loadout.contains.an.308d60b6": "The debug loadout contains an invalid weapon slot.",
+    "the.aircraft.change.mode.is.dcf2efb3": "The aircraft change mode is invalid.",
+    "the.aircraft.list.is.invalid.3d34847e": "The aircraft list is invalid.",
+    "an.aircraft.identifier.is.invalid.95211711": "An aircraft identifier is invalid.",
+    "multi.purpose.burst.missile.83414085": "Multi-Purpose Burst Missile",
+    "all.directional.multi.purpose.missile.3ae44e49": "All-Directional Multi-Purpose Missile",
+    "this.weapon.has.not.been.89a38067": "This weapon has not been purchased",
+    "high.velocity.air.to.air.45a1891b": "High-Velocity Air-to-Air Missile",
+    "long.range.air.to.air.01747326": "Long-Range Air-to-Air Missile",
+    "long.range.air.to.ground.028ca00a": "Long-Range Air-to-Ground Missile",
+    "self.forging.fragment.submunitions.3f9fe951": "Self-Forging Fragment Submunitions",
+    "select.a.different.aircraft.3d04db88": "Select a different aircraft.",
+    "shortcut.data.is.invalid.573000a9": "Shortcut data is invalid.",
+    "the.aircraft.interface.does.not.6d99202a": "The aircraft interface does not match the controller.",
+    "the.mod.is.disabled.e2a2d689": "The mod is disabled.",
+    "tactical.laser.system.1d655382": "Tactical Laser System",
+    "aircraft.change.failed.1db41bbb": "Aircraft change failed: ",
+    "aircraft.change.applied.41f605b6": "Aircraft change applied: ",
+    "to.spawn.dfae5745": " to spawn.",
+    "mod.1056c4ac": "Mod: ",
+    "short.range.aerial.suppression.missile.bba50c34": "Short-Range Aerial Suppression Missile",
+    "long.range.anti.ship.missile.76d89972": "Long-Range Anti-Ship Missile",
+    "land.attack.cruise.missile.fdb4df26": "Land Attack Cruise Missile",
+    "guided.penetration.bomb.46626c87": "Guided Penetration Bomb",
+    "stand.off.dispenser.ae365b98": "Stand-Off Dispenser",
+    "fuel.air.explosive.bomb.e5fd23b4": "Fuel-Air Explosive Bomb",
+    "this.shortcut.is.unavailable.7093c8d8": "This shortcut is unavailable.",
+    "the.aircraft.change.state.is.d7390db1": "The aircraft change state is invalid.",
+    "electromagnetic.launcher.12a20d30": "Electromagnetic Launcher",
+    "pulse.laser.system.c7b6871f": "Pulse Laser System",
+    "multiple.launch.standard.missile.23eabf64": "Multiple-Launch Standard Missile",
+    "not.purchased.336eda21": " (Not purchased)",
+    "unguided.bomb.b9b99df0": "Unguided Bomb",
+    "small.diameter.bomb.ba299cc1": "Small Diameter Bomb",
+    "guided.rocket.launcher.ea44f59c": "Guided Rocket Launcher",
+    "machine.gun.pod.c36c7293": "Machine Gun Pod",
+    "tactical.laser.system.1caaab54": "Tactical Laser System",
+    "pulse.laser.system.53cf78c4": "Pulse Laser System",
+    "integrated.electronic.warfare.system.94b251d1": "Integrated Electronic Warfare System",
+    "sp.aabf060d": "SP: ",
+    "rocket.launcher.97c7b931": "Rocket Launcher",
+    "electromagnetic.launcher.68b0e3be": "Electromagnetic Launcher",
+    "unmanned.aerial.vehicle.0ce7e105": "Unmanned Aerial Vehicle",
+    "punctuation.8ce1b17b": " (",
+    "punctuation.89d1a37e": ")",
+    "aircraft.information.is.unavailable.see.00661263": "Aircraft information is unavailable. See Logs for details.",
+    "aircraft.change.is.unavailable.see.588e221a": "Aircraft change is unavailable. See Logs for details.",
+    "aircraft.change.was.not.completed.1c563d6b": "Aircraft change was not completed. See Logs for details.",
+    "aircraft.change.failed.see.logs.0c497fab": "Aircraft change failed. See Logs for details.",
+    "special.weapon.930993fc": "Special weapon",
+    "loadout.debugging.is.unavailable.see.557ce0bc": "Loadout debugging is unavailable. See Logs for details.",
+    "the.debug.loadout.was.not.ae22c820": "The debug loadout was not applied. See Logs for details.",
+    "the.debug.loadout.failed.see.5cb24ccd": "The debug loadout failed. See Logs for details.",
+    "multi.sp.models.reverted.to.46f829d2": "Multi-SP models reverted to native visuals. See Logs for details.",
+    "models.reverted.to.native.visuals.4f908718": "Models reverted to native visuals; see Logs.",
+    "the.operation.could.not.be.1976a8f3": "The operation could not be completed. See Logs for details.",
+    "language.bc9f0319": "语言/Language",
+    "weapon.specifications.24d42767": "[WEAPON SPECIFICATIONS]",
+    "type.c0f69ff1": "[TYPE]",
+    "weapons.ammo.84af7e95": "[WEAPONS AMMO]",
+    "select.sp.weapon.1.b0269552": "[SELECT SP WEAPON 1]",
+    "select.sp.weapon.2.9d49bd0d": "[SELECT SP WEAPON 2]",
+    "select.sp.weapon.3.f6594add": "[SELECT SP WEAPON 3]",
+    "take.off.bb40af1a": "[TAKE OFF]",
+    "empty.02cab14e": "EMPTY",
+    "not.owned.26779261": "  NOT OWNED",
+    "select.sp.weapon.53a0281b": "SELECT SP WEAPON ",
+    "air.to.air.lock.on.59853a5f": "AIR TO AIR LOCK-ON MISSILE",
+    "air.to.ground.lock.on.e37a85a2": "AIR TO GROUND LOCK-ON MISSILE",
+    "air.to.ground.lock.on.c84750b4": "AIR TO GROUND LOCK-ON BOMB",
+    "air.to.ground.lock.on.22b7a3d4": "AIR TO GROUND LOCK-ON ROCKET",
+    "air.to.air.ground.lock.ab1aab7a": "AIR TO AIR/GROUND LOCK-ON MISSILE",
+    "air.to.air.ground.lock.0c72f446": "AIR TO AIR/GROUND LOCK-ON UAV",
+    "bomb.8a074d50": "BOMB",
+    "laser.104b8a31": "LASER",
+    "other.5a9cd7bf": "OTHER",
+    "waiting.for.the.native.pause.1135f7ad": "Waiting for the native pause menu to close before restarting the mission.",
+    "changelog.fd31c92d": "Changelog",
+    "collapse.changelogtoggle.6286d892": "Collapse###ChangelogToggle",
+    "expand.changelogtoggle.d2b52d09": "Expand###ChangelogToggle",
+    "author.and.license.5de4e76d": "Author and license"
+  },
+  "message_replacements": [
+    "the.sp.debug.protocol.does.89e22130",
+    "the.sp.debug.interface.does.024ebcbd",
+    "the.sp.debug.hook.could.6d9f31f8",
+    "the.sp.debug.hook.could.ebd410d8",
+    "the.sp.debug.argument.count.40238093",
+    "the.sp.debug.parameters.are.72f3a922",
+    "sp.debugging.does.not.belong.773ac020",
+    "the.sp.debug.player.identity.98253e25",
+    "controller.and.keyboard.tracking.options.5a09ef52",
+    "the.old.management.fields.have.d270012c",
+    "the.old.management.configuration.is.5a2e369b",
+    "management.configuration.revision.19.is.f8683818",
+    "the.hangar.multi.sp.model.69e69a4b",
+    "the.d.pad.weapon.switch.a3cb85be",
+    "the.old.configuration.contains.unknown.b42f0294",
+    "management.configuration.revision.16.is.d786d33b",
+    "management.configuration.revision.18.is.c6705a71",
+    "management.configuration.revision.17.is.bbf76656",
+    "the.mission.multi.sp.model.49da3e85",
+    "the.old.model.option.configuration.7ca83177",
+    "mission.multi.sp.models.on.79af0eb7",
+    "mission.multi.sp.models.off.f4fb65f0",
+    "next.mode.must.be.normal.82f6f57d",
+    "latched.tracking.must.be.enabled.ecca309d",
+    "legacy.camera.interaction.settings.have.0110293a",
+    "the.old.configuration.contains.unexpected.8991f095",
+    "the.old.next.setting.is.0b565bd7",
+    "latched.tracking.components.do.not.fbe2fcc3",
+    "the.latched.tracking.player.identity.f12201e7",
+    "the.native.latched.tracking.selection.32af8de5",
+    "target.tracking.input.hooks.could.8a7036d2",
+    "view.center.targeting.received.invalid.a8f17e92",
+    "view.center.targeting.received.an.7d82e8d0",
+    "the.target.candidate.array.changed.126ea576",
+    "the.target.candidate.array.is.840b6e99",
+    "the.view.center.targeting.player.f16ea9a6",
+    "the.native.view.center.targeting.7d27ffe3",
+    "view.center.targeting.hooks.could.f33ff639",
+    "view.center.targeting.hooks.could.e6d2c75d",
+    "view.center.targeting.hooks.could.f0044b85",
+    "view.center.targeting.hooks.could.c9c39d2c",
+    "view.center.targeting.requires.the.9c8ab615",
+    "view.center.targeting.is.outside.10c7bdfc",
+    "view.center.targeting.received.an.4417a22f",
+    "the.view.center.targeting.interface.ec69bfa8",
+    "view.center.targeting.parameters.are.3c5b60f8",
+    "the.view.center.targeting.protocol.2528d1a6",
+    "view.center.targeting.must.be.bab51561",
+    "the.view.center.dot.must.ab0b51f5",
+    "view.center.dot.parameters.are.97f9526b",
+    "the.view.center.dot.could.2c021e84",
+    "five.mod.shortcut.settings.are.9cb470e9",
+    "the.five.mod.shortcuts.must.8502d932",
+    "management.configuration.revision.16.is.d786d33b",
+    "the.l3.view.center.next.d9073877",
+    "the.old.configuration.contains.unexpected.711dd585",
+    "management.configuration.revision.15.is.fc217c4d",
+    "the.old.configuration.contains.unexpected.59602d69",
+    "the.target.is.not.an.f114857f",
+    "the.native.gun.salvo.interface.75cb636e",
+    "gun.salvo.hooks.could.not.0e7bc757",
+    "gun.salvo.hooks.could.not.9f5b7708",
+    "gun.salvo.hooks.could.not.62f44715",
+    "gun.salvo.hooks.could.not.6c57f8a1",
+    "the.gun.salvo.interface.does.c7ff3f70",
+    "gun.salvo.parameters.are.invalid.1fc7dcb7",
+    "gun.salvo.does.not.belong.97d98412",
+    "the.current.sp.does.not.eaea4b56",
+    "the.gun.salvo.core.call.35d4d7fa",
+    "gun.salvo.must.be.on.ee49edb3",
+    "four.mod.shortcut.settings.are.c750592f",
+    "the.four.mod.shortcuts.must.c3204c19",
+    "management.configuration.revision.13.is.745a4ffd",
+    "the.old.configuration.contains.unexpected.b9a16239",
+    "the.camera.tracking.transition.is.5a14c704",
+    "the.camera.tracking.transition.direction.e49f196c",
+    "the.camera.tracking.transition.interface.9a8b9af7",
+    "the.old.controller.tracking.configuration.0d1bad80",
+    "the.controller.x.replacement.setting.ec82dec4",
+    "management.configuration.revision.11.is.ce70814c",
+    "the.l3.tracking.setting.must.45c18f4f",
+    "the.camera.tracking.state.check.8a3f0b36",
+    "the.camera.tracking.component.identity.559abec6",
+    "the.camera.recenter.key.is.0ba64092",
+    "the.camera.recenter.key.conflicts.83f48605",
+    "auto.recenter.threshold.must.be.791ecd17",
+    "the.old.configuration.contains.an.0fd1ee13",
+    "management.configuration.revision.14.is.1ad56332",
+    "camera.sensitivity.must.be.a.932941ac",
+    "the.r3.replacement.setting.must.0553b672",
+    "the.old.configuration.contains.an.0ddb7131",
+    "the.old.camera.sensitivity.is.76152ac9",
+    "management.configuration.revision.10.is.c0bf20ee",
+    "camera.hold.parameters.are.outside.4e586655",
+    "the.camera.recenter.key.is.7c168451",
+    "the.camera.hold.interface.does.f0f5db36",
+    "the.camera.hold.setting.is.bb26b5ce",
+    "the.old.configuration.contains.unexpected.e0d9586a",
+    "management.configuration.revision.9.is.86706bf7",
+    "the.special.camera.check.does.3c6ecd3b",
+    "the.camera.hold.interface.does.545c0cad",
+    "the.native.camera.hold.interface.d3616826",
+    "camera.hold.hooks.could.not.fed9e7ee",
+    "camera.hold.hooks.could.not.83b61e41",
+    "camera.hold.requires.the.current.39d95850",
+    "the.player.camera.component.is.75a4af83",
+    "the.camera.does.not.belong.b683334b",
+    "the.camera.input.identity.changed.a875f9f8",
+    "the.camera.input.axis.list.eccd6f4e",
+    "the.camera.axis.identity.changed.6d157b8d",
+    "the.native.camera.look.axes.a58e20e7",
+    "camera.hold.received.an.invalid.3bd75f71",
+    "the.camera.hold.state.is.31dda00b",
+    "the.camera.hold.interface.does.9118a424",
+    "the.camera.hold.setting.must.d92e838a",
+    "native.target.tracking.was.not.b1c3b963",
+    "the.target.tracking.interface.does.b3cfccf8",
+    "the.game.s.xinput.interface.5bcb8eb2",
+    "target.tracking.input.could.not.b2da0043",
+    "the.native.target.tracking.axis.d49de3e0",
+    "controller.input.observation.could.not.6b8fd206",
+    "target.tracking.input.could.not.34ec8827",
+    "the.player.input.component.is.8577924b",
+    "the.player.input.axis.list.abdde7e8",
+    "the.target.tracking.axis.identity.24e3bef9",
+    "this.aircraft.has.no.native.694c2c79",
+    "the.target.tracking.key.is.1e2676d3",
+    "the.target.tracking.interface.does.2047a405",
+    "the.tracking.key.conflicts.with.3308e777",
+    "the.central.weapon.abbreviation.display.24ebe3db",
+    "the.tracking.key.conflicts.with.3a07c985",
+    "target.tracking.is.currently.unavailable.83446d36",
+    "no.target.is.selected.2d02fc46",
+    "target.tracking.on.7e430432",
+    "target.tracking.off.f41f765a",
+    "select.this.sp.or.no.60f6116c",
+    "this.mission.kept.the.original.fb25dbf2",
+    "close.management.and.wait.for.404be1fe",
+    "return.to.the.main.menu.e01e801c",
+    "confirm.this.sp.or.no.4a8836e0",
+    "wait.for.active.effects.and.420ee36f",
+    "mission.13.uses.its.assigned.779cb0af",
+    "close.the.game.s.pause.54dd92e9",
+    "confirm.take.off.back.edit.9f37546a",
+    "wait.for.fired.weapons.to.a80d2c8b",
+    "take.off.with.the.selected.96c58c73",
+    "mission.restart.timed.out.return.9f16cd80",
+    "the.restart.did.not.create.62c8d9be",
+    "aircraft.debugging.cancelled.because.mission.52c17de9",
+    "resupply.or.a.mission.transition.08301ced",
+    "controller.or.pause.handoff.failed.bcb5bee9",
+    "confirm.reselect.special.weapons.from.3bb995e4",
+    "leave.this.and.later.slots.56be6c3c",
+    "multi.sp.models.reverted.to.722e9a2e",
+    "the.hangar.did.not.receive.bd63c71b",
+    "the.management.pause.was.not.3f065b9f",
+    "the.native.pause.changed.the.02f07ba9",
+    "the.native.menu.pause.was.bb49de2f",
+    "the.native.pause.menu.changed.b858c0ab",
+    "the.native.pause.menu.does.dff011dc",
+    "the.mission.world.changed.while.01c99147",
+    "the.selected.aircraft.changed.while.777fa237",
+    "the.mission.or.loadout.changed.0940dd1c",
+    "another.game.action.changed.the.63bcfe84",
+    "close.the.native.pause.menu.35129884",
+    "wait.for.fired.weapons.to.43e8701c",
+    "finish.selecting.your.sp.loadout.e9d00cb5",
+    "wait.for.the.current.weapon.671b9287",
+    "enter.a.configured.single.player.fcec4959",
+    "aircraft.debugging.requires.an.enabled.23e7a896",
+    "the.game.session.changed.select.5cc7abc3",
+    "aircraft.change.cancelled.after.leaving.b95b7c12",
+    "aircraft.change.cancelled.after.entering.a6847795",
+    "the.mission.or.loadout.changed.15cce088",
+    "restarting.the.mission.and.waiting.996bed6e",
+    "the.player.session.changed.reopen.0d67b4d9",
+    "restarting.with.another.aircraft.please.09280b7c",
+    "waiting.for.management.to.pause.c8f3d30e",
+    "saved.mod.disabled.40bf1a5a",
+    "sp.weapons.loadout.debugging.is.321c05be",
+    "aircraft.change.cancelled.after.returning.673d7ea8",
+    "sp.ammunition.percentages.must.be.6a2470ee",
+    "the.aircraft.list.contains.duplicate.557431f4",
+    "no.other.sp.combination.is.b18e7e0f",
+    "loading.weapons.please.wait.6a0c0149",
+    "sp.ammunition.percentages.are.out.2a7c419e",
+    "flight.controls.are.not.ready.e80dfbd9",
+    "close.the.pause.menu.first.a3e85342",
+    "select.your.first.special.weapon.c9ff003e",
+    "multi.sp.models.on.10e704f5",
+    "multi.sp.models.off.ca0b9e2a",
+    "confirm.select.sp1.6229917b",
+    "restarting.the.mission.waiting.for.492c291f",
+    "the.player.aircraft.is.not.b286c3d6",
+    "mod.enabled.059ed7da",
+    "mod.disabled.ddc732b7",
+    "dlc.ownership.unknown.f1a7fac5",
+    "semi.active.air.to.air.05bd83f5",
+    "the.debug.loadout.interface.does.5f45d573",
+    "dlc.not.owned.8f080e7d",
+    "ownership.data.unavailable.b02bb5c3",
+    "quick.maneuver.air.to.air.145f9fea",
+    "high.capacity.air.to.air.75f05f08",
+    "high.power.air.to.air.d23d5a2b",
+    "label.4.target.air.to.air.c9acc93f",
+    "label.6.target.air.to.air.4e4a127c",
+    "label.8.target.air.to.air.b8d8ae6a",
+    "label.4.target.air.to.ground.8d2581a5",
+    "label.8.target.air.to.ground.917df009",
+    "the.game.is.still.loading.8883f81e",
+    "shortcut.bindings.must.be.distinct.f04bf29f",
+    "the.debug.loadout.contains.an.308d60b6",
+    "the.aircraft.change.mode.is.dcf2efb3",
+    "the.aircraft.list.is.invalid.3d34847e",
+    "an.aircraft.identifier.is.invalid.95211711",
+    "management.state.error.5a0c194c",
+    "aircraft.state.error.780cbde3",
+    "multi.purpose.burst.missile.83414085",
+    "all.directional.multi.purpose.missile.3ae44e49",
+    "this.weapon.has.not.been.89a38067",
+    "change.special.weapons.eda77ad4",
+    "high.velocity.air.to.air.45a1891b",
+    "long.range.air.to.air.01747326",
+    "long.range.air.to.ground.028ca00a",
+    "self.forging.fragment.submunitions.3f9fe951",
+    "select.a.different.aircraft.3d04db88",
+    "shortcut.data.is.invalid.573000a9",
+    "the.aircraft.interface.does.not.6d99202a",
+    "the.mod.is.disabled.e2a2d689",
+    "tactical.laser.system.1d655382",
+    "aircraft.change.failed.1db41bbb",
+    "aircraft.change.applied.41f605b6",
+    "to.spawn.dfae5745",
+    "mod.1056c4ac",
+    "short.range.aerial.suppression.missile.bba50c34",
+    "long.range.anti.ship.missile.76d89972",
+    "land.attack.cruise.missile.fdb4df26",
+    "guided.penetration.bomb.46626c87",
+    "stand.off.dispenser.ae365b98",
+    "fuel.air.explosive.bomb.e5fd23b4",
+    "this.shortcut.is.unavailable.7093c8d8",
+    "the.aircraft.change.state.is.d7390db1",
+    "ui.error.bb1191fe",
+    "select.an.aircraft.7809e2b7",
+    "electromagnetic.launcher.12a20d30",
+    "pulse.laser.system.c7b6871f",
+    "multiple.launch.standard.missile.23eabf64",
+    "refilled.89f913d7",
+    "not.purchased.336eda21",
+    "unguided.bomb.b9b99df0",
+    "small.diameter.bomb.ba299cc1",
+    "guided.rocket.launcher.ea44f59c",
+    "machine.gun.pod.c36c7293",
+    "tactical.laser.system.1caaab54",
+    "pulse.laser.system.53cf78c4",
+    "integrated.electronic.warfare.system.94b251d1",
+    "no.weapon.f5499408",
+    "sp.aabf060d",
+    "rocket.launcher.97c7b931",
+    "electromagnetic.launcher.68b0e3be",
+    "unmanned.aerial.vehicle.0ce7e105",
+    "yes.b8b3902a",
+    "no.be52ce60",
+    "punctuation.8ce1b17b",
+    "punctuation.89d1a37e",
+    "pause.state.changed.close.and.ad215909",
+    "waiting.for.the.native.pause.1135f7ad"
+  ],
+  "message_matches": {
+    "the.sp.debug.protocol.does.89e22130": {
+      "zh": "SP调试协议不匹配",
+      "en": "The SP debug protocol does not match."
+    },
+    "the.sp.debug.interface.does.024ebcbd": {
+      "zh": "SP调试原生接口与当前构建不符",
+      "en": "The SP debug interface does not match this game build."
+    },
+    "the.sp.debug.hook.could.6d9f31f8": {
+      "zh": "SP调试钩子创建失败",
+      "en": "The SP debug hook could not be created."
+    },
+    "the.sp.debug.hook.could.ebd410d8": {
+      "zh": "SP调试钩子启用失败",
+      "en": "The SP debug hook could not be enabled."
+    },
+    "the.sp.debug.argument.count.40238093": {
+      "zh": "SP调试参数数量无效",
+      "en": "The SP debug argument count is invalid."
+    },
+    "the.sp.debug.parameters.are.72f3a922": {
+      "zh": "SP调试参数无效",
+      "en": "The SP debug parameters are invalid."
+    },
+    "sp.debugging.does.not.belong.773ac020": {
+      "zh": "SP调试不属于当前玩家会话",
+      "en": "SP debugging does not belong to the current player session."
+    },
+    "the.sp.debug.player.identity.98253e25": {
+      "zh": "SP调试玩家身份已改变",
+      "en": "The SP debug player identity has changed."
+    },
+    "controller.and.keyboard.tracking.options.5a09ef52": {
+      "zh": "手柄和键盘注视开关必须为布尔值",
+      "en": "Controller and keyboard tracking options must be booleans."
+    },
+    "the.old.management.fields.have.d270012c": {
+      "zh": "旧管理界面字段已退役",
+      "en": "The old management fields have been retired."
+    },
+    "the.old.management.configuration.is.5a2e369b": {
+      "zh": "旧管理界面配置无效",
+      "en": "The old management configuration is invalid."
+    },
+    "management.configuration.revision.19.is.f8683818": {
+      "zh": "需要管理参数第 19 版",
+      "en": "Management configuration revision 19 is required."
+    },
+    "the.hangar.multi.sp.model.69e69a4b": {
+      "zh": "机库多SP模型开关必须为布尔值",
+      "en": "The hangar multi-SP model option must be a boolean."
+    },
+    "the.d.pad.weapon.switch.a3cb85be": {
+      "zh": "手柄十字键切换武器开关必须为布尔值",
+      "en": "The D-pad weapon switch option must be a boolean."
+    },
+    "the.old.configuration.contains.unknown.b42f0294": {
+      "zh": "旧配置含未知机库或十字键开关",
+      "en": "The old configuration contains unknown hangar or D-pad options."
+    },
+    "management.configuration.revision.16.is.d786d33b": {
+      "zh": "需要管理参数第 16 版",
+      "en": "Management configuration revision 16 is required."
+    },
+    "management.configuration.revision.18.is.c6705a71": {
+      "zh": "需要管理参数第 18 版",
+      "en": "Management configuration revision 18 is required."
+    },
+    "management.configuration.revision.17.is.bbf76656": {
+      "zh": "需要管理参数第 17 版",
+      "en": "Management configuration revision 17 is required."
+    },
+    "the.mission.multi.sp.model.49da3e85": {
+      "zh": "任务多SP模型开关必须为布尔值，旧总模型开关已退役",
+      "en": "The mission multi-SP model option must be a boolean; the old master model switch is retired."
+    },
+    "the.old.model.option.configuration.7ca83177": {
+      "zh": "旧模型开关配置无效",
+      "en": "The old model option configuration is invalid."
+    },
+    "mission.multi.sp.models.on.79af0eb7": {
+      "zh": "任务多SP模型：开启",
+      "en": "Mission multi-SP models: ON"
+    },
+    "mission.multi.sp.models.off.f4fb65f0": {
+      "zh": "任务多SP模型：关闭",
+      "en": "Mission multi-SP models: OFF"
+    },
+    "next.mode.must.be.normal.82f6f57d": {
+      "zh": "NEXT模式必须为普通或VR模式",
+      "en": "NEXT mode must be normal or VR."
+    },
+    "latched.tracking.must.be.enabled.ecca309d": {
+      "zh": "锁定注视功能开关必须为布尔值",
+      "en": "Latched tracking must be enabled or disabled."
+    },
+    "legacy.camera.interaction.settings.have.0110293a": {
+      "zh": "旧镜头交互设置已退役",
+      "en": "Legacy camera interaction settings have been retired."
+    },
+    "the.old.configuration.contains.unexpected.8991f095": {
+      "zh": "旧配置含未知新版镜头交互设置",
+      "en": "The old configuration contains unexpected camera interaction settings."
+    },
+    "the.old.next.setting.is.0b565bd7": {
+      "zh": "旧NEXT设置无效",
+      "en": "The old NEXT setting is invalid."
+    },
+    "latched.tracking.components.do.not.fbe2fcc3": {
+      "zh": "锁定注视组件不属于当前飞机",
+      "en": "Latched tracking components do not belong to the current aircraft."
+    },
+    "the.latched.tracking.player.identity.f12201e7": {
+      "zh": "锁定注视的玩家身份已变化",
+      "en": "The latched tracking player identity changed."
+    },
+    "the.native.latched.tracking.selection.32af8de5": {
+      "zh": "锁定注视的选择入口不匹配",
+      "en": "The native latched tracking selection interface does not match."
+    },
+    "target.tracking.input.hooks.could.8a7036d2": {
+      "zh": "目标注视输入接入失败",
+      "en": "Target tracking input hooks could not be created."
+    },
+    "view.center.targeting.received.invalid.a8f17e92": {
+      "zh": "视角选目标的相机数据无效",
+      "en": "View-center targeting received invalid camera data."
+    },
+    "view.center.targeting.received.an.7d82e8d0": {
+      "zh": "视角选目标的目标位置无效",
+      "en": "View-center targeting received an invalid target position."
+    },
+    "the.target.candidate.array.changed.126ea576": {
+      "zh": "视角选目标的候选表在调用期间改变",
+      "en": "The target candidate array changed during native selection."
+    },
+    "the.target.candidate.array.is.840b6e99": {
+      "zh": "视角选目标的候选表无效",
+      "en": "The target candidate array is invalid."
+    },
+    "the.view.center.targeting.player.f16ea9a6": {
+      "zh": "视角选目标的玩家身份已变化",
+      "en": "The view-center targeting player identity changed."
+    },
+    "the.native.view.center.targeting.7d27ffe3": {
+      "zh": "视角选目标的原生入口不匹配",
+      "en": "The native view-center targeting interface does not match this game build."
+    },
+    "view.center.targeting.hooks.could.f33ff639": {
+      "zh": "视角选目标钩子初始化失败",
+      "en": "View-center targeting hooks could not be initialized."
+    },
+    "view.center.targeting.hooks.could.e6d2c75d": {
+      "zh": "视角选目标钩子创建失败",
+      "en": "View-center targeting hooks could not be created."
+    },
+    "view.center.targeting.hooks.could.f0044b85": {
+      "zh": "视角选目标钩子排队失败",
+      "en": "View-center targeting hooks could not be scheduled."
+    },
+    "view.center.targeting.hooks.could.c9c39d2c": {
+      "zh": "视角选目标钩子启用失败",
+      "en": "View-center targeting hooks could not be enabled."
+    },
+    "view.center.targeting.requires.the.9c8ab615": {
+      "zh": "视角选目标需要当前玩家飞机",
+      "en": "View-center targeting requires the current player aircraft."
+    },
+    "view.center.targeting.is.outside.10c7bdfc": {
+      "zh": "视角选目标不在玩家游戏线程",
+      "en": "View-center targeting is outside the player game thread."
+    },
+    "view.center.targeting.received.an.4417a22f": {
+      "zh": "视角选目标的机头方向无效",
+      "en": "View-center targeting received an invalid aircraft orientation."
+    },
+    "the.view.center.targeting.interface.ec69bfa8": {
+      "zh": "视角选目标参数数量无效",
+      "en": "The view-center targeting interface does not match the controller."
+    },
+    "view.center.targeting.parameters.are.3c5b60f8": {
+      "zh": "视角选目标参数无效",
+      "en": "View-center targeting parameters are invalid."
+    },
+    "the.view.center.targeting.protocol.2528d1a6": {
+      "zh": "视角选目标协议不匹配",
+      "en": "The view-center targeting protocol does not match."
+    },
+    "view.center.targeting.must.be.bab51561": {
+      "zh": "视角选目标开关必须为布尔值",
+      "en": "View-center targeting must be on or off."
+    },
+    "the.view.center.dot.must.ab0b51f5": {
+      "zh": "视野中心白点开关必须为布尔值",
+      "en": "The view-center dot must be on or off."
+    },
+    "view.center.dot.parameters.are.97f9526b": {
+      "zh": "视野中心白点参数无效",
+      "en": "View-center dot parameters are invalid."
+    },
+    "the.view.center.dot.could.2c021e84": {
+      "zh": "视野中心白点发布失败",
+      "en": "The view-center dot could not be published."
+    },
+    "five.mod.shortcut.settings.are.9cb470e9": {
+      "zh": "缺少五个快捷键设置",
+      "en": "Five mod shortcut settings are required."
+    },
+    "the.five.mod.shortcuts.must.8502d932": {
+      "zh": "五个快捷键不能重复",
+      "en": "The five mod shortcuts must be distinct."
+    },
+    "the.l3.view.center.next.d9073877": {
+      "zh": "左摇杆视角选目标快捷开关必须为布尔值",
+      "en": "The L3 view-center NEXT shortcut must be on or off."
+    },
+    "the.old.configuration.contains.unexpected.711dd585": {
+      "zh": "旧配置含未知左摇杆视角选目标设置",
+      "en": "The old configuration contains unexpected L3 view-center NEXT settings."
+    },
+    "management.configuration.revision.15.is.fc217c4d": {
+      "zh": "需要管理参数第 15 版",
+      "en": "Management configuration revision 15 is required."
+    },
+    "the.old.configuration.contains.unexpected.59602d69": {
+      "zh": "旧配置含未知视角选目标设置",
+      "en": "The old configuration contains unexpected view-center targeting settings."
+    },
+    "the.target.is.not.an.f114857f": {
+      "zh": "目标不是当前已加载目录中的可用三SP机体",
+      "en": "The target is not an available three-SP aircraft in the loaded catalogue."
+    },
+    "the.native.gun.salvo.interface.75cb636e": {
+      "zh": "机炮齐射原生接口与当前构建不符",
+      "en": "The native gun salvo interface does not match this game build."
+    },
+    "gun.salvo.hooks.could.not.0e7bc757": {
+      "zh": "机炮齐射钩子初始化失败",
+      "en": "Gun salvo hooks could not be initialized."
+    },
+    "gun.salvo.hooks.could.not.9f5b7708": {
+      "zh": "机炮齐射钩子创建失败",
+      "en": "Gun salvo hooks could not be created."
+    },
+    "gun.salvo.hooks.could.not.62f44715": {
+      "zh": "机炮齐射钩子排队失败",
+      "en": "Gun salvo hooks could not be scheduled."
+    },
+    "gun.salvo.hooks.could.not.6c57f8a1": {
+      "zh": "机炮齐射钩子启用失败",
+      "en": "Gun salvo hooks could not be enabled."
+    },
+    "the.gun.salvo.interface.does.c7ff3f70": {
+      "zh": "机炮齐射参数数量无效",
+      "en": "The gun salvo interface does not match the controller."
+    },
+    "gun.salvo.parameters.are.invalid.1fc7dcb7": {
+      "zh": "机炮齐射参数无效",
+      "en": "Gun salvo parameters are invalid."
+    },
+    "gun.salvo.does.not.belong.97d98412": {
+      "zh": "机炮齐射不属于当前玩家会话",
+      "en": "Gun salvo does not belong to the current player session."
+    },
+    "the.current.sp.does.not.eaea4b56": {
+      "zh": "当前SP不支持机炮齐射",
+      "en": "The current SP does not support gun salvo."
+    },
+    "the.gun.salvo.core.call.35d4d7fa": {
+      "zh": "机炮齐射核心调用失败",
+      "en": "The gun salvo core call failed."
+    },
+    "gun.salvo.must.be.on.ee49edb3": {
+      "zh": "机炮齐射开关必须为布尔值",
+      "en": "Gun salvo must be on or off."
+    },
+    "four.mod.shortcut.settings.are.c750592f": {
+      "zh": "缺少四个快捷键设置",
+      "en": "Four mod shortcut settings are required."
+    },
+    "the.four.mod.shortcuts.must.c3204c19": {
+      "zh": "四个快捷键不能重复",
+      "en": "The four mod shortcuts must be distinct."
+    },
+    "management.configuration.revision.13.is.745a4ffd": {
+      "zh": "需要管理参数第 13 版",
+      "en": "Management configuration revision 13 is required."
+    },
+    "the.old.configuration.contains.unexpected.b9a16239": {
+      "zh": "旧配置含未知机炮齐射设置",
+      "en": "The old configuration contains unexpected gun salvo settings."
+    },
+    "the.camera.tracking.transition.is.5a14c704": {
+      "zh": "镜头注视交接进度超出原生范围",
+      "en": "The camera tracking transition is outside the native range."
+    },
+    "the.camera.tracking.transition.direction.e49f196c": {
+      "zh": "镜头注视交接方向无效",
+      "en": "The camera tracking transition direction is invalid."
+    },
+    "the.camera.tracking.transition.interface.9a8b9af7": {
+      "zh": "镜头注视交接接口不匹配",
+      "en": "The camera tracking transition interface does not match this game build."
+    },
+    "the.old.controller.tracking.configuration.0d1bad80": {
+      "zh": "旧手柄注视配置无效",
+      "en": "The old controller tracking configuration is invalid."
+    },
+    "the.controller.x.replacement.setting.ec82dec4": {
+      "zh": "手柄X替换设置已退役",
+      "en": "The controller X replacement setting is no longer supported."
+    },
+    "management.configuration.revision.11.is.ce70814c": {
+      "zh": "需要管理参数第 11 版",
+      "en": "Management configuration revision 11 is required."
+    },
+    "the.l3.tracking.setting.must.45c18f4f": {
+      "zh": "左摇杆保持注视开关必须为布尔值",
+      "en": "The L3 tracking setting must be on or off."
+    },
+    "the.camera.tracking.state.check.8a3f0b36": {
+      "zh": "镜头保持实际注视判据不匹配",
+      "en": "The camera tracking state check does not match this game build."
+    },
+    "the.camera.tracking.component.identity.559abec6": {
+      "zh": "镜头保持注视组件身份不符",
+      "en": "The camera tracking component identity changed."
+    },
+    "the.camera.recenter.key.is.0ba64092": {
+      "zh": "镜头回正键位无效或重复",
+      "en": "The camera recenter key is invalid or conflicts with another mod binding."
+    },
+    "the.camera.recenter.key.conflicts.83f48605": {
+      "zh": "镜头回正键不能与其他模组键位重复",
+      "en": "The camera recenter key conflicts with another mod binding."
+    },
+    "auto.recenter.threshold.must.be.791ecd17": {
+      "zh": "自动回正阈值必须为0至45的整数",
+      "en": "Auto recenter threshold must be a whole number from 0 to 45."
+    },
+    "the.old.configuration.contains.an.0fd1ee13": {
+      "zh": "旧配置含未知自动回正阈值",
+      "en": "The old configuration contains an unexpected auto recenter threshold."
+    },
+    "management.configuration.revision.14.is.1ad56332": {
+      "zh": "需要管理参数第 14 版",
+      "en": "Management configuration revision 14 is required."
+    },
+    "camera.sensitivity.must.be.a.932941ac": {
+      "zh": "镜头灵敏度必须为5至200的整数",
+      "en": "Camera sensitivity must be a whole number from 5 to 200."
+    },
+    "the.r3.replacement.setting.must.0553b672": {
+      "zh": "R3替换开关必须为布尔值",
+      "en": "The R3 replacement setting must be on or off."
+    },
+    "the.old.configuration.contains.an.0ddb7131": {
+      "zh": "旧配置含未知R3替换设置",
+      "en": "The old configuration contains an unexpected R3 replacement setting."
+    },
+    "the.old.camera.sensitivity.is.76152ac9": {
+      "zh": "旧镜头灵敏度无效",
+      "en": "The old camera sensitivity is invalid."
+    },
+    "management.configuration.revision.10.is.c0bf20ee": {
+      "zh": "需要管理参数第 10 版",
+      "en": "Management configuration revision 10 is required."
+    },
+    "camera.hold.parameters.are.outside.4e586655": {
+      "zh": "镜头保持参数超出范围",
+      "en": "Camera hold parameters are outside the supported range."
+    },
+    "the.camera.recenter.key.is.7c168451": {
+      "zh": "镜头回正键位无效",
+      "en": "The camera recenter key is invalid."
+    },
+    "the.camera.hold.interface.does.f0f5db36": {
+      "zh": "镜头保持参数数量无效",
+      "en": "The camera hold interface does not match the controller."
+    },
+    "the.camera.hold.setting.is.bb26b5ce": {
+      "zh": "镜头保持设置无效",
+      "en": "The camera hold setting is invalid."
+    },
+    "the.old.configuration.contains.unexpected.e0d9586a": {
+      "zh": "旧配置含未知镜头控制设置",
+      "en": "The old configuration contains unexpected camera control settings."
+    },
+    "management.configuration.revision.9.is.86706bf7": {
+      "zh": "需要管理参数第 9 版",
+      "en": "Management configuration revision 9 is required."
+    },
+    "the.special.camera.check.does.3c6ecd3b": {
+      "zh": "镜头保持特殊视角判据不匹配",
+      "en": "The special camera check does not match this game build."
+    },
+    "the.camera.hold.interface.does.545c0cad": {
+      "zh": "镜头保持接口与当前游戏不匹配",
+      "en": "The camera hold interface does not match this game build."
+    },
+    "the.native.camera.hold.interface.d3616826": {
+      "zh": "镜头保持原生入口接入失败",
+      "en": "The native camera hold interface could not be connected."
+    },
+    "camera.hold.hooks.could.not.fed9e7ee": {
+      "zh": "镜头保持钩子排队失败",
+      "en": "Camera hold hooks could not be scheduled."
+    },
+    "camera.hold.hooks.could.not.83b61e41": {
+      "zh": "镜头保持钩子启用失败",
+      "en": "Camera hold hooks could not be enabled."
+    },
+    "camera.hold.requires.the.current.39d95850": {
+      "zh": "镜头保持需要当前玩家飞机",
+      "en": "Camera hold requires the current player aircraft."
+    },
+    "the.player.camera.component.is.75a4af83": {
+      "zh": "镜头保持组件类型不符",
+      "en": "The player camera component is unsupported."
+    },
+    "the.camera.does.not.belong.b683334b": {
+      "zh": "镜头保持组件不属于当前飞机",
+      "en": "The camera does not belong to the current aircraft."
+    },
+    "the.camera.input.identity.changed.a875f9f8": {
+      "zh": "镜头保持视角输入身份不符",
+      "en": "The camera input identity changed."
+    },
+    "the.camera.input.axis.list.eccd6f4e": {
+      "zh": "镜头保持输入轴列表无效",
+      "en": "The camera input axis list is invalid."
+    },
+    "the.camera.axis.identity.changed.6d157b8d": {
+      "zh": "镜头保持轴名称不一致",
+      "en": "The camera axis identity changed."
+    },
+    "the.native.camera.look.axes.a58e20e7": {
+      "zh": "镜头保持缺少原生环视轴",
+      "en": "The native camera look axes are unavailable."
+    },
+    "camera.hold.received.an.invalid.3bd75f71": {
+      "zh": "镜头保持收到无效环视轴",
+      "en": "Camera hold received an invalid look axis."
+    },
+    "the.camera.hold.state.is.31dda00b": {
+      "zh": "镜头保持状态超出原生范围",
+      "en": "The camera hold state is outside the native range."
+    },
+    "the.camera.hold.interface.does.9118a424": {
+      "zh": "镜头保持协议不匹配",
+      "en": "The camera hold interface does not match the controller."
+    },
+    "the.camera.hold.setting.must.d92e838a": {
+      "zh": "镜头保持开关必须为布尔值",
+      "en": "The camera hold setting must be on or off."
+    },
+    "native.target.tracking.was.not.b1c3b963": {
+      "zh": "未观察到原生目标跟踪轴读取，已停止注视",
+      "en": "Native target tracking was not observed. Toggle tracking has been stopped."
+    },
+    "the.target.tracking.interface.does.b3cfccf8": {
+      "zh": "目标注视接口与当前游戏不匹配",
+      "en": "The target tracking interface does not match this game build."
+    },
+    "the.game.s.xinput.interface.5bcb8eb2": {
+      "zh": "目标注视缺少游戏使用的XInput接口",
+      "en": "The game's XInput interface is unavailable."
+    },
+    "target.tracking.input.could.not.b2da0043": {
+      "zh": "目标注视输入钩子初始化失败",
+      "en": "Target tracking input could not be initialized."
+    },
+    "the.native.target.tracking.axis.d49de3e0": {
+      "zh": "目标跟踪轴接入失败",
+      "en": "The native target tracking axis could not be connected."
+    },
+    "controller.input.observation.could.not.6b8fd206": {
+      "zh": "手柄观察接口接入失败",
+      "en": "Controller input observation could not be connected."
+    },
+    "target.tracking.input.could.not.34ec8827": {
+      "zh": "目标注视输入钩子启用失败",
+      "en": "Target tracking input could not be enabled."
+    },
+    "the.player.input.component.is.8577924b": {
+      "zh": "目标注视输入组件类型不符",
+      "en": "The player input component is unsupported."
+    },
+    "the.player.input.axis.list.abdde7e8": {
+      "zh": "目标注视输入轴列表无效",
+      "en": "The player input axis list is invalid."
+    },
+    "the.target.tracking.axis.identity.24e3bef9": {
+      "zh": "目标跟踪轴名称不一致",
+      "en": "The target tracking axis identity changed."
+    },
+    "this.aircraft.has.no.native.694c2c79": {
+      "zh": "当前机体没有原生目标跟踪轴",
+      "en": "This aircraft has no native target tracking axis."
+    },
+    "the.target.tracking.key.is.1e2676d3": {
+      "zh": "目标注视键位无效或重复",
+      "en": "The target tracking key is invalid or conflicts with another mod binding."
+    },
+    "the.target.tracking.interface.does.2047a405": {
+      "zh": "目标注视协议不匹配",
+      "en": "The target tracking interface does not match the controller."
+    },
+    "the.tracking.key.conflicts.with.3308e777": {
+      "zh": "目标注视键不能与模组快捷键重复",
+      "en": "The tracking key conflicts with a mod shortcut."
+    },
+    "the.central.weapon.abbreviation.display.24ebe3db": {
+      "zh": "中央武器简称显示方式无效",
+      "en": "The central weapon abbreviation display mode is invalid."
+    },
+    "the.tracking.key.conflicts.with.3a07c985": {
+      "zh": "目标注视键不能与武器选择键重复",
+      "en": "The tracking key conflicts with a direct weapon key."
+    },
+    "target.tracking.is.currently.unavailable.83446d36": {
+      "zh": "当前不能使用目标注视。",
+      "en": "Target tracking is currently unavailable."
+    },
+    "no.target.is.selected.2d02fc46": {
+      "zh": "没有可注视的目标。",
+      "en": "No target is selected."
+    },
+    "target.tracking.on.7e430432": {
+      "zh": "目标注视：开启",
+      "en": "Target tracking: ON"
+    },
+    "target.tracking.off.f41f765a": {
+      "zh": "目标注视：关闭",
+      "en": "Target tracking: OFF"
+    },
+    "select.this.sp.or.no.60f6116c": {
+      "zh": "请选择当前槽兵装；无兵装结束选装。弹药按管理页比例向上取整。",
+      "en": "Select this SP, or NO WEAPON to finish. Ammunition follows management percentages, rounded up."
+    },
+    "this.mission.kept.the.original.fb25dbf2": {
+      "zh": "任务仍生成原机体；当前任务不支持此重开入口，请返回机库换机。",
+      "en": "This mission kept the original aircraft. Change aircraft in the hangar."
+    },
+    "close.management.and.wait.for.404be1fe": {
+      "zh": "仍有已发射的活动武器，请关闭管理界面、等待武器结束后重试",
+      "en": "Close management and wait for fired weapons to finish before retrying."
+    },
+    "return.to.the.main.menu.e01e801c": {
+      "zh": "请返回主菜单或单人任务选择页，保存的总开关会自动生效。",
+      "en": "Return to the main menu or single-player mission selection; the saved master switch will apply automatically."
+    },
+    "confirm.this.sp.or.no.4a8836e0": {
+      "zh": "决定：选择当前 SP，或无兵装结束。返回：修改上一槽。",
+      "en": "Confirm this SP, or NO WEAPON to finish. Back: edit the previous slot."
+    },
+    "wait.for.active.effects.and.420ee36f": {
+      "zh": "持续效果或 TLS 尾迹尚未退场，请等待后再调试换装",
+      "en": "Wait for active effects and TLS trails to finish before rebuilding the loadout."
+    },
+    "mission.13.uses.its.assigned.779cb0af": {
+      "zh": "第13关使用任务指定SP，多SP功能暂时停用。",
+      "en": "Mission 13 uses its assigned SP. Multi-SP is temporarily disabled."
+    },
+    "close.the.game.s.pause.54dd92e9": {
+      "zh": "请先退出游戏暂停菜单，再直接打开管理界面换机。",
+      "en": "Close the game's pause menu, then open management directly to change aircraft."
+    },
+    "confirm.take.off.back.edit.9f37546a": {
+      "zh": "决定：按本次方案起飞。返回：修改最后一个选择。",
+      "en": "Confirm: take off. Back: edit the last choice."
+    },
+    "wait.for.fired.weapons.to.a80d2c8b": {
+      "zh": "仍有已发射的活动武器，请等待结束后再调试换装",
+      "en": "Wait for fired weapons to finish before rebuilding the loadout."
+    },
+    "take.off.with.the.selected.96c58c73": {
+      "zh": "按已选的 1 至 3 个 SP 重新起飞。",
+      "en": "Take off with the selected one to three SP weapons."
+    },
+    "mission.restart.timed.out.return.9f16cd80": {
+      "zh": "等待重开超时；未重复重开，请返回机库换机。",
+      "en": "Mission restart timed out. Return to the hangar to change aircraft."
+    },
+    "the.restart.did.not.create.62c8d9be": {
+      "zh": "原生重开未生成新玩家机体，请返回机库换机。",
+      "en": "The restart did not create a new player aircraft. Return to the hangar."
+    },
+    "aircraft.debugging.cancelled.because.mission.52c17de9": {
+      "zh": "第13关使用任务指定SP，已取消调试换机",
+      "en": "Aircraft debugging cancelled because Mission 13 uses its assigned SP."
+    },
+    "resupply.or.a.mission.transition.08301ced": {
+      "zh": "正在补给或交接任务状态，请完成后再打开。",
+      "en": "Resupply or a mission transition is in progress."
+    },
+    "controller.or.pause.handoff.failed.bcb5bee9": {
+      "zh": "控制器或暂停交接出错，请查看上方错误。",
+      "en": "Controller or pause handoff failed; see the error above."
+    },
+    "confirm.reselect.special.weapons.from.3bb995e4": {
+      "zh": "决定：返回 SP1，重新选择特殊兵装。",
+      "en": "Confirm: reselect special weapons from SP1."
+    },
+    "leave.this.and.later.slots.56be6c3c": {
+      "zh": "不搭载当前及后续槽，按管理页比例配弹。",
+      "en": "Leave this and later slots empty. Ammunition follows management percentages."
+    },
+    "multi.sp.models.reverted.to.722e9a2e": {
+      "zh": "多 SP 挂载已回退为原生单 SP：",
+      "en": "Multi-SP models reverted to native visuals: "
+    },
+    "the.hangar.did.not.receive.bd63c71b": {
+      "zh": "原生机库未接收决定/返回，已停止交接",
+      "en": "The hangar did not receive the action. Reopen the weapon selection page."
+    },
+    "the.management.pause.was.not.3f065b9f": {
+      "zh": "管理界面暂停没有归还，未发出重开请求",
+      "en": "The management pause was not released. The restart was not sent."
+    },
+    "the.native.pause.changed.the.02f07ba9": {
+      "zh": "原生暂停身份已变化，未发出重开请求",
+      "en": "The native pause changed. The restart was not sent."
+    },
+    "the.native.menu.pause.was.bb49de2f": {
+      "zh": "原生菜单暂停没有完成归还，未重开任务",
+      "en": "The native menu pause was not released. The mission was not restarted."
+    },
+    "the.native.pause.menu.changed.b858c0ab": {
+      "zh": "重开前原生暂停菜单身份已变化",
+      "en": "The native pause menu changed before restart."
+    },
+    "the.native.pause.menu.does.dff011dc": {
+      "zh": "原生暂停菜单不属于当前换机世界",
+      "en": "The native pause menu does not belong to the current mission world."
+    },
+    "the.mission.world.changed.while.01c99147": {
+      "zh": "关闭暂停菜单时任务世界已变化，未重开任务",
+      "en": "The mission world changed while closing the pause menu. The mission was not restarted."
+    },
+    "the.selected.aircraft.changed.while.777fa237": {
+      "zh": "关闭暂停菜单时目标机体选择已变化，未重开任务",
+      "en": "The selected aircraft changed while closing the pause menu. The mission was not restarted."
+    },
+    "the.mission.or.loadout.changed.0940dd1c": {
+      "zh": "任务或兵装已变化，请重新打开调试页",
+      "en": "The mission or loadout changed. Reopen Debug."
+    },
+    "another.game.action.changed.the.63bcfe84": {
+      "zh": "重开期间原生机体选择被其他流程改变",
+      "en": "Another game action changed the selected aircraft during restart."
+    },
+    "close.the.native.pause.menu.35129884": {
+      "zh": "原生任务仍在暂停，请先退出暂停菜单",
+      "en": "Close the native pause menu before changing aircraft."
+    },
+    "wait.for.fired.weapons.to.43e8701c": {
+      "zh": "仍有活动武器，请等待后再调试换装",
+      "en": "Wait for fired weapons to finish before rebuilding the loadout."
+    },
+    "finish.selecting.your.sp.loadout.e9d00cb5": {
+      "zh": "请完成所需 SP 选择后确认起飞",
+      "en": "Finish selecting your SP loadout before confirming takeoff"
+    },
+    "wait.for.the.current.weapon.671b9287": {
+      "zh": "原生连射尚未结束，暂不能重建SP",
+      "en": "Wait for the current weapon burst to finish before changing SP."
+    },
+    "enter.a.configured.single.player.fcec4959": {
+      "zh": "请先进入已配置兵装的单人任务。",
+      "en": "Enter a configured single-player mission first."
+    },
+    "aircraft.debugging.requires.an.enabled.23e7a896": {
+      "zh": "当前不是已启用Mod的单人任务",
+      "en": "Aircraft debugging requires an enabled single-player mission."
+    },
+    "the.game.session.changed.select.5cc7abc3": {
+      "zh": "游戏实例已改变，请重新选择机体",
+      "en": "The game session changed. Select an aircraft again."
+    },
+    "aircraft.change.cancelled.after.leaving.b95b7c12": {
+      "zh": "已离开单人任务，换机请求已取消",
+      "en": "Aircraft change cancelled after leaving single-player."
+    },
+    "aircraft.change.cancelled.after.entering.a6847795": {
+      "zh": "进入了其他任务，换机请求已取消",
+      "en": "Aircraft change cancelled after entering another mission."
+    },
+    "the.mission.or.loadout.changed.15cce088": {
+      "zh": "任务或兵装已改变，请重新按键",
+      "en": "The mission or loadout changed. Press the shortcut again."
+    },
+    "restarting.the.mission.and.waiting.996bed6e": {
+      "zh": "正在重开任务并等待目标机体。",
+      "en": "Restarting the mission and waiting for the selected aircraft."
+    },
+    "the.player.session.changed.reopen.0d67b4d9": {
+      "zh": "调试换装的玩家会话已经改变",
+      "en": "The player session changed. Reopen Debug."
+    },
+    "restarting.with.another.aircraft.please.09280b7c": {
+      "zh": "正在重开任务换机，请稍候。",
+      "en": "Restarting with another aircraft; please wait."
+    },
+    "waiting.for.management.to.pause.c8f3d30e": {
+      "zh": "正在等待管理界面暂停任务。",
+      "en": "Waiting for management to pause the mission."
+    },
+    "saved.mod.disabled.40bf1a5a": {
+      "zh": "（总开关关闭，仅保存设置）",
+      "en": " (saved; mod disabled)"
+    },
+    "sp.weapons.loadout.debugging.is.321c05be": {
+      "zh": "种SP；可继续调试组合）。",
+      "en": " SP weapons; loadout debugging is available)."
+    },
+    "aircraft.change.cancelled.after.returning.673d7ea8": {
+      "zh": "已返回菜单，换机请求已取消",
+      "en": "Aircraft change cancelled after returning to the menu."
+    },
+    "sp.ammunition.percentages.must.be.6a2470ee": {
+      "zh": "SP 弹药百分比必须为整数",
+      "en": "SP ammunition percentages must be whole numbers."
+    },
+    "the.aircraft.list.contains.duplicate.557431f4": {
+      "zh": "换机候选编号重复或名称为空",
+      "en": "The aircraft list contains duplicate identifiers or missing names."
+    },
+    "no.other.sp.combination.is.b18e7e0f": {
+      "zh": "没有其他可用 SP 组合",
+      "en": "No other SP combination is available."
+    },
+    "loading.weapons.please.wait.6a0c0149": {
+      "zh": "正在加载兵装，请稍候……",
+      "en": "Loading weapons. Please wait..."
+    },
+    "sp.ammunition.percentages.are.out.2a7c419e": {
+      "zh": "SP 弹药百分比超出范围",
+      "en": "SP ammunition percentages are out of range."
+    },
+    "flight.controls.are.not.ready.e80dfbd9": {
+      "zh": "当前飞行控制尚未开放。",
+      "en": "Flight controls are not ready."
+    },
+    "close.the.pause.menu.first.a3e85342": {
+      "zh": "请先退出游戏暂停菜单。",
+      "en": "Close the pause menu first."
+    },
+    "select.your.first.special.weapon.c9ff003e": {
+      "zh": "请选择第一种特殊兵装。",
+      "en": "Select your first special weapon."
+    },
+    "multi.sp.models.on.10e704f5": {
+      "zh": "多 SP 模型：开启",
+      "en": "Multi-SP models: ON"
+    },
+    "multi.sp.models.off.ca0b9e2a": {
+      "zh": "多 SP 模型：关闭",
+      "en": "Multi-SP models: OFF"
+    },
+    "confirm.select.sp1.6229917b": {
+      "zh": "决定：选择 SP1。",
+      "en": "Confirm: select SP1."
+    },
+    "restarting.the.mission.waiting.for.492c291f": {
+      "zh": "正在重开任务，等待 ",
+      "en": "Restarting the mission; waiting for "
+    },
+    "the.player.aircraft.is.not.b286c3d6": {
+      "zh": "当前玩家机体尚未就绪",
+      "en": "The player aircraft is not ready."
+    },
+    "mod.enabled.059ed7da": {
+      "zh": "Mod总开关：开启",
+      "en": "Mod: enabled"
+    },
+    "mod.disabled.ddc732b7": {
+      "zh": "Mod总开关：关闭",
+      "en": "Mod: disabled"
+    },
+    "dlc.ownership.unknown.f1a7fac5": {
+      "zh": "（DLC许可未知）",
+      "en": " (DLC ownership unknown)"
+    },
+    "semi.active.air.to.air.05bd83f5": {
+      "zh": "半主动雷达制导导弹",
+      "en": "Semi-Active Air-to-Air Missile"
+    },
+    "the.debug.loadout.interface.does.5f45d573": {
+      "zh": "调试换装协议不匹配",
+      "en": "The debug loadout interface does not match the controller."
+    },
+    "dlc.not.owned.8f080e7d": {
+      "zh": "（无DLC许可）",
+      "en": " (DLC not owned)"
+    },
+    "ownership.data.unavailable.b02bb5c3": {
+      "zh": "（许可资料未知）",
+      "en": " (Ownership data unavailable)"
+    },
+    "quick.maneuver.air.to.air.145f9fea": {
+      "zh": "高机动空对空导弹",
+      "en": "Quick Maneuver Air-to-Air Missile"
+    },
+    "high.capacity.air.to.air.75f05f08": {
+      "zh": "高容量空对空导弹",
+      "en": "High-Capacity Air-to-Air Missile"
+    },
+    "high.power.air.to.air.d23d5a2b": {
+      "zh": "高威力空对空导弹",
+      "en": "High-Power Air-to-Air Missile"
+    },
+    "label.4.target.air.to.air.c9acc93f": {
+      "zh": "四目标空对空导弹",
+      "en": "4-Target Air-to-Air Missile"
+    },
+    "label.6.target.air.to.air.4e4a127c": {
+      "zh": "六目标空对空导弹",
+      "en": "6-Target Air-to-Air Missile"
+    },
+    "label.8.target.air.to.air.b8d8ae6a": {
+      "zh": "八目标空对空导弹",
+      "en": "8-Target Air-to-Air Missile"
+    },
+    "label.4.target.air.to.ground.8d2581a5": {
+      "zh": "四目标空对地导弹",
+      "en": "4-Target Air-to-Ground Missile"
+    },
+    "label.8.target.air.to.ground.917df009": {
+      "zh": "八目标空对地导弹",
+      "en": "8-Target Air-to-Ground Missile"
+    },
+    "the.game.is.still.loading.8883f81e": {
+      "zh": "游戏实例尚未就绪",
+      "en": "The game is still loading."
+    },
+    "shortcut.bindings.must.be.distinct.f04bf29f": {
+      "zh": "快捷键有重复绑定",
+      "en": "Shortcut bindings must be distinct."
+    },
+    "the.debug.loadout.contains.an.308d60b6": {
+      "zh": "调试方案编号无效",
+      "en": "The debug loadout contains an invalid weapon slot."
+    },
+    "the.aircraft.change.mode.is.dcf2efb3": {
+      "zh": "换机生效方式无效",
+      "en": "The aircraft change mode is invalid."
+    },
+    "the.aircraft.list.is.invalid.3d34847e": {
+      "zh": "换机候选列表无效",
+      "en": "The aircraft list is invalid."
+    },
+    "an.aircraft.identifier.is.invalid.95211711": {
+      "zh": "换机候选编号无效",
+      "en": "An aircraft identifier is invalid."
+    },
+    "management.state.error.5a0c194c": {
+      "zh": "管理状态错误：",
+      "en": "Management state error: "
+    },
+    "aircraft.state.error.780cbde3": {
+      "zh": "换机状态错误：",
+      "en": "Aircraft state error: "
+    },
+    "multi.purpose.burst.missile.83414085": {
+      "zh": "多用途爆炸导弹",
+      "en": "Multi-Purpose Burst Missile"
+    },
+    "all.directional.multi.purpose.missile.3ae44e49": {
+      "zh": "全向多用途导弹",
+      "en": "All-Directional Multi-Purpose Missile"
+    },
+    "this.weapon.has.not.been.89a38067": {
+      "zh": "该兵装尚未购买",
+      "en": "This weapon has not been purchased"
+    },
+    "change.special.weapons.eda77ad4": {
+      "zh": "变更特殊兵装。",
+      "en": "Change special weapons."
+    },
+    "high.velocity.air.to.air.45a1891b": {
+      "zh": "高速空对空导弹",
+      "en": "High-Velocity Air-to-Air Missile"
+    },
+    "long.range.air.to.air.01747326": {
+      "zh": "远程空对空导弹",
+      "en": "Long-Range Air-to-Air Missile"
+    },
+    "long.range.air.to.ground.028ca00a": {
+      "zh": "远程空对地导弹",
+      "en": "Long-Range Air-to-Ground Missile"
+    },
+    "self.forging.fragment.submunitions.3f9fe951": {
+      "zh": "自锻破片子母弹",
+      "en": "Self-Forging Fragment Submunitions"
+    },
+    "select.a.different.aircraft.3d04db88": {
+      "zh": "请选择其他机体",
+      "en": "Select a different aircraft."
+    },
+    "shortcut.data.is.invalid.573000a9": {
+      "zh": "快捷键格式无效",
+      "en": "Shortcut data is invalid."
+    },
+    "the.aircraft.interface.does.not.6d99202a": {
+      "zh": "换机协议不匹配",
+      "en": "The aircraft interface does not match the controller."
+    },
+    "the.mod.is.disabled.e2a2d689": {
+      "zh": "本模组已关闭",
+      "en": "The mod is disabled."
+    },
+    "tactical.laser.system.1d655382": {
+      "zh": "战术激光系统",
+      "en": "Tactical Laser System"
+    },
+    "aircraft.change.failed.1db41bbb": {
+      "zh": "换机未完成：",
+      "en": "Aircraft change failed: "
+    },
+    "aircraft.change.applied.41f605b6": {
+      "zh": "换机已生效：",
+      "en": "Aircraft change applied: "
+    },
+    "to.spawn.dfae5745": {
+      "zh": " 实际生成。",
+      "en": " to spawn."
+    },
+    "mod.1056c4ac": {
+      "zh": "Mod提示：",
+      "en": "Mod: "
+    },
+    "short.range.aerial.suppression.missile.bba50c34": {
+      "zh": "小型空爆导弹",
+      "en": "Short-Range Aerial Suppression Missile"
+    },
+    "long.range.anti.ship.missile.76d89972": {
+      "zh": "远程反舰导弹",
+      "en": "Long-Range Anti-Ship Missile"
+    },
+    "land.attack.cruise.missile.fdb4df26": {
+      "zh": "远程巡航导弹",
+      "en": "Land Attack Cruise Missile"
+    },
+    "guided.penetration.bomb.46626c87": {
+      "zh": "精确制导炸弹",
+      "en": "Guided Penetration Bomb"
+    },
+    "stand.off.dispenser.ae365b98": {
+      "zh": "远距撒布弹药",
+      "en": "Stand-Off Dispenser"
+    },
+    "fuel.air.explosive.bomb.e5fd23b4": {
+      "zh": "燃料空气炸弹",
+      "en": "Fuel-Air Explosive Bomb"
+    },
+    "this.shortcut.is.unavailable.7093c8d8": {
+      "zh": "快捷键不可用",
+      "en": "This shortcut is unavailable."
+    },
+    "the.aircraft.change.state.is.d7390db1": {
+      "zh": "换机状态无效",
+      "en": "The aircraft change state is invalid."
+    },
+    "ui.error.bb1191fe": {
+      "zh": "界面错误：",
+      "en": "UI error: "
+    },
+    "select.an.aircraft.7809e2b7": {
+      "zh": "请选择机体",
+      "en": "Select an aircraft"
+    },
+    "electromagnetic.launcher.12a20d30": {
+      "zh": "电磁轨道炮",
+      "en": "Electromagnetic Launcher"
+    },
+    "pulse.laser.system.c7b6871f": {
+      "zh": "脉冲激光炮",
+      "en": "Pulse Laser System"
+    },
+    "multiple.launch.standard.missile.23eabf64": {
+      "zh": "多目标导弹",
+      "en": "Multiple-Launch Standard Missile"
+    },
+    "refilled.89f913d7": {
+      "zh": "（已补满）",
+      "en": " (refilled)"
+    },
+    "not.purchased.336eda21": {
+      "zh": "（未购买）",
+      "en": " (Not purchased)"
+    },
+    "unguided.bomb.b9b99df0": {
+      "zh": "无制导炸弹",
+      "en": "Unguided Bomb"
+    },
+    "small.diameter.bomb.ba299cc1": {
+      "zh": "小直径炸弹",
+      "en": "Small Diameter Bomb"
+    },
+    "guided.rocket.launcher.ea44f59c": {
+      "zh": "制导火箭弹",
+      "en": "Guided Rocket Launcher"
+    },
+    "machine.gun.pod.c36c7293": {
+      "zh": "机炮吊舱",
+      "en": "Machine Gun Pod"
+    },
+    "tactical.laser.system.1caaab54": {
+      "zh": "战术激光",
+      "en": "Tactical Laser System"
+    },
+    "pulse.laser.system.53cf78c4": {
+      "zh": "脉冲激光",
+      "en": "Pulse Laser System"
+    },
+    "integrated.electronic.warfare.system.94b251d1": {
+      "zh": "电子干扰",
+      "en": "Integrated Electronic Warfare System"
+    },
+    "no.weapon.f5499408": {
+      "zh": "无兵装",
+      "en": "NO WEAPON"
+    },
+    "sp.aabf060d": {
+      "zh": "SP：",
+      "en": "SP: "
+    },
+    "rocket.launcher.97c7b931": {
+      "zh": "火箭弹",
+      "en": "Rocket Launcher"
+    },
+    "electromagnetic.launcher.68b0e3be": {
+      "zh": "电磁炮",
+      "en": "Electromagnetic Launcher"
+    },
+    "unmanned.aerial.vehicle.0ce7e105": {
+      "zh": "无人机",
+      "en": "Unmanned Aerial Vehicle"
+    },
+    "yes.b8b3902a": {
+      "zh": "是",
+      "en": "YES"
+    },
+    "no.be52ce60": {
+      "zh": "否",
+      "en": "NO"
+    },
+    "punctuation.8ce1b17b": {
+      "zh": "（",
+      "en": " ("
+    },
+    "punctuation.89d1a37e": {
+      "zh": "）",
+      "en": ")"
+    },
+    "pause.state.changed.close.and.ad215909": {
+      "zh": "暂停状态已变化，请关闭后重新打开管理界面换机。",
+      "en": "Pause state changed. Close and reopen management to change aircraft."
+    },
+    "waiting.for.the.native.pause.1135f7ad": {
+      "zh": "正在等待原生暂停菜单归还，随后重开任务。",
+      "en": "Waiting for the native pause menu to close before restarting the mission."
+    }
+  }
+}

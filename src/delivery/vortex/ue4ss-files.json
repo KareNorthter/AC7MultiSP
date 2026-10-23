@@ -1,0 +1,110 @@
+{
+  "schema": 1,
+  "nexus_mod_id": 2474,
+  "nexus_file_id": 8453,
+  "version": "3.0.1.7",
+  "basis": "用户从 Nexus 条目2474下载文件8453；整包与官方镜像一致，24个登记运行成员逐一核对通过。",
+  "mirror_sha256": "8a9574f8c0ddd79b709213547f4ac4d927c14cf0d02be2c503ac9885aa096f13",
+  "files": {
+    "dwmapi.dll": {
+      "size": 61440,
+      "sha256": "ea3cdbb755dd61b9f4de70590b78a15974be65ba5fb3837ea2e1799d78d4c116"
+    },
+    "ue4ss/Mods/ActorDumperMod/Scripts/main.lua": {
+      "size": 605,
+      "sha256": "2fbf6d1cbc68ce4d600103e9b641d34dfa4ba0d04fa737b100663ec7629bc3ca"
+    },
+    "ue4ss/Mods/BPML_GenericFunctions/Scripts/main.lua": {
+      "size": 2950,
+      "sha256": "df87c361cdfc231ac8017ff9b930c323fac09f436ca4c41d48e952ff4b38d38f"
+    },
+    "ue4ss/Mods/BPModLoaderMod/load_order.txt": {
+      "size": 265,
+      "sha256": "e260b9b0d8d472ee3ebab77204c838f3d2aad8a9d5f08b9b8cb6b42b7b5418b9"
+    },
+    "ue4ss/Mods/BPModLoaderMod/Scripts/main.lua": {
+      "size": 13971,
+      "sha256": "dfdb999434876e8426187f8a5323b83ea5173a1915c4a878188744918f020c14"
+    },
+    "ue4ss/Mods/CheatManagerEnablerMod/Scripts/main.lua": {
+      "size": 1439,
+      "sha256": "15c7722168eb8966ed454e900e04de4b0ade42657905d8016c0e0660c119cd9e"
+    },
+    "ue4ss/Mods/ConsoleCommandsMod/Scripts/dump_object.lua": {
+      "size": 13093,
+      "sha256": "365b7e8a803f8ae917f54f6c852854c681e388227dd1f94b0ea3f6fb938b5086"
+    },
+    "ue4ss/Mods/ConsoleCommandsMod/Scripts/main.lua": {
+      "size": 297,
+      "sha256": "5bf33cd4ef9f6a155fe5f7842218a6486c2c227858ffd99806e75d81d0da9f27"
+    },
+    "ue4ss/Mods/ConsoleCommandsMod/Scripts/set.lua": {
+      "size": 2056,
+      "sha256": "876e7de49f0e30a4329c081472bc7d5e1948459c774b7abbb8be4b6323f16ec8"
+    },
+    "ue4ss/Mods/ConsoleCommandsMod/Scripts/summon_unloaded_assets.lua": {
+      "size": 489,
+      "sha256": "194b557404b6078767f8b57b836aa44d084cf6f3f2cbde71a6831857567f8103"
+    },
+    "ue4ss/Mods/ConsoleEnablerMod/Scripts/main.lua": {
+      "size": 3238,
+      "sha256": "e30ea7650c7807683bd0b0a6da22aaa12c20e0b8d356820a550e7ad9e1488079"
+    },
+    "ue4ss/Mods/EventViewerMod/dlls/main.dll": {
+      "size": 609280,
+      "sha256": "1079351b1dd5d0f56904b59b7bf9ab7fb5f5b294d10ace75e91f32fc4fa70a07"
+    },
+    "ue4ss/Mods/jsbLuaProfilerMod/Scripts/main.lua": {
+      "size": 579,
+      "sha256": "abc04f3dfa1d8bb2be81999d0560272f5156b3643dc892b2d0d071a18bc585a3"
+    },
+    "ue4ss/Mods/Keybinds/Scripts/main.lua": {
+      "size": 4025,
+      "sha256": "560e8ffffe3b7e0378c63db8a8f8da6465397a098d554b3a1d38e95794e3eb48"
+    },
+    "ue4ss/Mods/KismetDebuggerMod/dlls/main.dll": {
+      "size": 724480,
+      "sha256": "7134eea30e045ede4ab58fcf7bfe55cbcf4f247fdc56c9ab6fd588a53027cd61"
+    },
+    "ue4ss/Mods/LineTraceMod/Scripts/main.lua": {
+      "size": 2743,
+      "sha256": "d17abd9c9c6b28266075e04699c56e629a48890a42f6afbbc3a357df39d1d3cd"
+    },
+    "ue4ss/Mods/mods.json": {
+      "size": 850,
+      "sha256": "80cb1b5aca0758c8831e298f98d5070a2bed9f9245843f346f62e1992db3bdce"
+    },
+    "ue4ss/Mods/mods.txt": {
+      "size": 302,
+      "sha256": "5833e016ca759d565920c34428e8de3d2e2cfba19ae06b71b693f796393b9a30"
+    },
+    "ue4ss/Mods/shared/jsbProfiler/jsbProfi.lua": {
+      "size": 14548,
+      "sha256": "a6c51686e582a819a2376ee7e452d7f847d997c32bc3dd9f9814b24d74dff968"
+    },
+    "ue4ss/Mods/shared/Types.lua": {
+      "size": 56079,
+      "sha256": "85f67b2e34ab228320a118ec30c5b372e6da27761e68dc21269986869e27c758"
+    },
+    "ue4ss/Mods/shared/UEHelpers/UEHelpers.lua": {
+      "size": 10237,
+      "sha256": "7476f02eef0c87bfeab169f2ffe2e704363faeaae4bf9f1bda574b1e34f4a0e9"
+    },
+    "ue4ss/Mods/SplitScreenMod/Scripts/main.lua": {
+      "size": 4380,
+      "sha256": "a1fa43ee3c6a9ac1680b47a665dd3e1b29353d0663a6e242f82e8d4a1bb09484"
+    },
+    "ue4ss/UE4SS-settings.ini": {
+      "size": 7632,
+      "sha256": "7651c12eb14d4fd0a02bf7eb933e6498b3ed5bbbe9317174d957c805d96e4f44"
+    },
+    "ue4ss/UE4SS.dll": {
+      "size": 16213504,
+      "sha256": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd"
+    }
+  },
+  "nexus_archive_sha256": "8a9574f8c0ddd79b709213547f4ac4d927c14cf0d02be2c503ac9885aa096f13",
+  "nexus_archive_bytes": 21403706,
+  "nexus_archive_root": "PM-UE4SS-ZR1903/",
+  "nexus_archive_verified": true
+}
