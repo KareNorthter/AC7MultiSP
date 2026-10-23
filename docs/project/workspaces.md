@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 安装器与F6易用性调整，源码已接收、待编译验证 | 本聊天；基线bba1bb9；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 2.24.3源码候选：安装器首页、系统语言、关闭游戏确认、同源版本、更新栏；F6更新/反馈/作者水印及DLC换机许可。主代理整合双语生成和正文，静态差异及Python语法核对完成；未编译、测试、封装、安装或上传。用户反馈旧2.24.2已安装且基本功能无误，不追溯改旧回执；以后优先单代理，减少拆分 |
+| 安装器与F6易用性调整，EXE已交付、待人工验证 | 本聊天；源码锚5a33e3a；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 2.24.3候选：完整构建核心/UI及内嵌载荷，仅EXE进入Release/2.24.3；[回执](../../evidence/2.24.3-exe-delivery.json)记录来源、文件版本及摘要。构建和封装现场留同任务目录，未运行测试、安装器或游戏，未关闭游戏、上传。用户旧2.24.2基本功能反馈不扩大到本轮。以后优先单代理，减少拆分 |
 | 双语文档与通用交付，待游戏验证 | 本管理聊天；基线85ab3a0；codex/integrate-bilingual-delivery完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 接收根目录九份人工文档，生成英文并集中游戏/安装器词条；本地候选2.24.2、安装器0.3.0，独占docs/user、游戏文字调用、构建封装及对应正文。[交付回执](../../evidence/2.24.2-delivery.json)记录具体核对，不安装或操作游戏 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改 |
 | 安装器来源，已接收必要差异 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 原树及0.2.0成品保留不动；src/delivery及封装入口接收到上行整合任务，并按[最新交付方案](delivery.md)改造。自制Vortex扩展源码仅保留研究，当前通用包不分发 |

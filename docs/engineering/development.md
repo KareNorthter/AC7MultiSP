@@ -1,8 +1,8 @@
 # 开发与恢复
 
-本页说明源码、文字生成、构建依赖和恢复入口。正式版本及本机已知记录统一见[项目状态](../../README.md)；本轮整合的是**游戏2.24.2候选、安装器0.3.0**，不把候选制作记作正式发布或游戏验收。开发责任与授权见[开发规范](../project/workflow.md)，交付实现见[交付方案](../project/delivery.md)。
+本页说明源码、文字生成、构建依赖和恢复入口。正式版本及本机已知记录统一见[项目状态](../../README.md)，不把候选制作记作正式发布或游戏验收。开发责任与授权见[开发规范](../project/workflow.md)，交付实现见[交付方案](../project/delivery.md)。
 
-本轮已获授权接入中英文正文及界面文字，并制作通用ZIP和双语EXE。安装器从`a99a404`精确接收`src/delivery/`及原`src/package_delivery.py`后改造；旧独立工作树保持。文案修订后的候选制作结果以新构建、封装及EXE编译回执分别记录。本轮未运行`tests/run.py`、未安装或启动游戏、未上传，尚无新候选的游戏实测结论。
+安装器从`a99a404`精确接收`src/delivery/`及原`src/package_delivery.py`后改造；旧独立工作树保持。完整构建、封装及EXE编译分别记录来源与结果。用户可只要求交付EXE：仍按既定流水线生成内嵌的通用载荷，但独立ZIP只作为Temp中的封装输入，不复制到Release。构建不自动运行`tests/run.py`、安装、操作游戏或上传。
 
 功能机制见[架构](architecture.md)，模型方案见[挂载设计](multi-sp-mount-design.md)，工程教训见[工程经验](engineering-lessons.md)，未采用和待继续成果见[研究索引](../research/README.md)。
 
@@ -12,7 +12,7 @@
 | --- | --- |
 | Lua运行源码 | `dist/DualSP/Scripts/`，文件名由`src/product.json`的scripts清单约束；本轮20个运行文件为17份Lua、2份DLL和VERSION |
 | 核心/UI | `src/weapon_bridge.cpp`及相关头文件；`src/overlay.cpp`、`src/management_panel.hpp` |
-| 产品标识 | 根`VERSION`与`src/product.json`；游戏候选标记为candidate=true，安装器版本独立取`src/delivery/settings.json` |
+| 产品标识 | 根`VERSION`与`src/product.json`；游戏候选标记为candidate=true，安装器程序集、manifest和清单版本均派生产品VERSION |
 | 玩家文字唯一源 | `docs/user/`四个主题的中英文TXT，以及`docs/user/interface/`下游戏和安装器的双语JSON |
 | 游戏文字生成 | `src/user_texts.py`生成`src/generated/user_texts.hpp`和`dist/DualSP/Scripts/user_texts.lua`，不手改生成副本 |
 | 挂载数据 | `src/research/build_runtime_mount_data.py`及其导入模块生成核心表和`mount_assets.lua`；资源打包由`src/build_mount_assets.py`核对来源和资格 |
