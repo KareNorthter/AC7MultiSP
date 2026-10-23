@@ -132,7 +132,7 @@ def switch(manifest_path, profile):
 def main():
     parser = argparse.ArgumentParser(description='机体分组切换 / Aircraft profile switcher')
     parser.add_argument('--manifest', required=True, type=Path, help='本机清单 / Local manifest')
-    parser.add_argument('--profile', help='original、A 或 B / original, A or B')
+    parser.add_argument('--profile', help='清单中登记的分组名称 / Profile name registered in the manifest')
     args = parser.parse_args()
     if args.profile:
         switch(args.manifest, args.profile)
