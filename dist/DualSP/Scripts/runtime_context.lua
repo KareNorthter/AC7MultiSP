@@ -1,5 +1,7 @@
 -- 只读识别当前模式与游戏文本语言；不根据旧配置猜测是否允许修改游戏。
 local Context={language="zh",culture=nil,lastLanguage=-1}
+local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local userTexts=dofile(assert(source:match("^(.*)/[^/]+$")).."/user_texts.lua")
 local system,game,ui,localizer=nil,nil,nil,nil -- 经过反射预检的原生默认对象。
 local modeClasses={} -- UIGameMode 继承多人基类，必须结合已知菜单世界先识别其实际用途。
 local multiWidgets={} -- 多人机库并非都继承 MultiMenuBaseWidget，必须完整列出其原生类型。
@@ -184,4 +186,5 @@ end
 
 -- 本 Mod 提供中文和英文；其他游戏语言使用英文提示，原生说明仍由游戏翻译。
 function Context.text(zh,en)return Context.language=="zh"and zh or en end
+function Context.textKey(key,language)return userTexts.get(key,language or Context.language)end
 return Context

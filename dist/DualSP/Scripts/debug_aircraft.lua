@@ -1,6 +1,6 @@
 -- 调试换机走原生整关重开；只在新的受控玩家机体真正就绪后确认成功。
 local Module={}
--- 官方编号仅用于区分来源和许可提示；候选来自实际加载目录，不再以此表排除Mod机体。
+-- 官方编号用于区分来源；候选来自实际目录，带DLC要求的机体必须核实拥有许可。
 local official={
     [100]="f04e",[101]="f15c",[102]="f15e",[103]="f18f",[104]="f15j",[105]="f35c",[106]="a10a",[107]="f02a",
     [108]="f14d",[109]="f16c",[110]="f22a",[111]="j39e",[112]="m21b",[113]="m29a",[114]="m31b",[115]="mr2k",
@@ -13,6 +13,9 @@ local function valid(object)return object and object:IsValid()end
 local function integer(value)return type(value)=="number"and value%1==0 end
 local function address(object)return valid(object)and object:GetAddress()or nil end
 function Module.new(deps)
+    local translate=assert(deps.translate,"缺少换机通知语言提供器")
+    -- 状态桥沿用原中文匹配文案；F6按手动语言从同一catalog取显示值，不受游戏语言影响。
+    local function tr(key)return translate(key,"zh")end
     local self={response=0,ack=0,status="idle",notice="",options={},lastOptions=-1}
     local function changed()deps.changed()end
     local function waiting(pending,stage)
@@ -22,7 +25,7 @@ function Module.new(deps)
         end
     end
     local function fail(message,stopFlight)
-        self.pending=nil;self.status="failed";self.error=tostring(message);self.notice="换机未完成："..self.error
+        self.pending=nil;self.status="failed";self.error=tostring(message);self.notice=tr("aircraft.change.failed.1db41bbb")..self.error
         if stopFlight then self.blocked=self.error;deps.failFlight(self.error)end
         deps.note("DEBUG_AIRCRAFT_FAILED "..self.error);changed()
     end
@@ -97,14 +100,18 @@ function Module.new(deps)
                     local label=name
                     local licensed=nil
                     local extra=type(info.dlc_id)=="string"and info.dlc_id~=""and info.dlc_id~="Base"
-                    if not isMod and extra then
+                    if extra then
                         local checked,value=pcall(function()assert(valid(dlc));return dlc:IsDLCOwned(info.dlc_id)end)
                         if checked then licensed=value==true end
-                        label=label..(licensed==false and "（无DLC许可）"or licensed==nil and "（DLC许可未知）"or "")
-                    elseif not isMod and type(info.dlc_id)~="string"then label=label.."（许可资料未知）"
-                    elseif not isMod and ownedKnown and not owned[id]then label=label.."（未购买）"end
-                    self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
-                        purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
+                        label=label..(licensed==false and tr("dlc.not.owned.8f080e7d")or licensed==nil and tr("dlc.ownership.unknown.f1a7fac5")or "")
+                    elseif not isMod and type(info.dlc_id)~="string"then label=label..tr("ownership.data.unavailable.b02bb5c3")
+                    elseif not isMod and ownedKnown and not owned[id]then label=label..tr("not.purchased.336eda21")end
+                    -- 无法确认DLC许可时不提供候选；替换官方机体的Mod同样核对目录DLCID。
+                    local permitted=extra and licensed==true or not extra and (isMod or info.dlc_id=="Base"or info.dlc_id=="")
+                    if permitted then
+                        self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
+                            purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
+                    end
                 end
             end
             table.sort(self.options,function(a,b)
@@ -116,7 +123,7 @@ function Module.new(deps)
     end
     function self:state(session,revision)
         local allowed,reason=deps.canChange()
-        if self.pending then allowed=false;reason="正在重开任务并等待目标机体。"end
+        if self.pending then allowed=false;reason=tr("restarting.the.mission.and.waiting.996bed6e")end
         if allowed then self:refreshOptions(false)end
         if self.optionsError then allowed=false;reason=self.optionsError end
         return {protocol=2,session=session,revision=revision,available=allowed==true,reason=reason or "",
@@ -164,12 +171,12 @@ function Module.new(deps)
                 "原生机体选择没有接受目标机体")
             assert(context.instance:GetSelectedPlaneSkinNo()==0,"基础涂装没有就绪")
             self.ack=action.request;self.status="restarting";self.error=nil
-            self.notice="正在重开任务，等待 "..target.name.." 实际生成。"
+            self.notice=tr("restarting.the.mission.waiting.for.492c291f")..target.name..tr("to.spawn.dfae5745")
             deps.note("DEBUG_AIRCRAFT_RESTART request="..action.request.." from="..context.id.." to="..target.plane_id)
             if restart(owner)==false then
                 -- 原生关菜单可能跨调度完成，保存唯一事务，等待归还后才发出一次重开。
                 pending.resume=restart;pending.resumeOwner=address(owner)
-                self.notice="正在等待原生暂停菜单归还，随后重开任务。"
+                self.notice=tr("waiting.for.the.native.pause.1135f7ad")
                 waiting(pending,"waiting_native_resume");changed()
             end
         end)
@@ -220,7 +227,7 @@ function Module.new(deps)
                 assert(address(owner)==pending.resumeOwner,"等待暂停归还时控制器已变化，未重开任务")
                 if pending.resume(owner)~=false then
                     pending.resume=nil;pending.resumeOwner=nil;pending.started=os.clock()
-                    self.notice="正在重开任务，等待 "..pending.name.." 实际生成。"
+                    self.notice=tr("restarting.the.mission.waiting.for.492c291f")..pending.name..tr("to.spawn.dfae5745")
                     waiting(pending,"waiting_new_pawn");changed()
                 end
             end)
@@ -263,7 +270,7 @@ function Module.new(deps)
             local name=self.pending.name
             local count=1+(profile.b>=0 and 1 or 0)+(profile.c>=0 and 1 or 0)
             self.pending=nil;self.status="applied";self.error=nil
-            self.notice="换机已生效："..name.."（"..count.."种SP；可继续调试组合）。"
+            self.notice=tr("aircraft.change.applied.41f605b6")..name..tr("punctuation.8ce1b17b")..count..tr("sp.weapons.loadout.debugging.is.321c05be")
             deps.note("DEBUG_AIRCRAFT_APPLIED plane="..id.." request="..self.ack);changed()
         end
     end

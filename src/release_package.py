@@ -586,4 +586,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit('旧GameFiles发布入口已退役。请使用 src/package_delivery.py 制作通用ZIP和双语EXE。')

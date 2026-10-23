@@ -1,0 +1,150 @@
+{
+  "schema": 1,
+  "version": "2.24.2",
+  "candidate": true,
+  "installer_version": "0.3.0",
+  "source_baseline": "85ab3a0e9201010daf7f8ee528cce4a5b98fc463",
+  "installer_source": "a99a40463cd73c209069e9dbbd4a0d6ef2924482",
+  "incoming_manual_documents": [
+    {
+      "path": "docs/README.md",
+      "sha256": "cd0e4f337ee3a627ee8cc9bee7689f0e7e92e8e522330d0aea1bbe948933d3fe"
+    },
+    {
+      "path": "docs/engineering/development.md",
+      "sha256": "457fb3b8d17690ab7b6090d7d28c91d71e4be519a0984450bbdf38d991a4f2af"
+    },
+    {
+      "path": "docs/project/delivery.md",
+      "sha256": "490b33f3fb92ecf011c8fcd4e749b663f12fca135138934052c7f0d2308c83f3"
+    },
+    {
+      "path": "docs/project/player-docs.md",
+      "sha256": "98a9a5841f4f017c9c620ebb2443f82dd76f9fd5bd3561ac67a2c871bd47b877"
+    },
+    {
+      "path": "docs/project/workspaces.md",
+      "sha256": "21d9100e2263fa7d64a33b7f9813e3ee2a26848764f07cdb2ec2c605c2c6a604"
+    },
+    {
+      "path": "docs/user/作者与授权.txt",
+      "sha256": "04649421f32bc47a3c70db9df28299ab295cf8598f270b010da4273c7abf22df"
+    },
+    {
+      "path": "docs/user/功能说明.txt",
+      "sha256": "bc9b3d582c9810d2e67a785b2217eea0237f9e295c90d55a86ef4583ddd447c7"
+    },
+    {
+      "path": "docs/user/安装说明.txt",
+      "sha256": "840cae00575417c5951204dfe3d2502d0ec07c289e699c36287af5f0f89b2da4"
+    },
+    {
+      "path": "docs/user/更新日志.txt",
+      "sha256": "5fa8b0baa6b673ea2e0cbf5d874b6b8662c8614799b23c437d4e1f7098863fb7"
+    }
+  ],
+  "approved_corrections": [
+    "视角保持与持续注视为独立设置，中英文分开说明",
+    "RPK笔误改为RKT，中英文同步"
+  ],
+  "other_chinese_documents_byte_preserved": true,
+  "documents_sha256": {
+    "docs/user/作者与授权.en.txt": "af557038c242b278587d9388085d146baa665aa8a47092bf68e1fbca906f711d",
+    "docs/user/作者与授权.txt": "04649421f32bc47a3c70db9df28299ab295cf8598f270b010da4273c7abf22df",
+    "docs/user/功能说明.en.txt": "1183c4ae4c08db98c699305e7d0007463c373832aa09ea06dc20940387f569d5",
+    "docs/user/功能说明.txt": "ac733776bd14ec592b2e02e35b224beb53941195300d63133da916950f0b831f",
+    "docs/user/安装说明.en.txt": "6d248779fcbc30c27791d67bca4b2886144beb5a11f313f2326c0917f35d174e",
+    "docs/user/安装说明.txt": "840cae00575417c5951204dfe3d2502d0ec07c289e699c36287af5f0f89b2da4",
+    "docs/user/更新日志.en.txt": "236f462f3400fe359b9ed612086c66c44f11572d64144ac5f165a0ea58fe9551",
+    "docs/user/更新日志.txt": "5fa8b0baa6b673ea2e0cbf5d874b6b8662c8614799b23c437d4e1f7098863fb7"
+  },
+  "catalogs_sha256": {
+    "docs/user/interface/game.zh-CN.json": "b45527e4025a65a56585d4e0caae72cf901a78e5d430b43506e9c7857da8bd11",
+    "docs/user/interface/game.en.json": "1799e434304e75b7bce711984fbeb9f205c8526e9fd02053a598dcba6353e0ce",
+    "docs/user/interface/installer.zh-CN.json": "2696f1d126f3e159fe99a1b0c1a3cf6311c93f05b5343ae708fb7e919cfef0b9",
+    "docs/user/interface/installer.en.json": "43a363129c2019af143b1c676d2fb7dfc7ee4bd013fe2ba01a9b682f562be0f1"
+  },
+  "catalog_entries_per_language": {
+    "game": 467,
+    "installer": 103
+  },
+  "runtime_files": {
+    "Scripts/config_store.lua": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517",
+    "Scripts/debug_aircraft.lua": "c9bac1796e76b7b7892034524ad28088e347b211045b21373414b1fa28669be1",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "19c6f758c713691c516914fb03da117b28a39ca817663e79bc0c3d27190bfc29",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "3234d93351740f8cb3a219ce98d1c143b32acfd6c06ed6566ac929ed0cb6db13",
+    "Scripts/runtime_context.lua": "e5f21cb6215f8d9d0641724e69b304842da9563be88f149427e1528094235807",
+    "Scripts/user_texts.lua": "a7b667003c4dfc17adca54dd12544b6491215df04d1b0d60a9654182fc7c17ef",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "9ff159a0915bfc52a50be0f894cb1146a3d0ec7d5244f197466cd6b1ecdb5507",
+    "bin/DualSPUI.dll": "3cf70ccf15598ce21a9c90201529c51141b1388a7f746d866d21a8b8639f92fd",
+    "VERSION": "98df2f1d6d4225d15865564f2dec5ef38c14af1a42559a8203954205696e9da6"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "mount_resource_count": 77,
+  "pak_member_count": 154,
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\build-2.24.2-r2",
+    "receipt_sha256": "c056694c16f2e43b7a5d1d557062f66f14c2e1acf6ce235667495a36ef6f633c",
+    "source_and_product_verified": true
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\delivery-2.24.2-r2",
+    "receipt_sha256": "445f9f8e5d8e7ade890f20ed8643006f66f6172120990f754ede4df20da90216",
+    "exe_receipt_sha256": "8e319331bd2bf0d1c9de7a0dc65883d338fccd8d3b9e9cafa3815e57e5a97e4f"
+  },
+  "artifacts": [
+    {
+      "path": "E:\\AC7_MultiSP\\Release\\2.24.2\\AC7MultiSP-2.24.2-Universal.zip",
+      "size": 21295782,
+      "sha256": "cb1c60046eb52e2be401a94c9aa63021ef0e476219b01ade884daa3aba9a697c"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Release\\2.24.2\\AC7MultiSP_Installer.exe",
+      "size": 63180288,
+      "sha256": "70366a4fbf9843ed036786b034f1b4f6cca7282b118763bfbb897786225a2dd0"
+    }
+  ],
+  "universal_member_count": 41,
+  "engine_injector_mapping_files": 37,
+  "zip_documents_byte_equal_to_source": true,
+  "exe_export_byte_equal_to_universal_zip": true,
+  "ui_preview": {
+    "images_sha256": {
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\preview-r2-zh-CN-home.png": "0b40845daf4d15c5311e34a725f42d05fb25f86594461a73564f399bae016c52",
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\preview-r2-zh-CN-direct.png": "15f1a8fb6efdb84d8866e121d36f078b3f1d35e75c0887cbc380fe607893ef6b",
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\preview-r2-en-home.png": "2983a14912ff3cd6d7a3bcb46d0ad4ba61c67601ca765cce480558ec4f5615bb",
+      "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-bilingual-delivery\\preview-r2-en-direct.png": "b8df10e873746cf63a4e437bf7e7cf9c3eb5e662f8a7dcd7349ea552508c14f5"
+    },
+    "visually_reviewed": true,
+    "method": "离线绘制实际WinForms布局；RichTextBox用EM_FORMATRANGE渲染、ComboBox补绘当前值",
+    "scope": "中文和英文首页、未选游戏目录的直接安装页；未执行安装或联网"
+  },
+  "protected_old_core_unchanged": true,
+  "existing_release_receipts_rewritten": false,
+  "review": "四对玩家文档等义审阅；游戏格式占位、NUL、稳定UI标识、265条原始错误匹配顺序及Lua路径只读审阅，未发现明确回退",
+  "tests_run": false,
+  "game_installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "pending": [
+    "实际游戏中的双语字体、换行及语言切换",
+    "新通用包的Vortex实际部署、更新及卸载",
+    "EXE实际安装更新卸载、前置共用及异常恢复"
+  ],
+  "preserved_sources": [
+    "旧2.24.1正式包与验收回执",
+    "a99a404安装器原工作树",
+    "初版build-2.24.2及delivery-2.24.2冻结目录"
+  ]
+}

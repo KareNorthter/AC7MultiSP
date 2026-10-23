@@ -1,17 +1,19 @@
 #pragma once
 #include "common.hpp"
+#include "generated/user_texts.hpp"
 #include <winhttp.h>
 #include <shellapi.h>
 #include <objbase.h>
 #include <algorithm>
 #include <array>
+#include <cctype>
 #include <cwctype>
 #include <memory>
 #include <set>
 #include <vector>
 
 #ifndef AC7MULTISP_VERSION
-#define AC7MULTISP_VERSION "2.24.1"
+#define AC7MULTISP_VERSION "2.24.3"
 #endif
 
 namespace dualsp::updates {
@@ -83,6 +85,26 @@ inline std::wstring checkedUrl(const std::string& url) {
     ensure(host==L"wwbru.lanzoue.com" || host==L"downloads.iot-node-service-api.online" ||
         host==manifestHost,"下载链接域名未登记");
     return value;
+}
+inline std::wstring checkedAuthorUrl(size_t index,bool chinese) {
+    namespace documents=dualsp::user_texts::documents;
+    ensure(index<documents::compactAuthorCount(chinese),"作者入口不属于本地正文");
+    const std::string url=documents::compactAuthorUrl(index,chinese);
+    ensure(!url.empty() && url.size()<=2048,"作者链接长度无效");
+    for(unsigned char ch:url)ensure(ch>32 && ch<127 && ch!='"' && ch!='\'' && ch!='\\',"作者链接含无效字符");
+    if(url.rfind("mailto:",0)==0) {
+        const auto address=url.substr(7);
+        ensure(!address.empty() && address.find('@')!=std::string::npos,"作者邮箱无效");
+        for(unsigned char ch:address)ensure(std::isalnum(ch) || ch=='@' || ch=='.' || ch=='_' || ch=='-' || ch=='+',"作者邮箱含无效字符");
+    }else {
+        const auto value=wide(url);
+        URL_COMPONENTS parts{};parts.dwStructSize=sizeof(parts);
+        parts.dwSchemeLength=parts.dwHostNameLength=parts.dwUserNameLength=parts.dwPasswordLength=static_cast<DWORD>(-1);
+        ensure(WinHttpCrackUrl(value.c_str(),static_cast<DWORD>(value.size()),0,&parts)!=FALSE &&
+            parts.nScheme==INTERNET_SCHEME_HTTPS && parts.nPort==443 && parts.dwHostNameLength &&
+            !parts.dwUserNameLength && !parts.dwPasswordLength,"作者链接不是公开HTTPS地址");
+    }
+    return wide(url);
 }
 inline Snapshot parse(const std::string& body) {
     std::vector<std::set<std::string>> keys;
@@ -211,21 +233,41 @@ class Service {
         }catch(...) {self.status_.store(Status::Failed,std::memory_order_release);}
         self.checkBusy_.store(false,std::memory_order_release);return 0;
     }
-    struct BrowserRequest {Service* owner;std::wstring url;};
+    struct BrowserRequest {Service* owner;std::wstring url;bool logFolder;};
     static DWORD WINAPI browserEntry(void* pointer) noexcept {
         std::unique_ptr<BrowserRequest> request(static_cast<BrowserRequest*>(pointer));
-        const HRESULT com=CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED|COINIT_DISABLE_OLE1DDE);
         bool opened=false;
-        if(SUCCEEDED(com)) {
-            // 只使用HTTPS文件参数，无命令行参数、提权或包执行；不等待浏览器关闭。
-            SHELLEXECUTEINFOW info{};info.cbSize=sizeof(info);info.fMask=SEE_MASK_FLAG_NO_UI|SEE_MASK_NOASYNC;
-            info.lpVerb=L"open";info.lpFile=request->url.c_str();info.nShow=SW_SHOWNORMAL;
-            opened=ShellExecuteExW(&info)!=FALSE;
-            CoUninitialize();
-        }
+        const HRESULT com=CoInitializeEx(nullptr,COINIT_APARTMENTTHREADED|COINIT_DISABLE_OLE1DDE);
+        try {
+            if(SUCCEEDED(com)) {
+                if(request->logFolder) {
+                    // 日志直接位于modRoot；目录核对也放在后台，绘制线程不等磁盘。
+                    const auto& folder=modRoot();std::error_code error;
+                    ensure(std::filesystem::is_directory(folder,error) && !error,"日志目录不可用");
+                    request->url=folder.wstring();
+                }
+                // 只打开已核对的网址或日志目录，无命令行参数、提权或包执行。
+                SHELLEXECUTEINFOW info{};info.cbSize=sizeof(info);info.fMask=SEE_MASK_FLAG_NO_UI|SEE_MASK_NOASYNC;
+                info.lpVerb=L"open";info.lpFile=request->url.c_str();info.nShow=SW_SHOWNORMAL;
+                opened=ShellExecuteExW(&info)!=FALSE;
+            }
+        }catch(...) {}
+        if(SUCCEEDED(com))CoUninitialize();
         request->owner->browser_.store(opened?BrowserStatus::Opened:BrowserStatus::Failed,std::memory_order_release);
         request->owner->browserBusy_.store(false,std::memory_order_release);
-        nativeLog(opened?"UPDATE_BROWSER_OPENED":"UPDATE_BROWSER_OPEN_FAILED");return 0;
+        nativeLog(request->logFolder?(opened?"LOG_FOLDER_OPENED":"LOG_FOLDER_OPEN_FAILED"):
+            (opened?"UPDATE_BROWSER_OPENED":"UPDATE_BROWSER_OPEN_FAILED"));return 0;
+    }
+    bool launchShell(std::wstring target,bool logFolder=false) noexcept {
+        if(browserBusy_.exchange(true))return false;
+        try {
+            auto request=std::make_unique<BrowserRequest>();
+            request->owner=this;request->url=std::move(target);request->logFolder=logFolder;
+            ensure(pin(),"无法保持系统打开接口模块有效");
+            browser_.store(BrowserStatus::Opening,std::memory_order_release);
+            const HANDLE thread=CreateThread(nullptr,0,browserEntry,request.get(),0,nullptr);
+            ensure(thread!=nullptr,"系统打开接口线程创建失败");request.release();CloseHandle(thread);return true;
+        }catch(...) {browser_.store(BrowserStatus::Failed,std::memory_order_release);browserBusy_.store(false,std::memory_order_release);return false;}
     }
 public:
     void context(int value) noexcept {
@@ -266,18 +308,18 @@ public:
         return snapshot(); // 结果在任务内返回时暂存，回到任务外才消费，且整次启动只消费一次。
     }
     bool openDownload(const std::string& id) noexcept {
-        if(!context_.load(std::memory_order_acquire) || browserBusy_.exchange(true))return false;
+        if(!context_.load(std::memory_order_acquire) || status()!=Status::Newer)return false;
         try {
             const auto data=snapshot();ensure(data!=nullptr,"尚无有效下载清单");
             const auto link=std::find_if(data->downloads.begin(),data->downloads.end(),[&](const Download& entry){return entry.id==id;});
             ensure(link!=data->downloads.end(),"下载入口不属于当前清单");
-            auto request=std::make_unique<BrowserRequest>();request->owner=this;request->url=checkedUrl(link->url);
-            ensure(pin(),"无法保持浏览器接口模块有效");
-            browser_.store(BrowserStatus::Opening,std::memory_order_release);
-            const HANDLE thread=CreateThread(nullptr,0,browserEntry,request.get(),0,nullptr);
-            ensure(thread!=nullptr,"浏览器接口线程创建失败");request.release();CloseHandle(thread);return true;
-        }catch(...) {browser_.store(BrowserStatus::Failed,std::memory_order_release);browserBusy_.store(false,std::memory_order_release);return false;}
+            return launchShell(checkedUrl(link->url));
+        }catch(...) {return false;}
     }
+    bool openAuthor(size_t index,bool chinese) noexcept {
+        try {return launchShell(checkedAuthorUrl(index,chinese));}catch(...) {return false;}
+    }
+    bool openLogFolder() noexcept {return launchShell({},true);}
 };
 inline Service& service() {static auto* value=new Service();return *value;}
 }

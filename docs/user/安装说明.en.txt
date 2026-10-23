@@ -1,0 +1,21 @@
+AC7MultiSP Installation Guide
+
+This guide applies to the universal ZIP and its EXE installer. Choose either Vortex or EXE installation, and use the same method for updates and removal. Do not mix them.
+This mod contains both UE4SS components and PAK files, so installation through the CreeperUX launcher is not supported.
+
+1. EXE installation
+1. Run AC7MultiSP_Installer.exe and select "Direct Install".
+2. Confirm the game folder. If it is not found automatically, select the folder containing Ace7Game.exe.
+3. Click "Install" or "Update" and wait for completion.
+   If the game is running, confirm "Close game and install" to close it before continuing. Unsaved progress may be lost. Canceling leaves installation untouched.
+   The interface defaults to "Follow system", with manual Chinese and English options. The installer uses the mod's version. Check for updates beside the version and open the download page when a newer version is found.
+
+2. Vortex installation
+1. Manage Ace Combat 7 in Vortex and enable its game support extension. Also install the AC7-specific UE4SS: https://www.nexusmods.com/acecombat7skiesunknown/mods/2474
+2. Download the universal ZIP from Nexus using "Mod Manager Download", or import a downloaded ZIP with "Install From File".
+3. After installation, confirm that the mod type is "Engine Injector". If another type is shown, change it to this type first.
+4. Enable and deploy the mod, then launch the game through Steam.
+
+3. Manual installation
+1. Install the AC7-specific UE4SS.
+2. Merge and copy the ue4ss and Game folders from the ZIP into the game folder. Do not copy the ZIP's outer folder. Other documentation and management files do not need to be copied.

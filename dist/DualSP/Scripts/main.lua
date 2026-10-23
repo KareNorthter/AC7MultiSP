@@ -1,4 +1,4 @@
--- AC7MultiSP 2.24.1候选：版本和更新页、联系方式、退格输入隔离及未适配模型提示。
+-- AC7MultiSP 2.24.3源码候选：界面共用双语正文，DLC换机核对实际许可。
 -- 出击和中途补给使用原生 UMG 页面，管理快捷键默认 F6，可配置以避开其他模组。
 local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local root=assert(source:match("^(.*)/Scripts/[^/]+$"),"Cannot locate DualSP directory").."/"
@@ -9,7 +9,7 @@ local ConfigStore=dofile(root.."Scripts/config_store.lua")
 local Profile=dofile(root.."Scripts/loadout_profile.lua") -- 三槽结构、购买校验和百分比配弹。
 local weaponCycle=dofile(root.."Scripts/weapon_cycle.lua")
 local runtimeContext=dofile(root.."Scripts/runtime_context.lua") -- 模式与游戏文本语言共用只读来源。
-local tr=runtimeContext.text -- 原生页面文字跟随游戏，不跟随 F8 手动语言。
+local tr=runtimeContext.textKey -- 原生页面文字跟随游戏，不跟随 F8 手动语言。
 local runtimeAllowed=false -- 未确认单人状态前，所有模组功能均禁止。
 local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面绘制提示。
 local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
@@ -869,7 +869,7 @@ function weaponSwitch.gaze.update(_,generation)
         if inputToggle then
             gaze.response=gaze.response+1
             gaze.noticeWarning=not ok or not allowed or reason=="no_target"
-            gaze.notice=reason=="no_target"and tr("没有可注视的目标。","No target is selected.")or ""
+            gaze.notice=reason=="no_target"and tr("no.target.is.selected.2d02fc46")or ""
             note("TARGET_GAZE_TOGGLED active="..tostring(gaze.active).." allowed="..tostring(allowed).." reason="..tostring(reason))
             lastUIKey=nil
         end
@@ -1266,20 +1266,20 @@ local function observeOriginalSwitch()
 end
 -- 普通调试要求可操控；换机允许借用已核对的原生暂停，补给和检查点交接仍禁止。
 local function canDebugLoadout(hotkey,allowNativePause)
-    if runtimeReason=="mission13_fixed_sp"then return false,tr("第13关使用任务指定SP，多SP功能暂时停用。","Mission 13 uses its assigned SP. Multi-SP is temporarily disabled.")end
-    if aircraftDebug and aircraftDebug:busy()then return false,tr("正在重开任务换机，请稍候。","Restarting the mission with another aircraft; please wait.")end
-    if not runtimeAllowed or not isFlight or not configured then return false,tr("请先进入已配置兵装的单人任务。","Enter a configured single-player mission first.")end
-    if errorText or managementPauseError then return false,tr("控制器或暂停交接出错，请查看上方错误。","Controller or pause handoff failed; see the error above.")end
-    if supplySession or internal or restorePending or checkpointPending then return false,tr("正在补给或交接任务状态，请完成后再打开。","Resupply or a mission transition is in progress.")end
+    if runtimeReason=="mission13_fixed_sp"then return false,tr("mission.13.uses.its.assigned.779cb0af")end
+    if aircraftDebug and aircraftDebug:busy()then return false,tr("restarting.with.another.aircraft.please.09280b7c")end
+    if not runtimeAllowed or not isFlight or not configured then return false,tr("enter.a.configured.single.player.fcec4959")end
+    if errorText or managementPauseError then return false,tr("controller.or.pause.handoff.failed.bcb5bee9")end
+    if supplySession or internal or restorePending or checkpointPending then return false,tr("resupply.or.a.mission.transition.08301ced")end
     local nativePause=allowNativePause and existingManagementPauseValid(managementPause)
-    if not valid(instance)or not valid(plane)or not valid(activator)or(not ready()and not nativePause)then return false,tr("当前飞行控制尚未开放。","Flight controls are not ready.")end
+    if not valid(instance)or not valid(plane)or not valid(activator)or(not ready()and not nativePause)then return false,tr("flight.controls.are.not.ready.e80dfbd9")end
     if hotkey and not panelOpen then
-        if game:IsGamePaused(plane)then return false,tr("请先退出游戏暂停菜单。","Close the pause menu first.")end
-    elseif not panelOpen or not game:IsGamePaused(plane)then return false,tr("正在等待管理界面暂停任务。","Waiting for management to pause the mission.")end
+        if game:IsGamePaused(plane)then return false,tr("close.the.pause.menu.first.a3e85342")end
+    elseif not panelOpen or not game:IsGamePaused(plane)then return false,tr("waiting.for.management.to.pause.c8f3d30e")end
     return true
 end
 aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
-    json=json,copy=copyProfile,names=names,note=note,
+    json=json,copy=copyProfile,names=names,note=note,translate=tr,
     defaultProfile=function(options)return Profile.debugDefault(options,config)end,
     owned=loadExport("dualsp_debug_owned_aircraft"),
     changed=function()lastUIKey=nil end,
@@ -1292,7 +1292,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     canChange=function()
         local allowed,reason=canDebugLoadout(false,true);if not allowed then return false,reason end -- 暂停可停用飞行输入，但整关重开不依赖该输入。
         if not managementPause or not(managementPause.owned or existingManagementPauseValid(managementPause))then
-            return false,tr("暂停状态已变化，请关闭后重新打开管理界面换机。","Pause state changed. Close and reopen management to change aircraft.")
+            return false,tr("pause.state.changed.close.and.ad215909")
         end
         return true
     end,
@@ -1392,9 +1392,9 @@ local function applyDebugHotkey(action)
     hotkeyResponse=action.request;lastUIKey=nil
     weaponSwitch.hotkeyWarning=true -- 拒绝/失败默认归为警告，明确成功后才降为普通提示。
     if runtimeReason=="mission13_fixed_sp"then
-        hotkeyNotice=tr("第13关使用任务指定SP，多SP功能暂时停用。","Mission 13 uses its assigned SP. Multi-SP is temporarily disabled.");return
+        hotkeyNotice=tr("mission.13.uses.its.assigned.779cb0af");return
     end
-    if aircraftDebug and aircraftDebug:busy()then hotkeyNotice=tr("正在重开任务换机，请稍候。","Restarting with another aircraft; please wait.");return end
+    if aircraftDebug and aircraftDebug:busy()then hotkeyNotice=tr("restarting.with.another.aircraft.please.09280b7c");return end
     local profile=nil
     local accepted,why=pcall(function()
         assert(action.hotkey_protocol==1,"快捷键协议不匹配")
@@ -1414,7 +1414,7 @@ local function applyDebugHotkey(action)
         configureFlight(profile,"debug_hotkey") -- 同一游戏线程完整重建，错误交给既有故障清理。
         local names={}
         for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=flightOptions[profile[field]+1].code:upper()end end
-        hotkeyNotice="SP："..table.concat(names," + ")..tr("（已补满）"," (refilled)")
+        hotkeyNotice=runtimeContext.textKey("sp.aabf060d","zh")..table.concat(names," + ")..tr("refilled.89f913d7")
         weaponSwitch.hotkeyWarning=false
     else
         local nextConfig=json.decode(json.encode(config));nextConfig.task_mount_enabled=not config.task_mount_enabled
@@ -1444,9 +1444,9 @@ local function applyDebugHotkey(action)
             runtimeFixedMountEnabled=false;mountOptionsApplied=true
             mountWarning="多 SP 挂载已回退为原生单 SP："..tostring(err)
         end
-        hotkeyNotice=mountWarning or (config.task_mount_enabled and tr("任务多SP模型：开启","Mission multi-SP models: ON")or tr("任务多SP模型：关闭","Mission multi-SP models: OFF"))
+        hotkeyNotice=mountWarning or (config.task_mount_enabled and tr("mission.multi.sp.models.on.79af0eb7")or tr("mission.multi.sp.models.off.f4fb65f0"))
         weaponSwitch.hotkeyWarning=mountWarning~=nil
-        if not runtimeModEnabled then hotkeyNotice=hotkeyNotice..tr("（总开关关闭，仅保存设置）"," (saved; mod disabled)")end
+        if not runtimeModEnabled then hotkeyNotice=hotkeyNotice..tr("saved.mod.disabled.40bf1a5a")end
     end
     note("DEBUG_HOTKEY_APPLIED "..action.command.." "..hotkeyNotice)
 end
@@ -1562,7 +1562,7 @@ local function publishState()
     if isFlight or supplySession then appliedTaskMount=runtimeFixedMountEnabled end -- 机库核心状态不能冒充任务开关的应用状态。
     local info=catalogue and catalogue[tostring(planeId)]
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
-    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("请选择机体","Select an aircraft"),
+    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=21,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
@@ -1595,7 +1595,7 @@ local function publishState()
     state.camera_hold={protocol=8,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
     state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
-        reason=tr("请返回主菜单或单人任务选择页，保存的总开关会自动生效。","Return to the main menu or single-player mission selection; the saved master switch will apply automatically.")}
+        reason=tr("return.to.the.main.menu.e01e801c")}
     state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
         error=managementPauseError,
         existing=managementPause and managementPause.existing or false,
@@ -1728,7 +1728,7 @@ tryApplyMasterSwitch=function(force)
     else
         masterSwitch.error=nil
         masterSwitch.response=masterSwitch.response+1
-        masterSwitch.notice=runtimeModEnabled and tr("Mod总开关：开启","Mod: enabled")or tr("Mod总开关：关闭","Mod: disabled")
+        masterSwitch.notice=runtimeModEnabled and tr("mod.enabled.059ed7da")or tr("mod.disabled.ddc732b7")
         note("MASTER_SWITCH_APPLIED "..tostring(runtimeModEnabled))
     end
     runtimeChanging=false;lastUIKey=nil
@@ -2115,7 +2115,7 @@ RegisterHook("/Script/Nimbus.Mission:OnSuccessSupplyPhaseHandler",function()end,
 end))
 assert(type(LoopInGameThreadWithDelay)=="function" and type(ExecuteInGameThreadWithDelay)=="function" and type(IsInGameThread)=="function",
     "This DualSP version requires the bundled game-thread timer API")
-overlay();note("DUALSP_LOADED 2.24.1 MANAGEMENT_UI")
+overlay();note("DUALSP_LOADED 2.24.3 MANAGEMENT_UI")
 -- LoopAsync + ExecuteInGameThread used to register new Lua closures from an
 -- async Lua state every 20 ms while another state executed the controller.
 -- The crash dump aborts in Registry::get_function_ref. Register one recurring
