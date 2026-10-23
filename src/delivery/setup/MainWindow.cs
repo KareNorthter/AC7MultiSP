@@ -22,27 +22,28 @@ namespace AC7MultiSP.Setup {
             FlatAppearance.BorderColor = Color.FromArgb(165, 183, 200); Cursor = Cursors.Hand;
         }
         public override Size GetPreferredSize(Size proposedSize) {
-            int width = proposedSize.Width > 80 && proposedSize.Width < 10000 ? proposedSize.Width : Math.Max(200, Width);
+            int width = proposedSize.Width > UiDpi.Pixels(80) && proposedSize.Width < 10000 ? proposedSize.Width : Math.Max(UiDpi.Pixels(200), Width);
             using (var titleFont = new Font(Font.FontFamily, 14F, FontStyle.Bold)) {
-                int titleHeight = TextRenderer.MeasureText(heading, titleFont, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height;
-                int detailHeight = TextRenderer.MeasureText(description, Font, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height;
+                int textWidth = Math.Max(UiDpi.Pixels(80), width - UiDpi.Pixels(44));
+                int titleHeight = TextRenderer.MeasureText(heading, titleFont, new Size(textWidth, 0), TextFormatFlags.WordBreak).Height;
+                int detailHeight = TextRenderer.MeasureText(description, Font, new Size(textWidth, 0), TextFormatFlags.WordBreak).Height;
                 int warningHeight = 0;
                 if (!String.IsNullOrEmpty(warning)) using (var warningFont = new Font(Font, FontStyle.Bold))
-                    warningHeight = TextRenderer.MeasureText(warning, warningFont, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height + 6;
-                return new Size(width, Math.Max(MinimumSize.Height, titleHeight + detailHeight + warningHeight + 48));
+                    warningHeight = TextRenderer.MeasureText(warning, warningFont, new Size(textWidth, 0), TextFormatFlags.WordBreak).Height + UiDpi.Pixels(6);
+                return new Size(width, Math.Max(Math.Max(MinimumSize.Height, UiDpi.Pixels(112)), titleHeight + detailHeight + warningHeight + UiDpi.Pixels(48)));
             }
         }
         protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
             using (var titleFont = new Font(Font.FontFamily, 14F, FontStyle.Bold)) {
-                int pad = 20;
+                int pad = UiDpi.Pixels(20);
                 int titleHeight = TextRenderer.MeasureText(heading, titleFont, new Size(Math.Max(80, Width - pad * 2), 0), TextFormatFlags.WordBreak).Height;
                 TextRenderer.DrawText(e.Graphics, heading, titleFont, new Rectangle(pad, pad, Width - pad * 2, titleHeight), ForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
                 int detailHeight = TextRenderer.MeasureText(description, Font, new Size(Math.Max(80, Width - pad * 2), 0), TextFormatFlags.WordBreak).Height;
-                TextRenderer.DrawText(e.Graphics, description, Font, new Rectangle(pad, pad + titleHeight + 8, Width - pad * 2, detailHeight),
+                TextRenderer.DrawText(e.Graphics, description, Font, new Rectangle(pad, pad + titleHeight + UiDpi.Pixels(8), Width - pad * 2, detailHeight),
                     Color.FromArgb(85, 100, 115), TextFormatFlags.Left | TextFormatFlags.WordBreak);
                 if (!String.IsNullOrEmpty(warning)) using (var warningFont = new Font(Font, FontStyle.Bold))
-                    TextRenderer.DrawText(e.Graphics, warning, warningFont, new Rectangle(pad, pad + titleHeight + detailHeight + 14, Width - pad * 2, Math.Max(1, Height - pad * 2 - titleHeight - detailHeight - 14)),
+                    TextRenderer.DrawText(e.Graphics, warning, warningFont, new Rectangle(pad, pad + titleHeight + detailHeight + UiDpi.Pixels(14), Width - pad * 2, Math.Max(1, Height - pad * 2 - titleHeight - detailHeight - UiDpi.Pixels(14))),
                         ForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
             }
         }
@@ -77,6 +78,7 @@ namespace AC7MultiSP.Setup {
         string exported;
         bool busy;
         bool closing;
+        bool shown;
         enum UpdateState { Waiting, Checking, Failed, Current, Newer }
         UpdateState updateState = UpdateState.Waiting;
         internal Exception PreviewFailure { get; private set; }
@@ -85,7 +87,7 @@ namespace AC7MultiSP.Setup {
             bundle = value; preview = isPreview; snapshot = snapshotPath;
             Font = new Font("Microsoft YaHei UI", 10F);
             ClientSize = new Size(980, 740); MinimumSize = new Size(840, 660);
-            AutoScaleMode = AutoScaleMode.Dpi; StartPosition = FormStartPosition.CenterScreen;
+            AutoScaleDimensions = new SizeF(96F, 96F); AutoScaleMode = AutoScaleMode.Dpi; StartPosition = FormStartPosition.CenterScreen;
             BackColor = Color.FromArgb(245, 248, 251);
             shell.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             shell.RowStyles.Add(new RowStyle(SizeType.AutoSize));
@@ -99,6 +101,7 @@ namespace AC7MultiSP.Setup {
                 closing = true;
             };
             Shown += async delegate {
+                shown = true;
                 if (preview) {
                     // 预览仅绘制现有控件；不联网、不搜索或写入游戏目录。
                     var timer = new Timer { Interval = 200 };
@@ -221,6 +224,7 @@ namespace AC7MultiSP.Setup {
             language.SelectedIndex = UiText.Selection == "system" ? 0 : UiText.Selection == "zh-CN" ? 1 : 2;
             language.SelectedIndexChanged += delegate { if (busy) return; UiText.Selection = language.SelectedIndex == 0 ? "system" : language.SelectedIndex == 1 ? "zh-CN" : "en"; Render(); };
             languageRow.Controls.Add(language); tools.Controls.Add(languageRow); bar.Controls.Add(titles, 0, 0); bar.Controls.Add(tools, 1, 0);
+            if (shown) UiDpi.ScaleNew(bar);
             header = bar; shell.Controls.Add(header, 0, 0);
             foreach (Control child in content.Controls.Cast<Control>().ToArray()) { content.Controls.Remove(child); child.Dispose(); }
             documents = null; localState = null; feedback = null; install = null; uninstall = null; location = null; progress = null;
@@ -230,7 +234,11 @@ namespace AC7MultiSP.Setup {
             else RenderChoices();
             content.Enabled = !busy;
         }
-        void ShowContent(Control page) { page.Dock = DockStyle.Fill; content.Controls.Add(page); }
+        void ShowContent(Control page) {
+            // 首次显示由窗体统一缩放；后续切页/切语言只缩放新建子树一次。
+            if (shown) UiDpi.ScaleNew(page);
+            page.Dock = DockStyle.Fill; content.Controls.Add(page);
+        }
         void ShowChoices() { currentPage = "home"; Render(); }
         void ShowWaiting(string key) { waitingKey = key; currentPage = "waiting"; Render(); }
         async Task Start() { await CheckUpdates(); }
