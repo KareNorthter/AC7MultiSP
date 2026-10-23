@@ -1,37 +1,38 @@
 AC7MultiSP 安装说明
 
-准备工作
-• 先退出游戏。同一套Mod只使用一种方式管理，更新和卸载也沿用该方式。
-• 游戏文件夹可通过Steam中的“管理→浏览本地文件”找到，其中应有Ace7Game.exe。
-• 升级前备份个人设置：ue4ss/Mods/DualSP/profiles.json。不要直接删除整个旧Mod文件夹。
-• 本Mod需要《皇牌空战7》专用UE4SS；普通版UE4SS不能直接代替。
+本说明适用于通用ZIP及配套EXE安装程序。以下三种方式任选一种，更新和卸载也沿用同一种方式。
 
-一、通过Vortex安装
-1. 在Vortex中启用《皇牌空战7》的游戏支持扩展及“AC7MultiSP安装支持”扩展。
-2. 导入配套的Vortex通用ZIP，安装并启用。手动下载后可使用“Install From File”导入。
-3. 按提示安装所需的AC7专用UE4SS，然后部署Mod。
-4. 启动游戏，按F6检查是否出现管理界面。
+安装前
+• 完全退出游戏。通过Steam中的“管理→浏览本地文件”找到游戏文件夹，其中应有Ace7Game.exe。
+• 本Mod需要《皇牌空战7》专用UE4SS，普通版UE4SS不能直接代替。通用ZIP不包含这个前置组件。
+• 更新前备份个人设置：ue4ss/Mods/DualSP/profiles.json。
 
-也可用EXE中的“通过Vortex安装和更新”导出通用ZIP。免费Nexus账户可能需要在网页确认下载。以后通过Vortex更新、停用和卸载。
+一、Vortex安装
+1. 在Vortex中安装并启用《皇牌空战7》游戏支持扩展和“AC7MultiSP安装支持”扩展。
+2. 导入通用ZIP，安装并启用。手动下载的文件可通过“Install From File”导入。
+3. 按提示安装AC7专用UE4SS，然后部署Mod。
 
-二、通过EXE安装包安装
-1. 运行AC7MultiSP_Installer.exe，进入后选择“直接安装”。
-2. 确认游戏文件夹；未自动找到时，手动选择含Ace7Game.exe的文件夹。
-3. 点击“安装”或“更新”，完成后启动游戏，按F6检查。
+以后通过Vortex更新、停用和卸载。也可运行配套EXE，选择“通过Vortex安装和更新”，导出同一套通用ZIP后再导入。
 
-程序会安装所需的专用UE4SS，或复用兼容的现有版本。如果提示文件冲突或环境不受支持，请按提示处理，不要强行覆盖。卸载也使用该程序；个人设置和共享UE4SS会保留。
+二、EXE安装
+1. 运行AC7MultiSP_Installer.exe，选择“直接安装”。
+2. 确认游戏文件夹；未自动找到时，选择含Ace7Game.exe的文件夹。
+3. 点击“安装”或“更新”，等待完成。
 
-三、手动安装ZIP
-先解压。手动升级时，先将旧ue4ss/Mods/DualSP文件夹移到游戏目录外备份，避免新旧程序混用。随后按压缩包里的目录结构复制：
+安装程序会准备所需的AC7专用UE4SS，或复用兼容的现有版本。遇到冲突时按提示处理，不要强行覆盖。以后也通过该程序更新和卸载；卸载会保留个人设置及共享UE4SS。
 
-• 有GameFiles文件夹：把其中的dwmapi.dll、ue4ss、Game合并到游戏文件夹，不复制GameFiles文件夹本身。
-• 根目录直接是ue4ss和Game：这是通用ZIP。先准备好AC7专用UE4SS，再将这两个文件夹合并到游戏文件夹；根目录的其他说明文件无需复制。
+三、手动安装
+1. 按本Mod下载页的前置要求，先安装AC7专用UE4SS。
+2. 解压通用ZIP，将其中的ue4ss和Game两个文件夹合并复制到游戏文件夹。不要复制ZIP外层文件夹，其他说明及管理文件无需复制。
+3. 通用ZIP已带启用文件，不需要修改或覆盖mods.txt。
 
-已有同名加载器或其他Mod时，先备份并确认兼容。保留自己的profiles.json，不覆盖其他Mod的启用列表。通用ZIP已带启用文件；旧GameFiles包需确认ue4ss/Mods/mods.txt中有“DualSP : 1”。
-升级后，将备份中的profiles.json复制回新Mod文件夹。很早版本的设置可能需要重新调整。
-启动游戏后按F6检查。手动卸载时移出ue4ss/Mods/DualSP及Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak，并移除对应启用项；其他Mod仍使用的共享加载器不要移除。
+手动更新：先把旧ue4ss/Mods/DualSP文件夹移到游戏目录外备份，再复制新版，并将备份中的profiles.json复制回来，避免新旧程序混用。很早版本的设置可能需要重新调整。
+
+手动卸载：移出ue4ss/Mods/DualSP文件夹及Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak。其他Mod仍在使用的共享UE4SS请保留。
+
+安装完成后
+通过Steam启动游戏，按F6；能打开AC7MultiSP管理界面即表示Mod已启动。
 
 注意
-• 当前正式2.24.1 ZIP采用GameFiles结构；EXE及其配套Vortex方式仍为预览方案，以实际提供的安装文件为准。
-• 改用另一种管理方式前，先用原方式卸载本Mod并保留设置，避免重复部署。
-• 安装包不附带微软DirectX／VC++运行库；若系统缺少，需另行安装微软官方版本。
+• 切换安装方式前，先用原方式卸载本Mod并保留设置，避免重复安装。Vortex管理的文件不要用EXE或手动方式直接覆盖。
+• 本Mod不附带微软DirectX／VC++运行库；系统缺少时，请另行安装微软官方版本。

@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 文档治理，中文基本认可、英文待补齐 | 本管理聊天；四份中文完成锚archive/20261023/player-docs；双语规范基线31662a2，codex/docs-bilingual-policy完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 本轮仅补开发与文档双语规范及状态索引；功能代码、磁盘大资产和安装器线程未改。下一步补英文、盘点界面文字，再按用户安排接入程序；[文档复用](player-docs.md)记录边界 |
+| 文档治理，中文基本认可、英文待补齐 | 本管理聊天；四份中文完成锚archive/20261023/player-docs；安装说明基于79a90e4重写，codex/docs-universal-install完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 安装说明仅按未来通用ZIP及配套EXE编写，三种安装方式共用；根目录人工修改的功能说明、更新日志保留，不混入提交。双语及程序接入继续待用户安排；[文档复用](player-docs.md)记录边界 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改，双语及界面接入由用户稍后安排 |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
 | 原根目录资料，封存待甄别 | codex/aircraft-mod-static-plan；原兼容资料工作 | E:/AC7_MultiSP/Temp/preserved-local-20261023；0b75b21 | 原27项未提交变动逐文件保留；核对后按需接收独有结论，不整套覆盖main |
