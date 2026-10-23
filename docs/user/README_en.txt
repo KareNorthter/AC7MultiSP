@@ -79,4 +79,4 @@ Initial loading, loadout navigation and result-screen arrows may still stutter. 
 
 The package contains no personal settings, saves, logs, dumps or third-party aircraft mods. Remove DualSP and its mount PAK to uninstall; remove shared loaders only when no other mods need them. SP2.wav is user-provided third-party audio with no additional rights granted. DirectX/Visual C++ runtimes are not bundled; mod/dependency licenses are included.
 
-The complete version history is maintained once in the repository: docs/版本更新说明.md. This guide contains the current summary and controls; future delivery summaries should be generated from the shared history.
+The complete version history is maintained once in the repository: docs/releases/版本更新说明.md. This guide contains the current summary and controls; future delivery summaries should be generated from the shared history.

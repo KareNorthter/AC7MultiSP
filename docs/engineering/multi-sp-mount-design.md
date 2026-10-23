@@ -1,6 +1,6 @@
 # 多 SP 挂载设计
 
-本文说明正式 **main / 2.24.1** 的布局、运行显示与设计经验。历史 `2.25.x / 2.26.x` 为研究/整合阶段编号，其成果已按实际接收范围进入主线，不能按数字判断正式版本先后。正式交付及本机安装状态见[项目入口](../README.md)，运行模块关系见[架构](architecture.md)。
+本文说明正式 **main / 2.24.1** 的布局、运行显示与设计经验。历史 `2.25.x / 2.26.x` 为研究/整合阶段编号，其成果已按实际接收范围进入主线，不能按数字判断正式版本先后。正式交付及本机安装状态见[项目入口](../../README.md)，运行模块关系见[架构](architecture.md)。
 
 当前核心生成表含28架、196个非空组合；另有 F-15E、F-35C、Su-30SM 三架专项布局，以及六架机外保留、Su-47/Su-57 TGM 两架原生外观旁路。这里是策略与源码覆盖，不是39架七组合、全部场景均获实机验收。原47架有武装官方机体中的其余八架保留待办；无武装 `f104av` 不在该范围。
 
@@ -50,7 +50,7 @@
 
 ## 当前布局
 
-下表数字均为**布局容量**，固定炮体/效果源的数量不表示增加弹药；实际可见数还受库存、投放空位、装填和原生显隐影响。三种单挂原则上走原生，完整 Socket、变体、借位和七组合以[同源生成表](../src/mount_expansion_data.hpp)及源数据为准，不能从摘要反推队列。
+下表数字均为**布局容量**，固定炮体/效果源的数量不表示增加弹药；实际可见数还受库存、投放空位、装填和原生显隐影响。三种单挂原则上走原生，完整 Socket、变体、借位和七组合以[同源生成表](../../src/mount_expansion_data.hpp)及源数据为准，不能从摘要反推队列。
 
 ### 原有常规与专项布局
 
@@ -80,7 +80,7 @@
 | F-16XL | UGB12＋4AAM4；UGB12＋4AGM2；4AAM2＋4AGM6 | UGB12＋4AAM4＋4AGM2；静态窄间距不等于动态离架通过 |
 | MiG-35D | 内SAAM2＋最外6AAM2；最外SAAM2＋内4AGM2；最外6AAM2＋内4AGM2 | 内4AGM2，负Y最外6AAM1、正Y最外SAAM1 |
 
-F-4E 的十二位不再使用忽略库存的 `model_capacity_mask`。UGB＋SASM选位按原表序号 `0,6,1,7,2,8,3,9,4,10,5,11`，即 `sp11,sp12,…,sp21,sp22` 交替；原Socket身份、50%配弹、投弹队列与计时保持。旧“固定十二模型”只作为被后续覆盖的生成历史。依据见[库存与左右交替](../evidence/f04e-ugb-alternating-stock.json)。
+F-4E 的十二位不再使用忽略库存的 `model_capacity_mask`。UGB＋SASM选位按原表序号 `0,6,1,7,2,8,3,9,4,10,5,11`，即 `sp11,sp12,…,sp21,sp22` 交替；原Socket身份、50%配弹、投弹队列与计时保持。旧“固定十二模型”只作为被后续覆盖的生成历史。依据见[库存与左右交替](../../evidence/f04e-ugb-alternating-stock.json)。
 
 ### 后续接入八架
 
@@ -95,11 +95,11 @@ F-4E 的十二位不再使用忽略库存的 `model_capacity_mask`。UGB＋SASM�
 | Su-33 | 外HVAA2＋LASM4；HVAA6＋EML；LASM4＋EML | 外HVAA2＋LASM4＋EML；LASM原架可直接保留 |
 | F/A-18F Block III | 外LACM2＋翼尖/内8AGM12；LACM4＋4AAM4；8AGM18＋4AAM4 | 外LACM2＋翼尖/内8AGM12＋4AAM4；4AAM完整腹部活动架 |
 
-F/A-18E 两机最终布局来自[反馈修订](../evidence/f18e-layout-feedback-r1.json)。TGM 的 GPB Socket 依供架站距调整，三挂 HCAA 明确借空闲 `SWP2/sp22`，显示与真实离架同点。资源现用[r2](../evidence/f18etg-whole-rack-socket-r2.json)：只修正第二个 cooked Socket 引用，几何、变换、材质和碰撞保留，旧 r1 不再作为可安装输入。完整供架允许未使用支撑，机身对接和真实展开不能由离线包围体筛查代替。
+F/A-18E 两机最终布局来自[反馈修订](../../evidence/f18e-layout-feedback-r1.json)。TGM 的 GPB Socket 依供架站距调整，三挂 HCAA 明确借空闲 `SWP2/sp22`，显示与真实离架同点。资源现用[r2](../../evidence/f18etg-whole-rack-socket-r2.json)：只修正第二个 cooked Socket 引用，几何、变换、材质和碰撞保留，旧 r1 不再作为可安装输入。完整供架允许未使用支撑，机身对接和真实展开不能由离线包围体筛查代替。
 
-MiG-31B 保完整双PLSL、原生左右发射源与冷却，不裁单侧炮。mask6/7 的 SAAM 借 `SWP1/sp13、sp14`，三挂 LAAM 只用前 `sp11、sp12`。当前 r3 相对原生后腹 Socket 的 X减11、Z减2，X=10.50264、Y=±4.6、Z=-16.98927，旋转/几何保持；显示与离架共用新Socket。[最初观察](../evidence/m31b-mount-observation.json)已明确同侧 LAAM/SAAM、两枚后腹 SAAM 存在三角面相交，后续偏移是用户观察修订，不能写成穿模消失、支撑或动态净空全面通过。见[r3记录](../evidence/m31b-saam-offset-r3.json)。
+MiG-31B 保完整双PLSL、原生左右发射源与冷却，不裁单侧炮。mask6/7 的 SAAM 借 `SWP1/sp13、sp14`，三挂 LAAM 只用前 `sp11、sp12`。当前 r3 相对原生后腹 Socket 的 X减11、Z减2，X=10.50264、Y=±4.6、Z=-16.98927，旋转/几何保持；显示与离架共用新Socket。[最初观察](../../evidence/m31b-mount-observation.json)已明确同侧 LAAM/SAAM、两枚后腹 SAAM 存在三角面相交，后续偏移是用户观察修订，不能写成穿模消失、支撑或动态净空全面通过。见[r3记录](../../evidence/m31b-saam-offset-r3.json)。
 
-F-14D、F/A-18F、Su-33、Block III 用[局部机构模块](../src/local_mount.hpp)，独立核精确资源、骨架/AnimClass、父链和Socket双射。仅维持所持实例的原生Tick/骨更新，保持原生暂停，同值不写；不启用旧完整共舱控制器、不逐帧遍历骨或全局对象。真实取位等骨更新完成，否则本次映射旁路；EML固定炮体不按库存/装填隐藏。来源见[四机接线](../evidence/local-four-mount-runtime.json)。
+F-14D、F/A-18F、Su-33、Block III 用[局部机构模块](../../src/local_mount.hpp)，独立核精确资源、骨架/AnimClass、父链和Socket双射。仅维持所持实例的原生Tick/骨更新，保持原生暂停，同值不写；不启用旧完整共舱控制器、不逐帧遍历骨或全局对象。真实取位等骨更新完成，否则本次映射旁路；EML固定炮体不按库存/装填隐藏。来源见[四机接线](../../evidence/local-four-mount-runtime.json)。
 
 ### 机外保留与原生旁路
 
@@ -126,9 +126,9 @@ ADF-11F 的窄导轨局部穿入 UAV 是已记录外观取舍，不推广为其�
 | MiG-35D mask5/7 | 内4AGM `SWP3.sp33/34`；SAAM整组借 `SWP2.sp21/22` 或仅正Y `sp22`；原SAAM池核验并供原网格，不占显示位 |
 | Gripen E | SASM `sp11/12`，腹6AAM `sp25/26/27`；SASM＋6AAM再用 `sp23/24`，6AAM＋LACM用 `sp21/22`＋腹三点，LACM `sp31/32` |
 
-Gripen 腹部链已有原生单挂观察、完整七组件双射与 Body 复核，不能再用旧“没有独立腹导轨”否定。它继承原生接触关系，不声称机腹零穿模。MiG-35D 整组迁位仅登记 mask5/7 的 `full_borrowed_kinds=1`；供位池可以已选，借入Socket必须空闲。其余未登记借位继续要求供位池未选、逻辑兵装有原来源位。依据见[MiG-35D修订](../evidence/m35d-inner-4agm-layout.json)。
+Gripen 腹部链已有原生单挂观察、完整七组件双射与 Body 复核，不能再用旧“没有独立腹导轨”否定。它继承原生接触关系，不声称机腹零穿模。MiG-35D 整组迁位仅登记 mask5/7 的 `full_borrowed_kinds=1`；供位池可以已选，借入Socket必须空闲。其余未登记借位继续要求供位池未选、逻辑兵装有原来源位。依据见[MiG-35D修订](../../evidence/m35d-inner-4agm-layout.json)。
 
-同源入口为 [build_runtime_mount_data.py](../src/research/build_runtime_mount_data.py)，输出 [mount_expansion_data.hpp](../src/mount_expansion_data.hpp) 与 [mount_assets.lua](../dist/DualSP/Scripts/mount_assets.lua)。按三批基础、2.11～2.14覆盖、五机复核/反馈、F-4E历史容量、MiG-35D修订、F-4E库存交替，再接原生三机/MiG-31B、四机局部机构、偏移r1/r2/r3、碰撞保真、F/A-18E反馈及TGM r2顺序应用。源证据虽是研究记录，仍是精确覆盖和来源核验依赖，不能随正文清理删除、改名或格式化。
+同源入口为 [build_runtime_mount_data.py](../../src/research/build_runtime_mount_data.py)，输出 [mount_expansion_data.hpp](../../src/mount_expansion_data.hpp) 与 [mount_assets.lua](../../dist/DualSP/Scripts/mount_assets.lua)。按三批基础、2.11～2.14覆盖、五机复核/反馈、F-4E历史容量、MiG-35D修订、F-4E库存交替，再接原生三机/MiG-31B、四机局部机构、偏移r1/r2/r3、碰撞保真、F/A-18E反馈及TGM r2顺序应用。源证据虽是研究记录，仍是精确覆盖和来源核验依赖，不能随正文清理删除、改名或格式化。
 
 现行77资源/154成员保留旧编号和未加载副本；不因暂未用就重新编号。资源按逐项编码/独立解码回读，Lua仅请求当前组合所需项。原生游戏资产、工具、完整输入与产物留本机，后续构建前从来源记录核实完整输入，不用旧50/54资源目录冒充现套。
 
@@ -136,7 +136,7 @@ Gripen 腹部链已有原生单挂观察、完整七组件双射与 Body 复核�
 
 静态分区保材质、Socket、父链、非索引字节和全部LOD，主/深度/邻接索引不得跨区裁面；名称编码与资源回读需成立。缺省 BodyInstance 不能当作 NoCollision。
 
-普通资源和跨池弹体借位核对 NoCollision；登记的七机19份静态派生挂架及后续精确反馈资源可按碰撞保真资格保留原生 BlockAllDynamic。资格由 [mount_rack_collision.hpp](../src/mount_rack_collision.hpp) 核对源/派生包、BodySetup弱身份、父链/尺寸/GUID及完整碰撞证明，禁止自动覆盖配置；真正换网格前后再比对组件碰撞模式、Profile、ObjectType和响应，不直接改碰撞放行。见[七机证据](../evidence/native-seven-collision-preservation.json)。
+普通资源和跨池弹体借位核对 NoCollision；登记的七机19份静态派生挂架及后续精确反馈资源可按碰撞保真资格保留原生 BlockAllDynamic。资格由 [mount_rack_collision.hpp](../../src/mount_rack_collision.hpp) 核对源/派生包、BodySetup弱身份、父链/尺寸/GUID及完整碰撞证明，禁止自动覆盖配置；真正换网格前后再比对组件碰撞模式、Profile、ObjectType和响应，不直接改碰撞放行。见[七机证据](../../evidence/native-seven-collision-preservation.json)。
 
 任务与预览共用每实例恢复账本。原生显隐请求继续记账；新实例重采基线，不继承旧所有权。单挂、关闭模型、场景/机体换代或资格失败归还原网格、显隐、Tick/骨更新与动画责任；失败保留存活对象责任，失效弱身份不解引用。视觉失败不撤销已完成的兵装事务。
 
@@ -156,9 +156,9 @@ CFA 多挂隐藏 ECM 的 `SWP3` 双显隐位及 `SWPCover_01/04` 两支机构，
 
 选有ADMM时在原生 Parts 更新后，将 Body 的 `swc1` 盖板输出同步真实公共 `spwc`，同值不写、独立归还；不强改公共开度。普通同机切换可保留已核身份的骨隐藏租约，补给重配/退出仍归还。固定架维护不为126个发射组件复制无关弹药位图。
 
-ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EML＋ECM保双侧效果。炮口账本按地址先查，命中再核身份/归属；存活对象旧关系失配时删除旧记录并在同次请求重识别，不能直接原生放行。此修补不证明偶发双侧蓝光的现场根因，其他模板、挂接时序仍未覆盖，不扩大抑制范围。来源见[2.21.1接收记录](../evidence/2.21.1-integration.json)，实现见[cfa_muzzle_visual.hpp](../src/cfa_muzzle_visual.hpp)。
+ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EML＋ECM保双侧效果。炮口账本按地址先查，命中再核身份/归属；存活对象旧关系失配时删除旧记录并在同次请求重识别，不能直接原生放行。此修补不证明偶发双侧蓝光的现场根因，其他模板、挂接时序仍未覆盖，不扩大抑制范围。来源见[2.21.1接收记录](../../evidence/2.21.1-integration.json)，实现见[cfa_muzzle_visual.hpp](../../src/cfa_muzzle_visual.hpp)。
 
-发射批次边界还要求活动批次、收尾、按住输入和未消费队列为空才受控切换。队列修补不能代替重建前原生解除旧锁定；该正确性结论及历史证据从[研究索引](research/README.md)进入。
+发射批次边界还要求活动批次、收尾、按住输入和未消费队列为空才受控切换。队列修补不能代替重建前原生解除旧锁定；该正确性结论及历史证据从[研究索引](../research/README.md)进入。
 
 ### FALKEN发射期间拒绝切换
 
@@ -181,9 +181,9 @@ ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EM
 | 高频全表炮口检查 | 改地址查找后用户确认明显改善；命中身份与归还责任仍保留 |
 | 完整共舱和F-22腹骨 | 简化外观后的改善有功能取舍，不能证明旧完整方案已可流畅恢复 |
 
-性能应先按真实最慢阶段减少重复工作，不能把所有短卡归因动画/磁盘。旧CFA模型开三SP中位曾为83.43→41.18→26.19ms；后来已验收alpha1 r3为17.66ms/P95 20.20ms，仍保留88.31ms尖峰。不同场景、版本和计时修订并非受控A/B，核心事务不是整帧/FPS或完整输入延迟，不据此承诺10ms、120fps或全机收益。证据见[耗时对照](../evidence/cfa44-switch-cost-alpha1-r3-20261021.json)，通用读取批次、生命周期和计量方法集中在[工程经验](engineering-lessons.md)。
+性能应先按真实最慢阶段减少重复工作，不能把所有短卡归因动画/磁盘。旧CFA模型开三SP中位曾为83.43→41.18→26.19ms；后来已验收alpha1 r3为17.66ms/P95 20.20ms，仍保留88.31ms尖峰。不同场景、版本和计时修订并非受控A/B，核心事务不是整帧/FPS或完整输入延迟，不据此承诺10ms、120fps或全机收益。证据见[耗时对照](../../evidence/cfa44-switch-cost-alpha1-r3-20261021.json)，通用读取批次、生命周期和计量方法集中在[工程经验](engineering-lessons.md)。
 
-用户对F-14A、F/A-18E两机、F-14D、F/A-18F、Su-33和Block III的正常反馈仅按实际所测记录，见[反馈](../evidence/native-batch-user-feedback-20261020.json)；MiG-31B整体方向认可与后腹偏移待观察分别保留。不把总体正常扩为全组合、全部动作或性能保证。CFA偶发蓝光、F-2A性能、选装光标短卡、FALKEN停光后卡顿等未获归因的事项继续待办。
+用户对F-14A、F/A-18E两机、F-14D、F/A-18F、Su-33和Block III的正常反馈仅按实际所测记录，见[反馈](../../evidence/native-batch-user-feedback-20261020.json)；MiG-31B整体方向认可与后腹偏移待观察分别保留。不把总体正常扩为全组合、全部动作或性能保证。CFA偶发蓝光、F-2A性能、选装光标短卡、FALKEN停光后卡顿等未获归因的事项继续待办。
 
 ## 暂缓范围与继续适配
 
@@ -196,7 +196,7 @@ ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EM
 | FB-22、YF-23 | 复杂内部多套机构，不扩完整共舱 |
 | X-02S | 已撤外观接管，原生旁路，旧EML/腹舱研究留存 |
 
-五机活动架静态研究已用于四机局部接入；ASF-X尚未运行准入。旧 Block III 30个包络重叠案例不能一概写成面交，也不能以现接线抹去上层Socket、LACM离架后展开和多通道错相的动态验证边界。研究依据见[五机静态方案](../evidence/active-five-mount-static-plan.json)。
+五机活动架静态研究已用于四机局部接入；ASF-X尚未运行准入。旧 Block III 30个包络重叠案例不能一概写成面交，也不能以现接线抹去上层Socket、LACM离架后展开和多通道错相的动态验证边界。研究依据见[五机静态方案](../../evidence/active-five-mount-static-plan.json)。
 
 后续按以下顺序补证据，编译/测试/安装/游戏操作均由用户当次授权：
 
@@ -209,6 +209,6 @@ ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EM
 
 ## 研究与回退
 
-[研究索引](research/README.md)保存仍可复用的静态布局、动画、炮口、碰撞、未完成适配和调查入口；[归档索引](archive/README.md)保存撤回路线与旧全文恢复点。半成品代码、来源数据和本机原始资源不因正文精简自动删除。
+[研究索引](../research/README.md)保存仍可复用的静态布局、动画、炮口、碰撞、未完成适配和调查入口；[归档索引](../archive/README.md)保存撤回路线与旧全文恢复点。半成品代码、来源数据和本机原始资源不因正文精简自动删除。
 
 完整内部共存/旧共舱、F-22腹骨显隐、CFA旧强收、X-02S旧EML外观分别保留研究用途。恢复前对照当前兵装、性能取舍和用户决定，按精确差异接续，不用旧头文件或整套Lua覆盖现版；旧资源编号、原字节与证据维持其历史含义。

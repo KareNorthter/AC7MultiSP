@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-23",
+  "base_commit": "c353e79",
+  "restore_tag": "archive/20261023/pre-artifact-cleanup",
+  "scope": "文档分目录、旧发布产物与历史核心归档；不改功能源码，不编译、测试、安装或发布",
+  "archive_root": "E:/AC7_MultiSP/backup/artifact-archive-20261023",
+  "document_moves": {
+    "docs/workflow.md": "docs/project/workflow.md",
+    "docs/workspaces.md": "docs/project/workspaces.md",
+    "docs/architecture.md": "docs/engineering/architecture.md",
+    "docs/development.md": "docs/engineering/development.md",
+    "docs/engineering-lessons.md": "docs/engineering/engineering-lessons.md",
+    "docs/multi-sp-mount-design.md": "docs/engineering/multi-sp-mount-design.md",
+    "docs/README_zh-CN.txt": "docs/user/README_zh-CN.txt",
+    "docs/README_en.txt": "docs/user/README_en.txt",
+    "docs/安装说明.txt": "docs/user/安装说明.txt",
+    "docs/授权.txt": "docs/user/授权.txt",
+    "docs/release.txt": "docs/releases/release.txt",
+    "docs/版本更新说明.md": "docs/releases/版本更新说明.md",
+    "docs/Pages与R2发布更新说明.md": "docs/archive/delivery/Pages与R2发布更新说明.md",
+    "docs/management-design/index.html": "docs/research/management-design/index.html",
+    "docs/management-design/version-updates.html": "docs/research/management-design/version-updates.html"
+  },
+  "release_archive": {
+    "top_level_items": 14,
+    "files": 82,
+    "bytes": 769494079,
+    "verified_after_move": true,
+    "current_release_sha256": "b09f1300d67840a54a06bdea5f0e5a1f1bf859a6f350f623bd63742faee1146f",
+    "public_zip_members": [
+      "_headers",
+      "preview.json",
+      "stable.json"
+    ]
+  },
+  "release_manifest": "release-manifest.json",
+  "core_manifest": "core-manifest.json",
+  "archived_cores": [
+    {
+      "original": "dist/DualSP/cores/0.1.8/DualSP.dll",
+      "archive": "cores/0.1.8/DualSP.dll",
+      "bytes": 1705472,
+      "sha256": "3fff19496467f1616dd2db7f5434d2008d84c4e1375c16c51d7f49ae93262a49"
+    },
+    {
+      "original": "dist/DualSP/cores/0.1.9/DualSP.dll",
+      "archive": "cores/0.1.9/DualSP.dll",
+      "bytes": 1748480,
+      "sha256": "46731ae6ad519e0bd145e0ea03c32a2662947c8b03b56c524d7cdf46ca8096e1"
+    },
+    {
+      "original": "dist/DualSP/cores/1.0.1-candidate.1/DualSP.dll",
+      "archive": "cores/1.0.1-candidate.1/DualSP.dll",
+      "bytes": 1750528,
+      "sha256": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+    },
+    {
+      "original": "dist/DualSP/cores/1.0.2-su30sm-mount.2/DualSP.dll",
+      "archive": "cores/1.0.2-su30sm-mount.2/DualSP.dll",
+      "bytes": 1777152,
+      "sha256": "e5cc499b69279904105ddf3515ae574d6cf86e649c3a59c01cbf74ceeb2aa014"
+    },
+    {
+      "original": "dist/DualSP/cores/1.0.2-su30sm-three-sp.1/DualSP.dll",
+      "archive": "cores/1.0.2-su30sm-three-sp.1/DualSP.dll",
+      "bytes": 1780736,
+      "sha256": "4abd0e907324ca29dedcbcc39da9703be00990b7b025958a7e8ebffe4440e508"
+    },
+    {
+      "original": "dist/DualSP/cores/2.0.0/DualSP.dll",
+      "archive": "cores/2.0.0/DualSP.dll",
+      "bytes": 1814016,
+      "sha256": "1dedc32061a64f1bbe26bcebb167d9531688665f31154a872e06038ed9419481"
+    },
+    {
+      "original": "dist/DualSP/cores/2.4.0/DualSP.dll",
+      "archive": "cores/2.4.0/DualSP.dll",
+      "bytes": 1895936,
+      "sha256": "7449d7b705810dfd77f3ed577225e3fb2e5e1c998c564d10c9e4c0bfdd911bbb"
+    }
+  ],
+  "retained_binary_dependencies": [
+    {
+      "path": "dist/DualSP/bin/DualSP.dll",
+      "sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+    },
+    {
+      "path": "dist/DualSP/bin/DualSPUI.dll",
+      "sha256": "c01a0f484226ad93a912d58efeb9918053fe833e0eb7f86fb7c9e6fb7ab9407c"
+    },
+    {
+      "path": "dist/DualSP/cores/1.0.1/DualSP.dll",
+      "sha256": "ea3c9c17456eae89289621e40225f7d4cc2f192ae051e97725febfddb9ba27af"
+    },
+    {
+      "path": "dist/DualSP/cores/1.1.0/DualSP.dll",
+      "sha256": "da449197f3c2ee7a375589ab9475d454d6da72d4419b652c1464d3ce388fa597"
+    },
+    {
+      "path": "dist/DualSP/cores/2.0/DualSP.dll",
+      "sha256": "ff21e6818b74446ccc93a2303ccf13d0fd1ef0b9be68df301aecd49fbcaad678"
+    }
+  ],
+  "retained_release_baseline": "Release/baseline-0.1.7.json：旧安装器核对payload使用",
+  "legacy_tool_limitations": [
+    "文档迁移后，source_snapshot及release_package硬编码旧文档路径待适配；当前直接执行会缺文件",
+    "恢复早期install-resupply-candidate流程需先恢复对应历史核心原路径"
+  ],
+  "preserved_originals": [
+    "授权.txt字节不变",
+    "两份管理HTML字节不变",
+    "现有2.24.1 ZIP字节不变",
+    "既有JSON回执不改写",
+    "弹舱动画与其他研究源码/原料未清理"
+  ],
+  "checks": {
+    "archive_file_hashes_verified": true,
+    "protected_binaries_unchanged": true,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "published": false,
+    "markdown_relative_links_checked": 295,
+    "markdown_broken_links": 0
+  }
+}

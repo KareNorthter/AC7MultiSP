@@ -1,12 +1,13 @@
 # 工作区与成果索引
 
-本页是任务登记入口。当前正式版本见[README](../README.md)，分支/提交规范见[开发规范](workflow.md)。已封存路径不要继续编辑，恢复从main新建任务；重要半成品见[研究索引](research/README.md)。
+本页是任务登记入口。当前正式版本见[README](../../README.md)，分支/提交规范见[开发规范](workflow.md)。已封存路径不要继续编辑，恢复从main新建任务；重要半成品见[研究索引](../research/README.md)。
 
 ## 正式入口与明确保留的工作
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
+| 文档目录与旧产物归档，已接收/已关闭 | 本管理聊天；基线c353e79；完成锚archive/20261023/artifact-cleanup | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 文档分目录、Release历史产物和7份历史核心归档已合main，codex/chore-artifact-archive关闭；[归档回执](../../evidence/artifact-archive-20261023.json)记录范围，不改功能源码或其他聊天 |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
 | 原根目录资料，封存待甄别 | codex/aircraft-mod-static-plan；原兼容资料工作 | E:/AC7_MultiSP/Temp/preserved-local-20261023；0b75b21 | 原27项未提交变动逐文件保留；核对后按需接收独有结论，不整套覆盖main |
 | 旧更新实现，封存待续 | codex/update-feature | C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP | 11项未提交变动，已做快照；与现行更新页比较后再接收 |
@@ -41,20 +42,20 @@
 
 ## 已完成分支与原位封存
 
-本次移除52个已被main包含的活动分支名，tip均保存在archive/20261023/下；[治理回执](../evidence/project-governance-20261023.json)逐项列出原名、提交、标签和处置。
+本次移除52个已被main包含的活动分支名，tip均保存在archive/20261023/下；[治理回执](../../evidence/project-governance-20261023.json)逐项列出原名、提交、标签和处置。
 
 - 34个原本无工作树的已合分支关闭。
 - 18个干净且已合的旧工作树解除原分支：其中17个有ignored文件，原位detached并锁定；1个无任何ignored或未提交内容的cfa44-muzzle-notes副本送回收站。
 - 原main所在Temp/integration-2.22.2-alpha1另外原位封存，main回到根目录。冻结产物、原料和旧路径依赖均未迁走。
 - 4个原本缺目录的锁定登记已备份元数据后移出；恢复锚和缺原料风险留在研究/归档索引，不冒称恢复成功。
-- 其余历史detached研究树、脏树和未证明已接收分支继续保留。本轮没有清理大体积Temp、转储、旧ZIP或个人备份。
+- 其余历史detached研究树、脏树和未证明已接收分支继续保留。大体积Temp、转储和个人备份尚未清理；Release旧产物的后续集中归档见[归档索引](../archive/README.md#历史核心与发布包)。
 
-完整前后盘点及9处未提交快照见E:/AC7_MultiSP/backup/project-governance-20261023/；恢复方法见[归档索引](archive/README.md)。
+完整前后盘点及9处未提交快照见E:/AC7_MultiSP/backup/project-governance-20261023/；恢复方法见[归档索引](../archive/README.md)。
 
 ## 后续任务登记格式
 
 在适合的表中更新一行：任务目的｜责任聊天｜基线main提交｜分支/工作树｜独占修改范围｜状态｜来源/验收链接。状态用进行中、待接收、待验证、已接收、封存待续、已关闭。不要只写“最新”或用版本目录名代替提交。
 
-本次正文整理已以d2653ce合入main，整理分支已关闭。整理工作树C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP因当前置顶聊天受应用保护，自动归档被拒绝，故保留为detached完成快照；不作为新任务入口，也不为清理而更改用户置顶设置。
+首次正文整理以d2653ce合入main并关闭分支。整理工作树因当前置顶聊天受应用保护，自动归档被拒绝；本管理聊天核对干净后从main复用于上表归档任务，完成后回到detached状态。不为清理而更改用户置顶设置，其他任务仍须独立工作树。
 
 本次收尾后保留23个分支和39条有效工作树登记；其中多数为封存原料或旧研究，并非39个活动开发任务。日后新增任务不得从已封存整合目录直接继续，也不要把文档维护再拆成多个无人负责的版本。

@@ -22,4 +22,4 @@ vendor/** -text
 evidence/*.json -text
 
 # 用户提供的授权原件保留UTF-8字节及行尾。
-docs/授权.txt -text whitespace=cr-at-eol
+docs/user/授权.txt -text whitespace=cr-at-eol

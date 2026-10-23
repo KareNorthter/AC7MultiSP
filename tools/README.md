@@ -13,7 +13,7 @@
 | `vgmstream/`、`wwiser.pyz` | 自有Wwise音库的离线解析和本地试听；不随Mod发行，原音库/解码试听留Temp |
 | `AC7-Integrated-v0.7.0-beta.1/` | 本机保留的独立旧工具成品，目录内有自身说明；不属于main成套构建的默认依赖，不据名称推定兼容或已接收 |
 
-PowerShell、Python和Git是本机通用环境，不复制进项目。新增工具按项目约定放C盘以外，临时产物在`Temp/`；工具缺失时先报告，不临时换来源、全局安装或重复试错。资源原料、工具缓存和旧构建的保留/恢复位置见[工作区索引](../docs/workspaces.md)和[研究索引](../docs/research/README.md)。
+PowerShell、Python和Git是本机通用环境，不复制进项目。新增工具按项目约定放C盘以外，临时产物在`Temp/`；工具缺失时先报告，不临时换来源、全局安装或重复试错。资源原料、工具缓存和旧构建的保留/恢复位置见[工作区索引](../docs/project/workspaces.md)和[研究索引](../docs/research/README.md)。
 
 ## 来源与离线使用
 
@@ -22,4 +22,4 @@ PowerShell、Python和Git是本机通用环境，不复制进项目。新增工�
 - 音频工具来源：[vgmstream r2117](https://github.com/vgmstream/vgmstream/releases/tag/r2117)、[wwiser v20260808](https://github.com/bnnm/wwiser/releases/tag/v20260808)。这些是历史下载来源，不表示已重新检查上游最新版本。
 - 项目加载器来源：[Playmore的AC7专用UE4SS](https://github.com/Playmore-ModdingConcepts/PM-UE4SS/releases/tag/UE4SS)，其载荷和许可证保留在`payload/ue4ss/`；它不等于本目录下可随意替换的通用UE4SS。
 
-构建/资源来源的文件依赖见[开发与恢复](../docs/development.md)，检查覆盖见[检查说明](../tests/README.md)。当前版本和安装记录只在[项目入口](../README.md)维护，工作规范见[开发规范](../docs/workflow.md)。
+构建/资源来源的文件依赖见[开发与恢复](../docs/engineering/development.md)，检查覆盖见[检查说明](../tests/README.md)。当前版本和安装记录只在[项目入口](../README.md)维护，工作规范见[开发规范](../docs/project/workflow.md)。

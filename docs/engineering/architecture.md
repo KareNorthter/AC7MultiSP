@@ -1,6 +1,6 @@
 # 当前架构
 
-本文说明整理基线 `39141fd` 的运行机制。正式发布、本机安装和独立候选的当前状态只在[项目入口](../README.md)维护；历史 `2.25.x / 2.26.x` 是已接收研究阶段编号，不能按数字判断正式版本先后。原始记录见[evidence索引](../evidence/README.md)，旧方案从[研究索引](research/README.md)与[归档索引](archive/README.md)恢复。
+本文说明整理基线 `39141fd` 的运行机制。正式发布、本机安装和独立候选的当前状态只在[项目入口](../../README.md)维护；历史 `2.25.x / 2.26.x` 是已接收研究阶段编号，不能按数字判断正式版本先后。原始记录见[evidence索引](../../evidence/README.md)，旧方案从[研究索引](../research/README.md)与[归档索引](../archive/README.md)恢复。
 
 适用基线为 Steam build 9855922、Windows 10/11 x64 的单人战役与自由任务。源码保留未启用的弹舱动画等研究基础设施，保留文件不等于启用相应方案。
 
@@ -10,18 +10,18 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 | 入口 | 职责 |
 |---|---|
-| [main.lua](../dist/DualSP/Scripts/main.lua) | 游戏线程调度、许可、出击/补给/检查点、管理暂停与生命周期 |
-| [config_store.lua](../dist/DualSP/Scripts/config_store.lua)、loadout_profile.lua、loadout_flow.lua | 配置保存、方案与比例、独立草稿及确认 |
-| [native_loadout.lua](../dist/DualSP/Scripts/native_loadout.lua) | 准备、STANDBY、PART、补给的原生控件和输入交接 |
-| [debug_aircraft.lua](../dist/DualSP/Scripts/debug_aircraft.lua)、[mod_aircraft.lua](../dist/DualSP/Scripts/mod_aircraft.lua) | 换机、第三方目录与实际兵装资料 |
-| [native_bridge.lua](../dist/DualSP/Scripts/native_bridge.lua)、runtime_context.lua、weapon_cycle.lua | 核心请求匹配、运行许可、MSL/SP 切换 |
-| [weapon_bridge.cpp](../src/weapon_bridge.cpp) | 原生兵装重建、库存/装填、检查点、输入与声音交接 |
-| [su30sm_fixed_mount.hpp](../src/su30sm_fixed_mount.hpp)、mount_expansion.hpp、mount_mesh_override.hpp | 挂载布局、显示/离架映射、网格租约 |
-| [mount_preview.hpp](../src/mount_preview.hpp)、mount_exterior.hpp、light_mount.hpp、[local_mount.hpp](../src/local_mount.hpp) | 场景预览、机外保留、轻量机构与四机局部动画 |
-| [continuous_sp.hpp](../src/continuous_sp.hpp)、raven_sp.hpp、[seeker_rebuild.hpp](../src/seeker_rebuild.hpp) | 持续效果、UAV 回收、原生锁定解除与重建收尾 |
-| [target_gaze.hpp](../src/target_gaze.hpp)、[camera_hold.hpp](../src/camera_hold.hpp)、[view_target.hpp](../src/view_target.hpp) | 注视、镜头保持、NEXT 排序与中心白点 |
-| [overlay.cpp](../src/overlay.cpp)、management_panel.hpp、keyboard_shortcuts.hpp、[version_updates.hpp](../src/version_updates.hpp) | 管理界面、输入队列、更新检查 |
-| [bounded_log.hpp](../src/bounded_log.hpp) | Lua/核心/UI 共用有界后台日志 |
+| [main.lua](../../dist/DualSP/Scripts/main.lua) | 游戏线程调度、许可、出击/补给/检查点、管理暂停与生命周期 |
+| [config_store.lua](../../dist/DualSP/Scripts/config_store.lua)、loadout_profile.lua、loadout_flow.lua | 配置保存、方案与比例、独立草稿及确认 |
+| [native_loadout.lua](../../dist/DualSP/Scripts/native_loadout.lua) | 准备、STANDBY、PART、补给的原生控件和输入交接 |
+| [debug_aircraft.lua](../../dist/DualSP/Scripts/debug_aircraft.lua)、[mod_aircraft.lua](../../dist/DualSP/Scripts/mod_aircraft.lua) | 换机、第三方目录与实际兵装资料 |
+| [native_bridge.lua](../../dist/DualSP/Scripts/native_bridge.lua)、runtime_context.lua、weapon_cycle.lua | 核心请求匹配、运行许可、MSL/SP 切换 |
+| [weapon_bridge.cpp](../../src/weapon_bridge.cpp) | 原生兵装重建、库存/装填、检查点、输入与声音交接 |
+| [su30sm_fixed_mount.hpp](../../src/su30sm_fixed_mount.hpp)、mount_expansion.hpp、mount_mesh_override.hpp | 挂载布局、显示/离架映射、网格租约 |
+| [mount_preview.hpp](../../src/mount_preview.hpp)、mount_exterior.hpp、light_mount.hpp、[local_mount.hpp](../../src/local_mount.hpp) | 场景预览、机外保留、轻量机构与四机局部动画 |
+| [continuous_sp.hpp](../../src/continuous_sp.hpp)、raven_sp.hpp、[seeker_rebuild.hpp](../../src/seeker_rebuild.hpp) | 持续效果、UAV 回收、原生锁定解除与重建收尾 |
+| [target_gaze.hpp](../../src/target_gaze.hpp)、[camera_hold.hpp](../../src/camera_hold.hpp)、[view_target.hpp](../../src/view_target.hpp) | 注视、镜头保持、NEXT 排序与中心白点 |
+| [overlay.cpp](../../src/overlay.cpp)、management_panel.hpp、keyboard_shortcuts.hpp、[version_updates.hpp](../../src/version_updates.hpp) | 管理界面、输入队列、更新检查 |
+| [bounded_log.hpp](../../src/bounded_log.hpp) | Lua/核心/UI 共用有界后台日志 |
 
 表内未单独给路径的 Lua 文件均在 `dist/DualSP/Scripts/`，核心头文件均在 `src/`。Lua 唯一源目录不另复制。布局从源数据同源生成核心表及 Lua 清单，生成文件不能单独手改；详见[挂载设计](multi-sp-mount-design.md)。
 
@@ -40,7 +40,7 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 原生循环与直选共用最终事务，不发布内部 MSL 中间态。内部重建不重排自身输入。真实在途、未知或失效武器引用阻止组合重建；仅已核身份、玩家归属、非活动标记及原生 Bomb 父类的停用炸弹可作为残留忽略，另保留既有 Raven/UAV 例外，不清原生数组强行放行。
 
-每次模组兵装重建前通过原生逐槽 Reset 解除锁定、停音，再清理旧版本留下的无主登记，防止旧 LockedTargets 污染新批次；不直接清目标数组、不修改正常多目标发射数量。该共同路径的修复依据见[现场记录](../evidence/cfa44-live-seeker-residue.json)，不据此保证所有机体的双发现象均已消除。
+每次模组兵装重建前通过原生逐槽 Reset 解除锁定、停音，再清理旧版本留下的无主登记，防止旧 LockedTargets 污染新批次；不直接清目标数组、不修改正常多目标发射数量。该共同路径的修复依据见[现场记录](../../evidence/cfa44-live-seeker-residue.json)，不据此保证所有机体的双发现象均已消除。
 
 ## 进程内通信与文件边界
 
@@ -48,7 +48,7 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 旧 `native-command.txt`、`native-status.json`、`ui-actions.json`、`ui-state*.json`、`catalogue*.json/txt` 不再参与运行。遗留文件不被消费，也不自动删除，旧取证脚本不能用它们代表当前状态。
 
-文件访问限于配置初始化/实际变化保存及备份、首次资源/字体/音频加载、按需读日志与有界后台日志。未变化配置按上次成功保存快照跳过，失败不更新快照。布局 JSON 在 DLL 内存常量中解析；运行不读研究证据文件。纯网格成功加载后按资源生命周期保有，只加载当前组合需要的条目。已校验提示音 PCM 按路径跨任务复用，换 WAV 后需重启。此边界不等于引擎/系统完全没有磁盘访问，依据见[文件访问审阅](../evidence/mount-animation-file-io-20261021.json)。
+文件访问限于配置初始化/实际变化保存及备份、首次资源/字体/音频加载、按需读日志与有界后台日志。未变化配置按上次成功保存快照跳过，失败不更新快照。布局 JSON 在 DLL 内存常量中解析；运行不读研究证据文件。纯网格成功加载后按资源生命周期保有，只加载当前组合需要的条目。已校验提示音 PCM 按路径跨任务复用，换 WAV 后需重启。此边界不等于引擎/系统完全没有磁盘访问，依据见[文件访问审阅](../../evidence/mount-animation-file-io-20261021.json)。
 
 日志后台限速批量写入，mod 四份、native 六份，每份最多 1,000,000 字节；队列有界，忙时丢弃、抑制重复，调用线程不等待磁盘，最后记录可能未落盘。管理页日志默认收起，展开/刷新才读最近 64KiB。性能计量与内存读取批次约束见[工程经验](engineering-lessons.md)。
 
@@ -66,7 +66,7 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 任务只取实际受控玩家，机库只取 `HangarManager.LoadedPlayerPlane`。地址、UObject 索引、序列号共同构成弱身份；资源、反射字段、父链和归属另行核对。新实例重新采集原生归还基线，纯资源缓存不能延长玩家/世界生命周期。
 
-反射动态字段名由活跃闭包持有固定字符串数组，避免加载器保存字节视图后 Lua 字符串回收。此规避不改通用加载器、不缓存 UObject；旧悬空键须完整重启清除。依据见[F-22 准备页记录](../evidence/f22-preparation-string-lifetime.json)，不推定其他退出故障同因。
+反射动态字段名由活跃闭包持有固定字符串数组，避免加载器保存字节视图后 Lua 字符串回收。此规避不改通用加载器、不缓存 UObject；旧悬空键须完整重启清除。依据见[F-22 准备页记录](../../evidence/f22-preparation-string-lifetime.json)，不推定其他退出故障同因。
 
 绑定核对完整类/包、网格、池、Socket 双射及碰撞资格。通过引擎 `SetStaticMesh` 换网格并记原值，不写网格指针或碰撞配置。借位和动态挂点让可见模型与真实离架共用实际 Socket，活动机构读取当帧世界变换；骨更新未完成时旁路本次映射，不强行求值。静态碰撞保持资格见[挂载设计](multi-sp-mount-design.md#资源资格与运行归还)。
 
@@ -80,7 +80,7 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 电子战与 UAV 依真实 CDO 父类、回调、装填/结束归属契约准入，不单看 WeaponID 或名称。S-44/Gleipnir 的 HPM 即使复用编号31仍按实际 WeaponUAV 处理；真实 ElectronicSupportMeasures 走电子战，LaserInterceptor 不支持。非 Raven 不套 Raven 固定三武器限制，真 Raven 的回收模型/TLS 附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
 
-F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不等于任意 Mod 可用。依据见[第三方静态资料](../evidence/mod-aircraft-compat-static.json)及[特殊兵装契约](../evidence/mod-special-sp-contract-20261022.json)，逐类研究从[研究索引](research/README.md)进入。
+F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不等于任意 Mod 可用。依据见[第三方静态资料](../../evidence/mod-aircraft-compat-static.json)及[特殊兵装契约](../../evidence/mod-special-sp-contract-20261022.json)，逐类研究从[研究索引](../research/README.md)进入。
 
 ## 选装与调试换机
 
@@ -94,7 +94,7 @@ F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不
 
 ## 机炮齐射
 
-原生 MGP/PLSL 加上明确登记的23个自定义炮类组成25项精确名单；Lua 候选与核心执行同时核对默认对象名、WeaponID 与实际按住连发字段。编号0有效，不能被真假判断丢弃；HGP 文案不代表任意同名/同编号替换类均支持。完整名单及静态边界见[批量记录](../evidence/gun-salvo-mod-pod-survey.json)，Adler/XR302 的来源和观察见[研究索引](research/README.md)。
+原生 MGP/PLSL 加上明确登记的23个自定义炮类组成25项精确名单；Lua 候选与核心执行同时核对默认对象名、WeaponID 与实际按住连发字段。编号0有效，不能被真假判断丢弃；HGP 文案不代表任意同名/同编号替换类均支持。完整名单及静态边界见[批量记录](../../evidence/gun-salvo-mod-pod-survey.json)，Adler/XR302 的来源和观察见[研究索引](../research/README.md)。
 
 核心分别记住真实 GUN/SP 输入，将自有 SP 按住与真实 SP 合并。Lua 仅临时选择方案中的唯一合格 SP；内部重建不当作真实松键，下一调度确认仍按住后恢复 GUN 并追加 SP。松开立即归还额外输入，再在原身份内限时恢复原选择；真实 SP 未释放时最多等一秒。人工选择优先并取消旧恢复权。
 
@@ -111,7 +111,7 @@ F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不
 - NEXT 有 normal/vr 排序模式，默认 normal；vr 仅在原生 NEXT 同步作用域按实际相机方向临时排序候选，结束归还，不写当前目标或发射。候选资格和历史避让仍原生，不启用 VR 设备；与 AC7MouseAim 的 F2 HMD 可能冲突。
 - 白点独立、默认关闭，机头和实际相机三维夹角严格超过5°才显示。Lua 约20ms发布原子显隐/心跳，渲染端不读游戏对象；超过150ms、隐藏HUD或特殊镜头时隐藏。
 
-功能均受单人、前台、普通视角、当前玩家与心跳许可约束；暂停/管理/失焦/断连/离场清姿态及手势，恢复重新播种，不重放。角度自动回正已移除，旧设置不作为当前功能说明。交互研究见[研究索引](research/README.md)，输入和生命周期经验见[工程经验](engineering-lessons.md)。
+功能均受单人、前台、普通视角、当前玩家与心跳许可约束；暂停/管理/失焦/断连/离场清姿态及手势，恢复重新播种，不重放。角度自动回正已移除，旧设置不作为当前功能说明。交互研究见[研究索引](../research/README.md)，输入和生命周期经验见[工程经验](engineering-lessons.md)。
 
 ## 任务HUD与中央武器简称
 
@@ -137,10 +137,10 @@ Lua 游戏线程约20ms调度，正式飞行 HUD 通常约100ms同步，成功�
 
 只在任务外提示新版，进入任务即隐藏提醒。候选/正式版本分别比较；旧 `schema_version=1/preparing/package=null` 与当前 `schema=1/preparing` 仅显示“更新信息尚未发布”，不给旧包新版入口。HTTP/WinHTTP失败原因留日志。下载按钮经用户点击才交 Windows 默认浏览器，不自动下载/安装。
 
-授权文本编入 [version_update_credits.hpp](../src/version_update_credits.hpp)，正文整体滚动。清单/双入口部署规则见[Pages与R2发布更新说明](Pages与R2发布更新说明.md)。2.24.1本地包不等于线上更新流程已由用户验证。
+授权文本编入 [version_update_credits.hpp](../../src/version_update_credits.hpp)，正文整体滚动。清单/双入口部署规则见[Pages与R2发布更新说明](../archive/delivery/Pages与R2发布更新说明.md)。2.24.1本地包不等于线上更新流程已由用户验证。
 
 ## 冻结来源与交付
 
-正式2.24.1交付见[整合](../evidence/2.24.1-integration.json)及[发布](../evidence/2.24.1-release.json)。19个运行文件、77资源/154成员 PAK 成套，个人配置/状态不入包。构建、安装、用户反馈与发布各有独立回执；文档整理不重建、不安装、不改旧回执。
+正式2.24.1交付见[整合](../../evidence/2.24.1-integration.json)及[发布](../../evidence/2.24.1-release.json)。19个运行文件、77资源/154成员 PAK 成套，个人配置/状态不入包。构建、安装、用户反馈与发布各有独立回执；文档整理不重建、不安装、不改旧回执。
 
-[开发说明](development.md)负责构建、接收与恢复步骤；[研究索引](research/README.md)保留候选和半成品用途；[归档索引](archive/README.md)定位撤回方案、旧正文与 Git 恢复点。旧完整内舱、F-22腹骨、CFA旧强收和X-02S外观代码/资源保留供后续研究，恢复前必须比较现行边界，不能整套覆盖。
+[开发说明](development.md)负责构建、接收与恢复步骤；[研究索引](../research/README.md)保留候选和半成品用途；[归档索引](../archive/README.md)定位撤回方案、旧正文与 Git 恢复点。旧完整内舱、F-22腹骨、CFA旧强收和X-02S外观代码/资源保留供后续研究，恢复前必须比较现行边界，不能整套覆盖。

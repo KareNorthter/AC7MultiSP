@@ -1,6 +1,6 @@
 # 证据索引
 
-这里保存各次研究、构建、安装、用户反馈和发布的原始记录。文件名/日期说明记录阶段，不代表今天的状态；当前状态见[项目入口](../README.md)。可复用结论见[工程经验](../docs/engineering-lessons.md)，待续方案见[研究索引](../docs/research/README.md)。
+这里保存各次研究、构建、安装、用户反馈和发布的原始记录。文件名/日期说明记录阶段，不代表今天的状态；当前状态见[项目入口](../README.md)。可复用结论见[工程经验](../docs/engineering/engineering-lessons.md)，待续方案见[研究索引](../docs/research/README.md)。
 
 ## 关键入口
 
@@ -14,6 +14,7 @@
 | 原生/第三方边界 | [原生退让](special-aircraft-native-fallback-20261022.json)、[UAV/HPM契约](mod-special-sp-contract-20261022.json) | 哪些对象与使用路径可被放行 |
 | 动画半成品 | [产品访问](sp-animation-product-access.json)、[早期动画](mount-expansion-animated.json) | 研究依据与尚未成立的运行条件 |
 | 仓库整理 | [20261023治理回执](project-governance-20261023.json) | 删除的分支tip、封存工作树、快照及本轮核对范围 |
+| 文档与旧产物归档 | [20261023归档回执](artifact-archive-20261023.json) | 文档路径映射、旧包和DLL归档位置、仍保留依赖及核对范围 |
 
 ## 按主题定位其余记录
 

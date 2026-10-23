@@ -1,6 +1,6 @@
 # 检查入口与覆盖边界
 
-本目录保存现有离线检查及历史模拟。检查入口是`tests/run.py`，需要一个已有完整构建目录，通过`--build-dir`指定；本页只说明实现，不表示本轮已运行或获得执行授权。当前版本和实际验证状态统一见[项目入口](../README.md)，操作规范见[开发规范](../docs/workflow.md)。
+本目录保存现有离线检查及历史模拟。检查入口是`tests/run.py`，需要一个已有完整构建目录，通过`--build-dir`指定；本页只说明实现，不表示本轮已运行或获得执行授权。当前版本和实际验证状态统一见[项目入口](../README.md)，操作规范见[开发规范](../docs/project/workflow.md)。
 
 ## 成套入口实际执行什么
 
@@ -33,4 +33,4 @@
 
 真实出击、补给、检查点、F6/原生暂停、换机后的新玩家、实际键鼠/手柄消息、机型动画、在途兵装、第三方自有行为、长期稳定性与Present帧时间均需分别取证或用户实机验证。自动检查、离线资源回读、用户反馈和发布核验是不同证据，不互相替代。
 
-研究、构建及旧工具的实际位置见[开发与恢复](../docs/development.md)和[工具说明](../tools/README.md)；故障判断与计量边界见[工程经验](../docs/engineering-lessons.md)。本页不继续积累每轮候选版本的交接文字；旧全文可从`archive/20261023/pre-governance-main`恢复。
+研究、构建及旧工具的实际位置见[开发与恢复](../docs/engineering/development.md)和[工具说明](../tools/README.md)；故障判断与计量边界见[工程经验](../docs/engineering/engineering-lessons.md)。本页不继续积累每轮候选版本的交接文字；旧全文可从`archive/20261023/pre-governance-main`恢复。
