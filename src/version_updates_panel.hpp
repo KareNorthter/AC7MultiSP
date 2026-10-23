@@ -1,5 +1,5 @@
 #pragma once
-// 与管理页共用语言和卡片；中文按用户2026-10-22回传稿保存，#意见不进入显示。
+// 与管理页共用语言和卡片；玩家正文来自集中生成资源。
 void updateDownloadSameLine(const char* label) {
     const float width=ImGui::CalcTextSize(label).x+ImGui::GetStyle().FramePadding.x*2;
     if(ImGui::GetItemRectMax().x+ImGui::GetStyle().ItemSpacing.x+width<=
@@ -11,54 +11,62 @@ void drawVersionUpdatesPage() {
     const auto snapshot=updates.snapshot();
     if(ImGui::BeginChild("UpdateVersions",{0,0},ImGuiChildFlags_Borders|ImGuiChildFlags_AutoResizeY)) {
         ImGui::Text("%s  %s",uiText("current.version.16c8badf"),dualsp::updates::currentVersion);
-        ImGui::Text("%s  %s",uiText("latest.version.51f76219"),snapshot && !snapshot->latest.empty()?snapshot->latest.c_str():"—");
+        const std::string latest=std::string(uiText("latest.version.51f76219"))+"  "+
+            (snapshot && !snapshot->latest.empty()?snapshot->latest:"—");
+        updateDownloadSameLine(latest.c_str());ImGui::TextUnformatted(latest.c_str());
+        updateDownloadSameLine(uiText("check.for.updates.840f7526"));
         ImGui::BeginDisabled(updates.checking());
         if(ImGui::Button(uiText("check.for.updates.840f7526")))updates.requestCheck();
         ImGui::EndDisabled();
-        const char* title="—",*hint="";
+        const char* title="—";
         if(status==dualsp::updates::Status::Checking) {
-            title=uiText("checking.for.updates.a6e73905");hint=uiText("you.can.continue.playing.3acf66f6");
+            title=uiText("checking.for.updates.a6e73905");
         }else if(status==dualsp::updates::Status::Current) {
-            title=uiText("already.up.to.date.9c218466");hint=uiText("no.update.is.needed.f6dc0c26");
+            title=uiText("already.up.to.date.9c218466");
         }else if(status==dualsp::updates::Status::Newer)title=uiText("a.newer.version.is.available.274799a7");
         else if(status==dualsp::updates::Status::Unpublished) {
             title=uiText("update.information.has.not.been.4e698d95");
-            hint=uiText("you.can.continue.playing.and.5cfb85ee");
         }
         else if(status==dualsp::updates::Status::Failed) {
             title=uiText("unable.to.check.for.updates.f4fdc2e6");
-            hint=uiText("this.check.has.ended.you.137d7d95");
         }
-        ImGui::Separator();ImGui::TextWrapped("%s",title);
-        if(status==dualsp::updates::Status::Newer && snapshot)
-            ImGui::TextWrapped("%s",tr(snapshot->notesZh.c_str(),snapshot->notesEn.c_str()));
-        else if(*hint)ImGui::TextWrapped("%s",hint);
-    }
-    ImGui::EndChild();
-    if(panelCard("UpdateDownloads",uiText("download.update.22da3701"))) {
-        const bool opening=updates.browserStatus()==dualsp::updates::BrowserStatus::Opening;
-        const bool available=snapshot && !snapshot->downloads.empty();
-        ImGui::BeginDisabled(!available || opening);
-        if(available) {
-            for(size_t i=0;i<snapshot->downloads.size();++i) {
-                const auto& link=snapshot->downloads[i];
-                const char* label=link.id=="lanzou"?uiText("lanzou.download.edd106d4"):
-                    link.id=="r2"?uiText("cloudflarer2.download.1a0af643"):tr(link.zh.c_str(),link.en.c_str());
-                if(i)updateDownloadSameLine(label);
+        ImGui::TextWrapped("%s",title);
+        // 下载区域只在新版有效时出现，R2优先，其余按原清单顺序编号。
+        if(status==dualsp::updates::Status::Newer && snapshot && !snapshot->downloads.empty()) {
+            ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
+            bool first=true;size_t backup=0;
+            for(bool primary:{true,false})for(const auto& link:snapshot->downloads) {
+                if((link.id=="r2")!=primary)continue;
+                const std::string label=primary?uiText("primary.download.link.f6096f63"):
+                    std::string(uiText("backup.download.link.76fd22fe"))+std::to_string(++backup);
+                if(!first)updateDownloadSameLine(label.c_str());first=false;
                 ImGui::PushID(link.id.c_str());
-                if(ImGui::Button(label))updates.openDownload(link.id);
+                if(ImGui::Button(label.c_str()))updates.openDownload(link.id);
                 ImGui::PopID();
             }
-        }else {
-            ImGui::Button(uiText("lanzou.download.edd106d4"));updateDownloadSameLine(uiText("cloudflarer2.download.1a0af643"));
-            ImGui::Button(uiText("cloudflarer2.download.1a0af643"));
+            ImGui::EndDisabled();
         }
-        ImGui::EndDisabled();
-        ImGui::TextWrapped("%s",uiText("download.buttons.open.the.corresponding.687ea42f"));
-        ImGui::TextWrapped("%s",uiText("after.downloading.exit.the.game.aaa43341"));
     }
     ImGui::EndChild();
-    // 本地玩家正文只展示主要更新和作者授权；远端更新摘要仍作为外部数据显示。
+    const bool chinese=std::string(tr("zh","en"))=="zh";
+    // 反馈正文与作者授权同源，合并换行后作为紧凑栏；窄窗口允许自然换行。
+    std::string feedback=dualsp::updates::documents::compactFeedback(chinese);
+    feedback.erase(std::remove(feedback.begin(),feedback.end(),'\r'),feedback.end());
+    std::replace(feedback.begin(),feedback.end(),'\n',' ');
+    ImGui::PushFont(nullptr,std::min(ImGui::GetStyle().FontSizeBase,14.f));
+    const char* logLabel=uiText("open.mod.log.folder.06bdb703");
+    const float logWidth=ImGui::CalcTextSize(logLabel).x+ImGui::GetStyle().FramePadding.x*2;
+    const float feedbackWidth=ImGui::GetContentRegionAvail().x-logWidth-ImGui::GetStyle().ItemSpacing.x;
+    const bool inlineFeedback=feedbackWidth>=260;
+    ImGui::PushTextWrapPos(inlineFeedback?ImGui::GetCursorPosX()+feedbackWidth:0);
+    ImGui::TextDisabled("%s",feedback.c_str());ImGui::PopTextWrapPos();
+    if(inlineFeedback)ImGui::SameLine(ImGui::GetWindowContentRegionMax().x-logWidth);
+    ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
+    if(ImGui::SmallButton(logLabel))updates.openLogFolder();
+    ImGui::EndDisabled();ImGui::PopFont();
+    if(updates.browserStatus()==dualsp::updates::BrowserStatus::Failed)
+        ImGui::TextWrapped("%s",uiText("unable.to.open.link.or.folder.5705a221"));
+    // 本地玩家正文只展示主要更新和作者授权，保持原有展开/收起交互。
     if(panelCard("UpdateChangelog",uiText("changelog.fd31c92d"))) {
         static bool expanded=false;
         if(ImGui::SmallButton(expanded?uiText("collapse.changelogtoggle.6286d892"):

@@ -1,6 +1,6 @@
 -- 调试换机走原生整关重开；只在新的受控玩家机体真正就绪后确认成功。
 local Module={}
--- 官方编号仅用于区分来源和许可提示；候选来自实际加载目录，不再以此表排除Mod机体。
+-- 官方编号用于区分来源；候选来自实际目录，带DLC要求的机体必须核实拥有许可。
 local official={
     [100]="f04e",[101]="f15c",[102]="f15e",[103]="f18f",[104]="f15j",[105]="f35c",[106]="a10a",[107]="f02a",
     [108]="f14d",[109]="f16c",[110]="f22a",[111]="j39e",[112]="m21b",[113]="m29a",[114]="m31b",[115]="mr2k",
@@ -100,14 +100,18 @@ function Module.new(deps)
                     local label=name
                     local licensed=nil
                     local extra=type(info.dlc_id)=="string"and info.dlc_id~=""and info.dlc_id~="Base"
-                    if not isMod and extra then
+                    if extra then
                         local checked,value=pcall(function()assert(valid(dlc));return dlc:IsDLCOwned(info.dlc_id)end)
                         if checked then licensed=value==true end
                         label=label..(licensed==false and tr("dlc.not.owned.8f080e7d")or licensed==nil and tr("dlc.ownership.unknown.f1a7fac5")or "")
                     elseif not isMod and type(info.dlc_id)~="string"then label=label..tr("ownership.data.unavailable.b02bb5c3")
                     elseif not isMod and ownedKnown and not owned[id]then label=label..tr("not.purchased.336eda21")end
-                    self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
-                        purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
+                    -- 无法确认DLC许可时不提供候选；替换官方机体的Mod同样核对目录DLCID。
+                    local permitted=extra and licensed==true or not extra and (isMod or info.dlc_id=="Base"or info.dlc_id=="")
+                    if permitted then
+                        self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
+                            purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
+                    end
                 end
             end
             table.sort(self.options,function(a,b)

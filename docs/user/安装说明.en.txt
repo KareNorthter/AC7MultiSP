@@ -1,11 +1,14 @@
 AC7MultiSP Installation Guide
 
 This guide applies to the universal ZIP and its EXE installer. Choose either Vortex or EXE installation, and use the same method for updates and removal. Do not mix them.
+This mod contains both UE4SS components and PAK files, so installation through the CreeperUX launcher is not supported.
 
 1. EXE installation
 1. Run AC7MultiSP_Installer.exe and select "Direct Install".
 2. Confirm the game folder. If it is not found automatically, select the folder containing Ace7Game.exe.
 3. Click "Install" or "Update" and wait for completion.
+   If the game is running, confirm "Close game and install" to close it before continuing. Unsaved progress may be lost. Canceling leaves installation untouched.
+   The interface defaults to "Follow system", with manual Chinese and English options. The installer uses the mod's version. Check for updates beside the version and open the download page when a newer version is found.
 
 2. Vortex installation
 1. Manage Ace Combat 7 in Vortex and enable its game support extension. Also install the AC7-specific UE4SS: https://www.nexusmods.com/acecombat7skiesunknown/mods/2474

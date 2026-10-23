@@ -1,11 +1,14 @@
 AC7MultiSP 安装说明
 
 本说明适用于通用ZIP及配套EXE安装程序。vortex安装和exe安装请任选一种，更新和卸载也沿用同一种方式，不要混用。
+由于本mod同时含有ue4ss组件和pak文件，不支持CreeperUX启动器安装。
 
 一、EXE安装
 1. 运行AC7MultiSP_Installer.exe，选择“直接安装”。
 2. 确认游戏文件夹；未自动找到时，选择含Ace7Game.exe的文件夹。
 3. 点击“安装”或“更新”，等待完成。
+   如游戏仍在运行，确认“关闭游戏并安装”后，安装器会关闭游戏再继续；未保存进度可能丢失，取消则不安装。
+   界面语言默认“跟随系统”，也可手动选择中文或英文。版本号与Mod一致，版本附近可手动检测更新，发现新版后可点击打开下载页面。
 
 二、Vortex安装
 1. 在Vortex中管理《皇牌空战7》，启用对应的游戏支持扩展。并安装AC7专用UE4SS：https://www.nexusmods.com/acecombat7skiesunknown/mods/2474

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 namespace AC7MultiSP.Setup {
     // 对话框按钮跟随安装器语言；系统目录/保存选择器仍使用 Windows 提供的界面。
     internal static class UiDialog {
-        internal static DialogResult Show(IWin32Window owner, string message, string title, bool confirm = false) {
+        internal static DialogResult Show(IWin32Window owner, string message, string title, bool confirm = false, string confirmKey = "common.ok") {
             using (var dialog = new Form()) {
                 dialog.Text = title; dialog.Font = new Font("Microsoft YaHei UI", 10F);
                 dialog.AutoScaleMode = AutoScaleMode.Dpi; dialog.StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
@@ -18,7 +18,7 @@ namespace AC7MultiSP.Setup {
                 layout.Controls.Add(new TextBox { Text = message, Multiline = true, ReadOnly = true, WordWrap = true, ScrollBars = ScrollBars.Vertical,
                     Dock = DockStyle.Fill, BorderStyle = BorderStyle.None, BackColor = dialog.BackColor, AccessibleName = title }, 0, 0);
                 var actions = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill, FlowDirection = FlowDirection.RightToLeft, Padding = new Padding(0, 12, 0, 0) };
-                var okay = new Button { Text = UiText.T("common.ok"), DialogResult = DialogResult.OK, AutoSize = true, MinimumSize = new Size(110, 36) };
+                var okay = new Button { Text = UiText.T(confirmKey), DialogResult = DialogResult.OK, AutoSize = true, MinimumSize = new Size(110, 36) };
                 actions.Controls.Add(okay); dialog.AcceptButton = okay;
                 if (confirm) {
                     var cancel = new Button { Text = UiText.T("common.cancel"), DialogResult = DialogResult.Cancel, AutoSize = true, MinimumSize = new Size(110, 36) };

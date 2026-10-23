@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 import re
+from urllib.parse import urlsplit
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -15,6 +16,37 @@ DOCUMENTS = {
     "credits": "作者与授权",
 }
 OUTPUTS = ("src/generated/user_texts.hpp", "dist/DualSP/Scripts/user_texts.lua")
+
+
+def extract_compact_credits(text, language):
+    """从作者正文提取短声明、作者链接及反馈；缺少分节时拒绝生成旧信息。"""
+    headings = ("作者：", "反馈：", "第三方组件与素材") if language == "zh-CN" else (
+        "Author:", "Feedback:", "Third-party components and assets")
+    lines = [line.strip() for line in text.lstrip("\ufeff").splitlines()]
+    try:
+        author, feedback, end = (lines.index(title) for title in headings)
+    except ValueError as error:
+        raise ValueError("作者与授权缺少紧凑信息所需分节：" + language) from error
+    if not 0 < author < feedback < end:
+        raise ValueError("作者与授权分节顺序无效：" + language)
+    introduction = lines[1:author] if lines[0] == "AC7MultiSP" else lines[:author]
+    notice = "\n".join(line for line in introduction if line)
+    authors = []
+    for line in lines[author + 1:feedback]:
+        if not line:
+            continue
+        if line.startswith("https://"):
+            address = urlsplit(line)
+            if not authors or authors[-1]["url"] or not address.hostname or address.username or address.password or any(c.isspace() for c in line):
+                raise ValueError("作者网页地址或对应作者无效：" + language)
+            authors[-1]["url"] = line
+        else:
+            authors.append({"label": line.lstrip("• "), "url": ""})
+    contacts = [line.lstrip("• ") for line in lines[feedback + 1:end] if line]
+    if not notice or not authors or not contacts:
+        raise ValueError("紧凑作者和反馈信息不完整：" + language)
+    return {"notice": notice, "author_heading": headings[0], "authors": authors,
+            "feedback_heading": headings[1], "feedback": contacts}
 
 
 def unique_object(pairs):
@@ -116,6 +148,23 @@ def render():
         header += ["inline constexpr char " + key + "Zh[]=" + cpp_string(chinese) + ";",
                    "inline constexpr char " + key + "En[]=" + cpp_string(english) + ";",
                    "inline const char* " + key + "(bool chinese) noexcept {return chinese?" + key + "Zh:" + key + "En;}"]
+    compact = [extract_compact_credits(text, language) for text, language in zip(docs["credits"], ("zh-CN", "en"))]
+    for suffix, info in zip(("Zh", "En"), compact):
+        for field, value in (("Notice", info["notice"]), ("AuthorHeading", info["author_heading"]),
+                             ("Feedback", info["feedback_heading"] + " " + "    ".join(info["feedback"]))):
+            header.append("inline constexpr char compact" + field + suffix + "[]=" + cpp_string(value) + ";")
+        for field in ("label", "url"):
+            title = "Label" if field == "label" else "Url"
+            header.append("inline constexpr const char* compactAuthor" + title + "s" + suffix + "[]={" +
+                          ",".join(cpp_string(author[field]) for author in info["authors"]) + "};")
+    for field in ("Notice", "AuthorHeading", "Feedback"):
+        header.append("inline const char* compact" + field + "(bool chinese) noexcept {return chinese?compact" + field + "Zh:compact" + field + "En;}")
+    header += ["inline std::size_t compactAuthorCount(bool chinese) noexcept {return chinese?" +
+               str(len(compact[0]["authors"])) + ":" + str(len(compact[1]["authors"])) + ";}"]
+    for field in ("Label", "Url"):
+        header.append("inline const char* compactAuthor" + field + "(std::size_t index,bool chinese) noexcept {" +
+                      'if(index>=compactAuthorCount(chinese))return "";return chinese?compactAuthor' + field +
+                      "sZh[index]:compactAuthor" + field + "sEn[index];}")
     header += ["}", "}", ""]
     lua = ["-- 自动生成；唯一来源为 docs/user/interface/game.*.json，请勿手改。", "local Texts={}"]
     for language, catalog in (("zh", zh), ("en", en)):

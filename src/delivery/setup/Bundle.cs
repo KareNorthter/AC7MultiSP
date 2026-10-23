@@ -27,6 +27,17 @@ namespace AC7MultiSP.Setup {
         public Dictionary<string, ResourceFile> files { get; set; }
         public Dictionary<string, object> policy { get; set; }
     }
+    internal sealed class CreditAuthor {
+        public string label { get; set; }
+        public string url { get; set; }
+    }
+    internal sealed class CompactCredits {
+        public string notice { get; set; }
+        public string author_heading { get; set; }
+        public List<CreditAuthor> authors { get; set; }
+        public string feedback_heading { get; set; }
+        public List<string> feedback { get; set; }
+    }
     internal sealed class OwnedState {
         public int schema { get; set; }
         public string product { get; set; }
@@ -87,6 +98,9 @@ namespace AC7MultiSP.Setup {
             }
         }
         internal string Document(string topic, string language) { return Utf8.GetString(Bytes("installer/docs/" + language + "/" + topic + ".txt")).TrimStart('\uFEFF'); }
+        internal CompactCredits Credits(string language) {
+            return Json.Deserialize<CompactCredits>(Utf8.GetString(Bytes("installer/credits-compact/" + language + ".json")).TrimStart('\uFEFF'));
+        }
         internal static string Safe(string root, string relative, bool readLeaf = false) {
             if (String.IsNullOrEmpty(relative) || relative.Contains('\\') || relative.Contains(':') || relative.StartsWith("/"))
                 throw UiText.Error("error.pathInvalid");
@@ -105,6 +119,27 @@ namespace AC7MultiSP.Setup {
         internal static void Closed() {
             foreach (string name in new[] { "Ace7Game", "Ace7Game-Win64-Shipping" })
                 foreach (var process in Process.GetProcessesByName(name)) using (process) throw UiText.Error("error.gameRunning");
+        }
+        internal static bool GameRunning() {
+            bool running = false;
+            foreach (string name in new[] { "Ace7Game", "Ace7Game-Win64-Shipping" })
+                foreach (var process in Process.GetProcessesByName(name)) using (process) { if (!process.HasExited) running = true; }
+            return running;
+        }
+        internal static void CloseGameForInstall() {
+            // 只在用户明确确认后调用；窗口关闭超时再结束这两个已知游戏进程。
+            try {
+                foreach (string name in new[] { "Ace7Game", "Ace7Game-Win64-Shipping" })
+                    foreach (var process in Process.GetProcessesByName(name)) using (process) {
+                        if (process.HasExited) continue;
+                        try { process.CloseMainWindow(); } catch (InvalidOperationException) { continue; }
+                        if (!process.WaitForExit(3000)) {
+                            try { process.Kill(); } catch (InvalidOperationException) { continue; }
+                            if (!process.WaitForExit(3000)) throw UiText.Error("error.closeGame");
+                        }
+                    }
+                Closed();
+            } catch (Exception failure) { throw UiText.ErrorWithInner("error.closeGame", failure); }
         }
         internal static string GameRoot(string value) {
             string current = Path.GetFullPath(value.Trim().Trim('"'));

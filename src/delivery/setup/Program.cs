@@ -12,9 +12,6 @@ using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 using System.Windows.Forms;
 
-[assembly: AssemblyVersion("0.3.0.0")]
-[assembly: AssemblyFileVersion("0.3.0.0")]
-
 namespace AC7MultiSP.Setup {
     internal sealed class UpdateLink {
         public string id { get; set; }

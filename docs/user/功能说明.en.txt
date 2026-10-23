@@ -13,6 +13,7 @@ AC7MultiSP Features
 5. Debug features:
    • Change the SP weapon combination during a mission.
    • Unlimited ammunition and fast reload for SP weapons.
+   • Change aircraft and restart the mission. DLC aircraft are offered only when ownership is confirmed; unowned DLC or uncertain ownership is excluded.
 
 2. Common controls
 These are the default controls. Keyboard bindings can be customized.
@@ -23,6 +24,7 @@ These are the default controls. Keyboard bindings can be customized.
 • Ctrl + Alt + F6: toggle camera hold.
 • Enable persistent target tracking separately on the Camera page of the management interface. Hold Y on the controller to start tracking, then hold Y again to stop. On the keyboard, press the target-tracking key assigned in the game settings once to start, and again to stop.
 • Press L3: recenter the camera / stop target tracking. Hold R3: toggle camera hold.
+• Use "Version and Updates" to check manually. Download buttons appear only when a newer version is found: R2 is the primary link, with other links numbered as backups. The feedback row shows the email and test QQ group and can open the mod's log folder.
 
 3. Multi-SP weapon model support
 1. Fully supported:

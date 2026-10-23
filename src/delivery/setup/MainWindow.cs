@@ -13,9 +13,10 @@ namespace AC7MultiSP.Setup {
     internal sealed class ChoiceButton : Button {
         readonly string heading;
         readonly string description;
-        internal ChoiceButton(string title, string detail) {
-            heading = title; description = detail;
-            AccessibleName = title; AccessibleDescription = detail; Text = "";
+        readonly string warning;
+        internal ChoiceButton(string title, string detail, string caution = null) {
+            heading = title; description = detail; warning = caution;
+            AccessibleName = title; AccessibleDescription = detail + (String.IsNullOrEmpty(caution) ? "" : "\r\n" + caution); Text = "";
             Dock = DockStyle.Fill; AutoSize = true; MinimumSize = new Size(0, 112);
             FlatStyle = FlatStyle.Flat; BackColor = Color.White; ForeColor = Color.FromArgb(35, 55, 75);
             FlatAppearance.BorderColor = Color.FromArgb(165, 183, 200); Cursor = Cursors.Hand;
@@ -25,7 +26,10 @@ namespace AC7MultiSP.Setup {
             using (var titleFont = new Font(Font.FontFamily, 14F, FontStyle.Bold)) {
                 int titleHeight = TextRenderer.MeasureText(heading, titleFont, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height;
                 int detailHeight = TextRenderer.MeasureText(description, Font, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height;
-                return new Size(width, Math.Max(MinimumSize.Height, titleHeight + detailHeight + 48));
+                int warningHeight = 0;
+                if (!String.IsNullOrEmpty(warning)) using (var warningFont = new Font(Font, FontStyle.Bold))
+                    warningHeight = TextRenderer.MeasureText(warning, warningFont, new Size(Math.Max(80, width - 44), 0), TextFormatFlags.WordBreak).Height + 6;
+                return new Size(width, Math.Max(MinimumSize.Height, titleHeight + detailHeight + warningHeight + 48));
             }
         }
         protected override void OnPaint(PaintEventArgs e) {
@@ -34,8 +38,12 @@ namespace AC7MultiSP.Setup {
                 int pad = 20;
                 int titleHeight = TextRenderer.MeasureText(heading, titleFont, new Size(Math.Max(80, Width - pad * 2), 0), TextFormatFlags.WordBreak).Height;
                 TextRenderer.DrawText(e.Graphics, heading, titleFont, new Rectangle(pad, pad, Width - pad * 2, titleHeight), ForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
-                TextRenderer.DrawText(e.Graphics, description, Font, new Rectangle(pad, pad + titleHeight + 8, Width - pad * 2, Height - pad * 2 - titleHeight - 8),
+                int detailHeight = TextRenderer.MeasureText(description, Font, new Size(Math.Max(80, Width - pad * 2), 0), TextFormatFlags.WordBreak).Height;
+                TextRenderer.DrawText(e.Graphics, description, Font, new Rectangle(pad, pad + titleHeight + 8, Width - pad * 2, detailHeight),
                     Color.FromArgb(85, 100, 115), TextFormatFlags.Left | TextFormatFlags.WordBreak);
+                if (!String.IsNullOrEmpty(warning)) using (var warningFont = new Font(Font, FontStyle.Bold))
+                    TextRenderer.DrawText(e.Graphics, warning, warningFont, new Rectangle(pad, pad + titleHeight + detailHeight + 14, Width - pad * 2, Math.Max(1, Height - pad * 2 - titleHeight - detailHeight - 14)),
+                        ForeColor, TextFormatFlags.Left | TextFormatFlags.WordBreak);
             }
         }
     }
@@ -48,7 +56,9 @@ namespace AC7MultiSP.Setup {
         readonly Panel content = new Panel { Dock = DockStyle.Fill };
         Control header;
         ComboBox language;
-        LinkLabel credits;
+        Label updateStatus;
+        LinkLabel updateDownload;
+        Button checkUpdates;
         Label localState;
         Label feedback;
         TextBox location;
@@ -67,7 +77,8 @@ namespace AC7MultiSP.Setup {
         string exported;
         bool busy;
         bool closing;
-        bool userInteracted;
+        enum UpdateState { Waiting, Checking, Failed, Current, Newer }
+        UpdateState updateState = UpdateState.Waiting;
         internal Exception PreviewFailure { get; private set; }
 
         internal MainWindow(Bundle value, bool isPreview, string initialPage, string snapshotPath) {
@@ -188,25 +199,32 @@ namespace AC7MultiSP.Setup {
             var titles = new TableLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, ColumnCount = 1, Margin = Padding.Empty };
             titles.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             titles.Controls.Add(new Label { Text = UiText.T("app.heading"), AutoSize = true, Dock = DockStyle.Fill, Font = new Font(Font.FontFamily, 19F, FontStyle.Bold), Margin = Padding.Empty });
-            titles.Controls.Add(TextLabel(UiText.T("app.subtitle", bundle.Info.version, bundle.Info.delivery_version)));
-            var tools = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Anchor = AnchorStyles.Top | AnchorStyles.Right, Margin = Padding.Empty };
-            language = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 150, AccessibleName = UiText.T("language.label"), Enabled = !busy };
-            language.Items.Add(UiText.For("zh-CN", "language.name")); language.Items.Add(UiText.For("en", "language.name"));
-            language.SelectedIndex = UiText.Language == "zh-CN" ? 0 : 1;
-            language.DropDown += delegate { userInteracted = true; };
-            language.SelectedIndexChanged += delegate { if (busy) return; userInteracted = true; UiText.Language = language.SelectedIndex == 0 ? "zh-CN" : "en"; Render(); };
-            credits = new LinkLabel { Text = UiText.T("document.credits"), AutoSize = true, Margin = new Padding(3, 8, 0, 0), Enabled = !busy && currentPage != "waiting" };
-            credits.LinkClicked += delegate {
-                userInteracted = true;
-                if (documents == null || documents.IsDisposed) { currentPage = "home"; Render(); }
-                if (documents != null) documents.SelectedTab = documents.TabPages["credits"];
+            titles.Controls.Add(TextLabel(UiText.T("app.subtitle", bundle.Info.version)));
+            var updates = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, WrapContents = true, Margin = Padding.Empty };
+            updateStatus = new Label { AutoSize = true, Margin = new Padding(0, 8, 8, 0) };
+            updateDownload = new LinkLabel { AutoSize = true, Margin = new Padding(0, 8, 8, 0) };
+            updateDownload.LinkClicked += delegate {
+                if (updateState != UpdateState.Newer || availableUpdate == null) return;
+                string url = availableUpdate.installer_downloads != null && availableUpdate.installer_downloads.Count != 0
+                    ? availableUpdate.installer_downloads[0].url : Convert.ToString(bundle.Info.policy["nexus_url"]);
+                Open(url);
             };
-            tools.Controls.Add(language); tools.Controls.Add(credits); bar.Controls.Add(titles, 0, 0); bar.Controls.Add(tools, 1, 0);
+            checkUpdates = new Button { AutoSize = true, Padding = new Padding(6, 0, 6, 0), Margin = new Padding(0, 2, 0, 0) };
+            checkUpdates.Click += async delegate { await CheckUpdates(); };
+            updates.Controls.Add(updateStatus); updates.Controls.Add(updateDownload); updates.Controls.Add(checkUpdates);
+            titles.Controls.Add(updates); RefreshUpdateStatus();
+            var tools = new FlowLayoutPanel { AutoSize = true, FlowDirection = FlowDirection.TopDown, WrapContents = false, Anchor = AnchorStyles.Top | AnchorStyles.Right, Margin = Padding.Empty };
+            var languageRow = new FlowLayoutPanel { AutoSize = true, WrapContents = false, Margin = Padding.Empty };
+            languageRow.Controls.Add(new Label { Text = UiText.T("language.label"), AutoSize = true, Margin = new Padding(0, 5, 7, 0) });
+            language = new ComboBox { DropDownStyle = ComboBoxStyle.DropDownList, Width = 145, AccessibleName = UiText.T("language.label"), Enabled = !busy && currentPage != "waiting" };
+            language.Items.Add(UiText.T("language.system")); language.Items.Add(UiText.For("zh-CN", "language.name")); language.Items.Add(UiText.For("en", "language.name"));
+            language.SelectedIndex = UiText.Selection == "system" ? 0 : UiText.Selection == "zh-CN" ? 1 : 2;
+            language.SelectedIndexChanged += delegate { if (busy) return; UiText.Selection = language.SelectedIndex == 0 ? "system" : language.SelectedIndex == 1 ? "zh-CN" : "en"; Render(); };
+            languageRow.Controls.Add(language); tools.Controls.Add(languageRow); bar.Controls.Add(titles, 0, 0); bar.Controls.Add(tools, 1, 0);
             header = bar; shell.Controls.Add(header, 0, 0);
             foreach (Control child in content.Controls.Cast<Control>().ToArray()) { content.Controls.Remove(child); child.Dispose(); }
             documents = null; localState = null; feedback = null; install = null; uninstall = null; location = null; progress = null;
             if (currentPage == "direct") RenderDirect();
-            else if (currentPage == "update") RenderUpdate();
             else if (currentPage == "exported") RenderExported();
             else if (currentPage == "waiting") ShowContent(new Label { Text = UiText.T(waitingKey), Dock = DockStyle.Fill, TextAlign = ContentAlignment.MiddleCenter, Font = new Font(Font.FontFamily, 13F) });
             else RenderChoices();
@@ -215,45 +233,63 @@ namespace AC7MultiSP.Setup {
         void ShowContent(Control page) { page.Dock = DockStyle.Fill; content.Controls.Add(page); }
         void ShowChoices() { currentPage = "home"; Render(); }
         void ShowWaiting(string key) { waitingKey = key; currentPage = "waiting"; Render(); }
-        async Task Start() {
+        async Task Start() { await CheckUpdates(); }
+        void RefreshUpdateStatus() {
+            if (updateStatus == null || updateStatus.IsDisposed) return;
+            string key = updateState == UpdateState.Checking ? "update.checking" : updateState == UpdateState.Failed ? "update.failed" :
+                updateState == UpdateState.Current ? "update.current" : "update.waiting";
+            updateStatus.Text = UiText.T(key); updateStatus.Visible = updateState != UpdateState.Newer;
+            updateDownload.Text = updateState == UpdateState.Newer ? UiText.T("update.newer", availableUpdate.latest_version) : "";
+            updateDownload.Visible = updateState == UpdateState.Newer; updateDownload.Enabled = !busy;
+            checkUpdates.Text = UiText.T("update.check"); checkUpdates.Enabled = !busy && !preview && updateState != UpdateState.Checking;
+        }
+        async Task CheckUpdates() {
+            if (preview || busy || updateState == UpdateState.Checking) return;
+            updateState = UpdateState.Checking; RefreshUpdateStatus();
             try {
-                var update = await Task.Run(() => UpdateFeed.Fetch(Convert.ToString(bundle.Info.policy["updates_url"]), bundle.Info.delivery_version));
-                if (closing || userInteracted || currentPage != "home") return;
-                if (update.status == "ready" && new Version(update.latest_version) > new Version(bundle.Info.version)) { availableUpdate = update; currentPage = "update"; Render(); return; }
-            } catch (Exception failure) { Debug.WriteLine(failure); }
+                var update = await Task.Run(() => UpdateFeed.Fetch(Convert.ToString(bundle.Info.policy["updates_url"]), bundle.Info.version));
+                if (closing) return;
+                availableUpdate = update;
+                updateState = update.status != "ready" ? UpdateState.Waiting : new Version(update.latest_version) > new Version(bundle.Info.version) ? UpdateState.Newer : UpdateState.Current;
+            } catch (Exception failure) { if (closing) return; Debug.WriteLine(failure); availableUpdate = null; updateState = UpdateState.Failed; }
+            // 后台结果仅刷新标题旁的状态，不重建正文、不切页或弹窗。
+            RefreshUpdateStatus();
         }
         void RenderChoices() {
-            var page = new TableLayoutPanel { ColumnCount = 1, RowCount = 3, AutoScroll = true };
+            var page = new TableLayoutPanel { ColumnCount = 1, RowCount = 3, AutoScroll = false };
             page.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
             page.RowStyles.Add(new RowStyle(SizeType.AutoSize)); page.RowStyles.Add(new RowStyle(SizeType.AutoSize)); page.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
             var direct = new ChoiceButton(UiText.T("home.direct.title"), UiText.T("home.direct.description")) { Margin = new Padding(0, 0, 0, 12) };
-            var zip = new ChoiceButton(UiText.T("home.zip.title"), UiText.T("home.zip.description")) { Margin = new Padding(0, 0, 0, 16) };
+            var zip = new ChoiceButton(UiText.T("home.zip.title"), UiText.T("home.zip.description"), UiText.T("home.zip.warning")) { Margin = new Padding(0, 0, 0, 12) };
             direct.Click += async delegate { await EnterDirect(); }; zip.Click += async delegate { await Export(); };
-            page.Controls.Add(direct, 0, 0); page.Controls.Add(zip, 0, 1); page.Controls.Add(CreateDocuments(), 0, 2); ShowContent(page);
+            page.Controls.Add(direct, 0, 0); page.Controls.Add(zip, 0, 1); page.Controls.Add(CreateCompactCredits(), 0, 2); ShowContent(page);
         }
-        void RenderUpdate() {
-            var page = new TableLayoutPanel { ColumnCount = 1, RowCount = 3, AutoScroll = true };
-            page.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            page.RowStyles.Add(new RowStyle(SizeType.AutoSize)); page.RowStyles.Add(new RowStyle(SizeType.AutoSize)); page.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-            var message = TextLabel(UiText.T("update.available", availableUpdate.latest_version, bundle.Info.version));
-            message.Font = new Font(Font.FontFamily, 13F, FontStyle.Bold); message.Margin = new Padding(0, 20, 0, 20);
-            var actions = new FlowLayoutPanel { AutoSize = true, Dock = DockStyle.Fill };
-            var latest = ActionButton(UiText.T("update.download")); var ignore = ActionButton(UiText.T("update.continue"));
-            latest.Click += delegate {
-                string url = availableUpdate.installer_downloads != null && availableUpdate.installer_downloads.Count != 0
-                    ? availableUpdate.installer_downloads[0].url : Convert.ToString(bundle.Info.policy["nexus_url"]);
-                Open(url);
-            };
-            ignore.Click += delegate { ShowChoices(); }; actions.Controls.Add(latest); actions.Controls.Add(ignore);
-            page.Controls.Add(message, 0, 0); page.Controls.Add(actions, 0, 1); page.Controls.Add(CreateDocuments(), 0, 2); ShowContent(page);
+        Control CreateCompactCredits() {
+            var value = bundle.Credits(UiText.Language);
+            var panel = new TableLayoutPanel { Dock = DockStyle.Top, AutoSize = true, ColumnCount = 1, Font = new Font(Font.FontFamily, 9.5F), Margin = Padding.Empty, Padding = new Padding(2, 0, 2, 0) };
+            panel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            var notice = TextLabel(value.notice); notice.Font = new Font(panel.Font, FontStyle.Bold); panel.Controls.Add(notice);
+            var authors = new FlowLayoutPanel { Dock = DockStyle.Fill, AutoSize = true, WrapContents = true, Margin = Padding.Empty };
+            authors.Controls.Add(new Label { Text = value.author_heading, AutoSize = true, Margin = new Padding(0, 3, 10, 3) });
+            foreach (var author in value.authors) {
+                string target = author.url;
+                var link = new LinkLabel { Text = author.label, AutoSize = true, Margin = new Padding(0, 3, 14, 3) };
+                link.LinkClicked += delegate { OpenDocumentLink(target, target); };
+                authors.Controls.Add(link);
+            }
+            panel.Controls.Add(authors);
+            var feedbackText = TextLabel(value.feedback_heading + "\r\n" + String.Join("\r\n", value.feedback));
+            feedbackText.Margin = new Padding(0, 4, 0, 0); panel.Controls.Add(feedbackText);
+            // 普通标签自动换行；首页不使用带滚动条的文档控件。
+            panel.SizeChanged += delegate { notice.MaximumSize = new Size(Math.Max(100, panel.ClientSize.Width - 4), 0); feedbackText.MaximumSize = notice.MaximumSize; };
+            return panel;
         }
         async Task EnterDirect() {
             if (busy) return;
-            userInteracted = true;
             feedbackKey = null; feedbackFailure = null;
             if (!preview && String.IsNullOrEmpty(game)) {
                 ShowWaiting("working.findGame");
-                language.Enabled = false; credits.Enabled = false;
+                language.Enabled = false;
                 try {
                     var games = await Task.Run(() => Bundle.FindGames().ToArray());
                     if (closing) return;
@@ -318,17 +354,25 @@ namespace AC7MultiSP.Setup {
         }
         void SetFeedback(string key, params object[] args) { feedbackFailure = null; feedbackKey = key; feedbackArgs = args; UpdateFeedback(); }
         void SetBusy(bool value) {
-            busy = value; content.Enabled = !value; language.Enabled = !value; credits.Enabled = !value;
+            busy = value; content.Enabled = !value; language.Enabled = !value; RefreshUpdateStatus();
             if (progress != null) progress.Visible = value;
         }
         async Task Work(bool remove) {
             if (busy || preview || String.IsNullOrEmpty(game)) return;
             if (remove && UiDialog.Show(this, UiText.T("uninstall.confirm"), UiText.T("action.uninstall"), true) != DialogResult.OK) return;
+            bool closeGame = false;
+            try {
+                if (!remove && Bundle.GameRunning()) {
+                    if (UiDialog.Show(this, UiText.T("install.closeGameConfirm"), UiText.T("action.install"), true, "action.closeGameInstall") != DialogResult.OK) return;
+                    closeGame = true;
+                }
+            } catch (Exception failure) { UiDialog.Show(this, UiText.Explain(failure), UiText.T("error.operationTitle")); return; }
             SetBusy(true); SetFeedback(remove ? "working.uninstall" : "working.install");
             var report = new Progress<string>(message => { if (busy && !closing && feedback != null && !feedback.IsDisposed) feedback.Text = message; });
             try {
                 string selected = game;
                 await Task.Run(delegate {
+                    if (closeGame) Bundle.CloseGameForInstall();
                     Bundle.Closed(); bundle.CheckManager(selected);
                     // 仍在独占锁中自动恢复；不改变安装事务和配置保护规则。
                     using (var locked = new FileStream(Bundle.Safe(selected, "AC7MultiSP-install.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)) {
@@ -346,7 +390,6 @@ namespace AC7MultiSP.Setup {
         }
         async Task Export() {
             if (busy || preview) return;
-            userInteracted = true;
             string target;
             using (var dialog = new SaveFileDialog { Title = UiText.T("export.dialog"), Filter = UiText.T("export.filter"), FileName = bundle.Info.zip_name,
                 DefaultExt = "zip", AddExtension = true, CheckPathExists = true, OverwritePrompt = false }) {
@@ -386,13 +429,11 @@ namespace AC7MultiSP.Setup {
                     ScrollBars = RichTextBoxScrollBars.Vertical, Dock = DockStyle.Fill, BackColor = Color.White, BorderStyle = BorderStyle.None, WordWrap = true };
                 string original = text;
                 reader.LinkClicked += delegate(object sender, LinkClickedEventArgs e) { OpenDocumentLink(e.LinkText, original); };
-                reader.MouseDown += delegate { userInteracted = true; }; reader.KeyDown += delegate { userInteracted = true; };
                 tab.Controls.Add(reader);
                 documents.TabPages.Add(tab);
             }
             if (documents.TabPages.ContainsKey(selectedTopic)) documents.SelectedTab = documents.TabPages[selectedTopic];
-            documents.MouseDown += delegate { userInteracted = true; }; documents.KeyDown += delegate { userInteracted = true; };
-            documents.SelectedIndexChanged += delegate { userInteracted = true; if (documents.SelectedTab != null) selectedTopic = documents.SelectedTab.Name; };
+            documents.SelectedIndexChanged += delegate { if (documents.SelectedTab != null) selectedTopic = documents.SelectedTab.Name; };
             return documents;
         }
         void OpenDocumentLink(string link, string original) {

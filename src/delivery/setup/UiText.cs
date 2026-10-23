@@ -10,10 +10,14 @@ namespace AC7MultiSP.Setup {
     // 界面与安全提示只从 docs/user/interface 对应的内嵌资源读取。
     internal static class UiText {
         static readonly Dictionary<string, Dictionary<string, string>> texts = Load();
-        static string language = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "zh" ? "zh-CN" : "en";
+        static string selection = "system";
+        internal static string Selection {
+            get { return selection; }
+            set { selection = value == "zh-CN" || value == "en" ? value : "system"; }
+        }
         internal static string Language {
-            get { return language; }
-            set { language = value == "zh-CN" ? "zh-CN" : "en"; }
+            get { return selection == "system" ? (CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "zh" ? "zh-CN" : "en") : selection; }
+            set { Selection = value; }
         }
         static Dictionary<string, Dictionary<string, string>> Load() {
             var result = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);

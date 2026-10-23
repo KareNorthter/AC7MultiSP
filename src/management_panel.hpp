@@ -128,16 +128,84 @@ void drawManagementErrors() {
     }
 }
 #include "version_updates_panel.hpp"
+struct ManagementWatermark {
+    struct Part {std::string label;int author;};
+    std::vector<std::vector<Part>> rows;
+    float font{},noticeHeight{},height{},width{};
+    bool chinese{};
+};
+ManagementWatermark managementWatermark(float width) {
+    namespace documents=dualsp::updates::documents;
+    ManagementWatermark result;result.width=width;result.font=std::min(ImGui::GetStyle().FontSizeBase,13.f);
+    result.chinese=std::string(tr("zh","en"))=="zh";
+    ImGui::PushFont(nullptr,result.font);
+    float longest=ImGui::CalcTextSize(documents::compactAuthorHeading(result.chinese)).x;
+    for(size_t i=0;i<documents::compactAuthorCount(result.chinese);++i) {
+        const std::string label=std::string("• ")+documents::compactAuthorLabel(i,result.chinese);
+        longest=std::max(longest,ImGui::CalcTextSize(label.c_str()).x);
+    }
+    if(longest>width) {
+        // 高DPI或极窄窗口按实测字宽缩小，仍把未缩放字号交给PushFont。
+        result.font*=width/longest;
+        ImGui::PopFont();ImGui::PushFont(nullptr,result.font);
+    }
+    const float gap=ImGui::GetStyle().ItemSpacing.x;
+    result.noticeHeight=ImGui::CalcTextSize(documents::compactNotice(result.chinese),nullptr,false,width).y;
+    result.rows.push_back({{documents::compactAuthorHeading(result.chinese),-1}});
+    float rowWidth=ImGui::CalcTextSize(result.rows.back().front().label.c_str()).x;
+    for(size_t i=0;i<documents::compactAuthorCount(result.chinese);++i) {
+        std::string label=std::string("• ")+documents::compactAuthorLabel(i,result.chinese);
+        const float itemWidth=ImGui::CalcTextSize(label.c_str()).x;
+        if(rowWidth+gap+itemWidth>width) {result.rows.emplace_back();rowWidth=0;}
+        if(rowWidth)rowWidth+=gap;
+        result.rows.back().push_back({std::move(label),static_cast<int>(i)});rowWidth+=itemWidth;
+    }
+    result.height=result.noticeHeight+ImGui::GetStyle().ItemSpacing.y+
+        result.rows.size()*ImGui::GetTextLineHeightWithSpacing()-ImGui::GetStyle().ItemSpacing.y;
+    ImGui::PopFont();return result;
+}
+void drawManagementWatermark(const ManagementWatermark& mark,float right,float top) {
+    namespace documents=dualsp::updates::documents;
+    ImGui::PushFont(nullptr,mark.font);
+    const char* notice=documents::compactNotice(mark.chinese);
+    const float noticeWidth=std::min(mark.width,ImGui::CalcTextSize(notice).x);
+    ImGui::SetCursorPos({right-noticeWidth,top});ImGui::PushTextWrapPos(right);
+    ImGui::TextDisabled("%s",notice);ImGui::PopTextWrapPos();
+    float y=top+mark.noticeHeight+ImGui::GetStyle().ItemSpacing.y;
+    for(const auto& row:mark.rows) {
+        float width=0;
+        for(const auto& part:row)width+=ImGui::CalcTextSize(part.label.c_str()).x;
+        if(!row.empty())width+=(row.size()-1)*ImGui::GetStyle().ItemSpacing.x;
+        ImGui::SetCursorPos({right-width,y});
+        bool first=true;
+        for(const auto& part:row) {
+            if(!first)ImGui::SameLine();first=false;
+            if(part.author<0)ImGui::TextDisabled("%s",part.label.c_str());
+            else {
+                ImGui::PushID(part.author);
+                if(ImGui::TextLink(part.label.c_str()))
+                    dualsp::updates::service().openAuthor(static_cast<size_t>(part.author),mark.chinese);
+                ImGui::PopID();
+            }
+        }
+        y+=ImGui::GetTextLineHeightWithSpacing();
+    }
+    ImGui::PopFont();
+}
 void drawPanel() {
     const auto display=ImGui::GetIO().DisplaySize;
     const float width=std::min(1080.f,std::max(280.f,display.x-32)),height=std::min(830.f,std::max(240.f,display.y-32));
     ImGui::SetNextWindowPos({display.x*.5f,display.y*.5f},ImGuiCond_Always,{.5f,.5f});ImGui::SetNextWindowSize({width,height});
-    ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoSavedSettings);
-    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("2.24.1");
+    ImGui::Begin("AC7MultiSP###DualSPManagement",nullptr,ImGuiWindowFlags_NoDecoration|
+        ImGuiWindowFlags_NoSavedSettings|ImGuiWindowFlags_NoScrollWithMouse);
+    ImGui::TextColored({.37f,.84f,.79f,1},"AC7MultiSP");ImGui::SameLine();ImGui::TextDisabled("%s",dualsp::updates::currentVersion);
     if(state.value("management_protocol",0)!=managementProtocol||!managementError.empty()) {
         ImGui::TextWrapped("%s",uiText("management.components.do.not.match.9ae559c4"));
         if(!managementError.empty())ImGui::TextWrapped("%s",uiError(managementError).c_str());
         if(ImGui::Button(uiText("close.f09d5099")))togglePanel(false);
+        const auto watermark=managementWatermark(ImGui::GetWindowContentRegionMax().x-ImGui::GetCursorPosX());
+        drawManagementWatermark(watermark,ImGui::GetWindowContentRegionMax().x,
+            ImGui::GetWindowContentRegionMax().y-watermark.height);
         ImGui::End();return;
     }
     // 标题单独一行；主开关、管理改键及语言依次排列，窄窗口允许语言换行。
@@ -163,8 +231,21 @@ void drawPanel() {
         panelHelp("management.releases.only.its.own.d4015e85");
     }
     ImGui::Separator();
-    // 内容独立滚动，底部操作始终可见；小窗口不会把保存按钮挤出屏幕。
-    ImGui::BeginChild("ManagementBody",{0,-104},ImGuiChildFlags_None);
+    // 正文与固定页脚分开；保留左侧保存/关闭顺序，水印贴右，窄窗口移到固定下行。
+    const float footerRight=ImGui::GetWindowContentRegionMax().x;
+    const float footerLeft=ImGui::GetCursorPosX(),footerWidth=footerRight-footerLeft;
+    const bool stackedFooter=footerWidth<760;
+    const float saveWidth=std::min(168.f,std::max(100.f,footerWidth*.5f));
+    const float closeWidth=std::min(100.f,std::max(58.f,footerWidth*.25f));
+    const float gap=ImGui::GetStyle().ItemSpacing.x;
+    const auto watermark=managementWatermark(stackedFooter?footerWidth:
+        footerWidth-saveWidth-closeWidth-gap*4-30);
+    const float statusHeight=ImGui::GetFrameHeightWithSpacing();
+    const float actionHeight=std::max(36.f,stackedFooter?36.f:watermark.height);
+    const float footerHeight=statusHeight+ImGui::GetTextLineHeightWithSpacing()+actionHeight+
+        (stackedFooter?watermark.height+ImGui::GetStyle().ItemSpacing.y:0)+ImGui::GetStyle().ItemSpacing.y*2;
+    const float footerTop=ImGui::GetWindowContentRegionMax().y-footerHeight;
+    ImGui::BeginChild("ManagementBody",{0,std::max(1.f,footerTop-ImGui::GetCursorPosY()-ImGui::GetStyle().ItemSpacing.y)},ImGuiChildFlags_None);
     drawManagementErrors();
     if(state.value("mission_fixed_sp",false))ImGui::TextColored({1,.76f,.38f,1},"%s",uiText("mission.13.assigned.sp.camera.6fa3a5e0"));
     ImGui::BeginDisabled(!draftModEnabled);
@@ -216,18 +297,31 @@ void drawPanel() {
         ImGui::EndTabBar();if(requestedTab==managementTab)requestedTab=-1;
     }
     ImGui::EndDisabled();
-    ImGui::EndChild();ImGui::Separator();
+    ImGui::EndChild();ImGui::SetCursorPosY(footerTop);ImGui::Separator();
     ImGui::TextDisabled("%s",captureSlot>=0?uiText("waiting.for.a.key.esc.0bd06836"):pendingSave>0?uiText("saving.2a26d205"):managementDirty()?uiText("unsaved.changes.82a5cd03"):uiText("settings.saved.d104ef7d"));
     if(captureSlot>=0){ImGui::SameLine();if(ImGui::SmallButton(uiText("cancel.capture.1c5192e2")))captureSlot=-1;}
-    ImGui::BeginDisabled(captureSlot>=0||!bindingsValid()||pendingSave>0);
-    if(ImGui::Button(uiText("save.settings.savesettings.b8bcac13"),{168,36}))saveManagementSettings();
-    ImGui::EndDisabled();ImGui::SameLine();
-    if(ImGui::Button(uiText("close.closemanagement.542d61d9"),{100,36}))togglePanel(false);
-    panelHelp("closing.discards.unsaved.changes.language.585b36b5");
+    ImGui::BeginChild("ManagementFooterMessage",{0,ImGui::GetTextLineHeight()},ImGuiChildFlags_None,
+        ImGuiWindowFlags_NoScrollbar|ImGuiWindowFlags_NoScrollWithMouse);
     if(!bindingsValid())ImGui::TextColored({1,.65f,.4f,1},"%s",uiText("a.binding.is.invalid.or.8eccbcf5"));
     else if(!notice.empty()&&notice!=dualsp::user_texts::get("settings.saved.ce3bf5a0",true)&&notice!=dualsp::user_texts::get("settings.saved.ce3bf5a0",false)&&notice!=dualsp::user_texts::get("saving.2a26d205",true)&&notice!=dualsp::user_texts::get("saving.2a26d205",false))
-        ImGui::TextWrapped("%s",uiMessage(notice).c_str()); // 通常保存状态已在上行展示，避免修改草稿后留下旧成功提示。
+        ImGui::TextUnformatted(uiMessage(notice).c_str()); // 通常保存状态已在上行展示，避免修改草稿后留下旧成功提示。
     else if(state.contains("input_notice"))ImGui::TextDisabled("%s",state.at("input_notice").get<std::string>()=="empty_sp"?
         uiText("this.sp.is.empty.selection.92f6b119"):uiText("this.sp.is.depleted.selection.c47a85ad"));
+    if(ImGui::IsItemHovered() && ImGui::BeginTooltip()) {
+        ImGui::PushTextWrapPos(ImGui::GetFontSize()*24);
+        if(!bindingsValid())ImGui::TextUnformatted(uiText("a.binding.is.invalid.or.8eccbcf5"));
+        else if(!notice.empty())ImGui::TextUnformatted(uiMessage(notice).c_str());
+        ImGui::PopTextWrapPos();ImGui::EndTooltip();
+    }
+    ImGui::EndChild();
+    const float actionTop=footerTop+statusHeight+ImGui::GetTextLineHeightWithSpacing()+ImGui::GetStyle().ItemSpacing.y;
+    const float watermarkTop=actionTop+(stackedFooter?36.f+ImGui::GetStyle().ItemSpacing.y:0);
+    drawManagementWatermark(watermark,footerRight,watermarkTop);
+    ImGui::SetCursorPos({footerLeft,actionTop});
+    ImGui::BeginDisabled(captureSlot>=0||!bindingsValid()||pendingSave>0);
+    if(ImGui::Button(uiText("save.settings.savesettings.b8bcac13"),{saveWidth,36}))saveManagementSettings();
+    ImGui::EndDisabled();ImGui::SameLine();
+    if(ImGui::Button(uiText("close.closemanagement.542d61d9"),{closeWidth,36}))togglePanel(false);
+    panelHelp("closing.discards.unsaved.changes.language.585b36b5");
     ImGui::End();
 }

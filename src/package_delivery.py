@@ -44,7 +44,7 @@ def records(payload):
 
 
 def delivery_sources():
-    paths = [ROOT / 'src/package_delivery.py'] + sorted(SOURCE.rglob('*'))
+    paths = [ROOT / 'src/package_delivery.py', ROOT / 'src/user_texts.py'] + sorted(SOURCE.rglob('*'))
     paths += sorted((ROOT / 'docs/user').rglob('*'))
     return {p.relative_to(ROOT).as_posix(): digest(p) for p in paths if p.is_file()}
 
@@ -59,7 +59,7 @@ def main():
     output = args.output_dir.resolve()
     if output.exists():
         raise ValueError('输出目录已存在，拒绝覆盖；每次使用独立目录')
-    from user_texts import generate
+    from user_texts import generate, extract_compact_credits
     generate(check=True)
     info = product()
     receipt = read_json(build / 'build-receipt.json')
@@ -68,6 +68,10 @@ def main():
     version = info['version']
     if not re.fullmatch(r'\d+\.\d+\.\d+', version):
         raise ValueError('交付版本必须为三段数字')
+    if any(int(part) > 65534 for part in version.split('.')):
+        raise ValueError('交付版本超出Windows程序集版本范围')
+    # 兼容旧清单字段，但唯一版本来源仍为产品版本。
+    policy['delivery_version'] = version
     frozen = delivery_sources()
     runtime = {'Scripts/' + name: (ROOT / 'dist/DualSP/Scripts' / name).read_bytes() for name in info['scripts']}
     runtime.update({'bin/DualSP.dll': (build / 'DualSP.dll').read_bytes(),
@@ -89,6 +93,8 @@ def main():
             raw = path.read_bytes()
             raw.decode('utf-8-sig')
             documents[f'installer/docs/{language}/{topic}.txt'] = raw
+            if topic == 'credits':
+                documents[f'installer/credits-compact/{language}.json'] = encoded(extract_compact_credits(raw.decode('utf-8-sig'), language))
             main_files[MOD + 'docs/' + path.name] = raw
     main_files[MOD + 'vortex-package.json'] = encoded({
         'schema': 1, 'product': info['name'], 'version': version,
@@ -163,12 +169,25 @@ def main():
     frozen_dir = output / 'setup-source'
     frozen_dir.mkdir()
     source_hashes = {}
+    assembly_version = version + '.0'
     for path in sorted((SOURCE / 'setup').iterdir()):
         if path.suffix not in ('.cs', '.manifest'):
             continue
         raw = path.read_bytes()
+        if path.name == 'app.manifest':
+            template = raw.decode('utf-8-sig')
+            if template.count('@PRODUCT_ASSEMBLY_VERSION@') != 1:
+                raise ValueError('安装器manifest缺少唯一产品版本占位符')
+            raw = template.replace('@PRODUCT_ASSEMBLY_VERSION@', assembly_version).encode('utf-8')
         (frozen_dir / path.name).write_bytes(raw)
         source_hashes[path.name] = sha(raw)
+    # 版本属性随同冻结输入生成，源码不保留另一套安装器版本。
+    assembly_info = ('using System.Reflection;\n'
+                     f'[assembly: AssemblyVersion("{assembly_version}")]\n'
+                     f'[assembly: AssemblyFileVersion("{assembly_version}")]\n'
+                     f'[assembly: AssemblyInformationalVersion("{version}")]\n').encode('utf-8')
+    (frozen_dir / 'ProductVersion.cs').write_bytes(assembly_info)
+    source_hashes['ProductVersion.cs'] = sha(assembly_info)
     rsp = ['/nologo', '/target:winexe', '/platform:x64', '/optimize+', '/codepage:65001',
            '/reference:System.dll', '/reference:System.Core.dll', '/reference:System.Windows.Forms.dll',
            '/reference:System.Drawing.dll', '/reference:System.Web.Extensions.dll',

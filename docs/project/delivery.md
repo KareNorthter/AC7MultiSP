@@ -1,6 +1,6 @@
 # 通用ZIP与双语EXE交付
 
-本文维护交付格式、程序入口和验证边界。玩家步骤只维护[中文安装说明](../user/安装说明.txt)和[英文安装说明](../user/安装说明.en.txt)，文字复用见[玩家文档维护](player-docs.md)。本轮已获授权接入双语文字、制作通用ZIP与EXE；**游戏2.24.2为candidate=true候选，安装器独立版本0.3.0**，正式版本仍以[项目入口](../../README.md)为准。
+本文维护交付格式、程序入口和验证边界。玩家步骤只维护[中文安装说明](../user/安装说明.txt)和[英文安装说明](../user/安装说明.en.txt)，文字复用见[玩家文档维护](player-docs.md)。安装器版本完全跟随产品版本，正式与候选状态以[项目入口](../../README.md)为准；旧2.24.2安装器及回执保留原样。本次继续修改安装器与文案源码，不编译、封装、安装或操作游戏。
 
 安装器从`a99a404`精确接收必要`src/delivery/`及原`src/package_delivery.py`后按本方案改造，原独立树保持。文案修订后的候选制作结果以各阶段回执记录，不能把旧安装器反馈、封装完成或EXE编译当作本候选已安装/实测。本轮未运行`tests/run.py`、未安装或启动游戏、未上传。
 
@@ -9,7 +9,7 @@
 - Vortex和手动方式共用`AC7MultiSP-版本-Universal.zip`；EXE内嵌该ZIP原字节，导出时不重新组包。根目录按游戏相对路径组织为`ue4ss/`、`Game/`及包元数据，不使用旧GameFiles结构。
 - 主程序、界面、17份Lua和专用PAK同版成套。20个运行文件为17 Lua、2 DLL及VERSION，挂载资源仍为77份/154成员；音频、许可证、独立启用文件和文档另列封装清单。
 - 通用ZIP不含共享UE4SS、微软运行库、个人配置、日志、存档或其他Mod；`DualSP/enabled.txt`独立启用，不要求改写共享mods.txt。
-- 四对玩家TXT原字节进入ZIP及EXE对应语言文档；F6只展示更新日志和作者与授权。游戏与安装器固定文字分别来自`docs/user/interface/game.*.json`、`installer.*.json`，不在各展示位置另写副本。
+- 四对玩家TXT原字节进入ZIP及EXE对应语言文档；F6只展示更新日志和作者与授权。游戏与安装器固定文字分别来自`docs/user/interface/game.*.json`、`installer.*.json`，不在各展示位置另写副本。安装器首页的短声明、作者署名链接及反馈由同一作者与授权TXT提取，作为`installer/credits-compact/{zh-CN|en}.json`校验资源嵌入EXE，不把网址或邮箱抄入C#。
 
 ## 生成、冻结与封装入口
 
@@ -17,12 +17,14 @@
 | --- | --- | --- |
 | 游戏文字生成 | `src/user_texts.py`读取四对TXT及游戏双语JSON；`src/build.py`自动调用 | 生成C++头文件与Lua，检查双语键、占位符、NUL及ImGui标识；输出不手改 |
 | 完整游戏构建 | `src/build.py`，必须显式`--mount-assets-dir`，独立树可指定`--temp-root E:/AC7_MultiSP/Temp` | 独立目录内核心/UI、Lua来源、PAK及构建回执；冻结游戏源码和文字，不冻结安装器C#/JSON |
-| 唯一封装 | `src/package_delivery.py --build-dir 完整构建目录 --output-dir 全新目录 --audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav` | 核对完整构建及生成文字，回读通用ZIP各成员，生成EXE资源、冻结C#和`封装回执.json`；不依赖旧手装ZIP |
+| 唯一封装 | `src/package_delivery.py --build-dir 完整构建目录 --output-dir 全新目录 --audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav` | 核对完整构建及生成文字，回读通用ZIP各成员，生成EXE资源、产品版本属性、manifest、冻结C#和`封装回执.json`；不依赖旧手装ZIP |
 | 双语EXE编译 | `src/delivery/build_setup.ps1 -InputDirectory 封装目录` | 编译前后核对冻结源码、manifest、资源、响应文件与ZIP摘要，生成EXE及独立`EXE编译回执.json` |
 
 封装使用全新输出目录，已存在即拒绝覆盖。提示音核对原验收来源摘要，不分发个人替换音频；原始资源、旧构建、旧包与历史回执保持。
 
 游戏来源冻结已改用`docs/user/`，不再缺失旧`docs/授权.txt`。安装器封装另冻结`src/delivery/`、封装脚本及玩家文字，编译仅使用封装目录的快照。`src/package-release.py`是新封装入口的薄包装；`src/release_package.py`只保留历史helper，旧GameFiles命令行已停用。完整工具依赖见[开发与恢复](../engineering/development.md)。
+
+安装器没有独立版本源。封装从产品三段版本生成`setup-source/ProductVersion.cs`的程序集、文件及信息版本，并替换manifest的版本占位符；生成文件与其摘要纳入冻结源码，仍由编译入口核对。`settings.json`不再维护`delivery_version`；兼容清单字段由产品version派生，显示与更新User-Agent也使用同一产品版本。旧回执中的独立版本只表示当时事实。
 
 ## Vortex部署映射
 
@@ -41,6 +43,16 @@ EXE另内嵌固定来源的AC7专用UE4SS，可在空环境准备前置，或共
 旧安装识别与事务实现位于`src/delivery/setup/Bundle.cs`：按来源清单备份将改动的文件及profiles，移走新版废弃的已知程序，保留个人配置和自定义提示音。未知额外脚本、被外部修改的废弃程序、管理器托管文件或未知加载器须停止并给出对应语言提示，不能递归清空旧DualSP目录。
 
 失败时按事务记录尝试恢复；卸载只处理自身记录的产品文件，保留个人配置与共享前置。双语GUI、文档页、确认/进度/错误和导出界面已按新文字源接入，但实际操作及异常分支仍需验证，不能沿用旧预览结论。
+
+## 安装器界面与更新状态
+
+- 首页仅显示直接安装、导出通用ZIP两种方式，下方使用无滚动条的紧凑作者和反馈区；作者的两个网页只显示可点击署名，不显示长网址。首页不放四份文档标签或右上角作者全文入口。直接安装与导出结果页继续显示完整文档。
+- 右上角下拉框左侧固定显示`语言/Language`，默认“跟随系统”，读取当前Windows界面语言；中文系统显示简体中文，其他系统显示英文，也可手选中文或英文。
+- 导出按钮说明额外加粗提示：本Mod同时含UE4SS组件和PAK，不支持CreeperUX启动器安装，中英文同步。
+- 产品版本附近显示等待、检测中、失败、已最新或有新版状态，并提供手动检测。启动后台检测完成后只更新该区域，不切页、不弹窗、不重建正在阅读的正文；仅在清单有可用新版时显示可点击下载链接。沿用HTTPS、状态/产品/通道、三段版本、响应时间/大小和下载白名单等清单校验。
+- 点击安装/更新/重装时若检测到游戏仍在运行，先提示未保存进度可能丢失。仅用户选择“关闭游戏并安装”后，才尝试关闭`Ace7Game`与`Ace7Game-Win64-Shipping`：先请求窗口退出，3秒仍未退出则结束该进程并再等待3秒。取消或关闭失败都不进入安装事务；卸载仍要求用户自行完整退出。计划、恢复及逐项写入前的`Closed()`检查继续保留，防止确认后游戏重新启动。
+
+本轮只做源码和静态差异审阅，未实际关闭进程、启动安装器、联网检测或验证排版；这些结果不能表述为已通过。
 
 ## 手动方式边界
 
