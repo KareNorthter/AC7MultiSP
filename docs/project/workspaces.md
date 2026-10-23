@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 文档治理，四份草稿已接收、待人工审核 | 本管理聊天；基线59e02c3；完成锚archive/20261023/player-docs；codex/docs-player-guide已关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；detached保留 | 四份玩家正文及索引规范已合main，等待用户修改；功能代码、磁盘大资产和安装器线程未改。[文档复用](player-docs.md)记录后续接入边界；此前产物归档见[回执](../../evidence/artifact-archive-20261023.json) |
+| 文档治理，中文基本认可、英文待补齐 | 本管理聊天；四份中文完成锚archive/20261023/player-docs；双语规范基线31662a2，codex/docs-bilingual-policy完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 本轮仅补开发与文档双语规范及状态索引；功能代码、磁盘大资产和安装器线程未改。下一步补英文、盘点界面文字，再按用户安排接入程序；[文档复用](player-docs.md)记录边界 |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
 | 原根目录资料，封存待甄别 | codex/aircraft-mod-static-plan；原兼容资料工作 | E:/AC7_MultiSP/Temp/preserved-local-20261023；0b75b21 | 原27项未提交变动逐文件保留；核对后按需接收独有结论，不整套覆盖main |
 | 旧更新实现，封存待续 | codex/update-feature | C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP | 11项未提交变动，已做快照；与现行更新页比较后再接收 |
