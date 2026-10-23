@@ -8,6 +8,7 @@
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
 | 文档治理，中文基本认可、英文待补齐 | 本管理聊天；四份中文完成锚archive/20261023/player-docs；双语规范基线31662a2，codex/docs-bilingual-policy完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 本轮仅补开发与文档双语规范及状态索引；功能代码、磁盘大资产和安装器线程未改。下一步补英文、盘点界面文字，再按用户安排接入程序；[文档复用](player-docs.md)记录边界 |
+| 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改，双语及界面接入由用户稍后安排 |
 | 安装器，待接收/待验证 | codex/delivery-installation；“设计 Mod 下载与安装方案” | C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP；a99a404 | 用户原交互文档及0.2.0源码/成品留此；本轮未合代码，后续交付重做由用户安排 |
 | 原根目录资料，封存待甄别 | codex/aircraft-mod-static-plan；原兼容资料工作 | E:/AC7_MultiSP/Temp/preserved-local-20261023；0b75b21 | 原27项未提交变动逐文件保留；核对后按需接收独有结论，不整套覆盖main |
 | 旧更新实现，封存待续 | codex/update-feature | C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP | 11项未提交变动，已做快照；与现行更新页比较后再接收 |
@@ -48,7 +49,7 @@
 - 18个干净且已合的旧工作树解除原分支：其中17个有ignored文件，原位detached并锁定；1个无任何ignored或未提交内容的cfa44-muzzle-notes副本送回收站。
 - 原main所在Temp/integration-2.22.2-alpha1另外原位封存，main回到根目录。冻结产物、原料和旧路径依赖均未迁走。
 - 4个原本缺目录的锁定登记已备份元数据后移出；恢复锚和缺原料风险留在研究/归档索引，不冒称恢复成功。
-- 其余历史detached研究树、脏树和未证明已接收分支继续保留。大体积Temp、转储和个人备份尚未清理；Release旧产物的后续集中归档见[归档索引](../archive/README.md#历史核心与发布包)。
+- 其余历史detached研究树、脏树和未证明已接收分支继续保留。Temp散落文件、旧检查和空暂存已归组；大原料、转储与个人备份保留，见[本机资产索引](../archive/local-assets.md)。Release旧产物见[归档索引](../archive/README.md#历史核心与发布包)。
 
 完整前后盘点及9处未提交快照见E:/AC7_MultiSP/backup/project-governance-20261023/；恢复方法见[归档索引](../archive/README.md)。
 

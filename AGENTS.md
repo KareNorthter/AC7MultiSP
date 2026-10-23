@@ -13,7 +13,7 @@
 6. 不自动联系或指挥其他用户聊天。子代理限授权范围，用户指定GPT-6.1 Sol/high。本管理任务负责文档、接收和整合，不自行启动功能研究。
 7. 保护旧核心dist/DualSP/bin/DualSP.dll，SHA256 D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339，不得覆盖。不能用重建掩盖冻结差异或改历史回执。
 8. 不提交个人配置/状态、存档、游戏资源、音频、第三方PAK、工具、转储、发布ZIP或凭证。Lua唯一源dist/DualSP/Scripts/；原料、冻结产物和历史证据按依赖保护。
-9. pwsh7优先，复杂处理用Python；新文件UTF-8，Windows启动脚本保所需BOM。临时Temp/、备份backup/且忽略；无Git改前备份。清理送回收站，不永久删除。
+9. pwsh7优先，复杂处理用Python；新文件UTF-8，Windows启动脚本保所需BOM。临时文件放Temp/tasks/日期-主题/，备份backup/且忽略；旧资料先查[本机资产索引](docs/archive/local-assets.md)，不按Temp名称认定可删。无Git改前备份，清理送回收站，不永久删除。
 10. 未采用不等于无用：弹舱动画、旧布局、更新器等半成品保留提交锚、未提交差异、原料位置和继续条件，不能因未合main就删除。
 
 ## 按需阅读

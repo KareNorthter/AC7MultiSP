@@ -38,3 +38,26 @@ __pycache__/
 
 # 会话附件的选定参考图已归档到 references，不提交传输目录。
 /.codex-remote-attachments/
+
+# 游戏原料、安装包、取证转储及本机凭证不进入源码仓库。
+*.pak
+*.uasset
+*.uexp
+*.ucas
+*.utoc
+*.bnk
+*.wem
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.opus
+*.sav
+*.zip
+*.dmp
+*.mdmp
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12

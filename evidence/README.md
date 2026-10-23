@@ -15,6 +15,7 @@
 | 动画半成品 | [产品访问](sp-animation-product-access.json)、[早期动画](mount-expansion-animated.json) | 研究依据与尚未成立的运行条件 |
 | 仓库整理 | [20261023治理回执](project-governance-20261023.json) | 删除的分支tip、封存工作树、快照及本轮核对范围 |
 | 文档与旧产物归档 | [20261023归档回执](artifact-archive-20261023.json) | 文档路径映射、旧包和DLL归档位置、仍保留依赖及核对范围 |
+| 本机资产整理 | [20261023资产清单](local-assets-20261023.json) | 原路径到实际路径、归类、逐项处置、核对范围和GitHub研究恢复锚 |
 
 ## 按主题定位其余记录
 

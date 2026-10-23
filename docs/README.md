@@ -33,6 +33,7 @@
 | [开发规范](project/workflow.md) | 工作、分支、并行、提交、版本、日志、接收与清理规则 |
 | [工作区索引](project/workspaces.md) | 正式入口、活动成果、保留工作树与整理记录 |
 | [玩家文档维护](project/player-docs.md) | 四份正文的维护、审核和EXE／ZIP／F6复用规则 |
+| [仓库与本机边界](project/repository.md) | GitHub私有仓库、上传范围、研究恢复锚及公开前的材料边界 |
 
 ## 技术与研究
 
@@ -44,6 +45,7 @@
 | [工程经验](engineering/engineering-lessons.md) | 重要故障与性能经验，含证据和适用边界 |
 | [研究索引](research/README.md) | 弹舱动画等未采用/待接收半成品和继续条件 |
 | [归档与恢复](archive/README.md) | Git锚、原料、未提交快照和历史位置 |
+| [本机资产索引](archive/local-assets.md) | Temp、备份、研究原料和归组文件的实际位置与使用条件 |
 | [证据索引](../evidence/README.md) | 验收、安装、发布、研究回执检索；原始记录不回改 |
 | [工具说明](../tools/README.md) | 本机辅助工具来源用途，工具本体不入Git |
 | [既有检查说明](../tests/README.md) | 已有检查用途和条件，不构成自动测试授权 |
