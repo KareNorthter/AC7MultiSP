@@ -12,6 +12,7 @@
 | 更新模块 | [alpha1来源](2.24.0-alpha1-source-intake.json)、[alpha2来源](2.24.0-alpha2-source-intake.json) | UI、更新清单和通知的接收范围 |
 | 挂载完整原料 | [refresh](2.23.0-refresh-integration.json)、[Socket核对](mount-socket-reference-audit-20261021.json)、[TGM r2](f18etg-whole-rack-socket-r2.json) | 77资源阶段的来源及资格 |
 | 原生/第三方边界 | [原生退让](special-aircraft-native-fallback-20261022.json)、[UAV/HPM契约](mod-special-sp-contract-20261022.json) | 哪些对象与使用路径可被放行 |
+| Mod机体分组安装 | [20261023安装](aircraft-mod-profiles-installed-20261023.json) | 用户选择原作者资源分组启用、部署范围和缺项保留；不代表实机通过 |
 | 动画半成品 | [产品访问](sp-animation-product-access.json)、[早期动画](mount-expansion-animated.json) | 研究依据与尚未成立的运行条件 |
 | 仓库整理 | [20261023治理回执](project-governance-20261023.json) | 删除的分支tip、封存工作树、快照及本轮核对范围 |
 | 文档与旧产物归档 | [20261023归档回执](artifact-archive-20261023.json) | 文档路径映射、旧包和DLL归档位置、仍保留依赖及核对范围 |

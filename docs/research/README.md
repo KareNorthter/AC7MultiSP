@@ -4,6 +4,8 @@
 
 当前产品机制见[架构](../engineering/architecture.md)和[挂载设计](../engineering/multi-sp-mount-design.md)，可复用教训见[工程经验](../engineering/engineering-lessons.md)。历史原文见[归档索引](../archive/README.md)及`archive/20261023/pre-governance-main`标签。本机来源位置只提供恢复线索，实际续研前仍须核对文件与摘要。
 
+Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
+
 ## 挂载、弹舱与动画
 
 | 主题/状态 | 成果锚 | 来源位置 | 已知问题与继续研究入口 |

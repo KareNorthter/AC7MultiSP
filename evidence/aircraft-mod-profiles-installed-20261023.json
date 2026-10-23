@@ -1,0 +1,153 @@
+{
+  "installed": true,
+  "installed_at": "2026-10-23T22:50:09.402253+08:00",
+  "baseline_main": "85ab3a0e9201010daf7f8ee528cce4a5b98fc463",
+  "strategy": "用户选择按原作者版本分组启用；用户确认继续安装并记录未解析引用，后续自行实机确认",
+  "source_thread": "01a15f12-100b-7640-9d2b-2c54ef825a45",
+  "new_packages": 10,
+  "author_paks": 14,
+  "installed_to_profile_library": true,
+  "active_profile": "A",
+  "profiles": {
+    "A": {
+      "new_mods": [
+        "CFA-50 3038",
+        "F-35A 3212",
+        "F-35D 2902",
+        "FF-X29A 3303",
+        "J-20S Fagin - Addon 3765",
+        "Tornado F3 2424",
+        "UI-4054 3465",
+        "Yak-141 2724"
+      ],
+      "disabled_mods": [
+        "F-14IA Ruscat Mod Files 3751",
+        "FA-18R 2203",
+        "FA-27S 3404",
+        "J-15T 3738",
+        "MiG-29TK King Fulcrum 3775",
+        "QFA-308 3368",
+        "Su-37U 3380",
+        "TR-6 2641",
+        "X-49 1913",
+        "XFA-36A 3520"
+      ],
+      "added_planes": {
+        "197": "trndf3",
+        "268": "ui4054",
+        "241": "fa50",
+        "245": "f35a",
+        "228": "f35d",
+        "217": "y141",
+        "253": "hrud",
+        "288": "j20s"
+      },
+      "catalogue_rows": 177,
+      "reference_check": {
+        "unresolved_import_or_skin_references": 86,
+        "skin_count": 109,
+        "new_blueprint_assets": 269,
+        "user_authorized_original_packages": true,
+        "scope": "Import表中有未解析包名；不等同于所有引用都被实际使用，不证明必然崩溃或运行正常"
+      }
+    },
+    "B": {
+      "new_mods": [
+        "F-35D 2902",
+        "FF-X29A 3303",
+        "J-20S Fagin - Addon 3765",
+        "Tornado F3 2424",
+        "UI-4054 3465",
+        "V-55 3615",
+        "X-02R 3266",
+        "Yak-141 2724"
+      ],
+      "disabled_mods": [
+        "ADFY-00 2895",
+        "F-14IA Ruscat Mod Files 3751",
+        "F-17V 3600",
+        "F-32A 3319",
+        "F-35B 2821",
+        "Gleipnir 3301",
+        "J-15T 3738",
+        "MiG-29TK King Fulcrum 3775",
+        "QFA-308 3368",
+        "SU-35SX 3007",
+        "Su-37U 3380",
+        "TR-6 2641",
+        "X-49 1913",
+        "XFA-36A 3520"
+      ],
+      "added_planes": {
+        "278": "v55b",
+        "197": "trndf3",
+        "268": "ui4054",
+        "277": "v55",
+        "249": "x02r",
+        "250": "x02rv2",
+        "228": "f35d",
+        "217": "y141",
+        "253": "hrud",
+        "288": "j20s"
+      },
+      "catalogue_rows": 174,
+      "reference_check": {
+        "unresolved_import_or_skin_references": 91,
+        "skin_count": 137,
+        "new_blueprint_assets": 306,
+        "user_authorized_original_packages": true,
+        "scope": "Import表中有未解析包名；不等同于所有引用都被实际使用，不证明必然崩溃或运行正常"
+      }
+    }
+  },
+  "new_plane_ids_across_profiles": [
+    197,
+    217,
+    228,
+    241,
+    245,
+    249,
+    250,
+    253,
+    268,
+    277,
+    278,
+    288
+  ],
+  "profile_home": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles",
+  "backup": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624",
+  "active_catalogue_rows": 177,
+  "previous_catalogue_rows": 180,
+  "f14ia_stays_hidden": true,
+  "f3_reference_corrected": true,
+  "f3_id": 197,
+  "author_paks_byte_identical": true,
+  "old_non_controlled_paks_preserved_by_metadata": 188,
+  "protected_core_settings_save_files": 298,
+  "protected_file_hashes_equal": true,
+  "dualsp_runtime_observed": {
+    "version_file_present": false,
+    "dll_file_present": false,
+    "lua_file_count": 0
+  },
+  "user_feedback": {
+    "S44_Arkbird_previous_issues": "用户2026-10-23确认已验证解决"
+  },
+  "unresolved_reference_reports": {
+    "A": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\groups\\A\\reference-report.json",
+    "B": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\groups\\B\\reference-report.json"
+  },
+  "game_started": false,
+  "core_compiled": false,
+  "test_modules_written": false,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "switcher_source": "C:\\Users\\83717\\.codex\\worktrees\\research-mod-aircraft-compat\\AC7_MultiSP\\src\\research\\aircraft_mod_profiles.py",
+  "switcher_sha256": "87153046c8695466f0be1c02194513456babf2ae2f61e80bd06ff779619272ec",
+  "launchers": [
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\启用A组_Enable-A.cmd",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\启用B组_Enable-B.cmd",
+    "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\恢复原安装组_Restore-Original.cmd"
+  ],
+  "rollback": "退出游戏后运行恢复原安装组_Restore-Original.cmd；原文件和每次切换事务均保留，无永久删除"
+}
