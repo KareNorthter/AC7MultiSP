@@ -301,7 +301,7 @@ public:
         return Error::None;
     }
 
-    // 实际Initialize、弹药恢复及keepArmed完整Pressed/Released结束后调用。
+    // 实际Initialize、弹药恢复及keepArmed完整类别切换结束后调用。
     // 快照保留到完整原生切换结束且只消费一次；不写当前配置编号。
     Error restoreSwitch(Host& host, const Binding& current, std::uint64_t transaction, Snapshot& saved) {
         if (!host.onGameThread()) return Error::WrongThread;

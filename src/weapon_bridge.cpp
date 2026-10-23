@@ -302,6 +302,37 @@ struct ControlledWeaponSwitch {
     ~ControlledWeaponSwitch(){controlledWeaponSwitch=previous;}
 };
 
+// 内部类别切换走完整飞机入口，但不伪造真实的武器键按下/松开。
+// 原生第二参数为true时只跳过尾部DropTank长按初始化，门禁、类别及seeker更新仍完整执行。
+void nativeWeaponSelectionQualified() {
+    static bool qualified=false;
+    if(qualified)return;
+    verifyVersion();
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+    auto code=[base](size_t rva,size_t size,uint64_t expected) {
+        checkMemory(base+rva,size);
+        const auto* bytes=reinterpret_cast<const unsigned char*>(base+rva);
+        uint64_t fingerprint=14695981039346656037ull;
+        for(size_t i=0;i<size;++i)fingerprint=(fingerprint^bytes[i])*1099511628211ull;
+        require(fingerprint==expected,"原生飞机切换入口不匹配");
+    };
+    // 两个完整函数均来自Steam 9855922原生采样；覆盖bool透传和唯一消费分支，不仅核对前导。
+    code(0x82a730,0x7e,0x844bfd6c64749fd8ull);
+    code(0x8238f0,0x19c,0x2d85e7c3195f8dc2ull);
+    qualified=true;
+}
+void switchWeaponCategoryWithoutHold(Addr plane,Addr activator) {
+    require(session.gameThread && session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
+    require(session.plane==plane && session.activator==activator && read<Addr>(plane+0x11a8)==activator,
+        "类别切换玩家会话不符");
+    nativeWeaponSelectionQualified();
+    ControlledWeaponSwitch controlled;
+    using Switch=void(*)(void*,bool);
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+    reinterpret_cast<Switch>(base+0x82a730)(reinterpret_cast<void*>(plane),true);
+    // 未进入真实按下分支，不调用Released；原生真实松键仍自行结束长按，不保存跨帧输入快照。
+}
+
 // 只拦截完整飞机输入入口的调用；原生耗尽/回收回调继续执行自己的类别逻辑。
 bool observeEmptyWeaponSwitch(void* object) {
     const auto activator=reinterpret_cast<Addr>(object); // 仅监听已绑定的当前玩家。
@@ -794,15 +825,7 @@ void keepArmed(const Command& command,bool armed) {
     if(armed) {
         // 重建后必须经过飞机完整切换流程。仅 ToggleSpecial 会留下 MSL
         // 的锁定组件参数；原生飞机入口还会重绑 seeker 并应用 PART 修正。
-        using Switch=void(*)(void*);
-        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
-        constexpr unsigned char pressed[]={0x33,0xd2,0xe9};
-        constexpr unsigned char released[]={0xc6,0x81,0x51,0x1a,0,0,0,0xc3};
-        require(std::memcmp(reinterpret_cast<void*>(base+0x8238d0),pressed,sizeof(pressed))==0 &&
-            std::memcmp(reinterpret_cast<void*>(base+0x8238e0),released,sizeof(released))==0,
-            "原生飞机切换入口不匹配");
-        reinterpret_cast<Switch>(base+0x8238d0)(reinterpret_cast<void*>(command.plane));
-        reinterpret_cast<Switch>(base+0x8238e0)(reinterpret_cast<void*>(command.plane));
+        switchWeaponCategoryWithoutHold(command.plane,command.activator);
         require(read<unsigned char>(command.activator+0x2a1)!=0,"重建后无法恢复原生 SP 类别");
     }
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -933,6 +956,8 @@ void execute(const Command& command) {
     require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
     require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
+    // 在任何兵装重建前确认内部切换入口，拒绝不匹配版本时不先改动弹池。
+    if(command.op!="snapshot" && command.op!="checkpoint_save")nativeWeaponSelectionQualified();
     if(command.op=="switch" || command.op=="checkpoint_save" || command.op=="snapshot") {
         require(session.plane==command.plane && session.activator==command.activator &&
             session.active>=0 && session.active<session.count && session.count<=3,"当前兵装缓存会话不符");
@@ -1501,7 +1526,7 @@ extern "C" __declspec(dllexport) int dualsp_take_cycle_switch(void* luaState) {
         return 0;
     }
 }
-// 直接选择与循环选择共同使用完整飞机入口；作用域内不重复拦截自己的调用。
+// 直接选择与循环选择共同使用完整飞机入口；不建立或清除玩家的真实长按状态。
 extern "C" __declspec(dllexport) int dualsp_controlled_weapon_switch(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1513,15 +1538,7 @@ extern "C" __declspec(dllexport) int dualsp_controlled_weapon_switch(void* luaSt
             "类别切换玩家会话不符");
         // 与Lua等待和核心重建共用门槛；暂拒时不按下切换，由实际类别让Lua继续等待。
         if(weaponSwitchBlockReason(plane,activator)){api->boolean(luaState,true);return 1;}
-        const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
-        constexpr unsigned char pressed[]={0x33,0xd2,0xe9};
-        constexpr unsigned char released[]={0xc6,0x81,0x51,0x1a,0,0,0,0xc3};
-        require(std::memcmp(reinterpret_cast<void*>(base+0x8238d0),pressed,sizeof(pressed))==0 &&
-            std::memcmp(reinterpret_cast<void*>(base+0x8238e0),released,sizeof(released))==0,"原生飞机切换入口不匹配");
-        ControlledWeaponSwitch controlled;
-        using Switch=void(*)(void*);
-        reinterpret_cast<Switch>(base+0x8238d0)(reinterpret_cast<void*>(plane));
-        reinterpret_cast<Switch>(base+0x8238e0)(reinterpret_cast<void*>(plane));
+        switchWeaponCategoryWithoutHold(plane,activator);
         api->boolean(luaState,true);return 1;
     }catch(const std::exception& error) {
         nativeLog(std::string("CONTROLLED_SWITCH_ERROR ")+error.what());
