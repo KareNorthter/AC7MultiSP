@@ -7,6 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
+| Mod机体兼容性续研，长按输入源码修复待验证 | 本聊天；续接01a15f12-100b-7640-9d2b-2c54ef825a45；基线main/85ab3a0；本轮核对main/5a33e3a相关C++相同 | codex/research-mod-aircraft-compat；C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 独占[续研正文](../research/mod-aircraft-compatibility.md)、安装/反馈/研究回执、src/research/aircraft_mod_profiles.py及索引登记；src/weapon_bridge.cpp两处已改走原生跳过长按初始化参数，main.lua/common_bay_animation.hpp仅同步注释，架构同步说明。10包及XFA-33组已入库，当前A不切换。用户关闭总开关仅选EML出击仍无动画/炮体，已记录并暂缓深入；十字键稍后实测。修复未编译/安装/实测，未启动游戏或推送 |
 | 安装器与F6易用性调整，EXE已交付、待人工验证 | 本聊天；源码锚5a33e3a；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 2.24.3候选：完整构建核心/UI及内嵌载荷，仅EXE进入Release/2.24.3；[回执](../../evidence/2.24.3-exe-delivery.json)记录来源、文件版本及摘要。构建和封装现场留同任务目录，未运行测试、安装器或游戏，未关闭游戏、上传。用户旧2.24.2基本功能反馈不扩大到本轮。以后优先单代理，减少拆分 |
 | 双语文档与通用交付，待游戏验证 | 本管理聊天；基线85ab3a0；codex/integrate-bilingual-delivery完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 接收根目录九份人工文档，生成英文并集中游戏/安装器词条；本地候选2.24.2、安装器0.3.0，独占docs/user、游戏文字调用、构建封装及对应正文。[交付回执](../../evidence/2.24.2-delivery.json)记录具体核对，不安装或操作游戏 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改 |

@@ -1,0 +1,81 @@
+{
+  "recorded_at": "2026-10-23T23:09:48.607536+08:00",
+  "game_closed_by_agent": true,
+  "game_started_by_agent": false,
+  "custom_name_mod_disabled": {
+    "custom_package": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~AC7CustomName_Mission1_P.pak",
+    "custom_sha256": "6d41ba243b1fb94e50d02c44e5c47fd550b719203dc4e3ace6136cf4d20a96a0",
+    "custom_keys": 33133,
+    "addon_keys": 38604,
+    "key_status": {
+      "AircraftShort_Name_adlra": {
+        "custom_present": false,
+        "addon_present": true
+      },
+      "AircraftShort_Name_fa50": {
+        "custom_present": false,
+        "addon_present": true
+      },
+      "AircraftShort_Name_su75": {
+        "custom_present": false,
+        "addon_present": true
+      }
+    },
+    "A": {
+      "AircraftShort_Name_adlra": "ADA-01A",
+      "AircraftShort_Name_fa50": "CFA-50"
+    },
+    "L": {
+      "AircraftShort_Name_adlra": "ADA-01A",
+      "AircraftShort_Name_fa50": "CFA-50"
+    },
+    "disabled": true,
+    "backup": "E:\\AC7_MultiSP\\backup\\disable-customname-20261023-230728",
+    "game_closed": true
+  },
+  "provided_directory": "F:/下载/CFA-50 3038",
+  "provided_files": [
+    {
+      "source": "F:\\下载\\CFA-50 3038\\~~MQ-90L Quox bis Wingman UAV_P.pak",
+      "source_sha256": "da9fc30dd3c60e73d788f0f1d85d3ab997a8d819c3aa9e8a4cbe5d2a2a202d03",
+      "installed_sha256": "da9fc30dd3c60e73d788f0f1d85d3ab997a8d819c3aa9e8a4cbe5d2a2a202d03",
+      "library_sha256": "da9fc30dd3c60e73d788f0f1d85d3ab997a8d819c3aa9e8a4cbe5d2a2a202d03",
+      "identical": true,
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~MQ-90L Quox bis Wingman UAV_P.pak",
+      "entry_id": "new-000",
+      "members": 42
+    },
+    {
+      "source": "F:\\下载\\CFA-50 3038\\~~~CFA-50 Base file_P.pak",
+      "source_sha256": "d2ba2e61ee3e5af6c3f27c8375b3ce10fb59e4d2cf368d2afbdfe0242e80dd27",
+      "installed_sha256": "d2ba2e61ee3e5af6c3f27c8375b3ce10fb59e4d2cf368d2afbdfe0242e80dd27",
+      "library_sha256": "d2ba2e61ee3e5af6c3f27c8375b3ce10fb59e4d2cf368d2afbdfe0242e80dd27",
+      "identical": true,
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+      "entry_id": "new-001",
+      "members": 302
+    }
+  ],
+  "provided_files_already_installed_byte_identical": true,
+  "duplicate_copy_not_required": true,
+  "active_profile": "A",
+  "installed_table_source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~AC7MultiSP_Aircraft_Profile_P.pak",
+  "installed_table_sha256": "601aa688d62f221d24ca19208ed34dfa0e7f1776da137dc9275e7048d86a06bd",
+  "cfa50_row": {
+    "id": 241,
+    "code": "fa50",
+    "reference": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_fa50_s00.AcePlayerPawn_fa50_s00_C",
+    "sp": [
+      "admm",
+      "tls",
+      "eml"
+    ]
+  },
+  "name_problem_proven": "高优先级AC7CustomName包的名称索引缺少截图机体及CFA-50名称键，覆盖了包含相应键的机体兼容包。已按用户要求禁用整个呼号包。",
+  "cfa50_visibility_scope": "已核对原包、当前目录和名称键；未重新启动游戏，不能声称机库显示已获实机确认。此前不见CFA-50与名称被覆盖有关的解释仍需用户重启确认。",
+  "xfa33": "用户要求暂缓；本地未发现原包，未安装",
+  "core_compiled": false,
+  "test_modules_written": false,
+  "test_modules_run": false,
+  "gameplay_verified": false
+}

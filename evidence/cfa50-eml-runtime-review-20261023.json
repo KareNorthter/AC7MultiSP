@@ -1,0 +1,282 @@
+{
+  "recorded_at": "2026-10-23T23:55:39.828921+08:00",
+  "branch": "codex/research-mod-aircraft-compat",
+  "source_head": "d0f5bf1fbe9e878c56ca399365c65c7cd82053df",
+  "active_profile": "A",
+  "runtime_version": "2.24.1",
+  "status": "已定位EML炮体停留收纳姿态；根因与修复待原生出击对照",
+  "user_feedback": [
+    "三SP时ADMM、TLS正常；切EML时弹舱机构升起但炮体看似缺失，切MSL后舱门不关闭",
+    "用户称单SP+MSL下切EML没有动画；日志显示本次使用任务内debug_setup切换到config2，尚无全新原生出击对照",
+    "第二次确认当前ADMM+EML双SP、已切EML、看不到EML模型",
+    "用户关闭多SP十字键切换；要求核对作者十字键功能；随后指定僚机实机测试延后，先查EML"
+  ],
+  "actions": {
+    "process_read": true,
+    "process_write": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "game_closed": false,
+    "runtime_files_modified": false,
+    "compiled": false,
+    "test_modules_written_or_run": false
+  },
+  "captures": [
+    {
+      "label": "首次暂停，MSL类别",
+      "local_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\cfa50-eml-paused-20261023",
+      "pid": 39796,
+      "captured": "2026-10-23T23:39:03.290476+08:00",
+      "snapshot_sha256": "db8769081e245a9baa3dfb023eba93698434c8bf439bf83f90e4dadd597744bc",
+      "native_details_sha256": "f7f004e7d22b3a3e888723e0607679caceedfc01d5d196ef8f666d380373bad7",
+      "native_config": 2,
+      "parts_config": 2,
+      "request": 3,
+      "phase": 0,
+      "parts_values_by_offset": {
+        "0x17c": -0.009999999776482582,
+        "0x180": 1.0,
+        "0x184": 0.10672599077224731,
+        "0x188": -0.009999999776482582,
+        "0x18c": -0.009999999776482582,
+        "0x190": -0.009999999776482582,
+        "0x194": 1.0
+      },
+      "swp3_component_bits": {
+        "bPauseAnims": {
+          "value": false,
+          "byte_mask": 4,
+          "field_mask": 4,
+          "raw": 0
+        },
+        "bVisible": {
+          "value": true,
+          "byte_mask": 16,
+          "field_mask": 16,
+          "raw": 17
+        },
+        "bHiddenInGame": {
+          "value": false,
+          "byte_mask": 32,
+          "field_mask": 32,
+          "raw": 17
+        },
+        "bIsActive": {
+          "value": true,
+          "byte_mask": 1,
+          "field_mask": 1,
+          "raw": 147
+        }
+      }
+    },
+    {
+      "label": "用户确认ADMM+EML双SP，已选择EML",
+      "local_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\cfa50-eml-selected-20261023",
+      "pid": 39796,
+      "captured": "2026-10-23T23:43:54.623512+08:00",
+      "snapshot_sha256": "a272b2a2cb006a16369550d266a17b451ddb19c262473d586416d85cba805ff4",
+      "native_details_sha256": "4d23c46f8355735499f7079a2d88d6e677e9abfa7c3d06b19596f11c33f6fa73",
+      "native_config": 2,
+      "parts_config": 2,
+      "request": 1,
+      "phase": 2,
+      "parts_values_by_offset": {
+        "0x17c": 1.0,
+        "0x180": 1.0,
+        "0x184": 0.10672599077224731,
+        "0x188": 1.0,
+        "0x18c": 1.0,
+        "0x190": 1.0,
+        "0x194": 1.0
+      },
+      "swp3_component_bits": {
+        "bPauseAnims": {
+          "value": false,
+          "byte_mask": 4,
+          "field_mask": 4,
+          "raw": 0
+        },
+        "bVisible": {
+          "value": true,
+          "byte_mask": 16,
+          "field_mask": 16,
+          "raw": 17
+        },
+        "bHiddenInGame": {
+          "value": false,
+          "byte_mask": 32,
+          "field_mask": 32,
+          "raw": 17
+        },
+        "bIsActive": {
+          "value": true,
+          "byte_mask": 1,
+          "field_mask": 1,
+          "raw": 147
+        }
+      }
+    }
+  ],
+  "runtime_files": [
+    {
+      "path": "Scripts/config_store.lua",
+      "sha256": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/debug_aircraft.lua",
+      "sha256": "ca79576751710a0862a2d5953c1df07d66e09a044d84ff6e4209c287d14516c3",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/gun_salvo.lua",
+      "sha256": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/json.lua",
+      "sha256": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/loadout_flow.lua",
+      "sha256": "010aa0e221ede8c4e2c50a9cf66a311db47494c31c2c99bf9203fd3214e83dcf",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/loadout_profile.lua",
+      "sha256": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/main.lua",
+      "sha256": "643a7472bc497176672b223df699e80b33adbb6c8229cf276d6403d4dfb2f4ad",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/native_bridge.lua",
+      "sha256": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/native_hud.lua",
+      "sha256": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/native_loadout.lua",
+      "sha256": "eae4c49fa6fd018a07411554c90f538ba1039e313cf7cd7377cb62e879223ec7",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/runtime_context.lua",
+      "sha256": "bb5516db92852b1d290d40e95d2fbea25e40836fb1152f492c417fbce93d46c0",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/weapon_cycle.lua",
+      "sha256": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/weapon_names.lua",
+      "sha256": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/weapon_presentation.lua",
+      "sha256": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/mount_assets.lua",
+      "sha256": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "Scripts/mod_aircraft.lua",
+      "sha256": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "bin/DualSP.dll",
+      "sha256": "039edc2ece1f2cc7c5598239c08c849f013fa0121dc8f06d59d5dd66b39da560",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "bin/DualSPUI.dll",
+      "sha256": "b28e37e33251c7e4748b689eeb1f844fca59f2973b2b1b574bbdece69b553644",
+      "matches_install_receipt": true
+    },
+    {
+      "path": "VERSION",
+      "sha256": "ebf1768ccb1ae0be52707565e3ec2cafc76415d97ab30c4229fa8b7a3544ede4",
+      "matches_install_receipt": true
+    }
+  ],
+  "eml_findings": {
+    "weapon_class": "plwp_eml_fa50_C",
+    "active_pylon": "SWP3",
+    "mesh": "fa50_SWP3",
+    "animation_class": "fa50_SWP3_AnimBP_C",
+    "mesh_complete": true,
+    "lod0_vertices": 4098,
+    "lod0_triangles": 2670,
+    "source_contains_gun_geometry": true,
+    "gun_geometry_location": "炮体已并入SWP3骨架网格；sp21独立StaticMesh为空不能当作缺件证据",
+    "hidden_materials": [
+      []
+    ],
+    "all_published_bones_unit_scale": true,
+    "actual_bone_table_rows": 657,
+    "actual_swp_cover_channel": "spwc，运行时FName显示Spwc；已核对骨名基础名/数字后缀身份",
+    "eml_selected_public_progress": 1.0,
+    "node_channel_index_for_16_controlled_bones": 24,
+    "node_channel_index_24_value": 1.0,
+    "published_pose_comparison": {
+      "source_sequence_frames": 101,
+      "source_sequence_seconds": 3.3333332538604736,
+      "matches_stowed_frames": "0至50",
+      "max_position_error_at_frame50": 4.110825779525364e-06,
+      "max_angle_error_degrees_at_frame50": 8.957709118342611e-05,
+      "max_position_difference_from_frame100": 38.623494737961565
+    },
+    "sequence_skeleton_and_mesh_skeleton_same_object": true,
+    "interpretation": "公共开舱输出和节点通道缓存均已全开，实际已发布炮体骨骼仍匹配收纳帧；不能用重复复制PAK或补独立StaticMesh解决。尚未定位到原生求值或发布链的具体阻断点。",
+    "msl_cover_observation": "公共spwc已-0.01，部分非当前配置输出仍1；机身使用swcc/swc3，旧域残留与不收舱吻合，但不把此相关性当完整因果证明",
+    "not_proven": [
+      "作者原包单独使用是否正常",
+      "关闭本Mod后全新EML出击是否正常",
+      "任务内debug_setup单SP不等于原生对照",
+      "当前工作树尚无EML修复代码或安装候选"
+    ]
+  },
+  "dpad_findings": {
+    "setting": false,
+    "runtime_log_confirmation": "2026-10-23T15:38:22.056Z MANAGEMENT_SETTINGS_SAVED dpad=false",
+    "bindings": [
+      {
+        "key": "右",
+        "action": "INP_RadioOptionOn",
+        "effect": "召唤僚机"
+      },
+      {
+        "key": "上",
+        "action": "INP_RadioOptionUp",
+        "effect": "进攻命令"
+      },
+      {
+        "key": "下",
+        "action": "INP_RadioOptionDown",
+        "effect": "防御命令"
+      }
+    ],
+    "author_binding_consumes_input": true,
+    "author_binding_executes_when_paused": false,
+    "code_review": "overlay门禁与Lua动作接收均检查十字键开关；XInput钩子返回完整原始方向键；未找到RadioOption动作拦截。",
+    "gameplay_verified": false,
+    "deferred_by_user": true
+  },
+  "next_step": "关闭F6模组总开关，回机库只选EML重新出击，切到EML后比较实际炮体与骨骼；用户执行对照前保持现有文件。",
+  "local_artifact_policy": "原始日志、资源、动画轨、骨骼姿态和渲染预览留Temp，不入Git；早期快照outputs中末三项命名未经核实，以本回执按偏移值为准。"
+}

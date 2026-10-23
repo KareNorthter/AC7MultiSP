@@ -1104,12 +1104,12 @@ end
 function weaponSwitch.clear(reason)
     if weaponSwitch.pending then note("WEAPON_SWITCH_CANCELLED "..reason);weaponSwitch.pending=nil;lastUIKey=nil end
 end
--- 按下/释放始终成对；只有实际类别完成后才向两处 HUD 提交选择。
+-- 内部切换不模拟真实按键；只有实际类别完成后才向两处 HUD 提交选择。
 local function pressSwitch(desired)
     assert(IsInGameThread(),"武器类别切换必须在游戏线程完成")
     internal=true
     local desiredArmed=desired>0 -- 按逻辑目标核对最终类别，不能依赖中间态。
-    -- 原生可能因连射或其他短暂条件保持旧类别；释放配对后交回待切换状态。
+    -- 原生可能因连射或其他短暂条件保持旧类别；完整入口返回后交回待切换状态。
     local switched,switchError=weaponSwitch.press(plane:GetAddress(),activator:GetAddress())
     assert(switched,switchError)
     lastArmed=plane:IsSpecialWeaponArmed()

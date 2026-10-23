@@ -1,0 +1,202 @@
+{
+  "recorded_at": "2026-10-24T07:29:57.244353+08:00",
+  "kind": "静态研究，未实现或验证修复",
+  "user_request": "兼容Mod机体通过长按原生武器切换键触发附加效果；先静态研究；CFA-50长按X通常不响应、偶尔触发",
+  "branch": "codex/research-mod-aircraft-compat",
+  "source_head": "3c737097b51757b86f137c07e218323ff3d63def",
+  "main_reviewed": "bba1bb938aa3ce82ec0410dceb1a6ed994524c2f",
+  "main_comparison": "weapon_bridge.cpp、continuous_sp.hpp相同；main.lua差异为交付/i18n文案接入，相关切换流程未改变",
+  "scope": {
+    "process_opened": false,
+    "game_functions_called": false,
+    "inputs_sent": false,
+    "game_closed": false,
+    "runtime_files_modified": false,
+    "product_code_modified": false,
+    "compiled": false,
+    "test_modules_written_or_run": false
+  },
+  "author_mechanism": {
+    "pawn": "Default__AcePlayerPawn_fa50_C",
+    "effect_class": "plwp_ecmp_fa50_C",
+    "effect_parent": "plwp_esm_x0_C",
+    "effect_parent_boundary": "类名ecmp不等于它只是ECM；实际派生ESM蓝图，另含Jamming参数；不改作者效果含义",
+    "route": "复用PlayerPlane原生DropTank机制，不是第四个SpecialWeaponConfig，也未给X新增蓝图输入动作",
+    "previous_capture_duration_seconds": 1.0,
+    "duration_source": "2026-10-23的既有只读快照，不是本轮连接进程；作者Pawn没有显式覆盖该值",
+    "skin_override": "fa50_s10将DropTankWeaponClass覆盖为plwp_optical_x0_C，通用兼容须读取实际类而非固定效果名",
+    "explicit_overrides_in_reviewed_batch": [
+      {
+        "pawn": "Default__AcePlayerPawn_j20s_C",
+        "effect_class": "plwp_ares_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\1ac26435ee4fa6b81a7f\\AcePlayerPawn_j20s.json",
+        "json_sha256": "6ff572894a9e6b91eb9bc5a50cc6ba9d4da9fe65a9e8a63ee700a3ab2c84f643"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_dptk_C",
+        "effect_class": "plwp_esm_x0_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\34059f021f019711e954\\AcePlayerPawn_dptk.json",
+        "json_sha256": "40d3445c0754f8761bf22f5632f885fa21f70324b5a55edd2c316948ba3b927f"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_fa50_C",
+        "effect_class": "plwp_ecmp_fa50_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\53666b9fcebf648b801f\\AcePlayerPawn_fa50.json",
+        "json_sha256": "dcd705697dec6785d9ae94d56781bed35c26fc085f6246b800f460829966e20f"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_ui4054_C",
+        "effect_class": "plwp_iews_ui4054_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\5f842af5ba6a2e77edd1\\AcePlayerPawn_ui4054.json",
+        "json_sha256": "9a97854f21fe5648dcac3c217331956bd7c9d0f5ee8ed913a10de7d77d3f6b6f"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_x02r_C",
+        "effect_class": "plwp_optical_x1_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\6563e10fc62c0cfe6f45\\AcePlayerPawn_x02r.json",
+        "json_sha256": "fbdcaad62bed91e8cfb0c3e4ac47f9cb5a053f547103209c40caec4c11f08d60"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_x02rv2_C",
+        "effect_class": "plwp_optical_x1_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\d3e7d59b52d588ebaa6f\\AcePlayerPawn_x02rv2.json",
+        "json_sha256": "35e0e7d9a4c4d2df22f1693bd34234a0a7349717089ac5c2e713e113829922b4"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_f35ch_C",
+        "effect_class": "plwp_ecmp_FEN_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\f573333c965622649536\\AcePlayerPawn_f35ch.json",
+        "json_sha256": "8b2fdb6bcba8c4cd261c0dd77fe960e5a39f11fcd0b84d2ce204b33270c02f7f"
+      },
+      {
+        "pawn": "Default__AcePlayerPawn_fa50_s10_C",
+        "effect_class": "plwp_optical_x0_C",
+        "duration_override": null,
+        "json_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\f954bd89bcb1e289969f\\AcePlayerPawn_fa50_s10.json",
+        "json_sha256": "af8c2d4152a9ceecf8292adbfc5201cd57a27ab24aa4b88dd21c8a9d58cd10e8"
+      }
+    ]
+  },
+  "native_captures": [
+    {
+      "capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-8238d0.bin",
+      "sha256": "53ed97c7c0858c541c0cf7b6bfa7166706e31dac4f219fbc0ed3adc5d1899930",
+      "matches_asset_index": true,
+      "rva": "0x8238d0",
+      "decoded_bytes": 7
+    },
+    {
+      "capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-8238e0.bin",
+      "sha256": "d1720c90f39d55d7262e1ea6edc5661a7e1b85d09e01c1bc2103984dc2cdc7d6",
+      "matches_asset_index": true,
+      "rva": "0x8238e0",
+      "decoded_bytes": 8
+    },
+    {
+      "capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-8238f0.bin",
+      "sha256": "31f08d400104350ebae14aca977e74e7387ba8211c7e5fa90feb4ac3e6ece3dc",
+      "matches_asset_index": true,
+      "rva": "0x8238f0",
+      "decoded_bytes": 412
+    },
+    {
+      "capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-82a730.bin",
+      "sha256": "9c9a397344820765e8a073ec71c523f5eb08e1bdf388658a3c9425d5f863b87e",
+      "matches_asset_index": true,
+      "rva": "0x82a730",
+      "decoded_bytes": 126
+    }
+  ],
+  "native_press_release": {
+    "pressed": "0x8238d0以edx=0跳转0x82a730，再到完整飞机切换0x8238f0",
+    "hold_begin": "0x823a5c检查plane+0x1a48非空；0x823a65检查+0x1a50可用；+0x1a51=1、+0x1a54=0",
+    "released": "0x8238e0只将plane+0x1a51置0",
+    "toggle_false_boundary": "0x823999测试ToggleSpecial返回false后跳0x823a0f，仍可继续到长按初始化；仅返回false并不直接屏蔽原生长按入口",
+    "timer_update_boundary": "本次已核对按下与松开，尚未取得计时累计、到期投放、冷却/复用完整调用链，不猜测次数或重置可用标志"
+  },
+  "interference": {
+    "proven": "三SP模拟的按下/松开会先重置原生长按时间、再清真实按住标志；与当前操作重合时会截断真实长按。",
+    "sites": [
+      "keepArmed：原生重建后恢复SP类别",
+      "dualsp_controlled_weapon_switch：MSL/SP类别切换，包括直接选择/循环/延后切换"
+    ],
+    "event_sequence": [
+      "玩家按下X，原生建立长按标志并清计时",
+      "ToggleSpecial钩子将多SP请求交给Lua",
+      "Lua选择逻辑目标，重建SP或转换MSL/SP类别",
+      "模组同步调用原生按下与松开，清除物理X仍按住时的标志"
+    ],
+    "not_caused_by_dpad_setting": true,
+    "occasional_effect_hypotheses": [
+      "原生单SP或没有发生模拟切换的路径可能保留真实长按",
+      "待切换/拒绝等路径可能让原生按住持续更久；尚无对应现场证明",
+      "偶发效果也可能来自其他作者逻辑，不能仅凭现象当作长按成功"
+    ],
+    "source_locations": {
+      "bool observeEmptyWeaponSwitch": [
+        306
+      ],
+      "void keepArmed": [
+        789
+      ],
+      "dualsp_controlled_weapon_switch": [
+        1505
+      ],
+      "base+0x8238e0": [
+        802,
+        805,
+        1520,
+        1524
+      ]
+    },
+    "lua_locations": {
+      "local function pressSwitch": [
+        1108
+      ],
+      "local function selectLogicalWeapon": [
+        1124
+      ],
+      "local function observeOriginalSwitch": [
+        1238
+      ]
+    }
+  },
+  "compatibility_design": [
+    "玩家真实按下/松开继续交给原生；不按固定手柄X硬编码，不拦截作者独立蓝图动作",
+    "两处模拟切换共用窄范围输入保护；调用当时保存真实按住状态和已有计时，模拟流程结束后按同一玩家身份归还",
+    "真实未按下时不能因键盘快捷键、十字键、重建或齐射产生附加效果；延后请求不得恢复已经松开的旧状态",
+    "保留完整飞机切换与锁定参数重绑；不能退回仅ToggleSpecial，亦不能直接删除模拟松开而遗留卡键",
+    "不修改附加效果类型、可用标志、次数、持续、冷却或四个兵装槽；已触发效果能否跨重建保留须单独核对",
+    "不将原生DropTank适配扩大成任意作者长按脚本已通过；独立蓝图绑定按实际输入事件另查"
+  ],
+  "next_steps": [
+    "静态补齐计时/到期/效果生命周期和重建影响，再准备最小代码修复",
+    "后续获授权后验证多SP各类别长按、短按、延后切换、松开取消及非X输入不误触",
+    "CFA-50 EML炮体问题继续保留独立待办，不因长按路径发现而宣称已解决"
+  ],
+  "sources": [
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\research-mod-aircraft-compat\\AC7_MultiSP\\src\\weapon_bridge.cpp",
+      "sha256": "a1a09b2168fe04e49d22e1eada8944237b8971b0e56b73280ab2e46fea9972a4"
+    },
+    {
+      "path": "C:\\Users\\83717\\.codex\\worktrees\\research-mod-aircraft-compat\\AC7_MultiSP\\dist\\DualSP\\Scripts\\main.lua",
+      "sha256": "643a7472bc497176672b223df699e80b33adbb6c8229cf276d6403d4dfb2f4ad"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\c97939ae53c24db26275\\plwp_ecmp_fa50.json",
+      "sha256": "1600d912c4fc3eca7d460e2c41147ec38673cee1cd5adce59167db26ca996217"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\blueprints\\53666b9fcebf648b801f\\AcePlayerPawn_fa50.json",
+      "sha256": "dcd705697dec6785d9ae94d56781bed35c26fc085f6246b800f460829966e20f"
+    }
+  ]
+}

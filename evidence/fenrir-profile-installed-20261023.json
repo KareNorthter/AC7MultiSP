@@ -1,0 +1,124 @@
+{
+  "installed_at": "2026-10-23T23:27:13.971243+08:00",
+  "installed_to_profile_library": true,
+  "profile": "FENRIR",
+  "active_profile_preserved": "A",
+  "new_profile_activated": false,
+  "source_archive": "F:/下载/XFA-33 FENRIR - NEXT GEN STEALTH FIGHTER-1854-1-0-1667978764.7z",
+  "author_paks": 10,
+  "author_paks_byte_identical": true,
+  "deployed_library_files": [
+    {
+      "file": "~~~APR_FENRA_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~~~APR_FENRA_P.pak",
+      "sha256": "de95680e844b652b2d1b075e2318b923b4089b88b8d5afd89da7b0efc996bedc"
+    },
+    {
+      "file": "~~~APR_FENRB_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~~~APR_FENRB_P.pak",
+      "sha256": "b6f3d25516161cfea5e91ab3f59bce5b0ea3eb2b4b6216f40e2ae88716814e7c"
+    },
+    {
+      "file": "~~~APR_FENRC_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~~~APR_FENRC_P.pak",
+      "sha256": "9203845061fba24c2e6e11f1d04d257191520b552ec50ef8582d8571cb3d3656"
+    },
+    {
+      "file": "~APR_WPN_ECMS_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_ECMS_P.pak",
+      "sha256": "00e2b76aa43d145eb8a7326cdb0d4256287038a548089ea8622bd852e8378885"
+    },
+    {
+      "file": "~APR_WPN_HPM_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_HPM_P.pak",
+      "sha256": "8dbc6d66a26d1dfd3a2017426e626078e070d3417cf04f2460f493c817684306"
+    },
+    {
+      "file": "~APR_WPN_LSWM_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_LSWM_P.pak",
+      "sha256": "647efc6a8a46b02a71dca1ca5480c240bf0c320049b2e38849de45ce69010114"
+    },
+    {
+      "file": "~APR_WPN_MEML_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_MEML_P.pak",
+      "sha256": "c0631dae046dd5fd551d51603b1e26d3c4ca46a484ca4258d782823c5e2ea360"
+    },
+    {
+      "file": "~APR_WPN_MTLS_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_MTLS_P.pak",
+      "sha256": "fdca507fdae4e4915efbdf063277fb0aea66ce0f28b0f64a4c8fefc3829cbc7a"
+    },
+    {
+      "file": "~APR_WPN_SSWB_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_SSWB_P.pak",
+      "sha256": "095bca4dcbbaf0264c33776df55a3c217baa8688e58ec9e4f4ed3645d84885ab"
+    },
+    {
+      "file": "~APR_WPN_XQAM_P.pak",
+      "library_path": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\fenrir\\~APR_WPN_XQAM_P.pak",
+      "sha256": "9bfe011d0787fced40da9731a8f970d14158cd9a0af28e591ce5e25dad2d1e10"
+    }
+  ],
+  "replacements": {
+    "118": "XFA-33B FENRIR-B",
+    "125": "XFA-33A FENRIR-A",
+    "128": "XFA-33C FENRIR-C"
+  },
+  "entry_names_retained": [
+    "Su-30M2",
+    "Su-33",
+    "Su-30SM"
+  ],
+  "based_on": "A",
+  "disabled_mods_in_new_profile": [
+    "Su-35SX"
+  ],
+  "reason": "XQAM蓝图两个成员与Su-35SX不同，按作者版本分组隔离",
+  "catalogue_rows_when_enabled": 176,
+  "cfa50_retained": true,
+  "optional_formation_lights_installed": false,
+  "author_plane_values_preserved": true,
+  "support_pak_sha256": "5f4039537d532c527a4bad20bfb3364b8fc408871e209f3975b3a85bc4846f3f",
+  "bone_support": [
+    {
+      "table": "PlaneBodyConfig",
+      "previous_rows": 657,
+      "added_rows": 0
+    },
+    {
+      "table": "PlaneCockpitConfig",
+      "previous_rows": 534,
+      "added_rows": 0
+    }
+  ],
+  "backup": "E:\\AC7_MultiSP\\backup\\fenrir-profile-20261023-232701",
+  "launcher": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\启用XFA-33组_Enable-Fenrir.cmd",
+  "active_game_paks_preserved_by_metadata": 210,
+  "protected_core_settings_save_file_count": 330,
+  "protected_hashes_equal": true,
+  "cfa50_feedback": {
+    "user_confirmed_found": true,
+    "current_menu_before_exit": [
+      {
+        "index": 132,
+        "text": "AircraftShort_Name_fa50",
+        "locked": 0,
+        "secret": 0,
+        "hidden": 0
+      }
+    ],
+    "neighbors": [
+      "Rafale C",
+      "CFA-50",
+      "SLUAV"
+    ]
+  },
+  "exit_event_scope": "代理曾发正常关闭窗口请求，随后系统出现0x80000004转储。用户要求先继续安装；未判定为CFA-50三SP崩溃根因，异常记录与转储保留原位。",
+  "game_closed_by_agent": true,
+  "game_started_by_agent": false,
+  "core_compiled": false,
+  "test_modules_written": false,
+  "test_modules_run": false,
+  "gameplay_verified": false,
+  "rollback": "关闭游戏后运行启用A组_Enable-A.cmd返回A组；本次入库时A本身没有切换，恢复小文件前先保留后续修改。"
+}

@@ -1,0 +1,125 @@
+{
+  "recorded_at": "2026-10-24T07:37:18.005785+08:00",
+  "status": "源码修复完成，静态审阅；未编译/安装/实机验证",
+  "branch": "codex/research-mod-aircraft-compat",
+  "before_head": "01790e375835da452f3e914978061b16fb4ef050",
+  "main_reviewed": "5a33e3a8de7cd02a32ce70400d4d5145db9c9e43",
+  "authorization": "用户要求修复长按X；默认不编译、测试、安装或操作游戏的约定继续适用",
+  "problem": "内部完整飞机切换通过Pressed/Released配对完成，重置并清除玩家原生DropTank长按输入",
+  "implementation": {
+    "shared_entry": "switchWeaponCategoryWithoutHold",
+    "call": "0x82a730(plane,true)，true只跳过0x8238f0尾部的DropTank长按初始化",
+    "call_sites": [
+      {
+        "line": 324,
+        "text": "void switchWeaponCategoryWithoutHold(Addr plane,Addr activator) {"
+      },
+      {
+        "line": 828,
+        "text": "switchWeaponCategoryWithoutHold(command.plane,command.activator);"
+      },
+      {
+        "line": 1541,
+        "text": "switchWeaponCategoryWithoutHold(plane,activator);"
+      }
+    ],
+    "native_functions": [
+      {
+        "rva": "0x82a730",
+        "length": 126,
+        "raw_capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-82a730.bin",
+        "capture_sha256": "9c9a397344820765e8a073ec71c523f5eb08e1bdf388658a3c9425d5f863b87e",
+        "fnv1a64": "0x844bfd6c64749fd8",
+        "decoded_bytes": 126,
+        "parameter_instructions": [
+          "82a73d movzx edi, dl",
+          "82a798 movzx edx, dil"
+        ]
+      },
+      {
+        "rva": "0x8238f0",
+        "length": 412,
+        "raw_capture": "E:\\AC7_MultiSP\\backup\\local-assets-20261023\\misc\\flow-8238f0.bin",
+        "capture_sha256": "31f08d400104350ebae14aca977e74e7387ba8211c7e5fa90feb4ac3e6ece3dc",
+        "fnv1a64": "0x2d85e7c3195f8dc2",
+        "decoded_bytes": 412,
+        "parameter_instructions": [
+          "823901 movzx ebp, dl",
+          "823a57 test bpl, bpl",
+          "823a5a jne 0x823a7c",
+          "823a6e mov byte ptr [rsi + 0x1a51], 1",
+          "823a75 mov dword ptr [rsi + 0x1a54], r14d"
+        ]
+      }
+    ],
+    "guards": [
+      "同一会话的游戏线程、飞机和激活器归属",
+      "完整包装函数126字节和完整类别切换函数412字节首次指纹校验",
+      "execute兵装重建前先做代码资格预检；内部切换使用已有ControlledWeaponSwitch防止当作用户轮切"
+    ],
+    "preserved": [
+      "完整原生操作门禁",
+      "ToggleSpecial类别切换",
+      "锁定组件参数重绑与PART修正",
+      "既有舱门切换前后回调",
+      "原生真实按下和松开路径"
+    ],
+    "no_long_hold_state_ownership": true,
+    "no_drop_tank_fields_written": true,
+    "no_per_frame_polling_added": true,
+    "no_effect_or_cooldown_modified": true,
+    "no_new_user_visible_messages": true,
+    "why_no_release": "内部调用已跳过按住状态初始化，没有新增按住标志需要配对释放；真实Released仍由原生输入派发，不写回历史快照",
+    "change_from_static_proposal": "使用已核对的原生参数取代手工保存/恢复字段，避免跨重建归还旧状态"
+  },
+  "static_review": {
+    "reviewed": true,
+    "control_flow": "包装器bool仅透传，完整函数仅在尾部分支读取该值；true直接跳过+1a51=1及+1a54=0，其他门禁与类别更新不变",
+    "coverage": "keepArmed覆盖setup/switch/resupply/checkpoint恢复；controlled入口覆盖普通轮切/直选/延后类别转换",
+    "qualification_cost": "进程首次核对；快照和检查点保存不额外校验，未增加逐帧扫描",
+    "checks": "静态差异、历史采样摘要/参数控制流及调用点人工审阅；未运行测试或编译器",
+    "expected_but_not_gameplay_verified": [
+      "X持续按住跨内部换槽不被清除",
+      "真实松开取消长按",
+      "键盘/十字键/齐射内部切换不误触附加效果",
+      "短按轮切、忙碌延后和补给/检查点无回归"
+    ]
+  },
+  "files": [
+    {
+      "path": "src/weapon_bridge.cpp",
+      "sha256": "d739d2839707259bfd20ffb8989b87d186f0617c3ca13c4e8262a5be12a85911",
+      "scope": "功能源码"
+    },
+    {
+      "path": "src/common_bay_animation.hpp",
+      "sha256": "bf343684e0cd2802aad5017f89754b47c44bfa21c5d134bc1a11ee4ae0f0429a",
+      "scope": "同步注释"
+    },
+    {
+      "path": "dist/DualSP/Scripts/main.lua",
+      "sha256": "e3a092551e10f8df256d52a084a74f68de871ffabd90b8e596a92d3fcd6b32ed",
+      "scope": "同步注释"
+    }
+  ],
+  "not_done": {
+    "compiled": false,
+    "test_modules_written": false,
+    "tests_run": false,
+    "installed": false,
+    "game_started": false,
+    "game_closed": false,
+    "process_opened": false,
+    "gameplay_verified": false,
+    "pushed": false
+  },
+  "eml_followup": {
+    "user_report": "关闭F6模组总开关，回机库只选EML后，CFA50切换SP仍没有动画和EML模型弹出",
+    "source": "用户2026-10-24追加反馈",
+    "new_process_capture": false,
+    "effective_master_switch_independently_verified": false,
+    "conclusion": "只记录对照结果，不判定作者原包或三SP根因；用户要求暂不深入，保持未解决/暂缓",
+    "eml_code_or_assets_changed": false
+  },
+  "artifact_boundary": "只提交源码、文档和摘要；游戏PAK、原生采样字节及个人配置不入Git；旧冻结DLL未触碰"
+}

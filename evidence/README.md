@@ -14,6 +14,12 @@
 | 更新模块 | [alpha1来源](2.24.0-alpha1-source-intake.json)、[alpha2来源](2.24.0-alpha2-source-intake.json) | UI、更新清单和通知的接收范围 |
 | 挂载完整原料 | [refresh](2.23.0-refresh-integration.json)、[Socket核对](mount-socket-reference-audit-20261021.json)、[TGM r2](f18etg-whole-rack-socket-r2.json) | 77资源阶段的来源及资格 |
 | 原生/第三方边界 | [原生退让](special-aircraft-native-fallback-20261022.json)、[UAV/HPM契约](mod-special-sp-contract-20261022.json) | 哪些对象与使用路径可被放行 |
+| Mod机体分组安装 | [20261023安装](aircraft-mod-profiles-installed-20261023.json) | 用户选择原作者资源分组启用、部署范围和缺项保留；不代表实机通过 |
+| CFA-50与机库名称 | [20261023核对](cfa50-visibility-review-20261023.json) | 呼号包名称覆盖、用户授权禁用、CFA-50两包同字节及当前目录核对；显示仍待用户重启确认 |
+| XFA-33独立替换组 | [20261023入库](fenrir-profile-installed-20261023.json) | 三型替换关系、与Su-35SX隔离、保持A组、CFA-50机库已找到的后续反馈；未启用或实机验证新组 |
+| CFA-50的EML与十字键 | [20261023现场](cfa50-eml-runtime-review-20261023.json) | 炮体资源完整而已发布姿态仍收纳、舱门域残留；关闭多SP十字键后未发现输入拦截，僚机响应待用户稍后测试；EML根因待原生出击对照 |
+| Mod机体长按切换键 | [20261024静态研究](mod-aircraft-hold-switch-static-20261024.json) | CFA-50复用原生副油箱输入；两处模拟按下/松开会截断真实长按，通用保护方案与未核计时/效果边界；未改代码或游戏 |
+| 长按切换键源码修复 | [20261024源码](mod-aircraft-hold-switch-fix-source-20261024.json) | 两处内部切换改走原生跳过长按初始化参数，保留真实输入；未编译/安装/实测。另记录用户关闭总开关后EML仍无动画/炮体，按指令暂缓 |
 | 动画半成品 | [产品访问](sp-animation-product-access.json)、[早期动画](mount-expansion-animated.json) | 研究依据与尚未成立的运行条件 |
 | 仓库整理 | [20261023治理回执](project-governance-20261023.json) | 删除的分支tip、封存工作树、快照及本轮核对范围 |
 | 文档与旧产物归档 | [20261023归档回执](artifact-archive-20261023.json) | 文档路径映射、旧包和DLL归档位置、仍保留依赖及核对范围 |
