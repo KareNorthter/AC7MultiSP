@@ -62,7 +62,6 @@ internal static class VerifySetup {
             bundle = Activator.CreateInstance(type, true);
             string game = (string)Call("GameRoot", args[1]);
             Console.WriteLine("自动发现：" + String.Join("；", ((IEnumerable<string>)Call("FindGames")).ToArray()));
-            Assert((string)Call("Dependencies", game) == "", "本机运行库初筛");
             Call("Export", Path.Combine(output, "导出通用包.zip"));
             Assert(File.Exists(Path.Combine(output, "导出通用包.zip")), "调用成品内置资源导出 ZIP");
             var before = Files(game);

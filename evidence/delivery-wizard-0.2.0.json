@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-10-23",
+  "delivery_version": "0.2.0",
+  "payload_version": "2.24.1",
+  "input_document": "E:/AC7_MultiSP/docs/安装程序交互.md",
+  "input_document_sha256": "a6acdb07cd1100bea07ee9dd6924c4bf9f81f1916a738325a59304c77ae952eb",
+  "exe": "E:\\AC7_MultiSP\\Temp\\delivery-preview-0.2.0\\AC7MultiSP_Installer.exe",
+  "exe_sha256": "74dd8a158a927ed4ce08f4fea8dacf34ed3ea29bf08c59231bb1d7f8bde9cdf6",
+  "exe_bytes": 41719808,
+  "source_zip_sha256": "b09f1300d67840a54a06bdea5f0e5a1f1bf859a6f350f623bd63742faee1146f",
+  "sources_sha256": {
+    "app.manifest": "df62446aae19a6508d4978ae876ae08c888ef8c9bc2e7166a1a561c0a495348e",
+    "Bundle.cs": "f47f6b9a32838496b1cf5b482107e8e49a4bc32b3e4fc19ad428f5b343c662f3",
+    "MainWindow.cs": "b7c4c722d5f499ea1ae40152be445012f7c0f7d7b6e098d2f29894f52a18e8ec",
+    "Program.cs": "b9b3deeb601063b82719d24f2b09e02ba28d25c0667cbf6ee4592b015e8daf98"
+  },
+  "changes": [
+    "先检查更新，再提供两个安装方式选项",
+    "下载新版后关闭，忽略后继续当前版本",
+    "Vortex导出目录选择，导出完成关闭",
+    "直接安装仅安装或更新、卸载两个主按钮",
+    "更新日志和授权信息两个标签，右上作者信息跨页显示",
+    "移除VC++及DirectX检测和下载入口",
+    "Vortex管理拦截保留，恢复并入主操作"
+  ],
+  "exe_compiled": true,
+  "installer_executed": false,
+  "test_modules_run": false,
+  "game_installed": false,
+  "game_launched": false,
+  "uploaded": false,
+  "mod_recompiled": false,
+  "protected_old_core_unchanged": true,
+  "limitations": [
+    "本轮仅编译与静态核对，未运行新界面或安装；0.1.0旧验收不冒充新交互已验收",
+    "在线若尚无EXE链接，新版本按钮跳到Nexus发布页，不把ZIP当EXE",
+    "仍拒绝未知或不完整加载器，不宣称能自动解决所有第三方Mod冲突"
+  ]
+}

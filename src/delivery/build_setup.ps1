@@ -13,7 +13,7 @@ foreach ($entry in $taskReport.installer_sources_sha256.PSObject.Properties) {
         throw "冻结源码已改变：$($entry.Name)"
     }
 }
-if ($taskReport.exe_filename -notmatch '^AC7MultiSP-[0-9.]+-Setup-preview-[0-9.]+\.exe$') { throw '成品名称无效。' }
+if ($taskReport.exe_filename -ne 'AC7MultiSP_Installer.exe') { throw '成品名称无效。' }
 $taskExe = Join-Path $taskInput $taskReport.exe_filename
 if (Test-Path -LiteralPath $taskExe) { throw 'EXE 已存在，拒绝覆盖。' }
 $taskCompiler = Join-Path ([Environment]::GetFolderPath('Windows')) 'Microsoft.NET/Framework64/v4.0.30319/csc.exe'

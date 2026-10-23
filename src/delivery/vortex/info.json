@@ -1,7 +1,7 @@
 {
   "name": "AC7MultiSP 安装支持",
   "author": "Northter",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "补充 AC7 专用 UE4SS 前置引导及 MultiSP 跨目录安装；保留原 AC7 游戏扩展。",
   "requiredVersion": ">=2.9.0"
 }

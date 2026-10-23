@@ -144,14 +144,6 @@ namespace AC7MultiSP.Setup {
             }
             return games;
         }
-        internal static string Dependencies(string game = null) {
-            // 系统组件的实际 DLL 能否由 64 位加载器找到；不把 DX12 版本号视为旧组件齐全。
-            var missing = new List<string>();
-            foreach (string name in new[] { "vcruntime140.dll", "vcruntime140_1.dll", "msvcp140.dll", "xinput1_3.dll" })
-                if (!File.Exists(Path.Combine(Environment.SystemDirectory, name)) && (game == null ||
-                    !File.Exists(Path.Combine(game, name)) && !File.Exists(Path.Combine(game, "ue4ss", name)))) missing.Add(name);
-            return String.Join("、", missing.ToArray());
-        }
         internal static bool OwnedPath(string relative, bool shared) {
             bool program = relative.StartsWith(Mod + "Scripts/", StringComparison.Ordinal) || relative.StartsWith(Mod + "bin/", StringComparison.Ordinal) ||
                 relative.StartsWith(Mod + "licenses/", StringComparison.Ordinal) || relative.StartsWith(Mod + "docs/", StringComparison.Ordinal) ||
@@ -221,8 +213,6 @@ namespace AC7MultiSP.Setup {
                 AddChange(plan, StateName, null);
                 return plan;
             }
-            string missing = Dependencies(game);
-            if (missing.Length != 0) throw new IOException("缺少运行组件：" + missing + "。请用“运行库下载”补齐后重新检测。");
             string oldVersionFile = Safe(game, Mod + "VERSION");
             if (File.Exists(oldVersionFile)) {
                 string old = File.ReadAllText(oldVersionFile, Utf8).Trim();

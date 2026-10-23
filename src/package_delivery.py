@@ -149,6 +149,8 @@ enabled.txt 用于独立启用，不需要覆盖 mods.txt；停用时必须同�
     resources, embedded = [], {}
     payload = {n: ('mod', data) for n, data in universal.items()}
     payload.update({n: ('loader', game[n]) for n in shared_names if n != 'ue4ss/Mods/mods.txt'})
+    # 仅用于安装器显示，不混入游戏载荷或导出的通用 ZIP。
+    payload['installer/授权.txt'] = ('installer', (ROOT / 'docs/授权.txt').read_bytes())
     for name, (kind, data) in sorted(payload.items()):
         identifier = 'payload.' + sha(name.encode('utf-8'))
         file = resource_dir / identifier
@@ -161,7 +163,7 @@ enabled.txt 用于独立启用，不需要覆盖 mods.txt；停用时必须同�
     meta_file = resource_dir / 'bundle.json'
     meta_file.write_bytes(encoded(meta))
     resources.append((meta_file, 'bundle.json'))
-    exe = output / f'AC7MultiSP-{version}-Setup-preview-{policy["delivery_version"]}.exe'
+    exe = output / 'AC7MultiSP_Installer.exe'
     frozen = output / 'setup-source'
     frozen.mkdir()
     source_hashes = {}
