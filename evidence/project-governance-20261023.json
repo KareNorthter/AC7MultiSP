@@ -505,5 +505,15 @@
     "tests_run": false,
     "game_operated": false,
     "uploaded": false
+  },
+  "documentation_commit": "d2653ce",
+  "after_branch_count": 23,
+  "after_worktree_count": 39,
+  "governance_worktree": {
+    "path": "C:\\Users\\83717\\.codex\\worktrees\\project-governance\\AC7_MultiSP",
+    "state": "completed-detached",
+    "archive_attempt": "rejected-by-app",
+    "reason": "This worktree is protected by a pinned task or workspace.",
+    "pin_settings_changed": false
   }
 }
