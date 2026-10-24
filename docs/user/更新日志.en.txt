@@ -1,5 +1,8 @@
 AC7MultiSP Main Updates
 
+Unreleased fix (source only; build and in-game verification pending)
+• Fixed quick launch stopping during main-menu preparation and incorrect menu identification when skipping startup logos.
+
 2.25.X (local validation candidate)
 • Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.
 • Added startup logo skipping.

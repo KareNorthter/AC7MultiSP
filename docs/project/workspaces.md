@@ -8,7 +8,7 @@
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
 | 三线程整合与EXE交付，已交付待用户验收 | 本集成交付聊天；源码冻结95d85bd；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP；构建在E:/AC7_MultiSP/Temp/tasks/20261024-integration-delivery | 接收22a899e、2bef53b及main 7f213aa，统一2.25.0候选、双语日志和21个运行文件；完整重编及EXE封装完成，[回执](../../evidence/2.25.0-exe-delivery.json)记录来源和摘要。仅EXE进入Release/2.25.0；未运行测试、安装器或游戏，未安装/上传，游戏验收由用户完成 |
-| 快速进入测试任务，源码已接收待实测 | 来源2bef53b；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 快速任务、自动出击及Logo源码进入本轮2.25.0整合；设计与未覆盖范围见[唯一正文](../engineering/quick-mission-launch.md)，研究原件保持。完整构建由上行整合任务完成，尚未执行新入口或游戏验收 |
+| 快速进入测试任务，失败修复源码待验证 | 来源2bef53b已接收；本轮同步main 774946b；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 用户反馈2.25.0快速任务失败；本聊天修正快速任务准备/原生菜单归属校验，同步失败阶段日志、设计、README状态和双语更新条目。[失败定位](../../evidence/quick-mission-failure-20261024.json)记录主菜单误调武器输入和菜单GI非反射字段；本轮未编译/安装/操作游戏，不改版本与旧交付回执 |
 | Mod机体兼容性续研，长按修复已接收待实测 | 来源22a899e；codex/research-mod-aircraft-compat | C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 长按修复进入本轮2.25.0完整构建；[续研正文](../research/mod-aircraft-compatibility.md)保留机体分组、原包缺项及待办。未变更游戏机体组，EML问题按用户要求暂缓；短按/长按及三SP无回归仍待用户验收 |
 | F6启动更新选项，已接收待实测 | 来源7f213aa；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 默认开启选项、配置19补缺失字段及管理协议22已纳入本轮2.25.0完整构建；旧源码阶段未构建记录保留，实际联网和保存行为待用户验收 |
 | 安装器与F6易用性调整，已接收待人工验证 | 来源5a33e3a、DPI修订050dc3d；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 新首页/F6/DLC许可/DPI已纳入本轮2.25.0整合。原2.24.3、DPI回执和成品保留；旧线程停止构建的指令只记录当时范围，本集成按用户新授权制作新EXE，未安装/操作游戏/上传 |

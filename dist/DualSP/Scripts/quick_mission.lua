@@ -71,13 +71,14 @@ function Module.new(deps)
         if self.flight and self.flight.id==id then return {a=self.flight.swp,b=-1,c=-1,ratio=1}end
     end
     function self:fail(key,detail,block)
+        local stage=self.pending and self.pending.stage or "validation"
         self:releaseSkip()
         self.pending=nil;self.flight=nil;self.status="failed";self.error_key=key
         if block then
             local instance=deps.context().instance
             self.blocked=tostring(detail);self.blockWorld=valid(instance)and address(instance:GetWorld())or 0;deps.block(self.blocked)
         end
-        deps.note("QUICK_MISSION_FAILED "..tostring(detail));changed()
+        deps.note("QUICK_MISSION_FAILED stage="..stage.." "..tostring(detail));changed()
     end
     function self:failed(detail)if self.pending then self:fail("quick.failed",detail,true)end end
     function self:refresh(force)
@@ -143,17 +144,20 @@ function Module.new(deps)
             source={instance=address(context.instance),world=address(context.instance:GetWorld()),plane=context.instance:GetSelectedPlaneID(),
                 swp=context.instance:GetSelectedPlaneSWP(),skin=context.instance:GetSelectedPlaneSkinNo()}
             self.pending={instance=source.instance,sourceWorld=source.world,started=os.time(),task=task,target=target,preset=preset,
-                skippedMini={},lastSkip=-1,stage="loading"}
+                skippedMini={},lastSkip=-1,stage="preparing"}
             self.flight=nil;self.blocked=nil;self.autoEligible=false;self.autoChecked=true
             deps.prepare()
+            deps.note("QUICK_MISSION_PREPARED task="..task.code.." request="..action.request)
             assert(address(context.instance)==source.instance and address(context.instance:GetWorld())==source.world,"快速任务准备时世界已变化")
             context.instance:SetPlaneAndSWP(preset.plane_id,preset.swp)
             context.instance:SetSelectedPlaneSkinNo(0)
             assert(context.instance:GetSelectedPlaneID()==preset.plane_id and context.instance:GetSelectedPlaneSWP()==preset.swp,
                 "快速任务机体选择被原生拒绝")
+            self.pending.stage="native_request"
+            deps.note("QUICK_MISSION_NATIVE_REQUEST task="..task.code.." plane="..preset.plane_id.." swp="..preset.swp)
             local result=native(1,menu,preset)
             assert(result.protocol==1 and result.accepted==true,"原生加载器没有接受快速任务")
-            self.pending.accepted=true;self.ack=action.request;self.status="loading";self.error_key=nil
+            self.pending.accepted=true;self.pending.stage="loading";self.ack=action.request;self.status="loading";self.error_key=nil
             deps.note("QUICK_MISSION_ACCEPTED task="..task.code.." plane="..preset.plane_id.." swp="..preset.swp);changed()
         end)
         if not ok then

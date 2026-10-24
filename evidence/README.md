@@ -14,7 +14,7 @@
 | 2.23.1验收/标识 | [用户验收](2.23.1-formal-user-validation.json)、[标识变换](2.23.1-formal-version-label.json) | 已测功能和正式标识的关系 |
 | alpha1安装 | [预检](2.24.0-alpha1-install-preflight.json)、[完成](2.24.0-alpha1-install-completion.json) | 当时Vortex链接处置、个人资料与实际交换；不当作实时安装状态 |
 | 更新模块 | [alpha1来源](2.24.0-alpha1-source-intake.json)、[alpha2来源](2.24.0-alpha2-source-intake.json) | UI、更新清单和通知的接收范围 |
-| 快速任务入口研究 | [20261024只读观察](quick-mission-observation-20261024.json)、[原生入口依据](quick-mission-native-entry-20261024.json) | 23关实值与M6/DLC2手动出击观察；不证明自动启动或跳CG可用，原始日志及代码仅留本机Temp |
+| 快速任务入口研究 | [20261024只读观察](quick-mission-observation-20261024.json)、[原生入口依据](quick-mission-native-entry-20261024.json)、[2.25.0失败定位](quick-mission-failure-20261024.json) | 23关实值与M6/DLC2手动出击观察；不证明自动启动或跳CG可用，原始日志及代码仅留本机Temp |
 | 挂载完整原料 | [refresh](2.23.0-refresh-integration.json)、[Socket核对](mount-socket-reference-audit-20261021.json)、[TGM r2](f18etg-whole-rack-socket-r2.json) | 77资源阶段的来源及资格 |
 | 原生/第三方边界 | [原生退让](special-aircraft-native-fallback-20261022.json)、[UAV/HPM契约](mod-special-sp-contract-20261022.json) | 哪些对象与使用路径可被放行 |
 | Mod机体分组安装 | [20261023安装](aircraft-mod-profiles-installed-20261023.json) | 用户选择原作者资源分组启用、部署范围和缺项保留；不代表实机通过 |
