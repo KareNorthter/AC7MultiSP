@@ -31,7 +31,7 @@ ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，
 
 `VerifyAllResources`在安装、卸载、恢复、应用及导出入口写盘前完整核对内嵌资源，每安装器进程只完成一次；后续读取资源仍校对本项摘要。先核对发行载荷，不拿目标目录中玩家自改的音频、配置、运行状态或其他Mod作盗版判定；目标的备份/迁移/管理器拒绝规则继续沿用原事务。Vortex不会自动执行作者验签。客户端完全被替换时仍可能伪造本地结果，外部可信来源不可省略。
 
-`src/distribution_symbols.py`先把新构建两DLL复制到`private-debug/`，再用同工具链`llvm-strip`精简交付副本，静态比较必需导出、映射节字节、异常/重定位/TLS等加载契约；不一致即停止，不恢复覆盖旧核心。私有诊断件摘要和精简工具摘要进入新构建回执，私有DLL不进入通用ZIP。它们随本机构建保留；精简结果由构建回执记录，加载契约的静态一致不等于实际游戏加载或性能已验证。
+`src/distribution_symbols.py`先把新构建两DLL复制到`private-debug/`，再用同工具链`llvm-strip --strip-all`精简交付副本（COFF不使用不支持的keep-section参数，保留[LLVM的COFF处理](https://github.com/llvm/llvm-project/blob/main/llvm/lib/ObjCopy/COFF/COFFObjcopy.cpp)所述加载节并继续逐字节核对），静态比较必需导出、映射节字节、异常/重定位/TLS等加载契约；不一致即停止，不恢复覆盖旧核心。私有诊断件摘要和精简工具摘要进入新构建回执，私有DLL不进入通用ZIP。它们随本机构建保留；精简结果由构建回执记录，加载契约的静态一致不等于实际游戏加载或性能已验证。
 
 ## 生成、冻结与封装入口
 

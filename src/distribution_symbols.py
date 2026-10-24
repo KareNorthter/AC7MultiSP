@@ -66,8 +66,8 @@ def compact(output, compiler, run, environment):
         shutil.copy2(dll, original)
         if digest(original) != digest(dll):
             raise ValueError('私有诊断副本摘要不同，停止精简')
-        run([str(tool), '--strip-all', '--keep-section=.reloc', '--keep-section=.pdata',
-             '--keep-section=.xdata', '--keep-section=.eh_frame', str(dll)], cwd=output, env=environment, check=True)
+        # COFF不支持keep-section；strip-all去符号/调试节，加载节是否保留由下方逐字节校验决定。
+        run([str(tool), '--strip-all', str(dll)], cwd=output, env=environment, check=True)
         if loader_contract(dll) != before:
             raise ValueError('精简改变加载契约，不能交付；原件仍在private-debug')
         with pefile.PE(str(dll)) as pe:
