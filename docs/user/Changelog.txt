@@ -1,5 +1,10 @@
 AC7MultiSP
 
+2.25.3 alpha3 (self-test build, unreleased)
+• Quick missions add skin selection while retaining 1–3 SP loadouts and existing presets. Skins are checked by actual number, DLC ownership and resource reference.
+• Fixed a text-replacement error when displaying weapon descriptions on the resupply selection page, without changing ammunition or reload rules.
+• Skin selection and resupply behavior await in-game validation. Repeated bay opening on XFA-33 B and Su-57 TGM remains deferred.
+
 2.25.3 alpha2 (self-test build, unreleased)
 • Quick missions support 1–3 selected SP weapons, save the complete test loadout and retain launch-time ammunition ratios. Existing single-SP presets remain compatible.
 • Extended Backspace and Space isolation in F6 while paused, retaining text editing, rebinding and key-release handling after closing the panel. In-game validation is pending.

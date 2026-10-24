@@ -5,7 +5,7 @@ std::array<char,160> quickSearch{};
 void loadQuickMissionDraft() {
     if(!state.contains("quick_mission")){quickDraft=Json();return;}
     const auto& data=state.at("quick_mission");
-    if(data.value("protocol",0)!=2){quickDraft=Json();return;}
+    if(data.value("protocol",0)!=3){quickDraft=Json();return;}
     quickRequest=std::max(quickRequest,data.at("response").get<int>());
     if(quickPending && data.at("response").get<int>()>=quickPending)quickPending=0;
     const int generation=data.at("generation").get<int>();
@@ -14,7 +14,7 @@ void loadQuickMissionDraft() {
 }
 void submitQuickMission(const char* action) {
     quickPending=++quickRequest;
-    enqueue({{"type",action},{"quick_protocol",2},{"request",quickPending},
+    enqueue({{"type",action},{"quick_protocol",3},{"request",quickPending},
         {"generation",quickGeneration},{"preset",quickDraft}});
 }
 std::string quickMissionLabel(const Json& task) {
@@ -23,6 +23,10 @@ std::string quickMissionLabel(const Json& task) {
         char label[128]{};std::snprintf(label,sizeof(label),uiText("quick.dlc_task"),code.back()-'0');return label;
     }
     return task.value("label",std::string("--"));
+}
+std::string quickSkinLabel(int skin) {
+    if(skin==0)return uiText("quick.skin_default");
+    char label[128]{};std::snprintf(label,sizeof(label),uiText("quick.skin_number"),skin);return label;
 }
 void drawQuickMission() {
     if(quickDraft.is_null()){ImGui::TextWrapped("%s",uiText("quick.unavailable"));return;}
@@ -56,13 +60,31 @@ void drawQuickMission() {
             if(ImGui::Selectable(label.c_str(),plane==&row)) {
                 if(quickDraft.at("plane_id")!=row.at("plane_id")) {
                     quickDraft["plane_id"]=row.at("plane_id");
-                    quickDraft["a"]=0;quickDraft["b"]=-1;quickDraft["c"]=-1;
+                    quickDraft["a"]=0;quickDraft["b"]=-1;quickDraft["c"]=-1;quickDraft["skin_no"]=0;
                 }
                 plane=&row;
             }
         }
         ImGui::EndCombo();
     }
+    const Json* skin=nullptr;
+    if(plane)for(const auto& row:plane->at("skins"))if(row.at("skin_no")==quickDraft.at("skin_no"))skin=&row;
+    const auto skinPreview=skin?quickSkinLabel(skin->at("skin_no").get<int>()):std::string("--");
+    ImGui::BeginDisabled(!plane);
+    ImGui::SetNextItemWidth(std::min(520.f,ImGui::GetContentRegionAvail().x));
+    if(ImGui::BeginCombo(uiText("quick.skin"),skinPreview.c_str())) {
+        if(plane)for(const auto& row:plane->at("skins")) {
+            const auto label=quickSkinLabel(row.at("skin_no").get<int>());
+            ImGui::BeginDisabled(!row.value("available",false)||!row.value("licensed",false));
+            if(ImGui::Selectable(label.c_str(),skin==&row)){quickDraft["skin_no"]=row.at("skin_no");skin=&row;}
+            ImGui::EndDisabled();
+        }
+        ImGui::EndCombo();
+    }
+    ImGui::EndDisabled();
+    const bool skinReady=skin&&skin->value("available",false)&&skin->value("licensed",false);
+    ImGui::TextWrapped("%s",uiText("quick.skin_help"));
+    if(plane&&!skinReady)ImGui::TextWrapped("%s",uiText("quick.skin_unavailable"));
     const bool fixed=task&&task->value("fixed_sp",false);
     if(fixed&&quickDraft.at("a").get<int>()<0) {
         quickDraft["a"]=0;quickDraft["b"]=-1;quickDraft["c"]=-1;
@@ -96,6 +118,7 @@ void drawQuickMission() {
     if(fixed)ImGui::TextWrapped("%s",uiText("quick.fixed_sp"));
     const bool hasWeapons=std::any_of(selected.begin(),selected.end(),[](bool value){return value;});
     if(!hasWeapons)ImGui::TextWrapped("%s",uiText("choose.1.3.sp.weapons.717c3572"));
+    ImGui::TextWrapped("%s",uiText("quick.parts_pending"));
     int difficulty=quickDraft.at("difficulty").get<int>();
     ImGui::SetNextItemWidth(240);
     if(ImGui::Combo(uiText("quick.difficulty"),&difficulty,uiText("quick.difficulties")))quickDraft["difficulty"]=difficulty;
@@ -104,7 +127,7 @@ void drawQuickMission() {
     ImGui::TextWrapped("%s",uiText("quick.auto_help"));
     bool logos=quickDraft.at("skip_logos").get<bool>();
     if(ImGui::Checkbox(uiText("quick.skip_logos"),&logos))quickDraft["skip_logos"]=logos;
-    ImGui::BeginDisabled(!hasWeapons);
+    ImGui::BeginDisabled(!hasWeapons||!skinReady);
     if(ImGui::Button(uiText("quick.save")))submitQuickMission("quick_mission_save");
     ImGui::SameLine();ImGui::BeginDisabled(!task||!plane||!task->value("licensed",false));
     if(ImGui::Button(uiText("quick.start")))submitQuickMission("quick_mission_start");

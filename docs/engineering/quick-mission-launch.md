@@ -1,6 +1,6 @@
 # 快速进入测试任务设计
 
-状态：用户在2.25.3 alpha1确认快速任务仍只能选择一种SP；该版原实现确实只保存单槽，并非多SP资格误判。alpha2源码已将UI、预设及临时配装成套扩展到1至3SP，已完成[alpha2完整构建](../../evidence/2.25.3-alpha2-exe-delivery.json)，尚未安装或实机验证。来源及待测项见[反馈与源码记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)，正式状态见[项目入口](../../README.md)。
+状态：alpha2已完整构建多SP与F6键盘修订；本轮接收bbf0984/4fb9fd0的皮肤功能，保留alpha2扁平三SP预设，规范写回schema3。另修订补给兵装说明的翻译多返回值报错，准备2.25.3 alpha3完整构建。来源与边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，正式状态见[项目入口](../../README.md)。
 
 ## 目标与入口
 
@@ -103,10 +103,10 @@
 
 - `src/quick_mission.hpp`：任务表读取、原生自由任务设置/最终加载请求、Boot片头视觉结束状态；由weapon_bridge包含。
 - `dist/DualSP/Scripts/quick_mission.lua`：独立预设、许可、幂等请求、跨世界等待、入口过场跳过和临时1至3SP配装。main仅负责接入已有调度与初始化，不另造武器初始化链。
-- `src/quick_mission_panel.hpp`：F6调试页独立卡片。只提交动作，不在渲染线程调用游戏函数。UI/Lua子协议2与现有管理/换机协议分别核对；原生出击ABI仍为v1，只接收首槽，不把Lua多槽参数误传给旧原生接口。
+- `src/quick_mission_panel.hpp`：F6调试页独立卡片。只提交动作，不在渲染线程调用游戏函数。UI/Lua子协议3与现有管理/换机协议分别核对；原生出击ABI为v2，接收首槽和第10项skin_no；独立能力门禁拒绝混装旧UI/核心。
 - `runtime_context.quickMissionMenu`：只返回当前世界可见、已启用输入的MainMenuWidget，或F6实际暂借输入的该页面。
 
-预设为DualSP目录下`quick-mission.json`，schema=2，字段mission_id/plane_id/a/b/c/difficulty/auto_launch/skip_logos；a/b/c是原生配置号0至2，尾部空槽为-1，必须连续、不重复且至少一槽。默认M1、F-16C、单SP配置0、普通、自动出击关闭、Logo跳过开启。旧schema1的swp在内存转换为单槽，启动读取不改原件；提交保存或出击时才写schema2，仍先写pending并备份旧文件，失败保留原件。配置和副本均忽略，不入Git。
+预设为DualSP目录下`quick-mission.json`，schema=3，字段mission_id/plane_id/a/b/c/skin_no/difficulty/auto_launch/skip_logos；a/b/c是原生配置号0至2，尾部空槽为-1，必须连续、不重复且至少一槽。默认M1、F-16C、单SP配置0、普通、自动出击关闭、Logo跳过开启。旧schema1的swp在内存转换为单槽；alpha2的扁平schema2保留全部a/b/c并补基础皮肤0，同时兼容研究嵌套schema2，启动读取不改原件；提交保存或出击时才写schema3，仍先写pending并备份旧文件，失败保留原件。配置和副本均忽略，不入Git。
 
 出击请求冻结完整方案及当时双/三SP配弹比例；原生选机仅用首槽，新任务真实玩家就绪后返回完整临时方案，沿现有共用Profile与configureFlight初始化。保留调试允许未购买兵装、DLC许可与真实持续效果多挂准入；不以菜单目录猜测运行资格。不合格组合在HUD/武器重建前停止测试方案并提示返回主菜单调整，不向全局错误分支抛错或隔离整个机体，不保存为个人配装。M13继续原生任务SP。
 
@@ -143,3 +143,11 @@ F6调试页顺序为任务配装、任务内换机、快速测试任务、日志
 研究线程完成源码、双语资源和静态核对；本次整合另获编译与EXE交付授权，已完成完整构建和封装。研究观察、编译与游戏验收分别记录，没有执行新原生调用、安装或写进程内存。
 
 原2.25.0候选已由用户安装，快速任务与Logo验收失败；修复源码已按用户新授权接收并编译为2.25.1，未安装或操作游戏。后续验收包括：M6和DLC2实际快速出击、23关映射、ex01/ex03、真实机体/SP、M13、DLC缺许可、开场CG/起飞及必要脚本、180秒失败退出、重复点击、自动启动一次/取消/返回菜单、片头全部Logo与存档加载、中英文及个人配装保持。保护旧dist核心，候选必须独立输出，不覆盖冻结产物。后续继续由当前主代理直接处理，尽量少用子代理。
+
+## 快速任务皮肤与PART边界
+
+接收bbf0984及其同步main的4fb9fd0，当前集成使用预设/界面协议3避免与alpha2同号不同结构混用。皮肤目录读取真实SkinNo、SkinID、PlaneStringID、PlaneReference及DLCID；引用错误、编号冲突或DLC许可未确认的选项禁用，基础0号保留原生基础类核对。切换机体重置皮肤0；选择同一机体不清掉当前配装/皮肤。出击前设置并回读GI皮肤，原生ABI v2核对同一数值；新任务再核对GI选择与实际机体/皮肤引用，完整配装仍冻结出击时比例。皮肤列表并不代表已逐项实测外观或所有战役解锁条件，不改购买/解锁记录。
+
+研究预设的嵌套profile与alpha2扁平a/b/c都可读取，规范写回schema3。configured回调同步本次补给或调试后的临时方案，不反写快速预设或个人方案。PART尚未实现自选，沿用原生既有配件配置；完整装备、容量和冲突契约仍待研究，不能把已有数值预览当成装备功能。
+
+当前alpha2安装包不包含皮肤原生v2导出；合入源码不等于当前游戏已更新。源、迁移与验证边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，后续完整构建和实机验证分别登记。

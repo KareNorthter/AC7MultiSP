@@ -121,7 +121,7 @@ local managementProtocol=loadExport("dualsp_management_supported","DualSPUI.dll"
 local shortcutProtocol=loadExport("dualsp_shortcuts_supported","DualSPUI.dll") -- 可配置组合键须搭配新UI。
 local debugLoadoutProtocol=loadExport("dualsp_debug_loadout_supported","DualSPUI.dll") -- 调试扩展须与界面成套安装。
 loadExport("dualsp_debug_aircraft_supported","DualSPUI.dll") -- 换机独立子协议，不改变现有管理设置。
-loadExport("dualsp_quick_mission_supported","DualSPUI.dll") -- 快速任务与新原生启动事务须成套。
+loadExport("dualsp_quick_mission_v3_supported","DualSPUI.dll") -- 多SP/皮肤预设、原生核心与F6子协议3须成套。
 local debugLoadoutReady=loadExport("dualsp_debug_loadout_ready") -- 重建前只读检查正在飞行的武器。
 local debugFixedMount=loadExport("dualsp_debug_fixed_mount")
 local hotkeyResponse=0
@@ -1066,7 +1066,7 @@ local function configureFlight(profile,reason)
     -- 核心初始化后立即提交一次真实状态，避免等待 100 ms HUD 周期。
     refreshHUD(os.clock())
     if aircraftDebug then aircraftDebug:configured(planeId,profile)end
-    if quickMission then quickMission:configured(planeId)end
+    if quickMission then quickMission:configured(planeId,profile)end
 end
 -- 在原生补给成功回调返回的同一帧提交，模型、弹药、HUD 共用一个事务边界。
 local function completeSupplyHandoff()
@@ -1370,7 +1370,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         end
     end}
 quickMission=dofile(root.."Scripts/quick_mission.lua").new{
-    root=root,json=json,note=note,native=loadExport("dualsp_quick_mission_v1"),logos=loadExport("dualsp_startup_logos_v1"),aircraft=aircraftDebug,
+    root=root,json=json,note=note,native=loadExport("dualsp_quick_mission_v2"),logos=loadExport("dualsp_startup_logos_v1"),aircraft=aircraftDebug,
     profile=Profile,ammoSettings=ammoSettings,
     catalogue=function()return catalogue or{}end,changed=function()lastUIKey=nil end,
     enabled=function()return runtimeAllowed and runtimeModEnabled end,
@@ -1831,8 +1831,9 @@ local function tick()
     if not catalogue then
         local info=instance.GameInformation;if not valid(info)or not valid(info.PlaneDataTable)or not valid(info.WeaponDataTable)then return end
         local skinTable=info.SkinDataTable
+        if not valid(skinTable)then return end -- 皮肤目录也必须就绪，不能一次缓存缺少SkinNo/DLC资料的目录。
         catalogue=json.decode(assert(catalogExport(info.PlaneDataTable:GetAddress(),info.WeaponDataTable:GetAddress(),
-            valid(skinTable)and skinTable:GetAddress()or 0),"机体目录内存接口没有返回结果"))
+            skinTable:GetAddress()),"机体目录内存接口没有返回结果"))
         assert(not catalogue.error,catalogue.error)
         assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
         if not syncRuntime()then return end -- 目录刚就绪也先按纯数据退让，不先碰特殊机体/兵装对象。

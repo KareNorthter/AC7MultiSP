@@ -6,6 +6,7 @@
 
 | 症状与证据 | 已知原因或边界 | 正确做法 |
 | --- | --- | --- |
+| 补给页绘制兵装说明时报gsub次数参数类型错误，见[Rafale M现场](../../evidence/2.25.3-alpha3-skin-resupply-source.json) | Lua的assert成功也返回全部实参；生成翻译函数直接return assert(text,error)会传出两值，末参数位置的tr调用把错误说明展开为gsub次数。首次有效兵装说明进入补给换行分支就触发，与机型、SP数量或文本是否含换行无关 | 唯一文字生成器先断言再只return text；调用端先用单变量接收替换文字。缺词仍报错，不把额外返回值交给原生/字符串接口；不为排版错误改补弹逻辑 |
 | F-22准备页停在“正在准备兵装”，[原始异常](../../evidence/f22-preparation-string-lifetime.json)位于反射查询SpecItem6 | 加载器字符串池借用的Lua临时字段名已失效；画面停止实际已进入Fatal error，不是据文字证明模型慢 | 动态反射字段改固定字符串数组，由实际访问闭包持续持有。部署后完整重启清除旧缓存；仅规避本Mod已定位路径，不声称修复加载器全局或PW旧退出 |
 | CFA切换后MSL/EML偶发双发，[锁定残留现场](../../evidence/cfa44-live-seeker-residue.json)显示旧槽替换后仍有15–19项目标登记 | 只停锁定声音、只等待当前批次或清待发输入都未完整收尾；有效目标仍可能成为无主登记 | 调用原生Reset/解除锁定，核对声音与登记归还；保留SelectedTarget和原生正常多锁语义。不可为减少切换耗时删除这段清理 |
 | F/A-18E TGM投弹退场后仍被阻止换组合，[现场](../../evidence/f18etg-inactive-bomb-loadout-block-20261021.json)见有效但活动标记0的Bomb残留 | 数组非空不等于有实际在途兵装；残留最初产生的路径未定位 | 仅对身份、归属、类型及停用状态全部成立的原生Bomb例外放行；未知引用、活动兵装、持续效果和尾迹继续拒绝，不清原生数组 |
@@ -47,3 +48,5 @@ Vortex符号链接预检拒绝是路径保护生效，不应放宽contained检�
 更新日志`key 'schema' not found`证明取得JSON后协议字段不符，不是这条记录里的发送超时；另一次工具HTTP403不能改判游戏现场。[alpha2接收记录](../../evidence/2.24.0-alpha2-source-intake.json)据此区分旧preparing清单和真正ready新版。客户端检查、公开下载链接、ZIP字节和线上部署分别核对；本地包存在不证明线上包就绪，详见[更新发布说明](../archive/delivery/Pages与R2发布更新说明.md)。
 
 所有整理前症状和当时状态可从`archive/20261023/pre-governance-main`恢复；工程经验记录结论边界，不回写原始证据或抹去失败现场。
+
+翻译接口依据：[Lua assert返回值](https://www.lua.org/manual/5.4/manual.html#pdf-assert)与[多返回值调整](https://www.lua.org/manual/5.4/manual.html#3.4.12)。固定文字提供器应明确返回一段文字，不依赖调用方恰好截断多余结果。

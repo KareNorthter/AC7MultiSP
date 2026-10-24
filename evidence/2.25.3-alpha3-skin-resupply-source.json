@@ -1,0 +1,68 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "target_version": "2.25.3 alpha3",
+  "baseline": "05ff8fba9c9b8bf1a3e6b0b6455bc056843dd5f8",
+  "skin_source": {
+    "thread": "01a1695f-0756-7b61-9c57-becbe7022637",
+    "feature_commit": "bbf0984b57b311ff47f71826ed3351417a46245a",
+    "latest_tip": "4fb9fd069e1c6670b7681b0cd59f23a94ded1981",
+    "previous_installation": "alpha2没有dualsp_quick_mission_v2导出，quick-mission.json无skin_no，故皮肤选择此前未进入现用安装包"
+  },
+  "integration": [
+    "接收真实SkinNo/SkinID/DLCID目录、皮肤控件、原生setter与加载前后选择校验；保留主线名称软类引用修订",
+    "预设schema3使用扁平a/b/c及skin_no，兼容schema1单SP、alpha2扁平schema2和研究嵌套schema2；读取不改原件，保存/出击按既有流程备份",
+    "UI/Lua子协议3与dualsp_quick_mission_v3_supported门禁；原生出击ABI_v2追加第10个skin_no参数，返回protocol2；catalogue.skin_metadata schema2",
+    "保留alpha2配弹比例出击快照、validateProfile不合格组合拒绝、F6消息与按键状态隔离；configured回调同步补给/调试后的临时方案",
+    "PART不新增自选，缺完整装备/容量/冲突契约，界面明确提示；不改购买/解锁记录"
+  ],
+  "resupply": {
+    "aircraft": "Rafale M / rflm / 117",
+    "installed_version": "2.25.3 alpha2",
+    "event_time_utc": "2026-10-24T09:55:41.847Z",
+    "error": "native_loadout.lua:316: bad argument #3 to 'gsub' (number expected, got string)",
+    "call_path": [
+      "RESUPPLY_STARTED 117",
+      "MiniGamePhaseBP_ReturnLine / ms06",
+      "RESUPPLY_MENU_OPENED",
+      "MissionResupply_C attached",
+      "paintSupply -> weaponDescription -> gsub"
+    ],
+    "cause": "自动生成的Texts.get直接return assert(text,error)，Lua assert成功返回所有传入值；Context.textKey继续传递两值；tr置于gsub参数列表末尾，错误说明展开为替换次数参数",
+    "trigger": "补给专用窄栏首次绘制有效兵装说明并重新换行；不依赖文本实际有换行，不限定机型或SP数量。普通机库无该补给分支，最终确认/空槽说明可绕开",
+    "fix": [
+      "在唯一文字生成器中先取text并assert存在，再只return text；重新生成Lua，不手改生成表",
+      "补给排版先将分隔文字赋给单个局部变量，再传入gsub，明确收紧调用端参数数目"
+    ],
+    "not_changed": "未改变补弹、兵装重建、原生补给成功回调或配弹规则"
+  },
+  "local_evidence": {
+    "mod.log": {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-skin-resupply\\mod.log",
+      "sha256": "69877e768fe0946f26c392d6c8d04712de6c4ee29f33ca790e5a014884fe75f0"
+    },
+    "native.log": {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-skin-resupply\\native.log",
+      "sha256": "f8ac51a96334c64554815416976daba27168605af192ce74af4707f90725c46c"
+    }
+  },
+  "references": [
+    "https://www.lua.org/manual/5.4/manual.html#pdf-assert",
+    "https://www.lua.org/manual/5.4/manual.html#3.4.12"
+  ],
+  "validation": {
+    "static_review": true,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_operated": false
+  },
+  "pending": [
+    "皮肤0/非0、换机后皮肤重置、保存重启及自动出击、缺DLC/坏引用、旧alpha2三SP预设",
+    "Rafale M三SP返航补给的SP1/SP2/SP3说明、空槽/YES-NO、确认再起飞，其他机型和中英文回归",
+    "确认实物皮肤与所选编号一致；静态GI编号校验不代替渲染效果验收"
+  ],
+  "deferred": [
+    "XFA-33 B/Su-57 TGM公共舱重复展开仍按指令暂缓，不改舱门代码"
+  ]
+}

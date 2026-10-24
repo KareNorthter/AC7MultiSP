@@ -2205,6 +2205,7 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
         }
         // 只读接入真实机体/涂装引用，避免由机体代号猜类名。布局不符时不猜偏移。
         int referenceOffset=-1;Json skinReferences=Json::object();
+        Json skinMetadata={{"schema",2},{"ready",false}}; // 快速入口需要真实SkinNo、SkinID及DLCID，不能由序号猜皮肤。
         std::string referenceError;
         auto softReference=[](Addr address) {
             // 本项目限定的UE4.18 FSoftObjectPtr为40字节：弱引用/标记16字节＋FSoftObjectPath。
@@ -2239,29 +2240,33 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                 const auto skinType=rowType(skins,"SkinDataTable");const int size=metadata.typeSize(skinType);
                 const auto code=metadata.field(skinType,"PlaneStringID","StrProperty",16,size);
                 const auto number=metadata.field(skinType,"SkinNo","IntProperty",4,size);
+                const auto skinID=metadata.field(skinType,"SkinID","IntProperty",4,size);
+                const auto skinDLC=metadata.field(skinType,"DLCID","StrProperty",16,size);
                 const auto reference=metadata.field(skinType,"PlaneReference","StrProperty",16,size);
                 for(const auto row:tableRows(skins)) {
-                    std::string planeCode;int skinNo=-1;
+                    std::string planeCode,dlcID;int skinNo=-1,skinId=-1;
                     try {
                         planeCode=unrealString(row+code.offset);skinNo=read<int>(row+number.offset);
+                        skinId=read<int>(row+skinID.offset);dlcID=unrealString(row+skinDLC.offset);
                         require(!planeCode.empty() && planeCode.size()<=128 && skinNo>=0 && skinNo<100000,
                                 "机体目录：涂装身份无效");
                         const auto path=unrealString(row+reference.offset);
                         require(path.rfind("/Game/",0)==0 && path.size()<1024,"机体目录：涂装引用无效");
                         if(!skinReferences.contains(planeCode))skinReferences[planeCode]=Json::array();
-                        skinReferences[planeCode].push_back({{"skin_no",skinNo},{"reference",path}});
+                        skinReferences[planeCode].push_back({{"skin_no",skinNo},{"skin_id",skinId},{"dlc_id",dlcID},{"reference",path}});
                     }catch(const std::exception& error) {
                         // 已知编号的坏引用必须保留拒绝标记，不能伪装成没有此涂装而回退基础类。
                         if(!planeCode.empty() && planeCode.size()<=128 && skinNo>=0 && skinNo<100000) {
                             if(!skinReferences.contains(planeCode))skinReferences[planeCode]=Json::array();
-                            skinReferences[planeCode].push_back({{"skin_no",skinNo},{"reference_error",error.what()}});
+                            skinReferences[planeCode].push_back({{"skin_no",skinNo},{"skin_id",skinId},{"dlc_id",dlcID},{"reference_error",error.what()}});
                         }
                         nativeLog(std::string("MOD_SKIN_ROW_SKIPPED ")+error.what());
                     }
                 }
+                skinMetadata["ready"]=true;
             }
         }catch(const std::exception& error) {
-            referenceError=error.what();nativeLog("MOD_AIRCRAFT_REFERENCE_ERROR "+referenceError);
+            referenceError=error.what();skinMetadata["error"]=referenceError;nativeLog("MOD_AIRCRAFT_REFERENCE_ERROR "+referenceError);
         }
         std::map<std::string,Json> byCode;
         std::set<std::string> duplicateWeaponCodes;
@@ -2319,7 +2324,7 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
             }
         }
         const auto planeCount=catalog.size();
-        catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError}};
+        catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError},{"skin_metadata",skinMetadata}};
         result=catalog.dump();nativeLog("Catalogue loaded: "+std::to_string(planeCount)+" planes");
     }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());result=Json{{"error",e.what()}}.dump();}
     if(api){api->string(luaState,result.data(),result.size());return 1;}

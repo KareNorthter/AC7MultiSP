@@ -34,6 +34,7 @@ void quickMissionPreflight() {
     quickMissionSignature(base,0x9248d5,{0x8b,0x81,0xd8,0x04,0,0});
     quickMissionSignature(base,0x924a05,{0x8b,0x81,0xdc,0x04,0,0});
     quickMissionSignature(base,0x924a25,{0x8b,0x81,0xe0,0x04,0,0});
+    quickMissionSignature(base,0x924a45,{0x8b,0x81,0xe4,0x04,0,0});
     require(!quickMissionThread || quickMissionThread==GetCurrentThreadId(),"快速任务必须在同一游戏线程执行");
     require(!mountGameThread.load()||mountGameThread.load()==GetCurrentThreadId(),"快速任务不在绑定的游戏线程");
     quickMissionThread=GetCurrentThreadId();
@@ -126,11 +127,11 @@ extern "C" __declspec(dllexport) int dualsp_startup_logos_v1(void* luaState) {
     }
 }
 
-extern "C" __declspec(dllexport) int dualsp_quick_mission_v1(void* luaState) {
+extern "C" __declspec(dllexport) int dualsp_quick_mission_v2(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==9 && runtimeEnabled,"快速任务需要已启用的单人入口与完整参数");
+        require(api->top(luaState)==10 && runtimeEnabled,"快速任务需要已启用的单人入口与完整参数");
         quickMissionPreflight();
         const int op=static_cast<int>(api->readInteger(luaState,1));
         const Addr instance=api->readInteger(luaState,2),world=api->readInteger(luaState,3),table=api->readInteger(luaState,4);
@@ -149,16 +150,18 @@ extern "C" __declspec(dllexport) int dualsp_quick_mission_v1(void* luaState) {
         continuousIdentity(info);
         require(read<Addr>(info+mountProperty(info,"MissionDataTable","ObjectProperty",8))==table,"快速任务表不属于当前GI");
         auto tasks=quickMissionRows(table);
-        Json result={{"protocol",1},{"tasks",tasks}};
+        Json result={{"protocol",2},{"tasks",tasks}};
         if(op==1) {
             const int mission=static_cast<int>(api->readInteger(luaState,6)),plane=static_cast<int>(api->readInteger(luaState,7));
             const int swp=static_cast<int>(api->readInteger(luaState,8)),difficulty=static_cast<int>(api->readInteger(luaState,9));
-            require(plane>=0 && swp>=0 && swp<3 && difficulty>=0 && difficulty<4,"快速任务选机或难度无效");
+            const int skin=static_cast<int>(api->readInteger(luaState,10));
+            require(plane>=0 && swp>=0 && swp<3 && difficulty>=0 && difficulty<4 && skin>=0 && skin<100000,"快速任务选机、皮肤或难度无效");
             require(std::any_of(tasks.begin(),tasks.end(),[&](const Json& row){return row.at("mission_id")==mission;}),"目标不属于23个测试任务");
             const auto menuIdentity=continuousIdentity(menu);
             require(mountClassIs(menu,"MainMenuWidget","/Script/Nimbus") && !(read<unsigned>(menu+8)&0x30u) &&
                 quickMissionMenuInstance(menu,instance),"快速任务主菜单身份已变化");
-            require(read<int>(instance+0x4dc)==plane && read<int>(instance+0x4e0)==swp,"快速任务机体选择已变化");
+            require(read<int>(instance+0x4dc)==plane && read<int>(instance+0x4e0)==swp && read<int>(instance+0x4e4)==skin,
+                "快速任务机体、SP或皮肤选择已变化");
             const auto map=quickMissionMap(mission);
             const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));QuickMissionName mapName;
             using MakeName=QuickMissionName*(*)(QuickMissionName*,const wchar_t*,int);
@@ -185,7 +188,7 @@ extern "C" __declspec(dllexport) int dualsp_quick_mission_v1(void* luaState) {
                 write<int>(instance+0x4d8,oldMission); // 难度4的setter会再换算自由飞行ID；回滚保留原始编号。
                 throw std::runtime_error("原生加载器拒绝快速任务请求");
             }
-            result={{"protocol",1},{"accepted",true},{"native_request",request}};
+            result={{"protocol",2},{"accepted",true},{"native_request",request}};
             nativeLog("QUICK_MISSION_NATIVE_ACCEPTED mission="+std::to_string(mission)+" request="+std::to_string(request));
         } else require(op==0,"快速任务操作无效");
         const auto text=result.dump();api->boolean(luaState,true);api->string(luaState,text.data(),text.size());return 2;

@@ -14,7 +14,7 @@ AC7MultiSP Features
    • Change the SP weapon combination during a mission.
    • Unlimited ammunition and fast reload for SP weapons.
    • Change aircraft and restart the mission.
-   • Main-menu quick missions allow 1–3 SP weapons and saved test presets, with optional automatic launch on next startup. M13 retains its assigned SP.
+   • Main-menu quick missions allow skin selection, 1–3 SP weapons and saved test presets, with optional automatic launch on next startup. M13 retains its assigned SP.
 
 2. Common controls
 These are the default controls. Keyboard bindings can be customized.

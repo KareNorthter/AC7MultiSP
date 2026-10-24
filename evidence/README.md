@@ -17,11 +17,12 @@
 | 2.25.3 alpha1自测候选 | [前阶段来源接收](2.25.3-alpha1-source-intake.json)、[最新EXE交付与测试清单](2.25.3-alpha1-exe-delivery.json) | 最新7e255e1、已包含cc924a5、完整构建与内嵌ZIP核对；人工正文、英文源更名及两种语言各四份说明。未安装或游戏验证，正式仍为2.25.2 |
 | alpha1用户反馈与alpha2源码 | [反馈/修订](2.25.3-alpha1-feedback-alpha2-source.json) | 快速任务多SP、暂停时退格/空格优先修订；确认当前运行文件匹配alpha1，公共舱两机未生效且暂缓；alpha2未编译、测试或安装 |
 | 2.25.3 alpha2自测EXE | [交付与待测项](2.25.3-alpha2-exe-delivery.json) | 快速任务多SP、F6键盘隔离修订的完整构建；21份运行载荷、48成员ZIP、八份说明、版本及保护摘要核对；未安装或游戏验证 |
+| alpha3皮肤与补给源码 | [来源/故障](2.25.3-alpha3-skin-resupply-source.json) | 皮肤功能此前未进alpha2，schema3保留两种旧多SP格式；补给排版的翻译多返回值根因和修订，构建/实机验证另记 |
 | 2.24.3安装器DPI修订 | [DPI修订核对](2.24.3-dpi-exe-delivery.json) | 系统DPI清单、复用游戏载荷、EXE摘要及120 DPI双语页面离线预览；产物生成后用户要求停止后续编译，未安装或操作游戏 |
 | 2.23.1验收/标识 | [用户验收](2.23.1-formal-user-validation.json)、[标识变换](2.23.1-formal-version-label.json) | 已测功能和正式标识的关系 |
 | alpha1安装 | [预检](2.24.0-alpha1-install-preflight.json)、[完成](2.24.0-alpha1-install-completion.json) | 当时Vortex链接处置、个人资料与实际交换；不当作实时安装状态 |
 | 更新模块 | [alpha1来源](2.24.0-alpha1-source-intake.json)、[alpha2来源](2.24.0-alpha2-source-intake.json) | UI、更新清单和通知的接收范围 |
-| 快速任务入口研究 | [20261024只读观察](quick-mission-observation-20261024.json)、[原生入口依据](quick-mission-native-entry-20261024.json)、[2.25.0失败定位](quick-mission-failure-20261024.json) | 23关实值与M6/DLC2手动出击观察；不证明自动启动或跳CG可用，原始日志及代码仅留本机Temp |
+| 快速任务入口研究 | [20261024只读观察](quick-mission-observation-20261024.json)、[原生入口依据](quick-mission-native-entry-20261024.json)、[2.25.0失败定位](quick-mission-failure-20261024.json)、[多SP/皮肤/PART静态依据](quick-loadout-options-source-20261024.json) | 23关实值与M6/DLC2手动出击观察；不证明自动启动或跳CG可用，原始日志及代码仅留本机Temp |
 | 挂载完整原料 | [refresh](2.23.0-refresh-integration.json)、[Socket核对](mount-socket-reference-audit-20261021.json)、[TGM r2](f18etg-whole-rack-socket-r2.json) | 77资源阶段的来源及资格 |
 | 原生/第三方边界 | [原生退让](special-aircraft-native-fallback-20261022.json)、[UAV/HPM契约](mod-special-sp-contract-20261022.json) | 哪些对象与使用路径可被放行 |
 | Mod机体分组安装 | [20261023安装](aircraft-mod-profiles-installed-20261023.json) | 用户选择原作者资源分组启用、部署范围和缺项保留；不代表实机通过 |

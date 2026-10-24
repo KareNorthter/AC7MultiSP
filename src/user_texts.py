@@ -180,7 +180,9 @@ def render():
             lua.append("    [" + lua_string(key) + "]=" + lua_string(catalog["texts"][key]) + ",")
         lua.append("}")
     lua += ["function Texts.get(key,language)",
-            '    return assert((language=="zh"and Texts.zh or Texts.en)[key],"Missing user text: "..tostring(key))',
+            '    local text=(language=="zh"and Texts.zh or Texts.en)[key]',
+            '    assert(text,"Missing user text: "..tostring(key))',
+            '    return text',
             "end", "return Texts", ""]
     return {OUTPUTS[0]: "\n".join(header).encode("utf-8"), OUTPUTS[1]: "\n".join(lua).encode("utf-8")}
 

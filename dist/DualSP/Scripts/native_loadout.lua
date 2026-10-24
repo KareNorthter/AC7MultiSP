@@ -313,7 +313,8 @@ function NativeLoadout.new(dependencies)
         description=description:gsub("\r\n","\n"):gsub("\r","\n")
         if supply then
             -- 补给窄栏重新换行，保留段落；机库沿用原说明宽度和原生换行。
-            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr("punctuation.474f2af4")):gsub("\1","\n\n")
+            local separator=tr("punctuation.474f2af4") -- 只取一段文字，不能把翻译的额外返回值展开为gsub次数参数。
+            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",separator):gsub("\1","\n\n")
         end
         c.weaponDescriptions[option.code]=description
         return description
