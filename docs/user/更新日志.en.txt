@@ -1,8 +1,11 @@
 AC7MultiSP Main Updates
 
-Unreleased (build and in-game verification pending)
+2.25.X (local validation candidate)
 • Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.
 • Added startup logo skipping.
+• Fixed internal weapon switching interrupting native hold-button auxiliary functions, preserving the player's actual hold and release.
+• Added a startup update check option, enabled by default. It can be disabled and saved; manual checks remain available.
+• Improved installer text clarity at high DPI scaling.
 
 2.24.X
 • Added a "Version and Updates" page to the management interface, bringing together version information, author information, and licensing notes.

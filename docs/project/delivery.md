@@ -7,7 +7,7 @@
 ## 一套通用ZIP，三种安装方式
 
 - Vortex和手动方式共用`AC7MultiSP-版本-Universal.zip`；EXE内嵌该ZIP原字节，导出时不重新组包。根目录按游戏相对路径组织为`ue4ss/`、`Game/`及包元数据，不使用旧GameFiles结构。
-- 主程序、界面、17份Lua和专用PAK同版成套。20个运行文件为17 Lua、2 DLL及VERSION，挂载资源仍为77份/154成员；音频、许可证、独立启用文件和文档另列封装清单。
+- 主程序、界面、18份Lua和专用PAK同版成套。21个运行文件为18 Lua、2 DLL及VERSION，挂载资源仍为77份/154成员；音频、许可证、独立启用文件和文档另列封装清单。
 - 通用ZIP不含共享UE4SS、微软运行库、个人配置、日志、存档或其他Mod；`DualSP/enabled.txt`独立启用，不要求改写共享mods.txt。
 - 四对玩家TXT原字节进入ZIP及EXE对应语言文档；F6只展示更新日志和作者与授权。游戏与安装器固定文字分别来自`docs/user/interface/game.*.json`、`installer.*.json`，不在各展示位置另写副本。安装器首页的短声明、作者署名链接及反馈由同一作者与授权TXT提取，作为`installer/credits-compact/{zh-CN|en}.json`校验资源嵌入EXE，不把网址或邮箱抄入C#。
 
