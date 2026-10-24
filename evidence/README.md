@@ -15,6 +15,7 @@
 | 2.25.1界面与候选漏机修订 | [EXE交付核对](2.25.1-exe-delivery.json) | 水印/反馈卡片、Patch分类依据及两入口共用判断、964507d接收、完整构建、内嵌ZIP和EXE版本/摘要；未安装或实机验收 |
 | 2.25.2快速任务初始化修复 | [EXE交付核对](2.25.2-exe-delivery.json) | 辅助错误隔离、日志上方布局、完整构建/封装、版本和内嵌载荷摘要；未安装或游戏验收 |
 | 2.25.3 alpha1自测候选 | [前阶段来源接收](2.25.3-alpha1-source-intake.json)、[最新EXE交付与测试清单](2.25.3-alpha1-exe-delivery.json) | 最新7e255e1、已包含cc924a5、完整构建与内嵌ZIP核对；人工正文、英文源更名及两种语言各四份说明。未安装或游戏验证，正式仍为2.25.2 |
+| alpha1用户反馈与alpha2源码 | [反馈/修订](2.25.3-alpha1-feedback-alpha2-source.json) | 快速任务多SP、暂停时退格/空格优先修订；确认当前运行文件匹配alpha1，公共舱两机未生效且暂缓；alpha2未编译、测试或安装 |
 | 2.24.3安装器DPI修订 | [DPI修订核对](2.24.3-dpi-exe-delivery.json) | 系统DPI清单、复用游戏载荷、EXE摘要及120 DPI双语页面离线预览；产物生成后用户要求停止后续编译，未安装或操作游戏 |
 | 2.23.1验收/标识 | [用户验收](2.23.1-formal-user-validation.json)、[标识变换](2.23.1-formal-version-label.json) | 已测功能和正式标识的关系 |
 | alpha1安装 | [预检](2.24.0-alpha1-install-preflight.json)、[完成](2.24.0-alpha1-install-completion.json) | 当时Vortex链接处置、个人资料与实际交换；不当作实时安装状态 |

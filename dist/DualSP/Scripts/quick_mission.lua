@@ -1,26 +1,31 @@
--- 快速自由任务的独立请求、临时单SP方案及跨世界等待；不替换个人配装或旧检查点。
+-- 快速自由任务的独立请求、临时1至3SP方案及跨世界等待；不替换个人配装或旧检查点。
 local Module={}
 local function valid(object)return object and object:IsValid()end
 local function address(object)return valid(object)and object:GetAddress()or 0 end
 local function integer(value,minimum,maximum)return type(value)=="number"and value%1==0 and value>=minimum and value<=maximum end
 function Module.new(deps)
+    local Profile=assert(deps.profile,"快速任务缺少共用配装规则")
     local self={response=0,ack=0,status="idle",tasks={},planes={},generation=0,lastRefresh=-100,autoChecked=false}
     local path=deps.root.."quick-mission.json"
     local function normalize(value)
-        assert(type(value)=="table"and value.schema==1,"快速任务预设格式无效")
+        assert(type(value)=="table"and (value.schema==1 or value.schema==2),"快速任务预设格式无效")
         assert(integer(value.mission_id,1,2147483647)and integer(value.plane_id,0,2147483647),"快速任务预设编号无效")
-        assert(integer(value.swp,0,2)and integer(value.difficulty,0,3)and type(value.auto_launch)=="boolean","快速任务预设参数无效")
+        assert(integer(value.difficulty,0,3)and type(value.auto_launch)=="boolean","快速任务预设参数无效")
         assert(value.skip_logos==nil or type(value.skip_logos)=="boolean","片头设置格式无效")
-        return {schema=1,mission_id=value.mission_id,plane_id=value.plane_id,swp=value.swp,difficulty=value.difficulty,
+        local loadout=value.schema==1 and {a=value.swp,b=-1,c=-1}or {a=value.a,b=value.b,c=value.c}
+        Profile.count(loadout) -- 读取旧预设只转换内存；提交保存或出击时按原流程备份原件。
+        return {schema=2,mission_id=value.mission_id,plane_id=value.plane_id,a=loadout.a,b=loadout.b,c=loadout.c,difficulty=value.difficulty,
             auto_launch=value.auto_launch,skip_logos=value.skip_logos~=false}
     end
-    self.saved={schema=1,mission_id=101,plane_id=109,swp=0,difficulty=1,auto_launch=false,skip_logos=true}
+    self.saved={schema=2,mission_id=101,plane_id=109,a=0,b=-1,c=-1,difficulty=1,auto_launch=false,skip_logos=true}
     do
         local file=io.open(path,"rb")
         if file then
             local content=file:read("*a");file:close()
-            local ok,value=pcall(function()return normalize(deps.json.decode(content))end)
-            if ok then self.saved=value;self.lastSaved=deps.json.encode(value)
+            local ok,value,schema=pcall(function()
+                local original=deps.json.decode(content);return normalize(original),original.schema
+            end)
+            if ok then self.saved=value;self.lastSaved=schema==2 and deps.json.encode(value)or nil
             else self.error_key="quick.preset.invalid";deps.note("QUICK_MISSION_PRESET_ERROR "..tostring(value))end
         end
     end
@@ -33,7 +38,7 @@ function Module.new(deps)
         assert(valid(table),"快速任务表尚未就绪")
         preset=preset or self.saved
         local ok,text=deps.native(op,instance:GetAddress(),instance:GetWorld():GetAddress(),table:GetAddress(),address(menu),
-            preset.mission_id,preset.plane_id,preset.swp,preset.difficulty)
+            preset.mission_id,preset.plane_id,preset.a,preset.difficulty)
         assert(ok,text);return deps.json.decode(text)
     end
     local function license(dlc)
@@ -73,7 +78,17 @@ function Module.new(deps)
         end
     end
     function self:profile(id)
-        if self.flight and self.flight.id==id then return {a=self.flight.swp,b=-1,c=-1,ratio=1}end
+        if self.flight and self.flight.id==id then return Profile.copy(self.flight.profile)end
+    end
+    function self:validateProfile(id,options)
+        local profile=self:profile(id)
+        if not profile then return true end
+        local ok,err=pcall(Profile.validate,profile,options,true)
+        if not ok then
+            self:fail("quick.loadout_invalid",err,true)
+            return false -- 用户选择不合格组合不等于机体故障，不向主循环抛错或隔离整个机体。
+        end
+        return true
     end
     function self:fail(key,detail,block)
         local stage=self.pending and self.pending.stage or "validation"
@@ -130,7 +145,7 @@ function Module.new(deps)
         if self.pending then return end
         local source=nil
         local ok,err=pcall(function()
-            assert(action.quick_protocol==1 and action.generation==self.generation,"快速任务请求已过期")
+            assert(action.quick_protocol==2 and action.generation==self.generation,"快速任务请求已过期")
             local context=deps.context();assert(deps.enabled(),"快速任务需要先开启Mod")
             local menu=deps.menu();assert(valid(menu),"快速任务只允许主菜单启动")
             local preset=normalize(action.preset)
@@ -149,21 +164,21 @@ function Module.new(deps)
             source={instance=address(context.instance),world=address(context.instance:GetWorld()),plane=context.instance:GetSelectedPlaneID(),
                 swp=context.instance:GetSelectedPlaneSWP(),skin=context.instance:GetSelectedPlaneSkinNo()}
             self.pending={instance=source.instance,sourceWorld=source.world,started=os.time(),task=task,target=target,preset=preset,
-                skippedMini={},lastSkip=-1,stage="preparing"}
+                profile=Profile.withSettings(preset,deps.ammoSettings()),skippedMini={},lastSkip=-1,stage="preparing"}
             self.flight=nil;self.blocked=nil;self.autoEligible=false;self.autoChecked=true
             deps.prepare()
             deps.note("QUICK_MISSION_PREPARED task="..task.code.." request="..action.request)
             assert(address(context.instance)==source.instance and address(context.instance:GetWorld())==source.world,"快速任务准备时世界已变化")
-            context.instance:SetPlaneAndSWP(preset.plane_id,preset.swp)
+            context.instance:SetPlaneAndSWP(preset.plane_id,preset.a)
             context.instance:SetSelectedPlaneSkinNo(0)
-            assert(context.instance:GetSelectedPlaneID()==preset.plane_id and context.instance:GetSelectedPlaneSWP()==preset.swp,
+            assert(context.instance:GetSelectedPlaneID()==preset.plane_id and context.instance:GetSelectedPlaneSWP()==preset.a,
                 "快速任务机体选择被原生拒绝")
             self.pending.stage="native_request"
-            deps.note("QUICK_MISSION_NATIVE_REQUEST task="..task.code.." plane="..preset.plane_id.." swp="..preset.swp)
+            deps.note("QUICK_MISSION_NATIVE_REQUEST task="..task.code.." plane="..preset.plane_id.." configs="..preset.a..","..preset.b..","..preset.c)
             local result=native(1,menu,preset)
             assert(result.protocol==1 and result.accepted==true,"原生加载器没有接受快速任务")
             self.pending.accepted=true;self.pending.stage="loading";self.ack=action.request;self.status="loading";self.error_key=nil
-            deps.note("QUICK_MISSION_ACCEPTED task="..task.code.." plane="..preset.plane_id.." swp="..preset.swp);changed()
+            deps.note("QUICK_MISSION_ACCEPTED task="..task.code.." plane="..preset.plane_id.." configs="..preset.a..","..preset.b..","..preset.c);changed()
         end)
         if not ok then
             local context=deps.context()
@@ -225,9 +240,9 @@ function Module.new(deps)
             if pending.task.fixed_sp then
                 self.pending=nil;self.status="native_sp";self.error_key=nil;changed();return false
             end
-            self.flight={id=pending.preset.plane_id,swp=pending.preset.swp,instance=pending.instance,map=map}
+            self.flight={id=pending.preset.plane_id,profile=Profile.copy(pending.profile),instance=pending.instance,map=map}
             if pending.stage~="weapons"then pending.stage="weapons";self.status="weapons";changed()end
-            return false -- 主调度核对真实兵装并完成临时单SP初始化后才确认成功。
+            return false -- 主调度核对真实多挂资格并完成完整临时配装后才确认成功。
         end
         if not pending.skipFailed and os.time()~=pending.lastSkip then
             pending.lastSkip=os.time()
@@ -270,14 +285,14 @@ function Module.new(deps)
         self.autoReady=self.autoReady or os.time()
         if os.time()-self.autoReady<2 then return end
         self.autoChecked=true
-        self:request{type="quick_mission_start",quick_protocol=1,request=self.response+1,generation=self.generation,preset=self.saved}
+        self:request{type="quick_mission_start",quick_protocol=2,request=self.response+1,generation=self.generation,preset=self.saved}
     end
     function self:state()
         local menu=deps.enabled()and deps.menu()or nil
         local token=valid(menu)and (address(deps.context().instance)..":"..address(menu))or ""
         if token~=self.menuToken then self.menuToken=token;self.generation=self.generation+1;self.lastRefresh=-100 end
         if valid(menu)and not self.pending then self:refresh(false)end
-        return {protocol=1,available=valid(menu)and not self.pending and not self.dataError and not deps.otherBusy()or false,
+        return {protocol=2,available=valid(menu)and not self.pending and not self.dataError and not deps.otherBusy()or false,
             reason_key=not deps.enabled()and "quick.mod_off"or not valid(menu)and "quick.main_menu_only"or self.dataError and "quick.unavailable"or "",
             generation=self.generation,response=self.response,ack=self.ack,status=self.status,error_key=self.error_key,
             tasks=self.tasks,planes=self.planes,preset=self.saved,auto_pending=self.autoEligible and not self.autoChecked}

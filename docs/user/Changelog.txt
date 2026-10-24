@@ -1,5 +1,10 @@
 AC7MultiSP
 
+2.25.3 alpha2 (self-test source, awaiting build)
+• Quick missions support 1–3 selected SP weapons, save the complete test loadout and retain launch-time ammunition ratios. Existing single-SP presets remain compatible.
+• Extended Backspace and Space isolation in F6 while paused, retaining text editing, rebinding and key-release handling after closing the panel. In-game validation is pending.
+• Repeated bay opening when switching SP weapons on XFA-33 B and Su-57 TGM remains recorded and is deferred in this version.
+
 2.25.3 alpha1 (self-test build, unreleased)
 • Fixed weapon-name references for some mod aircraft, retaining author-provided names on aircraft such as F17V, ADF-11 and F-15EX.
 • Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior. Aircraft including S32 still require in-game validation.

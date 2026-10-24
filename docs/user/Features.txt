@@ -14,6 +14,7 @@ AC7MultiSP Features
    • Change the SP weapon combination during a mission.
    • Unlimited ammunition and fast reload for SP weapons.
    • Change aircraft and restart the mission.
+   • Main-menu quick missions allow 1–3 SP weapons and saved test presets, with optional automatic launch on next startup. M13 retains its assigned SP.
 
 2. Common controls
 These are the default controls. Keyboard bindings can be customized.
@@ -56,3 +57,4 @@ Popular mod aircraft will also receive priority for future support.
 • Loading multi-SP models on the F-2A causes severe FPS drops.
 • The SP weapon performance bars do not change when selecting PARTs. This is a UI issue; the parts still take effect.
 • Special effects triggered by holding the weapon-switch button on some mod aircraft may not be fully supported.
+• XFA-33 B and Su-57 TGM may still reopen weapon bays when switching SP weapons; a fix is deferred.

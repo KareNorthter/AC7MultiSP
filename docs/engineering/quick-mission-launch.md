@@ -1,6 +1,6 @@
 # 快速进入测试任务设计
 
-状态：2.25.1用户可快速进入但三SP初始化被辅助异常中止；c9bc440修复及快速卡片移至日志上方已随2.25.2完整构建并生成[EXE](../../evidence/2.25.2-exe-delivery.json)。新候选未安装、运行测试或实机验收，旧回执保留；正式状态见[项目入口](../../README.md)。
+状态：用户在2.25.3 alpha1确认快速任务仍只能选择一种SP；该版原实现确实只保存单槽，并非多SP资格误判。alpha2源码已将UI、预设及临时配装成套扩展到1至3SP，尚未编译或实机验证。来源及待测项见[反馈与源码记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)，正式状态见[项目入口](../../README.md)。
 
 ## 目标与入口
 
@@ -16,7 +16,7 @@
 |---|---|
 | 任务 / Mission | M1—M20、DLC SP Mission 1—3；名称、任务ID、地图、DLC标记从原生任务表读取，不按编号规律猜测 |
 | 机体 / Aircraft | 复用换机候选目录及搜索；核对完整兵装资料和真实类引用，原生退让机体不强行接管 |
-| 特殊兵装 / Special weapons | 从目标机体的三个真实SP选项选择，至少支持指定一种；后续复用本Mod连续1—3槽规则，核对实际兵装多挂资格 |
+| 特殊兵装 / Special weapons | 勾选目标机体1至3种SP，按原生配置顺序连续填入逻辑槽；空选不能保存或出击，真实多挂资格在任务玩家就绪后重新核对 |
 | 难度 / Difficulty | 简单、普通、困难、王牌，默认普通；原生难度setter已确认 |
 | 跳过片头Logo / Skip startup logos | 默认开启，独立预设保存；F6更改后下次启动生效，Mod总开关需开启 |
 | 进入任务 / Launch mission | 一次点击提交完整快照，关闭F6并启动；选择控件、普通“保存”均不出击 |
@@ -102,11 +102,13 @@
 代码职责：
 
 - `src/quick_mission.hpp`：任务表读取、原生自由任务设置/最终加载请求、Boot片头视觉结束状态；由weapon_bridge包含。
-- `dist/DualSP/Scripts/quick_mission.lua`：独立预设、许可、幂等请求、跨世界等待、入口过场跳过和临时单SP配装。main仅负责接入已有调度与初始化，不另造武器初始化链。
-- `src/quick_mission_panel.hpp`：F6调试页独立卡片。只提交动作，不在渲染线程调用游戏函数。子协议1与现有管理/换机协议分别核对。
+- `dist/DualSP/Scripts/quick_mission.lua`：独立预设、许可、幂等请求、跨世界等待、入口过场跳过和临时1至3SP配装。main仅负责接入已有调度与初始化，不另造武器初始化链。
+- `src/quick_mission_panel.hpp`：F6调试页独立卡片。只提交动作，不在渲染线程调用游戏函数。UI/Lua子协议2与现有管理/换机协议分别核对；原生出击ABI仍为v1，只接收首槽，不把Lua多槽参数误传给旧原生接口。
 - `runtime_context.quickMissionMenu`：只返回当前世界可见、已启用输入的MainMenuWidget，或F6实际暂借输入的该页面。
 
-预设为DualSP目录下 `quick-mission.json`，schema=1，字段mission_id/plane_id/swp/difficulty/auto_launch/skip_logos。默认M1、F-16C、SP1、普通、自动出击关闭、Logo跳过开启。只选择一种SP；多SP组合后续仍可用任务内调试。保存先写pending，再保留旧配置副本，失败保留原件；个人配置及购买记录不修改。配置和副本均忽略，不入Git。
+预设为DualSP目录下`quick-mission.json`，schema=2，字段mission_id/plane_id/a/b/c/difficulty/auto_launch/skip_logos；a/b/c是原生配置号0至2，尾部空槽为-1，必须连续、不重复且至少一槽。默认M1、F-16C、单SP配置0、普通、自动出击关闭、Logo跳过开启。旧schema1的swp在内存转换为单槽，启动读取不改原件；提交保存或出击时才写schema2，仍先写pending并备份旧文件，失败保留原件。配置和副本均忽略，不入Git。
+
+出击请求冻结完整方案及当时双/三SP配弹比例；原生选机仅用首槽，新任务真实玩家就绪后返回完整临时方案，沿现有共用Profile与configureFlight初始化。保留调试允许未购买兵装、DLC许可与真实持续效果多挂准入；不以菜单目录猜测运行资格。不合格组合在HUD/武器重建前停止测试方案并提示返回主菜单调整，不向全局错误分支抛错或隔离整个机体，不保存为个人配装。M13继续原生任务SP。
 
 自动入口在主菜单真实就绪2秒后发出一次请求；打开F6时延后，可取消本次。仅消费游戏启动时保存的auto_launch，当前保存开启不会立即自动启动。返回主菜单不重复出击。尚未绕过标题确认或存档选择，因此不能称全启动流程无人交互。
 

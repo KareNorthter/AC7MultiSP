@@ -13,6 +13,7 @@
 #include <iterator>
 #include <memory>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
@@ -72,8 +73,8 @@ int lastSequence=-1;
 bool panel=false,initialized=false;
 HHOOK panelKeyboardHook{};
 HHOOK panelMessageHook{};
-unsigned panelBackspaceSources=0; // 分别记账普通/原始键盘，关闭面板后仍消费已接管按压的尾沿。
-bool panelBackspaceCaptured=false;
+struct PanelTextKey {unsigned sources{},characterSource{};bool captured{};};
+std::array<PanelTextKey,2> panelTextKeys{}; // 退格/空格分别记账普通和原始键盘，尾沿仍归面板。
 std::atomic<bool> cursorOwned{false};
 std::mutex cursorMutex;
 RECT restoreClip{};
@@ -186,6 +187,7 @@ void enqueue(Json action) {
     else actions.push_back(std::move(action));
 }
 bool gameFocused() {return gameWindow && GetForegroundWindow()==GetAncestor(gameWindow,GA_ROOT);}
+#include "panel_keyboard_state.hpp"
 HCURSOR WINAPI panelSetCursor(HCURSOR requested) {
     return originalSetCursor(cursorOwned.load()&&gameFocused()?nullptr:requested);
 }
@@ -233,7 +235,7 @@ void togglePanel(bool open) {
 LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
     // 即使场景许可已关闭，失焦仍须清理本轮按压，避免返回单人后沿用旧状态。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceSources=0;panelBackspaceCaptured=false;}
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelTextKeys={};panelKeyboardTail.store(0);panelKeyboardMessageHeld.store(0);}
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
@@ -348,55 +350,74 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
 }
 // 预读只隔离，不投递或改变按压状态；实际取出消息后才交给ImGui一次。
-bool panelBackspaceEvent(bool down,unsigned source,bool removed) {
+bool panelTextKeyEvent(int key,bool down,unsigned source,bool removed) {
+    if(key!=VK_BACK && key!=VK_SPACE)return false;
+    auto& heldKey=panelTextKeys[key==VK_BACK?0:1];
     const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
-    if(!active && (!panelBackspaceSources || !gameFocused()))return false;
+    if(!active && (!heldKey.sources || !gameFocused()))return false;
     if(!removed)return true;
-    const bool wasHeld=panelBackspaceSources!=0;
-    if(down)panelBackspaceSources|=source;else panelBackspaceSources&=~source;
-    const bool held=panelBackspaceSources!=0;
+    const unsigned before=heldKey.sources;
+    const bool wasHeld=before!=0;
+    if(down)heldKey.sources|=source;else heldKey.sources&=~source;
+    const bool held=heldKey.sources!=0;
+    if(held)panelKeyboardMessageHeld.fetch_or(panelKeyboardBit(key));
+    else panelKeyboardMessageHeld.fetch_and(~panelKeyboardBit(key));
+    if(active && down)panelKeyboardTail.fetch_or(panelKeyboardBit(key));
     if(imguiContext) {
         ImGui::SetCurrentContext(imguiContext);
-        if(active && held && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
-        if(active && held && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
-        else if(held!=wasHeld && (!held || (active && !panelBackspaceCaptured)))
-            ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,held);
+        if(active && held && !wasHeld) {heldKey.captured=captureSlot>=0;heldKey.characterSource=source;}
+        if(active && held && !wasHeld && heldKey.captured)captureKeyboardKey(key,shortcutModifiers());
+        else if(held!=wasHeld && (!held || (active && !heldKey.captured)))
+            ImGui::GetIO().AddKeyEvent(key==VK_BACK?ImGuiKey_Backspace:ImGuiKey_Space,held);
+        // 被截走的空格不会再由TranslateMessage生成字符。只沿首次接管的来源投递，另一来源不重复插字。
+        if(key==VK_SPACE && active && down && !heldKey.captured &&
+           !(shortcutModifiers()&3) &&
+           (!wasHeld || ((before&source)!=0 && heldKey.characterSource==source)))ImGui::GetIO().AddInputCharacter(' ');
     }
-    if(!held){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
+    if(!held){heldKey={};if(suppressedCaptureKey==key)suppressedCaptureKey=0;}
     return true;
 }
 // 先于游戏/加载器的键盘钩子处理；仅当前游戏窗口线程，不安装全局低级钩子。
 LRESULT CALLBACK panelKeyboardProc(int code,WPARAM key,LPARAM flags) {
-    if((code!=HC_ACTION && code!=HC_NOREMOVE) || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
+    if((code!=HC_ACTION && code!=HC_NOREMOVE) || (key!=VK_BACK && key!=VK_SPACE))return CallNextHookEx(panelKeyboardHook,code,key,flags);
     try {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         const bool down=(flags&(1LL<<31))==0;
-        if(panelBackspaceEvent(down,1,code==HC_ACTION))return 1;
+        if(panelTextKeyEvent(static_cast<int>(key),down,1,code==HC_ACTION))return 1;
     }catch(...) {return CallNextHookEx(panelKeyboardHook,code,key,flags);}
     return CallNextHookEx(panelKeyboardHook,code,key,flags);
 }
-// WM_INPUT不经过WH_KEYBOARD；取消息时把已接管的退格改为WM_NULL，避免更早的原生处理看到它。
+// WM_INPUT不经过WH_KEYBOARD；取消息时把已接管按键改为WM_NULL，并清理原始消息。
 LRESULT CALLBACK panelMessageProc(int code,WPARAM removed,LPARAM data) {
     if(code!=HC_ACTION || !data)return CallNextHookEx(panelMessageHook,code,removed,data);
     auto& message=*reinterpret_cast<MSG*>(data);
     if(message.hwnd!=gameWindow)return CallNextHookEx(panelMessageHook,code,removed,data);
     if(message.message!=WM_INPUT && message.message!=WM_KEYDOWN && message.message!=WM_SYSKEYDOWN &&
-        message.message!=WM_KEYUP && message.message!=WM_SYSKEYUP)return CallNextHookEx(panelMessageHook,code,removed,data);
+        message.message!=WM_KEYUP && message.message!=WM_SYSKEYUP &&
+        message.message!=WM_CHAR && message.message!=WM_SYSCHAR)return CallNextHookEx(panelMessageHook,code,removed,data);
     try {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
-        if(!panelBackspaceSources && !(initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused()))
+        if(!panelTextKeys[0].sources && !panelTextKeys[1].sources && !(initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused()))
             return CallNextHookEx(panelMessageHook,code,removed,data);
         const bool taken=removed==PM_REMOVE;
         bool consumed=false;
         if((message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN ||
-            message.message==WM_KEYUP || message.message==WM_SYSKEYUP) && message.wParam==VK_BACK) {
+            message.message==WM_KEYUP || message.message==WM_SYSKEYUP) && (message.wParam==VK_BACK || message.wParam==VK_SPACE)) {
             const bool down=message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN;
-            consumed=panelBackspaceEvent(down,1,taken);
+            consumed=panelTextKeyEvent(static_cast<int>(message.wParam),down,1,taken);
+        }else if((message.message==WM_CHAR || message.message==WM_SYSCHAR) &&
+                 (message.wParam==VK_BACK || message.wParam==VK_SPACE)) {
+            consumed=panel && gameFocused();
+            // 无物理按压的空格字符（例如输入法提交）仍可进入文本框；已接管按压的字符不重复投递。
+            if(consumed && taken && message.wParam==VK_SPACE && !panelTextKeys[1].sources && captureSlot<0) {
+                ImGui::SetCurrentContext(imguiContext);
+                ImGui::GetIO().AddInputCharacter(' ');
+            }
         }else if(message.message==WM_INPUT) {
             RAWINPUT raw{};UINT size=sizeof(raw);
             if(GetRawInputData(reinterpret_cast<HRAWINPUT>(message.lParam),RID_INPUT,&raw,&size,sizeof(RAWINPUTHEADER))!=static_cast<UINT>(-1)
-                && raw.header.dwType==RIM_TYPEKEYBOARD && raw.data.keyboard.VKey==VK_BACK) {
-                consumed=panelBackspaceEvent((raw.data.keyboard.Flags&RI_KEY_BREAK)==0,2,taken);
+                && raw.header.dwType==RIM_TYPEKEYBOARD && (raw.data.keyboard.VKey==VK_BACK || raw.data.keyboard.VKey==VK_SPACE)) {
+                consumed=panelTextKeyEvent(raw.data.keyboard.VKey,(raw.data.keyboard.Flags&RI_KEY_BREAK)==0,2,taken);
                 if(consumed && taken && GET_RAWINPUT_CODE_WPARAM(message.wParam)==RIM_INPUT)
                     DefWindowProcW(message.hwnd,message.message,message.wParam,message.lParam);
             }
@@ -449,9 +470,9 @@ bool init(IDXGISwapChain* swap) {
     ImGui_ImplWin32_Init(gameWindow);ImGui_ImplDX11_Init(device,context);
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
     panelKeyboardHook=SetWindowsHookExW(WH_KEYBOARD,panelKeyboardProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
-    if(!panelKeyboardHook)nativeLog("MANAGEMENT_BACKSPACE_GATE_UNAVAILABLE");
+    if(!panelKeyboardHook)nativeLog("MANAGEMENT_TEXT_KEY_GATE_UNAVAILABLE");
     panelMessageHook=SetWindowsHookExW(WH_GETMESSAGE,panelMessageProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
-    if(!panelMessageHook)nativeLog("MANAGEMENT_BACKSPACE_MESSAGE_GATE_UNAVAILABLE");
+    if(!panelMessageHook)nativeLog("MANAGEMENT_TEXT_MESSAGE_GATE_UNAVAILABLE");
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
 // 管理界面的文字按用户选择显示；日志正文保留记录时的原文。
@@ -1104,6 +1125,9 @@ DWORD WINAPI startThread(void*) {
         auto vtable=*reinterpret_cast<void***>(swap);
         const auto initStatus=MH_Initialize();
         const auto user32=GetModuleHandleW(L"user32.dll");
+        if((initStatus==MH_OK||initStatus==MH_ERROR_ALREADY_INITIALIZED) && installPanelKeyboardState(user32))
+            nativeLog("Management keyboard state gates installed");
+        else nativeLog("MANAGEMENT_KEYBOARD_STATE_GATE_UNAVAILABLE");
         const auto setCursor=reinterpret_cast<void*>(GetProcAddress(user32,"SetCursor"));
         const auto setCursorPos=reinterpret_cast<void*>(GetProcAddress(user32,"SetCursorPos"));
         const auto clipCursor=reinterpret_cast<void*>(GetProcAddress(user32,"ClipCursor"));

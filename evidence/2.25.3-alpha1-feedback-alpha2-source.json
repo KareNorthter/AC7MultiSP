@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "tested_version": "2.25.3 alpha1",
+  "target_source_version": "2.25.3 alpha2",
+  "source_baseline": "74318557bcc76db8caf00a5469b0463805a5f90f",
+  "user_feedback": {
+    "quick_multi_sp": "快速任务不能选择多个SP，优先修复",
+    "paused_f6_input": "已暂停时打开F6，输入框退格仍退出暂停，空格触发底层暂停页确认；优先修复",
+    "public_bay": "XFA-33 B与Su-57 TGM半开/全开切SP仍重复从零展开；记录且暂不修复",
+    "other_items": "用户表示其他都没问题，仅按本次实际测试范围记录，不推定所有机型、组合或性能通过"
+  },
+  "installed_runtime_read_only": {
+    "VERSION": {
+      "sha256": "e3c48ac158c13721f93b226c69ee5bb8338919848d01f41c0e128a206215e491",
+      "matches_alpha1": true
+    },
+    "bin/DualSP.dll": {
+      "sha256": "85078c9748a873744564d54b8e0a6fda61461a79d700bf2e1555678c1bd07aba",
+      "matches_alpha1": true
+    },
+    "bin/DualSPUI.dll": {
+      "sha256": "21f028172435626094f0bf83c6db827a624fb04d3abfc6ff0017e9b535fac0a7",
+      "matches_alpha1": true
+    },
+    "Scripts/quick_mission.lua": {
+      "sha256": "57af132f429367e407128f0df0e41db66d207b6dab5c3a4b07601eb5ac27f245",
+      "matches_alpha1": true
+    },
+    "Scripts/main.lua": {
+      "sha256": "0df4e24adfec6e76f648b73bfdbab9532dff8cef89b156db6d8a16140951641d",
+      "matches_alpha1": true
+    }
+  },
+  "pause_log": {
+    "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha2-fixes\\mod-log-snapshot.log",
+    "sha256": "f27ed7a14534454f35aca9e1fb593093fdb482db5688645dd8958ff6160a4fa8",
+    "relevant_lines": [
+      "2026-10-24T04:26:40.252Z tick=301507578 seq=2102 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:26:56.834Z tick=301524156 seq=2110 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false",
+      "2026-10-24T04:27:33.279Z tick=301560609 seq=2295 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:27:36.407Z tick=301563734 seq=2298 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false",
+      "2026-10-24T04:28:15.185Z tick=301602515 seq=2396 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:28:20.735Z tick=301608062 seq=2399 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false",
+      "2026-10-24T04:29:06.660Z tick=301653984 seq=2573 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:29:16.615Z tick=301663937 seq=2581 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false",
+      "2026-10-24T04:29:57.081Z tick=301704406 seq=2714 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:30:02.396Z tick=301709718 seq=2717 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false",
+      "2026-10-24T04:30:51.847Z tick=301759171 seq=2898 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_BEGIN effective=false existing=false",
+      "2026-10-24T04:30:54.875Z tick=301762203 seq=2901 pid=29332 tid=9376 LUA MANAGEMENT_PAUSE_RELEASED owned=true remaining=false"
+    ]
+  },
+  "static_findings": [
+    "原快速预设schema1仅swp，界面RadioButton单选，flight临时方案强制一槽",
+    "游戏EXE导入GetAsyncKeyState/GetKeyState/GetKeyboardState，旧UI没有隔离这些独立读取路径",
+    "导入表和暂停日志不能证明该次误操作具体通过哪个调用栈；当前未做动态追踪"
+  ],
+  "changes": [
+    "快速预设schema2保存a/b/c，按原生配置顺序连续不重复；旧schema1只在内存转换，提交保存/出击走备份",
+    "快速UI/Lua子协议2，原生出击ABI仍v1，仅向原生提交首槽；完整方案在实际玩家就绪后按共用规则应用",
+    "配弹比例按出击请求时设置快照，保留DLC许可、M13原生SP与真实多挂资格；不合格组合不抛为机体隔离故障",
+    "退格/空格的普通消息、原始消息、字符与按键状态读取成套隔离；空格保留字符输入，关闭后按压尾沿继续归面板",
+    "轮询过滤仅限游戏主EXE调用、前台游戏窗口和模组许可，面板与其他DLL仍读取真实状态；失焦清账，不模拟输入或改系统键表"
+  ],
+  "deferred": [
+    "公共舱连续性反馈记入挂载设计与待办，不修改aircraft_bay_animation.hpp或挂架控制"
+  ],
+  "validation": {
+    "static_review_only": true,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_operated": false,
+    "uploaded": false
+  },
+  "pending_checks": [
+    "快速任务单/双/三SP、保存重启与自动启动、旧单SP预设、配弹比例、M13、受限组合",
+    "暂停前/后开F6的退格与空格：短按、长按、输入法空格、改键、关F6时仍按住、松开后原生恢复、切出窗口返回",
+    "单人/模组停用或失焦后的边界，钩子初始化失败日志与实际按键路径仍待验证"
+  ]
+}

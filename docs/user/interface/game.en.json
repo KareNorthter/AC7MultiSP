@@ -476,7 +476,7 @@
     "updates.check_on_startup": "Check for updates when the game starts",
     "updates.startup_setting_invalid": "Startup update check setting must be a boolean",
     "quick.title": "Quick mission test",
-    "quick.help": "Choose a mission, aircraft and one SP, then launch directly. This test loadout applies only to this sortie. DLC requires verified ownership.",
+    "quick.help": "Choose a mission, aircraft and 1–3 SP weapons, then launch. Selected weapons fill SP1–3 in native configuration order, with ammunition ratios from launch-time settings. Actual multi-SP compatibility is checked in mission; unsupported combinations are not forced. DLC requires verified ownership.",
     "quick.task": "Mission",
     "quick.aircraft": "Aircraft",
     "quick.difficulty": "Difficulty",
@@ -505,6 +505,7 @@
     "quick.status.failed": "Quick launch did not complete.",
     "quick.status.saved": "Test preset saved.",
     "quick.dlc_task": "SP Mission %d",
+    "quick.loadout_invalid": "The test loadout failed this aircraft’s multi-SP compatibility checks. Weapons were not initialized. Return to the main menu and adjust the quick-mission preset.",
     "quick.intro_failed": "Intro skipping did not complete. The native sequence continues while waiting for flight controls and weapons."
   },
   "message_replacements": [

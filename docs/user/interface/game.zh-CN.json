@@ -476,7 +476,7 @@
     "updates.check_on_startup": "启动游戏时检查更新",
     "updates.startup_setting_invalid": "启动更新检查开关必须为布尔值",
     "quick.title": "快速测试任务",
-    "quick.help": "选择任务、机体和一种SP后，一键出击。测试配装仅用于本次任务；DLC需要已确认的许可。",
+    "quick.help": "选择任务、机体和1至3种SP后，一键出击。所选兵装按原生配置顺序排列为SP1至SP3；实际配弹比例使用出击时设置。多挂资格进入任务后核对，不强制启用不合格组合；DLC需确认许可。",
     "quick.task": "任务",
     "quick.aircraft": "机体",
     "quick.difficulty": "难度",
@@ -505,6 +505,7 @@
     "quick.status.failed": "快速任务未完成。",
     "quick.status.saved": "测试预设已保存。",
     "quick.dlc_task": "DLC特殊任务 %d",
+    "quick.loadout_invalid": "测试组合未通过当前机体的多挂资格，未初始化兵装。请回主菜单调整快速任务预设。",
     "quick.intro_failed": "自动跳过开场未完成，保留原生过场；继续等待飞控与兵装就绪。"
   },
   "message_replacements": [

@@ -5,7 +5,7 @@ std::array<char,160> quickSearch{};
 void loadQuickMissionDraft() {
     if(!state.contains("quick_mission")){quickDraft=Json();return;}
     const auto& data=state.at("quick_mission");
-    if(data.value("protocol",0)!=1){quickDraft=Json();return;}
+    if(data.value("protocol",0)!=2){quickDraft=Json();return;}
     quickRequest=std::max(quickRequest,data.at("response").get<int>());
     if(quickPending && data.at("response").get<int>()>=quickPending)quickPending=0;
     const int generation=data.at("generation").get<int>();
@@ -14,7 +14,7 @@ void loadQuickMissionDraft() {
 }
 void submitQuickMission(const char* action) {
     quickPending=++quickRequest;
-    enqueue({{"type",action},{"quick_protocol",1},{"request",quickPending},
+    enqueue({{"type",action},{"quick_protocol",2},{"request",quickPending},
         {"generation",quickGeneration},{"preset",quickDraft}});
 }
 std::string quickMissionLabel(const Json& task) {
@@ -53,13 +53,27 @@ void drawQuickMission() {
         for(const auto& row:planes) {
             const auto label=uiMessage(row.value("label",std::string()))+" ["+std::to_string(row.at("plane_id").get<int>())+"]";
             if(!query.empty()&&aircraftSearchKey(label+row.value("code",std::string())).find(query)==std::string::npos)continue;
-            if(ImGui::Selectable(label.c_str(),plane==&row)){quickDraft["plane_id"]=row.at("plane_id");quickDraft["swp"]=0;plane=&row;}
+            if(ImGui::Selectable(label.c_str(),plane==&row)) {
+                if(quickDraft.at("plane_id")!=row.at("plane_id")) {
+                    quickDraft["plane_id"]=row.at("plane_id");
+                    quickDraft["a"]=0;quickDraft["b"]=-1;quickDraft["c"]=-1;
+                }
+                plane=&row;
+            }
         }
         ImGui::EndCombo();
     }
     const bool fixed=task&&task->value("fixed_sp",false);
+    if(fixed&&quickDraft.at("a").get<int>()<0) {
+        quickDraft["a"]=0;quickDraft["b"]=-1;quickDraft["c"]=-1;
+    }
     ImGui::BeginDisabled(fixed||!plane);
-    int swp=quickDraft.at("swp").get<int>();
+    const std::array<const char*,3> fields={"a","b","c"};
+    std::array<bool,3> selected{};
+    for(const auto field:fields) {
+        const int config=quickDraft.at(field).get<int>();
+        if(config>=0&&config<3)selected[config]=true;
+    }
     std::array<std::string,3> labels;
     for(int i=0;i<3;++i) {
         labels[i]="SP "+std::to_string(i+1);
@@ -72,11 +86,16 @@ void drawQuickMission() {
                 labels[i]+=" · "+code;
             }
         }
-        if(i)ImGui::SameLine();
-        if(ImGui::RadioButton(labels[i].c_str(),swp==i))quickDraft["swp"]=i;
+        if(ImGui::Checkbox(labels[i].c_str(),&selected[i])) {
+            for(const auto field:fields)quickDraft[field]=-1;
+            int slot=0;
+            for(int config=0;config<3;++config)if(selected[config])quickDraft[fields[slot++]]=config;
+        }
     }
     ImGui::EndDisabled();
     if(fixed)ImGui::TextWrapped("%s",uiText("quick.fixed_sp"));
+    const bool hasWeapons=std::any_of(selected.begin(),selected.end(),[](bool value){return value;});
+    if(!hasWeapons)ImGui::TextWrapped("%s",uiText("choose.1.3.sp.weapons.717c3572"));
     int difficulty=quickDraft.at("difficulty").get<int>();
     ImGui::SetNextItemWidth(240);
     if(ImGui::Combo(uiText("quick.difficulty"),&difficulty,uiText("quick.difficulties")))quickDraft["difficulty"]=difficulty;
@@ -85,10 +104,11 @@ void drawQuickMission() {
     ImGui::TextWrapped("%s",uiText("quick.auto_help"));
     bool logos=quickDraft.at("skip_logos").get<bool>();
     if(ImGui::Checkbox(uiText("quick.skip_logos"),&logos))quickDraft["skip_logos"]=logos;
+    ImGui::BeginDisabled(!hasWeapons);
     if(ImGui::Button(uiText("quick.save")))submitQuickMission("quick_mission_save");
     ImGui::SameLine();ImGui::BeginDisabled(!task||!plane||!task->value("licensed",false));
     if(ImGui::Button(uiText("quick.start")))submitQuickMission("quick_mission_start");
-    ImGui::EndDisabled();ImGui::EndDisabled();
+    ImGui::EndDisabled();ImGui::EndDisabled();ImGui::EndDisabled();
     if(data.value("auto_pending",false)&&ImGui::Button(uiText("quick.cancel_auto")))submitQuickMission("quick_mission_cancel_auto");
     const auto reason=data.value("reason_key",std::string());
     if(!reason.empty())ImGui::TextWrapped("%s",uiText(reason.c_str()));

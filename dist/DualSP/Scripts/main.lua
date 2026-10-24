@@ -1371,6 +1371,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
     end}
 quickMission=dofile(root.."Scripts/quick_mission.lua").new{
     root=root,json=json,note=note,native=loadExport("dualsp_quick_mission_v1"),logos=loadExport("dualsp_startup_logos_v1"),aircraft=aircraftDebug,
+    profile=Profile,ammoSettings=ammoSettings,
     catalogue=function()return catalogue or{}end,changed=function()lastUIKey=nil end,
     enabled=function()return runtimeAllowed and runtimeModEnabled end,
     context=function()return {instance=instance}end,
@@ -1921,6 +1922,7 @@ local function tick()
         local saved=quickMission:profile(planeId)or aircraftDebug:profile(planeId)or config.profiles[tostring(planeId)]
         if saved then
             previewOptions=previewOptions or optionsFor(planeId)
+            if not quickMission:validateProfile(planeId,previewOptions)then publishState();return end
             saved=aircraftDebug:resolveProfile(planeId,previewOptions)or saved
             primeFlightHUD(Profile.withSettings(saved,config),previewOptions)
             -- 换机开场可能尚未完成组件碰撞设置，等飞控开放后再接管模型；HUD预建仍继续。
@@ -1940,6 +1942,7 @@ local function tick()
     if isFlight and ready()and not configured and not supplySession and not errorText then
         local options=optionsFor(planeId)
         local temporary=quickMission:profile(planeId)or aircraftDebug:resolveProfile(planeId,options)
+        if not quickMission:validateProfile(planeId,options)then publishState();return end
         local saved=temporary or config.profiles[tostring(planeId)]
         local canUse=saved and Profile.validate(saved,options,temporary~=nil)
         assert(canUse,"没有已确认且可用的原生多 SP 配置，请返回机库通过原生兵装页确认后出击；管理界面不提供兵装选择")
