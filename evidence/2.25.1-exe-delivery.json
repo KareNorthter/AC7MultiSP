@@ -1,0 +1,98 @@
+{
+  "schema": 1,
+  "version": "2.25.1",
+  "candidate": true,
+  "installer_version": "2.25.1",
+  "created_at": "2026-10-24T08:31:47.389750+08:00",
+  "authorization": "用户要求放大F6水印、反馈卡片默认展开、解决两个机体列表漏项，接收快速任务最新成果并编译EXE；未授权测试模块、安装或游戏操作",
+  "source_commit": "32e262e63914691c78f7a3b9ba9d7de6ae1dffcf",
+  "source_workspace": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261024\\AC7_MultiSP",
+  "intake": {
+    "thread": "01a1695f-0756-7b61-9c57-becbe7022637",
+    "commit": "964507d9c32fb38b67a20b0fab1b431d38e4c4d9",
+    "scope": "主菜单准备不调用任务武器输入释放，菜单GI内部归属校验及失败阶段日志"
+  },
+  "changes": [
+    "水印从最高13号字改用正文基础字号，保留测量、换行和页脚空间计算",
+    "反馈与主要更新共用panelCard，正常字号和按钮，始终显示，无展开开关；中英文标题和正文仍从作者与授权提取",
+    "快速任务及任务内换机共用contentOwned，将Patch识别为非付费内容；保留真实DLC许可、三SP目录完整性及原生退让"
+  ],
+  "aircraft_filter_audit": {
+    "source_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261023-mod-aircraft-compat\\groups\\A\\PlayerPlaneDataTable.json",
+    "sha256": "7b9b079f49fed1c934a42345d0f0223216c703d785c97040f4b05a7e778b4f6d",
+    "source_kind": "既有A组安装时导出的机体表；本轮离线读取，未从当前进程重新导出",
+    "rows": 177,
+    "patch_rows": 118,
+    "base_rows": 28,
+    "other_dlc_rows": 31,
+    "root_cause": "旧候选把Patch送往IsDLCOwned，快速任务提交也重复同样错误；现两入口共用修正判断",
+    "boundaries": "不承诺118条全部可选；目录缺项、原生退让及未确认的真实DLC仍排除。未运行游戏许可函数或验收候选列表"
+  },
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-f6-aircraft-fix\\build-2.25.1-r1",
+    "receipt_sha256": "4ef5df8b0ad4aa819333f2f99b4d13d130e978940c82ce0f68162d6dd7a64ec5",
+    "core_recompiled": true,
+    "core_sha256": "7b48de06a49a3fa9ca3c8fbc739d2684195bb4bcb439e0785da14967a2848a1a",
+    "ui_sha256": "4d90428a9d5851a54006a53da1a957e4b6b4fb439a467432ca269e0762287d08",
+    "lua_count": 18,
+    "runtime_file_count": 21,
+    "source_verified_after_build": true
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-f6-aircraft-fix\\delivery-2.25.1-r1",
+    "receipt_sha256": "d88b5ea7b5c4f42802ef43fdc8468edcda400456d360c5c1853df6cc2a2e3a32",
+    "exe_receipt_sha256": "5c5862ff5f8634fab809021cc30e4155265d00ad794669367e519f2d7dc7fd86",
+    "internal_zip_sha256": "813f13e54b678d3dff5eca38d0df4eb89f0a00f77ace1157b64ecd29d398bf1a",
+    "universal_member_count": 42,
+    "embedded_zip_exact_bytes_verified": true,
+    "standalone_zip_delivered": false
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.25.1\\AC7MultiSP_Installer.exe",
+    "size": 63379968,
+    "sha256": "be79031362101e69c7400ebb279e8d20c9f687c7982c17dc824daffbfd7c057f",
+    "file_version": "2.25.1.0",
+    "product_version": "2.25.1",
+    "x64": true
+  },
+  "runtime_files": {
+    "Scripts/config_store.lua": "63b667973da6909d94fd38c554bbb5f7c282d364620615aa82561221ff3bd3e8",
+    "Scripts/debug_aircraft.lua": "ee06aa38cd5815cbe6dfbcb02118a69541d3545a7577c14d5cf933eeba0b1894",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "3e7b37b806aeacd584df22405e67017f7023c369619c7afeb567c3add7a312ff",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "3234d93351740f8cb3a219ce98d1c143b32acfd6c06ed6566ac929ed0cb6db13",
+    "Scripts/quick_mission.lua": "df9e0cbabdf7baa41415a0538a786a30dfe1e47827b3d2366a458b2f30c5d1e9",
+    "Scripts/runtime_context.lua": "ceac2863da78b9b8474093d1d165ef6238a81698b018589a2099abd67084fc62",
+    "Scripts/user_texts.lua": "71b9b8db112101d2db6e76b329d6bbc2c1453598f91c7c0e38712f93cd168f90",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "7b48de06a49a3fa9ca3c8fbc739d2684195bb4bcb439e0785da14967a2848a1a",
+    "bin/DualSPUI.dll": "4d90428a9d5851a54006a53da1a957e4b6b4fb439a467432ca269e0762287d08",
+    "VERSION": "659d4227e6c4beabee1ca67d78ab6e103f96619eb392295c71d803b8c0a9bbb1"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "lua_syntax_only": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "ui_preview_run": false,
+  "game_installed": false,
+  "game_started": false,
+  "game_closed": false,
+  "process_opened": false,
+  "uploaded": false,
+  "pending": [
+    "F6水印和反馈卡片在中英文/不同窗口大小下实际显示",
+    "两个候选列表的Patch机体可选及真实未拥有DLC仍隐藏",
+    "快速任务/片头修复后的原生加载和游戏内效果；M13/许可/失败路径仍逐项确认"
+  ]
+}
