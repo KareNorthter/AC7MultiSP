@@ -209,9 +209,7 @@ namespace AC7MultiSP.Setup {
             updateDownload = new LinkLabel { AutoSize = true, Margin = new Padding(0, 8, 8, 0) };
             updateDownload.LinkClicked += delegate {
                 if (updateState != UpdateState.Newer || availableUpdate == null) return;
-                string url = availableUpdate.installer_downloads != null && availableUpdate.installer_downloads.Count != 0
-                    ? availableUpdate.installer_downloads[0].url : Convert.ToString(bundle.Info.policy["nexus_url"]);
-                Open(url);
+                Open(AuthorLinks.Homepage);
             };
             checkUpdates = new Button { AutoSize = true, Padding = new Padding(6, 0, 6, 0), Margin = new Padding(0, 2, 0, 0) };
             checkUpdates.Click += async delegate { await CheckUpdates(); };
