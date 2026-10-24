@@ -6,15 +6,15 @@
 
 | 项目 | 状态与依据 |
 |---|---|
-| 正式版本目标 | **2.26.0**，作者确认alpha5“都正常了”并明确要求正式发布；版本与中英文日志已整理，正式EXE/ZIP尚未制作、未上传，见[验收与版本确认](evidence/2.26.0-release-authorization.json) |
+| 正式版本目标 | **2.26.0**，作者确认alpha5正常并指定正式版；正式EXE/ZIP已完整构建并签署，待作者上传，见[交付回执](evidence/2.26.0-exe-delivery.json)。[原版本确认](evidence/2.26.0-release-authorization.json)保留当时阶段事实 |
 | 上一正式版本 | **2.25.2**，原[发布准备与核对](evidence/2.25.2-publication-preparation.json)及旧产物保持原样 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
 | 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
-| 现成正式EXE与通用ZIP | [2.25.2 EXE](Release/2.25.2/AC7MultiSP_Installer.exe)及内嵌同字节通用ZIP；[原交付回执](evidence/2.25.2-exe-delivery.json)保留候选构建来源，不能改名冒充2.26.0 |
+| 现成正式EXE与通用ZIP | [2.26.0 EXE](Release/2.26.0/AC7MultiSP_Installer.exe)、[2.26.0 Universal ZIP](Release/2.26.0/AC7MultiSP-2.26.0-Universal.zip)及同目录发布签名、SHA256SUMS；EXE内嵌ZIP与独立ZIP原字节一致，40项Vortex部署映射静态核对通过，未执行安装或更新 |
 | 实机验证边界 | 作者确认alpha4基本通过，随后确认alpha5均正常；记录为用户实测反馈，不追认未逐项核实的异常验签、异机恢复或性能测量。F6状态发布性能、F-2A掉帧及XFA-33 B/Su-57 TGM公共舱待办继续保留 |
-| 主页与发布流程 | 已接收双语主页，统一[新版发布流程](docs/project/release-workflow.md)；工具准备EXE、Nexus通用ZIP、完整Pages包和摘要，R2/蓝奏云/Nexus/Pages均由作者手动上传。生成与实际部署分别记录 |
-| 当前正式源码 | VERSION为**2.26.0**、candidate=false；汇总2.25系列至alpha5主要变化，玩家日志移除alpha明细，旧2.25.X及更早历史保留。生成文字已同步，尚未构建正式包 |
+| 主页与发布流程 | 按[新版发布流程](docs/project/release-workflow.md)：作者上传同一EXE到R2/蓝奏云、ZIP到Nexus；提供最终链接后，接收指定网页线程的打赏/反馈成果，核对下载摘要并生成完整Pages供作者上传。stable的release_notes必须使用当前2.26.0中英文章节全部正文，不精简；当前stable尚未改为新版 |
+| 当前正式源码 | VERSION为**2.26.0**、candidate=false，构建来源38f1255。按作者最新四份中文原字节接收并同步英文；保留作者精简后的正式日志，生成文字已同步。安装器内嵌Steam登记的AC7游戏图标，四尺寸资源核对一致 |
 | 最近验收安装包 | [2.25.3 alpha5 EXE](Release/2.25.3-alpha5/AC7MultiSP_Installer.exe)，来源db0d2c9，作者本次确认正常；[原交付回执](evidence/2.25.3-alpha5-exe-delivery.json)记录制作时的核对事实，旧包和回执不改作正式版本 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。

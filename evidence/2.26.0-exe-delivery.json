@@ -1,0 +1,185 @@
+{
+  "schema": 2,
+  "version": "2.26.0",
+  "candidate": false,
+  "release_status": "正式产物已制作并签署，待作者上传",
+  "source_commit": "38f1255cfeb67e61fc92c3e531582641f0e316a7",
+  "source_workspace": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261024\\AC7_MultiSP",
+  "author_chinese_documents_sha256": {
+    "功能说明.txt": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8",
+    "安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+    "更新日志.txt": "bfe8641941803306de5c6e285cda8960b50f5551f146232785657dd177bcbae7",
+    "作者与授权.txt": "9a8b751d86f34304a6e818d544215f08c0e0da6fcb2d821291fb1ea1d9c08408"
+  },
+  "chinese_original_bytes_preserved_in_main_source_and_package": true,
+  "english_sync": "按作者最新四份中文核对；Features中文未变、既有对应英文保留，其余三份更新；不重新扩写作者精简日志",
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\build-r1\\game-build",
+    "receipt_sha256": "ee86507cd2059463e25c8f903a304c5e32bfb1d211c3e24e7adac9241a02bb8f",
+    "core_recompiled": true,
+    "core_sha256": "3a6d77de36e11db3d020dee85768be757c5a3d89b01ea421c874c280af1a0897",
+    "ui_sha256": "7127b5568b1bbfa5963696124f795005d13ca79b39ea3daf38ec2453e2e6fa3a",
+    "lua_count": 18,
+    "runtime_file_count": 21,
+    "lua_syntax_only": true,
+    "source_verified_after_build": true,
+    "distribution_symbols": {
+      "DualSP.dll": {
+        "size": 2032640,
+        "sha256": "3a6d77de36e11db3d020dee85768be757c5a3d89b01ea421c874c280af1a0897",
+        "private_sha256": "691a5e36a8d540c237503c39fcf0a2d9ce690aeb75ffd695a9b17d95a7db1810",
+        "loader_contract_preserved": true
+      },
+      "DualSPUI.dll": {
+        "size": 2267136,
+        "sha256": "7127b5568b1bbfa5963696124f795005d13ca79b39ea3daf38ec2453e2e6fa3a",
+        "private_sha256": "d2ee906331f9fd8acedbdde8e15ee701be44e9d953f2a1bc5f42d4ead07af988",
+        "loader_contract_preserved": true
+      }
+    }
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\build-r1\\delivery",
+    "receipt_sha256": "9927f91c178ac4cab1f8a500429daaceab4ed0810d09de32ecea4f404acca228",
+    "exe_receipt_sha256": "6080d1f1cd4743fb98969723b695fd058e9b8e5e1d58d8c67f27cb74e25b9464",
+    "internal_zip_sha256": "b1fd1e0ef9700fe33dd03839b55b9a41131b7c08d5affe55acc9da3c993fd6fe",
+    "universal_member_count": 50,
+    "embedded_zip_exact_bytes_verified": true,
+    "standalone_zip_delivered": true,
+    "readme_documents_sha256": {
+      "ReadMe_zhCN请读我/功能说明.txt": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8",
+      "ReadMe_EN/Features.txt": "82121bbec6927b231546e21daab976e5c65aeae03533979e8a49bdad839b4c0e",
+      "ReadMe_zhCN请读我/安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+      "ReadMe_EN/Installation.txt": "2c7b8b980321e6a082e0960471d81f2e1b76329067ee7fd6c09fc0485b44f386",
+      "ReadMe_zhCN请读我/更新日志.txt": "bfe8641941803306de5c6e285cda8960b50f5551f146232785657dd177bcbae7",
+      "ReadMe_EN/Changelog.txt": "de679d3cbcd7822d2dc7f995a5a989bc22681cc6feab4c474b14856281161983",
+      "ReadMe_zhCN请读我/作者与授权.txt": "9a8b751d86f34304a6e818d544215f08c0e0da6fcb2d821291fb1ea1d9c08408",
+      "ReadMe_EN/Author-and-License.txt": "3ad29a39d6ad15e0ed25bf852b6242d0b454c34bd9b5a0f00c31dd64df2fb8c7"
+    }
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\AC7MultiSP_Installer.exe",
+    "size": 61572096,
+    "sha256": "f1cb2f47977c48d28c59ea9ceb4a9076bc200f62f19aa2de1a52d40366227f5f",
+    "file_version": "2.26.0.0",
+    "product_version": "2.26.0",
+    "x64": true
+  },
+  "universal_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\AC7MultiSP-2.26.0-Universal.zip",
+    "size": 20975523,
+    "sha256": "b1fd1e0ef9700fe33dd03839b55b9a41131b7c08d5affe55acc9da3c993fd6fe"
+  },
+  "author_signing": {
+    "schema": 1,
+    "product": "AC7MultiSP",
+    "version": "2.26.0",
+    "channel": "stable",
+    "release_id": "2f35cfa13faa4c93841da77e8fbed037",
+    "source_commit": "38f1255cfeb67e61fc92c3e531582641f0e316a7",
+    "key_id": "7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f",
+    "registry_sha256": "ac439517694e28b56763b0cc7e3592fcfd35edc92872ae150605ec495e5b2bd2",
+    "content_sha256": "486d0382995252e031d0a79842c05b9b1a9ce00bbac0206ea53dac9b1a63ee46",
+    "bundle_sha256": "0fb65a69411bcd41d436ee60ed04b65dace082c5431790a3b93d61996e2417e7",
+    "content_verified": true,
+    "bundle_verified": true,
+    "release_verified": true,
+    "signed_release_folder_verified_after_copy": true,
+    "release_manifest_path": "E:\\AC7_MultiSP\\Release\\2.26.0\\AC7MultiSP-release.json",
+    "manifest_sha256": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9",
+    "signature_sha256": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909"
+  },
+  "installer_icon": {
+    "source_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\AceCombat7-Steam.ico",
+    "sha256": "e61e407c9f07f7a2f436d2ca8311c63598f1daba5f7425d19d7a5bfc30eb1774",
+    "frame_count": 4,
+    "frozen_path": "setup-source/app.ico",
+    "origin": {
+      "source_path": "D:/Program Files/Steam/steam/games/d4744923522f8cfd76349bd4214b36a53c1859d4.ico",
+      "source_kind": "Steam App 502500卸载登记的DisplayIcon",
+      "frozen_input": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\AceCombat7-Steam.ico",
+      "sha256": "e61e407c9f07f7a2f436d2ca8311c63598f1daba5f7425d19d7a5bfc30eb1774",
+      "game_asset_committed": false,
+      "unused_initial_extraction_preserved": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\icon-origin.json"
+    },
+    "embedded_frames_sha256": [
+      "15f214e6a527309d1c53b0363431d67e3291f5b73dae0ab6e194bdf18c4b0b58",
+      "8d528c8a82569e314c31aa64b6b42a293f15b7aa95177c4c36bc609fd1331ec9",
+      "a6c4773707a2a51600e48838536d933b1b4309c453d8a51b27b6c76faca2e00a",
+      "bca460c30549d04dcce31e1cf9959acb9ce24a8d0a72b782cd37f34918d34480"
+    ],
+    "exe_icon_matches_input_exactly": true,
+    "window_uses_associated_icon": true,
+    "window_executed": false
+  },
+  "vortex_static_audit": {
+    "mode": "仅静态结构、摘要、路径及官方覆盖指令核对；未执行Vortex",
+    "official_spec": "https://github.com/Nexus-Mods/Vortex/wiki/File-Based-Override-Instructions",
+    "minimum_version": "1.14.0",
+    "mod_type": "dinput",
+    "deployment_root": "含Ace7Game.exe的游戏根目录",
+    "copy_count": 40,
+    "all_mod_payload_files_mapped_once": true,
+    "destination_paths_equal_source_paths": true,
+    "version": "2.26.0",
+    "nexus_mod_id": 3797,
+    "game_id": "acecombat7skiesunknown",
+    "nexus_file_id": "上传后由Nexus提供，包内不伪造",
+    "readme_root_not_deployed": true,
+    "shared_ue4ss_excluded": true,
+    "personal_files_excluded": true,
+    "collection_install_supported": false,
+    "update_boundary": "在原Mod 3797页面上传2.26.0的新文件并正确填写版本；实际更新检查/替换部署由Vortex及Nexus完成，本轮未实测"
+  },
+  "runtime_files": {
+    "Scripts/config_store.lua": "63b667973da6909d94fd38c554bbb5f7c282d364620615aa82561221ff3bd3e8",
+    "Scripts/debug_aircraft.lua": "f3802f8b9c6b7e475cb873200df07b9c23956265341b046b0c42be8492e2d12f",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "115f5c319bc4167bfa03288e0fa6c5d4b70131b85991b24a9856fe1f24090b5f",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "fe0a2c64137ea12e5b5618cf6879ec83b465d3a0ff31e663fe35b3bd9ef7b3d2",
+    "Scripts/quick_mission.lua": "0fc0658fff4eebe49d53aba61f9c375dfe06145ae928778abafed8412b01430f",
+    "Scripts/runtime_context.lua": "ceac2863da78b9b8474093d1d165ef6238a81698b018589a2099abd67084fc62",
+    "Scripts/user_texts.lua": "c492a104128de6678f789cfdce0edaaa99e7ee96894cd7fc492fff0561d10b06",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "3a6d77de36e11db3d020dee85768be757c5a3d89b01ea421c874c280af1a0897",
+    "bin/DualSPUI.dll": "7127b5568b1bbfa5963696124f795005d13ca79b39ea3daf38ec2453e2e6fa3a",
+    "VERSION": "91bcec0cb53aa657be746c411f2155e0c4d4c212bd88198e12204774b1736f2f"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "future_release_notes": {
+    "zh-CN": "• 修复CFA-50、普通Su-57、DarkStar及XFA-33 A/C切换SP时舱门未正常闭合的问题。\n• 适配S32的IRCM武器，能与其他SP同时携带。\n• 修复任务中降落补给时卡死问题。",
+    "en": "• Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.\n• Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.\n• Fixed freezing during mid-mission landing and resupply."
+  },
+  "release_notes_policy": "作者对应2.26.0章节全部正文，不删条目、不压缩、不另写摘要；正式stable等最终链接后生成",
+  "webpage_reference": {
+    "thread": "01a16d65-a9bc-78f2-ad9a-7fd2547af982",
+    "workspace": "C:/Users/83717/.codex/worktrees/site-coffee-support/AC7_MultiSP",
+    "head": "622e639892244c789920d8eb1a7b97148a10dfc1",
+    "uncommitted_site_results_present": true,
+    "scope": "打赏弹窗、邮件反馈和日志位置说明；获得链接后重新核对接收，当下不改写来源树"
+  },
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "vortex_executed": false,
+  "installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "stable_manifest_modified": false,
+  "pending": [
+    "作者把同一EXE上传R2和蓝奏云、把ZIP上传Nexus原3797页并按四份文档更新说明",
+    "收到最终EXE链接后核对下载摘要，接收指定网页最新成果，制作完整Pages目录和ZIP供作者上传",
+    "部署后核对stable、完整双语release_notes、正文、下载链接和签名材料；不复用旧下载链接",
+    "Collection不在本ZIP覆盖范围；实际Vortex安装/更新/停用与新正式EXE运行未在本轮执行"
+  ]
+}
