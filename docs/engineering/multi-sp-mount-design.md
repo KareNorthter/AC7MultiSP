@@ -160,7 +160,7 @@ ADMM/EML分侧时仅抑制左 `sp21`、指定 `FX_EML_Muzzleflash02` 模板；EM
 
 发射批次边界还要求活动批次、收尾、按住输入和未消费队列为空才受控切换。队列修补不能代替重建前原生解除旧锁定；该正确性结论及历史证据从[研究索引](../research/README.md)进入。
 
-### CFA-50作者舱门分域（源码候选，未编译/实测）
+### CFA-50作者舱门分域（自测候选，未实机验证）
 
 CFA-50不是CFA-44外观布局的别名。作者本体`SWPCoverC_01..12`在机背，使用`swcc`（Parts+0x194），供ADMM/TLS配置0/1共用；`SWPCover3_01/02`在机腹，使用`swc3`（+0x188）。EML炮体已存在于机腹，不能因为顶部空舱就认定缺件。实际表引用、骨骼位置、已发布姿态及原生分派证据见[本轮回执](../../evidence/cfa50-bay-animation-source-20261024.json)。
 
@@ -172,11 +172,11 @@ CFA-50不是CFA-44外观布局的别名。作者本体`SWPCoverC_01..12`在机�
 - 重建调用栈直通。原生更新恰执行一次，调用前后分开核对玩家/世界/资源序列号、引擎和当前配置；短只读批次不跨原生调用或写入。逐帧不反射、不扫描、不读文件。同一玩家实例失败后停用附加控制，重新出击才重核。
 - 关闭总开关只丢弃绑定，不向失效对象写回；已经完成的正常收拢属于动态进度，不恢复原先冻结的开舱残值。没有取得CFA-50多挂布局资格，也没有接入ESM/长按输入。
 
-本候选只做源码与静态差异审阅，没有编译、运行测试、安装或实机通过。待在明确安装的候选上确认ADMM/TLS互切、两者到EML、MSL直接到EML、EML到MSL、单EML与重配/检查点/退出；还需观察顶部收拢过程中机腹EML和原生发射是否正常。研究线程不分配正式版本。
+研究阶段只做源码与静态差异审阅；后续已纳入2.25.3 alpha1完整构建，见[交付与测试清单](../../evidence/2.25.3-alpha1-exe-delivery.json)，尚未安装或实机通过。待在明确安装的候选上确认ADMM/TLS互切、两者到EML、MSL直接到EML、EML到MSL、单EML与重配/检查点/退出；还需观察顶部收拢过程中机腹EML和原生发射是否正常。研究线程不分配正式版本。
 
 ### 多机舱门收尾（源码候选，待逐机验证）
 
-2026-10-24先核对7种本体及挂架共84份资源；节点均为`FlightEngineBlend`、同一`PlaneBodyConfig`，没有额外`OverrideSequences`。实际Skeleton骨名和序列轨道交集见[静态回执](../../evidence/bay-domain-multi-aircraft-static-20261024.json)。用户随后要求一并实现并逐机反馈，新[共用模块](../../src/aircraft_bay_animation.hpp)在同步main/09cdc82后扩展原CFA-50实现；[源码回执](../../evidence/bay-domain-multi-aircraft-source-20261024.json)记录精确范围和静态核对。本候选没有编译、测试、安装或实机通过，不分配正式版本。
+2026-10-24先核对7种本体及挂架共84份资源；节点均为`FlightEngineBlend`、同一`PlaneBodyConfig`，没有额外`OverrideSequences`。实际Skeleton骨名和序列轨道交集见[静态回执](../../evidence/bay-domain-multi-aircraft-static-20261024.json)。用户随后要求一并实现并逐机反馈，新[共用模块](../../src/aircraft_bay_animation.hpp)在同步main/09cdc82后扩展原CFA-50实现；[源码回执](../../evidence/bay-domain-multi-aircraft-source-20261024.json)记录精确范围和静态核对。研究线程当时没有编译、测试或安装；后续已由集成交付任务纳入2.25.3 alpha1完整构建，尚未安装或实机通过，研究线程不分配正式版本。
 
 | 实际资源 | 本体消费域与原生配置兵装包名 | 本次候选处理 |
 |---|---|---|

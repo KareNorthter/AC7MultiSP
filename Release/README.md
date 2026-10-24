@@ -2,7 +2,9 @@
 
 当前正式功能版本和发布状态只在[项目入口](../README.md)维护；主要变化见[玩家更新日志](../docs/user/更新日志.txt)。
 
-本次按用户要求仅交付E:/AC7_MultiSP/Release/2.24.3/AC7MultiSP_Installer.exe，安装器和Mod版本均为2.24.3。已构建、封装并核对文件版本及摘要，未运行安装器或游戏；来源和边界见[EXE交付回执](../evidence/2.24.3-exe-delivery.json)。内部通用ZIP只留Temp作为EXE封装输入，不单独交付。
+本次交付[2.25.3 alpha1自测EXE](2.25.3-alpha1/AC7MultiSP_Installer.exe)，完整构建核心、UI和双语安装器，产品显示版本与Mod均为2.25.3 alpha1，Windows文件版本为2.25.3.1。[交付回执与待测清单](../evidence/2.25.3-alpha1-exe-delivery.json)记录来源、摘要和边界。已核对EXE内嵌ZIP原字节、两种语言各四份说明及运行载荷；内部ZIP留Temp，不单独复制到Release。未安装、运行游戏或上传，正式发布仍为2.25.2。
+
+旧2.25.2、2.24.3及其DPI修订EXE原样保留，不覆盖历史产物或回执。
 
 旧2.24.2通用ZIP与EXE保留在E:/AC7_MultiSP/Release/2.24.2/，来源见[旧交付回执](../evidence/2.24.2-delivery.json)，不覆盖历史产物或验收记录。
 
