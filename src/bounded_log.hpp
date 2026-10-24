@@ -5,6 +5,10 @@
 #include <cstring>
 #include <string_view>
 
+#ifndef AC7MULTISP_VERSION
+#error "请通过统一构建入口从VERSION注入AC7MULTISP_VERSION"
+#endif
+
 namespace dualsp {
 inline constexpr size_t logSegmentBytes=1000000,logTextBytes=7680;
 inline constexpr unsigned logQueueSlots=128,logImportantReserve=16;
@@ -145,7 +149,7 @@ class AsyncLog {
         LogStream mod(L"mod",3),native(L"native",5);
         const bool modReady=mod.prepare(),nativeReady=native.prepare();
         if(!modReady || !nativeReady){ready_.store(false,std::memory_order_release);return;}
-        const auto start=format(internal("LOG_SESSION version=2.24.1 budget_bytes=10000000 segment_bytes=1000000 mod_files=4 native_files=6 queue_slots=128 interval_ms=500"));
+        const auto start=format(internal("LOG_SESSION version=" AC7MULTISP_VERSION " budget_bytes=10000000 segment_bytes=1000000 mod_files=4 native_files=6 queue_slots=128 interval_ms=500"));
         mod.append(start);native.append(start);
         std::array<std::string,2> batches;for(auto& batch:batches)batch.reserve(65536);
         ULONGLONG nextBatch=GetTickCount64();

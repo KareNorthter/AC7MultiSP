@@ -7,20 +7,27 @@ std::vector<unsigned char> mountPreservedCollisionSettings(Addr component);
 bool mountMeshIdentityEqual(const MountIdentity& a,const MountIdentity& b) {
     return a.address==b.address && a.index==b.index && a.serial==b.serial;
 }
-// 接管中的组件再次绑定时，仍按首次记录的原版资源验证。
+// 补给与任务共用组件时，原网格必须一致；当前网格可以是任一已登记替换。
 Addr mountBaselineMesh(const MountIdentity& component,Addr current) {
-    const auto from=[&](const FixedMountState& state)->Addr {
+    const auto from=[&](const FixedMountState& state)->const MountMeshOverride* {
         for(const auto& item:state.meshOverrides)if(mountMeshIdentityEqual(item.component,component)) {
             require(mountAlive(item.original) && mountAlive(item.replacement),"弹体换位：原网格或替换网格失效");
-            require(current==item.original.address || current==item.replacement.address,"弹体换位：组件网格被其他逻辑改变");
-            return item.original.address;
+            return &item;
         }
-        return 0;
+        return nullptr;
     };
-    const Addr preview=from(mountPreview.layout);
-    const Addr task=from(fixedMount);
-    require(!preview || !task || preview==task,"弹体换位：任务与预览原网格不一致");
-    return preview?preview:task?task:current;
+    const auto* preview=mountPreview.active?from(mountPreview.layout):nullptr;
+    const auto* task=from(fixedMount);
+    if(preview && task) {
+        require(mountMeshIdentityEqual(mountPreview.layout.plane,fixedMount.plane) &&
+            mountMeshIdentityEqual(preview->original,task->original),"弹体换位：任务与预览原网格不一致");
+    }
+    const auto* recorded=preview?preview:task;
+    if(!recorded)return current;
+    // 只接受同一组件、同一原网格的已登记替换，不把未知网格当成新的原版资源。
+    require(current==recorded->original.address || (preview && current==preview->replacement.address) ||
+        (task && current==task->replacement.address),"弹体换位：组件网格被其他逻辑改变");
+    return recorded->original.address;
 }
 struct MountMeshSetter {
     using Process=void(*)(void*,void*,void*);

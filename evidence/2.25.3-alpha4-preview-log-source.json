@@ -1,0 +1,76 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "baseline": "622e639892244c789920d8eb1a7b97148a10dfc1",
+  "target_version": "2.25.3 alpha4",
+  "authorization": "用户要求修复日志检查的1（补给模型预览回退）和3（日志版本标记），本轮不编译/测试/安装或操作游戏",
+  "observed_installation": {
+    "version": "2.25.3 alpha3",
+    "pid": 39720,
+    "runtime_files_match": "evidence/2.25.3-alpha3-exe-delivery.json，21份运行文件摘要完全一致",
+    "local_log_snapshots": {
+      "mod.log": {
+        "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha3-log-review\\mod-181908.log",
+        "sha256": "a99a2287356c9cfdded76a2715f77096b01d5c98b9648019a1bbdb9c33393813"
+      },
+      "native.log": {
+        "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha3-log-review\\native-181908.log",
+        "sha256": "24a703c12d0d5e2eb16d9787fb56628e6bbfb219b062c98c86435f3b673d6402"
+      },
+      "UE4SS.log": {
+        "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha3-log-review\\UE4SS-181908.log",
+        "sha256": "b22f46d295c5f95f05d1556bcd0a002205ce39e751c02b21d0b17ea97eb239e6"
+      }
+    }
+  },
+  "preview": {
+    "event_utc": "2026-10-24T10:15:34.294Z",
+    "aircraft": "Rafale M / rflm / 117",
+    "error": "MOUNT_PREVIEW_FALLBACK 多 SP 模型预览已回退为原生单 SP：弹体换位：组件网格被其他逻辑改变",
+    "static_path": [
+      "三SP任务mask7使用14/15号派生挂架",
+      "补给双SP候选mask3使用11号挂架；mask6使用13号挂架",
+      "mountBaselineMesh分别要求当前网格属于预览记录和旧任务记录；已换成11号的合法预览挂架不满足旧任务14号记录",
+      "下一次mountBindVisuals经过同组件基线检查时抛错，mountPreviewFail锁定该身份为原生预览"
+    ],
+    "fix": "先取两份记录，各自校验资源存活；两份都存在时要求完整飞机弱身份和原网格弱身份一致。当前网格联合核对原网格、预览已登记替换和任务已登记替换，再返回共同原网格。",
+    "preserved": [
+      "组件地址/索引/序列号匹配",
+      "原网格与替换资源存活校验",
+      "任务/预览原网格一致；飞机不同拒绝合并记录",
+      "未知当前网格继续回退",
+      "实际SetStaticMesh、碰撞校验和逐项归还流程保持",
+      "不修改兵装配弹、冷却、发射顺序、补给成功回调或舱门代码"
+    ],
+    "reviewed_cases": [
+      "三SP任务下双SP候选mask3/6/3连续重新绑定",
+      "单SP/三SP候选之间切换、归还预览后恢复任务布局的既有流程",
+      "没有历史记录时仍按当前网格做原生资源核对",
+      "原网格身份不同、未知网格及失效资源继续拒绝"
+    ],
+    "limit": "静态路径修订，不作为已经完成补给、实际外观或重新起飞的验收证明"
+  },
+  "log_version": {
+    "cause": "src/bounded_log.hpp硬编码LOG_SESSION version=2.24.1；原统一构建只给UI传版本宏",
+    "fix": "src/build.py从VERSION读取的同一个version_define同时传给核心和UI；bounded_log.hpp会话头拼接该值，缺宏时报编译错误，不回落旧号，不运行时读文件",
+    "legacy": "不修改历史日志、旧DLL、旧构建/EXE或旧标识替换工具回执"
+  },
+  "validation": {
+    "static_diff_review": true,
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "installed": false,
+    "game_operated": false
+  },
+  "protected_old_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "deferred": [
+    "F6状态发布25—29毫秒及偶发峰值问题，本轮不处理",
+    "XFA-33 B、Su-57 TGM公共舱重复展开继续按指令暂缓"
+  ],
+  "pending": [
+    "Rafale M三SP出击，补给中切换各双SP组合并重复返回，再切单SP/三SP，检查不再预览回退",
+    "取消/确认补给、再次起飞后核对外观、弹药和三SP切换",
+    "新构建的mod.log/native.log会话头应显示完整产品版本（包含alpha标识）"
+  ]
+}

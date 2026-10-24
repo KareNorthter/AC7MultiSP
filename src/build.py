@@ -64,9 +64,10 @@ def main():
     run([str(compiler / "clang.exe"), "-O2", "-c", "-I", str(minhook / "include"),
                     *map(str, sources)], cwd=output, env=environment, check=True)
     candidate = output / "DualSP.dll"  # DLL 只留在独立构建目录，不写 dist/bin。
+    version_define = '-DAC7MULTISP_VERSION="' + info["version"] + '"'  # 核心日志、UI与更新模块共用VERSION。
     # 每次完整构建；旧回执缺少依赖，不能作为复用凭据。
     run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-shared", "-static",
-         "-D" + info["core_define"], "-I", str(root / "vendor"),
+         "-D" + info["core_define"], version_define, "-I", str(root / "vendor"),
          "-I", str(minhook / "include"), str(root / "src/weapon_bridge.cpp"),
          "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-lole32", "-o", str(candidate)],
         cwd=output, env=environment, check=True)
@@ -78,7 +79,7 @@ def main():
     run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-c",
                     "-I", str(root / "vendor"), "-I", str(minhook / "include"),
                     "-I", str(imgui), "-I", str(imgui / "backends"),
-                    '-DAC7MULTISP_VERSION="' + info["version"] + '"', *map(str, ui_sources)],
+                    version_define, *map(str, ui_sources)],
                    cwd=output, env=environment, check=True)
     ui = output / "DualSPUI.dll"  # 不覆盖工作区中任何已验证的二进制。
     run([str(compiler / "clang++.exe"), "-shared", "-static",
