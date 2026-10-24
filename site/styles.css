@@ -174,3 +174,56 @@ h2 { margin-bottom: 0; color: #203545; font-size: 22px; letter-spacing: -0.025em
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
 }
+
+/* 打赏入口与弹窗沿用主页的浅色卡片和青绿色按钮。 */
+.support-button { display: inline-flex; align-items: center; gap: 6px; padding: 9px 12px; border: 1px solid #b9d8d2; border-radius: 10px; color: var(--accent-strong); background: #edf7f4; cursor: pointer; font-size: 13px; }
+.support-button:hover { background: #dfefea; }
+.support-is-open { overflow: hidden; }
+.support-dialog { width: min(710px, calc(100% - 28px)); max-height: calc(100dvh - 32px); padding: 28px; border: 1px solid var(--border); border-radius: 22px; color: #1c2b38; background: var(--surface); box-shadow: 0 24px 90px #18344233; overflow-y: auto; }
+.support-dialog::backdrop { background: #152d3c80; backdrop-filter: blur(4px); }
+.support-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.support-heading h2 { margin: 0; font-size: clamp(22px, 4vw, 28px); }
+.support-close { flex: 0 0 36px; height: 36px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface-light); cursor: pointer; font-size: 24px; }
+.support-thanks { margin: 16px 0 24px; color: var(--text-muted); line-height: 1.8; }
+.support-options { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.support-option { min-width: 0; padding: 22px 18px; border: 1px solid var(--border); border-radius: 16px; text-align: center; }
+.support-option h3 { margin: 0 0 10px; font-size: 19px; }
+.support-option p { color: var(--text-muted); font-size: 13px; line-height: 1.8; }
+.support-qr { display: block; width: 100%; max-width: 240px; height: auto; margin: 16px auto 0; }
+.support-kofi { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f6faf9; }
+.coffee-mark { margin-bottom: 20px; font-size: 46px; }
+.support-kofi .download-button { flex: none; margin: 14px 0 22px; }
+.payment-logos { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
+.payment-logos img { object-fit: contain; }
+.support-kofi small { margin-top: 16px; color: var(--text-muted); font-size: 11px; }
+@media (max-width: 780px) { .site-header { flex-wrap: wrap; padding-block: 14px; gap: 12px; } .header-tools { flex-wrap: wrap; } }
+@media (max-width: 540px) { .support-dialog { padding: 20px; } .support-options { grid-template-columns: 1fr; } .support-button { font-size: 12px; padding: 7px 9px; } }
+
+/* 作者、反馈和打赏集中放在主介绍下方。 */
+.hero-copy .owner-meta { display: grid; gap: 18px; margin-top: 28px; padding-top: 24px; border-top: 1px solid var(--border); }
+.hero-copy .owner-group { display: grid; gap: 8px; }
+.hero-copy .owner-label { color: #344d5d; font-size: 15px; }
+.hero-copy .owner-links { gap: 8px 20px; font-size: 16px; line-height: 1.8; }
+.hero-copy .owner-links a { font-weight: 600; }
+.hero-copy .support-button { margin-top: 24px; padding: 14px 22px; gap: 10px; border-color: var(--accent); border-radius: 12px; background: var(--accent); color: white; font-size: 17px; font-weight: 700; box-shadow: 0 6px 18px #137d7826; }
+.hero-copy .support-button:hover { background: var(--accent-strong); }
+@media (max-width: 470px) { .hero-copy .owner-links { font-size: 15px; } .hero-copy .support-button { width: 100%; justify-content: center; } }
+
+/* 邮件反馈只提供填写指引与邮件入口，不在网页收集附件。 */
+.feedback-button { margin: 24px 10px 0 0; padding: 14px 22px; border: 1px solid var(--accent); border-radius: 12px; color: var(--accent-strong); background: white; font-size: 17px; font-weight: 700; cursor: pointer; }
+.feedback-button:hover { background: #edf7f4; }
+.feedback-dialog { max-width: 640px; }
+.feedback-guide { padding-left: 24px; color: #455d6d; line-height: 1.9; }
+.feedback-guide li + li { margin-top: 10px; }
+.feedback-note { color: var(--text-muted); font-size: 13px; line-height: 1.8; }
+.feedback-dialog label { display: block; margin-top: 20px; font-size: 14px; font-weight: 600; }
+.feedback-email { width: 100%; margin-top: 8px; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font: inherit; color: #344d5d; background: #f6faf9; }
+.feedback-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 18px; }
+.feedback-actions .support-button { padding: 12px 18px; font-size: 15px; }
+.feedback-actions button:disabled { opacity: .5; cursor: wait; }
+.feedback-status { color: var(--accent-strong); font-size: 14px; line-height: 1.7; }
+@media (max-width: 470px) { .feedback-button { width: 100%; margin-right: 0; } }
+
+.feedback-log-location { margin-block: 18px; padding: 14px 18px; border: 1px solid var(--border); border-radius: 12px; background: #f6faf9; font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.feedback-log-location p { margin: 0; }
+.feedback-log-location p + p { margin-top: 10px; }

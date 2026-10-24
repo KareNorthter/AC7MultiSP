@@ -13,7 +13,7 @@
 | 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
 | 现成正式EXE与通用ZIP | [2.26.0 EXE](Release/2.26.0/AC7MultiSP_Installer.exe)、[2.26.0 Universal ZIP](Release/2.26.0/AC7MultiSP-2.26.0-Universal.zip)及同目录发布签名、SHA256SUMS；EXE内嵌ZIP与独立ZIP原字节一致，40项Vortex部署映射静态核对通过，未执行安装或更新 |
 | 实机验证边界 | 作者确认alpha4基本通过，随后确认alpha5均正常；记录为用户实测反馈，不追认未逐项核实的异常验签、异机恢复或性能测量。F6状态发布性能、F-2A掉帧及XFA-33 B/Su-57 TGM公共舱待办继续保留 |
-| 主页与发布流程 | 按[新版发布流程](docs/project/release-workflow.md)：作者上传同一EXE到R2/蓝奏云、ZIP到Nexus；提供最终链接后，接收指定网页线程的打赏/反馈成果，核对下载摘要并生成完整Pages供作者上传。stable的release_notes必须使用当前2.26.0中英文章节全部正文，不精简；当前stable尚未改为新版 |
+| 主页与发布流程 | 已按作者新链接接收主页制作线程成果，交付[2.26.0 Pages ZIP](Release/2.26.0/AC7MultiSP-Pages-homepage.zip)及Pages目录；本地stable写入完整中英文2.26.0日志。R2下载文件大于正式EXE，作者随后要求先制作网页；[交付记录](evidence/2.26.0-pages-delivery.json)明确核验未通过，未上传Cloudflare |
 | 当前正式源码 | VERSION为**2.26.0**、candidate=false，构建来源38f1255。按作者最新四份中文原字节接收并同步英文；保留作者精简后的正式日志，生成文字已同步。安装器内嵌Steam登记的AC7游戏图标，四尺寸资源核对一致 |
 | 最近验收安装包 | [2.25.3 alpha5 EXE](Release/2.25.3-alpha5/AC7MultiSP_Installer.exe)，来源db0d2c9，作者本次确认正常；[原交付回执](evidence/2.25.3-alpha5-exe-delivery.json)记录制作时的核对事实，旧包和回执不改作正式版本 |
 

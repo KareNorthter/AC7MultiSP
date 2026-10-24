@@ -19,6 +19,7 @@
       </span>
     </a>
     <div class="header-tools">
+
       <a class="manifest-link" href="./stable.json" target="_blank" rel="noopener noreferrer">
         <span data-i18n="manifestLink">更新清单 JSON</span>
         <span aria-hidden="true">↗</span>
@@ -33,6 +34,15 @@
   <main>
     <section class="owner-strip panel" aria-label="作者信息与声明" data-i18n-aria="ownerInfoLabel">
       <p id="legalNotice" class="legal-notice" aria-live="polite" data-i18n="loadingAuthor">正在读取作者信息…</p>
+    </section>
+
+    <section class="hero panel" aria-labelledby="pageTitle">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="eyebrow">MOD 作者主页</p>
+        <h1 id="pageTitle">AC7MultiSP</h1>
+        <p class="hero-description" data-i18n="heroDescription">
+          多种特殊武器，自由组合。这里提供下载入口、使用说明和版本信息。
+        </p>
       <div class="owner-meta">
         <div class="owner-group">
           <span class="owner-label" data-i18n="creatorLabel">作者</span>
@@ -43,15 +53,10 @@
           <div id="feedbackLinks" class="owner-links" aria-live="polite"></div>
         </div>
       </div>
-    </section>
-
-    <section class="hero panel" aria-labelledby="pageTitle">
-      <div class="hero-copy">
-        <p class="eyebrow" data-i18n="eyebrow">MOD 作者主页</p>
-        <h1 id="pageTitle">AC7MultiSP</h1>
-        <p class="hero-description" data-i18n="heroDescription">
-          多种特殊武器，自由组合。这里提供下载入口、使用说明和版本信息。
-        </p>
+      <button type="button" class="feedback-button" id="feedbackOpen" aria-haspopup="dialog" aria-controls="feedbackDialog" data-i18n="feedbackButton">反馈问题</button>
+      <button type="button" class="support-button" id="supportOpen" aria-haspopup="dialog" aria-controls="supportDialog">
+        <span aria-hidden="true">☕</span> <span data-i18n="supportButton">请我喝杯咖啡</span>
+      </button>
       </div>
 
       <div class="release-card">
@@ -97,6 +102,59 @@
       </article>
     </section>
   </main>
+
+  <dialog id="feedbackDialog" class="support-dialog feedback-dialog" aria-labelledby="feedbackTitle" aria-describedby="feedbackIntro">
+    <div class="support-heading">
+      <h2 id="feedbackTitle" data-i18n="feedbackTitle">反馈 Mod 问题</h2>
+      <button type="button" id="feedbackClose" class="support-close" aria-label="关闭" data-i18n-aria="supportClose">×</button>
+    </div>
+    <p id="feedbackIntro" class="support-thanks" data-i18n="feedbackIntro">点击下方按钮打开邮件应用，邮件中已准备好问题填写模板。请补充后发送。</p>
+    <ol class="feedback-guide">
+      <li data-i18n="feedbackGuideVersion">说明 Mod 版本、安装方式，以及是否同时使用其他 Mod。</li>
+      <li data-i18n="feedbackGuideSteps">描述问题、复现步骤、相关机体和任务，以及预期与实际结果。</li>
+      <li data-i18n="feedbackGuideLogs">请在邮件应用中手动附上相关 .log 或 .txt 日志，必要时附截图；网页不会上传或自动附加文件。</li>
+    </ol>
+    <div class="feedback-log-location">
+      <p data-i18n="feedbackLogLocation"></p>
+      <p data-i18n="feedbackLogShortcut"></p>
+    </div>
+    <p class="feedback-note" data-i18n="feedbackPrivacy">发送前请检查日志，移除不愿公开的个人信息。</p>
+    <label for="feedbackEmail" data-i18n="feedbackEmailLabel">反馈邮箱</label>
+    <input id="feedbackEmail" class="feedback-email" type="text" readonly>
+    <div class="feedback-actions">
+      <button type="button" id="feedbackSend" class="support-button" disabled data-i18n="feedbackSend">发送反馈邮件</button>
+      <button type="button" id="feedbackCopy" class="support-button" disabled data-i18n="feedbackCopy">复制邮箱</button>
+    </div>
+    <p class="feedback-note" data-i18n="feedbackMailHint">如果没有打开邮件应用，请复制邮箱，在你常用的邮箱网站或应用中新建邮件。点击按钮不会自动发送。</p>
+    <p id="feedbackStatus" class="feedback-status" role="status" aria-live="polite"></p>
+  </dialog>
+
+  <dialog id="supportDialog" class="support-dialog" aria-labelledby="supportTitle" aria-describedby="supportThanks">
+    <div class="support-heading">
+      <div><p class="eyebrow" data-i18n="supportEyebrow">感谢你的支持</p><h2 id="supportTitle" data-i18n="supportTitle">请我喝杯咖啡</h2></div>
+      <button type="button" id="supportClose" class="support-close" aria-label="关闭" data-i18n-aria="supportClose">×</button>
+    </div>
+    <p id="supportThanks" class="support-thanks" data-i18n="supportThanks">如果这个模组给你带来了乐趣，欢迎请我喝杯咖啡。感谢你的支持！</p>
+    <div class="support-options">
+      <section class="support-option">
+        <h3 data-i18n="supportAlipay">支付宝</h3>
+        <p data-i18n="supportScan">打开支付宝，扫一扫下方二维码</p>
+        <img class="support-qr" src="./assets/alipay-qr.jpg" alt="支付宝打赏二维码" data-i18n-alt="supportQrAlt" width="762" height="871">
+      </section>
+      <section class="support-option support-kofi">
+        <span class="coffee-mark" aria-hidden="true">☕</span>
+        <h3>Ko-fi</h3>
+        <p data-i18n="supportKofiDescription">通过 Ko-fi 支持我，支持 PayPal 和信用卡支付。</p>
+        <a class="download-button" href="https://ko-fi.com/northter" target="_blank" rel="noopener noreferrer"><span data-i18n="supportKofiButton">前往 Ko-fi 打赏</span><span aria-hidden="true"> ↗</span></a>
+        <div class="payment-logos" role="group" aria-label="支付方式" data-i18n-aria="supportPayments">
+          <img src="./assets/paypal.svg" alt="PayPal" width="90" height="28">
+          <img src="./assets/visa.svg" alt="Visa" width="61" height="28">
+          <img src="./assets/mastercard.svg" alt="Mastercard" width="43" height="28">
+        </div>
+        <small data-i18n="supportNewTab">将在新标签页打开 Ko-fi</small>
+      </section>
+    </div>
+  </dialog>
 
   <footer class="site-footer">
     <span data-i18n="footerNotice">AC7MultiSP 是《皇牌空战7：未知空域》的非官方 Mod。</span>

@@ -9,7 +9,7 @@
 | installer.zh-CN.json、installer.en.json | EXE界面、确认、进度、错误与导出提示 |
 | author-links.json | 安装器与F6作者区共用的主页及咖啡入口；生成C++/C#常量，固定HTTPS主页域名 |
 | [安装器盘点](installer-inventory.json) | 对应源码入口、双语及格式核对范围 |
-| site.zh-CN.json、site.en.json | 双语主页的40对固定词条；不重复维护作者、联系方式和四份正文 |
+| site.zh-CN.json、site.en.json | 双语主页、打赏与邮件反馈弹窗的固定词条；不重复维护作者、联系方式和四份正文 |
 
 游戏资源改值后运行`python src/user_texts.py`，提交源JSON及生成的C++头/Lua表；构建也会自动生成。使用`--check`可仅检查产物是否过期。安装器直接内嵌JSON，不复制另一套源码文字。
 

@@ -54,6 +54,9 @@
     document.querySelectorAll("[data-language]").forEach((button) => {
       button.setAttribute("aria-pressed", String(button.dataset.language === language));
     });
+    document.querySelectorAll("[data-i18n-alt]").forEach((node) => {
+      node.alt = strings[node.dataset.i18nAlt];
+    });
     renderManifest();
     renderAuthors();
     renderDocument();
@@ -329,6 +332,86 @@
     renderManifest();
   }
 
+  const feedbackDialog = document.getElementById("feedbackDialog");
+  const feedbackOpen = document.getElementById("feedbackOpen");
+  const feedbackEmail = document.getElementById("feedbackEmail");
+  const feedbackSend = document.getElementById("feedbackSend");
+  const feedbackCopy = document.getElementById("feedbackCopy");
+  const feedbackStatus = document.getElementById("feedbackStatus");
+  feedbackOpen.addEventListener("click", async () => {
+    feedbackStatus.textContent = "";
+    feedbackEmail.value = "";
+    feedbackSend.disabled = feedbackCopy.disabled = true;
+    feedbackDialog.showModal();
+    document.body.classList.add("support-is-open");
+    try {
+      // 与作者区共用正文邮箱，不另设联系方式副本。
+      const author = await readDocument("author");
+      const email = author.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+      if (!email) throw new Error("Missing feedback email");
+      feedbackEmail.value = email[0];
+      feedbackSend.disabled = feedbackCopy.disabled = false;
+    } catch {
+      feedbackStatus.textContent = currentCopy().feedbackEmailError;
+    }
+  });
+  document.getElementById("feedbackClose").addEventListener("click", () => feedbackDialog.close());
+  feedbackDialog.addEventListener("click", (event) => {
+    const bounds = feedbackDialog.getBoundingClientRect();
+    if (event.target === feedbackDialog &&
+        (event.clientX < bounds.left || event.clientX > bounds.right ||
+         event.clientY < bounds.top || event.clientY > bounds.bottom)) feedbackDialog.close();
+  });
+  feedbackDialog.addEventListener("close", () => {
+    if (!document.querySelector("dialog[open]")) document.body.classList.remove("support-is-open");
+    feedbackOpen.focus();
+  });
+  feedbackSend.addEventListener("click", () => {
+    window.location.href = "mailto:" + feedbackEmail.value +
+      "?subject=" + encodeURIComponent(currentCopy().feedbackSubject) +
+      "&body=" + encodeURIComponent(currentCopy().feedbackBody);
+  });
+  feedbackCopy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(feedbackEmail.value);
+      feedbackStatus.textContent = currentCopy().feedbackCopied;
+    } catch {
+      feedbackEmail.focus();
+      feedbackEmail.select();
+      feedbackStatus.textContent = currentCopy().feedbackCopyFallback;
+    }
+  });
+
+  const supportDialog = document.getElementById("supportDialog");
+  const supportOpen = document.getElementById("supportOpen");
+  function syncSupportHash() {
+    if (/^#coffee\/?$/.test(window.location.hash)) {
+      if (!supportDialog.open) supportDialog.showModal();
+      document.body.classList.add("support-is-open");
+    } else if (supportDialog.open) {
+      supportDialog.close();
+    }
+  }
+  supportOpen.addEventListener("click", () => {
+    if (!/^#coffee\/?$/.test(window.location.hash)) window.location.hash = "coffee";
+    syncSupportHash();
+  });
+  document.getElementById("supportClose").addEventListener("click", () => supportDialog.close());
+  supportDialog.addEventListener("click", (event) => {
+    const bounds = supportDialog.getBoundingClientRect();
+    if (event.target === supportDialog &&
+        (event.clientX < bounds.left || event.clientX > bounds.right ||
+         event.clientY < bounds.top || event.clientY > bounds.bottom)) supportDialog.close();
+  });
+  supportDialog.addEventListener("close", () => {
+    document.body.classList.remove("support-is-open");
+    if (/^#coffee\/?$/.test(window.location.hash)) {
+      history.replaceState(history.state, "", window.location.pathname + window.location.search);
+    }
+    supportOpen.focus();
+  });
+  window.addEventListener("hashchange", syncSupportHash);
+
   document.querySelectorAll("[data-language]").forEach((button) => {
     button.addEventListener("click", () => {
       language = button.dataset.language;
@@ -360,5 +443,6 @@
     // 偏好不可用时默认使用中文。
   }
   applyLanguage();
+  syncSupportHash();
   loadManifest();
 })();

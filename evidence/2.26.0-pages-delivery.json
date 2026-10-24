@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "version": "2.26.0",
+  "source_intake": {
+    "thread": "01a16d65-a9bc-78f2-ad9a-7fd2547af982",
+    "source_head": "622e639892244c789920d8eb1a7b97148a10dfc1",
+    "files": {
+      "site/app.js": "57345ea85c4962baa314c52451aa46abd1e215b5b63df9c7c03b1a3bf88d1c73",
+      "site/index.html": "52644dbe021b9bd06316292ee50b2037b86a81d5960c2e55bebead0fb56fd7eb",
+      "site/styles.css": "d88e9fef9947535ddda212c249eb9d579eb6c03528fc0273f4b34a4068ee0f77",
+      "src/build_pages_site.py": "c9e18bda170def9b14e05c525ab87ea14c31b50f8d7da9d7007c0aa9a39ee7f6",
+      "docs/user/interface/site.en.json": "d61e7abecad6b172c61a1708c3c51c33281396c49b894eb2c14a92fcd8acfdd2",
+      "docs/user/interface/site.zh-CN.json": "36daaff1dd677e90e69e4270eb8cc839e9f9be89114bb29004e1f86d5b1402ef",
+      "site/assets/alipay-qr.jpg": "4e74a016dc49308b59b8181455c73761176f3197ec595e5257ebe7499919babe",
+      "site/assets/mastercard.svg": "b1ca921334ea354ed30b537236a6528225a4470190b461d677666e04143d3ab7",
+      "site/assets/paypal.svg": "d68fb04a134b6b046e019bc46f24ac4a989304bd80f0b4bc2ba2e3d538cf4464",
+      "site/assets/visa.svg": "22e530a4590b8972361da851ecc43074eab0cfb9d03e1d4f1b727e78cbc15275"
+    }
+  },
+  "author_instruction": "先制作网页；网页交付到E:/AC7_MultiSP/Release/2.26.0",
+  "r2": {
+    "verified": false,
+    "error": "finalize流式下载发现R2文件大于本次正式EXE；后续HEAD返回403，未再重试",
+    "expected_size": 61572096,
+    "expected_sha256": "f1cb2f47977c48d28c59ea9ceb4a9076bc200f62f19aa2de1a52d40366227f5f"
+  },
+  "lanzou_binary_verified": false,
+  "nexus_binary_verified": false,
+  "cloudflare_deployed": false,
+  "pages_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\AC7MultiSP-Pages-homepage.zip",
+    "size": 85368,
+    "sha256": "b4ddd50ed9607a3ee29804341438a3b07e602c0c1dfa22369581c464275bcb3d"
+  },
+  "pages_directory": "E:\\AC7_MultiSP\\Release\\2.26.0\\Pages",
+  "members": {
+    "_headers": {
+      "size": 574,
+      "sha256": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc"
+    },
+    "AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9"
+    },
+    "AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909"
+    },
+    "app.js": {
+      "size": 29077,
+      "sha256": "cc9341165e5c8ce3864a3ea7f25663ada55ecc110d019e863fa3abdc5f1f8381"
+    },
+    "assets/alipay-qr.jpg": {
+      "size": 63182,
+      "sha256": "4e74a016dc49308b59b8181455c73761176f3197ec595e5257ebe7499919babe"
+    },
+    "assets/mastercard.svg": {
+      "size": 178,
+      "sha256": "b1ca921334ea354ed30b537236a6528225a4470190b461d677666e04143d3ab7"
+    },
+    "assets/paypal.svg": {
+      "size": 229,
+      "sha256": "d68fb04a134b6b046e019bc46f24ac4a989304bd80f0b4bc2ba2e3d538cf4464"
+    },
+    "assets/visa.svg": {
+      "size": 196,
+      "sha256": "22e530a4590b8972361da851ecc43074eab0cfb9d03e1d4f1b727e78cbc15275"
+    },
+    "index.html": {
+      "size": 10243,
+      "sha256": "e22f7d3c540ddbeb10eec6c5f217f8225583aeb612aafe519c6a53f038fde126"
+    },
+    "preview.json": {
+      "size": 1024,
+      "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+    },
+    "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9"
+    },
+    "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909"
+    },
+    "stable.json": {
+      "size": 1117,
+      "sha256": "86f24589c3bba5f9d17953691dece01cd5a2ca86c96186037e9b42f3fa536410"
+    },
+    "styles.css": {
+      "size": 14066,
+      "sha256": "d88e9fef9947535ddda212c249eb9d579eb6c03528fc0273f4b34a4068ee0f77"
+    },
+    "user-docs/Author-and-License.txt": {
+      "size": 2099,
+      "sha256": "3ad29a39d6ad15e0ed25bf852b6242d0b454c34bd9b5a0f00c31dd64df2fb8c7"
+    },
+    "user-docs/Changelog.txt": {
+      "size": 2430,
+      "sha256": "de679d3cbcd7822d2dc7f995a5a989bc22681cc6feab4c474b14856281161983"
+    },
+    "user-docs/Features.txt": {
+      "size": 4933,
+      "sha256": "82121bbec6927b231546e21daab976e5c65aeae03533979e8a49bdad839b4c0e"
+    },
+    "user-docs/Installation.txt": {
+      "size": 1373,
+      "sha256": "2c7b8b980321e6a082e0960471d81f2e1b76329067ee7fd6c09fc0485b44f386"
+    },
+    "user-docs/作者与授权.txt": {
+      "size": 1810,
+      "sha256": "9a8b751d86f34304a6e818d544215f08c0e0da6fcb2d821291fb1ea1d9c08408"
+    },
+    "user-docs/功能说明.txt": {
+      "size": 4187,
+      "sha256": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8"
+    },
+    "user-docs/安装说明.txt": {
+      "size": 1172,
+      "sha256": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c"
+    },
+    "user-docs/更新日志.txt": {
+      "size": 1898,
+      "sha256": "bfe8641941803306de5c6e285cda8960b50f5551f146232785657dd177bcbae7"
+    }
+  },
+  "previous_signatures_preserved": [],
+  "release_notes_full_body_verified": true,
+  "player_documents_original_bytes_verified": true,
+  "assets_verified": true,
+  "both_coffee_hashes_supported": true,
+  "browser_interaction_verified": false,
+  "ready_for_upload_files": true,
+  "download_binary_verification_complete": false,
+  "pending": [
+    "R2需确认替换为本次正式EXE；当前下载一致性未通过，不宣称已核验",
+    "作者上传完整Pages目录或ZIP；部署后另行核对线上清单、文档、下载及弹窗交互"
+  ]
+}

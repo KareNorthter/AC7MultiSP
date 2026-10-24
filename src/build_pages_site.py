@@ -15,6 +15,7 @@ SITE_SOURCE = ROOT / "site"
 PLAYER_DOCS = ROOT / "docs" / "user"
 DEFAULT_OUTPUT = ROOT / "Temp" / "tasks" / "pages-site" / "pages-output"
 SITE_FILES = ("index.html", "styles.css", "app.js", "stable.json", "preview.json", "_headers")
+SITE_ASSETS = ("alipay-qr.jpg", "paypal.svg", "visa.svg", "mastercard.svg")
 SITE_COPY_MARKER = "/* SITE_UI_COPY */ {}"
 PLAYER_DOC_FILES = (
     "功能说明.txt",
@@ -184,6 +185,11 @@ def render_html(template: str, texts: dict[str, str]) -> str:
         return tag[:-1] + f' aria-label="{label}">'
 
     template = re.sub(r'<[^>]+\bdata-i18n-aria="[^"]+"[^>]*>', aria, template)
+    def image_alt(match: re.Match[str]) -> str:
+        tag = match[0]
+        key = re.search(r'data-i18n-alt="([^"]+)"', tag)[1]
+        return re.sub(r'alt="[^"]*"', lambda _: 'alt="' + html.escape(texts[key], quote=True) + '"', tag)
+    template = re.sub(r'<img\b[^>]+\bdata-i18n-alt="[^"]+"[^>]*>', image_alt, template)
     return re.sub(
         r'(<meta\s+name="description"\s+content=")[^"]*(")',
         lambda match: match[1] + html.escape(texts["metaDescription"], quote=True) + match[2],
@@ -219,7 +225,12 @@ def build(output: Path, manifest: Path | None = None) -> None:
             raise FileNotFoundError(f"缺少玩家正文：{source}")
         source.read_bytes().decode("utf-8")
 
+    # 支付图片按原字节发布，避免二维码被文本编码处理或遗漏。
+    assets = {name: (SITE_SOURCE / "assets" / name).read_bytes() for name in SITE_ASSETS}
     output.mkdir(parents=True, exist_ok=True)
+    (output / "assets").mkdir(exist_ok=True)
+    for name, content in assets.items():
+        (output / "assets" / name).write_bytes(content)
     for name in SITE_FILES:
         copy_utf8(SITE_SOURCE / name, output / name)
     copy_utf8(manifest, output / "stable.json")
