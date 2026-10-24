@@ -65,7 +65,7 @@ A阶段接入三种用途的签名，文件及消费者见[交付方案](deliver
 
     python -X utf8 src/release_workflow.py prepare --receipt evidence/2.25.2-exe-delivery.json --confirm-stable --output-dir Temp/tasks/20261024-release-2.25.2/prepare
 
-后续版本把receipt换成对应交付回执或上一步delivery-receipt.json。`--confirm-stable`表示操作者已获得正式发布确认，不是游戏验证通过。默认从site/stable.json读取R2与蓝奏云地址；新版本必须显式提供`--lanzou-url 实际分享链接`，可重复一至三次，避免沿用旧包链接。R2更换地址用`--r2-url 实际地址`，域名仍须在已支持范围内。
+后续版本把receipt换成对应交付回执或上一步delivery-receipt.json。`--confirm-stable`表示操作者已获得正式发布确认，不是游戏验证通过。默认从site/stable.json读取R2与蓝奏云地址；新版本须显式提供`--lanzou-url 实际分享链接`，或使用`--without-lanzou`明确只提供R2，可重复一至三次，避免沿用旧包链接。R2更换地址用`--r2-url 实际地址`，域名仍须在已支持范围内。
 
 输出包含：
 
@@ -113,3 +113,5 @@ R2文件已到位后运行：
 ## 本次材料与状态
 
 本机准备根目录：`E:/AC7_MultiSP/Temp/tasks/20261024-release-2.25.2/`。实际完成项见[2.25.2发布准备记录](../../evidence/2.25.2-publication-preparation.json)。该记录与原EXE交付回执并列保存；作者后续手动上传的结果另行补充新记录，不回改原始构建事实。
+
+本轮作者暂不上传蓝奏云：prepare使用--without-lanzou，downloads只保留R2，网页隐藏备用区；release_notes继续原文完整提取。不修改已交付EXE与原签名，重用安装器修订2发行集合及历史签名目录。

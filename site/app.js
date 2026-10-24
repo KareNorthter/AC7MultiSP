@@ -94,7 +94,7 @@
         !value.release_notes.zh.trim() ||
         !value.release_notes.en.trim() ||
         !Array.isArray(value.downloads) ||
-        value.downloads.length < 2 ||
+        value.downloads.length < 1 ||
         value.downloads.length > 4) {
       throw new Error("Incomplete manifest");
     }
@@ -118,10 +118,10 @@
     }
     const primary = value.downloads.filter((item) => item.id === "r2");
     const backups = value.downloads.filter((item) => item.id !== "r2");
-    if (primary.length !== 1 || backups.length < 1 || backups.length > 3 ||
+    if (primary.length !== 1 || backups.length > 3 ||
         backups.some((item) => !item.id.startsWith("lanzou") ||
           new URL(item.url).hostname.toLowerCase() !== "wwbru.lanzoue.com")) {
-      throw new Error("Manifest must contain one R2 link and one to three Lanzou backups");
+      throw new Error("Manifest must contain one R2 link and zero to three Lanzou backups");
     }
     return value;
   }
@@ -154,7 +154,7 @@
     const primary = manifest.downloads.filter((item) => item.id === "r2");
     const backups = manifest.downloads.filter((item) => item.id !== "r2");
     appendDownloadGroup(currentCopy().mainDownloadTitle, primary, "", true);
-    appendDownloadGroup(currentCopy().backupDownloadsTitle, backups, "", false);
+    if (backups.length) appendDownloadGroup(currentCopy().backupDownloadsTitle, backups, "", false);
     elements.releaseNotesText.textContent = manifest.release_notes[language === "zh-CN" ? "zh" : "en"];
     elements.releaseNotes.hidden = false;
   }

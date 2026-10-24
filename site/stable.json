@@ -16,14 +16,6 @@
         "en": "Primary · R2 installer"
       },
       "url": "https://downloads.iot-node-service-api.online/AC7MultiSP_Installer.exe"
-    },
-    {
-      "id": "lanzou",
-      "label": {
-        "zh": "备用下载 · 蓝奏云1",
-        "en": "Backup · Lanzou 1"
-      },
-      "url": "https://wwbru.lanzoue.com/iJ4D04d7hrih"
     }
   ]
 }

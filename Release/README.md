@@ -2,7 +2,9 @@
 
 当前正式功能版本和发布状态只在[项目入口](../README.md)维护；主要变化见[玩家更新日志](../docs/user/更新日志.txt)。
 
-当前最新为[2.26.0安装器修订2](2.26.0/installer-revision2/AC7MultiSP_Installer.exe)：新版下载提示固定进入作者主页，版本保持2.26.0，运行文件、文档和图标不变。同目录保存重签的匹配ZIP、发行清单与签名，以及[配套网页包](2.26.0/installer-revision2/AC7MultiSP-Pages-homepage.zip)；网页只更新发行签名材料并保留旧签名。来源与摘要见[修订回执](../evidence/2.26.0-installer-homepage-revision2.json)。新EXE尚未上传，固定链接替换后需再次清缓存。
+作者已将安装器修订2及配套文件移至Release/2.26.0根目录。当前仅保留R2下载的新网页包为[AC7MultiSP-Pages-R2-only.zip](2.26.0/AC7MultiSP-Pages-R2-only.zip)，解压目录为Pages-R2-only；R2已核对匹配修订2完整SHA256，待作者上传完整网页包。以下旧交付路径保留阶段说明，现成EXE请使用根目录文件。
+
+此前交付为[2.26.0安装器修订2](2.26.0/installer-revision2/AC7MultiSP_Installer.exe)：新版下载提示固定进入作者主页，版本保持2.26.0，运行文件、文档和图标不变。同目录保存重签的匹配ZIP、发行清单与签名，以及[配套网页包](2.26.0/installer-revision2/AC7MultiSP-Pages-homepage.zip)；网页只更新发行签名材料并保留旧签名。来源与摘要见[修订回执](../evidence/2.26.0-installer-homepage-revision2.json)。新EXE尚未上传，固定链接替换后需再次清缓存。
 
 本次已制作2.26.0首版正式EXE（Release原文件已被外部移走，原冻结封装副本保留）及[同版通用ZIP](2.26.0/AC7MultiSP-2.26.0-Universal.zip)。来源38f1255，产品2.26.0、Windows文件版本2.26.0.0，candidate=false。[交付与静态核对](../evidence/2.26.0-exe-delivery.json)记录全部摘要与边界；同目录提供AC7MultiSP-release.json、AC7MultiSP-release.sig.json及SHA256SUMS.txt，最终文件不再改名、换图或重新封装。
 

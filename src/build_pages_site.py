@@ -85,8 +85,8 @@ def validate_manifest(path: Path) -> None:
             raise ValueError(f"release_notes.{language} 为空或格式无效")
 
     downloads = manifest.get("downloads")
-    if not isinstance(downloads, list) or not 2 <= len(downloads) <= 4:
-        raise ValueError("ready 清单需要 1 个 R2 主入口和 1 至 3 个蓝奏云备用入口")
+    if not isinstance(downloads, list) or not 1 <= len(downloads) <= 4:
+        raise ValueError("ready 清单需要 1 个 R2 主入口，可选 0 至 3 个蓝奏云备用入口")
     ids: set[str] = set()
     download_roles: list[tuple[str, str]] = []
     for item in downloads:
@@ -138,10 +138,10 @@ def validate_manifest(path: Path) -> None:
     if (
         len(primary) != 1
         or primary[0][1] == "wwbru.lanzoue.com"
-        or not 1 <= len(backups) <= 3
+        or not 0 <= len(backups) <= 3
         or any(not item_id.startswith("lanzou") or host != "wwbru.lanzoue.com" for item_id, host in backups)
     ):
-        raise ValueError("下载入口必须是 1 个 R2 主链接和 1 至 3 个蓝奏云备用链接")
+        raise ValueError("下载入口必须是 1 个 R2 主链接，可选 0 至 3 个蓝奏云备用链接")
 
 
 def copy_utf8(source: Path, target: Path) -> None:

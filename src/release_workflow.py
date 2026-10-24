@@ -159,14 +159,16 @@ def prepare(args: argparse.Namespace) -> None:
                     for field in ('receipt_sha256', 'exe_receipt_sha256', 'internal_zip_sha256'))):
             raise ValueError('新版本缺少作者发布签名，不能准备上传')
     defaults = read(ROOT / "site/stable.json")
-    if version != defaults.get("latest_version") and not args.lanzou_url:
-        raise ValueError("发布新版本须显式提供本次--lanzou-url，不能自动沿用上一版分享页")
+    if args.without_lanzou and args.lanzou_url:
+        raise ValueError("--without-lanzou与--lanzou-url不能同时使用")
+    if version != defaults.get("latest_version") and not args.lanzou_url and not args.without_lanzou:
+        raise ValueError("发布新版本须显式提供本次--lanzou-url或--without-lanzou，不能沿用旧分享页")
     default_r2 = next(x["url"] for x in defaults["downloads"] if x["id"] == "r2")
     default_lanzou = [x["url"] for x in defaults["downloads"] if x["id"].startswith("lanzou")]
     r2 = checked_url(args.r2_url or default_r2, "downloads.iot-node-service-api.online")
-    lanzou = [checked_url(x, "wwbru.lanzoue.com") for x in (args.lanzou_url or default_lanzou)]
-    if not 1 <= len(lanzou) <= 3 or len(set(lanzou)) != len(lanzou):
-        raise ValueError("需要一至三个不同的蓝奏云备用链接")
+    lanzou = [] if args.without_lanzou else [checked_url(x, "wwbru.lanzoue.com") for x in (args.lanzou_url or default_lanzou)]
+    if not 0 <= len(lanzou) <= 3 or len(set(lanzou)) != len(lanzou):
+        raise ValueError("蓝奏云备用链接可为零至三个，且不能重复")
     output = fresh(args.output_dir)
     upload = output / "upload"; upload.mkdir()
     shutil.copy2(artifact, upload / EXE)
@@ -215,7 +217,7 @@ def prepare(args: argparse.Namespace) -> None:
 
 1. 将upload/{EXE}同一个文件上传R2和蓝奏云，不解压、不重新压缩。
 2. R2固定对象键：{plan['r2_object_key']}。可先将同文件另存为{plan['r2_optional_version_key']}，再替换固定入口，保留回退版本。
-3. 蓝奏云上传后取得本次真实分享链接。若链接变化，用finalize的--lanzou-url参数传入，可重复一至三次；不要把网页地址当作直接文件下载。
+3. 如启用蓝奏云，上传后取得本次真实分享链接；本次备用入口数量为{len(lanzou)}。未提供时不显示备用下载。若链接变化，用finalize的--lanzou-url参数传入，可重复一至三次。
 4. 将upload/{nexus_package['filename'] if nexus_package else '（本轮未准备通用ZIP）'}手动上传到Nexus本Mod文件页，核对版本{version}及适用说明；不要把Pages ZIP或EXE代替通用ZIP。Nexus下载说明使用同套中英文玩家正文，不再维护另一份说明。
 5. 下载R2固定入口核对SHA256；finalize可自动流式核对。蓝奏云及Nexus请人工下载核对SHA256SUMS.txt。
 6. 若upload内有AC7MultiSP-release.json及其sig文件，保留同版原件；finalize会加入Pages根目录及不可变发布目录。运行finalize准备完整Pages目录和ZIP，再上传Pages；不要提前部署stable.ready.json草稿。
@@ -327,10 +329,14 @@ def finalize(args: argparse.Namespace) -> None:
     preserved = preserve_signatures(args.previous_pages_dir, output / 'pages')
     if signing:
         immutable = output / 'pages' / 'releases' / signing['release_id']
-        immutable.mkdir(parents=True)
+        immutable.mkdir(parents=True, exist_ok=True)
         for name in (RELEASE, RELEASE_SIG):
             shutil.copy2(prepared / 'upload' / name, output / 'pages' / name)
-            shutil.copy2(prepared / 'upload' / name, immutable / name)
+            if (immutable / name).exists():
+                if digest(immutable / name) != digest(prepared / 'upload' / name):
+                    raise ValueError('同一发布ID的历史签名与本次原件不同，拒绝覆盖')
+            else:
+                shutil.copy2(prepared / 'upload' / name, immutable / name)
     archive = output / "AC7MultiSP-Pages-homepage.zip"
     members = {}
     with zipfile.ZipFile(archive, "x", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
@@ -416,6 +422,7 @@ def main() -> None:
     prep.add_argument("--confirm-stable", action="store_true", required=True, help="明确确认本次版本获准正式发布；不代表游戏验收")
     prep.add_argument("--r2-url")
     prep.add_argument("--lanzou-url", action="append")
+    prep.add_argument("--without-lanzou", action="store_true", help="作者明确暂不提供蓝奏云，只保留R2")
     prep.add_argument("--exe-only", action="store_true", help="仅明确不更新Nexus文件时省略通用ZIP；完整发布默认同时准备ZIP")
     prep.set_defaults(handler=prepare)
     final = commands.add_parser("finalize", help="核对R2并生成完整Pages ZIP；不上传")

@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "version": "2.26.0",
+  "user_request": "蓝奏云暂不上传，先不用；现成文件已由作者移动到Release/2.26.0根目录",
+  "pages_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\AC7MultiSP-Pages-R2-only.zip",
+    "sha256": "3d2cc062ec71e87db582eb8d609fb5d8c92b0b3828be103867e1159405cf2885",
+    "size": 86589
+  },
+  "pages_directory": "E:\\AC7_MultiSP\\Release\\2.26.0\\Pages-R2-only",
+  "publication_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-r2-only\\pages-release-r2\\publication-receipt.json",
+  "r2": {
+    "size": 61571584,
+    "sha256": "e878c0f5df18620adb48e008cb92757cc0d58989571058216fc71f6ffa67f343",
+    "verified": true,
+    "method": "streaming-download"
+  },
+  "downloads": [
+    {
+      "id": "r2",
+      "label": {
+        "zh": "主要下载 · R2安装程序",
+        "en": "Primary · R2 installer"
+      },
+      "url": "https://downloads.iot-node-service-api.online/AC7MultiSP_Installer.exe"
+    }
+  ],
+  "release_notes_full_body_verified": true,
+  "player_documents_unchanged": true,
+  "website_backup_section_hidden": true,
+  "game_and_installer_single_download_compatible": true,
+  "exe_rebuilt": false,
+  "historical_signatures_preserved": [
+    "2f35cfa13faa4c93841da77e8fbed037",
+    "78b97c323d0d422ba657a01135f44dd7"
+  ],
+  "signature_originals_included": true,
+  "cloudflare_deployed": false,
+  "tests_run": false,
+  "installed": false,
+  "old_output_failures_preserved": [
+    "prepare原交付路径EXE被作者移动；改用摘要相同的冻结原件",
+    "旧Pages目录被作者移动；从两套已核验冻结发行集恢复历史签名，保留失败目录后新目录生成"
+  ]
+}
