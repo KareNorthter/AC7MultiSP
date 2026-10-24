@@ -114,11 +114,16 @@ def render():
     for key in keys:
         check_pair(key, zh["texts"][key], en["texts"][key])
     # 只校对静态键引用；外部清单、游戏提供的动态文本仍走原选语路径。
-    for relative in ("src/overlay.cpp", "src/management_panel.hpp", "src/version_updates_panel.hpp",
+    for relative in ("src/overlay.cpp", "src/management_panel.hpp", "src/version_updates_panel.hpp", "src/quick_mission_panel.hpp",
                      "dist/DualSP/Scripts/main.lua", "dist/DualSP/Scripts/native_loadout.lua",
-                     "dist/DualSP/Scripts/loadout_flow.lua", "dist/DualSP/Scripts/debug_aircraft.lua"):
+                     "dist/DualSP/Scripts/loadout_flow.lua", "dist/DualSP/Scripts/debug_aircraft.lua", "dist/DualSP/Scripts/quick_mission.lua"):
         source = (ROOT / relative).read_text(encoding="utf-8-sig")
         for key in re.findall(r'"([a-z][a-z0-9_.]+\.[0-9a-f]{8})"', source):
+            if key not in zh["texts"]:
+                raise ValueError(relative + " 引用了未登记文字：" + key)
+        for key in re.findall(r'"(quick\.[a-z0-9_.]+)"', source):
+            if key.endswith("."):
+                continue  # 运行时状态后缀在资源中逐项维护。
             if key not in zh["texts"]:
                 raise ValueError(relative + " 引用了未登记文字：" + key)
     docs = {}

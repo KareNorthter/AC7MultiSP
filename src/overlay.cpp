@@ -13,6 +13,7 @@
 #include <iterator>
 #include <memory>
 #include <cmath>
+#include <cstdio>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
@@ -800,6 +801,7 @@ bool beginManagementTab(const char* label,int index) {
     if(selected)managementTab=index;
     return selected;
 }
+#include "quick_mission_panel.hpp"
 #include "management_panel.hpp"
 
 // 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
@@ -887,7 +889,7 @@ void refreshState() {
                 uiText("loadout.was.not.applied.see.164255b7");
             pendingDebug=0;
         }
-        loadDebugAircraftDraft();
+        loadDebugAircraftDraft();loadQuickMissionDraft();
         const auto& gaze=state.at("target_gaze");
         if(gaze.value("response",0)!=targetGazeResponse) {
             targetGazeResponse=gaze.value("response",0);showToast(gaze.value("notice",std::string()),gaze.value("notice_warning",false)?ToastKind::Warning:ToastKind::Info);
@@ -1167,6 +1169,7 @@ extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) 
 extern "C" __declspec(dllexport) int dualsp_debug_loadout_supported(void*) {return 0;}
 // 换机独立子协议1，不改变现有管理设置与SP换装协议。
 extern "C" __declspec(dllexport) int dualsp_debug_aircraft_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_quick_mission_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
     try {

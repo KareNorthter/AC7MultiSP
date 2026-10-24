@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 快速进入测试任务，进行中 | 本聊天；设计基线85ab3a0，开发同步main 5a33e3a；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 独占快速启动Lua及F6入口、main/overlay接入、独立配置、脚本清单、相关双语词条和设计正文；沿用已有23关实值，不改版本/安装器/旧核心。原件在主目录Temp/tasks/20261024-quick-mission-observation/ |
+| 快速进入测试任务，进行中 | 本聊天；设计基线85ab3a0，开发同步main 5a33e3a；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 独占快速启动/片头Logo Lua及F6入口、main/overlay接入、独立配置、脚本清单、相关双语词条和设计正文；沿用已有23关实值，不改版本/安装器/旧核心。原件在主目录Temp/tasks/20261024-quick-mission-observation/ |
 | 安装器与F6易用性调整，源码已接收、待编译验证 | 本聊天；基线bba1bb9；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 2.24.3源码候选：安装器首页、系统语言、关闭游戏确认、同源版本、更新栏；F6更新/反馈/作者水印及DLC换机许可。主代理整合双语生成和正文，静态差异及Python语法核对完成；未编译、测试、封装、安装或上传。用户反馈旧2.24.2已安装且基本功能无误，不追溯改旧回执；以后优先单代理，减少拆分 |
 | 双语文档与通用交付，待游戏验证 | 本管理聊天；基线85ab3a0；codex/integrate-bilingual-delivery完成后关闭 | C:/Users/83717/.codex/worktrees/project-governance/AC7_MultiSP；完成后detached保留 | 接收根目录九份人工文档，生成英文并集中游戏/安装器词条；本地候选2.24.2、安装器0.3.0，独占docs/user、游戏文字调用、构建封装及对应正文。[交付回执](../../evidence/2.24.2-delivery.json)记录具体核对，不安装或操作游戏 |
 | 本机资产与GitHub整理，已接收 | 本管理聊天；基线6c62f53；完成锚archive/20261023/local-assets；codex/chore-local-assets完成后关闭 | 同整理工作树，完成后detached保留；正式入口仍为根目录main | 733项原名归组、其余按依赖原位索引；[清单](../../evidence/local-assets-20261023.json)保存1,206项位置及22个研究提交恢复锚。37个其他工作树未改 |

@@ -28,6 +28,8 @@ __pycache__/
 
 # 运行时配置、命令及状态不是源码。
 /dist/DualSP/profiles*.json
+/dist/DualSP/quick-mission*.json
+/dist/DualSP/quick-mission.json.pending
 /dist/DualSP/*-command.txt
 /dist/DualSP/*-state*.json
 /dist/DualSP/catalogue*.json
