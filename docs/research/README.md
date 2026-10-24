@@ -8,6 +8,8 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 ## 挂载、弹舱与动画
 
+多机舱门续研已从静态比较推进到限定源码候选，范围是普通SU-57/TGM、DarkStar、XFA-33 A/B/C；尚未编译、安装或实机验证。唯一行为说明见[挂载设计](../engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)，待反馈项仍在上方兼容性续研正文维护。旧完整共舱/Tick接管方案未恢复。
+
 | 主题/状态 | 成果锚 | 来源位置 | 已知问题与继续研究入口 |
 | --- | --- | --- | --- |
 | 完整内舱、共舱动画：已撤回，原料保留 | `archive/full-bay-mount-2.8.1` / `57fd5d3`；[动画研究](../../evidence/mount-expansion-animated.json) | `archive/20261023/pre-governance-main`标签内`docs/archive/*-before-2.16.txt`；主目录`Temp/build-2.8.1*`及相关工作树Temp，恢复前核实 | F-22/Su-47/Su-57 TGM完整几何思路仍可参考，但Su-47/TGM严重掉帧、空架/重复开合；现行保原生。从`src/research/build_animated_mount_candidates.py`、`build_animated_runtime_data.py`及来源证据查起，不直接恢复旧运行整套 |

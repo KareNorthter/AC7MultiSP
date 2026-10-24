@@ -758,6 +758,7 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
     cfaSwitchCost.mark(1);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     // 逻辑槽先映射为原生配置；挂载模块独立保存舱门和重建状态。
+    aircraftBayBeforeRebuild(command,index); // 公共舱只在真实SP互切中采样一次，不依赖多挂外观开关。
     const auto mountRebuild=fixedMountBeforeRebuild(command,index,session);
 #endif
     cfaSwitchCost.mark(2);
@@ -836,6 +837,7 @@ void keepArmed(const Command& command,bool armed) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     mountAnimationAfterArmed(command,armed);
     mountLightAnimationAfterArmed(command,armed);
+    aircraftBayAfterArmed(command,armed);
     animationCompletion.completed=true;
 #endif
 }
@@ -956,6 +958,9 @@ const char* weaponSwitchBlockReason(Addr plane,Addr activator) {
     return nullptr;
 }
 void execute(const Command& command) {
+#ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
+    AircraftBayCompletion bayCompletion{command}; // 任一后续步骤失败也不把舱门快照留给下次事务。
+#endif
     if(command.op!="snapshot" && command.op!="checkpoint_save")debugWeapons.repairPool=0;
     verifyVersion();
     require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
@@ -1082,7 +1087,7 @@ void execute(const Command& command) {
         fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
         bindF35Cover(command.plane);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
-    cfa50BayBind(command); // 作者舱门分域独立于多挂外观开关，失败不回滚已完成的兵装事务。
+    aircraftBayBind(command); // 舱门分域独立于多挂外观开关，失败不回滚已完成的兵装事务。
 #endif
     cfaSwitchCost.mark(7);
 }
@@ -1118,7 +1123,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
-            cfa50BayRelease(); // 动态进度停止收尾，不把旧的开舱残值恢复回去。
+            aircraftBayRelease(); // 动态进度停止收尾，不把旧的开舱残值恢复回去。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
