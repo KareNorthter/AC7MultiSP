@@ -1,0 +1,130 @@
+{
+  "schema": 2,
+  "version": "2.25.3 alpha2",
+  "candidate": true,
+  "official_release": "2.25.2",
+  "source_commit": "0fb8423e93c2a222ceb92ff2a0ce6a9553aa6aa2",
+  "source_workspace": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261024\\AC7_MultiSP",
+  "feature_sources": {
+    "alpha2_fix_commit": "e402d7d",
+    "mod_aircraft_thread": "01a1692d-b258-72e1-b585-88d0e1bf1fc7",
+    "mod_aircraft_commit": "7e255e165b8c6942cba1538f360dfb75e66b0289",
+    "installer_f6_thread": "01a16afb-9bd5-77a2-83fd-75ae46e840a5",
+    "installer_f6_commit": "cc924a579b40479c1423a8d3ec0a8c96f62638f1"
+  },
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha2-exe\\build-r1\\game-build",
+    "receipt_sha256": "04f8d7b7504f4eeb8d478133ad08a38d96a5209cc2cb0a6b38a9c37b85760bfa",
+    "core_recompiled": true,
+    "core_sha256": "d0046f1fcb8bcb1846b6de486b87f938e34990a0e0f20f66f8434944bf3d2854",
+    "ui_sha256": "3ddef1723c00332bb4f48c2f14caa8ac9c223d72b8e0edd0001e9b92704ece11",
+    "lua_count": 18,
+    "runtime_file_count": 21,
+    "source_verified_after_build": true,
+    "lua_syntax_only": true
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha2-exe\\build-r1\\delivery",
+    "receipt_sha256": "674475045e8ed1e4fbf7f7b34dcb6eae18622d6749843bd6d174c0a76fd75e1a",
+    "exe_receipt_sha256": "475795398526a5a5eb02894e7a13fce86b4b54e2793d5ce4bb9169a4f166a9fd",
+    "internal_zip_sha256": "b6bc4f0c59a7023750bd88871a9af0ffa8caa1e7a71d872b08f72780813fbfd5",
+    "universal_member_count": 48,
+    "embedded_zip_exact_bytes_verified": true,
+    "standalone_zip_delivered": false,
+    "readme_documents_sha256": {
+      "ReadMe_zhCN请读我/作者与授权.txt": "5467633aaad4d0401bd9a0741185a1fb62df9aab1a254155ccd4b647581b97dc",
+      "ReadMe_zhCN请读我/更新日志.txt": "1b710b5afb4ea865bd1f0686dab360b48c3d75301b7652fde266d4915fe6cc53",
+      "ReadMe_zhCN请读我/安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+      "ReadMe_zhCN请读我/功能说明.txt": "442235c8585203467edf985c7fbac48924ce46ff067e8a5db9fddcb990f89869",
+      "ReadMe_EN/Changelog.txt": "854523ae90de7294a8c751c679941a974fa3677b8709ecbafda544c14be214a4",
+      "ReadMe_EN/Features.txt": "c86795469b9a2a175482c107fc92ece0d09f53346ecd123f41eaeb85f9b25c9f",
+      "ReadMe_EN/Installation.txt": "2c7b8b980321e6a082e0960471d81f2e1b76329067ee7fd6c09fc0485b44f386",
+      "ReadMe_EN/Author-and-License.txt": "aad0df5a7d883455905867066025922a96e972541454bf1f0e11dc9c4498e53e"
+    },
+    "english_sources_renamed": true
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.25.3-alpha2\\AC7MultiSP_Installer.exe",
+    "size": 63463936,
+    "sha256": "c66d73c540f9d7a52ea2581367984eeb69317244b872baf6251d59de59ba682b",
+    "file_version": "2.25.3.2",
+    "product_version": "2.25.3 alpha2",
+    "x64": true
+  },
+  "feedback_source": "evidence/2.25.3-alpha1-feedback-alpha2-source.json",
+  "runtime_files": {
+    "Scripts/config_store.lua": "63b667973da6909d94fd38c554bbb5f7c282d364620615aa82561221ff3bd3e8",
+    "Scripts/debug_aircraft.lua": "f3802f8b9c6b7e475cb873200df07b9c23956265341b046b0c42be8492e2d12f",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "8f99f7bb699b66f87c3df06e1f80329f1f263c90f46213fbdc2037407d4f2dd1",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "3234d93351740f8cb3a219ce98d1c143b32acfd6c06ed6566ac929ed0cb6db13",
+    "Scripts/quick_mission.lua": "034376520e32be32c78b1687df97350e3c3ae37a30df4ad13813c304c02ac5a6",
+    "Scripts/runtime_context.lua": "ceac2863da78b9b8474093d1d165ef6238a81698b018589a2099abd67084fc62",
+    "Scripts/user_texts.lua": "28851b4285edf195bc00ae77bc139bbd3fba7e77541ccfed97b802160e6aae41",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "d0046f1fcb8bcb1846b6de486b87f938e34990a0e0f20f66f8434944bf3d2854",
+    "bin/DualSPUI.dll": "3ddef1723c00332bb4f48c2f14caa8ac9c223d72b8e0edd0001e9b92704ece11",
+    "VERSION": "7e093c0a94a5c89f3d832a52a55c48201d9a7eb638185bd31322562fba848e43"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "game_closed": false,
+  "uploaded": false,
+  "performance_measured": false,
+  "test_checklist": [
+    {
+      "id": "quick-multi",
+      "zh": "快速任务分别选择单/双/三SP，保存并出击，确认完整组合、弹药比例及切换；重启后复核保存预设和自动出击。M13仍使用任务兵装。",
+      "en": "Select one, two and three SP weapons in quick missions; save and launch, then verify the complete loadout, ammo ratios and switching. Recheck saved presets and auto-launch after restarting. M13 retains its assigned SP.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "preset-compatibility",
+      "zh": "旧单SP预设应继续可用；新空选不能保存或出击，不合格多挂组合停止初始化并提示调整，不隔离整个机体。",
+      "en": "Existing single-SP presets remain usable. Empty selections cannot be saved or launched; incompatible mixed loadouts stop initialization with an adjustment message without quarantining the aircraft.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "pause-backspace-space",
+      "zh": "先暂停再开F6，在文本框短按/长按退格和空格：正常编辑，不退出暂停、不确认底层菜单。再从未暂停状态打开F6复核。",
+      "en": "Pause, open F6 and tap/hold Backspace and Space in text fields: editing works without unpausing or confirming the underlying menu. Also repeat when opening F6 from unpaused gameplay.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "input-lifecycle",
+      "zh": "检查改键、输入法空格、按住按键时关闭F6、松开后恢复原生操作，以及切出窗口再返回。钩子初始化失败需记录日志，不冒充通过。",
+      "en": "Check rebinding, IME Space, closing F6 while holding a key, restoration after release, and switching windows. Record hook initialization failures rather than treating them as passed.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "package-regression",
+      "zh": "确认安装器与F6显示alpha2，个人配置保留；中英文正文及导出ZIP的两个ReadMe目录各四份说明。常用原生三SP回归。",
+      "en": "Verify alpha2 in the installer and F6, preserved personal settings, both document languages and four documents in each exported ReadMe folder. Regress normal native triple-SP loadouts.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "deferred-bay",
+      "zh": "XFA-33 B与Su-57 TGM重复展开仍为已知未解决事项，本版按指令暂缓，不列为已修复。",
+      "en": "Repeated bay opening on XFA-33 B and Su-57 TGM remains a known unresolved issue, deferred as requested in this build.",
+      "state": "待用户实机验证"
+    }
+  ],
+  "pending": [
+    "用户自测验收后才确定正式2.25.3；本次不修改stable清单或建立正式标签",
+    "XFA-33 B与Su-57 TGM公共舱问题按指令暂缓，本轮未改舱门或挂架代码"
+  ]
+}

@@ -1,6 +1,6 @@
 # 快速进入测试任务设计
 
-状态：用户在2.25.3 alpha1确认快速任务仍只能选择一种SP；该版原实现确实只保存单槽，并非多SP资格误判。alpha2源码已将UI、预设及临时配装成套扩展到1至3SP，尚未编译或实机验证。来源及待测项见[反馈与源码记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)，正式状态见[项目入口](../../README.md)。
+状态：用户在2.25.3 alpha1确认快速任务仍只能选择一种SP；该版原实现确实只保存单槽，并非多SP资格误判。alpha2源码已将UI、预设及临时配装成套扩展到1至3SP，已完成[alpha2完整构建](../../evidence/2.25.3-alpha2-exe-delivery.json)，尚未安装或实机验证。来源及待测项见[反馈与源码记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)，正式状态见[项目入口](../../README.md)。
 
 ## 目标与入口
 

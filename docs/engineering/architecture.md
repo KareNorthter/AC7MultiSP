@@ -141,7 +141,7 @@ Lua 游戏线程约20ms调度，正式飞行 HUD 通常约100ms同步，成功�
 
 完整组合优先于同主键单键，快捷键共同避让回中；文本输入、捕获、连发及前台门槛保留。十字键请求标明来源，渲染端和游戏线程双重核对开关，关闭后仍维护按键基线，避免重开补发。alpha1的退格预读/原始消息隔离未消除用户在暂停菜单中的误操作，且空格仍触发原生确认。alpha2把退格与空格成套接管：WH_KEYBOARD/WH_GETMESSAGE预读只阻断，实际取出后按键及来源分别记账；空格的字符和重复只由首个接管来源投递一次，字符消息不重复插入，改键不顺带输入字符。原始消息按Win32约定清理；关闭后继续消费所接管按压的尾沿，失焦清账。
 
-单独的消息隔离不能代替按键状态隔离：静态导入确认游戏还使用GetAsyncKeyState/GetKeyState/GetKeyboardState。新增`panel_keyboard_state.hpp`仅过滤这些函数由游戏主EXE发起的退格/空格读取；面板自身、ImGui、其他DLL和其他应用仍读原始结果。范围受前台窗口、运行许可和面板输入所有权约束；关面板后等物理松开及消息尾沿均归还再结束过滤，不伪造输入、不写系统键表、不强行重设原生暂停。钩子部分失败只撤回本轮已创建项并记录诊断，不移除别的模块已有钩子。未增加扫描或文件读取，界面关闭且无尾沿时快速旁路；尚未编译或测量性能，也未动态证实本次具体漏过的调用栈。
+单独的消息隔离不能代替按键状态隔离：静态导入确认游戏还使用GetAsyncKeyState/GetKeyState/GetKeyboardState。新增`panel_keyboard_state.hpp`仅过滤这些函数由游戏主EXE发起的退格/空格读取；面板自身、ImGui、其他DLL和其他应用仍读原始结果。范围受前台窗口、运行许可和面板输入所有权约束；关面板后等物理松开及消息尾沿均归还再结束过滤，不伪造输入、不写系统键表、不强行重设原生暂停。钩子部分失败只撤回本轮已创建项并记录诊断，不移除别的模块已有钩子。未增加扫描或文件读取，界面关闭且无尾沿时快速旁路；已纳入[alpha2完整构建](../../evidence/2.25.3-alpha2-exe-delivery.json)，尚未测量性能或实机验证，也未动态证实本次具体漏过的调用栈。
 
 Win32依据：[键盘状态与消息时序](https://learn.microsoft.com/en-us/windows/win32/learnwin32/keyboard-input)、[Raw Input独立读取](https://learn.microsoft.com/en-us/windows/win32/inputdev/raw-input)。本轮反馈和静态边界见[记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)。
 
