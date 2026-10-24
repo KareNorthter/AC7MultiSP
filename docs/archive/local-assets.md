@@ -17,7 +17,7 @@
 | CFA-50顶部舱门与早期效果现场 | Temp/tasks/20261024-cfa50-bay-effects/ | 2.25.2只读现场、本体骨骼/序列与已发布姿态对照、Parts分派及源码回执生成器；effects/native-drop保留早期效果与输入采样，后续恢复机制研究另见下条；旧现场的“未生成”解释已在续研正文纠正。资源、进程原始数据和个人状态不入Git，结论见[续研正文](../research/mod-aircraft-compatibility.md#cfa-50的eml与十字键) |
 | CFA-50机体ECM与僚机ESM机制 | Temp/tasks/20261024-cfa50-ecm-lifecycle/ | 进程40308只读快照、原生调用链及离线摘要生成器；作者蓝图沿用20261023分组原料。加密磁盘代码反汇编不作依据，原始数据不入Git，见[机制正文](../research/mod-aircraft-compatibility.md#cfa-50机体ecm与僚机esm)和[回执](../../evidence/cfa50-ecm-esm-mechanism-20261024.json) |
 | S32及同类IRCM、名称与F-14IA对比 | Temp/tasks/20261024-s32-ircm-weapon-names/ | 当前PAK索引、176条目录静态扫描、已解析蓝图、S32激活/自然结束只读快照与原生代码、F-14IA原包同字节对比；原料不入Git，结论见[续研正文](../research/mod-aircraft-compatibility.md#s32及同类ircm机库与多sp名称差异)及[回执](../../evidence/mod-aircraft-reference-and-ircm-audit-20261024.json) |
-| SU-57、DarkStar与XFA-33舱门静态资源 | Temp/tasks/20261024-bay-domain-static/ | 84份本体/挂架蓝图、Skeleton/Sequence与657行BoneConfig的只读导出、轨道消费者摘要和记录脚本；原料不入Git，设计见[挂载正文](../engineering/multi-sp-mount-design.md#多机舱门收尾的静态扩展方向)和[回执](../../evidence/bay-domain-multi-aircraft-static-20261024.json) |
+| SU-57、DarkStar与XFA-33舱门资源与源码记录 | Temp/tasks/20261024-bay-domain-static/；Temp/tasks/20261024-bay-domain-candidate/ | 后者保存限定候选的资源引用/摘要记录脚本；前者84份本体/挂架蓝图、Skeleton/Sequence与657行BoneConfig的只读导出、轨道消费者摘要和记录脚本；原料不入Git，设计见[挂载正文](../engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)和[回执](../../evidence/bay-domain-multi-aircraft-static-20261024.json) |
 | 已归组的散落脚本、报告和附件 | backup/local-assets-20261023/maintenance-scripts、reports、notes、misc等 | 保留原文件名，按下节清单从原路径或新路径检索；属于历史材料，不作为现行构建入口 |
 | 旧检查、安装暂存与编译中间件 | 同归档根verification-fixtures、empty-staging、build-output | 集中保存旧检查副本、空暂存目录及build-ui对象文件；不是源码，也不表示本轮运行过检查 |
 | 个人资料、安装保护与历史恢复 | backup/内原有各目录 | 保持原位，不合并覆盖不同次备份；项目级恢复入口见[归档说明](README.md) |

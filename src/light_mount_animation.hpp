@@ -21,7 +21,8 @@ struct LightMountAnimation {
 } lightMountAnimation;
 
 bool mountLightHasAnimation(MountAircraft aircraft) {
-    return aircraft==MountAircraft::Dark || aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 || mountLocal(aircraft);
+    // Dark的swcc收尾由独立于外观的共用模块唯一负责，失败时也不另开第二套写入者。
+    return aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 || mountLocal(aircraft);
 }
 void mountLightAnimationReturnCfaBody() {
     auto& state=lightMountAnimation;
@@ -75,7 +76,7 @@ void mountLightAnimationBind() {
     require(state.engine && !(state.engine&7) && access.moduleReadOnlyPointer(read<Addr>(state.engine)) &&
         read<Addr>(state.engine+0x1268)==state.plane.address+0xb40 && read<Addr>(state.parts)==base+0x2fff178,
         "轻量动画：引擎或Parts身份不符");
-    state.flags=state.aircraft==MountAircraft::Dark?6u:state.aircraft==MountAircraft::Zoef?2u:1u;
+    state.flags=state.aircraft==MountAircraft::Zoef?2u:1u;
     require(((read<unsigned>(state.parts+0x27c)>>18)&15u)==state.flags && !(read<unsigned>(state.parts+0xb0)&(1u<<20)),
         "轻量动画：原生分域旗帜与已核资源不同");
     state.seconds=read<float>(base+0x25a35ec);state.closed=read<float>(base+0x2d7cb00);
@@ -225,7 +226,7 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
         const float speed=(options&0x40)?read<float>(reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x257beec):1.f;
         require(std::isfinite(speed) && speed>0,"轻量动画：原生速率无效");
         auto close=[&](float value) {return std::max(state.closed,value-delta/state.seconds*speed);};
-        // Dark/Falken只收非当前独立通道；CFA不执行这套进度衰减。
+        // 此处只负责Falken；Dark已交给共用模块，CFA不执行这套进度衰减。
         for(int channel=0;channel<3;++channel)if(channel!=config)after[1+channel]=close(before[1+channel]);
         after[4]=std::max(after[2],after[3]);after[5]=std::max(after[1],after[3]);after[6]=std::max(after[1],after[2]);
         mountLightAnimationPut(after);

@@ -1,0 +1,204 @@
+{
+  "date": "2026-10-24",
+  "stage": "限定源码候选，待接收及逐机验证",
+  "authorization": "用户要求先把普通SU-57、DarkStar、XFA-33三型等候选都做，逐个反馈并注意性能；沿静态比较纳入SU-57 TGM。",
+  "branch": "codex/research-mod-aircraft-compat",
+  "main_baseline": "09cdc824ab9fe7544137f639c2c6a1de7e5d2135",
+  "implementation_baseline": "b8fcc57932a53d104e6f22d0a057590eb3ab9413",
+  "source_sha256": {
+    "src/aircraft_bay_animation.hpp": "1e1c35b86dfb3df3d3d54e4ae1c2889f5454fefa3827bd57caffacb1fefbb7cc",
+    "src/light_mount_animation.hpp": "6076e0e6fe5d38f665346bed1440c1c3aa7ffb8d3c94d5f75684561e43512bab",
+    "src/su30sm_fixed_mount.hpp": "d32e7db3156432c7f69b4a3fab6f4423df2a280c1914761ce2adf20e449b0849",
+    "src/weapon_bridge.cpp": "cc1f4177cc79dc07274e0e850e17bc6ecebdb5325bd3f2b3297804909920438a"
+  },
+  "profiles": [
+    {
+      "pawn": "fa50",
+      "body": "fa50",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_admm_fa50",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_dualtls_fa50",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_fa50"
+      ],
+      "mode": "shared01_close",
+      "known_flags": 11,
+      "mesh": "/Game/Vehicles/Aircraft/fa50/fa50.fa50",
+      "animation": "/Game/Blueprint/Player/Body/fa50_AnimBP.fa50_AnimBP_C",
+      "consumer_outputs": {
+        "swc3": 2,
+        "swcc": 12
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "pkfa",
+      "body": "pkfa",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_r0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+      ],
+      "mode": "shared01_close",
+      "known_flags": null,
+      "mesh": "/Game/Vehicles/Aircraft/pkfa/pkfa.pkfa",
+      "animation": "/Game/Blueprint/Player/Body/pkfa_AnimBP.pkfa_AnimBP_C",
+      "consumer_outputs": {
+        "swcc": 20
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "dark",
+      "body": "dark",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"
+      ],
+      "mode": "shared01_close",
+      "known_flags": 6,
+      "mesh": "/Game/Vehicles/Aircraft/dark/dark.dark",
+      "animation": "/Game/Blueprint/Player/Body/dark_AnimBP.dark_AnimBP_C",
+      "consumer_outputs": {
+        "swcc": 2
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "su30",
+      "body": "fenra",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_lasm_a0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_weaponHPM"
+      ],
+      "mode": "shared01_close",
+      "known_flags": null,
+      "mesh": "/Game/Vehicles/Aircraft/fenra/fenra.fenra",
+      "animation": "/Game/Blueprint/Player/Body/fenra_AnimBP.fenra_AnimBP_C",
+      "consumer_outputs": {
+        "swcc": 2
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "su33",
+      "body": "fenrb",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_xqam_x0",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_x0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_lswm_x0"
+      ],
+      "mode": "public_switch_continuity",
+      "known_flags": null,
+      "mesh": "/Game/Vehicles/Aircraft/fenrb/fenrb.fenrb",
+      "animation": "/Game/Blueprint/Player/Body/fenrb_AnimBP.fenrb_AnimBP_C",
+      "consumer_outputs": {
+        "spwc": 2
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "su30sm",
+      "body": "fenrc",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Base/plwp_sswb_x0",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_meml_x0",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x5"
+      ],
+      "mode": "shared01_close",
+      "known_flags": null,
+      "mesh": "/Game/Vehicles/Aircraft/fenrc/fenrc.fenrc",
+      "animation": "/Game/Blueprint/Player/Body/fenrc_AnimBP.fenrc_AnimBP_C",
+      "consumer_outputs": {
+        "swcc": 2
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    },
+    {
+      "pawn": "su57tg",
+      "body": "su57tg",
+      "weapons": [
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r1",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0"
+      ],
+      "mode": "public_switch_continuity",
+      "known_flags": 1,
+      "mesh": "/Game/Vehicles/Aircraft/su57tg/su57tg.su57tg",
+      "animation": "/Game/Blueprint/Player/Body/su57tg_AnimBP.su57tg_AnimBP_C",
+      "consumer_outputs": {
+        "spwc": 20
+      },
+      "resource_reference_review": "与既有原包解析记录一致；不是运行时验证"
+    }
+  ],
+  "source_moves": {
+    "src/cfa50_bay_animation.hpp": "src/aircraft_bay_animation.hpp"
+  },
+  "ownership": "共用模块独占七机限定输出；Dark不再进入Light动画收尾。其他Light/F35/旧完整共舱资格不扩大。",
+  "writes": {
+    "shared01": [
+      "Parts+0x180",
+      "Parts+0x184",
+      "Parts+0x194"
+    ],
+    "public_transaction_only": [
+      "Parts+0x58",
+      "Parts+0x274",
+      "Parts+0x17c"
+    ],
+    "public_guards": "真实SP互切、原生打开/保持、前后无活动保舱且保持打开请求、实际阶段/进度一致、同事务同代与全部绑定身份。原生Init和keepArmed完整结束后消费一次。",
+    "cancel": "事务退出作用域、失败或总门禁清除待恢复快照；单实例失败只记录一次并回到原生。"
+  },
+  "performance_static_review": {
+    "shared_frame": "原生调用前后各一个短读取批次，固定6个弱身份、缓存链接及少量标量；输出相同不写。",
+    "public_frame": "只做绑定、Parts地址和模式门禁；没有新增逐帧读取批次或写入。",
+    "no_new_hot_path_work": [
+      "Actor/对象全局扫描",
+      "反射或字符串分类",
+      "文件读取",
+      "日志输出",
+      "动态容器分配",
+      "强制动画求值或骨操作"
+    ],
+    "measured": false
+  },
+  "native_signature": {
+    "file": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-cfa50-bay-effects\\parts-dispatch.bin",
+    "sha256": "1662a5080df3163e561acb2892d5d2df5a841474399b9a345024dc590566deaa",
+    "public_branch": "0x1ce7f69，170字节完整原生开合/阶段/活动保舱分支"
+  },
+  "source_inputs": {
+    "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\profiles.json": "aefdf218a326f19ace5cf0d7c715daf2718f704db087ef3a5d9f3f420c359a14",
+    "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\domains.json": "8a862b5ab6e2c3a8928537f35c0b32f3b1eb56bcf37a461215c4b61eb669b1bf"
+  },
+  "protected_legacy_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "validation": {
+    "static_resource_references": "七profile、21个兵装完整包、本体网格/动画及消费域与既有资源摘要一致",
+    "native_signatures": "与既有只读取证字节一致",
+    "diff_check": "git diff --check，未发现空白问题",
+    "compiled": false,
+    "test_modules_written": false,
+    "tests_run": false,
+    "installed": false,
+    "game_process_accessed": false,
+    "game_operated": false,
+    "pushed_or_uploaded": false
+  },
+  "limits": [
+    "公共域候选只消除SP重建造成的开合重置，未证明用户所见实际卡点均属此因。MSL开关仍由原生负责。",
+    "不复活非当前挂架Tick/NoSkeletonUpdate；本体关闭不等于挂架全部退场。",
+    "pkfa/fenra/fenrb/fenrc旗帜未有本轮运行现场，绑定记录并监视原生值，不从骨名猜位义。",
+    "没有游戏、发射、动态净空或性能验收；需在明确安装本候选后逐机反馈。"
+  ],
+  "design": "docs/engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证",
+  "docs": [
+    "docs/engineering/multi-sp-mount-design.md",
+    "docs/research/mod-aircraft-compatibility.md",
+    "docs/research/README.md",
+    "docs/project/workspaces.md",
+    "docs/archive/local-assets.md",
+    "evidence/README.md"
+  ]
+}
