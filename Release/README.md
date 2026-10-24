@@ -2,9 +2,9 @@
 
 当前正式功能版本和发布状态只在[项目入口](../README.md)维护；主要变化见[玩家更新日志](../docs/user/更新日志.txt)。
 
-本次交付[2.25.3 alpha4自测EXE](2.25.3-alpha4/AC7MultiSP_Installer.exe)，完整构建核心、UI和双语安装器，产品显示版本与Mod均为2.25.3 alpha4，Windows文件版本为2.25.3.4。[交付回执与待测清单](../evidence/2.25.3-alpha4-exe-delivery.json)记录来源9ed9863、摘要和边界。包含补给任务/预览网格记录冲突修订和统一日志版本，保留alpha3皮肤、多SP与F6键盘隔离。已核对EXE内嵌ZIP原字节、两种语言各四份说明、运行载荷和核心日志版本文字；未安装、运行游戏或上传，正式发布仍为2.25.2。内部ZIP留Temp，不单独复制到Release。
+本次交付[2.25.3 alpha5自测EXE](2.25.3-alpha5/AC7MultiSP_Installer.exe)，完整构建核心、UI和双语安装器，显示2.25.3 alpha5，Windows文件版本2.25.3.5。[交付回执与四项待测清单](../evidence/2.25.3-alpha5-exe-delivery.json)记录来源db0d2c9、摘要和边界。接入作者签名及安装前发行文件核对、交付DLL符号精简和安装器/F6作者区的主页/咖啡按钮；同步作者最新中文说明与对应英文。三用途签名、内嵌ZIP、八份说明、DLL加载数据均已静态核对，未运行安装器/测试、安装、游戏或上传。内部ZIP和最终发行签名原件留本轮Temp，未单独复制到Release。正式仍为2.25.2。
 
-旧2.25.3 alpha1/alpha2/alpha3、2.25.2、2.24.3及其DPI修订EXE原样保留，不覆盖历史产物或回执。
+旧2.25.3 alpha1/alpha2/alpha3/alpha4、2.25.2、2.24.3及其DPI修订EXE原样保留，不覆盖历史产物或回执。
 
 旧2.24.2通用ZIP与EXE保留在E:/AC7_MultiSP/Release/2.24.2/，来源见[旧交付回执](../evidence/2.24.2-delivery.json)，不覆盖历史产物或验收记录。
 

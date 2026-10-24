@@ -1,6 +1,6 @@
 # 免费Mod的署名、资源完整性与来源辨识研究
 
-状态：静态研究保存在5593ae3；用户已选择A，实施分支为`codex/feat-author-signing`。A源码候选见[交付方案](../project/delivery.md#a阶段作者签名)，alpha5集成与密钥启用的实际边界只维护在[发布流程](../project/release-workflow.md#作者签名与密钥保管)，B未实施。核查日期：2026-10-24。基线main `74318557bcc76db8caf00a5469b0463805a5f90f`。独立工作树为`C:/Users/83717/.codex/worktrees/research-mod-protection/AC7_MultiSP`，登记见[工作区索引](../project/workspaces.md)。正式状态仍只看[项目入口](../../README.md)。
+状态：静态研究保存在5593ae3；用户已选择A，实施分支为`codex/feat-author-signing`。A已由集成交付任务纳入alpha5，见[交付方案](../project/delivery.md#a阶段作者签名)，alpha5集成与密钥启用的实际边界只维护在[发布流程](../project/release-workflow.md#作者签名与密钥保管)，B未实施。核查日期：2026-10-24。基线main `74318557bcc76db8caf00a5469b0463805a5f90f`。独立工作树为`C:/Users/83717/.codex/worktrees/research-mod-protection/AC7_MultiSP`，登记见[工作区索引](../project/workspaces.md)。正式状态仍只看[项目入口](../../README.md)。
 
 研究阶段（5593ae3）只读取源码、既有交付回执、包成员及PE文件结构，查阅官方资料并整理文档；该阶段未修改产品代码或生成密钥。下文保留研究设计依据与静态盘点，实际实施范围及密钥操作以上方现行设计为准，不把研究建议当作已完成验证。主目录原有AGENTS人工修改、旧cmd删除及未跟踪`docs/赞助.txt`均不纳入本任务。现有赞助文字不是增加收费或激活功能的授权。
 

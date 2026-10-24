@@ -1,0 +1,178 @@
+{
+  "schema": 2,
+  "version": "2.25.3 alpha5",
+  "candidate": true,
+  "official_release": "2.25.2",
+  "source_commit": "db0d2c917e8ca2cf1fa55611aeec25b6926b1a43",
+  "source_workspace": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261024\\AC7_MultiSP",
+  "feature_sources": {
+    "protection": "6ce288182c3d15e1b921e59e94365569b03689e6",
+    "integration": "10da0ec",
+    "coff_fix": "db0d2c9",
+    "author_manual_documents": "5eaf3fb",
+    "baseline": "ec31e5bc668818b5ce850a9e9850600308b32cd1"
+  },
+  "alpha4_user_feedback": {
+    "text": "alpha4实机验收 基本没问题了",
+    "scope": "用户总体反馈，不据此推定全部异常分支、性能或第三方机体已逐项通过；不回改alpha4构建时的原回执"
+  },
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha5-signing\\build-r2\\game-build",
+    "receipt_sha256": "0e8f22f263397b25eb074b45957bd80ee22c2d54256739ba1561da481aea5947",
+    "core_recompiled": true,
+    "core_sha256": "fb4dc87b2664fb524ebe75c1b39e230c722b0aab6ec726970a763a38a223237d",
+    "ui_sha256": "69604db09889bbcb6c143776bb057cb5c72d90a625f52d25b699578c2787ac7f",
+    "lua_count": 18,
+    "runtime_file_count": 21,
+    "source_verified_after_build": true,
+    "package_source_verified_after_build": true,
+    "lua_syntax_only": true,
+    "distribution_symbols": {
+      "DualSP.dll": {
+        "distribution_size": 2032640,
+        "private_size": 2872832,
+        "distribution_sha256": "fb4dc87b2664fb524ebe75c1b39e230c722b0aab6ec726970a763a38a223237d",
+        "private_sha256": "26e8bccd5592c51b0429cc012762faab3d66fb14a567291ca752e208977c8d31",
+        "loader_contract_preserved": true,
+        "symbols_removed": true
+      },
+      "DualSPUI.dll": {
+        "distribution_size": 2270720,
+        "private_size": 3200512,
+        "distribution_sha256": "69604db09889bbcb6c143776bb057cb5c72d90a625f52d25b699578c2787ac7f",
+        "private_sha256": "68eee00fe6cc610dbc45d5ceb8cdffe7265699f0b669544f528af32a0fdd2d65",
+        "loader_contract_preserved": true,
+        "symbols_removed": true
+      }
+    }
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha5-signing\\build-r2\\delivery",
+    "receipt_sha256": "691f68a03898fd454d60d97653427292cc2a9e73d9f5a36404c95a9fa3c730cc",
+    "exe_receipt_sha256": "0e063ce7630f6839dba98e193f0f06bdf076d45567c7ad66090779eff6c0750f",
+    "internal_zip_sha256": "f694b472d8e8f9d06d6cf5cfc3d611fdd46f8cc425b45b1d11f682e08c206da1",
+    "universal_member_count": 50,
+    "embedded_zip_exact_bytes_verified": true,
+    "standalone_zip_delivered": false,
+    "readme_documents_sha256": {
+      "ReadMe_zhCN请读我/功能说明.txt": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8",
+      "ReadMe_zhCN请读我/安装说明.txt": "bc9fca6622b1e52c1972386a187980cfc036b2108f3af6b29f0b1a251394a728",
+      "ReadMe_zhCN请读我/作者与授权.txt": "e39da6dce6da3e951bbdce7eb81b4e77e46aaf3dff0b30910de9587573aeca45",
+      "ReadMe_zhCN请读我/更新日志.txt": "9b9731ab63cb4b3d241b4633388f5959072175f21d06a6177e859476455cc81b",
+      "ReadMe_EN/Features.txt": "82121bbec6927b231546e21daab976e5c65aeae03533979e8a49bdad839b4c0e",
+      "ReadMe_EN/Installation.txt": "96b47501c91168cd9963910522fbe984625f660d8c0b2f79d2a8fc008fead1c6",
+      "ReadMe_EN/Author-and-License.txt": "179c116227027d6f35b4e531ad7d6006b822c9d848617c41fef6f72f75c22150",
+      "ReadMe_EN/Changelog.txt": "4a1f02c0b8654247dcbb88c34eff67bb880656bb35a0cd6af90eade0f30b9dcb"
+    }
+  },
+  "author_signing": {
+    "schema": 1,
+    "product": "AC7MultiSP",
+    "version": "2.25.3 alpha5",
+    "channel": "candidate",
+    "release_id": "b7e7a024373f43048dc071a147b018e3",
+    "source_commit": "db0d2c917e8ca2cf1fa55611aeec25b6926b1a43",
+    "key_id": "7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f",
+    "registry_sha256": "ac439517694e28b56763b0cc7e3592fcfd35edc92872ae150605ec495e5b2bd2",
+    "content_sha256": "f37d9c74b2cbdf2f651947ada402b90ef81d9d24e44e0333f0ab05fd86ff7476",
+    "bundle_sha256": "5881228765160903d0073ed3fe00f08ac2236b09903606e5e2cefeed3b79472d",
+    "content_verified": true,
+    "bundle_verified": true,
+    "release_verified": true,
+    "all_signed_file_hashes_verified": true,
+    "release_manifest_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha5-signing\\build-r2\\delivery\\AC7MultiSP-release.json",
+    "release_manifest_sha256": "c64a4221a7e8adf186e24258e4d1d042e41e25be40cb3517b7c271a27d2f4b46",
+    "release_signature_sha256": "c11615821eeabc14ad45af290e284e9caaf9647adbbd84f7847c7269be38f006",
+    "existing_key_reused": true,
+    "new_key_created": false,
+    "private_recovery_materials_read": false,
+    "windows_authenticode_added": false,
+    "in_game_runtime_verification": false,
+    "tamper_or_missing_signature_scenarios_executed": false,
+    "csharp_verifier_executed": false,
+    "offline_recovery_verified": false
+  },
+  "author_links": {
+    "targets": {
+      "homepage": "https://ac7multisp-updates.pages.dev/",
+      "coffee": "https://ac7multisp-updates.pages.dev#coffee/"
+    },
+    "shared_metadata": "docs/user/interface/author-links.json",
+    "bilingual_labels_verified": true,
+    "same_urls_frozen_for_cpp_and_csharp": true,
+    "browser_navigation_verified": false
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.25.3-alpha5\\AC7MultiSP_Installer.exe",
+    "size": 61347840,
+    "sha256": "b467230bb7f8c730e41f90483ba3f907bfba54e6f2c012f158dce4aa25e879f2",
+    "file_version": "2.25.3.5",
+    "product_version": "2.25.3 alpha5",
+    "x64": true
+  },
+  "runtime_files": {
+    "Scripts/config_store.lua": "63b667973da6909d94fd38c554bbb5f7c282d364620615aa82561221ff3bd3e8",
+    "Scripts/debug_aircraft.lua": "f3802f8b9c6b7e475cb873200df07b9c23956265341b046b0c42be8492e2d12f",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "115f5c319bc4167bfa03288e0fa6c5d4b70131b85991b24a9856fe1f24090b5f",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "fe0a2c64137ea12e5b5618cf6879ec83b465d3a0ff31e663fe35b3bd9ef7b3d2",
+    "Scripts/quick_mission.lua": "0fc0658fff4eebe49d53aba61f9c375dfe06145ae928778abafed8412b01430f",
+    "Scripts/runtime_context.lua": "ceac2863da78b9b8474093d1d165ef6238a81698b018589a2099abd67084fc62",
+    "Scripts/user_texts.lua": "c492a104128de6678f789cfdce0edaaa99e7ee96894cd7fc492fff0561d10b06",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "fb4dc87b2664fb524ebe75c1b39e230c722b0aab6ec726970a763a38a223237d",
+    "bin/DualSPUI.dll": "69604db09889bbcb6c143776bb057cb5c72d90a625f52d25b699578c2787ac7f",
+    "VERSION": "f47da0a0a4ad85b128a071655ed892f57d5e1697e8ea89e4e6230dae5b99e4b8"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "failed_builds": [
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha5-signing\\build-r1",
+      "reason": "COFF不支持keep-section参数；保留现场，修正为strip-all后新目录完整重建"
+    }
+  ],
+  "tests_run": false,
+  "installer_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "performance_measured": false,
+  "test_checklist": [
+    {
+      "id": "install",
+      "zh": "安装/更新后确认安装器和F6均显示2.25.3 alpha5，原配置保留，正常启动无签名错误。",
+      "en": "Install/update, confirm 2.25.3 alpha5 in the installer and F6, retained settings and normal startup without signature errors."
+    },
+    {
+      "id": "author-links",
+      "zh": "安装器与F6切换中英文，分别点击主页和咖啡按钮，确认正确网页及咖啡区域，并检查按钮没有遮挡。",
+      "en": "Switch both interfaces between Chinese and English; check both author buttons, the homepage/coffee section and unobstructed layout."
+    },
+    {
+      "id": "quick-mission",
+      "zh": "快速任务选择皮肤和三SP，出击后正常切换、发射；暂停中F6输入退格/空格不误操作游戏菜单。",
+      "en": "Select a skin and triple-SP quick mission; switch/fire normally and check that Backspace/Space in F6 while paused do not operate the game menu."
+    },
+    {
+      "id": "resupply",
+      "zh": "Rafale M三SP降落补给，切换配装候选并再次出击，确认模型、弹药和HUD正常，留意明显卡顿。",
+      "en": "Resupply with triple-SP Rafale M, change loadout candidates and relaunch; check models, ammo, HUD and noticeable stalls."
+    }
+  ],
+  "pending": [
+    "alpha5由作者安装和实机验收后再决定正式2.25.3；未修改stable/标签或上传",
+    "F6状态发布性能及XFA-33 B/Su-57 TGM公共舱继续暂缓",
+    "A阶段核对制作/安装发行内容，不能阻止原包转售；安装后游戏运行期核验B未接入"
+  ]
+}
