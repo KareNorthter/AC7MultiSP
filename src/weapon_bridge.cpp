@@ -2163,6 +2163,7 @@ std::string unrealString(Addr address) {
     const int size=WideCharToMultiByte(CP_UTF8,0,wide,n-1,nullptr,0,nullptr,nullptr);
     std::string result(size,0);WideCharToMultiByte(CP_UTF8,0,wide,n-1,result.data(),size,nullptr,nullptr);return result;
 }
+#include "quick_mission.hpp"
 extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     std::string result;

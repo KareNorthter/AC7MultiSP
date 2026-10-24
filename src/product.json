@@ -16,6 +16,7 @@
     "native_bridge.lua",
     "native_hud.lua",
     "native_loadout.lua",
+    "quick_mission.lua",
     "runtime_context.lua",
     "user_texts.lua",
     "weapon_cycle.lua",

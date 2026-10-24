@@ -50,3 +50,5 @@ mod接管内置弹舱动画的性能问题仍未解决。
 • 适用Steam版游戏，仅用于单人战役，多人模式停用。
 • 兼容的mod：大部分Addon机体、皮肤SKIN、AC7MouseAim鼠标飞控、Enhanced Gunplay、All Aircraft PSM、Modular Weapon Swap。
 • 暂不兼容：F-14IA，Pre-Campaign VR关卡
+
+• 开发中：主菜单F6“调试”页可保存快速测试预设，指定M1—M20或DLC特殊任务、机体、单种SP与难度，一键出击，并可设置启动后自动进入。M13保留任务指定SP。启动Logo跳过默认开启，可在测试预设中关闭。尚待候选构建及实机验证。

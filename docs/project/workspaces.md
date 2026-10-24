@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 快速进入测试任务，进行中 | 本聊天；设计基线85ab3a0，开发同步main 5a33e3a；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 独占快速启动Lua及F6入口、main/overlay接入、独立配置、脚本清单、相关双语词条和设计正文；沿用已有23关实值，不改版本/安装器/旧核心。原件在主目录Temp/tasks/20261024-quick-mission-observation/ |
+| 快速进入测试任务，进行中 | 本聊天；设计基线85ab3a0，开发同步main 5a33e3a；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 独占快速启动/片头Logo Lua及F6入口、main/overlay接入、独立配置、脚本清单、相关双语词条和设计正文；沿用已有23关实值，不改版本/安装器/旧核心。原件在主目录Temp/tasks/20261024-quick-mission-observation/ |
 | Mod机体兼容性续研，长按输入源码修复待验证 | 本聊天；续接01a15f12-100b-7640-9d2b-2c54ef825a45；基线main/85ab3a0；本轮核对main/5a33e3a相关C++相同 | codex/research-mod-aircraft-compat；C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 独占[续研正文](../research/mod-aircraft-compatibility.md)、安装/反馈/研究回执、src/research/aircraft_mod_profiles.py及索引登记；src/weapon_bridge.cpp两处已改走原生跳过长按初始化参数，main.lua/common_bay_animation.hpp仅同步注释，架构同步说明。10包及XFA-33组已入库，当前A不切换。用户关闭总开关仅选EML出击仍无动画/炮体，已记录并暂缓深入；十字键稍后实测。修复未编译/安装/实测，未启动游戏或推送 |
 | F6启动更新选项，源码已接收、待编译验证 | 本聊天；基线97fbdbb；沿用codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 默认开启的启动检查选项、草稿保存、配置兼容及联网前许可已接入；管理协议22，配置19仅补缺失字段，不重置已有设置。双语文字生成及静态差异核对完成；未编译、测试、安装或上传，现有EXE不包含此选项 |
 | 安装器与F6易用性调整，DPI修订已保存、停止后续编译 | 本聊天；游戏源码锚5a33e3a、DPI修订050dc3d；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 安装器系统DPI感知、96 DPI基准及动态控件缩放已修复，复用2.24.3载荷；完成本机125%双语离线预览和EXE生成后，用户要求无需继续编译。[DPI回执](../../evidence/2.24.3-dpi-exe-delivery.json)及Release/2.24.3-dpi保留；旧回执不覆盖，不再构建、安装、操作游戏或上传。以后优先单代理，减少拆分 |

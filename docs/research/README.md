@@ -31,7 +31,7 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 | 主题/状态 | 成果锚 | 来源位置 | 已知问题与继续研究入口 |
 | --- | --- | --- | --- |
-| 快速进入测试任务：已观察，封存待续 | `codex/feat-quick-mission-launch`；main基线 `85ab3a0` | `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`；[唯一设计正文](../engineering/quick-mission-launch.md)、[观察摘要](../../evidence/quick-mission-observation-20261024.json) | 2026-10-24授权只读观察M6与DLC2，已取得23关任务ID和DLC标记；完整启动调用链、模式/难度、自动跳CG仍待确认。未改运行源码，未编译测试安装或调用游戏函数 |
+| 快速进入测试任务及片头Logo：源码进行中 | `codex/feat-quick-mission-launch`；main基线 `85ab3a0` | `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`；[唯一设计正文](../engineering/quick-mission-launch.md)、[观察摘要](../../evidence/quick-mission-observation-20261024.json) | 已核对23关任务表及原生自由任务出击链，完成F6、独立预设、主菜单自动出击和Boot片头跳过源码；未编译/测试/安装或执行新调用，继续条件见唯一设计正文 |
 | 游戏内“版本和更新”：正式采用 | 来源`d9d3dab`、后续功能`2346cdb`；[alpha2接收](../../evidence/2.24.0-alpha2-source-intake.json) | `version-updates/AC7_MultiSP`及main当前`src/version_updates*.hpp` | 原发布当时未安装，后续已知安装记录统一见[项目状态](../../README.md)。本轮未核查线上完整流程；旧[说明](../archive/delivery/Pages与R2发布更新说明.md)为历史参考。功能为检查并由用户打开浏览器 |
 | 独立安装器：待接收的新交互成果 | `codex/delivery-installation` / `a99a404` | `C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP`；现场材料见[工作区索引](../project/workspaces.md) | 0.1.0有用户确认EXE安装2.24.1的记录，0.2.0仅生成新安装器，新界面未运行；当前已知状态统一见[项目状态](../../README.md)。源码未合main，载荷版本不能代替安装器自身验收 |
 | 旧update-feature：未提交成果保留、未整套接收 | HEAD `42b87c0`；20261023盘点与`update-feature.zip` | `C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP`；本地`src/version_updates.hpp`及Lua/UI/构建/发布工具改动 | HEAD已是main祖先不代表现场改动已接收；与已采用更新页有重叠，继续先比较功能/文案/工具差异，不把整个工作树覆盖到main |
