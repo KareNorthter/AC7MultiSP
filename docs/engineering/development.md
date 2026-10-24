@@ -40,7 +40,7 @@
 - 本机工具根为`E:/AC7_MultiSP/tools`，产品清单指定`llvm-mingw-20261006-ucrt-x86_64`；构建使用其中lupa/pefile及仓库vendor。使用前核对实际文件，不把旧版本记录当现场检查。
 - `src/build.py`的`--mount-assets-dir`为必填，必须指向当前完整的77资源/154成员输入，不再沿用旧54资源默认目录。具体原料位置先查[本机资产索引](../archive/local-assets.md)及对应来源回执；名称、字节和资格仍逐项核对，数量相同不能替代摘要。
 - 独立工作树可用`--temp-root E:/AC7_MultiSP/Temp`，同时把`--output-dir`指定到该根内全新的任务子目录。构建拒绝覆盖旧输出，编译中间文件也留在本次目录；失败后保留现场，修正后使用新目录。
-- 封装显式提供`--build-dir`、全新`--output-dir`及`--audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav`。提示音核对原验收摘要，不使用个人替换音频分发；新封装不依赖旧手装ZIP。
+- 封装显式提供`--build-dir`、全新`--output-dir`、`--icon-source 本机游戏ICO`及`--audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav`。ICO原料及冻结规则见[交付方案](../project/delivery.md#安装器游戏图标)，不将游戏资源提交Git。提示音核对原验收摘要，不使用个人替换音频分发；新封装不依赖旧手装ZIP。
 - EXE使用系统64位.NET Framework编译器。`build_setup.ps1`先核对冻结C#/manifest、资源、响应文件及独立ZIP摘要，编译后再复核输入，单独写`EXE编译回执.json`；编译成功不代表安装器已运行。
 
 表、Lua清单和PAK必须成套。`src/build_mount_assets.py`继续核对Socket引用、七机碰撞保真、F/A-18E反馈和TGM r2；当前TGM资源为`MSP_f18etg_gpb_inner_whole_r2`。依据见[Socket资格](../../evidence/mount-socket-reference-audit-20261021.json)和[TGM r2](../../evidence/f18etg-whole-rack-socket-r2.json)，不能混用54/65/74/77资源阶段的整表、编号或旧资源。

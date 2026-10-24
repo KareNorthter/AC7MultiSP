@@ -33,13 +33,19 @@ ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，
 
 `src/distribution_symbols.py`先把新构建两DLL复制到`private-debug/`，再用同工具链`llvm-strip --strip-all`精简交付副本（COFF不使用不支持的keep-section参数，保留[LLVM的COFF处理](https://github.com/llvm/llvm-project/blob/main/llvm/lib/ObjCopy/COFF/COFFObjcopy.cpp)所述加载节并继续逐字节核对），静态比较必需导出、映射节字节、异常/重定位/TLS等加载契约；不一致即停止，不恢复覆盖旧核心。私有诊断件摘要和精简工具摘要进入新构建回执，私有DLL不进入通用ZIP。它们随本机构建保留；精简结果由构建回执记录，加载契约的静态一致不等于实际游戏加载或性能已验证。
 
+## 安装器游戏图标
+
+2.26.0起，构建与封装显式传入`--icon-source 本机ICO路径`。本轮从Steam App 502500登记的DisplayIcon读取《皇牌空战7》原图标，原字节冻结到本轮`setup-source/app.ico`，通过`/win32icon`编入EXE；主窗体读取自身关联图标。ICO范围、来源及摘要进入封装回执，编译前后核对冻结输入，图标必须在最终release签名前编入，不能签名后换图。
+
+游戏ICO不进入Git或通用ZIP，只作为本机游戏资源保留在本轮Temp。恢复源码不等于恢复图标原料，缺失时构建前即停止，不用另一图标冒充。
+
 ## 生成、冻结与封装入口
 
 | 阶段 | 入口与输入 | 输出和核对 |
 | --- | --- | --- |
 | 游戏文字生成 | `src/user_texts.py`读取四对TXT及游戏双语JSON；`src/build.py`自动调用 | 生成C++头文件与Lua，检查双语键、占位符、NUL及ImGui标识；输出不手改 |
 | 完整游戏构建 | `src/build.py`，必须显式`--mount-assets-dir`，独立树可指定`--temp-root E:/AC7_MultiSP/Temp` | 独立目录内核心/UI、Lua来源、PAK及构建回执；冻结游戏源码和文字，不冻结安装器C#/JSON |
-| 唯一封装 | `src/package_delivery.py --build-dir 完整构建目录 --output-dir 全新目录 --audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav` | 核对完整构建及生成文字，回读通用ZIP各成员，生成EXE资源、产品版本属性、manifest、冻结C#和`封装回执.json`；不依赖旧手装ZIP |
+| 唯一封装 | `src/package_delivery.py --build-dir 完整构建目录 --output-dir 全新目录 --audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav --icon-source 本机ICO路径` | 核对完整构建及生成文字，回读通用ZIP各成员，生成EXE资源、产品版本属性、manifest、冻结C#和`封装回执.json`；不依赖旧手装ZIP |
 | 双语EXE编译 | `src/delivery/build_setup.ps1 -InputDirectory 封装目录`，可指定`-SigningKeyName`/`-SigningProvider` | 编译前验证bundle和冻结资源，编译前后核对源码/响应文件/ZIP；生成EXE及独立回执，再给最终EXE/ZIP生成release签名。任一步失败均不可发布 |
 
 封装使用全新输出目录，已存在即拒绝覆盖。提示音核对原验收来源摘要，不分发个人替换音频；原始资源、旧构建、旧包与历史回执保持。
@@ -58,7 +64,7 @@ ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，
 
 封装器在通用ZIP生成`vortex_override_instructions.json`，指定`setmodtype=dinput`，使用Vortex内置Engine Injector把文件部署到游戏根目录。映射逐项覆盖程序、Lua、提示音、文档、许可证、启用文件及专用模型PAK；不能把整包误当普通PAK包，也不能只删扩展名称而省略映射。
 
-下载、版本检查、更新、启用、停用和部署由Vortex负责。路线限定单个Mod直接安装；Collection依赖安装可能不应用包内覆盖指令，不在支持范围内。Vortex/手动方式由玩家先准备已核验的AC7专用UE4SS，Requirements只是依赖提示，不保证自动安装、运行中部署拦截或未知共享加载器处理。
+按[Vortex官方覆盖指令规范](https://github.com/Nexus-Mods/Vortex/wiki/File-Based-Override-Instructions)，该机制从Vortex 1.14.0支持。静态核对要求每个Mod载荷恰有一条源/目标一致的copy、路径无越界/大小写冲突，标明2.26.0、Nexus Mod 3797及游戏ID；版本更新用同一Mod页的新文件，由Nexus提供新fileId，不能在包里预填尚未上传的fileId。包的阅读目录、共享UE4SS及玩家配置不进入部署映射。下载、版本检查、更新、启用、停用和部署由Vortex负责。路线限定单个Mod直接安装；Collection依赖安装可能不应用包内覆盖指令，不在支持范围内。Vortex/手动方式由玩家先准备已核验的AC7专用UE4SS，Requirements只是依赖提示，不保证自动安装、运行中部署拦截或未知共享加载器处理。
 
 旧手动安装转Vortex需先移出旧程序及专用PAK、保留个人配置，避免停用时恢复旧手装文件；不能用覆盖ZIP替代此迁移。玩家的具体步骤以唯一安装正文为准。
 

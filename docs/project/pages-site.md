@@ -40,13 +40,13 @@ site/stable.json按作者2026-10-24的正式发布确认更新为2.25.2：R2固�
 
 R2主链接id固定为r2，备用id以lanzou开头且唯一。现行客户端仅登记wwbru.lanzoue.com、downloads.iot-node-service-api.online、ac7multisp-updates.pages.dev等指定主机；更换域名先核对游戏、EXE和主页三处消费者，不自行改写蓝奏云分享地址。R2为主入口，备用允许一至三个；preparing时不展示可点击下载按钮。
 
-stable中的release_notes是当前可下载版本的中英文短摘要，按唯一玩家更新日志提取，不把全部开发日志另写进去。它描述下载包，不能因仓库正文有新条目就宣告新版已发布。preview是旧schema_version预览协议，当前记录2.22.0链路、install_enabled=false，保留原字节及状态，不把它改成stable格式或新候选。
+stable中的release_notes必须是当前可下载版本在中英文唯一玩家更新日志中的完整章节正文，保留全部条目和内部换行，不另行精简，也不混入其他版本章节。它描述下载包，不能因仓库正文有新条目就宣告新版已发布。preview是旧schema_version预览协议，当前记录2.22.0链路、install_enabled=false，保留原字节及状态，不把它改成stable格式或新候选。
 
 site/_headers 为静态 JSON 设置 application/json 内容类型和 no-store 缓存，并为页面资源设置安全响应头。Cloudflare Pages 会读取发布目录中的 _headers 并将规则用于静态资源；若以后改为 Pages Functions，需要在函数响应中自行设置响应头，参见[Cloudflare Pages响应头说明](https://developers.cloudflare.com/pages/configuration/headers/)。
 
 ## 发布边界
 
-A阶段源码候选由发布工具额外复制同版`AC7MultiSP-release.json`、`.sig.json`到站点根目录及`releases/发布ID/`。它们不替代stable/preview，当前公钥暂缓启用且未部署。后续整站发布必须携带以前已发布的签名目录；现有Direct Upload替换整站，不能让新目录丢失旧签名。具体密钥和制作状态只见[发布流程](release-workflow.md#作者签名与密钥保管)。
+A阶段发布工具额外复制同版`AC7MultiSP-release.json`、`.sig.json`到站点根目录及`releases/发布ID/`。它们不替代stable/preview，公钥已随alpha5启用，正式签名部署仍须以实际上传和核对记录为准。后续整站发布必须携带以前已发布的签名目录；现有Direct Upload替换整站，不能让新目录丢失旧签名。具体密钥和制作状态只见[发布流程](release-workflow.md#作者签名与密钥保管)。
 
 完整顺序见[新版发布流程](release-workflow.md#分工与顺序)。工具prepare复用有摘要回执的EXE和通用ZIP，finalize核对R2后生成整站及ZIP，verify-online在人工部署后核对线上文件。R2、蓝奏云、Nexus通用ZIP和Cloudflare Pages都由作者手动上传，本工具不操作外部账号。
 

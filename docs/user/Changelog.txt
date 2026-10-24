@@ -1,39 +1,17 @@
 AC7MultiSP
 
 2.26.0
-Major changes from the 2.25 series through this release.
-
-Quick missions
-• Added main-menu quick missions with mission, aircraft, difficulty, skin and 1–3 SP selections, separate saved presets and optional automatic launch on the next startup. Existing presets remain compatible; M13 retains its mission-specific weapon.
-• Added an option to skip startup logos and moved quick missions above the log section on the Debug page.
-• Fixed multi-SP initialization stopping after a quick launch, which disabled triple-SP functionality.
-
-Aircraft and weapon compatibility
-• Fixed some installed mod aircraft missing from quick-mission and in-mission aircraft selection lists. Paid content remains subject to actual DLC ownership checks.
-• Aircraft lists now prefer in-game names and support searches by display name, internal code or ID. Corrected weapon-name references for some mod aircraft while retaining author-provided names.
-• Fixed internal SP switching interrupting native hold-button auxiliary functions, improving compatibility with special effects on some mod aircraft.
-• Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior.
-• Improved weapon-bay closing after weapon changes on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
-
-Resupply and management interface
-• Fixed a text-replacement error when displaying weapon descriptions during mid-mission resupply, and model-preview fallback when repeatedly switching multi-SP candidates.
-• Fixed Backspace and Space in F6 while paused accidentally operating the underlying game menu, retaining normal text editing and key rebinding.
-• Enlarged the F6 author watermark and made the feedback card consistent with other cards and fully visible by default. Added a startup update-check option while retaining manual checks.
-• Unified log session version labels to prevent conflicting outdated version numbers in the same run.
-
-Installation and author information
-• Added a bilingual EXE installer supporting direct installation, updates, uninstallation and universal ZIP export. Improved its home page, language selection and high-DPI display, retaining Vortex and manual installation compatibility.
-• Added ReadMe_EN and ReadMe_zhCN请读我 folders to the universal ZIP, each containing four documents in its language. English documents now use English filenames.
-• Added author content signatures and distribution-file checks before installation and export; mismatched signatures or files stop the operation. Stripped debug symbols from distribution DLLs without adding per-frame in-game verification.
-• Added “Visit my homepage” and “Buy me a coffee” buttons to the installer and F6 author areas, and incorporated the latest feature notes, free-use notice and acknowledgments.
+• Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
+• Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.
+• Fixed freezing during mid-mission landing and resupply.
 
 2.25.X
-• Fixed internal weapon switching interrupting native hold-button auxiliary effects on some mod aircraft.
-• Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.
+• Fixed the weapon-switch button's hold function not working, supporting ECM and other effects triggered by holding this button on some mod aircraft.
+• Added startup logo skipping and quick missions. Select the mission, aircraft, difficulty, skin and 1–3 SP weapons to enter a mission quickly.
 • Added an installer for one-click download and installation, while retaining Vortex compatibility.
 
 2.24.X
-• Added update checks and browser download links, and refined in-game messages.
+• Added update checks and browser download links.
 
 2.22.X–2.23.X
 • Reworked the management interface.

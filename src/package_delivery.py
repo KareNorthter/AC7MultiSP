@@ -3,6 +3,7 @@ import argparse
 import hashlib
 import json
 import re
+import struct
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -18,6 +19,23 @@ PAK = 'Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak'
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def installer_icon(path):
+    """只读取显式指定的本机ICO，冻结原字节；不把游戏图标放入源码仓库。"""
+    path = path.resolve(strict=True)
+    if not 6 <= path.stat().st_size <= 1048576:
+        raise ValueError('安装器图标大小无效')
+    raw = path.read_bytes()
+    reserved, kind, count = struct.unpack_from('<HHH', raw)
+    if reserved or kind != 1 or not 1 <= count <= 64 or len(raw) < 6 + count * 16:
+        raise ValueError('安装器图标必须是完整ICO')
+    for i in range(count):
+        length, offset = struct.unpack_from('<II', raw, 6 + i * 16 + 8)
+        if not length or offset < 6 + count * 16 or offset + length > len(raw):
+            raise ValueError('安装器ICO图像范围无效')
+    return raw, {'source_path': str(path), 'sha256': sha(raw), 'frame_count': count,
+                 'frozen_path': 'setup-source/app.ico'}
 
 
 def encoded(value):
@@ -55,6 +73,7 @@ def delivery_sources():
 def package(args, signer):
     """私钥操作只通过显式选定的本机密钥句柄完成。"""
     public_source = csharp_trust()
+    icon_raw, icon_info = installer_icon(args.icon_source)
     build = args.build_dir.resolve(strict=True)
     output = args.output_dir.resolve()
     if output.exists():
@@ -186,6 +205,8 @@ def package(args, signer):
     frozen_dir = output / 'setup-source'
     frozen_dir.mkdir()
     source_hashes = {}
+    (frozen_dir / 'app.ico').write_bytes(icon_raw)
+    source_hashes['app.ico'] = sha(icon_raw)
     for path in sorted((SOURCE / 'setup').iterdir()):
         if path.suffix not in ('.cs', '.manifest'):
             continue
@@ -227,22 +248,25 @@ def package(args, signer):
            '/reference:System.dll', '/reference:System.Core.dll', '/reference:System.Windows.Forms.dll',
            '/reference:System.Drawing.dll', '/reference:System.Web.Extensions.dll',
            '/reference:System.IO.Compression.dll', '/reference:System.IO.Compression.FileSystem.dll',
-           f'/out:"{exe}"', f'/win32manifest:"{frozen_dir / "app.manifest"}"']
+           f'/out:"{exe}"', f'/win32manifest:"{frozen_dir / "app.manifest"}"',
+           f'/win32icon:"{frozen_dir / "app.ico"}"']
     rsp.extend(f'/resource:"{file}",{identifier}' for file, identifier in resources)
     rsp.extend(f'"{file}"' for file in sorted(frozen_dir.glob('*.cs')))
     (output / 'setup-build.rsp').write_text('\n'.join(rsp) + '\n', encoding='utf-8-sig')
     if frozen != delivery_sources() or receipt['source_files'] != source_snapshot():
         raise ValueError('封装期间来源改变，不能交付')
+    if digest(args.icon_source) != icon_info['sha256']:
+        raise ValueError('封装期间图标来源改变，不能交付')
     signing = dict(signed_identity, key_id=signer.key_id, registry_sha256=digest(TRUST),
                    content_sha256=sha(content), bundle_sha256=sha(meta_raw))
     report = {'schema': 2, 'version': version, 'candidate': info['candidate'], 'author_signing': signing,
               'delivery_version': policy['delivery_version'], 'created_at': datetime.now(timezone.utc).isoformat(),
               'universal_zip': zip_name, 'universal_sha256': digest(archive),
               'universal_size': archive.stat().st_size, 'universal_member_count': len(universal),
-              'exe_filename': exe.name, 'installer_sources_sha256': source_hashes,
+              'exe_filename': exe.name, 'installer_icon': icon_info, 'installer_sources_sha256': source_hashes,
               'installer_inputs_sha256': {
                   p.relative_to(output).as_posix(): digest(p)
-                  for p in sorted([output / 'setup-build.rsp', *resource_dir.iterdir()]) if p.is_file()},
+                  for p in sorted([output / 'setup-build.rsp', frozen_dir / 'app.ico', *resource_dir.iterdir()]) if p.is_file()},
               'build_receipt_sha256': digest(build / 'build-receipt.json'), 'source_files': frozen,
               'runtime_files': {n: sha(d) for n, d in runtime.items()}, 'mount_assets': receipt['mount_assets'],
               'game_files': records(main_files), 'documents': records(documents),
@@ -258,6 +282,7 @@ def main():
     parser.add_argument('--build-dir', type=Path, required=True)
     parser.add_argument('--output-dir', type=Path, required=True)
     parser.add_argument('--audio-source', type=Path, default=ROOT / 'dist/DualSP/Audio/SP2.wav')
+    parser.add_argument('--icon-source', type=Path, required=True, help='作者显式指定的本机游戏ICO；只冻结到本轮Temp，不入Git')
     parser.add_argument('--signing-key-name', help='可省略以按公钥查找唯一的本机CNG密钥；不接受私钥文件')
     parser.add_argument('--signing-provider', default='Microsoft Software Key Storage Provider')
     args = parser.parse_args()

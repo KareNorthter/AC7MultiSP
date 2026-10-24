@@ -1,5 +1,5 @@
 AC7MultiSP
-This program is for learning and discussion only. It is completely free. Please do not resell it for profit.
+This program is for learning and discussion only. It is completely free. Do not use it for any other commercial purposes.
 
 Author:
 • Homepage: https://ac7multisp-updates.pages.dev/
@@ -10,7 +10,7 @@ Author:
 
 Feedback:
 • Email: karenorthterofchina@gmail.com
-• Test QQ group: 1072924682
+• Test QQ group: 1072924682 (latest beta builds are shared here)
 
 Third-party components and assets
 The third-party components used by this mod are covered by their respective licenses. Full license texts are included in the package under ue4ss/Mods/DualSP/licenses.
@@ -22,8 +22,9 @@ Acknowledgments
 • MinHook: Tsuda Kageyu; its HDE component was developed by Vyacheslav Patkov.
 • nlohmann/json: Niels Lohmann and contributors, for the data processing library.
 • PROJECT ACES / Bandai Namco: thanks for creating Ace Combat 7.
+• Thanks to all players who participated in mod testing and provided feedback.
 
-Thanks to these friends for their help:
-Abyssdw, Xihe.Liu, HLC, 鹿目まどか, Zabaglione, 龙战骑兵, 水馒头（反我的世界）, 梨想主义可还行, 江郎才尽, and others.
-
-Thanks to all players who participated in testing and provided feedback.
+Notice:
+If you encounter any problems while downloading or using this mod, please read the instructions carefully first. They describe possible situations and solutions in as much detail as possible. If your issue is not covered, please contact me through the email address or QQ group above. I will review your feedback and help you resolve it as soon as possible.
+The author reserves the right to interpret all features of this mod. If you wish to use this mod for any purpose other than playing the game, please contact me and obtain my consent beforehand. If you repost this mod on other channels or platforms, please credit the author and identify the source. Do not use this mod for improper purposes; you are responsible for any consequences arising from such use.
+Finally, thank you for trusting and using this mod. Enjoy the game.

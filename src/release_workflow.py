@@ -82,6 +82,9 @@ def notes_for(version: str, language: str) -> str:
 
 
 def compile_delivery(args: argparse.Namespace) -> None:
+    # 在完整编译前确认图标可读取，避免最后封装才发现本机原料缺失。
+    from package_delivery import installer_icon
+    installer_icon(args.icon_source)
     # 无可用签名密钥时在编译前停止，不能先制作无签名产物再假装完成。
     with Signer(args.signing_key_name, args.signing_provider):
         pass
@@ -97,7 +100,8 @@ def compile_delivery(args: argparse.Namespace) -> None:
         signing_args += ['--signing-key-name', args.signing_key_name]
         setup_signing += ['-SigningKeyName', args.signing_key_name]
     subprocess.run([sys.executable, str(ROOT / "src/package_delivery.py"), "--build-dir", str(game),
-                    "--output-dir", str(package), "--audio-source", str(args.audio_source.resolve()), *signing_args], cwd=ROOT, check=True)
+                    "--output-dir", str(package), "--audio-source", str(args.audio_source.resolve()),
+                    "--icon-source", str(args.icon_source.resolve()), *signing_args], cwd=ROOT, check=True)
     subprocess.run([args.pwsh, "-NoProfile", "-File", str(ROOT / "src/delivery/build_setup.ps1"),
                     "-InputDirectory", str(package), *setup_signing], cwd=ROOT, check=True)
     signed_release = verify_release(package)
@@ -401,6 +405,7 @@ def main() -> None:
     build.add_argument("--output-dir", type=Path, required=True)
     build.add_argument("--tools-root", type=Path, default=ROOT / "tools")
     build.add_argument("--audio-source", type=Path, default=ROOT / "dist/DualSP/Audio/SP2.wav")
+    build.add_argument("--icon-source", type=Path, required=True, help="本机游戏ICO原料；编译前核对并冻结到本轮目录")
     build.add_argument("--pwsh", default=r"C:\Program Files\PowerShell\7\pwsh.exe")
     build.add_argument('--signing-key-name', help='省略时按登记公钥匹配当前用户唯一CNG密钥')
     build.add_argument('--signing-provider', default=PROVIDER)

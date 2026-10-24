@@ -18,10 +18,3 @@ Installation through the CreeperUX launcher is not supported: this mod contains 
 3. Manual installation
 1. Install the AC7-specific UE4SS.
 2. Merge and copy the ue4ss and Game folders from the ZIP into the game folder. Do not copy the ZIP's outer folder. Other documentation and management files do not need to be copied.
-
-4. Source verification (for releases providing author signature files)
-This mod is completely free. A signed installer checks its embedded release files before installation, removal, recovery, or ZIP export. If verification fails, it stops; keep the files and check their source on the author's original release page.
-If the author provides AC7MultiSP-release.json and AC7MultiSP-release.sig.json, place them alongside the original EXE and universal ZIP from that release, and use a signed installer from a source you have already verified to run:
-AC7MultiSP_Installer.exe --verify-release "folder to check"
-This command only reads the release files listed in the manifest; it does not install or modify them. Vortex does not automatically verify the author's signature. Check the source before manual installation too. Some older releases have no author signature; refer to their original release records.
-A matching signature means that the files were approved by the corresponding author key. It does not establish that a download or sales channel is authorized, or prevent resale of an unchanged package.

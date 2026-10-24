@@ -85,6 +85,7 @@ namespace AC7MultiSP.Setup {
 
         internal MainWindow(Bundle value, bool isPreview, string initialPage, string snapshotPath) {
             bundle = value; preview = isPreview; snapshot = snapshotPath;
+            Icon = System.Drawing.Icon.ExtractAssociatedIcon(Application.ExecutablePath);
             Font = new Font("Microsoft YaHei UI", 10F);
             ClientSize = new Size(980, 740); MinimumSize = new Size(840, 660);
             AutoScaleDimensions = new SizeF(96F, 96F); AutoScaleMode = AutoScaleMode.Dpi; StartPosition = FormStartPosition.CenterScreen;
