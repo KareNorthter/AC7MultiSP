@@ -35,6 +35,8 @@
 | [工作区索引](project/workspaces.md) | 正式入口、活动成果、保留工作树与整理记录 |
 | [玩家文档维护](project/player-docs.md) | 四份正文的维护、审核和EXE／ZIP／F6复用规则 |
 | [最新交付方案](project/delivery.md) | 通用ZIP部署映射、省略配套扩展、前置处理、旧安装迁移及待验证范围 |
+| [新版发布流程](project/release-workflow.md) | 自动准备与摘要核对；作者手动上传R2、蓝奏云、Nexus通用ZIP及Cloudflare Pages |
+| [主页与更新清单](project/pages-site.md) | 浅色双语主页、R2主链与蓝奏云备用链、同源正文、清单生成及发布步骤 |
 | [仓库与本机边界](project/repository.md) | GitHub私有仓库、上传范围、研究恢复锚及公开前的材料边界 |
 
 ## 技术与研究

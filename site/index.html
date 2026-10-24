@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fa">
+  <meta name="description" content="AC7MultiSP 下载入口与中英文说明。">
+  <title>AC7MultiSP</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="AC7MultiSP 首页" data-i18n-aria="homeLabel">
+      <span class="brand-mark" aria-hidden="true">AC</span>
+      <span class="brand-copy">
+        <strong>AC7MultiSP</strong>
+        <small data-i18n="brandSubtitle">皇牌空战7 Mod · 玩家主页</small>
+      </span>
+    </a>
+    <div class="header-tools">
+      <a class="manifest-link" href="./stable.json" target="_blank" rel="noopener noreferrer">
+        <span data-i18n="manifestLink">更新清单 JSON</span>
+        <span aria-hidden="true">↗</span>
+      </a>
+      <div class="language-toggle" role="group" aria-label="语言" data-i18n-aria="languageGroupLabel">
+        <button type="button" data-language="zh-CN" aria-pressed="true">中文</button>
+        <button type="button" data-language="en" aria-pressed="false">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="owner-strip panel" aria-label="作者信息与声明" data-i18n-aria="ownerInfoLabel">
+      <p id="legalNotice" class="legal-notice" aria-live="polite" data-i18n="loadingAuthor">正在读取作者信息…</p>
+      <div class="owner-meta">
+        <div class="owner-group">
+          <span class="owner-label" data-i18n="creatorLabel">作者</span>
+          <div id="profileLinks" class="owner-links" aria-live="polite"></div>
+        </div>
+        <div class="owner-group">
+          <span class="owner-label" data-i18n="feedbackLabel">反馈</span>
+          <div id="feedbackLinks" class="owner-links" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hero panel" aria-labelledby="pageTitle">
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="eyebrow">MOD 作者主页</p>
+        <h1 id="pageTitle">AC7MultiSP</h1>
+        <p class="hero-description" data-i18n="heroDescription">
+          多种特殊武器，自由组合。这里提供下载入口、使用说明和版本信息。
+        </p>
+      </div>
+
+      <div class="release-card">
+        <div class="release-heading">
+          <div>
+            <p class="eyebrow" data-i18n="stableRelease">稳定版</p>
+            <h2 data-i18n="downloadTitle">下载与更新</h2>
+          </div>
+          <span id="releaseStatus" class="status-chip" role="status" aria-live="polite" data-i18n="loadingManifest">正在读取…</span>
+        </div>
+        <div class="version-line">
+          <span data-i18n="latestVersion">最新版本</span>
+          <strong id="latestVersion">—</strong>
+        </div>
+        <p id="downloadHint" class="download-hint" data-i18n="loadingManifest">正在读取版本信息…</p>
+        <div id="downloadActions" class="download-actions" aria-live="polite"></div>
+        <div id="releaseNotes" class="release-notes" hidden>
+          <h3 data-i18n="releaseNotes">更新内容</h3>
+          <p id="releaseNotesText"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="documents" aria-labelledby="documentsHeading">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-i18n="documentation">项目资料</p>
+          <h2 id="documentsHeading" data-i18n="documentationTitle">了解 AC7MultiSP</h2>
+        </div>
+        <p class="section-note" data-i18n="documentationNote">页面正文直接取自项目中英文玩家文档。</p>
+      </div>
+      <nav class="document-tabs" role="tablist" aria-label="AC7MultiSP 文档" data-i18n-aria="documentTabsLabel">
+        <button type="button" role="tab" id="tab-features" aria-controls="documentPanel" aria-selected="true" data-section="features" data-i18n="featuresTab">功能说明</button>
+        <button type="button" role="tab" id="tab-install" aria-controls="documentPanel" aria-selected="false" data-section="install" data-i18n="installTab">安装说明</button>
+        <button type="button" role="tab" id="tab-changelog" aria-controls="documentPanel" aria-selected="false" data-section="changelog" data-i18n="changelogTab">更新日志</button>
+        <button type="button" role="tab" id="tab-author" aria-controls="documentPanel" aria-selected="false" data-section="author" data-i18n="authorTab">作者与授权</button>
+      </nav>
+      <article id="documentPanel" class="document-panel panel" role="tabpanel" aria-labelledby="tab-features" tabindex="0">
+        <h3 id="documentTitle" data-i18n="featuresTab">功能说明</h3>
+        <div id="documentBody" class="document-body" aria-live="polite">
+          <p data-i18n="loadingDocument">正在读取文档…</p>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span data-i18n="footerNotice">AC7MultiSP 是《皇牌空战7：未知空域》的非官方 Mod。</span>
+    <span class="footer-links">
+      <a href="./stable.json" target="_blank" rel="noopener noreferrer" data-i18n="footerManifest">更新程序 JSON 接口</a>
+      <span aria-hidden="true">·</span>
+      <span data-i18n="footerNoTracking">此页面不加载第三方字体或统计脚本。</span>
+    </span>
+  </footer>
+</body>
+</html>

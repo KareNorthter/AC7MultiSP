@@ -7,6 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
+| 双语主页与发布流程，已接收待作者上传 | 本管理聊天；基线c1092c0；codex/integrate-pages-workflow完成后关闭 | C:/Users/83717/.codex/worktrees/integrate-pages-workflow/AC7_MultiSP；材料E:/AC7_MultiSP/Temp/tasks/20261024-release-2.25.2/ | 接收“mod内置更新”的未提交主页，集中双语词条并保留preview；按用户正式2.25.2确认整理[完整发布流程](release-workflow.md)，工具准备EXE、Nexus通用ZIP和整站材料，四处上传由作者完成。原ZIP、来源树及冻结产物不改，见[接收回执](../../evidence/pages-workflow-intake-20261024.json)与[发布准备](../../evidence/2.25.2-publication-preparation.json) |
 | 三线程整合与EXE交付，2.25.2已交付待用户验收 | 本集成交付聊天；功能修复c9bc440，构建源码b5c5d04；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP；产物在E:/AC7_MultiSP/Temp/tasks/20261024-quick-trisp-delivery | 完整构建辅助错误隔离和快速卡片位置修复，EXE进入Release/2.25.2；[回执](../../evidence/2.25.2-exe-delivery.json)记录来源及摘要。不运行测试模块、不安装或操作游戏；旧产物/回执保留 |
 | 快速进入测试任务，2.25.2初始化修复待实测 | 来源964507d及整合c9bc440 | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP；现行源码main | 原主菜单准备/归属修复保留；辅助异常隔离和日志上方布局已随2.25.2完整构建。原[失败定位](../../evidence/quick-mission-failure-20261024.json)、[三SP中止日志](../../evidence/quick-mission-trisp-failure-20261024.json)及[唯一设计](../engineering/quick-mission-launch.md)保留，尚未验证新游戏效果 |
 | Mod机体兼容性续研，长按修复已接收待实测 | 来源22a899e；codex/research-mod-aircraft-compat | C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 长按修复进入本轮2.25.0完整构建；[续研正文](../research/mod-aircraft-compatibility.md)保留机体分组、原包缺项及待办。未变更游戏机体组，EML问题按用户要求暂缓；短按/长按及三SP无回归仍待用户验收 |

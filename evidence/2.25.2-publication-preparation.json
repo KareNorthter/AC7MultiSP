@@ -1,0 +1,161 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "version": "2.25.2",
+  "user_confirmation": {
+    "message": "正式发布，2.25.2",
+    "meaning": "作者确认发布版本与所给下载链接；不据此补造游戏验收",
+    "manual_upload_services": [
+      "R2",
+      "蓝奏云",
+      "Nexus通用ZIP",
+      "Cloudflare Pages"
+    ]
+  },
+  "source": {
+    "main_base": "c1092c011d33bd97d8b289c032f860520ed8807b",
+    "exe_delivery_receipt": "evidence/2.25.2-exe-delivery.json",
+    "exe_delivery_receipt_sha256": "e66486d83a772ed108e39f31d6789887b0fe11dc2b9c439d753f46fb2dd93a36",
+    "original_candidate_flag": true,
+    "original_receipt_and_artifacts_unchanged": true,
+    "game_version_unchanged": true
+  },
+  "downloads": {
+    "r2": "https://downloads.iot-node-service-api.online/AC7MultiSP_Installer.exe",
+    "lanzou": [
+      "https://wwbru.lanzoue.com/ig8Aj4d59fqd"
+    ],
+    "trailing_chinese_comma_removed": true,
+    "r2_verification": {
+      "size": 63383040,
+      "sha256": "e954dbae04fc85b569c935c927696bcb146a4558592996247c2efb462fb506df",
+      "verified": true,
+      "method": "streaming-download"
+    },
+    "lanzou_binary_verified": false,
+    "nexus_binary_verified": false
+  },
+  "local_preparation_root": "E:/AC7_MultiSP/Temp/tasks/20261024-release-2.25.2",
+  "artifacts": {
+    "exe": {
+      "filename": "AC7MultiSP_Installer.exe",
+      "size": 63383040,
+      "sha256": "e954dbae04fc85b569c935c927696bcb146a4558592996247c2efb462fb506df"
+    },
+    "nexus_universal_zip": {
+      "filename": "AC7MultiSP-2.25.2-Universal.zip",
+      "size": 21348433,
+      "sha256": "e8dfe4124e93ff82abaeebac54c3a3284eb5679c490629d207abb691c6d88c98",
+      "uploaded": false
+    },
+    "pages_zip": {
+      "filename": "AC7MultiSP-Pages-homepage.zip",
+      "size": 23816,
+      "sha256": "ffa14a5b79ec462690518e51051182bdc293fd21dc223871c395df1d47d061c1",
+      "members": {
+        "_headers": {
+          "size": 574,
+          "sha256": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc"
+        },
+        "app.js": {
+          "size": 19370,
+          "sha256": "027ba54fbf1551690cc8ad208f3c341080840fe024ba22e0f73661fe67d2042f"
+        },
+        "index.html": {
+          "size": 5513,
+          "sha256": "ab6abfd245a6c768b85e745dbb79118ce8dd0dde24f56498c03c032fb3d4253f"
+        },
+        "preview.json": {
+          "size": 1024,
+          "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+        },
+        "stable.json": {
+          "size": 2397,
+          "sha256": "634c96e10a0141658b8bc38a9120f3db08c53cf978a89bad06521b8e7a1a2699"
+        },
+        "styles.css": {
+          "size": 9205,
+          "sha256": "c7b82cd7a2e2ef446d088d1bab9c424475c1dfedc14f143a43e4561ae120c7a3"
+        },
+        "user-docs/作者与授权.en.txt": {
+          "size": 1045,
+          "sha256": "af557038c242b278587d9388085d146baa665aa8a47092bf68e1fbca906f711d"
+        },
+        "user-docs/作者与授权.txt": {
+          "size": 928,
+          "sha256": "04649421f32bc47a3c70db9df28299ab295cf8598f270b010da4273c7abf22df"
+        },
+        "user-docs/功能说明.en.txt": {
+          "size": 4698,
+          "sha256": "7b547270f0ae2fbac1a4678dae336fff998f41d49720d3197cd511c44aa98fa1"
+        },
+        "user-docs/功能说明.txt": {
+          "size": 4054,
+          "sha256": "75132fa2c79ced82d9b4356c2e9a231e001d17cb0beb98025567926f044b1c5a"
+        },
+        "user-docs/安装说明.en.txt": {
+          "size": 1698,
+          "sha256": "bc98fdf07022dcd3f76c7aaa39c92b77fc7fdfb778273a81297bda45b317f772"
+        },
+        "user-docs/安装说明.txt": {
+          "size": 1479,
+          "sha256": "0a5a0ae0ecf71b21304641462b55b618910b16bf18721fa31e9fdb85ef139fd2"
+        },
+        "user-docs/更新日志.en.txt": {
+          "size": 2876,
+          "sha256": "932bf4e18fc55cd3853840f082ff7df1f149cb47ae585a93983810662a94852e"
+        },
+        "user-docs/更新日志.txt": {
+          "size": 2306,
+          "sha256": "4207a29efaf0936180e19128f49e84548adcc83738b3c5e947a9bc74b3ff4324"
+        }
+      }
+    }
+  },
+  "local_receipts": [
+    {
+      "path": "Temp/tasks/20261024-release-2.25.2/prepare/release-plan.json",
+      "sha256": "977eae6910dbc66b8dad7000d7d38d8117a753d8e858982d42062857b16966a5"
+    },
+    {
+      "path": "Temp/tasks/20261024-release-2.25.2/pages-release/publication-receipt.json",
+      "sha256": "131bfe422f8b1f699abbd8aaa7e97c9cacffd3b2135e26947b3cd79f006dddaa"
+    }
+  ],
+  "document_source": {
+    "canonical": "docs/user",
+    "pages_documents_match_source": true,
+    "existing_zip_document_differences": [
+      "更新日志.txt",
+      "更新日志.en.txt"
+    ],
+    "difference_reason": "本轮仅移除2.25.X标题中的候选字样；保留已冻结包原字节，未重编译游戏生成文字"
+  },
+  "verification": {
+    "python_ast_checked": true,
+    "bilingual_site_keys": 40,
+    "zip_crc_and_all_member_hashes_checked": true,
+    "nexus_zip_members": 42,
+    "legacy_preview_preserved": true,
+    "source_worktree_unchanged": true,
+    "main_preexisting_changes_preserved": true,
+    "protected_dll_hash_checked": true,
+    "mod_compiled": false,
+    "tests_run": false,
+    "browser_started": false,
+    "installed": false,
+    "game_started": false,
+    "uploaded_by_this_task": false,
+    "cloudflare_deployed_by_this_task": false,
+    "online_pages_checked": false,
+    "documentation_relative_links_checked": 419,
+    "broken_links": 0
+  },
+  "pending_manual_actions": [
+    "确认蓝奏云EXE下载摘要",
+    "作者更新Nexus通用ZIP并下载核对摘要",
+    "确认当前Pages没有源码未收录的独有文件，上传完整主页ZIP",
+    "部署后执行verify-online并检查响应头、双语页面与客户端提示"
+  ],
+  "workflow_document": "docs/project/release-workflow.md"
+}

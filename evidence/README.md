@@ -4,6 +4,8 @@
 
 ## 关键入口
 
+主页源码、原上传ZIP及文档快照差异见[20261024主页接收回执](pages-workflow-intake-20261024.json)；作者的2.25.2正式发布确认、本次生成材料与下载核对见[发布准备记录](2.25.2-publication-preparation.json)。发布顺序只维护在[新版发布流程](../docs/project/release-workflow.md)；本地准备不证明Cloudflare、蓝奏云或Nexus已由本工具上传。
+
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
 | 正式2.24.1 | [integration](2.24.1-integration.json)、[release](2.24.1-release.json)、[授权](2.24.1-release-authorization.json) | 当次来源、检查、发布成员与授权；不证明后续实际安装 |

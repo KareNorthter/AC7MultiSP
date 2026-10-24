@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "product": "AC7MultiSP",
+  "channel": "stable",
+  "status": "ready",
+  "latest_version": "2.25.2",
+  "release_notes": {
+    "zh": "• 修复快速任务开场辅助异常导致多SP初始化中止的问题；快速任务卡片移到日志上方。\n• 修复主菜单快速任务在出击准备时中止，以及片头Logo跳过的菜单识别错误。\n• 增加主菜单快速测试任务入口、独立测试预设和启动自动出击选项。\n• 增加启动时跳过片头Logo。\n• 修复内部兵装切换打断原生长按附加功能的问题，保留玩家真实按住和松开。\n• 增加默认开启的启动更新检查开关，可保存关闭；手动检测仍可用。\n• 改善安装器在高DPI缩放下的字体清晰度。\n• 放大F6作者水印，将反馈区统一为默认全部显示的卡片。\n• 修复快速任务和任务内换机列表误隐藏部分已安装Mod机体的问题，保留DLC许可限制。",
+    "en": "• Fixed quick-mission intro helper errors aborting multi-SP initialization, and moved the quick-mission card above the logs.\n• Fixed quick launch stopping during main-menu preparation and incorrect menu identification when skipping startup logos.\n• Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.\n• Added startup logo skipping.\n• Fixed internal weapon switching interrupting native hold-button auxiliary functions, preserving the player's actual hold and release.\n• Added a startup update check option, enabled by default. It can be disabled and saved; manual checks remain available.\n• Improved installer text clarity at high DPI scaling.\n• Enlarged the F6 author watermark and made feedback a matching card with all content always visible.\n• Fixed some installed mod aircraft being hidden from quick mission and in-mission aircraft lists, while retaining DLC ownership checks."
+  },
+  "downloads": [
+    {
+      "id": "r2",
+      "label": {
+        "zh": "主要下载 · R2安装程序",
+        "en": "Primary · R2 installer"
+      },
+      "url": "https://downloads.iot-node-service-api.online/AC7MultiSP_Installer.exe"
+    },
+    {
+      "id": "lanzou",
+      "label": {
+        "zh": "备用下载 · 蓝奏云1",
+        "en": "Backup · Lanzou 1"
+      },
+      "url": "https://wwbru.lanzoue.com/ig8Aj4d59fqd"
+    }
+  ]
+}

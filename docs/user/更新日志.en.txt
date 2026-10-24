@@ -1,6 +1,6 @@
 AC7MultiSP Main Updates
 
-2.25.X (local validation candidate)
+2.25.X
 • Fixed quick-mission intro helper errors aborting multi-SP initialization, and moved the quick-mission card above the logs.
 • Fixed quick launch stopping during main-menu preparation and incorrect menu identification when skipping startup logos.
 • Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.
