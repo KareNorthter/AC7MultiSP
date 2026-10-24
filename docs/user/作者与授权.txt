@@ -2,10 +2,11 @@ AC7MultiSP
 本程序仅供学习交流，完全免费，请勿二次变卖盈利
 
 作者：
+• 主页：https://ac7multisp-updates.pages.dev/
 • Nexus Mods：Northter
   https://www.nexusmods.com/acecombat7skiesunknown/mods/3797
 • bilibili：班德慕  
-    https://space.bilibili.com/4853235
+  https://space.bilibili.com/4853235
 
 反馈：
 • 邮箱：karenorthterofchina@gmail.com
@@ -23,7 +24,8 @@ AC7MultiSP
 • PROJECT ACES / Bandai Namco：感谢《皇牌空战7》原作。
 
 感谢这些朋友的提供的帮助：
-Abyssdw，Xihe.Liu，HLC，鹿目まどか，Zabaglione，龙战骑兵，水馒头（反我的世界），等等
+Abyssdw，Xihe.Liu，HLC，鹿目まどか，Zabaglione，龙战骑兵，水馒头（反我的世界），梨想主义可还行，江郎才尽，等等
+感谢所有参与测试、提供反馈意见的玩家。
 
 
 
