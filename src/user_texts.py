@@ -10,10 +10,10 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "docs/user/interface"
 DOCUMENTS = {
-    "features": "功能说明",
-    "installation": "安装说明",
-    "changelog": "更新日志",
-    "credits": "作者与授权",
+    "features": ("功能说明.txt", "Features.txt"),
+    "installation": ("安装说明.txt", "Installation.txt"),
+    "changelog": ("更新日志.txt", "Changelog.txt"),
+    "credits": ("作者与授权.txt", "Author-and-License.txt"),
 }
 OUTPUTS = ("src/generated/user_texts.hpp", "dist/DualSP/Scripts/user_texts.lua")
 
@@ -127,9 +127,9 @@ def render():
             if key not in zh["texts"]:
                 raise ValueError(relative + " 引用了未登记文字：" + key)
     docs = {}
-    for key, stem in DOCUMENTS.items():
-        docs[key] = tuple((ROOT / "docs/user" / (stem + suffix)).read_text(encoding="utf-8-sig")
-                          for suffix in (".txt", ".en.txt"))
+    for key, filenames in DOCUMENTS.items():
+        docs[key] = tuple((ROOT / "docs/user" / filename).read_text(encoding="utf-8-sig")
+                          for filename in filenames)
     header = ["#pragma once", "// 自动生成；唯一来源为 docs/user 正文和 interface/game.*.json，请勿手改。",
               "#include <cstddef>", "#include <string_view>", "#include <utility>",
               "namespace dualsp::user_texts {", "struct Entry {std::string_view key;const char* zh;const char* en;};",

@@ -3,9 +3,10 @@ AC7MultiSP
 2.25.3 alpha1 (self-test build, unreleased)
 • Fixed weapon-name references for some mod aircraft, retaining author-provided names on aircraft such as F17V, ADF-11 and F-15EX.
 • Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior. Aircraft including S32 still require in-game validation.
-• Added CFA-50 upper-bay closing after leaving ADMM/TLS; the result awaits self-testing.
+• Added bay closing for CFA-50, standard Su-57, DarkStar and XFA-33 A/C. XFA-33 B and Su-57 TGM retain bay progress when switching SP weapons. In-game validation is pending.
 • Aircraft lists now prefer in-game display names and support searches by CFA-50, internal code or ID.
 • Extended Backspace isolation in F6 text fields to reduce accidental game pauses.
+• The universal ZIP provides four documents in separate Chinese and English folders; English documents use English filenames.
 • This build is for self-testing only. The official release remains 2.25.2.
 
 2.25.X

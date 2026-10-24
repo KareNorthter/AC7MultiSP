@@ -7,9 +7,9 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from release_tools import ROOT, product, read_json, digest, verify_build, source_snapshot
+from user_texts import DOCUMENTS as TOPICS
 
 SOURCE = ROOT / 'src/delivery'
-TOPICS = {'features': '功能说明', 'installation': '安装说明', 'changelog': '更新日志', 'credits': '作者与授权'}
 MOD = 'ue4ss/Mods/DualSP/'
 PAK = 'Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak'
 
@@ -92,15 +92,18 @@ def main():
     for p in sorted((ROOT / 'payload/ue4ss/Mods/DualSP/licenses').glob('*.txt')):
         main_files[MOD + 'licenses/' + p.name] = p.read_bytes()
     documents = {}
-    for topic, name in TOPICS.items():
-        for language, suffix in [('zh-CN', ''), ('en', '.en')]:
-            path = ROOT / 'docs/user' / (name + suffix + '.txt')
+    readme_documents = {}
+    for topic, filenames in TOPICS.items():
+        for language, filename in zip(('zh-CN', 'en'), filenames):
+            path = ROOT / 'docs/user' / filename
             raw = path.read_bytes()
             raw.decode('utf-8-sig')
             documents[f'installer/docs/{language}/{topic}.txt'] = raw
             if topic == 'credits':
                 documents[f'installer/credits-compact/{language}.json'] = encoded(extract_compact_credits(raw.decode('utf-8-sig'), language))
             main_files[MOD + 'docs/' + path.name] = raw
+            folder = 'ReadMe_zhCN请读我' if language == 'zh-CN' else 'ReadMe_EN'
+            readme_documents[folder + '/' + path.name] = raw
     main_files[MOD + 'vortex-package.json'] = encoded({
         'schema': 1, 'product': info['name'], 'version': version,
         'distribution': 'universal', 'delivery_version': policy['delivery_version'],
@@ -124,9 +127,8 @@ def main():
         'schema': 1, 'product': info['name'], 'version': version, 'candidate': info['candidate'],
         'distribution': 'universal', 'delivery_version': policy['delivery_version'],
         'files': records(main_files), 'build_receipt_sha256': digest(build / 'build-receipt.json')})
-    # ZIP根目录的安装说明也是唯一源的原字节生成副本。
-    for name in ('安装说明.txt', '安装说明.en.txt'):
-        universal[name] = (ROOT / 'docs/user' / name).read_bytes()
+    # 两种语言各四份原字节副本；只供阅读，不加入Vortex的游戏部署映射。
+    universal.update(readme_documents)
     output.mkdir(parents=True)
     zip_name = f'AC7MultiSP-{version}-Universal.zip'
     archive = output / zip_name

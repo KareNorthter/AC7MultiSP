@@ -21,3 +21,9 @@ AC7MultiSP
 • MinHook：Tsuda Kageyu；其中HDE组件由Vyacheslav Patkov开发。
 • nlohmann/json：Niels Lohmann及贡献者，提供数据处理库。
 • PROJECT ACES / Bandai Namco：感谢《皇牌空战7》原作。
+
+感谢这些朋友的提供的帮助：
+Abyssdw，Xihe.Liu，HLC，鹿目まどか，Zabaglione，龙战骑兵，水馒头（反我的世界），等等
+
+
+

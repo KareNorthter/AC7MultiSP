@@ -18,13 +18,13 @@ SITE_FILES = ("index.html", "styles.css", "app.js", "stable.json", "preview.json
 SITE_COPY_MARKER = "/* SITE_UI_COPY */ {}"
 PLAYER_DOC_FILES = (
     "功能说明.txt",
-    "功能说明.en.txt",
+    "Features.txt",
     "安装说明.txt",
-    "安装说明.en.txt",
+    "Installation.txt",
     "更新日志.txt",
-    "更新日志.en.txt",
+    "Changelog.txt",
     "作者与授权.txt",
-    "作者与授权.en.txt",
+    "Author-and-License.txt",
 )
 DOWNLOAD_HOSTS = {
     "wwbru.lanzoue.com",

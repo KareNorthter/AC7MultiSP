@@ -67,8 +67,8 @@ def checked_url(value: str, host: str) -> str:
 
 
 def notes_for(version: str, language: str) -> str:
-    suffix = ".en" if language == "en" else ""
-    text = (ROOT / f"docs/user/更新日志{suffix}.txt").read_text(encoding="utf-8-sig")
+    filename = "Changelog.txt" if language == "en" else "更新日志.txt"
+    text = (ROOT / "docs/user" / filename).read_text(encoding="utf-8-sig")
     # 2.25.2之后逐版本记录；旧发布仍可复用当时的系列摘要，不回改历史正文。
     base = version.split(" alpha", 1)[0]
     section = version if tuple(map(int, base.split("."))) > (2, 25, 2) else ".".join(base.split(".")[:2]) + ".X"

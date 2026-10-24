@@ -20,10 +20,10 @@
 
 | 唯一正文 | 内容 |
 |---|---|
-| [功能说明](user/功能说明.txt)／[Features](user/功能说明.en.txt) | 多兵装、常用操作、模型适配与其他Mod兼容性 |
-| [安装说明](user/安装说明.txt)／[English installation guide](user/安装说明.en.txt) | 无自制配套扩展的Vortex、EXE、手动三种方式，以及更新、卸载注意事项 |
-| [更新日志](user/更新日志.txt)／[Changelog](user/更新日志.en.txt) | 2.25.2之后逐版本列出具体变化；历史阶段概括保留 |
-| [作者与授权](user/作者与授权.txt)／[Author and license](user/作者与授权.en.txt) | 作者联系方式、用户自定授权、第三方许可与致谢 |
+| [功能说明](user/功能说明.txt)／[Features](user/Features.txt) | 多兵装、常用操作、模型适配与其他Mod兼容性 |
+| [安装说明](user/安装说明.txt)／[English installation guide](user/Installation.txt) | 无自制配套扩展的Vortex、EXE、手动三种方式，以及更新、卸载注意事项 |
+| [更新日志](user/更新日志.txt)／[Changelog](user/Changelog.txt) | 2.25.2之后逐版本列出具体变化；历史阶段概括保留 |
+| [作者与授权](user/作者与授权.txt)／[Author and license](user/Author-and-License.txt) | 作者联系方式、用户自定授权、第三方许可与致谢 |
 | [界面资源维护](user/interface/README.md) | 游戏及安装器的中英文词条、盘点与生成入口；供维护者使用 |
 
 ## 开发规范

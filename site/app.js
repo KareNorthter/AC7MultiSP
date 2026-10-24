@@ -4,10 +4,10 @@
   const copy = /* SITE_UI_COPY */ {};
 
   const documents = {
-    features: { "zh-CN": "功能说明.txt", en: "功能说明.en.txt" },
-    install: { "zh-CN": "安装说明.txt", en: "安装说明.en.txt" },
-    changelog: { "zh-CN": "更新日志.txt", en: "更新日志.en.txt" },
-    author: { "zh-CN": "作者与授权.txt", en: "作者与授权.en.txt" }
+    features: { "zh-CN": "功能说明.txt", en: "Features.txt" },
+    install: { "zh-CN": "安装说明.txt", en: "Installation.txt" },
+    changelog: { "zh-CN": "更新日志.txt", en: "Changelog.txt" },
+    author: { "zh-CN": "作者与授权.txt", en: "Author-and-License.txt" }
   };
   const downloadHosts = new Set([
     "wwbru.lanzoue.com",

@@ -1,6 +1,6 @@
 # 通用ZIP与双语EXE交付
 
-本文维护交付格式、程序入口和验证边界。玩家步骤只维护[中文安装说明](../user/安装说明.txt)和[英文安装说明](../user/安装说明.en.txt)，文字复用见[玩家文档维护](player-docs.md)。安装器版本完全跟随产品版本，正式与候选状态以[项目入口](../../README.md)为准；旧安装器及回执保留原样。制作范围按当次授权；仅交付EXE时，封装所需ZIP保留在Temp，不单独复制到Release。
+本文维护交付格式、程序入口和验证边界。玩家步骤只维护[中文安装说明](../user/安装说明.txt)和[英文安装说明](../user/Installation.txt)，文字复用见[玩家文档维护](player-docs.md)。安装器版本完全跟随产品版本，正式与候选状态以[项目入口](../../README.md)为准；旧安装器及回执保留原样。制作范围按当次授权；仅交付EXE时，封装所需ZIP保留在Temp，不单独复制到Release。
 
 新版发布顺序、自动准备命令及人工上传统一按[新版发布流程](release-workflow.md)维护；主页协议见[主页说明](pages-site.md)。R2与蓝奏云使用同一EXE，Nexus由作者手动更新同版通用ZIP，之后上传完整Pages包。不能把本地候选制作完成推定为正式确认、远端上传或主页已更新。
 
@@ -12,6 +12,8 @@
 - 主程序、界面、18份Lua和专用PAK同版成套。21个运行文件为18 Lua、2 DLL及VERSION，挂载资源仍为77份/154成员；音频、许可证、独立启用文件和文档另列封装清单。
 - 通用ZIP不含共享UE4SS、微软运行库、个人配置、日志、存档或其他Mod；`DualSP/enabled.txt`独立启用，不要求改写共享mods.txt。
 - 四对玩家TXT原字节进入ZIP及EXE对应语言文档；F6只展示更新日志和作者与授权。游戏与安装器固定文字分别来自`docs/user/interface/game.*.json`、`installer.*.json`，不在各展示位置另写副本。安装器首页的短声明、作者署名链接及反馈由同一作者与授权TXT提取，作为`installer/credits-compact/{zh-CN|en}.json`校验资源嵌入EXE，不把网址或邮箱抄入C#。
+
+ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，替代根目录散放的两份安装说明。英文源与包内文件名统一为`Features.txt`、`Installation.txt`、`Changelog.txt`、`Author-and-License.txt`；中文保留原文件名。根目录阅读副本不进入Vortex游戏部署映射，运行目录docs及EXE内嵌正文仍使用同一份来源原字节；历史ZIP和旧回执不回改。
 
 ## 生成、冻结与封装入口
 
