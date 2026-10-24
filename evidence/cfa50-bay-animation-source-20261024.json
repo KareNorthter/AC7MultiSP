@@ -1,0 +1,246 @@
+{
+  "recorded_at": "2026-10-24T09:21:52.975139+08:00",
+  "branch": "codex/research-mod-aircraft-compat",
+  "source_parent": "22a899e430540d7eaee0bab5ce4977d8eb73a74d",
+  "reviewed_main": "c1092c011d33bd97d8b289c032f860520ed8807b",
+  "main_difference": "相关挂载头相同；weapon_bridge.cpp的main差异仅为独立quick_mission头包含。只接收本候选精确差异。",
+  "status": "顶部旧域冻结已定位，限定源码候选待接收/构建/实机验证",
+  "user_feedback": [
+    "EML炮体实际在机腹，模型存在；此前看漏。当前是顶部空舱误开，切回MSL后不关闭。",
+    "其他Mod机体长按X已可触发ESM等效果且有特效。",
+    "CFA-50的ESM问题暂不研究，用户自行继续测试；先研究动画。"
+  ],
+  "historical_correction": {
+    "supersedes_interpretation_in": "cfa50-eml-runtime-review-20261023.json",
+    "correction": "保留原资源/姿态采样事实，但不再把顶部空舱或已采机构姿态解释成EML炮体缺失；用户已确认炮体存在。",
+    "raw_evidence_unchanged": true
+  },
+  "actions_this_turn": {
+    "process_read": true,
+    "process_write": false,
+    "game_functions_called": false,
+    "input_injected": false,
+    "game_closed_or_started": false,
+    "runtime_files_modified": false,
+    "source_modified": true,
+    "compiled": false,
+    "test_modules_written_or_run": false,
+    "installed": false,
+    "pushed_or_uploaded": false
+  },
+  "runtime": {
+    "pid": 11028,
+    "version": "2.25.2",
+    "candidate": true,
+    "profile": "A",
+    "install_receipt_sha256": "8c7a6581fb403ea39069e782aec3f3ed64369c78c4358fcea978e735d208da1a",
+    "delivery_receipt_local_path": "E:\\AC7_MultiSP\\evidence\\2.25.2-exe-delivery.json",
+    "delivery_receipt_sha256": "e66486d83a772ed108e39f31d6789887b0fe11dc2b9c439d753f46fb2dd93a36",
+    "files": [
+      {
+        "path": "bin/DualSP.dll",
+        "sha256": "ed6261dae0530e55cda2437763c01ee89933924008e08f122d345e94dec8da75",
+        "install_receipt_sha256": "ed6261dae0530e55cda2437763c01ee89933924008e08f122d345e94dec8da75",
+        "matches_install_receipt": true
+      },
+      {
+        "path": "bin/DualSPUI.dll",
+        "sha256": "7a40b9356eee180c01c87ac0223ea33a74fa9366107a29abbdd1bc1c942ec698",
+        "install_receipt_sha256": "7a40b9356eee180c01c87ac0223ea33a74fa9366107a29abbdd1bc1c942ec698",
+        "matches_install_receipt": true
+      }
+    ],
+    "long_hold_source_already_in_runtime": true,
+    "not_animation_candidate": true
+  },
+  "snapshots": [
+    {
+      "captured": "2026-10-24T09:01:58.049462+08:00",
+      "local_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-cfa50-bay-effects\\paused-initial",
+      "native_details_sha256": "1c71abaf6593d90fc1fe81b9830f3a6873835c852b50c9041663065007eb3ccd",
+      "native_config": 2,
+      "parts_config": 2,
+      "request": 3,
+      "phase": 0,
+      "values_by_offset": {
+        "0x17c": -0.009999999776482582,
+        "0x180": 0.38014474511146545,
+        "0x184": 0.9049025774002075,
+        "0x188": -0.009999999776482582,
+        "0x18c": -0.009999999776482582,
+        "0x190": -0.009999999776482582,
+        "0x194": 0.9049025774002075
+      },
+      "interpretation": "公共及EML已关闭，顶部两来源和共用域仍留旧开度。早期快照末三outputs名称未经核实，以本记录偏移为准。"
+    },
+    {
+      "captured": "2026-10-24T09:11:25.156957+08:00",
+      "local_path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-cfa50-bay-effects\\body-cover-live.json",
+      "sha256": "90caf4fbeba45b413559d5d1481e9c0ca164cdfd3e140fb1325eb20b0e9943e4",
+      "native_config": 2,
+      "parts_config": 2,
+      "request": 1,
+      "phase": 2,
+      "values_by_offset": {
+        "0x17c": 1.0,
+        "0x180": 1.0,
+        "0x184": 1.0,
+        "0x188": 1.0,
+        "0x18c": 1.0,
+        "0x190": 1.0,
+        "0x194": 1.0
+      },
+      "published_pose_comparison": [
+        {
+          "group": "top",
+          "bones": [
+            "SWPCoverC_01",
+            "SWPCoverC_02",
+            "SWPCoverC_03",
+            "SWPCoverC_04",
+            "SWPCoverC_05",
+            "SWPCoverC_06",
+            "SWPCoverC_07",
+            "SWPCoverC_08",
+            "SWPCoverC_09",
+            "SWPCoverC_10",
+            "SWPCoverC_11",
+            "SWPCoverC_12"
+          ],
+          "best": {
+            "frame": 74,
+            "max_position_error": 9.877165882229576e-07,
+            "max_rotation_error_degrees": 2.2653174724081298e-05
+          },
+          "first": {
+            "frame": 0,
+            "max_position_error": 2.2986099302256253,
+            "max_rotation_error_degrees": 73.52031658519687
+          },
+          "last": {
+            "frame": 99,
+            "max_position_error": 9.877165882229576e-07,
+            "max_rotation_error_degrees": 2.2653174724081298e-05
+          }
+        },
+        {
+          "group": "ventral",
+          "bones": [
+            "SWPCover3_01",
+            "SWPCover3_02"
+          ],
+          "best": {
+            "frame": 74,
+            "max_position_error": 0.0,
+            "max_rotation_error_degrees": 0.0
+          },
+          "first": {
+            "frame": 0,
+            "max_position_error": 0.0,
+            "max_rotation_error_degrees": 83.0000012203091
+          },
+          "last": {
+            "frame": 99,
+            "max_position_error": 0.0,
+            "max_rotation_error_degrees": 0.0
+          }
+        }
+      ],
+      "interpretation": "用户自行经过ADMM/TLS后切到EML，顶部通道仍全开；本体已发布姿态实际对应全开，非仅控制值变化。"
+    }
+  ],
+  "author_domains": {
+    "body": "fa50",
+    "animation_class": "fa50_AnimBP_C",
+    "bone_table": "PlaneBodyConfig",
+    "top": {
+      "bones": "SWPCoverC_01..12",
+      "channel": "swcc",
+      "offset": "0x194",
+      "configs": [
+        0,
+        1
+      ]
+    },
+    "ventral": {
+      "bones": "SWPCover3_01/02",
+      "channel": "swc3",
+      "offset": "0x188",
+      "configs": [
+        2
+      ]
+    },
+    "body_sequence_frames": 100,
+    "body_sequence_tracks": 57,
+    "body_source_summary_sha256": "1c7af07895f8907f9aef4a41e95d664f1255a566ea9a93b9d9b7f16541e4cdb3",
+    "body_sequence_json_sha256": "a91d1901288944378663face44be7199d7623404f4a7387a064a126a47d372ff",
+    "skeleton_json_sha256": "64dcdda8de3de6205e40ed0decdbf800704d7884bedefdd950163babfefbeb50"
+  },
+  "native_dispatch": {
+    "rva": "0x1ce7f57",
+    "length": 284,
+    "sha256": "1662a5080df3163e561acb2892d5d2df5a841474399b9a345024dc590566deaa",
+    "selected_writes": {
+      "0": [
+        "0x180",
+        "0x194",
+        "0x190"
+      ],
+      "1": [
+        "0x184",
+        "0x18c",
+        "0x194"
+      ],
+      "2": [
+        "0x188",
+        "0x18c",
+        "0x190"
+      ]
+    },
+    "candidate_signature_rva": "0x1ce8013",
+    "candidate_signature_bytes": 96,
+    "candidate_signature_matches_live": true,
+    "finding": "配置2不更新顶部swcc，非当前独立/共用输出无自动收尾；既有轻量动画未绑定CFA-50。"
+  },
+  "source_candidate": {
+    "files": [
+      {
+        "path": "src/cfa50_bay_animation.hpp",
+        "sha256": "ab69e03a818ee7cce48a1ddaffd816d9db47763b83012796e0ee0de53b2e7288"
+      },
+      {
+        "path": "src/su30sm_fixed_mount.hpp",
+        "sha256": "d1e1612dfac2370eb4b61c6923adf6fafd348246ecf5e9e1386716dfcaf938d5"
+      },
+      {
+        "path": "src/weapon_bridge.cpp",
+        "sha256": "91b54cffb3b66351a4229c4f5d2d79bccaf04f90463a35efe59f29f10c05105d"
+      }
+    ],
+    "design": "docs/engineering/multi-sp-mount-design.md#cfa-50作者舱门分域源码候选未编译实测",
+    "scope": "仅作者CFA-50的顶部swc1/swc2及swcc，按原生速率补收非当前来源；机腹、公共请求和发射保留原生。",
+    "write_offsets": [
+      "0x180",
+      "0x184",
+      "0x194"
+    ],
+    "qualification": [
+      "精确Pawn父类/包",
+      "所选真实兵装类/包",
+      "本体网格及动画类/包",
+      "Parts原始代码及自有钩子回执",
+      "引擎owner及Parts vtable",
+      "作者分域旗帜0xb",
+      "实例序列号、会话、线程和当前配置"
+    ],
+    "esm_or_hold_input_changed": false,
+    "compiled_or_gameplay_verified": false
+  },
+  "remaining": [
+    "按后续授权构建/安装并实机验证顶部收尾与机腹EML、ADMM/TLS、发射正常",
+    "验证MSL直达EML、单EML、重配、检查点及退出生命周期",
+    "ESM暂缓；十字键继续按原计划稍后实测"
+  ],
+  "frozen_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "raw_asset_policy": "原始进程/日志、作者资源、个人状态和代码采样仅留本机Temp；Git只收研究摘要与自有源码。"
+}

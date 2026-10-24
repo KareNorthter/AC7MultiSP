@@ -1077,6 +1077,7 @@ void execute(const Command& command) {
         fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
         bindF35Cover(command.plane);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
+    cfa50BayBind(command); // 作者舱门分域独立于多挂外观开关，失败不回滚已完成的兵装事务。
 #endif
     cfaSwitchCost.mark(7);
 }
@@ -1112,6 +1113,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
+            cfa50BayRelease(); // 动态进度停止收尾，不把旧的开舱残值恢复回去。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
