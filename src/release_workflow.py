@@ -69,10 +69,11 @@ def checked_url(value: str, host: str) -> str:
 def notes_for(version: str, language: str) -> str:
     suffix = ".en" if language == "en" else ""
     text = (ROOT / f"docs/user/更新日志{suffix}.txt").read_text(encoding="utf-8-sig")
-    series = ".".join(version.split(".")[:2]) + ".X"
-    found = re.search(r"(?m)^" + re.escape(series) + r"[^\n]*\n(.*?)(?=^\d+\.\d+\.(?:X|\d+)|\Z)", text, re.S)
+    # 2.25.2之后逐版本记录；旧发布仍可复用当时的系列摘要，不回改历史正文。
+    section = version if tuple(map(int, version.split("."))) > (2, 25, 2) else ".".join(version.split(".")[:2]) + ".X"
+    found = re.search(r"(?m)^" + re.escape(section) + r"(?=[ \t（(]|$)[^\n]*\n(.*?)(?=^\d+\.\d+\.(?:X|\d+)|\Z)", text, re.S)
     if not found or not found[1].strip():
-        raise ValueError(f"唯一更新日志中缺少{series}的{language}摘要")
+        raise ValueError(f"唯一更新日志中缺少{section}的{language}摘要")
     return found[1].strip()
 
 
