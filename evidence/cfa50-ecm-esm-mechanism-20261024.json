@@ -1,0 +1,665 @@
+{
+  "主题": "CFA-50机体ECM与僚机ESM机制及3SP干预范围",
+  "日期": "2026-10-24",
+  "分支": "codex/research-mod-aircraft-compat",
+  "源码锚": "7a229cf559de5937368bb4478c3eed881c03f66f",
+  "核对main": "cc924a579b40479c1423a8d3ec0a8c96f62638f1",
+  "授权与动作": {
+    "只读进程": true,
+    "进程号": 40308,
+    "调用游戏函数": false,
+    "写进程": false,
+    "注入输入": false,
+    "操作游戏": false,
+    "编译": false,
+    "编写或运行测试": false,
+    "安装": false,
+    "推送或上传": false,
+    "产品源码修改": false
+  },
+  "用户反馈": [
+    "长按X有音效和波纹，但没有雷达蓝区和中央ESM启用提示",
+    "此前偶有完整画面效果、雷达蓝区和ESM提示",
+    "最新确认：召唤僚机后可触发雷达蓝区"
+  ],
+  "运行文件": [
+    {
+      "path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/bin/DualSP.dll",
+      "bytes": 2837504,
+      "sha256": "ed6261dae0530e55cda2437763c01ee89933924008e08f122d345e94dec8da75"
+    },
+    {
+      "path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/bin/DualSPUI.dll",
+      "bytes": 3181056,
+      "sha256": "7a40b9356eee180c01c87ac0223ea33a74fa9366107a29abbdd1bc1c942ec698"
+    }
+  ],
+  "运行版本边界": "2.25.2安装候选，已含22a899e长按修复；舱门候选7a229cf未编译、安装。不是正式版本发布记录。",
+  "现场摘要": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-094120-534993/ecm.json",
+      "bytes": 6046,
+      "sha256": "c52a56831643e026194920cea7fbbc0b57ff54fe83d1a8b43237109780f6d555",
+      "captured": "2026-10-24T09:41:21.054426+08:00",
+      "user_label": "已触发有音效波纹，缺雷达蓝区与HUD提示",
+      "read_errors": [],
+      "drop_input": {
+        "available": 1,
+        "held": 0,
+        "mesh_component": {
+          "address": "0x196d10c98d0",
+          "name": "DropTankMesh",
+          "class": "StaticMeshComponent"
+        },
+        "timer": 0.0,
+        "required_seconds": 1.0,
+        "up_dot_world_up": 0.9925129918089921,
+        "tilt_degrees": 7.015572562661322,
+        "orientation_passes_native_gate": true,
+        "is_igc_mode_byte": 0
+      },
+      "player_support_class": null,
+      "player_support_field_captured": false,
+      "player_jamming_class": null,
+      "effects": [
+        {
+          "name": "plwp_ecmp_fa50_C_0",
+          "active": 1,
+          "age": 5.510089874267578,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-094411-674834/ecm.json",
+      "bytes": 6300,
+      "sha256": "31aebd8b09065b38653125e2d37a2b5020ff61bcdcdceb5acc2a01fcb7cf52f1",
+      "captured": "2026-10-24T09:44:12.198455+08:00",
+      "user_label": "区分CFA50自身ECM与配套僚机ESM",
+      "read_errors": [],
+      "drop_input": {
+        "available": 1,
+        "held": 0,
+        "mesh_component": {
+          "address": "0x196d10c98d0",
+          "name": "DropTankMesh",
+          "class": "StaticMeshComponent"
+        },
+        "timer": 0.0,
+        "required_seconds": 1.0,
+        "up_dot_world_up": 0.9925129918089921,
+        "tilt_degrees": 7.015572562661322,
+        "orientation_passes_native_gate": true,
+        "is_igc_mode_byte": 0
+      },
+      "player_support_class": null,
+      "player_support_field_captured": true,
+      "player_jamming_class": null,
+      "effects": [
+        {
+          "name": "plwp_ecmp_fa50_C_0",
+          "active": 1,
+          "age": 5.510089874267578,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/ecm.json",
+      "bytes": 19894,
+      "sha256": "85d46b460f96d0ffcc1496515385396ea6afe0e179e7e96b9ed4e2253d9efbc3",
+      "captured": "2026-10-24T09:50:23.561069+08:00",
+      "user_label": "用户确认召唤僚机后出现雷达蓝区",
+      "read_errors": [],
+      "drop_input": {
+        "available": 1,
+        "held": 0,
+        "mesh_component": {
+          "address": "0x196d10c98d0",
+          "name": "DropTankMesh",
+          "class": "StaticMeshComponent"
+        },
+        "timer": 0.0,
+        "required_seconds": 1.0,
+        "up_dot_world_up": 0.5177655591195172,
+        "tilt_degrees": 58.81751138172185,
+        "orientation_passes_native_gate": true,
+        "is_igc_mode_byte": 0
+      },
+      "player_support_class": "plwp_iews_zburator_C",
+      "player_support_field_captured": true,
+      "player_jamming_class": null,
+      "effects": [
+        {
+          "name": "plwp_ecmp_fa50_C_0",
+          "active": 0,
+          "age": 30.002094268798828,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_3",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_2",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_1",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_0",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_ecmp_fa50_C_2",
+          "active": 0,
+          "age": 30.009492874145508,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_ecmp_fa50_C_1",
+          "active": 1,
+          "age": 12.51097583770752,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095331-677336/ecm.json",
+      "bytes": 19930,
+      "sha256": "032c58f170ae0627c336615c8aa95781635a1af250216796c4d75a39bde0ff61",
+      "captured": "2026-10-24T09:53:32.250914+08:00",
+      "user_label": "召唤僚机后蓝区已确认；后续只读采样，未要求用户改变场景",
+      "read_errors": [],
+      "drop_input": {
+        "available": 1,
+        "held": 0,
+        "mesh_component": {
+          "address": "0x196d10c98d0",
+          "name": "DropTankMesh",
+          "class": "StaticMeshComponent"
+        },
+        "timer": 0.0,
+        "required_seconds": 1.0,
+        "up_dot_world_up": 0.5177655591195172,
+        "tilt_degrees": 58.81751138172185,
+        "orientation_passes_native_gate": true,
+        "is_igc_mode_byte": 0
+      },
+      "player_support_class": "plwp_iews_zburator_C",
+      "player_support_field_captured": true,
+      "player_jamming_class": null,
+      "effects": [
+        {
+          "name": "plwp_ecmp_fa50_C_0",
+          "active": 0,
+          "age": 30.002094268798828,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0,
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_3",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_2",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_1",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_iews_zburator_C_0",
+          "active": 1,
+          "age": 3.9730801582336426,
+          "LifeTime": 20.0,
+          "SupportTimeCampaign": 20.0,
+          "JammingTimeCampaign": 20.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": "plwp_quox_bis_range_C",
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_ecmp_fa50_C_2",
+          "active": 0,
+          "age": 30.009492874145508,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0
+          ]
+        },
+        {
+          "name": "plwp_ecmp_fa50_C_1",
+          "active": 1,
+          "age": 12.51097583770752,
+          "LifeTime": 30.0,
+          "SupportTimeCampaign": 0.0,
+          "JammingTimeCampaign": 30.0,
+          "PostProcessTime": 3.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "owner_weapon_class": null,
+          "post_process_enabled": false,
+          "post_process_mid_present": false,
+          "weighted_material_weights": [
+            0.0,
+            0.0
+          ]
+        }
+      ]
+    }
+  ],
+  "作者资源摘要": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/c97939ae53c24db26275/plwp_ecmp_fa50.json",
+      "bytes": 53670,
+      "sha256": "1600d912c4fc3eca7d460e2c41147ec38673cee1cd5adce59167db26ca996217"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/d88fdb99ac2fca70938c/plwp_iews_zburator.json",
+      "bytes": 81547,
+      "sha256": "9121f4c19548337eb2cd7e71a09b58fb85ae6a868e9b9aa748d3d3ae484750b2"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/f9404cc126b23c61aa63/plwp_iews_zburator.json",
+      "bytes": 90542,
+      "sha256": "3218ab243c8a0d58f6165e912deb34857f933c667c548a422f2627b1cb9504ad"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/f5effa78ea3df2c59b19/plwp_quox_bis.json",
+      "bytes": 211699,
+      "sha256": "bb78654bdafe50bae7aacf2577d908d8f0c084ec001563b993d3e1ea171fad94"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/53666b9fcebf648b801f/AcePlayerPawn_fa50.json",
+      "bytes": 413867,
+      "sha256": "dcd705697dec6785d9ae94d56781bed35c26fc085f6246b800f460829966e20f"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/f954bd89bcb1e289969f/AcePlayerPawn_fa50_s10.json",
+      "bytes": 136274,
+      "sha256": "af8c2d4152a9ceecf8292adbfc5201cd57a27ab24aa4b88dd21c8a9d58cd10e8"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/blueprints/fe58631814f438aacfc2/plwp_quox_bis_range.json",
+      "bytes": 44788,
+      "sha256": "72bda332b62af9992044f016fc93d6490b6be2513847c502600c019cf7259788"
+    }
+  ],
+  "原生与采集脚本摘要": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/index.json",
+      "bytes": 6257,
+      "sha256": "21ff2091a88a8415d68a7a98f624eda1902f63da04ea4f421e0ac2a46e7985bb"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/range-86b450-2000.bin.asm",
+      "bytes": 54524,
+      "sha256": "0d8715bcd0adaf20390c56c189f37585f1bf5a32f0da97635e6bcde9340319ce"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/player-a10-8215d0.bin",
+      "bytes": 152,
+      "sha256": "143a6974d4c39e59c06d366ceac5114ab3824f73a78875d2a3322be1b71d1be1"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/player-a18-821580.bin",
+      "bytes": 69,
+      "sha256": "a5a28df2c8392d7c96a441014580ff3c1e7549c796b89ecb0f5fc76c35ed056d"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/player-a20-820770.bin",
+      "bytes": 91,
+      "sha256": "e534c5b4f13f569a9bfd70fa08596b785c8270d17d9a6ffaf92c535098bb0314"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-3e9d10.bin",
+      "bytes": 51,
+      "sha256": "b5a6126c9285ee319ea2dbf717ee5665b757c5493fd5a60497cc988957729f20"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-3eb540.bin",
+      "bytes": 527,
+      "sha256": "aff46198e891e17a182493ec10f23872c711db30af3cc2a90aea20bbc09a2bff"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-82a1e0.bin",
+      "bytes": 93,
+      "sha256": "6a22ef5c259a30daf588fa67ed86ce746307b1eb42b918922eff62fa4a60cce6"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-82bb60.bin",
+      "bytes": 284,
+      "sha256": "2fd13be3707099b10eab5e4d5600aba56c0c0e91254cb570cdc5870e6e0ec672"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-86b450.bin",
+      "bytes": 26,
+      "sha256": "3085b22be3479140f414ee03fda3b71fb9a3ebca7804e6ca88ec7930883119de"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-86bde0.bin",
+      "bytes": 424,
+      "sha256": "2db014591c83c0c816bddfdb130fadf9f1ee53ede1b91d560560ca690e121e4d"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-86bf90.bin",
+      "bytes": 133,
+      "sha256": "4ce58854394952121642969a670ebf73edca0bf004889b05115b39ae389fded5"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-86c020.bin",
+      "bytes": 306,
+      "sha256": "b8dd8f291a11c6138e97adfc53d0a4ba0c3dd9db6dcf2898ba0a94e1e73318f1"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-86c210.bin",
+      "bytes": 43,
+      "sha256": "f4d58e8d477072d7683b85480f99b42fe24a4fdea5f396b6e3878d747ccde2a7"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-8943e0.bin",
+      "bytes": 453,
+      "sha256": "afaf2c4a304854cd27159523a1971b9e174193afa174135659dc598edb60676b"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-894740.bin",
+      "bytes": 33,
+      "sha256": "adad0b8dafd7c673bf11a1a5496be9479681cfe99b023adff14163620bdd9015"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-894850.bin",
+      "bytes": 172,
+      "sha256": "a9975d54719f9a3f7920d4f449e0798146c67aef0993285bc1fa94416a2b9682"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-895bb0.bin",
+      "bytes": 271,
+      "sha256": "0c04092cad9df1c3c391de260afa8a98cd543ea2d9e485ca22eb87df55a1bbaf"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-896f10.bin",
+      "bytes": 76,
+      "sha256": "07e68f0d6256497b236adbd913e5794ebfd63679648ecd1b19b324738449469d"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/20261024-095022-999883/native-897010.bin",
+      "bytes": 405,
+      "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/7fe4c7.asm",
+      "bytes": 1913,
+      "sha256": "a6f3646ccbe5c0fd7de855989418a4178cad470648ecca025db9ae35987410a1"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/native-routes/7fe4c7.bin",
+      "bytes": 288,
+      "sha256": "d18424caf8dd9c9ff608e6b782350ec583ef1e0fab288257f7ede1854a22141e"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/capture_ecm.py",
+      "bytes": 9572,
+      "sha256": "a9275186976517a0562ce9f4a0937a7712baa3d2d88993c4e367da86e749fb29"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/capture_esm_routes.py",
+      "bytes": 2303,
+      "sha256": "1a0d63ea70d4884933dd02fce106c4a2a0751d1d2f9358502e440ecb69ff469d"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-ecm-lifecycle/scan_hud_functions.py",
+      "bytes": 1356,
+      "sha256": "141691f31cfd0050e2b0d605e5921c92fd30ff032f5948f4a3ea2051cd4b0445"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/native-drop/index.json",
+      "bytes": 12808,
+      "sha256": "8cf5a951d441596aafb47c9d6aaa8c7ce5a275a0f7d29fcba5cf29eef6166c66"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/native-drop/82bb60-full.asm",
+      "bytes": 2733,
+      "sha256": "7d5ed8fbba044be5000c2bf2aa8313a92dd728bdbbb185d00114f567e1c1bda7"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/native-drop/82bcdd.asm",
+      "bytes": 169,
+      "sha256": "ec9bfaa749747e0ae5fd8adda53efbae8896df3b31853a952a65c55181f238bd"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/native-drop/82a23d.asm",
+      "bytes": 1302,
+      "sha256": "aeca4f35ea4935098d46859a5f3b2dadb4c2b6a5d18162ac392456249c5c2865"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/native-drop/16ec260-full.asm",
+      "bytes": 1623,
+      "sha256": "6c4c93097b9cb17277361a67a3cd162b9b84b77ad77f50e5a735c652eddcbe70"
+    }
+  ],
+  "确认机制": {
+    "默认机体ECM": {
+      "包": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_fa50",
+      "触发": "原生DropTank长按，不占第四SP槽；没有独立蓝图X输入或自定义Tick",
+      "SupportTimeCampaign": 0,
+      "JammingTimeCampaign": 30,
+      "LifeTime": 30,
+      "PostProcessTime": 3,
+      "边界": "不提供自身持续ESM支持；有音效/波纹但无自身支持蓝区不能作为失败证据。s10覆盖成光学类，结论不外推全部皮肤。"
+    },
+    "僚机ESM": {
+      "包": "/Game/Blueprint/Weapons/Player/Variation/QuoxRange/plwp_iews_zburator",
+      "SupportTimeCampaign": 20,
+      "JammingTimeCampaign": 20,
+      "LifeTime": 20,
+      "提供者": "plwp_quox_bis_range，默认和防御WeaponData均使用该类，间隔20秒；进攻改用plwp_quox_laser",
+      "现场": "玩家SupportMeasures由null变为该类，四个20秒实例的OwnerWeapon均是plwp_quox_bis_range；用户确认蓝区出现。",
+      "所有权": "OwningGameObject仍是玩家，不按外部所有者猜测；OwnerWeapon明确指向配套僚机。",
+      "续放边界": "蓝图有20秒续放配置，足以解释可能持续覆盖；本轮未观察一整轮续放时间轴，不能把静态配置写成完整实测。"
+    },
+    "同名资源区分": "Variation/plwp_iews_zburator与Variation/QuoxRange/plwp_iews_zburator不同；前者Support=0、Life=10，不能套到配套僚机。",
+    "长按门禁": "82bb60要求available、held、可控且非IGC；机体向上轴与世界向上轴点积必须严格大于0.5，即综合倾斜小于60度。连续游戏时间严格超过1秒后投放。任一门禁失败清held及timer，恢复平飞后仍须重新松开再按。",
+    "冷却边界": "LoadTime=30不能单独证明长按30秒冷却；原生长按入口未发现按该字段拒绝触发。未改作者冷却、可用标志或姿态门禁。",
+    "原生支持与雷达": "86bc90按SupportTime与age判支持，86bc00判敌方干扰；4e9546通过86bd20决定雷达区域，7fe283/7fe4c7更新玩家SupportMeasures与状态。",
+    "屏幕与结束": "86c210按PostProcessTime清效果；86b450清组件启用、材质权重和MID，86bf90最终退场也清理。现场有权重0的已创建材质，说明已结束，不能称未生成。两个机体ECM分别在age30.002094/30.009493变为inactive。"
+  },
+  "3SP冲突审阅": {
+    "既有真实问题": "旧内部模拟Pressed/Released截断真实长按；22a899e改用82a730(plane,true)跳过附加长按初始化且不模拟Released。当前已安装。",
+    "持续效果账本": "continuous_sp.hpp从玩家ActiveWeapons/SpawnedWeapons和已有账本取候选；本轮机体ECM及僚机ESM均不在这两个数组，未取得被捕获/隔离的证据。",
+    "HUD范围": "当前多SP UI维护武器状态行；未发现写中央ESM提示、雷达支持区的路径。不能仅据此声称所有场景完全无冲突。",
+    "结论": "本轮缺蓝区与波纹较短已有原生/作者机制解释，未确认需要新增3SP修复的根因；不把SupportTime从0改30以伪装修复。"
+  },
+  "仍未确认": [
+    "此前中央ESM提示和完整画面特效未取得相应现场，不能把本次只确认蓝区当作提示也通过",
+    "此前所有触发失败和所有特效持续异常未逐次重现；姿态门禁可解释失败条件，但不能倒推每次失败都是该原因",
+    "全程满足门禁仍触发失败、僚机停用后超过各自游戏时间仍不结束、跨SP重建异常，须保留对应时间轴再定点处理"
+  ],
+  "证据边界": [
+    "本次09:50与09:53游戏内age相同，不能按现实等待推断计时失效，用户可能暂停",
+    "磁盘加密.text反汇编已排除；原生机制采用只读取得的实际代码，.pdata片段不足时结合保存的完整范围",
+    "原始进程、日志、第三方资源和个人状态只在忽略目录；Git仅保存摘要和结论"
+  ],
+  "静态核对": {
+    "源码与dist差异": "无",
+    "编译或测试": "未执行",
+    "冻结旧核心SHA256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+    "范围": "文档差异、文件链接和原始材料摘要核对，不代表功能实测通过"
+  }
+}

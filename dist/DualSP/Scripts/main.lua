@@ -78,7 +78,8 @@ local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切�
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
 loadExport("dualsp_mod_uav_supported") -- UAV/HPM按真实类型与原生契约；选装新增第五返回值。
-local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 按真实类检查电子战/UAV，TLS保留原范围。
+local continuousSPOption=loadExport("dualsp_continuous_sp_option") -- 按真实类检查电子战/UAV/IRCM，TLS保留原范围。
+loadExport("dualsp_mod_interceptor_supported") -- IRCM资格第六返回值与核心保有流程须成套。
 local finishTLS=loadExport("dualsp_finish_tls") -- 在缓存冷却前核对持续策略，已登记原生TLS交给保有事务。
 local nativeMenuConfirm=loadExport("dualsp_menu_confirm") -- 双选内部步骤复用当前页面的原生确认音。
 local nativeLoadoutAmmo=loadExport("dualsp_loadout_ammo") -- 三页统一读取部件加成后的完整载量。
@@ -268,7 +269,7 @@ local descriptions={
     lasm="远程反舰导弹",lagm="远程空对地导弹",lacm="远程巡航导弹",["4agm"]="四目标空对地导弹",["8agm"]="八目标空对地导弹",
     ugb="无制导炸弹",gpb="精确制导炸弹",xsdb="小直径炸弹",sffs="自锻破片子母弹",sod="远距撒布弹药",faeb="燃料空气炸弹",
     eml="电磁轨道炮",plsl="脉冲激光炮",tls="战术激光系统",rkt="火箭弹",grkt="制导火箭弹",mgp="机炮吊舱",mpbm="多用途爆炸导弹",uav="无人机",ecm="电子干扰",mstm="多目标导弹",admm="全向多用途导弹"}
-local unsupportedDual={[26]=true,[31]=true} -- 未知31/26仍拒绝；电子战/UAV真实类及生命周期由核心核对。
+local unsupportedDual={[26]=true,[31]=true} -- 未知31/26仍拒绝；电子战/UAV/IRCM真实类及生命周期由核心核对。
 local electronicDecisionSeen={} -- 仅去重诊断日志，不缓存资格；换涂装后仍读取当前真实类。
 local names={f04e="F-4E Phantom II",f15c="F-15C Eagle",f15e="F-15E Strike Eagle",f18f="F/A-18F Super Hornet",f16c="F-16C Fighting Falcon",f22a="F-22A Raptor",f35c="F-35C Lightning II",a10a="A-10C Thunderbolt II",f14d="F-14D Super Tomcat",f02a="F-2A",f15j="F-15J",j39e="Gripen E",m21b="MiG-21bis",m29a="MiG-29A",m31b="MiG-31B",mr2k="Mirage 2000-5",rflm="Rafale M",typn="Typhoon",pkfa="Su-57",su30="Su-30M2",su30sm="Su-30SM",su33="Su-33",su34="Su-34",su35="Su-35S",su37="Su-37",su47="Su-47",x02s="X-02S Strike Wyvern",adf11f="ADF-11F Raven",zoef="ADF-01 FALKEN",mrgn="ADFX-01 Morgan",dark="DarkStar",f18e="F/A-18E",f18etg="F/A-18E Top Gun",f14a="F-14A",f14atg="F-14A Top Gun",su57tg="Su-57 Top Gun",f104="F-104C",asfx="ASF-X Shinden II",fa27="XFA-27",fa44="CFA-44 Nosferatu",f15m="F-15 S/MTD",f16x="F-16XL",fb22="FB-22",f18x="F/A-18F Block III",f02x="F-2A Super Kai",m35d="MiG-35D",yf23="YF-23"}
 
@@ -372,16 +373,18 @@ local function readOptionsFor(id)
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
-        local ok,supported,electronic,reason,uav=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
+        local ok,supported,electronic,reason,uav,interceptor=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
         assert(ok,supported)
-        assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string"and type(uav)=="boolean","持续兵装资格回执不完整")
-        if electronic or uav or unsupportedDual[weaponIds[i]]then continuousOptions[i]=supported
+        assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string"and type(uav)=="boolean"and type(interceptor)=="boolean",
+            "持续兵装资格回执不完整 / Incomplete continuous-weapon qualification response")
+        if electronic or uav or interceptor or unsupportedDual[weaponIds[i]]then continuousOptions[i]=supported
         else continuousOptions[i]=true end
-        if electronic or uav or unsupportedDual[weaponIds[i]]then
+        if electronic or uav or interceptor or unsupportedDual[weaponIds[i]]then
             local key=info.code.."/"..name.."/"..reason
             if not electronicDecisionSeen[key]then
                 electronicDecisionSeen[key]=true
-                note((uav and (supported and "MOD_UAV_SUPPORTED"or "MOD_UAV_UNAVAILABLE")or
+                note((interceptor and (supported and "MOD_INTERCEPTOR_SUPPORTED"or "MOD_INTERCEPTOR_UNAVAILABLE")or
+                    uav and (supported and "MOD_UAV_SUPPORTED"or "MOD_UAV_UNAVAILABLE")or
                     (supported and "MOD_ELECTRONIC_SUPPORTED"or "MOD_ELECTRONIC_UNAVAILABLE"))..
                     " plane="..info.code.." config="..i.." weapon_id="..weaponIds[i].." class="..name.." reason="..reason)
             end

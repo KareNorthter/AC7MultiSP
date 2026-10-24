@@ -6,7 +6,7 @@
 
 用户希望参考任务内换机，指定机体、SP和任务，一键进入M1—M20及三个DLC特殊任务，跳过选任务、选机、选装交互和CG，用于快速测试。优先游戏启动后直接进入；若原生启动条件不允许，至少支持主菜单F6管理页启动。
 
-从main `85ab3a0` 建立 `codex/feat-quick-mission-launch`，工作树为 `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`。早期开发合入main `5a33e3a`，合并锚 `ab02cc4`；本轮同步main `01a1020`。本任务维护快速Lua、F6接入、独立预设、脚本清单、对应双语资源和本文，不改版本号或安装器，不覆盖旧核心。接收前仍须比较届时main。
+从main `85ab3a0` 建立 `codex/feat-quick-mission-launch`，工作树为 `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`。早期开发合入main `5a33e3a`，合并锚 `ab02cc4`；本轮基线main `01a1020`，完工前同步主线 `09cdc82` 的机体引用和IRCM资格等新修订。本任务维护快速Lua、F6接入、独立预设、脚本清单、对应双语资源和本文，不改版本号或安装器，不覆盖旧核心。接收前仍须比较届时main。
 
 ## 当前源码交互
 

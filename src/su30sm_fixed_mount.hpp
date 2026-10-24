@@ -193,6 +193,7 @@ void mountLightInherit(FixedMountState&,const FixedMountState&);
 bool mountLightLayoutChanged(const FixedMountState&);
 bool mountLightCopyTransform(void*,const FixedMountState&,int);
 bool mountLightAnimationParts(void*,float,void*);
+bool cfa50BayParts(void*,float,void*);
 bool mountLightAnimationRelease();
 void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
@@ -473,6 +474,7 @@ void fixedMountFail(const char* message) noexcept {
 }
 // 原生仅把公共 SP 进度写给当前通道，切换配置后旧通道会冻结；在同一动画更新中补齐各舱的连续状态。
 void mountPartsUpdate(void* object,float delta,void* input) {
+    if(GetCurrentThreadId()==mountGameThread.load() && cfa50BayParts(object,delta,input))return;
     if(GetCurrentThreadId()==mountGameThread.load() && mountLightAnimationParts(object,delta,input))return;
     if(GetCurrentThreadId()!=mountGameThread.load() || !f35Cover.parts ||
        reinterpret_cast<Addr>(object)!=f35Cover.parts || !input) {
@@ -778,6 +780,7 @@ template<class T> T mountAnimationRead(Addr address) { return read<T>(address); 
 #include "mount_animation_runtime.hpp"
 #include "local_mount.hpp"
 #include "light_mount_animation.hpp"
+#include "cfa50_bay_animation.hpp"
 // 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。
 void fixedMountRestoreOrder(const Group& saved,int next) {
     const int count=static_cast<int>(saved.slots.size()); // QAAM 必须保留自己的四槽旋转。

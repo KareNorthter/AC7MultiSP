@@ -258,7 +258,7 @@ namespace AC7MultiSP.Setup {
                 var update = await Task.Run(() => UpdateFeed.Fetch(Convert.ToString(bundle.Info.policy["updates_url"]), bundle.Info.version));
                 if (closing) return;
                 availableUpdate = update;
-                updateState = update.status != "ready" ? UpdateState.Waiting : new Version(update.latest_version) > new Version(bundle.Info.version) ? UpdateState.Newer : UpdateState.Current;
+                updateState = update.status != "ready" ? UpdateState.Waiting : ReleaseVersion.Compare(update.latest_version, bundle.Info.version) > 0 ? UpdateState.Newer : UpdateState.Current;
             } catch (Exception failure) { if (closing) return; Debug.WriteLine(failure); availableUpdate = null; updateState = UpdateState.Failed; }
             // 后台结果仅刷新标题旁的状态，不重建正文、不切页或弹窗。
             RefreshUpdateStatus();

@@ -67,5 +67,8 @@
     "tests_run": false,
     "installed": false,
     "game_operated": false
-  }
+  },
+  "synchronized_main": "09cdc82",
+  "feature_source_commit": "bbf0984",
+  "synchronization": "语义合并README/工作区任务行，保留主线SoftClass引用与IRCM资格修订，双语更新日志保留两方条目，生成表从唯一资源生成。未编译或运行测试。"
 }

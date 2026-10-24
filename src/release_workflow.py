@@ -70,8 +70,10 @@ def notes_for(version: str, language: str) -> str:
     suffix = ".en" if language == "en" else ""
     text = (ROOT / f"docs/user/更新日志{suffix}.txt").read_text(encoding="utf-8-sig")
     # 2.25.2之后逐版本记录；旧发布仍可复用当时的系列摘要，不回改历史正文。
-    section = version if tuple(map(int, version.split("."))) > (2, 25, 2) else ".".join(version.split(".")[:2]) + ".X"
-    found = re.search(r"(?m)^" + re.escape(section) + r"(?=[ \t（(]|$)[^\n]*\n(.*?)(?=^\d+\.\d+\.(?:X|\d+)|\Z)", text, re.S)
+    base = version.split(" alpha", 1)[0]
+    section = version if tuple(map(int, base.split("."))) > (2, 25, 2) else ".".join(base.split(".")[:2]) + ".X"
+    # 只允许括号状态后缀，不能把同号alpha章节当作正式版摘要。
+    found = re.search(r"(?m)^" + re.escape(section) + r"[ \t]*(?:[（(][^\n]*)?\n(.*?)(?=^\d+\.\d+\.(?:X|\d+)|\Z)", text, re.S)
     if not found or not found[1].strip():
         raise ValueError(f"唯一更新日志中缺少{section}的{language}摘要")
     return found[1].strip()
@@ -106,6 +108,8 @@ def prepare(args: argparse.Namespace) -> None:
     receipt_path = args.receipt.resolve()
     receipt = read(receipt_path)
     version = receipt["version"]
+    if " alpha" in version:
+        raise ValueError("alpha为自测版，不能准备stable正式发布；验收后再确定正式版本并重新制作产物")
     if not re.fullmatch(r"\d+\.\d+\.\d+", version):
         raise ValueError("发布版本必须是三段数字")
     artifact = resolve(receipt["artifact"]["path"])

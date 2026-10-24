@@ -794,9 +794,14 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
             nativeLog(Json{{"event","MOD_UAV_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
             require(false,"UAV/HPM兵装：当前原生回调或装填机制不支持多SP，详见native.log");
         }
+        if(support.interceptor && support.kind==ContinuousKind::None) {
+            nativeLog(Json{{"event","MOD_INTERCEPTOR_RUNTIME_REJECTED"},{"reason",support.reason},{"config",index}}.dump());
+            require(false,"IRCM当前回调、装填或附着不支持多SP / IRCM callbacks, reload or attachment do not support Multi-SP");
+        }
         const int weaponId=read<unsigned char>(cdo+0x3b0);
         if((weaponId==26 || weaponId==31) && !support.electronic)
-            require(support.kind==ContinuousKind::UAV,"复用UAV/ECM编号的未知兵装尚不支持多SP");
+            require(support.kind==ContinuousKind::UAV || support.kind==ContinuousKind::Interceptor,
+                "复用UAV/ECM编号的未知兵装尚不支持多SP");
     }
     ravenAfterRebuild(command);
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
@@ -1077,6 +1082,7 @@ void execute(const Command& command) {
         fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
         bindF35Cover(command.plane);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
+    cfa50BayBind(command); // 作者舱门分域独立于多挂外观开关，失败不回滚已完成的兵装事务。
 #endif
     cfaSwitchCost.mark(7);
 }
@@ -1112,6 +1118,7 @@ extern "C" __declspec(dllexport) int dualsp_runtime_gate(void* luaState) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
             mountPreviewRelease(0,false);
             fixedMountRelease(); // 世界仍有效时归还显示；身份失效时不读取旧组件。
+            cfa50BayRelease(); // 动态进度停止收尾，不把旧的开舱残值恢复回去。
 #endif
             supplyPlane=0;supplyActivator=0;supplyWidget=0;preparationAction={};
             selectionAudio={};switchInputAllowed=false;emptySwitchRequested=false;cycleSwitchRequested=false;selectionWave.close();
@@ -1151,7 +1158,8 @@ extern "C" __declspec(dllexport) int dualsp_infinite_ammo_supported(void*) {retu
 extern "C" __declspec(dllexport) int dualsp_raven_sp_supported(void*) {return 0;} // 拒绝旧核心混装。
 extern "C" __declspec(dllexport) int dualsp_mod_electronic_supported(void*) {return 0;} // 四返回值和通用电子战保有须成套。
 extern "C" __declspec(dllexport) int dualsp_mod_uav_supported(void*) {return 0;} // 第五返回值标识真实UAV，Lua/核心须成套。
-// 菜单按实际CDO核对通用电子战/UAV和已有TLS资格；返回真实UAV标记及拒绝原因。
+extern "C" __declspec(dllexport) int dualsp_mod_interceptor_supported(void*) {return 0;} // 第六返回值标识真实IRCM，Lua/核心须成套。
+// 菜单按实际CDO核对电子战/UAV/IRCM和已有TLS资格；返回真实类标记及拒绝原因。
 extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     try {
@@ -1175,7 +1183,7 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
         const char* reason=ravenAllowed?support.reason:"uav_raven_visual_layout_changed";
         api->boolean(luaState,true);api->boolean(luaState,supported);
         api->boolean(luaState,support.electronic);api->string(luaState,reason,std::strlen(reason));
-        api->boolean(luaState,support.uav);return 5;
+        api->boolean(luaState,support.uav);api->boolean(luaState,support.interceptor);return 6;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}
         return 0;
@@ -2220,7 +2228,8 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                 MountAnimationReflection::named(type,expected,"/Script/Nimbus");return type;
             };
             const auto planeType=rowType(planes,"PlayerPlaneDataTable");
-            try {referenceOffset=metadata.field(planeType,"Reference","SoftObjectProperty",40,metadata.typeSize(planeType)).offset;}
+            // 机体Reference是软类引用；严格核对实际类型，避免导出失败后按机体代号猜错基础类。
+            try {referenceOffset=metadata.field(planeType,"Reference","SoftClassProperty",40,metadata.typeSize(planeType)).offset;}
             catch(const std::exception& error) {referenceError=error.what();nativeLog("MOD_AIRCRAFT_REFERENCE_ERROR "+referenceError);}
             if(skins) {
                 const auto skinType=rowType(skins,"SkinDataTable");const int size=metadata.typeSize(skinType);

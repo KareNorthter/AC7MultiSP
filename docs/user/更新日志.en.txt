@@ -1,22 +1,23 @@
-AC7MultiSP Main Updates
+AC7MultiSP
+
+2.25.3 alpha1 (self-test build, unreleased)
+• Fixed weapon-name references for some mod aircraft, retaining author-provided names on aircraft such as F17V, ADF-11 and F-15EX.
+• Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior. Aircraft including S32 still require in-game validation.
+• Added CFA-50 upper-bay closing after leaving ADMM/TLS; the result awaits self-testing.
+• Aircraft lists now prefer in-game display names and support searches by CFA-50, internal code or ID.
+• Extended Backspace isolation in F6 text fields to reduce accidental game pauses.
+• This build is for self-testing only. The official release remains 2.25.2.
 
 Unreleased (version to be assigned during integration; source only)
 • Quick launch now offers 1–3 SP selections and skin selection, with support for existing single-SP presets.
 • Multiple SPs use the existing ammunition and compatibility rules. PART selection is not yet supported.
 
 2.25.X
-• Fixed quick-mission intro helper errors aborting multi-SP initialization, and moved the quick-mission card above the logs.
-• Fixed quick launch stopping during main-menu preparation and incorrect menu identification when skipping startup logos.
+• Fixed internal weapon switching interrupting native hold-button auxiliary effects on some mod aircraft.
 • Added main-menu quick mission testing, separate test presets and optional automatic launch on startup.
-• Added startup logo skipping.
-• Fixed internal weapon switching interrupting native hold-button auxiliary functions, preserving the player's actual hold and release.
-• Added a startup update check option, enabled by default. It can be disabled and saved; manual checks remain available.
-• Improved installer text clarity at high DPI scaling.
-• Enlarged the F6 author watermark and made feedback a matching card with all content always visible.
-• Fixed some installed mod aircraft being hidden from quick mission and in-mission aircraft lists, while retaining DLC ownership checks.
+• Added an installer for one-click download and installation, while retaining Vortex compatibility.
 
 2.24.X
-• Added a "Version and Updates" page to the management interface, bringing together version information, author information, and licensing notes.
 • Added update checks and browser download links, and refined in-game messages.
 
 2.22.X–2.23.X
