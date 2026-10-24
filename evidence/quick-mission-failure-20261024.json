@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "process_in_logs": 17200,
+  "installed_version": "2.25.0",
+  "scope": "只读日志、已存原生副本与源码核对；修复未构建或安装；未操作游戏",
+  "runtime": {
+    "Scripts/main.lua": {
+      "sha256": "7e77b7f5ef81182ca16bc6481bf7ffa6973db28900877f82df00986573164fd2",
+      "matches_install_receipt": true
+    },
+    "Scripts/quick_mission.lua": {
+      "sha256": "85696c764d7658554e9a84f04ab3a95d96547731921f1ec2b7f9e6e69040924f",
+      "matches_install_receipt": true
+    },
+    "bin/DualSP.dll": {
+      "sha256": "2215ebf09c0bbdaa180934cd36f9a232052e0cf4e982954ad57ab826ea820345",
+      "matches_install_receipt": true
+    }
+  },
+  "logs": [
+    {
+      "name": "mod.log",
+      "source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\mod.log",
+      "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-failure\\mod.log",
+      "sha256": "9e7be11e98410d13bbb9fbb2bf34213b9ba777949d29b3fa649f65d000f8ded4",
+      "excerpts": [
+        "2026-10-24T00:15:29.143Z tick=286436468 seq=16 pid=17200 tid=41756 LUA STARTUP_LOGOS_FAILED 模型预览：缺少必要反射字段",
+        "2026-10-24T00:19:58.296Z tick=286705625 seq=112 pid=17200 tid=41756 LUA QUICK_MISSION_FAILED ...s\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\Scripts\\main.lua:1086: Player weapon activator is unavailable"
+      ]
+    },
+    {
+      "name": "native.log",
+      "source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\Mods\\DualSP\\native.log",
+      "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-failure\\native.log",
+      "sha256": "f810c1b3d11a30fc5e84f643b01dac931704a3fd2298d946ada9244cca5b8924",
+      "excerpts": [
+        "2026-10-24T00:15:29.143Z tick=286436468 seq=15 pid=17200 tid=41756 CORE STARTUP_LOGOS_ERROR 模型预览：缺少必要反射字段"
+      ]
+    },
+    {
+      "name": "UE4SS.log",
+      "source": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\ue4ss\\UE4SS.log",
+      "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-failure\\UE4SS.log",
+      "sha256": "4c424a04b200c87987bfa238ffc31a7e685d1b00c017180094aab14cd1c71468",
+      "excerpts": []
+    }
+  ],
+  "findings": [
+    {
+      "time_local": "2026-10-24 08:19:58 +08:00",
+      "feature": "快速任务",
+      "error": "Player weapon activator is unavailable",
+      "cause": "主菜单prepare调用任务内releaseWeaponInput，其assert要求有效武器组件；在原生加载请求之前中止。",
+      "change": "仅删除快速入口的任务武器输入释放；保留F6输入归还和通用所有权清理，不放宽飞行释放函数。"
+    },
+    {
+      "time_local": "2026-10-24 08:15:29 +08:00",
+      "feature": "片头Logo",
+      "error": "模型预览：缺少必要反射字段",
+      "cause": "MenuBaseWidget的游戏实例缓存不是GameInstance反射字段，Logo和主菜单出击均错误调用mountProperty。",
+      "native_basis": "已有副本0x656a17读取Copyright继承的MenuBaseWidget+0x290，再作为GI调用原生方法；新增字节指纹与原件吻合。",
+      "change": "统一核对菜单基类及原生GI缓存；保留世界、对象身份和网络隔离校验。"
+    }
+  ],
+  "native_launch_accepted_in_this_log_session": false,
+  "validation": {
+    "static_diff": true,
+    "native_signature_matches_saved_copy": true,
+    "build": false,
+    "tests": false,
+    "installation": false,
+    "in_game_verified": false
+  }
+}

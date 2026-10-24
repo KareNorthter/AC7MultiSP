@@ -4,7 +4,7 @@
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
   "upgrade_receipt": "evidence/2.24.0-alpha1-installed.json",
-  "candidate": false,
+  "candidate": true,
   "scripts": [
     "config_store.lua",
     "debug_aircraft.lua",
@@ -16,12 +16,14 @@
     "native_bridge.lua",
     "native_hud.lua",
     "native_loadout.lua",
+    "quick_mission.lua",
     "runtime_context.lua",
+    "user_texts.lua",
     "weapon_cycle.lua",
     "weapon_names.lua",
     "weapon_presentation.lua",
     "mount_assets.lua",
     "mod_aircraft.lua"
   ],
-  "receipt_prefix": "2.24.1"
+  "receipt_prefix": "2.25.3-alpha1"
 }

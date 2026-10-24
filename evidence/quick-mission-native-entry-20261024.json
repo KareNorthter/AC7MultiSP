@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "kind": "只读原生研究与源码静态核对",
+  "source_process": 42896,
+  "process_write": false,
+  "game_functions_called": false,
+  "build_or_tests_run": false,
+  "installed": false,
+  "raw_directory": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-implementation\\native-42896",
+  "raw_files": [
+    {
+      "name": "bind.bin",
+      "bytes": 206616,
+      "sha256": "f16e26f373d1258cf24aa63d8166256e457a2b83dad8922911a74591f18ea1eb"
+    },
+    {
+      "name": "metadata.json",
+      "bytes": 510059,
+      "sha256": "c4931101154f5d02819a6c49ed2dfba8c57401c001507b0a6a4b566d01a30955"
+    },
+    {
+      "name": "pdata.bin",
+      "bytes": 2446980,
+      "sha256": "e1c3ebf1569777bc4a066513cdcc78f19398478c79787e1db0b1b43a0fc6022b"
+    },
+    {
+      "name": "rdata.bin",
+      "bytes": 17074486,
+      "sha256": "0c19b1d16cf81587bc0e0adb3138d7e3639cfc9e219acfcd8bc6544ce45826cc"
+    },
+    {
+      "name": "text.bin",
+      "bytes": 38857296,
+      "sha256": "0021c10efeb425bb9c51befa885f9c901da344a925d0241963adbb10ff05db1d"
+    }
+  ],
+  "entry": {
+    "native_sortie": "0x6aed40",
+    "mission_map_resolver": "0x4f6130",
+    "fname": "0xa4ade0",
+    "change_map": "0x3d0320",
+    "mode_setter": "0x3cfce0",
+    "free_mission_mode": 2,
+    "difficulty_setter": "0x3cfc40",
+    "mission_setter": "0x3cfd90",
+    "difficulty": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "sortie_stage": 4
+  },
+  "logos": {
+    "world": "/Game/UI/Menu/Boot",
+    "class": "/Script/Nimbus.CopyrightWidget",
+    "tick": "0x656fc0",
+    "natural_visual_completion": "0x65724d",
+    "native_load_wait": "0x657096",
+    "method": "沿用视觉结束等待状态，由原生tick完成加载交接；不修改游戏资源"
+  },
+  "static_review": "函数指纹逐项与已保存原件吻合；反射字段来源已核对；文字从唯一中英文资源生成。没有执行候选代码。",
+  "pending": [
+    "候选构建和安装授权",
+    "F6原生出击效果",
+    "片头全部Logo跳过及初始化",
+    "CG/起飞覆盖",
+    "23关及DLC/机体/SP/失败路径实机确认"
+  ]
+}

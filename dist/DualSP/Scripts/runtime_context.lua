@@ -1,5 +1,7 @@
 -- 只读识别当前模式与游戏文本语言；不根据旧配置猜测是否允许修改游戏。
 local Context={language="zh",culture=nil,lastLanguage=-1}
+local source=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local userTexts=dofile(assert(source:match("^(.*)/[^/]+$")).."/user_texts.lua")
 local system,game,ui,localizer=nil,nil,nil,nil -- 经过反射预检的原生默认对象。
 local modeClasses={} -- UIGameMode 继承多人基类，必须结合已知菜单世界先识别其实际用途。
 local multiWidgets={} -- 多人机库并非都继承 MultiMenuBaseWidget，必须完整列出其原生类型。
@@ -161,6 +163,23 @@ function Context.canToggleMaster(instance,heldWidgets)
 end
 
 -- 仅在许可变化时记录上下文，便于区分共享菜单与真正的多人对局，不增加周期日志。
+function Context.quickMissionMenu(instance,heldWidgets)
+    if not Context.allowed(instance)then return nil end
+    local world=instance:GetWorld()
+    if not world:GetFullName():find("/Game/UI/Menu/Menu.",1,true)then return nil end
+    local function suitable(widget,held)
+        return valid(widget)and widget:IsA(singleEntryClasses[1])and widget:IsVisible()
+            and valid(widget:GetWorld())and widget:GetWorld():GetAddress()==world:GetAddress()
+            and (held or widget:IsEnableControl())
+    end
+    for _,widget in ipairs(heldWidgets or{})do if suitable(widget,true)then return widget end end
+    local manager=ui:GetCurrentUIManagerActor();local result=nil
+    if valid(manager)and valid(manager:GetWorld())and manager:GetWorld():GetAddress()==world:GetAddress()then
+        manager.MenuWidgetArray:ForEach(function(_,value)local widget=value:get();if suitable(widget,false)then result=widget end end)
+    end
+    return result
+end
+
 function Context.describe(instance)
     if not valid(instance)then return "instance=none"end
     local world=instance:GetWorld() -- 和许可判断使用同一游戏实例。
@@ -184,4 +203,5 @@ end
 
 -- 本 Mod 提供中文和英文；其他游戏语言使用英文提示，原生说明仍由游戏翻译。
 function Context.text(zh,en)return Context.language=="zh"and zh or en end
+function Context.textKey(key,language)return userTexts.get(key,language or Context.language)end
 return Context

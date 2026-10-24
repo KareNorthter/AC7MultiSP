@@ -6,21 +6,23 @@
 
 | 项目 | 状态与依据 |
 |---|---|
-| 正式功能版本 | **2.24.1**，发布锚v2.24.1，原功能/发布记录截至39141fd |
-| 正式源码入口 | main；主工作区E:/AC7_MultiSP。文档整理不改变功能版本或既有发布包 |
+| 正式发布版本 | **2.25.2**，用户于2026-10-24明确确认正式发布，并提供R2主链与蓝奏云备用链；[发布准备与核对](evidence/2.25.2-publication-preparation.json)记录本次事实，不追补游戏验收 |
+| 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
-| 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；合入、构建、安装、验收、发布分别记录 |
-| 独立待接收成果 | codex/delivery-installation / a99a404：安装器0.2.0预览，载荷2.24.1。代码未合main，新交互不沿用旧验收结论 |
-| 已知本机记录 | 安装器0.1.0记录用户确认EXE安装2.24.1；0.2.0只生成新安装器。本轮未检查游戏目录，不把记录当成实时状态 |
-| 整理边界 | 文档、规范、本机资产归类与私有GitHub源码备份；功能代码与现有发布包保持，未编译测试或安装。交付流程由用户后续重做 |
+| 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
+| 现成EXE与通用ZIP | [EXE安装器](Release/2.25.2/AC7MultiSP_Installer.exe)及其内嵌同字节通用ZIP；[原交付回执](evidence/2.25.2-exe-delivery.json)保留候选构建来源、版本与摘要，本次不重新编译或改写原件 |
+| 2.25.2功能来源 | c9bc440修复快速任务辅助异常阻断初始化，快速卡片移到日志上方；构建来源b5c5d04。快速预设仍指定单种SP，三SP组合可在任务内调试切换；M13保留任务指定SP |
+| 实机验证边界 | 用户曾确认2.25.1快速进入成功，随后出现三SP初始化中止；[日志依据](evidence/quick-mission-trisp-failure-20261024.json)保留。2.25.2的正式发布确认不等于所有修复、安装和异常分支已实测 |
+| 主页与发布流程 | 已接收双语主页，统一[新版发布流程](docs/project/release-workflow.md)；工具准备EXE、Nexus通用ZIP、完整Pages包和摘要，R2/蓝奏云/Nexus/Pages均由作者手动上传。生成与实际部署分别记录 |
+| 当前自测源码 | **2.25.3 alpha1**；接收Mod兵装名称引用修复、限定IRCM混装和CFA-50顶部舱门收尾，包含此前已合入的机体显示名及F6退格隔离。[接收记录](evidence/2.25.3-alpha1-source-intake.json)列出来源与边界；仅静态审阅，未编译、测试或安装，现成2.25.2产物不变。alpha表示自测版，用户验收后另行确定正式2.25.3 |
 
-研究曾使用2.25/2.26等编号，相关提交已进入后来的正式主线；这些不是比2.24.1更新的正式发布。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。
+旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。
 
 ## 阅读入口
 
 - **找资料：**[文档索引](docs/README.md)，按读者、主题、位置和内容检索。
 - **开始工作：**[开发规范](docs/project/workflow.md)、[工作区索引](docs/project/workspaces.md)。
-- **玩家阅读与审核：**[功能说明](docs/user/功能说明.txt)、[安装说明](docs/user/安装说明.txt)、[更新日志](docs/user/更新日志.txt)、[作者与授权](docs/user/作者与授权.txt)。中文已获基本认可，英文待补齐，授权条款待作者补充；程序内文案尚未同步。
+- **玩家阅读与审核：**[功能说明](docs/user/功能说明.txt)、[安装说明](docs/user/安装说明.txt)、[更新日志](docs/user/更新日志.txt)、[作者与授权](docs/user/作者与授权.txt)。四主题均有英文稿，具体路径见文档索引；EXE、ZIP和F6按[复用约定](docs/project/player-docs.md)共用。作者最新免费及禁止二次变卖条款已同步。
 - **理解实现：**[架构](docs/engineering/architecture.md)、[开发与恢复](docs/engineering/development.md)、[挂载设计](docs/engineering/multi-sp-mount-design.md)。
 - **避免重复踩坑：**[工程经验](docs/engineering/engineering-lessons.md)、[待续研究](docs/research/README.md)。
 - **追溯历史：**[开发版本旧记录](docs/archive/development-history.md)、[证据索引](evidence/README.md)、[归档与恢复](docs/archive/README.md)。

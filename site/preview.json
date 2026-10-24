@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "product": "AC7MultiSP",
+  "channel": "preview",
+  "revision": 1,
+  "status": "ready",
+  "prerelease": true,
+  "install_enabled": false,
+  "latest_version": "2.22.0",
+  "message_zh": "测试下载链路已就绪，仅下载和校验，不安装。",
+  "package": {
+    "filename": "AC7MultiSP-2.22.0_without_runtime.zip",
+    "size": 28295766,
+    "sha256": "1b27b313e2591b3c97eba702dba4ed8e5e469f0e1a7359bfc2c39ea65066fee7",
+    "downloads": [
+      {
+        "provider": "cloudflare-r2",
+        "kind": "direct",
+        "verified": true,
+        "url": "https://downloads.iot-node-service-api.online/AC7MultiSP-2.22.0_without_runtime.zip"
+      }
+    ],
+    "manual_downloads": [
+      {
+        "provider": "lanzou",
+        "kind": "share_page",
+        "url": "https://wwbru.lanzoue.com/iAbzo4cswzvi"
+      }
+    ]
+  },
+  "manifest_mirrors": [
+    "https://ac7multisp-updates.pages.dev/preview.json"
+  ],
+  "signature_status": "unsigned_research_draft"
+}

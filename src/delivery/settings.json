@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "product": "AC7MultiSP",
+  "game_id": "acecombat7skiesunknown",
+  "steam_app_id": "502500",
+  "nexus_mod_id": 3797,
+  "nexus_url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3797",
+  "updates_url": "https://ac7multisp-updates.pages.dev/stable.json",
+  "mod_prefix": "ue4ss/Mods/DualSP/",
+  "pak": "Game/Content/Paks/~mods/AC7MultiSP_Mounts_P.pak",
+  "ue4ss": {
+    "nexus_mod_id": 2474,
+    "nexus_file_id": 8453,
+    "version": "3.0.1.7",
+    "page": "https://www.nexusmods.com/acecombat7skiesunknown/mods/2474",
+    "download_page": "https://www.nexusmods.com/acecombat7skiesunknown/mods/2474?tab=files&file_id=8453&nmm=1",
+    "files": {
+      "dwmapi.dll": "ea3cdbb755dd61b9f4de70590b78a15974be65ba5fb3837ea2e1799d78d4c116",
+      "ue4ss/UE4SS.dll": "7c6219d0b13b7fcffce59f5b62111a783eb64e02b206dbf8d43517e7eb540acd"
+    }
+  },
+  "dependencies": {
+    "vc_url": "https://learn.microsoft.com/zh-cn/cpp/windows/latest-supported-vc-redist",
+    "directx_url": "https://www.microsoft.com/zh-cn/download/details.aspx?id=8109"
+  }
+}

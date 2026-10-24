@@ -15,10 +15,10 @@ local function color(r,g,b,a)return {SpecifiedColor={R=r,G=g,B=b,A=a},ColorUseRu
 local copyProfile=Profile.copy -- 交接快照包含第三槽。
 
 -- 类型对应原生 WeaponConceptText 的键；不再把兵装全名放进 TYPE。
-local weaponTypes={Atalom="AIR TO AIR LOCK-ON MISSILE",Atglom="AIR TO GROUND LOCK-ON MISSILE",
-    Atglob="AIR TO GROUND LOCK-ON BOMB",Atglor="AIR TO GROUND LOCK-ON ROCKET",
-    Ataglom="AIR TO AIR/GROUND LOCK-ON MISSILE",Ataglou="AIR TO AIR/GROUND LOCK-ON UAV",
-    Rocket="ROCKET",Bomb="BOMB",Laser="LASER",Other="OTHER"}
+local weaponTypes={Atalom="air.to.air.lock.on.59853a5f",Atglom="air.to.ground.lock.on.e37a85a2",
+    Atglob="air.to.ground.lock.on.c84750b4",Atglor="air.to.ground.lock.on.22b7a3d4",
+    Ataglom="air.to.air.ground.lock.ab1aab7a",Ataglou="air.to.air.ground.lock.0c72f446",
+    Rocket="rocket.launcher.97c7b931",Bomb="bomb.8a074d50",Laser="laser.104b8a31",Other="other.5a9cd7bf"}
 
 -- 补给适配器复用原生控件操作和输入读取，保持两种页面各自的布局。
 function NativeLoadout.new(dependencies)
@@ -241,7 +241,7 @@ function NativeLoadout.new(dependencies)
         applyLayout(retained,layout,widget)
     end
     local function preparationTitle(stage)
-        return "SELECT SP WEAPON "..assert(stage:match("^sp([123])$"),"准备页兵装标题阶段无效")
+        return tr("select.sp.weapon.53a0281b")..assert(stage:match("^sp([123])$"),"准备页兵装标题阶段无效")
     end
     -- 原生文字模板含隐藏动画的内部状态，新增文字从干净对象初始化，只复制显示样式。
     local function initializeLeaf(widget,source,isImage,initialText)
@@ -299,7 +299,7 @@ function NativeLoadout.new(dependencies)
     end
     -- 选装和补给共用游戏原生长说明；只缓存当前页面的文字，游戏语言变化后重新读取。
     local function weaponDescription(c,option)
-        if not option then return tr("不搭载特殊兵装。","No special weapon equipped.")end
+        if not option then return tr("no.special.weapon.equipped.00df4341")end
         c.weaponDescriptions=c.weaponDescriptions or {}
         if c.weaponDescriptions[option.code]then return c.weaponDescriptions[option.code]end
         local localizer=StaticFindObject("/Script/Nimbus.Default__LocalizationManager")
@@ -307,13 +307,13 @@ function NativeLoadout.new(dependencies)
         local descriptionKey="Weapon_Description_"..option.code:lower()
         local description=localizer:HasString(descriptionKey)and localizer:LocalizeString(descriptionKey,true,""):ToString()or ""
         if #description==0 then
-            description=tr("此模组兵装未提供说明。","No description was provided for this mod weapon.")
+            description=tr("no.description.was.provided.for.d3334f5d")
             displayFallback(c,descriptionKey,"key="..descriptionKey.." 使用说明占位文字")
         end
         description=description:gsub("\r\n","\n"):gsub("\r","\n")
         if supply then
             -- 补给窄栏重新换行，保留段落；机库沿用原说明宽度和原生换行。
-            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr(""," ")):gsub("\1","\n\n")
+            description=description:gsub("\n[ \t]*\n+","\1"):gsub("[ \t]*\n[ \t]*",tr("punctuation.474f2af4")):gsub("\1","\n\n")
         end
         c.weaponDescriptions[option.code]=description
         return description
@@ -380,7 +380,7 @@ function NativeLoadout.new(dependencies)
         local list=controls(base)
         -- 等待与正式选装使用同一个SP1标题，挂入页面前就写好，不额外显示三槽占位标题。
         clone(view,assert(list.TitleText),false,nil,nil,preparationTitle("sp1"))
-        setText(view,clone(view,assert(list.DescriptionText),false),tr("正在加载兵装，请稍候……","Loading weapons. Please wait..."))
+        setText(view,clone(view,assert(list.DescriptionText),false),tr("loading.weapons.please.wait.6a0c0149"))
         for index=0,2 do mask(view,assert(list["ItemText"..index]))end
         info=pending.owner.WeaponInformation
         assert(valid(info)and valid(info.HangarAircraftAllWeaponsAmmo),"等待中的兵装信息区缺失")
@@ -643,7 +643,7 @@ function NativeLoadout.new(dependencies)
                 column.icon:SetBrushFromMaterial(material)
             end
             column.heading=infoWidget(c,templates.heading,panel,{X=0,Y=3*pitch+detailsOffset},{X=width,Y=24},false)
-            setText(c,column.heading,"[WEAPON SPECIFICATIONS]")
+            setText(c,column.heading,tr("weapon.specifications.24d42767"))
             for i,item in ipairs(templates.items)do
                 local y=(i+3)*pitch+detailsOffset -- 性能和类型整体下移，不挤压名称或内部行距。
                 local label=infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.58,Y=pitch},false) -- 标签与条形区分开。
@@ -657,7 +657,7 @@ function NativeLoadout.new(dependencies)
                 column.ammo=infoWidget(c,templates.ammo,panel,{X=0,Y=14*pitch+detailsOffset},{X=width,Y=32},false)
                 setText(c,column.ammoHeading,ammoLabel)
             end
-            setText(c,column.typeHeading,"[TYPE]")
+            setText(c,column.typeHeading,tr("type.c0f69ff1"))
         end
     end
     -- 展示文案可缺省；对象、页面和兵装写入所需的结构校验仍保留。
@@ -731,14 +731,15 @@ function NativeLoadout.new(dependencies)
             -- 悬停数量与颜色独立更新，不反复重画未变的名称和 18 个基础性能条。
             local signature=tostring(weapon)
             if column.lastContent==signature then goto nextColumn end
-            setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or "EMPTY"))
-            local fullName=option and weaponFullName(c,option)or "NO WEAPON" -- 空挂载不查询不存在的兵装键。
-            local typeText="NO WEAPON"
+            setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or tr("empty.02cab14e")))
+            local fullName=option and weaponFullName(c,option)or tr("no.weapon.f5499408") -- 空挂载不查询不存在的兵装键。
+            local typeText=tr("no.weapon.f5499408")
             if option then
                 local typeKey=type(option.type_key)=="string"and option.type_key or ""
-                typeText=weaponTypes[typeKey:gsub("^HangarWeaponType_Name_","")]
+                local typeTextKey=weaponTypes[typeKey:gsub("^HangarWeaponType_Name_","")]
+                typeText=typeTextKey and tr(typeTextKey)or nil
                 if not typeText then
-                    typeText="OTHER";displayFallback(c,"type:"..typeKey,"type="..typeKey.." 使用OTHER")
+                    typeText=tr("other.5a9cd7bf");displayFallback(c,"type:"..typeKey,"type="..typeKey.." 使用OTHER")
                 end
             end
             if column.fullName then setText(c,column.fullName,fullName)else typeText=fullName end -- STANDBY 紧凑栏保留原有全名位置。
@@ -762,7 +763,7 @@ function NativeLoadout.new(dependencies)
             end
             -- 准备页弹药汇总的三个逻辑槽与上方三栏保持一致。
             if c.ammo then
-                setText(c,c.ammo[i].name,option and option.code:upper()or "EMPTY")
+                setText(c,c.ammo[i].name,option and option.code:upper()or tr("empty.02cab14e"))
             end
             column.lastContent=signature
             ::nextColumn::
@@ -812,7 +813,7 @@ function NativeLoadout.new(dependencies)
             {name=assert(ammoTemplate.WeaponsName),fullName=assert(fullNameTemplate.Name),icon=assert(fullNameTemplate.Icon),
              heading=assert(group.SpecGroupName),items=items,
              typeHeading=assert(typeTemplate.WeaponTypeLabel),type=assert(typeTemplate.WeaponTypeText),
-             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},"[WEAPONS AMMO]",gap)
+             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},tr("weapons.ammo.84af7e95"),gap)
         c.ammo={}
         for i=1,3 do
             c.ammo[i]=preparationAmmoRow(c,ammo[ammoFields[i]])
@@ -1072,7 +1073,7 @@ function NativeLoadout.new(dependencies)
         informationColumns(c,parent,origin,columnWidth,pitch,mainSize.Y-origin.Y-20,
             {name=list.WeaponAmmo_Text,heading=assert(group.SpecGroupName),items=items,
              typeHeading=list.WeaponType_Label,type=list.WeaponType_Text,
-             ammoHeading=list.WeaponAmmo_Label,ammo=list.WeaponAmmo_Text},"[WEAPONS AMMO]",gap)
+             ammoHeading=list.WeaponAmmo_Label,ammo=list.WeaponAmmo_Text},tr("weapons.ammo.84af7e95"),gap)
         -- 说明仅占左侧列表下方，与右侧三栏保留明确间隔。
         local descriptionX=72 -- 与原生左侧列表标题的逻辑基线对齐。
         local descriptionWidth=origin.X-descriptionX-30 -- 与右侧信息栏保留间隙。
@@ -1100,15 +1101,15 @@ function NativeLoadout.new(dependencies)
         signature=signature..":"..flow:preview().ratio
         if signature==c.lastPaint then return end
         c.lastPaint=signature
-        setText(c,c.title,stage=="sp1"and "[SELECT SP WEAPON 1]"or stage=="sp2"and "[SELECT SP WEAPON 2]"or stage=="sp3"and "[SELECT SP WEAPON 3]"or "[TAKE OFF]")
+        setText(c,c.title,stage=="sp1"and tr("select.sp.weapon.1.b0269552")or stage=="sp2"and tr("select.sp.weapon.2.9d49bd0d")or stage=="sp3"and tr("select.sp.weapon.3.f6594add")or tr("take.off.bb40af1a"))
         for i=1,3 do
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
             c.cursors[i]:SetVisibility(row and i==flow.cursor and VISIBLE or 2)
             if row then
-                local label=row.action=="takeoff"and "YES"or row.action=="reselect"and "NO"
-                    or row.weapon<0 and "NO WEAPON"or row.code
-                setText(c,c.rows[i],label..(row.enabled and ""or "  NOT OWNED"))
+                local label=row.action=="takeoff"and tr("yes.b8b3902a")or row.action=="reselect"and tr("no.be52ce60")
+                    or row.weapon<0 and tr("no.weapon.f5499408")or row.code
+                setText(c,c.rows[i],label..(row.enabled and ""or tr("not.owned.26779261")))
                 local tint=c.tint.SpecifiedColor
                 c.rows[i]:SetColorAndOpacity(row.enabled and c.tint or color(tint.R*.45,tint.G*.45,tint.B*.45,1))
                 -- 光标是新建文字控件，显式复用当前列表颜色，避免移动父 Canvas 后继承透明样式。
@@ -1118,12 +1119,12 @@ function NativeLoadout.new(dependencies)
         local a,b,third=paintColumns(c)
         local option=nil -- 最终页按 YES/NO 给说明；选择页才显示当前候选说明。
         if stage~="review"then option=flow.options[(stage=="sp1"and a or stage=="sp2"and b or third)+1]end
-        local description=stage=="review"and (flow.cursor==1 and tr("决定：按本次方案起飞。返回：修改最后一个选择。","Confirm: take off. Back: edit the last choice.")or tr("决定：返回 SP1，重新选择特殊兵装。","Confirm: reselect special weapons from SP1."))
-            or stage=="sp1"and tr("决定：选择 SP1。","Confirm: select SP1.")or tr("决定：选择当前 SP，或无兵装结束。返回：修改上一槽。","Confirm this SP, or NO WEAPON to finish. Back: edit the previous slot.")
-        if flow.message then description=flow.message..tr("。",". ")..description end
+        local description=stage=="review"and (flow.cursor==1 and tr("confirm.take.off.back.edit.9f37546a")or tr("confirm.reselect.special.weapons.from.3bb995e4"))
+            or stage=="sp1"and tr("confirm.select.sp1.6229917b")or tr("confirm.this.sp.or.no.4a8836e0")
+        if flow.message then description=flow.message..tr("punctuation.d0866a43")..description end
         setText(c,c.description,description)
-        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("变更特殊兵装。","Change special weapons.")or tr("按已选的 1 至 3 个 SP 重新起飞。","Take off with the selected one to three SP weapons."))
-            or option and weaponDescription(c,option)or tr("不搭载当前及后续槽，按管理页比例配弹。","Leave this and later slots empty. Ammunition follows management percentages."))
+        setText(c,c.weaponDescription,stage=="review"and (flow.cursor==2 and tr("change.special.weapons.eda77ad4")or tr("take.off.with.the.selected.96c58c73"))
+            or option and weaponDescription(c,option)or tr("leave.this.and.later.slots.56be6c3c"))
         self.status=stage;note("NATIVE_RESUPPLY_STAGE "..signature)
     end
 
@@ -1146,7 +1147,7 @@ function NativeLoadout.new(dependencies)
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
             if row then
-                setText(c,c.rows[i],(row.weapon<0 and "NO WEAPON"or row.code)..(row.enabled and ""or "  NOT OWNED"))
+                setText(c,c.rows[i],(row.weapon<0 and tr("no.weapon.f5499408")or row.code)..(row.enabled and ""or tr("not.owned.26779261")))
                 c.rows[i]:SetColorAndOpacity(not row.enabled and color(.3,.36,.43,1)or (i==flow.cursor and selected or blue))
             end
         end
@@ -1259,7 +1260,7 @@ function NativeLoadout.new(dependencies)
             if direction~=0 and(direction~=oldDirection or now>=c.repeatAt)then
                 c.flow:move(direction);c.repeatAt=now+(direction~=oldDirection and .35 or .12)
             elseif input.cancel and not c.previous.cancel then
-                if c.flow.stage=="sp1"then c.flow.message=tr("请完成所需 SP 选择后确认起飞","Finish selecting your SP loadout before confirming takeoff")
+                if c.flow.stage=="sp1"then c.flow.message=tr("finish.selecting.your.sp.loadout.e9d00cb5")
                 else c.flow:back()end
             elseif input.accept and not c.previous.accept then
                 local result=c.flow:confirm()

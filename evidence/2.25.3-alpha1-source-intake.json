@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "version": "2.25.3 alpha1",
+  "candidate": true,
+  "date": "2026-10-24",
+  "official_release": "2.25.2",
+  "baseline": "01a1020c15922125f875d802dd5f513a1373afce",
+  "integration_merge": "e99967d",
+  "sources": [
+    {
+      "thread": "01a1692d-b258-72e1-b585-88d0e1bf1fc7",
+      "title": "mod机体兼容性研究",
+      "branch": "codex/research-mod-aircraft-compat",
+      "commit": "32aebeb7b84a49adfbbbc8d2606980a00244485b",
+      "state": "本轮新接收；含7a229cf舱门候选与4e75e4c机制结论",
+      "scope": [
+        "PPDT Reference使用40字节SoftClassProperty，保留作者实际基础类与兵装名称",
+        "IRCM真实LaserInterceptor类、原生回调和代码指纹、发射即装填与无挂接契约准入；持续对象保有及回收",
+        "CFA-50限定顶部ADMM/TLS域离开后的舱门收尾；不改作者资源、EML域或发射规则",
+        "CFA-50机体ECM和僚机ESM区分及长按姿态条件仅记录研究结论，没有新增运行修复"
+      ]
+    },
+    {
+      "thread": "01a16afb-9bd5-77a2-83fd-75ae46e840a5",
+      "title": "优化installer和管理界面",
+      "branch": "codex/fix-cfa50-aircraft-name",
+      "commit": "cc924a579b40479c1423a8d3ec0a8c96f62638f1",
+      "state": "接收前已在main祖先中，保留且不重复应用",
+      "scope": [
+        "机体选择列表优先使用游戏显示名，保留FA50和241查找",
+        "F6文本输入补齐退格预读与原始键盘隔离，保留长按删字、改键与失焦清理"
+      ]
+    }
+  ],
+  "dependencies": [
+    "核心与18份Lua必须同版成套；dualsp_mod_interceptor_supported能力门禁及持续资格第六返回值不能只替换一侧",
+    "新增src/cfa50_bay_animation.hpp通过现有挂载Parts钩子接入，保留实例/线程/资源/原生指纹检查与失败回原生"
+  ],
+  "integration_changes": [
+    "VERSION为2.25.3 alpha1，product.candidate为true，receipt_prefix为2.25.3-alpha1",
+    "安装器及封装识别alphaN；同基号正式版晚于全部alpha，alpha序号按整数比较",
+    "完整产品显示与信息版本保留alpha；Windows程序集和manifest属性为2.25.3.1，不用该属性决定升降级",
+    "正式stable清单仍只接受三段数字，prepare拒绝alpha；正式摘要不会误取alpha同号章节",
+    "中英文独立alpha更新条目及对应生成文字已同步；用户人工中文历史作为原字节基础保留"
+  ],
+  "manual_changelog_intake": {
+    "path": "E:\\AC7_MultiSP\\docs\\user\\更新日志.txt",
+    "sha256": "4371d9c03a9ff5e4abb3d457d2c70d5dae3291902ee6b4a607a024e598ce9efb",
+    "backup": "E:\\AC7_MultiSP\\backup\\alpha1-intake-20261024-102614\\更新日志.before.txt",
+    "scope": "仅接收中文更新日志人工修订作为新增alpha章的基础，其余根目录人工正文、AGENTS及已删除启动脚本不纳入"
+  },
+  "unresolved": [
+    "IRCM混装尚未游戏验证；S32单挂原生激活/12秒自然结束现场不能替代混装验收，GAF1/XR302仍待实测",
+    "APS RectennaBarrier仍受限制；F-14IA继续隔离",
+    "CFA-50顶部舱门候选尚未验证，历史用户反馈不扩大为新候选通过",
+    "F6名称与退格修订尚未验证界面效果或游戏按键隔离"
+  ],
+  "preserved_old_core": {
+    "path": "E:/AC7_MultiSP/dist/DualSP/bin/DualSP.dll",
+    "sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "validation": {
+    "mode": "仅静态差异、来源祖先关系、双语正文与生成文字核对",
+    "text_generator": "已执行src/user_texts.py，仅更新生成资源，不是编译或测试",
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_started": false,
+    "uploaded": false,
+    "official_release_changed": false
+  },
+  "promotion": "由用户自测验收后再确定正式2.25.3；本次不建立正式标签，不改旧产物、历史回执或site/stable.json"
+}

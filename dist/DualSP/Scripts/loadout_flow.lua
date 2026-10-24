@@ -24,10 +24,10 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
                     rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}
                 end
             end
-            rows[#rows+1]={weapon=-1,enabled=true,code=tr("无兵装","NO WEAPON")}
+            rows[#rows+1]={weapon=-1,enabled=true,code=tr("no.weapon.f5499408")}
         elseif self.stage=="review"then
             if takeoffReview then
-                rows={{action="takeoff",code=tr("是","YES"),enabled=true},{action="reselect",code=tr("否","NO"),enabled=true}}
+                rows={{action="takeoff",code=tr("yes.b8b3902a"),enabled=true},{action="reselect",code=tr("no.be52ce60"),enabled=true}}
             end -- 出击没有额外确认菜单；review 只作为多槽选择已完成的内部状态。
         end
         return rows

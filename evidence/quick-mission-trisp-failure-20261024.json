@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "created_at": "2026-10-24T08:45:04.106990+08:00",
+  "source_version": "2.25.1",
+  "user_feedback": "快速进入任务成功，但本项目三SP功能失效；快速入口应置于调试页倒数第二项、日志上方",
+  "log_snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-trisp-source\\mod.log",
+  "log_sha256": "13d07924a9ec771435924a437e719fd98e193bb8bf1cbfdddf6640cc3ed693cf",
+  "entries": [
+    "2026-10-24T00:39:54.755Z tick=287902078 seq=16 pid=29576 tid=35480 LUA ERROR ...ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/quick_mission.lua:55: [Lua::call_function] lua_pcall returned LUA_ERRRUN => ...ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/quick_mission.lua:63: Tried calling a member function but the UObject instance is nullptr",
+    "2026-10-24T00:40:12.048Z tick=287919375 seq=26 pid=29576 tid=35480 LUA QUICK_MISSION_PREPARED task=ms06 request=1",
+    "2026-10-24T00:40:12.048Z tick=287919375 seq=27 pid=29576 tid=35480 LUA QUICK_MISSION_NATIVE_REQUEST task=ms06 plane=210 swp=0",
+    "2026-10-24T00:40:12.094Z tick=287919421 seq=29 pid=29576 tid=35480 LUA QUICK_MISSION_ACCEPTED task=ms06 plane=210 swp=0",
+    "2026-10-24T00:40:30.333Z tick=287937656 seq=38 pid=29576 tid=35480 LUA ERROR ...ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/quick_mission.lua:232: [UFunction::setup_metamethods -> __call] UFunction expected 2 parameters, received 0",
+    "2026-10-24T00:40:30.334Z tick=287937656 seq=39 pid=29576 tid=35480 LUA QUICK_MISSION_FAILED stage=loading ...ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/quick_mission.lua:232: [UFunction::setup_metamethods -> __call] UFunction expected 2 parameters, received 0",
+    "2026-10-24T00:40:30.334Z tick=287937656 seq=40 pid=29576 tid=35480 LUA MOD_AIRCRAFT_NATIVE_FALLBACK plane=210 reason=adapter_error ...ACE COMBAT 7/ue4ss/Mods/DualSP/Scripts/quick_mission.lua:232: [UFunction::setup_metamethods -> __call] UFunction expected 2 parameters, received 0"
+  ],
+  "finding": "主菜单加载请求成功，随后GetCurrentMission零参调用报expected 2 parameters, received 0，主调度捕获后将机体210/Arkbird作为adapter_error隔离；另有SetRenderOpacity空UObject异常",
+  "fix": [
+    "不再调用默认对象GetCurrentMission；筛选当前世界唯一的非CDO Mission实例",
+    "开场跳过及片头辅助均本地捕获错误，不因辅助异常阻断兵装初始化",
+    "移除现场报空UObject的SetRenderOpacity调用，保留原生视觉结束与加载交接",
+    "快速任务卡片移至日志正上方，保持调试页其他卡片顺序"
+  ],
+  "not_changed": [
+    "仍为单种SP快速测试预设；进入后的组合调试及个人方案规则不变",
+    "真实机体/任务身份错误及兵装初始化错误仍遵守原有失败保护"
+  ],
+  "validation": "只读日志、既有对象索引及源码静态审阅；未编译、运行测试、安装或操作游戏",
+  "compiled": false,
+  "tests_run": false,
+  "game_installed": false,
+  "game_functions_called": false
+}

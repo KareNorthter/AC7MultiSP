@@ -1,81 +1,81 @@
 # 开发与恢复
 
-本页说明工程入口、真实文件依赖和恢复方法。当前正式版本、本机已知记录与待接收成果统一见[项目状态](../../README.md)；本轮未检查游戏实时状态。历史2.24.1整合/发布当时按授权未安装、未上传，依据为[整合回执](../../evidence/2.24.1-integration.json)、[发布回执](../../evidence/2.24.1-release.json)及[发布授权](../../evidence/2.24.1-release-authorization.json)，不能把当时回执当作今天的安装状态。
+本页说明源码、文字生成、构建依赖和恢复入口。正式版本及本机已知记录统一见[项目状态](../../README.md)，不把候选制作记作正式发布或游戏验收。开发责任与授权见[开发规范](../project/workflow.md)，交付实现见[交付方案](../project/delivery.md)。
 
-开发规范、分支/提交、版本号、并行责任和授权范围统一见[工作流程](../project/workflow.md)。功能机制见[架构](architecture.md)，模型方案见[挂载设计](multi-sp-mount-design.md)，工程教训见[工程经验](engineering-lessons.md)，未采用和待继续的成果见[研究索引](../research/README.md)。本页不再累积每轮交接。
+安装器从`a99a404`精确接收`src/delivery/`及原`src/package_delivery.py`后改造；旧独立工作树保持。完整构建、封装及EXE编译分别记录来源与结果。用户可只要求交付EXE：仍按既定流水线生成内嵌的通用载荷，但独立ZIP只作为Temp中的封装输入，不复制到Release。构建不自动运行`tests/run.py`、安装、操作游戏或上传。
 
-用户已明确后续重做打包交付流程。下列构建/安装/发布工具仅记录现有实现与历史恢复依赖，不把旧交付工具的源码冻结规则用作阻止文档整理的条件；本次整理不运行或修改这些工具。
+功能机制见[架构](architecture.md)，模型方案见[挂载设计](multi-sp-mount-design.md)，工程教训见[工程经验](engineering-lessons.md)，未采用和待继续成果见[研究索引](../research/README.md)。
 
 ## 源码与产物入口
 
 | 内容 | 唯一入口或用途 |
 | --- | --- |
-| Lua运行源码 | `dist/DualSP/Scripts/`；产品文件名由`src/product.json`的scripts清单约束 |
-| 核心/UI | `src/weapon_bridge.cpp`、相关`.hpp`；`src/overlay.cpp`、`src/management_panel.hpp` |
-| 产品标识 | 根`VERSION`、`src/product.json`；Lua日志和UI版本文本随正式变更同步 |
-| 挂载生成来源 | `src/research/build_runtime_mount_data.py`及其导入的数据模块；生成`src/mount_expansion_data.hpp`等表及`mount_assets.lua`，以生成器实际输出为准 |
-| 资源打包 | `src/build_mount_assets.py`按生成白名单、来源证据、碰撞与Socket资格核对本地`.uasset/.uexp`，生成自有PAK |
-| 完整构建 | `src/build.py`；旧`.cmd`包装不替代成套入口 |
-| 现有检查 | `tests/run.py --build-dir`；会运行既有检查、编译其C++用例并检查DLL加载导出，须有本轮授权 |
-| 安装/预检 | `src/install.py --build-dir`；只有显式`--apply`交换游戏文件 |
-| 本地发布 | `src/release_package.py`；`src/package-release.py`是保留独立旧逻辑的历史入口，不是前者的包装器 |
+| Lua运行源码 | `dist/DualSP/Scripts/`，文件名由`src/product.json`的scripts清单约束；本轮21个运行文件为18份Lua、2份DLL和VERSION |
+| 核心/UI | `src/weapon_bridge.cpp`及相关头文件；`src/overlay.cpp`、`src/management_panel.hpp` |
+| 产品标识 | 根`VERSION`与`src/product.json`；游戏候选标记为candidate=true，安装器程序集、manifest和清单版本均派生产品VERSION |
+| 玩家文字唯一源 | `docs/user/`四个主题的中英文TXT，以及`docs/user/interface/`下游戏和安装器的双语JSON |
+| 游戏文字生成 | `src/user_texts.py`生成`src/generated/user_texts.hpp`和`dist/DualSP/Scripts/user_texts.lua`，不手改生成副本 |
+| 挂载数据 | `src/research/build_runtime_mount_data.py`及其导入模块生成核心表和`mount_assets.lua`；资源打包由`src/build_mount_assets.py`核对来源和资格 |
+| 完整游戏构建 | `src/build.py`先生成文字，再冻结源码并成套构建核心/UI/Lua和自有PAK |
+| 现有检查 | `tests/run.py --build-dir`，覆盖和条件见[检查说明](../../tests/README.md)；构建不等于已运行此入口 |
+| 唯一封装入口 | `src/package_delivery.py`；`src/package-release.py`仅是它的薄包装 |
+| 双语EXE编译 | `src/delivery/build_setup.ps1 -InputDirectory`，消费封装目录内冻结的C#、资源和编译参数 |
+| 历史工具 | `src/install.py`保留旧手动安装/预检实现；`src/release_package.py`只留旧helper供历史恢复，旧GameFiles命令行入口已停用 |
 | 本机取证 | `启动游戏并取证.cmd` → `src/research/start_crash_capture.ps1`；按需使用，原始转储留Temp |
 
-`dist/DualSP/bin/DualSP.dll`是受保护旧核心，不是新构建输出位置。新DLL只生成到独立构建目录；其保护摘要见[AGENTS](../../AGENTS.md)。构建还直接核对`cores/1.0.1`、`cores/1.1.0`、`cores/2.0`三份旧DLL，本轮原位保留。其他历史快照的归档与恢复条件见[历史核心](../archive/README.md#历史核心与发布包)。
+`dist/DualSP/bin/DualSP.dll`是受保护旧核心，不是新构建输出位置。其保护摘要见[AGENTS](../../AGENTS.md)；构建还核对`cores/1.0.1`、`cores/1.1.0`、`cores/2.0`三份旧DLL，依赖原位保留。其他旧核心的恢复条件见[历史核心](../archive/README.md#历史核心与发布包)。
 
 ## 文档迁移后的工具边界
 
-本轮按用户要求优先整理目录，不改功能代码或现有交付脚本。旧工具仍硬编码平铺文档路径：`src/release_tools.py`的`source_snapshot()`读取`docs/授权.txt`，`src/release_package.py`从旧`docs/`位置读取用户说明、安装说明和摘要。现在玩家正文只有`docs/user/`内的功能说明、安装说明、更新日志、作者与授权四份；原授权在archive/legal，开发版本旧记录在archive，旧中英README及release.txt已退役。因此当前直接执行相关构建冻结或打包流程会遇到缺文件；后续按[复用约定](../project/player-docs.md)适配，不能用兼容副本制造第二份正文，也不能改旧回执让冻结检查通过。
+游戏与安装器已接入`docs/user/`唯一文字源，构建冻结不再读取已退役的`docs/授权.txt`。`src/user_texts.py`同时校对中英文键、格式占位符、列表NUL、ImGui标识和原始消息匹配映射；`--check`只核对生成结果是否过期，`src/build.py`会自动生成。正文的展示分工与维护方式见[玩家文档维护](../project/player-docs.md)，不能为兼容旧脚本重新建立第二份正文。
 
-首次目录迁移映射见[归档回执](../../evidence/artifact-archive-20261023.json)，后续玩家文档改组以[当前索引](../README.md)为准。工具改造统一消费唯一正文，重新确定源码冻结规则，并在当次授权内验证；现有2.24.1 ZIP字节不受文档重写影响。旧版本安装器若要重放，还须先从归档恢复其指定DLL，不能把当前版本直接交给旧入口。
+游戏源码冻结由`src/release_tools.py`的`source_snapshot()`定义，包含产品C++/头文件、生成头文件、vendor、产品清单内Lua、构建工具、研究来源和证据，以及四对玩家TXT、游戏JSON与文字生成器。它不包含安装器C#和安装器JSON；安装器与封装来源单独冻结，因此只修安装器文字或C#不需要冒充游戏功能重建。
 
-## 构建前必须具备的本机依赖
+`src/package_delivery.py`核对完整游戏构建与文字生成结果，再冻结封装脚本、`src/delivery/`及`docs/user/`输入，生成通用ZIP、EXE资源和冻结C#副本。EXE编译入口只消费该次封装目录，不从正在编辑的工作树重新取C#。旧GameFiles发布入口、标识替换工具和旧文档路径仅用于恢复历史，不再决定新交付的格式。
 
-- 本机工具根为`E:/AC7_MultiSP/tools`，产品清单指定`llvm-mingw-20261006-ucrt-x86_64`；构建还使用`tools/test-python`中的lupa/pefile及仓库`vendor/`。实际执行前核对存在和版本，不用旧文档代替现场检查。
-- 当前运行规模为19文件、77资源/154成员。可追溯的完整资源输入为`E:/AC7_MultiSP/Temp/integration-2.23.0-refresh/Temp/mount-assets-2.23.0-refresh/source`，见[refresh整合](../../evidence/2.23.0-refresh-integration.json)；整理时目录仍有154成员。数量只用于初筛，名称、字节及当前来源证据必须逐项一致。
-- `src/build.py`的默认资源目录仍是旧`Temp/mount-assets-2.14.0/source`，不能据默认值推定它满足当前产品。旧`Temp/mount-assets-2.20.1/source`只有54资源，也不能直接替代当前输入。独立工作树没有自动携带ignored资源，构建须显式传`--mount-assets-dir`。
-- Git源码不能代替本地资源。原模型、原版PAK、资源提取、离线几何和构建目录均可能被忽略；接收时应同时核对来源证据与本机原料，保留旧输入，不覆盖同名历史副本。
+首次目录迁移见[归档回执](../../evidence/artifact-archive-20261023.json)。旧回执、正式2.24.1包和旧冻结来源保持当时含义，不因本轮文字或工具改造而改写。
 
-完整来源冻结由`src/release_tools.py`的`source_snapshot()`定义，包含产品C++/头文件、vendor、清单内Lua、工具、研究脚本和多份原路径证据；已不再是早期文档所写的固定11份证据。`src/build_mount_assets.py`还核对整套Socket引用、七机碰撞保真、F/A-18E反馈及TGM r2等证据。改动或移动这些文件会改变构建来源，不能只更新摘要让旧冻结通过。
+## 构建与封装依赖
 
-TGM当前用修正后的`MSP_f18etg_gpb_inner_whole_r2`，旧r1资源不在运行白名单；完整输入必须与[Socket资格](../../evidence/mount-socket-reference-audit-20261021.json)和[TGM r2回执](../../evidence/f18etg-whole-rack-socket-r2.json)一致。表、Lua清单和PAK成套接收，不能混用54/65/74/77资源阶段的整表或编号。
+- 本机工具根为`E:/AC7_MultiSP/tools`，产品清单指定`llvm-mingw-20261006-ucrt-x86_64`；构建使用其中lupa/pefile及仓库vendor。使用前核对实际文件，不把旧版本记录当现场检查。
+- `src/build.py`的`--mount-assets-dir`为必填，必须指向当前完整的77资源/154成员输入，不再沿用旧54资源默认目录。具体原料位置先查[本机资产索引](../archive/local-assets.md)及对应来源回执；名称、字节和资格仍逐项核对，数量相同不能替代摘要。
+- 独立工作树可用`--temp-root E:/AC7_MultiSP/Temp`，同时把`--output-dir`指定到该根内全新的任务子目录。构建拒绝覆盖旧输出，编译中间文件也留在本次目录；失败后保留现场，修正后使用新目录。
+- 封装显式提供`--build-dir`、全新`--output-dir`及`--audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav`。提示音核对原验收摘要，不使用个人替换音频分发；新封装不依赖旧手装ZIP。
+- EXE使用系统64位.NET Framework编译器。`build_setup.ps1`先核对冻结C#/manifest、资源、响应文件及独立ZIP摘要，编译后再复核输入，单独写`EXE编译回执.json`；编译成功不代表安装器已运行。
 
-## 现有接收与交付工具的依赖参考
+表、Lua清单和PAK必须成套。`src/build_mount_assets.py`继续核对Socket引用、七机碰撞保真、F/A-18E反馈和TGM r2；当前TGM资源为`MSP_f18etg_gpb_inner_whole_r2`。依据见[Socket资格](../../evidence/mount-socket-reference-audit-20261021.json)和[TGM r2](../../evidence/f18etg-whole-rack-socket-r2.json)，不能混用54/65/74/77资源阶段的整表、编号或旧资源。
 
-1. 先定位来源提交、相对已接收基线的增量及所需本机资源。只接收本次增量，分别列清源码、生成表、Lua、证据与资源输入；研究分支曾写“未构建”只说明当时状态，是否已进入main须对照提交和后续回执。
-2. 有构建授权时，使用当前工作树的唯一源码、显式工具/资源目录和全新`Temp/build-*`。构建冻结来源、工具链、DLL、对象、Lua与PAK；失败目录保留，修复后另建新目录。构建不会安装或启动游戏。
-3. 有检查授权时，现有检查入口消费该次`build-receipt.json`并生成独立`test-receipt.json`。协议或字段变化应同步现有检查的夹具；旧双SP模拟已排除，不能用它证明当前引擎行为。离线检查通过不等于实机通过。
-4. 有安装授权时，`--base-receipt`必须对应实际已安装的完整runtime_files。main内product历史默认指向`evidence/2.24.0-alpha1-installed.json`，只是工具配置，不证明当前实装；执行前需核对现场。预检通过后才按授权应用，游戏应退出，完整旧Mod、个人文件和存档先备份，交换后回读。
-5. 用户反馈、main合入、正式标识、安装和发布分别记账。2.24.1原发布当时使用`--uninstalled-release --without-runtimes`；该回执只说明当时未安装，后续EXE安装记录见[项目状态](../../README.md)。日后继续发布必须匹配当轮授权与真实来源。
+Git不含ignored原料、音频、工具、原版PAK或冻结产物。接收时分别核对源码差异、证据、生成结果和本机输入；不能只恢复Git文本就称完整恢复，也不能修改旧摘要让冻结通过。
 
-历史版本仅改标识的发布有两条受限路径：`--validated-build-dir`核对标识重建，`--accepted-label-only-build`沿用已测指令字节、只允许指定只读版本文本精确变化。允许的源文件、元数据、长度和PE节差异由发布工具及原验收证明决定；不能把它当通用二进制修改入口，也不能改写旧构建/安装回执。发布不附运行库须显式`--without-runtimes`并与授权一致。
+## 验证与安装保护
 
-## 安装保护与配置
+游戏构建、既有检查、ZIP成员回读、EXE编译、实际安装、用户实测和正式发布分别记录。本轮授权制作候选；完整构建会做Lua语法和产物/来源核对，封装会回读ZIP，但这些不等于运行`tests/run.py`或游戏实测。新候选的双语显示、安装事务和实际部署边界见[交付方案](../project/delivery.md#待验证范围)。
 
-默认安装严格核验本Mod、自有PAK、共享加载器关键文件、游戏程序及存档，不读取其他Mod/PAK的全部内容。`--verify-other-mods`可额外做完整字节审计；这仍不是兼容性测试。回执`other_mod_files_preserved=null`表示未全量核验，`other_mod_files_touched=false`只表示本安装器未写入；不能互相代替。
+当前EXE的旧安装识别、文件备份、管理器托管拒绝和失败恢复在`src/delivery/setup/Bundle.cs`维护；通用ZIP的Vortex部署映射由封装器逐文件生成。玩家操作只维护[中英文安装说明](../project/player-docs.md)，本页不另写安装步骤。
 
-当前配置19：有效文件保留，旧格式/损坏JSON先按原字节另名备份，再生成新版默认值；配置19内部无效设置仍报错。`--reset-config`会额外隔离旧profiles，属于明确的重置操作，不能用于普通保留升级。旧18→19迁移链和当时备份名留在历史记录，不作为当前仍会执行的承诺。
+历史`src/install.py`的完整runtime_files基线、`--reset-config`、`--verify-other-mods`及其回执字段仍按原实现解释，不作为新EXE接口。历史Vortex链接物化安装见[预检](../../evidence/2.24.0-alpha1-install-preflight.json)和[完成回执](../../evidence/2.24.0-alpha1-install-completion.json)；它只证明当时处理，不替代新候选验收，也不授权跟随链接覆盖Vortex源包。
 
-Vortex部署的符号链接不能由手动安装器跟随覆盖。alpha1现场按用户选择先把本Mod游戏端链接备份，再物化普通文件并复核；没有改Vortex原包或状态库，后续Vortex部署仍可能替换手动候选。相关现场见[预检](../../evidence/2.24.0-alpha1-install-preflight.json)和[完成回执](../../evidence/2.24.0-alpha1-install-completion.json)。
+有效配置19保留；旧格式/损坏JSON先按原字节备份，再生成新版默认值，当前配置内部无效设置仍报错。EXE备份个人文件不等于游戏已完成配置读取或迁移，不能把封装内的来源回执当作实装证明。
 
 ## 恢复与取证
 
-恢复未采用的研究先读[研究索引](../research/README.md)及[历史归档](../archive/README.md)。从main建立新研究分支，使用标签查看所需旧文件，再提取精确差异；旧运行核心、Lua、资源和整套文档不能整支覆盖当前产品。Git bundle、未提交差异/未跟踪ZIP与ignored原料各自承担不同恢复范围，锁定工作树也不代表文件只读。
+恢复未采用研究先读[研究索引](../research/README.md)、[历史归档](../archive/README.md)和[本机资产索引](../archive/local-assets.md)。从main建立新研究分支后提取所需旧差异，不能用旧核心、Lua、资源和文档整套覆盖当前产品。Git bundle、未提交ZIP与ignored原料分别承担不同恢复范围；工作树锁定也不等于文件只读。
 
-本轮整理前正文保存在`archive/20261023/pre-governance-main`标签中；早期正文和归档清单见[归档索引](../archive/README.md)。旧文中的“当前”、候选编号和绝对路径属于当时阶段，需与当前提交、现场文件及后续回执交叉核对。
+整理前正文保存在`archive/20261023/pre-governance-main`，旧文中的“当前”、研究号与路径属于当时阶段。旧产物重放需先恢复其指定核心和原料，不直接交给新交付入口假装兼容。
 
-取证脚本修订2使用硬件退出/消息框断点、独立输出和产物核验；完整转储有磁盘预算，仍存在附加前窗口、非Win32界面、外部终止等边界。调试器可能改变时序，不用于无干预帧率对照，也不保证每次根因都能捕获。原始转储留Temp，不入发布包，详见[取证改进](../../evidence/crash-capture-hardening-2.20.2.json)。
+取证修订2使用硬件退出/消息框断点、独立输出和产物核验，仍有附加前窗口、非Win32界面、外部终止等边界。调试器可能改变时序，不用于无干预帧率对照，也不保证每次都能捕获根因。详见[取证改进](../../evidence/crash-capture-hardening-2.20.2.json)；转储留Temp，不入发布包。
 
 ## 仍未解决或未覆盖的事项
 
-| 事项 | 当前证据边界与继续入口 |
+| 事项 | 边界与继续入口 |
 | --- | --- |
-| 更新与交付流程 | 历史发布回执未覆盖后续EXE安装；已知记录与待接收安装器统一见[项目状态](../../README.md)。本轮未核查游戏目录、线上清单或下载文件；旧[发布更新说明](../archive/delivery/Pages与R2发布更新说明.md)仅作历史参考，流程由用户后续重做 |
-| CFA切换尖峰与偶发视觉 | 用户确认明显减轻，仍有尖峰；ECM持续效果阶段未细分到单函数。偶发EML蓝光根因未证实，见[工程经验](engineering-lessons.md)、[挂载设计](multi-sp-mount-design.md) |
-| 选装进入SP1/光标、结算箭头、F-2A性能 | 结算轻卡仍有，其他专项保留；没有全场景性能结论，不因旧候选已合入就写成解决 |
-| MiG-31B r3及动态净空 | 整体布局获认可，后腹SAAM的r3位移、支撑/机腹净空仍需观察；离线包络不能替代动态验收 |
-| F-14IA原生异步依赖 | 当前提前退回原生并保留本机隐藏隔离；不代表修好第三方蓝图加载顺序，见[安全退让证据](../../evidence/special-aircraft-native-fallback-20261022.json) |
-| PW旧出击退出、CFA暂停对象创建异常 | PW一次再试成功，首轮根因未明；CFA原始异常在UI对象创建跳板，不能与ADMM队列或最终退出断点强判同因。见[PW记录](../../evidence/pwmki-sortie-crash-2.20.1.json)、[CFA记录](../../evidence/cfa44-admm-debug-pause-crash-20261021.json) |
-| 兼容与半成品 | 完整内舱、ASF-X/RKT、旧updater、FOV及来源工作树的未提交改动继续保留；状态与重启研究入口见[研究索引](../research/README.md) |
+| 新候选交付 | 构建与封装核对不代替游戏实测；双语界面、ZIP部署、EXE安装/更新/卸载及异常恢复分别验证，见[交付方案](../project/delivery.md) |
+| 线上更新 | 本轮未上传或核查线上清单及下载文件；[Pages与R2旧说明](../archive/delivery/Pages与R2发布更新说明.md)仅作历史参考，不代表新包已上线 |
+| CFA切换尖峰与偶发视觉 | 用户确认明显减轻，仍有尖峰；ECM阶段未细分到单函数，偶发EML蓝光根因未证实，见[工程经验](engineering-lessons.md)和[挂载设计](multi-sp-mount-design.md) |
+| 选装进入SP1/光标、结算箭头、F-2A性能 | 结算轻卡仍有，其他专项保留；旧成果已接收不等于全场景性能问题解决 |
+| MiG-31B r3及动态净空 | 整体布局获认可，后腹SAAM位移、支撑及机腹净空仍需观察；离线包络不替代动态验收 |
+| F-14IA原生异步依赖 | 当前提前退回原生并保留本机隐藏隔离，不代表修好第三方蓝图加载顺序，见[安全退让](../../evidence/special-aircraft-native-fallback-20261022.json) |
+| PW旧退出、CFA暂停异常 | PW首轮根因未明；CFA对象创建跳板异常不能与ADMM队列或最终退出断点强判同因，见[PW记录](../../evidence/pwmki-sortie-crash-2.20.1.json)、[CFA记录](../../evidence/cfa44-admm-debug-pause-crash-20261021.json) |
+| 未采用成果 | 完整内舱、ASF-X/RKT、旧updater、FOV及未提交研究继续保留，见[研究索引](../research/README.md) |
 
-已修复的ADMM无限队列边界、停用Bomb误拦截、内存交接可靠性和暂停换机接续不再列为未接收候选；它们的故障现场与限制仍保留在[工程经验](engineering-lessons.md)。当前用户确认不扩张为全部机型、所有Mod、固定帧率或每个边界通过。
+ADMM无限队列边界、停用Bomb误拦截、内存交接可靠性及暂停换机接续已接收；故障现场与适用限制留在工程经验，不扩大为全部机型、所有Mod或固定帧率保证。

@@ -1,5 +1,5 @@
 #pragma once
-// 与管理页共用语言和卡片；中文按用户2026-10-22回传稿保存，#意见不进入显示。
+// 与管理页共用语言和卡片；玩家正文来自集中生成资源。
 void updateDownloadSameLine(const char* label) {
     const float width=ImGui::CalcTextSize(label).x+ImGui::GetStyle().FramePadding.x*2;
     if(ImGui::GetItemRectMax().x+ImGui::GetStyle().ItemSpacing.x+width<=
@@ -9,69 +9,70 @@ void drawVersionUpdatesPage() {
     auto& updates=dualsp::updates::service();
     const auto status=updates.status();
     const auto snapshot=updates.snapshot();
-    if(panelCard("UpdateAuthor",tr("作者信息","Author information"))) {
-        ImGui::TextUnformatted(tr("NexusMod：Northter","NexusMod: Northter"));
-        ImGui::TextUnformatted(tr("bilibili：班德慕","bilibili: 班德慕"));
-        ImGui::TextWrapped("%s",tr("邮箱：karenorthterofchina@gmail.com","Email: karenorthterofchina@gmail.com"));
-        ImGui::TextWrapped("%s",tr("测试反馈QQ群：1072924682","Test feedback QQ group: 1072924682"));
-    }
-    ImGui::EndChild();
     if(ImGui::BeginChild("UpdateVersions",{0,0},ImGuiChildFlags_Borders|ImGuiChildFlags_AutoResizeY)) {
-        ImGui::Text("%s  %s",tr("当前版本","Current version"),dualsp::updates::currentVersion);
-        ImGui::Text("%s  %s",tr("最新版本","Latest version"),snapshot && !snapshot->latest.empty()?snapshot->latest.c_str():"—");
+        ImGui::Checkbox(uiText("updates.check_on_startup"),&draftStartupUpdateCheck);
+        ImGui::Text("%s  %s",uiText("current.version.16c8badf"),dualsp::updates::currentVersion);
+        const std::string latest=std::string(uiText("latest.version.51f76219"))+"  "+
+            (snapshot && !snapshot->latest.empty()?snapshot->latest:"—");
+        updateDownloadSameLine(latest.c_str());ImGui::TextUnformatted(latest.c_str());
+        updateDownloadSameLine(uiText("check.for.updates.840f7526"));
         ImGui::BeginDisabled(updates.checking());
-        if(ImGui::Button(tr("手动检测更新","Check for updates")))updates.requestCheck();
+        if(ImGui::Button(uiText("check.for.updates.840f7526")))updates.requestCheck();
         ImGui::EndDisabled();
-        const char* title="—",*hint="";
+        const char* title="—";
         if(status==dualsp::updates::Status::Checking) {
-            title=tr("正在检查更新…","Checking for updates...");hint=tr("你可以继续游戏。","You can continue playing.");
+            title=uiText("checking.for.updates.a6e73905");
         }else if(status==dualsp::updates::Status::Current) {
-            title=tr("已是最新版本","Already up to date");hint=tr("无需更新。","No update is needed.");
-        }else if(status==dualsp::updates::Status::Newer)title=tr("发现新版本","A newer version is available");
+            title=uiText("already.up.to.date.9c218466");
+        }else if(status==dualsp::updates::Status::Newer)title=uiText("a.newer.version.is.available.274799a7");
         else if(status==dualsp::updates::Status::Unpublished) {
-            title=tr("更新信息尚未发布","Update information has not been published yet");
-            hint=tr("你可以继续游戏，稍后手动检测更新。","You can continue playing and check again later.");
+            title=uiText("update.information.has.not.been.4e698d95");
         }
         else if(status==dualsp::updates::Status::Failed) {
-            title=tr("暂时无法检查更新","Unable to check for updates at the moment");
-            hint=tr("本次检查已结束，不影响继续游戏。可稍后手动检测更新，详细原因见日志。","This check has ended. You can continue playing and check again later. See Logs for details.");
+            title=uiText("unable.to.check.for.updates.f4fdc2e6");
         }
-        ImGui::Separator();ImGui::TextWrapped("%s",title);
-        if(status==dualsp::updates::Status::Newer && snapshot)
-            ImGui::TextWrapped("%s",tr(snapshot->notesZh.c_str(),snapshot->notesEn.c_str()));
-        else if(*hint)ImGui::TextWrapped("%s",hint);
-    }
-    ImGui::EndChild();
-    if(panelCard("UpdateDownloads",tr("下载更新","Download update"))) {
-        const bool opening=updates.browserStatus()==dualsp::updates::BrowserStatus::Opening;
-        const bool available=snapshot && !snapshot->downloads.empty();
-        ImGui::BeginDisabled(!available || opening);
-        if(available) {
-            for(size_t i=0;i<snapshot->downloads.size();++i) {
-                const auto& link=snapshot->downloads[i];
-                const char* label=link.id=="lanzou"?tr("蓝奏云下载","Lanzou download"):
-                    link.id=="r2"?tr("CloudFlareR2 下载","CloudFlareR2 download"):tr(link.zh.c_str(),link.en.c_str());
-                if(i)updateDownloadSameLine(label);
+        ImGui::TextWrapped("%s",title);
+        // 下载区域只在新版有效时出现，R2优先，其余按原清单顺序编号。
+        if(status==dualsp::updates::Status::Newer && snapshot && !snapshot->downloads.empty()) {
+            ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
+            bool first=true;size_t backup=0;
+            for(bool primary:{true,false})for(const auto& link:snapshot->downloads) {
+                if((link.id=="r2")!=primary)continue;
+                const std::string label=primary?uiText("primary.download.link.f6096f63"):
+                    std::string(uiText("backup.download.link.76fd22fe"))+std::to_string(++backup);
+                if(!first)updateDownloadSameLine(label.c_str());first=false;
                 ImGui::PushID(link.id.c_str());
-                if(ImGui::Button(label))updates.openDownload(link.id);
+                if(ImGui::Button(label.c_str()))updates.openDownload(link.id);
                 ImGui::PopID();
             }
-        }else {
-            ImGui::Button(tr("蓝奏云下载","Lanzou download"));updateDownloadSameLine(tr("CloudFlareR2 下载","CloudFlareR2 download"));
-            ImGui::Button(tr("CloudFlareR2 下载","CloudFlareR2 download"));
+            ImGui::EndDisabled();
         }
-        ImGui::EndDisabled();
-        ImGui::TextWrapped("%s",tr("点击下载按钮，将使用 Windows 默认浏览器打开对应入口。",
-            "Download buttons open the corresponding link in your default Windows browser."));
-        ImGui::TextWrapped("%s",tr("下载完成后，请先退出游戏，再按压缩包内的说明解压安装。",
-            "After downloading, exit the game, then extract and install the update as described in the archive."));
     }
     ImGui::EndChild();
-    if(panelCard("UpdateLicense",tr("授权信息","License information"))) {
+    const bool chinese=std::string(tr("zh","en"))=="zh";
+    // 与文档共用卡片样式；反馈正文始终展示，字号及按钮沿用管理页。
+    if(panelCard("UpdateFeedback",dualsp::updates::documents::compactFeedbackHeading(chinese))) {
+        ImGui::TextWrapped("%s",dualsp::updates::documents::compactFeedbackBody(chinese));
+        ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
+        if(ImGui::Button(uiText("open.mod.log.folder.06bdb703")))updates.openLogFolder();
+        ImGui::EndDisabled();
+        if(updates.browserStatus()==dualsp::updates::BrowserStatus::Failed)
+            ImGui::TextWrapped("%s",uiText("unable.to.open.link.or.folder.5705a221"));
+    }
+    ImGui::EndChild();
+    // 本地玩家正文只展示主要更新和作者授权，保持原有展开/收起交互。
+    if(panelCard("UpdateChangelog",uiText("changelog.fd31c92d"))) {
         static bool expanded=false;
-        if(ImGui::SmallButton(expanded?tr("收起###UpdateLicenseToggle","Collapse###UpdateLicenseToggle"):
-            tr("展开###UpdateLicenseToggle","Expand###UpdateLicenseToggle")))expanded=!expanded;
-        if(expanded)ImGui::TextWrapped("%s",tr(dualsp::updates::creditsZh,dualsp::updates::creditsEn));
+        if(ImGui::SmallButton(expanded?uiText("collapse.changelogtoggle.6286d892"):
+            uiText("expand.changelogtoggle.d2b52d09")))expanded=!expanded;
+        if(expanded)ImGui::TextWrapped("%s",dualsp::updates::documents::changelog(std::string(tr("zh","en"))=="zh"));
+    }
+    ImGui::EndChild();
+    if(panelCard("UpdateLicense",uiText("author.and.license.5de4e76d"))) {
+        static bool expanded=false;
+        if(ImGui::SmallButton(expanded?uiText("collapse.updatelicensetoggle.aa7b68a7"):
+            uiText("expand.updatelicensetoggle.ebfd8718")))expanded=!expanded;
+        if(expanded)ImGui::TextWrapped("%s",dualsp::updates::documents::credits(std::string(tr("zh","en"))=="zh"));
     }
     ImGui::EndChild();
 }

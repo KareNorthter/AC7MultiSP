@@ -1,17 +1,18 @@
-AC7MultiSP 作者与授权
+AC7MultiSP
+本程序仅供学习交流，完全免费，请勿二次变卖盈利
 
-作者与反馈
+作者：
 • Nexus Mods：Northter
-• bilibili：班德慕
-• 邮箱：karenorthterofchina@gmail.com
-• 测试反馈QQ群：1072924682
+  https://www.nexusmods.com/acecombat7skiesunknown/mods/3797
+• bilibili：班德慕  
+    https://space.bilibili.com/4853235
 
-本Mod授权声明
-待作者补充：本Mod的转载、修改、二次发布及其他使用条件。
+反馈：
+• 邮箱：karenorthterofchina@gmail.com
+• 测试QQ群：1072924682
 
 第三方组件与素材
 本Mod使用的第三方组件分别遵循各自的许可证，完整文本随包提供，位于ue4ss/Mods/DualSP/licenses。
-SP2.wav提示音为用户提供的非原创音频，本项目不授予该音频的额外使用权。
 
 致谢
 • UE4SS：Narknon及UE4SS-RE贡献者，提供脚本运行支持。

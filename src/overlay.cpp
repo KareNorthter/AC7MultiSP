@@ -13,6 +13,7 @@
 #include <iterator>
 #include <memory>
 #include <cmath>
+#include <cstdio>
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
@@ -70,7 +71,8 @@ ULONGLONG lastControllerUpdate{};
 int lastSequence=-1;
 bool panel=false,initialized=false;
 HHOOK panelKeyboardHook{};
-bool panelBackspaceHeld=false; // 关闭面板后仍消费本次按压的尾沿，避免长按落回原生暂停。
+HHOOK panelMessageHook{};
+unsigned panelBackspaceSources=0; // 分别记账普通/原始键盘，关闭面板后仍消费已接管按压的尾沿。
 bool panelBackspaceCaptured=false;
 std::atomic<bool> cursorOwned{false};
 std::mutex cursorMutex;
@@ -82,7 +84,8 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=21; // 三页布局及独立注视输入，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=22; // 新增启动更新选项，UI/Lua须成套，避免旧界面静默漏存。
+bool draftStartupUpdateCheck=true;
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
 bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
@@ -122,12 +125,13 @@ enum class ToastKind {Info,Important,Warning,Error};
 ToastKind toastKind=ToastKind::Info;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
 const char* tr(const char* zh,const char* en);
-void panelHelp(const char* zh,const char* en);
+const char* uiText(const char* key);
+void panelHelp(const char* key);
 std::string uiMessage(const std::string& message,
-    const char* zh="操作未完成，请在日志页查看详细原因。",
-    const char* en="The operation could not be completed. See Logs for details.");
+    const char* fallbackKey="the.operation.could.not.be.1976a8f3");
+std::string uiError(const std::string& message,const char* fallbackKey="the.operation.could.not.be.1976a8f3");
 void showToast(std::string message,ToastKind kind=ToastKind::Info) {
-    message=uiMessage(dualsp::noticeBody(std::move(message)));
+    message=(kind==ToastKind::Warning||kind==ToastKind::Error)?uiError(dualsp::noticeBody(std::move(message))):uiMessage(dualsp::noticeBody(std::move(message)));
     // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
     if(message.size()>240) {
         size_t end=240;
@@ -228,10 +232,11 @@ void togglePanel(bool open) {
 }
 LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
+    // 即使场景许可已关闭，失焦仍须清理本轮按压，避免返回单人后沿用旧状态。
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceSources=0;panelBackspaceCaptured=false;}
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceHeld=false;panelBackspaceCaptured=false;}
     // 回正键捕获也接受真实鼠标中键；原生可能只交付RAWINPUT，所以两条消息路径都处理。
     if(gameFocused() && (msg==WM_MBUTTONDOWN || msg==WM_MBUTTONUP) && (suppressedCaptureMouse || (panel && captureSlot==8))) {
         if(msg==WM_MBUTTONDOWN && !suppressedCaptureMouse){suppressedCaptureMouse=true;captureKeyboardKey(VK_MBUTTON,shortcutModifiers());}
@@ -272,7 +277,7 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
             if(index==0)togglePanel(!panel);
             else if(index==3){if(!panel)enqueue({{"type","toggle_gun_salvo"}});}
             else if(index==4){if(!panel)enqueue({{"type","toggle_camera_hold"}});}
-            else if(index==1&&debugAircraftBusy())showToast(tr("正在处理换机，请等待任务重开。","Aircraft change is pending; wait for the mission restart."),ToastKind::Important);
+            else if(index==1&&debugAircraftBusy())showToast(uiText("aircraft.change.is.pending.wait.0963cbb0"),ToastKind::Important);
             else if(state.contains("debug_hotkey")&&state["debug_hotkey"].value("protocol",0)==1&&state.contains("debug_loadout")) {
                 const auto& debug=state["debug_loadout"];
                 enqueue({{"type","debug_hotkey"},{"hotkey_protocol",1},{"request",++hotkeyRequest},
@@ -342,24 +347,63 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(panel && ((msg>=WM_KEYFIRST && msg<=WM_KEYLAST)||(msg>=WM_MOUSEFIRST && msg<=WM_MOUSELAST)||msg==WM_INPUT))return 0;
     return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
 }
-// 先于游戏/加载器的消息分发处理退格，交给ImGui编辑；不安装全局低级键盘钩子。
+// 预读只隔离，不投递或改变按压状态；实际取出消息后才交给ImGui一次。
+bool panelBackspaceEvent(bool down,unsigned source,bool removed) {
+    const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
+    if(!active && (!panelBackspaceSources || !gameFocused()))return false;
+    if(!removed)return true;
+    const bool wasHeld=panelBackspaceSources!=0;
+    if(down)panelBackspaceSources|=source;else panelBackspaceSources&=~source;
+    const bool held=panelBackspaceSources!=0;
+    if(imguiContext) {
+        ImGui::SetCurrentContext(imguiContext);
+        if(active && held && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
+        if(active && held && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
+        else if(held!=wasHeld && (!held || (active && !panelBackspaceCaptured)))
+            ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,held);
+    }
+    if(!held){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
+    return true;
+}
+// 先于游戏/加载器的键盘钩子处理；仅当前游戏窗口线程，不安装全局低级钩子。
 LRESULT CALLBACK panelKeyboardProc(int code,WPARAM key,LPARAM flags) {
-    if(code!=HC_ACTION || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
+    if((code!=HC_ACTION && code!=HC_NOREMOVE) || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
     try {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         const bool down=(flags&(1LL<<31))==0;
-        const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
-        if(!active && !panelBackspaceHeld)return CallNextHookEx(panelKeyboardHook,code,key,flags);
-        const bool wasHeld=panelBackspaceHeld;panelBackspaceHeld=down;
-        if(imguiContext) {
-            ImGui::SetCurrentContext(imguiContext);
-            if(active && down && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
-            if(active && down && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
-            else if(!down || (active && !panelBackspaceCaptured))ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,down);
-        }
-        if(!down){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
-        return 1; // HC_NOREMOVE及其他键始终直通；只消费已实际取出的退格按下/释放。
+        if(panelBackspaceEvent(down,1,code==HC_ACTION))return 1;
     }catch(...) {return CallNextHookEx(panelKeyboardHook,code,key,flags);}
+    return CallNextHookEx(panelKeyboardHook,code,key,flags);
+}
+// WM_INPUT不经过WH_KEYBOARD；取消息时把已接管的退格改为WM_NULL，避免更早的原生处理看到它。
+LRESULT CALLBACK panelMessageProc(int code,WPARAM removed,LPARAM data) {
+    if(code!=HC_ACTION || !data)return CallNextHookEx(panelMessageHook,code,removed,data);
+    auto& message=*reinterpret_cast<MSG*>(data);
+    if(message.hwnd!=gameWindow)return CallNextHookEx(panelMessageHook,code,removed,data);
+    if(message.message!=WM_INPUT && message.message!=WM_KEYDOWN && message.message!=WM_SYSKEYDOWN &&
+        message.message!=WM_KEYUP && message.message!=WM_SYSKEYUP)return CallNextHookEx(panelMessageHook,code,removed,data);
+    try {
+        std::lock_guard<std::recursive_mutex> guard(renderMutex);
+        if(!panelBackspaceSources && !(initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused()))
+            return CallNextHookEx(panelMessageHook,code,removed,data);
+        const bool taken=removed==PM_REMOVE;
+        bool consumed=false;
+        if((message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN ||
+            message.message==WM_KEYUP || message.message==WM_SYSKEYUP) && message.wParam==VK_BACK) {
+            const bool down=message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN;
+            consumed=panelBackspaceEvent(down,1,taken);
+        }else if(message.message==WM_INPUT) {
+            RAWINPUT raw{};UINT size=sizeof(raw);
+            if(GetRawInputData(reinterpret_cast<HRAWINPUT>(message.lParam),RID_INPUT,&raw,&size,sizeof(RAWINPUTHEADER))!=static_cast<UINT>(-1)
+                && raw.header.dwType==RIM_TYPEKEYBOARD && raw.data.keyboard.VKey==VK_BACK) {
+                consumed=panelBackspaceEvent((raw.data.keyboard.Flags&RI_KEY_BREAK)==0,2,taken);
+                if(consumed && taken && GET_RAWINPUT_CODE_WPARAM(message.wParam)==RIM_INPUT)
+                    DefWindowProcW(message.hwnd,message.message,message.wParam,message.lParam);
+            }
+        }
+        if(consumed){message.message=WM_NULL;message.wParam=0;message.lParam=0;return 0;}
+    }catch(...) {return CallNextHookEx(panelMessageHook,code,removed,data);}
+    return CallNextHookEx(panelMessageHook,code,removed,data);
 }
 void makeTarget(IDXGISwapChain* swap) {
     ID3D11Texture2D* buffer{};
@@ -406,6 +450,8 @@ bool init(IDXGISwapChain* swap) {
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
     panelKeyboardHook=SetWindowsHookExW(WH_KEYBOARD,panelKeyboardProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
     if(!panelKeyboardHook)nativeLog("MANAGEMENT_BACKSPACE_GATE_UNAVAILABLE");
+    panelMessageHook=SetWindowsHookExW(WH_GETMESSAGE,panelMessageProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
+    if(!panelMessageHook)nativeLog("MANAGEMENT_BACKSPACE_MESSAGE_GATE_UNAVAILABLE");
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
 // 管理界面的文字按用户选择显示；日志正文保留记录时的原文。
@@ -414,8 +460,22 @@ const char* tr(const char* zh,const char* en) {
     const auto language=draftLanguage=="auto"?state.value("game_language",std::string("en")):draftLanguage;
     return language=="zh"?zh:en;
 }
-std::string uiMessage(const std::string& message,const char* zh,const char* en) {
-    return dualsp::localizedUiMessage(message,std::string(tr("zh","en"))=="zh",tr(zh,en));
+const char* uiText(const char* key) {
+    return dualsp::user_texts::get(key,std::string(tr("zh","en"))=="zh");
+}
+std::string uiMessage(const std::string& message,const char* fallbackKey) {
+    return dualsp::localizedUiMessage(message,std::string(tr("zh","en"))=="zh",uiText(fallbackKey));
+}
+
+std::string uiError(const std::string& message,const char* fallbackKey) {
+    const auto localized=uiMessage(message,fallbackKey);
+    if(localized.empty() || localized==uiText(fallbackKey))return localized;
+    if(localized.rfind(uiText(fallbackKey),0)==0)return localized;
+    for(const auto& entry:dualsp::uiMessages)
+        if(message==entry.sourceZh || message==entry.sourceEn || message==entry.zh || message==entry.en)return localized;
+    // 未识别的原始诊断可以保留，但始终附本项目所选语言的解释。
+    if(localized==message)return std::string(uiText(fallbackKey))+" ("+localized+")";
+    return localized;
 }
 
 // 单键绑定支持常用键盘键；当前管理入口和 Esc 不能绑定为武器选择。
@@ -425,25 +485,25 @@ bool supportedKey(int key) { return dualsp::supportedShortcutKey(key); }
 std::string keyLabel(int key) {
     if((key>='0'&&key<='9')||(key>='A'&&key<='Z'))return std::string(1,static_cast<char>(key));
     if(key>=VK_F1&&key<=VK_F24)return "F"+std::to_string(key-VK_F1+1);
-    if(key>=VK_NUMPAD0&&key<=VK_NUMPAD9)return std::string(tr("小键盘 ","Numpad "))+std::to_string(key-VK_NUMPAD0);
+    if(key>=VK_NUMPAD0&&key<=VK_NUMPAD9)return std::string(uiText("numpad.2fae4464"))+std::to_string(key-VK_NUMPAD0);
     switch(key) {
-        case VK_MBUTTON:return tr("鼠标中键","Middle mouse");
+        case VK_MBUTTON:return uiText("middle.mouse.5581bb76");
         case VK_BACK:return "Backspace";case VK_TAB:return "Tab";case VK_RETURN:return "Enter";
-        case VK_SPACE:return tr("空格","Space");case VK_PRIOR:return "Page Up";case VK_NEXT:return "Page Down";
-        case VK_END:return "End";case VK_HOME:return "Home";case VK_LEFT:return tr("左方向键","Left Arrow");
-        case VK_UP:return tr("上方向键","Up Arrow");case VK_RIGHT:return tr("右方向键","Right Arrow");
-        case VK_DOWN:return tr("下方向键","Down Arrow");case VK_INSERT:return "Insert";case VK_DELETE:return "Delete";
+        case VK_SPACE:return uiText("space.def1441f");case VK_PRIOR:return "Page Up";case VK_NEXT:return "Page Down";
+        case VK_END:return "End";case VK_HOME:return "Home";case VK_LEFT:return uiText("left.arrow.c1cc20cd");
+        case VK_UP:return uiText("up.arrow.f36f38a7");case VK_RIGHT:return uiText("right.arrow.673752aa");
+        case VK_DOWN:return uiText("down.arrow.6c65987e");case VK_INSERT:return "Insert";case VK_DELETE:return "Delete";
         case VK_MULTIPLY:return "Numpad *";case VK_ADD:return "Numpad +";case VK_SEPARATOR:return "Numpad Separator";
         case VK_SUBTRACT:return "Numpad -";case VK_DECIMAL:return "Numpad .";case VK_DIVIDE:return "Numpad /";
         case VK_OEM_1:return ";";case VK_OEM_PLUS:return "=";case VK_OEM_COMMA:return ",";case VK_OEM_MINUS:return "-";
         case VK_OEM_PERIOD:return ".";case VK_OEM_2:return "/";case VK_OEM_3:return "`";
         case VK_OEM_4:return "[";case VK_OEM_5:return "\\";case VK_OEM_6:return "]";case VK_OEM_7:return "'";
     }
-    return tr("不支持的键","Unsupported key");
+    return uiText("unsupported.key.a2f46db7");
 }
 
 std::string shortcutLabel(dualsp::Shortcut value) {
-    if(value.key==0)return tr("未绑定","Unassigned");
+    if(value.key==0)return uiText("unassigned.5dc2dd7c");
     return std::string(value.mods&1?"Ctrl+":"")+(value.mods&2?"Alt+":"")+(value.mods&4?"Shift+":"")+keyLabel(value.key);
 }
 std::array<dualsp::Shortcut,5> readShortcuts(const Json& data) {
@@ -476,15 +536,15 @@ void captureKeyboardKey(int key,int mods) {
     if(key==VK_ESCAPE){captureSlot=-1;notice.clear();return;}
     auto nextKeys=draftKeys;auto nextShortcuts=draftShortcuts;int nextCenter=draftCameraCenterKey;
     if(captureSlot<4) {
-        if(mods!=0){notice=tr("武器直接选择只支持单键。","Direct weapon selection accepts single keys.");return;}
+        if(mods!=0){notice=uiText("direct.weapon.selection.accepts.single.6aef719b");return;}
         nextKeys[captureSlot]=key;
     } else if(captureSlot==8) {
-        if(mods!=0){notice=tr("镜头回正只支持单键。","Camera recenter accepts a single key.");return;}
+        if(mods!=0){notice=uiText("camera.recenter.accepts.a.single.6fd0ed44");return;}
         nextCenter=key;
     } else nextShortcuts[captureSlot==10?4:(captureSlot==9?3:captureSlot-4)]={key,mods};
     if(!dualsp::validShortcuts(nextShortcuts,nextKeys)
         ||!dualsp::validCameraCenterKey(nextCenter,draftCameraHold,0,nextShortcuts,nextKeys)) {
-        notice=tr("键位不可用或重复；请换一个按键。Esc取消。","Unsupported or duplicate binding. Choose another key; Esc cancels.");return;
+        notice=uiText("unsupported.or.duplicate.binding.choose.e7262915");return;
     }
     draftKeys=nextKeys;draftShortcuts=nextShortcuts;draftCameraCenterKey=nextCenter;captureSlot=-1;notice.clear();
 }
@@ -492,6 +552,7 @@ void captureKeyboardKey(int key,int mods) {
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
+    draftStartupUpdateCheck=state.at("startup_update_check_enabled").get<bool>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftTaskMountEnabled=state.at("task_mount_enabled").get<bool>();
     draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
@@ -575,22 +636,22 @@ void loadDebugAircraftDraft() noexcept {
         }
         if(pendingAircraft>0&&response==pendingAircraft) {
             const bool accepted=ack==pendingAircraft&&status!="failed";
-            aircraftNotice=accepted?(status=="applied"?tr("换机已在重开的任务中生效。","Aircraft change applied in the restarted mission."):
-                mode=="next_restart"?tr("机体已选择；请手动重开任务后生效。","Aircraft selected; restart the mission to apply it."):
-                tr("请求已接受，正在重开任务；换机尚待生效。","Request accepted; restarting the mission. Aircraft change is not applied yet.")):
-                tr("换机请求未完成，请查看错误说明。","Aircraft change was not completed; see the error details.");
+            aircraftNotice=accepted?(status=="applied"?uiText("aircraft.change.applied.in.the.8802c6d6"):
+                mode=="next_restart"?uiText("aircraft.selected.restart.the.mission.9a8553aa"):
+                uiText("request.accepted.restarting.the.mission.f342df8c")):
+                uiText("aircraft.change.was.not.completed.dd99cdf8");
             const auto message=data.value("notice",std::string());if(!message.empty())aircraftNotice=message;
             pendingAircraft=0;showToast(aircraftNotice,accepted?ToastKind::Important:ToastKind::Error);
         } else if(appliedNow) {
             aircraftNotice=data.value("notice",std::string());
-            if(aircraftNotice.empty())aircraftNotice=tr("换机已在重开的任务中生效。","Aircraft change applied in the restarted mission.");
+            if(aircraftNotice.empty())aircraftNotice=uiText("aircraft.change.applied.in.the.8802c6d6");
             showToast(aircraftNotice,ToastKind::Important);
         } else if(data.contains("notice")&&!data.at("notice").get<std::string>().empty())aircraftNotice=data.at("notice").get<std::string>();
         else if(changedSession&&status=="idle"&&pendingAircraft==0)aircraftNotice.clear();
     }catch(const std::exception& error) {
         aircraftSupported=aircraftAvailable=false;debugAircraftOptions.clear();
         if(aircraftDataError!=error.what()) {
-            showToast(std::string(tr("换机状态错误：","Aircraft state error: "))+error.what(),ToastKind::Error);
+            showToast(std::string(uiText("aircraft.state.error.780cbde3"))+error.what(),ToastKind::Error);
             nativeLog(std::string("DEBUG_AIRCRAFT_DATA_ERROR ")+error.what());
         }
         aircraftDataError=error.what();
@@ -610,32 +671,28 @@ int aircraftInitial(const DebugAircraftOption& option) {
     return !key.empty()&&key.front()>='a'&&key.front()<='z'?key.front()-'a'+1:27;
 }
 void drawDebugAircraft() {
-    ImGui::SeparatorText(tr("任务内换机","Aircraft change"));
+    ImGui::SeparatorText(uiText("aircraft.change.88b94e64"));
     if(state.contains("management_pause")&&state.at("management_pause").value("existing",false))
-        ImGui::TextWrapped("%s",tr("任务暂停中可直接换机；关闭管理会返回暂停菜单。",
-            "Aircraft changes are available while paused. Closing management returns to the pause menu."));
+        ImGui::TextWrapped("%s",uiText("aircraft.changes.are.available.while.32a3a8bb"));
     ImGui::TextWrapped("%s",aircraftMode=="next_restart"?
-        tr("选择机体后请手动重开本任务，换机才会生效；当前飞行中的机体不会立即替换。","Select an aircraft, then manually restart this mission to apply it. The current aircraft is not replaced immediately."):
-        tr("选择机体后点击下方按钮，将重开本任务并使用目标机体；当前任务进度会重置。","Choose an aircraft and use the button below to restart this mission with it. Current mission progress will reset."));
-    panelHelp("包含实际加载目录中具有完整三SP数据的官方及Mod机体，也列出未购买或缺DLC许可的官方机体。Mod名称缺失时显示代号。只替换外观的Mod沿用原机体条目；不改购买记录，实际生成仍由游戏和对应Mod决定。",
-        "Includes official and mod aircraft with complete three-SP data in the loaded catalogue, including unpurchased or unlicensed official aircraft. Missing mod names fall back to codes. Visual replacements use the base aircraft entry. Purchase records stay unchanged; spawning depends on the game and the installed mod.");
+        uiText("select.an.aircraft.then.manually.9ed31c02"):
+        uiText("choose.an.aircraft.and.use.cc75b2be"));
+    panelHelp("includes.official.and.mod.aircraft.6ae8b80f");
     const bool busy=debugAircraftBusy();
     const bool available=aircraftSupported&&aircraftAvailable&&!busy&&pendingDebug==0;
     const auto selected=std::find_if(debugAircraftOptions.begin(),debugAircraftOptions.end(),[](const auto& option){return option.planeId==aircraftTarget;});
-    const std::string preview=selected!=debugAircraftOptions.end()?uiMessage(selected->name)+"  ["+std::to_string(selected->planeId)+"]":tr("暂无可用机体","No available aircraft");
-    ImGui::BeginDisabled(!available);ImGui::TextUnformatted(tr("目标机体","Target aircraft"));
+    const std::string preview=selected!=debugAircraftOptions.end()?uiMessage(selected->name)+"  ["+std::to_string(selected->planeId)+"]":uiText("no.available.aircraft.3b7a7e51");
+    ImGui::BeginDisabled(!available);ImGui::TextUnformatted(uiText("target.aircraft.e872d0ff"));
     ImGui::SetNextItemWidth(std::min(520.f,ImGui::GetContentRegionAvail().x));
     if(ImGui::BeginCombo("###DebugAircraftTarget",preview.c_str(),ImGuiComboFlags_HeightLargest)) {
         if(ImGui::IsWindowAppearing())ImGui::SetKeyboardFocusHere();
         ImGui::SetNextItemWidth(std::max(140.f,ImGui::GetContentRegionAvail().x-72));
-        ImGui::InputTextWithHint("##AircraftSearch",tr("搜索名称 / 代号 / 编号","Search name / code / ID"),aircraftSearch.data(),aircraftSearch.size());
-        ImGui::SameLine();if(ImGui::SmallButton(tr("重置","Reset"))) {aircraftSearch.fill(0);aircraftSourceFilter=aircraftInitialFilter=0;}
+        ImGui::InputTextWithHint("##AircraftSearch",uiText("search.name.code.id.a15a68b4"),aircraftSearch.data(),aircraftSearch.size());
+        ImGui::SameLine();if(ImGui::SmallButton(uiText("reset.0f237974"))) {aircraftSearch.fill(0);aircraftSourceFilter=aircraftInitialFilter=0;}
         ImGui::SetNextItemWidth(std::max(110.f,ImGui::GetContentRegionAvail().x*.48f));
-        ImGui::Combo("##AircraftSource",&aircraftSourceFilter,tr("全部机体\0官方机体\0Mod机体\0","All aircraft\0Official aircraft\0Mod aircraft\0"));
+        ImGui::Combo("##AircraftSource",&aircraftSourceFilter,uiText("all.aircraft.official.aircraft.mod.6b744b3e"));
         ImGui::SameLine();ImGui::SetNextItemWidth(std::max(90.f,ImGui::GetContentRegionAvail().x));
-        ImGui::Combo("##AircraftInitial",&aircraftInitialFilter,tr(
-            "全部首字母\0A\0B\0C\0D\0E\0F\0G\0H\0I\0J\0K\0L\0M\0N\0O\0P\0Q\0R\0S\0T\0U\0V\0W\0X\0Y\0Z\0数字 / 其他\0",
-            "All initials\0A\0B\0C\0D\0E\0F\0G\0H\0I\0J\0K\0L\0M\0N\0O\0P\0Q\0R\0S\0T\0U\0V\0W\0X\0Y\0Z\0Digits / Other\0"));
+        ImGui::Combo("##AircraftInitial",&aircraftInitialFilter,uiText("all.initials.a.b.c.96d7741e"));
         std::istringstream query(aircraftSearch.data());std::string word;std::vector<std::string> words;
         while(query>>word) {auto key=aircraftSearchKey(word);if(!key.empty())words.push_back(std::move(key));}
         std::vector<const DebugAircraftOption*> matches;
@@ -645,7 +702,7 @@ void drawDebugAircraft() {
             const auto haystack=aircraftSearchKey(uiMessage(option.name))+" "+aircraftSearchKey(option.code)+" "+std::to_string(option.planeId);
             if(std::all_of(words.begin(),words.end(),[&](const auto& key){return haystack.find(key)!=std::string::npos;}))matches.push_back(&option);
         }
-        ImGui::TextDisabled(tr("匹配 %d / %d","Matches %d / %d"),static_cast<int>(matches.size()),static_cast<int>(debugAircraftOptions.size()));
+        ImGui::TextDisabled(uiText("matches.d.d.cce538e2"),static_cast<int>(matches.size()),static_cast<int>(debugAircraftOptions.size()));
         ImGui::BeginChild("AircraftResults",{0,250},ImGuiChildFlags_Borders,ImGuiWindowFlags_HorizontalScrollbar);
         ImGuiListClipper clipper;clipper.Begin(static_cast<int>(matches.size()));
         while(clipper.Step())for(int i=clipper.DisplayStart;i<clipper.DisplayEnd;++i) {
@@ -655,38 +712,37 @@ void drawDebugAircraft() {
             if(ImGui::Selectable(label.c_str(),chosen)) {aircraftTarget=option.planeId;ImGui::CloseCurrentPopup();}
             ImGui::PopID();
         }
-        if(matches.empty())ImGui::TextWrapped("%s",tr("没有匹配机体，请修改搜索或重置筛选。","No matching aircraft. Change the search or reset filters."));
+        if(matches.empty())ImGui::TextWrapped("%s",uiText("no.matching.aircraft.change.the.d1d5ac6f"));
         ImGui::EndChild();
         ImGui::EndCombo();
     }
     ImGui::EndDisabled();
     const bool same=aircraftTarget==state.value("plane_id",-1);
-    if(same&&selected!=debugAircraftOptions.end())ImGui::TextDisabled("%s",tr("这是当前机体，请选择其他机体。","This is the current aircraft; choose another."));
-    if(!aircraftSupported)ImGui::TextWrapped("%s",aircraftDataError.empty()?tr("当前控制器未提供任务换机。","The controller does not provide mission aircraft changes."):uiMessage(aircraftDataError,"换机资料不可用，请查看日志。","Aircraft information is unavailable. See Logs for details.").c_str());
-    else if(!aircraftAvailable&&!aircraftReason.empty())ImGui::TextWrapped("%s",uiMessage(aircraftReason,"当前无法换机，请查看日志。","Aircraft change is unavailable. See Logs for details.").c_str());
-    if(pendingDebug>0)ImGui::TextWrapped("%s",tr("正在应用SP方案，请等待完成。","An SP loadout is being applied; wait for it to finish."));
+    if(same&&selected!=debugAircraftOptions.end())ImGui::TextDisabled("%s",uiText("this.is.the.current.aircraft.991bd752"));
+    if(!aircraftSupported)ImGui::TextWrapped("%s",aircraftDataError.empty()?uiText("the.controller.does.not.provide.7d885be5"):uiError(aircraftDataError,"aircraft.information.is.unavailable.see.00661263").c_str());
+    else if(!aircraftAvailable&&!aircraftReason.empty())ImGui::TextWrapped("%s",uiError(aircraftReason,"aircraft.change.is.unavailable.see.588e221a").c_str());
+    if(pendingDebug>0)ImGui::TextWrapped("%s",uiText("an.sp.loadout.is.being.3b941d11"));
     ImGui::BeginDisabled(!available||same||selected==debugAircraftOptions.end());
     if(ImGui::Button(aircraftMode=="next_restart"?
-        tr("选择机体，等待重开任务###ApplyAircraft","Select aircraft for next restart###ApplyAircraft"):
-        tr("换机并重开任务###ApplyAircraft","Change aircraft and restart mission###ApplyAircraft"),
+        uiText("select.aircraft.for.next.restart.6ec2b993"):
+        uiText("change.aircraft.and.restart.mission.cdc35890"),
         {std::min(ImGui::GetContentRegionAvail().x,520.f),36})) {
         pendingAircraft=++aircraftRequest;
         enqueue({{"type","debug_aircraft"},{"debug_aircraft_protocol",2},{"request",pendingAircraft},
             {"session",aircraftSession},{"revision",aircraftRevision},{"target_plane_id",aircraftTarget}});
-        aircraftNotice=tr("已提交换机请求，等待游戏线程确认…","Aircraft change submitted; waiting for the game thread...");
+        aircraftNotice=uiText("aircraft.change.submitted.waiting.for.dfc92e72");
     }
     ImGui::EndDisabled();
-    if(!aircraftNotice.empty())ImGui::TextWrapped("%s",uiMessage(aircraftNotice,"换机未完成，请查看日志。","Aircraft change was not completed. See Logs for details.").c_str());
+    if(!aircraftNotice.empty())ImGui::TextWrapped("%s",uiMessage(aircraftNotice,"aircraft.change.was.not.completed.1c563d6b").c_str());
     if(state.contains("debug_aircraft")&&state.at("debug_aircraft").contains("error")&&state.at("debug_aircraft").at("error").is_string())
-        ImGui::TextWrapped("%s",uiMessage(state.at("debug_aircraft").at("error").get<std::string>(),"换机未完成，请查看日志。","Aircraft change failed. See Logs for details.").c_str());
+        ImGui::TextWrapped("%s",uiError(state.at("debug_aircraft").at("error").get<std::string>(),"aircraft.change.failed.see.logs.0c497fab").c_str());
 }
 
 // 调试仅发送完整方案与任务版本，游戏线程重新校验身份、购买与活动武器。
 void drawDebugLoadout(bool focus) {
     const auto& debug=state.at("debug_loadout"); // 发布状态是只读快照。
-    ImGui::Text(tr("当前飞机：%s","Current aircraft: %s"),uiMessage(state.value("plane_name",std::string())).c_str());
-    panelHelp("按列表从上到下分配SP1/SP2/SP3。应用后按已保存比例补满SP并切回MSL；普通导弹、机炮、干扰弹保留，个人方案和已有检查点不改写。组合轮切及模型快捷键仅在配置文件设置。",
-        "Checked weapons become SP1/SP2/SP3 from top to bottom. Applying refills SPs with saved percentages and selects MSL; standard missiles, gun, countermeasures, saved loadouts and checkpoints remain unchanged. Loadout/model shortcuts are configurable in the configuration file.");
+    ImGui::Text(uiText("current.aircraft.s.b550b075"),uiMessage(state.value("plane_name",std::string())).c_str());
+    panelHelp("checked.weapons.become.sp1.sp2.4395e57c");
     const bool available=debug.value("available",false)&&pendingDebug==0&&!debugAircraftBusy(); // 等待回执时不能重复提交。
     const auto options=debug.value("options",Json::array()); // 没有任务时不展示猜测兵装。
     const int count=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true)); // 实际选择数量。
@@ -696,38 +752,38 @@ void drawDebugLoadout(bool focus) {
             const auto& option=options.at(index); // 原生配置项包含购买和多挂许可。
             const bool owned=option.at("owned").get<bool>();
             const bool multiple=option.at("available").get<bool>();
-            const auto label=option.at("code").get<std::string>()+" / "+uiMessage(option.at("description").get<std::string>(),"特殊兵装","Special weapon")+"###DebugSP"+std::to_string(index);
+            const auto label=option.at("code").get<std::string>()+" / "+uiMessage(option.at("description").get<std::string>(),"special.weapon.930993fc")+"###DebugSP"+std::to_string(index);
             const bool selectable=owned||debug.value("allow_unowned",false);
             ImGui::BeginDisabled(!available||!selectable);
             if(focus&&available&&selectable){ImGui::SetKeyboardFocusHere();focus=false;}
             ImGui::Checkbox(label.c_str(),&debugSelected[index]);
             ImGui::EndDisabled();
-            if(!owned){ImGui::SameLine();ImGui::TextDisabled("%s",tr("未购买（任务调试可用）","Not purchased (mission debug allowed)"));}
-            if(!multiple){ImGui::SameLine();ImGui::TextDisabled("%s",tr("仅限单挂","Single SP only"));}
+            if(!owned){ImGui::SameLine();ImGui::TextDisabled("%s",uiText("not.purchased.mission.debug.allowed.541d53c7"));}
+            if(!multiple){ImGui::SameLine();ImGui::TextDisabled("%s",uiText("single.sp.only.23e61794"));}
         }
         // 同帧勾选后重新计算，不能沿用绘制前的数量判定或配弹预览。
         const int selected=static_cast<int>(std::count(debugSelected.begin(),debugSelected.end(),true));
         valid=selected>0;
         for(int index=0;index<3;++index)if(debugSelected[index])
             valid=valid&&(options.at(index).at("owned").get<bool>()||debug.value("allow_unowned",false))&&(selected==1||options.at(index).at("available").get<bool>());
-        if(!valid)ImGui::TextWrapped("%s",tr("请选择 1 至 3 种 SP；标注仅限单挂的兵装不能组合。","Choose 1–3 SP weapons. Single-only weapons cannot be combined."));
+        if(!valid)ImGui::TextWrapped("%s",uiText("choose.1.3.sp.weapons.717c3572"));
     }
     if(!debug.value("available",false)&&debug.contains("reason"))
-        ImGui::TextWrapped("%s",uiMessage(debug.at("reason").get<std::string>(),"当前无法调试兵装，请查看日志。","Loadout debugging is unavailable. See Logs for details.").c_str());
+        ImGui::TextWrapped("%s",uiError(debug.at("reason").get<std::string>(),"loadout.debugging.is.unavailable.see.557ce0bc").c_str());
 
     ImGui::BeginDisabled(!available||!valid);
-    if(ImGui::Button(tr("应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"),
+    if(ImGui::Button(uiText("apply.sp.loadout.and.refill.47b451be"),
         {std::min(ImGui::GetContentRegionAvail().x,430.f),36})) {
         std::array<int,3> configs{-1,-1,-1};int slot=0; // 只在点击时形成连续逻辑槽。
         for(int index=0;index<3;++index)if(debugSelected[index])configs[slot++]=index;
         pendingDebug=++debugRequest;
         enqueue({{"type","debug_loadout"},{"debug_protocol",1},{"request",pendingDebug},
             {"session",debugSession},{"revision",debugRevision},{"profile",{{"a",configs[0]},{"b",configs[1]},{"c",configs[2]}}}});
-        debugNotice=tr("正在应用，等待游戏线程确认…","Applying; waiting for the game thread...");
+        debugNotice=uiText("applying.waiting.for.the.game.3f8f6870");
     }
     ImGui::EndDisabled();
-    if(!debugNotice.empty())ImGui::TextWrapped("%s",uiMessage(debugNotice,"调试换装未完成，请查看日志。","The debug loadout was not applied. See Logs for details.").c_str());
-    if(debug.contains("error"))ImGui::TextWrapped("%s",uiMessage(debug.at("error").get<std::string>(),"调试换装未完成，请查看日志。","The debug loadout failed. See Logs for details.").c_str());
+    if(!debugNotice.empty())ImGui::TextWrapped("%s",uiMessage(debugNotice,"the.debug.loadout.was.not.ae22c820").c_str());
+    if(debug.contains("error"))ImGui::TextWrapped("%s",uiError(debug.at("error").get<std::string>(),"the.debug.loadout.failed.see.5cb24ccd").c_str());
 }
 
 // 每类合计最多读取64 KiB，接续最近轮换文件；只在日志页打开或手动刷新时读取。
@@ -776,12 +832,13 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
+        {"startup_update_check_enabled",draftStartupUpdateCheck},
         {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_enabled",draftTargetGazePad},{"target_gaze_keyboard_enabled",draftTargetGazeKeyboard},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
-    notice=tr("正在保存…","Saving...");
+    notice=uiText("saving.2a26d205");
 }
 
 // 统一分页入口，让 Ctrl+Tab 的选择和鼠标选择共用当前页状态。
@@ -790,6 +847,7 @@ bool beginManagementTab(const char* label,int index) {
     if(selected)managementTab=index;
     return selected;
 }
+#include "quick_mission_panel.hpp"
 #include "management_panel.hpp"
 
 // 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
@@ -827,6 +885,7 @@ void refreshState() {
             state.at("target_gaze_pad_enabled").get<bool>();state.at("target_gaze_keyboard_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
+            state.at("startup_update_check_enabled").get<bool>();
             if(state.at("debug_weapons").at("protocol").get<int>()!=1)throw std::runtime_error("SP调试协议不匹配");
             state.at("debug_weapons").at("infinite").get<bool>();state.at("debug_weapons").at("fast").get<bool>();
             state.at("debug_weapons").at("available").get<bool>();
@@ -854,30 +913,30 @@ void refreshState() {
         if(!panel)draftLanguage=state.value("language",std::string("auto"));
         if(!panel && wasManagement && wasViewTarget!=state.at("view_target_mode").get<std::string>()) {
             draftViewTargetMode=state.at("view_target_mode").get<std::string>();
-            showToast(draftViewTargetMode=="vr"?tr("NEXT：VR模式／视角中心优先","NEXT: VR / view center"):tr("NEXT：普通模式／机头附近优先","NEXT: normal / aircraft nose"));
+            showToast(draftViewTargetMode=="vr"?uiText("next.vr.view.center.e592c191"):uiText("next.normal.aircraft.nose.a3ea4063"));
         }
         if(!panel && wasManagement && wasGunSalvo!=state.at("gun_salvo_enabled").get<bool>()) {
             draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
-            showToast(draftGunSalvo?tr("机炮齐射：开启","Gun salvo: ON"):tr("机炮齐射：关闭","Gun salvo: OFF"));
+            showToast(draftGunSalvo?uiText("gun.salvo.on.ff42b867"):uiText("gun.salvo.off.2b40a562"));
         }
         if(!panel && wasManagement && wasCameraHold!=state.at("camera_hold_enabled").get<bool>()) {
             draftCameraHold=state.at("camera_hold_enabled").get<bool>();
-            showToast(draftCameraHold?tr("镜头保持：开启","Camera hold: ON"):tr("镜头保持：关闭","Camera hold: OFF"));
+            showToast(draftCameraHold?uiText("camera.hold.on.43a9820d"):uiText("camera.hold.off.5641503e"));
         }
         if(pendingSave>0&&state.value("settings_response",0)==pendingSave) {
-            notice=state.value("settings_ack",0)==pendingSave?tr("设置已保存。","Settings saved."):
-                tr("保存失败，详见错误和日志。","Save failed; see the error and logs.");
+            notice=state.value("settings_ack",0)==pendingSave?uiText("settings.saved.ce3bf5a0"):
+                uiText("save.failed.see.the.error.cfdce700");
             pendingSave=0;
         }
         const auto& debug=state.at("debug_loadout"); // 回执只来自游戏线程完整提交。
         if(pendingDebugWeapons>0 && state.at("debug_weapons").value("response",0)==pendingDebugWeapons)pendingDebugWeapons=0;
         if(debug.at("session").get<int>()!=debugSession||debug.at("revision").get<int>()!=debugRevision) {pendingDebugWeapons=0;loadDebugDraft();}
         if(pendingDebug>0&&debug.at("response").get<int>()==pendingDebug) {
-            debugNotice=debug.at("ack").get<int>()==pendingDebug?tr("SP 方案已应用并补满。关闭面板后继续测试。","SP loadout applied and refilled. Close the panel to continue testing."):
-                tr("换装未完成，请查看错误说明。","Loadout was not applied. See the error details.");
+            debugNotice=debug.at("ack").get<int>()==pendingDebug?uiText("sp.loadout.applied.and.refilled.3910f2ee"):
+                uiText("loadout.was.not.applied.see.164255b7");
             pendingDebug=0;
         }
-        loadDebugAircraftDraft();
+        loadDebugAircraftDraft();loadQuickMissionDraft();
         const auto& gaze=state.at("target_gaze");
         if(gaze.value("response",0)!=targetGazeResponse) {
             targetGazeResponse=gaze.value("response",0);showToast(gaze.value("notice",std::string()),gaze.value("notice_warning",false)?ToastKind::Warning:ToastKind::Info);
@@ -903,15 +962,14 @@ void refreshState() {
         for(auto item=errors.begin();item!=errors.end();++item) {
             if(!reportedToastErrors.contains(item.key())||reportedToastErrors.at(item.key())!=item.value()) {
                 const bool visual=item.key()=="mount_warning";
-                const auto detail=visual?uiMessage(item.value().get<std::string>(),"多挂外观已回退原生，请查看日志。",
-                    "Multi-SP models reverted to native visuals. See Logs for details."):
-                    uiMessage(item.value().get<std::string>());
+                const auto detail=visual?uiError(item.value().get<std::string>(),"multi.sp.models.reverted.to.46f829d2"):
+                    uiError(item.value().get<std::string>());
                 showToast(detail,visual?ToastKind::Warning:ToastKind::Error);break;
             }
         }
         reportedToastErrors=std::move(errors);
     }catch(const std::exception& error) {
-        if(managementError!=error.what())showToast(std::string(tr("管理状态错误：","Management state error: "))+error.what(),ToastKind::Error);
+        if(managementError!=error.what())showToast(std::string(uiText("management.state.error.5a0c194c"))+error.what(),ToastKind::Error);
         managementError=error.what();nativeLog(std::string("MANAGEMENT_DATA_ERROR ")+error.what());
     }
 }
@@ -964,9 +1022,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 if(foreground && !panel && managementError.empty() && GetTickCount64()>=hotkeyToastUntil) {
                     if(const auto update=dualsp::updates::service().claimNotice()) {
                         const auto binding=shortcutLabel(shortcuts[0]);
-                        const auto message=std::string(tr("发现新版本 ","Version "))+update->latest+
-                            tr("。请按 "," is available. Open ")+binding+
-                            tr("，在“版本和更新”页选择下载入口。"," > Version and updates and choose a download link.");
+                        const auto message=std::string(uiText("version.29bc0009"))+update->latest+
+                            uiText("is.available.open.e79f34f1")+binding+
+                            uiText("version.and.updates.and.choose.cd6e7a78");
                         showToast(message,ToastKind::Important);updateToastActive=true;
                     }
                 }
@@ -994,8 +1052,8 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     float noticeY=std::max(24.f,ImGui::GetIO().DisplaySize.y*(72.f/1080.f));
                     if(loadingVisible) {
                         drawNotice("##MultiSPStartupLoading",loading.unsupported?
-                            tr("此机体暂无多SP模型方案适配","No multi-SP model layout is available for this aircraft."):
-                            tr("加载多SP模型中，请等待...","Loading multi-SP models, please wait..."),false,noticeY);
+                            uiText("no.multi.sp.model.layout.9b7d944c"):
+                            uiText("loading.multi.sp.models.please.b6555bf0"),false,noticeY);
                         loadingDrawn=loading.token;
                     }
                     if(dotVisible) {
@@ -1009,7 +1067,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(toastVisible) {
                         drawNotice("##DebugHotkeyNotice",hotkeyToast,toastIsError,noticeY);
                     }
-                }catch(const Json::exception& e){notice=e.what();showToast(std::string(tr("界面错误：","UI error: "))+e.what(),ToastKind::Error);nativeLog(std::string("UI_ERROR ")+e.what());}
+                }catch(const Json::exception& e){notice=e.what();showToast(std::string(uiText("ui.error.bb1191fe"))+e.what(),ToastKind::Error);nativeLog(std::string("UI_ERROR ")+e.what());}
                 if(panel&&!popupAtFrameStart&&ImGui::IsKeyPressed(ImGuiKey_GamepadFaceRight)&&
                     !ImGui::IsPopupOpen(nullptr,ImGuiPopupFlags_AnyPopupId|ImGuiPopupFlags_AnyPopupLevel))togglePanel(false);
                 ImGui::Render();
@@ -1158,6 +1216,7 @@ extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) 
 extern "C" __declspec(dllexport) int dualsp_debug_loadout_supported(void*) {return 0;}
 // 换机独立子协议1，不改变现有管理设置与SP换装协议。
 extern "C" __declspec(dllexport) int dualsp_debug_aircraft_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_quick_mission_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
     try {
@@ -1216,9 +1275,12 @@ extern "C" __declspec(dllexport) int dualsp_flat_management_supported(void*) {re
 extern "C" __declspec(dllexport) int dualsp_updates_context_v1(void* luaState) {
     try {
         static const dualsp::LuaApi api;
-        if(api.top(luaState)!=1)return 0;
+        const int count=api.top(luaState);
+        if(count!=1 && count!=2)return 0;
         const auto context=api.readInteger(luaState,1);
-        if(context>=0 && context<=3)dualsp::updates::service().context(static_cast<int>(context));
+        const auto automatic=count==2?api.readInteger(luaState,2):1;
+        if(context>=0 && context<=3 && (automatic==0 || automatic==1))
+            dualsp::updates::service().context(static_cast<int>(context),automatic==1);
     }catch(...) {nativeLog("UPDATE_CONTEXT_IGNORED");}
     return 0;
 }

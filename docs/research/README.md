@@ -4,7 +4,7 @@
 
 当前产品机制见[架构](../engineering/architecture.md)和[挂载设计](../engineering/multi-sp-mount-design.md)，可复用教训见[工程经验](../engineering/engineering-lessons.md)。历史原文见[归档索引](../archive/README.md)及`archive/20261023/pre-governance-main`标签。本机来源位置只提供恢复线索，实际续研前仍须核对文件与摘要。
 
-Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
+Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。最新32aebeb及舱门候选已接收进2.25.3 alpha1源码，未编译或验证新候选。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
 
 ## 挂载、弹舱与动画
 
@@ -31,6 +31,7 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 | 主题/状态 | 成果锚 | 来源位置 | 已知问题与继续研究入口 |
 | --- | --- | --- | --- |
+| 快速进入测试任务及片头Logo：2.25.2辅助异常修复待实测 | `codex/feat-quick-mission-launch`；main基线 `85ab3a0` | `C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP`；[唯一设计正文](../engineering/quick-mission-launch.md)、[观察摘要](../../evidence/quick-mission-observation-20261024.json) | 已核对23关任务表及原生自由任务出击链，F6、独立预设、主菜单自动出击和Boot片头跳过源码2bef53b已进入2.25.0完整构建；用户确认2.25.1可快速进入但三SP初始化中止；辅助错误隔离和卡片位置修复已进入2.25.2完整构建，待用户实机验收，继续条件见唯一设计正文 |
 | 游戏内“版本和更新”：正式采用 | 来源`d9d3dab`、后续功能`2346cdb`；[alpha2接收](../../evidence/2.24.0-alpha2-source-intake.json) | `version-updates/AC7_MultiSP`及main当前`src/version_updates*.hpp` | 原发布当时未安装，后续已知安装记录统一见[项目状态](../../README.md)。本轮未核查线上完整流程；旧[说明](../archive/delivery/Pages与R2发布更新说明.md)为历史参考。功能为检查并由用户打开浏览器 |
 | 独立安装器：待接收的新交互成果 | `codex/delivery-installation` / `a99a404` | `C:/Users/83717/.codex/worktrees/delivery-installation/AC7_MultiSP`；现场材料见[工作区索引](../project/workspaces.md) | 0.1.0有用户确认EXE安装2.24.1的记录，0.2.0仅生成新安装器，新界面未运行；当前已知状态统一见[项目状态](../../README.md)。源码未合main，载荷版本不能代替安装器自身验收 |
 | 旧update-feature：未提交成果保留、未整套接收 | HEAD `42b87c0`；20261023盘点与`update-feature.zip` | `C:/Users/83717/.codex/worktrees/update-feature/AC7_MultiSP`；本地`src/version_updates.hpp`及Lua/UI/构建/发布工具改动 | HEAD已是main祖先不代表现场改动已接收；与已采用更新页有重叠，继续先比较功能/文案/工具差异，不把整个工作树覆盖到main |

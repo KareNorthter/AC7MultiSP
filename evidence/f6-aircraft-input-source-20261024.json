@@ -1,0 +1,41 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "base_main": "026dd43d6982e97fac14ecd67b3e1cfbb3cf0319",
+  "user_feedback": [
+    "当前列表搜索FA50或241能看到候选，但CFA50找不到；用户记得旧版本能找到",
+    "当前安装版本在F6管理界面按退格键又会触发暂停，旧版本曾修复"
+  ],
+  "installed_ui": {
+    "path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/bin/DualSPUI.dll",
+    "version_file": "2.25.2",
+    "sha256": "7a40b9356eee180c01c87ac0223ea33a74fa9366107a29abbdd1bc1c942ec698",
+    "matches_delivery": "evidence/2.25.2-exe-delivery.json",
+    "hook_unavailable_marker_observed": false
+  },
+  "history": {
+    "mod_candidates": "effa304已按目录接入Mod候选，名称仍回退内部代号；未找到CFA-50专用名称映射的历史提交，不能据此否定用户旧版体验",
+    "patch_filter": "5a33e3a引入DLC硬筛选后误筛Patch候选，45901b5已修复；当前用户已确认241在列表，本次不修改资格判断",
+    "backspace_fix": "407e94b引入WH_KEYBOARD，当前源码仍保留；原接收记录明确排除真实游戏退格输入链验收"
+  },
+  "source_findings": [
+    "CFA-50内部code为fa50、ID为241，游戏AircraftShort_Name_fa50为CFA-50；当前名字回退FA50，CFA50搜索和C首字母筛选不能命中",
+    "旧退格处理只接收HC_ACTION，HC_NOREMOVE直接放行；原始键盘WM_INPUT不经过WH_KEYBOARD，窗口过程末尾拦截太晚",
+    "缺少游戏内输入跟踪，不能确认预读或原始键盘哪一条是本次暂停的实际触发路径"
+  ],
+  "source_changes": [
+    "仅对合格Mod候选读取原生本地化名称，名称失败回退，不改变DLC、购买或三SP资格；快速任务共用候选",
+    "WH_KEYBOARD预读隔离及WH_GETMESSAGE原始键盘隔离，共用边沿投递，普通/原始消息分别记账，不使用全局钩子"
+  ],
+  "references": [
+    "evidence/cfa50-visibility-review-20261023.json",
+    "https://learn.microsoft.com/en-us/windows/win32/winmsg/keyboardproc",
+    "https://learn.microsoft.com/en-us/windows/win32/winmsg/getmsgproc"
+  ],
+  "validation": "仅静态差异与源码审阅；修订效果待后续授权构建和用户实机确认",
+  "compiled": false,
+  "tests_written_or_run": false,
+  "installed": false,
+  "game_operated": false,
+  "uploaded": false
+}

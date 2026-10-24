@@ -1,0 +1,248 @@
+{
+  "date": "2026-10-24",
+  "purpose": "精确接收mod内置更新聊天的主页成果，统一双语来源并接入本地发布准备；外部上传由作者完成",
+  "source": {
+    "thread_id": "01a15c1d-949a-7730-8a4a-34541a522225",
+    "title": "mod内置更新",
+    "branch": "codex/pages-download-home",
+    "head": "7f213aabcec8be0daf44e194db2def659cbcd504",
+    "worktree": "C:/Users/83717/.codex/worktrees/pages-download-home/AC7_MultiSP",
+    "uncommitted_snapshot": "backup/pages-intake-20261024/source/",
+    "snapshot_files": [
+      {
+        "path": "docs/README.md",
+        "bytes": 6219,
+        "sha256": "dd033ad0720861663aebf3cb8a1c3f010ae1c579da449d93d9d10382f0f3bf9e"
+      },
+      {
+        "path": "docs/project/workspaces.md",
+        "bytes": 8616,
+        "sha256": "8cd6dac591f964bfbed6b753ea5e548bc1168478e5e1b47ac53401a463c03dbd"
+      },
+      {
+        "path": "docs/project/pages-site.md",
+        "bytes": 3366,
+        "sha256": "500e086ba124cdf8bf36338563d1492896d8efc8e3cfeafda708aec7ccc41a88"
+      },
+      {
+        "path": "src/build_pages_site.py",
+        "bytes": 7158,
+        "sha256": "25a72510834a7d506f6d916288bb5c182f34422b50ad13c3492efe9be14ea9f1"
+      },
+      {
+        "path": "site/app.js",
+        "bytes": 19378,
+        "sha256": "1375a54e654a4cf60299f85f5ee081096079b8459a6cafce9f3060fc13b3700b"
+      },
+      {
+        "path": "site/index.html",
+        "bytes": 5467,
+        "sha256": "bc7a5f9ec997391a32e60437b55999ac622a34ac227110b6a237c1b980d590a7"
+      },
+      {
+        "path": "site/stable.json",
+        "bytes": 1082,
+        "sha256": "f37aa2ecf8e3f59d79bb67023e8b7efa1af614b67ba08a621af2164007bb26a9"
+      },
+      {
+        "path": "site/styles.css",
+        "bytes": 9205,
+        "sha256": "c7b82cd7a2e2ef446d088d1bab9c424475c1dfedc14f143a43e4561ae120c7a3"
+      },
+      {
+        "path": "site/_headers",
+        "bytes": 574,
+        "sha256": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc"
+      }
+    ],
+    "unchanged_during_intake": true
+  },
+  "main_base": "c1092c011d33bd97d8b289c032f860520ed8807b",
+  "accepted_files": [
+    {
+      "path": "site/index.html",
+      "sha256": "b8896c8c7c5009222fdc424671c24f80b3a415923fb3f94295688d24f6fcfde7"
+    },
+    {
+      "path": "site/styles.css",
+      "sha256": "c7b82cd7a2e2ef446d088d1bab9c424475c1dfedc14f143a43e4561ae120c7a3"
+    },
+    {
+      "path": "site/app.js",
+      "sha256": "bb7b094322b6400e85eaef29201bfae9f4b5f5c94b597a41f57e762443714f87"
+    },
+    {
+      "path": "site/stable.json",
+      "sha256": "634c96e10a0141658b8bc38a9120f3db08c53cf978a89bad06521b8e7a1a2699"
+    },
+    {
+      "path": "site/preview.json",
+      "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+    },
+    {
+      "path": "site/_headers",
+      "sha256": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc"
+    },
+    {
+      "path": "src/build_pages_site.py",
+      "sha256": "c184cd0cb3cea7277f8044e60b022ecbbc0e8be416484e1a52ef96ffd3143a4a"
+    },
+    {
+      "path": "docs/user/interface/site.zh-CN.json",
+      "sha256": "9db9b9ebc33a018bc1ec81d8d88b954efe0da38266fc65f29c3bd22e84c7fed9"
+    },
+    {
+      "path": "docs/user/interface/site.en.json",
+      "sha256": "871f418f33ae41e6e81895d2324e7668d6721424d58a5e4de49c3504b1614df7"
+    },
+    {
+      "path": "src/release_workflow.py",
+      "sha256": "7f58180f7e3821798396f5e45b8465367480a8db25e92a6d815068b54af019b8"
+    },
+    {
+      "path": ".gitattributes",
+      "sha256": "d92f738064774687a301614c707bc349cec238b91781e7aa7c347dc21445d187"
+    }
+  ],
+  "prepared_homepage": {
+    "path": "Temp/tasks/20261024-updates-web-publish/AC7MultiSP-Pages-homepage.zip",
+    "bytes": 21972,
+    "sha256": "d9ede927b156a57a0dfd3f70fb4efedee9eed29dfc6314cdf4251cc80b384ae5",
+    "members": [
+      {
+        "path": "_headers",
+        "bytes": 574,
+        "sha256": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc"
+      },
+      {
+        "path": "app.js",
+        "bytes": 19378,
+        "sha256": "1375a54e654a4cf60299f85f5ee081096079b8459a6cafce9f3060fc13b3700b"
+      },
+      {
+        "path": "index.html",
+        "bytes": 5467,
+        "sha256": "bc7a5f9ec997391a32e60437b55999ac622a34ac227110b6a237c1b980d590a7"
+      },
+      {
+        "path": "stable.json",
+        "bytes": 1082,
+        "sha256": "f37aa2ecf8e3f59d79bb67023e8b7efa1af614b67ba08a621af2164007bb26a9"
+      },
+      {
+        "path": "styles.css",
+        "bytes": 9205,
+        "sha256": "c7b82cd7a2e2ef446d088d1bab9c424475c1dfedc14f143a43e4561ae120c7a3"
+      },
+      {
+        "path": "user-docs/作者与授权.en.txt",
+        "bytes": 1045,
+        "sha256": "af557038c242b278587d9388085d146baa665aa8a47092bf68e1fbca906f711d"
+      },
+      {
+        "path": "user-docs/作者与授权.txt",
+        "bytes": 928,
+        "sha256": "04649421f32bc47a3c70db9df28299ab295cf8598f270b010da4273c7abf22df"
+      },
+      {
+        "path": "user-docs/功能说明.en.txt",
+        "bytes": 4323,
+        "sha256": "b78dfab43a5a198888ebcb37c2003106367be90da02321b08f1e0b340bfbc874"
+      },
+      {
+        "path": "user-docs/功能说明.txt",
+        "bytes": 3731,
+        "sha256": "d5a7e9de94de492930c93a12c5276ee2a6a90c5d991a0991dfaed1851a836bc8"
+      },
+      {
+        "path": "user-docs/安装说明.en.txt",
+        "bytes": 1698,
+        "sha256": "bc98fdf07022dcd3f76c7aaa39c92b77fc7fdfb778273a81297bda45b317f772"
+      },
+      {
+        "path": "user-docs/安装说明.txt",
+        "bytes": 1479,
+        "sha256": "0a5a0ae0ecf71b21304641462b55b618910b16bf18721fa31e9fdb85ef139fd2"
+      },
+      {
+        "path": "user-docs/更新日志.en.txt",
+        "bytes": 1876,
+        "sha256": "236f462f3400fe359b9ed612086c66c44f11572d64144ac5f165a0ea58fe9551"
+      },
+      {
+        "path": "user-docs/更新日志.txt",
+        "bytes": 1445,
+        "sha256": "5fa8b0baa6b673ea2e0cbf5d874b6b8662c8614799b23c437d4e1f7098863fb7"
+      },
+      {
+        "path": "preview.json",
+        "bytes": 1024,
+        "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+      }
+    ],
+    "source_receipt": "Temp/tasks/20261024-updates-web-publish/首页发布准备.json",
+    "unchanged": true,
+    "main_document_differences": [
+      {
+        "path": "user-docs/功能说明.en.txt",
+        "prepared_sha256": "b78dfab43a5a198888ebcb37c2003106367be90da02321b08f1e0b340bfbc874",
+        "main_sha256": "7b547270f0ae2fbac1a4678dae336fff998f41d49720d3197cd511c44aa98fa1"
+      },
+      {
+        "path": "user-docs/功能说明.txt",
+        "prepared_sha256": "d5a7e9de94de492930c93a12c5276ee2a6a90c5d991a0991dfaed1851a836bc8",
+        "main_sha256": "75132fa2c79ced82d9b4356c2e9a231e001d17cb0beb98025567926f044b1c5a"
+      },
+      {
+        "path": "user-docs/更新日志.en.txt",
+        "prepared_sha256": "236f462f3400fe359b9ed612086c66c44f11572d64144ac5f165a0ea58fe9551",
+        "main_sha256": "68182a77dc7087073acc6b33f0ed54646c691469b27f4ad84c28addcf8e31f82"
+      },
+      {
+        "path": "user-docs/更新日志.txt",
+        "prepared_sha256": "5fa8b0baa6b673ea2e0cbf5d874b6b8662c8614799b23c437d4e1f7098863fb7",
+        "main_sha256": "2caca16aafd96b165763a05651597ef66644dc14a35a2777d0332f87a924b6a5"
+      }
+    ],
+    "cloudflare_uploaded": false,
+    "role": "来源线程旧上传包，仅作追溯；不用于本次2.25.2发布",
+    "document_comparison_main_base": "c1092c011d33bd97d8b289c032f860520ed8807b"
+  },
+  "manifests": {
+    "stable_version": "2.25.2",
+    "stable_status": "ready",
+    "stable_source": "作者本轮确认正式发布及EXE链接；本地R2下载摘要已核对，Pages尚未部署",
+    "preview_version": "2.22.0",
+    "preview_install_enabled": false,
+    "preview_source": "原ZIP按字节接收，保持独立旧协议"
+  },
+  "workflow_changes": [
+    "主页固定文字集中到40对site双语JSON，输出时填入HTML及app模板",
+    "preview.json成为受管生成输入，不依赖输出目录偶然残留文件",
+    "八份正文跟随当前main，不从旧上传ZIP反向覆盖",
+    "已准备包、静态接收、生成与部署分别记录；发布须先确认真实产物和链接",
+    "新增release_workflow统一构建入口、现成产物准备、R2摘要核验、完整Pages包及部署后核对；Nexus通用ZIP由作者更新"
+  ],
+  "verification": {
+    "source_snapshot_hashes_checked": true,
+    "zip_crc_and_members_checked": true,
+    "python_ast_checked": true,
+    "bilingual_keys_equal": true,
+    "documentation_relative_links_checked": 419,
+    "broken_links": 0,
+    "site_generated": true,
+    "browser_started": false,
+    "mod_compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "cloudflare_deployed": false,
+    "remote_downloads_verified": true,
+    "remote_download_verification_scope": "仅R2固定EXE；蓝奏云及Nexus文件尚未核验",
+    "preview_staged_bytes_preserved": true
+  },
+  "constraints": [
+    "main原AGENTS.md未提交修改及旧安装cmd删除保持，不夹入提交",
+    "现有2.25.2游戏产物/回执及其他用户线程不修改",
+    "新site词条位于docs/user/interface，现行source_snapshot会收集JSON；后续构建来源按新输入冻结，旧回执不改写"
+  ]
+}

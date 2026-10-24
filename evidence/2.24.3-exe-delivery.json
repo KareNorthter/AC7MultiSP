@@ -1,0 +1,72 @@
+{
+  "schema": 1,
+  "version": "2.24.3",
+  "installer_version": "2.24.3",
+  "candidate": true,
+  "created_at": "2026-10-23T23:37:29.244906+00:00",
+  "source_commit": "5a33e3a8de7cd02a32ce70400d4d5145db9c9e43",
+  "source_workspace": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\worktree",
+  "authorization": "用户2026-10-24授权编译并生成新EXE，无需单独ZIP；未授权测试或安装",
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\build-2.24.3-r1",
+    "receipt_sha256": "d151bd5a4c1e806740d5f0dc2d0ab3a8926ee5d9480f1e31134f96baca45698f",
+    "core_recompiled": true,
+    "ui_sha256": "9e50c658f8c5e43c2971718a38e57c230728bf3d97da3d9dc185f7414e8fc3c9"
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-f6\\delivery-2.24.3-r1",
+    "receipt_sha256": "872e363af051fe2077ed832ce7bf88df747bff95ec68ebf935b7193ee4103f21",
+    "exe_receipt_sha256": "c965fcb210539cc706e917f09beb2ac8c1273402c65e6401cfbeeb0a797453d1",
+    "source_verified": true,
+    "internal_zip_sha256": "a21340b303f7c4da2c27dafda89ecf870d10642d61468f8fac6a9ea8480a20e7",
+    "standalone_zip_delivered": false
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.24.3\\AC7MultiSP_Installer.exe",
+    "size": 63221248,
+    "sha256": "65c6ee8e89be2e81e9f0abcb22ff4942c20e9510fcbc7048f3a7e23af65010f0",
+    "file_version": "2.24.3.0",
+    "product_version": "2.24.3",
+    "x64": true
+  },
+  "runtime_files": {
+    "Scripts/config_store.lua": "446ff82986e321fe1be456cabc6a043d22ef70c9b07766f2a1b6987a83a3b517",
+    "Scripts/debug_aircraft.lua": "948124933a7c323719a04e2d797de3f28c8b91125ef4d463220d5d15e4441ebe",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "d4b301bf8cb92044bf314c84f03c1b95a977f05fa0b7a45e3ac8b4cda7b674af",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "3234d93351740f8cb3a219ce98d1c143b32acfd6c06ed6566ac929ed0cb6db13",
+    "Scripts/runtime_context.lua": "e5f21cb6215f8d9d0641724e69b304842da9563be88f149427e1528094235807",
+    "Scripts/user_texts.lua": "ab5ec40bbb0adeb883478ce56dadb92bf23542bb301874c21dfdce7de129af61",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "08ed98ad289d53becdc5681d96250cc83f2e45cb57de5de246525442480477ef",
+    "bin/DualSPUI.dll": "9e50c658f8c5e43c2971718a38e57c230728bf3d97da3d9dc185f7414e8fc3c9",
+    "VERSION": "74f895988363f0d39f440ad61a0c3688f82d0f8b8f07dd3d8d92c54c10adc208"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "mount_resource_count": 77,
+  "pak_member_count": 154,
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "lua_syntax_only": true,
+  "ui_preview_run": false,
+  "installer_executed": false,
+  "tests_run": false,
+  "game_installed": false,
+  "game_started": false,
+  "game_closed": false,
+  "uploaded": false,
+  "pending": [
+    "新版安装器实际排版与更新检测",
+    "关闭游戏确认及安装/更新/卸载异常分支",
+    "F6页脚水印、日志入口及DLC换机许可的游戏验证"
+  ]
+}
