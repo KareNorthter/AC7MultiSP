@@ -17,6 +17,35 @@ function Module.new(deps)
     -- 状态桥沿用原中文匹配文案；F6按手动语言从同一catalog取显示值，不受游戏语言影响。
     local function tr(key)return translate(key,"zh")end
     local self={response=0,ack=0,status="idle",notice="",options={},lastOptions=-1}
+    local aircraftNames,nameInstance,nameCulture={}
+    local function nameResolver(instance)
+        -- 只缓存字符串；原生对象仅在本次刷新中使用，接口未就绪不影响候选资格。
+        local ok,localizer,culture=pcall(function()
+            local object=StaticFindObject("/Script/Nimbus.Default__LocalizationManager")
+            if not valid(object)then return end
+            local value=object:GetCulture()
+            local text=type(value)=="string"and value or value:ToString()
+            if type(text)~="string"or text==""then return end
+            return object,text
+        end)
+        if not ok or not localizer or not culture then return function()end end
+        local current=address(instance)
+        if current~=nameInstance or culture~=nameCulture then
+            aircraftNames={};nameInstance=current;nameCulture=culture
+        end
+        return function(code)
+            local key="AircraftShort_Name_"..code:lower()
+            if aircraftNames[key]then return aircraftNames[key]end
+            local readOK,name=pcall(function()
+                if not localizer:HasString(key)then return end
+                return localizer:LocalizeString(key,true,""):ToString()
+            end)
+            if readOK and type(name)=="string"and name:find("%S")and #name<=256
+                and name~=key and not name:find("%c")then
+                aircraftNames[key]=name;return name
+            end
+        end
+    end
     local function changed()deps.changed()end
     local function waiting(pending,stage)
         -- 只在阶段变化时记一次，不把换机等待变成逐帧日志。
@@ -87,6 +116,7 @@ function Module.new(deps)
         self.lastOptions=os.clock();self.options={};self.optionsError=nil
         local ok,err=pcall(function()
             local context=deps.context();assert(valid(context.instance),"游戏实例尚未就绪")
+            local modName=nameResolver(context.instance)
             local owned,ownedKnown={},false
             local readOK,encoded=pcall(function()
                 local accepted,text=deps.owned(context.instance:GetAddress());assert(accepted,text)
@@ -117,6 +147,10 @@ function Module.new(deps)
                     -- 无法确认DLC许可时不提供候选；替换官方机体的Mod同样核对目录DLCID。
                     local permitted=extra and licensed==true or not extra and (isMod or self:contentOwned(info.dlc_id)==true)
                     if permitted then
+                        if isMod then
+                            local localized=modName(info.code)
+                            if localized then label=localized..label:sub(#name+1);name=localized end
+                        end
                         self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
                             purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}
                     end

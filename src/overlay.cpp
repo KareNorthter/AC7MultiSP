@@ -71,7 +71,8 @@ ULONGLONG lastControllerUpdate{};
 int lastSequence=-1;
 bool panel=false,initialized=false;
 HHOOK panelKeyboardHook{};
-bool panelBackspaceHeld=false; // 关闭面板后仍消费本次按压的尾沿，避免长按落回原生暂停。
+HHOOK panelMessageHook{};
+unsigned panelBackspaceSources=0; // 分别记账普通/原始键盘，关闭面板后仍消费已接管按压的尾沿。
 bool panelBackspaceCaptured=false;
 std::atomic<bool> cursorOwned{false};
 std::mutex cursorMutex;
@@ -231,10 +232,11 @@ void togglePanel(bool open) {
 }
 LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     std::lock_guard<std::recursive_mutex> guard(renderMutex);
+    // 即使场景许可已关闭，失焦仍须清理本轮按压，避免返回单人后沿用旧状态。
+    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceSources=0;panelBackspaceCaptured=false;}
     if(!runtimeEnabled.load())return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
     if(imguiContext)ImGui::SetCurrentContext(imguiContext);
     // 改键的按下、连发和释放一起消费，避免改完键后长按顺带操作管理页。
-    if(msg==WM_KILLFOCUS){suppressedCaptureKey=0;suppressedCaptureMouse=false;captureSlot=-1;consumedShortcutKeys={};panelBackspaceHeld=false;panelBackspaceCaptured=false;}
     // 回正键捕获也接受真实鼠标中键；原生可能只交付RAWINPUT，所以两条消息路径都处理。
     if(gameFocused() && (msg==WM_MBUTTONDOWN || msg==WM_MBUTTONUP) && (suppressedCaptureMouse || (panel && captureSlot==8))) {
         if(msg==WM_MBUTTONDOWN && !suppressedCaptureMouse){suppressedCaptureMouse=true;captureKeyboardKey(VK_MBUTTON,shortcutModifiers());}
@@ -345,24 +347,63 @@ LRESULT CALLBACK windowProc(HWND hwnd,UINT msg,WPARAM w,LPARAM l) {
     if(panel && ((msg>=WM_KEYFIRST && msg<=WM_KEYLAST)||(msg>=WM_MOUSEFIRST && msg<=WM_MOUSELAST)||msg==WM_INPUT))return 0;
     return CallWindowProcW(originalWindowProc,hwnd,msg,w,l);
 }
-// 先于游戏/加载器的消息分发处理退格，交给ImGui编辑；不安装全局低级键盘钩子。
+// 预读只隔离，不投递或改变按压状态；实际取出消息后才交给ImGui一次。
+bool panelBackspaceEvent(bool down,unsigned source,bool removed) {
+    const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
+    if(!active && (!panelBackspaceSources || !gameFocused()))return false;
+    if(!removed)return true;
+    const bool wasHeld=panelBackspaceSources!=0;
+    if(down)panelBackspaceSources|=source;else panelBackspaceSources&=~source;
+    const bool held=panelBackspaceSources!=0;
+    if(imguiContext) {
+        ImGui::SetCurrentContext(imguiContext);
+        if(active && held && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
+        if(active && held && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
+        else if(held!=wasHeld && (!held || (active && !panelBackspaceCaptured)))
+            ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,held);
+    }
+    if(!held){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
+    return true;
+}
+// 先于游戏/加载器的键盘钩子处理；仅当前游戏窗口线程，不安装全局低级钩子。
 LRESULT CALLBACK panelKeyboardProc(int code,WPARAM key,LPARAM flags) {
-    if(code!=HC_ACTION || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
+    if((code!=HC_ACTION && code!=HC_NOREMOVE) || key!=VK_BACK)return CallNextHookEx(panelKeyboardHook,code,key,flags);
     try {
         std::lock_guard<std::recursive_mutex> guard(renderMutex);
         const bool down=(flags&(1LL<<31))==0;
-        const bool active=initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused();
-        if(!active && !panelBackspaceHeld)return CallNextHookEx(panelKeyboardHook,code,key,flags);
-        const bool wasHeld=panelBackspaceHeld;panelBackspaceHeld=down;
-        if(imguiContext) {
-            ImGui::SetCurrentContext(imguiContext);
-            if(active && down && !wasHeld)panelBackspaceCaptured=captureSlot>=0;
-            if(active && down && !wasHeld && panelBackspaceCaptured)captureKeyboardKey(VK_BACK,shortcutModifiers());
-            else if(!down || (active && !panelBackspaceCaptured))ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace,down);
-        }
-        if(!down){panelBackspaceCaptured=false;if(suppressedCaptureKey==VK_BACK)suppressedCaptureKey=0;}
-        return 1; // HC_NOREMOVE及其他键始终直通；只消费已实际取出的退格按下/释放。
+        if(panelBackspaceEvent(down,1,code==HC_ACTION))return 1;
     }catch(...) {return CallNextHookEx(panelKeyboardHook,code,key,flags);}
+    return CallNextHookEx(panelKeyboardHook,code,key,flags);
+}
+// WM_INPUT不经过WH_KEYBOARD；取消息时把已接管的退格改为WM_NULL，避免更早的原生处理看到它。
+LRESULT CALLBACK panelMessageProc(int code,WPARAM removed,LPARAM data) {
+    if(code!=HC_ACTION || !data)return CallNextHookEx(panelMessageHook,code,removed,data);
+    auto& message=*reinterpret_cast<MSG*>(data);
+    if(message.hwnd!=gameWindow)return CallNextHookEx(panelMessageHook,code,removed,data);
+    if(message.message!=WM_INPUT && message.message!=WM_KEYDOWN && message.message!=WM_SYSKEYDOWN &&
+        message.message!=WM_KEYUP && message.message!=WM_SYSKEYUP)return CallNextHookEx(panelMessageHook,code,removed,data);
+    try {
+        std::lock_guard<std::recursive_mutex> guard(renderMutex);
+        if(!panelBackspaceSources && !(initialized && imguiContext && runtimeEnabled.load() && panel && gameFocused()))
+            return CallNextHookEx(panelMessageHook,code,removed,data);
+        const bool taken=removed==PM_REMOVE;
+        bool consumed=false;
+        if((message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN ||
+            message.message==WM_KEYUP || message.message==WM_SYSKEYUP) && message.wParam==VK_BACK) {
+            const bool down=message.message==WM_KEYDOWN || message.message==WM_SYSKEYDOWN;
+            consumed=panelBackspaceEvent(down,1,taken);
+        }else if(message.message==WM_INPUT) {
+            RAWINPUT raw{};UINT size=sizeof(raw);
+            if(GetRawInputData(reinterpret_cast<HRAWINPUT>(message.lParam),RID_INPUT,&raw,&size,sizeof(RAWINPUTHEADER))!=static_cast<UINT>(-1)
+                && raw.header.dwType==RIM_TYPEKEYBOARD && raw.data.keyboard.VKey==VK_BACK) {
+                consumed=panelBackspaceEvent((raw.data.keyboard.Flags&RI_KEY_BREAK)==0,2,taken);
+                if(consumed && taken && GET_RAWINPUT_CODE_WPARAM(message.wParam)==RIM_INPUT)
+                    DefWindowProcW(message.hwnd,message.message,message.wParam,message.lParam);
+            }
+        }
+        if(consumed){message.message=WM_NULL;message.wParam=0;message.lParam=0;return 0;}
+    }catch(...) {return CallNextHookEx(panelMessageHook,code,removed,data);}
+    return CallNextHookEx(panelMessageHook,code,removed,data);
 }
 void makeTarget(IDXGISwapChain* swap) {
     ID3D11Texture2D* buffer{};
@@ -409,6 +450,8 @@ bool init(IDXGISwapChain* swap) {
     originalWindowProc=reinterpret_cast<WNDPROC>(SetWindowLongPtrW(gameWindow,GWLP_WNDPROC,reinterpret_cast<LONG_PTR>(&windowProc)));
     panelKeyboardHook=SetWindowsHookExW(WH_KEYBOARD,panelKeyboardProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
     if(!panelKeyboardHook)nativeLog("MANAGEMENT_BACKSPACE_GATE_UNAVAILABLE");
+    panelMessageHook=SetWindowsHookExW(WH_GETMESSAGE,panelMessageProc,nullptr,GetWindowThreadProcessId(gameWindow,nullptr));
+    if(!panelMessageHook)nativeLog("MANAGEMENT_BACKSPACE_MESSAGE_GATE_UNAVAILABLE");
     initialized=true;nativeLog("DX11 overlay ready");return true;
 }
 // 管理界面的文字按用户选择显示；日志正文保留记录时的原文。

@@ -14,6 +14,7 @@ AC7MultiSP Features
    • Change the SP weapon combination during a mission.
    • Unlimited ammunition and fast reload for SP weapons.
    • Change aircraft and restart the mission. DLC aircraft are offered only when ownership is confirmed; unowned DLC or uncertain ownership is excluded.
+     Mod aircraft prefer their in-game display names. Search by name, internal code or ID, for example CFA-50, FA50 or 241.
    • Local validation candidate: the main-menu F6 Debug page provides a quick test preset for M1–M20 and DLC SP Missions, with aircraft, one SP and difficulty selection, direct launch and optional automatic launch on startup. M13 retains its assigned SP. Startup logo skipping is enabled by default and can be disabled in the preset. In-game validation is still pending.
 
 2. Common controls
