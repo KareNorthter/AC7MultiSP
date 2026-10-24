@@ -82,7 +82,8 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=21; // 三页布局及独立注视输入，核心/UI/Lua须成套部署。
+constexpr int managementProtocol=22; // 新增启动更新选项，UI/Lua须成套，避免旧界面静默漏存。
+bool draftStartupUpdateCheck=true;
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
 bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
@@ -507,6 +508,7 @@ void captureKeyboardKey(int key,int mods) {
 // 管理页打开时加载保存值；未保存的草稿不改变游戏输入。
 void loadManagementDraft() {
     draftLanguage=state.at("language").get<std::string>();
+    draftStartupUpdateCheck=state.at("startup_update_check_enabled").get<bool>();
     draftModEnabled=state.at("mod_enabled").get<bool>();
     draftTaskMountEnabled=state.at("task_mount_enabled").get<bool>();
     draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
@@ -786,6 +788,7 @@ void refreshLogs() {
 void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
+        {"startup_update_check_enabled",draftStartupUpdateCheck},
         {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"target_gaze_pad_enabled",draftTargetGazePad},{"target_gaze_keyboard_enabled",draftTargetGazeKeyboard},{"camera_hold_enabled",draftCameraHold},
@@ -837,6 +840,7 @@ void refreshState() {
             state.at("target_gaze_pad_enabled").get<bool>();state.at("target_gaze_keyboard_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();
             state.at("gun_salvo_enabled").get<bool>();
+            state.at("startup_update_check_enabled").get<bool>();
             if(state.at("debug_weapons").at("protocol").get<int>()!=1)throw std::runtime_error("SP调试协议不匹配");
             state.at("debug_weapons").at("infinite").get<bool>();state.at("debug_weapons").at("fast").get<bool>();
             state.at("debug_weapons").at("available").get<bool>();
@@ -1225,9 +1229,12 @@ extern "C" __declspec(dllexport) int dualsp_flat_management_supported(void*) {re
 extern "C" __declspec(dllexport) int dualsp_updates_context_v1(void* luaState) {
     try {
         static const dualsp::LuaApi api;
-        if(api.top(luaState)!=1)return 0;
+        const int count=api.top(luaState);
+        if(count!=1 && count!=2)return 0;
         const auto context=api.readInteger(luaState,1);
-        if(context>=0 && context<=3)dualsp::updates::service().context(static_cast<int>(context));
+        const auto automatic=count==2?api.readInteger(luaState,2):1;
+        if(context>=0 && context<=3 && (automatic==0 || automatic==1))
+            dualsp::updates::service().context(static_cast<int>(context),automatic==1);
     }catch(...) {nativeLog("UPDATE_CONTEXT_IGNORED");}
     return 0;
 }

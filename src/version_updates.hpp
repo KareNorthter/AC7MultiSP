@@ -197,6 +197,7 @@ inline std::string fetch() {
 class Service {
     std::atomic<int> context_{0}; // 0停用，1任务外，2任务内，3主菜单。
     std::atomic<bool> started_{false},claimed_{false},browserBusy_{false},checkBusy_{false};
+    std::atomic<bool> automaticEnabled_{false}; // 收到游戏线程的已加载配置前，不申请自动联网。
     std::atomic<Status> status_{Status::Waiting};
     std::atomic<BrowserStatus> browser_{BrowserStatus::Idle};
     std::shared_ptr<const Snapshot> snapshot_;
@@ -222,6 +223,11 @@ class Service {
                 const HANDLE delay=CreateEventW(nullptr,TRUE,FALSE,nullptr);
                 ensure(delay!=nullptr,"无法安排后台版本检查");
                 WaitForSingleObject(delay,2000);CloseHandle(delay);
+                if(!self.automaticEnabled_.load(std::memory_order_acquire)) {
+                    self.status_.store(Status::Waiting,std::memory_order_release);
+                    self.checkBusy_.store(false,std::memory_order_release);
+                    nativeLog("UPDATE_CHECK_CANCELLED automatic_disabled");return 0;
+                }
             }
             auto result=parse(fetch());
             const auto status=result.status;
@@ -271,12 +277,16 @@ class Service {
     }
 public:
     void context(int value) noexcept {
+        context_.store(value,std::memory_order_release); // 运行许可关闭时只停上下文，不覆盖已保存的启动选项。
+    }
+    void context(int value,bool automatic) noexcept {
+        automaticEnabled_.store(automatic,std::memory_order_release);
         context_.store(value,std::memory_order_release);
-        if(value!=3 || started_.exchange(true))return; // 自动检查只申请一次；额外请求必须由用户点击。
-        requestCheck(false);
+        if(value!=3 || started_.exchange(true))return; // 首次主菜单即消费启动机会，游戏中再开启不补发。
+        if(automatic)requestCheck(false);
     }
     bool requestCheck(bool manual=true) noexcept {
-        if(!context_.load(std::memory_order_acquire) || checkBusy_.exchange(true))return false;
+        if(!context_.load(std::memory_order_acquire) || (!manual && !automaticEnabled_.load(std::memory_order_acquire)) || checkBusy_.exchange(true))return false;
         started_.store(true,std::memory_order_release);
         status_.store(Status::Checking,std::memory_order_release);
         std::atomic_store_explicit(&snapshot_,std::shared_ptr<const Snapshot>{},std::memory_order_release);

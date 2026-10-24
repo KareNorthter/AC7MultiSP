@@ -8,7 +8,8 @@ namespace AC7MultiSP.Setup {
         internal static DialogResult Show(IWin32Window owner, string message, string title, bool confirm = false, string confirmKey = "common.ok") {
             using (var dialog = new Form()) {
                 dialog.Text = title; dialog.Font = new Font("Microsoft YaHei UI", 10F);
-                dialog.AutoScaleMode = AutoScaleMode.Dpi; dialog.StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
+                dialog.AutoScaleDimensions = new SizeF(96F, 96F); dialog.AutoScaleMode = AutoScaleMode.Dpi;
+                dialog.StartPosition = owner == null ? FormStartPosition.CenterScreen : FormStartPosition.CenterParent;
                 dialog.FormBorderStyle = FormBorderStyle.FixedDialog; dialog.MaximizeBox = false; dialog.MinimizeBox = false; dialog.ShowInTaskbar = owner == null;
                 int height = Math.Max(85, Math.Min(380, TextRenderer.MeasureText(message, dialog.Font, new Size(590, 0), TextFormatFlags.WordBreak).Height + 20));
                 dialog.ClientSize = new Size(640, height + 88);

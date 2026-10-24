@@ -15,7 +15,7 @@
   },
   "original_message_replacements": 265,
   "original_message_replacements_unique": 264,
-  "catalog_entries_per_language": 471,
+  "catalog_entries_per_language": 473,
   "sources": [
     "docs/user/interface/game.zh-CN.json",
     "docs/user/interface/game.en.json"
@@ -42,8 +42,9 @@
   "original_default_fallback": 1,
   "original_literal_bilingual_total_excluding_language_sentinel": 214,
   "resources_id_rule": "初次提取以英文短语和摘要生成稳定ID；后续修改中英文值时保留ID，禁止按新文字重建ID。",
-  "stable_diagnostic_match_keys": 266,
+  "stable_diagnostic_match_keys": 267,
   "language_boundary": "原生选装页跟随游戏语言；F6界面、状态通知和文档按管理页语言。状态桥的原中文片段只作匹配键，两种显示正文均来自catalog。",
-  "current_message_replacements": 267,
-  "additional_bridge_messages": 2
+  "current_message_replacements": 268,
+  "additional_bridge_messages": 3,
+  "startup_update_option": "启动检查默认开启，随管理设置保存；已存在配置仅补缺失字段，手动检查不受开关影响；管理协议22，配置版本19保留"
 }

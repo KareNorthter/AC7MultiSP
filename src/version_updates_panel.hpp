@@ -10,6 +10,7 @@ void drawVersionUpdatesPage() {
     const auto status=updates.status();
     const auto snapshot=updates.snapshot();
     if(ImGui::BeginChild("UpdateVersions",{0,0},ImGuiChildFlags_Borders|ImGuiChildFlags_AutoResizeY)) {
+        ImGui::Checkbox(uiText("updates.check_on_startup"),&draftStartupUpdateCheck);
         ImGui::Text("%s  %s",uiText("current.version.16c8badf"),dualsp::updates::currentVersion);
         const std::string latest=std::string(uiText("latest.version.51f76219"))+"  "+
             (snapshot && !snapshot->latest.empty()?snapshot->latest:"—");

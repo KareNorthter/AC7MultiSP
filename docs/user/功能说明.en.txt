@@ -25,6 +25,7 @@ These are the default controls. Keyboard bindings can be customized.
 • Enable persistent target tracking separately on the Camera page of the management interface. Hold Y on the controller to start tracking, then hold Y again to stop. On the keyboard, press the target-tracking key assigned in the game settings once to start, and again to stop.
 • Press L3: recenter the camera / stop target tracking. Hold R3: toggle camera hold.
 • Use "Version and Updates" to check manually. Download buttons appear only when a newer version is found: R2 is the primary link, with other links numbered as backups. The feedback row shows the email and test QQ group and can open the mod's log folder.
+  "Check for updates when the game starts" is enabled by default. Click "Save settings" after changing it. Disabling it skips automatic checks on the next launch; manual checks remain available. Existing personal settings and loadouts are preserved.
 
 3. Multi-SP weapon model support
 1. Fully supported:
