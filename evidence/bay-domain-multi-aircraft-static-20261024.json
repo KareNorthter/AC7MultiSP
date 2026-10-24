@@ -1,0 +1,2789 @@
+{
+  "日期": "2026-10-24",
+  "主题": "CFA-50方法与SU-57、DarkStar、XFA-33三型舱门静态比较",
+  "分支": "codex/research-mod-aircraft-compat",
+  "基线": "32aebeb7b84a49adfbbbc8d2606980a00244485b",
+  "核对main": "09cdc824ab9fe7544137f639c2c6a1de7e5d2135",
+  "授权": "先静态研究同类问题、判断能否共用方法或需逐机适配；本轮不实现扩展，不操作游戏。",
+  "执行范围": {
+    "读取游戏进程": false,
+    "调用游戏函数": false,
+    "进程写入": false,
+    "操作游戏": false,
+    "修改产品源码": false,
+    "编译": false,
+    "编写或运行测试": false,
+    "安装": false,
+    "推送上传": false
+  },
+  "源码状态": "main已包含CFA-50候选7a229cf与名称/IRCM候选32aebeb；相关舱门文件与本研究分支相同。本轮不核查实际安装或实机验收，旧回执的未安装状态不外推为当前现场。",
+  "资源范围": {
+    "PAK提供者": "当前Mod索引优先，原版pakchunk及补丁只补查原版资源；替换组使用实际fenra/b/c模型而非原su30/su33/su30sm外观。",
+    "原版索引成员数": 60955,
+    "解析资源数": 84,
+    "缺失目标": [],
+    "骨骼表行数": 657
+  },
+  "CFA50现有方法": {
+    "本体域": "顶部12根SWPCoverC骨使用swcc=0/1共用域，机腹两根使用swc3。",
+    "原生根因": "原生每帧只给当前配置命中的域复制spwc。选配置2写188/18c/190，不写180/184/194，旧顶部值冻结。",
+    "候选处理": "原生Parts完整更新一次；当前通道用原生结果，非当前swc1/swc2按delta/0.4*speed降到-0.01，再以max重算swcc，只写180/184/194。",
+    "保留": "不压spwc，不改request/phase/发射门禁，不写骨骼姿态，不强制Tick或动画求值。独立于多挂外观开关；绑定精确核Pawn/武器/BodyMesh/AnimClass/引擎/Parts域旗帜11。",
+    "状态": "有此前CFA-50现场支持的限定源码候选；本轮仅解释和静态比较，不补记实机通过。"
+  },
+  "通道与聚合": {
+    "public": "spwc/17c",
+    "independent": [
+      "swc1/180",
+      "swc2/184",
+      "swc3/188"
+    ],
+    "shared": {
+      "swca/18c": [
+        1,
+        2
+      ],
+      "swcb/190": [
+        0,
+        2
+      ],
+      "swcc/194": [
+        0,
+        1
+      ]
+    },
+    "编号约定": "集合使用原生配置0/1/2，不是逻辑SP1/2/3的位置"
+  },
+  "本体静态消费者": {
+    "pkfa": {
+      "swcc": 20
+    },
+    "su57tg": {
+      "spwc": 20
+    },
+    "dark": {
+      "swcc": 2
+    },
+    "su30": {
+      "swcc": 2
+    },
+    "su33": {
+      "spwc": 2
+    },
+    "su30sm": {
+      "swcc": 2
+    },
+    "fa50": {
+      "swc3": 2,
+      "swcc": 12
+    }
+  },
+  "实际资源与轨道": [
+    {
+      "code": "pkfa",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_pkfa.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\133bd1426ec7633d\\AcePlayerPawn_pkfa.json",
+        "sha256": "85a54e445be7ee26b50e24d98331d8b1621bad364d0d7065f1c206e0400eceb5"
+      },
+      "components": [
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP1.pkfa_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/pkfa_SWP1_AnimBP.pkfa_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/pkfa_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\7f49e8a5ea3c1793\\pkfa_SWP1_AnimBP.json",
+            "sha256": "8e6b6e6f2c8792ab8c30238d7d35f4e436ea6619634c8663f7c8ef4044f776bb"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP1_Anim.pkfa_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\de19d853244ae4e0\\pkfa_SWP1_Anim.json",
+            "sha256": "f4400cd501983106b7258b53368d79a3bfd1b0d2358b1fc720f8160ae09ef2d7"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP1_Skeleton.pkfa_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\3975fd11227cf74b\\pkfa_SWP1_Skeleton.json",
+            "sha256": "028b7e696a8cd2b5b2a93769c878b842cce647dab458ac0fab5aa139743c078f"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 11,
+          "cover_outputs": {
+            "spwc": 10
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPAnim1_01",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_02",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_03",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_04",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_05",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_06",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_07",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_08",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_09",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_10",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/pkfa/pkfa.pkfa",
+          "animation": "/Game/Blueprint/Player/Body/pkfa_AnimBP.pkfa_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/pkfa_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\bb89bd269f4fc418\\pkfa_AnimBP.json",
+            "sha256": "0b66adb8960b5a4a9d93ad084efbf1c3067de862217c37e31fe66b230b54305c"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/pkfa/pkfa_Anim.pkfa_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\ff3097ee2592c257\\pkfa_Anim.json",
+            "sha256": "59c1b5fc71369d44a757156f3b81edf517fa5afe62502836faa57f41ae757952"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/pkfa/pkfa_Skeleton.pkfa_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/pkfa/pkfa_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\45b6077005c9e6bc\\pkfa_Skeleton.json",
+            "sha256": "15803148a5e3525c585c85aa3c5c75f6cc88ef9b3c77dc81119102bb198fe71c"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 46,
+          "cover_outputs": {
+            "swcc": 20
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCoverC_31",
+              "index": 26,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_32",
+              "index": 27,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_29",
+              "index": 28,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_30",
+              "index": 29,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_27",
+              "index": 30,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_28",
+              "index": 31,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_25",
+              "index": 32,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_26",
+              "index": 33,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_23",
+              "index": 34,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_24",
+              "index": 35,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_21",
+              "index": 36,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_22",
+              "index": 37,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_19",
+              "index": 38,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_20",
+              "index": 39,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_17",
+              "index": 40,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_18",
+              "index": 41,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 42,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_01",
+              "index": 43,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_04",
+              "index": 44,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_03",
+              "index": 45,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "su57tg",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su57tg.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\7084d8ab78869f9f\\AcePlayerPawn_su57tg.json",
+        "sha256": "3062a9cb6cacb37aed91e72ba1167e1573c96abde9f5457a4b78f0c32ef3cd67"
+      },
+      "components": [
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP1.su57tg_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/su57tg_SWP1_AnimBP.su57tg_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/su57tg_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\a7fc056fa1698f73\\su57tg_SWP1_AnimBP.json",
+            "sha256": "f79c3a6b88ad26d6068fb71b3fda07bfe015935bd6bed5cc7c46a2ffebb200a2"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP1_Anim.su57tg_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\c83993eff5d3c7ce\\su57tg_SWP1_Anim.json",
+            "sha256": "6a1ed58047a788109ae190c5153a5a86e193687752e6a9c2c401d7134c25b407"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP1_Skeleton.su57tg_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1435959494861486\\su57tg_SWP1_Skeleton.json",
+            "sha256": "750f1e4f43bf3e0ef07c9cb820d72a9a4228d1358db8f9f35093d7f696f5aefb"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 11,
+          "cover_outputs": {
+            "spwc": 10
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPAnim1_01",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_02",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_03",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_04",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_05",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_06",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_07",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_08",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_09",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_10",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP2_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP2.su57tg_SWP2",
+          "animation": "/Game/Blueprint/Player/Body/su57tg_SWP2_AnimBP.su57tg_SWP2_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/su57tg_SWP2_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\a5b1b0f838dd6523\\su57tg_SWP2_AnimBP.json",
+            "sha256": "257a564f901a5158452b7fc175e1ea7dbfdf4a6cb3d501f10dcf21c029ce9e5b"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP2_Anim.su57tg_SWP2_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP2_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\d0964f54a252dfc6\\su57tg_SWP2_Anim.json",
+            "sha256": "0e9b9a798c9cbf551e7065cbe1c7d4a48d47a9bba8294f7c710299e7589ecb90"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/su57tg/su57tg_SWP2_Skeleton.su57tg_SWP2_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_SWP2_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\429cc91a61d5d275\\su57tg_SWP2_Skeleton.json",
+            "sha256": "1c60ec6eac7801dd284948cf327fbc0ed19ce546adaaab4aa0fab671914d6a53"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 11,
+          "cover_outputs": {
+            "spwc": 10
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPAnim1_01",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_02",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_03",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_04",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_05",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_06",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_07",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_08",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_09",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPAnim1_10",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/su57tg/su57tg.su57tg",
+          "animation": "/Game/Blueprint/Player/Body/su57tg_AnimBP.su57tg_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/su57tg_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\3d3994bdf676fd15\\su57tg_AnimBP.json",
+            "sha256": "8d3fb9b7531f8514e55f4592e1702f3c61573f5ba19218ab5018ce09756c323a"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/su57tg/su57tg_Anim.su57tg_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\44ac38e40f193c4f\\su57tg_Anim.json",
+            "sha256": "5d2a35018bff78ef2ce148e26809a2a8971d90879c6c4c5e5f62f6fa7b422759"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/su57tg/su57tg_Skeleton.su57tg_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/su57tg/su57tg_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\20fe07ac71167a59\\su57tg_Skeleton.json",
+            "sha256": "93b86d5d9a770287c504fc37f684b84924c190f9390684b9d0384b8a7fa46c40"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 46,
+          "cover_outputs": {
+            "spwc": 20
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_19",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_20",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_18",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_15",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_16",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_13",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_14",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 12,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 13,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 16,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_02",
+              "index": 34,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_01",
+              "index": 35,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 36,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_03",
+              "index": 37,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "dark",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dark.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\f14126e620cfa495\\AcePlayerPawn_dark.json",
+        "sha256": "db1b459560d72c314a6c1fdb9fccf549fac891444da22bd96f8ac798ba4398d8"
+      },
+      "components": [
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/dark/dark_SWP1.dark_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/dark_SWP1_AnimBP.dark_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/dark_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\c56a66d6a1df8191\\dark_SWP1_AnimBP.json",
+            "sha256": "9be721c339aaf37087c0f4742d0c7783ae569bca9d1f2eb9bc0ca16b693f5b4f"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/dark/dark_SWP1_Anim.dark_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/dark/dark_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\6bc4ffc413dd18f0\\dark_SWP1_Anim.json",
+            "sha256": "d356b903405aa9042d1f42946cb0db33990d192725a37f56f85b51000ff45678"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/dark/dark_SWP1_Skeleton.dark_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/dark/dark_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\32e54dadc9182841\\dark_SWP1_Skeleton.json",
+            "sha256": "d861ac136db364ef3a27b1106414f20059ee579aca4b12ee0189f58589e66ff0"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 17,
+          "cover_outputs": {
+            "spwc": 16
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_01",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_02",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_03",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 12,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_13",
+              "index": 13,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_14",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_16",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 16,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/dark/dark.dark",
+          "animation": "/Game/Blueprint/Player/Body/dark_AnimBP.dark_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/dark_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\17a14f24c2452a93\\dark_AnimBP.json",
+            "sha256": "0f1118b9e830efb8c708ef5e05c133a19a5eb44300a0be4371409111928ac7cc"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/dark/dark_Anim.dark_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/dark/dark_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\df051645ef67938b\\dark_Anim.json",
+            "sha256": "6db1a7f6408be3c59be1e2340bcd3203f91e435b649d0e98b8bfccadabaf1ab5"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/dark/dark_Skeleton.dark_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\pakchunk0-WindowsNoEditor_0_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/dark/dark_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\a7b8d56bcd53608a\\dark_Skeleton.json",
+            "sha256": "f159f2d88e7e6b8841c10e7776947478a706a816f5573ffc96ec8938f50241b9"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 36,
+          "cover_outputs": {
+            "swcc": 2
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCoverC_01",
+              "index": 10,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 11,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "su30",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\3acd107822b08bb7\\AcePlayerPawn_su30.json",
+        "sha256": "62ad051b801157e986b9ae5dd4855e93ac2bcdc1cfa1c1f3b4a5aa6a11041b1c"
+      },
+      "components": [
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/fenra/fenra.fenra",
+          "animation": "/Game/Blueprint/Player/Body/fenra_AnimBP.fenra_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenra_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\66f1d23df7b15068\\fenra_AnimBP.json",
+            "sha256": "444f9f5fd69e4cd6927d8eb9928b81c52fbac8de90a033b1daf3c0a1a3a52fcb"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenra/fenra_Anim.fenra_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\f922d79ed1f76f0e\\fenra_Anim.json",
+            "sha256": "5bf0cc4d42bde868373657d39731b5f35f33caef3f39441f26eb158c6c4eab6c"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenra/fenra_Skeleton.fenra_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\75185be99ad14b5d\\fenra_Skeleton.json",
+            "sha256": "d5a7acb869a6bbb7ff6f74eb092b2093430a172df521451718aa729ac27c48dd"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 83,
+          "cover_outputs": {
+            "swcc": 2
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCoverC_01",
+              "index": 33,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 34,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenra/fenra_SWP1.fenra_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/fenra_SWP1_AnimBP.fenra_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenra_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\611ae2dad19492f8\\fenra_SWP1_AnimBP.json",
+            "sha256": "41de519eb288c59cc576be0181a47d89f0424197f8bc0331b8e66011ba2b2db9"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenra/fenra_SWP1_Anim.fenra_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\710cc52df2007aa5\\fenra_SWP1_Anim.json",
+            "sha256": "8dc4f6723a275e905160a24586ee40b34fa065b59460175fb29d89ca41012a25"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenra/fenra_SWP1_Skeleton.fenra_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\4dcf1bf6307dd042\\fenra_SWP1_Skeleton.json",
+            "sha256": "b992cdacba175ceb6059ca0a8032b0ad830f8ebdbadabc064989d848099f7f2a"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 9,
+          "cover_outputs": {
+            "spwc": 6
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP2_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenra/fenra_SWP2.fenra_SWP2",
+          "animation": "/Game/Blueprint/Player/Body/fenra_SWP2_AnimBP.fenra_SWP2_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenra_SWP2_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\666117c494d3fe84\\fenra_SWP2_AnimBP.json",
+            "sha256": "756443628143bf3154dd5a36a61aa332dce1fbf5976d2fc04b25676f47a6c131"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenra/fenra_SWP2_Anim.fenra_SWP2_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP2_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\9ca35808212895d3\\fenra_SWP2_Anim.json",
+            "sha256": "663fef2b1bb022c66c8c0c38d8d6e87446f088a7ce8ffb2c2efefeb1a6a857dc"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenra/fenra_SWP2_Skeleton.fenra_SWP2_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP2_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\11d4d701eefa74c1\\fenra_SWP2_Skeleton.json",
+            "sha256": "60a9593677ac624f708004787f8c7ad532cf89352e1fb2c4939d514529fe91eb"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 16,
+          "cover_outputs": {
+            "spwc": 11
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP3_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenra/fenra_SWP3.fenra_SWP3",
+          "animation": "/Game/Blueprint/Player/Body/fenra_SWP3_AnimBP.fenra_SWP3_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenra_SWP3_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\0ecfdd75e6c41e36\\fenra_SWP3_AnimBP.json",
+            "sha256": "95584898ee26496200cd890a7a85bb22d433d374f3439ebf7c8e3cd30f9238ff"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenra/fenra_SWP3_Anim.fenra_SWP3_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP3_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\01b70cbfc6e2407e\\fenra_SWP3_Anim.json",
+            "sha256": "21ff2325e241c8dbe0fdf9c0360cb6f2fd73aaa334f058ed940c7aefd9a81446"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenra/fenra_SWP3_Skeleton.fenra_SWP3_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRA_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenra/fenra_SWP3_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\6bbe4db464c164fd\\fenra_SWP3_Skeleton.json",
+            "sha256": "89d4ee11c3daca100f81aaa6fafdedf54f9043797b3647db31083e9dced3ccbe"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 3,
+          "cover_outputs": {
+            "spwc": 1
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_17",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "su33",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su33.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\9e213a18440fb208\\AcePlayerPawn_su33.json",
+        "sha256": "eff088a5a498d2ba531dc2b8f883a13095f3e06b402175e3f510ceb3311478c0"
+      },
+      "components": [
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/fenrb/fenrb.fenrb",
+          "animation": "/Game/Blueprint/Player/Body/fenrb_AnimBP.fenrb_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrb_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\0b16913c609d618e\\fenrb_AnimBP.json",
+            "sha256": "d38e62e8609337a610b6bef370c2b1f235e4b582428b812194bb506dc8077d8d"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrb/fenrb_Anim.fenrb_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\e2e208b04f52774a\\fenrb_Anim.json",
+            "sha256": "027108d50ac1fb6298eb05ff18a9cde72bc29a705a902ccfe4c539d69057947e"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrb/fenrb_Skeleton.fenrb_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\93c312d6fdbbb660\\fenrb_Skeleton.json",
+            "sha256": "6edabee725188171aff1c98aa7704ccbb7b01dc50a40131d0aaa0ffdc3f6d967"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 83,
+          "cover_outputs": {
+            "spwc": 2
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_01",
+              "index": 33,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_02",
+              "index": 34,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP1.fenrb_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/fenrb_SWP1_AnimBP.fenrb_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrb_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\3cad228bf2da737e\\fenrb_SWP1_AnimBP.json",
+            "sha256": "9fc7fcb1ac433e86753b03519a8de6f50329b7d72489be1215d04f2fcd252590"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP1_Anim.fenrb_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\84bca28f5dfae131\\fenrb_SWP1_Anim.json",
+            "sha256": "6925017871649fc315905411f99e05624041626d88ad922aa81ac5ea9e979a59"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP1_Skeleton.fenrb_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\3fda2a350a7120cb\\fenrb_SWP1_Skeleton.json",
+            "sha256": "73abd239b4189f81adf32fe1b5dfb8864e8e37e8fbec08e7275d50922ba380a1"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 16,
+          "cover_outputs": {
+            "spwc": 11
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP2_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP2.fenrb_SWP2",
+          "animation": "/Game/Blueprint/Player/Body/fenrb_SWP2_AnimBP.fenrb_SWP2_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrb_SWP2_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\ff9a8919d0d77e77\\fenrb_SWP2_AnimBP.json",
+            "sha256": "2c181d63f492a997cb3561ea7a48fd7a161df779b09196972c0090a3180f54be"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP2_Anim.fenrb_SWP2_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP2_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\f787004d233acbe4\\fenrb_SWP2_Anim.json",
+            "sha256": "232265ba6d3c6f28d4e88be1802b05958cb1bf2031d57be2acc28f5006edf3c6"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP2_Skeleton.fenrb_SWP2_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP2_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\89164db57a6a509c\\fenrb_SWP2_Skeleton.json",
+            "sha256": "2c9fccaeb26856d1c8fbdbd463a11aaa067a83e5ee43aa32983083cebc53340b"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 16,
+          "cover_outputs": {
+            "spwc": 11
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP3_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP3.fenrb_SWP3",
+          "animation": "/Game/Blueprint/Player/Body/fenrb_SWP3_AnimBP.fenrb_SWP3_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrb_SWP3_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\fa266dba2404b3bc\\fenrb_SWP3_AnimBP.json",
+            "sha256": "5dd9704e87a1e948aebd0fd9a9efa6fdaf5caf1e9776d6c5221f452da2162e23"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP3_Anim.fenrb_SWP3_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP3_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\4b205ed5e6a2d820\\fenrb_SWP3_Anim.json",
+            "sha256": "1cd792415c3157b93e77d75f6d8a658f9713e7355b1fae57a383bce2387709de"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrb/fenrb_SWP3_Skeleton.fenrb_SWP3_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRB_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrb/fenrb_SWP3_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\126cc51d1dbec578\\fenrb_SWP3_Skeleton.json",
+            "sha256": "dc951b96aa39cebebbde5a4edc9859b1b79d556a2e5e4b36d61d840965d9397d"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 9,
+          "cover_outputs": {
+            "spwc": 6
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "su30sm",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_su30sm.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\830e46466b2dce8d\\AcePlayerPawn_su30sm.json",
+        "sha256": "cdc9c165d9f08f37d6964027210bec40235868dfbeb8557e71785a773d4c996c"
+      },
+      "components": [
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/fenrc/fenrc.fenrc",
+          "animation": "/Game/Blueprint/Player/Body/fenrc_AnimBP.fenrc_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrc_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1db81d4b0288a155\\fenrc_AnimBP.json",
+            "sha256": "8012e3504c2cb9c89bfe6db88754492ec0af128ca3a40abdb854efc2c1a1e09a"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrc/fenrc_Anim.fenrc_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1b5d715ac4ef3ba6\\fenrc_Anim.json",
+            "sha256": "04b40b58ee3a224176ad8387b69060ab57934f5193ce3beebe6dec50808b2922"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrc/fenrc_Skeleton.fenrc_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\47f186a6a6a6fdca\\fenrc_Skeleton.json",
+            "sha256": "96571423742402c9abd6a5e8de02976a859e385f7328f1520adf335053e39355"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 83,
+          "cover_outputs": {
+            "swcc": 2
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCoverC_01",
+              "index": 33,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 34,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP1.fenrc_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/fenrc_SWP1_AnimBP.fenrc_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrc_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1a51bebf33b0b95f\\fenrc_SWP1_AnimBP.json",
+            "sha256": "5be61e9c52d2f26027917de8ae84d424d789a34a21fdbbdcf4f117128f97395a"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP1_Anim.fenrc_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\b153bf08c9823bfd\\fenrc_SWP1_Anim.json",
+            "sha256": "c962ecfcd641776d9f8c663d5cfdbd20dab2f2dfa87bd0d7174c9198823ee78e"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP1_Skeleton.fenrc_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\0334295b986e8688\\fenrc_SWP1_Skeleton.json",
+            "sha256": "c0cd7cba451e8ba254252db863d99d65c53196deb6f5bbc188a83c5d485f9323"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 14,
+          "cover_outputs": {
+            "spwc": 11
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_03",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 12,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 13,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP2_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP2.fenrc_SWP2",
+          "animation": "/Game/Blueprint/Player/Body/fenrc_SWP2_AnimBP.fenrc_SWP2_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrc_SWP2_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\927b61782d870c07\\fenrc_SWP2_AnimBP.json",
+            "sha256": "704538185831e2e9a52863eed24c34144ab5d0c0148e8f6b72f392ad060d48bc"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP2_Anim.fenrc_SWP2_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP2_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\eabb44ed6912909f\\fenrc_SWP2_Anim.json",
+            "sha256": "5d9ffbe520b29de5dacce9b315fec371e5889862ce813fa1ab2c6d93a9d53aaa"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP2_Skeleton.fenrc_SWP2_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP2_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\5546a8069b139e45\\fenrc_SWP2_Skeleton.json",
+            "sha256": "31bdee5d9a101e806e7180b7d12ca499507fa8b54379bf4b6630b67e62f9f35e"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 20,
+          "cover_outputs": {
+            "spwc": 17
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_12",
+              "index": 1,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_00",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_03",
+              "index": 12,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_15",
+              "index": 13,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_14",
+              "index": 14,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_13",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 17,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_01",
+              "index": 18,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_02",
+              "index": 19,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP3_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP3.fenrc_SWP3",
+          "animation": "/Game/Blueprint/Player/Body/fenrc_SWP3_AnimBP.fenrc_SWP3_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fenrc_SWP3_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1e5f2ad60acab1c5\\fenrc_SWP3_AnimBP.json",
+            "sha256": "6d48a618df6e25d3edea256eed0c85dfda7a5073b4da54174c87e7d2244faaab"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP3_Anim.fenrc_SWP3_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP3_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\bbbc018c979cd342\\fenrc_SWP3_Anim.json",
+            "sha256": "943f30edb70b8b05b21bcd017919478354f75acd0c51532fe9d4340563bcc7e8"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fenrc/fenrc_SWP3_Skeleton.fenrc_SWP3_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Fenrir\\~~~APR_FENRC_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fenrc/fenrc_SWP3_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\101fae85d4022896\\fenrc_SWP3_Skeleton.json",
+            "sha256": "f6fa6fca25df109dafe607ef6431cc4039e7d2c528808d5a2e7629a3ed11caeb"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 3,
+          "cover_outputs": {
+            "spwc": 1
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_17",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "code": "fa50",
+      "source": {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+        "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_fa50.uasset",
+        "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\4420da0d0281f2ce\\AcePlayerPawn_fa50.json",
+        "sha256": "dcd705697dec6785d9ae94d56781bed35c26fc085f6246b800f460829966e20f"
+      },
+      "components": [
+        {
+          "component": "SWP1_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fa50/fa50_SWP1.fa50_SWP1",
+          "animation": "/Game/Blueprint/Player/Body/fa50_SWP1_AnimBP.fa50_SWP1_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fa50_SWP1_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\4329568265131022\\fa50_SWP1_AnimBP.json",
+            "sha256": "52d3372bcb81379bebbd73aa0b4ecb214a7de9dd1bdb6bddfcc47c73742365ff"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fa50/fa50_SWP1_Anim.fa50_SWP1_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP1_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\9ffe2315f0951c0d\\fa50_SWP1_Anim.json",
+            "sha256": "ad24efc8ccc85f59033c75123d203abf4e478b5b1f4cb756190e830c00e6c7b9"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fa50/fa50_SWP1_Skeleton.fa50_SWP1_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP1_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\f93de5d857fadf67\\fa50_SWP1_Skeleton.json",
+            "sha256": "4e6f311d285b2a231b950c27cecfefc1ef64df33bfbf523acb776b45143d4b27"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 133,
+          "cover_outputs": {
+            "swc1": 6,
+            "spwc": 1
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover1_01",
+              "index": 2,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover1_02",
+              "index": 3,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover1_03",
+              "index": 4,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover1_04",
+              "index": 67,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover1_05",
+              "index": 68,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover1_06",
+              "index": 69,
+              "outputs": [
+                "swc1"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 132,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP2_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fa50/fa50_SWP2.fa50_SWP2",
+          "animation": "/Game/Blueprint/Player/Body/fa50_SWP2_AnimBP.fa50_SWP2_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fa50_SWP2_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\36c83ce64c30f506\\fa50_SWP2_AnimBP.json",
+            "sha256": "f4eb558b3c2b6ff943753302475dcffbb4a3387d8360f8d77069cecfd90c9272"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fa50/fa50_SWP2_Anim.fa50_SWP2_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP2_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\6d21b6d5eea94e1b\\fa50_SWP2_Anim.json",
+            "sha256": "78d5182e1a789a4f0ccde5e628233f5059f19e3502d8e5d9be28f774bb6af639"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fa50/fa50_SWP2_Skeleton.fa50_SWP2_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP2_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\30a6a2c2a684edc5\\fa50_SWP2_Skeleton.json",
+            "sha256": "420bf5f9dfc7fd132498d67b39065ee185736f02f016135cc3b76ce697202cc7"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 23,
+          "cover_outputs": {
+            "swcc": 18,
+            "spwc": 1
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCoverC_01",
+              "index": 2,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 3,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_03",
+              "index": 4,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_04",
+              "index": 5,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_05",
+              "index": 6,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_06",
+              "index": 7,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_07",
+              "index": 8,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_08",
+              "index": 9,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_09",
+              "index": 10,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_10",
+              "index": 12,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_11",
+              "index": 13,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_12",
+              "index": 14,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_13",
+              "index": 15,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_14",
+              "index": 16,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_15",
+              "index": 17,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_16",
+              "index": 18,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_17",
+              "index": 19,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_18",
+              "index": 20,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 22,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "SWP3_GEN_VARIABLE",
+          "mesh": "/Game/Vehicles/Aircraft/fa50/fa50_SWP3.fa50_SWP3",
+          "animation": "/Game/Blueprint/Player/Body/fa50_SWP3_AnimBP.fa50_SWP3_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fa50_SWP3_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\02cdf5ac17d16755\\fa50_SWP3_AnimBP.json",
+            "sha256": "568d93bbc83d9fac05d4d8bc6c4d316ad7470ff95bd06f770fb4c5403edab6d7"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fa50/fa50_SWP3_Anim.fa50_SWP3_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP3_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\e26bd544d8472f5a\\fa50_SWP3_Anim.json",
+            "sha256": "e9b43f7f0427ddd6525147227bdece514f0e036ef4017393e25bb712d22d9591"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fa50/fa50_SWP3_Skeleton.fa50_SWP3_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_SWP3_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\1d307da68b8c1037\\fa50_SWP3_Skeleton.json",
+            "sha256": "20e2151c4dbf7bc6b68b859768fb5c2a38f5d98d6a40872f53942cc41f394ddd"
+          },
+          "frames": 101,
+          "override_sequences": [],
+          "bone_count": 19,
+          "cover_outputs": {
+            "spwc": 16
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover_14",
+              "index": 2,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_13",
+              "index": 3,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_12",
+              "index": 4,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_10",
+              "index": 5,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_09",
+              "index": 6,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_11",
+              "index": 7,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_08",
+              "index": 8,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_07",
+              "index": 9,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_06",
+              "index": 10,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_05",
+              "index": 11,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_02",
+              "index": 12,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_01",
+              "index": 13,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_04",
+              "index": 15,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_00",
+              "index": 16,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_03",
+              "index": 17,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover_17",
+              "index": 18,
+              "outputs": [
+                "spwc"
+              ],
+              "has_track": true
+            }
+          ]
+        },
+        {
+          "component": "PlaneBodyMesh",
+          "mesh": "/Game/Vehicles/Aircraft/fa50/fa50.fa50",
+          "animation": "/Game/Blueprint/Player/Body/fa50_AnimBP.fa50_AnimBP_C",
+          "animation_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Blueprint/Player/Body/fa50_AnimBP.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\92c036c3e096ebaa\\fa50_AnimBP.json",
+            "sha256": "6abfdec3bf551f4dd13937961239d1ba63bc67d7d0fa862b4cee2eb246a7f9c8"
+          },
+          "sequence": "/Game/Vehicles/Aircraft/fa50/fa50_Anim.fa50_Anim",
+          "sequence_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_Anim.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\efa20722871cb72c\\fa50_Anim.json",
+            "sha256": "a91d1901288944378663face44be7199d7623404f4a7387a064a126a47d372ff"
+          },
+          "skeleton": "/Game/Vehicles/Aircraft/fa50/fa50_Skeleton.fa50_Skeleton",
+          "skeleton_source": {
+            "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~CFA-50 Base file_P.pak",
+            "asset": "../../../Nimbus/Content/Vehicles/Aircraft/fa50/fa50_Skeleton.uasset",
+            "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-bay-domain-static\\assets\\8427ff991793c009\\fa50_Skeleton.json",
+            "sha256": "64dcdda8de3de6205e40ed0decdbf800704d7884bedefdd950163babfefbeb50"
+          },
+          "frames": 100,
+          "override_sequences": [],
+          "bone_count": 57,
+          "cover_outputs": {
+            "swc3": 2,
+            "swcc": 12
+          },
+          "cover_bones": [
+            {
+              "bone": "SWPCover3_01",
+              "index": 13,
+              "outputs": [
+                "swc3"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCover3_02",
+              "index": 14,
+              "outputs": [
+                "swc3"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_01",
+              "index": 15,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_02",
+              "index": 16,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_03",
+              "index": 17,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_04",
+              "index": 18,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_05",
+              "index": 19,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_06",
+              "index": 20,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_07",
+              "index": 21,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_08",
+              "index": 22,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_09",
+              "index": 23,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_10",
+              "index": 24,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_11",
+              "index": 25,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            },
+            {
+              "bone": "SWPCoverC_12",
+              "index": 26,
+              "outputs": [
+                "swcc"
+              ],
+              "has_track": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "差异结论": {
+    "普通SU57_pkfa": "本体20根swcc轨道，SWP1另有10根spwc轨道；与CFA顶部同类。当前仅保静态PLSL机外外观，不在Light收尾名单。可以复用共用0/1域收尾逻辑，但不能套CFA-50整套资源资格。",
+    "DarkStar": "本体2根swcc轨道，SWP1有16根spwc轨道。现有Light已收非当前3路并重算3个双配置聚合，不是完全没有修复；它依赖外观绑定、多SP组合、精确原版兵装/资源与无失败状态。绑定未覆盖是静态可见缺口，本次实际异常是否因此发生尚未采样。",
+    "XFA33A": "su30替换为fenra，本体2根swcc，三挂架spwc轨道6/11/1；本体可共用0/1域思路，挂架不是独立域。",
+    "XFA33B": "su33替换为fenrb，本体2根spwc，三挂架spwc轨道11/11/6；清180/184/194不会影响其本体，共用关闭spwc会伤当前动画/门禁，不能套CFA方案。",
+    "XFA33C": "su30sm替换为fenrc，本体2根swcc，三挂架spwc轨道11/17/1；本体可共用0/1域思路，不借原Su-30SM资格放行。",
+    "SU57TGM": "本体20根spwc，两个挂架各10根spwc；和普通SU57机制不同，列入公共域分支。"
+  },
+  "共同点与边界": [
+    "所读本体与挂架节点均使用FlightEngineBlend、同一BoneConfig，OverrideSequences为空；可提取共用域计算，但必须保留实际资源登记。",
+    "CFA-50本体序列100帧，其余所读序列101帧；不能复制CFA序列索引或骨骼姿态，正常原生节点负责按各自序列求值。",
+    "每个命中的舱门骨均在对应序列TrackToSkeletonMapTable中；只证明有轨道，不证明逐帧位移、端点方向或游戏骨发布已正常。",
+    "所有XFA挂架均读取spwc；非当前挂架可能另受原生停用/骨更新暂停影响，单补本体域不保证挂架也收回。",
+    "Parts+b0 bit20等原生持续兵装保舱条件及活动旧兵装归属需保留；不能推广为无条件收拢所有非当前输出。"
+  ],
+  "建议实现": {
+    "方向": "一套独立于多挂外观的收尾内核，加精确资源profile；不是每机复制一套控制器，也不是只按机型编号全局接管。",
+    "第一阶段": "核对普通SU57、DarkStar、XFA-A/C的实际域旗帜与切换现场后，共用0/1聚合收尾；Dark整合现有逻辑，防止两处Parts后处理同时写同域。",
+    "第二阶段": "XFA-B和SU57TGM先区分公共spwc本身不关闭，还是Body/挂架读值或骨发布停住；仅公共域消费者不能由清旧聚合域修复。",
+    "profiles必须包含": [
+      "精确Pawn/替换模型/AnimClass/骨架/Sequence/BoneConfig关系",
+      "原生配置到消费者集合与输出域映射",
+      "本体/挂架分别适用的通道",
+      "原生持续保舱及退出归还责任"
+    ],
+    "禁止捷径": "不恢复旧完整共舱控制器，不遍历全局Actor/每帧反射或文件，不强制动画求值、不直接改骨/伪造全开、不为修门改兵装参数。"
+  },
+  "仍需现场": [
+    "每机从哪个兵装切到哪个兵装及回MSL，Body与SWP分别是否残留",
+    "独立域/聚合/公共输出与request/phase、活动保舱标志的同帧值",
+    "实际资源及已发布姿态、当前外观设置和资格失败原因"
+  ],
+  "原料摘要": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-bay-domain-static/profiles.json",
+      "bytes": 174326,
+      "sha256": "aefdf218a326f19ace5cf0d7c715daf2718f704db087ef3a5d9f3f420c359a14"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-bay-domain-static/domains.json",
+      "bytes": 96021,
+      "sha256": "8a862b5ab6e2c3a8928537f35c0b32f3b1eb56bcf37a461215c4b61eb669b1bf"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-bay-domain-static/inspect_profiles.py",
+      "bytes": 4205,
+      "sha256": "d340dd949436fed43c154f3214f2c19d468aad989206d05a729cebe3b9a0dcdc"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-bay-domain-static/summarize_domains.py",
+      "bytes": 5417,
+      "sha256": "b287cbba71492eea1b3deb49b7e1b8980e19228c4511ac879bb801396a9d6af2"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-cfa50-bay-effects/parts-dispatch.bin",
+      "bytes": 284,
+      "sha256": "1662a5080df3163e561acb2892d5d2df5a841474399b9a345024dc590566deaa"
+    }
+  ],
+  "静态核对边界": "源代码路径和资源消费者关系比较，不是功能测试，不连接进程；源资源与原始解析仅留忽略目录。",
+  "末次静态核对": {
+    "解析资源摘要不一致": [],
+    "缺失文档链接": [],
+    "资源数": 84,
+    "产品源码变更": "无",
+    "编译或测试": "未执行"
+  }
+}
