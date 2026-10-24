@@ -1,6 +1,6 @@
 # 快速进入测试任务设计
 
-状态：快速任务及片头Logo跳过已接入本分支源码，未编译、测试、安装或实机验证，未发布。用户已要求继续开发；现有游戏授权仍为只读观察/取代码，未扩展为执行新入口。正式状态仍见[项目入口](../../README.md)。
+状态：源码2bef53b已接收，随2.25.0候选完成完整构建和EXE封装，[交付回执](../../evidence/2.25.0-exe-delivery.json)记录来源与核对。未运行测试模块、安装或执行新游戏入口；实际效果待用户游戏内验收，尚未正式发布。正式状态见[项目入口](../../README.md)。
 
 ## 目标与入口
 
@@ -42,7 +42,7 @@
 | `/Script/Nimbus.NimbusCheatManager:ForceMapChange`；位置24634 | `MapName:FString` | 调试地图切换候选；不直接采用未经核实的作弊启动路径 |
 | `/Script/Nimbus.NimbusCheatManager:ToggleForceSkipIGC` | 无参数 | 开关型候选；当前值与恢复办法未知，不能重复调用当作“设置开启” |
 
-该索引中的原生 `CampaignHangarSortieWidget`、`CampaignMissionLoadWidget` 类没有反射函数，`CampaignFreeMissionWidget` 只有属性；这些原生类的清单不能代替其蓝图流程。尚未找到已证实的单人/自由任务模式设置和完整出击入口，不能用 `SetMissionID + OpenLevel` 拼接后宣称可用。
+该索引中的原生 `CampaignHangarSortieWidget`、`CampaignMissionLoadWidget` 类没有反射函数，`CampaignFreeMissionWidget` 只有属性；这些原生类的清单不能代替其蓝图流程。前期未确认完整出击入口；后续原生模式及最终加载请求的依据见下文“原生链与当前实现”，没有采用 `SetMissionID + OpenLevel` 拼接。
 
 任务表实际对象为 `/Game/Blueprint/Information/MissionDataTable.MissionDataTable`，位置47365；结构为 `/Script/Nimbus.MissionDataTable`，已见 `MissionID`、`MissionStringID`、`StageNo`、`Category`、`Rule`、`DLCID`、`FreeFlightMissionID`、`NextMissionID`、`HangarPersistentLongName` 等字段。旧索引本身没有真实行值；2026-10-24已从当前进程取得72行，23个目标任务的实值见下节，不再以编号猜测作为依据。
 
@@ -120,6 +120,6 @@
 
 ## 待验证及授权边界
 
-本分支目前完成源码与双语资源生成、静态差异和指纹对应核对；没有编译、编写/运行测试、安装、操作游戏、执行新原生调用或写进程内存。静态观察不能代替调用效果，玩家正文已明确未发布。
+研究线程完成源码、双语资源和静态核对；本次整合另获编译与EXE交付授权，已完成完整构建和封装。研究观察、编译与游戏验收分别记录，没有执行新原生调用、安装或写进程内存。
 
-源码可审后需要一次明确授权，才能构建候选、备份安装及实机验证。验收包括：M6和DLC2实际快速出击、23关映射、ex01/ex03、真实机体/SP、M13、DLC缺许可、开场CG/起飞及必要脚本、180秒失败退出、重复点击、自动启动一次/取消/返回菜单、片头全部Logo与存档加载、中英文及个人配装保持。保护旧dist核心，候选必须独立输出，不覆盖冻结产物。后续继续由当前主代理直接处理，尽量少用子代理。
+候选已按用户授权制作；安装及游戏内验收尚未执行。待用户验收包括：M6和DLC2实际快速出击、23关映射、ex01/ex03、真实机体/SP、M13、DLC缺许可、开场CG/起飞及必要脚本、180秒失败退出、重复点击、自动启动一次/取消/返回菜单、片头全部Logo与存档加载、中英文及个人配装保持。保护旧dist核心，候选必须独立输出，不覆盖冻结产物。后续继续由当前主代理直接处理，尽量少用子代理。
