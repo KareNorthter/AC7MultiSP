@@ -11,6 +11,13 @@ void quickMissionSignature(Addr base,Addr rva,std::initializer_list<unsigned cha
     require(std::memcmp(reinterpret_cast<const void*>(base+rva),expected.begin(),expected.size())==0,
         "快速任务原生入口与当前构建不符");
 }
+bool quickMissionMenuInstance(Addr widget,Addr instance) {
+    // MenuBaseWidget的GI缓存不是UPROPERTY。原生Copyright激活直接读取+0x290并以GI调用3cf2b0。
+    // MainMenu和Copyright共用同一菜单基类布局；先核对读取指令、继承身份，再比较缓存指针。
+    const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+    quickMissionSignature(base,0x656a17,{0x48,0x8b,0x8b,0x90,0x02,0,0,0x48,0x8d,0x91,0x48,0x02,0,0});
+    return mountClassIs(widget,"MenuBaseWidget","/Script/Nimbus")&&read<Addr>(widget+0x290)==instance;
+}
 void quickMissionPreflight() {
     verifyVersion();
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
@@ -105,7 +112,7 @@ extern "C" __declspec(dllexport) int dualsp_startup_logos_v1(void* luaState) {
         quickMissionSignature(base,0x1798e90,{0x48,0x8b,0x41,0x30,0x48,0x85,0xc0,0x74,0x08,0x48,0x8b,0x80,0x88,0x02,0,0,0xc3});
         require(read<Addr>(read<Addr>(instance)+0x138)==base+0x1798e90&&
             reinterpret_cast<World>(base+0x1798e90)(instance)==world&&
-            read<Addr>(widget+mountProperty(widget,"GameInstance","ObjectProperty",8))==instance&&
+            quickMissionMenuInstance(widget,instance)&&
             !read<Addr>(world+mountProperty(world,"NetDriver","ObjectProperty",8)),"片头跳过世界已变化");
         require(read<Addr>(read<Addr>(widget)+0x420)==base+0x656fc0,"片头页面tick不属于已确认构建");
         if(!read<unsigned char>(widget+0x3b0)||read<unsigned char>(widget+0x3c5)){api->boolean(luaState,false);return 1;}
@@ -150,7 +157,7 @@ extern "C" __declspec(dllexport) int dualsp_quick_mission_v1(void* luaState) {
             require(std::any_of(tasks.begin(),tasks.end(),[&](const Json& row){return row.at("mission_id")==mission;}),"目标不属于23个测试任务");
             const auto menuIdentity=continuousIdentity(menu);
             require(mountClassIs(menu,"MainMenuWidget","/Script/Nimbus") && !(read<unsigned>(menu+8)&0x30u) &&
-                read<Addr>(menu+mountProperty(menu,"GameInstance","ObjectProperty",8))==instance,"快速任务主菜单身份已变化");
+                quickMissionMenuInstance(menu,instance),"快速任务主菜单身份已变化");
             require(read<int>(instance+0x4dc)==plane && read<int>(instance+0x4e0)==swp,"快速任务机体选择已变化");
             const auto map=quickMissionMap(mission);
             const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));QuickMissionName mapName;

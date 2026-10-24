@@ -1381,7 +1381,8 @@ quickMission=dofile(root.."Scripts/quick_mission.lua").new{
         setPanel(false)
         assert(not panelOpen and not managementPause and not managementPauseError,"快速任务管理输入没有归还")
         requestClose=requestClose+1
-        releaseWeaponInput("quick_mission");releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()
+        -- 此入口只允许主菜单；没有任务玩家或武器组件，不能调用飞行中的ReleaseWeaponInput。
+        releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()
         resetCheckpointState();resetFlightTracking()
     end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
