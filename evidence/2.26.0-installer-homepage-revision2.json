@@ -1,0 +1,91 @@
+{
+  "schema": 1,
+  "version": "2.26.0",
+  "revision": "installer-revision2",
+  "candidate": false,
+  "source_commit": "2923ed6c59be6fc64e443994a1f0c076920c0956",
+  "change": "安装器发现新版链接固定调用AuthorLinks.Homepage，不再跳Nexus或清单直链",
+  "target_url": "https://ac7multisp-updates.pages.dev/",
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\installer-revision2\\AC7MultiSP_Installer.exe",
+    "size": 61571584,
+    "sha256": "e878c0f5df18620adb48e008cb92757cc0d58989571058216fc71f6ffa67f343",
+    "product_version": "2.26.0",
+    "file_version": "2.26.0.0"
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-installer-homepage-r2\\package",
+    "receipt_sha256": "cc2e6dbe3af86efabb6d349cfd755cb280166f4c5d88dfcec85f79308f222daa",
+    "exe_receipt_sha256": "468901d88f3d484803d4e750d35623e449bdf1a033035c4f415018037e34d952",
+    "internal_zip_sha256": "f3e77f4042e0916fe85bea2d30de55d33bce354d50165976609993314c57ae1f"
+  },
+  "game_build_reused": "E:/AC7_MultiSP/Temp/tasks/20261024-release-2.26.0-build/build-r1/game-build",
+  "game_source_snapshot_equal": true,
+  "runtime_files_unchanged": true,
+  "documents_unchanged": true,
+  "icon_unchanged": true,
+  "universal_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\installer-revision2\\AC7MultiSP-2.26.0-Universal.zip",
+    "sha256": "f3e77f4042e0916fe85bea2d30de55d33bce354d50165976609993314c57ae1f",
+    "changed_members": [
+      "ac7multisp-package.json",
+      "ue4ss/Mods/DualSP/author-content.json",
+      "ue4ss/Mods/DualSP/author-content.sig.json"
+    ],
+    "scope": "重新签署内容身份及其摘要元数据；运行文件与玩家正文未变，旧ZIP保留"
+  },
+  "author_signing": {
+    "schema": 1,
+    "product": "AC7MultiSP",
+    "version": "2.26.0",
+    "channel": "stable",
+    "release_id": "78b97c323d0d422ba657a01135f44dd7",
+    "source_commit": "2923ed6c59be6fc64e443994a1f0c076920c0956",
+    "key_id": "7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f",
+    "registry_sha256": "ac439517694e28b56763b0cc7e3592fcfd35edc92872ae150605ec495e5b2bd2",
+    "content_sha256": "c1e1728c69640beddf028804f2bfbbf6b87ed2fd06d52c8b83139a27d0c6ce29",
+    "bundle_sha256": "642ae840f3e6e28bec9eedabd8d83f9d62c5c054e761e2e534f47c7a2359c4a9"
+  },
+  "release_signatures_verified": true,
+  "companion_pages_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.0\\installer-revision2\\AC7MultiSP-Pages-homepage.zip",
+    "sha256": "1d58d7a5967fb2e1fca99e8526b7f226f0cd0ee760cb5977f521c7e3e40c4cfe",
+    "members_sha256": {
+      "_headers": "08df29f376132cd090e4bf14e806bda248e6c20cb1d75f1caacb89c8b4fd8afc",
+      "AC7MultiSP-release.json": "fd988f730a5bbc63fc99537c300ba6f17d82574b1b613a2fef1496db621c0c7c",
+      "AC7MultiSP-release.sig.json": "e45a121a942968a77e4e2086e36acaca42c9b89411d5f03fee4c84d549dd091e",
+      "app.js": "cc9341165e5c8ce3864a3ea7f25663ada55ecc110d019e863fa3abdc5f1f8381",
+      "assets/alipay-qr.jpg": "4e74a016dc49308b59b8181455c73761176f3197ec595e5257ebe7499919babe",
+      "assets/mastercard.svg": "b1ca921334ea354ed30b537236a6528225a4470190b461d677666e04143d3ab7",
+      "assets/paypal.svg": "d68fb04a134b6b046e019bc46f24ac4a989304bd80f0b4bc2ba2e3d538cf4464",
+      "assets/visa.svg": "22e530a4590b8972361da851ecc43074eab0cfb9d03e1d4f1b727e78cbc15275",
+      "index.html": "e22f7d3c540ddbeb10eec6c5f217f8225583aeb612aafe519c6a53f038fde126",
+      "preview.json": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a",
+      "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.json": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9",
+      "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.sig.json": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909",
+      "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.json": "fd988f730a5bbc63fc99537c300ba6f17d82574b1b613a2fef1496db621c0c7c",
+      "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.sig.json": "e45a121a942968a77e4e2086e36acaca42c9b89411d5f03fee4c84d549dd091e",
+      "stable.json": "86f24589c3bba5f9d17953691dece01cd5a2ca86c96186037e9b42f3fa536410",
+      "styles.css": "d88e9fef9947535ddda212c249eb9d579eb6c03528fc0273f4b34a4068ee0f77",
+      "user-docs/Author-and-License.txt": "3ad29a39d6ad15e0ed25bf852b6242d0b454c34bd9b5a0f00c31dd64df2fb8c7",
+      "user-docs/Changelog.txt": "de679d3cbcd7822d2dc7f995a5a989bc22681cc6feab4c474b14856281161983",
+      "user-docs/Features.txt": "82121bbec6927b231546e21daab976e5c65aeae03533979e8a49bdad839b4c0e",
+      "user-docs/Installation.txt": "2c7b8b980321e6a082e0960471d81f2e1b76329067ee7fd6c09fc0485b44f386",
+      "user-docs/作者与授权.txt": "9a8b751d86f34304a6e818d544215f08c0e0da6fcb2d821291fb1ea1d9c08408",
+      "user-docs/功能说明.txt": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8",
+      "user-docs/安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+      "user-docs/更新日志.txt": "bfe8641941803306de5c6e285cda8960b50f5551f146232785657dd177bcbae7"
+    },
+    "content_scope": "只更新根目录发行签名，增加新发布ID签名目录，保留旧签名；其他网页原字节不变"
+  },
+  "old_artifacts_and_receipts_not_modified": true,
+  "old_exe_retained_at": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-release-2.26.0-build\\build-r1\\delivery\\AC7MultiSP_Installer.exe",
+  "old_release_exe_already_absent": true,
+  "installer_compiled": true,
+  "installer_executed": false,
+  "tests_run": false,
+  "installed": false,
+  "uploaded": false,
+  "r2_feedback": "作者确认清缓存后旧正式EXE入口正常；本修订尚未上传，替换EXE后需再清对应URL缓存",
+  "pending": "作者上传新EXE并同步配套网页签名材料；本轮未执行浏览器跳转或线上新文件核验"
+}

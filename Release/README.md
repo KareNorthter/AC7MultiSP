@@ -2,7 +2,9 @@
 
 当前正式功能版本和发布状态只在[项目入口](../README.md)维护；主要变化见[玩家更新日志](../docs/user/更新日志.txt)。
 
-本次已制作[2.26.0正式EXE](2.26.0/AC7MultiSP_Installer.exe)及[同版通用ZIP](2.26.0/AC7MultiSP-2.26.0-Universal.zip)。来源38f1255，产品2.26.0、Windows文件版本2.26.0.0，candidate=false。[交付与静态核对](../evidence/2.26.0-exe-delivery.json)记录全部摘要与边界；同目录提供AC7MultiSP-release.json、AC7MultiSP-release.sig.json及SHA256SUMS.txt，最终文件不再改名、换图或重新封装。
+当前最新为[2.26.0安装器修订2](2.26.0/installer-revision2/AC7MultiSP_Installer.exe)：新版下载提示固定进入作者主页，版本保持2.26.0，运行文件、文档和图标不变。同目录保存重签的匹配ZIP、发行清单与签名，以及[配套网页包](2.26.0/installer-revision2/AC7MultiSP-Pages-homepage.zip)；网页只更新发行签名材料并保留旧签名。来源与摘要见[修订回执](../evidence/2.26.0-installer-homepage-revision2.json)。新EXE尚未上传，固定链接替换后需再次清缓存。
+
+本次已制作2.26.0首版正式EXE（Release原文件已被外部移走，原冻结封装副本保留）及[同版通用ZIP](2.26.0/AC7MultiSP-2.26.0-Universal.zip)。来源38f1255，产品2.26.0、Windows文件版本2.26.0.0，candidate=false。[交付与静态核对](../evidence/2.26.0-exe-delivery.json)记录全部摘要与边界；同目录提供AC7MultiSP-release.json、AC7MultiSP-release.sig.json及SHA256SUMS.txt，最终文件不再改名、换图或重新封装。
 
 四份中文正文保留作者原字节，仅同步对应英文；EXE、ZIP两个阅读目录和Mod运行目录均逐项核对。EXE内嵌ZIP与独立ZIP一致；安装器文件图标含Steam登记的游戏原图标四个尺寸，窗口读取自身图标。Vortex覆盖指令的40项载荷、dinput游戏根部署、2.26.0与原Nexus Mod 3797标识已静态核对，限Vortex 1.14+单Mod直接安装，Collection不在范围内。未运行安装器、Vortex、测试模块或游戏，未上传。
 
