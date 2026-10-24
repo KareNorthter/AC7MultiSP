@@ -11,6 +11,7 @@
 | 2.24.3仅EXE交付候选 | [EXE交付核对](2.24.3-exe-delivery.json) | 新首页、F6及DLC许可调整的完整构建、封装来源、文件版本和EXE摘要；未运行安装器、测试或游戏，未单独交付ZIP |
 | 2.25.0三线程整合候选 | [EXE交付核对](2.25.0-exe-delivery.json) | 三线程精确来源、完整核心/UI编译、18 Lua/21运行文件、内嵌ZIP原字节、DPI和EXE版本/摘要；未安装或游戏验收 |
 | 2.25.1界面与候选漏机修订 | [EXE交付核对](2.25.1-exe-delivery.json) | 水印/反馈卡片、Patch分类依据及两入口共用判断、964507d接收、完整构建、内嵌ZIP和EXE版本/摘要；未安装或实机验收 |
+| 2.25.2快速任务初始化修复 | [EXE交付核对](2.25.2-exe-delivery.json) | 辅助错误隔离、日志上方布局、完整构建/封装、版本和内嵌载荷摘要；未安装或游戏验收 |
 | 2.24.3安装器DPI修订 | [DPI修订核对](2.24.3-dpi-exe-delivery.json) | 系统DPI清单、复用游戏载荷、EXE摘要及120 DPI双语页面离线预览；产物生成后用户要求停止后续编译，未安装或操作游戏 |
 | 2.23.1验收/标识 | [用户验收](2.23.1-formal-user-validation.json)、[标识变换](2.23.1-formal-version-label.json) | 已测功能和正式标识的关系 |
 | alpha1安装 | [预检](2.24.0-alpha1-install-preflight.json)、[完成](2.24.0-alpha1-install-completion.json) | 当时Vortex链接处置、个人资料与实际交换；不当作实时安装状态 |

@@ -7,8 +7,8 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 三线程整合与EXE交付，2.25.2构建中 | 本集成交付聊天；功能源码c9bc440；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP；产物在E:/AC7_MultiSP/Temp/tasks/20261024-quick-trisp-delivery | 用户授权编译并提供EXE；完整构建片头/开场辅助错误隔离、快速入口移至日志上方的修复。不运行测试模块、不安装或操作游戏，保留旧EXE及回执 |
-| 快速进入测试任务，失败修复已接收待实测 | 来源964507d；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 主菜单准备/菜单GI归属修复及阶段日志已纳入2.25.1完整构建；[失败定位](../../evidence/quick-mission-failure-20261024.json)和[唯一设计](../engineering/quick-mission-launch.md)保留依据。未实机确认新原生加载或Logo效果，不回改2.25.0回执 |
+| 三线程整合与EXE交付，2.25.2已交付待用户验收 | 本集成交付聊天；功能修复c9bc440，构建源码b5c5d04；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP；产物在E:/AC7_MultiSP/Temp/tasks/20261024-quick-trisp-delivery | 完整构建辅助错误隔离和快速卡片位置修复，EXE进入Release/2.25.2；[回执](../../evidence/2.25.2-exe-delivery.json)记录来源及摘要。不运行测试模块、不安装或操作游戏；旧产物/回执保留 |
+| 快速进入测试任务，2.25.2初始化修复待实测 | 来源964507d及整合c9bc440 | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP；现行源码main | 原主菜单准备/归属修复保留；辅助异常隔离和日志上方布局已随2.25.2完整构建。原[失败定位](../../evidence/quick-mission-failure-20261024.json)、[三SP中止日志](../../evidence/quick-mission-trisp-failure-20261024.json)及[唯一设计](../engineering/quick-mission-launch.md)保留，尚未验证新游戏效果 |
 | Mod机体兼容性续研，长按修复已接收待实测 | 来源22a899e；codex/research-mod-aircraft-compat | C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 长按修复进入本轮2.25.0完整构建；[续研正文](../research/mod-aircraft-compatibility.md)保留机体分组、原包缺项及待办。未变更游戏机体组，EML问题按用户要求暂缓；短按/长按及三SP无回归仍待用户验收 |
 | F6启动更新选项，已接收待实测 | 来源7f213aa；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 默认开启选项、配置19补缺失字段及管理协议22已纳入本轮2.25.0完整构建；旧源码阶段未构建记录保留，实际联网和保存行为待用户验收 |
 | 安装器与F6易用性调整，已接收待人工验证 | 来源5a33e3a、DPI修订050dc3d；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 新首页/F6/DLC许可/DPI已纳入本轮2.25.0整合。原2.24.3、DPI回执和成品保留；旧线程停止构建的指令只记录当时范围，本集成按用户新授权制作新EXE，未安装/操作游戏/上传 |
