@@ -15,6 +15,8 @@ from urllib.request import Request, urlopen
 import zipfile
 
 from build_pages_site import ROOT, PLAYER_DOC_FILES, SITE_FILES, build as build_site, validate_manifest
+from author_signing import (Signer, PROVIDER, RELEASE, RELEASE_SIG, verify_release,
+                            read_limited, verify_manifest)
 
 EXE = "AC7MultiSP_Installer.exe"
 
@@ -80,16 +82,25 @@ def notes_for(version: str, language: str) -> str:
 
 
 def compile_delivery(args: argparse.Namespace) -> None:
+    # 无可用签名密钥时在编译前停止，不能先制作无签名产物再假装完成。
+    with Signer(args.signing_key_name, args.signing_provider):
+        pass
     output = fresh(args.output_dir)
     game, package = output / "game-build", output / "delivery"
     command = [sys.executable, str(ROOT / "src/build.py"), "--mount-assets-dir", str(args.mount_assets_dir.resolve()),
                "--temp-root", str(next(root for root in temp_roots() if output.is_relative_to(root))),
                "--output-dir", str(game), "--tools-root", str(args.tools_root.resolve())]
     subprocess.run(command, cwd=ROOT, check=True)
+    signing_args = ['--signing-provider', args.signing_provider]
+    setup_signing = ['-SigningProvider', args.signing_provider, '-Python', sys.executable]
+    if args.signing_key_name:
+        signing_args += ['--signing-key-name', args.signing_key_name]
+        setup_signing += ['-SigningKeyName', args.signing_key_name]
     subprocess.run([sys.executable, str(ROOT / "src/package_delivery.py"), "--build-dir", str(game),
-                    "--output-dir", str(package), "--audio-source", str(args.audio_source.resolve())], cwd=ROOT, check=True)
+                    "--output-dir", str(package), "--audio-source", str(args.audio_source.resolve()), *signing_args], cwd=ROOT, check=True)
     subprocess.run([args.pwsh, "-NoProfile", "-File", str(ROOT / "src/delivery/build_setup.ps1"),
-                    "-InputDirectory", str(package)], cwd=ROOT, check=True)
+                    "-InputDirectory", str(package), *setup_signing], cwd=ROOT, check=True)
+    signed_release = verify_release(package)
     packaged, exe_receipt = read(package / "封装回执.json"), read(package / "EXE编译回执.json")
     artifact = package / EXE
     if digest(artifact) != exe_receipt["sha256"]:
@@ -98,7 +109,10 @@ def compile_delivery(args: argparse.Namespace) -> None:
                "artifact": {"path": str(artifact), "size": artifact.stat().st_size, "sha256": digest(artifact)},
                "package": {"path": str(package), "receipt_sha256": digest(package / "封装回执.json"),
                            "exe_receipt_sha256": digest(package / "EXE编译回执.json"),
-                           "internal_zip_sha256": packaged["universal_sha256"]},
+                           "internal_zip_sha256": packaged["universal_sha256"],
+                           "author_signing": {"release_id": signed_release['release_id'],
+                                              "manifest_sha256": digest(package / RELEASE),
+                                              "signature_sha256": digest(package / RELEASE_SIG)}},
                "tests_run": False, "installed": False, "game_started": False, "uploaded": False}
     write(output / "delivery-receipt.json", receipt)
     print(f"完整构建和EXE封装完成：{output / 'delivery-receipt.json'}")
@@ -124,6 +138,22 @@ def prepare(args: argparse.Namespace) -> None:
     for field, filename in (("receipt_sha256", "封装回执.json"), ("exe_receipt_sha256", "EXE编译回执.json")):
         if packaged_info.get(field) and (package is None or digest(package / filename) != packaged_info[field]):
             raise ValueError(f"历史{filename}摘要不一致")
+    signed_release = None
+    if package is not None and (package / RELEASE).exists():
+        signed_release = verify_release(package)
+        if (signed_release['version'] != version or signed_release['channel'] != 'stable' or
+                signed_release['files'].get(EXE) != {'size': expected['size'], 'sha256': expected['sha256']}):
+            raise ValueError('发布签名与正式版或EXE回执不同')
+        if args.exe_only:
+            raise ValueError('签名发行清单成套绑定EXE和ZIP，请保留两份本地发布文件')
+    else:
+        # 只保留已经正式发布的2.25.2原件复用；不允许拿新包走无签名退路。
+        legacy = read(ROOT / 'evidence/2.25.2-exe-delivery.json')
+        if (version != '2.25.2' or expected['sha256'] != legacy['artifact']['sha256'] or
+                expected['size'] != legacy['artifact']['size'] or
+                any(packaged_info.get(field) != legacy['package'].get(field)
+                    for field in ('receipt_sha256', 'exe_receipt_sha256', 'internal_zip_sha256'))):
+            raise ValueError('新版本缺少作者发布签名，不能准备上传')
     defaults = read(ROOT / "site/stable.json")
     if version != defaults.get("latest_version") and not args.lanzou_url:
         raise ValueError("发布新版本须显式提供本次--lanzou-url，不能自动沿用上一版分享页")
@@ -138,6 +168,9 @@ def prepare(args: argparse.Namespace) -> None:
     shutil.copy2(artifact, upload / EXE)
     if digest(upload / EXE) != expected["sha256"]:
         raise ValueError("复制后的EXE摘要不一致")
+    if signed_release:
+        for name in (RELEASE, RELEASE_SIG):
+            shutil.copy2(package / name, upload / name)
     nexus_package = None
     if not args.exe_only:
         if package is None:
@@ -151,6 +184,8 @@ def prepare(args: argparse.Namespace) -> None:
         shutil.copy2(archive, upload / archive.name)
         nexus_package = {"filename": archive.name, "size": archive.stat().st_size,
                          "sha256": digest(archive), "uploaded": False}
+    if signed_release:
+        verify_release(upload)
     manifest = {"schema": 1, "product": "AC7MultiSP", "channel": "stable", "status": "ready", "latest_version": version,
                 "release_notes": {"zh": notes_for(version, "zh"), "en": notes_for(version, "en")},
                 "downloads": [{"id": "r2", "label": {"zh": "主要下载 · R2安装程序", "en": "Primary · R2 installer"}, "url": r2}]
@@ -162,6 +197,9 @@ def prepare(args: argparse.Namespace) -> None:
             "source_receipt_sha256": digest(receipt_path), "original_receipt_candidate": receipt.get("candidate"),
             "artifact": {"filename": EXE, "size": expected["size"], "sha256": expected["sha256"]},
             "nexus_package": nexus_package,
+            "author_signing": ({"release_id": signed_release['release_id'],
+                                "manifest_sha256": digest(upload / RELEASE), "signature_sha256": digest(upload / RELEASE_SIG)}
+                               if signed_release else None),
             "player_documents": {name: digest(ROOT / "docs/user" / name) for name in PLAYER_DOC_FILES},
             "manifest_sha256": digest(output / "stable.ready.json"), "r2_url": r2, "lanzou_urls": lanzou,
             "r2_object_key": urlparse(r2).path.lstrip("/"),
@@ -176,7 +214,7 @@ def prepare(args: argparse.Namespace) -> None:
 3. 蓝奏云上传后取得本次真实分享链接。若链接变化，用finalize的--lanzou-url参数传入，可重复一至三次；不要把网页地址当作直接文件下载。
 4. 将upload/{nexus_package['filename'] if nexus_package else '（本轮未准备通用ZIP）'}手动上传到Nexus本Mod文件页，核对版本{version}及适用说明；不要把Pages ZIP或EXE代替通用ZIP。Nexus下载说明使用同套中英文玩家正文，不再维护另一份说明。
 5. 下载R2固定入口核对SHA256；finalize可自动流式核对。蓝奏云及Nexus请人工下载核对SHA256SUMS.txt。
-6. 运行finalize准备完整Pages目录和ZIP，再上传Pages；不要提前部署stable.ready.json草稿。
+6. 若upload内有AC7MultiSP-release.json及其sig文件，保留同版原件；finalize会加入Pages根目录及不可变发布目录。运行finalize准备完整Pages目录和ZIP，再上传Pages；不要提前部署stable.ready.json草稿。
 7. Pages部署后运行verify-online核对线上stable/preview与本次准备目录，再核对浏览器双语和客户端提示。
 
 EXE摘要：{expected['sha256']}
@@ -217,6 +255,39 @@ def verify_r2(plan: dict) -> dict:
     return {"size": size, "sha256": expected["sha256"], "verified": True, "method": "streaming-download"}
 
 
+def preserve_signatures(previous: Path | None, target: Path) -> list[str]:
+    """只接收可信签名材料，不复制旧站点脚本、私钥或下载文件。"""
+    if previous is None:
+        return []
+    if previous.is_symlink() or previous.is_junction():
+        raise ValueError('历史Pages目录不能是链接')
+    source = previous.resolve(strict=True) / 'releases'
+    if not source.is_dir():
+        return []
+    if source.is_symlink() or source.is_junction():
+        raise ValueError('历史签名目录不能是链接')
+    folders = sorted(source.iterdir())
+    if len(folders) > 256:
+        raise ValueError('历史签名版本数量超限，请先人工整理')
+    preserved = []
+    for folder in folders:
+        if folder.is_symlink() or folder.is_junction() or not folder.is_dir() or not re.fullmatch(r'[0-9a-f]{32}', folder.name):
+            raise ValueError('历史签名目录结构不符合约定')
+        for name in (RELEASE, RELEASE_SIG):
+            path = folder / name
+            if path.is_symlink() or path.is_junction():
+                raise ValueError('历史签名文件不能是链接')
+        raw, signature = read_limited(folder / RELEASE), read_limited(folder / RELEASE_SIG, 2048)
+        manifest = verify_manifest(raw, signature, 'release')
+        if manifest['release_id'] != folder.name:
+            raise ValueError('历史签名的发布ID不同')
+        destination = target / 'releases' / folder.name
+        destination.mkdir(parents=True, exist_ok=False)
+        (destination / RELEASE).write_bytes(raw); (destination / RELEASE_SIG).write_bytes(signature)
+        preserved.append(folder.name)
+    return preserved
+
+
 def finalize(args: argparse.Namespace) -> None:
     prepared = args.prepared_dir.resolve()
     plan = read(prepared / "release-plan.json")
@@ -229,6 +300,11 @@ def finalize(args: argparse.Namespace) -> None:
     nexus = plan.get("nexus_package")
     if nexus and digest(prepared / "upload" / nexus["filename"]) != nexus["sha256"]:
         raise ValueError("Nexus通用ZIP在prepare后发生变化")
+    signing = plan.get('author_signing')
+    if signing:
+        if digest(prepared / 'upload' / RELEASE) != signing['manifest_sha256'] or digest(prepared / 'upload' / RELEASE_SIG) != signing['signature_sha256']:
+            raise ValueError('发布签名材料在prepare后改变')
+        verify_release(prepared / 'upload')
     if args.lanzou_url:
         urls = [checked_url(x, "wwbru.lanzoue.com") for x in args.lanzou_url]
         if not 1 <= len(urls) <= 3 or len(set(urls)) != len(urls):
@@ -244,6 +320,13 @@ def finalize(args: argparse.Namespace) -> None:
     output = fresh(args.output_dir)
     write(output / "stable.json", manifest)
     build_site(output / "pages", output / "stable.json")
+    preserved = preserve_signatures(args.previous_pages_dir, output / 'pages')
+    if signing:
+        immutable = output / 'pages' / 'releases' / signing['release_id']
+        immutable.mkdir(parents=True)
+        for name in (RELEASE, RELEASE_SIG):
+            shutil.copy2(prepared / 'upload' / name, output / 'pages' / name)
+            shutil.copy2(prepared / 'upload' / name, immutable / name)
     archive = output / "AC7MultiSP-Pages-homepage.zip"
     members = {}
     with zipfile.ZipFile(archive, "x", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
@@ -262,11 +345,13 @@ def finalize(args: argparse.Namespace) -> None:
                "lanzou_urls_supplied": [x["url"] for x in manifest["downloads"] if x["id"].startswith("lanzou")],
                "lanzou_binary_verified": False, "pages_zip_sha256": digest(archive), "members": members,
                "nexus_package": nexus, "nexus_binary_verified": False,
+               "preserved_signed_releases": preserved, "previous_signed_history_supplied": args.previous_pages_dir is not None,
                "cloudflare_deployed": False, "tests_run": False, "installed": False, "generated_at": datetime.now(timezone.utc).isoformat()}
     write(output / "publication-receipt.json", receipt)
     (output / "上传Cloudflare前请读.txt").write_text(
         "请人工完成蓝奏云EXE及Nexus通用ZIP上传并核对下载摘要，再将AC7MultiSP-Pages-homepage.zip或pages目录内容上传到现有Pages项目。\n"
         "Pages会替换整站；请保留旧部署，上传完整包，不单独上传stable.json。\n"
+        "若以前发布过签名版本，请先用--previous-pages-dir提供旧完整Pages材料并核对已保留目录，再上传整站；不要丢弃旧版签名。\n"
         "本工具已核对R2和本地ZIP，尚未部署或核对蓝奏云、Nexus文件、浏览器排版、游戏联网。\n", encoding="utf-8")
     print(f"完整Pages上传包已准备：{archive}")
 
@@ -283,6 +368,19 @@ def verify_online(args: argparse.Namespace) -> None:
     base = args.base_url.rstrip("/") + "/"
     checked_url(base, "ac7multisp-updates.pages.dev")
     names = [name for name in SITE_FILES if name != "_headers"] + ["user-docs/" + name for name in PLAYER_DOC_FILES]
+    for name in (RELEASE, RELEASE_SIG):
+        if (folder / name).is_file():
+            names.append(name)
+    if (folder / RELEASE).is_file():
+        verify_manifest(read_limited(folder / RELEASE), read_limited(folder / RELEASE_SIG, 2048), 'release')
+    if (folder / 'releases').is_dir():
+        for previous in sorted((folder / 'releases').iterdir()):
+            if not re.fullmatch(r'[0-9a-f]{32}', previous.name):
+                raise ValueError('本地历史签名目录无效')
+            release = verify_manifest(read_limited(previous / RELEASE), read_limited(previous / RELEASE_SIG, 2048), 'release')
+            if release['release_id'] != previous.name:
+                raise ValueError('本地历史签名ID不同')
+            names.extend('releases/' + previous.name + '/' + name for name in (RELEASE, RELEASE_SIG))
     results = {}
     for name in names:
         local = folder / name
@@ -304,6 +402,8 @@ def main() -> None:
     build.add_argument("--tools-root", type=Path, default=ROOT / "tools")
     build.add_argument("--audio-source", type=Path, default=ROOT / "dist/DualSP/Audio/SP2.wav")
     build.add_argument("--pwsh", default=r"C:\Program Files\PowerShell\7\pwsh.exe")
+    build.add_argument('--signing-key-name', help='省略时按登记公钥匹配当前用户唯一CNG密钥')
+    build.add_argument('--signing-provider', default=PROVIDER)
     build.set_defaults(handler=compile_delivery)
     prep = commands.add_parser("prepare", help="复用有摘要回执的现成EXE，准备人工上传材料")
     prep.add_argument("--receipt", type=Path, required=True)
@@ -318,6 +418,7 @@ def main() -> None:
     final.add_argument("--output-dir", type=Path, required=True)
     final.add_argument("--lanzou-url", action="append")
     final.add_argument("--manual-r2-sha256", help="网络不可用时，由操作者下载并核对后提供的实际摘要")
+    final.add_argument('--previous-pages-dir', type=Path, help='上一版完整Pages材料；校验并保留releases中的签名原件')
     final.set_defaults(handler=finalize)
     online = commands.add_parser("verify-online", help="手动部署后回读Pages核心文件")
     online.add_argument("--pages-dir", type=Path, required=True)

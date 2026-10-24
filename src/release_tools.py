@@ -77,7 +77,7 @@ def source_snapshot(root=ROOT):
     paths.update(p for p in (root / 'vendor').rglob('*') if p.is_file())
     paths.update(root / 'dist/DualSP/Scripts' / name for name in info['scripts'])
     paths.update(root / 'src' / name for name in (
-        'build.py', 'build_mount_assets.py', 'release_tools.py', 'install.py', 'package-release.py', 'release_package.py',
+        'build.py', 'build_mount_assets.py', 'distribution_symbols.py', 'release_tools.py', 'install.py', 'package-release.py', 'release_package.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
         'src/research/native_static_batch_data.py',
@@ -163,6 +163,14 @@ def verify_build(receipt, build_dir=None, root=ROOT):
         if digest(root / name) != value:
             raise ValueError('受保护文件改变：' + name)
     if build_dir:
+        symbols = receipt.get('distribution_symbols', {})
+        if symbols.get('schema') != 1 or set(symbols.get('files', {})) != {'DualSP.dll', 'DualSPUI.dll'}:
+            raise ValueError('缺少交付DLL精简与私有诊断件回执')
+        for name, record in symbols['files'].items():
+            if (record.get('private_path') != 'private-debug/' + name or record.get('loader_contract_preserved') is not True or
+                    digest(contained(Path(build_dir) / record['private_path'], build_dir)) != record['private_sha256'] or
+                    digest(contained(Path(build_dir) / name, build_dir)) != record['distribution_sha256']):
+                raise ValueError('交付DLL或私有诊断件改变')
         assets = receipt.get('mount_assets',{})
         from research.build_runtime_mount_data import build as runtime_mount_data
         expected_variants = runtime_mount_data()['assets']

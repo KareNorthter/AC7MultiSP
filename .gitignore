@@ -63,3 +63,12 @@ __pycache__/
 !.env.example
 *.pfx
 *.p12
+
+# 作者私钥及恢复材料只保存在仓库外；误放入仓库也不得提交。
+/signing-private/
+*.private-key.json
+*.private.pem
+*.private.der
+*.encrypted.p8
+*.dpapi
+*.snk

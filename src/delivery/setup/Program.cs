@@ -69,6 +69,13 @@ namespace AC7MultiSP.Setup {
         [STAThread] static void Main(string[] args) {
             Application.EnableVisualStyles(); Application.SetCompatibleTextRenderingDefault(false);
             try {
+                AuthorSignature.Initialize();
+                if (args.Length == 2 && args[0] == "--verify-release") {
+                    string verifiedVersion;
+                    try { verifiedVersion = AuthorSignature.VerifyReleaseFolder(args[1]); }
+                    catch (Exception failure) { throw UiText.ErrorWithInner("error.authorIntegrity", failure); }
+                    UiDialog.Show(null, UiText.T("verification.releasePassed", verifiedVersion), UiText.T("app.title")); return;
+                }
                 if (args.Length == 2 && args[0] == "--export-zip") { new Bundle().Export(Path.GetFullPath(args[1])); return; }
                 bool preview = false;
                 string snapshot = null, page = "home";
@@ -87,6 +94,11 @@ namespace AC7MultiSP.Setup {
                 }
             } catch (Exception failure) {
                 Environment.ExitCode = 1;
+                if (!AuthorSignature.Ready) {
+                    bool chinese = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName == "zh";
+                    MessageBox.Show(chinese ? SignatureBootstrap.FailureZh : SignatureBootstrap.FailureEn,
+                        chinese ? SignatureBootstrap.TitleZh : SignatureBootstrap.TitleEn, MessageBoxButtons.OK, MessageBoxIcon.Error); return;
+                }
                 UiDialog.Show(null, UiText.T("error.start", UiText.Explain(failure)), UiText.T("app.title"));
             }
         }

@@ -8,6 +8,8 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 from release_tools import ROOT, product, read_json, digest, verify_build, source_snapshot
 from user_texts import DOCUMENTS as TOPICS
+from author_signing import (Signer, identity, sign_manifest, csharp_trust, TRUST, CONTENT, CONTENT_SIG,
+                            valid_path as signed_path, unique)
 
 SOURCE = ROOT / 'src/delivery'
 MOD = 'ue4ss/Mods/DualSP/'
@@ -23,6 +25,7 @@ def encoded(value):
 
 
 def valid_path(name):
+    signed_path(name)
     parts = name.split('/')
     if ('\\' in name or ':' in name or PurePosixPath(name).is_absolute() or
             any(not p or p in ('.', '..') or p.endswith(('.', ' ')) or
@@ -44,17 +47,14 @@ def records(payload):
 
 
 def delivery_sources():
-    paths = [ROOT / 'src/package_delivery.py', ROOT / 'src/user_texts.py'] + sorted(SOURCE.rglob('*'))
+    paths = [ROOT / 'src/package_delivery.py', ROOT / 'src/user_texts.py', ROOT / 'src/author_signing.py'] + sorted(SOURCE.rglob('*'))
     paths += sorted((ROOT / 'docs/user').rglob('*'))
     return {p.relative_to(ROOT).as_posix(): digest(p) for p in paths if p.is_file()}
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--build-dir', type=Path, required=True)
-    parser.add_argument('--output-dir', type=Path, required=True)
-    parser.add_argument('--audio-source', type=Path, default=ROOT / 'dist/DualSP/Audio/SP2.wav')
-    args = parser.parse_args()
+def package(args, signer):
+    """私钥操作只通过显式选定的本机密钥句柄完成。"""
+    public_source = csharp_trust()
     build = args.build_dir.resolve(strict=True)
     output = args.output_dir.resolve()
     if output.exists():
@@ -62,6 +62,7 @@ def main():
     from user_texts import generate, extract_compact_credits
     generate(check=True)
     info = product()
+    signed_identity = identity(info['version'], info['candidate'])
     receipt = read_json(build / 'build-receipt.json')
     verify_build(receipt, build)
     policy = read_json(SOURCE / 'settings.json')
@@ -117,6 +118,8 @@ def main():
     for name in main_files:
         if re.search(r'/(profiles[^/]*\.json|ui-state\.json|catalogue[^/]*\.json|.*\.log|.*\.sav)$', name, re.I):
             raise ValueError('禁止分发个人文件：' + name)
+    content, content_signature = sign_manifest(dict(signed_identity, purpose='content', files=records(main_files)), signer)
+    main_files[CONTENT], main_files[CONTENT_SIG] = content, content_signature
     instructions = [{'type': 'setmodtype', 'value': 'dinput'}]
     attributes = {'version': version, 'source': 'nexus', 'modId': str(policy['nexus_mod_id']), 'downloadGame': policy['game_id']}
     instructions.extend({'type': 'attribute', 'source': 'ac7multisp-' + k, 'key': k, 'value': v} for k, v in attributes.items())
@@ -149,6 +152,16 @@ def main():
     payload.update({n: ('loader', p.read_bytes()) for n, p in loader.items()})
     payload.update({n: ('document', raw) for n, raw in documents.items()})
     payload['installer/universal.zip'] = ('archive', archive.read_bytes())
+    installer_catalogs = {}
+    for language in ('zh-CN', 'en'):
+        raw = (ROOT / 'docs/user/interface' / ('installer.' + language + '.json')).read_bytes()
+        catalog = json.loads(raw.decode('utf-8-sig'), object_pairs_hook=unique)
+        if not isinstance(catalog, dict) or not catalog or any(not isinstance(v, str) for v in catalog.values()) or len(raw) > 65536:
+            raise ValueError('安装器词条格式或大小无效')
+        installer_catalogs[language] = catalog
+        payload['installer/ui/' + language + '.json'] = ('interface', raw)
+    if set(installer_catalogs['zh-CN']) != set(installer_catalogs['en']):
+        raise ValueError('安装器双语词条缺失')
     resource_dir = output / 'exe-input'
     resource_dir.mkdir()
     resources = []
@@ -159,19 +172,16 @@ def main():
         file.write_bytes(raw)
         resources.append((file, identifier))
         embedded[name] = {'kind': kind, 'resource': identifier, 'size': len(raw), 'sha256': sha(raw)}
-    for language in ('zh-CN', 'en'):
-        path = ROOT / 'docs/user/interface' / ('installer.' + language + '.json')
-        raw = path.read_bytes()
-        json.loads(raw.decode('utf-8-sig'))
-        file = resource_dir / ('installer-ui.' + language + '.json')
-        file.write_bytes(raw)
-        resources.append((file, file.name))
-    meta = {'schema': 1, 'product': info['name'], 'version': version, 'candidate': info['candidate'],
+    meta = {**signed_identity, 'purpose': 'bundle', 'candidate': info['candidate'],
             'delivery_version': policy['delivery_version'], 'zip_name': zip_name,
             'universal_sha256': digest(archive), 'files': embedded, 'policy': policy}
+    meta_raw, meta_signature = sign_manifest(meta, signer)
     meta_file = resource_dir / 'bundle.json'
-    meta_file.write_bytes(encoded(meta))
+    meta_file.write_bytes(meta_raw)
     resources.append((meta_file, 'bundle.json'))
+    signature_file = resource_dir / 'bundle.sig.json'
+    signature_file.write_bytes(meta_signature)
+    resources.append((signature_file, 'bundle.sig.json'))
     exe = output / 'AC7MultiSP_Installer.exe'
     frozen_dir = output / 'setup-source'
     frozen_dir.mkdir()
@@ -194,6 +204,18 @@ def main():
                      f'[assembly: AssemblyInformationalVersion("{version}")]\n').encode('utf-8')
     (frozen_dir / 'ProductVersion.cs').write_bytes(assembly_info)
     source_hashes['ProductVersion.cs'] = sha(assembly_info)
+    (frozen_dir / 'TrustedAuthorKeys.cs').write_bytes(public_source)
+    source_hashes['TrustedAuthorKeys.cs'] = sha(public_source)
+    # 首次验签失败不能依赖未验证的UI资源；从同一词条生成最小双语提示。
+    bootstrap = ['// 自动生成；唯一来源为installer双语JSON，不手工维护。',
+                 'namespace AC7MultiSP.Setup { internal static class SignatureBootstrap {']
+    for suffix, language in (('Zh', 'zh-CN'), ('En', 'en')):
+        for field, key in (('Title', 'app.title'), ('Failure', 'error.authorSignature')):
+            bootstrap.append('internal const string ' + field + suffix + ' = ' +
+                             json.dumps(installer_catalogs[language][key], ensure_ascii=True) + ';')
+    bootstrap_raw = ('\n'.join(bootstrap + ['} }', ''])).encode('utf-8')
+    (frozen_dir / 'SignatureBootstrap.cs').write_bytes(bootstrap_raw)
+    source_hashes['SignatureBootstrap.cs'] = sha(bootstrap_raw)
     rsp = ['/nologo', '/target:winexe', '/platform:x64', '/optimize+', '/codepage:65001',
            '/reference:System.dll', '/reference:System.Core.dll', '/reference:System.Windows.Forms.dll',
            '/reference:System.Drawing.dll', '/reference:System.Web.Extensions.dll',
@@ -204,7 +226,9 @@ def main():
     (output / 'setup-build.rsp').write_text('\n'.join(rsp) + '\n', encoding='utf-8-sig')
     if frozen != delivery_sources() or receipt['source_files'] != source_snapshot():
         raise ValueError('封装期间来源改变，不能交付')
-    report = {'schema': 2, 'version': version, 'candidate': info['candidate'],
+    signing = dict(signed_identity, key_id=signer.key_id, registry_sha256=digest(TRUST),
+                   content_sha256=sha(content), bundle_sha256=sha(meta_raw))
+    report = {'schema': 2, 'version': version, 'candidate': info['candidate'], 'author_signing': signing,
               'delivery_version': policy['delivery_version'], 'created_at': datetime.now(timezone.utc).isoformat(),
               'universal_zip': zip_name, 'universal_sha256': digest(archive),
               'universal_size': archive.stat().st_size, 'universal_member_count': len(universal),
@@ -220,6 +244,18 @@ def main():
               'tests_run': False, 'game_installed': False, 'game_started': False, 'uploaded': False}
     (output / '封装回执.json').write_bytes(encoded(report))
     print(json.dumps({k: report[k] for k in ('version', 'candidate', 'universal_zip', 'universal_sha256', 'universal_member_count', 'exe_filename')}, ensure_ascii=False))
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--build-dir', type=Path, required=True)
+    parser.add_argument('--output-dir', type=Path, required=True)
+    parser.add_argument('--audio-source', type=Path, default=ROOT / 'dist/DualSP/Audio/SP2.wav')
+    parser.add_argument('--signing-key-name', help='可省略以按公钥查找唯一的本机CNG密钥；不接受私钥文件')
+    parser.add_argument('--signing-provider', default='Microsoft Software Key Storage Provider')
+    args = parser.parse_args()
+    with Signer(args.signing_key_name, args.signing_provider) as signer:
+        package(args, signer)
 
 
 if __name__ == '__main__':
