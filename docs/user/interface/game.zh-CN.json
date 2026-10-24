@@ -504,7 +504,8 @@
     "quick.status.native_sp": "已进入M13，保留任务指定兵装。",
     "quick.status.failed": "快速任务未完成。",
     "quick.status.saved": "测试预设已保存。",
-    "quick.dlc_task": "DLC特殊任务 %d"
+    "quick.dlc_task": "DLC特殊任务 %d",
+    "quick.intro_failed": "自动跳过开场未完成，保留原生过场；继续等待飞控与兵装就绪。"
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",

@@ -15,7 +15,7 @@
   },
   "original_message_replacements": 265,
   "original_message_replacements_unique": 264,
-  "catalog_entries_per_language": 503,
+  "catalog_entries_per_language": 504,
   "sources": [
     "docs/user/interface/game.zh-CN.json",
     "docs/user/interface/game.en.json"

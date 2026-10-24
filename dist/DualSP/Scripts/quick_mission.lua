@@ -43,26 +43,34 @@ function Module.new(deps)
     function self:waiting()return self.pending and self.pending.stage~="weapons"end
     function self:startup()
         if not self.saved.skip_logos or not deps.enabled()or self.logoFailed then return end
-        local instance=deps.context().instance
-        if not valid(instance)or not valid(instance:GetWorld())then return end
-        local world=instance:GetWorld()
-        if not world:GetFullName():find("/Game/UI/Menu/Boot.",1,true)then return end
-        local ui=StaticFindObject("/Script/Nimbus.Default__UIManagerActor")
-        local class=StaticFindObject("/Script/Nimbus.CopyrightWidget")
-        if not valid(ui)or not valid(class)then return end
-        local manager=ui:GetCurrentUIManagerActor()
-        if not valid(manager)or address(manager:GetWorld())~=address(world)then return end
-        manager.MenuWidgetArray:ForEach(function(_,value)
-            local widget=value:get()
-            if not valid(widget)or not widget:IsA(class)or not widget:IsVisible()or not widget:IsEnableControl()
-                or address(widget:GetWorld())~=address(world)or self.logoWidget==address(widget)then return end
-            local ok,accepted,err=pcall(deps.logos,address(instance),address(world),address(widget))
-            if not ok or err then
-                self.logoFailed=true;self.error_key="quick.logos_failed";deps.note("STARTUP_LOGOS_FAILED "..tostring(err or accepted));changed()
-            elseif accepted then
-                self.logoWidget=address(widget);widget:SetRenderOpacity(0);deps.note("STARTUP_LOGOS_HIDDEN")
-            end
+        -- 视觉辅助失败只停本次跳过，不向主调度冒泡并隔离当前机体。
+        local startupOK,startupError=pcall(function()
+            local instance=deps.context().instance
+            if not valid(instance)or not valid(instance:GetWorld())then return end
+            local world=instance:GetWorld()
+            if not world:GetFullName():find("/Game/UI/Menu/Boot.",1,true)then return end
+            local ui=StaticFindObject("/Script/Nimbus.Default__UIManagerActor")
+            local class=StaticFindObject("/Script/Nimbus.CopyrightWidget")
+            if not valid(ui)or not valid(class)then return end
+            local manager=ui:GetCurrentUIManagerActor()
+            if not valid(manager)or address(manager:GetWorld())~=address(world)then return end
+            manager.MenuWidgetArray:ForEach(function(_,value)
+                local widget=value:get()
+                if not valid(widget)or not widget:IsA(class)or not widget:IsVisible()or not widget:IsEnableControl()
+                    or address(widget:GetWorld())~=address(world)or self.logoWidget==address(widget)then return end
+                local ok,accepted,err=pcall(deps.logos,address(instance),address(world),address(widget))
+                if not ok or err then
+                    self.logoFailed=true;self.error_key="quick.logos_failed";deps.note("STARTUP_LOGOS_FAILED "..tostring(err or accepted));changed()
+                elseif accepted then
+                    -- 本构建没有可调用的Widget:SetRenderOpacity；由原生结束状态完成交接。
+                    self.logoWidget=address(widget);deps.note("STARTUP_LOGOS_NATIVE_WAIT")
+                end
+            end)
         end)
+        if not startupOK then
+            self.logoFailed=true;self.error_key="quick.logos_failed"
+            deps.note("STARTUP_LOGOS_FAILED "..tostring(startupError));changed()
+        end
     end
     function self:profile(id)
         if self.flight and self.flight.id==id then return {a=self.flight.swp,b=-1,c=-1,ratio=1}end
@@ -207,11 +215,6 @@ function Module.new(deps)
         if instance:GetMissionID()~=pending.preset.mission_id then self:fail("quick.changed","快速任务编号与目标世界不符",true);return false end
         local game=deps.game();local owner=game:GetPlayerController(instance,0)
         if not valid(owner)or address(owner:GetWorld())~=address(world)or not owner:IsLocalController()or not owner:IsLocalPlayerController()then return true end
-        if not pending.skipChecked then
-            assert(valid(StaticFindObject("/Script/Nimbus.NimbusPlayerController:SetIsSkipIGC"))and
-                valid(StaticFindObject("/Script/Nimbus.Mission:SkipMiniGame")),"快速任务跳过接口缺失")
-            pending.skipChecked=true
-        end
         local pawn=game:GetPlayerPawn(instance,0)
         local ready=valid(pawn)and pawn:IsA(StaticFindObject("/Script/Nimbus.PlayerPlane"))and address(pawn:GetWorld())==address(world)
             and address(owner:K2_GetPawn())==address(pawn)and pawn.bEnableWeaponInput and not pawn:IsWeaponSystemDisabled()
@@ -226,19 +229,34 @@ function Module.new(deps)
             if pending.stage~="weapons"then pending.stage="weapons";self.status="weapons";changed()end
             return false -- 主调度核对真实兵装并完成临时单SP初始化后才确认成功。
         end
-        if os.time()~=pending.lastSkip then
-            pending.lastSkip=os.time();owner:SetIsSkipIGC(true);self.skipOwner=owner
-            local defaults=StaticFindObject("/Script/Nimbus.Default__Mission")
-            local mission=valid(defaults)and defaults:GetCurrentMission()or nil
-            if valid(mission)and address(mission:GetWorld())==address(world)then
-                local phase=mission.CurrentPhase
-                -- 只跳本次出击的起飞/开场补油；不取消任务阶段、补给菜单或战斗玩法。
-                if valid(phase)and phase:IsA(StaticFindObject("/Script/Nimbus.MiniGamePhase"))then
-                    local label=phase:GetClass():GetFullName()
-                    if (label:find("Takeoff",1,true)or label:find("Refuel",1,true))and not pending.skippedMini[address(phase)]then
-                        pending.skippedMini[address(phase)]=true;mission:SkipMiniGame()
+        if not pending.skipFailed and os.time()~=pending.lastSkip then
+            pending.lastSkip=os.time()
+            local skipped,skipError=pcall(function()
+                assert(valid(StaticFindObject("/Script/Nimbus.NimbusPlayerController:SetIsSkipIGC"))and
+                    valid(StaticFindObject("/Script/Nimbus.Mission:SkipMiniGame")),"快速任务跳过接口缺失")
+                owner:SetIsSkipIGC(true);self.skipOwner=owner
+                -- 不调用默认对象的GetCurrentMission；只认当前世界唯一的实际任务实例。
+                local mission=nil
+                for _,candidate in ipairs(FindAllOf("Mission")or{})do
+                    if valid(candidate)and not candidate:HasAnyFlags(0x10)and address(candidate:GetWorld())==address(world)then
+                        assert(not mission,"快速任务当前世界的任务实例不唯一")
+                        mission=candidate
                     end
                 end
+                if valid(mission)and address(mission:GetWorld())==address(world)then
+                    local phase=mission.CurrentPhase
+                    -- 只跳本次出击的起飞/开场补油；不取消任务阶段、补给菜单或战斗玩法。
+                    if valid(phase)and phase:IsA(StaticFindObject("/Script/Nimbus.MiniGamePhase"))then
+                        local label=phase:GetClass():GetFullName()
+                        if (label:find("Takeoff",1,true)or label:find("Refuel",1,true))and not pending.skippedMini[address(phase)]then
+                            pending.skippedMini[address(phase)]=true;mission:SkipMiniGame()
+                        end
+                    end
+                end
+            end)
+            if not skipped then
+                pending.skipFailed=true;self:releaseSkip();self.error_key="quick.intro_failed"
+                deps.note("QUICK_MISSION_SKIP_ERROR "..tostring(skipError));changed()
             end
         end
         return true

@@ -7,7 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
-| 三线程整合与EXE交付，2.25.1已交付待用户验收 | 本集成交付聊天；本轮源码冻结32e262e；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP；构建在E:/AC7_MultiSP/Temp/tasks/20261024-f6-aircraft-fix | F6水印/常显反馈卡片、两处Patch机体许可分类已修，接收快速任务964507d；完整构建和EXE封装完成，[回执](../../evidence/2.25.1-exe-delivery.json)记录来源和摘要。旧2.25.0及回执保留；未运行测试、安装器、离线UI预览或游戏，未安装/上传 |
+| 三线程整合与EXE交付，快速任务初始化修复待下次打包 | 本集成交付聊天；基线main 4622619；codex/integrate-20261024 | C:/Users/83717/.codex/worktrees/integrate-20261024/AC7_MultiSP | 用户确认2.25.1可快速进入但本项目三SP失效；[日志依据](../../evidence/quick-mission-trisp-failure-20261024.json)显示过场辅助异常导致Arkbird隔离。源码隔离辅助失败并移除错误反射调用；快速卡片移到日志上方。本轮只做静态核对，不编译/测试/安装/操作游戏，随下次更新打包 |
 | 快速进入测试任务，失败修复已接收待实测 | 来源964507d；codex/feat-quick-mission-launch | C:/Users/83717/.codex/worktrees/quick-mission-launch/AC7_MultiSP | 主菜单准备/菜单GI归属修复及阶段日志已纳入2.25.1完整构建；[失败定位](../../evidence/quick-mission-failure-20261024.json)和[唯一设计](../engineering/quick-mission-launch.md)保留依据。未实机确认新原生加载或Logo效果，不回改2.25.0回执 |
 | Mod机体兼容性续研，长按修复已接收待实测 | 来源22a899e；codex/research-mod-aircraft-compat | C:/Users/83717/.codex/worktrees/research-mod-aircraft-compat/AC7_MultiSP | 长按修复进入本轮2.25.0完整构建；[续研正文](../research/mod-aircraft-compatibility.md)保留机体分组、原包缺项及待办。未变更游戏机体组，EML问题按用户要求暂缓；短按/长按及三SP无回归仍待用户验收 |
 | F6启动更新选项，已接收待实测 | 来源7f213aa；codex/feat-installer-f6-usability | E:/AC7_MultiSP/Temp/tasks/20261024-installer-f6/worktree | 默认开启选项、配置19补缺失字段及管理协议22已纳入本轮2.25.0完整构建；旧源码阶段未构建记录保留，实际联网和保存行为待用户验收 |

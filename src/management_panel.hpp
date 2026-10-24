@@ -254,8 +254,6 @@ void drawPanel() {
         if(beginManagementTab(uiText("general.features.d6795dc0"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
         if(beginManagementTab(uiText("camera.bindings.291ded16"),1)) {drawCameraSettings();ImGui::EndTabItem();}
         if(beginManagementTab(uiText("debug.debug.3211ed36"),2)) {
-            if(panelCard("QuickMission",uiText("quick.title")))drawQuickMission();
-            ImGui::EndChild();
             if(panelCard("DebugLoadout",uiText("mission.loadout.682b8e9c"))) {
                 const auto& options=state.at("debug_weapons");
                 bool infinite=pendingDebugWeapons>0?pendingInfiniteAmmo:options.at("infinite").get<bool>();
@@ -275,6 +273,8 @@ void drawPanel() {
             }
             ImGui::EndChild();
             if(panelCard("DebugAircraft",uiText("change.aircraft.6b159313")))drawDebugAircraft();
+            ImGui::EndChild();
+            if(panelCard("QuickMission",uiText("quick.title")))drawQuickMission();
             ImGui::EndChild();
             if(panelCard("Logs",uiText("logs.2c322bb4"))) {
                 if(ImGui::SmallButton(logsExpanded?uiText("collapse.togglelogs.01eaf7d4"):uiText("expand.togglelogs.85549964")))logsExpanded=!logsExpanded;

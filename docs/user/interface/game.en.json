@@ -504,7 +504,8 @@
     "quick.status.native_sp": "Entered M13 with its mission-assigned SP.",
     "quick.status.failed": "Quick launch did not complete.",
     "quick.status.saved": "Test preset saved.",
-    "quick.dlc_task": "SP Mission %d"
+    "quick.dlc_task": "SP Mission %d",
+    "quick.intro_failed": "Intro skipping did not complete. The native sequence continues while waiting for flight controls and weapons."
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",
