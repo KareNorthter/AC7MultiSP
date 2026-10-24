@@ -78,9 +78,15 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 目录按 PPDT 基础引用、SDT 涂装引用与真实类父链核对，不按 `_sNN/_typeNN` 后缀猜身份。坏行按机体隔离，同编号冲突拒绝；实际兵装取当前预览/玩家实例的三个 SpecialWeaponConfig。展示资料不足可降级为类代号/OTHER/空性能条，不因此授予写入许可。基础同槽类吻合才沿用作者 PWDT。
 
+本分支的名称共用修复将PPDT `Reference`严格绑定为实际`SoftClassProperty`、40字节软类引用；旧代码要求`SoftObjectProperty`而使真实引用导出失败。两类共享软引用数据布局不代表反射类型名相同。恢复真实类路径后，基础同槽兵装类一致时保留作者展示代号；更换皮肤导致实际类不一致时仍走现有回退，不按编号把自定义兵装改成原版，也不放宽加载状态、对象身份或写入资格。该字段绑定适用于所有目录行，不硬编码F17V/ADF-11别名。范围和未编译/安装边界见[同类问题回执](../../evidence/mod-aircraft-reference-and-ircm-audit-20261024.json)。
+
 换涂装、对象或兵装类会使旧草稿签名失效，排队和写入前再次核对。已配置飞行/补给持有受控快照；第三方脚本运行期热换类会报告 `EXTERNAL_SP_CHANGE`，不能把新库存记入旧逻辑槽，也不构成完整外部蓝图兼容协议。
 
-电子战与 UAV 依真实 CDO 父类、回调、装填/结束归属契约准入，不单看 WeaponID 或名称。S-44/Gleipnir 的 HPM 即使复用编号31仍按实际 WeaponUAV 处理；真实 ElectronicSupportMeasures 走电子战，LaserInterceptor 不支持。非 Raven 不套 Raven 固定三武器限制，真 Raven 的回收模型/TLS 附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
+电子战、UAV及本分支待验证的IRCM依真实CDO父类、回调、装填/结束归属契约准入，不单看WeaponID或名称。S-44/Gleipnir的HPM即使复用编号31仍按实际WeaponUAV处理；真实ElectronicSupportMeasures走电子战。非Raven不套Raven固定三武器限制，真Raven的回收模型/TLS附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
+
+IRCM源码候选新增`ContinuousKind::Interceptor`，仅接受`/Script/Nimbus.LaserInterceptor`派生、发射即装填且无延后装填归属、已核对的原生Tick/初始化/结束/Release/Retire回调，以及未挂接的独立根组件。源于S32只读激活和自然退场现场：10秒有效期、2秒尾迹，最终12.0008秒非活动；原生搜索/拦截/结束代码完整范围、所属玩家检查与最终回收首次按9855922指纹核对。保留Actor原生Tick、目标搜索、作者蓝图事件和寿命，不以ECM分支代替IRCM。
+
+IRCM旧实例纳入现有双引用数组保有、临时Root和发射代次账本；额外记录独立根组件的弱身份，重建后检查其没有被换成或挂上新的挂架。Release/Retire只隔离旧代对当前SP的装填通知，Actor自身的结束、尾迹和回池继续执行；补给、检查点及失败收尾沿现有完整End/Retire路径。Lua资格返回增加第六项`interceptor`，新增`dualsp_mod_interceptor_supported`能力门禁，核心与Lua须成套接收；真实拦截器改用其他编号时也不能绕过准入失败。RectennaBarrier仍不支持，未知回调或附着结构拒绝。F-14IA的副油箱IRCM及机库依赖崩溃不因同名资源而自动放行；现有提前退让保持。本候选未编译、测试、安装或完成多SP实机验收。
 
 F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不等于任意 Mod 可用。依据见[第三方静态资料](../../evidence/mod-aircraft-compat-static.json)及[特殊兵装契约](../../evidence/mod-special-sp-contract-20261022.json)，逐类研究从[研究索引](../research/README.md)进入。
 

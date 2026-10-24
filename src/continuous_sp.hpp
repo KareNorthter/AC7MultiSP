@@ -2,12 +2,13 @@
 #pragma once
 
 struct ContinuousIdentity { Addr address{}; int index{},serial{}; };
-enum class ContinuousKind { None, Electronic, TLS, UAV };
+enum class ContinuousKind { None, Electronic, TLS, UAV, Interceptor };
 struct ContinuousSupport {
     ContinuousKind kind{ContinuousKind::None};
     bool electronic{};
     const char* reason{"not_registered"};
     bool uav{}; // 按真实WeaponUAV类识别，不以菜单名称或编号26代替。
+    bool interceptor{}; // IRCM真实类单独返回，不能借用电子战标记或编号31代替。
 };
 struct ContinuousEffect {
     ContinuousIdentity actor,plane,activator,level;
@@ -163,7 +164,29 @@ bool continuousFalkenTLSBusy(Addr plane,Addr activator) {
 }
 bool continuousLegacyPlane(Addr plane) {return continuousCfa44(plane) || continuousMorgan(plane) || continuousRaven(plane) ||
     continuousXfa27(plane) || continuousSu37(plane);} // CFA已有弱身份机型缓存，先命中，避免先遍历另外三架的类链。
-// 电子战/UAV均与WeaponID解耦；仍逐次核对原生回调和发射即装填契约。
+// S32原生激活/12秒自然退场采样：IRCM不依附会被重建的挂架，不能套TLS的四层附着。
+bool continuousInterceptorUnattached(Addr weapon) {
+    const Addr root=read<Addr>(weapon+0x160);
+    return root && !read<unsigned char>(weapon+0x638) && !read<Addr>(weapon+0x640) && !read<Addr>(root+0x100);
+}
+bool continuousInterceptorCodeQualified() {
+    static int qualified=0;
+    if(qualified)return qualified>0;
+    verifyVersion();
+    const Addr base=continuousBase();
+    auto code=[base](size_t rva,size_t size,uint64_t expected) {
+        checkMemory(base+rva,size);
+        const auto* bytes=reinterpret_cast<const unsigned char*>(base+rva);
+        uint64_t hash=14695981039346656037ull;
+        for(size_t i=0;i<size;++i)hash=(hash^bytes[i])*1099511628211ull;
+        return hash==expected;
+    };
+    // 连续范围覆盖初始化、Tick、搜索与拦截的完整代码，另核对所属玩家检查和最终退场。
+    const bool ok=code(0x8736e0,0x880,0x7e4208d2f93388abull) &&
+        code(0x8614c0,0x73,0x1f19818ecc2c9e4bull) && code(0x861490,0x2b,0x261b720586e9602cull);
+    qualified=ok?1:-1;return ok;
+}
+// 电子战/UAV/IRCM均与展示编号解耦；仍逐次核对原生回调和发射即装填契约。
 ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
     const bool electronic=continuousElectronicClass(cls);
@@ -184,9 +207,19 @@ ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
         return {supported?ContinuousKind::UAV:ContinuousKind::None,false,
             supported?"native_uav":"uav_native_callbacks_changed",true};
     }
+    if(continuousClassDerived(cls,"LaserInterceptor","/Script/Nimbus")) {
+        if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))
+            return {ContinuousKind::None,false,"interceptor_reload_contract_changed",false,true};
+        if(read<Addr>(table+0x618)!=base+0x873730 || read<Addr>(table+0x628)!=base+0x8736e0 ||
+            read<Addr>(table+0x648)!=base+0x894850 || read<Addr>(table+0x678)!=base+0x873700 ||
+            read<Addr>(table+0x680)!=base+0x861490)
+            return {ContinuousKind::None,false,"interceptor_native_callbacks_changed",false,true};
+        if(!continuousInterceptorUnattached(weapon))
+            return {ContinuousKind::None,false,"interceptor_attachment_not_supported",false,true};
+        if(!continuousInterceptorCodeQualified())return {ContinuousKind::None,false,"interceptor_native_code_changed",false,true};
+        return {ContinuousKind::Interceptor,false,"native_interceptor",false,true};
+    }
     const int id=read<unsigned char>(weapon+0x3b0);
-    if(continuousClassDerived(cls,"LaserInterceptor","/Script/Nimbus"))
-        return {ContinuousKind::None,false,"interceptor_lifecycle_not_supported"};
     if(id!=25 && id!=26)return {ContinuousKind::None,false,id==31?"electronic_class_unrecognized":"not_continuous"};
     const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
     const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
@@ -348,6 +381,11 @@ void continuousInstall() {
     }
 }
 void continuousAttachment(ContinuousEffect& e) {
+    if(e.kind==ContinuousKind::Interceptor) {
+        require(continuousInterceptorUnattached(e.actor.address),
+            "持续兵装：IRCM原生无挂接结构改变 / Continuous weapon: IRCM attachment contract changed");
+        e.attachment.push_back(continuousIdentity(read<Addr>(e.actor.address+0x160)));return;
+    }
     if(e.kind!=ContinuousKind::TLS)return;
     Addr component=read<Addr>(e.actor.address+0x160);
     for(int i=0;component && i<8;++i) {
@@ -363,6 +401,8 @@ void continuousAttachment(ContinuousEffect& e) {
 }
 bool continuousAttachmentIntact(const ContinuousEffect& e) {
     if(e.attachment.empty() || e.finalNotified)return true;
+    if(e.kind==ContinuousKind::Interceptor)return e.attachment.size()==1 && continuousAlive(e.attachment[0]) &&
+        read<Addr>(e.actor.address+0x160)==e.attachment[0].address && continuousInterceptorUnattached(e.actor.address);
     if(read<Addr>(e.actor.address+0x160)!=e.attachment.front().address ||
         read<Addr>(e.actor.address+0x640)!=e.attachment[1].address || read<uint64_t>(e.actor.address+0x648)!=e.socket)return false;
     for(size_t i=0;i<e.attachment.size();++i)
@@ -417,7 +457,8 @@ struct ContinuousRebuild {
             if(!w || read<Addr>(w+0x3b8)!=plane || !read<unsigned char>(w+0x368))continue;
             const int id=read<unsigned char>(w+0x3b0);
             const auto support=continuousSupport(plane,w);
-            if(!support.electronic && !support.uav && (!legacy || (id!=25 && id!=26 && id!=31)))continue;
+            if(!support.electronic && !support.uav && !support.interceptor &&
+                (!legacy || (id!=25 && id!=26 && id!=31)))continue;
             if(support.kind==ContinuousKind::None) {
                 if(strict)nativeLog(Json{{"event","CONTINUOUS_UNSUPPORTED"},{"weapon",continuousName(w)},
                     {"weapon_id",id},{"electronic",support.electronic},{"reason",support.reason}}.dump());
@@ -451,7 +492,8 @@ struct ContinuousRebuild {
         roots.reserve(continuousEffects.size()+additions.size());
         // 先完成所有可失败的校验/保有，再登记新对象，避免构造失败改变现有收尾政策。
         for(const auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator) {
-            require(continuousAttachmentIntact(e),"持续兵装：已有 TLS 附着改变");roots.emplace_back(e.actor);
+            require(continuousAttachmentIntact(e),
+                "持续兵装：已有附着改变 / Continuous weapon: retained attachment changed");roots.emplace_back(e.actor);
         }
         for(const auto& e:additions)roots.emplace_back(e.actor);
         for(auto& e:additions){nativeLog(Json{{"event","CONTINUOUS_CAPTURED"},{"index",e.actor.index},{"serial",e.actor.serial},
@@ -465,7 +507,8 @@ struct ContinuousRebuild {
         std::vector<Addr> addActive,addSpawned;
         for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator) {
             require(continuousSameShot(e),"持续兵装：重建改变了活动对象身份或发射代次");
-            require(continuousAttachmentIntact(e),"持续兵装：重建破坏 TLS 附着");
+            require(continuousAttachmentIntact(e),
+                "持续兵装：重建破坏附着 / Continuous weapon: rebuild changed attachment");
             // UAV 由 ActiveWeapons 保有，SpawnedWeapons 会被新 MSL 覆盖，且新 SP 的小池未必容得下两架 UAV。
             if(e.kind!=ContinuousKind::UAV && !continuousContains(spawned,e.actor.address))addSpawned.push_back(e.actor.address);
             if(!e.released && !read<unsigned char>(e.actor.address+0x5c0) && !continuousContains(active,e.actor.address))addActive.push_back(e.actor.address);

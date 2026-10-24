@@ -1,0 +1,2042 @@
+{
+  "日期": "2026-10-24",
+  "主题": "Mod机体名称共用修复、S32及同类IRCM混装源码候选、F-14IA边界",
+  "分支": "codex/research-mod-aircraft-compat",
+  "本轮基线": "4e75e4c8ef92547cdfaafeddeb8479f3ec5b28fc",
+  "核对main": "01a1020c15922125f875d802dd5f513a1373afce",
+  "状态": "源码候选与静态审阅完成；未编译、编写/运行测试、安装或多SP实机验收，不分配正式版本",
+  "用户授权": [
+    "研究S32的IRCM不能共存和F17V/Mod ADF-11名称差异",
+    "扫描其他Mod机并一并修复",
+    "S32已单挂激活暂停；用户自行解除暂停并等待自然结束后再次暂停，允许只读采集",
+    "随后要求核对F-14IA是否同类、能否一并解决"
+  ],
+  "用户确认": {
+    "S32": "选择界面禁止与其他SP组合",
+    "ADF11": "就叫ADF-11，是Mod机，对应目录uav11/159"
+  },
+  "动作边界": {
+    "游戏函数调用": false,
+    "写进程": false,
+    "注入输入": false,
+    "操作游戏": false,
+    "构建": false,
+    "测试": false,
+    "安装": false,
+    "推送上传": false,
+    "修改第三方资源": false
+  },
+  "当前磁盘范围": {
+    "PAK数": 219,
+    "分组状态": "FENRIR",
+    "说明": "本聊天未切组；原回执记录安装时A，本轮只读state及磁盘目录为FENRIR。盘上组和旧实测版本不能相互替代。",
+    "catalogue_planes": 176,
+    "mod_bases_exported": 126,
+    "fallback_alias_without_parent_match": 9,
+    "decoded_packages": 409,
+    "覆盖边界": "176条当前目录均比较真实基础引用与代号；126条可从已安装Mod包导出基础类。其余原版/缺少Mod覆盖的包不强行加载。只逐项解析F17V/ADF-11登记皮肤，不能称所有皮肤实测。"
+  },
+  "名称根因": {
+    "旧绑定": "Reference/SoftObjectProperty/40",
+    "新绑定": "Reference/SoftClassProperty/40",
+    "历史只读反射": {
+      "source": {
+        "path": "E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/cfa50-visibility/live-hangar.json",
+        "bytes": 1075485,
+        "sha256": "ae500026b9cf25985a72cc88e82dcdb018f5a2c91b5bd985a02070a670d97207"
+      },
+      "pid": 25696,
+      "field": {
+        "offset": 40,
+        "size": 40,
+        "class": "SoftClassProperty"
+      }
+    },
+    "最新日志": "PID40308仍记录MOD_AIRCRAFT_REFERENCE_ERROR 字段缺失、类型或数组维数不符，旧候选未读取真实基础引用",
+    "后续链路": "SDT可使预览身份通过，但baseWeapons只取PPDT基础引用；引用缺失时猜AcePlayerPawn_<code>，遇别名失败。WeaponID与作者展示编号不同时，按内部编号回退为另一个名称。",
+    "静态推演并非UI实测": {
+      "f17v": [
+        "6AGM→4AGM",
+        "12AM→8AAM"
+      ],
+      "uav11": [
+        "APS→ECM",
+        "HGN→MG"
+      ],
+      "f15ex11": [
+        "12AM→8AAM"
+      ],
+      "f15ex21": [
+        "12AM→8AAM",
+        "ODMM→ADMM"
+      ]
+    },
+    "共用修复": "读取正确类型和真实路径，基础同槽实际类相同才保留作者PWDT代号；不新增机体别名，不按内部WeaponID改武器或强行命名。",
+    "同类路径条目": [
+      {
+        "id": 221,
+        "code": "x02a",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_x02a_01",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "6aam",
+            "catalogue_weapon_id": 4,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_x02a.plwp_6aam_x02a_C",
+            "native_parent": "/Game/Blueprint/Weapons/MSL_BaseClass",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_6aam",
+              "LifeTime": 9.0,
+              "LoadTime": 18.0,
+              "MaxLoadedCount": 6
+            },
+            "runtime_code_from_enum": "6aam",
+            "runtime_id_from_native_code": 4,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "6aam"
+            ]
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "sod",
+            "catalogue_weapon_id": 24,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_sod_x02a.plwp_sod_x02a_C",
+            "native_parent": "/Script/Nimbus.SODBomb",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_sod",
+              "LifeTime": 15.0,
+              "LoadTime": 10.0,
+              "MaxLoadedCount": 2,
+              "TrailTime": 20.0
+            },
+            "runtime_code_from_enum": "sod",
+            "runtime_id_from_native_code": 24,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "sod"
+            ]
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "qaam",
+            "catalogue_weapon_id": 18,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_x02a.plwp_qaam_x02a_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+            "effective_defaults": {
+              "LifeTime": 30.0,
+              "LoadTime": 10.0
+            },
+            "runtime_code_from_enum": null,
+            "runtime_id_from_native_code": null,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": []
+          }
+        ]
+      },
+      {
+        "id": 257,
+        "code": "f15ex11",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15ex1",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "12am",
+            "catalogue_weapon_id": 73,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_ex.plwp_12aam_ex_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0",
+            "effective_defaults": {
+              "MaxLoadedCount": 12,
+              "WeaponID": "EWeaponID::WID_8aam"
+            },
+            "runtime_code_from_enum": "8aam",
+            "runtime_id_from_native_code": 5,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "8aam"
+            ]
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "xsdb",
+            "catalogue_weapon_id": 28,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_12xsdb_ex.plwp_12xsdb_ex_C",
+            "native_parent": "/Script/Nimbus.Bomb",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_xsdb",
+              "LifeTime": 180.0,
+              "LoadTime": 7.0,
+              "MaxLoadedCount": 12
+            },
+            "runtime_code_from_enum": "xsdb",
+            "runtime_id_from_native_code": 28,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "xsdb"
+            ]
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "lacm",
+            "catalogue_weapon_id": 14,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_ex.plwp_lacm_ex_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_lacm_f0",
+            "effective_defaults": {
+              "MaxLoadedCount": 8
+            },
+            "runtime_code_from_enum": null,
+            "runtime_id_from_native_code": null,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": []
+          }
+        ]
+      },
+      {
+        "id": 258,
+        "code": "f15ex21",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15ex2",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "12am",
+            "catalogue_weapon_id": 73,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_ex.plwp_12aam_ex_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0",
+            "effective_defaults": {
+              "MaxLoadedCount": 12,
+              "WeaponID": "EWeaponID::WID_8aam"
+            },
+            "runtime_code_from_enum": "8aam",
+            "runtime_id_from_native_code": 5,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "8aam"
+            ]
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "xsdb",
+            "catalogue_weapon_id": 28,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_12xsdb_ex.plwp_12xsdb_ex_C",
+            "native_parent": "/Script/Nimbus.Bomb",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_xsdb",
+              "LifeTime": 180.0,
+              "LoadTime": 7.0,
+              "MaxLoadedCount": 12
+            },
+            "runtime_code_from_enum": "xsdb",
+            "runtime_id_from_native_code": 28,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "xsdb"
+            ]
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "odmm",
+            "catalogue_weapon_id": 43,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_8odmm_lz.plwp_8odmm_lz_C",
+            "native_parent": "/Game/Blueprint/Weapons/MSL_BaseClass",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_admm",
+              "LifeTime": 9.0,
+              "LoadTime": 15.0,
+              "MaxLoadedCount": 8
+            },
+            "runtime_code_from_enum": "admm",
+            "runtime_id_from_native_code": 34,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "admm"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 281,
+        "code": "f17v",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f17v1",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "6agm",
+            "catalogue_weapon_id": 50,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_6agm_wtf0.plwp_6agm_wtf0_C",
+            "native_parent": "/Game/Blueprint/Weapons/MSL_BaseClass",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_4agm",
+              "LifeTime": 13.0,
+              "LoadTime": 10.0,
+              "MaxLoadedCount": 6
+            },
+            "runtime_code_from_enum": "4agm",
+            "runtime_id_from_native_code": 3,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "4agm"
+            ]
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "12am",
+            "catalogue_weapon_id": 73,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_8aam_ex.plwp_8aam_ex_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_6aam_a0",
+            "effective_defaults": {
+              "MaxLoadedCount": 18,
+              "WeaponID": "EWeaponID::WID_8aam"
+            },
+            "runtime_code_from_enum": "8aam",
+            "runtime_id_from_native_code": 5,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "8aam"
+            ]
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "tls",
+            "catalogue_weapon_id": 25,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_ttls_f17v.plwp_ttls_f17v_C",
+            "native_parent": "/Script/Nimbus.LaserWeapon",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_tls",
+              "LifeTime": 15.0,
+              "TrailTime": 2.0,
+              "LoadTime": 16.0,
+              "MaxLoadedCount": 1
+            },
+            "runtime_code_from_enum": "tls",
+            "runtime_id_from_native_code": 25,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "tls"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 159,
+        "code": "uav11",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_adf11",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "aps",
+            "catalogue_weapon_id": 44,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_aps_adf11.plwp_aps_adf11_C",
+            "native_parent": "/Script/Nimbus.RectennaBarrier",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_ecm",
+              "LoadTime": 30.0
+            },
+            "runtime_code_from_enum": "ecm",
+            "runtime_id_from_native_code": 31,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "ecm"
+            ],
+            "unsupported_native_kind": "RectennaBarrier"
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "mg",
+            "catalogue_weapon_id": 0,
+            "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_gun_adf11.plwp_gun_adf11_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_mgp_r0",
+            "effective_defaults": {
+              "MaxLoadedCount": 2,
+              "LifeTime": 3.0,
+              "WeaponID": "EWeaponID::WID_mg"
+            },
+            "runtime_code_from_enum": "mg",
+            "runtime_id_from_native_code": 0,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": [
+              "mg"
+            ]
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "hgn",
+            "catalogue_weapon_id": 49,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_hgn_adf11.plwp_hgn_adf11_C",
+            "native_parent": "/Script/Nimbus.Artillery",
+            "effective_defaults": {
+              "WeaponID": "EWeaponID::WID_mg",
+              "LifeTime": 3.5,
+              "LoadTime": 0.125,
+              "TrailTime": 20.0,
+              "bAutoFireOnHold": true,
+              "MaxLoadedCount": 1
+            },
+            "runtime_code_from_enum": "mg",
+            "runtime_id_from_native_code": 0,
+            "catalogue_runtime_id_differ": true,
+            "old_fallback_codes": [
+              "mg"
+            ]
+          }
+        ]
+      },
+      {
+        "id": 9005,
+        "code": "f15c_vr",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15c",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": false,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15c",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "sasm",
+            "catalogue_weapon_id": 21,
+            "class": null
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "4aam",
+            "catalogue_weapon_id": 2,
+            "class": null
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "plsl",
+            "catalogue_weapon_id": 22,
+            "class": null
+          }
+        ]
+      },
+      {
+        "id": 9006,
+        "code": "f16c_vr",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f16c",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": false,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f16c",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "4aam",
+            "catalogue_weapon_id": 2,
+            "class": null
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "gpb",
+            "catalogue_weapon_id": 8,
+            "class": null
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "sasm",
+            "catalogue_weapon_id": 21,
+            "class": null
+          }
+        ]
+      },
+      {
+        "id": 9007,
+        "code": "f35c_vr",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": false,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "sod",
+            "catalogue_weapon_id": 24,
+            "class": null
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "4aam",
+            "catalogue_weapon_id": 2,
+            "class": null
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "8agm",
+            "catalogue_weapon_id": 6,
+            "class": null
+          }
+        ]
+      },
+      {
+        "id": 9008,
+        "code": "f04e_vr",
+        "package": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_f04e_Mobius",
+        "fallback_name_differs": true,
+        "fallback_base_in_parent_chain": false,
+        "mod_base_exported": true,
+        "parent_boundary": "/Game/Blueprint/Player/Pawn/AcePlayerPawn",
+        "slots": [
+          {
+            "slot": 1,
+            "catalogue_code": "ugb",
+            "catalogue_weapon_id": 27,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0.plwp_ugb_a0_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_ugb_a0",
+            "effective_defaults": {},
+            "runtime_code_from_enum": null,
+            "runtime_id_from_native_code": null,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": []
+          },
+          {
+            "slot": 2,
+            "catalogue_code": "lagm",
+            "catalogue_weapon_id": 15,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0.plwp_lagm_a0_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_lagm_a0",
+            "effective_defaults": {},
+            "runtime_code_from_enum": null,
+            "runtime_id_from_native_code": null,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": []
+          },
+          {
+            "slot": 3,
+            "catalogue_code": "sasm",
+            "catalogue_weapon_id": 21,
+            "class": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0.plwp_sasm_a0_C",
+            "native_parent": "/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
+            "effective_defaults": {},
+            "runtime_code_from_enum": null,
+            "runtime_id_from_native_code": null,
+            "catalogue_runtime_id_differ": false,
+            "old_fallback_codes": []
+          }
+        ]
+      }
+    ],
+    "已报告机体皮肤差异": [
+      {
+        "code": "f17v",
+        "skin": 7,
+        "package": "/Game/Blueprint/Player/Pawn/Skin/AcePlayerPawn_f17v_s07",
+        "base_configs": {
+          "1": "/Game/Blueprint/Weapons/Player/Base/plwp_6agm_wtf0.plwp_6agm_wtf0_C",
+          "2": "/Game/Blueprint/Weapons/Player/Variation/plwp_8aam_ex.plwp_8aam_ex_C",
+          "3": "/Game/Blueprint/Weapons/Player/Variation/plwp_ttls_f17v.plwp_ttls_f17v_C"
+        },
+        "skin_configs": {
+          "1": "/Game/Blueprint/Weapons/Player/Base/plwp_6agm_wtf0.plwp_6agm_wtf0_C",
+          "2": "/Game/Blueprint/Weapons/Player/Variation/plwp_8aam_ex.plwp_8aam_ex_C",
+          "3": "/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0.plwp_tls_x0_C"
+        }
+      }
+    ],
+    "边界": "X-02A和四条VR也有路径别名风险，不等于它们均已出现错误名称。F17V皮肤7换原生TLS，保留实际类不同的既有回退。"
+  },
+  "S32根因与适配": {
+    "旧限制": "真实LaserInterceptor被continuousSupport显式拒绝，编号31触发Lua available=false；SP1选它后SP2仅剩无兵装，运行核心也拒绝绕过菜单。",
+    "已核机制": "继承LaserInterceptor→AttachedWeapon→WeaponBase，原生搜索并跟踪来袭弹药，拥有独立未挂接根组件；发射即装填，无延后装填归属。不是ElectronicSupportMeasures。",
+    "结束证据": "同一实例index/serial从age1.7350366活动/未释放、在Active和Spawned两数组，变为age12.000799活动0/已释放、移出Active仍留Spawned池。LifeTime10+TrailTime2；留在池里不等于仍生效。",
+    "回调": {
+      "tick": "0x873730",
+      "end": "0x8736e0",
+      "release": "0x894850",
+      "init": "0x873700",
+      "retire": "0x861490"
+    },
+    "原生指纹": [
+      {
+        "rva": "0x8736e0",
+        "bytes": 2176,
+        "fnv1a64": "7e4208d2f93388ab"
+      },
+      {
+        "rva": "0x8614c0",
+        "bytes": 115,
+        "fnv1a64": "1f19818ecc2c9e4b"
+      },
+      {
+        "rva": "0x861490",
+        "bytes": 43,
+        "fnv1a64": "261b720586e9602c"
+      }
+    ],
+    "源码候选": "新增Interceptor种类，真实类/回调/装填/无挂接及原生代码逐层准入，纳入现有引用保有和旧发射代次通知隔离；记录根组件弱身份，重建后仍须无挂接。自然结束和作者事件仍执行；未知或改变契约拒绝。",
+    "跨编号与成套要求": "ContinuousSupport新增interceptor真实类标记，导出返回第六项；Lua capability dualsp_mod_interceptor_supported防旧核心混装，不允许改用其他WeaponID绕过失败。核心与Lua须成套。",
+    "边界": "自然退场是原包单SP现场，不是源码候选多SP验证。菜单、持续切槽、切回再发、装填、补给/检查点/失败收尾均未实机验收。"
+  },
+  "其他特殊类": [
+    {
+      "plane": "gaf1v2",
+      "id": 194,
+      "slot": 1,
+      "catalogue_code": "ircm",
+      "catalogue_weapon_id": 41,
+      "class": "/Game/Blueprint/Weapons/Player/Base/plwp_IRCM.plwp_IRCM_C",
+      "native_parent": "/Script/Nimbus.LaserInterceptor",
+      "effective_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 10.0,
+        "TrailTime": 2.0,
+        "LoadTime": 11.0,
+        "MaxLoadedCount": 1
+      },
+      "runtime_code_from_enum": "ecm",
+      "runtime_id_from_native_code": 31,
+      "catalogue_runtime_id_differ": true,
+      "old_fallback_codes": [
+        "ecm"
+      ],
+      "unsupported_native_kind": "LaserInterceptor"
+    },
+    {
+      "plane": "s32",
+      "id": 206,
+      "slot": 1,
+      "catalogue_code": "ircm",
+      "catalogue_weapon_id": 41,
+      "class": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C",
+      "native_parent": "/Script/Nimbus.LaserInterceptor",
+      "effective_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 10.0,
+        "TrailTime": 2.0,
+        "LoadTime": 11.0,
+        "MaxLoadedCount": 1
+      },
+      "runtime_code_from_enum": "ecm",
+      "runtime_id_from_native_code": 31,
+      "catalogue_runtime_id_differ": true,
+      "old_fallback_codes": [
+        "ecm"
+      ],
+      "unsupported_native_kind": "LaserInterceptor"
+    },
+    {
+      "plane": "xr302",
+      "id": 202,
+      "slot": 1,
+      "catalogue_code": "ircm",
+      "catalogue_weapon_id": 41,
+      "class": "/Game/Blueprint/Weapons/Player/base/plwp_ircm_xr302.plwp_ircm_xr302_C",
+      "native_parent": "/Script/Nimbus.LaserInterceptor",
+      "effective_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LifeTime": 10.0,
+        "TrailTime": 2.0,
+        "LoadTime": 11.0,
+        "MaxLoadedCount": 1
+      },
+      "runtime_code_from_enum": "ecm",
+      "runtime_id_from_native_code": 31,
+      "catalogue_runtime_id_differ": true,
+      "old_fallback_codes": [
+        "ecm"
+      ],
+      "unsupported_native_kind": "LaserInterceptor"
+    },
+    {
+      "plane": "uav11",
+      "id": 159,
+      "slot": 1,
+      "catalogue_code": "aps",
+      "catalogue_weapon_id": 44,
+      "class": "/Game/Blueprint/Weapons/Player/Base/plwp_aps_adf11.plwp_aps_adf11_C",
+      "native_parent": "/Script/Nimbus.RectennaBarrier",
+      "effective_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LoadTime": 30.0
+      },
+      "runtime_code_from_enum": "ecm",
+      "runtime_id_from_native_code": 31,
+      "catalogue_runtime_id_differ": true,
+      "old_fallback_codes": [
+        "ecm"
+      ],
+      "unsupported_native_kind": "RectennaBarrier"
+    },
+    {
+      "plane": "ua45",
+      "id": 205,
+      "slot": 3,
+      "catalogue_code": "aps",
+      "catalogue_weapon_id": 44,
+      "class": "/Game/Blueprint/Weapons/Player/Base/plwp_aps_ua45.plwp_aps_ua45_C",
+      "native_parent": "/Script/Nimbus.RectennaBarrier",
+      "effective_defaults": {
+        "WeaponID": "EWeaponID::WID_ecm",
+        "LoadTime": 30.0
+      },
+      "runtime_code_from_enum": "ecm",
+      "runtime_id_from_native_code": 31,
+      "catalogue_runtime_id_differ": true,
+      "old_fallback_codes": [
+        "ecm"
+      ],
+      "unsupported_native_kind": "RectennaBarrier"
+    }
+  ],
+  "同类采用范围": "GAF-1 V2、S32、XR-302的SP1均为LaserInterceptor，参数10+2/11；共同使用限定资格，不按机型放开。仅S32有本轮激活/结束现场，其他两机仍需实际CDO满足全部门禁。",
+  "另类限制": "ADF-11/uav11及UA-45的APS是RectennaBarrier，虽复用31，但不是IRCM或ECM；仍保留限制，未伪装成电子战放行。",
+  "F14IA": {
+    "原料": [
+      {
+        "source": {
+          "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch2\\~~S32_Prototype_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_ircm_s32.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\d41370e272b4cf43\\plwp_ircm_s32.json",
+          "sha256": "8657911415f56b34f234e7738f87c30a32d919081638247bf14251de5ef8bb28"
+        },
+        "members": {
+          ".uasset": "0800d452f1e6eb0afd3e76968347126598240d8f61bf218cdfb2642e8895b04c",
+          ".uexp": "a8520e6caf1e5841b09ff0fb56b36b7f98fe279ab5dea75f8997f78e29ba4656"
+        },
+        "classes": [
+          {
+            "name": "plwp_ircm_s32_C",
+            "parent": "/Script/Nimbus.LaserInterceptor"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__plwp_ircm_s32_C",
+            "values": {
+              "WeaponID": "EWeaponID::WID_ecm",
+              "LifeTime": 10.0,
+              "TrailTime": 2.0,
+              "LoadTime": 11.0
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Blueprint/Weapons/AI/Base/Data/CUR_LaserInterceptorSwingRate",
+          "/Game/Materials/Decals/bullet_concrete_decal_Inst",
+          "/Game/Materials/Decals/bullet_others_decal_Inst",
+          "/Game/UI/HUD/ProgressBar/Weapons/w_ecmp_x0",
+          "/Game/UI/HUD/ProgressBar/Weapons/w_ecmp_x0_inside",
+          "/Game/Vehicles/Weapons/w_ircm_x0/w_ircm_x0_SM",
+          "/Game/Vehicles/Weapons/weaponRack/WeaponRack_w_ecmp_x2",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_ConcreteImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_GroundImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_IcebergImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_WaterImpact_M03",
+          "/Game/VFX/Environment/hpm/FX_hpm01",
+          "/Game/VFX/Environment/ircm/FX_ircm",
+          "/Game/WwiseAssets/SFX/SpecialWeapon/SPWP_ATG_GPB_DETACH",
+          "/Game/WwiseAssets/SFX/MissionSpecific/DLC_OBJ_EX03_BULLET",
+          "/Game/WwiseAssets/SFX/MissionSpecific/DLC_OBJ_EX03_BULLET_Stop"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/plwp_ircm_s32.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\5bfeb98093dda311\\plwp_ircm_s32.json",
+          "sha256": "8657911415f56b34f234e7738f87c30a32d919081638247bf14251de5ef8bb28"
+        },
+        "members": {
+          ".uasset": "0800d452f1e6eb0afd3e76968347126598240d8f61bf218cdfb2642e8895b04c",
+          ".uexp": "a8520e6caf1e5841b09ff0fb56b36b7f98fe279ab5dea75f8997f78e29ba4656"
+        },
+        "classes": [
+          {
+            "name": "plwp_ircm_s32_C",
+            "parent": "/Script/Nimbus.LaserInterceptor"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__plwp_ircm_s32_C",
+            "values": {
+              "WeaponID": "EWeaponID::WID_ecm",
+              "LifeTime": 10.0,
+              "TrailTime": 2.0,
+              "LoadTime": 11.0
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Blueprint/Weapons/AI/Base/Data/CUR_LaserInterceptorSwingRate",
+          "/Game/Materials/Decals/bullet_concrete_decal_Inst",
+          "/Game/Materials/Decals/bullet_others_decal_Inst",
+          "/Game/UI/HUD/ProgressBar/Weapons/w_ecmp_x0",
+          "/Game/UI/HUD/ProgressBar/Weapons/w_ecmp_x0_inside",
+          "/Game/Vehicles/Weapons/w_ircm_x0/w_ircm_x0_SM",
+          "/Game/Vehicles/Weapons/weaponRack/WeaponRack_w_ecmp_x2",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_ConcreteImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_GroundImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_IcebergImpact_M01",
+          "/Game/VFX/Vehicles/Weapon/Impact/Medium/FX_WaterImpact_M03",
+          "/Game/VFX/Environment/hpm/FX_hpm01",
+          "/Game/VFX/Environment/ircm/FX_ircm",
+          "/Game/WwiseAssets/SFX/SpecialWeapon/SPWP_ATG_GPB_DETACH",
+          "/Game/WwiseAssets/SFX/MissionSpecific/DLC_OBJ_EX03_BULLET",
+          "/Game/WwiseAssets/SFX/MissionSpecific/DLC_OBJ_EX03_BULLET_Stop"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\405ae0da07a869d6\\AcePlayerPawn_dptk_ircm.json",
+          "sha256": "7b9ed649f937c3126c22f6d7bd97d7c16542e16dc943837921a186688ba84eb0"
+        },
+        "members": {
+          ".uasset": "b36d07852a32557d1f2feffce0ecf7c00364229a491e2d4bbf36adfe4c0874e2",
+          ".uexp": "432947454d288fc23122c28cfd9cccd0f6539191c409c36cb2911298bae5003e"
+        },
+        "classes": [
+          {
+            "name": "AcePlayerPawn_dptk_ircm_C",
+            "parent": "/Script/Nimbus.PlayerPlane"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__AcePlayerPawn_dptk_ircm_C",
+            "values": {
+              "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Animation/Camera/camera_3rdperson_expert",
+          "/Game/Animation/Camera/camera_3rdperson_novice",
+          "/Game/Animation/Camera/camera_cockpit_f18f",
+          "/Game/Blueprint/AI/DamageState/DamageImpactVfxDataTable",
+          "/Game/Blueprint/AI/DamageState/DamagePartsTrailVfxDataTable",
+          "/Game/Blueprint/AI/DamageState/PlaneDamagedSpinParam",
+          "/Game/Blueprint/Player/AirRain/CUR_AirRain_SpeedRateCurves",
+          "/Game/Blueprint/Player/Camera/Curves/CUR_TPS_AirModifyRate",
+          "/Game/Blueprint/Player/Camera/Curves/CUR_TPS_AirMoveRate",
+          "/Game/Blueprint/Player/Camera/Curves/CurveHighGTurndHeightRatio",
+          "/Game/Blueprint/Player/Camera/Curves/CurveHighGTurnInterpolationRatio",
+          "/Game/Blueprint/Player/Camera/ImpactCamera/BP_ImpactCameraParameter",
+          "/Game/Blueprint/Player/Cockpit/f18f_CP_AnimBP",
+          "/Game/Blueprint/Player/Misc/AutoExposureBiasCurveForLightning",
+          "/Game/Blueprint/Player/Misc/SeekerJamming_JammedWaverFactorMultiplyCurveForTime",
+          "/Game/Blueprint/Player/Misc/SeekerJamming_LockedTimeMultiplyCurveForDistance",
+          "/Game/Blueprint/Player/Misc/SeekerJamming_LockingTimeMultiplyCurveForDistance",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot_FSUS",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRotVR",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationTrans",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationTransVR",
+          "/Game/Blueprint/UI/HUD/HUDMessages/GuideMessageWidgetBP",
+          "/Game/Blueprint/UI/HUD/Radar/MiniMapLayerVRBP",
+          "/Game/Blueprint/UI/HUD/StatWidgets/IconStatWidgetVR_all",
+          "/Game/Blueprint/UI/HUD/SubWidgets/CompassWidgetVRBP",
+          "/Game/Blueprint/UI/HUD/SubWidgets/PitchMeterWidgetVRBP",
+          "/Game/Blueprint/UI/HUD/Texture3DUI/MissileDirectionIndicatorMat",
+          "/Game/Blueprint/VR/M_HUD_MFD",
+          "/Game/Blueprint/VR/VRTickActor",
+          "/Game/Blueprint/Weapons/Flare_BaseClass",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_gun_x0",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_msl_a0",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+          "/Game/Characters/Pilot/Lleg_AnimBP",
+          "/Game/Characters/Pilot/Lleg_Rig",
+          "/Game/Characters/Pilot/LP_pilot_SM",
+          "/Game/Characters/Pilot/Rleg_AnimBP",
+          "/Game/Characters/Pilot/Rleg_Rig",
+          "/Game/Materials/Meshes/Plane",
+          "/Game/Materials/Parameters/GlobalMaterialParameters",
+          "/Game/UI/HUD/Container/hud_container_air01",
+          "/Game/UI/HUD/Container/hud_container_air01_NG",
+          "/Game/UI/HUD/Container/hud_container_air02",
+          "/Game/UI/HUD/Container/hud_container_air_cloud",
+          "/Game/UI/HUD/Container/hud_container_escortAir",
+          "/Game/UI/HUD/Container/hud_container_escortAir_NG",
+          "/Game/UI/HUD/Container/hud_container_escortGnd",
+          "/Game/UI/HUD/Container/hud_container_escortGnd_NG",
+          "/Game/UI/HUD/Container/hud_container_gnd01",
+          "/Game/UI/HUD/Container/hud_container_gnd01_NG",
+          "/Game/UI/HUD/Container/hud_container_gnd02",
+          "/Game/UI/HUD/Container/hud_container_gnd_cloud",
+          "/Game/UI/HUD/Container/hud_container_surrender",
+          "/Game/UI/HUD/Container/hud_container_wingman01",
+          "/Game/UI/HUD/hud_destination_mark",
+          "/Game/UI/HUD/hud_gunReticle_mgp",
+          "/Game/UI/HUD/hud_lockNG",
+          "/Game/UI/HUD/hud_rclReticle",
+          "/Game/UI/HUD/hud_Reticle_tgtp",
+          "/Game/UI/HUD/hud_seeker01",
+          "/Game/UI/HUD/hud_seeker01_1",
+          "/Game/UI/HUD/hud_seeker02",
+          "/Game/UI/HUD/hud_seeker02_1",
+          "/Game/UI/HUD/Models/hud_missile_indicator",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_01",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_02",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_03",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_04",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_05",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_06",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_07",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_08",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_09",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_10",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_11",
+          "/Game/UI/HUD/MultiLockon/hud_Multi_Lock-on_Air-to-Air_Missile_12",
+          "/Game/UI/HUD/VR_nomip_WidgetHUD_UnmodifiedTranslucency",
+          "/Game/UI/HUD/VR_w_glassmask_texture",
+          "/Game/UI/HUD/VR_w_glassmask_WidgetHUD_UnmodifiedTranslucency",
+          "/Game/UI/HUD/VR_w_glassmask_WidgetHUD_UnmodifiedTranslucency_Inst",
+          "/Game/Vehicles/Aircraft/Common/PilotSeat_ShadowMesh",
+          "/Game/Vehicles/Aircraft/Common/Textures/Decals/Default_000_D",
+          "/Game/VFX/Common/Materials/Rain/M_Canopy_UI_IEWS",
+          "/Game/VFX/Common/Materials/Rain/M_Canopy_UI_Layered_Inst",
+          "/Game/VFX/Environment/Common/Air_current/particle/FX_air_current",
+          "/Game/VFX/Environment/Common/rain/particle/FX_rain",
+          "/Game/VFX/Environment/Common/Sand_Dust/particle/FX_sand_dust",
+          "/Game/VFX/Vehicles/Aircraft/Common/Damage/FX_DamagedSmoke_Heavy_01",
+          "/Game/VFX/Vehicles/Aircraft/Common/Damage/FX_DamagedSmoke_Light_01",
+          "/Game/VFX/Vehicles/Aircraft/Common/Damage/FX_DamagedSmoke_Medium01",
+          "/Game/VFX/Vehicles/Aircraft/Common/Damage/FX_DamagedSmoke_Medium_02",
+          "/Game/VFX/Vehicles/Aircraft/Common/Desert_smoke/FX_Aircraft_Ground_WaterTrai00",
+          "/Game/VFX/Vehicles/Aircraft/Common/ElectricDischarge/FX_ElectricDischargeM_00_NPC",
+          "/Game/VFX/Vehicles/Aircraft/Common/ElectricDischarge/FX_ElectricDischargeM_00_Test",
+          "/Game/VFX/Vehicles/Aircraft/Common/Explosion/FX_Aircraft_Explosion03",
+          "/Game/WwiseAssets/Ambient/Air_Ambient_Play",
+          "/Game/WwiseAssets/Ambient/Air_Ambient_Stop",
+          "/Game/WwiseAssets/Ambient/AMB_AIRFLOW",
+          "/Game/WwiseAssets/Ambient/AMB_AIRFLOW_Stop",
+          "/Game/WwiseAssets/Ambient/AMB_M04_RAIN",
+          "/Game/WwiseAssets/Ambient/AMB_M04_RAIN_Stop",
+          "/Game/WwiseAssets/Ambient/Cloud_Density_Ambient_Play",
+          "/Game/WwiseAssets/Ambient/Cloud_Density_Ambient_Stop",
+          "/Game/WwiseAssets/Ambient/DLC_AMB_IEWS",
+          "/Game/WwiseAssets/Ambient/DLC_AMB_IEWS_Stop",
+          "/Game/WwiseAssets/Ambient/DLC_HUD_OTH_ESM_LOOP",
+          "/Game/WwiseAssets/Ambient/DLC_HUD_OTH_ESM_LOOP_Stop",
+          "/Game/WwiseAssets/SFX/E3/Player_Engine_On",
+          "/Game/WwiseAssets/SFX/Player_Air_Resistance_HiG",
+          "/Game/WwiseAssets/SFX/Player_Air_Resistance_HiG_Stop",
+          "/Game/WwiseAssets/SFX/Player_Engine",
+          "/Game/WwiseAssets/SFX/Player_Engine_Stop",
+          "/Game/WwiseAssets/SFX/Player_Jet_Ground_Refrection",
+          "/Game/WwiseAssets/SFX/Player_Jet_Ground_Refrection_Stop",
+          "/Game/WwiseAssets/SFX/Player_Maneuver_Air_Resistance_Play",
+          "/Game/WwiseAssets/SFX/Player_Maneuver_Air_Resistance_Stop",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14ia.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\c9ba96e2196dce3a\\AcePlayerPawn_f14ia.json",
+          "sha256": "ced0036420b490575fab3688f6cbebc0b9093b5204edc0a002ab82c16027c719"
+        },
+        "members": {
+          ".uasset": "9362231875e1dedbd3c5d352f9484f6573d135c452b320322039a94d0ef224b0",
+          ".uexp": "ce0971d52d412f3f1eca65d920d4e9654e7f594dd90173254dd5b5cef91e3fde"
+        },
+        "classes": [
+          {
+            "name": "AcePlayerPawn_f14ia_C",
+            "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__AcePlayerPawn_f14ia_C",
+            "values": {
+              "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Animation/Camera/camera_cockpit_f14d",
+          "/Game/Blueprint/AI/DamageState/PlaneDamagedSpinParam",
+          "/Game/Blueprint/Player/Body/f14ia_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_GearOn_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_SWP3_AnimBP",
+          "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14ia",
+          "/Game/Blueprint/Player/Cockpit/f14ia_CP_AnimBP",
+          "/Game/Blueprint/Player/Parts/f14d_FX_MapTable",
+          "/Game/Blueprint/Player/Parts/PartsAnimationConfig_f14ia",
+          "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot_FSUS_f14d",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1",
+          "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_f14ia",
+          "/Game/Characters/Pilot/LP_pilot_SM",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d_inside",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_CP",
+          "/Game/Vehicles/Aircraft/f14d/f14d_FX_Canopy_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOn",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOn_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP1_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP2_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP3",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_msl_r0",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32",
+          "/Game/Vehicles/Aircraft/f22a/f22a_dptk_SM"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iacp.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\397ca413f2eeacf1\\AcePlayerPawn_f14iacp.json",
+          "sha256": "b346348e535f09d287b8af81a53a0f916539345e1d319d79b6abe7857593ea47"
+        },
+        "members": {
+          ".uasset": "f0507dcc66a168dbf1bac4f9ff7e25fff8125d70882f75248bfec092792de430",
+          ".uexp": "49570405c220ae67d9b3a4eb903b8d5e44ee7c72462276e0d5c42ad718c76e9e"
+        },
+        "classes": [
+          {
+            "name": "AcePlayerPawn_f14iacp_C",
+            "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__AcePlayerPawn_f14iacp_C",
+            "values": {
+              "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Animation/Camera/camera_cockpit_f14d",
+          "/Game/Blueprint/AI/DamageState/PlaneDamagedSpinParam",
+          "/Game/Blueprint/Player/Body/f14ia_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_GearOn_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_SWP3_AnimBP",
+          "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14ia",
+          "/Game/Blueprint/Player/Cockpit/f14ia_CP_AnimBP",
+          "/Game/Blueprint/Player/Parts/f14d_FX_MapTable",
+          "/Game/Blueprint/Player/Parts/PartsAnimationConfig_f14ia",
+          "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot_FSUS_f14d",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1",
+          "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_saam_f14ia",
+          "/Game/Characters/Pilot/ZOE_pilot_SM",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d_inside",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_CP",
+          "/Game/Vehicles/Aircraft/f14d/f14d_FX_Canopy_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOn",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOn_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP1_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP2_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP3",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_msl_r0",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32",
+          "/Game/Characters/Pilot/LP_pilotAI_SM"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iatg.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\9997d35d7b6ba551\\AcePlayerPawn_f14iatg.json",
+          "sha256": "d07baf904e2d278ffbbc20def2b7e6d4caebbcab9af98b9960db11e369a9267f"
+        },
+        "members": {
+          ".uasset": "f4ceec56dba43def0b4baa10e6eeb2f7a03f5e258dadba4547a5f4b9d9455a71",
+          ".uexp": "2e939965fa65a0143918aa07626888aaef9d4a40d6efd913ade43b29cf89bb6f"
+        },
+        "classes": [
+          {
+            "name": "AcePlayerPawn_f14iatg_C",
+            "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__AcePlayerPawn_f14iatg_C",
+            "values": {
+              "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32.plwp_ircm_s32_C"
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Animation/Camera/camera_cockpit_f14d",
+          "/Game/Blueprint/AI/DamageState/PlaneDamagedSpinParam",
+          "/Game/Blueprint/Player/Body/f14ia_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_GearOn_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_SWP3_AnimBP",
+          "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14ia",
+          "/Game/Blueprint/Player/Cockpit/f14ia_CP_AnimBP",
+          "/Game/Blueprint/Player/Parts/f14d_FX_MapTable",
+          "/Game/Blueprint/Player/Parts/PartsAnimationConfig_f14ia",
+          "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot_FSUS_f14d",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1",
+          "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0",
+          "/Game/Characters/st_Pilot/st_Helmet_Pilot_SM",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d_inside",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_CP",
+          "/Game/Vehicles/Aircraft/f14d/f14d_FX_Canopy_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOn",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOn_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_R73_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP2_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP3",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_msl_r0",
+          "/Game/Blueprint/Weapons/Player/Base/plwp_ircm_s32",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Marvick_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Helmet_Marvick_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Visor_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Rooster_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Helmet_Rooster_Inst"
+        ]
+      },
+      {
+        "source": {
+          "pak": "E:\\AC7_MultiSP\\Temp\\ace7-aircraft-static-20261020\\paks\\019\\~~~~F14IA_Addon_Base_P.pak",
+          "asset": "../../../Nimbus/Content/Blueprint/Player/Pawn/AcePlayerPawn_f14iatg2.uasset",
+          "json": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-s32-ircm-weapon-names\\assets\\90f0a28189f526f2\\AcePlayerPawn_f14iatg2.json",
+          "sha256": "aef88fe76055258c9a196f07b5fc7cfdc9bbecbbf9088519ffc6d671526929db"
+        },
+        "members": {
+          ".uasset": "0a40754985f224d2fd528f853bbee3f571b61f586bbd2ea5a029eb7466beb0f0",
+          ".uexp": "b2576ff59d08e5bd401f1123e4c8b84678d96d1fa55f6305702aaece1cde187b"
+        },
+        "classes": [
+          {
+            "name": "AcePlayerPawn_f14iatg2_C",
+            "parent": "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm.AcePlayerPawn_dptk_ircm_C"
+          }
+        ],
+        "defaults": [
+          {
+            "name": "Default__AcePlayerPawn_f14iatg2_C",
+            "values": {
+              "DropTankWeaponClass": "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt.plwp_esm_dt_C"
+            }
+          }
+        ],
+        "direct_packages": [
+          "/Game/Animation/Camera/camera_cockpit_f14d",
+          "/Game/Blueprint/AI/DamageState/PlaneDamagedSpinParam",
+          "/Game/Blueprint/Player/Body/f14ia_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_GearOn_AnimBP",
+          "/Game/Blueprint/Player/Body/f14ia_SWP3_AnimBP",
+          "/Game/Blueprint/Player/Capabilities/PlayerPlaneConfig_f14ia",
+          "/Game/Blueprint/Player/Cockpit/f14ia_CP_AnimBP",
+          "/Game/Blueprint/Player/Parts/f14d_FX_MapTable",
+          "/Game/Blueprint/Player/Parts/PartsAnimationConfig_f14ia",
+          "/Game/Blueprint/Player/Pawn/AcePlayerPawn_dptk_ircm",
+          "/Game/Blueprint/Player/Takeoff/CUR_CatapultTakeoffModifierAnimationRot_FSUS_f14d",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_12aam_r1",
+          "/Game/Blueprint/Weapons/Player/base/plwp_lagm_f14ia",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_qaam_r0",
+          "/Game/Characters/st_Pilot/st_Helmet_Pilot_SM",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d",
+          "/Game/UI/HUD/ProgressBar/Aircraft/hud_acIcon_f14d_inside",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_CP",
+          "/Game/Vehicles/Aircraft/f14d/f14d_FX_Canopy_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_GearOn",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOff_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_RefuelOn_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_R73_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP2_SM",
+          "/Game/Vehicles/Aircraft/f14ia/f14ia_SWP3",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_msl_r0",
+          "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_dt",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Enemy_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Helmet_Enemy_Inst",
+          "/Game/Characters/st_Pilot/Materials/st_Pilot_Visor_Inst"
+        ]
+      }
+    ],
+    "结论": "F-14IA作者原包与当前S32包的plwp_ircm_s32 .uasset/.uexp逐字节相同；此处不是两份IRCM资源版本冲突。",
+    "入口差异": "F-14IA/dptk_ircm由DropTankWeaponClass调用，在三SP之外；TG2覆盖为ESM。当前S32适配不放开未知源槽-1的IRCM保有。",
+    "加载崩溃": "历史AsyncLoading.cpp:3007请求IRCM时仍等待创建，当前没有对应复现/新转储，不能从同字节资源或S32正常结束推出根因消失。",
+    "采取措施": "只读研究、保留原nativeOnly退让与分组停用，不加载F-14IA或恢复目录。后续先复核原包加载时序与依赖，再讨论独立恢复。"
+  },
+  "原始材料摘要": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/selection-assets.json",
+      "bytes": 458879,
+      "sha256": "075965068e29afec5d784825f6c40c53926134286fdfdf2c4ae903452e0883c6"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/installed-audit.json",
+      "bytes": 494858,
+      "sha256": "71d732b182bf61fe20b3ab95e6203f6134035091cb6f6e128a5e61e613e30aaa"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/f14-ircm-comparison.json",
+      "bytes": 24030,
+      "sha256": "ed411260ab01e8d9d9da5d01a0a276a6225d66f0f73bb62c1a63932bd966b89a"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/inspect_selection.py",
+      "bytes": 6260,
+      "sha256": "df2f72959399b76537c8e32f1953067aac458e20f5889f4510cd9f3c06b06278"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/audit_installed.py",
+      "bytes": 7265,
+      "sha256": "975f1903f40ef693f141da834b844ed1b99307207044c3da46389e4ce926a2e4"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/capture_ircm.py",
+      "bytes": 6888,
+      "sha256": "3ecbf32b4f97b114a22373a9e4814aa056fc6abc1ef2082017a022b4f67e62c4"
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/inspect_f14.py",
+      "bytes": 2505,
+      "sha256": "e86b011def477284606e9d0ed1531d14b2757549fa2e6bcc1bb14bb0c053ee53"
+    }
+  ],
+  "原生现场": [
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/live-20261024-100932-925561/ircm.json",
+      "bytes": 14527,
+      "sha256": "f6d6e55ad1b38a4a476b3b949c11e759ba5642da2975729e7661e564d8904f74",
+      "captured": "2026-10-24T10:09:33.583407+08:00",
+      "pid": 40308,
+      "errors": [],
+      "effects": [
+        {
+          "name": "plwp_ircm_s32_C_0",
+          "index": 137923,
+          "serial": 91313,
+          "active": 1,
+          "released": 0,
+          "age": 1.7350366115570068,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": true,
+          "in_spawned_weapons": true,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": null
+        },
+        {
+          "name": "Default__plwp_ircm_s32_C",
+          "index": 148075,
+          "serial": 0,
+          "active": 0,
+          "released": 0,
+          "age": 0.0,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": null
+        }
+      ],
+      "native_code": [
+        {
+          "requested": "0x6070b0",
+          "rva": "0x6070b0",
+          "bytes": 32,
+          "file": "native-6070b0.bin",
+          "sha256": "765553d856a7fb83c7a24d5494feaf80d185af3e5071850c0a65ece531c70f25"
+        },
+        {
+          "requested": "0x81e810",
+          "rva": "0x81e810",
+          "bytes": 9,
+          "file": "native-81e810.bin",
+          "sha256": "f1c203c844caa24b881b7b232c4c67965cb03e7b6daf5154e1cd9e637de0ceb6"
+        },
+        {
+          "requested": "0x85d940",
+          "rva": "0x85d940",
+          "bytes": 32,
+          "file": "native-85d940.bin",
+          "sha256": "fbb5cd7d43e7b3dc6fdde011b70c06b905b1de93773e66b291940244b75fd6f6"
+        },
+        {
+          "requested": "0x861490",
+          "rva": "0x861490",
+          "bytes": 43,
+          "file": "native-861490.bin",
+          "sha256": "36c29e69d931c259aed6f715b3a4b4bf2a9930adafc67f14cfcdbd6160f42104"
+        },
+        {
+          "requested": "0x86abe0",
+          "rva": "0x86abe0",
+          "bytes": 32,
+          "file": "native-86abe0.bin",
+          "sha256": "b90562b06047f892b470e5cf9baaa56c264e406305d2e82583c282d3dde7b22e"
+        },
+        {
+          "requested": "0x8736e0",
+          "rva": "0x8736e0",
+          "bytes": 27,
+          "file": "native-8736e0.bin",
+          "sha256": "d986b4d952b30970b247ecc16d166c84dc41d3d6858e1af7c6013d29d1949b57"
+        },
+        {
+          "requested": "0x873700",
+          "rva": "0x873700",
+          "bytes": 37,
+          "file": "native-873700.bin",
+          "sha256": "f04ba990fd23406f8e5f1489b96b5f664b5433d6ac5477f8fa35f3aecda86c77"
+        },
+        {
+          "requested": "0x873730",
+          "rva": "0x873730",
+          "bytes": 99,
+          "file": "native-873730.bin",
+          "sha256": "f2cc75aa2afae6556a1c4bba65717079f1cc7e6021e55fba0a5535412f485bc6"
+        },
+        {
+          "requested": "0x885240",
+          "rva": "0x885240",
+          "bytes": 40,
+          "file": "native-885240.bin",
+          "sha256": "1c5229b74552e56ad211695e94a7efad49d9851cafd2dd61e7163e6a719af37e"
+        },
+        {
+          "requested": "0x885510",
+          "rva": "0x885510",
+          "bytes": 156,
+          "file": "native-885510.bin",
+          "sha256": "b52237d9064fc50e50730b84e3f6f4458f811568daf389e6aeba83decb2cebef"
+        },
+        {
+          "requested": "0x894740",
+          "rva": "0x894740",
+          "bytes": 33,
+          "file": "native-894740.bin",
+          "sha256": "adad0b8dafd7c673bf11a1a5496be9479681cfe99b023adff14163620bdd9015"
+        },
+        {
+          "requested": "0x894850",
+          "rva": "0x894850",
+          "bytes": 172,
+          "file": "native-894850.bin",
+          "sha256": "a9975d54719f9a3f7920d4f449e0798146c67aef0993285bc1fa94416a2b9682"
+        },
+        {
+          "requested": "0x894af0",
+          "rva": "0x894af0",
+          "bytes": 32,
+          "file": "native-894af0.bin",
+          "sha256": "3a8386098a6cdcc3de2bfb7bb669c4ad28e2d518e217e70463d2d4a53183a356"
+        },
+        {
+          "requested": "0x895410",
+          "rva": "0x895410",
+          "bytes": 32,
+          "file": "native-895410.bin",
+          "sha256": "bbd0e783a7fa2e37767e53e6e8dffe5e6def8368659de11bf56dca3d7d25ebd6"
+        },
+        {
+          "requested": "0x895bb0",
+          "rva": "0x895bb0",
+          "bytes": 271,
+          "file": "native-895bb0.bin",
+          "sha256": "0c04092cad9df1c3c391de260afa8a98cd543ea2d9e485ca22eb87df55a1bbaf"
+        },
+        {
+          "requested": "0x895ee0",
+          "rva": "0x895ee0",
+          "bytes": 32,
+          "file": "native-895ee0.bin",
+          "sha256": "8f2a73a03f7e1c4e78e3b73ac838e40ec606541c83c2e008248532e9ecb7c6a0"
+        },
+        {
+          "requested": "0x895fd0",
+          "rva": "0x895fd0",
+          "bytes": 32,
+          "file": "native-895fd0.bin",
+          "sha256": "38a84a9c374bcd707ddc8f2c57c1d18fd7626ebab28cf0551916aa6ba3dce43b"
+        },
+        {
+          "requested": "0x896f10",
+          "rva": "0x896f10",
+          "bytes": 76,
+          "file": "native-896f10.bin",
+          "sha256": "07e68f0d6256497b236adbd913e5794ebfd63679648ecd1b19b324738449469d"
+        },
+        {
+          "requested": "0x897010",
+          "rva": "0x897010",
+          "bytes": 405,
+          "file": "native-897010.bin",
+          "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50"
+        },
+        {
+          "requested": "0xb9cfb0",
+          "rva": "0xb9cfb0",
+          "bytes": 32,
+          "file": "native-b9cfb0.bin",
+          "sha256": "b76ecbb8bebeb2e8937aaefe10b79956dbe8190a75b3314c13c09c311cc46978"
+        }
+      ]
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/live-20261024-101006-281170/ircm.json",
+      "bytes": 121242,
+      "sha256": "50e1fd958ce3f0143fed4ef7c2197d5a989527da615e0e623a9d8a2ea6acfcdd",
+      "captured": "2026-10-24T10:10:06.895035+08:00",
+      "pid": 40308,
+      "errors": [],
+      "effects": [
+        {
+          "name": "plwp_ircm_s32_C_0",
+          "index": 137923,
+          "serial": 91313,
+          "active": 1,
+          "released": 0,
+          "age": 1.7350366115570068,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": true,
+          "in_spawned_weapons": true,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": [
+            {
+              "name": "Static Mesh",
+              "class": "StaticMeshComponent",
+              "socket": "None",
+              "parent_name": null
+            }
+          ]
+        },
+        {
+          "name": "Default__plwp_ircm_s32_C",
+          "index": 148075,
+          "serial": 0,
+          "active": 0,
+          "released": 0,
+          "age": 0.0,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": [
+            {
+              "name": "Static Mesh",
+              "class": "StaticMeshComponent",
+              "socket": "None",
+              "parent_name": null
+            }
+          ]
+        }
+      ],
+      "native_code": [
+        {
+          "requested": "0x6070b0",
+          "rva": "0x6070b0",
+          "bytes": 32,
+          "file": "native-6070b0.bin",
+          "sha256": "765553d856a7fb83c7a24d5494feaf80d185af3e5071850c0a65ece531c70f25"
+        },
+        {
+          "requested": "0x81e810",
+          "rva": "0x81e810",
+          "bytes": 9,
+          "file": "native-81e810.bin",
+          "sha256": "f1c203c844caa24b881b7b232c4c67965cb03e7b6daf5154e1cd9e637de0ceb6"
+        },
+        {
+          "requested": "0x85d940",
+          "rva": "0x85d940",
+          "bytes": 32,
+          "file": "native-85d940.bin",
+          "sha256": "fbb5cd7d43e7b3dc6fdde011b70c06b905b1de93773e66b291940244b75fd6f6"
+        },
+        {
+          "requested": "0x861480",
+          "rva": "0x861480",
+          "bytes": 32,
+          "file": "native-861480.bin",
+          "sha256": "ea9e38e1d778877e7c3b0897d7f6af0c7f025f7a4d41c9be3e81ae3b0eb5b064"
+        },
+        {
+          "requested": "0x861490",
+          "rva": "0x861490",
+          "bytes": 43,
+          "file": "native-861490.bin",
+          "sha256": "36c29e69d931c259aed6f715b3a4b4bf2a9930adafc67f14cfcdbd6160f42104"
+        },
+        {
+          "requested": "0x8614c0",
+          "rva": "0x8614c0",
+          "bytes": 115,
+          "file": "native-8614c0.bin",
+          "sha256": "bf910c80846e6d43e36209264ef1b36aa90db79e0495d77fa4a152844bd89eba"
+        },
+        {
+          "requested": "0x86abe0",
+          "rva": "0x86abe0",
+          "bytes": 32,
+          "file": "native-86abe0.bin",
+          "sha256": "b90562b06047f892b470e5cf9baaa56c264e406305d2e82583c282d3dde7b22e"
+        },
+        {
+          "requested": "0x8736e0",
+          "rva": "0x8736e0",
+          "bytes": 27,
+          "file": "native-8736e0.bin",
+          "sha256": "d986b4d952b30970b247ecc16d166c84dc41d3d6858e1af7c6013d29d1949b57"
+        },
+        {
+          "requested": "0x873700",
+          "rva": "0x873700",
+          "bytes": 37,
+          "file": "native-873700.bin",
+          "sha256": "f04ba990fd23406f8e5f1489b96b5f664b5433d6ac5477f8fa35f3aecda86c77"
+        },
+        {
+          "requested": "0x873730",
+          "rva": "0x873730",
+          "bytes": 99,
+          "file": "native-873730.bin",
+          "sha256": "f2cc75aa2afae6556a1c4bba65717079f1cc7e6021e55fba0a5535412f485bc6"
+        },
+        {
+          "requested": "0x8737a0",
+          "rva": "0x8737a0",
+          "bytes": 70,
+          "file": "native-8737a0.bin",
+          "sha256": "51f5a3b335b9b62c9289605ff944586fcd24a81709f852896cf20a998c8f3029"
+        },
+        {
+          "requested": "0x873c60",
+          "rva": "0x873c60",
+          "bytes": 65,
+          "file": "native-873c60.bin",
+          "sha256": "7da184f0c7f3fa80c0b5ae48f8e0e5ce536df1253ac90d71a86fcd14fd21853d"
+        },
+        {
+          "requested": "0x885240",
+          "rva": "0x885240",
+          "bytes": 40,
+          "file": "native-885240.bin",
+          "sha256": "1c5229b74552e56ad211695e94a7efad49d9851cafd2dd61e7163e6a719af37e"
+        },
+        {
+          "requested": "0x885510",
+          "rva": "0x885510",
+          "bytes": 156,
+          "file": "native-885510.bin",
+          "sha256": "b52237d9064fc50e50730b84e3f6f4458f811568daf389e6aeba83decb2cebef"
+        },
+        {
+          "requested": "0x894740",
+          "rva": "0x894740",
+          "bytes": 33,
+          "file": "native-894740.bin",
+          "sha256": "adad0b8dafd7c673bf11a1a5496be9479681cfe99b023adff14163620bdd9015"
+        },
+        {
+          "requested": "0x894850",
+          "rva": "0x894850",
+          "bytes": 172,
+          "file": "native-894850.bin",
+          "sha256": "a9975d54719f9a3f7920d4f449e0798146c67aef0993285bc1fa94416a2b9682"
+        },
+        {
+          "requested": "0x894af0",
+          "rva": "0x894af0",
+          "bytes": 32,
+          "file": "native-894af0.bin",
+          "sha256": "3a8386098a6cdcc3de2bfb7bb669c4ad28e2d518e217e70463d2d4a53183a356"
+        },
+        {
+          "requested": "0x895410",
+          "rva": "0x895410",
+          "bytes": 32,
+          "file": "native-895410.bin",
+          "sha256": "bbd0e783a7fa2e37767e53e6e8dffe5e6def8368659de11bf56dca3d7d25ebd6"
+        },
+        {
+          "requested": "0x895bb0",
+          "rva": "0x895bb0",
+          "bytes": 271,
+          "file": "native-895bb0.bin",
+          "sha256": "0c04092cad9df1c3c391de260afa8a98cd543ea2d9e485ca22eb87df55a1bbaf"
+        },
+        {
+          "requested": "0x895ee0",
+          "rva": "0x895ee0",
+          "bytes": 32,
+          "file": "native-895ee0.bin",
+          "sha256": "8f2a73a03f7e1c4e78e3b73ac838e40ec606541c83c2e008248532e9ecb7c6a0"
+        },
+        {
+          "requested": "0x895fd0",
+          "rva": "0x895fd0",
+          "bytes": 32,
+          "file": "native-895fd0.bin",
+          "sha256": "38a84a9c374bcd707ddc8f2c57c1d18fd7626ebab28cf0551916aa6ba3dce43b"
+        },
+        {
+          "requested": "0x896f10",
+          "rva": "0x896f10",
+          "bytes": 76,
+          "file": "native-896f10.bin",
+          "sha256": "07e68f0d6256497b236adbd913e5794ebfd63679648ecd1b19b324738449469d"
+        },
+        {
+          "requested": "0x897010",
+          "rva": "0x897010",
+          "bytes": 405,
+          "file": "native-897010.bin",
+          "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50"
+        },
+        {
+          "requested": "0x8e2fb0",
+          "rva": "0x8e2fb0",
+          "bytes": 57,
+          "file": "native-8e2fb0.bin",
+          "sha256": "4dab0ffa1fc95af2cfcaa5b9d788178b71c712a4fc2f2837da05eaf52802f993"
+        },
+        {
+          "requested": "0x8e2ff0",
+          "rva": "0x8e2ff0",
+          "bytes": 57,
+          "file": "native-8e2ff0.bin",
+          "sha256": "ff65860c2b9afdbd0972dac83369cc60995926f5fca7f67b7a5526e4014055df"
+        },
+        {
+          "requested": "0xb9cfb0",
+          "rva": "0xb9cfb0",
+          "bytes": 32,
+          "file": "native-b9cfb0.bin",
+          "sha256": "b76ecbb8bebeb2e8937aaefe10b79956dbe8190a75b3314c13c09c311cc46978"
+        },
+        {
+          "requested": "0x873600",
+          "rva": "0x873600",
+          "bytes": 4864,
+          "file": "range-873600-1300.bin",
+          "sha256": "2af3d4d2297b1bae5e5f1ae288a3d4a3f5031f402540e191c4eac0d17e7a76da"
+        }
+      ]
+    },
+    {
+      "path": "E:/AC7_MultiSP/Temp/tasks/20261024-s32-ircm-weapon-names/live-20261024-101159-143268/ircm.json",
+      "bytes": 121126,
+      "sha256": "dfbce2e3bcb4a502fc8ffcbcfc1946cdde7a14338657eb69e5b24604ee292815",
+      "captured": "2026-10-24T10:11:59.784374+08:00",
+      "pid": 40308,
+      "errors": [],
+      "effects": [
+        {
+          "name": "plwp_ircm_s32_C_0",
+          "index": 137923,
+          "serial": 91313,
+          "active": 0,
+          "released": 1,
+          "age": 12.000799179077148,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": true,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": [
+            {
+              "name": "Static Mesh",
+              "class": "StaticMeshComponent",
+              "socket": "None",
+              "parent_name": null
+            }
+          ]
+        },
+        {
+          "name": "Default__plwp_ircm_s32_C",
+          "index": 148075,
+          "serial": 0,
+          "active": 0,
+          "released": 0,
+          "age": 0.0,
+          "LifeTime": 10.0,
+          "LoadTime": 11.0,
+          "TrailTime": 2.0,
+          "in_active_weapons": false,
+          "in_spawned_weapons": false,
+          "reload_contract_raw": "0100000000000000",
+          "reload_owner": "0x0",
+          "callbacks": {
+            "0x618": "0x873730",
+            "0x620": "0x86abe0",
+            "0x628": "0x8736e0",
+            "0x630": "0x894740",
+            "0x638": "0x6070b0",
+            "0x640": "0xb9cfb0",
+            "0x648": "0x894850",
+            "0x650": "0x895ee0",
+            "0x658": "0x896f10",
+            "0x660": "0x895bb0",
+            "0x668": "0x897010",
+            "0x670": "0x85d940",
+            "0x678": "0x873700",
+            "0x680": "0x861490",
+            "0x688": "0x895410"
+          },
+          "attachments": [
+            {
+              "name": "Static Mesh",
+              "class": "StaticMeshComponent",
+              "socket": "None",
+              "parent_name": null
+            }
+          ]
+        }
+      ],
+      "native_code": [
+        {
+          "requested": "0x6070b0",
+          "rva": "0x6070b0",
+          "bytes": 32,
+          "file": "native-6070b0.bin",
+          "sha256": "765553d856a7fb83c7a24d5494feaf80d185af3e5071850c0a65ece531c70f25"
+        },
+        {
+          "requested": "0x81e810",
+          "rva": "0x81e810",
+          "bytes": 9,
+          "file": "native-81e810.bin",
+          "sha256": "f1c203c844caa24b881b7b232c4c67965cb03e7b6daf5154e1cd9e637de0ceb6"
+        },
+        {
+          "requested": "0x85d940",
+          "rva": "0x85d940",
+          "bytes": 32,
+          "file": "native-85d940.bin",
+          "sha256": "fbb5cd7d43e7b3dc6fdde011b70c06b905b1de93773e66b291940244b75fd6f6"
+        },
+        {
+          "requested": "0x861480",
+          "rva": "0x861480",
+          "bytes": 32,
+          "file": "native-861480.bin",
+          "sha256": "ea9e38e1d778877e7c3b0897d7f6af0c7f025f7a4d41c9be3e81ae3b0eb5b064"
+        },
+        {
+          "requested": "0x861490",
+          "rva": "0x861490",
+          "bytes": 43,
+          "file": "native-861490.bin",
+          "sha256": "36c29e69d931c259aed6f715b3a4b4bf2a9930adafc67f14cfcdbd6160f42104"
+        },
+        {
+          "requested": "0x8614c0",
+          "rva": "0x8614c0",
+          "bytes": 115,
+          "file": "native-8614c0.bin",
+          "sha256": "bf910c80846e6d43e36209264ef1b36aa90db79e0495d77fa4a152844bd89eba"
+        },
+        {
+          "requested": "0x86abe0",
+          "rva": "0x86abe0",
+          "bytes": 32,
+          "file": "native-86abe0.bin",
+          "sha256": "b90562b06047f892b470e5cf9baaa56c264e406305d2e82583c282d3dde7b22e"
+        },
+        {
+          "requested": "0x8736e0",
+          "rva": "0x8736e0",
+          "bytes": 27,
+          "file": "native-8736e0.bin",
+          "sha256": "d986b4d952b30970b247ecc16d166c84dc41d3d6858e1af7c6013d29d1949b57"
+        },
+        {
+          "requested": "0x873700",
+          "rva": "0x873700",
+          "bytes": 37,
+          "file": "native-873700.bin",
+          "sha256": "f04ba990fd23406f8e5f1489b96b5f664b5433d6ac5477f8fa35f3aecda86c77"
+        },
+        {
+          "requested": "0x873730",
+          "rva": "0x873730",
+          "bytes": 99,
+          "file": "native-873730.bin",
+          "sha256": "f2cc75aa2afae6556a1c4bba65717079f1cc7e6021e55fba0a5535412f485bc6"
+        },
+        {
+          "requested": "0x8737a0",
+          "rva": "0x8737a0",
+          "bytes": 70,
+          "file": "native-8737a0.bin",
+          "sha256": "51f5a3b335b9b62c9289605ff944586fcd24a81709f852896cf20a998c8f3029"
+        },
+        {
+          "requested": "0x873c60",
+          "rva": "0x873c60",
+          "bytes": 65,
+          "file": "native-873c60.bin",
+          "sha256": "7da184f0c7f3fa80c0b5ae48f8e0e5ce536df1253ac90d71a86fcd14fd21853d"
+        },
+        {
+          "requested": "0x885240",
+          "rva": "0x885240",
+          "bytes": 40,
+          "file": "native-885240.bin",
+          "sha256": "1c5229b74552e56ad211695e94a7efad49d9851cafd2dd61e7163e6a719af37e"
+        },
+        {
+          "requested": "0x885510",
+          "rva": "0x885510",
+          "bytes": 156,
+          "file": "native-885510.bin",
+          "sha256": "b52237d9064fc50e50730b84e3f6f4458f811568daf389e6aeba83decb2cebef"
+        },
+        {
+          "requested": "0x894740",
+          "rva": "0x894740",
+          "bytes": 33,
+          "file": "native-894740.bin",
+          "sha256": "adad0b8dafd7c673bf11a1a5496be9479681cfe99b023adff14163620bdd9015"
+        },
+        {
+          "requested": "0x894850",
+          "rva": "0x894850",
+          "bytes": 172,
+          "file": "native-894850.bin",
+          "sha256": "a9975d54719f9a3f7920d4f449e0798146c67aef0993285bc1fa94416a2b9682"
+        },
+        {
+          "requested": "0x894af0",
+          "rva": "0x894af0",
+          "bytes": 32,
+          "file": "native-894af0.bin",
+          "sha256": "3a8386098a6cdcc3de2bfb7bb669c4ad28e2d518e217e70463d2d4a53183a356"
+        },
+        {
+          "requested": "0x895410",
+          "rva": "0x895410",
+          "bytes": 32,
+          "file": "native-895410.bin",
+          "sha256": "bbd0e783a7fa2e37767e53e6e8dffe5e6def8368659de11bf56dca3d7d25ebd6"
+        },
+        {
+          "requested": "0x895bb0",
+          "rva": "0x895bb0",
+          "bytes": 271,
+          "file": "native-895bb0.bin",
+          "sha256": "0c04092cad9df1c3c391de260afa8a98cd543ea2d9e485ca22eb87df55a1bbaf"
+        },
+        {
+          "requested": "0x895ee0",
+          "rva": "0x895ee0",
+          "bytes": 32,
+          "file": "native-895ee0.bin",
+          "sha256": "8f2a73a03f7e1c4e78e3b73ac838e40ec606541c83c2e008248532e9ecb7c6a0"
+        },
+        {
+          "requested": "0x895fd0",
+          "rva": "0x895fd0",
+          "bytes": 32,
+          "file": "native-895fd0.bin",
+          "sha256": "38a84a9c374bcd707ddc8f2c57c1d18fd7626ebab28cf0551916aa6ba3dce43b"
+        },
+        {
+          "requested": "0x896f10",
+          "rva": "0x896f10",
+          "bytes": 76,
+          "file": "native-896f10.bin",
+          "sha256": "07e68f0d6256497b236adbd913e5794ebfd63679648ecd1b19b324738449469d"
+        },
+        {
+          "requested": "0x897010",
+          "rva": "0x897010",
+          "bytes": 405,
+          "file": "native-897010.bin",
+          "sha256": "2814c6e33058b81bd19373cdb3805d39a934a75f20a2e76d343bec59ed81bd50"
+        },
+        {
+          "requested": "0x8e2fb0",
+          "rva": "0x8e2fb0",
+          "bytes": 57,
+          "file": "native-8e2fb0.bin",
+          "sha256": "4dab0ffa1fc95af2cfcaa5b9d788178b71c712a4fc2f2837da05eaf52802f993"
+        },
+        {
+          "requested": "0x8e2ff0",
+          "rva": "0x8e2ff0",
+          "bytes": 57,
+          "file": "native-8e2ff0.bin",
+          "sha256": "ff65860c2b9afdbd0972dac83369cc60995926f5fca7f67b7a5526e4014055df"
+        },
+        {
+          "requested": "0xb9cfb0",
+          "rva": "0xb9cfb0",
+          "bytes": 32,
+          "file": "native-b9cfb0.bin",
+          "sha256": "b76ecbb8bebeb2e8937aaefe10b79956dbe8190a75b3314c13c09c311cc46978"
+        },
+        {
+          "requested": "0x873600",
+          "rva": "0x873600",
+          "bytes": 4864,
+          "file": "range-873600-1300.bin",
+          "sha256": "2af3d4d2297b1bae5e5f1ae288a3d4a3f5031f402540e191c4eac0d17e7a76da"
+        }
+      ]
+    }
+  ],
+  "运行核心": {
+    "path": "E:/SteamLibrary/steamapps/common/ACE COMBAT 7/ue4ss/Mods/DualSP/bin/DualSP.dll",
+    "bytes": 2837504,
+    "sha256": "ed6261dae0530e55cda2437763c01ee89933924008e08f122d345e94dec8da75"
+  },
+  "源码候选文件": [
+    "src/weapon_bridge.cpp",
+    "src/continuous_sp.hpp",
+    "dist/DualSP/Scripts/main.lua"
+  ],
+  "静态核对": "人工逐项核对资格/第六返回值/候选取并集/弱身份/自然结束通知/原生指纹/对应正文；只做差异、链接、摘要核对。未运行编译器、解释器语法检查或测试。",
+  "末次静态核对": {
+    "材料摘要变化": [],
+    "缺失文档链接": [],
+    "原生指纹重算": [
+      {
+        "bytes": 2176,
+        "fnv1a64": "7e4208d2f93388ab",
+        "matches_source_value": true
+      },
+      {
+        "bytes": 115,
+        "fnv1a64": "1f19818ecc2c9e4b",
+        "matches_source_value": true
+      },
+      {
+        "bytes": 43,
+        "fnv1a64": "261b720586e9602c",
+        "matches_source_value": true
+      }
+    ],
+    "冻结核心SHA256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+    "游戏运行核心未变化": true,
+    "范围": "只核对静态材料，不编译、不运行Lua/核心或测试"
+  }
+}
