@@ -2,7 +2,7 @@ AC7MultiSP
 
 2.25.3 alpha4 (self-test build, unreleased)
 • Corrected conflicting task and preview rack records that caused model previews to fall back while switching multi-SP resupply candidates. Unknown-resource checks remain in place; in-game validation is pending.
-• Log session versions now follow the product version automatically instead of retaining the old 2.24.1 label.
+• Log session versions now follow the product version automatically. The separate outdated Lua startup version was removed to prevent conflicting version labels.
 
 2.25.3 alpha3 (self-test build, unreleased)
 • Quick missions add skin selection while retaining 1–3 SP loadouts and existing presets. Skins are checked by actual number, DLC ownership and resource reference.

@@ -18,6 +18,7 @@
 | alpha1用户反馈与alpha2源码 | [反馈/修订](2.25.3-alpha1-feedback-alpha2-source.json) | 快速任务多SP、暂停时退格/空格优先修订；确认当前运行文件匹配alpha1，公共舱两机未生效且暂缓；alpha2未编译、测试或安装 |
 | 2.25.3 alpha2自测EXE | [交付与待测项](2.25.3-alpha2-exe-delivery.json) | 快速任务多SP、F6键盘隔离修订的完整构建；21份运行载荷、48成员ZIP、八份说明、版本及保护摘要核对；未安装或游戏验证 |
 | 2.25.3 alpha3自测EXE | [交付与待测项](2.25.3-alpha3-exe-delivery.json) | 接收皮肤功能并兼容alpha2多SP预设、修订补给说明报错；完整核心/UI构建、48成员ZIP、八份说明及EXE版本/摘要核对，未安装或游戏验证 |
+| 2.24.2文字迁移复核 | [改动与静态检查](2.24.2-localization-review-20261024.json) | 原生选装/补给、通知、错误映射及封装的实际范围；既知翻译回归已修正，补齐Lua启动日志旧号残留；未编译/游戏验证 |
 | alpha4补给预览/日志源码 | [定位与修订](2.25.3-alpha4-preview-log-source.json) | alpha3最新日志的同组件挂架记录误判、联合基线核对和VERSION构建注入；仅静态审阅，未编译/测试/安装，F6状态发布性能暂未处理 |
 | alpha3皮肤与补给源码 | [来源/故障](2.25.3-alpha3-skin-resupply-source.json) | 皮肤功能此前未进alpha2，schema3保留两种旧多SP格式；补给排版的翻译多返回值根因和修订，构建/实机验证另记 |
 | 2.24.3安装器DPI修订 | [DPI修订核对](2.24.3-dpi-exe-delivery.json) | 系统DPI清单、复用游戏载荷、EXE摘要及120 DPI双语页面离线预览；产物生成后用户要求停止后续编译，未安装或操作游戏 |

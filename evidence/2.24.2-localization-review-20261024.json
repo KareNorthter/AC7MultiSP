@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "review_baseline": "1a024b543590ac27aec9edf1e4830ab96b4f240c",
+  "reviewed_commit": "bba1bb938aa3ce82ec0410dceb1a6ed994524c2f",
+  "original_baseline": "85ab3a0e9201010daf7f8ee528cce4a5b98fc463",
+  "request": "用户询问2.24.2统一双语资源除F6/安装器文字外的实际改动，并要求检查是否有问题",
+  "scope": [
+    "原生选装/补给标题、空槽、未购买、兵装类型/弹药/性能标题、加载和确认说明改为资源键；补给换行分隔符改走共用翻译",
+    "main.lua快捷换装/模型开关/无目标/禁用原因提示、debug_aircraft.lua换机状态和许可附注改为共用翻译",
+    "新增user_texts.py及JSON唯一词条，构建生成C++头和Lua表；runtime_context.lua加载一次翻译表，新增textKey并迁移调用",
+    "ui_messages.hpp原始错误匹配键与显示翻译分离，长句及片段处理；保留原诊断日志，未知错误显示对应语言解释",
+    "四组双语玩家正文进入统一生成/封装，ZIP与EXE共用；EXE导出同字节通用ZIP，Vortex用包内逐文件映射取代自制配套扩展必需；EXE集成固定来源前置及安装事务",
+    "build.py显式要求完整挂载原料目录、支持任务临时根、生成词条；source_snapshot覆盖玩家正文、游戏JSON和生成器"
+  ],
+  "unchanged_by_original_commit": [
+    "src/weapon_bridge.cpp",
+    "src/su30sm_fixed_mount.hpp",
+    "dist/DualSP/Scripts/config_store.lua",
+    "dist/DualSP/Scripts/loadout_profile.lua",
+    "dist/DualSP/Scripts/native_bridge.lua",
+    "dist/DualSP/Scripts/weapon_cycle.lua",
+    "dist/DualSP/Scripts/native_hud.lua"
+  ],
+  "static_checks": {
+    "old_literal_bilingual_calls_parsed": 214,
+    "exact_pair_matches": 207,
+    "remaining_7_reviewed": "6项作者/授权显示改为唯一正文；1项换机等待英文合并同义词条，控制条件不变",
+    "old_diagnostic_replacement_count": 265,
+    "new_diagnostic_replacement_count_at_intake": 267,
+    "original_relative_order_preserved": true,
+    "current_generated_resources_match": true,
+    "current_installer_language_keys": 111,
+    "installer_keys_paired": true,
+    "installer_literal_references_missing": [],
+    "dynamic_document_titles": "features/installation/changelog/credits/thirdParty均存在；document.只是动态前缀，不作为缺词",
+    "installer_placeholder_pairs_mismatch": [],
+    "flow_decisions": "loadout_flow.lua仍按weapon/action枚举执行，YES/NO显示值不参与控制判断",
+    "file_io_boundary": "runtime_context加载词条一次，C++只读生成表；未增加逐帧JSON文件读取"
+  },
+  "findings": [
+    {
+      "id": "translation-return",
+      "state": "已修正于alpha3",
+      "cause": "原迁移的Texts.get返回assert全部实参导致补给gsub计数参数类型错误",
+      "current": "生成器与Lua表均单值返回，调用端先将分隔符赋给单个局部变量"
+    },
+    {
+      "id": "lua-startup-version",
+      "state": "本轮补齐alpha4源码，未构建",
+      "cause": "上一轮只修LOG_SESSION头，main.lua的DUALSP_LOADED仍硬编码2.24.3；原2.24.2提交也手工维护这份数字，后续易漏改",
+      "fix": "启动事件移除独立版本，按同一PID关联VERSION构建注入的会话头；不增加运行时文件读取"
+    },
+    {
+      "id": "other-runtime-regression",
+      "state": "在已审阅范围内未发现新的明确运行级回归；不等于全部运行分支已实测",
+      "boundary": "本轮不运行游戏或安装器，不将静态资源一致视为游戏验收"
+    }
+  ],
+  "not_attributed_to_translation": [
+    "补给挂架记录冲突早于2.24.2，仍按alpha4挂载修订记录解释",
+    "F6状态发布性能问题本轮未优化"
+  ],
+  "validation": {
+    "static_review": true,
+    "compiled": false,
+    "tests_written": false,
+    "tests_run": false,
+    "installer_executed": false,
+    "installed": false,
+    "game_operated": false
+  },
+  "docs": "docs/engineering/engineering-lessons.md与architecture.md维护共用边界；本记录不复制玩家说明"
+}
