@@ -1,5 +1,9 @@
 AC7MultiSP Main Updates
 
+Unreleased (version to be assigned during integration; source only)
+• Quick launch now offers 1–3 SP selections and skin selection, with support for existing single-SP presets.
+• Multiple SPs use the existing ammunition and compatibility rules. PART selection is not yet supported.
+
 2.25.X
 • Fixed quick-mission intro helper errors aborting multi-SP initialization, and moved the quick-mission card above the logs.
 • Fixed quick launch stopping during main-menu preparation and incorrect menu identification when skipping startup logos.

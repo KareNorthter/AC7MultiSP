@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "baseline": "01a1020c15922125f875d802dd5f513a1373afce",
+  "scope": "快速任务1—3SP与皮肤源码，PART既有原件静态评估；不连接游戏、不写进程内存",
+  "sources": [
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-mission-implementation\\native-42896\\metadata.json",
+      "sha256": "c4931101154f5d02819a6c49ed2dfba8c57401c001507b0a6a4b566d01a30955"
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\experience-object-index.json",
+      "sha256": "0cbe2aba2387c84488385e6d85a44440722d6ef2b932182bad77c75390bcf6f1"
+    }
+  ],
+  "multi_sp": {
+    "preset_schema": 2,
+    "read_legacy_schema": 1,
+    "migration": "swp转profile.a，b/c=-1，skin_no=0；只在保存/出击时写新格式并保留旧件",
+    "rules": "沿用Profile.count/validate/withSettings/copy和已有实际兵装初始化，不改全局配弹或多挂资格",
+    "temporary_profile": "首次飞控就绪按现有管理比例生成；后续调试/补给配置成功后同步临时副本，不改快速预设或个人方案"
+  },
+  "skins": {
+    "native_setter": "/Script/Nimbus.NimbusGameInstance:SetSelectedPlaneSkinNo",
+    "native_getter": "/Script/Nimbus.NimbusGameInstance:GetSelectedPlaneSkinNo",
+    "getter_read_rva": "0x924a45",
+    "field": "GI+0x4e4",
+    "row_struct": "/Script/Nimbus.SkinDataTable",
+    "fields": {
+      "SkinID": "IntProperty",
+      "SkinNo": "IntProperty",
+      "PlaneStringID": "StrProperty",
+      "PlaneReference": "StrProperty",
+      "DLCID": "StrProperty"
+    },
+    "validation": "按实际SkinNo/PlaneStringID和DLC许可筛选，坏引用/冲突禁用，实际类仍按所选皮肤核对；不改购买/解锁",
+    "offline_table": {
+      "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-quick-loadout\\skin-rows\\SkinDataTable.json",
+      "sha256": "cb92cf330ddb6df4bba34c1f8087c019e7ec6b0d752ee7ed5c618032e5f2dcc5",
+      "rows": 384,
+      "empty_reference_rows": 0,
+      "scope": "用户自有本体补丁PAK；不包含当前第三方Mod运行时覆盖，不固化行值"
+    }
+  },
+  "protocol": {
+    "quick": 2,
+    "core_export": "dualsp_quick_mission_v2",
+    "ui_export": "dualsp_quick_mission_v2_supported",
+    "native_integer_arguments": 10,
+    "appended_argument": "skin_no",
+    "management": 22,
+    "personal_config": 19
+  },
+  "parts": {
+    "status": "尚未实现自选",
+    "reason": "未取得完整原生装备/卸载、容量、同组冲突、单机资格和持久化契约",
+    "existing_preview": "dualsp_parts_ammo_preview只计算HangarStatus最多8件候选/已装修正，未赋予装备能力",
+    "shipping_cheat": "SetForceEquipUpgradeParts共用0x932ec0包装，终点0x3c5210只释放字符串并返回",
+    "page_evidence": "CampaignHangarPartsWidget激活0x6cf1e0含专用状态，候选交互0x6cf8f0访问GI+0x5f8对应的存档列表；未据此调用或写入",
+    "continue_when": "用户授权只读观察原生装备/卸载，确认列表含义、容量和冲突检查、实际玩家初始化来源及失败回滚"
+  },
+  "validation": {
+    "static_diff": true,
+    "skin_getter_signature_matches_saved_copy": true,
+    "text_generated_from_bilingual_sources": true,
+    "compiled": false,
+    "tests_run": false,
+    "installed": false,
+    "game_operated": false
+  }
+}

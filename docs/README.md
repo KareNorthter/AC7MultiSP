@@ -44,7 +44,7 @@
 | 文档 | 内容与维护边界 |
 |---|---|
 | [架构](engineering/architecture.md) | 当前模块、跨语言接口、生命周期与保护机制，不写逐轮交付 |
-| [快速进入测试任务设计](engineering/quick-mission-launch.md) | 快速任务及片头Logo跳过的源码设计、原生依据、23关映射与待实机验证范围 |
+| [快速进入测试任务设计](engineering/quick-mission-launch.md) | 快速任务多SP/皮肤、预设迁移及片头跳过设计，原生依据、PART待续条件与验证边界 |
 | [开发与恢复](engineering/development.md) | 源码/原料路径、工具依赖、接收恢复和未解决事项 |
 | [挂载设计](engineering/multi-sp-mount-design.md) | 挂点、净空、布局、配弹、显隐及当前取舍 |
 | [工程经验](engineering/engineering-lessons.md) | 重要故障与性能经验，含证据和适用边界 |

@@ -1217,6 +1217,7 @@ extern "C" __declspec(dllexport) int dualsp_debug_loadout_supported(void*) {retu
 // 换机独立子协议1，不改变现有管理设置与SP换装协议。
 extern "C" __declspec(dllexport) int dualsp_debug_aircraft_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_quick_mission_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_quick_mission_v2_supported(void*) {return 0;}
 // 原生菜单会消费导航键，准备/补给页直接读真实按住状态；不发送或拦截键盘输入。
 extern "C" __declspec(dllexport) int dualsp_preparation_navigation(void* luaState) {
     try {
