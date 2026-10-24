@@ -129,40 +129,46 @@ void drawManagementErrors() {
 }
 #include "version_updates_panel.hpp"
 struct ManagementWatermark {
-    struct Part {std::string label;int author;};
+    struct Part {std::string label;int author;int action=-1;};
     std::vector<std::vector<Part>> rows;
     float font{},noticeHeight{},height{},width{};
     bool chinese{};
 };
+float watermarkPartWidth(const ManagementWatermark::Part& part) {
+    return ImGui::CalcTextSize(part.label.c_str()).x+(part.action>=0?ImGui::GetStyle().FramePadding.x*2:0);
+}
+float watermarkRowHeight(const std::vector<ManagementWatermark::Part>& row) {
+    for(const auto& part:row)if(part.action>=0)return ImGui::GetFrameHeight();
+    return ImGui::GetTextLineHeight();
+}
 ManagementWatermark managementWatermark(float width) {
     namespace documents=dualsp::updates::documents;
-    // 水印沿用正文基础字号；窄页脚仍按实测宽度换行，不固定压成小字。
+    // 作者区使用正文基础字号；按钮和作者链接按实测尺寸换行，页脚预留真实高度。
     ManagementWatermark result;result.width=width;result.font=ImGui::GetStyle().FontSizeBase;
     result.chinese=std::string(tr("zh","en"))=="zh";
     ImGui::PushFont(nullptr,result.font);
-    float longest=ImGui::CalcTextSize(documents::compactAuthorHeading(result.chinese)).x;
-    for(size_t i=0;i<documents::compactAuthorCount(result.chinese);++i) {
-        const std::string label=std::string("• ")+documents::compactAuthorLabel(i,result.chinese);
-        longest=std::max(longest,ImGui::CalcTextSize(label.c_str()).x);
-    }
+    std::vector<ManagementWatermark::Part> parts={{documents::compactAuthorHeading(result.chinese),-1}};
+    for(size_t i=0;i<documents::compactAuthorCount(result.chinese);++i)
+        parts.push_back({std::string("• ")+documents::compactAuthorLabel(i,result.chinese),static_cast<int>(i)});
+    parts.push_back({uiText("author.homepage.44eb1411"),-1,0});
+    parts.push_back({uiText("author.coffee.f1fa8278"),-1,1});
+    float longest=0;
+    for(const auto& part:parts)longest=std::max(longest,watermarkPartWidth(part));
     if(longest>width) {
-        // 高DPI或极窄窗口按实测字宽缩小，仍把未缩放字号交给PushFont。
-        result.font*=width/longest;
+        result.font*=std::max(1.f,width-ImGui::GetStyle().FramePadding.x*2)/longest;
         ImGui::PopFont();ImGui::PushFont(nullptr,result.font);
     }
     const float gap=ImGui::GetStyle().ItemSpacing.x;
     result.noticeHeight=ImGui::CalcTextSize(documents::compactNotice(result.chinese),nullptr,false,width).y;
-    result.rows.push_back({{documents::compactAuthorHeading(result.chinese),-1}});
-    float rowWidth=ImGui::CalcTextSize(result.rows.back().front().label.c_str()).x;
-    for(size_t i=0;i<documents::compactAuthorCount(result.chinese);++i) {
-        std::string label=std::string("• ")+documents::compactAuthorLabel(i,result.chinese);
-        const float itemWidth=ImGui::CalcTextSize(label.c_str()).x;
-        if(rowWidth+gap+itemWidth>width) {result.rows.emplace_back();rowWidth=0;}
+    result.rows.emplace_back();float rowWidth=0;
+    for(auto& part:parts) {
+        const float itemWidth=watermarkPartWidth(part);
+        if(rowWidth && rowWidth+gap+itemWidth>width) {result.rows.emplace_back();rowWidth=0;}
         if(rowWidth)rowWidth+=gap;
-        result.rows.back().push_back({std::move(label),static_cast<int>(i)});rowWidth+=itemWidth;
+        result.rows.back().push_back(std::move(part));rowWidth+=itemWidth;
     }
-    result.height=result.noticeHeight+ImGui::GetStyle().ItemSpacing.y+
-        result.rows.size()*ImGui::GetTextLineHeightWithSpacing()-ImGui::GetStyle().ItemSpacing.y;
+    result.height=result.noticeHeight;
+    for(const auto& row:result.rows)result.height+=ImGui::GetStyle().ItemSpacing.y+watermarkRowHeight(row);
     ImGui::PopFont();return result;
 }
 void drawManagementWatermark(const ManagementWatermark& mark,float right,float top) {
@@ -174,22 +180,27 @@ void drawManagementWatermark(const ManagementWatermark& mark,float right,float t
     ImGui::TextDisabled("%s",notice);ImGui::PopTextWrapPos();
     float y=top+mark.noticeHeight+ImGui::GetStyle().ItemSpacing.y;
     for(const auto& row:mark.rows) {
-        float width=0;
-        for(const auto& part:row)width+=ImGui::CalcTextSize(part.label.c_str()).x;
+        float width=0;const float rowHeight=watermarkRowHeight(row);
+        for(const auto& part:row)width+=watermarkPartWidth(part);
         if(!row.empty())width+=(row.size()-1)*ImGui::GetStyle().ItemSpacing.x;
-        ImGui::SetCursorPos({right-width,y});
-        bool first=true;
+        ImGui::SetCursorPos({right-width,y});bool first=true;
         for(const auto& part:row) {
             if(!first)ImGui::SameLine();first=false;
-            if(part.author<0)ImGui::TextDisabled("%s",part.label.c_str());
-            else {
-                ImGui::PushID(part.author);
-                if(ImGui::TextLink(part.label.c_str()))
-                    dualsp::updates::service().openAuthor(static_cast<size_t>(part.author),mark.chinese);
+            if(part.action>=0) {
+                ImGui::PushID(100+part.action);
+                if(ImGui::Button(part.label.c_str()))dualsp::updates::service().openAuthorAction(static_cast<size_t>(part.action));
                 ImGui::PopID();
+            }else {
+                if(rowHeight>ImGui::GetTextLineHeight())ImGui::AlignTextToFramePadding();
+                if(part.author<0)ImGui::TextDisabled("%s",part.label.c_str());
+                else {
+                    ImGui::PushID(part.author);
+                    if(ImGui::TextLink(part.label.c_str()))dualsp::updates::service().openAuthor(static_cast<size_t>(part.author),mark.chinese);
+                    ImGui::PopID();
+                }
             }
         }
-        y+=ImGui::GetTextLineHeightWithSpacing();
+        y+=rowHeight+ImGui::GetStyle().ItemSpacing.y;
     }
     ImGui::PopFont();
 }

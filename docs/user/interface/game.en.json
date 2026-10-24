@@ -516,7 +516,9 @@
     "quick.select_sp": "Select at least one SP.",
     "quick.multi_sp_help": "Ammunition ratios and combination limits follow the Mod settings. Skins or mods may change the actual weapons. They are checked after loading; unsupported combinations report an error instead of silently switching to one SP.",
     "quick.parts_pending": "PART selection is not yet available in quick launch. The game handles parts using its native rules.",
-    "quick.wrong_skin": "The aircraft or skin number changed during loading. The test loadout was not applied."
+    "quick.wrong_skin": "The aircraft or skin number changed during loading. The test loadout was not applied.",
+    "author.homepage.44eb1411": "Visit my homepage",
+    "author.coffee.f1fa8278": "Buy me a coffee"
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",

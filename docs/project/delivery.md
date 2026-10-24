@@ -15,6 +15,24 @@
 
 ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，替代根目录散放的两份安装说明。英文源与包内文件名统一为`Features.txt`、`Installation.txt`、`Changelog.txt`、`Author-and-License.txt`；中文保留原文件名。根目录阅读副本不进入Vortex游戏部署映射，运行目录docs及EXE内嵌正文仍使用同一份来源原字节；历史ZIP和旧回执不回改。
 
+## A阶段作者签名
+
+作者在确认alpha4基本实机通过后，授权接入保护并制作2.25.3 alpha5。本轮复用先前保留的唯一CNG密钥，仅导出并登记RSA3072公钥，不创建新钥、不读取恢复件。接入作者签名、安装前核验和DLL交付副本精简；构建与核对结果由alpha5交付回执记录，不能视为安装或游戏验收。旧正式包仍保留原字节。B阶段游戏/F6运行期核验未接入，安装后手工修改文件不会被游戏主动阻止。
+
+密码学格式和密钥保管的唯一说明见[发布流程的作者签名](release-workflow.md#作者签名与密钥保管)。`src/author_signing.py`通过Windows CNG使用固定RSA3072/PSS/SHA256、32字节盐，先核验签名，再读取清单列明文件；公钥固定生成到安装器，不接受包中自带的新公钥作为信任依据。
+
+| 签名用途 | 最终字节及位置 | 消费者 |
+|---|---|---|
+| content | ZIP中`ue4ss/Mods/DualSP/author-content.json`及`.sig.json`，绑定同版Mod载荷；自身不入自己的摘要集合 | 随Vortex映射或手动部署；EXE校对它与安装载荷的范围及摘要 |
+| bundle | EXE内`bundle.json`及`bundle.sig.json`，逐项绑定散文件、共享前置、通用ZIP、双语正文/短署名及UI JSON | `AuthorSignature.Initialize`在正常界面读词条前验签；首次失败用同一JSON生成的双语最小提示，避免资源验证循环 |
+| release | 最终EXE及通用ZIP旁`AC7MultiSP-release.json`及`.sig.json`，不放进被签名的EXE/ZIP造成自引用 | 可信安装器的`--verify-release 文件夹`只读核对，或维护者使用`author_signing.py verify-release --files-dir 文件夹` |
+
+三种清单均限制64KiB、256成员和1GiB总载荷，每成员不超过256MiB；签名包络限制2KiB。固定用途域与原始UTF-8字节一起做SHA256，不把JSON重排后验签；拒绝重复键、越界/非法路径、大小写冲突、未知算法/公钥及版本/用途混用。新清单绑定完整版本、candidate/stable、发布ID及Git来源锚。Git锚不替代构建回执中实际源码摘要。
+
+`VerifyAllResources`在安装、卸载、恢复、应用及导出入口写盘前完整核对内嵌资源，每安装器进程只完成一次；后续读取资源仍校对本项摘要。先核对发行载荷，不拿目标目录中玩家自改的音频、配置、运行状态或其他Mod作盗版判定；目标的备份/迁移/管理器拒绝规则继续沿用原事务。Vortex不会自动执行作者验签。客户端完全被替换时仍可能伪造本地结果，外部可信来源不可省略。
+
+`src/distribution_symbols.py`先把新构建两DLL复制到`private-debug/`，再用同工具链`llvm-strip`精简交付副本，静态比较必需导出、映射节字节、异常/重定位/TLS等加载契约；不一致即停止，不恢复覆盖旧核心。私有诊断件摘要和精简工具摘要进入新构建回执，私有DLL不进入通用ZIP。它们随本机构建保留；精简结果由构建回执记录，加载契约的静态一致不等于实际游戏加载或性能已验证。
+
 ## 生成、冻结与封装入口
 
 | 阶段 | 入口与输入 | 输出和核对 |
@@ -22,9 +40,11 @@ ZIP根目录另提供`ReadMe_EN/`与`ReadMe_zhCN请读我/`，各四份正文，
 | 游戏文字生成 | `src/user_texts.py`读取四对TXT及游戏双语JSON；`src/build.py`自动调用 | 生成C++头文件与Lua，检查双语键、占位符、NUL及ImGui标识；输出不手改 |
 | 完整游戏构建 | `src/build.py`，必须显式`--mount-assets-dir`，独立树可指定`--temp-root E:/AC7_MultiSP/Temp` | 独立目录内核心/UI、Lua来源、PAK及构建回执；冻结游戏源码和文字，不冻结安装器C#/JSON |
 | 唯一封装 | `src/package_delivery.py --build-dir 完整构建目录 --output-dir 全新目录 --audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav` | 核对完整构建及生成文字，回读通用ZIP各成员，生成EXE资源、产品版本属性、manifest、冻结C#和`封装回执.json`；不依赖旧手装ZIP |
-| 双语EXE编译 | `src/delivery/build_setup.ps1 -InputDirectory 封装目录` | 编译前后核对冻结源码、manifest、资源、响应文件与ZIP摘要，生成EXE及独立`EXE编译回执.json` |
+| 双语EXE编译 | `src/delivery/build_setup.ps1 -InputDirectory 封装目录`，可指定`-SigningKeyName`/`-SigningProvider` | 编译前验证bundle和冻结资源，编译前后核对源码/响应文件/ZIP；生成EXE及独立回执，再给最终EXE/ZIP生成release签名。任一步失败均不可发布 |
 
 封装使用全新输出目录，已存在即拒绝覆盖。提示音核对原验收来源摘要，不分发个人替换音频；原始资源、旧构建、旧包与历史回执保持。
+
+封装新增可选`--signing-key-name`及`--signing-provider`。省略名称时，只在当前用户CNG存储中查找本项目名称前缀，并且必须与登记公钥匹配且唯一；不自动生成密钥。无登记/匹配时停止。安装器源与签名工具、公钥、全部词条共同冻结；生成的`TrustedAuthorKeys.cs`和`SignatureBootstrap.cs`只存在本次封装快照，不另设可编辑翻译来源。封装期间不改变原同源TXT字节。
 
 游戏来源冻结已改用`docs/user/`，不再缺失旧`docs/授权.txt`。安装器封装另冻结`src/delivery/`、封装脚本及玩家文字，编译仅使用封装目录的快照。`src/package-release.py`是新封装入口的薄包装；`src/release_package.py`只保留历史helper，旧GameFiles命令行已停用。完整工具依赖见[开发与恢复](../engineering/development.md)。
 

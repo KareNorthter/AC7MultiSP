@@ -87,6 +87,8 @@ def main():
                     "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-o", str(ui),
                     "-ld3d11", "-ldxgi", "-lxinput", "-ld3dcompiler", "-lgdi32", "-ldwmapi", "-lwinhttp", "-lshell32", "-lole32"],
                    cwd=output, env=environment, check=True)
+    from distribution_symbols import compact
+    distribution_symbols = compact(output, compiler, run, environment)
     with pefile.PE(str(candidate)) as library:
         exports = {item.name.decode("ascii") for item in library.DIRECTORY_ENTRY_EXPORT.symbols if item.name}
         if library.FILE_HEADER.Machine != 0x8664:
@@ -110,6 +112,7 @@ def main():
               "source_files": source_before, "toolchain": toolchain_before, "toolchain_path": str(compiler.parent),
               "compiler_version": subprocess.check_output([str(compiler / "clang++.exe"), "--version"], text=True),
               "commands": commands, "objects": {p.name: digest(p) for p in sorted(output.glob('*.o'))},
+              "distribution_symbols": distribution_symbols,
               "candidate": info['version'], "candidate_sha256": digest(candidate),
               "ui_sha256": digest(ui), "required_ui_exports_verified": sorted(ui_required),
               "build_define": info["core_define"], "compiled": True,

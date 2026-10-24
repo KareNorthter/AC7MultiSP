@@ -326,6 +326,13 @@ public:
             return launchShell(checkedUrl(link->url));
         }catch(...) {return false;}
     }
+    bool openAuthorAction(size_t index) noexcept {
+        try {
+            ensure(index<2,"作者按钮不存在");
+            return launchShell(checkedUrl(index==0?dualsp::user_texts::author_links::homepage:
+                dualsp::user_texts::author_links::coffee));
+        }catch(...) {return false;}
+    }
     bool openAuthor(size_t index,bool chinese) noexcept {
         try {return launchShell(checkedAuthorUrl(index,chinese));}catch(...) {return false;}
     }

@@ -71,10 +71,7 @@ namespace AC7MultiSP.Setup {
         internal readonly BundleInfo Info;
         internal readonly JavaScriptSerializer Json = new JavaScriptSerializer { MaxJsonLength = 1048576, RecursionLimit = 30 };
         internal Bundle() {
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("bundle.json")) {
-                if (stream == null) throw new InvalidDataException(UiText.T("error.bundleMissing"));
-                using (var reader = new StreamReader(stream, Utf8)) Info = Json.Deserialize<BundleInfo>(reader.ReadToEnd());
-            }
+            Info = AuthorSignature.Info;
             if (Info.schema != 1 || Info.product != "AC7MultiSP" || !ReleaseVersion.Valid(Info.version) ||
                 (Info.version.Contains(" alpha") && !Info.candidate))
                 throw new InvalidDataException(UiText.T("error.bundleInvalid"));
@@ -88,16 +85,7 @@ namespace AC7MultiSP.Setup {
                 return BitConverter.ToString(sha.ComputeHash(stream)).Replace("-", "").ToLowerInvariant();
         }
         internal byte[] Bytes(string relative) {
-            ResourceFile entry;
-            if (!Info.files.TryGetValue(relative, out entry)) throw new InvalidDataException(UiText.T("error.resourceMissing", relative));
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(entry.resource)) {
-                if (stream == null) throw new InvalidDataException(UiText.T("error.resourceMissing", relative));
-                using (var output = new MemoryStream()) {
-                    stream.CopyTo(output); var data = output.ToArray();
-                    if (data.LongLength != entry.size || Digest(data) != entry.sha256) throw new InvalidDataException(UiText.T("error.resourceHash", relative));
-                    return data;
-                }
-            }
+            return AuthorSignature.Bytes(relative);
         }
         internal string Document(string topic, string language) { return Utf8.GetString(Bytes("installer/docs/" + language + "/" + topic + ".txt")).TrimStart('\uFEFF'); }
         internal CompactCredits Credits(string language) {
@@ -184,7 +172,8 @@ namespace AC7MultiSP.Setup {
         internal static bool OwnedPath(string relative, bool shared) {
             bool program = relative.StartsWith(Mod + "Scripts/", StringComparison.Ordinal) || relative.StartsWith(Mod + "bin/", StringComparison.Ordinal) ||
                 relative.StartsWith(Mod + "licenses/", StringComparison.Ordinal) || relative.StartsWith(Mod + "docs/", StringComparison.Ordinal) ||
-                new[] { Mod + "VERSION", Mod + "enabled.txt", Mod + "install-receipt.json", Mod + "vortex-package.json", Mod + "Audio/SP2.wav" }.Contains(relative);
+                new[] { Mod + "VERSION", Mod + "enabled.txt", Mod + "install-receipt.json", Mod + "vortex-package.json", Mod + "Audio/SP2.wav",
+                    Mod + "author-content.json", Mod + "author-content.sig.json" }.Contains(relative);
             return program || relative == Pak || relative == StateName ||
                 (shared && new[] { "dwmapi.dll", "ue4ss/UE4SS.dll", "ue4ss/UE4SS-settings.ini" }.Contains(relative));
         }
@@ -232,6 +221,8 @@ namespace AC7MultiSP.Setup {
             return value;
         }
         internal Plan MakePlan(string input, bool uninstall) {
+            // 修改目标或恢复事务前，完整核对可信清单列明的内嵌资源。
+            AuthorSignature.VerifyAllResources();
             Closed();
             if (!Environment.Is64BitOperatingSystem || Environment.OSVersion.Version.Major < 10) throw UiText.Error("error.windowsVersion");
             string game = GameRoot(input);
@@ -321,6 +312,7 @@ namespace AC7MultiSP.Setup {
             plan.Changes.Add(relative, data);
         }
         internal void Restore(string game, string journalFile) {
+            AuthorSignature.VerifyAllResources();
             Closed();
             string file = Safe(game, "AC7MultiSP-backup/" + Path.GetFileName(Path.GetDirectoryName(journalFile)) + "/transaction.json");
             var journal = Read<Journal>(file);
@@ -347,6 +339,7 @@ namespace AC7MultiSP.Setup {
             journal.status = "rolled-back"; Save(file, journal);
         }
         internal string Apply(Plan plan, Action<string> progress) {
+            AuthorSignature.VerifyAllResources();
             Closed(); CheckManager(plan.Game);
             using (var locked = new FileStream(Safe(plan.Game, "AC7MultiSP-install.lock"), FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)) {
                 foreach (var snapshot in plan.Before) if (Hash(Safe(plan.Game, snapshot.Key, !plan.Changes.ContainsKey(snapshot.Key))) != snapshot.Value) throw UiText.Error("error.targetChanged", snapshot.Key);
@@ -404,6 +397,7 @@ namespace AC7MultiSP.Setup {
             }
         }
         internal void Export(string output) {
+            AuthorSignature.VerifyAllResources();
             string temporary = output + ".partial-" + Guid.NewGuid().ToString("N");
             byte[] data = Bytes("installer/universal.zip");
             using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write)) stream.Write(data, 0, data.Length);

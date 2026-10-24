@@ -516,7 +516,9 @@
     "quick.select_sp": "请至少勾选一种SP。",
     "quick.multi_sp_help": "配弹和组合限制沿用Mod设置。皮肤或第三方替换可能改变实际兵装；载入后核对，不支持的组合会报错，不自动改为单SP。",
     "quick.parts_pending": "PART暂不支持在快速入口自选，配件由游戏按原生规则处理。",
-    "quick.wrong_skin": "载入后的机体或皮肤编号与预设不符，测试配装未应用。"
+    "quick.wrong_skin": "载入后的机体或皮肤编号与预设不符，测试配装未应用。",
+    "author.homepage.44eb1411": "访问我的主页",
+    "author.coffee.f1fa8278": "请我喝咖啡"
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",

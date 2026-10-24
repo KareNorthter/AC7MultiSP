@@ -57,4 +57,4 @@ Popular mod aircraft will also receive priority for future support.
 • Loading multi-SP models on the F-2A causes severe FPS drops.
 • The SP weapon performance bars do not change when selecting PARTs. This is a UI issue; the parts still take effect.
 • Special effects triggered by holding the weapon-switch button on some mod aircraft may not be fully supported.
-• XFA-33 B and Su-57 TGM may still reopen weapon bays when switching SP weapons; a fix is deferred.
+• Some aircraft with special sustained effects (such as APS on the ADF-11) cannot select them together with SP weapons.

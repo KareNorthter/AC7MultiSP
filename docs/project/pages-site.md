@@ -46,6 +46,8 @@ site/_headers 为静态 JSON 设置 application/json 内容类型和 no-store �
 
 ## 发布边界
 
+A阶段源码候选由发布工具额外复制同版`AC7MultiSP-release.json`、`.sig.json`到站点根目录及`releases/发布ID/`。它们不替代stable/preview，当前公钥暂缓启用且未部署。后续整站发布必须携带以前已发布的签名目录；现有Direct Upload替换整站，不能让新目录丢失旧签名。具体密钥和制作状态只见[发布流程](release-workflow.md#作者签名与密钥保管)。
+
 完整顺序见[新版发布流程](release-workflow.md#分工与顺序)。工具prepare复用有摘要回执的EXE和通用ZIP，finalize核对R2后生成整站及ZIP，verify-online在人工部署后核对线上文件。R2、蓝奏云、Nexus通用ZIP和Cloudflare Pages都由作者手动上传，本工具不操作外部账号。
 
 本任务只准备本地上传材料，不更改线上Cloudflare Pages。直接上传Pages会用新目录替换整套线上文件；部署前需查看当前Production内容并保留仍在使用的其他清单或资源。现行源码保留stable与旧preview；若线上还有其他独有文件，核对并接收后再部署，不能用历史ZIP推定线上清单完整。

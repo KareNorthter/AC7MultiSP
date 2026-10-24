@@ -22,11 +22,8 @@ namespace AC7MultiSP.Setup {
         static Dictionary<string, Dictionary<string, string>> Load() {
             var result = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
             foreach (string code in new[] { "zh-CN", "en" }) {
-                using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("installer-ui." + code + ".json")) {
-                    if (stream == null) { result[code] = new Dictionary<string, string>(); continue; }
-                    using (var reader = new StreamReader(stream, Bundle.Utf8))
-                        result[code] = new JavaScriptSerializer { MaxJsonLength = 131072 }.Deserialize<Dictionary<string, string>>(reader.ReadToEnd().TrimStart('\uFEFF'));
-                }
+                result[code] = new JavaScriptSerializer { MaxJsonLength = 65536 }.Deserialize<Dictionary<string, string>>(
+                    Bundle.Utf8.GetString(AuthorSignature.Bytes("installer/ui/" + code + ".json")).TrimStart('\uFEFF'));
             }
             return result;
         }

@@ -6,6 +6,10 @@
 
 Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。最新7e255e1及前阶段名称/IRCM修订已进入2.25.3 alpha1完整构建；[交付与待测清单](../../evidence/2.25.3-alpha1-exe-delivery.json)明确尚未安装或游戏验收。用户随后确认XFA-33 B、Su-57 TGM公共舱互切修订未生效，已按指令暂缓；其他已测项无问题，范围见[反馈记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
 
+## 免费Mod署名与资源保护
+
+[唯一研究正文](mod-protection.md)基于main 7431855及2.25.3 alpha1原交付静态盘点，给出同源文字/图片、离线签名、安装与按需核验、符号精简及可选混淆的边界、成本和继续条件。研究锚5593ae3；用户已选择A，源码候选位于codex/feat-author-signing，现行设计见[交付方案](../project/delivery.md#a阶段作者签名)。源码6ce2881由集成交付线程接入alpha5，现有作者公钥已登记；制作与验证见alpha5交付回执。B未实施，研究旧扫描保持原阶段含义，不分配正式版本。
+
 ## 挂载、弹舱与动画
 
 多机舱门续研已从静态比较推进到限定源码候选，范围是普通SU-57/TGM、DarkStar、XFA-33 A/B/C；尚未编译、安装或实机验证。唯一行为说明见[挂载设计](../engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)，待反馈项仍在上方兼容性续研正文维护。旧完整共舱/Tick接管方案未恢复。

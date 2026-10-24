@@ -18,6 +18,23 @@ DOCUMENTS = {
 OUTPUTS = ("src/generated/user_texts.hpp", "dist/DualSP/Scripts/user_texts.lua")
 
 
+def author_links():
+    """两个固定作者入口共用一份元数据；不能从更新清单替换。"""
+    links = json.loads((CATALOG / 'author-links.json').read_text(encoding='utf-8-sig'), object_pairs_hook=unique_object)
+    if set(links) != {'homepage', 'coffee'}:
+        raise ValueError('作者入口不成套')
+    for url in links.values():
+        if not isinstance(url, str) or len(url) > 2048 or any(ord(c) <= 32 or ord(c) >= 127 or c in "\\\"'" for c in url):
+            raise ValueError('作者入口含无效字符')
+        parts = urlsplit(url)
+        if (parts.scheme != 'https' or parts.hostname != 'ac7multisp-updates.pages.dev' or
+                parts.port not in (None, 443) or parts.username or parts.password or parts.path not in ('', '/') or parts.query):
+            raise ValueError('作者入口必须是已登记主页的HTTPS地址')
+    if urlsplit(links['homepage']).fragment or urlsplit(links['coffee']).fragment != 'coffee/':
+        raise ValueError('作者入口锚点无效')
+    return links
+
+
 def extract_compact_credits(text, language):
     """从作者正文提取短声明、作者链接及反馈；缺少分节时拒绝生成旧信息。"""
     headings = ("作者：", "反馈：", "第三方组件与素材") if language == "zh-CN" else (
@@ -34,6 +51,10 @@ def extract_compact_credits(text, language):
     authors = []
     for line in lines[author + 1:feedback]:
         if not line:
+            continue
+        # 正文允许作者手写“主页：URL”；紧凑区由专用按钮显示该入口，避免重复。
+        inline = re.search(r'https://\S+$', line)
+        if inline and inline.group() == author_links()['homepage']:
             continue
         if line.startswith("https://"):
             address = urlsplit(line)
@@ -172,6 +193,9 @@ def render():
         header.append("inline const char* compactAuthor" + field + "(std::size_t index,bool chinese) noexcept {" +
                       'if(index>=compactAuthorCount(chinese))return "";return chinese?compactAuthor' + field +
                       "sZh[index]:compactAuthor" + field + "sEn[index];}")
+    header += ["}", "namespace author_links {"]
+    for key, url in author_links().items():
+        header.append("inline constexpr char " + key + "[]=" + cpp_string(url) + ";")
     header += ["}", "}", ""]
     lua = ["-- 自动生成；唯一来源为 docs/user/interface/game.*.json，请勿手改。", "local Texts={}"]
     for language, catalog in (("zh", zh), ("en", en)):

@@ -27,6 +27,26 @@
 
 2.25.2的特殊来源：作者在2026-10-24明确确认它是正式发布，并提供两个EXE链接。现成EXE和通用ZIP来自此前候选构建，原回执与内嵌candidate标识原样保留；新发布确认另记，不虚构游戏验收，也不为改称呼重新编译。本次主页使用现行正文，包内文档仍是原冻结快照。后续新构建由版本整合任务统一正式/候选元数据。
 
+## 作者签名与密钥保管
+
+A阶段接入三种用途的签名，文件及消费者见[交付方案](delivery.md#a阶段作者签名)。最初密钥生成时Windows拒绝事后修改导出策略，用户曾暂缓启用。2026-10-24用户确认alpha4基本实机通过并要求接入保护、制作alpha5，现已复用当时保留的唯一CNG密钥，登记其公开部分。公钥BLOB的SHA256指纹为`7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f`。本次不创建新钥、不读取恢复材料。新制作入口遇空登记或不匹配密钥即停止，不提供忽略验签或无签名回退；历史2.25.2原件复用特例仍按原摘要限制。
+
+密钥设置属于独立、显式操作：`src/delivery/create_author_key.ps1 -BackupDirectory 仓库外全新目录`。构建/封装不会调用它。脚本已按实际限制改为保留可导出策略，不再尝试生成后关闭导出，也没有再运行。Windows当前用户CNG密钥存储负责日常私钥，代码通过NCrypt句柄签名，不把私钥参数、字节或密码写到命令行、源码、临时包或日志。可导出密钥仍可能被同账户具有权限的程序导出，不能声称硬件级保护或不可导出。
+
+本次已产生的恢复材料保留在仓库外`E:/AC7MultiSP-Signing/author-20261024/`：`author-recovery.pfx`及`recovery-password.dpapi`，旁留`activation-status.json`记录用户暂停；目录ACL限当前用户和SYSTEM。前者用随机密码和AES256-CBC/SHA256、600000次口令派生加密，密码只经CurrentUser DPAPI保护保存。PFX里的自签证书仅为恢复容器，不安装到证书存储、不用于Windows发布者认证。最初流程中断在公钥登记之前，没有生成local-key/public-key文件；本次只枚举项目专用前缀的唯一CNG密钥并导出公钥。原activation-status.json及恢复件保持原样，新增activation-20261024-alpha5.json记录后续授权与公开指纹，不保存密钥名称。
+
+这是本机加密恢复材料，尚无异机/离线恢复验收；DPAPI依赖Windows用户资料及其保护密钥，拷贝两个文件不保证换机可恢复。作者本次授权复用现有本机密钥出包，不等于异机恢复验收；后续另行确认离线恢复安排，不在聊天展示恢复口令或私钥。不得将`.pfx/.p12`、`.dpapi`、私钥PEM/DER、签名访问凭证或个人密钥名配置提交Git。公钥BLOB及其SHA256指纹可以公开，公钥登记应人工审阅后才进入源码，客户端不能从待核验包自行接收一个“新可信公钥”。
+
+签名协议固定为RSA-PSS3072/SHA256、PSS盐32字节。签名输入为ASCII `AC7MultiSP.signature.v1`加NUL，再加清单原始UTF-8字节的SHA256；包络携带schema、固定algorithm、完整公钥BLOB指纹key_id及Base64签名。各用途独立检查purpose、版本、通道、发布ID；公钥指纹仅在已登记集合中查找。算法和上限不能由下载包自行放宽。采用Windows官方[NCryptSignHash](https://learn.microsoft.com/en-us/windows/win32/api/ncrypt/nf-ncrypt-ncryptsignhash)及[BCryptVerifySignature](https://learn.microsoft.com/en-us/windows/win32/api/bcrypt/nf-bcrypt-bcryptverifysignature)，不自写RSA算法。
+
+启用后的顺序为：完整构建并精简交付DLL→content签名→通用ZIP→全部EXE资源及bundle签名→EXE编译→最终EXE/ZIP的release签名。最终文件签署后不可再改资源、版本、精简、混淆或代码签名；将来增加Authenticode时须放在release摘要之前。任何一步失败保留输出，不覆盖旧成品或旧回执。`build_setup.ps1`如果已编译但最后签名失败，该目录仍不可发布。
+
+新构建可通过`--signing-key-name`/`--signing-provider`显式选当前账户已有密钥；省略名称时按已登记公钥匹配本项目名称前缀的唯一密钥，多个或没有匹配就停止。私钥名称不是密钥本体，但也不作为个人配置写入仓库。安装器中的公钥由封装器生成，日常作者文案仍只改双语唯一正文，再完整构建/封装，不单独改内嵌文本后补同名旧签名。
+
+签名版prepare复制EXE、ZIP和两份发布签名原件，拒绝用`--exe-only`拆开已签名文件集合；finalize验证它们后把签名材料放进Pages根目录和`releases/发布ID/`，不改stable/preview协议。后续使用`finalize --previous-pages-dir 上一版完整Pages目录`验证并保留旧`releases/`签名；只复制签名材料，不复制旧站点代码。未提供旧目录会在发布回执记录未提供，人工上传前须核对有无历史材料，不把仅含当版文件的目录直接覆盖上线。发布签名不包含经常变化的分享网址；现有HTTPS/域名限制仍独立执行。
+
+保护研究阶段仅做静态核对；alpha5按本次授权完整编译，制作时核对三用途签名、封装字节及符号精简的加载契约。实际完成项以alpha5交付回执为准；篡改/丢失签名、公钥替换、双语启动失败、安装事务、Vortex部署及实际耗时/内存仍须按分别获得的授权验证，不能把正常出包验签视为全部异常分支通过。
+
 ## 工具入口
 
 统一入口为`src/release_workflow.py`，需要Python 3.11及以上和Git；显式build还需要[开发依赖](../engineering/development.md)。从仓库根目录运行，输出指定到Temp/tasks/日期-发布主题/下的全新子目录。目录已存在会停止，不覆盖旧产物或删除文件。
@@ -52,6 +72,7 @@
 - upload/AC7MultiSP_Installer.exe：上传R2与蓝奏云的同一个文件。
 - upload/AC7MultiSP-版本-Universal.zip：作者上传到Nexus。默认必需，来源与EXE内嵌ZIP一致。只有明确本轮不更新Nexus文件时才使用`--exe-only`。
 - SHA256SUMS.txt：两种发布文件的摘要。
+- 签名版另含upload/AC7MultiSP-release.json及AC7MultiSP-release.sig.json，绑定最终EXE/ZIP；下载文件核对必须从可信作者入口取得核验器或公钥，不能仅信同包自述。
 - stable.ready.json：清单草稿，不提前上传。
 - release-plan.json、手动发布步骤.txt：版本、来源、对象键、摘要和手工步骤。
 

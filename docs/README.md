@@ -49,6 +49,7 @@
 | [挂载设计](engineering/multi-sp-mount-design.md) | 挂点、净空、布局、配弹、显隐及当前取舍 |
 | [工程经验](engineering/engineering-lessons.md) | 重要故障与性能经验，含证据和适用边界 |
 | [研究索引](research/README.md) | 弹舱动画等未采用/待接收半成品和继续条件 |
+| [免费Mod保护研究](research/mod-protection.md) | 实际载荷、署名/图片来源、工具核查及分阶段依据；用户已选择A，源码候选现状见交付方案，公钥暂缓启用 |
 | [Mod机体兼容性续研](research/mod-aircraft-compatibility.md) | 剩余机体分组安装、原包缺项、已解决反馈和后续待办 |
 | [归档与恢复](archive/README.md) | Git锚、原料、未提交快照和历史位置 |
 | [本机资产索引](archive/local-assets.md) | Temp、备份、研究原料和归组文件的实际位置与使用条件 |

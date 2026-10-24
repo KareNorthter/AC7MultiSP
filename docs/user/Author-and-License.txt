@@ -2,6 +2,7 @@ AC7MultiSP
 This program is for learning and discussion only. It is completely free. Please do not resell it for profit.
 
 Author:
+• Homepage: https://ac7multisp-updates.pages.dev/
 • Nexus Mods: Northter
   https://www.nexusmods.com/acecombat7skiesunknown/mods/3797
 • bilibili: 班德慕
@@ -23,4 +24,6 @@ Acknowledgments
 • PROJECT ACES / Bandai Namco: thanks for creating Ace Combat 7.
 
 Thanks to these friends for their help:
-Abyssdw, Xihe.Liu, HLC, 鹿目まどか, Zabaglione, 龙战骑兵, 水馒头（反我的世界）, and others.
+Abyssdw, Xihe.Liu, HLC, 鹿目まどか, Zabaglione, 龙战骑兵, 水馒头（反我的世界）, 梨想主义可还行, 江郎才尽, and others.
+
+Thanks to all players who participated in testing and provided feedback.

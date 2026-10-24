@@ -1,5 +1,11 @@
 AC7MultiSP
 
+2.25.3 alpha5 (self-test build, not released)
+• Add author signatures and integrity checks before installation; mismatched signatures or distribution content stop installation and export.
+• Strip debug symbols from distribution DLLs while retaining private diagnostic originals; no per-frame in-game verification is added.
+• Add “Visit my homepage” and “Buy me a coffee” buttons beside the author information in the installer and F6, in both languages.
+• Incorporate the author’s latest feature notes and acknowledgments.
+
 2.25.3 alpha4 (self-test build, unreleased)
 • Corrected conflicting task and preview rack records that caused model previews to fall back while switching multi-SP resupply candidates. Unknown-resource checks remain in place; in-game validation is pending.
 • Log session versions now follow the product version automatically. The separate outdated Lua startup version was removed to prevent conflicting version labels.

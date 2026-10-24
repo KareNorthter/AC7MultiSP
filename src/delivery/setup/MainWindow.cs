@@ -285,6 +285,12 @@ namespace AC7MultiSP.Setup {
                 link.LinkClicked += delegate { OpenDocumentLink(target, target); };
                 authors.Controls.Add(link);
             }
+            // 与作者链接同处一行，窄窗口由FlowLayoutPanel自动换行。
+            var homepage = ActionButton(UiText.T("author.homepage"));
+            homepage.Click += delegate { Open(AuthorLinks.Homepage); };
+            var coffee = ActionButton(UiText.T("author.coffee"));
+            coffee.Click += delegate { Open(AuthorLinks.Coffee); };
+            authors.Controls.Add(homepage); authors.Controls.Add(coffee);
             panel.Controls.Add(authors);
             var feedbackText = TextLabel(value.feedback_heading + "\r\n" + String.Join("\r\n", value.feedback));
             feedbackText.Margin = new Padding(0, 4, 0, 0); panel.Controls.Add(feedbackText);
