@@ -1,0 +1,64 @@
+{
+  "schema": 1,
+  "date": "2026-10-24",
+  "version": "2.26.0",
+  "candidate": false,
+  "baseline_commit": "37b2edc56fc5382a3912df4ef0492927bf952d6e",
+  "user_statement": "都正常了，我现在需要发布正式版本：2.26.0。请整理2.25.X到当前最新版本的所有主要改动，写入更新日志。更新日志删去alpha版本的日志。",
+  "accepted_build": {
+    "version": "2.25.3 alpha5",
+    "source_commit": "db0d2c917e8ca2cf1fa55611aeec25b6926b1a43",
+    "artifact_sha256": "b467230bb7f8c730e41f90483ba3f907bfba54e6f2c012f158dce4aa25e879f2",
+    "original_receipt": "evidence/2.25.3-alpha5-exe-delivery.json"
+  },
+  "feedback_scope": "按作者总体正常反馈记录验收，不推定未逐项核实的异常验签、异机恢复及性能测量全部通过。",
+  "source_records": [
+    "evidence/2.25.0-exe-delivery.json",
+    "evidence/2.25.1-exe-delivery.json",
+    "evidence/2.25.2-exe-delivery.json",
+    "evidence/2.25.3-alpha1-exe-delivery.json",
+    "evidence/2.25.3-alpha2-exe-delivery.json",
+    "evidence/2.25.3-alpha3-exe-delivery.json",
+    "evidence/2.25.3-alpha4-exe-delivery.json",
+    "evidence/2.25.3-alpha5-exe-delivery.json"
+  ],
+  "changelog": {
+    "scope": "2.25系列至alpha5的主要变化汇总为2.26.0正式章节",
+    "languages": [
+      "zh-CN",
+      "en"
+    ],
+    "alpha_entries_removed": true,
+    "previous_stable_sections_preserved": true,
+    "before_sha256": {
+      "docs/user/更新日志.txt": "9b9731ab63cb4b3d241b4633388f5959072175f21d06a6177e859476455cc81b",
+      "docs/user/Changelog.txt": "4a1f02c0b8654247dcbb88c34eff67bb880656bb35a0cd6af90eade0f30b9dcb"
+    },
+    "historical_receipts_and_artifacts_modified": false
+  },
+  "metadata": {
+    "version": "2.26.0",
+    "candidate": false,
+    "receipt_prefix": "2.26.0"
+  },
+  "compiled": false,
+  "tests_run": false,
+  "installer_executed": false,
+  "installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "stable_manifest_modified": false,
+  "release_tag_created": false,
+  "pending": [
+    "后续获授权后从正式源码完整构建并签署新EXE/ZIP，不能改名或改写alpha5旧签名",
+    "上传、线上核对和stable清单仍按发布流程执行；本轮未进行",
+    "F6状态发布性能、F-2A掉帧及XFA-33 B/Su-57 TGM公共舱仍为待办，不列作已修复"
+  ],
+  "static_verification": {
+    "major_items_per_language": 16,
+    "no_alpha_entries_in_player_changelogs": true,
+    "historical_2_25_and_earlier_bytes_preserved": true,
+    "formal_release_notes_extraction_verified": true,
+    "generated_texts_consistent": true
+  }
+}

@@ -1,33 +1,31 @@
 AC7MultiSP
 
-2.25.3 alpha5 (self-test build, not released)
-• Add author signatures and integrity checks before installation; mismatched signatures or distribution content stop installation and export.
-• Strip debug symbols from distribution DLLs while retaining private diagnostic originals; no per-frame in-game verification is added.
-• Add “Visit my homepage” and “Buy me a coffee” buttons beside the author information in the installer and F6, in both languages.
-• Incorporate the author’s latest feature notes and acknowledgments.
+2.26.0
+Major changes from the 2.25 series through this release.
 
-2.25.3 alpha4 (self-test build, unreleased)
-• Corrected conflicting task and preview rack records that caused model previews to fall back while switching multi-SP resupply candidates. Unknown-resource checks remain in place; in-game validation is pending.
-• Log session versions now follow the product version automatically. The separate outdated Lua startup version was removed to prevent conflicting version labels.
+Quick missions
+• Added main-menu quick missions with mission, aircraft, difficulty, skin and 1–3 SP selections, separate saved presets and optional automatic launch on the next startup. Existing presets remain compatible; M13 retains its mission-specific weapon.
+• Added an option to skip startup logos and moved quick missions above the log section on the Debug page.
+• Fixed multi-SP initialization stopping after a quick launch, which disabled triple-SP functionality.
 
-2.25.3 alpha3 (self-test build, unreleased)
-• Quick missions add skin selection while retaining 1–3 SP loadouts and existing presets. Skins are checked by actual number, DLC ownership and resource reference.
-• Fixed a text-replacement error when displaying weapon descriptions on the resupply selection page, without changing ammunition or reload rules.
-• Skin selection and resupply behavior await in-game validation. Repeated bay opening on XFA-33 B and Su-57 TGM remains deferred.
+Aircraft and weapon compatibility
+• Fixed some installed mod aircraft missing from quick-mission and in-mission aircraft selection lists. Paid content remains subject to actual DLC ownership checks.
+• Aircraft lists now prefer in-game names and support searches by display name, internal code or ID. Corrected weapon-name references for some mod aircraft while retaining author-provided names.
+• Fixed internal SP switching interrupting native hold-button auxiliary functions, improving compatibility with special effects on some mod aircraft.
+• Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior.
+• Improved weapon-bay closing after weapon changes on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
 
-2.25.3 alpha2 (self-test build, unreleased)
-• Quick missions support 1–3 selected SP weapons, save the complete test loadout and retain launch-time ammunition ratios. Existing single-SP presets remain compatible.
-• Extended Backspace and Space isolation in F6 while paused, retaining text editing, rebinding and key-release handling after closing the panel. In-game validation is pending.
-• Repeated bay opening when switching SP weapons on XFA-33 B and Su-57 TGM remains recorded and is deferred in this version.
+Resupply and management interface
+• Fixed a text-replacement error when displaying weapon descriptions during mid-mission resupply, and model-preview fallback when repeatedly switching multi-SP candidates.
+• Fixed Backspace and Space in F6 while paused accidentally operating the underlying game menu, retaining normal text editing and key rebinding.
+• Enlarged the F6 author watermark and made the feedback card consistent with other cards and fully visible by default. Added a startup update-check option while retaining manual checks.
+• Unified log session version labels to prevent conflicting outdated version numbers in the same run.
 
-2.25.3 alpha1 (self-test build, unreleased)
-• Fixed weapon-name references for some mod aircraft, retaining author-provided names on aircraft such as F17V, ADF-11 and F-15EX.
-• Added IRCM mixed-loadout support subject to native compatibility checks, retaining duration, ending and recycling behavior. Aircraft including S32 still require in-game validation.
-• Added bay closing for CFA-50, standard Su-57, DarkStar and XFA-33 A/C. XFA-33 B and Su-57 TGM retain bay progress when switching SP weapons. In-game validation is pending.
-• Aircraft lists now prefer in-game display names and support searches by CFA-50, internal code or ID.
-• Extended Backspace isolation in F6 text fields to reduce accidental game pauses.
-• The universal ZIP provides four documents in separate Chinese and English folders; English documents use English filenames.
-• This build is for self-testing only. The official release remains 2.25.2.
+Installation and author information
+• Added a bilingual EXE installer supporting direct installation, updates, uninstallation and universal ZIP export. Improved its home page, language selection and high-DPI display, retaining Vortex and manual installation compatibility.
+• Added ReadMe_EN and ReadMe_zhCN请读我 folders to the universal ZIP, each containing four documents in its language. English documents now use English filenames.
+• Added author content signatures and distribution-file checks before installation and export; mismatched signatures or files stop the operation. Stripped debug symbols from distribution DLLs without adding per-frame in-game verification.
+• Added “Visit my homepage” and “Buy me a coffee” buttons to the installer and F6 author areas, and incorporated the latest feature notes, free-use notice and acknowledgments.
 
 2.25.X
 • Fixed internal weapon switching interrupting native hold-button auxiliary effects on some mod aircraft.
