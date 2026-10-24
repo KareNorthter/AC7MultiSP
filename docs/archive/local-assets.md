@@ -14,7 +14,8 @@
 | 安装器、Vortex与兼容研究 | Temp/delivery-*、Temp/vortex-*、Temp/compatibility-*等 | 保留现有来源与现场；安装器代码仍在独立分支，本轮未接收 |
 | Mod机体分组续研 | Temp/tasks/20261023-mod-aircraft-compat/、backup/aircraft-mod-profiles-*；游戏根AC7AircraftProfiles/ | 本轮分组原料、未解析引用清单、安装快照和切换事务；按[续研正文](../research/mod-aircraft-compatibility.md)恢复，不清理分组库或把临时名称当可删依据 |
 | Mod机体长按兼容静态原料 | Temp/tasks/20261024-mod-hold-switch-static/ | 作者附加类索引、历史按下/松开采样的离线反汇编及摘要；不含本轮进程采集，原始历史采样仍在归档位置，见[续研正文](../research/mod-aircraft-compatibility.md#长按武器切换键的附加功能) |
-| CFA-50顶部舱门与暂缓效果现场 | Temp/tasks/20261024-cfa50-bay-effects/ | 2.25.2只读现场、本体骨骼/序列与已发布姿态对照、Parts分派及源码回执生成器；effects/native-drop仅保存ESM暂缓前已取得的材料，不据此继续研究。资源、进程原始数据和个人状态不入Git，结论见[续研正文](../research/mod-aircraft-compatibility.md#cfa-50的eml与十字键) |
+| CFA-50顶部舱门与早期效果现场 | Temp/tasks/20261024-cfa50-bay-effects/ | 2.25.2只读现场、本体骨骼/序列与已发布姿态对照、Parts分派及源码回执生成器；effects/native-drop保留早期效果与输入采样，后续恢复机制研究另见下条；旧现场的“未生成”解释已在续研正文纠正。资源、进程原始数据和个人状态不入Git，结论见[续研正文](../research/mod-aircraft-compatibility.md#cfa-50的eml与十字键) |
+| CFA-50机体ECM与僚机ESM机制 | Temp/tasks/20261024-cfa50-ecm-lifecycle/ | 进程40308只读快照、原生调用链及离线摘要生成器；作者蓝图沿用20261023分组原料。加密磁盘代码反汇编不作依据，原始数据不入Git，见[机制正文](../research/mod-aircraft-compatibility.md#cfa-50机体ecm与僚机esm)和[回执](../../evidence/cfa50-ecm-esm-mechanism-20261024.json) |
 | 已归组的散落脚本、报告和附件 | backup/local-assets-20261023/maintenance-scripts、reports、notes、misc等 | 保留原文件名，按下节清单从原路径或新路径检索；属于历史材料，不作为现行构建入口 |
 | 旧检查、安装暂存与编译中间件 | 同归档根verification-fixtures、empty-staging、build-output | 集中保存旧检查副本、空暂存目录及build-ui对象文件；不是源码，也不表示本轮运行过检查 |
 | 个人资料、安装保护与历史恢复 | backup/内原有各目录 | 保持原位，不合并覆盖不同次备份；项目级恢复入口见[归档说明](README.md) |
