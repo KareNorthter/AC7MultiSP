@@ -14,8 +14,8 @@
 | 2.25.2功能来源 | c9bc440修复快速任务辅助异常阻断初始化，快速卡片移到日志上方；构建来源b5c5d04。快速预设仍指定单种SP，三SP组合可在任务内调试切换；M13保留任务指定SP |
 | 实机验证边界 | 用户曾确认2.25.1快速进入成功，随后出现三SP初始化中止；[日志依据](evidence/quick-mission-trisp-failure-20261024.json)保留。2.25.2的正式发布确认不等于所有修复、安装和异常分支已实测 |
 | 主页与发布流程 | 已接收双语主页，统一[新版发布流程](docs/project/release-workflow.md)；工具准备EXE、Nexus通用ZIP、完整Pages包和摘要，R2/蓝奏云/Nexus/Pages均由作者手动上传。生成与实际部署分别记录 |
-| 当前自测源码 | **2.25.3 alpha3**，构建准备中：合入快速任务皮肤选择，保留alpha2多SP/键盘修订；修复补给兵装说明的翻译多返回值报错。来源与边界见[皮肤/补给修订](evidence/2.25.3-alpha3-skin-resupply-source.json)。XFA-33 B、Su-57 TGM公共舱重复展开继续暂缓；尚未安装或游戏验证，正式仍为2.25.2 |
-| 最新自测安装包 | [2.25.3 alpha2 EXE](Release/2.25.3-alpha2/AC7MultiSP_Installer.exe)，Windows文件版本2.25.3.2，产品显示2.25.3 alpha2。完整重编核心/UI、18份Lua成套，内嵌48成员ZIP和两种语言各四份说明均已核对；未运行安装器、安装或操作游戏，alpha1原包保留 |
+| 当前自测源码 | **2.25.3 alpha3**，已完整构建：合入快速任务皮肤选择，保留alpha2多SP/键盘修订；修复补给兵装说明的翻译多返回值报错。来源与边界见[皮肤/补给修订](evidence/2.25.3-alpha3-skin-resupply-source.json)。XFA-33 B、Su-57 TGM公共舱重复展开继续暂缓；尚未安装或游戏验证，正式仍为2.25.2 |
+| 最新自测安装包 | [2.25.3 alpha3 EXE](Release/2.25.3-alpha3/AC7MultiSP_Installer.exe)，Windows文件版本2.25.3.3，产品显示2.25.3 alpha3。来源2acf8de，完整重编核心/UI、18份Lua成套，内嵌48成员ZIP和两种语言各四份说明均已核对；[交付与待测项](evidence/2.25.3-alpha3-exe-delivery.json)。未运行安装器、安装或操作游戏，alpha1/alpha2原包保留 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。
 

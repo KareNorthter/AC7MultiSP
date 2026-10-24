@@ -1,6 +1,6 @@
 # 快速进入测试任务设计
 
-状态：alpha2已完整构建多SP与F6键盘修订；本轮接收bbf0984/4fb9fd0的皮肤功能，保留alpha2扁平三SP预设，规范写回schema3。另修订补给兵装说明的翻译多返回值报错，准备2.25.3 alpha3完整构建。来源与边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，正式状态见[项目入口](../../README.md)。
+状态：alpha2已完整构建多SP与F6键盘修订；本轮接收bbf0984/4fb9fd0的皮肤功能，保留alpha2扁平三SP预设，规范写回schema3。另修订补给兵装说明的翻译多返回值报错，已从2acf8de完成[2.25.3 alpha3完整构建与封装](../../evidence/2.25.3-alpha3-exe-delivery.json)，未安装或实机验证。来源与边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，正式状态见[项目入口](../../README.md)。
 
 ## 目标与入口
 
@@ -150,4 +150,4 @@ F6调试页顺序为任务配装、任务内换机、快速测试任务、日志
 
 研究预设的嵌套profile与alpha2扁平a/b/c都可读取，规范写回schema3。configured回调同步本次补给或调试后的临时方案，不反写快速预设或个人方案。PART尚未实现自选，沿用原生既有配件配置；完整装备、容量和冲突契约仍待研究，不能把已有数值预览当成装备功能。
 
-当前alpha2安装包不包含皮肤原生v2导出；合入源码不等于当前游戏已更新。源、迁移与验证边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，后续完整构建和实机验证分别登记。
+核查时游戏安装为alpha2，不包含皮肤原生v2导出；本轮alpha3已完整构建核心/UI与18份Lua，并核对内嵌ZIP和双语正文，未安装或替换游戏文件。来源、迁移与故障边界见[本轮记录](../../evidence/2.25.3-alpha3-skin-resupply-source.json)，产物和用户待测项见[交付回执](../../evidence/2.25.3-alpha3-exe-delivery.json)。

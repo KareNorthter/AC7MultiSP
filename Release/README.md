@@ -2,9 +2,9 @@
 
 当前正式功能版本和发布状态只在[项目入口](../README.md)维护；主要变化见[玩家更新日志](../docs/user/更新日志.txt)。
 
-本次交付[2.25.3 alpha2自测EXE](2.25.3-alpha2/AC7MultiSP_Installer.exe)，完整构建核心、UI和双语安装器，产品显示版本与Mod均为2.25.3 alpha2，Windows文件版本为2.25.3.2。[交付回执与待测清单](../evidence/2.25.3-alpha2-exe-delivery.json)记录来源、摘要和边界。包含快速任务1至3SP及F6退格/空格隔离修订；已核对EXE内嵌ZIP原字节、两种语言各四份说明及运行载荷。内部ZIP留Temp，不单独复制到Release。未安装、运行游戏或上传，正式发布仍为2.25.2。
+本次交付[2.25.3 alpha3自测EXE](2.25.3-alpha3/AC7MultiSP_Installer.exe)，完整构建核心、UI和双语安装器，产品显示版本与Mod均为2.25.3 alpha3，Windows文件版本为2.25.3.3。[交付回执与待测清单](../evidence/2.25.3-alpha3-exe-delivery.json)记录来源2acf8de、摘要和边界。增加快速任务皮肤选择并修订补给说明文字报错，保留alpha2多SP与F6键盘隔离；已核对EXE内嵌ZIP原字节、两种语言各四份说明及运行载荷。内部ZIP留Temp，不单独复制到Release。未安装、运行游戏或上传，正式发布仍为2.25.2。
 
-旧2.25.3 alpha1、2.25.2、2.24.3及其DPI修订EXE原样保留，不覆盖历史产物或回执。
+旧2.25.3 alpha1/alpha2、2.25.2、2.24.3及其DPI修订EXE原样保留，不覆盖历史产物或回执。
 
 旧2.24.2通用ZIP与EXE保留在E:/AC7_MultiSP/Release/2.24.2/，来源见[旧交付回执](../evidence/2.24.2-delivery.json)，不覆盖历史产物或验收记录。
 
