@@ -26,7 +26,9 @@
 
 游戏来源冻结已改用`docs/user/`，不再缺失旧`docs/授权.txt`。安装器封装另冻结`src/delivery/`、封装脚本及玩家文字，编译仅使用封装目录的快照。`src/package-release.py`是新封装入口的薄包装；`src/release_package.py`只保留历史helper，旧GameFiles命令行已停用。完整工具依赖见[开发与恢复](../engineering/development.md)。
 
-安装器没有独立版本源。封装从产品三段版本生成`setup-source/ProductVersion.cs`的程序集、文件及信息版本，并替换manifest的版本占位符；生成文件与其摘要纳入冻结源码，仍由编译入口核对。`settings.json`不再维护`delivery_version`；兼容清单字段由产品version派生，显示与更新User-Agent也使用同一产品版本。旧回执中的独立版本只表示当时事实。
+安装器没有独立版本源。封装从产品版本生成`setup-source/ProductVersion.cs`的程序集、文件及信息版本，并替换manifest的版本占位符；生成文件与其摘要纳入冻结源码，仍由编译入口核对。正式版三段数字追加`.0`作为Windows四段属性；自测版`X.Y.Z alphaN`必须标记candidate，显示、信息版本和载荷保留完整标识，Windows四段属性使用`X.Y.Z.N`，各段不超过65534。版本顺序由产品语义判断，不能按该四段属性决定升降级。
+
+安装器`ReleaseVersion.cs`统一比较安装目标、旧安装和更新提示：先比较三段基号，同号按alpha序号递增，正式版晚于所有同号alpha。因此可从2.25.2升到2.25.3 alpha1，再升到正式2.25.3；拒绝从正式2.25.3降为同号alpha。stable更新清单继续只接受正式三段版本，不因本地使用alpha而放宽远端校验。`settings.json`不再维护`delivery_version`；兼容清单字段由产品version派生，显示与更新User-Agent也使用同一产品版本。旧回执中的独立版本只表示当时事实。
 
 ## Vortex部署映射
 

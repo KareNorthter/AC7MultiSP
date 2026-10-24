@@ -66,10 +66,15 @@ def main():
     verify_build(receipt, build)
     policy = read_json(SOURCE / 'settings.json')
     version = info['version']
-    if not re.fullmatch(r'\d+\.\d+\.\d+', version):
-        raise ValueError('交付版本必须为三段数字')
-    if any(int(part) > 65534 for part in version.split('.')):
+    release = re.fullmatch(r'(\d+\.\d+\.\d+)(?: alpha([1-9]\d*))?', version)
+    if not release:
+        raise ValueError('交付版本必须为三段数字，可附加自测标识 alphaN')
+    alpha = int(release[2] or 0)
+    if alpha and not info['candidate']:
+        raise ValueError('alpha自测版必须标记candidate，不能冒充正式发布')
+    if any(int(part) > 65534 for part in release[1].split('.')) or alpha > 65534:
         raise ValueError('交付版本超出Windows程序集版本范围')
+    assembly_version = release[1] + '.' + str(alpha)
     # 兼容旧清单字段，但唯一版本来源仍为产品版本。
     policy['delivery_version'] = version
     frozen = delivery_sources()
@@ -169,7 +174,6 @@ def main():
     frozen_dir = output / 'setup-source'
     frozen_dir.mkdir()
     source_hashes = {}
-    assembly_version = version + '.0'
     for path in sorted((SOURCE / 'setup').iterdir()):
         if path.suffix not in ('.cs', '.manifest'):
             continue

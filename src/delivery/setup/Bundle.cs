@@ -23,6 +23,7 @@ namespace AC7MultiSP.Setup {
         public string product { get; set; }
         public string version { get; set; }
         public string delivery_version { get; set; }
+        public bool candidate { get; set; }
         public string zip_name { get; set; }
         public Dictionary<string, ResourceFile> files { get; set; }
         public Dictionary<string, object> policy { get; set; }
@@ -74,7 +75,8 @@ namespace AC7MultiSP.Setup {
                 if (stream == null) throw new InvalidDataException(UiText.T("error.bundleMissing"));
                 using (var reader = new StreamReader(stream, Utf8)) Info = Json.Deserialize<BundleInfo>(reader.ReadToEnd());
             }
-            if (Info.schema != 1 || Info.product != "AC7MultiSP" || !Regex.IsMatch(Info.version, @"^\d+\.\d+\.\d+$"))
+            if (Info.schema != 1 || Info.product != "AC7MultiSP" || !ReleaseVersion.Valid(Info.version) ||
+                (Info.version.Contains(" alpha") && !Info.candidate))
                 throw new InvalidDataException(UiText.T("error.bundleInvalid"));
         }
         internal static string Digest(byte[] data) {
@@ -251,9 +253,8 @@ namespace AC7MultiSP.Setup {
             string oldVersionFile = Safe(game, Mod + "VERSION");
             if (File.Exists(oldVersionFile)) {
                 string old = File.ReadAllText(oldVersionFile, Utf8).Trim();
-                var match = Regex.Match(old, @"^(\d+\.\d+\.\d+)(?: alpha[1-9][0-9]*)?$");
-                if (!match.Success) throw UiText.Error("error.versionUnknown");
-                if (new Version(match.Groups[1].Value) > new Version(Info.version)) throw UiText.Error("error.downgrade");
+                if (!ReleaseVersion.Valid(old)) throw UiText.Error("error.versionUnknown");
+                if (ReleaseVersion.Compare(old, Info.version) > 0) throw UiText.Error("error.downgrade");
             }
             var loaderFiles = Info.files.Where(p => p.Value.kind == "loader").ToArray();
             bool anyLoader = loaderFiles.Any(p => File.Exists(Safe(game, p.Key, true))) || File.Exists(Safe(game, "UE4SS.dll", true));
