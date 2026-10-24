@@ -156,13 +156,15 @@ def render():
     compact = [extract_compact_credits(text, language) for text, language in zip(docs["credits"], ("zh-CN", "en"))]
     for suffix, info in zip(("Zh", "En"), compact):
         for field, value in (("Notice", info["notice"]), ("AuthorHeading", info["author_heading"]),
-                             ("Feedback", info["feedback_heading"] + " " + "    ".join(info["feedback"]))):
+                             ("Feedback", info["feedback_heading"] + " " + "    ".join(info["feedback"])),
+                             ("FeedbackHeading", info["feedback_heading"]),
+                             ("FeedbackBody", "\n".join(info["feedback"]))):
             header.append("inline constexpr char compact" + field + suffix + "[]=" + cpp_string(value) + ";")
         for field in ("label", "url"):
             title = "Label" if field == "label" else "Url"
             header.append("inline constexpr const char* compactAuthor" + title + "s" + suffix + "[]={" +
                           ",".join(cpp_string(author[field]) for author in info["authors"]) + "};")
-    for field in ("Notice", "AuthorHeading", "Feedback"):
+    for field in ("Notice", "AuthorHeading", "Feedback", "FeedbackHeading", "FeedbackBody"):
         header.append("inline const char* compact" + field + "(bool chinese) noexcept {return chinese?compact" + field + "Zh:compact" + field + "En;}")
     header += ["inline std::size_t compactAuthorCount(bool chinese) noexcept {return chinese?" +
                str(len(compact[0]["authors"])) + ":" + str(len(compact[1]["authors"])) + ";}"]

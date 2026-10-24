@@ -72,6 +72,16 @@ function Module.new(deps)
         end
         return self:profile(id)
     end
+    -- Patch是游戏补丁内容标记，不是付费许可；两种换机入口共用此判断。
+    function self:contentOwned(dlcID)
+        if dlcID=="Base"or dlcID=="Patch"or dlcID==""then return true end
+        if type(dlcID)~="string"then return nil end
+        local instance=deps.context().instance
+        local dlc=valid(instance)and instance.DLCInformation or nil
+        if not valid(dlc)then return nil end
+        local checked,owned=pcall(function()return dlc:IsDLCOwned(dlcID)end)
+        if checked then return owned==true end
+    end
     function self:refreshOptions(force)
         if not force and os.clock()-self.lastOptions<1 then return end
         self.lastOptions=os.clock();self.options={};self.optionsError=nil
@@ -86,7 +96,6 @@ function Module.new(deps)
             ownedKnown=readOK
             if not readOK and self.ownedError~=tostring(encoded)then deps.note("DEBUG_AIRCRAFT_OWNERSHIP_UNKNOWN "..tostring(encoded))end
             self.ownedError=not readOK and tostring(encoded)or nil
-            local dlc=context.instance.DLCInformation
             for key,info in pairs(deps.catalogue()or{})do
                 local id=tonumber(key)
                 -- 只接入目录中有完整三SP数据的机体；Mod仍须走原生重开及新玩家类身份确认。
@@ -99,15 +108,14 @@ function Module.new(deps)
                     local name=deps.names[info.code]or supplied
                     local label=name
                     local licensed=nil
-                    local extra=type(info.dlc_id)=="string"and info.dlc_id~=""and info.dlc_id~="Base"
+                    local extra=type(info.dlc_id)=="string"and info.dlc_id~=""and info.dlc_id~="Base"and info.dlc_id~="Patch"
                     if extra then
-                        local checked,value=pcall(function()assert(valid(dlc));return dlc:IsDLCOwned(info.dlc_id)end)
-                        if checked then licensed=value==true end
+                        licensed=self:contentOwned(info.dlc_id)
                         label=label..(licensed==false and tr("dlc.not.owned.8f080e7d")or licensed==nil and tr("dlc.ownership.unknown.f1a7fac5")or "")
                     elseif not isMod and type(info.dlc_id)~="string"then label=label..tr("ownership.data.unavailable.b02bb5c3")
                     elseif not isMod and ownedKnown and not owned[id]then label=label..tr("not.purchased.336eda21")end
                     -- 无法确认DLC许可时不提供候选；替换官方机体的Mod同样核对目录DLCID。
-                    local permitted=extra and licensed==true or not extra and (isMod or info.dlc_id=="Base"or info.dlc_id=="")
+                    local permitted=extra and licensed==true or not extra and (isMod or self:contentOwned(info.dlc_id)==true)
                     if permitted then
                         self.options[#self.options+1]={plane_id=id,name=name,label=label,code=info.code,mod=isMod,
                             purchased=ownedKnown and owned[id]==true or nil,dlc_owned=licensed}

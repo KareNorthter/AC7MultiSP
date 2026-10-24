@@ -50,23 +50,16 @@ void drawVersionUpdatesPage() {
     }
     ImGui::EndChild();
     const bool chinese=std::string(tr("zh","en"))=="zh";
-    // 反馈正文与作者授权同源，合并换行后作为紧凑栏；窄窗口允许自然换行。
-    std::string feedback=dualsp::updates::documents::compactFeedback(chinese);
-    feedback.erase(std::remove(feedback.begin(),feedback.end(),'\r'),feedback.end());
-    std::replace(feedback.begin(),feedback.end(),'\n',' ');
-    ImGui::PushFont(nullptr,std::min(ImGui::GetStyle().FontSizeBase,14.f));
-    const char* logLabel=uiText("open.mod.log.folder.06bdb703");
-    const float logWidth=ImGui::CalcTextSize(logLabel).x+ImGui::GetStyle().FramePadding.x*2;
-    const float feedbackWidth=ImGui::GetContentRegionAvail().x-logWidth-ImGui::GetStyle().ItemSpacing.x;
-    const bool inlineFeedback=feedbackWidth>=260;
-    ImGui::PushTextWrapPos(inlineFeedback?ImGui::GetCursorPosX()+feedbackWidth:0);
-    ImGui::TextDisabled("%s",feedback.c_str());ImGui::PopTextWrapPos();
-    if(inlineFeedback)ImGui::SameLine(ImGui::GetWindowContentRegionMax().x-logWidth);
-    ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
-    if(ImGui::SmallButton(logLabel))updates.openLogFolder();
-    ImGui::EndDisabled();ImGui::PopFont();
-    if(updates.browserStatus()==dualsp::updates::BrowserStatus::Failed)
-        ImGui::TextWrapped("%s",uiText("unable.to.open.link.or.folder.5705a221"));
+    // 与文档共用卡片样式；反馈正文始终展示，字号及按钮沿用管理页。
+    if(panelCard("UpdateFeedback",dualsp::updates::documents::compactFeedbackHeading(chinese))) {
+        ImGui::TextWrapped("%s",dualsp::updates::documents::compactFeedbackBody(chinese));
+        ImGui::BeginDisabled(updates.browserStatus()==dualsp::updates::BrowserStatus::Opening);
+        if(ImGui::Button(uiText("open.mod.log.folder.06bdb703")))updates.openLogFolder();
+        ImGui::EndDisabled();
+        if(updates.browserStatus()==dualsp::updates::BrowserStatus::Failed)
+            ImGui::TextWrapped("%s",uiText("unable.to.open.link.or.folder.5705a221"));
+    }
+    ImGui::EndChild();
     // 本地玩家正文只展示主要更新和作者授权，保持原有展开/收起交互。
     if(panelCard("UpdateChangelog",uiText("changelog.fd31c92d"))) {
         static bool expanded=false;

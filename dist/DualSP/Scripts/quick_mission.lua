@@ -36,11 +36,8 @@ function Module.new(deps)
             preset.mission_id,preset.plane_id,preset.swp,preset.difficulty)
         assert(ok,text);return deps.json.decode(text)
     end
-    local function license(instance,dlc)
-        if dlc=="Base"or dlc==""then return true end
-        if type(dlc)~="string"or not valid(instance.DLCInformation)then return false end
-        local ok,owned=pcall(function()return instance.DLCInformation:IsDLCOwned(dlc)end)
-        return ok and owned==true
+    local function license(dlc)
+        return deps.aircraft:contentOwned(dlc)==true
     end
     function self:busy()return self.pending~=nil end
     function self:waiting()return self.pending and self.pending.stage~="weapons"end
@@ -89,7 +86,7 @@ function Module.new(deps)
             local result=native(0,menu)
             assert(result.protocol==1 and type(result.tasks)=="table"and #result.tasks==23,"快速任务原生协议不匹配")
             self.tasks=result.tasks
-            for _,task in ipairs(self.tasks)do task.licensed=license(context.instance,task.dlc_id)end
+            for _,task in ipairs(self.tasks)do task.licensed=license(task.dlc_id)end
             self.planes={};deps.aircraft:refreshOptions(true)
             for _,option in ipairs(deps.aircraft.options)do
                 local entry=deps.catalogue()[tostring(option.plane_id)]
@@ -138,7 +135,7 @@ function Module.new(deps)
             for _,entry in ipairs(self.tasks)do if entry.mission_id==preset.mission_id then task=entry end end
             for _,entry in ipairs(self.planes)do if entry.plane_id==preset.plane_id then target=entry end end
             assert(task and target,"快速任务目标不在当前目录中")
-            assert(license(context.instance,task.dlc_id)and license(context.instance,target.dlc_id),"快速任务DLC许可尚未确认")
+            assert(license(task.dlc_id)and license(target.dlc_id),"快速任务DLC许可尚未确认")
             writePreset(preset)
             source={instance=address(context.instance),world=address(context.instance:GetWorld()),plane=context.instance:GetSelectedPlaneID(),
                 swp=context.instance:GetSelectedPlaneSWP(),skin=context.instance:GetSelectedPlaneSkinNo()}

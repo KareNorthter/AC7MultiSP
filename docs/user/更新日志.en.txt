@@ -6,6 +6,8 @@ AC7MultiSP Main Updates
 • Fixed internal weapon switching interrupting native hold-button auxiliary functions, preserving the player's actual hold and release.
 • Added a startup update check option, enabled by default. It can be disabled and saved; manual checks remain available.
 • Improved installer text clarity at high DPI scaling.
+• Enlarged the F6 author watermark and made feedback a matching card with all content always visible.
+• Fixed some installed mod aircraft being hidden from quick mission and in-mission aircraft lists, while retaining DLC ownership checks.
 
 2.24.X
 • Added a "Version and Updates" page to the management interface, bringing together version information, author information, and licensing notes.

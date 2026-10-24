@@ -136,7 +136,8 @@ struct ManagementWatermark {
 };
 ManagementWatermark managementWatermark(float width) {
     namespace documents=dualsp::updates::documents;
-    ManagementWatermark result;result.width=width;result.font=std::min(ImGui::GetStyle().FontSizeBase,13.f);
+    // 水印沿用正文基础字号；窄页脚仍按实测宽度换行，不固定压成小字。
+    ManagementWatermark result;result.width=width;result.font=ImGui::GetStyle().FontSizeBase;
     result.chinese=std::string(tr("zh","en"))=="zh";
     ImGui::PushFont(nullptr,result.font);
     float longest=ImGui::CalcTextSize(documents::compactAuthorHeading(result.chinese)).x;
