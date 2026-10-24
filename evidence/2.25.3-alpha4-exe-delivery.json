@@ -1,0 +1,133 @@
+{
+  "schema": 2,
+  "version": "2.25.3 alpha4",
+  "candidate": true,
+  "official_release": "2.25.2",
+  "source_commit": "9ed9863a56a6e7d2aa1470b60adb308f00e0acbe",
+  "source_workspace": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261024\\AC7_MultiSP",
+  "feature_sources": {
+    "preview_and_core_log": "1a024b543590ac27aec9edf1e4830ab96b4f240c",
+    "lua_log_followup": "9ed9863a56a6e7d2aa1470b60adb308f00e0acbe",
+    "preserved_alpha3_source": "2acf8de9002e6e3fbded6d2648381031a113d8ac",
+    "source_record": "evidence/2.25.3-alpha4-preview-log-source.json",
+    "localization_review": "evidence/2.24.2-localization-review-20261024.json"
+  },
+  "build": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha4-exe\\build-r1\\game-build",
+    "receipt_sha256": "df8402d8e8fdefbee068e3dfb24d984ad13a0eb0d8b871350653039ffe036a2c",
+    "core_recompiled": true,
+    "core_sha256": "cd8f4741eb1bea6e072c2d6c3310584ba5acacb981676abadc7b896c7171626a",
+    "ui_sha256": "2b0c3c04f7a60d71c9c0513afcd87d53dda37be617ca9beb0934bc776e002fb0",
+    "lua_count": 18,
+    "runtime_file_count": 21,
+    "source_verified_after_build": true,
+    "package_source_verified_after_build": true,
+    "lua_syntax_only": true
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261024-alpha4-exe\\build-r1\\delivery",
+    "receipt_sha256": "a26ca20ded02ea712b7f88b31975c787f406609298e7d45ed4fcff57dcad09eb",
+    "exe_receipt_sha256": "66e8165724d8be557c211b9eb48698b9aed5b383be7cdea139d5e7bed179f710",
+    "internal_zip_sha256": "ae96d865da3b7d259f139b97206ad5f93aa387d15e986f1136cc92869c18b929",
+    "universal_member_count": 48,
+    "embedded_zip_exact_bytes_verified": true,
+    "standalone_zip_delivered": false,
+    "readme_documents_sha256": {
+      "ReadMe_zhCN请读我/作者与授权.txt": "5467633aaad4d0401bd9a0741185a1fb62df9aab1a254155ccd4b647581b97dc",
+      "ReadMe_zhCN请读我/更新日志.txt": "81cb57625a58ef74d821d66432622639919d543ec13557d31a28b1a366b8eb80",
+      "ReadMe_zhCN请读我/功能说明.txt": "72093827993c14f105b4167774b236fb859667babb57396bdb02abf7ac7a0aec",
+      "ReadMe_zhCN请读我/安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+      "ReadMe_EN/Changelog.txt": "1454e7ce604d972905dd4af41c5fbd2466b3dd71da95f03ea05e4e577dbd3eb1",
+      "ReadMe_EN/Author-and-License.txt": "aad0df5a7d883455905867066025922a96e972541454bf1f0e11dc9c4498e53e",
+      "ReadMe_EN/Installation.txt": "2c7b8b980321e6a082e0960471d81f2e1b76329067ee7fd6c09fc0485b44f386",
+      "ReadMe_EN/Features.txt": "56a3042262c4ec34b4ad308b75e010947d45b0832b2cceca80abaf226a7013ef"
+    },
+    "english_sources_renamed": true
+  },
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.25.3-alpha4\\AC7MultiSP_Installer.exe",
+    "size": 63490560,
+    "sha256": "eba632bd3d18b45f8f0df2d6a11c6667aef69f81ea38a5e0183c3edb94bf77e9",
+    "file_version": "2.25.3.4",
+    "product_version": "2.25.3 alpha4",
+    "x64": true
+  },
+  "feedback_source": "evidence/2.25.3-alpha4-preview-log-source.json",
+  "runtime_files": {
+    "Scripts/config_store.lua": "63b667973da6909d94fd38c554bbb5f7c282d364620615aa82561221ff3bd3e8",
+    "Scripts/debug_aircraft.lua": "f3802f8b9c6b7e475cb873200df07b9c23956265341b046b0c42be8492e2d12f",
+    "Scripts/gun_salvo.lua": "eaa674f9817b850fb511c8324ff24d6e078ec84d6ce61671286d6f619c035dce",
+    "Scripts/json.lua": "0eaccda57fabc0330736de25f45cf589821a42b5e0fe02e4e3125f7dc0bf2b7e",
+    "Scripts/loadout_flow.lua": "4e9fba391765340995191241c333ccca94175fb47d8b105ab59cbd5b2340d660",
+    "Scripts/loadout_profile.lua": "fea91881824724baa1245dadf85fd69314bd65a1d531f4cf305afbf9fa30726c",
+    "Scripts/main.lua": "115f5c319bc4167bfa03288e0fa6c5d4b70131b85991b24a9856fe1f24090b5f",
+    "Scripts/native_bridge.lua": "d8691096c24323603c5f145f8d0fef6de343ec31bbecfbdb60a0a295cf021392",
+    "Scripts/native_hud.lua": "640ff4baf6f3889a62e7095db7eb29fac95cc5946408916946411bc6188457bd",
+    "Scripts/native_loadout.lua": "fe0a2c64137ea12e5b5618cf6879ec83b465d3a0ff31e663fe35b3bd9ef7b3d2",
+    "Scripts/quick_mission.lua": "0fc0658fff4eebe49d53aba61f9c375dfe06145ae928778abafed8412b01430f",
+    "Scripts/runtime_context.lua": "ceac2863da78b9b8474093d1d165ef6238a81698b018589a2099abd67084fc62",
+    "Scripts/user_texts.lua": "a1ee31459c2c6bb17ab64d89e76917627920cbf1572fcfdb0086ead226849ded",
+    "Scripts/weapon_cycle.lua": "06cb860d6cb372f56599470dea2af0603f7ac0e5d57d0bafaad39851ce4e4807",
+    "Scripts/weapon_names.lua": "10ac2f5e91c177a9d6fb1b0870aadd4688a607b4f967b2a06b7f4d4737e80ada",
+    "Scripts/weapon_presentation.lua": "15edd10eb54c9878716c017fd0beb6aee8697f769f38ecb78974a300e243b7be",
+    "Scripts/mount_assets.lua": "5cc09fae94faa1015786cd0a4ad299d3f6fd6262ef20086935fa46f00be15fb1",
+    "Scripts/mod_aircraft.lua": "3a203cf2772f508ff36d91e1eb80b1158963148664b701388311b764496c9e03",
+    "bin/DualSP.dll": "cd8f4741eb1bea6e072c2d6c3310584ba5acacb981676abadc7b896c7171626a",
+    "bin/DualSPUI.dll": "2b0c3c04f7a60d71c9c0513afcd87d53dda37be617ca9beb0934bc776e002fb0",
+    "VERSION": "65de33db7d4ab72c81094f88a8e1443ebe7c00977f303884f200fd0ff03d3700"
+  },
+  "mount_assets_sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1",
+  "protected_old_core_unchanged": true,
+  "old_artifacts_preserved": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "game_closed": false,
+  "uploaded": false,
+  "performance_measured": false,
+  "test_checklist": [
+    {
+      "id": "resupply-preview",
+      "zh": "Rafale M三SP出击后进入补给，反复选择SP1+SP2、SP2+SP3、SP1+SP3、三SP和单SP候选，确认预览正确且不再出现MOUNT_PREVIEW_FALLBACK。",
+      "en": "Enter resupply after a triple-SP sortie on Rafale M. Repeatedly preview SP1+SP2, SP2+SP3, SP1+SP3, triple-SP and single-SP candidates; verify correct visuals without MOUNT_PREVIEW_FALLBACK.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "resupply-handoff",
+      "zh": "检查说明、空槽与YES/NO，重选后确认补给并再次起飞，核对挂载、弹药、HUD与三个SP的切换；关闭多挂模型时应恢复原生外观。",
+      "en": "Check descriptions, empty slots and YES/NO. Reselect, confirm resupply and relaunch; verify mounts, ammunition, HUD and all three SP weapons. Disabling multi-SP models should restore native visuals.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "other-aircraft",
+      "zh": "按使用情况复核F-2A、Su-30M2、Su-34、MiG-29A、F-14A或F-14D的补给候选变化；这些属于静态同类条件，尚未宣称逐机复现或通过。",
+      "en": "As used, check resupply candidate changes on F-2A, Su-30M2, Su-34, MiG-29A, F-14A or F-14D. These are static candidates with similar conditions, not aircraft individually reproduced or validated.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "log-version",
+      "zh": "新进程mod.log/native.log的LOG_SESSION显示完整2.25.3 alpha4；DUALSP_LOADED只记加载事件，不再出现独立旧号。",
+      "en": "In a new process, LOG_SESSION in mod.log/native.log must show the complete 2.25.3 alpha4 version. DUALSP_LOADED records only the load event without a separate outdated version.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "prior-features",
+      "zh": "快速任务皮肤及1至3SP、旧预设兼容继续正常；暂停中F6退格/空格不操作底层菜单；安装器和F6均显示alpha4。",
+      "en": "Regress quick-mission skins, one-to-three SP weapons and old presets. Backspace/Space in F6 while paused must not operate underlying menus. Verify alpha4 in both the installer and F6.",
+      "state": "待用户实机验证"
+    },
+    {
+      "id": "deferred",
+      "zh": "F6状态发布性能、XFA-33 B与Su-57 TGM重复展开仍未处理，不列为本版修复。",
+      "en": "F6 state-publication performance and repeated bay opening on XFA-33 B/Su-57 TGM remain unaddressed and are not fixes in this build.",
+      "state": "待用户实机验证"
+    }
+  ],
+  "compiled_core_log_version_verified": true,
+  "lua_duplicate_version_removed": true,
+  "pending": [
+    "用户自测验收后才确定正式2.25.3；本次不修改stable清单或建立正式标签",
+    "XFA-33 B与Su-57 TGM公共舱及F6状态发布性能继续暂缓；本轮修订补给挂架记录校验，不改舱门或配弹规则"
+  ]
+}
