@@ -11,10 +11,10 @@
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
 | 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
-| 现成正式EXE与通用ZIP | 作者最新四份中文已原字节接收并同步英文，正在完整制作2.26.1正式EXE、通用ZIP和Pages上传材料；旧2.26.0、alpha候选及暂停构建现场不覆盖。 |
+| 现成正式EXE与通用ZIP | 已交付[2.26.1 EXE](Release/2.26.1/AC7MultiSP_Installer.exe)，SHA256为30745081…，及[通用ZIP](Release/2.26.1/AC7MultiSP-2.26.1-Universal.zip)，79b95836…；两者含作者最新四份中文原字节和完整重译英文，见[交付回执](evidence/2.26.1-exe-delivery.json)。旧正式及候选产物保留。 |
 | 实机验证边界 | 作者已验收alpha3的性能、舱门及其他功能，详见[性能验收](docs/research/runtime-performance.md#alpha3验收与正式2261)。这是用户反馈，不追认异常验签、故障注入或异机恢复等专项；XFA-33 B/Su-57 TGM公共舱继续暂缓。 |
-| 主页与发布流程 | 已交付[仅R2网页包](Release/2.26.0/AC7MultiSP-Pages-R2-only.zip)，暂不提供蓝奏云，隐藏备用下载区，完整日志不变。R2已流式核对为安装器修订2（e878c0f5…），无需重编EXE；[网页核对](evidence/2.26.0-pages-r2-only.json)记录来源和待部署事实 |
-| 当前正式源码 | VERSION为**2.26.1**、candidate=false；接收3d9ceb9、73366ce、b95afa2，运行逻辑沿用已验收alpha3，仅正式版本元数据与同源文字更新。 |
+| 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。由作者先上传EXE/ZIP并核对，再部署网页；[网页回执](evidence/2.26.1-pages-delivery.json)明确远端及部署未核验，site/stable.json仍保留上次已发布版本。 |
+| 当前正式源码 | VERSION为**2.26.1**、candidate=false；接收3d9ceb9、73366ce、b95afa2，运行逻辑沿用已验收alpha3。正式包来源6dc4b99，已原样接收作者最新中文并全文重译英文；[文本核对](evidence/2.26.1-document-sync.json)确认EXE、ZIP和实际F6界面DLL中的相应正文同源同步。中文修改须作者逐条审核。 |
 | 最近验收安装包 | **2.26.1 alpha3**，SHA256为647be5d4…；[原交付回执](evidence/2.26.1-alpha3-integration-delivery.json)不回改。正式2.26.1重新构建后单独记录，不将候选验收冒充新字节已安装。 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。

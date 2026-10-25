@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "version": "2.26.1",
+  "candidate": false,
+  "source_commit": "6dc4b9985a68d42c0963c20fb671c71ee0b7b10f",
+  "build_source_snapshot_matches": true,
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.1\\AC7MultiSP_Installer.exe",
+    "size": 61735936,
+    "sha256": "307450810aa755fc6e81dd24d6434ac8b743a6fca4042f75878a70e4b5bd35de"
+  },
+  "package": {
+    "path": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-release-2.26.1-author-text\\package-final",
+    "receipt_sha256": "53351939ac236d3fa5b7c438a72694878200dd1050ac8f53d40ef57c7f331945",
+    "exe_receipt_sha256": "4d707d18deef30fc0a02982d915d4bed3a5654268796771a6b64ac398ea00c66",
+    "internal_zip_sha256": "79b958363ef3f87746a2dbed89828e3a17f8b39c02625b717124a2089e688f28"
+  },
+  "universal_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.1\\AC7MultiSP-2.26.1-Universal.zip",
+    "sha256": "79b958363ef3f87746a2dbed89828e3a17f8b39c02625b717124a2089e688f28",
+    "member_count": 50
+  },
+  "build_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-release-2.26.1-author-text\\game-build-final\\build-receipt.json",
+  "build_receipt_sha256": "03242cd69fffa3227c972940dc75f6af871feac642c0d707fa8c4307e6e42743",
+  "core_sha256": "ee5ba09a480d57ef09df75d9c356b7470a9c1ee6e7bd09ed38c41925349beda1",
+  "ui_sha256": "b26ebe475a8583ddbf2dbf6a4e690782bebef49e8bab5774774d53db1b83d162",
+  "author_signing": {
+    "schema": 1,
+    "product": "AC7MultiSP",
+    "version": "2.26.1",
+    "channel": "stable",
+    "release_id": "6758d0157e8d4bed9008171cadc51023",
+    "source_commit": "6dc4b9985a68d42c0963c20fb671c71ee0b7b10f",
+    "key_id": "7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f",
+    "registry_sha256": "ac439517694e28b56763b0cc7e3592fcfd35edc92872ae150605ec495e5b2bd2",
+    "content_sha256": "ec4d413b542afe909750251a91e26a6462eacae5dac3774efcce49ca67485f7e",
+    "bundle_sha256": "c130cab0526d2b5ef9cafb71ea4f469e842ad49f6523b798471ae70908e4c31e"
+  },
+  "author_text_intake": "evidence/2.26.1-author-text-intake.json",
+  "full_retranslation": "evidence/2.26.1-full-retranslation.json",
+  "chinese_source_bytes_preserved": {
+    "功能说明.txt": {
+      "sha256": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c",
+      "size": 3722
+    },
+    "安装说明.txt": {
+      "sha256": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+      "size": 1230
+    },
+    "更新日志.txt": {
+      "sha256": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554",
+      "size": 2005
+    },
+    "作者与授权.txt": {
+      "sha256": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+      "size": 2466
+    }
+  },
+  "english_documents_sha256": {
+    "Features.txt": "cb2657f32d4e83ae37a3b273698227b183636aef35aca5459add837b7e7ed675",
+    "Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "Changelog.txt": "90959ff0ddef684bd949c393dbb8a696ffd45a3f5692f85677cb32882c145562",
+    "Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+  },
+  "mount_assets": {
+    "variants": 77,
+    "members": 154,
+    "sha256": "c1d0d251961074e27babf19272b72fb5522166afec7b07199902c87017e96cf1"
+  },
+  "release_signature_verified": true,
+  "protected_files_verified": true,
+  "lua_syntax_only": true,
+  "lua_files": 18,
+  "exports_verified": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "acceptance": "作者已验收alpha3运行逻辑；本次仅更新正式版本及作者原稿/完整英文翻译，新正式字节未实装",
+  "website": "另行生成本地待上传网页包，历史至2.26.0、顶部2.26.1、只描述R2；远端文件与部署未核验"
+}

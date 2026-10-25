@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "version": "2.26.1",
+  "exe_manifest_resources_equal_latest_source": {
+    "ue4ss/Mods/DualSP/docs/Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe",
+    "ue4ss/Mods/DualSP/docs/Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "installer/docs/en/features.txt": "cb2657f32d4e83ae37a3b273698227b183636aef35aca5459add837b7e7ed675",
+    "ue4ss/Mods/DualSP/docs/作者与授权.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "installer/docs/en/installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "installer/docs/zh-CN/features.txt": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c",
+    "ue4ss/Mods/DualSP/docs/安装说明.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "ue4ss/Mods/DualSP/docs/Changelog.txt": "90959ff0ddef684bd949c393dbb8a696ffd45a3f5692f85677cb32882c145562",
+    "ue4ss/Mods/DualSP/docs/更新日志.txt": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554",
+    "installer/docs/zh-CN/credits.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "ue4ss/Mods/DualSP/docs/功能说明.txt": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c",
+    "installer/docs/en/credits.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe",
+    "installer/docs/en/changelog.txt": "90959ff0ddef684bd949c393dbb8a696ffd45a3f5692f85677cb32882c145562",
+    "ue4ss/Mods/DualSP/docs/Features.txt": "cb2657f32d4e83ae37a3b273698227b183636aef35aca5459add837b7e7ed675",
+    "installer/docs/zh-CN/installation.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "installer/docs/zh-CN/changelog.txt": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554"
+  },
+  "zip_root_documents_equal_latest_source": {
+    "Author-and-License.txt": true,
+    "Changelog.txt": true,
+    "Features.txt": true,
+    "Installation.txt": true,
+    "作者与授权.txt": true,
+    "功能说明.txt": true,
+    "安装说明.txt": true,
+    "更新日志.txt": true
+  },
+  "f6_compiled_ui_documents_equal_latest_source": {
+    "更新日志.txt": true,
+    "Changelog.txt": true,
+    "作者与授权.txt": true,
+    "Author-and-License.txt": true
+  },
+  "f6_scope": "只展示中英文更新日志及作者与授权；功能说明、安装说明由EXE/ZIP提供",
+  "binary_check": "EXE仅读取程序集资源，不执行入口；F6核对实际UI DLL内的完整UTF-8正文及来源快照，未启动游戏",
+  "runtime_version_limit": "本结论针对新制作的Release/2.26.1正式包；未安装，当前游戏中已加载的旧DLL不会自动更新",
+  "tests_run": false,
+  "installer_executed": false,
+  "game_started": false
+}

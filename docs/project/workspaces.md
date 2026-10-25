@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| 集成交付：2.26.1正式发布材料，进行中 | 本集成交付聊天；基线main/19b1528；codex/integrate-20261025 | C:/Users/83717/.codex/worktrees/integrate-20261025/AC7_MultiSP | alpha3已获作者验收，正式版本已合main；按本次授权原字节接收四份作者中文、同步英文，增加中文逐条审核规则，重新构建EXE、Nexus通用ZIP及完整Pages上传材料。沿用R2单入口并保留历史签名，作者手动发布；不运行测试模块、不安装/操作游戏、不推送/上传，不改主工作区其他未提交内容 |
+| 集成交付：2.26.1正式发布材料，已接收 | 本集成交付聊天；基线main/19b1528；codex/integrate-20261025 | C:/Users/83717/.codex/worktrees/integrate-20261025/AC7_MultiSP | alpha3已验收；作者四份中文原字节接收、英文全部重译，中文逐条审核规则已登记。已完整构建正式EXE与通用ZIP并静态回读实际嵌入正文；Pages历史升序至2.26.0（含2.25.X），最新2.26.1和R2单入口词条获作者逐条批复。材料在Release/2.26.1，见[EXE/ZIP](../../evidence/2.26.1-exe-delivery.json)、[网页](../../evidence/2.26.1-pages-delivery.json)和[正文同步](../../evidence/2.26.1-document-sync.json)。作者自行上传；未测试/安装/操作游戏/推送/部署。其他本地修改与旧包保留 |
 | F6状态发布性能优化，已接收 | codex/fix-f6-publish-performance；基线main/19b1528；来源56a6ba8 | C:/Users/83717/.codex/worktrees/f6-publish-performance/AC7_MultiSP | 轻量飞行状态与独立管理列表已由性能分支带入正式2.26.1；原alpha1交付保留。alpha3获作者总体正常反馈，后续整合由上方集成交付行统一负责，不修改来源树 |
 | 任务内与原生选装性能，已接收 | codex/perf-runtime-preview；main/19b1528；最新73366ce | C:/Users/83717/.codex/worktrees/runtime-preview-performance/AC7_MultiSP | 包含F6来源、671b664及EML/公共视角/对象与模型读取优化；全部tip经alpha3纳入正式2.26.1，来源树保持干净。alpha2反馈、采样与后续验证只在[性能评估](../research/runtime-performance.md)维护；作者已确认CFA EML及F-2A普通飞行优化有效，具体观察与边界见该正文 |
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |

@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "version": "2.26.1",
+  "pages_zip": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.1\\AC7MultiSP-Pages-homepage.zip",
+    "sha256": "768c12f384e7ca36b130e99dd3e65da8bd29f179730befaad566d7552699b9a2",
+    "size": 90341
+  },
+  "pages_directory": "E:\\AC7_MultiSP\\Release\\2.26.1\\Pages",
+  "manifest_sha256": "728d1a8bc395e642ef4e65b0de600f3584fee7246a9b62e3d222784d525fc4c6",
+  "latest_notes": {
+    "zh": "• 优化整体性能表现。特别优化CFA-44和F-2A的多SP模型方案的性能。\n• 修正CFA-44机腹舱未闭合的问题。",
+    "en": "• Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.\n• Fixed the CFA-44 ventral weapon bay failing to close."
+  },
+  "history_headings": {
+    "zh-CN": [
+      "1.X及更早",
+      "2.0.X—2.5.X",
+      "2.6.X—2.16.X",
+      "2.17.X—2.21.X",
+      "2.22.X—2.23.X",
+      "2.24.X",
+      "2.25.X",
+      "2.26.0"
+    ],
+    "en": [
+      "1.X and earlier",
+      "2.0.X–2.5.X",
+      "2.6.X–2.16.X",
+      "2.17.X–2.21.X",
+      "2.22.X–2.23.X",
+      "2.24.X",
+      "2.25.X",
+      "2.26.0"
+    ]
+  },
+  "source_8_documents_equal": true,
+  "preview_bytes_equal": true,
+  "chinese_four_source_bytes_unchanged": true,
+  "download_description": "仅Cloudflare R2；中文逐条获作者确认",
+  "previous_signed_release_ids": [
+    "2f35cfa13faa4c93841da77e8fbed037",
+    "78b97c323d0d422ba657a01135f44dd7"
+  ],
+  "current_signed_release_id": "6758d0157e8d4bed9008171cadc51023",
+  "release_signature_verified": true,
+  "members": {
+    "_headers": {
+      "size": 717,
+      "sha256": "4f29fb3eb27922b58f513e00e7a2b5d768cd278cc815e956a852e2a1950d1de6"
+    },
+    "AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "6331599341dda5186e3f0ec7d04e7c34c47c4176d0b6a67312e44ab165a0759d"
+    },
+    "AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "44b0c491ac44719740faa46e859cfd7a153d3a40e04e9510b15b4b666b31b649"
+    },
+    "app.js": {
+      "size": 28353,
+      "sha256": "11ec307681b3dbb4d472e47b7caf8a3635f6c1fb8c62f365b08313fa373feb0c"
+    },
+    "assets/alipay-qr.jpg": {
+      "size": 63182,
+      "sha256": "4e74a016dc49308b59b8181455c73761176f3197ec595e5257ebe7499919babe"
+    },
+    "assets/mastercard.svg": {
+      "size": 178,
+      "sha256": "b1ca921334ea354ed30b537236a6528225a4470190b461d677666e04143d3ab7"
+    },
+    "assets/paypal.svg": {
+      "size": 229,
+      "sha256": "d68fb04a134b6b046e019bc46f24ac4a989304bd80f0b4bc2ba2e3d538cf4464"
+    },
+    "assets/visa.svg": {
+      "size": 196,
+      "sha256": "22e530a4590b8972361da851ecc43074eab0cfb9d03e1d4f1b727e78cbc15275"
+    },
+    "index.html": {
+      "size": 10243,
+      "sha256": "e22f7d3c540ddbeb10eec6c5f217f8225583aeb612aafe519c6a53f038fde126"
+    },
+    "preview.json": {
+      "size": 1024,
+      "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+    },
+    "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9"
+    },
+    "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909"
+    },
+    "releases/6758d0157e8d4bed9008171cadc51023/AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "6331599341dda5186e3f0ec7d04e7c34c47c4176d0b6a67312e44ab165a0759d"
+    },
+    "releases/6758d0157e8d4bed9008171cadc51023/AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "44b0c491ac44719740faa46e859cfd7a153d3a40e04e9510b15b4b666b31b649"
+    },
+    "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.json": {
+      "size": 550,
+      "sha256": "fd988f730a5bbc63fc99537c300ba6f17d82574b1b613a2fef1496db621c0c7c"
+    },
+    "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.sig.json": {
+      "size": 662,
+      "sha256": "e45a121a942968a77e4e2086e36acaca42c9b89411d5f03fee4c84d549dd091e"
+    },
+    "stable.json": {
+      "size": 736,
+      "sha256": "728d1a8bc395e642ef4e65b0de600f3584fee7246a9b62e3d222784d525fc4c6"
+    },
+    "styles.css": {
+      "size": 14013,
+      "sha256": "23329b646cef22111e27878be4861fb9b90c576de1ce59215d5880733af3edf0"
+    },
+    "user-docs/Author-and-License.txt": {
+      "size": 2677,
+      "sha256": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+    },
+    "user-docs/changelog-history.en.txt": {
+      "size": 2414,
+      "sha256": "95c6dd3290d66da3fbfc335576b12e4a202a9b2f34b70016686da931aec3325c"
+    },
+    "user-docs/changelog-history.zh-CN.txt": {
+      "size": 1860,
+      "sha256": "075cb4bb8022b98e029a617d3a03df46e2ca6a506658adb38f388f1a87b18783"
+    },
+    "user-docs/Changelog.txt": {
+      "size": 2599,
+      "sha256": "90959ff0ddef684bd949c393dbb8a696ffd45a3f5692f85677cb32882c145562"
+    },
+    "user-docs/Features.txt": {
+      "size": 4456,
+      "sha256": "cb2657f32d4e83ae37a3b273698227b183636aef35aca5459add837b7e7ed675"
+    },
+    "user-docs/Installation.txt": {
+      "size": 1419,
+      "sha256": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608"
+    },
+    "user-docs/作者与授权.txt": {
+      "size": 2466,
+      "sha256": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa"
+    },
+    "user-docs/功能说明.txt": {
+      "size": 3722,
+      "sha256": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c"
+    },
+    "user-docs/安装说明.txt": {
+      "size": 1230,
+      "sha256": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad"
+    },
+    "user-docs/更新日志.txt": {
+      "size": 2005,
+      "sha256": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554"
+    }
+  },
+  "remote_r2": {
+    "verified": false,
+    "reason": "本次文件尚由作者上传，不用本地预期摘要冒充远端下载核验",
+    "expected_sha256": "307450810aa755fc6e81dd24d6434ac8b743a6fca4042f75878a70e4b5bd35de",
+    "expected_size": 61735936
+  },
+  "cloudflare_deployed": false,
+  "nexus_uploaded": false,
+  "lanzou_used": false,
+  "tests_run": false,
+  "game_started": false,
+  "preparation_scope": "使用已验证的本地EXE/ZIP及清单生成待上传完整站点；未调用finalize或人工摘要替代入口，未改site/stable.json线上源状态"
+}

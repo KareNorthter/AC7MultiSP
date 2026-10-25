@@ -121,7 +121,7 @@
     if (primary.length !== 1 || backups.length > 3 ||
         backups.some((item) => !item.id.startsWith("lanzou") ||
           new URL(item.url).hostname.toLowerCase() !== "wwbru.lanzoue.com")) {
-      throw new Error("Manifest must contain one R2 link and zero to three Lanzou backups");
+      throw new Error("Invalid download roles");
     }
     return value;
   }
