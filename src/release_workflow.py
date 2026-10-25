@@ -378,6 +378,8 @@ def verify_online(args: argparse.Namespace) -> None:
     base = args.base_url.rstrip("/") + "/"
     checked_url(base, "ac7multisp-updates.pages.dev")
     names = [name for name in SITE_FILES if name != "_headers"] + ["user-docs/" + name for name in PLAYER_DOC_FILES]
+    names.extend("user-docs/" + name for name in ("changelog-history.zh-CN.txt", "changelog-history.en.txt")
+                 if (folder / "user-docs" / name).is_file())
     for name in (RELEASE, RELEASE_SIG):
         if (folder / name).is_file():
             names.append(name)
