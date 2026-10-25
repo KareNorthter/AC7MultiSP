@@ -1,5 +1,10 @@
 AC7MultiSP
 
+Unreleased (source only; not compiled or verified in game)
+• Unified compatibility-failure handling for sustained effects and weapon bays, limiting local failures to the aircraft instance. Multi-SP reads and writes remain blocked when cleanup safety cannot be verified.
+• Organized shared weapon contracts and bay resource profiles without adding aircraft-specific controllers or expanding aircraft support.
+• Added explicit tracking of temporary sustained-effect retention releases so cleanup failures prevent a successful transaction response.
+
 2.26.0
 • Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
 • Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.

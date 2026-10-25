@@ -3,6 +3,7 @@
 
 struct ContinuousIdentity { Addr address{}; int index{},serial{}; };
 enum class ContinuousKind { None, Electronic, TLS, UAV, Interceptor };
+#include "continuous_sp_profiles.hpp"
 struct ContinuousSupport {
     ContinuousKind kind{ContinuousKind::None};
     bool electronic{};
@@ -30,7 +31,7 @@ bool continuousUavHookReady=false;
 std::string continuousUavHookFailure;
 bool continuousHooksReady=false;
 std::string continuousHookFailure;
-std::string continuousRuntimeFailure; // 回调错误留给下一次 HUD/命令读取，不能只写日志后继续运行。
+CompatibilityFailures continuousFailures; // 局部故障按真实玩家身份隔离，无法确认责任时才锁存全局。
 bool continuousRebuildStarted=false; // 仅当前核心命令；拒绝调试或无效请求不能顺带结束仍在工作的效果。
 std::atomic<DWORD> continuousThread{0};
 
@@ -69,6 +70,47 @@ bool continuousAlive(const ContinuousIdentity& id) {
 }
 ContinuousIdentity continuousIdentity(Addr object) {
     return ContinuousReadBatch{}.identity(object);
+}
+CompatibilityContext continuousContext(Addr plane,Addr activator) {
+    const ContinuousReadBatch memory;
+    const auto player=memory.identity(plane),owner=memory.identity(memory.read<Addr>(plane+0x20));
+    const auto component=memory.identity(activator);
+    require(memory.read<Addr>(plane+0x11a8)==activator,"Activator is not owned by this plane");
+    return {compatibilityIdentity(player),compatibilityIdentity(component),compatibilityIdentity(owner)};
+}
+CompatibilityContext continuousContext(const ContinuousEffect& effect) noexcept {
+    return {compatibilityIdentity(effect.plane),compatibilityIdentity(effect.activator),compatibilityIdentity(effect.level)};
+}
+void continuousRecordFailure(const CompatibilityContext& context,const char* stage,const char* message) noexcept {
+    try {
+        // 只有玩家、激活器和Level归属仍可信，才把故障限制在该玩家实例。
+        // 清理账本/临时Root不随本故障记录清空；旧对象的通知隔离继续工作。
+        const auto current=continuousContext(context.player.address,context.activator.address);
+        require(compatibilitySameIdentity(context.player,current.player) &&
+            compatibilitySameIdentity(context.activator,current.activator) && compatibilitySameIdentity(context.owner,current.owner),
+            "持续兵装：故障归属已失效");
+        continuousFailures.recordLocal(context,stage,message);
+    }catch(...) {continuousFailures.recordGlobal(context,stage,message);}
+    const auto* fault=continuousFailures.find(context.player);
+    if(fault)compatibilityLogFault("continuous",*fault,continuousFailures.global()!=nullptr);
+}
+void continuousRecordFailure(const ContinuousEffect& effect,const char* stage,const char* message) noexcept {
+    continuousRecordFailure(continuousContext(effect),stage,message);
+}
+void continuousRequireRuntime(Addr plane,Addr activator) {
+    require(!continuousHooksReady || GetCurrentThreadId()==continuousThread.load(),"持续兵装：调用线程改变");
+    if(continuousFailures.empty())return; // 健康路径不增加对象表、父链或引用数组读取。
+    const auto blocked=[](const char* key) {
+        throw std::runtime_error(std::string(dualsp::user_texts::get(key,true))+" / "+dualsp::user_texts::get(key,false));
+    };
+    if(continuousFailures.global())blocked("compatibility.runtime.process_blocked");
+    const auto context=continuousContext(plane,activator);
+    const ContinuousReadBatch memory;
+    continuousFailures.forgetDestroyedContexts([&](const auto& previous) {
+        return memory.entry({previous.player.address,previous.player.index,previous.player.serial})==0 &&
+            memory.entry({previous.activator.address,previous.activator.index,previous.activator.serial})==0;
+    });
+    if(continuousFailures.find(context))blocked("compatibility.runtime.player_blocked");
 }
 std::string continuousName(Addr object,const NativeReadBatch& memory) {
     const unsigned index=memory.read<unsigned>(object+0x18);
@@ -186,45 +228,41 @@ bool continuousInterceptorCodeQualified() {
         code(0x8614c0,0x73,0x1f19818ecc2c9e4bull) && code(0x861490,0x2b,0x261b720586e9602cull);
     qualified=ok?1:-1;return ok;
 }
-// 电子战/UAV/IRCM均与展示编号解耦；仍逐次核对原生回调和发射即装填契约。
+const ContinuousNativeContract* continuousNativeContract(Addr cls) {
+    const NativeReadBatch memory;
+    // 一次有界父链遍历完成分类；不缓存实例、回调或装填状态。
+    for(int i=0;cls && i<64;++i,cls=memory.read<Addr>(cls+0x30)) {
+        const auto name=continuousName(cls,memory);
+        for(const auto& contract:continuousNativeContracts())if(name==contract.nativeClass &&
+            continuousName(memory.read<Addr>(cls+0x20),memory)=="/Script/Nimbus")return &contract;
+    }
+    require(!cls,"持续兵装：类继承链无效或过长");return nullptr;
+}
+// 所有原生类型共用同一准入流程；描述表只提供契约，不授予运行写入权限。
 ContinuousSupport continuousSupport(Addr plane,Addr weapon) {
     const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
-    const bool electronic=continuousElectronicClass(cls);
-    if(electronic) {
-        if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))
-            return {ContinuousKind::None,true,"electronic_reload_contract_changed"};
-        if(read<Addr>(table+0x648)!=base+0x894850 || read<Addr>(table+0x628)!=base+0x895fd0 ||
-            read<Addr>(table+0x680)!=base+0x86bf90)
-            return {ContinuousKind::None,true,"electronic_native_callbacks_changed"};
-        return {ContinuousKind::Electronic,true,"native_electronic"};
-    }
-    if(continuousUavClass(cls)) {
+    if(const auto* contract=continuousNativeContract(cls)) {
+        const bool electronic=contract->kind==ContinuousKind::Electronic,uav=contract->kind==ContinuousKind::UAV;
+        const bool interceptor=contract->kind==ContinuousKind::Interceptor;
+        const auto result=[&](bool accepted,const char* reason) {
+            return ContinuousSupport{accepted?contract->kind:ContinuousKind::None,electronic,reason,uav,interceptor};
+        };
         if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8) ||
-            read<unsigned char>(weapon+0x45d) || read<float>(weapon+0x518)!=0)
-            return {ContinuousKind::None,false,"uav_reload_contract_changed",true};
-        const bool supported=read<Addr>(table+0x618)==base+0x8a6bf0 && read<Addr>(table+0x628)==base+0x8779a0 &&
-            read<Addr>(table+0x648)==base+0x8a5260 && read<Addr>(table+0x668)==base+0x878d40 && read<Addr>(table+0x680)==base+0x878eb0;
-        return {supported?ContinuousKind::UAV:ContinuousKind::None,false,
-            supported?"native_uav":"uav_native_callbacks_changed",true};
-    }
-    if(continuousClassDerived(cls,"LaserInterceptor","/Script/Nimbus")) {
-        if(read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))
-            return {ContinuousKind::None,false,"interceptor_reload_contract_changed",false,true};
-        if(read<Addr>(table+0x618)!=base+0x873730 || read<Addr>(table+0x628)!=base+0x8736e0 ||
-            read<Addr>(table+0x648)!=base+0x894850 || read<Addr>(table+0x678)!=base+0x873700 ||
-            read<Addr>(table+0x680)!=base+0x861490)
-            return {ContinuousKind::None,false,"interceptor_native_callbacks_changed",false,true};
-        if(!continuousInterceptorUnattached(weapon))
-            return {ContinuousKind::None,false,"interceptor_attachment_not_supported",false,true};
-        if(!continuousInterceptorCodeQualified())return {ContinuousKind::None,false,"interceptor_native_code_changed",false,true};
-        return {ContinuousKind::Interceptor,false,"native_interceptor",false,true};
+            (uav && (read<unsigned char>(weapon+0x45d) || read<float>(weapon+0x518)!=0)))
+            return result(false,contract->reloadRejected);
+        for(size_t i=0;i<contract->callbackCount;++i) {
+            const auto& callback=contract->callbacks[i];
+            if(read<Addr>(table+callback.offset)!=base+callback.rva)return result(false,contract->callbacksRejected);
+        }
+        if(interceptor && !continuousInterceptorUnattached(weapon))return result(false,"interceptor_attachment_not_supported");
+        if(interceptor && !continuousInterceptorCodeQualified())return result(false,"interceptor_native_code_changed");
+        return result(true,contract->accepted);
     }
     const int id=read<unsigned char>(weapon+0x3b0);
     if(id!=25 && id!=26)return {ContinuousKind::None,false,id==31?"electronic_class_unrecognized":"not_continuous"};
-    const bool raven=continuousRaven(plane),morgan=!raven && continuousMorgan(plane);
-    const bool tls=id==25 && ((morgan && continuousClass(cls,"plwp_tls_x1_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x1")) ||
-        (raven && continuousClass(cls,"plwp_tls_x3_C","/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x3")) ||
-        (continuousSu37(plane) && continuousClass(cls,"plwp_tls_x0_C","/Game/Blueprint/Weapons/Player/Base/plwp_tls_x0")));
+    bool tls=false;
+    if(id==25)for(const auto& profile:continuousTLSProfiles())if(continuousClass(cls,profile.weaponClass,profile.weaponPackage) &&
+        continuousPlaneClass(plane,profile.pawnClass,profile.pawnPackage)) {tls=true;break;}
     if(!tls || read<unsigned char>(weapon+0x458)!=1 || read<unsigned char>(weapon+0x459) || read<Addr>(weapon+0x5d8))return {};
     const bool supported=read<Addr>(table+0x648)==base+0x894850 && read<Addr>(table+0x628)==base+0x85f1c0 &&
         read<Addr>(table+0x680)==base+0x861490;
@@ -320,7 +358,7 @@ void continuousNotification(void* activator,void* weapon,bool final) noexcept {
             else {continuousRemove(e.activator.address+0x338,e.actor.address);e.released=true;}
             nativeLog(Json{{"event",final?"CONTINUOUS_RETIRE_ISOLATED":"CONTINUOUS_RELEASE_ISOLATED"},
                 {"source",e.source},{"index",e.actor.index},{"serial",e.actor.serial}}.dump());
-        }catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_CALLBACK_ERROR ")+error.what());}
+        }catch(const std::exception& error){continuousRecordFailure(e,"notification",error.what());}
         return; // 校验异常也不能退回会修改当前 SP 的通知；Actor 自身收尾仍继续。
     }
     original(activator,weapon);
@@ -335,7 +373,7 @@ void continuousUavEnd(void* weapon) {
             continuousRemove(e.activator.address+0x338,e.actor.address);e.released=true;
             nativeLog(Json{{"event","CONTINUOUS_UAV_RELEASE_ISOLATED"},{"source",e.source},{"index",e.actor.index},{"serial",e.actor.serial}}.dump());
         }}
-        catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_UAV_END_ERROR ")+error.what());}
+        catch(const std::exception& error){continuousRecordFailure(e,"uav_end",error.what());}
         break;
     }
     continuousOriginalUavEnd(weapon);
@@ -422,20 +460,39 @@ void continuousDrain(Addr plane,Addr activator);
 
 // RootSet 仅覆盖同步重建的引用空窗。正常帧仍由原生 UPROPERTY 数组保有对象。
 // FUObjectItem::Flags 是 UE4.18 的内部标志；绝不写 UObject::ObjectFlags。
+std::array<ContinuousIdentity,64> continuousRootLeases; // 释放失败后保留责任，不能跟随栈对象一起丢失。
 struct ContinuousRoot {
-    ContinuousIdentity id;bool owned{};
+    ContinuousIdentity id;bool owned{};size_t lease=continuousRootLeases.size();
     explicit ContinuousRoot(ContinuousIdentity identity):id(identity) {
         const Addr entry=continuousEntry(id);require(entry && continuousAlive(id),"持续兵装：无法取得临时保有");
+        for(size_t i=0;i<continuousRootLeases.size();++i)if(!continuousRootLeases[i].address) {lease=i;break;}
+        if(lease==continuousRootLeases.size())throw std::runtime_error(
+            std::string(dualsp::user_texts::get("compatibility.runtime.root_capacity",true))+" / "+
+            dualsp::user_texts::get("compatibility.runtime.root_capacity",false));
         const LONG prior=InterlockedOr(reinterpret_cast<volatile LONG*>(entry+8),0x40000000L);
         owned=(prior&0x40000000L)==0;
+        if(owned)continuousRootLeases[lease]=id;
     }
     ContinuousRoot(const ContinuousRoot&)=delete;
     ContinuousRoot& operator=(const ContinuousRoot&)=delete;
-    ContinuousRoot(ContinuousRoot&& other) noexcept:id(other.id),owned(other.owned){other.owned=false;}
-    ~ContinuousRoot() noexcept {
+    ContinuousRoot(ContinuousRoot&& other) noexcept:id(other.id),owned(other.owned),lease(other.lease){other.owned=false;}
+    void release() {
         if(!owned)return;
-        try{const Addr entry=continuousEntry(id);if(entry)InterlockedAnd(reinterpret_cast<volatile LONG*>(entry+8),~0x40000000L);}
-        catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_ROOT_RELEASE_ERROR ")+error.what());}
+        try {
+            const Addr entry=continuousEntry(id);
+            if(entry)InterlockedAnd(reinterpret_cast<volatile LONG*>(entry+8),~0x40000000L);
+            // 身份已消失时原UObject条目已不存在，绝不清除复用条目的Root。
+            continuousRootLeases[lease]={};owned=false;
+        }catch(const std::exception& error) {
+            continuousFailures.recordGlobal({},"root_release",error.what());
+            compatibilityLogFault("continuous",*continuousFailures.global(),true);
+            try {nativeLog(Json{{"event","CONTINUOUS_ROOT_RELEASE_ERROR"},{"actor",id.address},
+                {"index",id.index},{"serial",id.serial},{"lease",lease}}.dump());}catch(...) { }
+            throw;
+        }
+    }
+    ~ContinuousRoot() noexcept {
+        try {release();}catch(...) { } // 正常路径显式释放；兜底失败仍留下Root责任和全局故障。
     }
 };
 struct ContinuousRebuild {
@@ -529,15 +586,19 @@ struct ContinuousRebuild {
         for(size_t i=0;i<addActive.size();++i)write<Addr>(active.data+(active.count+i)*sizeof(Addr),addActive[i]);
         write<int>(spawned.header+8,spawned.count+static_cast<int>(addSpawned.size()));
         write<int>(active.header+8,active.count+static_cast<int>(addActive.size()));
+        continuousRequireRuntime(plane,activator); // 重建中的原生回调也可能刚刚登记故障。
         committed=true;
         if(!roots.empty())nativeLog(Json{{"event","CONTINUOUS_RETAINED"},{"count",roots.size()},
             {"active_added",addActive.size()},{"spawned_added",addSpawned.size()}}.dump());
+    }
+    void releaseRoots() {
+        for(auto& root:roots)root.release(); // 保持原临时保有区间，在本次最后一次引擎调用后显式释放。
     }
     ~ContinuousRebuild() noexcept {
         if(!plane || committed || !rebuilding)return;
         // 临时 root 析构前结束旧效果；异常明确记录，不能声称已经恢复持续行为。
         for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator)
-            try{continuousFinish(e);}catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_ABORT_ERROR ")+error.what());}
+            try{continuousFinish(e);}catch(const std::exception& error){continuousRecordFailure(e,"rebuild_abort",error.what());}
     }
 };
 void continuousDrain(Addr plane,Addr activator) {
@@ -545,11 +606,14 @@ void continuousDrain(Addr plane,Addr activator) {
     // 这里只处理本实验真实类型，其他替换武器仍由其原生边界收尾。
     Command boundary;boundary.op="switch";boundary.plane=plane;boundary.activator=activator;
     ContinuousRebuild retained(boundary,false);
-    for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator)continuousFinish(e);
-    retained.committed=true;continuousSweep();
+    for(auto& e:continuousEffects)if(e.plane.address==plane && e.activator.address==activator) {
+        try {continuousFinish(e);}
+        catch(const std::exception& error) {continuousRecordFailure(e,"drain",error.what());throw;}
+    }
+    retained.committed=true;continuousSweep();retained.releaseRoots();
 }
 void continuousAbortRetained() noexcept {
     // 覆盖 initialize 后恢复库存、类别或最终提交失败；不吸收未知新玩家对象。
     for(auto& e:continuousEffects)if(e.plane.address==session.plane && e.activator.address==session.activator)
-        try{continuousFinish(e);}catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("CONTINUOUS_ABORT_ERROR ")+error.what());}
+        try{continuousFinish(e);}catch(const std::exception& error){continuousRecordFailure(e,"transaction_abort",error.what());}
 }

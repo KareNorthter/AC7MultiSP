@@ -178,6 +178,8 @@ CFA-50不是CFA-44外观布局的别名。作者本体`SWPCoverC_01..12`在机�
 
 ### 多机舱门收尾（源码候选，待逐机验证）
 
+未发布兼容流程第一版将七项原资源配置移到[aircraft_bay_profiles.hpp](../../src/aircraft_bay_profiles.hpp)，以`Shared01Close`和`PublicSwitchContinuity`明确选择已有策略；资源、旗帜和算法不变。舱门接入独立的共用故障账本，失败仅停止对应玩家实例的舱门收尾，保留原生Parts；重新开关总功能不重试同一失败实例。流程与责任规则只在[架构](architecture.md#通用兼容适配流程未发布源码第一版)维护。本次未扩大支持范围、未修复已暂缓的公共舱反馈，未编译或实测。
+
 2026-10-24先核对7种本体及挂架共84份资源；节点均为`FlightEngineBlend`、同一`PlaneBodyConfig`，没有额外`OverrideSequences`。实际Skeleton骨名和序列轨道交集见[静态回执](../../evidence/bay-domain-multi-aircraft-static-20261024.json)。用户随后要求一并实现并逐机反馈，新[共用模块](../../src/aircraft_bay_animation.hpp)在同步main/09cdc82后扩展原CFA-50实现；[源码回执](../../evidence/bay-domain-multi-aircraft-source-20261024.json)记录精确范围和静态核对。研究线程当时没有编译、测试或安装；后续已由集成交付任务纳入2.25.3 alpha1完整构建，尚未安装或实机通过，研究线程不分配正式版本。
 
 | 实际资源 | 本体消费域与原生配置兵装包名 | 本次候选处理 |

@@ -36,9 +36,11 @@
 #include "native_common_bay_parts.hpp"
 #include "owned_bone_refresh.hpp"
 #include "bounded_log.hpp"
+#include "generated/user_texts.hpp"
 
 namespace {
 using Addr = uintptr_t;
+#include "compatibility_lifecycle.hpp"
 // Lua 每次提交完整方案；配置编号与逻辑槽编号不得混用。
 struct Command {
     std::string op; // 初始化、换槽、补给或检查点动作。
@@ -821,6 +823,8 @@ void initialize(const Command& command,int index,bool preserveAuxiliary=true) {
         mountAircraft(command.plane)==MountAircraft::Fa44)
         mountCfaMuzzlePrewarm(command.plane,command.request);
 #endif
+    continuous.releaseRoots(); // 保持原保有窗口，最后一次引擎调用之后、成功回执之前明确归还。
+    continuousRequireRuntime(command.plane,command.activator);
     cfaSwitchCost.mark(5);
 }
 void keepArmed(const Command& command,bool armed) {
@@ -964,7 +968,7 @@ void execute(const Command& command) {
     if(command.op!="snapshot" && command.op!="checkpoint_save")debugWeapons.repairPool=0;
     verifyVersion();
     require(!session.gameThread || session.gameThread==GetCurrentThreadId(),"武器事务必须在绑定的游戏线程执行");
-    require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
+    continuousRequireRuntime(command.plane,command.activator);
     require(read<Addr>(command.plane+0x11a8)==command.activator,"Activator is not owned by this plane");
     // 在任何兵装重建前确认内部切换入口，拒绝不匹配版本时不先改动弹池。
     if(command.op!="snapshot" && command.op!="checkpoint_save")nativeWeaponSelectionQualified();
@@ -984,8 +988,10 @@ void execute(const Command& command) {
         if(command.op!="switch")cfaWeaponDiagnostic.admmObserved=false; // 换装/补给/检查点不沿用旧发射历史。
     }
     continuousSweep();
-    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="checkpoint_restore" || command.op=="resupply")
+    if(command.op=="setup" || command.op=="resupply_setup" || command.op=="checkpoint_restore" || command.op=="resupply") {
         continuousDrain(command.plane,command.activator); // 活动效果不进入弹药/检查点快照。
+        continuousRequireRuntime(command.plane,command.activator); // Drain的临时保有释放失败时不继续初始化。
+    }
     // 补给重选需要重建当前组合，同时保留任务已经捕获的检查点。
     // 此新命令只存在于源码候选；正式 DLL 保持不变，不能直接混装。
     if(command.op=="setup" || command.op=="resupply_setup" || command.op=="debug_setup") {
@@ -1170,13 +1176,13 @@ extern "C" __declspec(dllexport) int dualsp_continuous_sp_option(void* luaState)
     try {
         static const dualsp::LuaApi bound;api=&bound;
         require(runtimeEnabled,"Mod disabled outside single-player");
-        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
         require(api->top(luaState)==2,"持续兵装：选装检查参数无效");verifyVersion();
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
         const Addr cdo=static_cast<Addr>(api->readInteger(luaState,2));
         continuousIdentity(plane);continuousIdentity(cdo);
         const Addr activator=read<Addr>(plane+0x11a8),cls=read<Addr>(cdo+0x10);
         continuousIdentity(activator);
+        continuousRequireRuntime(plane,activator);
         bool configured=false;
         for(int i=0;i<3;++i)configured|=read<Addr>(activator+0x158+i*0x30)==cls;
         require(configured,"持续兵装：默认对象不属于当前机体的三个真实配置");
@@ -1649,11 +1655,11 @@ extern "C" __declspec(dllexport) int dualsp_finish_tls(void* luaState) {
     try {
         static const dualsp::LuaApi bound;api=&bound; // 与已安装 UE4SS 共享参数接口。
         require(runtimeEnabled,"Mod disabled outside single-player");
-        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
         require(api->top(luaState)==2,"TLS 收尾接口参数数量无效");verifyVersion();
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1)); // 本次玩家和激活器。
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
         require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
+        continuousRequireRuntime(plane,activator);
         // Falken只允许自然退场；即使调用旧收尾接口，也不得提前End或隐藏主束。
         if(continuousFalken(plane)) {
             require(!continuousFalkenTLSBusy(plane,activator),"Falken TLS尚未自然结束，请等待后切换");
@@ -2073,8 +2079,6 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         api=&bound;
         std::lock_guard<std::mutex> guard(nativeExecutionMutex);
         require(runtimeEnabled,"Mod disabled outside single-player");
-        require(continuousRuntimeFailure.empty(),continuousRuntimeFailure.c_str());
-        continuousSweep();
         require(api->top(luaState)==4,"HUD 内存接口参数数量无效");
         const auto plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto activator=static_cast<Addr>(api->readInteger(luaState,2));
@@ -2084,6 +2088,7 @@ extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {
         require(std::isfinite(time) && time>=0,"HUD 游戏时间无效");
         verifyVersion();
         require(read<Addr>(plane+0x11a8)==activator,"HUD 激活器不属于当前玩家机体");
+        continuousRequireRuntime(plane,activator);continuousSweep();
         const bool mainReady=liveHasReadyRound(activator,false);
         std::array<bool,3> spReady{}; // 未搭载槽固定不就绪。
         require(session.plane==plane && session.activator==activator && session.count==count,"HUD SP 会话不匹配");
@@ -2130,6 +2135,7 @@ extern "C" __declspec(dllexport) int dualsp_execute_memory_v1(void* luaState) {
         if(command.op!="snapshot")nativeLog(Json{{"event","NATIVE_BEGIN"},{"op",command.op},{"request",request},
             {"target",command.target},{"configs",command.configs},{"count",command.count},{"thread",GetCurrentThreadId()}}.dump());
         execute(command);
+        continuousRequireRuntime(command.plane,command.activator); // 含Drain析构和原生回调错误，失败不能发布成功。
         Json state=snapshotState(command);
         state["count"]=session.count;state["configs"]=session.configs;state["ok"]=true;state["request"]=request;state["maximum"]=session.maximum;
         state["ratio"]=session.ratio;

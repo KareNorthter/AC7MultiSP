@@ -50,6 +50,7 @@ mod接管内置弹舱动画的性能问题仍未解决。
 四、适用范围与其他Mod兼容性
 • 适用Steam版游戏，仅用于单人战役，多人模式停用。
 • 兼容的mod：大部分Addon机体、皮肤SKIN、AC7MouseAim鼠标飞控、Enhanced Gunplay、All Aircraft PSM、Modular Weapon Swap。
+• 多SP、持续效果与多挂外观分别核对支持范围。局部舱门适配失败时交回原生；持续效果故障会停止受影响机体实例的多SP读写，请退出本任务后重新出击。若无法确认清理或共享状态安全，则需重启游戏，具体原因见日志。
 • 暂不兼容：F-14IA，Pre-Campaign VR关卡
 
 五、已知问题：

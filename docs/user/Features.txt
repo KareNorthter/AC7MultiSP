@@ -50,6 +50,7 @@ Popular mod aircraft will also receive priority for future support.
 4. Scope and compatibility with other mods
 • For the Steam version, single-player campaign only. Disabled in multiplayer.
 • Compatible mods: most add-on aircraft, skins, AC7MouseAim, Enhanced Gunplay, All Aircraft PSM, Modular Weapon Swap.
+• Multi-SP, sustained effects and multi-SP visuals are qualified separately. A local bay-adaptation failure falls back to native behavior. A sustained-effect failure stops Multi-SP reads and writes for the affected aircraft instance; leave the mission and sortie again. If cleanup or shared-state safety cannot be verified, restart the game. See the log for details.
 • Currently incompatible: F-14IA, Pre-Campaign VR missions.
 
 5. Known issues
