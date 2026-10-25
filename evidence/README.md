@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| CFA EML持续掉帧研究 | [现场与动态对照](cfa44-eml-steady-performance-20261025.json) | alpha2同进程EML/ADMM只读采样、内存查询热点、取位连带炮口巡检的证据和限制；未实施修复，不把样本比例当FPS收益 |
 | alpha2首轮性能反馈 | [用户观察与日志](2.26.1-alpha2-performance-feedback-20261025.json) | F-2A普通飞行和选装改善；CFA EML模型开启时持续掉帧待定位；不将FPS观察当完整帧剖析 |
 | 2.26.1 alpha2性能自测EXE | [构建与交付核对](2.26.1-alpha2-runtime-performance-delivery.json) | main与F6精确来源、核心/UI完整编译、Lua语法/接口/保护摘要及作者签名；只交付EXE，未安装或实机验证 |
 | 任务内与原生选装性能基线 | [20261025日志摘要](runtime-performance-baseline-20261025.json) | main与F6来源锚、alpha1进程样本及本机日志快照；不代表alpha2收益或受控A/B |

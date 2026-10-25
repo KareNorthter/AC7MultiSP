@@ -8,7 +8,7 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 ## 任务内与原生选装性能
 
-[性能评估](runtime-performance.md)维护main/19b1528与F6 alpha1的基线、实现优先级、alpha2范围及用户测试步骤。用户授权实现并交付EXE，尚待安装实测；CFA骨维护/炮口和选装完整重绑的后续优化保留，不将一次性加载当目标。
+[性能评估](runtime-performance.md)维护main/19b1528与F6 alpha1的基线、实现优先级、alpha2范围及用户测试步骤。alpha2首轮反馈有效；CFA EML持续掉帧已取得暂停快照和EML/ADMM动态采样，优先处理取位连带炮口巡检，尚未实施该修订。完整重绑及公共稳定期开销继续保留，不将一次性加载当目标。
 
 ## 免费Mod署名与资源保护
 
