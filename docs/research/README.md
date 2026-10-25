@@ -6,13 +6,13 @@
 
 Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。最新7e255e1及前阶段名称/IRCM修订已进入2.25.3 alpha1完整构建；[交付与待测清单](../../evidence/2.25.3-alpha1-exe-delivery.json)明确尚未安装或游戏验收。用户随后确认XFA-33 B、Su-57 TGM公共舱互切修订未生效，已按指令暂缓；其他已测项无问题，范围见[反馈记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
 
-通用兼容流程第一版从正式2.26.0/main `19b1528`另建`codex/refactor-compatibility-pipeline`，接入能力独立的故障账本、持续效果契约表和舱门资源策略；唯一设计及待验证范围见[架构](../engineering/architecture.md#通用兼容适配流程未发布源码第一版)，责任与路径见[工作区索引](../project/workspaces.md)。源码未发布，未编译、测试或安装，不恢复暂缓适配，不覆盖旧研究原件。
+通用兼容流程第一版从正式2.26.0/main `19b1528`另建`codex/refactor-compatibility-pipeline`，接入能力独立的故障账本、持续效果契约表和舱门资源策略；唯一设计及待验证范围见[架构](../engineering/architecture.md#通用兼容适配流程未发布源码第一版)，责任与路径见[工作区索引](../project/workspaces.md)。源码已纳入2.26.1 alpha3集成候选，未安装或实机验证，不恢复暂缓适配，不覆盖旧研究原件。
 
-同分支随后按用户更正处理CFA-44机腹舱：限定资源使用共用单路独立输出策略，Light旧复制写入者撤出。具体规则、原料来源与待验证项只在[挂载设计CFA专节](../engineering/multi-sp-mount-design.md#cfa切换与ecm当前策略)维护；未编译或实机验证。
+同分支随后按用户更正处理CFA-44机腹舱：限定资源使用共用单路独立输出策略，Light旧复制写入者撤出。具体规则、原料来源与待验证项只在[挂载设计CFA专节](../engineering/multi-sp-mount-design.md#cfa切换与ecm当前策略)维护；已纳入alpha3候选，待实机验证。
 
 ## 任务内与原生选装性能
 
-[性能评估](runtime-performance.md)维护main/19b1528与F6 alpha1的基线、实现优先级、alpha2范围及统一测试步骤。alpha2首轮反馈有效；EML修订45a8c43后，继续实现公共视角/对象表读取、稳定相机资格复用、轻量挂架/模型校验批次及非CFA切换分段日志，均尚未编译/测试。原生选择槽重复取位、F-2A完整重绑/初始化及渲染成本继续保留，不将一次性加载当目标。
+[性能评估](runtime-performance.md)维护main/19b1528与F6 alpha1的基线、实现优先级、alpha2范围及统一测试步骤。alpha2首轮反馈有效；EML修订45a8c43后，继续实现公共视角/对象表读取、稳定相机资格复用、轻量挂架/模型校验批次及非CFA切换分段日志，均已接入alpha3集成候选，待实机验证。原生选择槽重复取位、F-2A完整重绑/初始化及渲染成本继续保留，不将一次性加载当目标。
 
 ## 免费Mod署名与资源保护
 

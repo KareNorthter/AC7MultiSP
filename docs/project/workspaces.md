@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 集成交付：三线程成果统一自测，进行中 | 本集成交付聊天；基线main/19b1528；codex/integrate-20261025 | C:/Users/83717/.codex/worktrees/integrate-20261025/AC7_MultiSP | 接收3d9ceb9、73366ce、b95afa2，独占本树公共源码整合、VERSION/产品元数据、双语日志及唯一工程正文。目标2.26.1 alpha3；本轮授权合并、完整编译及EXE交付，作者自行安装/游戏验收；不运行测试模块、不推送/上传，不覆盖主工作区未提交修改及旧产物。后续集成由本聊天负责 |
 | F6状态发布性能优化，进行中 | codex/fix-f6-publish-performance；鼠标飞控冲突排查责任聊天；基线main/19b1528 | C:/Users/83717/.codex/worktrees/f6-publish-performance/AC7_MultiSP | 独占main.lua、debug_aircraft.lua、quick_mission.lua、overlay.cpp、quick_mission_panel.hpp及对应说明；独立管理列表、轻量飞行状态，授权完整构建与EXE封装，不安装、不操作游戏、不推送。2.26.1 alpha1为本轮自测包，正式版仍2.26.0 |
 | 任务内与原生选装性能，追加源码待验证/待接收 | codex/perf-runtime-preview；本性能评估聊天；main/19b1528，接收F6源码dfe84ed | C:/Users/83717/.codex/worktrees/runtime-preview-performance/AC7_MultiSP | 独占本树main.lua、挂载预览/固定挂载/机外显示及对应正文；已完整构建并[交付alpha2 EXE](../../evidence/2.26.1-alpha2-runtime-performance-delivery.json)，源码671b664，用户首轮反馈有效。EML修订45a8c43及本轮追加源码待统一测试：continuous_sp.hpp、camera_hold.hpp、target_gaze.hpp、light_mount.hpp、su30sm_fixed_mount.hpp及weapon_bridge.cpp轻量切换分段日志和对应正文，保留既有交互顺序，沿用先不编译，仅静态审阅。评估与后续验证见[性能评估](../research/runtime-performance.md)。不改F6来源树，不安装游戏、不推送 |
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |

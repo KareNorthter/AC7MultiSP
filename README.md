@@ -7,7 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式发布版本 | **2.26.0**，作者于2026-10-25确认安装包和Mod功能正常，并要求接收当前main及同步GitHub；[验收与文档接收](evidence/2.26.0-main-acceptance-20261025.json)记录本次事实。已交付EXE/ZIP不重建或改写 |
-| 本分支性能自测候选 | 现成EXE仍为**2.26.1 alpha2**，main/19b1528加F6来源dfe84ed及首批优化；用户反馈普通飞行、机库及补给选SP改善。EML及追加公共视角/模型校验优化源码已实现，按要求先不编译，现成包不含这两批修订；尚未整体验收，不替代正式2.26.0。见[交付回执](evidence/2.26.1-alpha2-runtime-performance-delivery.json)及[评估与统一测试](docs/research/runtime-performance.md) |
+| 本轮统一自测候选 | **2.26.1 alpha3**；基线main/19b1528，接收原生英文标签3d9ceb9、性能73366ce、兼容流程及CFA机腹舱b95afa2。源码已集成，准备完整构建EXE；由作者安装和游戏验收，正式版仍为2.26.0。覆盖步骤见[统一测试](docs/research/runtime-performance.md#统一游戏对照alpha3集成候选) |
 | 上一正式版本 | **2.25.2**，原[发布准备与核对](evidence/2.25.2-publication-preparation.json)及旧产物保持原样 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |

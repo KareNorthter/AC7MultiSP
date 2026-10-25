@@ -1,10 +1,12 @@
 AC7MultiSP
 
-Unreleased (source only; not compiled or verified in game)
-• Adjusted the CFA-44 ventral bay: it stays closed with multi-SP models enabled. With models disabled, it opens only while using ADMM and closes after switching to other weapons.
-• Unified compatibility-failure handling for sustained effects and weapon bays, limiting local failures to the aircraft instance. Multi-SP reads and writes remain blocked when cleanup safety cannot be verified.
-• Organized shared weapon contracts and bay resource profiles without adding aircraft-specific controllers or expanding aircraft support.
-• Added explicit tracking of temporary sustained-effect retention releases so cleanup failures prevent a successful transaction response.
+2.26.1 alpha3 (test build)
+• Restored English for the specified fixed labels in native loadout and resupply menus. Weapon descriptions and takeoff prompts still follow the game language; F6 and the installer retain Chinese and English.
+• Optimized CFA-44 EML muzzle checks during steady flight and reduced repeated camera, object-identity, rack and model-visibility checks. Actual frame-rate gains require in-game verification.
+• Fixed the CFA-44 ventral bay: it stays closed with multi-SP models enabled. With models disabled, it opens only while ADMM is selected and closes after switching to EML, ECM or MSL.
+• Unified compatibility-failure handling for sustained effects and weapon bays, isolating local failures by aircraft instance. Multi-SP operations remain blocked when cleanup safety cannot be verified.
+• Tracked releases of temporary sustained-effect retention so cleanup failures prevent a successful response. Added switch-stage logs for other aircraft to help locate remaining stutter.
+• Includes the UI transfer, loadout and steady-flight optimizations from alpha1 and alpha2.
 
 2.26.1 alpha2 (test build)
 • Reduced repeated model validation when selecting SP weapons in the hangar and resupply menu, plus model polling and data copying during steady flight.
