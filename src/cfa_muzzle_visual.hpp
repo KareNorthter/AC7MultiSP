@@ -11,6 +11,24 @@ struct CfaMuzzleVisual {
 // 全局显隐回调只查询本次对象，不能逐条核对历史炮口的UObject身份。
 std::map<Addr,CfaMuzzleVisual> cfaMuzzleVisuals;
 
+// 这里只保留资格快照，不持有内存页、实时变换或显隐归还基线。
+// 非目标也记录其拒绝条件；父链、Socket、类或模板变化后必须重新发现。
+struct CfaMuzzleChild {
+    MountIdentity component,componentClass,particle;
+    Addr parent{};
+    unsigned socketIndex{},socketNumber{};
+    MountAnimationReflection::Field particleField;
+    bool managed{};
+};
+struct CfaMuzzleDiscovery {
+    bool ready{};
+    MountIdentity plane,rack,rackClass;
+    MountAnimationReflection::Field childrenField;
+    Addr data{};
+    int count{},capacity{};
+    std::vector<CfaMuzzleChild> children;
+} cfaMuzzleDiscovery;
+
 struct CfaMuzzleCost {
     struct Sample { uint64_t ticks{},calls{},hits{}; } sample;
     bool active{};
@@ -158,43 +176,49 @@ void mountCfaMuzzlePrewarm(Addr plane,uint64_t request) noexcept {
             {"ms",frequency.QuadPart>0?double(CfaMuzzleCost::now()-started)*1000.0/frequency.QuadPart:0.0},{"error",error}}.dump());
     }catch(...) { } // 可选预热失败不改变既有武器事务，也不反复重试。
 }
-void mountCfaMuzzleHide(const CfaMuzzleVisual& item) {
-    // EML持续取位会多次经过这里；已经不可见就不再通知渲染和传播显隐。
-    if(read<unsigned char>(item.component.address+0x1bc)&0x10)
-        mountOriginalVisibility(reinterpret_cast<void*>(item.component.address),false,0);
-}
-
 bool mountCfaMuzzleScope() {
     return fixedMountEnabled && fixedMount.bound && !fixedMountFailed && fixedMount.light &&
         fixedMount.aircraft==MountAircraft::Fa44 && (fixedMount.kindsMask&3u)==3u;
 }
-bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item) {
-    const MountIdentityBatch identities;
+bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item,const MountIdentityBatch& identities) {
     return identities.alive(item.component) && identities.alive(item.plane) && identities.alive(item.rack) && identities.alive(item.particle) &&
         identities.read<Addr>(item.component.address+0x100)==item.rack.address &&
         identities.read<Addr>(item.component.address+item.templateOffset)==item.particle.address &&
         identities.read<unsigned>(item.component.address+0x10c)==0 &&
         identities.read<unsigned>(item.component.address+0x108)==item.socketIndex;
 }
-bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item) {
+bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item) {
+    const MountIdentityBatch identities;return mountCfaMuzzleAttached(item,identities);
+}
+bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item,const MountIdentityBatch& identities) {
     return mountSameIdentity(item.plane,fixedMount.plane) &&
-        mountSameIdentity(item.rack,fixedMount.light->racks[1].component) && mountCfaMuzzleAttached(item);
+        mountSameIdentity(item.rack,fixedMount.light->racks[1].component) && mountCfaMuzzleAttached(item,identities);
+}
+bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item) {
+    const MountIdentityBatch identities;return mountCfaMuzzleCurrent(item,identities);
+}
+void mountCfaMuzzleHide(CfaMuzzleVisual item) {
+    if(!mountCfaMuzzleScope())return;
+    {
+        const MountIdentityBatch identities;
+        if(!mountCfaMuzzleCurrent(item,identities)) { cfaMuzzleDiscovery.ready=false;return; }
+        if(!(identities.read<unsigned char>(item.component.address+0x1bc)&0x10))return;
+    } // 写显隐前重新核对目标，且不把页缓存带入可能重入的引擎调用。
+    cfaMuzzleDiscovery.ready=false;
+    mountOriginalVisibility(reinterpret_cast<void*>(item.component.address),false,0);
 }
 CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
     const auto found=cfaMuzzleVisuals.find(object);
     if(found!=cfaMuzzleVisuals.end()) {
-        if(!mountAlive(found->second.component))cfaMuzzleVisuals.erase(found);
-        else {
-            if(mountCfaMuzzleCurrent(found->second))return &found->second;
-            // 旧归属失配后只重新识别当前对象，避免仍符合左炮口条件时漏放本次请求。
-            cfaMuzzleVisuals.erase(found);
-        }
+        if(mountCfaMuzzleCurrent(found->second))return &found->second;
+        // 旧归属失配后同次重新识别，且不把失效账本当成已发现目标。
+        cfaMuzzleDiscovery.ready=false;cfaMuzzleVisuals.erase(found);
     }
     const auto& rack=fixedMount.light->racks[1].component;
     {
         const NativeReadBatch memory;
         if(memory.read<Addr>(object+0x100)!=rack.address || memory.read<unsigned>(object+0x10c)!=0 ||
-           mountNameIndex(memory.read<unsigned>(object+0x108))!="sp21")return nullptr;
+           mountNameIndex(memory.read<unsigned>(object+0x108),memory)!="sp21")return nullptr;
     } // 后续解析元数据及显隐调用不共享这份批次。
     // 非目标模板先快速退出；Outer和反射字段不再随每个持续特效请求从头扫描。
     if((!mountAlive(cfaMuzzleMetadata.componentClass) || read<Addr>(object+0x10)!=cfaMuzzleMetadata.componentClass.address) &&
@@ -208,6 +232,7 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
     const auto inserted=cfaMuzzleVisuals.emplace(object,CfaMuzzleVisual{mountIdentity(object),fixedMount.plane,rack,mountIdentity(particle),offset,
         read<unsigned>(object+0x108),
         (read<unsigned char>(object+0x1bc)&0x10)!=0});
+    cfaMuzzleDiscovery.ready=false;
     nativeLog("CFA_LEFT_EML_MUZZLE_SUPPRESSED sp21 FX_EML_Muzzleflash02");
     return &inserted.first->second;
 }
@@ -217,7 +242,7 @@ bool mountCfaMuzzleFilter(void* object,bool requested,unsigned char propagation,
         // 归还失败后仍记最新原生请求；此时只直通，不再抑制或用旧请求覆盖原生状态。
         const auto found=cfaMuzzleVisuals.find(reinterpret_cast<Addr>(object));
         if(found!=cfaMuzzleVisuals.end()) {
-            if(!mountCfaMuzzleAttached(found->second))cfaMuzzleVisuals.erase(found);
+            if(!mountCfaMuzzleAttached(found->second)) { cfaMuzzleDiscovery.ready=false;cfaMuzzleVisuals.erase(found); }
             else if(!hidden)found->second.nativeVisible=requested;
         }
         return false;
@@ -225,22 +250,64 @@ bool mountCfaMuzzleFilter(void* object,bool requested,unsigned char propagation,
     auto* item=mountCfaMuzzleFind(reinterpret_cast<Addr>(object));
     if(!item)return false;
     if(cost.active)++cfaMuzzleCost.sample.hits;
-    if(hidden)mountOriginalHidden(object,requested,propagation); // 隐藏请求照常执行，不取得该位的所有权。
-    else item->nativeVisible=requested;
-    mountCfaMuzzleHide(*item);return true;
+    const auto current=*item; // 原生隐藏入口可能重入；不跨调用保留map节点引用。
+    if(hidden) {
+        cfaMuzzleDiscovery.ready=false;
+        mountOriginalHidden(object,requested,propagation); // 隐藏请求照常执行，不取得该位的所有权。
+    } else item->nativeVisible=requested;
+    mountCfaMuzzleHide(current);return true;
 }
 // 每次模型提交清理一次失效记录；活对象仍保留归还责任，不在每个显隐回调里全表巡检。
 void mountCfaMuzzlePrune() {
     if(cfaMuzzleVisuals.empty())return;
     const MountIdentityBatch identities; // 这里只移除已失效的弱记录，不调用粒子或显隐入口。
     for(auto it=cfaMuzzleVisuals.begin();it!=cfaMuzzleVisuals.end();) {
-        if(!identities.alive(it->second.component))it=cfaMuzzleVisuals.erase(it);
+        if(!identities.alive(it->second.component)) { cfaMuzzleDiscovery.ready=false;it=cfaMuzzleVisuals.erase(it); }
         else ++it;
     }
 }
-// 初始化会先生成持久PSC；提交后及实际取发射位置前补查，覆盖初始已可见而未再调用显隐的粒子。
-void mountCfaMuzzleSync() {
-    if(!mountCfaMuzzleScope())return;
+// 稳定取位只读取当前事实，不遍历反射链、不分配容器，也不调用引擎。
+// 列表长度不变但某个元素被替换，以及同对象换Socket/模板，也会使快照失效。
+bool mountCfaMuzzleCollect(const CfaMuzzleDiscovery& snapshot,std::array<Addr,256>& visible,int& visibleCount) {
+    visibleCount=0;
+    if(!snapshot.ready || !mountSameIdentity(snapshot.plane,fixedMount.plane) ||
+       !mountSameIdentity(snapshot.rack,fixedMount.light->racks[1].component))return false;
+    const MountIdentityBatch identities;
+    if(!identities.alive(snapshot.plane) || !identities.alive(snapshot.rack) || !identities.alive(snapshot.rackClass) ||
+       identities.read<Addr>(snapshot.rack.address+0x10)!=snapshot.rackClass.address)return false;
+    mountCfaMuzzleFieldCurrent(snapshot.childrenField,identities);
+    const Addr array=snapshot.rack.address+snapshot.childrenField.offset;
+    auto sameArray=[&] {
+        return identities.read<Addr>(array)==snapshot.data && identities.read<int>(array+8)==snapshot.count &&
+            identities.read<int>(array+12)==snapshot.capacity;
+    };
+    if(!sameArray())return false;
+    for(int i=0;i<snapshot.count;++i) {
+        const auto& child=snapshot.children[i];
+        const Addr object=identities.read<Addr>(snapshot.data+static_cast<Addr>(i)*8);
+        if(object!=child.component.address)return false;
+        if(!object)continue;
+        if(!identities.alive(child.component) || !identities.alive(child.componentClass) ||
+           identities.read<Addr>(object+0x10)!=child.componentClass.address ||
+           identities.read<Addr>(object+0x100)!=child.parent ||
+           identities.read<unsigned>(object+0x108)!=child.socketIndex ||
+           identities.read<unsigned>(object+0x10c)!=child.socketNumber)return false;
+        if(child.particleField.identity.address) {
+            mountCfaMuzzleFieldCurrent(child.particleField,identities);
+            if(identities.read<Addr>(object+child.particleField.offset)!=child.particle.address ||
+               (child.particle.address && !identities.alive(child.particle)))return false;
+        }
+        const auto found=cfaMuzzleVisuals.find(object);
+        if(child.managed!=(found!=cfaMuzzleVisuals.end()))return false;
+        if(!child.managed)continue;
+        if(!mountCfaMuzzleCurrent(found->second,identities))return false;
+        if(identities.read<unsigned char>(object+0x1bc)&0x10)visible[visibleCount++]=object;
+    }
+    return sameArray();
+}
+// 绑定/重建或快照失配后才重新分类；所有临时读取批次在反射、分配和引擎调用前结束。
+CfaMuzzleDiscovery mountCfaMuzzleDiscover() {
+    CfaMuzzleDiscovery next;next.plane=fixedMount.plane;
     const auto& rack=fixedMount.light->racks[1].component;
     require(mountAlive(rack),"CFA炮口：右炮原生挂架失效");
     const auto cls=mountIdentity(read<Addr>(rack.address+0x10));
@@ -249,20 +316,57 @@ void mountCfaMuzzleSync() {
         auto& api=fixedMount.light->reflection;
         cached={cls,api.field(cls.address,"AttachChildren","ArrayProperty",16,api.typeSize(cls.address),true)};
     }
-    mountCfaMuzzleFieldCurrent(cached.children);
-    const Addr array=rack.address+cached.children.offset;
-    const Addr data=read<Addr>(array);const int count=read<int>(array+8),capacity=read<int>(array+12);
-    require(count>=0 && count<=256 && capacity>=count && capacity<=4096 && (!count || data),"CFA炮口：子组件列表无效");
-    if(count)checkMemory(data,static_cast<size_t>(count)*8);
-    for(int i=0;i<count;++i) {
-        const Addr child=read<Addr>(data+static_cast<Addr>(i)*8);if(!child)continue;
-        mountIdentity(child);
-        if(auto* item=mountCfaMuzzleFind(child))mountCfaMuzzleHide(*item);
+    next.rack=rack;next.rackClass=cls;next.childrenField=cached.children;
+    {
+        const MountIdentityBatch identities;
+        mountCfaMuzzleFieldCurrent(next.childrenField,identities);
+        const Addr array=rack.address+next.childrenField.offset;
+        next.data=identities.read<Addr>(array);next.count=identities.read<int>(array+8);next.capacity=identities.read<int>(array+12);
+        require(next.count>=0 && next.count<=256 && next.capacity>=next.count && next.capacity<=4096 &&
+            (!next.count || next.data),"CFA炮口：子组件列表无效");
     }
-    require(read<Addr>(array)==data && read<int>(array+8)==count && read<int>(array+12)==capacity,
-        "CFA炮口：检查期间子组件列表改变");
+    next.children.resize(next.count); // 仅发现时分配，稳定期不复制或扩容。
+    for(int i=0;i<next.count;++i) {
+        const Addr object=read<Addr>(next.data+static_cast<Addr>(i)*8);if(!object)continue;
+        auto& child=next.children[i];
+        child.component=mountIdentity(object);child.componentClass=mountIdentity(read<Addr>(object+0x10));
+        {
+            const MountIdentityBatch identities;
+            child.parent=identities.read<Addr>(object+0x100);
+            child.socketIndex=identities.read<unsigned>(object+0x108);child.socketNumber=identities.read<unsigned>(object+0x10c);
+        }
+        bool expectedManaged=false;
+        if(child.parent==rack.address && !child.socketNumber && mountNameIndex(child.socketIndex)=="sp21" &&
+           mountClassIs(object,"ParticleSystemComponent","/Script/Engine")) {
+            child.particleField=mountCfaMuzzleFields(object,fixedMount.light->reflection).particle;
+            const Addr particle=read<Addr>(object+child.particleField.offset);
+            if(particle)child.particle=mountIdentity(particle);
+            expectedManaged=mountCfaMuzzleTemplate(particle);
+        }
+        child.managed=mountCfaMuzzleFind(object)!=nullptr;
+        // 分类依据先入快照，再核对账本结果，不能把识别失败后的新Template记成稳定的非目标。
+        require(child.managed==expectedManaged,"CFA炮口：检查期间子组件列表改变");
+    }
+    next.ready=true;return next;
+}
+// 初始化粒子可能未发出新显隐请求；提交强制发现，显示/发射取位则先尝试轻量维护。
+void mountCfaMuzzleSync(bool forceDiscovery) {
+    if(!mountCfaMuzzleScope())return;
+    std::array<Addr,256> visible;int visibleCount{};
+    if(forceDiscovery || !mountCfaMuzzleCollect(cfaMuzzleDiscovery,visible,visibleCount)) {
+        cfaMuzzleDiscovery.ready=false;
+        auto next=mountCfaMuzzleDiscover();
+        require(mountCfaMuzzleCollect(next,visible,visibleCount),"CFA炮口：检查期间子组件列表改变");
+        cfaMuzzleDiscovery=std::move(next);
+    }
+    // 读取批次已经结束。每次引擎调用前再核目标，前一调用可以使后面的候选失效。
+    for(int i=0;i<visibleCount;++i) {
+        const auto found=cfaMuzzleVisuals.find(visible[i]);
+        if(found!=cfaMuzzleVisuals.end())mountCfaMuzzleHide(found->second);
+    }
 }
 bool mountCfaMuzzleRelease() {
+    cfaMuzzleDiscovery={}; // 资格缓存可丢弃；未归还的原生显隐请求仍留在下面的独立账本。
     std::map<Addr,CfaMuzzleVisual> pending;
     for(const auto& entry:cfaMuzzleVisuals)try {
         const auto& item=entry.second;

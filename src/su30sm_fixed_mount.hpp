@@ -199,7 +199,7 @@ void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
 bool mountCfaMuzzleFilter(void*,bool,unsigned char,bool);
 bool mountCfaMuzzleRelease();
-void mountCfaMuzzleSync();
+void mountCfaMuzzleSync(bool forceDiscovery=false);
 bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
 struct F35CoverState {
@@ -611,7 +611,7 @@ bool mountCopyTransform(void* output,int slot) {
     std::memcpy(output,reinterpret_cast<void*>(component+0x180),48);
     return true;
 }
-// 直接发射路径使用逻辑槽取位；普通导弹、其他飞机及重建过程保持原生。
+// 原生显示和实际发射都可能使用逻辑槽取位；普通导弹、其他飞机及重建过程保持原生。
 bool mountTransform(void* manager,void* output,int group,int slot) {
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && mountNeedsMappedTransform(fixedMount,fixedMount.weaponKinds[session.active]) && group==2 &&
        reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try {
@@ -932,7 +932,7 @@ void fixedMountCommit(const Command& command) {
     fixedMount.rebuilding=false;
     if(mountLocal(aircraft))mountLocalMaintain(fixedMount);
     { CfaWorkScope cost(6);mountLightAnimationCommit(); } // CFA公共进度仍由原生推进。
-    { CfaWorkScope cost(7);mountCfaMuzzlePrune();mountCfaMuzzleSync(); }
+    { CfaWorkScope cost(7);mountCfaMuzzlePrune();mountCfaMuzzleSync(true); } // 重建提交必须重新发现炮口，不复用旧组件资格。
     fixedMount.animatedVisualAudit=0; // 兵装重建后所有布局立即刷新，不能被稳定期巡检限频挡住。
     fixedMountRefresh(command.time);
 }

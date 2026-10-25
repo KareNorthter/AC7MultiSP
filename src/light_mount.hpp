@@ -545,11 +545,14 @@ bool mountLightCopyTransform(void* output,const FixedMountState& state,int posit
     require(state.light && position>=0 && position<state.physicalCount,"轻量挂载：发射位置越界");
     const auto& point=state.light->positions[position];const Addr component=point.component.address;
     if(state.aircraft==MountAircraft::Fa44 && point.pool==1)mountCfaMuzzleSync();
-    require(component==state.physical[position] && mountAlive(point.component),"轻量挂载：发射组件身份改变");
-    // 从原挂架的具名Socket取实时世界位置，避免UAV回收运动或隐藏骨缩放污染发射变换。
     const auto& rack=state.light->racks[point.pool];
-    require(mountAlive(rack.component) && read<Addr>(component+0x100)==rack.component.address &&
-        read<unsigned>(component+0x108)==point.socket.index && read<unsigned>(component+0x10c)==point.socket.number,
-        "轻量挂载：发射Socket或父链改变");
+    {
+        const MountIdentityBatch identities;
+        require(component==state.physical[position] && identities.alive(point.component),"轻量挂载：发射组件身份改变");
+        require(identities.alive(rack.component) && identities.read<Addr>(component+0x100)==rack.component.address &&
+            identities.read<unsigned>(component+0x108)==point.socket.index && identities.read<unsigned>(component+0x10c)==point.socket.number,
+            "轻量挂载：发射Socket或父链改变");
+    } // 炮口同步已经结束；本批次也在下面的引擎取位之前结束。
+    // 显示和发射都从具名Socket取实时世界位置，不跨帧缓存变换。
     state.light->socketReader.copy(state.light->reflection,rack.component,point.socket,output);return true;
 }
