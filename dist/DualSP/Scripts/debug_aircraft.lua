@@ -163,13 +163,13 @@ function Module.new(deps)
         end)
         if not ok then self.options={};self.optionsError=tostring(err)end
     end
-    function self:state(session,revision)
+    function self:state(session,revision,includeOptions)
         local allowed,reason=deps.canChange()
         if self.pending then allowed=false;reason=tr("restarting.the.mission.and.waiting.996bed6e")end
-        if allowed then self:refreshOptions(false)end
+        if allowed and includeOptions then self:refreshOptions(false)end
         if self.optionsError then allowed=false;reason=self.optionsError end
         return {protocol=2,session=session,revision=revision,available=allowed==true,reason=reason or "",
-            options=self.options,response=self.response,ack=self.ack,status=self.status,mode="restart",notice=self.notice,error=self.error}
+            options=includeOptions and self.options or nil,response=self.response,ack=self.ack,status=self.status,mode="restart",notice=self.notice,error=self.error}
     end
     function self:request(action)
         if not integer(action.request)or action.request<=self.response then return end

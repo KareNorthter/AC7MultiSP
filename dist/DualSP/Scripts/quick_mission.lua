@@ -327,15 +327,15 @@ function Module.new(deps)
         self.autoChecked=true
         self:request{type="quick_mission_start",quick_protocol=3,request=self.response+1,generation=self.generation,preset=self.saved}
     end
-    function self:state()
+    function self:state(includeLists)
         local menu=deps.enabled()and deps.menu()or nil
         local token=valid(menu)and (address(deps.context().instance)..":"..address(menu))or ""
         if token~=self.menuToken then self.menuToken=token;self.generation=self.generation+1;self.lastRefresh=-100 end
-        if valid(menu)and not self.pending then self:refresh(false)end
+        if includeLists and valid(menu)and not self.pending then self:refresh(false)end
         return {protocol=3,available=valid(menu)and not self.pending and not self.dataError and not deps.otherBusy()or false,
             reason_key=not deps.enabled()and "quick.mod_off"or not valid(menu)and "quick.main_menu_only"or self.dataError and "quick.unavailable"or "",
             generation=self.generation,response=self.response,ack=self.ack,status=self.status,error_key=self.error_key,
-            tasks=self.tasks,planes=self.planes,preset=self.saved,auto_pending=self.autoEligible and not self.autoChecked}
+            tasks=includeLists and self.tasks or nil,planes=includeLists and self.planes or nil,preset=self.saved,auto_pending=self.autoEligible and not self.autoChecked}
     end
     return self
 end

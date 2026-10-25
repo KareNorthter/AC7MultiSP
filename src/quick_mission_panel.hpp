@@ -33,7 +33,7 @@ void drawQuickMission() {
     const auto& data=state.at("quick_mission");
     ImGui::TextWrapped("%s",uiText("quick.help"));
     const bool available=data.value("available",false)&&!quickPending;
-    const auto& tasks=data.at("tasks");const auto& planes=data.at("planes");
+    const auto& tasks=*managementLists[1];const auto& planes=*managementLists[2];
     const Json* task=nullptr;const Json* plane=nullptr;
     for(const auto& row:tasks)if(row.at("mission_id")==quickDraft.at("mission_id"))task=&row;
     for(const auto& row:planes)if(row.at("plane_id")==quickDraft.at("plane_id"))plane=&row;

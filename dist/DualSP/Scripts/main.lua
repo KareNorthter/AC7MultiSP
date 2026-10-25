@@ -1584,6 +1584,8 @@ local function locatePlane()
     end
     return nil,""
 end
+loadExport("dualsp_ui_lists_supported","DualSPUI.dll") -- 轻量状态与独立列表快照须与UI成套。
+weaponSwitch.uiLists={}
 local function publishState()
     publishSequence=publishSequence+1
     local appliedTaskMount=config.task_mount_enabled
@@ -1622,8 +1624,16 @@ local function publishState()
     state.target_gaze={protocol=4,switch_available=weaponSwitch.gaze.canSwitch(),active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,notice_warning=weaponSwitch.gaze.noticeWarning==true,error=weaponSwitch.gaze.error}
     state.camera_hold={protocol=8,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
-    state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision)
-    state.quick_mission=quickMission:state()
+    state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision,panelOpen)
+    state.quick_mission=quickMission:state(panelOpen)
+    -- 大列表只在管理页需要且来源表变化时发送；普通飞行和切换不遍历、编码旧列表。
+    local lists={aircraft=state.debug_aircraft.options,tasks=state.quick_mission.tasks,planes=state.quick_mission.planes}
+    state.debug_aircraft.options=nil;state.quick_mission.tasks=nil;state.quick_mission.planes=nil
+    local changedLists={}
+    for key,value in pairs(lists)do
+        if weaponSwitch.uiLists[key]~=value then changedLists[key]=value end
+    end
+    if next(changedLists)then state.management_lists=changedLists end
     state.master_switch={pending=config.mod_enabled~=runtimeModEnabled,error=masterSwitch.error,response=masterSwitch.response,notice=masterSwitch.notice,
         reason=tr("return.to.the.main.menu.e01e801c")}
     state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
@@ -1643,7 +1653,11 @@ local function publishState()
     if nativeHud.error or hudSamplingError then state.hud_error=nativeHud.error or hudSamplingError end
     if weaponPresentation.error then state.central_error=weaponPresentation.error end
     if errorText then state.error=errorText;state.state=nil end
-    local ok,err=publish(json.encode(state));assert(ok,err)
+    local encodeStarted=os.clock();local encoded=json.encode(state)
+    recordStage("publish_encode",encodeStarted)
+    local submitStarted=os.clock();local ok,err=publish(encoded);assert(ok,err)
+    recordStage("publish_submit",submitStarted)
+    for key,value in pairs(changedLists)do weaponSwitch.uiLists[key]=value end
 end
 -- 禁用先关闭原生与渲染侧入口，再释放自己的控件和事务；不改多人兵装或配置。
 local function checkRuntime(activatedWidget)
@@ -2179,7 +2193,7 @@ local function recordTickCost(started)
         note(string.format("PERF_TICK scene=%s samples=%d average_ms=%.3f peak_ms=%.3f page=%s",scene,performance.count,
             performance.total/performance.count,performance.peak,runtimeContext.observedMenu or "none"))
         -- 父阶段包含子阶段；只用于定位热点，不能把所有阶段相加当作总耗时。
-        for _,name in ipairs({"context","options","pages","preview_scene","preview_native","publish"})do
+        for _,name in ipairs({"context","options","pages","preview_scene","preview_native","publish","publish_encode","publish_submit"})do
             local row=performanceStages[name]
             if row then note(string.format("PERF_STAGE scene=%s stage=%s samples=%d total_ms=%.3f average_ms=%.3f peak_ms=%.3f",
                 scene,name,row.count,row.total,row.total/row.count,row.peak))end
