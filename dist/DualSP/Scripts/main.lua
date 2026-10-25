@@ -277,6 +277,7 @@ local function valid(object)return object and object:IsValid()end
 local nativeClient=dofile(root.."Scripts/native_bridge.lua").new{
     execute=bridge,json=json,profile=Profile}
 local function native(op,target)
+    local started=os.clock()
     if weaponSwitch.salvo.service and op~="switch"and op~="snapshot"then weaponSwitch.salvo.service:release()end
     if ensureMountAssets and runtimeFixedMountEnabled then
         -- 新玩家、重建或检查点是明确的新尝试边界；普通轮切不重复重试失败资源。
@@ -293,6 +294,7 @@ local function native(op,target)
     end
     result.weapon_revision=weaponRevision
     active=result.active;nativeState=result
+    if op=="switch"then recordStage("native_switch",started)end
     -- 核心事务只更新数据；HUD 由选择事务结束或周期调度统一提交。
     -- snapshot/重建返回时的类别可能仍是原生切换过程中的 MSL，不能立即绘制。
     return result
@@ -549,6 +551,7 @@ ensureMountAssets=function(code,sourcePlane,retry,profile)
     return ok
 end
 local function mountPreview(context)
+    local previewStarted=os.clock()
     -- 视觉失败只返回警告，不能冒泡为页面或兵装事务错误。
     local called,ok,warning=pcall(function()
         local supply=context.mode=="resupply"or context.mode=="resupply_transition"
@@ -604,6 +607,7 @@ local function mountPreview(context)
         if supply then supplyPreviewActive=true end
         return accepted,message
     end)
+    recordStage("preview_total",previewStarted)
     if not called then
         if type(context.ownerAddress)=="number"then releaseMountPreview(context.ownerAddress)end
         previewWarning(ok);return false
@@ -979,6 +983,7 @@ end
 refreshHUD=function(now)
     assert(IsInGameThread(),"武器 HUD 必须在游戏线程更新")
     if internal then return end
+    local started=os.clock()
     -- HUD 生命周期不依赖武器输入许可；过场暂时禁止操作不能把已接管的多 SP 恢复成单 SP。
     local enabled=runtimeAllowed and not errorText and (not supplySession or supplySession.applied)and valid(plane)and plane:GetNimbusHUDEnabled()
     -- 右下 HUD 始终启用；中央简称选择常驻或短显，两处共用一次就绪采样和游戏时间。
@@ -1002,6 +1007,8 @@ refreshHUD=function(now)
     else
         weaponPresentation:update(plane,currentProfile,flightOptions,nativeState,enabled,now,config.central_weapon_display,gameTime)
     end
+    lastHUD=now -- 即时切换已刷新，本轮后面的周期调度不再重复采样和绘制。
+    recordStage("hud",started)
 end
 -- 由出击初始化和飞行切换共同使用的输入释放接口，在 configureFlight
 -- 定义前先声明，避免 Lua 将其解析成全局变量。
@@ -2000,7 +2007,9 @@ local function tick()
         end
         observeOriginalSwitch()
         weaponSwitch.pump()
+        local mountStarted=os.clock()
         local mountOK,mountError=updateFixedMount(planeAddress,game:GetTimeSeconds(plane)) -- 统一更新；单 QAAM 保留四处库存模型，其他单挂归还原生。
+        recordStage("flight_mount",mountStarted)
         assert(mountOK,mountError)
         mountWarning=mountError~=""and mountError or nil -- 模型失败独立降级，不中断弹药、冷却或切换。
     end
@@ -2193,7 +2202,7 @@ local function recordTickCost(started)
         note(string.format("PERF_TICK scene=%s samples=%d average_ms=%.3f peak_ms=%.3f page=%s",scene,performance.count,
             performance.total/performance.count,performance.peak,runtimeContext.observedMenu or "none"))
         -- 父阶段包含子阶段；只用于定位热点，不能把所有阶段相加当作总耗时。
-        for _,name in ipairs({"context","options","pages","preview_scene","preview_native","publish","publish_encode","publish_submit"})do
+        for _,name in ipairs({"context","options","pages","preview_scene","preview_total","preview_native","native_switch","flight_mount","hud","publish","publish_encode","publish_submit"})do
             local row=performanceStages[name]
             if row then note(string.format("PERF_STAGE scene=%s stage=%s samples=%d total_ms=%.3f average_ms=%.3f peak_ms=%.3f",
                 scene,name,row.count,row.total,row.total/row.count,row.peak))end

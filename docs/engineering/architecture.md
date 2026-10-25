@@ -48,6 +48,8 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 本轮2.26.1 alpha1候选将F6大列表与轻量状态分开：Lua仅在管理页打开时刷新换机、快速任务机体/皮肤与任务列表，按来源表身份变化发送`management_lists`。普通飞行及兵装切换仍及时发布HUD、设置、许可和事务回执，但不再编码旧列表。UI接收端在短锁内分别交换三份不可变列表及轻量状态，轻量快照覆盖不会丢掉尚未消费的列表；渲染侧按共享身份保有列表，换机选项只在列表变化时重新解析。新增`dualsp_ui_lists_supported`要求Lua/UI成套，旧组件不能静默混装。列表仅用于显示，换机/快速任务提交仍执行原有实时身份、许可及目标核对，不能以列表缓存绕过检查。
 
+2.26.1 alpha2在成功的即时HUD刷新后更新周期时间戳，避免当轮后续100ms调度重复采样。切换和重建的即时调用保留；不合并不同选择事务。新增`preview_total`（Lua准备及原生预览）、`native_switch`（含资源检查及兵装请求）、`flight_mount`、`hud`四项15秒汇总；`preview_native`包含在`preview_total`中，仍不可相加。评估和用户测试方法见[性能评估](../research/runtime-performance.md)。
+
 候选沿用`PERF_STAGE`统计并新增`publish_encode`、`publish_submit`两项，分别覆盖Lua JSON编码和UI DLL同步提交；包含于`publish`总耗时，不可相加作总开销。只在原15秒汇总时输出，不逐帧刷日志。自测重点是频繁切换时的发布峰值和鼠标飞控回中、F6开关后的列表及事务回执；尚未宣称实机性能收益或冲突已解决。
 
 核心 `dualsp_execute_memory_v1` 直接接收操作、身份、配置、请求号等参数并返回本次结果；目录走 `dualsp_catalogue_memory_v1`。状态通过 `dualsp_publish_memory_v1` 交换不可变快照，动作由 `dualsp_drain_actions_memory_v1` 领取一次。连续同来源、尚未领取的直选只保留最后目标，其他动作截断合并；原生轮切和齐射不合并。游戏线程最终仍检查许可、身份、在途状态和请求号。

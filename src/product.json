@@ -25,5 +25,5 @@
     "mount_assets.lua",
     "mod_aircraft.lua"
   ],
-  "receipt_prefix": "2.26.1-alpha1"
+  "receipt_prefix": "2.26.1-alpha2"
 }

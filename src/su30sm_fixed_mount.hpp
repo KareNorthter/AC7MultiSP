@@ -122,7 +122,7 @@ struct FixedMountState {
     MountIdentity animatedRack; // 已选择并需要持续播放的 F-35C SWP2；显隐接管也必须接管动画生命周期。
     bool nativeRackPaused{},nativeRackTick{}; // 最近一次原生重建请求，解除固定挂载时归还。
     uint64_t readyMask{}; // 实际物理位置的聚合就绪状态。
-    ULONGLONG animatedVisualAudit{}; // 新三机无状态变化时只周期核对显隐，骨骼/附着位置仍由原生逐帧更新。
+    ULONGLONG animatedVisualAudit{}; // 无状态变化时只周期核对显隐，骨骼/附着位置仍由原生逐帧更新。
     ULONGLONG localAnimationAudit{}; // 局部机构资格巡检独立计时，不被弹药显隐刷新延后。
     MountIdentity exteriorRack;
     size_t exteriorMeshOffset{};
@@ -224,14 +224,17 @@ std::string mountHookFailure; // 安装失败明确阻止本进程重试，不�
 std::atomic<DWORD> mountGameThread{0}; // 全局显隐入口可能被别的线程调用，只有绑定线程可读取本原型状态。
 
 // 只解码本研究使用的 ASCII 对象名；名称表及最大长度均有边界。
-std::string mountNameIndex(unsigned index) {
+std::string mountNameIndex(unsigned index,const NativeReadBatch& memory) {
     require(index<4000000,"固定挂载：名称索引越界");
     const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 当前主映像。
-    const Addr names=read<Addr>(base+0x3bc7070); // 本 build 的分块名称表。
-    const Addr chunk=read<Addr>(names+(index/0x4000)*8); // 每块 16384 项。
-    const Addr entry=read<Addr>(chunk+(index%0x4000)*8); // 名称条目含 16 字节头。
-    require((read<unsigned char>(entry)&1)==0,"固定挂载：预期的资源名不是 ASCII");
+    const Addr names=memory.read<Addr>(base+0x3bc7070); // 本 build 的分块名称表。
+    const Addr chunk=memory.read<Addr>(names+(index/0x4000)*8); // 每块 16384 项。
+    const Addr entry=memory.read<Addr>(chunk+(index%0x4000)*8); // 名称条目含 16 字节头。
+    require((memory.read<unsigned char>(entry)&1)==0,"固定挂载：预期的资源名不是 ASCII");
     return readBoundedName(entry+16,"固定挂载：资源名不可读或没有终止符");
+}
+std::string mountNameIndex(unsigned index) {
+    const NativeReadBatch memory;return mountNameIndex(index,memory);
 }
 // 资源身份使用对象本名，不依赖用户配置的机体编号。
 std::string mountName(Addr object) { return mountNameIndex(read<unsigned>(object+0x18)); }
@@ -275,6 +278,15 @@ struct MountIdentityBatch {
         Addr object{};int serial{};std::memcpy(&object,bytes.data(),8);std::memcpy(&serial,bytes.data()+16,4);
         return object==id.address && serial==id.serial;
     }
+    MountIdentity identity(Addr object) const {
+        const int index=memory.read<int>(object+0xc);
+        require(index>=0 && index<count,"固定挂载：对象索引无效");
+        const auto bytes=memory.read<std::array<unsigned char,24>>(entries+static_cast<Addr>(index)*24);
+        Addr address{};int serial{};std::memcpy(&address,bytes.data(),8);std::memcpy(&serial,bytes.data()+16,4);
+        require(address==object,"固定挂载：对象表身份不匹配");
+        return {object,index,serial};
+    }
+    std::string name(Addr object) const {return mountNameIndex(memory.read<unsigned>(object+0x18),memory);}
     template<class T> T read(Addr address) const {return memory.read<T>(address);}
 };
 // 使用已核对的组件 Tick 接口更新调度队列，不能仅改 Tick 状态字节。
@@ -809,7 +821,8 @@ void fixedMountRefresh(double time) {
     for(int weapon=0;weapon<session.count;++weapon) {
         if(mountLight(fixedMount.aircraft) && !mountLightMapped(fixedMount.aircraft,fixedMount.weaponKinds[weapon]))continue;
         if((fixedMount.aircraft==MountAircraft::F15e && fixedMount.weaponKinds[weapon]==2) || mountFixedEmitter(fixedMount.aircraft,fixedMount.weaponKinds[weapon]))continue; // 固定炮体常驻，不把效果寿命当作导弹冷却。
-        const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon]; // 当前或缓存队列。
+        const Group live=weapon==session.active?capture(session.activator,true,time):Group{};
+        const Group& group=weapon==session.active?live:session.special[weapon]; // 非活动队列只读引用，不复制弹槽。
         const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
         const int count=fixedMount.logicalCounts[fixedMount.weaponKinds[weapon]]; // 槽数与模型池一一核对。
         require(group.slots.size()==static_cast<size_t>(count) && dualsp::validAmmoCount(ammo) && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
@@ -845,7 +858,8 @@ void fixedMountRefresh(double time) {
     if(changed)nativeLog(Json{{"event","FIXED_MOUNT_MASK"},{"before",fixedMount.readyMask},{"after",mask},{"game_time",time}}.dump());
     fixedMount.readyMask=mask;
     const auto now=GetTickCount64();
-    if(!mountAnimated(fixedMount.aircraft) || changed || now-fixedMount.animatedVisualAudit>=100) {
+    // 弹体变化仍当轮提交；静态显隐兜底与活动挂架共用100ms巡检，原生显隐钩子仍即时响应。
+    if(changed || now-fixedMount.animatedVisualAudit>=100) {
         mountApply();fixedMount.animatedVisualAudit=now;
     }
 }
@@ -919,7 +933,7 @@ void fixedMountCommit(const Command& command) {
     if(mountLocal(aircraft))mountLocalMaintain(fixedMount);
     { CfaWorkScope cost(6);mountLightAnimationCommit(); } // CFA公共进度仍由原生推进。
     { CfaWorkScope cost(7);mountCfaMuzzlePrune();mountCfaMuzzleSync(); }
-    if(mountExterior(aircraft) || mountLight(aircraft))fixedMount.animatedVisualAudit=0; // 事务结束后立即刷新一次，不重复维护。
+    fixedMount.animatedVisualAudit=0; // 兵装重建后所有布局立即刷新，不能被稳定期巡检限频挡住。
     fixedMountRefresh(command.time);
 }
 // 动画状态独立于是否选择多挂；补给转单挂后也应正常关闭上一组舱门。

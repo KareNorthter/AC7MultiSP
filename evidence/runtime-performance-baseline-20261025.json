@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "main": "19b1528d599d9d2d34c9f48ceba7799c6355669c",
+  "prior_optimization": "dfe84ed37f77cd2fc5552162f5b63e11cfa27737",
+  "pid": 35532,
+  "baseline_snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-runtime-preview-performance\\baseline-alpha1\\snapshot.json",
+  "snapshot_sha256": "47de605ea8ed3ff96800010313d45513a89322b046caaa79c76e399f7ecd35fe",
+  "models_off": {
+    "samples": 43,
+    "median_ms": 3.4491,
+    "p95_ms": 6.5923,
+    "max_ms": 7.9049
+  },
+  "models_on": {
+    "samples": 97,
+    "median_ms": 29.1257,
+    "p95_ms": 42.6618,
+    "max_ms": 45.6038
+  },
+  "limitations": [
+    "既有日志，不是受控A/B",
+    "核心事务不等于完整帧或GPU耗时",
+    "父子阶段嵌套，不能相加",
+    "alpha2尚未游戏实测"
+  ]
+}
