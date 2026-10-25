@@ -49,7 +49,7 @@ Git不含ignored原料、音频、工具、原版PAK或冻结产物。接收时�
 
 ## 验证与安装保护
 
-游戏构建、既有检查、ZIP成员回读、EXE编译、实际安装、用户实测和正式发布分别记录。本轮授权制作候选；完整构建会做Lua语法和产物/来源核对，封装会回读ZIP，但这些不等于运行`tests/run.py`或游戏实测。新候选的双语显示、安装事务和实际部署边界见[交付方案](../project/delivery.md#待验证范围)。
+游戏构建、既有检查、ZIP成员回读、EXE编译、实际安装、用户实测和正式发布分别记录。构建按当次正式或候选授权执行；完整构建会做Lua语法和产物/来源核对，封装会回读ZIP，但这些不等于运行`tests/run.py`或游戏实测。新候选的双语显示、安装事务和实际部署边界见[交付方案](../project/delivery.md#待验证范围)。
 
 当前EXE的旧安装识别、文件备份、管理器托管拒绝和失败恢复在`src/delivery/setup/Bundle.cs`维护；通用ZIP的Vortex部署映射由封装器逐文件生成。玩家操作只维护[中英文安装说明](../project/player-docs.md)，本页不另写安装步骤。
 
@@ -72,7 +72,7 @@ Git不含ignored原料、音频、工具、原版PAK或冻结产物。接收时�
 | 新候选交付 | 构建与封装核对不代替游戏实测；双语界面、ZIP部署、EXE安装/更新/卸载及异常恢复分别验证，见[交付方案](../project/delivery.md) |
 | 线上更新 | 本轮未上传或核查线上清单及下载文件；[Pages与R2旧说明](../archive/delivery/Pages与R2发布更新说明.md)仅作历史参考，不代表新包已上线 |
 | CFA切换尖峰与偶发视觉 | 用户确认明显减轻，仍有尖峰；ECM阶段未细分到单函数，偶发EML蓝光根因未证实，见[工程经验](engineering-lessons.md)和[挂载设计](multi-sp-mount-design.md) |
-| 选装进入SP1/光标、结算箭头、F-2A性能 | 结算轻卡仍有，其他专项保留；旧成果已接收不等于全场景性能问题解决 |
+| 选装进入SP1/光标、结算箭头及剩余切换成本 | 结算轻卡及选装专项保留；CFA EML持续掉帧与F-2A普通飞行已获2.26.1有效反馈，模型开时CFA切换短降帧可接受；不扩大为全场景性能问题解决，见[性能验收](../research/runtime-performance.md#alpha3验收与正式2261) |
 | MiG-31B r3及动态净空 | 整体布局获认可，后腹SAAM位移、支撑及机腹净空仍需观察；离线包络不替代动态验收 |
 | F-14IA原生异步依赖 | 当前提前退回原生并保留本机隐藏隔离，不代表修好第三方蓝图加载顺序，见[安全退让](../../evidence/special-aircraft-native-fallback-20261022.json) |
 | PW旧退出、CFA暂停异常 | PW首轮根因未明；CFA对象创建跳板异常不能与ADMM队列或最终退出断点强判同因，见[PW记录](../../evidence/pwmki-sortie-crash-2.20.1.json)、[CFA记录](../../evidence/cfa44-admm-debug-pause-crash-20261021.json) |

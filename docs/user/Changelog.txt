@@ -1,23 +1,11 @@
 AC7MultiSP
 
-2.26.1 alpha3 (test build)
-• Restored English for the specified fixed labels in native loadout and resupply menus. Weapon descriptions and takeoff prompts still follow the game language; F6 and the installer retain Chinese and English.
-• Optimized CFA-44 EML muzzle checks during steady flight and reduced repeated camera, object-identity, rack and model-visibility checks. Actual frame-rate gains require in-game verification.
+2.26.1
+• Optimized CFA-44 EML muzzle checks, resolving the sustained frame-rate drop while EML was selected in the tested scenarios, and improved F-2A performance during normal flight.
+• Reduced repeated validation and data transfer during flight, weapon switching, and native loadout/resupply selection while retaining immediate ammo, reload and HUD updates. Frequent switching with multi-SP models enabled may still cause brief frame-rate drops.
 • Fixed the CFA-44 ventral bay: it stays closed with multi-SP models enabled. With models disabled, it opens only while ADMM is selected and closes after switching to EML, ECM or MSL.
-• Unified compatibility-failure handling for sustained effects and weapon bays, isolating local failures by aircraft instance. Multi-SP operations remain blocked when cleanup safety cannot be verified.
-• Tracked releases of temporary sustained-effect retention so cleanup failures prevent a successful response. Added switch-stage logs for other aircraft to help locate remaining stutter.
-• Includes the UI transfer, loadout and steady-flight optimizations from alpha1 and alpha2.
-
-2.26.1 alpha2 (test build)
-• Reduced repeated model validation when selecting SP weapons in the hangar and resupply menu, plus model polling and data copying during steady flight.
-• Avoided duplicate HUD refreshes after switching in the same update; immediate weapon switching, ammo and cooldown updates are retained.
-• Added periodic performance breakdowns for comparing stutter after installation. In-game improvement remains to be verified.
-• Includes the UI state-transfer optimization from alpha1.
-
-2.26.1 alpha1 (test build)
-• Optimized UI state transfer during flight and weapon switching by separating large aircraft and quick-mission lists.
-• Management lists are transferred when F6 is open and an update is needed; weapon, HUD and operation-result updates remain immediate.
-• Intended to investigate occasional mouse-flight camera recentering. Performance and compatibility still require in-game verification.
+• Restored English for the specified fixed labels in native loadout and resupply menus. Weapon descriptions and takeoff prompts still follow the game language; F6 and the installer retain Chinese and English.
+• Unified compatibility-failure handling for sustained effects and weapon bays, isolating local failures by aircraft instance. Multi-SP operations remain blocked when cleanup safety cannot be verified, preventing cleanup failures from being reported as successful operations.
 
 2.26.0
 • Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.

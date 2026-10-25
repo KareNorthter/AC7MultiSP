@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1",
+  "candidate": false,
+  "user_statement": "1.CFA44优化良好，①关闭多sp模型：普通飞行120FPS，频繁切换降低10fps。弹舱动画正常。②开启多sp模型：普通飞行120fps，频繁切换降低40fps，可接受。eml不会专门掉帧。弹舱动画正常。\n2.F2A在打开和关闭sp模型时，普通飞行都120fps，和其他飞机差不多了，优化有效。\n3.其他功能均正常。\n现在合入main，版本号正式命名为2.26.1，写入更新日志文档。然后提供exe。",
+  "accepted_candidate": "2.26.1 alpha3",
+  "accepted_artifact_record": "evidence/2.26.1-alpha3-integration-delivery.json",
+  "accepted_exe_sha256": "647be5d4bf811685e5ebc6d69b15cb70d0353938d2ca11cdfb224e6430d85385",
+  "main_before": "19b1528d599d9d2d34c9f48ceba7799c6355669c",
+  "integration_before": "ea9cf29c55692f86e5fdba8d3c72c629f58792f2",
+  "feedback": {
+    "cfa44_models_off": {
+      "normal_fps": 120,
+      "frequent_switch_drop_fps": 10,
+      "bay_animation": "正常"
+    },
+    "cfa44_models_on": {
+      "normal_fps": 120,
+      "frequent_switch_drop_fps": 40,
+      "user_assessment": "可接受",
+      "eml_specific_drop": false,
+      "bay_animation": "正常"
+    },
+    "f2a": {
+      "normal_fps_models_on": 120,
+      "normal_fps_models_off": 120,
+      "user_assessment": "和其他飞机差不多，优化有效",
+      "switch_performance": "本轮未单独报告"
+    },
+    "other_features": "用户总体确认正常，未逐项补造测试记录"
+  },
+  "authorization": [
+    "合入main",
+    "正式版本2.26.1",
+    "更新中英文日志",
+    "重新构建交付EXE"
+  ],
+  "scope": "只变更正式版本元数据、同源文字及验收/工程状态；运行逻辑沿用已验收alpha3。正式EXE需要重新构建，不改名冒充、不覆盖旧产物。",
+  "not_authorized": [
+    "运行测试模块",
+    "安装或操作游戏",
+    "推送GitHub",
+    "上传或部署线上服务"
+  ],
+  "limits": [
+    "FPS来自用户观察，非新增受控性能测量",
+    "候选验收不等于新正式字节已实装",
+    "未追认故障注入、Root异常释放或异机恢复等专项",
+    "XFA-33 B及Su-57 TGM公共舱继续暂缓"
+  ]
+}
