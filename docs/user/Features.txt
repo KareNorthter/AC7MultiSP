@@ -3,8 +3,8 @@ AC7MultiSP Features
 1. Main features
 1. All aircraft can sortie with up to three types of SP weapons.
    By default, each SP weapon has 50% ammunition when carrying two types, or 33% when carrying three. Both settings can be adjusted to 100%.
-2. Most base-game and DLC aircraft have dedicated SP weapon mounting models, displaying multiple SP weapon types on the aircraft to avoid abrupt model changes when switching weapons.
-   This feature may reduce FPS or cause stuttering. It can be disabled separately for missions and the hangar.
+2. SP weapon mounting models have been made for most individual aircraft in the base game and DLC, displaying multiple SP weapon types on the aircraft at the same time to avoid abrupt model changes when switching weapons.
+   This feature may reduce FPS or cause stuttering. It can be disabled during missions or in the hangar.
 3. When carrying MGP/HGP/PLSL pods, the built-in gun and pods can fire together with one button.
 4. Camera controls:
    • Optional persistent target tracking: press the target-tracking button to keep tracking without holding it down.
@@ -14,19 +14,17 @@ AC7MultiSP Features
    • Change the SP weapon combination during a mission.
    • Unlimited ammunition and fast reload for SP weapons.
    • Change aircraft and restart the mission.
-   • Main-menu quick missions allow skin selection, 1–3 SP weapons and saved test presets, with optional automatic launch on next startup. M13 retains its assigned SP.
+   • Quickly enter a mission from the main menu to help develop and test mods.
 
 2. Common controls
 These are the default controls. Keyboard bindings can be customized.
-• F6 or controller Back + Y: open the management interface.
+• F6 or controller Select + Y: open the management interface.
 • Keyboard 1 / 2 / 3 / 4: select standard missiles / the first / second / third SP weapon.
 • Controller D-pad left / up / right / down: select the same four weapons. Controller X still cycles weapons.
 • Ctrl + Alt + F5: toggle linked gun fire.
 • Ctrl + Alt + F6: toggle camera hold.
 • Enable persistent target tracking separately on the Camera page of the management interface. Hold Y on the controller to start tracking, then hold Y again to stop. On the keyboard, press the target-tracking key assigned in the game settings once to start, and again to stop.
 • Press L3: recenter the camera / stop target tracking. Hold R3: toggle camera hold.
-• Use "Version and Updates" to check manually. Download buttons appear only when a newer version is found: R2 is the primary link, with other links numbered as backups. The feedback row shows the email and test QQ group and can open the mod's log folder.
-  "Check for updates when the game starts" is enabled by default. Click "Save settings" after changing it. Disabling it skips automatic checks on the next launch; manual checks remain available. Existing personal settings and loadouts are preserved.
 
 3. Multi-SP weapon model support
 1. Fully supported:
@@ -34,7 +32,6 @@ These are the default controls. Keyboard bindings can be customized.
 • Mirage 2000-5, Rafale M, Typhoon, Gripen E
 • MiG-29A, MiG-31B (some combinations mount SAAM under the fuselage), MiG-35D, Su-30M2, Su-30SM, Su-33, Su-34, Su-35S, Su-37
 • XFA-27, ADFX-01, ADF-01 FALKEN (weapons cannot be switched while firing TLS), ADF-11F, CFA-44 (ADMM on the left, EML on the right, ECM model hidden)
-• CFA-44 ventral bay: stays closed when multi-SP models are enabled. With multi-SP models disabled, it opens only while ADMM is selected and active, and closes after switching to EML, ECM or MSL.
 
 2. Partially supported:
 • F-22A: the 8AAM pods are always visible. SP weapon models inside the fuselage weapon bays change when switching weapons.
@@ -43,20 +40,19 @@ These are the default controls. Keyboard bindings can be customized.
 
 3. Not yet supported:
 A-10, ASF-X, F-2A Super Kai, F-104C, MiG-21bis
-RKT-related performance issues remain unresolved. The F-104C and MiG-21bis also have too few pylons.
 Su-47, Su-57 TGM, X-02S, FB-22, YF-23
-Performance issues with the mod taking over internal weapon bay animations remain unresolved.
 Popular mod aircraft will also receive priority for future support.
 
 4. Scope and compatibility with other mods
 • For the Steam version, single-player campaign only. Disabled in multiplayer.
 • Compatible mods: most add-on aircraft, skins, AC7MouseAim, Enhanced Gunplay, All Aircraft PSM, Modular Weapon Swap.
-• Multi-SP, sustained effects and multi-SP visuals are qualified separately. A local bay-adaptation failure falls back to native behavior. A sustained-effect failure stops Multi-SP reads and writes for the affected aircraft instance; leave the mission and sortie again. If cleanup or shared-state safety cannot be verified, restart the game. See the log for details.
-• Currently incompatible: F-14IA, Pre-Campaign VR missions.
+• Cannot coexist with: F-14IA.
+• Can coexist with, but this mod does not take effect in: Pre-Campaign VR missions.
 
 5. Known issues
 • Linked gun fire is not yet compatible with some mod aircraft.
-• Loading multi-SP models on the F-2A causes severe FPS drops.
+• The ventral weapon bays on some aircraft may remain open.
 • The SP weapon performance bars do not change when selecting PARTs. This is a UI issue; the parts still take effect.
 • Special effects triggered by holding the weapon-switch button on some mod aircraft may not be fully supported.
 • Some aircraft with special sustained effects (such as APS on the ADF-11) cannot select them together with SP weapons.
+• On lower-performance PCs, very low FPS while this mod is enabled may cause mouse-flight control problems. If this happens, disable multi-SP models to improve FPS.

@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1",
+  "user_instruction": "我修改了user的4个中文文件，把他们翻译成英文，然后制作exe，zip发布包和网页。我会发布。另外增加一条项目全局规则：任何对user中文文件的改动都必须由我逐条审核，不得静默修改。",
+  "source": "E:/AC7_MultiSP/docs/user",
+  "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-release-2.26.1-author-text\\author-input",
+  "chinese_files": {
+    "功能说明.txt": {
+      "sha256": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c",
+      "size": 3722
+    },
+    "安装说明.txt": {
+      "sha256": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+      "size": 1230
+    },
+    "更新日志.txt": {
+      "sha256": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554",
+      "size": 2005
+    },
+    "作者与授权.txt": {
+      "sha256": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+      "size": 2466
+    }
+  },
+  "english_files": {
+    "Features.txt": "8f28d290d3ab75d1df4e3760805eda154eb8afcc5e0e99fc7e8e519f249c8566",
+    "Installation.txt": "0cebc9ba8a77029a232b6c8f9c74ae2655b577031f1e31fe8d6da46875fbe498",
+    "Changelog.txt": "2d80613a9ca474351560bc828b900e3b07378f0806a0067b06bae6ed67d9883b",
+    "Author-and-License.txt": "0378fe3753a79b6d0f5d3ec39bd11289329b49e07a57aaa70e117162133e1b4d"
+  },
+  "chinese_bytes_preserved": true,
+  "global_rule": "AGENTS.md -> docs/project/workflow.md#user中文文件逐条审核",
+  "scope": "只同步英文及生成资源，中文原文不改写；正式版本2.26.1，重新制作EXE、ZIP和完整网页，由作者手动上传。",
+  "previous_build_retained": "E:/AC7_MultiSP/Temp/tasks/20261025-release-2.26.1/game-build",
+  "publication": "沿用作者此前R2单入口、不提供蓝奏云的约定；本地网页是上传材料，尚未核对新EXE远端下载或部署。",
+  "tests_run": false,
+  "installed": false,
+  "uploaded": false
+}

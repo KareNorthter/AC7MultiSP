@@ -1,5 +1,6 @@
 AC7MultiSP 安装说明
 
+本mod仅适用于Steam版本的ACE COMBAT 7 最新版。
 本说明适用于通用ZIP及配套EXE安装程序。vortex安装和exe安装请任选一种，更新和卸载也沿用同一种方式，不要混用。
 不支持CreeperUX启动器安装（因为本mod同时含有ue4ss组件和pak文件，CreeperUX不拷贝pak文件）
 

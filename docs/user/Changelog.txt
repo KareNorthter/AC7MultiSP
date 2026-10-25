@@ -1,11 +1,8 @@
 AC7MultiSP
 
 2.26.1
-• Optimized CFA-44 EML muzzle checks, resolving the sustained frame-rate drop while EML was selected in the tested scenarios, and improved F-2A performance during normal flight.
-• Reduced repeated validation and data transfer during flight, weapon switching, and native loadout/resupply selection while retaining immediate ammo, reload and HUD updates. Frequent switching with multi-SP models enabled may still cause brief frame-rate drops.
-• Fixed the CFA-44 ventral bay: it stays closed with multi-SP models enabled. With models disabled, it opens only while ADMM is selected and closes after switching to EML, ECM or MSL.
-• Restored English for the specified fixed labels in native loadout and resupply menus. Weapon descriptions and takeoff prompts still follow the game language; F6 and the installer retain Chinese and English.
-• Unified compatibility-failure handling for sustained effects and weapon bays, isolating local failures by aircraft instance. Multi-SP operations remain blocked when cleanup safety cannot be verified, preventing cleanup failures from being reported as successful operations.
+• Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.
+• Fixed the CFA-44 ventral weapon bay failing to close.
 
 2.26.0
 • Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.

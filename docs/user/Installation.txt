@@ -1,5 +1,6 @@
 AC7MultiSP Installation Guide
 
+This mod is only for the latest Steam version of ACE COMBAT 7.
 This guide applies to the universal ZIP and its EXE installer. Choose either Vortex or EXE installation, and use the same method for updates and removal. Do not mix them.
 Installation through the CreeperUX launcher is not supported: this mod contains both UE4SS components and PAK files, and CreeperUX does not copy PAK files.
 
