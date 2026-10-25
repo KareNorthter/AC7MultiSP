@@ -26,7 +26,7 @@
   ],
   "included": [
     "F6控件、帮助、状态、通知、异常摘要；新版下载主备按钮、日志目录反馈入口",
-    "本项目写入原生选装页的标题、空槽、分类及提示",
+    "本项目写入原生选装/补给页的文字仍共用资源；指定标题、空槽、分类及确认按钮取英文，描述与提示保留双语，精确范围见同目录README",
     "换机通知和机体许可附注",
     "原uiMessages有序显示转换表",
     "四份中英文玩家正文；F6展示更新日志和作者与授权，固定页脚及反馈栏复用正文提取结果",
@@ -43,7 +43,7 @@
   "original_literal_bilingual_total_excluding_language_sentinel": 214,
   "resources_id_rule": "初次提取以英文短语和摘要生成稳定ID；后续修改中英文值时保留ID，禁止按新文字重建ID。",
   "stable_diagnostic_match_keys": 267,
-  "language_boundary": "原生选装页跟随游戏语言；F6界面、状态通知和文档按管理页语言。状态桥的原中文片段只作匹配键，两种显示正文均来自catalog。",
+  "language_boundary": "游戏自身UI保持原样；原生选装/补给页指定固定标签由调用端明确取英文，具体描述与起飞等提示仍跟随游戏语言。F6界面、状态通知和文档按管理页语言；安装器单独维护双语。共用catalog中文值与状态桥原文匹配键不因原生标签改英文而改变。",
   "current_message_replacements": 268,
   "additional_bridge_messages": 3,
   "startup_update_option": "启动检查默认开启，随管理设置保存；已存在配置仅补缺失字段，手动检查不受开关影响；管理协议22，配置版本19保留",

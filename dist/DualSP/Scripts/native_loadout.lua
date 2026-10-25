@@ -30,7 +30,7 @@ function NativeLoadout.new(dependencies)
     local mountPreview,releaseMountPreview=dependencies.mountPreview,dependencies.releaseMountPreview
     assert(mode=="preparation"or mode=="resupply"or mode=="standby"or mode=="parts","未知原生页面模式")
     if mode=="preparation"or mode=="resupply"then assert(type(commit)=="function","交互页面缺少提交接口")end
-    local tr=assert(translate,"缺少原生页面语言提供器") -- 页面语言由游戏文本文化决定。
+    local tr=assert(translate,"缺少原生页面语言提供器") -- 描述和提示跟随游戏；原生页固定标签明确取英文，不改共用译表。
     -- 每个适配器独立保存草稿、控件与原生确认事务。
     local supply=mode=="resupply"
     local parts=mode=="parts" -- PART 页复用右栏只读展示，不接管部件选择。
@@ -241,7 +241,7 @@ function NativeLoadout.new(dependencies)
         applyLayout(retained,layout,widget)
     end
     local function preparationTitle(stage)
-        return tr("select.sp.weapon.53a0281b")..assert(stage:match("^sp([123])$"),"准备页兵装标题阶段无效")
+        return tr("select.sp.weapon.53a0281b","en")..assert(stage:match("^sp([123])$"),"准备页兵装标题阶段无效")
     end
     -- 原生文字模板含隐藏动画的内部状态，新增文字从干净对象初始化，只复制显示样式。
     local function initializeLeaf(widget,source,isImage,initialText)
@@ -644,7 +644,7 @@ function NativeLoadout.new(dependencies)
                 column.icon:SetBrushFromMaterial(material)
             end
             column.heading=infoWidget(c,templates.heading,panel,{X=0,Y=3*pitch+detailsOffset},{X=width,Y=24},false)
-            setText(c,column.heading,tr("weapon.specifications.24d42767"))
+            setText(c,column.heading,tr("weapon.specifications.24d42767","en"))
             for i,item in ipairs(templates.items)do
                 local y=(i+3)*pitch+detailsOffset -- 性能和类型整体下移，不挤压名称或内部行距。
                 local label=infoWidget(c,item.SpecName,panel,{X=0,Y=y},{X=width*.58,Y=pitch},false) -- 标签与条形区分开。
@@ -658,7 +658,7 @@ function NativeLoadout.new(dependencies)
                 column.ammo=infoWidget(c,templates.ammo,panel,{X=0,Y=14*pitch+detailsOffset},{X=width,Y=32},false)
                 setText(c,column.ammoHeading,ammoLabel)
             end
-            setText(c,column.typeHeading,tr("type.c0f69ff1"))
+            setText(c,column.typeHeading,tr("type.c0f69ff1","en"))
         end
     end
     -- 展示文案可缺省；对象、页面和兵装写入所需的结构校验仍保留。
@@ -732,15 +732,15 @@ function NativeLoadout.new(dependencies)
             -- 悬停数量与颜色独立更新，不反复重画未变的名称和 18 个基础性能条。
             local signature=tostring(weapon)
             if column.lastContent==signature then goto nextColumn end
-            setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or tr("empty.02cab14e")))
-            local fullName=option and weaponFullName(c,option)or tr("no.weapon.f5499408") -- 空挂载不查询不存在的兵装键。
-            local typeText=tr("no.weapon.f5499408")
+            setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or tr("empty.02cab14e","en")))
+            local fullName=option and weaponFullName(c,option)or tr("no.weapon.f5499408","en") -- 空挂载不查询不存在的兵装键。
+            local typeText=tr("no.weapon.f5499408","en")
             if option then
                 local typeKey=type(option.type_key)=="string"and option.type_key or ""
                 local typeTextKey=weaponTypes[typeKey:gsub("^HangarWeaponType_Name_","")]
-                typeText=typeTextKey and tr(typeTextKey)or nil
+                typeText=typeTextKey and tr(typeTextKey,"en")or nil
                 if not typeText then
-                    typeText=tr("other.5a9cd7bf");displayFallback(c,"type:"..typeKey,"type="..typeKey.." 使用OTHER")
+                    typeText=tr("other.5a9cd7bf","en");displayFallback(c,"type:"..typeKey,"type="..typeKey.." 使用OTHER")
                 end
             end
             if column.fullName then setText(c,column.fullName,fullName)else typeText=fullName end -- STANDBY 紧凑栏保留原有全名位置。
@@ -764,7 +764,7 @@ function NativeLoadout.new(dependencies)
             end
             -- 准备页弹药汇总的三个逻辑槽与上方三栏保持一致。
             if c.ammo then
-                setText(c,c.ammo[i].name,option and option.code:upper()or tr("empty.02cab14e"))
+                setText(c,c.ammo[i].name,option and option.code:upper()or tr("empty.02cab14e","en"))
             end
             column.lastContent=signature
             ::nextColumn::
@@ -814,7 +814,7 @@ function NativeLoadout.new(dependencies)
             {name=assert(ammoTemplate.WeaponsName),fullName=assert(fullNameTemplate.Name),icon=assert(fullNameTemplate.Icon),
              heading=assert(group.SpecGroupName),items=items,
              typeHeading=assert(typeTemplate.WeaponTypeLabel),type=assert(typeTemplate.WeaponTypeText),
-             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},tr("weapons.ammo.84af7e95"),gap)
+             ammoHeading=assert(typeTemplate.WeaponTypeLabel),ammo=assert(ammoTemplate.WeaponsAmmo)},tr("weapons.ammo.84af7e95","en"),gap)
         c.ammo={}
         for i=1,3 do
             c.ammo[i]=preparationAmmoRow(c,ammo[ammoFields[i]])
@@ -1074,7 +1074,7 @@ function NativeLoadout.new(dependencies)
         informationColumns(c,parent,origin,columnWidth,pitch,mainSize.Y-origin.Y-20,
             {name=list.WeaponAmmo_Text,heading=assert(group.SpecGroupName),items=items,
              typeHeading=list.WeaponType_Label,type=list.WeaponType_Text,
-             ammoHeading=list.WeaponAmmo_Label,ammo=list.WeaponAmmo_Text},tr("weapons.ammo.84af7e95"),gap)
+             ammoHeading=list.WeaponAmmo_Label,ammo=list.WeaponAmmo_Text},tr("weapons.ammo.84af7e95","en"),gap)
         -- 说明仅占左侧列表下方，与右侧三栏保留明确间隔。
         local descriptionX=72 -- 与原生左侧列表标题的逻辑基线对齐。
         local descriptionWidth=origin.X-descriptionX-30 -- 与右侧信息栏保留间隙。
@@ -1102,14 +1102,14 @@ function NativeLoadout.new(dependencies)
         signature=signature..":"..flow:preview().ratio
         if signature==c.lastPaint then return end
         c.lastPaint=signature
-        setText(c,c.title,stage=="sp1"and tr("select.sp.weapon.1.b0269552")or stage=="sp2"and tr("select.sp.weapon.2.9d49bd0d")or stage=="sp3"and tr("select.sp.weapon.3.f6594add")or tr("take.off.bb40af1a"))
+        setText(c,c.title,stage=="sp1"and tr("select.sp.weapon.1.b0269552","en")or stage=="sp2"and tr("select.sp.weapon.2.9d49bd0d","en")or stage=="sp3"and tr("select.sp.weapon.3.f6594add","en")or tr("take.off.bb40af1a","en"))
         for i=1,3 do
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
             c.cursors[i]:SetVisibility(row and i==flow.cursor and VISIBLE or 2)
             if row then
-                local label=row.action=="takeoff"and tr("yes.b8b3902a")or row.action=="reselect"and tr("no.be52ce60")
-                    or row.weapon<0 and tr("no.weapon.f5499408")or row.code
+                local label=row.action=="takeoff"and tr("yes.b8b3902a","en")or row.action=="reselect"and tr("no.be52ce60","en")
+                    or row.weapon<0 and tr("no.weapon.f5499408","en")or row.code
                 setText(c,c.rows[i],label..(row.enabled and ""or tr("not.owned.26779261")))
                 local tint=c.tint.SpecifiedColor
                 c.rows[i]:SetColorAndOpacity(row.enabled and c.tint or color(tint.R*.45,tint.G*.45,tint.B*.45,1))
@@ -1148,7 +1148,7 @@ function NativeLoadout.new(dependencies)
             local row=rows[i]
             c.rows[i]:SetVisibility(row and VISIBLE or COLLAPSED)
             if row then
-                setText(c,c.rows[i],(row.weapon<0 and tr("no.weapon.f5499408")or row.code)..(row.enabled and ""or tr("not.owned.26779261")))
+                setText(c,c.rows[i],(row.weapon<0 and tr("no.weapon.f5499408","en")or row.code)..(row.enabled and ""or tr("not.owned.26779261")))
                 c.rows[i]:SetColorAndOpacity(not row.enabled and color(.3,.36,.43,1)or (i==flow.cursor and selected or blue))
             end
         end
