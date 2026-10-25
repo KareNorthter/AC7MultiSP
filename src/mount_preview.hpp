@@ -8,16 +8,17 @@ bool mountSameIdentity(const MountIdentity& a,const MountIdentity& b) {
 }
 // UE4.18 的反射字段链已经由现场只读采样核对；字段名、类型、尺寸全部匹配才使用。
 size_t mountProperty(Addr object,const char* name,const char* kind,int size) {
-    mountIdentity(object);
-    Addr cls=read<Addr>(object+0x10);
-    for(int depth=0;cls && depth<32;++depth,cls=read<Addr>(cls+0x30)) {
-        mountIdentity(cls);
-        Addr field=read<Addr>(cls+0x38);
-        for(int count=0;field && count<1024;++count,field=read<Addr>(field+0x28)) {
-            mountIdentity(field);
-            if(mountName(field)!=name)continue;
-            require(mountName(read<Addr>(field+0x10))==kind && read<int>(field+0x34)==size,"模型预览：反射字段类型改变");
-            const int offset=read<int>(field+0x44);
+    const MountIdentityBatch batch;
+    batch.identity(object);
+    Addr cls=batch.read<Addr>(object+0x10);
+    for(int depth=0;cls && depth<32;++depth,cls=batch.read<Addr>(cls+0x30)) {
+        batch.identity(cls);
+        Addr field=batch.read<Addr>(cls+0x38);
+        for(int count=0;field && count<1024;++count,field=batch.read<Addr>(field+0x28)) {
+            batch.identity(field);
+            if(batch.name(field)!=name)continue;
+            require(batch.name(batch.read<Addr>(field+0x10))==kind && batch.read<int>(field+0x34)==size,"模型预览：反射字段类型改变");
+            const int offset=batch.read<int>(field+0x44);
             require(offset>=0x28 && offset<0x10000,"模型预览：反射字段越界");
             return static_cast<size_t>(offset);
         }
@@ -25,25 +26,30 @@ size_t mountProperty(Addr object,const char* name,const char* kind,int size) {
     }
     throw std::runtime_error("模型预览：缺少必要反射字段");
 }
-bool mountClassIs(Addr object,const char* name,const char* package) {
-    mountIdentity(object);
-    Addr cls=read<Addr>(object+0x10);
-    for(int depth=0;cls && depth<32;++depth,cls=read<Addr>(cls+0x30)) {
-        mountIdentity(cls);
-        if(mountName(cls)==name && mountName(read<Addr>(cls+0x20))==package)return true;
+bool mountClassIs(Addr object,const char* name,const char* package,const MountIdentityBatch& batch) {
+    batch.identity(object);
+    Addr cls=batch.read<Addr>(object+0x10);
+    for(int depth=0;cls && depth<32;++depth,cls=batch.read<Addr>(cls+0x30)) {
+        batch.identity(cls);
+        if(batch.name(cls)==name && batch.name(batch.read<Addr>(cls+0x20))==package)return true;
     }
     return false;
 }
+bool mountClassIs(Addr object,const char* name,const char* package) {
+    const MountIdentityBatch batch;return mountClassIs(object,name,package,batch);
+}
 Addr mountOuterWorld(Addr object) {
-    for(int depth=0;object && depth<24;++depth,object=read<Addr>(object+0x20)) {
-        mountIdentity(object);
-        if(mountClassIs(object,"World","/Script/Engine"))return object;
+    const MountIdentityBatch batch;
+    for(int depth=0;object && depth<24;++depth,object=batch.read<Addr>(object+0x20)) {
+        batch.identity(object);
+        if(mountClassIs(object,"World","/Script/Engine",batch))return object;
     }
     throw std::runtime_error("模型预览：实际模型没有有效世界");
 }
 bool mountOuterContains(Addr object,Addr expected) {
-    for(int depth=0;object && depth<24;++depth,object=read<Addr>(object+0x20)) {
-        mountIdentity(object);
+    const MountIdentityBatch batch;
+    for(int depth=0;object && depth<24;++depth,object=batch.read<Addr>(object+0x20)) {
+        batch.identity(object);
         if(object==expected)return true;
     }
     return false;
@@ -195,32 +201,33 @@ bool mountPreviewMatchesManager(Addr manager) {
 }
 bool mountPreviewLayoutChanged() {
     const auto& state=mountPreview.layout;
-    if(read<Addr>(mountPreview.activator.address+0x260)!=state.manager.address || !mountAlive(state.manager))return true;
-    if(read<Addr>(state.manager.address+0x150)!=state.meshManager.address || !mountAlive(state.meshManager))return true;
-    if(read<Addr>(state.plane.address+0x160)!=state.root.address || !mountAlive(state.root) ||
-       read<Addr>(state.plane.address+0x1ae0)!=state.weaponBase.address || !mountAlive(state.weaponBase))return true;
+    const MountIdentityBatch batch; // 只读核对结束即丢弃，重绑和显隐写入不复用本批次。
+    if(batch.read<Addr>(mountPreview.activator.address+0x260)!=state.manager.address || !batch.alive(state.manager))return true;
+    if(batch.read<Addr>(state.manager.address+0x150)!=state.meshManager.address || !batch.alive(state.meshManager))return true;
+    if(batch.read<Addr>(state.plane.address+0x160)!=state.root.address || !batch.alive(state.root) ||
+       batch.read<Addr>(state.plane.address+0x1ae0)!=state.weaponBase.address || !batch.alive(state.weaponBase))return true;
     if(mountLight(state.aircraft))return mountLightLayoutChanged(state);
     if(mountExterior(state.aircraft)) {
-        if(!mountAlive(state.exteriorRack) || read<Addr>(state.plane.address+state.rackOffsets[2])!=state.exteriorRack.address)return true;
+        if(!batch.alive(state.exteriorRack) || batch.read<Addr>(state.plane.address+state.rackOffsets[2])!=state.exteriorRack.address)return true;
         if(state.aircraft==MountAircraft::Pkfa)return false;
         const Addr array=state.meshManager.address+0x170;
-        if(read<int>(array+8)!=state.poolCounts[2])return true;
-        const Addr data=read<Addr>(array);
-        for(const auto& visual:state.visuals)if(!mountAlive(visual.identity) ||
-            (visual.index<0?state.exteriorRack.address:read<Addr>(data+visual.index*8))!=visual.identity.address)return true;
+        if(batch.read<int>(array+8)!=state.poolCounts[2])return true;
+        const Addr data=batch.read<Addr>(array);
+        for(const auto& visual:state.visuals)if(!batch.alive(visual.identity) ||
+            (visual.index<0?state.exteriorRack.address:batch.read<Addr>(data+visual.index*8))!=visual.identity.address)return true;
         return false;
     }
     std::array<Addr,3> arrays{},racks{};
     for(int pool=0;pool<3;++pool) {
         const Addr array=state.meshManager.address+0x150+pool*16;
-        if(read<int>(array+8)!=state.poolCounts[pool])return true;
-        arrays[pool]=read<Addr>(array);
-        racks[pool]=read<Addr>(state.plane.address+state.rackOffsets[pool]);
+        if(batch.read<int>(array+8)!=state.poolCounts[pool])return true;
+        arrays[pool]=batch.read<Addr>(array);
+        racks[pool]=batch.read<Addr>(state.plane.address+state.rackOffsets[pool]);
     }
     for(const auto& visual:state.visuals) {
-        if(!mountAlive(visual.identity))return true;
+        if(!batch.alive(visual.identity))return true;
         if((visual.index<0?racks[visual.pool]:
-            read<Addr>(arrays[visual.pool]+visual.index*8))!=visual.identity.address)return true;
+            batch.read<Addr>(arrays[visual.pool]+visual.index*8))!=visual.identity.address)return true;
     }
     return false;
 }

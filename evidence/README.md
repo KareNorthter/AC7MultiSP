@@ -8,6 +8,10 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| CFA EML持续掉帧研究 | [现场与动态对照](cfa44-eml-steady-performance-20261025.json) | alpha2同进程EML/ADMM只读采样、内存查询热点、取位连带炮口巡检的证据和限制；未实施修复，不把样本比例当FPS收益 |
+| alpha2首轮性能反馈 | [用户观察与日志](2.26.1-alpha2-performance-feedback-20261025.json) | F-2A普通飞行和选装改善；CFA EML模型开启时持续掉帧待定位；不将FPS观察当完整帧剖析 |
+| 2.26.1 alpha2性能自测EXE | [构建与交付核对](2.26.1-alpha2-runtime-performance-delivery.json) | main与F6精确来源、核心/UI完整编译、Lua语法/接口/保护摘要及作者签名；只交付EXE，未安装或实机验证 |
+| 任务内与原生选装性能基线 | [20261025日志摘要](runtime-performance-baseline-20261025.json) | main与F6来源锚、alpha1进程样本及本机日志快照；不代表alpha2收益或受控A/B |
 | 2.26.0验收与main收尾 | [20261025验收与文档接收](2.26.0-main-acceptance-20261025.json) | 作者确认安装包/Mod正常；三份手改TXT原字节接收，文字生成同步；仅授权推送main，不重编或重包，不改原产物/回执 |
 | 2.26.0仅R2网页 | [交付与R2核对](2.26.0-pages-r2-only.json) | 停用蓝奏云、隐藏备用区；R2完整SHA256匹配修订2，完整中英文章节与历史签名保留，未部署或重编EXE |
 | 2.26.0安装器主页修订2 | [来源与交付](2.26.0-installer-homepage-revision2.json) | 新版提示固定进主页，版本不变；冻结一致的游戏构建复用，C#重编并重签，独立修订目录交付与配套网页签名同步，未运行或上传 |

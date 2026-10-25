@@ -1,5 +1,16 @@
 AC7MultiSP
 
+2.26.1 alpha2 (test build)
+• Reduced repeated model validation when selecting SP weapons in the hangar and resupply menu, plus model polling and data copying during steady flight.
+• Avoided duplicate HUD refreshes after switching in the same update; immediate weapon switching, ammo and cooldown updates are retained.
+• Added periodic performance breakdowns for comparing stutter after installation. In-game improvement remains to be verified.
+• Includes the UI state-transfer optimization from alpha1.
+
+2.26.1 alpha1 (test build)
+• Optimized UI state transfer during flight and weapon switching by separating large aircraft and quick-mission lists.
+• Management lists are transferred when F6 is open and an update is needed; weapon, HUD and operation-result updates remain immediate.
+• Intended to investigate occasional mouse-flight camera recentering. Performance and compatibility still require in-game verification.
+
 2.26.0
 • Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
 • Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.

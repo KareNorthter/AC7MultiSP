@@ -679,9 +679,10 @@ void debugWeaponsTick(Addr activator) noexcept;
 #include "gun_salvo.hpp"
 #include "debug_weapons.hpp"
 
-// 只计当前CFA切换，九个连续区间覆盖核心执行至回执发布；日志在计时结束后写一次。
+// 九个连续区间覆盖核心执行至回执发布；CFA沿用详细计量，其他机体只记分段时长。
+// 非CFA不启用逐次查页/炮口计时，全部日志都在计时结束后仅写一次。
 struct CfaSwitchCost {
-    bool active{};uint64_t start{},last{};
+    bool active{},detailed{};uint64_t start{},last{};
     std::array<uint64_t,9> ticks{};
     std::array<bool,9> reached{};
     std::array<std::array<uint64_t,4>,9> reads{};
@@ -691,12 +692,12 @@ struct CfaSwitchCost {
     size_t muzzleRecordsBefore{};
 #endif
     static uint64_t now() { LARGE_INTEGER value{};QueryPerformanceCounter(&value);return value.QuadPart; }
-    void begin(bool enabled) {
-        *this={};active=enabled;
-        nativeReadCost={};nativeReadCost.active=active;
+    void begin(bool enabled,bool details=true) {
+        *this={};active=enabled;detailed=details;
+        nativeReadCost={};nativeReadCost.active=active && detailed;
         cfaWorkCosts={};
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
-        cfaMuzzleCost={};cfaMuzzleCost.active=active;muzzleRecordsBefore=cfaMuzzleVisuals.size();
+        cfaMuzzleCost={};cfaMuzzleCost.active=active && detailed;muzzleRecordsBefore=cfaMuzzleVisuals.size();
 #endif
         if(active)start=last=now();
     }
@@ -724,9 +725,13 @@ struct CfaSwitchCost {
                 "restore_effects","reload_armed","mount_commit","response_publish"};
             Json stages=Json::object();
             for(unsigned i=0;i<ticks.size();++i)if(reached[i])stages[names[i]]=double(ticks[i])*ms;
-            Json result{{"event","CFA_SWITCH_COST"},{"request",request},{"ok",ok},
+            Json result{{"event",detailed?"CFA_SWITCH_COST":"SP_SWITCH_COST"},{"request",request},{"ok",ok},
                 {"total_ms",double(end-start)*ms},{"stages_ms",stages},{"target_config",target},{"models",models},
-                {"profile_revision",4}};
+                {"profile_revision",detailed?4:1}};
+            if(!detailed) {
+                result["detail_level"]="stages_only";
+                nativeLog(result.dump());return;
+            }
             Json checks=Json::object();
             for(unsigned i=0;i<reads.size();++i)if(reached[i])checks[names[i]]={
                 {"calls",reads[i][0]},{"ms",double(reads[i][1])*ms},
@@ -2122,7 +2127,7 @@ extern "C" __declspec(dllexport) int dualsp_execute_memory_v1(void* luaState) {
         require(runtimeEnabled,"Mod disabled outside single-player");
         transientSwitch=command.op=="switch";
         verifyVersion();
-        cfaSwitchCost.begin(transientSwitch && continuousCfa44(command.plane));
+        cfaSwitchCost.begin(transientSwitch,transientSwitch && continuousCfa44(command.plane));
         cfaSwitchCost.target=command.configs[command.target];
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
         cfaSwitchCost.models=fixedMountEnabled && fixedMount.bound && !fixedMountFailed;

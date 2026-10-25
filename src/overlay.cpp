@@ -64,6 +64,10 @@ void mountLoadingCancel() {
     std::lock_guard<std::mutex> guard(mountLoadingMutex);mountLoadingNotice={};mountLoadingPending.store(false,std::memory_order_release);
 }
 std::shared_ptr<const Json> publishedState=std::make_shared<const Json>(Json::object());
+// 三份列表独立保有，轻量状态覆盖不会丢掉尚未消费的列表，也不反复复制列表。
+std::array<std::shared_ptr<const Json>,3> publishedLists{
+    std::make_shared<const Json>(Json::array()),std::make_shared<const Json>(Json::array()),std::make_shared<const Json>(Json::array())};
+auto managementLists=publishedLists; // 仅渲染线程消费；游戏线程只更新publishedLists。
 std::atomic<uint64_t> publishedGeneration{0};
 std::vector<Json> actions;
 ImGuiContext* imguiContext{};
@@ -632,8 +636,10 @@ void loadDebugAircraftDraft() noexcept {
         const auto mode=data.value("mode",std::string("restart")),status=data.value("status",std::string("idle"));
         if(mode!="restart"&&mode!="next_restart")throw std::runtime_error("换机生效方式无效");
         if(status!="idle"&&status!="restarting"&&status!="applied"&&status!="failed")throw std::runtime_error("换机状态无效");
-        const auto& options=data.at("options");
+        const auto& options=*managementLists[0];
         if(!options.is_array()||options.size()>4096)throw std::runtime_error("换机候选列表无效");
+        static std::shared_ptr<const Json> parsedOptions;
+        if(parsedOptions!=managementLists[0]) {
         std::vector<DebugAircraftOption> next;
         std::unordered_set<int> seen;
         for(const auto& option:options) {
@@ -644,11 +650,13 @@ void loadDebugAircraftDraft() noexcept {
                 throw std::runtime_error("换机候选编号重复或名称为空");
             next.push_back({id,name,code,mod});
         }
+        debugAircraftOptions=std::move(next);parsedOptions=managementLists[0];
+        }
         const bool changedSession=session!=aircraftSession;
         const bool appliedNow=status=="applied"&&aircraftStatus!="applied";
         aircraftSession=session;aircraftRevision=revision;aircraftMode=mode;aircraftStatus=status;
         aircraftAvailable=data.at("available").get<bool>();aircraftReason=data.value("reason",std::string());
-        aircraftSupported=true;aircraftDataError.clear();debugAircraftOptions=std::move(next);
+        aircraftSupported=true;aircraftDataError.clear();
         aircraftRequest=std::max(aircraftRequest,response);
         const auto contains=[&](int id){return std::any_of(debugAircraftOptions.begin(),debugAircraftOptions.end(),[&](const auto& option){return option.planeId==id;});};
         if(changedSession||!contains(aircraftTarget)) {
@@ -884,6 +892,7 @@ void refreshState() {
         {
             std::lock_guard<std::mutex> guard(publishedMutex);
             snapshot=publishedState;consumedGeneration=publishedGeneration.load(std::memory_order_relaxed);
+            managementLists=publishedLists;
         }
         state=*snapshot; // 大对象复制在锁外，游戏线程只需交换快照指针。
         // 键位在交给窗口消息前核对，格式错误不能跨 Win32 回调抛出异常。
@@ -1272,8 +1281,21 @@ extern "C" __declspec(dllexport) int dualsp_publish_memory_v1(void* luaState) {
         if(!text || !size || size>4*1024*1024)throw std::runtime_error("UI状态长度无效");
         Json fresh=Json::parse(text,text+size);
         if(!fresh.is_object())throw std::runtime_error("UI状态格式无效");
+        std::array<std::shared_ptr<const Json>,3> lists;
+        if(fresh.contains("management_lists")) {
+            auto& data=fresh.at("management_lists");
+            if(!data.is_object())throw std::runtime_error("管理列表快照格式无效");
+            const char* names[]={"aircraft","tasks","planes"};
+            for(size_t index=0;index<lists.size();++index)if(data.contains(names[index])) {
+                auto& rows=data.at(names[index]);
+                if(!rows.is_array()||rows.size()>4096)throw std::runtime_error("管理列表快照长度无效");
+                lists[index]=std::make_shared<const Json>(std::move(rows));
+            }
+            fresh.erase("management_lists");
+        }
         auto snapshot=std::make_shared<const Json>(std::move(fresh));
         {std::lock_guard<std::mutex> guard(publishedMutex);
+            for(size_t index=0;index<lists.size();++index)if(lists[index])publishedLists[index].swap(lists[index]);
             publishedState.swap(snapshot);publishedGeneration.fetch_add(1,std::memory_order_release);}
         api->boolean(luaState,true);api->string(luaState,"",0);return 2;
     }catch(const std::exception& e){
@@ -1282,6 +1304,7 @@ extern "C" __declspec(dllexport) int dualsp_publish_memory_v1(void* luaState) {
         return 0;
     }
 }
+extern "C" __declspec(dllexport) int dualsp_ui_lists_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_drain_actions_memory_v1(void* luaState) {
     try {
         static const dualsp::LuaApi api;

@@ -2,7 +2,7 @@
 // 当前玩家的相对环视保持及手柄移动响应；不冻结相机、改坐标或吞掉干扰弹输入。
 // 本文件在target_gaze.hpp之后包含，共享GetAxisValue与XInput入口。
 struct CameraHold {
-    ContinuousIdentity plane,input,view,focus;
+    ContinuousIdentity plane,input,view,focus,viewClass;
     std::array<ContinuousIdentity,3> cameras; // 原生槽0=第一人称、1=座舱、2=第三人称。
     Addr bindings{};
     int count{},capacity{},viewType{-1};
@@ -40,7 +40,7 @@ struct CameraHold {
         pressedAt=buttonReleasedAt=0;nativeRequests=0;
     }
     void clear() {
-        allowed=false;heartbeat=0;plane={};input={};view={};focus={};cameras={};bindings=0;count=capacity=0;
+        allowed=false;heartbeat=0;plane={};input={};view={};focus={};viewClass={};cameras={};bindings=0;count=capacity=0;
         right=up=track=0;viewType=-1;cancelGesture();
         centerKeySeeded=centerKeyDown=false;centerKey=0;sensitivity=100;
         replaceR3=padConnected=holdEnabled=false;
@@ -70,21 +70,33 @@ void cameraHoldFailure(const char* reason) {
     cameraHold.clear();cameraHold.error=message;
     try {nativeLog(std::string("CAMERA_HOLD_ERROR ")+message);}catch(...){}
 }
-bool cameraHoldIdentities() {
-    return continuousAlive(cameraHold.plane) && continuousAlive(cameraHold.input) && continuousAlive(cameraHold.view) && continuousAlive(cameraHold.focus) &&
-        read<Addr>(cameraHold.plane.address+0x118)==cameraHold.input.address &&
-        read<Addr>(cameraHold.plane.address+0x1250)==cameraHold.view.address &&
-        read<Addr>(cameraHold.input.address+0x20)==cameraHold.plane.address && read<Addr>(cameraHold.view.address+0x20)==cameraHold.plane.address &&
-        read<Addr>(cameraHold.plane.address+0x1370)==cameraHold.focus.address && read<Addr>(cameraHold.focus.address+0x20)==cameraHold.plane.address;
+bool cameraHoldIdentities(const ContinuousReadBatch& memory) {
+    return memory.alive(cameraHold.plane) && memory.alive(cameraHold.input) && memory.alive(cameraHold.view) && memory.alive(cameraHold.focus) &&
+        memory.read<Addr>(cameraHold.plane.address+0x118)==cameraHold.input.address &&
+        memory.read<Addr>(cameraHold.plane.address+0x1250)==cameraHold.view.address &&
+        memory.read<Addr>(cameraHold.input.address+0x20)==cameraHold.plane.address && memory.read<Addr>(cameraHold.view.address+0x20)==cameraHold.plane.address &&
+        memory.read<Addr>(cameraHold.plane.address+0x1370)==cameraHold.focus.address && memory.read<Addr>(cameraHold.focus.address+0x20)==cameraHold.plane.address;
 }
-bool cameraHoldCameraIdentities() {
+bool cameraHoldIdentities() {const ContinuousReadBatch memory;return cameraHoldIdentities(memory);}
+bool cameraHoldCameraIdentities(const ContinuousReadBatch& memory) {
     for(int i=0;i<3;++i) {
         const auto& camera=cameraHold.cameras[i];
-        if(!continuousAlive(camera) || read<Addr>(cameraHold.view.address+0x318+i*0x10)!=camera.address ||
-            read<Addr>(camera.address+0x20)!=cameraHold.plane.address || read<Addr>(camera.address+0x330)!=cameraHold.plane.address ||
-            read<Addr>(camera.address+0x338)!=cameraHold.focus.address)return false;
+        if(!memory.alive(camera) || memory.read<Addr>(cameraHold.view.address+0x318+i*0x10)!=camera.address ||
+            memory.read<Addr>(camera.address+0x20)!=cameraHold.plane.address || memory.read<Addr>(camera.address+0x330)!=cameraHold.plane.address ||
+            memory.read<Addr>(camera.address+0x338)!=cameraHold.focus.address)return false;
     }
     return true;
+}
+// 只复用同一绑定的类型资格；七个对象及输入列表的当前身份/链接仍在每次调度核对。
+bool cameraHoldBindingCurrent(Addr plane) {
+    if(cameraHold.plane.address!=plane)return false;
+    const ContinuousReadBatch memory;
+    return cameraHoldIdentities(memory) &&
+        memory.alive(cameraHold.viewClass) && memory.read<Addr>(cameraHold.view.address+0x10)==cameraHold.viewClass.address &&
+        cameraHoldCameraIdentities(memory) &&
+        memory.read<Addr>(cameraHold.input.address+0x110)==cameraHold.bindings &&
+        memory.read<int>(cameraHold.input.address+0x118)==cameraHold.count &&
+        memory.read<int>(cameraHold.input.address+0x11c)==cameraHold.capacity;
 }
 bool cameraHoldSameTarget(const ContinuousIdentity& a,const ContinuousIdentity& b) {
     return a.address && a.address==b.address && a.index==b.index && a.serial==b.serial;
@@ -490,6 +502,7 @@ void bindCameraHold(Addr plane) {
     cameraHold.focus=continuousIdentity(read<Addr>(plane+0x1370));
     require(mountClassIs(cameraHold.input.address,"InputComponent","/Script/Engine") &&
         mountClassIs(cameraHold.view.address,"CameraViewComponent","/Script/Nimbus"),"镜头保持组件类型不符");
+    cameraHold.viewClass=continuousIdentity(read<Addr>(cameraHold.view.address+0x10));
     require(read<Addr>(cameraHold.input.address+0x20)==plane && read<Addr>(cameraHold.view.address+0x20)==plane,"镜头保持组件不属于当前飞机");
     require(mountClassIs(cameraHold.focus.address,"CameraFocusTargetComponent","/Script/Nimbus") &&
         read<Addr>(cameraHold.focus.address+0x20)==plane,"镜头保持注视组件身份不符");
@@ -531,25 +544,28 @@ int cameraHoldLua(void* luaState) {
         if(!allowed || !plane || !targetGazeFocused()){cameraHold.clear();cameraHold.error.clear();}
         else {
             require(cameraHold.error.empty(),cameraHold.error.c_str());
-            installCameraHold();continuousIdentity(plane);
-            const auto input=read<Addr>(plane+0x118);
-            const auto viewObject=read<Addr>(plane+0x1250);
-            bool pending=!input || !viewObject || !read<Addr>(plane+0x1370) || !read<int>(input+0x118);
-            if(!pending) {
-                continuousIdentity(viewObject);
-                require(mountClassIs(viewObject,"CameraViewComponent","/Script/Nimbus"),"镜头保持组件类型不符");
-                for(int i=0;i<3;++i) {
-                    const auto camera=read<Addr>(viewObject+0x318+i*0x10);
-                    if(!camera){pending=true;break;}
-                    continuousIdentity(camera);
-                    if(!read<Addr>(camera+0x330) || !read<Addr>(camera+0x338)){pending=true;break;}
+            installCameraHold();
+            const bool same=cameraHoldBindingCurrent(plane);
+            bool pending=false;
+            if(!same) {
+                continuousIdentity(plane);
+                const auto input=read<Addr>(plane+0x118);
+                const auto viewObject=read<Addr>(plane+0x1250);
+                pending=!input || !viewObject || !read<Addr>(plane+0x1370) || !read<int>(input+0x118);
+                if(!pending) {
+                    continuousIdentity(viewObject);
+                    require(mountClassIs(viewObject,"CameraViewComponent","/Script/Nimbus"),"镜头保持组件类型不符");
+                    for(int i=0;i<3;++i) {
+                        const auto camera=read<Addr>(viewObject+0x318+i*0x10);
+                        if(!camera){pending=true;break;}
+                        continuousIdentity(camera);
+                        if(!read<Addr>(camera+0x330) || !read<Addr>(camera+0x338)){pending=true;break;}
+                    }
                 }
             }
             if(pending) {
                 cameraHold.clear();reason="waiting_input";
             }else {
-                const bool same=cameraHold.plane.address==plane && cameraHoldIdentities() && cameraHoldCameraIdentities() &&
-                    read<Addr>(input+0x110)==cameraHold.bindings && read<int>(input+0x118)==cameraHold.count && read<int>(input+0x11c)==cameraHold.capacity;
                 if(!same)bindCameraHold(plane);
                 const int view=read<unsigned char>(cameraHold.view.address+0x350);
                 if(view>2 || cameraHoldNativeSpecial()) {cameraHold.resetPose();cameraHold.cancelGesture();cameraHold.centerKeySeeded=false;reason="special_view";cameraHold.allowed=false;}

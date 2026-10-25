@@ -143,7 +143,8 @@ void mountExteriorRefresh(double time) {
     uint64_t mask=0;
     if(state.aircraft==MountAircraft::F22a) {
         for(int weapon=0;weapon<session.count;++weapon)if(state.weaponKinds[weapon]==2) {
-            const Group group=weapon==session.active?capture(session.activator,true,time):session.special[weapon];
+            const Group live=weapon==session.active?capture(session.activator,true,time):Group{};
+            const Group& group=weapon==session.active?live:session.special[weapon]; // 仅读取缓存，不复制弹槽。
             const int count=static_cast<int>(group.slots.size()),ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12);
             require(count==14 && window>=0 && window<=count && cursor>=0 && cursor<count && dualsp::validAmmoCount(ammo) &&
                 time+.001>=group.capturedTime,"机外保留：8AAM队列或游戏时间改变");

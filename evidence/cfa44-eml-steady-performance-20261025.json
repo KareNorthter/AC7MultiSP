@@ -1,0 +1,285 @@
+{
+  "date": "2026-10-25",
+  "status": "研究完成，取位连带炮口巡检为首要修订方向，未实施修复",
+  "source": {
+    "branch": "codex/perf-runtime-preview",
+    "head_before_research": "1b42254ae8149ad50c6cb135876ef30add897755",
+    "runtime_version": "2.26.1 alpha2",
+    "core_sha256": "927164093f7154c693d5f50a5cd862f629a1250e76329407edae96730b5e9ef0",
+    "pid": 36452,
+    "tid": 30808
+  },
+  "authorization": "用户提供暂停现场，并分别同意恢复EML与ADMM不开火飞行后约10秒只读采样；不注入输入、不写游戏内存、不调用游戏函数",
+  "conditions": {
+    "aircraft": "CFA-44",
+    "models": true,
+    "sp_count": 3,
+    "eml_selection": "配置1，plwp_eml_x2_C，armed=true",
+    "admm_selection": "日志请求249完成配置0，plwp_admm_x0_C，armed=true",
+    "pause": "原生Esc暂停，日志CampaignHudPause；动态采样按用户指示恢复",
+    "scene_control": "同进程和用户所选场景；未锁定画面、前后台或完整帧时间"
+  },
+  "sampling": {
+    "eml": {
+      "samples": 486,
+      "duration_seconds": 9.991523399949074,
+      "query_virtual_memory_samples": 335,
+      "ntdll_exports": [
+        [
+          "ZwQueryVirtualMemory+0x14",
+          335
+        ],
+        [
+          "ZwSetEvent+0x14",
+          5
+        ],
+        [
+          "ZwClearEvent+0x14",
+          2
+        ],
+        [
+          "ZwWaitForSingleObject+0x14",
+          1
+        ],
+        [
+          "RtlTryEnterCriticalSection+0x4e",
+          1
+        ],
+        [
+          "RtlEnterCriticalSection+0x53",
+          1
+        ],
+        [
+          "RtlLeaveCriticalSection+0x6e",
+          1
+        ],
+        [
+          "RtlLeaveCriticalSection+0x35",
+          1
+        ]
+      ],
+      "partial_unwind_sample_counts": {
+        "readableMemory(": 335,
+        "mountCfaMuzzleSync(": 138,
+        "mountCopyTransform(": 75,
+        "LightMountSocketReader::copy(": 35,
+        "continuousAlive(": 67,
+        "mountClassIs(": 44
+      },
+      "unwind_stops": {
+        "采样栈范围外": 481,
+        "缺少帧寄存器": 3,
+        "未知模块": 2
+      },
+      "hold_mean_ms": 0.1084746909327805,
+      "hold_max_ms": 0.2835000050254166,
+      "all_prior_suspend_counts_zero": true,
+      "raw_sha256": "5c723a61c0cf223b906203735f08963936ddb71ad8ee921cf9037ca79c13bf9c",
+      "prior_suspend_counts": {
+        "0": 486
+      },
+      "end_file_time": "2026-10-25T05:57:11.582604+00:00",
+      "valid_prior_zero_samples": 486,
+      "query_rva_filter": [
+        "0x1621b4"
+      ],
+      "valid_query_samples": 335
+    },
+    "admm": {
+      "samples": 488,
+      "duration_seconds": 9.997003800002858,
+      "query_virtual_memory_samples": 145,
+      "ntdll_exports": [
+        [
+          "ZwQueryVirtualMemory+0x14",
+          145
+        ],
+        [
+          "ZwDelayExecution+0x14",
+          102
+        ],
+        [
+          "ZwSetEvent+0x14",
+          7
+        ],
+        [
+          "ZwWaitForSingleObject+0x14",
+          6
+        ],
+        [
+          "RtlDelayExecution+0x34",
+          2
+        ],
+        [
+          "RtlAllocateHeap+0x19ac",
+          1
+        ],
+        [
+          "ZwWaitForMultipleObjects+0x14",
+          1
+        ],
+        [
+          "ZwCreateThreadEx+0x14",
+          1
+        ]
+      ],
+      "partial_unwind_sample_counts": {
+        "readableMemory(": 145,
+        "mountCfaMuzzleSync(": 0,
+        "mountCopyTransform(": 0,
+        "LightMountSocketReader::copy(": 0,
+        "continuousAlive(": 74,
+        "mountClassIs(": 4
+      },
+      "unwind_stops": {
+        "栈底": 261,
+        "采样栈范围外": 218,
+        "未知模块": 2,
+        "达到帧数上限": 5,
+        "未支持展开操作 10": 2
+      },
+      "hold_mean_ms": 0.12297131138811743,
+      "hold_max_ms": 0.4712999798357487,
+      "all_prior_suspend_counts_zero": false,
+      "raw_sha256": "37df7f312dd303e1dc3ebd4de6b9e32aa430a888f7ef5cf9320dbd08472f288a",
+      "prior_suspend_counts": {
+        "0": 486,
+        "1": 2
+      },
+      "end_file_time": "2026-10-25T06:03:18.509700+00:00",
+      "valid_prior_zero_samples": 486,
+      "query_rva_filter": [
+        "0x1621b4"
+      ],
+      "valid_query_samples": 145
+    }
+  },
+  "findings": [
+    "EML两个就绪槽实时取位标志均为1；SWP2含2网格和2炮口粒子，未观察到该列表无限增长。",
+    "EML取位触发mountLightCopyTransform中的mountCfaMuzzleSync，每次扫描挂架子组件并校验身份、类型、父链及模板；左sp21网格会进入非匹配粒子类型检查。",
+    "原生普通显示/位置计算也可调用取位，未开火仍可进入；部分展开栈EML见138个炮口同步样本，ADMM未见。",
+    "Lua周期flight_mount与切换事务CFA_SWITCH_COST没有覆盖全部普通飞行原生回调，不能用较低Lua时间排除该热点。",
+    "ADMM仍有视角/目标功能身份检查样本，保留为后续公共成本候选，未归因为全部无Mod差值。"
+  ],
+  "native_reachable_chain_rva": [
+    "0x4c4cb0",
+    "0x4c55a0",
+    "0x81c8c0",
+    "0x882690",
+    "0x89cfc0",
+    "0x8a0960"
+  ],
+  "native_chain_boundary": "来自当前进程函数捕获及直接调用关系，不是完整动态调用树；上游正式名称和每帧次数未确认。0x8872b0的+0x3a5现场为0，其Bomb_TGTP分支不算EML执行证据。",
+  "proposals_not_implemented": [
+    {
+      "priority": 1,
+      "proposal": "分离绑定/重建时炮口资格发现与热路径已知目标维护",
+      "expected": "EML稳定期潜力高",
+      "difficulty": "中",
+      "guard": "动态弱身份/归属/模板验证、子组件变更失效与原生显隐归还"
+    },
+    {
+      "priority": 2,
+      "proposal": "同次纯读取批量验证、减少重复校验，实时Socket变换照常读取",
+      "expected": "中到高",
+      "difficulty": "中",
+      "guard": "不跨引擎调用/写入/分配/帧复用页验证，不删安全校验"
+    },
+    {
+      "priority": 3,
+      "proposal": "验证选择槽内外层取位重复，只有确认同一事务重复时再合并",
+      "expected": "未量化",
+      "difficulty": "中到高",
+      "guard": "不改变选槽、弹药、装填或原生锁定清理"
+    }
+  ],
+  "limitations": [
+    "QueryVirtualMemory占比是壁钟采样落点，受系统调用采样偏差影响，不等于精确CPU耗时或FPS收益。",
+    "仅一轮每种兵装，未严格控制前后台、帧等待、场景变化；未采GPU数据，不能排除其他因素。",
+    "部分x64离线栈展开，不支持完整尾声等语义；越界停止保留前缀。EML栈1KiB且无完整整数寄存器，ADMM栈限定当前页并有整数寄存器，不能以栈深度比较开销。",
+    "ADMM两样本在外部已挂起计数1时取得，原因未定；仅归还本次挂起，严格对照排除这两样本。",
+    "ADMM初次采样4KiB跨页读取失败，finally归还挂起后退出；改成页内读取后取得有效一轮，不将失败轮算入统计。",
+    "未通过改后对照验证恢复多少FPS，函数计数重叠不能相加。"
+  ],
+  "local_root": "E:/AC7_MultiSP/Temp/tasks/20261025-eml-steady-performance",
+  "artifacts": [
+    {
+      "path": "eml-paused/snapshot.json",
+      "sha256": "a8abc37d4eeff915caec35b946f726cf9a0fd196dabe1a411dc1d905d2f6365e"
+    },
+    {
+      "path": "eml-live-gates.json",
+      "sha256": "2605b33f10963c1854a7b755a3bad0c79a09e84d8cabc554538019600e37d504"
+    },
+    {
+      "path": "caller-identity.json",
+      "sha256": "5b745907691d6e666d979d18b20362b6e2d26afd8b45915f7f6e770ee634ed60"
+    },
+    {
+      "path": "eml-running-samples.json",
+      "sha256": "5c723a61c0cf223b906203735f08963936ddb71ad8ee921cf9037ca79c13bf9c"
+    },
+    {
+      "path": "admm-running-samples.json",
+      "sha256": "37df7f312dd303e1dc3ebd4de6b9e32aa430a888f7ef5cf9320dbd08472f288a"
+    },
+    {
+      "path": "eml-running-samples-unwind.json",
+      "sha256": "43deae5c5f4afcc7ebbbb2c5dec2bed8995899cba9fcd99a21e6d73abe7d6127"
+    },
+    {
+      "path": "admm-running-samples-unwind.json",
+      "sha256": "0bf1b6ec55479c0b94cd8aa06104c76326a4a974e6010ca0bc58301886928d7a"
+    },
+    {
+      "path": "comparison-summary.json",
+      "sha256": "090ec17b8ea76d9b7a81ca1a9d0757187f31ef4faec883b218f8431a19a16ef1"
+    },
+    {
+      "path": "sample_thread.py",
+      "sha256": "6c56f6c1bd21d9a5958f127edb8bd1ebf509ae4c0aa38e2c7a5e5159340a30d3"
+    },
+    {
+      "path": "unwind_samples.py",
+      "sha256": "357b8d620486327a5703e9cb445432bf834b9f32f439087201e310c38b6cb0b7"
+    },
+    {
+      "path": "compare_samples.py",
+      "sha256": "7038c654677a760503e48a253052fb3785c68afa6dda800f57b67ab0ffb632c5"
+    },
+    {
+      "path": "native-callers/manifest.json",
+      "sha256": "7d2067960fc5c4eadb5a372ee134b416c8148208504432fd0187e42a3befc3f6"
+    },
+    {
+      "path": "native-callers-2/manifest.json",
+      "sha256": "6ae59927c07dad7300097580e7cdf3fbf4e99758325d4cb241b15cfacd880443"
+    },
+    {
+      "path": "native-callers-3/manifest.json",
+      "sha256": "f2ca54d9fae262a383ad1b0fac68dd76546422e88b01c66509ea0935e158a90d"
+    },
+    {
+      "path": "native-callers-4/manifest.json",
+      "sha256": "0cd72ef7c65e09fddb2485ad6fe462679fbabf9528b3266107ca19059accfed6"
+    },
+    {
+      "path": "native-callers-5/manifest.json",
+      "sha256": "0176ad3124e5a0e60247c6a9cb24411512b8607e9c87683711e433d49890ecb5"
+    },
+    {
+      "path": "native-callers-6/manifest.json",
+      "sha256": "f2b3ec351b8cafeb9c001af47378ee02ad2a401d3b70aceae5a48a43a2b861d2"
+    }
+  ],
+  "logs": "logs-after-comparison/ 保留当前mod/native轮转日志，原始数据不入Git",
+  "validation": {
+    "runtime_code_changed": false,
+    "compiled": false,
+    "test_modules_run": false,
+    "installed": false,
+    "pushed": false,
+    "new_exe": false,
+    "review": "本轮文档差异、JSON摘要及本机原料指向静态核对"
+  }
+}

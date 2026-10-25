@@ -47,6 +47,7 @@
 | [快速进入测试任务设计](engineering/quick-mission-launch.md) | 快速任务多SP/皮肤、预设迁移及片头跳过设计，原生依据、PART待续条件与验证边界 |
 | [开发与恢复](engineering/development.md) | 源码/原料路径、工具依赖、接收恢复和未解决事项 |
 | [挂载设计](engineering/multi-sp-mount-design.md) | 挂点、净空、布局、配弹、显隐及当前取舍 |
+| [任务内与原生选装性能](research/runtime-performance.md) | 性能基线、优化优先级、alpha2范围及人工对照方法 |
 | [工程经验](engineering/engineering-lessons.md) | 重要故障与性能经验，含证据和适用边界 |
 | [研究索引](research/README.md) | 弹舱动画等未采用/待接收半成品和继续条件 |
 | [免费Mod保护研究](research/mod-protection.md) | 实际载荷、署名/图片来源、工具核查及分阶段依据；A阶段签名与符号精简已纳入alpha5并获作者正常反馈，运行期核验仍未接入；实际边界见交付方案 |
