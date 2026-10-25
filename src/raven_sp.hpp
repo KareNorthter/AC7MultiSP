@@ -7,7 +7,7 @@ struct RavenPose {
     std::array<float,3> location{},rotation{};
 };
 struct RavenVisualState {
-    ContinuousIdentity plane,activator,manager,meshManager;
+    ContinuousIdentity plane,activator,manager,meshManager,level;
     std::vector<RavenPose> poses;
 } ravenVisual;
 struct RavenPoseSetter {
@@ -95,6 +95,7 @@ void ravenBindVisual(Addr plane,Addr activator) {
         if(same)return;
     }
     RavenVisualState next;next.plane=continuousIdentity(plane);next.activator=continuousIdentity(activator);
+    next.level=continuousIdentity(read<Addr>(plane+0x20)); // 特殊收尾故障也必须使用共用的归属与隔离流程。
     require(read<Addr>(plane+0x11a8)==activator,"UAV 回收：激活器不属于当前机体");
     next.manager=continuousIdentity(read<Addr>(activator+0x260));
     next.meshManager=continuousIdentity(read<Addr>(next.manager.address+0x150));
@@ -210,5 +211,9 @@ void ravenRestoreReload(const Command& command) {
 }
 void ravenAbortRebuild() noexcept {
     try {if(ravenSameVisual(session.plane,session.activator))ravenClearQueues();}
-    catch(const std::exception& error){continuousRuntimeFailure=error.what();nativeLog(std::string("RAVEN_ABORT_ERROR ")+error.what());}
+    catch(const std::exception& error) {
+        const CompatibilityContext context{compatibilityIdentity(ravenVisual.plane),compatibilityIdentity(ravenVisual.activator),
+            compatibilityIdentity(ravenVisual.level)};
+        continuousRecordFailure(context,"raven_abort",error.what());
+    }
 }

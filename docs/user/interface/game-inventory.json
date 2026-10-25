@@ -48,5 +48,6 @@
   "additional_bridge_messages": 3,
   "startup_update_option": "启动检查默认开启，随管理设置保存；已存在配置仅补缺失字段，手动检查不受开关影响；管理协议22，配置版本19保留",
   "quick_mission": "快速任务多SP/皮肤/自动出击/片头Logo及PART待支持提示由quick.*双语词条维护；多SP/皮肤使用独立子协议2，预设schema2兼容读取旧schema1，统一生成",
-  "author_actions": "F6作者区的主页/咖啡按钮标签来自game双语JSON；网址与安装器共用author-links.json；仅点击时交给系统浏览器，不增加逐帧网络或签名检查"
+  "author_actions": "F6作者区的主页/咖啡按钮标签来自game双语JSON；网址与安装器共用author-links.json；仅点击时交给系统浏览器，不增加逐帧网络或签名检查",
+  "compatibility_runtime": "compatibility.runtime.*的三项错误由双语JSON同源生成，核心返回中英文完整提示；原始故障阶段与弱身份写入开发日志；源码第一版未编译或实机验证"
 }

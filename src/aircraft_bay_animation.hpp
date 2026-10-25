@@ -1,40 +1,8 @@
-// 已核资源共用的舱门收尾：旧0/1聚合域逐帧收拢，公共域仅在SP互切事务保留真实进度。
+// 已核资源共用的舱门策略：聚合域收尾、公共域事务连续性和单路独立输出选择。
 // 不取得多挂布局资格，不强制骨骼求值，不修改作者资源。
 #pragma once
 
-struct AircraftBayProfile {
-    const char* pawn;
-    const char* body;
-    std::array<const char*,3> weapons; // 完整包路径，按原生配置顺序登记。
-    bool shared01; // 本体消费swcc；否则本体消费公共spwc。
-    int knownFlags; // -1表示未采集现场旗帜；算法不依赖其位义，只绑定并监视本次原生值。
-};
-const std::array<AircraftBayProfile,7>& aircraftBayProfiles() {
-    static const std::array<AircraftBayProfile,7> profiles={{
-        {"fa50","fa50",{"/Game/Blueprint/Weapons/Player/Variation/plwp_admm_fa50",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_dualtls_fa50",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_fa50"},true,11},
-        {"pkfa","pkfa",{"/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_r0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"},true,-1},
-        {"dark","dark",{"/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"},true,6},
-        {"su30","fenra",{"/Game/Blueprint/Weapons/Player/Base/plwp_lasm_a0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_weaponHPM"},true,-1},
-        {"su33","fenrb",{"/Game/Blueprint/Weapons/Player/Base/plwp_xqam_x0",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_laam_x0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_lswm_x0"},false,-1},
-        {"su30sm","fenrc",{"/Game/Blueprint/Weapons/Player/Base/plwp_sswb_x0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_meml_x0",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x5"},true,-1},
-        {"su57tg","su57tg",{"/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r1",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0"},false,1}
-    }};
-    return profiles;
-}
+#include "aircraft_bay_profiles.hpp"
 
 struct AircraftBayAnimation {
     MountIdentity plane,activator,world,body,mesh,animation;
@@ -59,13 +27,28 @@ struct AircraftBayAnimation {
     } pending;
 } aircraftBayAnimation;
 uint64_t aircraftBayGeneration{}; // 绑定换代后即使仍是同一玩家/Parts，也不能消费上一代状态。
+CompatibilityFailures aircraftBayFailures; // 舱门只关闭本能力，不向兵装事务或持续效果传播错误。
 
 void aircraftBayRelease() noexcept { aircraftBayAnimation={}; }
-void aircraftBayFail(const char* reason) noexcept {
+void aircraftBayFail(const char* reason,const char* stage,const CompatibilityContext* attempted=nullptr) noexcept {
     auto& state=aircraftBayAnimation;
+    if(attempted) {
+        state={}; // 绑定失败属于本次尝试，不能把上一机体的身份带进故障记录。
+        state.plane={attempted->player.address,attempted->player.index,attempted->player.serial};
+        state.activator={attempted->activator.address,attempted->activator.index,attempted->activator.serial};
+        state.world={attempted->owner.address,attempted->owner.index,attempted->owner.serial};
+    }
     state.bound=false;state.failed=true;state.pending={};
-    try {nativeLog(Json{{"event","AIRCRAFT_BAY_FALLBACK"},
-        {"aircraft",state.profile?state.profile->body:"unknown"},{"reason",reason}}.dump());}catch(...) { }
+    const CompatibilityContext context=attempted?*attempted:CompatibilityContext{
+        compatibilityIdentity(state.plane),compatibilityIdentity(state.activator),compatibilityIdentity(state.world)};
+    if(!context.player.address) {
+        // 尚未取得玩家身份时没有取得写入资格，只归还本次绑定，不把错误记给上一次机体。
+        try {nativeLog(Json{{"event","AIRCRAFT_BAY_BIND_REJECTED"},{"reason",reason}}.dump());}catch(...) { }
+        return;
+    }
+    aircraftBayFailures.recordLocal(context,stage,reason);
+    if(const auto* fault=aircraftBayFailures.find(context.player))
+        compatibilityLogFault("bay_animation",*fault,aircraftBayFailures.global()!=nullptr);
 }
 bool aircraftBaySession(const AircraftBayAnimation& state) {
     if(session.plane!=state.plane.address || session.activator!=state.activator.address ||
@@ -76,12 +59,24 @@ bool aircraftBaySession(const AircraftBayAnimation& state) {
 
 // 只在事务完成后核对资源。相同会话直接返回，无关机体在同一UObject序列号内只分类一次。
 void aircraftBayBind(const Command& command) noexcept {
+    CompatibilityContext attempted;
     try {
         if(!runtimeEnabled || session.plane!=command.plane || session.activator!=command.activator) {
             aircraftBayRelease();return;
         }
         auto& state=aircraftBayAnimation;
         const auto plane=mountIdentity(command.plane);
+        attempted.player=compatibilityIdentity(plane);
+        if(!aircraftBayFailures.empty()) {
+            const MountIdentityBatch identities;
+            aircraftBayFailures.forgetDestroyedContexts([&](const auto& previous) {
+                const auto& player=previous.player;
+                return !identities.alive({player.address,player.index,player.serial});
+            }); // 该辅助器仅比较对象表地址/序列号，不把PendingKill当成销毁。
+            if(aircraftBayFailures.find(compatibilityIdentity(plane))) {
+                aircraftBayRelease();state.plane=plane;state.failed=true;return;
+            }
+        }
         if(mountSameIdentity(state.plane,plane)) {
             if(state.ignored || state.failed)return;
             if(state.bound && aircraftBaySession(state) && read<Addr>(command.plane+0x1410)==state.engine)return;
@@ -94,6 +89,8 @@ void aircraftBayBind(const Command& command) noexcept {
             }
         }
         if(!state.profile) {state.ignored=true;return;}
+        if(state.profile->strategy==AircraftBayStrategy::SelectedIndependent)
+            require(state.profile->independentConfig>=0 && state.profile->independentConfig<3,"舱门：配置编号无效");
         require(mountClassIs(command.plane,"PlayerPlane","/Script/Nimbus") &&
             session.gameThread==GetCurrentThreadId() && session.count>=1 && session.count<=3,
             "舱门：玩家类型、线程或配装无效");
@@ -113,6 +110,7 @@ void aircraftBayBind(const Command& command) noexcept {
         }
         state.activator=mountIdentity(command.activator);
         state.world=mountIdentity(mountOuterWorld(command.plane));
+        attempted.activator=compatibilityIdentity(state.activator);attempted.owner=compatibilityIdentity(state.world);
         state.count=session.count;state.configs=session.configs;
         for(int i=0;i<state.count;++i) {
             const int config=state.configs[i];require(config>=0 && config<3,"舱门：配置编号无效");
@@ -128,7 +126,7 @@ void aircraftBayBind(const Command& command) noexcept {
             access.originalCodeMatches(0x1ce8013,"8b8e78010000f30f10867c01000085c9743683e901741783f9017544f30f118688010000f30f11868c010000eb2af30f118684010000f30f11868c010000f30f118694010000eb18f30f118680010000f30f118694010000f30f118690010000") &&
             access.originalCodeMatches(0x1ce7f69,"8b454c83f8017526"),"舱门：原生Parts或分域代码改变");
         // 公共域要写回请求/阶段，额外核对完整开关及活动兵装保舱分支，不能只认入口前缀。
-        if(!state.profile->shared01)require(access.originalCodeMatches(0x1ce7f69,
+        if(state.profile->strategy==AircraftBayStrategy::PublicSwitchContinuity)require(access.originalCodeMatches(0x1ce7f69,
             "8b454c83f8017526f30f588e7c0100000f2fcff30f118e7c0100007253c7867c0100000000803fb802000000eb4283f803751ef30f10867c010000f30f5cc10f2fc2f30f11867c0100007324418bc6eb1583f802750cc7867c0100000000803feb0e85c0750ac7867c0100000ad723bc8986740200008b86b0000000c1e814a8017427f30f108674010000f30f108e7c0100000f2fc1730af30f118e74010000eb08f30f11867c010000"),"公共舱：原生请求、阶段或保舱分支改变");
         state.base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
         state.engine=read<Addr>(command.plane+0x1410);state.parts=state.engine+0xf90;
@@ -144,15 +142,17 @@ void aircraftBayBind(const Command& command) noexcept {
         state.generation=++aircraftBayGeneration;state.bound=true;
         nativeLog(Json{{"event","AIRCRAFT_BAY_BOUND"},{"aircraft",body},{"domain_flags",state.flags},
             {"flags_previously_known",state.profile->knownFlags>=0},{"configs",state.configs},
-            {"mode",state.profile->shared01?"shared01_close":"public_switch_continuity"}}.dump());
-    }catch(const std::exception& error) {aircraftBayFail(error.what());}
+            {"mode",state.profile->strategy==AircraftBayStrategy::Shared01Close?"shared01_close":
+                state.profile->strategy==AircraftBayStrategy::SelectedIndependent?"selected_independent":"public_switch_continuity"}}.dump());
+    }catch(const std::exception& error) {aircraftBayFail(error.what(),"bind",&attempted);}
 }
 
 struct AircraftBayFrame {
     int config{},request{},phase{};
     std::array<float,2> top{};
     float combined{},progress{},speed{};
-    bool held{};
+    float independent{};
+    bool held{},armed{};
 };
 AircraftBayFrame aircraftBayCurrent() {
     const auto& state=aircraftBayAnimation;
@@ -176,10 +176,16 @@ AircraftBayFrame aircraftBayCurrent() {
     frame.progress=outputs[0];frame.top={outputs[1],outputs[2]};frame.combined=outputs[6];
     for(float value:{frame.progress,frame.top[0],frame.top[1],frame.combined})
         require(std::isfinite(value) && value>=-1 && value<=1,"舱门：动画进度越界");
-    if(state.profile->shared01) {
+    if(state.profile->strategy!=AircraftBayStrategy::PublicSwitchContinuity) {
         const unsigned options=memory.read<unsigned>(state.parts+0x64);
         frame.speed=(options&0x40)?memory.read<float>(state.base+0x257beec):1.f;
         require(std::isfinite(frame.speed) && frame.speed>0,"舱门：原生速率无效");
+        if(state.profile->strategy==AircraftBayStrategy::SelectedIndependent) {
+            frame.independent=outputs[1+state.profile->independentConfig];
+            require(std::isfinite(frame.independent) && frame.independent>=-1 && frame.independent<=1,"舱门：动画进度越界");
+            const auto armed=memory.read<unsigned char>(state.activator.address+0x2a1);
+            require(armed<=1,"舱门：兵装类别无效");frame.armed=armed!=0;
+        }
     } else {
         frame.request=memory.read<int>(state.parts+0x58);frame.phase=memory.read<int>(state.parts+0x274);
         require(frame.request>=0 && frame.request<=3 && frame.phase>=0 && frame.phase<=3,"舱门：原生请求或阶段越界");
@@ -191,7 +197,7 @@ AircraftBayFrame aircraftBayCurrent() {
 bool aircraftBayParts(void* object,float delta,void* input) {
     auto& state=aircraftBayAnimation;
     // 公共域机型不增加逐帧读取或写入；只使用下面的事务快照。
-    if(!state.bound || reinterpret_cast<Addr>(object)!=state.parts || !state.profile->shared01 ||
+    if(!state.bound || reinterpret_cast<Addr>(object)!=state.parts || state.profile->strategy==AircraftBayStrategy::PublicSwitchContinuity ||
        !runtimeEnabled || controlledWeaponSwitch)return false;
     bool called=false;
     try {
@@ -205,6 +211,19 @@ bool aircraftBayParts(void* object,float delta,void* input) {
            !mountSameIdentity(plane,state.plane) || !mountSameIdentity(activator,state.activator))return true;
         const auto native=aircraftBayCurrent();
         require(before.config==native.config,"舱门：原生更新中选择改变");
+        if(state.profile->strategy==AircraftBayStrategy::SelectedIndependent) {
+            const int config=state.profile->independentConfig;
+            const bool closeForModels=state.profile->closeWhenModelsEnabled && fixedMountEnabled;
+            const bool selected=native.armed && native.config==config;
+            float progress=state.closed;
+            if(!closeForModels)progress=selected?native.progress:
+                std::max(state.closed,before.independent-delta/state.seconds*native.speed);
+            if(progress==native.independent)return true;
+            const Addr output=parts+0x180+static_cast<Addr>(config)*sizeof(float);
+            require(MountAnimationReflection::writable(output,sizeof(progress)),"舱门：独立输出不可写");
+            std::memcpy(reinterpret_cast<void*>(output),&progress,sizeof(progress));
+            return true; // 只写指定swc输出；公共spwc、请求、阶段和发射门槛不变。
+        }
         auto after=native.top;
         for(int i=0;i<2;++i)if(i!=native.config)
             after[i]=std::max(state.closed,before.top[i]-delta/state.seconds*native.speed);
@@ -216,7 +235,7 @@ bool aircraftBayParts(void* object,float delta,void* input) {
         std::memcpy(reinterpret_cast<void*>(parts+0x180),after.data(),sizeof(after));
         std::memcpy(reinterpret_cast<void*>(parts+0x194),&top,sizeof(top));
     }catch(const std::exception& error) {
-        aircraftBayFail(error.what());if(!called)mountOriginalPartsUpdate(object,delta,input);
+        aircraftBayFail(error.what(),"parts_update");if(!called)mountOriginalPartsUpdate(object,delta,input);
     }
     return true;
 }
@@ -224,7 +243,7 @@ bool aircraftBayParts(void* object,float delta,void* input) {
 // 公共域只消除模组Init对同一本体开合状态的重置。MSL→SP、SP→MSL和主动关闭仍完整走原生。
 void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
     auto& state=aircraftBayAnimation;state.pending={};
-    if(!state.bound || state.profile->shared01 || !runtimeEnabled || command.op!="switch")return;
+    if(!state.bound || state.profile->strategy!=AircraftBayStrategy::PublicSwitchContinuity || !runtimeEnabled || command.op!="switch")return;
     try {
         require(command.plane==state.plane.address && command.activator==state.activator.address &&
             target>=0 && target<3,"公共舱：事务身份或目标改变");
@@ -236,7 +255,7 @@ void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
         require(frame.phase!=2 || frame.progress==1.f,"公共舱：全开阶段与进度不同步");
         state.pending={state.plane,state.activator,state.profile,state.engine,state.parts,
             state.generation,command.request,target,frame.request,frame.phase,frame.progress,true};
-    }catch(const std::exception& error) {aircraftBayFail(error.what());}
+    }catch(const std::exception& error) {aircraftBayFail(error.what(),"before_rebuild");}
 }
 void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
     auto& state=aircraftBayAnimation;const auto saved=state.pending;state.pending={};
@@ -262,7 +281,7 @@ void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
         nativeLog(Json{{"event","AIRCRAFT_BAY_SWITCH_RESTORED"},{"aircraft",state.profile->body},
             {"request",command.request},{"target",saved.target},{"cover_request",saved.request},
             {"phase",saved.phase},{"progress",saved.progress}}.dump());
-    }catch(const std::exception& error) {aircraftBayFail(error.what());}
+    }catch(const std::exception& error) {aircraftBayFail(error.what(),"after_armed");}
 }
 struct AircraftBayCompletion {
     const Command& command;

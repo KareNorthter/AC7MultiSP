@@ -518,7 +518,10 @@
     "quick.parts_pending": "PART selection is not yet available in quick launch. The game handles parts using its native rules.",
     "quick.wrong_skin": "The aircraft or skin number changed during loading. The test loadout was not applied.",
     "author.homepage.44eb1411": "Visit my homepage",
-    "author.coffee.f1fa8278": "Buy me a coffee"
+    "author.coffee.f1fa8278": "Buy me a coffee",
+    "compatibility.runtime.player_blocked": "Continuous-effect adaptation has stopped for this aircraft instance. Leave the mission and sortie again; see the log for details.",
+    "compatibility.runtime.process_blocked": "Continuous-effect cleanup or shared state could not be verified. Multi-SP reads and writes have stopped. Restart the game; see the log for details.",
+    "compatibility.runtime.root_capacity": "The temporary retention limit for continuous effects has been reached. This switch has stopped."
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",

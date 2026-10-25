@@ -34,6 +34,7 @@ AC7MultiSP 功能说明
 • Mirage 2000-5、Rafale M、Typhoon、Gripen E
 • MiG-29A、MiG-31B（部分组合在机腹挂载SAAM）、MiG-35D、Su-30M2、Su-30SM、Su-33、Su-34、Su-35S、Su-37
 • XFA-27、ADFX-01、ADF-01 FALKEN（发射TLS时不能切换武器）、ADF-11F、CFA-44（左边ADMM，右边EML，隐藏ECM模型）
+• CFA-44机腹舱：开启多SP模型时始终关闭；关闭多SP模型时，仅当前使用ADMM才打开，切到EML、ECM或MSL后收拢。
 
 2.部分适配：
 • F-22A：8AAM吊舱始终显示。机腹内部弹舱的SP武器模型会在切换时变化。
@@ -50,6 +51,7 @@ mod接管内置弹舱动画的性能问题仍未解决。
 四、适用范围与其他Mod兼容性
 • 适用Steam版游戏，仅用于单人战役，多人模式停用。
 • 兼容的mod：大部分Addon机体、皮肤SKIN、AC7MouseAim鼠标飞控、Enhanced Gunplay、All Aircraft PSM、Modular Weapon Swap。
+• 多SP、持续效果与多挂外观分别核对支持范围。局部舱门适配失败时交回原生；持续效果故障会停止受影响机体实例的多SP读写，请退出本任务后重新出击。若无法确认清理或共享状态安全，则需重启游戏，具体原因见日志。
 • 暂不兼容：F-14IA，Pre-Campaign VR关卡
 
 五、已知问题：

@@ -1,0 +1,125 @@
+{
+  "date": "2026-10-25",
+  "branch": "codex/refactor-compatibility-pipeline",
+  "main_base": "19b1528d599d9d2d34c9f48ceba7799c6355669c",
+  "previous_source": "985cfdcadb503372a66f68bbc8b548a6e9544633",
+  "user_feedback": {
+    "models_disabled": "ADMM在机腹和机背共显示三组；切EML/ECM时机腹空开，回MSL不关闭。",
+    "models_enabled": "切任意SP会打开空的机腹舱。",
+    "final_requested_policy": "多SP模型开启时机腹始终关闭；关闭时仅当前使用ADMM才打开，EML/ECM/MSL收拢。",
+    "correction": "作者撤回了“模型开启时始终打开”的误述，本修订采用随后更正的“始终关闭”。",
+    "agent_game_observation": false
+  },
+  "sources": [
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\fa44_Skeleton.json",
+      "sha256": "a1cc62b7e4ac202470c009b3cf37c67c6483d7bdbc795e12fd7c79f42eebefec",
+      "historical_sha256": "a1cc62b7e4ac202470c009b3cf37c67c6483d7bdbc795e12fd7c79f42eebefec",
+      "same_bytes_as_historical_record": true
+    },
+    {
+      "path": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\assets\\pakchunk0-WindowsNoEditor_0_P\\decoded\\AcePlayerPawn_fa44.json",
+      "sha256": "752041002162933281f9a43ee0557bb8be6c8e36586383c657e4c4703e2cd348",
+      "historical_sha256": "752041002162933281f9a43ee0557bb8be6c8e36586383c657e4c4703e2cd348",
+      "same_bytes_as_historical_record": true
+    }
+  ],
+  "body_bones": [
+    {
+      "name": "SWPCover1_01",
+      "parent_index": 0,
+      "reference_position": [
+        27.39479637145996,
+        -4.284695148468018,
+        -8.275397300720215
+      ],
+      "channel": "swc1",
+      "channel_source": "evidence/sp-switch-animation-research.json"
+    },
+    {
+      "name": "SWPCover1_02",
+      "parent_index": 0,
+      "reference_position": [
+        27.39479637145996,
+        4.284695148468018,
+        -8.275397300720215
+      ],
+      "channel": "swc1",
+      "channel_source": "evidence/sp-switch-animation-research.json"
+    }
+  ],
+  "weapons": [
+    {
+      "config": 0,
+      "class": "plwp_admm_x0_C",
+      "package": "/Game/Blueprint/Weapons/Player/Base/plwp_admm_x0"
+    },
+    {
+      "config": 1,
+      "class": "plwp_eml_x2_C",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x2"
+    },
+    {
+      "config": 2,
+      "class": "plwp_ecmp_x1_C",
+      "package": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1"
+    }
+  ],
+  "interpretation": {
+    "location": "该独立双骨位于负Z机腹，与正Z的12根公共骨分开；结合用户反馈限定目标，未解释完整蒙皮。",
+    "native_dispatch": "配置0写swc1；切其他配置后不继续写swc1，旧值可能冻结。原分派证据见既有研究及共用模块中的原生指纹。",
+    "old_mod_writer": "Light在组合含ADMM时将公共spwc复制给swc1，令多挂下该机腹舱也随其他SP打开。",
+    "causality_boundary": "有静态控制路径和作者反馈支持；不是本轮游戏复现或修订效果验收。"
+  },
+  "implementation": {
+    "strategy": "SelectedIndependent：配置选择的单路独立输出策略，不在主事务增加机型分支。",
+    "cfa44_profile": {
+      "config": 0,
+      "output": "Parts+0x180 / swc1",
+      "known_flags": 1,
+      "close_when_models_enabled": true
+    },
+    "models_enabled": "原生Parts后把swc1设为原生关闭值-0.01，包括MSL；仅值变化时写。",
+    "models_disabled": "armed且当前配置0时swc1跟随实际spwc；其他情况按原速收拢，不依赖当前多挂布局绑定。",
+    "single_writer": "删除Light旧CfaBody复制、租约和逐帧入口，公共互切事务快照仍保留。",
+    "unchanged": [
+      "公共spwc",
+      "request/phase",
+      "发射门槛",
+      "弹药/冷却/武器池",
+      "骨骼姿态与原版资源",
+      "其他七项舱门配置"
+    ],
+    "failure": "沿共用能力账本停止该玩家舱门适配，原生Parts仍只调用一次，不恢复Light旧写入者。"
+  },
+  "source_snapshots": [
+    {
+      "path": "src/aircraft_bay_profiles.hpp",
+      "sha256": "12047fb28eac1f32fad4193e3783904bd1efe391490776a2556751afa864d05f"
+    },
+    {
+      "path": "src/aircraft_bay_animation.hpp",
+      "sha256": "7ce7ec93ecc96f723d5c318850c1ace23abe751a257f2f9d7de90a6b490e3716"
+    },
+    {
+      "path": "src/light_mount_animation.hpp",
+      "sha256": "68fb88815987a09a2ce900c774084524acce4fa066d9e0f73d8557b1ae8effe2"
+    }
+  ],
+  "verification": {
+    "static_source_and_asset_review": true,
+    "compiled": false,
+    "tests_added_or_run": false,
+    "game_process_access": false,
+    "installed": false,
+    "gameplay_verified": false,
+    "performance_measured": false
+  },
+  "pending": [
+    "模型开关两侧的ADMM/EML/ECM/MSL与半开互切",
+    "三SP发射、库存与冷却不回退",
+    "任务内切模型开关及单SP",
+    "补给/检查点/退出与替换皮肤退让",
+    "DarkStar等旧配置回归"
+  ]
+}

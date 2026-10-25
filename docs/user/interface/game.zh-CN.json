@@ -518,7 +518,10 @@
     "quick.parts_pending": "PART暂不支持在快速入口自选，配件由游戏按原生规则处理。",
     "quick.wrong_skin": "载入后的机体或皮肤编号与预设不符，测试配装未应用。",
     "author.homepage.44eb1411": "访问我的主页",
-    "author.coffee.f1fa8278": "请我喝咖啡"
+    "author.coffee.f1fa8278": "请我喝咖啡",
+    "compatibility.runtime.player_blocked": "当前机体实例的持续效果适配已停止。请退出本任务后重新出击；详细原因见日志。",
+    "compatibility.runtime.process_blocked": "持续效果清理或共享状态无法确认，已停止多SP读写。请重启游戏；详细原因见日志。",
+    "compatibility.runtime.root_capacity": "持续效果的临时保有责任已达上限，本次切换已停止。"
   },
   "message_replacements": [
     "the.sp.debug.protocol.does.89e22130",

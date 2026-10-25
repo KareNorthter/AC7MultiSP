@@ -19,6 +19,7 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 | [su30sm_fixed_mount.hpp](../../src/su30sm_fixed_mount.hpp)、mount_expansion.hpp、mount_mesh_override.hpp | 挂载布局、显示/离架映射、网格租约 |
 | [mount_preview.hpp](../../src/mount_preview.hpp)、mount_exterior.hpp、light_mount.hpp、[local_mount.hpp](../../src/local_mount.hpp) | 场景预览、机外保留、轻量机构与四机局部动画 |
 | [continuous_sp.hpp](../../src/continuous_sp.hpp)、raven_sp.hpp、[seeker_rebuild.hpp](../../src/seeker_rebuild.hpp) | 持续效果、UAV 回收、原生锁定解除与重建收尾 |
+| [compatibility_lifecycle.hpp](../../src/compatibility_lifecycle.hpp)、[continuous_sp_profiles.hpp](../../src/continuous_sp_profiles.hpp)、[aircraft_bay_profiles.hpp](../../src/aircraft_bay_profiles.hpp) | 能力独立的故障范围、原生持续效果契约和有限舱门资源配置；通用流程见下文 |
 | [target_gaze.hpp](../../src/target_gaze.hpp)、[camera_hold.hpp](../../src/camera_hold.hpp)、[view_target.hpp](../../src/view_target.hpp) | 注视、镜头保持、NEXT 排序与中心白点 |
 | [overlay.cpp](../../src/overlay.cpp)、management_panel.hpp、keyboard_shortcuts.hpp、[version_updates.hpp](../../src/version_updates.hpp) | 管理界面、输入队列、更新检查 |
 | [bounded_log.hpp](../../src/bounded_log.hpp) | Lua/核心/UI 共用有界后台日志 |
@@ -90,17 +91,50 @@ alpha2之后的未构建源码将`ContinuousReadBatch`的对象表头及24字节
 
 目录按 PPDT 基础引用、SDT 涂装引用与真实类父链核对，不按 `_sNN/_typeNN` 后缀猜身份。坏行按机体隔离，同编号冲突拒绝；实际兵装取当前预览/玩家实例的三个 SpecialWeaponConfig。展示资料不足可降级为类代号/OTHER/空性能条，不因此授予写入许可。基础同槽类吻合才沿用作者 PWDT。
 
-本分支的名称共用修复将PPDT `Reference`严格绑定为实际`SoftClassProperty`、40字节软类引用；旧代码要求`SoftObjectProperty`而使真实引用导出失败。两类共享软引用数据布局不代表反射类型名相同。恢复真实类路径后，基础同槽兵装类一致时保留作者展示代号；更换皮肤导致实际类不一致时仍走现有回退，不按编号把自定义兵装改成原版，也不放宽加载状态、对象身份或写入资格。该字段绑定适用于所有目录行，不硬编码F17V/ADF-11别名。范围和未编译/安装边界见[同类问题回执](../../evidence/mod-aircraft-reference-and-ircm-audit-20261024.json)。
+现行名称共用修复将PPDT `Reference`严格绑定为实际`SoftClassProperty`、40字节软类引用；旧代码要求`SoftObjectProperty`而使真实引用导出失败。两类共享软引用数据布局不代表反射类型名相同。恢复真实类路径后，基础同槽兵装类一致时保留作者展示代号；更换皮肤导致实际类不一致时仍走现有回退，不按编号把自定义兵装改成原版，也不放宽加载状态、对象身份或写入资格。该字段绑定适用于所有目录行，不硬编码F17V/ADF-11别名。原修复范围和研究阶段边界见[同类问题回执](../../evidence/mod-aircraft-reference-and-ircm-audit-20261024.json)。
 
 换涂装、对象或兵装类会使旧草稿签名失效，排队和写入前再次核对。已配置飞行/补给持有受控快照；第三方脚本运行期热换类会报告 `EXTERNAL_SP_CHANGE`，不能把新库存记入旧逻辑槽，也不构成完整外部蓝图兼容协议。
 
-电子战、UAV及本分支待验证的IRCM依真实CDO父类、回调、装填/结束归属契约准入，不单看WeaponID或名称。S-44/Gleipnir的HPM即使复用编号31仍按实际WeaponUAV处理；真实ElectronicSupportMeasures走电子战。非Raven不套Raven固定三武器限制，真Raven的回收模型/TLS附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
+电子战、UAV及IRCM依真实CDO父类、回调、装填/结束归属契约准入，不单看WeaponID或名称。S-44/Gleipnir的HPM即使复用编号31仍按实际WeaponUAV处理；真实ElectronicSupportMeasures走电子战。非Raven不套Raven固定三武器限制，真Raven的回收模型/TLS附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
 
-IRCM源码候选新增`ContinuousKind::Interceptor`，仅接受`/Script/Nimbus.LaserInterceptor`派生、发射即装填且无延后装填归属、已核对的原生Tick/初始化/结束/Release/Retire回调，以及未挂接的独立根组件。源于S32只读激活和自然退场现场：10秒有效期、2秒尾迹，最终12.0008秒非活动；原生搜索/拦截/结束代码完整范围、所属玩家检查与最终回收首次按9855922指纹核对。保留Actor原生Tick、目标搜索、作者蓝图事件和寿命，不以ECM分支代替IRCM。
+IRCM使用`ContinuousKind::Interceptor`，仅接受`/Script/Nimbus.LaserInterceptor`派生、发射即装填且无延后装填归属、已核对的原生Tick/初始化/结束/Release/Retire回调，以及未挂接的独立根组件。源于S32只读激活和自然退场现场：10秒有效期、2秒尾迹，最终12.0008秒非活动；原生搜索/拦截/结束代码完整范围、所属玩家检查与最终回收首次按9855922指纹核对。保留Actor原生Tick、目标搜索、作者蓝图事件和寿命，不以ECM分支代替IRCM。
 
-IRCM旧实例纳入现有双引用数组保有、临时Root和发射代次账本；额外记录独立根组件的弱身份，重建后检查其没有被换成或挂上新的挂架。Release/Retire只隔离旧代对当前SP的装填通知，Actor自身的结束、尾迹和回池继续执行；补给、检查点及失败收尾沿现有完整End/Retire路径。Lua资格返回增加第六项`interceptor`，新增`dualsp_mod_interceptor_supported`能力门禁，核心与Lua须成套接收；真实拦截器改用其他编号时也不能绕过准入失败。RectennaBarrier仍不支持，未知回调或附着结构拒绝。F-14IA的副油箱IRCM及机库依赖崩溃不因同名资源而自动放行；现有提前退让保持。本候选未编译、测试、安装或完成多SP实机验收。
+IRCM旧实例纳入现有双引用数组保有、临时Root和发射代次账本；额外记录独立根组件的弱身份，重建后检查其没有被换成或挂上新的挂架。Release/Retire只隔离旧代对当前SP的装填通知，Actor自身的结束、尾迹和回池继续执行；补给、检查点及失败收尾沿现有完整End/Retire路径。Lua资格返回增加第六项`interceptor`，新增`dualsp_mod_interceptor_supported`能力门禁，核心与Lua须成套接收；真实拦截器改用其他编号时也不能绕过准入失败。RectennaBarrier仍不支持，未知回调或附着结构拒绝。F-14IA的副油箱IRCM及机库依赖崩溃不因同名资源而自动放行；现有提前退让保持。名称及IRCM修订已随正式2.26.0进入main；原研究回执保留当时未编译的事实，总体验收不扩大为全部皮肤和组合逐项通过。
 
 F-14IA 整族与三 SP 资料不完整机体提前原生退让；目录资格不等于任意 Mod 可用。依据见[第三方静态资料](../../evidence/mod-aircraft-compat-static.json)及[特殊兵装契约](../../evidence/mod-special-sp-contract-20261022.json)，逐类研究从[研究索引](../research/README.md)进入。
+
+### 通用兼容适配流程（未发布源码第一版）
+
+本节是兼容流程的唯一设计正文。基线为main `19b1528`、正式2.26.0；本分支仅完成源码和静态审阅，未编译、运行测试、安装或实机验证。评估来源为`codex/docs-mod-compatibility-review`的`921b8df`；逐机原包、分组及用户反馈仍在[兼容性续研](../research/mod-aircraft-compatibility.md)维护。
+
+基础多SP、持续效果、多挂外观、舱门收尾、附加输入是独立能力。第一版将持续效果和舱门接入共用故障账本，不把所有历史适配一次重写，也不新增逐机控制器、外部插件加载器或任意脚本回调。目录展示及Lua机体退让保持原边界，CFA专用发射与Raven回收机制仍保留原生约束。
+
+共用流程为：**识别真实资源 → 核对能力契约 → 捕获本次身份及责任 → 执行原生事务 → 完成引用/临时保有归还 → 检查故障后发布结果**。显示名、机体编号、配置表命中均不能独立授予写入资格；能力降级不得扩大另一能力的权限。
+
+| 层 | 第一版职责 | 扩展约束 |
+|---|---|---|
+| 描述表 | `continuous_sp_profiles.hpp`登记三类原生回调/装填契约及三项TLS资源例外；`aircraft_bay_profiles.hpp`登记八项资源与三种舱门策略 | 满足已有契约的新机体直接复用；仅资源不同优先改对应描述表，不向主事务增加机名分支 |
+| 能力模块 | `continuous_sp.hpp`负责效果引用和原生通知；`aircraft_bay_animation.hpp`负责限定舱门输出 | 类型/资源仍逐次或按原绑定边界核对；未知生命周期拒绝，不靠新增表项冒充机制已安全 |
+| 故障账本 | `CompatibilityFailures`只保存弱身份、首个原因、阶段及重复次数，不读取引擎或执行清理 | 每种能力独立实例；调用方提供归属证据，不能按菜单简称共用故障状态 |
+| 主事务 | 用统一的`continuousRequireRuntime`检查当前上下文，提交前再次检查 | 不认识新增机型；视觉失败仍原生退让，不撤销已完成的配弹事务 |
+
+**故障范围：**持续效果的通知、UAV结束、Drain和异常收尾失败时，再次核对玩家、激活器和Level弱身份及归属；全部吻合才登记为该玩家实例故障。该实例的多SP缓存读写、资格查询及HUD就绪读取停止，不能只禁用一个按钮后继续使用不可靠库存。同一玩家换配置或重新开关总功能不解除故障；其他玩家实例可按原契约重新准入，但不能借用仍有故障的同一个激活器。无法确认上述归属时，或临时Root释放失败时，保持进程级多SP拦截，要求重启游戏。本版不实现自动重试、定时解锁或不明状态恢复。
+
+舱门使用独立账本：失败清除绑定与事务快照，保留原生Parts调用；只停止对应玩家实例的舱门能力，不影响持续效果、库存与其他机体。绑定身份尚未取得就失败时只拒绝本次绑定，不错误隔离上一机体。总门禁清绑定不会清故障；同一实例不反复尝试。资源精确资格和算法仍以[挂载设计](multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)为准。
+
+舱门策略按输出性质复用：`Shared01Close`补齐旧聚合域收尾，`PublicSwitchContinuity`仅保留同事务公共进度，`SelectedIndependent`只控制某个原生配置对应的`swc1/2/3`独立输出。单路策略参数为配置索引及“模型开时关闭”，执行时再核当前armed/配置和实际模型开关，不接收机型回调；开舱只沿原生公共进度，收拢沿原生速率，模型开启时的关舱覆盖仅写独立输出。CFA-44为本次首个配置，Light旧单路写入者已撤出；资源与用户规则的唯一正文见[挂载设计CFA专节](multi-sp-mount-design.md#cfa切换与ecm当前策略)。本次仍未编译或实机验证。
+
+**记录与清理分开：**每个能力最多保留64条玩家故障；同一玩家保留首次原因并累计重复次数，诊断文本有界且按UTF-8边界截断。只有对象表地址/序列号证明旧玩家身份已消失，才可回收局部故障记录；持续效果还要求旧激活器身份也已消失，避免新玩家借用旧组件绕过保护。PendingKill、换机、失去控制或账本清空均不算清理完成。容量耗尽时关闭该能力的后续接入，不覆盖旧记录。故障记录回收不删除效果账本、原生引用或未归还Root，进程级故障不随门禁切换清除。
+
+临时Root另有64项责任表，仅登记本模块实际设置的Root位。正常重建在恢复两组原生引用后显式释放Root，析构仍兜底；释放失败保留责任项和进程级故障。构造失败、Drain收尾和原生回调期间的错误均须在后续初始化或成功回执前检查，不能仅记录日志后报告成功。责任表为空同样不是解除进程级故障的充分条件，本版不提供强制解锁入口。
+
+**成本边界：**三类原生持续兵装共用一次最多64层父链分类，装填、回调、IRCM附着及代码指纹检查保留，不缓存动态实例结论；TLS仍限原三项资源。健康故障门禁直接返回，不新增对象表/父链/数组读取。局部故障存在时才在原接口调用中核对作用域和回收记录，无新增线程、全局Actor扫描、逐帧日志或文件访问。原候选数组去重和引用扫描未改，性能收益尚未测量。
+
+后续确需新增机制时，在能力模块实现独立的预检、写入区、提交和归还边界，说明所持引用、原生结束职责、失败影响范围及继续条件；特殊资源只通过描述表选择已审阅的机制。禁止通过特殊适配直接改主程序许可、其他机体的输入/弹药、全局动画或共享作者资源。不能证明安全归还时保留原生或限制具体能力，不为追求完全兼容扩大接管。
+
+后续验证范围包括：原三类持续兵装及TLS契约不回退；局部通知/Drain/Raven清理异常后的换机与新任务；相同地址新序列号、同激活器复用、Root释放失败、故障容量上限；舱门失败后原生Parts恰调用一次、跨机型独立、门禁重开不重试；事务期间出现故障不得返回成功。此清单仅描述后续完成条件，不表示已编写或执行测试。
+
+本版不修改Lua导出参数/返回值、管理协议、配置schema或VERSION；新错误来自同一双语文字源。现成EXE、ZIP和冻结DLL不包含本分支改动，不能据源码重构追认运行验证。
 
 ## 选装与调试换机
 

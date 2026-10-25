@@ -34,6 +34,7 @@ These are the default controls. Keyboard bindings can be customized.
 • Mirage 2000-5, Rafale M, Typhoon, Gripen E
 • MiG-29A, MiG-31B (some combinations mount SAAM under the fuselage), MiG-35D, Su-30M2, Su-30SM, Su-33, Su-34, Su-35S, Su-37
 • XFA-27, ADFX-01, ADF-01 FALKEN (weapons cannot be switched while firing TLS), ADF-11F, CFA-44 (ADMM on the left, EML on the right, ECM model hidden)
+• CFA-44 ventral bay: stays closed when multi-SP models are enabled. With multi-SP models disabled, it opens only while ADMM is selected and active, and closes after switching to EML, ECM or MSL.
 
 2. Partially supported:
 • F-22A: the 8AAM pods are always visible. SP weapon models inside the fuselage weapon bays change when switching weapons.
@@ -50,6 +51,7 @@ Popular mod aircraft will also receive priority for future support.
 4. Scope and compatibility with other mods
 • For the Steam version, single-player campaign only. Disabled in multiplayer.
 • Compatible mods: most add-on aircraft, skins, AC7MouseAim, Enhanced Gunplay, All Aircraft PSM, Modular Weapon Swap.
+• Multi-SP, sustained effects and multi-SP visuals are qualified separately. A local bay-adaptation failure falls back to native behavior. A sustained-effect failure stops Multi-SP reads and writes for the affected aircraft instance; leave the mission and sortie again. If cleanup or shared-state safety cannot be verified, restart the game. See the log for details.
 • Currently incompatible: F-14IA, Pre-Campaign VR missions.
 
 5. Known issues
