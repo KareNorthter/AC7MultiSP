@@ -1,5 +1,5 @@
 AC7MultiSP
-This program is for learning and discussion only. It is completely free. Do not use it for any other commercial purposes.
+This program is for learning and discussion only. It is completely free. Do not use it for other commercial purposes.
 
 Author:
 • Homepage: https://ac7multisp-updates.pages.dev/
@@ -10,7 +10,7 @@ Author:
 
 Feedback:
 • Email: karenorthterofchina@gmail.com
-• Test QQ group: 1072924682 (latest beta builds are shared here)
+• Test QQ group: 1072924682 (the latest beta builds are shared here)
 
 Third-party components and assets
 The third-party components used by this mod are covered by their respective licenses. Full license texts are included in the package under ue4ss/Mods/DualSP/licenses.
@@ -25,7 +25,7 @@ Acknowledgments
 • Thanks to all players who participated in mod testing and provided feedback.
 
 Notice:
-AC7MultiSP is an unofficial fan project. It is not affiliated with, endorsed by or supported by Bandai Namco Entertainment. ACE COMBAT™ 7: SKIES UNKNOWN is a trademark of Bandai Namco Entertainment Inc. This mod contains no game files or game code. You must own a legitimate copy of the game to use it. To access DLC content, you must also own the corresponding DLC. Use this mod at your own risk.
+AC7MultiSP is an unofficial fan project. It is not affiliated with, endorsed by or supported by Bandai Namco Entertainment. ACE COMBAT™ 7: SKIES UNKNOWN is a trademark of Bandai Namco Entertainment Inc. This mod contains no game files or game code; you must own a legitimate copy of the game to use it. To access DLC content, you must also own the corresponding DLC. Use this mod at your own risk.
 
 Every effort has been made during development to support different aircraft and maintain compatibility with other mods, but some issues still need to be fixed. Thank you for your understanding and patience. If you encounter any problems while downloading or using this mod, please read the instructions carefully first. They describe possible situations and solutions in as much detail as possible. If your issue is not covered, please contact me through the email address or QQ group above. I will review your feedback and help you resolve it as soon as possible.
 The author reserves the right to interpret all features of this mod. If you wish to use this mod for any purpose other than playing the game, please contact me and obtain my consent beforehand. If you repost this mod on other channels or platforms, please credit the author and identify the source. Do not use this mod for improper purposes; you are responsible for any consequences arising from such use.

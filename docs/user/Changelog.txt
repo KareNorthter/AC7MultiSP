@@ -4,6 +4,7 @@ AC7MultiSP
 • Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.
 • Fixed the CFA-44 ventral weapon bay failing to close.
 
+
 2.26.0
 • Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.
 • Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.
@@ -18,15 +19,15 @@ AC7MultiSP
 • Added update checks and browser download links.
 
 2.22.X–2.23.X
-• Reworked the management interface.
+• Redesigned the management interface.
 • Improved controller camera controls.
 • Added separate model switches for missions and the hangar, and expanded mounting visuals for more aircraft.
 • Reduced the overhead of SP weapon switching and interface operations, improving stuttering when switching weapons on the CFA-44.
-• Added unlimited ammunition and fast reload options for SP weapons, and expanded support for some third-party aircraft, drones, and gun-type SP weapons.
+• Added unlimited ammunition and fast reload options for special SP weapons, and expanded support for some third-party aircraft, drones and gun-type SP weapons.
 
 2.17.X–2.21.X
-• Added persistent target tracking, camera hold, and camera recentering controls.
-• Added linked fire for the built-in gun, gun pods, and pulse lasers.
+• Added persistent target tracking, camera hold and camera recentering controls.
+• Added linked fire for the aircraft gun, gun pods and pulse lasers.
 • Improved SP weapon switching on aircraft including the CFA-44 and FALKEN.
 
 2.6.X–2.16.X
@@ -35,8 +36,8 @@ AC7MultiSP
 • Restored the game's original model display for some aircraft with internal weapon bays to reduce stuttering, while retaining multi-SP weapon use.
 
 2.0.X–2.5.X
-• Renamed the mod to AC7MultiSP, supporting up to three SP weapon types on one aircraft.
-• Added multi-SP weapon model display in the hangar, during resupply, and in missions, plus shortcuts for combinations and models.
+• Renamed the mod to AC7MultiSP, supporting up to three special SP weapon types on one aircraft.
+• Added multi-SP weapon model display in the hangar, during resupply and in missions, plus shortcuts for combinations and models.
 
 1.X and earlier
-• Named DualSP, with two SP weapon types, independent ammunition and reloads, and gradual improvements to the management interface and installation methods.
+• Named DualSP, with two special SP weapon types, independent ammunition and reloads, and gradual improvements to the management interface and installation methods.

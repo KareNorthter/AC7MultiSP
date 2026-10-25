@@ -96,6 +96,10 @@ R2文件已到位后运行：
 
 输出`AC7MultiSP-Pages-homepage.zip`、pages/目录、stable.json及publication-receipt.json。Pages包根目录包含HTML、JS、CSS、stable.json、保留的preview.json、_headers和八份玩家正文，不额外套目录。作者先确认蓝奏云和Nexus文件，再将完整ZIP或pages/内容上传现有Pages项目。单独上传stable.json会替换不完整站点；源site/app.js含模板占位，也不能直接上传源码目录。
 
+### 作者要求先制作网页上传包时
+
+可先使用prepare的stable.ready.json及当前同源正文调用build_pages_site.py --manifest，生成明确标记为“待上传、远端未核”的完整Pages材料，复用preserve_signatures验证并保留历史签名，再加入本版两份发布签名。此步骤仅核对本地生成包，不调用finalize，也不把本地预期摘要冒充人工下载结果；源码site/stable.json仍保留已发布版本。先上传R2的同一EXE、核对下载摘要，再上传新Pages包；Nexus使用同次通用ZIP。实际部署后另做线上核对，不回改旧记录。
+
 ### 部署后核对和收尾
 
     python -X utf8 src/release_workflow.py verify-online --pages-dir Temp/tasks/20261024-release-2.25.2/pages-release/pages --receipt Temp/tasks/20261024-release-2.25.2/online-verification.json

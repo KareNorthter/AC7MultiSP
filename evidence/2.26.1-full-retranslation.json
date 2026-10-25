@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1",
+  "author_instruction": "删除英文user四个文件，全部依据当前中文重新翻译",
+  "old_english": "主工作区及集成工作树旧稿均已送回收站，不永久删除；Git历史保持",
+  "source": "E:/AC7_MultiSP/docs/user",
+  "files": {
+    "Features.txt": {
+      "chinese_source": "功能说明.txt",
+      "source_sha256": "1e10fac20375c2f3ce8850678422b234667526f287b91e1d25acc167c93a965c",
+      "english_sha256": "cb2657f32d4e83ae37a3b273698227b183636aef35aca5459add837b7e7ed675",
+      "aligned_nonempty_lines": 51
+    },
+    "Installation.txt": {
+      "chinese_source": "安装说明.txt",
+      "source_sha256": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+      "english_sha256": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+      "aligned_nonempty_lines": 16
+    },
+    "Changelog.txt": {
+      "chinese_source": "更新日志.txt",
+      "source_sha256": "fa381c53eb7ad58786d1a31b0d3359b68c46a0166d05c1f96593622fa5869554",
+      "english_sha256": "90959ff0ddef684bd949c393dbb8a696ffd45a3f5692f85677cb32882c145562",
+      "aligned_nonempty_lines": 33
+    },
+    "Author-and-License.txt": {
+      "chinese_source": "作者与授权.txt",
+      "source_sha256": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+      "english_sha256": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe",
+      "aligned_nonempty_lines": 26
+    }
+  },
+  "method": "新文件从当前中文逐行翻译，不读取或拼接旧英文；非空行一一对应，中文空白段落位置保留",
+  "chinese_bytes_preserved": true,
+  "review_html": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-release-2.26.1-author-text\\中英逐行对照.html",
+  "superseded_package": "E:/AC7_MultiSP/Temp/tasks/20261025-release-2.26.1-author-text/package",
+  "superseded_exe_sha256": "48cafa9f5e93fd8ef6ef4e6c4c6f259d751350d7cd5a7a726da4843a762b6fdd",
+  "superseded_reason": "此前包在作者要求全文重译之前生成，不作为最终发布包；后续从新翻译重建到新目录",
+  "test_modules_run": false,
+  "installed": false,
+  "uploaded": false
+}

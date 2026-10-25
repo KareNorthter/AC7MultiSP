@@ -151,6 +151,31 @@ def copy_utf8(source: Path, target: Path) -> None:
     target.write_bytes(content)
 
 
+def historical_changelog(source: Path, version: str) -> str:
+    """只生成网页历史视图，原始中英文日志全文仍按原字节发布。"""
+    latest = tuple(map(int, version.split(".")))
+    sections = []
+    current = None
+    current_found = False
+    for line in source.read_text(encoding="utf-8").splitlines():
+        heading = line.strip()
+        match = re.match(r"^(\d+)\.(\d+|X)(?:\.(\d+|X))?(?:$|[—–\s及])", heading)
+        if match:
+            current = {"heading": heading, "lines": [line], "order": tuple(
+                0 if part in (None, "X") else int(part) for part in match.groups())}
+            sections.append(current)
+            current_found = current_found or heading == version
+        elif current is not None:
+            current["lines"].append(line)
+    if not current_found:
+        raise ValueError("网页日志缺少当前完整版本章节：" + version)
+    history = sorted((item for item in sections if item["order"] < latest), key=lambda item: item["order"])
+    if not history:
+        raise ValueError("网页历史日志为空，拒绝生成缺失历史的页面")
+    return "AC7MultiSP\n\n" + "\n\n".join(
+        "\n".join(item["lines"]).rstrip() for item in history) + "\n"
+
+
 def read_site_texts() -> dict[str, dict[str, str]]:
     """主页固定词条只维护interface里的双语JSON。"""
     texts = {}
@@ -238,6 +263,13 @@ def build(output: Path, manifest: Path | None = None) -> None:
     (output / "index.html").write_text(page, encoding="utf-8", newline="\n")
     for name in PLAYER_DOC_FILES:
         copy_utf8(PLAYER_DOCS / name, output / "user-docs" / name)
+    version = json.loads(manifest.read_text(encoding="utf-8")).get("latest_version")
+    if not version:
+        version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    for language, name in (("zh-CN", "更新日志.txt"), ("en", "Changelog.txt")):
+        history = historical_changelog(PLAYER_DOCS / name, version)
+        (output / "user-docs" / f"changelog-history.{language}.txt").write_text(
+            history, encoding="utf-8", newline="\n")
 
 
 def main() -> int:

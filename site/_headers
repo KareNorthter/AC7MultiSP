@@ -12,3 +12,15 @@
 /preview.json
   Content-Type: application/json; charset=utf-8
   Cache-Control: no-store
+
+/user-docs/*
+  Cache-Control: no-store
+
+/app.js
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+/
+  Cache-Control: no-cache

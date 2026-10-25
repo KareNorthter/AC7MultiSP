@@ -6,7 +6,7 @@
   const documents = {
     features: { "zh-CN": "功能说明.txt", en: "Features.txt" },
     install: { "zh-CN": "安装说明.txt", en: "Installation.txt" },
-    changelog: { "zh-CN": "更新日志.txt", en: "Changelog.txt" },
+    changelog: { "zh-CN": "changelog-history.zh-CN.txt", en: "changelog-history.en.txt" },
     author: { "zh-CN": "作者与授权.txt", en: "Author-and-License.txt" }
   };
   const downloadHosts = new Set([
@@ -147,14 +147,11 @@
     if (manifest.status === "preparing") {
       setStatus("preparing", currentCopy().preparingStatus, currentCopy().preparingHint);
       appendDownloadGroup(currentCopy().mainDownloadTitle, [], currentCopy().preparingMain, true);
-      appendDownloadGroup(currentCopy().backupDownloadsTitle, [], currentCopy().preparingBackup, false);
       return;
     }
     setStatus("ready", currentCopy().readyStatus, currentCopy().readyHint);
     const primary = manifest.downloads.filter((item) => item.id === "r2");
-    const backups = manifest.downloads.filter((item) => item.id !== "r2");
     appendDownloadGroup(currentCopy().mainDownloadTitle, primary, "", true);
-    if (backups.length) appendDownloadGroup(currentCopy().backupDownloadsTitle, backups, "", false);
     elements.releaseNotesText.textContent = manifest.release_notes[language === "zh-CN" ? "zh" : "en"];
     elements.releaseNotes.hidden = false;
   }
@@ -194,7 +191,7 @@
     if (!filename) throw new Error("Unknown document");
     const cacheKey = language + "/" + filename;
     if (textCache.has(cacheKey)) return textCache.get(cacheKey);
-    const response = await fetch("./user-docs/" + encodeURIComponent(filename), { cache: "force-cache" });
+    const response = await fetch("./user-docs/" + encodeURIComponent(filename), { cache: "no-store" });
     if (!response.ok) throw new Error("Document request failed");
     const text = await response.text();
     textCache.set(cacheKey, text);

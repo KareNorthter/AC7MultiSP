@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1",
+  "author_requirement": "历史说明从最早版本到2.26.0，最新下载旁只显示2.26.1；网页只描述Cloudflare R2",
+  "previous_archives": [
+    "E:/AC7_MultiSP/Release/2.26.0/AC7MultiSP-Pages-homepage.zip",
+    "E:/AC7_MultiSP/Release/2.26.0/AC7MultiSP-Pages-R2-only.zip"
+  ],
+  "local_findings": "两份旧包的中英文完整日志均含2.25.X，旧app.js无版本过滤，只显示整篇正文；顶卡由stable.release_notes只显示当时最新2.26.0。旧正文fetch force-cache且_headers未设置正文no-store，存在旧正文缓存风险。",
+  "online_inspection": "web读取主页及Changelog.txt均被工具拒绝访问，未重试；不能确认线上实际缺项原因或归因到缓存",
+  "change": "生成独立历史视图，支持X与范围标题，按版本起点升序排除当前版本；原八份正文按原字节保留。正文读取与响应禁止缓存。",
+  "chinese_copy_approval": {
+    "source": "用户逐条审核回复",
+    "response": "下载入口正在准备中 和 备用链接确认后开放 不需要。其他批准",
+    "applied": {
+      "preparingHint": "下载使用 Cloudflare R2。",
+      "readyHint": "通过 Cloudflare R2 下载 EXE 安装程序。",
+      "deleted": [
+        "backupDownloadsTitle",
+        "preparingBackup"
+      ]
+    }
+  },
+  "tests_run": false,
+  "deployed": false
+}
