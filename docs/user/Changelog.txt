@@ -1,6 +1,7 @@
 AC7MultiSP
 
 Unreleased (source only; not compiled or verified in game)
+• Adjusted the CFA-44 ventral bay: it stays closed with multi-SP models enabled. With models disabled, it opens only while using ADMM and closes after switching to other weapons.
 • Unified compatibility-failure handling for sustained effects and weapon bays, limiting local failures to the aircraft instance. Multi-SP reads and writes remain blocked when cleanup safety cannot be verified.
 • Organized shared weapon contracts and bay resource profiles without adding aircraft-specific controllers or expanding aircraft support.
 • Added explicit tracking of temporary sustained-effect retention releases so cleanup failures prevent a successful transaction response.

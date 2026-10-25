@@ -16,33 +16,16 @@ struct LightMountAnimation {
         float progress{};
         bool valid{};
     } pending;
-    // 只接管ADMM盖板的swc1输出；公共spwc和发射阶段不做逐帧强写。
-    struct CfaBody { float native{},written{};bool owned{}; } cfaBody;
 } lightMountAnimation;
 
 bool mountLightHasAnimation(MountAircraft aircraft) {
     // Dark的swcc收尾由独立于外观的共用模块唯一负责，失败时也不另开第二套写入者。
+    // CFA在本模块仅保留公共SP互切快照，机腹独立输出也由共用模块负责。
     return aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 || mountLocal(aircraft);
 }
-void mountLightAnimationReturnCfaBody() {
-    auto& state=lightMountAnimation;
-    if(!state.cfaBody.owned)return;
-    // 实例销毁/引擎换代后不访问旧Parts；原生已改写时不以旧基线覆盖它。
-    if(mountAlive(state.plane) && read<Addr>(state.plane.address+0x1410)==state.engine &&
-       read<Addr>(state.engine+0x1268)==state.plane.address+0xb40 &&
-       read<Addr>(state.parts)==reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x2fff178 &&
-       read<float>(state.parts+0x180)==state.cfaBody.written) {
-        require(MountAnimationReflection::writable(state.parts+0x180,sizeof(float)),"CFA盖板：归还输出不可写");
-        std::memcpy(reinterpret_cast<void*>(state.parts+0x180),&state.cfaBody.native,sizeof(float));
-    }
-    state.cfaBody={};
-}
 bool mountLightAnimationRelease() {
-    lightMountAnimation.pending={};
-    try {mountLightAnimationReturnCfaBody();lightMountAnimation={};return true;}
-    catch(const std::exception& error) {
-        nativeLog(std::string("LIGHT_PARTS_RELEASE_ERROR ")+error.what());return false;
-    } // 失败保留唯一输出的归还责任，后续退出流程重试。
+    // 独立舱门动态输出已交共用模块，本模块只保有同事务快照，无需恢复旧的冻结开舱值。
+    lightMountAnimation={};return true;
 }
 
 // 以下字段来自通用PlayerPlane→engine包装器→Parts原生链，并逐条校验原指令。
@@ -109,38 +92,10 @@ void mountLightAnimationPut(const std::array<float,7>& values) {
     std::memcpy(reinterpret_cast<void*>(address),values.data(),sizeof(values));
 }
 
-// CFA三副机构使用spwc，Body另有swc1盖板；选有ADMM时让这组盖板跟随真实公共进度。
-// 只复制一个输出，不能压低ECM的spwc或伪造全开阶段，也不逐骨检查/反射调用。
-void mountLightAnimationCfaBody(int config) {
-    auto& state=lightMountAnimation;
-    if(!(fixedMount.kindsMask&1u))return;
-    std::array<float,2> values{};
-    checkMemory(state.parts+0x17c,sizeof(values));
-    std::memcpy(values.data(),reinterpret_cast<void*>(state.parts+0x17c),sizeof(values));
-    for(float value:values)require(std::isfinite(value) && value>=-1 && value<=1,"CFA盖板：进度无效");
-    auto& owned=state.cfaBody;
-    // config0由原生本帧写swc1；其他配置只有观察到新值时才更新原生基线。
-    if(config==0 || !owned.owned || values[1]!=owned.written)owned={values[1],values[1],false};
-    if(values[0]==values[1])return;
-    require(MountAnimationReflection::writable(state.parts+0x180,sizeof(float)),"CFA盖板：同步输出不可写");
-    owned.written=values[0];owned.owned=true;
-    std::memcpy(reinterpret_cast<void*>(state.parts+0x180),&values[0],sizeof(float));
-}
-int mountLightAnimationCfaFrameCurrent() {
-    const auto& state=lightMountAnimation;
-    // 完整资格在绑定/切换时核对；本次原生回调已给出Parts，只复核活机体、所属引擎和当前域。
-    require(mountAlive(state.plane) && read<Addr>(state.plane.address+0x1410)==state.engine &&
-        ((read<unsigned>(state.parts+0x27c)>>18)&15u)==1u,"CFA盖板：玩家或公共舱域改变");
-    const int config=read<int>(state.parts+0x178);
-    require(config>=0 && config<3,"CFA盖板：原生配置越界");
-    return config;
-}
 void mountLightAnimationBeforeRebuild(const Command& command,int target) {
     auto& state=lightMountAnimation;state.pending={};
     if(!fixedMount.bound || (fixedMount.aircraft!=MountAircraft::Fa44 && !mountLocal(fixedMount.aircraft)))return;
     mountLightAnimationBind();
-    // 先归还附属盖板，让Init产生的新原生值成为下一次基线。
-    mountLightAnimationReturnCfaBody();
     if(command.op!="switch" || command.plane!=state.plane.address ||
        command.activator!=fixedMount.animationActivator.address)return;
     const int prior=mountLightAnimationCurrent();
@@ -184,7 +139,6 @@ void mountLightAnimationAfterArmed(const Command& command,bool armed) noexcept {
         std::memcpy(reinterpret_cast<void*>(state.parts+0x58),&saved.request,sizeof(int));
         std::memcpy(reinterpret_cast<void*>(state.parts+0x274),&saved.phase,sizeof(int));
         std::memcpy(reinterpret_cast<void*>(state.parts+0x17c),&saved.progress,sizeof(float));
-        if(state.aircraft==MountAircraft::Fa44)mountLightAnimationCfaBody(saved.target);
     }catch(const std::exception& error) {fixedMountFail(error.what());}
 }
 void mountLightAnimationCommit() {
@@ -200,19 +154,7 @@ bool mountLightAnimationParts(void* object,float delta,void* input) {
     if(!state.parts || reinterpret_cast<Addr>(object)!=state.parts || !fixedMount.bound || fixedMount.rebuilding ||
        !mountMeshIdentityEqual(state.plane,fixedMount.plane))return false;
     if(mountLocal(state.aircraft))return false; // 四机公共通道只在SP互切事务恢复一次，逐帧原生更新完整直通。
-    if(state.aircraft==MountAircraft::Fa44) {
-        // 无ADMM则没有额外swc1盖板，连通道同步也无需执行。
-        if(!(fixedMount.kindsMask&1u))return false;
-        mountOriginalPartsUpdate(object,delta,input);
-        try {
-            // 原生调用可能触发退出/换代；返回后重新确认范围，再读输出。
-            if(!fixedMount.bound || fixedMount.rebuilding || state.aircraft!=MountAircraft::Fa44 ||
-               reinterpret_cast<Addr>(object)!=state.parts || !mountMeshIdentityEqual(state.plane,fixedMount.plane))return true;
-            require(input && reinterpret_cast<Addr>(input)==state.parts+0xc,"CFA盖板：原生输入改变");
-            mountLightAnimationCfaBody(mountLightAnimationCfaFrameCurrent());
-        }catch(const std::exception& error) {fixedMountFail(error.what());}
-        return true;
-    }
+    if(state.aircraft==MountAircraft::Fa44)return false; // swc1由共用模块唯一写入，失败也不恢复旧复制逻辑。
     bool called=false;
     try {
         const int config=mountLightAnimationCurrent();

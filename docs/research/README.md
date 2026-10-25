@@ -8,6 +8,8 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 通用兼容流程第一版从正式2.26.0/main `19b1528`另建`codex/refactor-compatibility-pipeline`，接入能力独立的故障账本、持续效果契约表和舱门资源策略；唯一设计及待验证范围见[架构](../engineering/architecture.md#通用兼容适配流程未发布源码第一版)，责任与路径见[工作区索引](../project/workspaces.md)。源码未发布，未编译、测试或安装，不恢复暂缓适配，不覆盖旧研究原件。
 
+同分支随后按用户更正处理CFA-44机腹舱：限定资源使用共用单路独立输出策略，Light旧复制写入者撤出。具体规则、原料来源与待验证项只在[挂载设计CFA专节](../engineering/multi-sp-mount-design.md#cfa切换与ecm当前策略)维护；未编译或实机验证。
+
 ## 免费Mod署名与资源保护
 
 [唯一研究正文](mod-protection.md)基于main 7431855及2.25.3 alpha1原交付静态盘点，给出同源文字/图片、离线签名、安装与按需核验、符号精简及可选混淆的边界、成本和继续条件。研究锚5593ae3；用户已选择A，源码候选位于codex/feat-author-signing，现行设计见[交付方案](../project/delivery.md#a阶段作者签名)。源码6ce2881由集成交付线程接入alpha5，现有作者公钥已登记；制作与验证见alpha5交付回执。B未实施，研究旧扫描保持原阶段含义，不分配正式版本。
