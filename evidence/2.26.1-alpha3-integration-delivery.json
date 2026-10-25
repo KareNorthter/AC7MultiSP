@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1 alpha3",
+  "candidate": true,
+  "main_baseline": "19b1528d599d9d2d34c9f48ceba7799c6355669c",
+  "source_commit": "f047b7083e26a5592262c64b574f7034280b3ec3",
+  "branch": "codex/integrate-20261025",
+  "worktree": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261025\\AC7_MultiSP",
+  "sources": [
+    {
+      "thread": "01a17237-7d70-7253-abd7-f0c9c40c2dce",
+      "branch": "codex/fix-native-ui-language",
+      "commit": "3d9ceb9424d2534e9d1ec8cb8216f1e0db2b2fa1"
+    },
+    {
+      "thread": "01a170fd-c406-76e1-9cbb-e76448b8af0b",
+      "branch": "codex/perf-runtime-preview",
+      "commit": "73366ce3b6bc4a2b3d3320438806abae5e208d27"
+    },
+    {
+      "thread": "01a171a1-28f2-7202-b724-8f05cb28bed5",
+      "branch": "codex/refactor-compatibility-pipeline",
+      "commit": "b95afa2f4324b757770adfcf17944d136d783403"
+    }
+  ],
+  "intake": "三个来源tip均为集成HEAD祖先；20份独占运行源码逐字节与来源相同，共同源码continuous_sp.hpp/weapon_bridge.cpp保留双方改动，生成表从唯一正文重建",
+  "conflicts_resolved": [
+    "docs/research/README.md",
+    "docs/user/Changelog.txt",
+    "docs/user/更新日志.txt",
+    "src/generated/user_texts.hpp",
+    "docs/project/workspaces.md"
+  ],
+  "delivered_exe": "E:\\AC7_MultiSP\\Release\\2.26.1-alpha3\\AC7MultiSP_Installer.exe",
+  "sha256": "647be5d4bf811685e5ebc6d69b15cb70d0353938d2ca11cdfb224e6430d85385",
+  "size": 61754880,
+  "core_sha256": "65566ad09fa9b656a92451df260dabbe7b69d92e1911d1458a6883d36fe8a123",
+  "ui_sha256": "b9638a19e73276c5f2e4f17fa47cdf7b2f66d73d8ff2842a9d9966e785ca2abc",
+  "build_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-integration-alpha3\\game-build\\build-receipt.json",
+  "build_receipt_sha256": "7ed8b86c87519353e293483b00419e523a1d3d01f08b6f05940de78a735a8fd1",
+  "package_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-integration-alpha3\\package\\封装回执.json",
+  "package_receipt_sha256": "daf08447af6bc1c75694d2926e74034b23fbe8877e1d5524312c46a08eaad113",
+  "exe_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-integration-alpha3\\package\\EXE编译回执.json",
+  "exe_receipt_sha256": "de53859d66ea8c4469be5856144f9d9e498d4165180d6c5ab8ac74d4517bd953",
+  "release_manifest": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-integration-alpha3\\package\\AC7MultiSP-release.json",
+  "release_signature": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-integration-alpha3\\package\\AC7MultiSP-release.sig.json",
+  "author_signing": {
+    "schema": 1,
+    "product": "AC7MultiSP",
+    "version": "2.26.1 alpha3",
+    "channel": "candidate",
+    "release_id": "62224ca873b940a2a7b6b9a89548d70b",
+    "source_commit": "f047b7083e26a5592262c64b574f7034280b3ec3",
+    "key_id": "7fb2b9911ea8ec785ea12fbaa051ec1d7c683046873e44f66f25c289d1142f2f",
+    "registry_sha256": "ac439517694e28b56763b0cc7e3592fcfd35edc92872ae150605ec495e5b2bd2",
+    "content_sha256": "93839cf85df41e00009a6e5ed4e28d00789247888f664b749347038f3cbd05f6",
+    "bundle_sha256": "c87085af48fc3fa16382ad62cb64d29fd409fd3d535b327f6b8861218ac07772"
+  },
+  "release_signature_verified": true,
+  "build_source_and_protected_files_verified": true,
+  "lua_syntax_only": true,
+  "lua_files": 18,
+  "required_exports_verified": true,
+  "mount_asset_variants": 77,
+  "mount_pak_members": 154,
+  "universal_zip_member_count": 50,
+  "universal_zip_delivered": false,
+  "core_recompiled": true,
+  "ui_recompiled": true,
+  "tests_run": false,
+  "installer_executed": false,
+  "game_installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "main_updated": false,
+  "formal_version_unchanged": "2.26.0",
+  "user_acceptance": "待作者自行安装和游戏验收；本轮未承诺帧率收益",
+  "coverage": "docs/research/runtime-performance.md#统一游戏对照alpha3集成候选",
+  "not_verified": [
+    "实际性能收益及同场景FPS",
+    "中英文界面实际显示",
+    "游戏内持续效果、舱门、镜头及补给/检查点/换机回归",
+    "Root释放失败、对象地址复用及异常回调/故障容量受控验证",
+    "EXE实际安装/迁移/卸载、异常恢复和线上联网"
+  ]
+}
