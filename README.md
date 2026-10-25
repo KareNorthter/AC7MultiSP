@@ -6,16 +6,16 @@
 
 | 项目 | 状态与依据 |
 |---|---|
-| 正式版本目标 | **2.26.0**，作者确认alpha5正常并指定正式版；正式EXE/ZIP已完整构建并签署，待作者上传，见[交付回执](evidence/2.26.0-exe-delivery.json)。[原版本确认](evidence/2.26.0-release-authorization.json)保留当时阶段事实 |
+| 正式发布版本 | **2.26.0**，作者于2026-10-25确认安装包和Mod功能正常，并要求接收当前main及同步GitHub；[验收与文档接收](evidence/2.26.0-main-acceptance-20261025.json)记录本次事实。已交付EXE/ZIP不重建或改写 |
 | 上一正式版本 | **2.25.2**，原[发布准备与核对](evidence/2.25.2-publication-preparation.json)及旧产物保持原样 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
 | 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
 | 现成正式EXE与通用ZIP | 作者已将安装器修订2等文件移到Release/2.26.0根目录；[当前EXE](Release/2.26.0/AC7MultiSP_Installer.exe)版本2.26.0，e878c0f5…；[原修订回执](evidence/2.26.0-installer-homepage-revision2.json)保留交付时路径，冻结原件及旧记录不改写 |
-| 实机验证边界 | 作者确认alpha4基本通过，随后确认alpha5均正常；记录为用户实测反馈，不追认未逐项核实的异常验签、异机恢复或性能测量。F6状态发布性能、F-2A掉帧及XFA-33 B/Su-57 TGM公共舱待办继续保留 |
+| 实机验证边界 | 作者已确认2.26.0安装包及Mod功能正常；这是用户总体反馈，不追认未逐项核实的异常验签、异机恢复或性能测量。F6状态发布性能、F-2A掉帧及XFA-33 B/Su-57 TGM公共舱待办继续保留 |
 | 主页与发布流程 | 已交付[仅R2网页包](Release/2.26.0/AC7MultiSP-Pages-R2-only.zip)，暂不提供蓝奏云，隐藏备用下载区，完整日志不变。R2已流式核对为安装器修订2（e878c0f5…），无需重编EXE；[网页核对](evidence/2.26.0-pages-r2-only.json)记录来源和待部署事实 |
-| 当前正式源码 | VERSION为**2.26.0**、candidate=false，构建来源38f1255。按作者最新四份中文原字节接收并同步英文；保留作者精简后的正式日志，生成文字已同步。安装器内嵌Steam登记的AC7游戏图标，四尺寸资源核对一致 |
-| 最近验收安装包 | [2.25.3 alpha5 EXE](Release/2.25.3-alpha5/AC7MultiSP_Installer.exe)，来源db0d2c9，作者本次确认正常；[原交付回执](evidence/2.25.3-alpha5-exe-delivery.json)记录制作时的核对事实，旧包和回执不改作正式版本 |
+| 当前正式源码 | VERSION为**2.26.0**、candidate=false；完整运行构建来源38f1255，安装器修订2来源2923ed6。已原样接收作者最新中英文TXT并同步供后续构建使用的生成文字；按作者要求不重编/重包，现成EXE、ZIP及网页包正文仍是各自冻结快照 |
+| 最近验收安装包 | 2.26.0安装器修订2，SHA256为e878c0f5…；作者已确认安装包与Mod功能正常，[原修订回执](evidence/2.26.0-installer-homepage-revision2.json)保留制作时路径与核对事实。本次TXT细节修订不追改现成包 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。
 

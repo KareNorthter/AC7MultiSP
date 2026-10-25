@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.0",
+  "user_statement": "我刚刚修改了user里面的中文/英文txt中的一些细节，但是无需重新打包了。安装包和mod功能都正常。现在请将当前的2.26.0合并到main主线，并提交github",
+  "baseline_main": "2b79f59fd8f0629ddcefc151e8cc30f51227455c",
+  "code_and_website_already_in_main": true,
+  "accepted_artifact_sha256": "e878c0f5df18620adb48e008cb92757cc0d58989571058216fc71f6ffa67f343",
+  "accepted_artifact_record": "evidence/2.26.0-installer-homepage-revision2.json",
+  "user_validation": "作者总体确认安装包与Mod功能正常；不推定未记录的异常分支、性能或Vortex行为全覆盖",
+  "author_txt_changed_files": [
+    "docs/user/Author-and-License.txt",
+    "docs/user/Installation.txt",
+    "docs/user/作者与授权.txt"
+  ],
+  "author_txt_sha256": {
+    "Author-and-License.txt": "aaff583e6ff8d21d91cc17b7330d66799405c93c989920eb017061adc8ed3b7a",
+    "Changelog.txt": "de679d3cbcd7822d2dc7f995a5a989bc22681cc6feab4c474b14856281161983",
+    "Features.txt": "82121bbec6927b231546e21daab976e5c65aeae03533979e8a49bdad839b4c0e",
+    "Installation.txt": "d1f78e7816033b155febb892f722996ad604818e119596eab9feaacd0700af68",
+    "作者与授权.txt": "352ec6977de9db77070ad8c8453ad1eb92f531bbee506728c8ad3c828c004ad0",
+    "功能说明.txt": "841b8ebd3e5dcdd4a694824ed4257966e1fbb9be63c4c8080b34d11affce28c8",
+    "安装说明.txt": "5c3bcc0eff2d6a823eb99ca10906a7276086a596fd34892b07839142442abb5c",
+    "更新日志.txt": "bfe8641941803306de5c6e285cda8960b50f5551f146232785657dd177bcbae7"
+  },
+  "manual_text_preserved_verbatim": true,
+  "text_generation": "从唯一正文重新生成C++文字表，供后续构建使用；不是重编或重新打包",
+  "artifact_documents_are_frozen_older_snapshot": true,
+  "existing_artifacts_and_receipts_not_modified": true,
+  "github": {
+    "repository": "KareNorthter/AC7MultiSP",
+    "visibility_verified": "PRIVATE",
+    "authorized_ref": "refs/heads/main",
+    "remote_main_before_push": "79a90e4c909bc0cc3567bb61e3a5574395eaf209",
+    "remote_new_commits_at_fetch": 0,
+    "push_result": "以本轮终端推送及远端HEAD回读为准，不在推送前宣称成功",
+    "push_other_branches_or_tags": false,
+    "force_push": false
+  },
+  "compiled": false,
+  "tests_run": false,
+  "repackaged": false,
+  "installed": false,
+  "game_started": false,
+  "cloudflare_uploaded": false
+}
