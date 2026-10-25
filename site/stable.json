@@ -3,10 +3,10 @@
   "product": "AC7MultiSP",
   "channel": "stable",
   "status": "ready",
-  "latest_version": "2.26.0",
+  "latest_version": "2.26.1",
   "release_notes": {
-    "zh": "• 修复CFA-50、普通Su-57、DarkStar及XFA-33 A/C切换SP时舱门未正常闭合的问题。\n• 适配S32的IRCM武器，能与其他SP同时携带。\n• 修复任务中降落补给时卡死问题。",
-    "en": "• Fixed weapon bays failing to close properly when switching SP weapons on CFA-50, standard Su-57, DarkStar and XFA-33 A/C.\n• Added support for the S32's IRCM weapon, allowing it to be carried together with other SP weapons.\n• Fixed freezing during mid-mission landing and resupply."
+    "zh": "• 优化整体性能表现。特别优化CFA-44和F-2A的多SP模型方案的性能。\n• 修正CFA-44机腹舱未闭合的问题。",
+    "en": "• Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.\n• Fixed the CFA-44 ventral weapon bay failing to close."
   },
   "downloads": [
     {

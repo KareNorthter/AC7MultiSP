@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "date": "2026-10-25",
+  "version": "2.26.1",
+  "author_statement": "我已经发布。将当前的改动提交到main分支。发布包无需提交。",
+  "publication_basis": "作者确认本次发布已完成；本记录不等于工具独立下载或部署核验",
+  "source_main_before": "11b04a7b75eb7f42cb8e0bf171c262e70542c60b",
+  "source_delivery": "evidence/2.26.1-exe-delivery.json",
+  "pages_delivery": "evidence/2.26.1-pages-delivery.json",
+  "manifest_source": "E:\\AC7_MultiSP\\Release\\2.26.1\\Pages\\stable.json",
+  "manifest_sha256": "728d1a8bc395e642ef4e65b0de600f3584fee7246a9b62e3d222784d525fc4c6",
+  "site_stable_synced_to": "2.26.1",
+  "author_reported_published": true,
+  "independently_verified_online_this_turn": false,
+  "current_source_changes_received": [
+    "AGENTS.md中子代理须申请的作者规则",
+    "删除作者已移除的旧安装2.22.0候选.cmd入口",
+    "同步已交付网页的2.26.1正式清单",
+    "README、工作区与证据索引发布状态"
+  ],
+  "kept_local": [
+    "Release/下全部发布产物",
+    "docs/支付宝.jpg（与site/assets/alipay-qr.jpg原字节相同）",
+    "docs/赞助.txt（已有Ko-fi链接副本）"
+  ],
+  "packages_committed": false,
+  "user_chinese_documents_changed": false,
+  "build_run": false,
+  "tests_run": false,
+  "installed": false,
+  "uploaded_by_agent": false,
+  "git_pushed": false
+}
