@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "version": "2.26.1 alpha2",
+  "kind": "用户反馈与本机日志，只读核对",
+  "snapshot": "E:\\AC7_MultiSP\\Temp\\tasks\\20261025-runtime-preview-performance\\feedback-alpha2",
+  "sessions": {
+    "42932": "F-2A",
+    "36452": "CFA阶段，05:28Z后另有F-15C，不能混为CFA"
+  },
+  "cfa_models_on": {
+    "samples": 55,
+    "median_ms": 15.844800000000001,
+    "p95_ms": 18.3499,
+    "max_ms": 20.3433
+  },
+  "cfa_models_off": {
+    "samples": 83,
+    "median_ms": 2.5667,
+    "p95_ms": 3.3033,
+    "max_ms": 3.5909
+  },
+  "user_feedback": {
+    "f2a": {
+      "mission": "M15",
+      "no_mod_fps": 140,
+      "models_on_cruise_fps": 100,
+      "previous_models_on_cruise_fps": 50,
+      "models_on_switch_fps": 50,
+      "models_off_cruise_fps": 100,
+      "models_off_switch_fps": 90
+    },
+    "cfa": {
+      "mission_as_reported": "F15",
+      "models_on_cruise_fps": 120,
+      "models_on_switch_fps_drop": [
+        30,
+        50
+      ],
+      "models_on_eml_cruise_fps": 60,
+      "eml_drop_persistent": true,
+      "models_off_cruise_fps": 120,
+      "models_off_switch_fps_drop": 10,
+      "models_off_eml_drop": false
+    },
+    "camera_recenter_bug_observed": false,
+    "hangar_and_resupply_stutter": "用户反馈大幅改善"
+  },
+  "limitations": [
+    "FPS来自用户观察，未采集完整帧时间",
+    "未卸载UE4SS与mod的所有组合均不推断",
+    "日志不能证明EML持续掉帧的具体回调或CPU/GPU根因",
+    "旧alpha1不是受控同场景A/B",
+    "本轮未修改运行代码、编译、运行测试或操作游戏"
+  ]
+}

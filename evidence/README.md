@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| alpha2首轮性能反馈 | [用户观察与日志](2.26.1-alpha2-performance-feedback-20261025.json) | F-2A普通飞行和选装改善；CFA EML模型开启时持续掉帧待定位；不将FPS观察当完整帧剖析 |
 | 2.26.1 alpha2性能自测EXE | [构建与交付核对](2.26.1-alpha2-runtime-performance-delivery.json) | main与F6精确来源、核心/UI完整编译、Lua语法/接口/保护摘要及作者签名；只交付EXE，未安装或实机验证 |
 | 任务内与原生选装性能基线 | [20261025日志摘要](runtime-performance-baseline-20261025.json) | main与F6来源锚、alpha1进程样本及本机日志快照；不代表alpha2收益或受控A/B |
 | 2.26.0验收与main收尾 | [20261025验收与文档接收](2.26.0-main-acceptance-20261025.json) | 作者确认安装包/Mod正常；三份手改TXT原字节接收，文字生成同步；仅授权推送main，不重编或重包，不改原产物/回执 |
