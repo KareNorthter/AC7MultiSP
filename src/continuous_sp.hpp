@@ -40,27 +40,35 @@ struct ContinuousReadBatch {
     NativeReadBatch memory;
     Addr entries{};int count{};
     ContinuousReadBatch() {
-        const Addr header=continuousBase()+0x3bcfdb0;
-        entries=memory.read<Addr>(header);count=memory.read<int>(header+12);
+        const auto header=memory.read<std::array<unsigned char,16>>(continuousBase()+0x3bcfdb0);
+        std::memcpy(&entries,header.data(),8);std::memcpy(&count,header.data()+12,4);
         require(count>=0 && count<3000000,"持续兵装：对象表长度无效");
     }
     template<class T> T read(Addr address) const {return memory.read<T>(address);}
+    struct Item { Addr object{};unsigned flags{};int serial{}; };
+    Item item(int index) const {
+        const auto bytes=read<std::array<unsigned char,24>>(entries+static_cast<Addr>(index)*24);
+        Item result;
+        std::memcpy(&result.object,bytes.data(),8);std::memcpy(&result.flags,bytes.data()+8,4);
+        std::memcpy(&result.serial,bytes.data()+16,4);return result;
+    }
     Addr entry(const ContinuousIdentity& id) const {
         if(!id.address || id.index<0 || id.index>=count)return 0;
-        const Addr item=entries+static_cast<Addr>(id.index)*24;
-        return read<Addr>(item)==id.address && read<int>(item+16)==id.serial?item:0;
+        const auto current=item(id.index);
+        return current.object==id.address && current.serial==id.serial?entries+static_cast<Addr>(id.index)*24:0;
     }
     bool alive(const ContinuousIdentity& id) const {
-        const Addr item=entry(id);
-        return item && !(read<unsigned>(item+8)&0x30000000u);
+        if(!id.address || id.index<0 || id.index>=count)return false;
+        const auto current=item(id.index); // 地址、序列号和销毁标记一次取齐，仍每次读取当前条目。
+        return current.object==id.address && current.serial==id.serial && !(current.flags&0x30000000u);
     }
     ContinuousIdentity identity(Addr object) const {
         require(object!=0,"持续兵装：对象为空");
         const int index=read<int>(object+0xc);
         require(index>=0 && index<count,"持续兵装：对象索引越界");
-        const Addr item=entries+static_cast<Addr>(index)*24;
-        ContinuousIdentity id{object,index,read<int>(item+16)};
-        require(alive(id),"持续兵装：对象身份已失效");return id;
+        const auto current=item(index);
+        require(current.object==object && !(current.flags&0x30000000u),"持续兵装：对象身份已失效");
+        return {object,index,current.serial};
     }
 };
 Addr continuousEntry(const ContinuousIdentity& id) {return ContinuousReadBatch{}.entry(id);}

@@ -363,8 +363,9 @@ void mountBindVisualPositions(FixedMountState& state) {
 }
 // 只在当前批量应用内复用公共标志；显隐钩子的独立请求仍重新读取现场值。
 bool mountGroupVisible(const FixedMountState& state) {
-    const bool master=read<unsigned char>(state.meshManager.address+0x120)!=0;
-    const bool planeHidden=(read<unsigned char>(state.plane.address+0x84)&1)!=0;
+    const NativeReadBatch memory;
+    const bool master=memory.read<unsigned char>(state.meshManager.address+0x120)!=0;
+    const bool planeHidden=(memory.read<unsigned char>(state.plane.address+0x84)&1)!=0;
     return master && !planeHidden && state.rootVisible && !state.rootHidden && state.ancestorVisible && !state.ancestorHidden;
 }
 // 所有可视组件均保留原父链；挂架网格按机型和组合独立选择。
@@ -405,9 +406,13 @@ void mountApplyVisuals(const FixedMountState& state) {
     // 同步批次只做一次完整姿态重验；原生独立显隐请求仍走默认逐次核对。
     const int animationGate=mountAnimated(state.aircraft) && !mountExterior(state.aircraft)?int(groupVisible && mountAnimationShow(state,{})):-1;
     for(const auto& visual:state.visuals) {
-        require(mountAlive(visual.identity),"固定挂载：组件已销毁");
         const Addr object=visual.identity.address; // 已验证的当前组件。
-        const auto flags=read<unsigned char>(object+0x1bc); // 两个反射确认的显隐位。
+        unsigned char flags{};
+        {
+            const MountIdentityBatch identities;
+            require(identities.alive(visual.identity),"固定挂载：组件已销毁");
+            flags=identities.read<unsigned char>(object+0x1bc); // 身份及两个显隐位共享本组件的读取批次。
+        } // 后面的原生显隐可以重入，下一组件重新取得当前对象表和可读区间。
         const bool desired=mountDesired(state,visual,groupVisible,animationGate); // 聚合结果和本批次原生总显隐共同决定。
         const bool desiredHidden=mountCfaEcmVisual(state,visual);
         if(bool(flags&0x20)!=desiredHidden)mountOriginalHidden(reinterpret_cast<void*>(object),desiredHidden,0);
@@ -615,7 +620,10 @@ bool mountCopyTransform(void* output,int slot) {
 bool mountTransform(void* manager,void* output,int group,int slot) {
     if(GetCurrentThreadId()==mountGameThread.load() && fixedMount.bound && !fixedMount.rebuilding && mountNeedsMappedTransform(fixedMount,fixedMount.weaponKinds[session.active]) && group==2 &&
        reinterpret_cast<Addr>(manager)==fixedMount.meshManager.address)try {
-        require(mountAlive(fixedMount.plane) && mountAlive(fixedMount.meshManager),"固定挂载：发射身份失效");
+        {
+            const MountIdentityBatch identities;
+            require(identities.alive(fixedMount.plane) && identities.alive(fixedMount.meshManager),"固定挂载：发射身份失效");
+        } // 映射可能调用引擎取位，不能沿用这里的读取批次。
         if(mountCopyTransform(output,slot))return true;
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
     return mountOriginalTransform(manager,output,group,slot);

@@ -44,18 +44,19 @@ bool targetGazeLive() {
         GetTickCount64()-targetGaze.heartbeat.load()<=500 && targetGazeFocused();
 }
 bool targetGazeIdentities() {
-    return continuousAlive(targetGaze.plane)&&continuousAlive(targetGaze.input)&&continuousAlive(targetGaze.selection)&&continuousAlive(targetGaze.view)&&
-        read<Addr>(targetGaze.plane.address+0x118)==targetGaze.input.address&&
-        read<Addr>(targetGaze.plane.address+0x1310)==targetGaze.selection.address&&
-        read<Addr>(targetGaze.plane.address+0x1250)==targetGaze.view.address&&
-        read<Addr>(targetGaze.input.address+0x20)==targetGaze.plane.address&&
-        read<Addr>(targetGaze.selection.address+0x20)==targetGaze.plane.address&&
-        read<Addr>(targetGaze.view.address+0x20)==targetGaze.plane.address;
+    const ContinuousReadBatch memory;
+    return memory.alive(targetGaze.plane)&&memory.alive(targetGaze.input)&&memory.alive(targetGaze.selection)&&memory.alive(targetGaze.view)&&
+        memory.read<Addr>(targetGaze.plane.address+0x118)==targetGaze.input.address&&
+        memory.read<Addr>(targetGaze.plane.address+0x1310)==targetGaze.selection.address&&
+        memory.read<Addr>(targetGaze.plane.address+0x1250)==targetGaze.view.address&&
+        memory.read<Addr>(targetGaze.input.address+0x20)==targetGaze.plane.address&&
+        memory.read<Addr>(targetGaze.selection.address+0x20)==targetGaze.plane.address&&
+        memory.read<Addr>(targetGaze.view.address+0x20)==targetGaze.plane.address;
 }
 bool targetGazeOrdinary() {return read<unsigned char>(targetGaze.view.address+0x350)<=2&&!cameraHoldNativeSpecial();}
 bool targetGazeHasTarget() {
     const auto selected=read<Addr>(targetGaze.selection.address+0x248);
-    if(selected)try {return continuousAlive(continuousIdentity(selected));}catch(...) {}
+    if(selected)try {continuousIdentity(selected);return true;}catch(...) {} // identity已核对地址、序列号与销毁标记。
     return false;
 }
 void targetGazeToggle() {

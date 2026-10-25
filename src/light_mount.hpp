@@ -69,17 +69,25 @@ struct LightMountBones {
             identities.read<Addr>(mesh.address+skeletonField.offset)==skeleton.address,"轻量骨显隐：骨架资源被替换");
     }
     void current() {
-        componentCurrent();Reflection::alive(meshField.identity);Reflection::alive(skeletonField.identity);Reflection::alive(physicsEnum);
+        componentCurrent();
+        {
+            const MountIdentityBatch identities;
+            require(identities.alive(meshField.identity) && identities.alive(skeletonField.identity) && identities.alive(physicsEnum),
+                "动画访问：对象身份失效");
+        } // 参数getter保持原顺序，且不沿用之前的读取批次。
         for(const auto& fn:{numBones,hide,unhide,isHidden}) {
             Reflection::alive(fn.identity);
             require(Reflection::refValue<unsigned short>(reflection.parms,fn.identity.address)==fn.size,
                 "轻量骨显隐：缓存函数参数尺寸改变");
         }
-        for(const auto& field:{meshField,skeletonField,countResult,hideName,hidePhysics,unhideName,hiddenName,hiddenResult.field}) {
-            Reflection::alive(field.identity);
-            require(read<int>(field.identity.address+0x44)==field.offset && read<int>(field.identity.address+0x34)==field.size,
-                "轻量骨显隐：缓存字段布局改变");
-        }
+        {
+            const MountIdentityBatch identities;
+            for(const auto& field:{meshField,skeletonField,countResult,hideName,hidePhysics,unhideName,hiddenName,hiddenResult.field}) {
+                require(identities.alive(field.identity),"动画访问：对象身份失效");
+                require(identities.read<int>(field.identity.address+0x44)==field.offset &&
+                    identities.read<int>(field.identity.address+0x34)==field.size,"轻量骨显隐：缓存字段布局改变");
+            }
+        } // getter后重新取当前字段；后续骨操作不会沿用这份读取批次。
     }
     bool hidden(Name name) {
         alignas(16) std::array<unsigned char,256> params{};
@@ -433,10 +441,9 @@ bool mountLightDesired(const FixedMountState& state,const MountVisual& visual,bo
         (visual.pool==1?visual.physicalBit!=0:(state.readyMask&visual.physicalBit)!=0);
     return (state.readyMask&visual.physicalBit)!=0;
 }
-bool mountLightLayoutChanged(const FixedMountState& state) {
+bool mountLightLayoutChanged(const FixedMountState& state,const MountIdentityBatch& identities) {
     CfaWorkScope cost(0);
     if(!state.light)return true;
-    const MountIdentityBatch identities; // 这段只读循环不调用引擎，结束后不保留表头。
     for(int pool=0;pool<3;++pool) {
         const auto& rack=state.light->racks[pool];if(!rack.component.address)continue;
         if(!identities.alive(rack.component) || !identities.alive(rack.mesh) ||
@@ -455,6 +462,10 @@ bool mountLightLayoutChanged(const FixedMountState& state) {
         }
     }
     return false;
+}
+bool mountLightLayoutChanged(const FixedMountState& state) {
+    if(!state.light)return true;
+    const MountIdentityBatch identities;return mountLightLayoutChanged(state,identities);
 }
 void mountLightRelease(FixedMountState& state,bool keepBones) {
     if(!state.light)return;
@@ -480,12 +491,15 @@ void mountLightRelease(FixedMountState& state,bool keepBones) {
 }
 void mountLightBeforeRebuild(const Command& command) {
     auto& state=fixedMount;
-    const bool keep=command.op=="switch" && state.bound && state.aircraft==MountAircraft::Fa44 &&
-        state.plane.address==command.plane && state.animationActivator.address==command.activator &&
-        mountAlive(state.plane) && mountAlive(state.animationActivator) && mountAlive(state.manager) &&
-        mountAlive(state.meshManager) && read<Addr>(command.plane+0x11a8)==command.activator &&
-        read<Addr>(command.activator+0x260)==state.manager.address &&
-        read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state);
+    bool keep=false;
+    if(command.op=="switch" && state.bound && state.aircraft==MountAircraft::Fa44 &&
+       state.plane.address==command.plane && state.animationActivator.address==command.activator) {
+        const MountIdentityBatch identities;
+        keep=identities.alive(state.plane) && identities.alive(state.animationActivator) && identities.alive(state.manager) &&
+            identities.alive(state.meshManager) && identities.read<Addr>(command.plane+0x11a8)==command.activator &&
+            identities.read<Addr>(command.activator+0x260)==state.manager.address &&
+            identities.read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state,identities);
+    } // 释放/归还可以调用引擎，必须先结束上面的纯读取批次。
     mountLightRelease(state,keep);
 }
 void mountLightInherit(FixedMountState& next,const FixedMountState& prior) {
@@ -503,10 +517,13 @@ void mountLightInherit(FixedMountState& next,const FixedMountState& prior) {
 }
 void mountLightMaintain(FixedMountState& state) {
     if(!mountLight(state.aircraft))return;
-    require(mountAlive(state.plane) && mountAlive(state.manager) && mountAlive(state.meshManager) &&
-        mountAlive(state.animationActivator) && read<Addr>(state.animationActivator.address+0x260)==state.manager.address &&
-        read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state),
-        "轻量挂载：模型池、资源或管理器身份改变");
+    {
+        const MountIdentityBatch identities;
+        require(identities.alive(state.plane) && identities.alive(state.manager) && identities.alive(state.meshManager) &&
+            identities.alive(state.animationActivator) && identities.read<Addr>(state.animationActivator.address+0x260)==state.manager.address &&
+            identities.read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state,identities),
+            "轻量挂载：模型池、资源或管理器身份改变");
+    }
     if(state.aircraft!=MountAircraft::Fa44)return;
     // SWP3两组机构只控制外形；sp31仍在Body上，不能隐藏根骨或压低公共开盖进度。
     auto& ecm=state.light->racks[2];
