@@ -7,6 +7,7 @@
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
 | 正式主工作区 | main；接收/整合任务 | E:/AC7_MultiSP | 正式源码及统一文档；不要让研究线程直接并行写入 |
+| 原生选装/补给固定标签英文修订，待接收、待验证 | 本原生UI汉化追查与修订聊天；基线main 19b1528；codex/fix-native-ui-language | C:/Users/83717/.codex/worktrees/fix-native-ui-language/AC7_MultiSP | 已完成native_loadout.lua、loadout_flow.lua的指定标签英文取语；同步AGENTS双语边界、workflow、player-docs、architecture及interface说明/盘点。静态差异确认运行代码仅增加英文参数，描述提示、共用译表及weapon/action事务保持；未编译/编写或运行测试/安装，未改版本、核心或发布包。接收此分支后按另行授权验证 |
 | 免费Mod保护A阶段，alpha5由集成接收 | codex/feat-author-signing；来源6ce288182c3d15e1b921e59e94365569b03689e6 | C:/Users/83717/.codex/worktrees/research-mod-protection/AC7_MultiSP | 签名/精简源码由集成交付任务接入，复用已保留的唯一密钥并登记公钥；研究树及恢复件原样保留。实际边界见[交付方案](delivery.md#a阶段作者签名)，B未实施 |
 | CFA-50检索与F6退格隔离，源码已接收待验证 | 本安装器/F6反馈聊天；基线026dd43；codex/fix-cfa50-aircraft-name | C:/Users/83717/.codex/worktrees/cfa50-aircraft-list/AC7_MultiSP；现行源码main | debug_aircraft.lua读取游戏正式名称，overlay.cpp补齐预读/原始键盘退格隔离；[定位记录](../../evidence/f6-aircraft-input-source-20261024.json)确认旧修复已合入且已安装UI与2.25.2交付一致。cc924a5已纳入2.25.3 alpha1完整构建，未安装或实测，现成2.25.2产物不含修订；CFA-50 EML研究范围不变 |
 | 双语主页与发布流程，已接收待作者上传 | 本管理聊天；基线c1092c0；codex/integrate-pages-workflow，18eea51已合main；工作树受置顶保护保留 | C:/Users/83717/.codex/worktrees/integrate-pages-workflow/AC7_MultiSP；材料E:/AC7_MultiSP/Temp/tasks/20261024-release-2.25.2/ | 接收“mod内置更新”的未提交主页，集中双语词条并保留preview；按用户正式2.25.2确认整理[完整发布流程](release-workflow.md)，工具准备EXE、Nexus通用ZIP和整站材料，四处上传由作者完成。原ZIP、来源树及冻结产物不改，见[接收回执](../../evidence/pages-workflow-intake-20261024.json)与[发布准备](../../evidence/2.25.2-publication-preparation.json) |

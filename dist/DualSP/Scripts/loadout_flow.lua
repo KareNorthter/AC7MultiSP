@@ -7,7 +7,7 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
     -- 未确认草稿读取最新管理比例；profile() 返回独立快照，之后交接不再变化。
     local settings=ammoSettings or {ammo_percent_two=50,ammo_percent_three=33}
     local copy=function(value)return Profile.withSettings(value,type(settings)=="function"and settings()or settings)end
-    local tr=assert(translate,"缺少多槽选择草稿语言提供器") -- 不改变草稿协议，只提供用户文字。
+    local tr=assert(translate,"缺少多槽选择草稿语言提供器") -- 原生列表标签取英文；仍按weapon/action处理，不按显示文字判断。
     assert(#options==3,"Native loadout requires the aircraft's three SP options")
     local self={stage="sp1",cursor=1,draft=copy(profile),options=options,message=nil,lastStage=2}
     local takeoffReview=mode=="resupply" -- 补给保留 YES/NO；出击完成当前数量后直接交接。
@@ -24,10 +24,10 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
                     rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}
                 end
             end
-            rows[#rows+1]={weapon=-1,enabled=true,code=tr("no.weapon.f5499408")}
+            rows[#rows+1]={weapon=-1,enabled=true,code=tr("no.weapon.f5499408","en")}
         elseif self.stage=="review"then
             if takeoffReview then
-                rows={{action="takeoff",code=tr("yes.b8b3902a"),enabled=true},{action="reselect",code=tr("no.be52ce60"),enabled=true}}
+                rows={{action="takeoff",code=tr("yes.b8b3902a","en"),enabled=true},{action="reselect",code=tr("no.be52ce60","en"),enabled=true}}
             end -- 出击没有额外确认菜单；review 只作为多槽选择已完成的内部状态。
         end
         return rows
