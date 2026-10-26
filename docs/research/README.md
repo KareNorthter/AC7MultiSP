@@ -10,6 +10,10 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 同分支随后按用户更正处理CFA-44机腹舱：限定资源使用共用单路独立输出策略，Light旧复制写入者撤出。具体规则、原料来源与待验证项只在[挂载设计CFA专节](../engineering/multi-sp-mount-design.md#cfa切换与ecm当前策略)维护；作者已确认alpha3机腹舱表现正常，正式2.26.1沿用。
 
+## VR模式5°条件生效
+
+从正式2.26.1/main `800f858`建立`codex/feat-vr-target-center-gate`，按实际相机与机头夹角限定VR排序，居中归还原生；[唯一设计与验证边界](../engineering/architecture.md#vr模式的5生效范围未发布)维护机制及静态性能判断，[工作区登记](../project/workspaces.md)维护责任范围。源码实现待接收、待验证；本次始终不编译/安装，也不写/运行测试或操作游戏，旧正式回执保持。
+
 ## 任务内与原生选装性能
 
 [性能评估](runtime-performance.md)维护main/19b1528与F6 alpha1的基线、实现优先级、alpha2范围及统一测试步骤。alpha2首轮反馈有效；EML修订45a8c43后，继续实现公共视角/对象表读取、稳定相机资格复用、轻量挂架/模型校验批次及非CFA切换分段日志，均已纳入正式2.26.1，CFA EML持续掉帧与F-2A普通飞行优化获作者确认，验收边界见同页。原生选择槽重复取位、F-2A完整重绑/初始化及渲染成本继续保留，不将一次性加载当目标。
