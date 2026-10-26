@@ -7,11 +7,8 @@ local NativeHUD={}
 local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local weaponNames=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 local Profile=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 按实际槽数排列。
-local VISIBLE,COLLAPSED,HIT_TEST_INVISIBLE=0,1,3
+local VISIBLE,COLLAPSED=0,1
 local TRANSIENT=0x40
--- 归一化十字键轮廓；四行分别填亮左/上/右/下，不依赖字体中的图标字形。
-local dpadOutline={{1,0},{2,0},{2,1},{3,1},{3,2},{2,2},{2,3},{1,3},{1,2},{0,2},{0,1},{1,1},{1,0}}
-local dpadArms={{0,1},{1,0},{2,1},{1,2}}
 local function valid(o)return o and o:IsValid()end
 local function vec(v)return {X=v.X,Y=v.Y}end
 local function translation(widget)return vec(widget.RenderTransform.Translation)end
@@ -55,7 +52,6 @@ function NativeHUD.new(note,refreshIcons)
     local panelClass=nil
     local verticalBoxClass=nil
     local canvasPanelClass=nil
-    local imageClass=nil
     local cloneSerial=0
     local function inspectTree(root,result)
         if not valid(root)then return end
@@ -166,7 +162,6 @@ function NativeHUD.new(note,refreshIcons)
         c.lastActive=nil
         c.lastSelection=nil
         c.iconRevision=nil -- 再次显示时重新提交原生剪影，避免沿用关闭前的缓存。
-        c.dpadVisible=nil;c.dpadLayout=nil
     end
     local function preflight()
         -- Reject an unsupported engine API before modifying any visible widget.
@@ -180,8 +175,6 @@ function NativeHUD.new(note,refreshIcons)
             "/Script/UMG.VerticalBoxSlot:SetHorizontalAlignment","/Script/UMG.VerticalBoxSlot:SetVerticalAlignment",
             "/Script/UMG.Widget:ForceLayoutPrepass","/Script/UMG.Widget:GetDesiredSize","/Script/UMG.TextBlock:SetFont",
             "/Script/UMG.TextBlock:SetText","/Script/UMG.TextBlock:SetColorAndOpacity","/Script/UMG.TextBlock:SetShadowColorAndOpacity",
-            "/Script/UMG.Image:SetBrush","/Script/UMG.Image:SetColorAndOpacity",
-            "/Script/UMG.Image:SetGlowColor","/Script/UMG.Image:SetUseGlobalGlowColor",
             "/Script/UMG.Widget:SetRenderTranslation","/Script/UMG.Widget:SetVisibility","/Script/UMG.Widget:GetVisibility"}
         for _,path in ipairs(functions)do assert(valid(StaticFindObject(path)),"Native HUD API is unavailable: "..path)end
         panelClass=StaticFindObject("/Script/UMG.PanelWidget")
@@ -190,8 +183,6 @@ function NativeHUD.new(note,refreshIcons)
         assert(valid(verticalBoxClass),"Native source holder class is unavailable")
         canvasPanelClass=StaticFindObject("/Script/UMG.CanvasPanel")
         assert(valid(canvasPanelClass),"箭头源容器类不可用")
-        imageClass=StaticFindObject("/Script/UMG.Image")
-        assert(valid(imageClass),"十字键图形控件类不可用")
     end
     local function clone(source,tree,name,parent)
         -- Use the live native template so font, margins, alignment and color
@@ -245,82 +236,6 @@ function NativeHUD.new(note,refreshIcons)
                 assert(entry.parent:RemoveChild(entry.source),"无法重新隔离原生选择箭头")
                 local retained=c.arrowHolder:AddChildToCanvas(entry.source)
                 assert(valid(retained),"无法重新保留原生选择箭头");applyCanvasStyle(retained,entry.style)
-            end
-        end
-    end
-    -- 原生 Image 的纯色画刷组成线框，使用原生文字的泛光；不加载贴图或覆盖选择箭头。
-    local function attachDpad(c)
-        c.dpads={}
-        for index,arm in ipairs(dpadArms)do
-            cloneSerial=cloneSerial+1
-            local widget=StaticConstructObject(canvasPanelClass,c.owner.WidgetTree,FName("DualSPDpad_"..cloneSerial),TRANSIENT,0,false,false)
-            assert(valid(widget),"无法建立十字键图标容器")
-            c.clones[#c.clones+1]=widget;widget:SetVisibility(COLLAPSED)
-            local entry=c.arrowSources[index==1 and 1 or 2]
-            local slot=entry.parent:AddChildToCanvas(widget)
-            assert(valid(slot),"无法接入十字键图标")
-            local icon={widget=widget,slot=slot,parts={}}
-            c.dpads[index]=icon
-            local source=index==1 and c.widgets.MainWeaponTextBP or c.name
-            local function rectangle(x,y,w,h,bright)
-                cloneSerial=cloneSerial+1
-                local part=StaticConstructObject(imageClass,c.owner.WidgetTree,FName("DualSPDpadPart_"..cloneSerial),TRANSIENT,0,false,false)
-                assert(valid(part),"无法建立十字键线段")
-                local partSlot=widget:AddChildToCanvas(part)
-                assert(valid(partSlot),"无法接入十字键线段")
-                local brush=part.Brush;brush.DrawAs=1 -- Box：无纹理的白色画刷，颜色由控件统一指定。
-                part:SetBrush(brush);part.bIsImageHidingEnable=false
-                part:SetGlowColor(source.GlowColor);part:SetUseGlobalGlowColor(source.bUseGlobalGlowColor)
-                part:SetVisibility(HIT_TEST_INVISIBLE)
-                icon.parts[#icon.parts+1]={widget=part,slot=partSlot,x=x,y=y,w=w,h=h,bright=bright}
-            end
-            local thickness=.13
-            for edge=1,#dpadOutline-1 do
-                local a,b=dpadOutline[edge],dpadOutline[edge+1]
-                rectangle(math.min(a[1],b[1])-thickness/2,math.min(a[2],b[2])-thickness/2,
-                    math.max(math.abs(a[1]-b[1]),thickness),math.max(math.abs(a[2]-b[2]),thickness),false)
-            end
-            rectangle(arm[1]+.14,arm[2]+.14,.72,.72,true)
-        end
-    end
-    -- 固定映射按逻辑槽显示，尺寸随原生行高变化；关闭直选只隐藏图标。
-    local function syncDpad(c,enabled)
-        if c.dpadVisible~=enabled then
-            for index,icon in ipairs(c.dpads)do
-                icon.widget:SetVisibility(enabled and index<=c.countSP+1 and HIT_TEST_INVISIBLE or COLLAPSED)
-            end
-            c.dpadVisible=enabled
-        end
-        if not enabled then return end
-        if c.dpadLayout~=c.row then
-            local size=math.min(c.row*.72,22)
-            for index,icon in ipairs(c.dpads)do
-                local entry=c.arrowSources[index==1 and 1 or 2]
-                local style=entry.style
-                local arrow=index==1 and c.mainArrow or c.arrow
-                -- 箭头有自己的渲染平移；SP行只取最初平移，不能叠加当前选中槽位。
-                local offset=index==1 and translation(arrow)or c.shifted[3].original
-                applyCanvasStyle(icon.slot,style)
-                icon.slot:SetAlignment({X=0,Y=0})
-                icon.slot:SetPosition({X=style.position.X-style.alignment.X*style.size.X+offset.X-size-6,
-                    Y=style.position.Y-style.alignment.Y*style.size.Y+offset.Y+math.max(index-2,0)*c.row+(c.row-size)/2})
-                icon.slot:SetSize({X=size,Y=size})
-                for _,part in ipairs(icon.parts)do
-                    part.slot:SetPosition({X=part.x*size/3,Y=part.y*size/3})
-                    part.slot:SetSize({X=part.w*size/3,Y=part.h*size/3})
-                end
-            end
-            c.dpadLayout=c.row
-        end
-        for index,icon in ipairs(c.dpads)do
-            local source=index==1 and c.widgets.MainWeaponTextBP or c.name
-            local tint=source.ColorAndOpacity.SpecifiedColor
-            local signature=table.concat({tint.R,tint.G,tint.B,tint.A},":")
-            if icon.style~=signature then
-                for _,part in ipairs(icon.parts)do
-                    part.widget:SetColorAndOpacity({R=tint.R,G=tint.G,B=tint.B,A=tint.A*(part.bright and 1 or .45)})
-                end
-                icon.style=signature
             end
         end
     end
@@ -385,7 +300,6 @@ function NativeHUD.new(note,refreshIcons)
         c.nameStyles={}
         c.arrowFontSize=widgets.SpecialWeaponSel.Font.Size;c.mainArrowFontSize=widgets.NormalWeaponSel.Font.Size
         attachArrows(c)
-        attachDpad(c)
         note("NATIVE_HUD_ATTACHED "..owner:GetFullName())
         return c
     end
@@ -413,7 +327,7 @@ function NativeHUD.new(note,refreshIcons)
         end
         return nil
     end
-    local function update(plane,profile,options,state,enabled,now,dpadEnabled)
+    local function update(plane,profile,options,state,enabled,now)
         if not enabled then restore();self.status="stock";self.waitingSince=nil;return end
         if self.error then return end
         -- 开场可能很长，输入开放前只等待控件生成；五秒诊断从正式接管时开始。
@@ -523,11 +437,10 @@ function NativeHUD.new(note,refreshIcons)
             syncNameStyle(nameWidget,c.name,weaponNames.brightness(label,state.ready[group+1]),c.nameStyles,"sp"..group)
         end
         c.lastCountStyle=countStyle
-        syncDpad(c,dpadEnabled==true)
         self.status="native"
     end
-    function self:update(plane,profile,options,state,enabled,now,dpadEnabled)
-        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now,dpadEnabled)end,debug.traceback)
+    function self:update(plane,profile,options,state,enabled,now)
+        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now)end,debug.traceback)
         if not ok then
             self.error=tostring(err);self.status="error";note("NATIVE_HUD_ERROR "..self.error)
             local restored,restoreErr=pcall(restore)

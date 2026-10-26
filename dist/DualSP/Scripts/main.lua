@@ -1001,7 +1001,7 @@ refreshHUD=function(now)
     end
     nativeState.armed=plane:IsSpecialWeaponArmed()
     -- 单 SP 出击也处理名称就绪状态，但保持原生面板高度。
-    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now,config.dpad_weapon_switch_enabled)
+    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now)
     if enabled and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
@@ -1023,7 +1023,7 @@ local function primeFlightHUD(profile,options,prewarm)
         slots={{},{},{}},ready={false,false,false,false},pending=true} -- 初始化前不把原生单 SP 数量冒充多 SP 实际弹药。
     local visible=plane:GetNimbusHUDEnabled()
     -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
-    nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock(),config.dpad_weapon_switch_enabled)
+    nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
     weaponPresentation:update(plane,profile,options,seed,visible,os.clock(),config.central_weapon_display,game:GetTimeSeconds(plane))
 end
 -- 正常出击建立检查点；补给和显式调试重建保留任务检查点。
