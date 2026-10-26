@@ -1,5 +1,11 @@
--- 中央提示和右下角列表共用简称，避免两份兵装名称映射。
+-- 中央提示和右下角列表共用简称与名称亮度规则。
 local WeaponNames={}
+local steadyLabels={PLSL=true,MGP=true,HGP=true}
+
+-- 炮类的极短装填会让名称闪烁；只豁免文字变暗，不改核心就绪状态。
+function WeaponNames.brightness(label,ready)
+    return (steadyLabels[label]or ready)and 1 or .35
+end
 
 -- 根据配置索引取得数据表中的大写简称。
 function WeaponNames.special(options,index)
