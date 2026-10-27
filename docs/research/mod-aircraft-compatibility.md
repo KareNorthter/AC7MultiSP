@@ -79,7 +79,7 @@ CFA-50用户已更正：EML炮体在机腹，实际存在。当前问题是切EM
 
 ## XFA-33独立替换组
 
-用户提供的XFA-33原包现可在`E:/AC7_MOD/下载收藏/零散下载/XFA-33 FENRIR - NEXT GEN STEALTH FIGHTER-1854-1-0-1667978764.7z`查找；历史脚本引用的`F:/下载/`原件保留。对应Nexus作者页`https://www.nexusmods.com/acecombat7skiesunknown/mods/1854`。这是替换版，不增加独立机体编号；用户当时选择另建组、先保持A组。作者10份MAIN原PAK已全部复制入分组库并核对摘要，含三机体主体及七种配套兵装；可选航灯未装。
+用户提供的XFA-33原包现可在`E:/AC7_MOD/其他Mod/XFA-33 FENRIR - NEXT GEN STEALTH FIGHTER-1854-1-0-1667978764.7z`查找；历史脚本引用的`F:/下载/`原件保留。对应Nexus作者页`https://www.nexusmods.com/acecombat7skiesunknown/mods/1854`。这是替换版，不增加独立机体编号；用户当时选择另建组、先保持A组。作者10份MAIN原PAK已全部复制入分组库并核对摘要，含三机体主体及七种配套兵装；可选航灯未装。
 
 | 原机库条目 | 启用替换组后的机体 |
 |---|---|
@@ -214,6 +214,6 @@ S-44/Arkbird此前问题不在待办中。IRCM已有本分支限定源码候选�
 ## 来源与恢复
 
 - 旧未提交计划和分批安装回执仍保留在`E:/AC7_MultiSP/Temp/preserved-local-20261023/`，不回改旧回执；旧研究现场不整套覆盖main。
-- 原作者资源集中副本：`E:/AC7_MOD/下载收藏/ACE7`；历史脚本引用的`F:/下载/ACE7`原件保留。已展开索引及原PAK在`E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/`，整理边界见[其他 Mod 管理](../archive/other-mod-library.md)。
+- 原作者资源集中副本：`E:/AC7_MOD/机体大全`；历史脚本引用的`F:/下载/ACE7`原件保留。已展开索引及原PAK在`E:/AC7_MultiSP/Temp/ace7-aircraft-static-20261020/`，整理边界见[其他 Mod 管理](../archive/other-mod-library.md)。
 - 本轮准备、缺项清单、表回读、原料映射在`E:/AC7_MultiSP/Temp/tasks/20261023-mod-aircraft-compat/`；原文件和个人快照在安装回执指定的`backup/aircraft-mod-profiles-*`。
 - 新安装状态以[本轮安装回执](../../evidence/aircraft-mod-profiles-installed-20261023.json)和本机分组状态为据。分组切换后以`AC7AircraftProfiles/state.json`为准，不把安装时A组状态当永久事实。
