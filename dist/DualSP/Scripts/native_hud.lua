@@ -420,7 +420,7 @@ function NativeHUD.new(note,refreshIcons)
         end
         assert(state.ready and type(state.ready[1])=="boolean","MSL 就绪状态缺失")
         -- 未就绪时仅保留正常亮度的35%，使装填状态更容易辨认。
-        syncNameStyle(c.main,c.widgets.MainWeaponTextBP,state.ready[1]and 1 or .35,c.nameStyles,"main")
+        syncNameStyle(c.main,c.widgets.MainWeaponTextBP,weaponNames.brightness("MSL",state.ready[1]),c.nameStyles,"main")
         local countColor=c.count.ColorAndOpacity
         local countTint=countColor.SpecifiedColor -- 只有源颜色实际变化时才同步弹药文字。
         local countStyle=table.concat({countTint.R,countTint.G,countTint.B,countTint.A,tostring(countColor.ColorUseRule)},":")
@@ -432,9 +432,9 @@ function NativeHUD.new(note,refreshIcons)
             if label~=c.lastNames[group]then nameWidget:SetText(FText(label));c.lastNames[group]=label;self.writeCount=self.writeCount+1 end
             if count~=c.lastCounts[group]then countWidget:SetText(FText(count));c.lastCounts[group]=count;self.writeCount=self.writeCount+1 end
             if c.lastCountStyle~=countStyle then countWidget:SetColorAndOpacity(countColor)end
-            -- 弹药为零由核心统一判定；至少一发就绪即可保持正常文字。
+            -- 普通兵装按核心就绪结果变暗；三种炮类仅豁免名称亮度。
             assert(state.ready and type(state.ready[group+1])=="boolean","SP 就绪状态缺失")
-            syncNameStyle(nameWidget,c.name,state.ready[group+1]and 1 or .35,c.nameStyles,"sp"..group)
+            syncNameStyle(nameWidget,c.name,weaponNames.brightness(label,state.ready[group+1]),c.nameStyles,"sp"..group)
         end
         c.lastCountStyle=countStyle
         self.status="native"
