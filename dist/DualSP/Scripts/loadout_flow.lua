@@ -2,6 +2,7 @@
 local Flow={}
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 共用连续槽与百分比配弹规则。
+local WeaponNames=dofile(assert(path:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 -- 出击与补给共用多槽选择规则，最终确认文字由原生页面用途决定。
 function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
     -- 未确认草稿读取最新管理比例；profile() 返回独立快照，之后交接不再变化。
@@ -15,13 +16,13 @@ function Flow.new(profile,options,reviewLabel,mode,translate,ammoSettings)
         local rows={}
         if self.stage=="sp1" then
             for index,option in ipairs(self.options)do
-                if option.owned then rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}end
+                if option.owned then rows[#rows+1]={weapon=index-1,enabled=true,code=WeaponNames.label(option)}end
             end
         elseif self.stage=="sp2"or self.stage=="sp3"then
             local first=self.options[self.draft.a+1]
             for index,option in ipairs(self.options)do
                 if option.owned and index-1~=self.draft.a and (self.stage~="sp3"or index-1~=self.draft.b)and first.available and option.available then
-                    rows[#rows+1]={weapon=index-1,enabled=true,code=option.code:upper()}
+                    rows[#rows+1]={weapon=index-1,enabled=true,code=WeaponNames.label(option)}
                 end
             end
             rows[#rows+1]={weapon=-1,enabled=true,code=tr("no.weapon.f5499408","en")}

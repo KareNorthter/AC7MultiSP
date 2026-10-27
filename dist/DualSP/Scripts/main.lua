@@ -8,6 +8,7 @@ local json=dofile(root.."Scripts/json.lua")
 local ConfigStore=dofile(root.."Scripts/config_store.lua")
 local Profile=dofile(root.."Scripts/loadout_profile.lua") -- 三槽结构、购买校验和百分比配弹。
 local weaponCycle=dofile(root.."Scripts/weapon_cycle.lua")
+local weaponNames=dofile(root.."Scripts/weapon_names.lua")
 local runtimeContext=dofile(root.."Scripts/runtime_context.lua") -- 模式与游戏文本语言共用只读来源。
 local tr=runtimeContext.textKey -- 原生页面文字跟随游戏，不跟随 F8 手动语言。
 local runtimeAllowed=false -- 未确认单人状态前，所有模组功能均禁止。
@@ -345,6 +346,7 @@ local function readOptionsFor(id)
     local continuousOptions={}
     local salvoOptions={}
     local presentation={}
+    local displayCodes={}
     local baseWeapons=modAircraft:baseWeapons(info,sourcePlane) -- 目录软引用缺失时只沿实际父类补齐展示来源。
     local weaponIds={} -- 菜单 PWDT 编号与运行时 WeaponID 可以不同；部件计算必须用后者。
     -- 仅登记静态配置已核对的炮类SP；编号0也是有效编号，不能当成缺失。
@@ -375,6 +377,10 @@ local function readOptionsFor(id)
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
+        -- 展示代号另存，不改ecm资源键、购买编号及核心配置。
+        if presentation[i].code=="ecm"then
+            displayCodes[i]=weaponNames.forClass(presentation[i].code,weaponClass:GetFullName():match("^[^ ]+ (.+)$"))
+        end
         local ok,supported,electronic,reason,uav,interceptor=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
         assert(ok,supported)
         assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string"and type(uav)=="boolean"and type(interceptor)=="boolean",
@@ -399,8 +405,9 @@ local function readOptionsFor(id)
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
         local display=presentation[i]
-        options[i]={index=item.index,code=display.code,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=display.category,type_key=display.type_key,generic=display.generic,
-            stats=display.stats,description=descriptions[display.code]or display.code:upper(),
+        local displayCode=displayCodes[i]=="IEWS"and "IEWS"or nil
+        options[i]={index=item.index,code=display.code,display_code=displayCode,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=display.category,type_key=display.type_key,generic=display.generic,
+            stats=display.stats,description=displayCode=="IEWS"and "IEWS"or descriptions[display.code]or display.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=continuousOptions[i]==true}
     end
@@ -1447,7 +1454,7 @@ local function applyDebugHotkey(action)
     if profile then
         configureFlight(profile,"debug_hotkey") -- 同一游戏线程完整重建，错误交给既有故障清理。
         local names={}
-        for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=flightOptions[profile[field]+1].code:upper()end end
+        for _,field in ipairs(Profile.fields)do if profile[field]>=0 then names[#names+1]=weaponNames.special(flightOptions,profile[field])end end
         hotkeyNotice=runtimeContext.textKey("sp.aabf060d","zh")..table.concat(names," + ")..tr("refilled.89f913d7")
         weaponSwitch.hotkeyWarning=false
     else
