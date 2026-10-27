@@ -11,12 +11,15 @@
 | 机体-A组、机体-B组 | 使用原分组工具切换机体组，退出游戏后使用 |
 | 机体-XFA-33组 | 切换到 XFA-33 替换组，会替换 Su-30M2、Su-33 和 Su-30SM |
 | 机体-恢复原安装组 | 使用同一工具恢复原安装组；不负责恢复自定义呼号包 |
+| 一键切换Gunplay | 关闭游戏后双击，在启用与停用之间切换 Enhanced Gunplay A5 主文件 |
 | AC7 Integrated-图形界面 | 第三方鼠标飞控及附加 Mod 工具；功能、适用范围和操作以其自带说明为准 |
 | Vortex-Mod管理器 | 打开本机 Vortex；其管理状态、下载和部署仍由 Vortex 自己维护 |
 
 四个机体入口原文件在 `E:/SteamLibrary/steamapps/common/ACE COMBAT 7/`，实际程序、清单、分组和事务在其 `AC7AircraftProfiles/`。工具的分组、保护及已知限制见[机体续研](../research/mod-aircraft-compatibility.md#分组与安装方式)。AC7 Integrated 入口指向 `E:/AC7_MultiSP/tools/AC7-Integrated-v0.7.0-beta.1/Start-GUI.cmd`，该工具有自己的配置和管理范围，并非上述机体分组工具。
 
 不要通过移动 PAK 或混用管理器推断当前启用状态；具体操作先退出游戏，并查看相应工具的提示和原说明。快捷方式只提供统一入口，本次没有运行切换、安装或游戏。
+
+Gunplay入口调用本项目的[本机切换脚本](../../src/research/gunplay_toggle.py)，只处理主文件 `!EOM_EnhancedGunplay_A5_P.pak`，沿用此前低优先级命名；其他Mod的同名资源可能覆盖其部分效果。脚本在游戏退出后与安装器共用锁，并核对主文件 SHA256；有其他Gunplay PAK、补丁、链接或未完成准备文件时停止，提示人工核对。停用时主文件移入 `E:/AC7_MOD/管理入口/Gunplay停用仓库/`；首次启用时从 `E:/AC7_MultiSP/backup/gunplay-hangar-isolation-20261021-230355/` 的已核对原件复制，不改原备份。2026-10-27建立入口时主文件处于停用状态，本次没有实际运行启停，效果和兼容性待用户验证。此前机库崩溃记录未证明Gunplay是唯一原因，见[隔离记录](../../evidence/special-aircraft-native-fallback-20261022.json)。
 
 `E:/AC7_MOD/部署与分组文件清单.csv` 是 2026-10-27 的只读磁盘快照，列出游戏部署目录和机体分组库中的 PAK、大小与链接目标。它不是实时列表，不证明每个文件已启用；有变化后需重新盘点。
 

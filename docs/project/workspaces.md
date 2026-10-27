@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| Gunplay一键启停，待用户验证 | codex/feat-gunplay-toggle；基线 main/052b8bc | C:/Users/83717/.codex/worktrees/gunplay-toggle/AC7_MultiSP；入口 E:/AC7_MOD/管理入口/一键切换Gunplay.cmd | 为现有A5主文件提供低优先级启停入口，保护备份和其他Mod；范围与使用说明见[其他 Mod 管理](../archive/other-mod-library.md)，未实际运行启停或游戏 |
 | Mod机体测试前查询，已接收 | 本聊天；codex/docs-aircraft-nexus-precheck；基线main/e78672b | C:/Users/83717/.codex/worktrees/aircraft-nexus-requirement/AC7_MultiSP | 在AGENTS登记测试前查询作者Nexus页面、武器效果与皮肤差异的要求；仅文档静态核对 |
 | 其他 Mod 目录简化，已接收 | codex/chore-simplify-mod-library；基线 main/b5bac08 | C:/Users/83717/.codex/worktrees/simplify-ac7-mod-library/AC7_MultiSP；本机入口 E:/AC7_MOD | 机体大全单独存放，其余原包统一归入一个目录；重复副本经摘要复核后送回收站，详见[其他 Mod 管理](../archive/other-mod-library.md) |
 | 其他 Mod 资料与管理入口整理，已接收 | codex/chore-consolidate-ac7-mods；基线 main/800f858 | C:/Users/83717/.codex/worktrees/consolidate-other-mods/AC7_MultiSP；本机入口 E:/AC7_MOD | 整理其他 AC7 Mod 原包及管理快捷方式，保护现有游戏部署、Vortex 和历史依赖；位置与保留原因见[其他 Mod 管理](../archive/other-mod-library.md) |
