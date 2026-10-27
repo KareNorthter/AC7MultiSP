@@ -1,5 +1,7 @@
 -- 快速自由任务的独立请求、临时1至3SP方案及跨世界等待；不替换个人配装或旧检查点。
 local Module={}
+local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local WeaponNames=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 local function valid(object)return object and object:IsValid()end
 local function address(object)return valid(object)and object:GetAddress()or 0 end
 local function integer(value,minimum,maximum)return type(value)=="number"and value%1==0 and value>=minimum and value<=maximum end
@@ -148,7 +150,7 @@ function Module.new(deps)
             for _,option in ipairs(deps.aircraft.options)do
                 local entry=deps.catalogue()[tostring(option.plane_id)]
                 if entry and entry.supported and type(entry.weapons)=="table"and #entry.weapons==3 then
-                    self.planes[#self.planes+1]={plane_id=option.plane_id,label=option.label,code=option.code,weapons=entry.weapons,dlc_id=entry.dlc_id,skins=skinOptions(entry)}
+                    self.planes[#self.planes+1]={plane_id=option.plane_id,label=option.label,code=option.code,weapons=WeaponNames.catalogueOptions(entry),dlc_id=entry.dlc_id,skins=skinOptions(entry)}
                 end
             end
             self.dataError=nil

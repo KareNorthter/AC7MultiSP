@@ -103,7 +103,7 @@ void drawQuickMission() {
             const auto& weapon=plane->at("weapons").at(i);
             if(weapon.is_string())labels[i]+=" · "+weapon.get<std::string>();
             else if(weapon.is_object()) {
-                auto code=weapon.value("code",std::string());
+                auto code=weapon.value("display_code",weapon.value("code",std::string()));
                 std::transform(code.begin(),code.end(),code.begin(),[](unsigned char c){return c>='a'&&c<='z'?c-'a'+'A':c;});
                 labels[i]+=" · "+code;
             }

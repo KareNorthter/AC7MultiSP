@@ -3,6 +3,7 @@
 local path=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local Flow=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_flow.lua")
 local Profile=dofile(assert(path:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 预览与核心共用百分比及向上取整规则。
+local WeaponNames=dofile(assert(path:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 -- 本机加载器会借用反射字段名的字节；固定名字由这些闭包持续持有，避免临时拼接串回收后留下悬空缓存。
 local specFields={"SpecItem1","SpecItem2","SpecItem3","SpecItem4","SpecItem5","SpecItem6"}
 local ammoFields={"WeaponsSP1","WeaponsSP2","WeaponsSP3"}
@@ -671,7 +672,7 @@ function NativeLoadout.new(dependencies)
             assert(valid(localizer),"原生兵装名称接口缺失")
             local name=localizer:HasString(nameKey)and localizer:LocalizeString(nameKey,true,""):ToString()or ""
             if #name==0 then
-                name=option.code:upper();displayFallback(c,nameKey,"key="..nameKey.." 使用兵装代号")
+                name=WeaponNames.label(option);displayFallback(c,nameKey,"key="..nameKey.." 使用兵装代号")
             end
             c.weaponFullNames[code]=name
         end
@@ -732,7 +733,7 @@ function NativeLoadout.new(dependencies)
             -- 悬停数量与颜色独立更新，不反复重画未变的名称和 18 个基础性能条。
             local signature=tostring(weapon)
             if column.lastContent==signature then goto nextColumn end
-            setText(c,column.name,"SP"..i.."  "..(option and option.code:upper()or tr("empty.02cab14e","en")))
+            setText(c,column.name,"SP"..i.."  "..(option and WeaponNames.label(option)or tr("empty.02cab14e","en")))
             local fullName=option and weaponFullName(c,option)or tr("no.weapon.f5499408","en") -- 空挂载不查询不存在的兵装键。
             local typeText=tr("no.weapon.f5499408","en")
             if option then
@@ -764,7 +765,7 @@ function NativeLoadout.new(dependencies)
             end
             -- 准备页弹药汇总的三个逻辑槽与上方三栏保持一致。
             if c.ammo then
-                setText(c,c.ammo[i].name,option and option.code:upper()or tr("empty.02cab14e","en"))
+                setText(c,c.ammo[i].name,option and WeaponNames.label(option)or tr("empty.02cab14e","en"))
             end
             column.lastContent=signature
             ::nextColumn::
