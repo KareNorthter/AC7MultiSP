@@ -6,6 +6,8 @@
 
 Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。最新7e255e1及前阶段名称/IRCM修订已进入2.25.3 alpha1完整构建；[交付与待测清单](../../evidence/2.25.3-alpha1-exe-delivery.json)明确尚未安装或游戏验收。用户随后确认XFA-33 B、Su-57 TGM公共舱互切修订未生效，已按指令暂缓；其他已测项无问题，范围见[反馈记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
 
+游戏启动后的兵装资料不完整提醒尚待实现，RH-172补给与ZSD/Gunplay组合的用户反馈也已记录；继续条件和边界见[兼容性续研正文](mod-aircraft-compatibility.md#启动时兵装资料提醒待实现)。
+
 通用兼容流程第一版从正式2.26.0/main `19b1528`另建`codex/refactor-compatibility-pipeline`，接入能力独立的故障账本、持续效果契约表和舱门资源策略；唯一设计及待验证范围见[架构](../engineering/architecture.md#通用兼容适配流程)，责任与路径见[工作区索引](../project/workspaces.md)。源码经alpha3集成和作者总体正常反馈，正式接收为2.26.1，不恢复暂缓适配，不覆盖旧研究原件。
 
 同分支随后按用户更正处理CFA-44机腹舱：限定资源使用共用单路独立输出策略，Light旧复制写入者撤出。具体规则、原料来源与待验证项只在[挂载设计CFA专节](../engineering/multi-sp-mount-design.md#cfa切换与ecm当前策略)维护；作者已确认alpha3机腹舱表现正常，正式2.26.1沿用。
