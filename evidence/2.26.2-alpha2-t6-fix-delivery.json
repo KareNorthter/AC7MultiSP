@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "version": "2.26.2 alpha2",
+  "source_commit": "e8c2b6f",
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.2-alpha2\\AC7MultiSP_Installer_DevFault_T6Fix.exe",
+    "sha256": "66a8e273f684cab0a8c84e6870cf54d942254ba2ae39ede45628ceebea33246a",
+    "size": 73314304
+  },
+  "build_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-dev-t6-fix-r2-build\\game-build\\build-receipt.json",
+  "delivery_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-dev-t6-fix-r2-build\\delivery-receipt.json",
+  "development_build": true,
+  "author_signature_verified": true,
+  "signed_release_id": "ff297d8b256245a5b95a2b4cce7e252b",
+  "main_lua_sha256": "d5a28b0f1fee9064541445f3163e331c4f395ce54fa659222ec81c3a6508078d",
+  "panel_sha256": "e9829d3e305a13201bf520bc4e5056193745b774b7975f1c1b1dbcfc9bf973c1",
+  "panel_session_updated": true,
+  "old_artifacts_preserved": true,
+  "quick_results_preserved": [
+    {
+      "round": 1,
+      "result": "通过",
+      "directory": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing\\results\\20261028-144610-035426"
+    },
+    {
+      "round": 2,
+      "result": "通过",
+      "directory": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing\\results\\20261028-145226-312949"
+    },
+    {
+      "round": 3,
+      "result": "通过",
+      "directory": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing\\results\\20261028-150541-283044"
+    },
+    {
+      "round": 4,
+      "result": "有问题",
+      "directory": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing\\results\\20261028-150910-773887"
+    }
+  ],
+  "checks": [
+    "完整核心与UI构建",
+    "产品Lua语法检查",
+    "作者签名与封装回读",
+    "构建源码冻结清单",
+    "旧冻结核心摘要",
+    "面板Python语法"
+  ],
+  "initial_failed_build": "20261028-alpha2-dev-t6-fix-build：源目录未平铺完整资源，未产生EXE；保留失败输出",
+  "resource_source": "原alpha2开发构建独立解包的180成员，摘要逐一匹配原资源回执；重新经过构建资源资格检查",
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "uploaded": false,
+  "user_next": "关闭旧面板后重开，安装／更新开发测试包，重测第4轮，再继续第5轮；不重做1—3轮。"
+}

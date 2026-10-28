@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| 集成交付：2.26.2 alpha2，已出包待测试 | codex/integrate-2.26.2-alpha2；基线 main/37b36a8，延续alpha1/53305aa | C:/Users/83717/.codex/worktrees/integrate-2-26-2-alpha2/AC7_MultiSP | 接收外挂模型6e3581f及故障恢复733aa35，中文alpha2日志逐条获准；已构建常规/开发两包，提供默认关闭的故障入口和离线控制工具；已完成测试前alpha1快照及PAK摘要，入口简化为一个面板、快速五轮并自动归档日志。环境/流程见[故障测试指导](../engineering/aircraft-fault-testing.md)，不自动启动游戏或执行实机用例 |
+| 集成交付：2.26.2 alpha2，已出包待测试 | codex/integrate-2.26.2-alpha2；基线 main/37b36a8，延续alpha1/53305aa | C:/Users/83717/.codex/worktrees/integrate-2-26-2-alpha2/AC7_MultiSP | 接收外挂模型6e3581f及故障恢复733aa35，中文alpha2日志逐条获准；已构建常规/开发两包，提供默认关闭的故障入口和离线控制工具；已完成测试前alpha1快照及PAK摘要，单面板快速五轮自动归档；作者1—3轮通过，T6漏触发已修正并独立出开发包，待补测4—5轮。环境/流程见[故障测试指导](../engineering/aircraft-fault-testing.md)，不自动启动游戏或执行实机用例 |
 | 机体故障隔离与启动检查，源码待验证 | 本聊天；codex/feat-aircraft-fault-recovery；基线main/9075581 | C:/Users/83717/.codex/worktrees/aircraft-fault-recovery/AC7_MultiSP | 已编写机体级退让、F6诊断、换机恢复及严重错误提示；启动加载与更新结果分开提示，兵装异常在第一页查看。十二项中文词条经作者两次确认，同步英文与生成表；边界见[架构](../engineering/architecture.md#机体故障退让与f6诊断未发布源码)。补充[测试指导](../engineering/aircraft-fault-testing.md)及本机TXT/原始日志归因核对；人工注入入口未实现。仅静态审阅，未编译、测试、安装或操作游戏，未合main |
 | X-02R与三个J-20启用，用户已验收 | codex/chore-enable-x02r-j20；基线 main/a0f4073 | C:/Users/83717/.codex/worktrees/install-x02r-j20/AC7_MultiSP | 由A切至B，四个Mod六份PAK与原包一致。作者2026-10-28确认X-02R A/B、J-20A/B/S及RH-172功能均正常，见[用户验收](../../evidence/mod-aircraft-user-acceptance-20261028.json)；功能与未知项维护在[机体正文](../research/mod-aircraft-compatibility.md#2026-10-28启用x-02r与三个j-20)，原启用回执保持；本轮仅记录反馈，未启动游戏、编译或运行测试 |
 | 机体兼容反馈与资料提醒，已接收 | 本聊天；codex/docs-mod-compatibility-observations；基线main/41993d7 | C:/Users/83717/.codex/worktrees/mod-compatibility-observations/AC7_MultiSP | 记录RH-172补给冲突反馈和启动时兵装资料提醒待办；仅文档静态核对 |

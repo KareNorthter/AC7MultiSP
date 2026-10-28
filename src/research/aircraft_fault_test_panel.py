@@ -53,15 +53,16 @@ class Panel:
         self.status = tk.StringVar(value='先安装开发测试包，然后从第一轮开始。游戏由你正常启动。')
         self.result = tk.StringVar(value='请选择本轮结果')
         root.title('AC7MultiSP alpha2 · 快速测试')
-        root.geometry('790x540')
-        root.minsize(710, 490)
+        root.geometry('790x580')
+        root.minsize(710, 540)
         root.protocol('WM_DELETE_WINDOW', self.close)
         notebook = ttk.Notebook(root)
         notebook.pack(fill='both', expand=True, padx=12, pady=10)
         quick, extended = ttk.Frame(notebook, padding=12), ttk.Frame(notebook, padding=12)
         notebook.add(quick, text='快速测试 · 5轮')
         notebook.add(extended, text='扩展测试 · 可选')
-        ttk.Button(quick, text='准备并安装开发测试包（首次使用）', command=lambda: self.run('install-dev')).pack(anchor='w')
+        ttk.Button(quick, text='安装／更新开发测试包', command=lambda: self.run('install-dev')).pack(anchor='w')
+        ttk.Button(quick, text='重测第4轮（保留第1—3轮结果）', command=lambda: self.run('retry-four')).pack(anchor='w', pady=(8, 0))
         self.heading = ttk.Label(quick, font=('Microsoft YaHei UI', 15, 'bold'))
         self.heading.pack(anchor='w', pady=(18, 8))
         self.instructions = ttk.Label(quick, wraplength=720, justify='left')
@@ -129,7 +130,10 @@ class Panel:
         mod = Path(data['game'])/'ue4ss/Mods/DualSP'
         require(digest(mod/'bin/DualSP.dll') == data['development_core_sha256'] and
                 digest(mod/'bin/DualSPUI.dll') == data['development_ui_sha256'],
-                '请先点击“准备并安装开发测试包”，完成安装后再准备本轮。')
+                '请先点击“安装／更新开发测试包”，完成安装后再准备本轮。')
+        if data.get('development_main_lua_sha256'):
+            require(digest(mod/'Scripts/main.lua') == data['development_main_lua_sha256'],
+                    '当前Lua尚未包含T6修正，请先完成开发测试包更新安装。')
 
     def save_progress(self, progress):
         history = self.session/'progress-history'
@@ -185,7 +189,8 @@ class Panel:
                 data = self.ensure_session()
                 if action.startswith('install-'):
                     mode = 'dev' if action == 'install-dev' else 'normal'
-                    receipt = read(self.session.parent/f'20261028-alpha2-{mode}-build/delivery-receipt.json')
+                    receipt_path = data.get('development_delivery_receipt') if mode == 'dev' else None
+                    receipt = read(Path(receipt_path) if receipt_path else self.session.parent/f'20261028-alpha2-{mode}-build/delivery-receipt.json')
                     exe = Path(data['development_exe'] if mode == 'dev' else data['normal_exe'])
                     require(digest(exe) == receipt['artifact']['sha256'], '安装包摘要不符，请联系维护者。')
                     if mode == 'normal':
@@ -193,6 +198,16 @@ class Panel:
                         self.invoke('select', 'off')
                     os.startfile(str(exe))
                     message = '已打开安装器。完成安装后，再准备第一轮。' if mode == 'dev' else '已关闭人工故障并打开常规安装器。'
+                elif action == 'retry-four':
+                    self.ensure_developer(data)
+                    require(all(any(item['round'] == number and item['result'] == '通过' for item in progress['results'])
+                                for number in (1, 2, 3)), '第1—3轮尚未全部记录通过，请先完成快速流程。')
+                    self.invoke('archive')
+                    self.invoke('select', 'T6')
+                    progress['index'] = 3
+                    progress['armed'] = True
+                    self.save_progress(progress)
+                    message = '已准备修正版第4轮。前3轮结果保留；现在请启动游戏，进入F-16C选装页。'
                 elif action == 'next':
                     self.ensure_developer(data)
                     if progress['armed']:

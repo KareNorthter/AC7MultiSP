@@ -9,7 +9,7 @@
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
 | 2.26.2 alpha2自测与开发故障EXE | [源码接收](2.26.2-alpha2-source-integration.json)／[两包交付核对](2.26.2-alpha2-exe-delivery.json)／[首次环境状态](2.26.2-alpha2-test-environment.json)／[快照完成与简化入口](2.26.2-alpha2-test-panel-ready.json) | 四机外挂、检查/隔离/恢复、常规包和默认关闭的开发注入；90资源、双语正文及签名已核对。游戏退出后已完成alpha1快照，入口简化为面板快速五轮；实机用例未执行 |
-| alpha2快速验收与T6漏触发 | [作者反馈及定位](2.26.2-alpha2-quick-feedback-t6.json) | 作者确认快速1—3轮通过；第4轮T6已启用但未触发，事件注入漏覆盖轮询接入。已修源码，待构建及补测4—5轮，不追认严重保护通过 |
+| alpha2快速验收与T6漏触发 | [作者反馈及定位](2.26.2-alpha2-quick-feedback-t6.json)／[修正版开发包](2.26.2-alpha2-t6-fix-delivery.json) | 作者确认快速1—3轮通过；第4轮T6已启用但未触发，事件注入漏覆盖轮询接入。已修正并独立出包，面板支持保留结果重测第4轮；待补测4—5轮，不追认严重保护通过 |
 | 本体/DLC外挂机体候选 | [四机来源与13份资源](remaining-external-mounts-20261028.json)、[实际编码cooked引用](remaining-external-mount-audit-20261028.json) | A-10C/Super Kai布局、F-104C双SP及MiG-21bis的RKT＋SAAM；MGP和两机三SP原生退让；未编译/测试/安装/游戏验证 |
 | 六个Mod机体入口用户验收 | [20261028作者功能反馈](mod-aircraft-user-acceptance-20261028.json) | X-02R A/B、J-20A/B/S和RH-172功能正常；不补造逐项测试或追认ZSD组合冲突已修复 |
 | X-02R与三个J-20启用 | [20261028切换B组及摘要核对](x02r-j20-enabled-20261028.json) | 作者确认由A切B；四个Mod六份PAK及目录一致，作者页面与未知项登记，未实机验证 |
