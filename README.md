@@ -7,7 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式发布版本 | **2.26.1**，作者于2026-10-25验收alpha3：CFA-44 EML持续掉帧已消除、舱门正常，F-2A普通飞行性能恢复，其他功能总体正常；现已由作者确认发布；[验收与授权](evidence/2.26.1-release-authorization.json)和[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)分别保留阶段依据。 |
-| 本轮内测候选 | **2.26.2 beta**；基于 2.26.1 整合以下成果并待构建交付。此前 **2.26.2 alpha2**延续alpha1，接收四机外挂模型及启动检查、故障隔离和恢复。作者已确认快速五轮、四机模型及PLSL/MGP/HGP亮度正常；视角及长按Start管理界面改动正常，XFA-36 OSL已恢复卫星激光。MiG-21单MGP模型基本正常，但开火时两侧均出现炮口火光，留待修复。ADFX-00(SP)选机卡死未复现，原因未确定。后续Super Kai IEWS、Su-57内舱、F35收尾、单MGP、XFA-36激光及已获准的管理操作调整已构建[整合修订EXE](evidence/2.26.2-alpha2-integrated-exe-20261028.json)，其中上述项目已获作者实机反馈；[中文设计稿](docs/research/management-review-20261028/index.html)剩余七项文案待逐条确认。正式版仍为2.26.1；此前alpha2各包和回执保留。 |
+| 本轮内测候选 | **2.26.2 beta**；基于 2.26.1 整合以下成果，已制作[内测安装包](evidence/2.26.2-beta-exe-delivery.json)，等待内测用户验证。此前 **2.26.2 alpha2**延续alpha1，接收四机外挂模型及启动检查、故障隔离和恢复。作者已确认快速五轮、四机模型及PLSL/MGP/HGP亮度正常；视角及长按Start管理界面改动正常，XFA-36 OSL已恢复卫星激光。MiG-21单MGP模型基本正常，但开火时两侧均出现炮口火光，留待修复。ADFX-00(SP)选机卡死未复现，原因未确定。后续Super Kai IEWS、Su-57内舱、F35收尾、单MGP、XFA-36激光及已获准的管理操作调整已构建[整合修订EXE](evidence/2.26.2-alpha2-integrated-exe-20261028.json)，其中上述项目已获作者实机反馈；[中文设计稿](docs/research/management-review-20261028/index.html)剩余七项文案待逐条确认。正式版仍为2.26.1；此前alpha2各包和回执保留。 |
 | 上一正式版本 | **2.26.0**；[原验收](evidence/2.26.0-main-acceptance-20261025.json)及EXE/ZIP保持原样。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |

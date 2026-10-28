@@ -1,0 +1,11 @@
+{
+  "version": "2.26.2 beta",
+  "channel": "candidate",
+  "source_commit": "5cb70774007cf3478e38df00397962a8510165d8",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta/AC7MultiSP_Installer_2.26.2_beta.exe",
+  "sha256": "6ca9af204786305feab076b8d71bf42b73ff4409bdad000e739fb4db4f2371fe",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261028-2.26.2-beta-build/delivery-receipt.json",
+  "development_fault_tests": false,
+  "validation": "安装包签名与文件一致；中英文更新日志与封装内两处正文原字节一致；安装器版本比较按alpha、beta、正式版排序。",
+  "scope": "作者认可中文更新日志；整合alpha2实机反馈保留已知MiG-21火光问题。未运行安装器、游戏或上传；真实冲突测试未触发异常，未据此确认检测覆盖。"
+}
