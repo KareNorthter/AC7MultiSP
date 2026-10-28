@@ -119,7 +119,7 @@ alpha2之后的未构建源码将`ContinuousReadBatch`的对象表头及24字节
 
 电子战、UAV及IRCM依真实CDO父类、回调、装填/结束归属契约准入，不单看WeaponID或名称。S-44/Gleipnir的HPM即使复用编号31仍按实际WeaponUAV处理；真实ElectronicSupportMeasures走电子战。非Raven不套Raven固定三武器限制，真Raven的回收模型/TLS附着守卫保留。持续引用仍保留弱身份、发射代次、原生分配与回收、64项上限和收尾隔离。
 
-XFA-36A的OSL复用TLS编号，但直接继承`WeaponBase`，不符合原有TLS收尾契约。接收兼容性研究`f7be405`后，仅当真实资源、玩家归属、原生字段、独立根组件、六个回调及代码指纹均匹配时，才在切换前使用已核对的原生结束请求；其他兵装仍按原有策略处理。作者蓝图生成的独立激光效果按自身寿命退场，切换后是否继续从机头发出及画面何时消失仍须实机验证。依据见[OSL研究记录](../../evidence/xfa36-osl-switch-20261028.json)；当前集成源码尚未编译或安装。
+XFA-36A的OSL复用TLS编号，但直接继承`WeaponBase`，不符合原有TLS收尾契约。接收兼容性研究`f7be405`后，仅当真实资源、玩家归属、原生字段、独立根组件、六个回调及代码指纹均匹配时，才在切换前使用已核对的原生结束请求；其他兵装仍按原有策略处理。作者蓝图生成的独立激光效果按自身寿命退场，切换后是否继续从机头发出及画面何时消失仍须实机验证。依据见[OSL研究记录](../../evidence/xfa36-osl-switch-20261028.json)；[整合修订EXE](../../evidence/2.26.2-alpha2-integrated-exe-20261028.json)已编译，尚未安装或重新实机验证。
 
 IRCM使用`ContinuousKind::Interceptor`，仅接受`/Script/Nimbus.LaserInterceptor`派生、发射即装填且无延后装填归属、已核对的原生Tick/初始化/结束/Release/Retire回调，以及未挂接的独立根组件。源于S32只读激活和自然退场现场：10秒有效期、2秒尾迹，最终12.0008秒非活动；原生搜索/拦截/结束代码完整范围、所属玩家检查与最终回收首次按9855922指纹核对。保留Actor原生Tick、目标搜索、作者蓝图事件和寿命，不以ECM分支代替IRCM。
 

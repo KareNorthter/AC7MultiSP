@@ -7,7 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式发布版本 | **2.26.1**，作者于2026-10-25验收alpha3：CFA-44 EML持续掉帧已消除、舱门正常，F-2A普通飞行性能恢复，其他功能总体正常；现已由作者确认发布；[验收与授权](evidence/2.26.1-release-authorization.json)和[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)分别保留阶段依据。 |
-| 本轮自测候选 | **2.26.2 alpha2**；延续alpha1，接收四机外挂模型及启动检查、故障隔离和恢复。已构建常规与独立开发故障EXE，见[交付核对](evidence/2.26.2-alpha2-exe-delivery.json)。第4轮开发故障漏触发已修正并[单独出包](evidence/2.26.2-alpha2-t6-fix-delivery.json)；作者现已确认快速五轮、四机多SP模型及PLSL/MGP/HGP名称亮度通过，视角操作待测；Super Kai的IEWS显示已修源码；另接收最新Su-57内舱/F35收尾和单MGP候选，并生成[中文可编辑设计稿](docs/research/management-review-20261028/index.html)，本批尚未编译，见[接收回执](evidence/2.26.2-latest-source-and-management-review.json)；用例与恢复入口见[故障测试指导](docs/engineering/aircraft-fault-testing.md)。正式版仍为2.26.1；原alpha1来源及交付保留 |
+| 本轮自测候选 | **2.26.2 alpha2**；延续alpha1，接收四机外挂模型及启动检查、故障隔离和恢复。作者已确认快速五轮、四机模型及PLSL/MGP/HGP亮度正常，视角待测。后续Super Kai IEWS、Su-57内舱、F35收尾、单MGP、XFA-36激光及已获准的管理操作调整已构建[整合修订EXE](evidence/2.26.2-alpha2-integrated-exe-20261028.json)，待作者安装与实机验证；[中文设计稿](docs/research/management-review-20261028/index.html)剩余七项文案待逐条确认。正式版仍为2.26.1；此前alpha2各包和回执保留。 |
 | 上一正式版本 | **2.26.0**；[原验收](evidence/2.26.0-main-acceptance-20261025.json)及EXE/ZIP保持原样。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |

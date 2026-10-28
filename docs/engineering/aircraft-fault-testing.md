@@ -152,7 +152,7 @@ T6/T7触发后，核对重启提示、F6错误详情及日志。返回菜单、�
 
 当前运行核心为此前已验收快速五轮的alpha2 T6修正版，后续IEWS显示、新Su-57/单MGP源码未编译安装。本节是已准备环境，不代表真实冲突、命名或恢复已经验收。
 
-作者随后反馈：F-17V、Gleipnir、X-02R A/B及UI-4054在机库选择三SP、任务内使用三SP均正常且未报错；不由此推断全部武器效果、全部皮肤或资源覆盖均无差异。XFA-36的激光切换发生错误，现场日志记录`TLS 原生收尾接口不匹配`；已按[兼容性研究](../../evidence/xfa36-osl-switch-20261028.json)接收针对OSL的限定收尾源码，尚未编译或重新实机验证。具体反馈及安装边界见[本轮记录](../../evidence/real-conflict-user-feedback-20261028.json)。
+作者随后反馈：F-17V、Gleipnir、X-02R A/B及UI-4054在机库选择三SP、任务内使用三SP均正常且未报错；不由此推断全部武器效果、全部皮肤或资源覆盖均无差异。XFA-36的激光切换发生错误，现场日志记录`TLS 原生收尾接口不匹配`；已按[兼容性研究](../../evidence/xfa36-osl-switch-20261028.json)接收针对OSL的限定收尾源码，并编译[整合修订EXE](../../evidence/2.26.2-alpha2-integrated-exe-20261028.json)，尚未安装或重新实机验证。具体反馈及安装边界见[本轮记录](../../evidence/real-conflict-user-feedback-20261028.json)。
 
 针对LMCM等资料缺失，先按[兼容性归因记录](../research/mod-aircraft-compatibility.md#本机txt说明与兵装资料缺失的归因)核对前置与实际加载表，避免把所有问题都归咎于机体间冲突。
 

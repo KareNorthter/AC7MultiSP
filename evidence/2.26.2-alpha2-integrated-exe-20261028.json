@@ -1,0 +1,52 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "version": "2.26.2 alpha2",
+  "candidate": true,
+  "source_commit": "13cd28b391ad16d4c02ecf41857d63b627c7fc1a",
+  "artifact": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.26.2-alpha2\\AC7MultiSP_Installer_Integrated_20261028.exe",
+    "size": 74561024,
+    "sha256": "7c6eadfd36ba2fabedb0f6b76d4809845a787aaa667e2e1e6391584ac97734c3"
+  },
+  "build_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-integrated-final-build\\game-build\\build-receipt.json",
+  "delivery_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-integrated-final-build\\delivery-receipt.json",
+  "author_signing": {
+    "release_id": "7c4312f76ad44d5394b26fa5fb1b4b8c",
+    "manifest_sha256": "c94b6231c3174b3db263a2cfe8dd63c2d35cd254fae53705e4ce7edb9880e4b9",
+    "signature_sha256": "71386b8d716cd77aaca3d5f6bea54b1edb239295e58e137cadfd95946a704d22"
+  },
+  "core_sha256": "171cef17408875d7a8cb2a0aeef2e376f22cd6239ce9d70fe8262752172f2a40",
+  "ui_sha256": "218c4cd97b5b8868d301a61bcd62586043166957db14386a190af106a1b77dd5",
+  "resources": 92,
+  "installer_player_text_instances": 16,
+  "ui_player_texts": 4,
+  "author_approved_chinese_diff": "2.26.2-alpha2-design-intake-20261028.json",
+  "design_unconfirmed_items": 7,
+  "design_draft_sha256": "adb58d713697f7e9cb305ac8450b5aade60f2288ff7095ce53c358c6172b4759",
+  "features": [
+    "XFA-36 OSL严格收尾修复候选",
+    "错误详情取消顶部重复",
+    "Super Kai IEWS显示",
+    "Su-57内舱和F35舱门收尾候选",
+    "MiG-21单MGP双路候选",
+    "手柄长按Start三秒",
+    "最新版本不弹通知"
+  ],
+  "normal_build_dev_fault_entry": false,
+  "protected_old_core_sha256": "D7D7055CA7909021EEACA15E63FF5FF253D2EB7E60A3FE3B79DCEEAB231DE339",
+  "verification": [
+    "完整核心与UI编译",
+    "作者签名及安装器资源回读",
+    "源码冻结与92资源资格",
+    "中英文16处安装器/部署正文及F6四份正文",
+    "3项已批准中文差异逐字节范围",
+    "旧冻结核心摘要"
+  ],
+  "game_tests_run": false,
+  "game_started": false,
+  "installed": false,
+  "published": false,
+  "old_exes_preserved": true,
+  "preliminary_build": "20261028-alpha2-integrated-review-build为源码提交前的预备构建，签名source_commit仅为旧HEAD，未作为交付；最终包基于已提交13cd28b。"
+}

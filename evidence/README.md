@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| alpha2整合修订EXE与设计稿审核 | [构建与回读](2.26.2-alpha2-integrated-exe-20261028.json)／[设计稿批准范围](2.26.2-alpha2-design-intake-20261028.json) | XFA-36收尾、已接收模型及管理操作修订；92资源与双语正文核对，设计稿七项中文待逐条确认；未安装或实机验证 |
 | 混装实机反馈与XFA-36 OSL | [作者反馈](real-conflict-user-feedback-20261028.json)／[OSL兼容研究](xfa36-osl-switch-20261028.json) | F-17V、Gleipnir、X-02R A/B、UI-4054三SP无报错；XFA-36出现TLS收尾错误，已接收限定修复源码，未编译或重新验收 |
 | 真实冲突机体安装与恢复入口 | [20261028安装回执](real-conflict-aircraft-installed-20261028.json) | XFA-36A包/F-17V/Gleipnir共5份原PAK，补回5条真实目录至179条；保留X-02R/UI-4054并逐项复核6个不同内容成员。核心/UI与设计稿保持，未注入人工错误或启动游戏，退出后可一键恢复B组 |
 | 最新研究接收、IEWS修正与中文设计稿 | [源码与审核稿回执](2.26.2-latest-source-and-management-review.json) | 接收1b56361/f59e81f，33机/231决策/92资源；Super Kai补充真实类IEWS显示。当前四分页和608条文字清单供审核，未编译/安装，不扩大旧验收 |
