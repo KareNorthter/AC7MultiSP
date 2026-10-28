@@ -1,0 +1,496 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "status": "static_binding_design_not_registered",
+  "base_source_commit": "06a99de",
+  "runtime_registered": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "candidate_validated": false,
+  "plane_candidate": {
+    "code": "f22a",
+    "local_mechanism": true,
+    "local_pool": 2,
+    "groups": [
+      {
+        "class": "plwp_qaam_a0_C",
+        "rack": "f22a_SWP1",
+        "rack_package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP1",
+        "mesh": "w_qaam_a0_SM",
+        "mesh_package": "/Game/Vehicles/Weapons/w_qaam_a0/w_qaam_a0_SM",
+        "sockets": [
+          "sp11",
+          "sp12",
+          "sp13",
+          "sp14",
+          "sp15",
+          "sp16"
+        ],
+        "window": 2,
+        "fixed": false,
+        "launcher": false,
+        "skeletal": true,
+        "skeleton": "f22a_SWP1_Skeleton",
+        "anim": "f22a_SWP1_AnimBP_C"
+      },
+      {
+        "class": "plwp_xsdb_a0_C",
+        "rack": "f22a_SWP2",
+        "rack_package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP2",
+        "mesh": "w_xsdb_a0_closed_SM",
+        "mesh_package": "/Game/Vehicles/Weapons/w_xsdb_a0/w_xsdb_a0_closed_SM",
+        "sockets": [
+          "sp21",
+          "sp22",
+          "sp23",
+          "sp24",
+          "sp25",
+          "sp26"
+        ],
+        "window": 4,
+        "fixed": false,
+        "launcher": false,
+        "skeletal": true,
+        "skeleton": "f22a_SWP2_Skeleton",
+        "anim": "f22a_SWP2_AnimBP_C"
+      },
+      {
+        "class": "plwp_8aam_a0_C",
+        "rack": "f22a_SWP3",
+        "rack_package": "/Game/Vehicles/Aircraft/f22a/f22a_SWP3",
+        "mesh": "w_4aam_a0_SM",
+        "mesh_package": "/Game/Vehicles/Weapons/w_4aam_a0/w_4aam_a0_SM",
+        "sockets": [
+          "sp31",
+          "sp32",
+          "sp37",
+          "sp38",
+          "sp42",
+          "sp41",
+          "sp34",
+          "sp36",
+          "sp33",
+          "sp35",
+          "sp40",
+          "sp39",
+          "sp44",
+          "sp43"
+        ],
+        "window": 8,
+        "fixed": false,
+        "launcher": false,
+        "skeletal": true,
+        "skeleton": "f22a_SWP3_Skeleton",
+        "anim": "f22a_SWP3_AnimBP_C",
+        "bones": [
+          {
+            "name": "Body",
+            "parent": -1
+          },
+          {
+            "name": "SWPCover_38",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_37",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_36",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_35",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_34",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_28",
+            "parent": 5
+          },
+          {
+            "name": "SWPCover_27",
+            "parent": 5
+          },
+          {
+            "name": "SWPCover_33",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_26",
+            "parent": 8
+          },
+          {
+            "name": "SWPCover_25",
+            "parent": 8
+          },
+          {
+            "name": "SWPCover_32",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_31",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_30",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_29",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_24",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_10",
+            "parent": 15
+          },
+          {
+            "name": "SWPCover_09",
+            "parent": 15
+          },
+          {
+            "name": "SWPCover_23",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_22",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_21",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_08",
+            "parent": 20
+          },
+          {
+            "name": "SWPCover_07",
+            "parent": 20
+          },
+          {
+            "name": "SWPCover_20",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_19",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_18",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_06",
+            "parent": 25
+          },
+          {
+            "name": "SWPCover_05",
+            "parent": 25
+          },
+          {
+            "name": "SWPCover_17",
+            "parent": 0
+          },
+          {
+            "name": "SWPCover_16",
+            "parent": 0
+          }
+        ]
+      }
+    ],
+    "plans": [
+      null,
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          [],
+          []
+        ],
+        "racks": 1,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          []
+        ],
+        "racks": 2,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [],
+          []
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 13
+          },
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 12
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 11
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 10
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 5
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 4
+          }
+        ],
+        "full_borrowed_kinds": 3
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1,
+            8,
+            6,
+            9,
+            7,
+            2,
+            3
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 13
+          },
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 12
+          }
+        ],
+        "full_borrowed_kinds": 1
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1,
+            8,
+            6,
+            9,
+            7,
+            2,
+            3
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 11
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 10
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 5
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 4
+          }
+        ],
+        "full_borrowed_kinds": 2
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1,
+            8,
+            6,
+            9,
+            7,
+            2,
+            3
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 13
+          },
+          {
+            "kind": 0,
+            "pool": 2,
+            "socket": 12
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 11
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 10
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 5
+          },
+          {
+            "kind": 1,
+            "pool": 2,
+            "socket": 4
+          }
+        ],
+        "full_borrowed_kinds": 3
+      }
+    ],
+    "body": {
+      "mesh": "f22a",
+      "mesh_package": "/Game/Vehicles/Aircraft/f22a/f22a",
+      "anim": "f22a_AnimBP_C",
+      "anim_package": "/Game/Blueprint/Player/Body/f22a_AnimBP"
+    }
+  },
+  "sources": {
+    "src\\animated_mount_data.hpp": "977d5359f939349ad6d11c3108ed09d121872e78999a9aafc375bfaa59881e68",
+    "src\\f22_exterior_bones.hpp": "13f719c65c0513d3b2e4a82affa4ae512e04831723360fdb9e2fca6117f3a01a",
+    "evidence\\mount-expansion-animated.json": "c62c41b9bd069b5d355f8261c15f8993f569ccbedfba289d6079ffc5ec791543",
+    "evidence\\animated-runtime-f22a-capture.json": "bbcb5e7082f3cd08ed9a38405cc32ffd18f67e128078366e5bcbfc397526eda1"
+  },
+  "new_route": "唯一SWP3供位/呈现与局部租约，使用本轮已接入的local_pool参数，不恢复旧完整共舱或腹部九骨显隐",
+  "existing_evidence": {
+    "historical_8aam_logical_count": 14,
+    "historical_8aam_window": 8,
+    "historical_pools": [
+      6,
+      6,
+      14
+    ],
+    "historical_provider_skeleton_bones": 30,
+    "not_current_validation": "旧研究是2.7.1现场，不能当作当前安装版的新采集"
+  },
+  "remaining_before_runtime_registration": [
+    "核当前原生三池/组件父链、SWP3骨架与AnimClass及Parts分域",
+    "核心机型分类需从旧机外/完整动画类别迁为生成表局部类别，索引在普通Su-57之后追加",
+    "内舱QAAM/XSDB与侧8AAM来自同一SWP3池，必须按逻辑位置预计算内部模型掩码，不能按pool==2一刀切隐藏",
+    "内舱取位需要当前帧SWP3发布；原生暂停及NoSkeletonUpdate/Tick请求分别记账和归还",
+    "纯公共spwc的同舱连续性需要独立核实；不把此前TGM公共舱失败追认为已解决",
+    "完整7组合的库存/装填/发射映射及恢复待验证，14逻辑槽与8侧位容量不混为一谈"
+  ],
+  "author_visual_tolerance": "作者允许肉眼难察的轻微穿插/不贴合，保留原弹体与原Socket，不据此接受错误离架或卡顿"
+}
