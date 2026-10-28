@@ -1381,7 +1381,7 @@ function NativeLoadout.new(dependencies)
         local ok,err=pcall(function()restore(releaseInput);releaseClosedRoot()end)
         if not ok then
             note((supply and "NATIVE_RESUPPLY_RESTORE_ERROR "or "NATIVE_LOADOUT_RESTORE_ERROR ")..tostring(err))
-            if supply then error(err)end
+            if supply or options.strict then error(err)end -- 统一退让不能把归还失败当成安全完成。
         end
         self.ignored=nil;self.ignoredReason=nil;if clearError~=false then self.error=nil end
         self.phase=nil;self.phaseObject=nil;self.phaseWorld=nil

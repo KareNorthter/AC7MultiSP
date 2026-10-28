@@ -126,6 +126,8 @@ std::string hotkeyToast;
 ULONGLONG hotkeyToastUntil{};
 bool toastIsError=false;
 bool updateToastActive=false; // 进入任务立即隐藏更新提醒，其他通知沿用原有规则。
+bool startupNoticeShown=false,catalogueNoticeShown=false;
+std::string recoveryNoticeKey;
 enum class ToastKind {Info,Important,Warning,Error};
 ToastKind toastKind=ToastKind::Info;
 Json reportedToastErrors=Json::object(); // 同一持续错误只提示一次，恢复后再次发生才重新提示。
@@ -877,6 +879,18 @@ bool beginManagementTab(const char* label,int index) {
     return selected;
 }
 #include "quick_mission_panel.hpp"
+// 只替换固定占位符，不把机体代号或错误文本作为格式串执行。
+std::string recoveryText(const char* key,const std::string& count={}) {
+    auto result=std::string(uiText(key));
+    for(const auto& part:std::array<std::pair<std::string,std::string>,3>{{
+        {"{key}",shortcutLabel(shortcuts[0])},{"{version}",dualsp::updates::currentVersion},{"{count}",count}}}) {
+        size_t offset=0;
+        while((offset=result.find(part.first,offset))!=std::string::npos) {
+            result.replace(offset,part.first.size(),part.second);offset+=part.second.size();
+        }
+    }
+    return result;
+}
 #include "management_panel.hpp"
 
 // 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
@@ -983,6 +997,17 @@ void refreshState() {
                 masterResponse=master.value("response",0);showToast(master.value("notice",std::string()),master.contains("error")?ToastKind::Error:ToastKind::Important);
             }
         }
+        if(state.contains("recovery")) {
+            const auto& recovery=state.at("recovery");
+            const auto reason=recovery.value("reason",std::string());
+            const bool disabled=recovery.value("disabled",false),severe=recovery.value("severe",false);
+            const auto key=disabled?(std::string(severe?"severe/":"aircraft/")+reason):std::string();
+            if(!key.empty() && key!=recoveryNoticeKey) {
+                showToast(recoveryText(severe?"recovery.severe":
+                    recovery.value("must_leave",false)?"recovery.leave_mission":"recovery.aircraft"),ToastKind::Error);
+            }
+            recoveryNoticeKey=key;
+        }
         Json errors=Json::object();
         for(const char* field:{"error","menu_error","hud_error","central_error","settings_error","mount_warning"})
             if(state.contains(field)&&state.at(field).is_string()&&!state.at(field).get_ref<const std::string&>().empty())errors[field]=state.at(field);
@@ -990,7 +1015,7 @@ void refreshState() {
             if(state.contains(field)&&state.at(field).contains("error")&&state.at(field).at("error").is_string()
                 &&!state.at(field).at("error").get_ref<const std::string&>().empty())errors[field]=state.at(field).at("error");
         for(auto item=errors.begin();item!=errors.end();++item) {
-            if(!reportedToastErrors.contains(item.key())||reportedToastErrors.at(item.key())!=item.value()) {
+            if(recoveryNoticeKey.empty()&&(!reportedToastErrors.contains(item.key())||reportedToastErrors.at(item.key())!=item.value())) {
                 const bool visual=item.key()=="mount_warning";
                 const auto detail=visual?uiError(item.value().get<std::string>(),"multi.sp.models.reverted.to.46f829d2"):
                     uiError(item.value().get<std::string>());
@@ -1050,11 +1075,33 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                 // 平时仍跳过整个绘制；只有管理面板或短暂通知可见时提交ImGui帧。
                 // 不抢已有提示；检查结果仅在前台、任务外且面板关闭时消费一次。
                 if(foreground && !panel && managementError.empty() && GetTickCount64()>=hotkeyToastUntil) {
-                    if(const auto update=dualsp::updates::service().claimNotice()) {
-                        const auto binding=shortcutLabel(shortcuts[0]);
-                        const auto message=std::string(uiText("version.29bc0009"))+update->latest+
-                            uiText("is.available.open.e79f34f1")+binding+
-                            uiText("version.and.updates.and.choose.cd6e7a78");
+                    static const Json emptyRecovery=Json::object();
+                    const auto& recovery=state.contains("recovery")?state.at("recovery"):emptyRecovery;
+                    if(!startupNoticeShown && recovery.value("catalogue_ready",false) &&
+                        recovery.value("outside_mission",false)) {
+                        auto message=recoveryText("recovery.loaded");
+                        const int count=recovery.value("issue_count",0);
+                        if(count>0) {
+                            message+="\n"+recoveryText("recovery.catalogue_count",std::to_string(count));
+                            catalogueNoticeShown=true;
+                        }
+                        showToast(message,ToastKind::Important);startupNoticeShown=true;
+                    }else if(!catalogueNoticeShown && recovery.value("issue_count",0)>0 && recovery.value("outside_mission",false)) {
+                        showToast(recoveryText("recovery.catalogue_count",std::to_string(recovery.at("issue_count").get<int>())),ToastKind::Warning);
+                        catalogueNoticeShown=true;
+                    }else if(dualsp::updates::service().claimNotice()) {
+                        auto& updates=dualsp::updates::service();
+                        std::string message;
+                        switch(updates.status()) {
+                        case dualsp::updates::Status::Current:message=uiText("already.up.to.date.9c218466");break;
+                        case dualsp::updates::Status::Failed:message=uiText("unable.to.check.for.updates.f4fdc2e6");break;
+                        case dualsp::updates::Status::Unpublished:message=uiText("update.information.has.not.been.4e698d95");break;
+                        default:
+                            if(const auto update=updates.snapshot())message=std::string(uiText("version.29bc0009"))+update->latest+
+                                uiText("is.available.open.e79f34f1")+shortcutLabel(shortcuts[0])+
+                                uiText("version.and.updates.and.choose.cd6e7a78");
+                            break;
+                        }
                         showToast(message,ToastKind::Important);updateToastActive=true;
                     }
                 }
@@ -1219,6 +1266,7 @@ extern "C" __declspec(dllexport) int dualsp_three_sp_supported(void*) {return 0;
 extern "C" __declspec(dllexport) int dualsp_management_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_async_logging_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_shortcuts_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_aircraft_recovery_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gaze_latch_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_gaze_inputs_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_camera_controls_v2_supported(void*) {return 0;}

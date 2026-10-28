@@ -114,7 +114,23 @@ void drawBasicBindings() {
     }
     ImGui::EndChild();
 }
+std::string weaponCatalogueReason(const Json& issue) {
+    const auto key=issue.value("reason_key",std::string());
+    auto reason=key.empty()?uiError(issue.value("reason",std::string())):std::string(uiText(key.c_str()));
+    const auto at=reason.find("{weapon}");
+    if(at!=std::string::npos)reason.replace(at,8,issue.value("weapon",std::string()));
+    return reason;
+}
 void drawManagementErrors() {
+    if(state.contains("recovery")&&state.at("recovery").value("disabled",false)) {
+        const auto& recovery=state.at("recovery");
+        ImGui::TextWrapped("%s",recoveryText(recovery.value("severe",false)?"recovery.severe":
+            recovery.value("must_leave",false)?"recovery.leave_mission":"recovery.aircraft").c_str());
+        const auto reason=recovery.value("reason",std::string());
+        if(!recovery.value("severe",false)&&recovery.contains("issue"))
+            ImGui::TextWrapped("%s",weaponCatalogueReason(recovery.at("issue")).c_str());
+        else if(!reason.empty())ImGui::TextWrapped("%s",uiError(reason).c_str());
+    }
     const char* fields[]={"error","menu_error","hud_error","central_error","settings_error"};
     bool errors=false;for(const char* field:fields)errors=errors||state.contains(field);
     for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
@@ -125,6 +141,34 @@ void drawManagementErrors() {
             for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})if(state.contains(field)&&state.at(field).contains("error"))
                 ImGui::TextWrapped("%s",uiError(state.at(field).at("error").get<std::string>()).c_str());
         }
+    }
+}
+void drawWeaponCatalogueIssues() {
+    if(!state.contains("recovery"))return;
+    const auto& recovery=state.at("recovery");
+    const int count=recovery.value("issue_count",0);
+    if(count<=0)return;
+    const std::string title=std::string(uiText("recovery.catalogue_title"))+"###WeaponCatalogueIssues";
+    if(ImGui::Button(recoveryText("recovery.catalogue_count",std::to_string(count)).c_str()))
+        ImGui::OpenPopup(title.c_str());
+    const auto display=ImGui::GetIO().DisplaySize;
+    ImGui::SetNextWindowSize({std::min(760.f,std::max(260.f,display.x-48)),
+        std::min(570.f,std::max(180.f,display.y-48))},ImGuiCond_Appearing);
+    if(ImGui::BeginPopupModal(title.c_str(),nullptr,ImGuiWindowFlags_NoSavedSettings)) {
+        ImGui::TextWrapped("%s",uiText("recovery.catalogue_help"));
+        ImGui::Separator();
+        ImGui::BeginChild("WeaponCatalogueRows",{0,-ImGui::GetFrameHeightWithSpacing()},ImGuiChildFlags_Borders);
+        if(recovery.contains("issues")&&recovery.at("issues").is_array())for(const auto& issue:recovery.at("issues")) {
+            std::string identity="#"+std::to_string(issue.value("id",-1))+" / "+issue.value("code",std::string());
+            if(issue.contains("slot"))identity+=" / SP"+std::to_string(issue.at("slot").get<int>());
+            if(issue.contains("weapon"))identity+=" / "+issue.at("weapon").get<std::string>();
+            ImGui::TextWrapped("%s",identity.c_str());
+            ImGui::TextWrapped("%s",weaponCatalogueReason(issue).c_str());
+            ImGui::Separator();
+        }
+        ImGui::EndChild();
+        if(ImGui::Button(uiText("recovery.close")))ImGui::CloseCurrentPopup();
+        ImGui::EndPopup();
     }
 }
 #include "version_updates_panel.hpp"
@@ -260,9 +304,9 @@ void drawPanel() {
     ImGui::BeginChild("ManagementBody",{0,std::max(1.f,footerTop-ImGui::GetCursorPosY()-ImGui::GetStyle().ItemSpacing.y)},ImGuiChildFlags_None);
     drawManagementErrors();
     if(state.value("mission_fixed_sp",false))ImGui::TextColored({1,.76f,.38f,1},"%s",uiText("mission.13.assigned.sp.camera.6fa3a5e0"));
-    ImGui::BeginDisabled(!draftModEnabled);
+    // 总开关不锁分页与诊断；功能动作继续按已发布的实际可用状态禁用。
     if(ImGui::BeginTabBar("ManagementTabs")) {
-        if(beginManagementTab(uiText("general.features.d6795dc0"),0)) {drawFeatureSettings();ImGui::EndTabItem();}
+        if(beginManagementTab(uiText("general.features.d6795dc0"),0)) {drawWeaponCatalogueIssues();drawFeatureSettings();ImGui::EndTabItem();}
         if(beginManagementTab(uiText("camera.bindings.291ded16"),1)) {drawCameraSettings();ImGui::EndTabItem();}
         if(beginManagementTab(uiText("debug.debug.3211ed36"),2)) {
             if(panelCard("DebugLoadout",uiText("mission.loadout.682b8e9c"))) {
@@ -310,7 +354,6 @@ void drawPanel() {
         if(beginManagementTab(uiText("version.and.updates.versionupdates.f6da021a"),3)) {drawVersionUpdatesPage();ImGui::EndTabItem();}
         ImGui::EndTabBar();if(requestedTab==managementTab)requestedTab=-1;
     }
-    ImGui::EndDisabled();
     ImGui::EndChild();ImGui::SetCursorPosY(footerTop);ImGui::Separator();
     ImGui::TextDisabled("%s",captureSlot>=0?uiText("waiting.for.a.key.esc.0bd06836"):pendingSave>0?uiText("saving.2a26d205"):managementDirty()?uiText("unsaved.changes.82a5cd03"):uiText("settings.saved.d104ef7d"));
     if(captureSlot>=0){ImGui::SameLine();if(ImGui::SmallButton(uiText("cancel.capture.1c5192e2")))captureSlot=-1;}

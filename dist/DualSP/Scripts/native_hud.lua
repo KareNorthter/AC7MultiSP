@@ -447,8 +447,9 @@ function NativeHUD.new(note,refreshIcons)
             if not restored then note("NATIVE_HUD_RESTORE_ERROR "..tostring(restoreErr))end
         end
     end
-    function self:reset()
+    function self:reset(strict)
         local ok,err=pcall(restore)
+        local cleanupError=not ok and tostring(err)or nil
         if not ok then note("NATIVE_HUD_RESTORE_ERROR "..tostring(err))end
         local c=self.cache
         if c then
@@ -467,8 +468,9 @@ function NativeHUD.new(note,refreshIcons)
                     assert(c.arrowHolder.Slot.Parent:RemoveChild(c.arrowHolder),"无法释放箭头源容器")
                 end
             end)
-            if not removed then note("NATIVE_HUD_RELEASE_ERROR "..tostring(removeErr))end
+            if not removed then cleanupError=cleanupError or tostring(removeErr);note("NATIVE_HUD_RELEASE_ERROR "..tostring(removeErr))end
         end
+        if strict and cleanupError then error(cleanupError)end -- 保留未完成责任，交由统一退让升级故障。
         self.cache=nil;self.error=nil;self.status="waiting";self.lastScan=-1;self.waitingSince=nil
     end
     return self
