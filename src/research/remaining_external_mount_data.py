@@ -64,3 +64,38 @@ def append_remaining_external(planes, assets, preserved, root):
     planes.extend(deepcopy(candidates))
     assets.extend(additions)
     preserved.extend(deepcopy(collision))
+    append_single_mgp(planes, assets, preserved, root)
+
+
+def append_single_mgp(planes, assets, preserved, root):
+    """单吊舱只合并真实发射位置，不改变原生双发及Gunplay数值。"""
+    record = json.loads((root/'evidence/mgp-single-pod-20261028.json').read_text(encoding='utf-8'))
+    plane = next(p for p in planes if p['code'] == 'm21b')
+    if (record['schema'] != 1 or record['status'] != 'single_mgp_native_pair_source_candidate' or
+            assets != record['baseline_assets'] or plane != record['expected_plane'] or
+            record['prior_receipt_sha256'] != hashlib.sha256((root/'evidence'/RECEIPT).read_bytes()).hexdigest() or
+            record['appended_assets'] != ['MSP_m21b_mgp_left_r1', 'MSP_m21b_rkt_right_r1']):
+        raise ValueError('MGP单吊舱的原机体、资源基线或来源不符')
+    reports = record['resource_reports']
+    rows = record['resource_audits']
+    if len(reports) != 2 or len(rows) != 2 or len(record['collision_preservation']) != 2:
+        raise ValueError('MGP单吊舱资源依据缺项')
+    for name, report, row, proof in zip(record['appended_assets'], reports, rows, record['collision_preservation']):
+        if (report['recipe']['name'] != name or row['asset'] != name or proof['asset'] != name or
+                report['source'] != proof['source'] or row['encoded_hashes'] != report['encoded_hashes'] or
+                not row['passed'] or row['errors'] or not all(report.get(k) is True for k in (
+                    'asset_roundtrip', 'renamed_ac7_roundtrip', 'all_exports_payload_preserved',
+                    'non_index_bytes_preserved', 'sockets_and_materials_preserved'))):
+            raise ValueError('MGP单吊舱资源、碰撞或cooked引用资格不成立')
+    expected = deepcopy(plane)
+    expected['groups'][0]['mapped_fixed'] = True
+    right = [i for i, socket in enumerate(plane['groups'][1]['sockets']) if int(socket[2:]) % 2 == 0]
+    expected['plans'][3] = dict(selected=[[0], right, []], racks=3, variants=[len(assets), len(assets)+1, -1])
+    expected['plans'][5] = dict(selected=[[0], [], [1]], racks=5,
+        variants=[len(assets), -1, assets.index('MSP_m21b_saam_right_r1')])
+    if record['replacement_plane'] != expected or len(right) != 16:
+        raise ValueError('单MGP仅准入左sp11及右RKT/SAAM，不得改写三SP或原生双发身份')
+    plane.clear()
+    plane.update(deepcopy(expected))
+    assets.extend(record['appended_assets'])
+    preserved.extend(deepcopy(record['collision_preservation']))

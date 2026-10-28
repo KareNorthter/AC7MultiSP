@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "scope": "作者操作MiG-21bis MGP，助手只读观察",
+  "process_write": false,
+  "input_injected": false,
+  "game_functions_called": false,
+  "screen_observations": [
+    {
+      "mission_time": "19:46:06",
+      "mgp": 3098,
+      "gun": 2366,
+      "visual": "左右两路射流"
+    },
+    {
+      "mission_time": "19:37:88",
+      "mgp": 2716,
+      "gun": 2196,
+      "visual": "左右两路射流"
+    },
+    {
+      "mission_time": "19:11:81",
+      "mgp": 1604,
+      "gun": 1688,
+      "selected": "RKT"
+    },
+    {
+      "mission_time": "19:00:93",
+      "mgp": 1368,
+      "gun": 1627,
+      "selected": "MGP"
+    }
+  ],
+  "memory_capture": {
+    "status": "stopped",
+    "error": "WinError 299，命令文件玩家地址不可读；未重复尝试",
+    "ui_source_mismatch": "ui-state报告F-22A，与现场MiG-21及用户说明不符，不作为当前玩家来源"
+  },
+  "limits": [
+    "不是连续录像或逐发计数",
+    "观察期间GUN弹量也减少，不能孤立归因MGP伤害",
+    "未取得有效子弹对象或原生取位路径快照",
+    "不证明单吊舱保双路伤害方案可实现"
+  ]
+}
