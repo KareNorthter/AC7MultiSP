@@ -1,0 +1,386 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "branch": "codex/research-internal-bay-multisp",
+  "installed_version": "2.26.2 alpha1",
+  "game_process_access": "作者启动游戏并操作，本任务只读",
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "compiled": false,
+  "tests_run": false,
+  "candidate_installed": false,
+  "candidate_validated": false,
+  "user_feedback": "su57并未出现舱门不闭合的问题",
+  "conclusion": "普通Su-57关舱正常，不列入关舱故障；共用Shared01Close在模型开启的实采过程能收拢旧swcc输出。关闭状态仅有切换成功日志，未完整采到动画细节。",
+  "identity_checks": [
+    "当前受控原版pkfa Pawn父类及包",
+    "控制器Pawn和激活器owner一致",
+    "本体pkfa与pkfa_AnimBP_C",
+    "Parts owner及虚表",
+    "采样逐次玩家、引擎、组件弱身份核对"
+  ],
+  "actual_domain_flags": 6,
+  "components": {
+    "body": {
+      "mesh": "pkfa",
+      "pose_count": 46
+    },
+    "SWP1": {
+      "mesh": "pkfa_SWP1",
+      "pose_count": 11
+    },
+    "SWP2": {
+      "mesh": "pkfa_SWP2_SM",
+      "pose_count": null
+    },
+    "SWP3": {
+      "mesh": "pkfa_SWP3_SM",
+      "pose_count": null
+    }
+  },
+  "log_events": [
+    {
+      "utc": "2026-10-28T03:36:53.251Z",
+      "request": 10,
+      "models": true,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:36:54.344Z",
+      "request": 11,
+      "models": true,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:36:56.251Z",
+      "request": 12,
+      "models": true,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:36:57.536Z",
+      "request": 13,
+      "models": true,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:36:58.498Z",
+      "request": 14,
+      "models": true,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:37:04.296Z",
+      "request": 15,
+      "models": true,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:37:04.871Z",
+      "request": 16,
+      "models": true,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:37:05.488Z",
+      "request": 17,
+      "models": true,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:37:06.590Z",
+      "request": 18,
+      "models": true,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:36.185Z",
+      "request": 19,
+      "models": false,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:38.112Z",
+      "request": 20,
+      "models": false,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:41.926Z",
+      "request": 21,
+      "models": false,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:44.114Z",
+      "request": 22,
+      "models": false,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:46.276Z",
+      "request": 23,
+      "models": false,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:49.312Z",
+      "request": 24,
+      "models": false,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:50.675Z",
+      "request": 25,
+      "models": false,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:52.147Z",
+      "request": 26,
+      "models": false,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:38:58.197Z",
+      "request": 27,
+      "models": false,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:00.161Z",
+      "request": 28,
+      "models": false,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:01.413Z",
+      "request": 29,
+      "models": false,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:04.125Z",
+      "request": 30,
+      "models": true,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:05.749Z",
+      "request": 31,
+      "models": true,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:07.394Z",
+      "request": 32,
+      "models": true,
+      "target_config": 2,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:10.517Z",
+      "request": 33,
+      "models": true,
+      "target_config": 0,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:12.031Z",
+      "request": 34,
+      "models": true,
+      "target_config": 1,
+      "ok": true
+    },
+    {
+      "utc": "2026-10-28T03:39:13.443Z",
+      "request": 35,
+      "models": true,
+      "target_config": 2,
+      "ok": true
+    }
+  ],
+  "stream": {
+    "file": "pkfa-stream-113909.jsonl",
+    "started_utc": "2026-10-28T03:39:10.784181+00:00",
+    "count": 599,
+    "duration_s": 59.9861,
+    "period_s": 0.1,
+    "parts_stable_samples": 599,
+    "models_during_captured_switches": true,
+    "transitions": [
+      {
+        "from": 0,
+        "to": 1,
+        "t": 1.3042,
+        "stable_samples_in_next_second": 10,
+        "public_min": 0.1359499990940094,
+        "swcc_min": 0.5777649283409119,
+        "interpretation": "数值回落，不据此宣布可见动画故障"
+      },
+      {
+        "from": 1,
+        "to": 2,
+        "t": 2.7082,
+        "stable_samples_in_next_second": 10,
+        "public_min": 1.0,
+        "swcc_min": -0.009999999776482582,
+        "interpretation": "切往外置PLSL，swcc正常收拢"
+      }
+    ],
+    "final_armed": 0,
+    "final_outputs": [
+      -0.009999999776482582,
+      -0.009999999776482582,
+      -0.009999999776482582,
+      -0.009999999776482582,
+      -0.009999999776482582,
+      -0.009999999776482582,
+      -0.009999999776482582
+    ],
+    "non_atomic": true
+  },
+  "coverage": {
+    "models_off_logs": "11:38:36–11:39:01，request19–29均成功，UTC+8",
+    "models_on_logs": "11:36:53–11:37:06及11:39:04–11:39:13，均成功，UTC+8",
+    "direct_channel_sampling": "11:39:10–11:40:10，只覆盖开启状态末轮",
+    "sampling_gap": "发出可开始操作的说明后才完成采样脚本准备，正式采样启动晚于作者关闭状态的操作；不是作者未做关闭状态测试",
+    "interrupted_second_stream": "11:41:49启动；命令调用被中断不等于采样进程终止，限时采样自行结束。已读部分只有配置2/MSL全闭，无新切换，不能补足关闭状态动态证据"
+  },
+  "unpublished_source_changes": {
+    "status": "未采用草稿已保存，工作区恢复至本轮前源码，不新增Su-57修复",
+    "reason": "作者明确反馈关舱正常；数值回落尚未证实可见动画故障，先记录不改变已正常的行为",
+    "base_commit": "aa7984098574d45c85bab22806ea61ce5585aefe",
+    "local_patch": "C:\\Users\\83717\\.codex\\worktrees\\internal-bay-multisp\\AC7_MultiSP\\Temp\\tasks\\20261028-official-bay-live\\su57-shared-continuity-draft.patch",
+    "patch_sha256": "7fb4f2be2f7ae1f16de5daba306684d4f77cd30b917e308d1e600608c3558f43",
+    "applied": false,
+    "compiled": false,
+    "installed": false,
+    "continue_condition": "将来完整内舱混挂若明确需要连续开度，先核实际骨发布与外观，再按精确差异评审草稿"
+  },
+  "local_materials_root": "C:\\Users\\83717\\.codex\\worktrees\\internal-bay-multisp\\AC7_MultiSP\\Temp\\tasks\\20261028-official-bay-live",
+  "local_material_hashes": {
+    "capture-wrapper-source.json": "4ed32e1930d6c6bbc9a5b69d8ba8d6e3a19c65dd30e5d0cf20f456a38c09d8a1",
+    "capture_official.py": "b210ce71ba26df15d285016c40f455a66a4f191d451d9b6ee3db5e2c53410c6d",
+    "capture_pkfa_mount_state.py": "b5fc0749e66f2cb2d7994168b527fcecb86a77be0d47660995feb0101f2ad26b",
+    "observe_pkfa.py": "4ae33fae697639fc366202bbee78ee965d0eb4691ad24f4e4aefaf93cd1dfa0e",
+    "pkfa-mount-state.json": "3df6388a47180f0d54a3ae7eb4d8b216aa3c160e481fe42f0f72e5c612d6cfb1",
+    "pkfa-native-log.txt": "4e442895b16913f9668a8f8b4eaa5da9dc368cd252848bcb5a62ff072cbf0a67",
+    "pkfa-stream-113909.jsonl": "83b8e77533a3a061e8b449f3dea9a0ca8b48d9803d0accbc4b4c26a37c05fb78",
+    "pkfa-stream-114148.jsonl": "9bae4b16cc117c87cb37f93abe32bded8adaefa21e6cce9196b007a249d145b8",
+    "pkfa-stream-end.json": "b29891c07dfa39ecae89adfb34b17a4b2bfd72e78070409e70837a3ae940091f",
+    "pkfa-stream-start-113909.json": "cedab17be1a640d144350d88014e60b1bac6930d0d42db3563f47757ca93757e",
+    "pkfa-stream-start-114148.json": "a3d2dbf6f0a968db895dc18871910de6ea3adf36740eba165ba438fc11b8ff2a",
+    "su57-shared-continuity-draft.patch": "7fb4f2be2f7ae1f16de5daba306684d4f77cd30b917e308d1e600608c3558f43"
+  },
+  "mount_identity_snapshot": {
+    "file": "pkfa-mount-state.json",
+    "process_write": false,
+    "game_functions_called": false,
+    "pools": {
+      "SWP1": {
+        "count": 4,
+        "entries": [
+          {
+            "socket": "sp11",
+            "socket_number": 0,
+            "parent_component": "SWP1",
+            "mesh": "w_4aam_r1_SM"
+          },
+          {
+            "socket": "sp12",
+            "socket_number": 0,
+            "parent_component": "SWP1",
+            "mesh": "w_4aam_r1_SM"
+          },
+          {
+            "socket": "sp13",
+            "socket_number": 0,
+            "parent_component": "SWP1",
+            "mesh": "w_4aam_r1_SM"
+          },
+          {
+            "socket": "sp14",
+            "socket_number": 0,
+            "parent_component": "SWP1",
+            "mesh": "w_4aam_r1_SM"
+          }
+        ]
+      },
+      "SWP2": {
+        "count": 2,
+        "entries": [
+          {
+            "socket": "SP21",
+            "socket_number": 0,
+            "parent_component": "SWP2",
+            "mesh": "w_gpb_r0_SM"
+          },
+          {
+            "socket": "SP22",
+            "socket_number": 0,
+            "parent_component": "SWP2",
+            "mesh": "w_gpb_r0_SM"
+          }
+        ]
+      },
+      "SWP3": {
+        "count": 2,
+        "entries": [
+          {
+            "socket": "SP31",
+            "socket_number": 0,
+            "parent_component": "SWP3",
+            "mesh": "BulletMesh"
+          },
+          {
+            "socket": "SP32",
+            "socket_number": 0,
+            "parent_component": "SWP3",
+            "mesh": "BulletMesh"
+          }
+        ]
+      }
+    },
+    "active_sp": {
+      "class": "plwp_plsl_x0_C",
+      "count": 2,
+      "window": 2,
+      "launch_index_table": [
+        0,
+        1
+      ]
+    },
+    "rack_parents": "SWP1/SWP2/SWP3均为WeaponMeshBase子组件，无附着Socket",
+    "meaning": "原4AAM池4、GPB池2、PLSL占位池2；GPB架为静态组件，可继续评审单静态供位路线",
+    "boundaries": [
+      "PLSL池网格为BulletMesh占位，不表示两枚可消耗炮体；固定炮体来自原SWP3整架",
+      "静态证据sp21/sp22与本次FName显示SP21/SP22大小写不同；运行绑定应按引擎FName身份核对，不能只凭小写字符串或数组序号猜对应",
+      "只取得当前PLSL逻辑队列2/窗口2；4AAM和GPB的非当前模型池数量不充当逻辑队列长度",
+      "只读原生映射不是新增混挂已启用或实际离架/净空通过"
+    ]
+  }
+}
