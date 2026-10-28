@@ -1,5 +1,6 @@
 #pragma once
 #include "common.hpp"
+#include "development_fault_tests.hpp"
 #include "generated/user_texts.hpp"
 #include <winhttp.h>
 #include <shellapi.h>
@@ -229,7 +230,8 @@ class Service {
                     nativeLog("UPDATE_CHECK_CANCELLED automatic_disabled");return 0;
                 }
             }
-            auto result=parse(fetch());
+            const auto& dev=dualsp::development::config();
+            auto result=parse(dev.test.rfind("U-",0)==0?dualsp::development::updateResponse():fetch());
             const auto status=result.status;
             self.finish(std::move(result));
             nativeLog(status==Status::Unpublished?"UPDATE_CHECK_UNPUBLISHED":"UPDATE_CHECK_FINISHED");

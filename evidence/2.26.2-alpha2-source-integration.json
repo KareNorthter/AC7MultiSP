@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "version": "2.26.2 alpha2",
+  "candidate": true,
+  "main_baseline": "37b36a850ceceaa95e97911dfcc4eb59b93e200d",
+  "alpha1": "53305aa342338dbcdc2433ad068d1449ba99b1ae",
+  "sources": [
+    {
+      "branch": "codex/feat-base-dlc-multi-sp",
+      "commit": "6e3581f",
+      "scope": "四机外挂方案，90资源/180成员；内置弹舱及MGP单吊舱方案暂缓"
+    },
+    {
+      "branch": "codex/feat-aircraft-fault-recovery",
+      "commit": "733aa35",
+      "scope": "启动检查、F6诊断、机体隔离、换机恢复及严重错误保护"
+    }
+  ],
+  "chinese_log_approval": "作者逐条同意alpha2标题及三项正文；故障线程12项中文词条已由作者在来源线程两次明确批准，逐字接收",
+  "development_addition": "仅显式开发构建允许读取DevFaultTest.json；T1/T2/T3使用检查输入副本，T4/T5/T6/T7通过受控错误及既有清理/共享故障边界；U用例经原更新解析器",
+  "game_started": false,
+  "tests_run": false,
+  "status": "源码已整合，构建及实机验收另记"
+}

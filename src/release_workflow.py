@@ -93,6 +93,8 @@ def compile_delivery(args: argparse.Namespace) -> None:
     command = [sys.executable, str(ROOT / "src/build.py"), "--mount-assets-dir", str(args.mount_assets_dir.resolve()),
                "--temp-root", str(next(root for root in temp_roots() if output.is_relative_to(root))),
                "--output-dir", str(game), "--tools-root", str(args.tools_root.resolve())]
+    if args.development_fault_tests:
+        command.append("--development-fault-tests")
     subprocess.run(command, cwd=ROOT, check=True)
     signing_args = ['--signing-provider', args.signing_provider]
     setup_signing = ['-SigningProvider', args.signing_provider, '-Python', sys.executable]
@@ -409,6 +411,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     build = commands.add_parser("build", help="显式编译游戏、封装通用ZIP和EXE；不安装测试")
+    build.add_argument("--development-fault-tests", action="store_true", help="仅候选版：额外开发故障测试包")
     build.add_argument("--mount-assets-dir", type=Path, required=True)
     build.add_argument("--output-dir", type=Path, required=True)
     build.add_argument("--tools-root", type=Path, default=ROOT / "tools")

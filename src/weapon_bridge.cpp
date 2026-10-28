@@ -27,6 +27,7 @@
 #include <memory>
 #include <set>
 #include "common.hpp"
+#include "development_fault_tests.hpp"
 #include "reload_timer.hpp"
 #include "ammo_count.hpp"
 #include "ue4ss_lua_api.hpp"
@@ -2293,23 +2294,39 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
         }
         std::map<std::string,Json> byCode;
         std::set<std::string> duplicateWeaponCodes;
+        // 真资料与开发资料副本共用同一个重复身份检查入口。
+        const auto indexWeapon=[&](const std::string& code,const Json& value) {
+            require(!code.empty() && code.size()<=128,"机体目录：兵装代号无效");
+            require(!duplicateWeaponCodes.count(code),"机体目录：重复兵装代号");
+            if(byCode.count(code)) {
+                byCode.erase(code);duplicateWeaponCodes.insert(code);
+                throw std::runtime_error("机体目录：重复兵装代号 "+code);
+            }
+            byCode[code]=value;
+        };
         for(const auto row:tableRows(weapons)) {
             try {
                 const auto code=unrealString(row+16);
-                require(!code.empty() && code.size()<=128,"机体目录：兵装代号无效");
-                require(!duplicateWeaponCodes.count(code),"机体目录：重复兵装代号");
-                if(byCode.count(code)) {
-                    byCode.erase(code);duplicateWeaponCodes.insert(code);
-                    throw std::runtime_error("机体目录：重复兵装代号 "+code);
-                }
                 Json stats=Json::array();for(int i=0;i<6;++i)stats.push_back(read<unsigned char>(row+40+i));
                 // 分类图标和类型键读取原生武器表，避免另维护一份兵装映射。
-                byCode[code]={{"weapon_id",read<int>(row+8)},{"stats",stats},
-                    {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}};
+                indexWeapon(code,{{"weapon_id",read<int>(row+8)},{"stats",stats},
+                    {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}});
             }catch(const std::exception& error) {nativeLog(std::string("MOD_WEAPON_ROW_SKIPPED ")+error.what());}
         }
+        const bool devCatalogue=dualsp::development::catalogue();
+        auto planeRows=tableRows(planes); // 只复制读取列表，不改引擎行或原PAK。
+        if(devCatalogue && dualsp::development::config().test=="T3-weapon" && !byCode.empty()) {
+            const Json example=byCode.begin()->second;
+            indexWeapon("ac7dev_duplicate",example);
+            try {indexWeapon("ac7dev_duplicate",example);}catch(const std::exception& error) {nativeLog(error.what());}
+        }
+        if(devCatalogue && dualsp::development::config().test=="T3-aircraft") {
+            Addr repeated{};
+            for(const auto row:planeRows)if(read<int>(row+8)==dualsp::development::config().target){repeated=row;break;}
+            if(repeated)planeRows.push_back(repeated);
+        }
         Json catalog=Json::object(),catalogIssues=Json::array();
-        for(const auto row:tableRows(planes)) {
+        for(const auto row:planeRows) {
             int id=-1;std::string planeCode;
             try {
                 id=read<int>(row+8);require(id>=0,"机体目录：机体编号无效");
@@ -2326,7 +2343,12 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                 for(int i=0;i<3;++i) {
                     std::string weaponCode;const char* issueKey="";
                     try {
-                        const auto code=unrealString(row+96+i*24);
+                        auto code=unrealString(row+96+i*24);
+                        if(devCatalogue && id==dualsp::development::config().target) {
+                            const auto& test=dualsp::development::config().test;
+                            if((test=="T1" && i==0) || (test=="T2" && i<2))code="ac7dev_missing_"+std::to_string(i+1);
+                            if(test=="T3-weapon" && i==0)code="ac7dev_duplicate";
+                        }
                         weaponCode=code;
                         if(code=="-1") {supported=false;continue;}
                         if(duplicateWeaponCodes.count(code)) {
@@ -2335,7 +2357,8 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                         if(!byCode.count(code)) {
                             issueKey="recovery.missing_weapon";throw std::runtime_error("机体目录：兵装引用不存在 "+code);
                         }
-                        const int maximum=read<int>(row+112+i*24);
+                        int maximum=read<int>(row+112+i*24);
+                        if(devCatalogue && dualsp::development::is("T3-ammo",id) && i==0)maximum=100001;
                         if(!dualsp::validAmmoCount(maximum)) {
                             issueKey="recovery.invalid_ammo";throw std::runtime_error("机体目录：槽位基础载量无效");
                         }
@@ -2377,3 +2400,22 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
 // 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。
 extern "C" __declspec(dllexport) int dualsp_mod_aircraft_catalogue_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_aircraft_recovery_supported(void*) {return 0;}
+// 常规包仅返回关闭状态；配置读取和受控失败仅在开发候选宏内可达。
+extern "C" __declspec(dllexport) int dualsp_development_fault_v1(void* luaState) {
+    static const dualsp::LuaApi api;Json response={{"enabled",false}};
+#ifdef AC7MULTISP_DEVELOPMENT_FAULT_TESTS
+    const auto& cfg=dualsp::development::config();
+    size_t length{};const auto text=api.readText(luaState,1,&length);
+    const std::string stage=text?std::string(text,length):std::string();
+    const int id=api.top(luaState)>=2?static_cast<int>(api.readInteger(luaState,2)):-1;
+    response={{"enabled",!cfg.test.empty()},{"case",cfg.test},{"target",cfg.target},{"fail",false}};
+    if(id==cfg.target && stage=="preparation" && (cfg.test=="T4" || cfg.test=="T6") && dualsp::development::claim(2,"preparation"))response["fail"]=true;
+    if(id==cfg.target && stage=="transaction" && cfg.test=="T5" && dualsp::development::claim(4,"transaction_before_write"))response["fail"]=true;
+    if(id==cfg.target && stage=="cleanup" && cfg.test=="T6" && dualsp::development::has(2) && dualsp::development::claim(8,"ownership_cleanup_boundary"))response["fail"]=true;
+    if(id==cfg.target && stage=="transaction" && cfg.test=="T7" && dualsp::development::claim(16,"core_process_fault")) {
+        continuousFailures.recordGlobal({},"development_injection","DEV_TEST controlled shared-state failure");
+        compatibilityLogFault("continuous",*continuousFailures.global(),true);
+    }
+#endif
+    const auto encoded=response.dump();api.string(luaState,encoded.data(),encoded.size());return 1;
+}

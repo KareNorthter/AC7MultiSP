@@ -79,7 +79,7 @@ def source_snapshot(root=ROOT):
     paths.update(root / 'src' / name for name in (
         'build.py', 'build_mount_assets.py', 'distribution_symbols.py', 'release_tools.py', 'install.py', 'package-release.py', 'release_package.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
-    paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
+    paths.update(root / name for name in ('src/research/aircraft_fault_test_control.py','src/research/build_runtime_mount_data.py',
         'src/research/remaining_external_mount_data.py','src/research/prepare_remaining_external_mounts.py',
         'evidence/remaining-external-mounts-20261028.json','evidence/remaining-external-mount-audit-20261028.json',
         'src/research/native_static_batch_data.py',

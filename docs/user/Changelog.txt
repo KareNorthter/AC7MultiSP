@@ -1,5 +1,10 @@
 AC7MultiSP
 
+2.26.2 alpha2 (test build)
+• Added dual-SP and triple-SP models for A-10C and F-2A Super Kai, dual-SP models for F-104C, and an RKT + SAAM dual-SP model for MiG-21bis.
+• Added SP weapon-data checks and F6 error details. Aircraft errors disable enhancements; recovery is attempted after leaving the mission and selecting another aircraft. Severe errors require a game restart.
+• The startup loading notification appears for about three seconds. Update results are shown separately after the check finishes.
+
 2.26.2 alpha1 (test build)
 • VR target selection uses camera-center priority only when the view is more than 5° away from the aircraft's nose, returning to normal logic within 5°.
 • Added continuous horizontal 360° orbiting with camera hold enabled in first-person, third-person and normal cockpit views, and improved right-stick transitions.

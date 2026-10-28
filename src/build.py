@@ -20,11 +20,15 @@ def main():
     parser.add_argument("--mount-assets-dir", type=Path, required=True,
                         help="显式指定当前完整挂载资源来源；不再沿用旧54资源阶段默认目录")
     parser.add_argument("--output-dir", type=Path, default=ROOT / "Temp" / ("build-" + datetime.now().strftime("%Y%m%d-%H%M%S-%f")))
+    parser.add_argument("--development-fault-tests", action="store_true", help="仅候选版：编入默认关闭的受控故障入口")
     args = parser.parse_args()
     root = ROOT
     from user_texts import generate
     generate()
     info = product()
+    if args.development_fault_tests and not info["candidate"]:
+        raise ValueError("正式版禁止编入开发故障入口")
+    development_defines = ["-DAC7MULTISP_DEVELOPMENT_FAULT_TESTS"] if args.development_fault_tests else []
     source_before = source_snapshot()
     args.temp_root.mkdir(parents=True, exist_ok=True)
     output = contained(args.output_dir, args.temp_root).resolve()  # 不覆盖此前候选或正式 DLL。
@@ -67,7 +71,7 @@ def main():
     version_define = '-DAC7MULTISP_VERSION="' + info["version"] + '"'  # 核心日志、UI与更新模块共用VERSION。
     # 每次完整构建；旧回执缺少依赖，不能作为复用凭据。
     run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-shared", "-static",
-         "-D" + info["core_define"], version_define, "-I", str(root / "vendor"),
+         "-D" + info["core_define"], version_define, *development_defines, "-I", str(root / "vendor"),
          "-I", str(minhook / "include"), str(root / "src/weapon_bridge.cpp"),
          "buffer.o", "hook.o", "trampoline.o", "hde64.o", "-lole32", "-o", str(candidate)],
         cwd=output, env=environment, check=True)
@@ -79,7 +83,7 @@ def main():
     run([str(compiler / "clang++.exe"), "-std=c++17", "-O2", "-c",
                     "-I", str(root / "vendor"), "-I", str(minhook / "include"),
                     "-I", str(imgui), "-I", str(imgui / "backends"),
-                    version_define, *map(str, ui_sources)],
+                    version_define, *development_defines, *map(str, ui_sources)],
                    cwd=output, env=environment, check=True)
     ui = output / "DualSPUI.dll"  # 不覆盖工作区中任何已验证的二进制。
     run([str(compiler / "clang++.exe"), "-shared", "-static",
@@ -116,7 +120,7 @@ def main():
               "candidate": info['version'], "candidate_sha256": digest(candidate),
               "ui_sha256": digest(ui), "required_ui_exports_verified": sorted(ui_required),
               "build_define": info["core_define"], "compiled": True,
-              "core_recompiled": True, "core_reused_from": None,
+              "core_recompiled": True, "core_reused_from": None, "development_fault_tests": args.development_fault_tests,
               "lua_syntax_only": True, "required_exports_verified": sorted(required),
               "game_installed": False, "game_validated": False, "test_modules_run": False,
               "installation_blockers": [],

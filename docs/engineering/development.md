@@ -37,6 +37,8 @@
 
 ## 构建与封装依赖
 
+alpha2开发故障包使用`src/release_workflow.py build --development-fault-tests`；此标志传入完整构建并写入构建和封装回执。常规包不带该标志；正式版candidate=false时构建拒绝该标志。入口、恢复和执行边界统一见[故障测试指导](aircraft-fault-testing.md)，不将开发配置加入普通玩家设置。
+
 - 本机工具根为`E:/AC7_MultiSP/tools`，产品清单指定`llvm-mingw-20261006-ucrt-x86_64`；构建使用其中lupa/pefile及仓库vendor。使用前核对实际文件，不把旧版本记录当现场检查。
 - `src/build.py`的`--mount-assets-dir`为必填。main基线为77资源/154成员；本分支外挂机体候选需90资源/180成员，已准备于`C:/Users/83717/.codex/worktrees/base-dlc-multi-sp/AC7_MultiSP/Temp/tasks/20261028-base-dlc-multi-sp/mount-assets-90/source`，同级上层`input-manifest.json`记录摘要。后续构建只能使用与分支白名单一致的整套输入，不沿用旧54/77资源目录。位置和保留条件见[本机资产索引](../archive/local-assets.md)，数量相同不能替代摘要。本轮未编译或打包。
 - 本批离线资源可由`src/research/prepare_remaining_external_mounts.py`重现：显式传`--source-manifest`、`--tools-root`、任务Temp内新目录`--output-root`，以及新文件`--receipt`、`--audit`；资源与来源记录均拒绝覆盖。生成器`build_runtime_mount_data.py`再输出运行表和Lua资源清单；该过程不编译核心、不运行测试或游戏。旧77资源保持原字节，新增13资源经编码/解码、cooked引用和碰撞载荷静态核对。

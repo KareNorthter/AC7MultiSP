@@ -271,6 +271,7 @@ def package(args, signer):
               'runtime_files': {n: sha(d) for n, d in runtime.items()}, 'mount_assets': receipt['mount_assets'],
               'game_files': records(main_files), 'documents': records(documents),
               'game_dlls_recompiled': receipt['core_recompiled'], 'exe_compiled': False,
+              'development_fault_tests': receipt.get('development_fault_tests', False),
               'archive_members_read_back': True, 'separate_vortex_extension': False,
               'tests_run': False, 'game_installed': False, 'game_started': False, 'uploaded': False}
     (output / '封装回执.json').write_bytes(encoded(report))

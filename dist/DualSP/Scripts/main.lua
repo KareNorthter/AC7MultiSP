@@ -117,6 +117,13 @@ loadExport("dualsp_mod_aircraft_catalogue_supported") -- 新Lua依赖真实机�
 loadExport("dualsp_aircraft_recovery_supported")
 loadExport("dualsp_aircraft_recovery_supported","DualSPUI.dll") -- 诊断门禁与目录异常须成套。
 local modAircraft=dofile(root.."Scripts/mod_aircraft.lua").new(note)
+faultRecovery.dev={invoke=loadExport("dualsp_development_fault_v1")}
+faultRecovery.dev.enabled=json.decode(faultRecovery.dev.invoke("settings",-1)).enabled==true
+function faultRecovery.dev.check(stage,id)
+    if not faultRecovery.dev.enabled then return end
+    local result=json.decode(faultRecovery.dev.invoke(stage,id or -1))
+    assert(not result.fail,"DEV_TEST "..tostring(result.case).." stage="..stage.." target="..tostring(result.target))
+end
 local publish=loadExport("dualsp_publish_memory_v1","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions_memory_v1","DualSPUI.dll")
 local overlay=loadExport("dualsp_overlay_start","DualSPUI.dll")
@@ -291,6 +298,7 @@ local function native(op,target)
     assert(IsInGameThread(),"Native weapon access requires the game thread")
     assert(valid(plane) and valid(activator),"Player plane is unavailable")
     local time=game:GetTimeSeconds(plane)
+    if configured and op=="switch"then faultRecovery.dev.check("transaction",planeId)end
     local result=nativeClient:request{op=op,plane=plane:GetAddress(),activator=activator:GetAddress(),
         target=target or 0,time=time,profile=currentProfile}
     if op=="setup"or op=="resupply_setup"or op=="debug_setup"or op=="switch"or op=="checkpoint_restore"or op=="resupply"then
@@ -982,6 +990,7 @@ local function selectionAudio(op,target)
 end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
 local function releaseRuntimeOwnership(strict)
+    if strict and valid(instance)then faultRecovery.dev.check("cleanup",instance:GetSelectedPlaneID())end
     weaponSwitch.pending=nil;internal=false
     weaponSwitch.camera.release(strict)
     weaponSwitch.view.release(false,strict)
@@ -2194,6 +2203,7 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
         scenePreviewRequested=false
         local owner=ctx:get() -- 控件仍只接入登记页面；场景预览覆盖同一机库的其他页面。
         if not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarWeaponWidget"))then
+            faultRecovery.dev.check("preparation",instance:GetSelectedPlaneID())
             nativeLoadout:activate(owner,pageContext{mode="preparation",now=os.clock(),inFlight=false,panelOpen=false})
         elseif not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarReviewWidget"))then
             nativeStandby:activate(owner,pageContext{mode="saved",now=os.clock(),inFlight=false,panelOpen=false})
