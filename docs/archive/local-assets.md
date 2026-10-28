@@ -8,6 +8,7 @@
 
 | 用途 | 本机位置 | 使用方法与边界 |
 |---|---|---|
+| F35C关闭模型后舱门不闭合现场 | C:/Users/83717/.codex/worktrees/internal-bay-multisp/AC7_MultiSP/Temp/tasks/20261028-f35-bay-live/ | 作者启动的2.26.2 alpha1进程只读采样；玩家发现、Parts与本体/SWP2发布姿态、临时采集脚本及本次进程日志留本机，不入Git。初次旧命令地址失效，后按对象身份与控制器归属定位；结论见[挂载正文](../engineering/multi-sp-mount-design.md#官方内舱与活动机构续研2026-10-28未发布) |
 | 当前77资源输入 | Temp/integration-2.23.0-refresh/Temp/mount-assets-2.23.0-refresh/source | 原位保留154成员；来源见[开发说明](../engineering/development.md)。旧2.14/2.20输入不能代替 |
 | 挂载及动画待续原料 | Temp/remaining-native-mount-research/、Temp/mount-assets-*、Temp/f22a-*20261017-1144* | 原位保留；部分manifest和研究脚本读取绝对路径，搬动会使旧处理失败。具体方案见[研究索引](../research/README.md) |
 | 已封存工作树及冻结产物 | 工作区索引列出的Temp/integration-*及研究目录 | 原位保留；不要从文件夹名猜版本，也不要直接在封存树继续写。新工作从main开分支 |

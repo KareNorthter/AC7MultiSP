@@ -277,6 +277,10 @@ F35C在2.26.1中还有明确的接线缺口：`bindF35Cover`受`fixedMountEnable
 
 相较旧F35实现，本次新增共用模块的玩家/世界/资源弱身份检查，并把同舱快照恢复点从Init后移到完整`keepArmed`后。因此必须重新观察实际效果及性能，不能称等价迁移已获实机通过。现有公共域机型的算法不因F35加入而改变；XFA-33B/TGM此前“恢复后仍重复展开”的反馈继续有效。
 
+**2026-10-28只读现场：**作者复现后，当前进程实际安装的是`2.26.2 alpha1`，核心/UI文件摘要与其交付记录一致；该候选来源`8cc309b`的三个舱门相关文件与本研究基线main/37b36a8无差异。本轮不更换研究基线或安装任何文件。已核原版F35涂装派生Pawn、本体`f35c`和`f35c_AnimBP_C`、当前控制器Pawn及激活器owner。切换SOD→4AAM→8AGM后回到MSL的暂停快照中，armed=0、配置=2、request/phase=0、保舱=false、分域=6；`spwc/swc3/swca/swcb=-0.01`，而`swc1/swc2/swcc=1`。当前日志同时记录models=false。这直接证明旧独立/共舱输出残留，不是“公共值已经关闭，因此所有舱门输出都已关闭”。原资源中本体八根`SWPCoverC_01..08`消费`swcc`，与症状一致；尚未做本次姿态端点拟合，不据此排除额外骨发布问题。来源见[现场记录](../../evidence/f35-bay-live-observation-20261028.json)。
+
+旧`capture_mount_state.py`依赖的`native-command.txt`停留在2026-10-21，不再是当前内存协议的玩家来源；初次只读失败后已停止使用旧地址。有效采样从当前UObject表定位唯一F35实例，再逐项核当前受控归属，不修改旧命令文件。开启模型后的同实例对照及修复候选效果仍待采集/验证；现场观察不是候选验收。
+
 统一修复采用“共用算法＋逐资源准入”，不向所有机体写同一组偏移：`Shared01Close`处理0/1聚合域，`SelectedIndependent`处理单路独立输出，`IndependentClose`处理经核实的三独立/聚合域，公共域仅处理事务连续性。只有确认本体和挂架实际消费域后才新增资源项；F22/TGM等纯公共域不套非当前独立通道收尾。来源、原生分派及F35对照见[域研究](../../evidence/sp-bay-domains.json)、[原生代码研究](../../evidence/sp-common-bay-control.json)和[七机资源比较](../../evidence/bay-domain-multi-aircraft-static-20261024.json)。
 
 #### 七组合方案与推进顺序
