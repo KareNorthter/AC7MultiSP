@@ -73,7 +73,7 @@ namespace AC7MultiSP.Setup {
         internal Bundle() {
             Info = AuthorSignature.Info;
             if (Info.schema != 1 || Info.product != "AC7MultiSP" || !ReleaseVersion.Valid(Info.version) ||
-                (Info.version.Contains(" alpha") && !Info.candidate))
+                ((Info.version.Contains(" alpha") || Info.version.EndsWith(" beta", StringComparison.Ordinal)) && !Info.candidate))
                 throw new InvalidDataException(UiText.T("error.bundleInvalid"));
         }
         internal static string Digest(byte[] data) {

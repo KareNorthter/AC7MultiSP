@@ -6,6 +6,8 @@
 
 功能机制见[架构](architecture.md)，模型方案见[挂载设计](multi-sp-mount-design.md)，工程教训见[工程经验](engineering-lessons.md)，未采用和待继续成果见[研究索引](../research/README.md)。
 
+候选版本支持 `alphaN` 和 `beta`；同号版本按 alpha、beta、正式版排序，二者均使用候选签名渠道，不作为 stable 发布。
+
 ## 源码与产物入口
 
 | 内容 | 唯一入口或用途 |

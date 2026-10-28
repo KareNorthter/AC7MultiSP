@@ -58,8 +58,8 @@ def inventory(directory):
 def product(root=ROOT):
     value = read_json(root / 'src/product.json')
     value['version'] = (root / 'VERSION').read_text(encoding='utf-8').strip()
-    if not re.fullmatch(r'\d+\.\d+\.\d+(?: alpha[1-9]\d*)?', value['version']):
-        raise ValueError('VERSION 必须是三位数字版本，可附加内部测试标识 alphaN')
+    if not re.fullmatch(r'\d+\.\d+\.\d+(?: alpha[1-9]\d*| beta)?', value['version']):
+        raise ValueError('VERSION 必须是三位数字版本，可附加内部测试标识 alphaN 或 beta')
     expected = value['scripts']
     script_dir = root / 'dist/DualSP/Scripts'
     actual = sorted(p.relative_to(script_dir).as_posix() for p in script_dir.rglob('*.lua'))

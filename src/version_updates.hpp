@@ -54,15 +54,16 @@ inline std::array<unsigned,3> version(const std::string& text) {
     ensure(offset==text.size(),"稳定版不接受测试版本标识");return parts;
 }
 inline bool newerThanCurrent(const std::string& latest,const std::string& current=currentVersion) {
-    const auto split=current.find(" alpha");
+    const bool beta=current.size()>=5 && current.substr(current.size()-5)==" beta";
+    const auto split=beta?current.size()-5:current.find(" alpha");
     const auto base=split==std::string::npos?current:current.substr(0,split);
-    if(split!=std::string::npos) {
+    if(split!=std::string::npos && !beta) {
         const auto number=current.substr(split+6);
         ensure(!number.empty() && number.front()>='1' && number.front()<='9' &&
             std::all_of(number.begin(),number.end(),[](char ch){return ch>='0' && ch<='9';}),"当前测试版本标识无效");
     }
     const auto target=version(latest),local=version(base);
-    return target>local || (split!=std::string::npos && target==local); // 同号正式版晚于alpha。
+    return target>local || (split!=std::string::npos && target==local); // 同号正式版晚于测试版。
 }
 inline std::string text(const Json& value,size_t limit,bool multiline=false) {
     ensure(value.is_string(),"更新清单文字字段无效");

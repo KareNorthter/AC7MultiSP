@@ -72,7 +72,7 @@ def notes_for(version: str, language: str) -> str:
     filename = "Changelog.txt" if language == "en" else "更新日志.txt"
     text = (ROOT / "docs/user" / filename).read_text(encoding="utf-8-sig")
     # 2.25.2之后逐版本记录；旧发布仍可复用当时的系列摘要，不回改历史正文。
-    base = version.split(" alpha", 1)[0]
+    base = version.split(" ", 1)[0]
     section = version if tuple(map(int, base.split("."))) > (2, 25, 2) else ".".join(base.split(".")[:2]) + ".X"
     # 只允许括号状态后缀，不能把同号alpha章节当作正式版摘要。
     found = re.search(r"(?m)^" + re.escape(section) + r"[ \t]*(?:[（(][^\n]*)?\n(.*?)(?=^\d+\.\d+\.(?:X|\d+)|\Z)", text, re.S)
