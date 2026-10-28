@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "source": "本集成交付聊天的作者实机反馈",
+  "installation_receipt": "evidence/x02r-j20-enabled-20261028.json",
+  "feedback": [
+    {
+      "quote": "我测试了这5个飞机的功能，一切正常",
+      "aircraft": ["X-02R A", "X-02R B", "J-20A", "J-20B", "J-20S"],
+      "result": "作者确认功能正常"
+    },
+    {
+      "quote": "RH172也一切正常",
+      "aircraft": ["RH-172"],
+      "result": "作者确认功能正常"
+    }
+  ],
+  "acceptance": "六个机体入口的本次用户功能验收通过；原安装回执的未实机验证状态保留当时事实。",
+  "scope": "作者未逐项列出皮肤、SP、长按或异常恢复的测试步骤，不补造逐项记录；本反馈不代表重新启用ZSD后的组合冲突已解决，也不改变正式版本。",
+  "agent_game_started": false,
+  "agent_tests_run": false,
+  "recompiled": false,
+  "reinstalled": false
+}

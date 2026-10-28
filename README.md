@@ -13,6 +13,7 @@
 | 发布历史 | [2.24.1发布回执](evidence/2.24.1-release.json)、[玩家主要更新](docs/user/更新日志.txt)；旧候选及验收记录各保留原阶段含义 |
 | 现成正式EXE与通用ZIP | 已交付[2.26.1 EXE](Release/2.26.1/AC7MultiSP_Installer.exe)，SHA256为30745081…，及[通用ZIP](Release/2.26.1/AC7MultiSP-2.26.1-Universal.zip)，79b95836…；两者含作者最新四份中文原字节和完整重译英文，见[交付回执](evidence/2.26.1-exe-delivery.json)。旧正式及候选产物保留。 |
 | 实机验证边界 | 作者已验收alpha3的性能、舱门及其他功能，详见[性能验收](docs/research/runtime-performance.md#alpha3验收与正式2261)。这是用户反馈，不追认异常验签、故障注入或异机恢复等专项；XFA-33 B/Su-57 TGM公共舱继续暂缓。 |
+| Mod机体实机反馈 | 作者于2026-10-28确认X-02R A/B、J-20A/B/S及RH-172六个机体入口功能正常，见[用户验收](evidence/mod-aircraft-user-acceptance-20261028.json)。正式版本不变；此前ZSD组合冲突不据此记为已修复。 |
 | 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。作者已确认完成发布，site/stable.json已按交付材料同步2.26.1；[原网页回执](evidence/2.26.1-pages-delivery.json)保留制作时远端未核事实，[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)记录作者后续反馈。本轮未独立下载或部署核验。 |
 | 当前正式源码 | VERSION为**2.26.1**、candidate=false；接收3d9ceb9、73366ce、b95afa2，运行逻辑沿用已验收alpha3。正式包来源6dc4b99，已原样接收作者最新中文并全文重译英文；[文本核对](evidence/2.26.1-document-sync.json)确认EXE、ZIP和实际F6界面DLL中的相应正文同源同步。中文修改须作者逐条审核。 |
 | 最近验收安装包 | **2.26.1 alpha3**，SHA256为647be5d4…；[原交付回执](evidence/2.26.1-alpha3-integration-delivery.json)不回改。正式2.26.1重新构建后单独记录，不将候选验收冒充新字节已安装。 |
