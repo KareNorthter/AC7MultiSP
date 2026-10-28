@@ -1,0 +1,125 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "version": "2.26.2 alpha1",
+  "candidate": true,
+  "main_baseline": "800f8586eff0a5506912f56f074608f2df35510a",
+  "branch": "codex/integrate-2.26.2-alpha1",
+  "worktree": "C:\\Users\\83717\\.codex\\worktrees\\integrate-20261025\\AC7_MultiSP",
+  "sources": [
+    {
+      "thread": "01a1599c-1427-7ab2-8d61-0a6a0369edaa",
+      "branch": "codex/research-camera-orbit-smoothing",
+      "tip": "ede049affef3916aef07d371aabd6b97762dff9e",
+      "scope": "右摇杆平滑及普通视角水平连续360度"
+    },
+    {
+      "thread": "01a1599c-1427-7ab2-8d61-0a6a0369edaa",
+      "branch": "codex/feat-vr-target-center-gate",
+      "tip": "5cd8df03d46452cbed9696becfc50589aa9c84b1",
+      "scope": "VR选目标5度条件，功能说明及NEXT帮助按作者决定保留"
+    },
+    {
+      "thread": "01a1772a-169b-7073-b055-a84e3b353a1a",
+      "branch": "codex/feat-hud-dpad-brightness",
+      "tip": "a3f591aa22bdf9f0469328e36a97fb119e98d3bb",
+      "scope": "只接收炮类名称亮度，最终源码撤回十字键图标"
+    },
+    {
+      "thread": "01a178bc-26f3-77c2-9e93-a7a2457358f5",
+      "branch": "codex/fix-iews-display",
+      "tip": "30b167def8246d1d0bb25d31481b3f8a301527d0",
+      "scope": "仅显示IEWS正式简称，不新增中文全称或修改电子战效果"
+    }
+  ],
+  "unique_runtime_files_equal_source": [
+    {
+      "file": "src/camera_hold.hpp",
+      "source": "ede049a",
+      "sha256": "310d8884b4cbf2f7973477bf457b1fc605fb1131a1bcf517984f717f3a60ed15"
+    },
+    {
+      "file": "src/view_target.hpp",
+      "source": "5cd8df0",
+      "sha256": "14b240580ddc791b79a55a35879f79f21222b68f2a2c1f6c6c884d89be4836c9"
+    },
+    {
+      "file": "dist/DualSP/Scripts/weapon_presentation.lua",
+      "source": "a3f591a",
+      "sha256": "360e7ea2cb08fd98cb6f6441959f15daa38dd0e3724677ec4e78a3b5a30be2d8"
+    },
+    {
+      "file": "dist/DualSP/Scripts/native_hud.lua",
+      "source": "a3f591a",
+      "sha256": "08e17213d320707757dfeec8d64e547f14602c8816e7fd643f316e2ebe9aa4a2"
+    },
+    {
+      "file": "dist/DualSP/Scripts/quick_mission.lua",
+      "source": "30b167d",
+      "sha256": "ed2d6a55a32afa56533bce7070aca738451151d7147b00d62c0f9a7f6e2fad9b"
+    },
+    {
+      "file": "dist/DualSP/Scripts/native_loadout.lua",
+      "source": "30b167d",
+      "sha256": "b3718470906f4b28433a9efc27c80d5cc4edf4c090d09b6b94878caf156b40ee"
+    },
+    {
+      "file": "dist/DualSP/Scripts/loadout_flow.lua",
+      "source": "30b167d",
+      "sha256": "03c282a59aa99af803d0c70746223d8c7d7918a0444bc8b51ac1887b8615e8a6"
+    },
+    {
+      "file": "dist/DualSP/Scripts/main.lua",
+      "source": "30b167d",
+      "sha256": "cc141faed6aa197af083153f00e3d922e9ee79f161504b5999dd2eedac7b72bb"
+    },
+    {
+      "file": "src/overlay.cpp",
+      "source": "30b167d",
+      "sha256": "4cd0ad3b0fc54bdf45e32793b6c2c3f54d4ee6e45937b2761f5e8d0d4fd18428"
+    },
+    {
+      "file": "src/quick_mission_panel.hpp",
+      "source": "30b167d",
+      "sha256": "5212d30cc64cc91bc8ce5ec797660bbaf40d3b0bc4a35f273fa4c255005a9885"
+    }
+  ],
+  "shared_weapon_names": "以IEWS来源为底稿，保留HUD来源完整brightness函数和steadyLabels；除首行合并注释外与组合预期一致",
+  "documentation_conflicts": "架构、研究索引和任务登记按独立主题同时保留，IEWS名称规则留在HUD节下，VR门限单独成节",
+  "approved_chinese_log": {
+    "source": "本聊天用户逐条审核回复",
+    "response": "逐条同意标题及1—4项",
+    "file": "docs/user/更新日志.txt",
+    "added_title": "2.26.2 alpha1（自测版）",
+    "added_items": [
+      "VR选目标模式仅在视角偏离机头超过5°时使用视角中心优先，回到5°以内时恢复普通逻辑。",
+      "增加视角保持下的水平连续360°环绕，覆盖第一人称、第三人称和普通座舱，并改善右摇杆转动衔接。",
+      "PLSL、MGP、HGP在中央提示与右下HUD中的名称不再因装填或空弹变暗，原有显隐规则不变。",
+      "修正CFA-44、ADFX-01 Morgan、XFA-27原版IEWS的名称显示；不修改实际电子战效果。"
+    ],
+    "english_synced": true,
+    "previous_chapters_byte_preserved": true
+  },
+  "features_and_next_help_unchanged": true,
+  "protocol_or_configuration_schema_changed": false,
+  "protected_dll_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339",
+  "verification": "仅源码人工审阅、来源字节比对、文档摘要及静态差异检查，文字生成不等于程序编译",
+  "compiled": false,
+  "lua_compiled": false,
+  "tests_written": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "pushed": false,
+  "uploaded": false,
+  "main_updated": false,
+  "new_exe_or_zip": false,
+  "formal_version_unchanged": "2.26.1",
+  "pending_validation": [
+    "普通第一/第三人称及座舱左右跨后方、多圈、松杆/反向、俯仰、L3/R3、注视混合及暂停/失焦/断连/换机恢复",
+    "VR模式5度边界上下的NEXT选择、白点关闭/HUD隐藏与普通模式对照",
+    "PLSL/MGP/HGP装填和空弹时的两处名称亮度、其他武器未就绪变暗、中央短显与隐藏HUD规则",
+    "CFA-44/Morgan/XFA-27各选装、补给、HUD、F6和快速任务的IEWS显示；真实ECM等第三方名称不误改",
+    "电子战实际支援和干扰效果保留既有未完整验证边界，名称修正不作为效果已通过的证据"
+  ]
+}

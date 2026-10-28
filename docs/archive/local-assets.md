@@ -14,6 +14,7 @@
 | 未接收的原根目录资料 | Temp/preserved-local-20261023 | 27项原未提交资料与兼容现场；本身是Git工作树，不是普通临时文件 |
 | 崩溃与诊断现场 | Temp/crash-capture-*、Temp/pw01-*及其他诊断目录 | 完整转储和现场原位保留，按回执定位；不能把普通退出记录当作已找到根因 |
 | alpha2性能与EML持续掉帧现场 | Temp/tasks/20261025-runtime-preview-performance/；Temp/tasks/20261025-eml-steady-performance/ | 前者保留基线、构建与首轮反馈日志；后者保留暂停对象/原生代码、两轮10秒主线程采样、部分栈展开、对照日志及分析脚本。原始进程数据不入Git，不凭Temp名称清理；结论见[性能评估](../research/runtime-performance.md)与[EML回执](../../evidence/cfa44-eml-steady-performance-20261025.json) |
+| 视角平滑与连续环绕只读现场 | C:/Users/83717/.codex/worktrees/camera-orbit-smoothing/AC7_MultiSP/Temp/tasks/20261026-camera-orbit-smoothing/ | 2026-10-26用户授权的原生输入/输出函数、常量分析、45/30/60秒观察与汇总脚本；原始进程数据不入Git，不凭Temp名称清理。有效输入仅覆盖第一/第三人称，座舱未实测；结论见[唯一研究正文](../research/camera-orbit-smoothing.md) |
 | 安装器、Vortex与兼容研究 | Temp/delivery-*、Temp/vortex-*、Temp/compatibility-*等 | 保留现有来源与现场；安装器代码仍在独立分支，本轮未接收 |
 | Mod机体分组续研 | Temp/tasks/20261023-mod-aircraft-compat/、backup/aircraft-mod-profiles-*；游戏根AC7AircraftProfiles/ | 本轮分组原料、未解析引用清单、安装快照和切换事务；按[续研正文](../research/mod-aircraft-compatibility.md)恢复，不清理分组库或把临时名称当可删依据 |
 | Mod机体长按兼容静态原料 | Temp/tasks/20261024-mod-hold-switch-static/ | 作者附加类索引、历史按下/松开采样的离线反汇编及摘要；不含本轮进程采集，原始历史采样仍在归档位置，见[续研正文](../research/mod-aircraft-compatibility.md#长按武器切换键的附加功能) |

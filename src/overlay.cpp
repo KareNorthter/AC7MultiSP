@@ -781,7 +781,9 @@ void drawDebugLoadout(bool focus) {
             const auto& option=options.at(index); // 原生配置项包含购买和多挂许可。
             const bool owned=option.at("owned").get<bool>();
             const bool multiple=option.at("available").get<bool>();
-            const auto label=option.at("code").get<std::string>()+" / "+uiMessage(option.at("description").get<std::string>(),"special.weapon.930993fc")+"###DebugSP"+std::to_string(index);
+            const auto code=option.value("display_code",option.at("code").get<std::string>());
+            const auto description=uiMessage(option.at("description").get<std::string>(),"special.weapon.930993fc");
+            const auto label=code+(description==code?std::string():" / "+description)+"###DebugSP"+std::to_string(index);
             const bool selectable=owned||debug.value("allow_unowned",false);
             ImGui::BeginDisabled(!available||!selectable);
             if(focus&&available&&selectable){ImGui::SetKeyboardFocusHere();focus=false;}

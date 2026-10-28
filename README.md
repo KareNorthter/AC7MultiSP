@@ -7,6 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式发布版本 | **2.26.1**，作者于2026-10-25验收alpha3：CFA-44 EML持续掉帧已消除、舱门正常，F-2A普通飞行性能恢复，其他功能总体正常；现已由作者确认发布；[验收与授权](evidence/2.26.1-release-authorization.json)和[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)分别保留阶段依据。 |
+| 本轮自测候选 | **2.26.2 alpha1**；基线main/800f858，接收视角5°门限及连续环绕、HUD炮类名称常亮、原版IEWS显示修正。已构建[安装EXE](Release/2.26.2-alpha1/AC7MultiSP_Installer.exe)待作者验收，未运行测试、安装或实机验证；正式版仍为2.26.1。见[源码接收](evidence/2.26.2-alpha1-source-integration.json)和[交付核对](evidence/2.26.2-alpha1-exe-delivery.json) |
 | 上一正式版本 | **2.26.0**；[原验收](evidence/2.26.0-main-acceptance-20261025.json)及EXE/ZIP保持原样。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |

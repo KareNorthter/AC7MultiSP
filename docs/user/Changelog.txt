@@ -1,5 +1,11 @@
 AC7MultiSP
 
+2.26.2 alpha1 (test build)
+• VR target selection uses camera-center priority only when the view is more than 5° away from the aircraft's nose, returning to normal logic within 5°.
+• Added continuous horizontal 360° orbiting with camera hold enabled in first-person, third-person and normal cockpit views, and improved right-stick transitions.
+• PLSL, MGP and HGP names in the central prompt and lower-right HUD no longer dim during reload or when out of ammunition. Existing visibility rules are unchanged.
+• Corrected the displayed name of native IEWS on CFA-44, ADFX-01 Morgan and XFA-27 without changing its actual electronic-warfare effects.
+
 2.26.1
 • Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.
 • Fixed the CFA-44 ventral weapon bay failing to close.
