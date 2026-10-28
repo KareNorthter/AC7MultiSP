@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| 最新研究接收、IEWS修正与中文设计稿 | [源码与审核稿回执](2.26.2-latest-source-and-management-review.json) | 接收1b56361/f59e81f，33机/231决策/92资源；Super Kai补充真实类IEWS显示。当前四分页和608条文字清单供审核，未编译/安装，不扩大旧验收 |
 | 2.26.2 alpha2自测与开发故障EXE | [源码接收](2.26.2-alpha2-source-integration.json)／[两包交付核对](2.26.2-alpha2-exe-delivery.json)／[首次环境状态](2.26.2-alpha2-test-environment.json)／[快照完成与简化入口](2.26.2-alpha2-test-panel-ready.json) | 四机外挂、检查/隔离/恢复、常规包和默认关闭的开发注入；90资源、双语正文及签名已核对。游戏退出后已完成alpha1快照，入口简化为面板快速五轮；实机用例未执行 |
 | alpha2快速验收与T6漏触发 | [作者反馈及定位](2.26.2-alpha2-quick-feedback-t6.json)／[修正版开发包](2.26.2-alpha2-t6-fix-delivery.json) | 作者确认快速1—3轮通过；第4轮T6已启用但未触发，事件注入漏覆盖轮询接入。已修正并独立出包，面板支持保留结果重测第4轮；待补测4—5轮，不追认严重保护通过 |
 | alpha2作者验收及Super Kai名称核查 | [验收与来源](2.26.2-alpha2-user-validation.json) | 修正版4—5轮、四机多SP模型、三种炮类HUD亮度通过；视角待测。Super Kai官方名称IEWS，现行显示修正遗漏，效果不据名称判断 |

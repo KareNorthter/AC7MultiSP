@@ -22,13 +22,13 @@ bool mountExpanded(MountAircraft aircraft) {
 bool mountLocal(MountAircraft aircraft) { return aircraft==MountAircraft::Pkfa || (aircraft>=MountAircraft::F14d && aircraft<=MountAircraft::F18x); }
 int mountExpansionIndex(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型未登记");
-    if(aircraft==MountAircraft::Pkfa)return 28; // 在原28机后追加，保留既有编号和资源索引。
+    if(aircraft==MountAircraft::Pkfa)return 32; // 追加在现有32机之后，不挤占四架外挂候选的索引。
     return aircraft<=MountAircraft::Typn?static_cast<int>(aircraft)-static_cast<int>(MountAircraft::F02a):
         10+static_cast<int>(aircraft)-static_cast<int>(MountAircraft::Su35);
 }
 MountAircraft mountExpansionAircraft(size_t index) {
     require(index<mountExpansionData().at("planes").size(),"扩展挂载：机型索引越界");
-    if(index==28)return MountAircraft::Pkfa;
+    if(index==32)return MountAircraft::Pkfa;
     return static_cast<MountAircraft>(index<10?static_cast<int>(MountAircraft::F02a)+index:
         static_cast<int>(MountAircraft::Su35)+index-10);
 }

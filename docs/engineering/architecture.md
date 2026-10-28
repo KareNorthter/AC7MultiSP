@@ -30,6 +30,8 @@ Lua 在游戏线程确认模式、世界、实际玩家和原生交接，再向�
 
 总开关关闭、多人或模式尚未确认时不接管兵装。总开关只在允许输入的主菜单/单人任务选择等安全入口应用；在任务、补给或机库保存时等待安全入口。第13关任务 ID `113` 旁路兵装、模型和 HUD，保留原生指定 SP、选装与检查点；自由飞行 `213` 不命中，离开该关后重新建会话。镜头功能有独立许可。
 
+兵装显示简称由`weapon_names.lua`统一提供。原版Morgan、XFA-27、CFA-44及Super Kai的IEWS内部均使用`ecm`目录代号；运行时严格按实际兵装完整类路径显示IEWS，快速目录还核对原版机体完整引用及三槽签名。Super Kai对应`/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_j0.plwp_ecmp_j0_C`，三槽为LASM/6AAM/ecm。本次只补显示白名单，不改效果、内部键、资格或Mod自定义名称。名称核查来源见[接收回执](../../evidence/2.26.2-latest-source-and-management-review.json)。
+
 ### 机体故障退让与F6诊断（alpha2候选）
 
 `codex/feat-aircraft-fault-recovery`基于main/9075581，按[总体规则](../project/workflow.md#故障隔离与恢复)补齐统一退让。单人环境确认许可与增强许可分离：资料不完整、已隔离机体停止全部增强调度，但UI门禁保持开放；诊断模式只消费打开/关闭管理页及保存设置，不调用换机、快速任务、兵装或镜头接口，也不尝试取得原生暂停。多人和未知环境仍关闭界面许可，不能借诊断模式绕过原有边界。

@@ -1,0 +1,82 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "branch": "codex/integrate-2.26.2-alpha2",
+  "base_before_intake": "068fbeaa13945541c8fcde7b6e7b91aa2ce8acba",
+  "sources": [
+    {
+      "thread": "01a18072-8d42-7152-ac22-0c3c7e097337",
+      "branch": "codex/feat-base-dlc-multi-sp",
+      "tip": "1b56361",
+      "merge": "df2b531",
+      "new_scope": "MiG-21单MGP吊舱保原生双路发射，MGP+RKT与MGP+SAAM；新增2份资源，三SP继续原生外观"
+    },
+    {
+      "thread": "01a18081-2ba8-7ef2-b3ca-c474ab29a68c",
+      "branch": "codex/research-internal-bay-multisp",
+      "tip": "f59e81f",
+      "merge": "76e57c8",
+      "new_scope": "普通Su-57七组合与F35共用舱门收尾候选；F22草案仅保存证据，未注册运行"
+    }
+  ],
+  "integration": {
+    "planes": 33,
+    "combination_decisions": 231,
+    "assets": 92,
+    "native_only_combinations": 2,
+    "previous_32_planes_unchanged": true,
+    "previous_92_assets_order_unchanged": true,
+    "generation_order": "先独立核对28机/77资源的Su57研究基线，再在现有32机后追加Su57；正反索引明确为32，避免两分支共同使用索引28而错配四机。92资源顺序不变。",
+    "old_test_feedback_not_extended_to_new_layouts": true,
+    "previous_32_plane_order_unchanged": true,
+    "pkfa_table_index": 32
+  },
+  "super_kai_iews_fix": {
+    "file": "dist/DualSP/Scripts/weapon_names.lua",
+    "official_name_source": "https://www.nintendo.com/us/store/products/ace-combat-7-skies-unknown-f-2a-super-kai-set-70050000050182-switch/",
+    "identity_source": "evidence/mount-expansion-catalog.json，f02x SpecialWeaponConfig3",
+    "class": "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_j0.plwp_ecmp_j0_C",
+    "catalogue_signature": [
+      "lasm",
+      "6aam",
+      "ecm"
+    ],
+    "display": "IEWS",
+    "effects_changed": false,
+    "custom_mod_names_preserved": true
+  },
+  "rule_added": "任何机体测试前核对Wiki、官方或Mod作者网站的SP原名，并比较选装/HUD/管理显示名称，记录来源及差异",
+  "management_review": {
+    "path": "docs/research/management-review-20261028/index.html",
+    "language": "中文审核稿，确认后再制作双语",
+    "pages": 4,
+    "editable_items": 54,
+    "text_inventory": 608,
+    "inventory_is_not_independent_popup_count": true,
+    "layout_and_copy_export_in_one_html": true,
+    "old_design_feedback_preserved": true,
+    "browser_preview_and_html_export_checked": true
+  },
+  "verification": [
+    "来源分支无未提交差异，未操作来源工作树",
+    "合并差异与统一生成表核对",
+    "原32机及92资源的静态内容/顺序核对",
+    "受保护旧核心SHA256核对",
+    "Python与网页JS语法静态检查",
+    "网页排版、选中控件编辑、版本页、提示清单和可编辑HTML导出查看",
+    "全部33机正反索引与生成表逐项静态核对"
+  ],
+  "compiled": false,
+  "game_tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "published_or_uploaded": false,
+  "formal_chinese_user_files_changed": false,
+  "formal_version_changed": false,
+  "pending": [
+    "作者审核中文布局与提示",
+    "视角实机验收",
+    "新Su57布局、单MGP双路实际命中与炮口、新F35收尾效果验证",
+    "正式中文与等义英文按审核结果落地"
+  ]
+}

@@ -306,12 +306,15 @@ def build(include_remaining=True):
     else:
         from pkfa_internal_runtime_data import append_pkfa_internal
     data = append_pkfa_internal(data, ROOT)
+    # 独立研究先核对28机基线；整合后将Su-57追加到现有32机末尾，避免挤占四机的索引。
+    pkfa = data['planes'].pop()
     if include_remaining:
         if __package__:
             from .remaining_external_mount_data import append_remaining_external
         else:
             from remaining_external_mount_data import append_remaining_external
         append_remaining_external(data['planes'], data['assets'], data['collision_preservation'], ROOT)
+    data['planes'].append(pkfa)
     return data
 
 

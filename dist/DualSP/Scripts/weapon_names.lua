@@ -7,11 +7,12 @@ function WeaponNames.brightness(label,ready)
     return (steadyLabels[label]or ready)and 1 or .35
 end
 
--- 原版三机的IEWS共用ecm目录代号。只修正完整资源身份相符的原版兵装，保留Mod自定义名称。
+-- 原版四机的IEWS共用ecm目录代号。只修正完整资源身份相符的原版兵装，保留Mod自定义名称。
 local nativeIEWS={
     mrgn={weapons={"tls","mpbm","ecm"},class="/Game/Blueprint/Weapons/Player/Base/plwp_esm_x0.plwp_esm_x0_C"},
     fa27={weapons={"sod","mstm","ecm"},class="/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x2.plwp_ecmp_x2_C"},
-    fa44={weapons={"admm","eml","ecm"},class="/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1.plwp_ecmp_x1_C"}
+    fa44={weapons={"admm","eml","ecm"},class="/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1.plwp_ecmp_x1_C"},
+    f02x={weapons={"lasm","6aam","ecm"},class="/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_j0.plwp_ecmp_j0_C"}
 }
 local nativeIEWSClasses={}
 for _,profile in pairs(nativeIEWS)do nativeIEWSClasses[profile.class]=true end

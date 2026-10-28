@@ -28,9 +28,9 @@ return {
     f18f={{69,"MSP_f18f_lasm_inner",2,136}},
     su33={{70,"MSP_su33_hvaa_outer",1,136}},
     f18x={{71,"MSP_f18x_lacm_outer",1,136},{72,"MSP_f18x_agm_inner_tips_sensor",2,136}},
-    pkfa={},
     a10a={{77,"MSP_a10a_ugb_inner_r1",1,136},{78,"MSP_a10a_rkt_outer_mid_r1",2,8},{79,"MSP_a10a_rkt_outer_r1",2,192},{80,"MSP_a10a_agm_mid_r1",3,128}},
     f02x={{81,"MSP_f02x_lasm_inner_r1",1,136},{82,"MSP_f02x_aam_outer_inner_r1",2,136},{83,"MSP_f02x_ecm_center_r1",3,192}},
     f104={{84,"MSP_f104_saam_left_r1",1,40},{85,"MSP_f104_grkt_right_r1",2,8},{86,"MSP_f104_grkt_left_r1",2,64},{87,"MSP_f104_hpaa_right_r1",3,96}},
     m21b={{88,"MSP_m21b_rkt_left_r1",2,64},{89,"MSP_m21b_saam_right_r1",3,96},{90,"MSP_m21b_mgp_left_r1",1,40},{91,"MSP_m21b_rkt_right_r1",2,8}},
+    pkfa={},
 }
