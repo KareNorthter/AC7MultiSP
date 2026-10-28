@@ -90,13 +90,60 @@
   "local_material_hashes": {
     "after-switch-msl.json": "9eb6fe0f3997f1a92948c9fa5d21d24f37f8ca6584a2aa4e5863b60ebee2e429",
     "capture_live.py": "45b23b45ff1a90ff78b064095146e90ca1b3529151a3cf72f4c2edb4b59f311c",
+    "models-on-msl.json": "ac54e594f052ecffe0b7372ddbeaacfcca9a3d5b1a768cefc18dd7d5e5e946f0",
+    "native-log-models-on.txt": "cf4db9d2279a51a5ae43357357eb551613b7d4f05eafb043b8e99c5dd2a65cb9",
     "native-log-observation.txt": "3cadb30255c0c3672de708e56d05be242c07468f7bf5bf7931c1263745f5ec13",
     "player-discovery.json": "2f1a465a6d3d5f6ec3bbd0c734a02395c3f81b60a9d90bada29612468d0fc981"
   },
   "remaining": [
-    "同实例开启多SP模型后的输出/姿态对照",
     "候选构建和安装另按作者授权",
     "候选SOD/4AAM半开全开连续性及MSL收拢实机观察",
+    "普通Su-57关闭显示后的同类现场",
     "性能未采样，不能承诺帧率"
-  ]
+  ],
+  "models_on_comparison": {
+    "same_player_activator_body_animation": true,
+    "sample": {
+      "native_config": 2,
+      "armed": 0,
+      "parts": {
+        "config": 2,
+        "request": 0,
+        "phase": 0,
+        "domain_flags": 6,
+        "held": false,
+        "outputs": {
+          "spwc": -0.009999999776482582,
+          "swc1": -0.009999999776482582,
+          "swc2": -0.009999999776482582,
+          "swc3": -0.009999999776482582,
+          "swca": -0.009999999776482582,
+          "swcb": -0.009999999776482582,
+          "swcc": -0.009999999776482582
+        }
+      }
+    },
+    "changed_published_bone_indices": {
+      "body": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "SWP2": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "comparison_threshold": 0.0001,
+    "interpretation": "开启模型并再次切换SP后，七输出均关闭，本体和SWP2姿态改变，说明没有永久停止发布姿态。残留输出是原异常直接原因。",
+    "operation_boundary": "原生日志models=true且request5/6/7再次切换配置0/1/2后回MSL，不能把结果描述成仅切模型开关的受控对照",
+    "bone_identity_boundary": "只比较相同组件的发布姿态索引，未将各索引按本轮运行骨名逐项拟合"
+  }
 }
