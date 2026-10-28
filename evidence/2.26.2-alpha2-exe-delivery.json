@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "version": "2.26.2 alpha2",
+  "candidate": true,
+  "source_commit": "0e6a0855488d4e320ae3a3e0fa80939ae4a3a9a3",
+  "branch": "codex/integrate-2.26.2-alpha2",
+  "artifacts": [
+    {
+      "purpose": "常规自测候选",
+      "exe": "E:\\AC7_MultiSP\\Release\\2.26.2-alpha2\\AC7MultiSP_Installer.exe",
+      "size": 73107456,
+      "sha256": "c8545e45b8c156eaea7244ad464d02c8a36a60831126e69b1fd2d57ddc51860a",
+      "development_fault_tests": false,
+      "core_sha256": "6a6790bb6f713f343ea406196b3fdec2658d893a0807767192f5287ee570da38",
+      "ui_sha256": "c91bc210ed6ee60db63d35205476188154e406f2559b36c38e808ba643919fb6",
+      "receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-normal-build\\delivery-receipt.json",
+      "release_signature_verified": true,
+      "exe_player_text_resources_verified": 16,
+      "zip_player_text_resources_verified": 16,
+      "f6_embedded_documents_verified": 4,
+      "mount_asset_count": 90
+    },
+    {
+      "purpose": "独立开发故障候选，默认关闭注入",
+      "exe": "E:\\AC7_MultiSP\\Release\\2.26.2-alpha2\\AC7MultiSP_Installer_DevFault.exe",
+      "size": 73313792,
+      "sha256": "96615db6fb9b41e2be6309bae7da52271eaa272331d2891bb018b24a0f0a4861",
+      "development_fault_tests": true,
+      "core_sha256": "13b7ee02315c5199ab361e2e87eb634c515fab957351b4831b107ebf7a953ffb",
+      "ui_sha256": "0e8066f0a1253217077c4c59b32c3d848f72f4cf6fb06db04b3b6bebcd0e29c9",
+      "receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-alpha2-dev-build\\delivery-receipt.json",
+      "release_signature_verified": true,
+      "exe_player_text_resources_verified": 16,
+      "zip_player_text_resources_verified": 16,
+      "f6_embedded_documents_verified": 4,
+      "mount_asset_count": 90
+    }
+  ],
+  "normal_configuration_reader_absent": true,
+  "development_configuration_default": "off，只有独立开发构建读取DevFaultTest.json，每次启动固定一个用例和目标；常规包不读取",
+  "approved_chinese_changelog": "作者逐项同意标题及三条变化，中英文同步；12项来源中文界面词条沿用原线程批准",
+  "test_environment": "E:/AC7_MultiSP/Temp/tasks/20261028-aircraft-fault-testing/；安装/配置快照须在游戏退出后另行准备和记录",
+  "installer_executed": false,
+  "game_started": false,
+  "tests_run": false,
+  "uploaded": false,
+  "main_updated": false,
+  "formal_version": "2.26.1",
+  "acceptance": "待作者实际安装和游戏验收，静态资源、编译及签名核对不代替实机结果。"
+}

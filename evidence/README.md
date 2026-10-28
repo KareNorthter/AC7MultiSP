@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| 2.26.2 alpha2自测与开发故障EXE | [源码接收](2.26.2-alpha2-source-integration.json)／[两包交付核对](2.26.2-alpha2-exe-delivery.json)／[环境准备状态](2.26.2-alpha2-test-environment.json) | 四机外挂、检查/隔离/恢复、常规包和默认关闭的开发注入；90资源、双语正文及签名已核对。测试入口已准备，安装快照等作者退出游戏后完成，实机用例未执行 |
 | 本体/DLC外挂机体候选 | [四机来源与13份资源](remaining-external-mounts-20261028.json)、[实际编码cooked引用](remaining-external-mount-audit-20261028.json) | A-10C/Super Kai布局、F-104C双SP及MiG-21bis的RKT＋SAAM；MGP和两机三SP原生退让；未编译/测试/安装/游戏验证 |
 | 六个Mod机体入口用户验收 | [20261028作者功能反馈](mod-aircraft-user-acceptance-20261028.json) | X-02R A/B、J-20A/B/S和RH-172功能正常；不补造逐项测试或追认ZSD组合冲突已修复 |
 | X-02R与三个J-20启用 | [20261028切换B组及摘要核对](x02r-j20-enabled-20261028.json) | 作者确认由A切B；四个Mod六份PAK及目录一致，作者页面与未知项登记，未实机验证 |
