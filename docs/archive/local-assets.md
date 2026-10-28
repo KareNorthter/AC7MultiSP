@@ -8,6 +8,7 @@
 
 | 用途 | 本机位置 | 使用方法与边界 |
 |---|---|---|
+| 本体/DLC外挂机体候选输入 | `C:/Users/83717/.codex/worktrees/base-dlc-multi-sp/AC7_MultiSP/Temp/tasks/20261028-base-dlc-multi-sp/` | `native-source`为本机原版提取副本；`resources-r2`为13份新挂架，`cooked-audit`为实际编码回读；`mount-assets-90/source`为90资源/180成员完整输入，父目录清单记录摘要。`resources-r1`仅为中间副本，保留未清理；不可作为整套输入。来源见[外挂机体候选](../engineering/multi-sp-mount-design.md#剩余外挂机体候选未发布待验证)，均未打包或安装 |
 | 当前77资源输入 | Temp/integration-2.23.0-refresh/Temp/mount-assets-2.23.0-refresh/source | 原位保留154成员；来源见[开发说明](../engineering/development.md)。旧2.14/2.20输入不能代替 |
 | 挂载及动画待续原料 | Temp/remaining-native-mount-research/、Temp/mount-assets-*、Temp/f22a-*20261017-1144* | 原位保留；部分manifest和研究脚本读取绝对路径，搬动会使旧处理失败。具体方案见[研究索引](../research/README.md) |
 | 已封存工作树及冻结产物 | 工作区索引列出的Temp/integration-*及研究目录 | 原位保留；不要从文件夹名猜版本，也不要直接在封存树继续写。新工作从main开分支 |

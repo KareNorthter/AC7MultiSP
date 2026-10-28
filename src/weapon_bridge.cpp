@@ -1297,13 +1297,25 @@ extern "C" __declspec(dllexport) int dualsp_task_mount_plan_supported(void* luaS
     const dualsp::LuaApi* api=nullptr;
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==1,"机体模型资格需要一个玩家参数");
+        require(api->top(luaState)==1 || api->top(luaState)==4,"机体模型资格需要玩家及可选的三个原生配置编号");
         require(!mountHooksReady || GetCurrentThreadId()==mountGameThread.load(),"机体模型资格须在游戏线程读取");
         const Addr plane=static_cast<Addr>(api->readInteger(luaState,1));
         const auto identity=mountIdentity(plane);
         require(mountAlive(identity) && mountClassIs(plane,"PlayerPlane","/Script/Nimbus"),"机体模型资格缺少有效玩家机体");
         const auto aircraft=mountAircraft(plane);
-        const bool supported=aircraft!=MountAircraft::Unsupported && !mountNativeOnly(aircraft);
+        bool supported=aircraft!=MountAircraft::Unsupported && !mountNativeOnly(aircraft);
+        if(api->top(luaState)==4) {
+            unsigned mask=0;bool empty=false;
+            for(int slot=2;slot<=4;++slot) {
+                const auto config=api->readInteger(luaState,slot);
+                require(config>=-1 && config<=2,"机体模型资格的原生配置编号无效");
+                if(config<0) { empty=true;continue; }
+                require(!empty && !(mask&(1u<<config)),"机体模型资格的配置不连续或重复");
+                mask|=1u<<config;
+            }
+            require(mask!=0,"机体模型资格缺少兵装");
+            if(supported && mountExpansionNative(aircraft,mask))supported=false;
+        }
         api->boolean(luaState,true);api->boolean(luaState,supported);return 2;
     }catch(const std::exception& error) {
         if(api){api->boolean(luaState,false);api->string(luaState,error.what(),std::strlen(error.what()));return 2;}

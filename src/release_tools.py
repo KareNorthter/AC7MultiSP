@@ -80,6 +80,8 @@ def source_snapshot(root=ROOT):
         'build.py', 'build_mount_assets.py', 'distribution_symbols.py', 'release_tools.py', 'install.py', 'package-release.py', 'release_package.py',
         'build.cmd', 'build-core-portable.cmd', 'build-ui.cmd'))
     paths.update(root / name for name in ('src/research/build_runtime_mount_data.py',
+        'src/research/remaining_external_mount_data.py','src/research/prepare_remaining_external_mounts.py',
+        'evidence/remaining-external-mounts-20261028.json','evidence/remaining-external-mount-audit-20261028.json',
         'src/research/native_static_batch_data.py',
         'src/research/prepare_native_four_mounts.py','evidence/static-native-three-aircraft.json',
         'evidence/m31b-mount-observation.json',

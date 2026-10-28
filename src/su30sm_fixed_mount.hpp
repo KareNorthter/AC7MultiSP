@@ -3,7 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x }; // 新四机只追加索引，既有机体编号保持。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x, A10a, F02x, F104, M21b }; // 新机只追加索引，既有机体编号保持。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -17,7 +17,7 @@ struct MountSpecification {
 #include "animated_mount_data.hpp"
 bool mountExpanded(MountAircraft aircraft) {
     return (aircraft>=MountAircraft::F02a && aircraft<=MountAircraft::Typn) ||
-        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::F18x);
+        (aircraft>=MountAircraft::Su35 && aircraft<=MountAircraft::M21b);
 }
 bool mountLocal(MountAircraft aircraft) { return aircraft>=MountAircraft::F14d && aircraft<=MountAircraft::F18x; }
 int mountExpansionIndex(MountAircraft aircraft) {
@@ -40,6 +40,11 @@ const Json& mountAnimatedPlan(MountAircraft aircraft,unsigned mask);
 const Json& mountExpansionDefinition(MountAircraft aircraft) {
     require(mountExpanded(aircraft),"扩展挂载：机型不在白名单");
     return mountExpansionData().at("planes").at(mountExpansionIndex(aircraft));
+}
+bool mountExpansionNative(MountAircraft aircraft,unsigned mask) {
+    // 局部适配明确按组合退让；不能因同一机体有双挂方案而接管三挂。
+    return mountExpanded(aircraft) && mask>=1 && mask<=7 &&
+        mountExpansionDefinition(aircraft).at("plans").at(mask).value("native_only",false);
 }
 const MountSpecification& mountExpansionSpecification(MountAircraft aircraft) {
     static const auto specifications=[] {
@@ -899,6 +904,7 @@ void fixedMountCommit(const Command& command) {
     const bool singleQaam=session.count==1 && aircraft==MountAircraft::Su30sm && kindsMask==4;
     admission.stop();
     if(session.count==1 && !singleQaam) { fixedMountRelease();return; }
+    if(mountExpansionNative(aircraft,kindsMask)) { fixedMountRelease();return; }
     if(mountExterior(aircraft) && !(kindsMask&4u)) { fixedMountRelease();return; } // 无8AAM/PLSL的组合完全原生。
     if(mountLight(aircraft) && mountLightNative(aircraft,kindsMask)) { fixedMountRelease();return; }
     require(singleQaam || (session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
