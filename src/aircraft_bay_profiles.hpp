@@ -11,6 +11,7 @@ struct AircraftBayProfile {
     int independentConfig{-1}; // 单路策略：指定原生配置，同时选中swc1/2/3对应输出。
     bool closeWhenModelsEnabled{}; // 多SP模型开启时关闭这条独立输出，其他机构继续原生。
     unsigned continuityConfigs{}; // 指定同舱配置集合；只在该集合内SP互切时保留真实进度。
+    bool continuityRequiresModels{}; // 仅已绑定的多SP外观需要连续性，关闭外观仍走原生切换。
 };
 const std::array<AircraftBayProfile,9>& aircraftBayProfiles() {
     static const std::array<AircraftBayProfile,9> profiles={{
@@ -22,7 +23,7 @@ const std::array<AircraftBayProfile,9>& aircraftBayProfiles() {
             "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_fa50"},AircraftBayStrategy::Shared01Close,11},
         {"pkfa","pkfa",{"/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
             "/Game/Blueprint/Weapons/Player/Variation/plwp_gpb_r0",
-            "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"},AircraftBayStrategy::Shared01Close,-1},
+            "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"},AircraftBayStrategy::Shared01Close,6,-1,false,3,true},
         {"dark","dark",{"/Game/Blueprint/Weapons/Player/Base/plwp_sasm_a0",
             "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
             "/Game/Blueprint/Weapons/Player/Base/plwp_plsl_x0"},AircraftBayStrategy::Shared01Close,6},

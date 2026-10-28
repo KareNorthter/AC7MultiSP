@@ -94,7 +94,8 @@ void aircraftBayBind(const Command& command) noexcept {
         if(state.profile->strategy==AircraftBayStrategy::SelectedIndependent)
             require(state.profile->independentConfig>=0 && state.profile->independentConfig<3,"舱门：配置编号无效");
         require(state.profile->continuityConfigs==0 ||
-            (state.profile->strategy==AircraftBayStrategy::IndependentClose && state.profile->continuityConfigs==3),
+            ((state.profile->strategy==AircraftBayStrategy::IndependentClose ||
+              state.profile->strategy==AircraftBayStrategy::Shared01Close) && state.profile->continuityConfigs==3),
             "舱门：同舱配置集合不受支持");
         require(mountClassIs(command.plane,"PlayerPlane","/Script/Nimbus") &&
             session.gameThread==GetCurrentThreadId() && session.count>=1 && session.count<=3,
@@ -279,6 +280,8 @@ void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
     auto& state=aircraftBayAnimation;state.pending={};
     if(!state.bound || (state.profile->strategy!=AircraftBayStrategy::PublicSwitchContinuity && !state.profile->continuityConfigs) ||
        !runtimeEnabled || command.op!="switch")return;
+    if(state.profile->continuityRequiresModels && (!fixedMountEnabled || fixedMountFailed || !fixedMount.bound ||
+       !mountSameIdentity(fixedMount.plane,state.plane)))return;
     try {
         require(command.plane==state.plane.address && command.activator==state.activator.address &&
             target>=0 && target<3,"公共舱：事务身份或目标改变");
@@ -297,6 +300,8 @@ void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
 void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
     auto& state=aircraftBayAnimation;const auto saved=state.pending;state.pending={};
     if(!saved.valid || !state.bound || !runtimeEnabled)return;
+    if(state.profile->continuityRequiresModels && (!fixedMountEnabled || fixedMountFailed || !fixedMount.bound ||
+       !mountSameIdentity(fixedMount.plane,state.plane)))return;
     try {
         require(command.op=="switch" && armed && command.request==saved.transaction &&
             command.plane==saved.plane.address && command.activator==saved.activator.address &&
@@ -308,16 +313,25 @@ void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
         require(native.config==saved.target,"公共舱：切换完成配置不同步");
         if(native.held || (native.request!=1 && native.request!=2))return; // 新兵装保舱或主动关闭时保留新请求。
         const bool independent=state.profile->strategy==AircraftBayStrategy::IndependentClose;
+        const bool shared=state.profile->strategy==AircraftBayStrategy::Shared01Close;
         if(native.request==saved.request && native.phase==saved.phase && native.progress==saved.progress &&
-           (!independent || native.outputs==saved.outputs))return;
+           (!independent || native.outputs==saved.outputs) &&
+           (!shared || (native.top[0]==saved.outputs[1] && native.top[1]==saved.outputs[2] &&
+                        native.combined==saved.outputs[6])))return;
         require(MountAnimationReflection::writable(state.parts+0x58,sizeof(int)) &&
             MountAnimationReflection::writable(state.parts+0x274,sizeof(int)) &&
             MountAnimationReflection::writable(state.parts+0x17c,independent?sizeof(saved.outputs):sizeof(float)),"公共舱：恢复区不可写");
-        // 公共域只恢复三项；F35同舱另恢复七路真实输出，不把半开变全开，不跨事务重放。
+        if(shared)require(MountAnimationReflection::writable(state.parts+0x180,2*sizeof(float)) &&
+            MountAnimationReflection::writable(state.parts+0x194,sizeof(float)),"共舱：恢复区不可写");
+        // 公共域只恢复三项；F35另恢复七路，聚合域另恢复0/1及swcc，其他输出不接管。
         std::memcpy(reinterpret_cast<void*>(state.parts+0x58),&saved.request,sizeof(int));
         std::memcpy(reinterpret_cast<void*>(state.parts+0x274),&saved.phase,sizeof(int));
         if(independent)std::memcpy(reinterpret_cast<void*>(state.parts+0x17c),saved.outputs.data(),sizeof(saved.outputs));
         else std::memcpy(reinterpret_cast<void*>(state.parts+0x17c),&saved.progress,sizeof(float));
+        if(shared) {
+            std::memcpy(reinterpret_cast<void*>(state.parts+0x180),saved.outputs.data()+1,2*sizeof(float));
+            std::memcpy(reinterpret_cast<void*>(state.parts+0x194),saved.outputs.data()+6,sizeof(float));
+        }
         nativeLog(Json{{"event","AIRCRAFT_BAY_SWITCH_RESTORED"},{"aircraft",state.profile->body},
             {"request",command.request},{"target",saved.target},{"cover_request",saved.request},
             {"phase",saved.phase},{"progress",saved.progress}}.dump());

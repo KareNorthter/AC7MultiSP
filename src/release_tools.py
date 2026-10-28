@@ -102,6 +102,8 @@ def source_snapshot(root=ROOT):
         'evidence/mod-aircraft-compat-static.json',
         'evidence/mod-electronic-compat-static.json','evidence/mod-infinite-ammo-compat-static.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
+        'src/research/pkfa_internal_runtime_data.py','evidence/pkfa-internal-mount-source-20261028.json',
+        'evidence/su57-bay-live-observation-20261028.json',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',
         'src/research/build_animated_runtime_data.py','src/research/review_su47_native_endpoints.py',
         'src/research/summarize_animation_product_access.py','evidence/mount-expansion-animated.json',

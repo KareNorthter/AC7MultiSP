@@ -1,10 +1,11 @@
-// 原生四机局部机构：只保SWP3的真实动画与Socket，不接管机身姿态或强制全开。
+// 原生局部机构：只保登记供位架的真实动画与Socket，不接管机身姿态或强制全开。
 // 在反射、轻量Socket读取器和旧动画入口定义后包含。
 #pragma once
 
 struct LocalMountOwnership {
     MountIdentity plane,base,component,componentClass,mesh,skeleton,anim;
     size_t rackOffset{},meshOffset{},skeletonOffset{},animOffset{};
+    int pool{2}; // 既有四机默认SWP3；普通Su-57限定为SWP1。
     MountAnimationReflection reflection;
     LightMountSocketReader sockets;
     MountAnimationReflection::Field refresh;
@@ -72,9 +73,20 @@ void mountLocalQualifyBones(LocalMountOwnership& lease,const Json& group) {
 void mountLocalBind(FixedMountState& state,Addr plane) {
     const auto& definition=mountExpansionDefinition(state.aircraft);
     require(mountLocal(state.aircraft) && definition.value("local_mechanism",false),"局部机构：机型未登记");
-    const auto& group=definition.at("groups").at(2);
+    if(definition.contains("body")) {
+        const auto& body=definition.at("body");
+        const Addr component=read<Addr>(plane+mountProperty(plane,"PlaneBodyMesh","ObjectProperty",8));
+        require(mountClassIs(component,"SkeletalMeshComponent","/Script/Engine"),"局部机构：本体类型不符");
+        const Addr mesh=read<Addr>(component+mountProperty(component,"SkeletalMesh","ObjectProperty",8));
+        const Addr anim=read<Addr>(component+mountProperty(component,"AnimClass","ClassProperty",8));
+        mountAnimatedResource(mesh,body.at("mesh").get<std::string>(),body.at("mesh_package").get<std::string>(),"SkeletalMesh");
+        mountAnimatedResource(anim,body.at("anim").get<std::string>(),body.at("anim_package").get<std::string>(),"AnimBlueprintGeneratedClass");
+    }
+    const int pool=definition.value("local_pool",2);
+    require(pool>=0 && pool<3,"局部机构：供位池越界");
+    const auto& group=definition.at("groups").at(pool);
     auto lease=std::make_shared<LocalMountOwnership>();
-    lease->plane=state.plane;lease->base=state.weaponBase;lease->rackOffset=state.rackOffsets[2];
+    lease->pool=pool;lease->plane=state.plane;lease->base=state.weaponBase;lease->rackOffset=state.rackOffsets[pool];
     lease->component=mountIdentity(read<Addr>(plane+lease->rackOffset));
     const Addr object=lease->component.address;
     require(mountClassIs(object,"SkeletalMeshComponent","/Script/Engine"),"局部机构：不是原生骨架组件");
@@ -87,11 +99,12 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
     lease->anim=mountIdentity(read<Addr>(object+lease->animOffset));
     const auto code=definition.at("code").get<std::string>();
     const auto package="/Game/Vehicles/Aircraft/"+code+"/";
-    mountAnimatedResource(lease->mesh.address,group.at("rack").get<std::string>(),package+code+"_SWP3","SkeletalMesh");
-    mountAnimatedResource(lease->skeleton.address,group.at("skeleton").get<std::string>(),package+code+"_SWP3_Skeleton","Skeleton");
+    const auto rackName=code+"_SWP"+std::to_string(pool+1);
+    mountAnimatedResource(lease->mesh.address,group.at("rack").get<std::string>(),package+rackName,"SkeletalMesh");
+    mountAnimatedResource(lease->skeleton.address,group.at("skeleton").get<std::string>(),package+rackName+"_Skeleton","Skeleton");
     // 原生AnimBP在Blueprint/Player/Body，不能按网格目录拼接其所属包。
     mountAnimatedResource(lease->anim.address,group.at("anim").get<std::string>(),
-        "/Game/Blueprint/Player/Body/"+code+"_SWP3_AnimBP","AnimBlueprintGeneratedClass");
+        "/Game/Blueprint/Player/Body/"+rackName+"_AnimBP","AnimBlueprintGeneratedClass");
     auto& api=lease->reflection;api.bindSdk();
     const int extent=api.typeSize(lease->componentClass.address);
     const auto no=api.boolean(lease->componentClass.address,"bNoSkeletonUpdate",extent,true);
@@ -109,14 +122,15 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
     require(lease->always<=255,"局部机构：骨刷新枚举越界");
     mountLocalQualifyBones(*lease,group);
     lease->sockets.prepare(api,lease->component);
-    for(const auto& visual:state.visuals)if(visual.pool==2 && visual.index>=0) {
+    for(const auto& visual:state.visuals)if(visual.pool==pool && visual.index>=0) {
         MountAnimationReflection::SocketName name{read<unsigned>(visual.identity.address+0x108),read<unsigned>(visual.identity.address+0x10c)};
         require(!name.number && lease->sockets.exists(api,lease->component,name),"局部机构：原生弹体挂点不存在");
         lease->nativeSockets.emplace(visual.identity.address,name);
     }
     mountLocalCurrent(*lease);
     // 同实例的任务/补给预览共用一份原生状态，不把自己强制的值当作恢复基线。
-    for(auto* prior:{&fixedMount,&mountPreview.layout})if((state.kindsMask&4u) && prior!=&state && prior->local &&
+    for(auto* prior:{&fixedMount,&mountPreview.layout})if((state.rackMask&(1u<<pool)) && prior!=&state && prior->local &&
+        prior->local->pool==pool &&
         mountMeshIdentityEqual(prior->local->component,lease->component) &&
         mountMeshIdentityEqual(prior->local->mesh,lease->mesh) && mountMeshIdentityEqual(prior->local->anim,lease->anim) &&
         mountMeshIdentityEqual(prior->local->plane,lease->plane)) {
@@ -132,7 +146,7 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
 
 void mountLocalMaintain(FixedMountState& state) {
     if(!mountLocal(state.aircraft) || !state.local)return;
-    if(!(state.kindsMask&4u)) {
+    if(!(state.rackMask&(1u<<state.local->pool))) {
         if(&state==&mountPreview.layout && mountPreviewOwnsTask())mountLocalBeforeRebuild(fixedMount);
         return;
     }
@@ -202,7 +216,7 @@ bool mountLocalCopyTransform(void* output,const FixedMountState& state,int posit
     const Addr component=state.physical[position];
     const auto visual=std::find_if(state.visuals.begin(),state.visuals.end(),[&](const MountVisual& v){return v.identity.address==component;});
     require(visual!=state.visuals.end() && mountAlive(visual->identity),"局部机构：发射弹体身份失效");
-    if(visual->pool!=2) {
+    if(visual->pool!=state.local->pool) {
         checkMemory(component+0x180,48);checkMemory(reinterpret_cast<Addr>(output),48);
         std::memcpy(output,reinterpret_cast<void*>(component+0x180),48);return true;
     }
