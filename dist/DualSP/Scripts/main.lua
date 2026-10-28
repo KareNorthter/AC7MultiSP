@@ -2161,6 +2161,9 @@ local function tick()
         if nativeSupply.error then error(nativeSupply.error)end
     elseif not isFlight and not supplySession then
         nativeLoadout:pump(pageContext{mode="preparation",now=now,inFlight=not runtimeContext.hangarVisible,panelOpen=panelOpen})
+        -- 激活事件和轮询都可接入选装页；在公共更新边界检查，避免事件遗漏导致用例空跑。
+        -- 等实际持有页面后再注入，让异常进入主循环的统一严格收尾与严重错误处理。
+        if nativeLoadout.cache then faultRecovery.dev.check("preparation",planeId)end
         if modAircraft.safetyPending and not syncRuntime()then return end
     end
     nativeStandby:pump(pageContext{mode="saved",now=now,inFlight=isFlight or supplySession~=nil or not runtimeContext.hangarVisible,panelOpen=panelOpen})
@@ -2203,7 +2206,6 @@ RegisterHook("/Script/Nimbus.MenuBaseWidget:SetIsEnableControl",function()end,fu
         scenePreviewRequested=false
         local owner=ctx:get() -- 控件仍只接入登记页面；场景预览覆盖同一机库的其他页面。
         if not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarWeaponWidget"))then
-            faultRecovery.dev.check("preparation",instance:GetSelectedPlaneID())
             nativeLoadout:activate(owner,pageContext{mode="preparation",now=os.clock(),inFlight=false,panelOpen=false})
         elseif not isFlight and owner:IsA(StaticFindObject("/Script/Nimbus.CampaignHangarReviewWidget"))then
             nativeStandby:activate(owner,pageContext{mode="saved",now=os.clock(),inFlight=false,panelOpen=false})

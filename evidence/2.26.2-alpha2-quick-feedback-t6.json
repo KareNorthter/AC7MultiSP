@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "version": "2.26.2 alpha2",
+  "source_before_fix": "34842c8740f92545985c0a458671f917086bc9a1",
+  "user_feedback": {
+    "quick_rounds_1_to_3": "作者确认测试成功，面板记录均为通过",
+    "quick_round_4": "F-16C机库可选3SP并正常出击，无报错；面板记录有问题",
+    "quick_round_5": "尚未确认"
+  },
+  "round_4_archive": "E:/AC7_MultiSP/Temp/tasks/20261028-aircraft-fault-testing/results/20261028-150910-773887",
+  "observed": {
+    "case": "T6",
+    "target": 109,
+    "game_pid_in_archived_logs": 9032,
+    "core_development_build_and_T6_armed": true,
+    "ui_T6_armed": true,
+    "T6_trigger_record_found": false,
+    "native_preparation_adapter_attached": true,
+    "installed_core_sha256": "13b7ee02315c5199ab361e2e87eb634c515fab957351b4831b107ebf7a953ffb"
+  },
+  "cause": "选装页既可由激活事件接入，也可由轮询接入；T4/T6原注入点只位于激活事件，未覆盖公共路径。T6已装载但未触发，不代表严重错误保护通过，也尚不能认定实际保护失效。",
+  "source_fix": "将preparation注入检查移到nativeLoadout:pump后的公共边界，要求实际页面cache存在；异常由主循环统一严格收尾，T6在严格收尾边界再报告失败。移除事件中的独立注入。",
+  "validation": "仅静态差异与日志核对；未编译、安装、运行测试或启动游戏",
+  "old_exe_contains_fix": false,
+  "retest": "构建并安装修正开发包后，只补测快速第4轮及后续关闭注入的重启恢复；保留1至3轮结果。"
+}
