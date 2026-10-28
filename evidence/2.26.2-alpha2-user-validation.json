@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "source": "作者本聊天反馈；不冒充AI实机测试",
+  "version": "2.26.2 alpha2",
+  "passed": {
+    "fault_quick_rounds": "1—3此前通过；T6修正版的第4、5轮本次确认符合预期",
+    "multi_sp_models": ["MiG-21bis（作者称MIG21B）", "F-104C", "F-2A Super Kai", "A-10C"],
+    "hud_label_brightness": ["PLSL", "MGP", "HGP"]
+  },
+  "pending": ["视角操作实机测试", "快速五轮未包含的扩展故障及更新响应用例"],
+  "super_kai_name": {
+    "correct_player_name": "IEWS",
+    "official_loadout": ["LASM", "6AAM", "IEWS"],
+    "primary_source": "https://www.nintendo.com/us/store/products/ace-combat-7-skies-unknown-f-2a-super-kai-set-70050000050182-switch/",
+    "steam_source": "https://store.steampowered.com/app/1692463/",
+    "wiki_search_result": "https://acecombat.wiki.gg/wiki/F-2A_-Super_Kai-",
+    "source_access": "Nintendo官方发布商说明正文已读取；Steam及Wiki搜索摘要一致，Wiki正文403，未冒充全文读取",
+    "user_observed": "ECM",
+    "code_observed": "weapon_names.lua的nativeIEWS仅列mrgn、fa27、fa44，未列Super Kai；非匹配项回落到code:upper()",
+    "status": "确认显示修正遗漏，待补充真实兵装类身份后修正；本轮未改代码或武器效果"
+  },
+  "fault_explanation": {
+    "round_2_T2": "只替换送入Mod目录检查器的目标机兵装代号副本，不修改UE资料或PAK；原生资源仍完整可用",
+    "round_3_T5": "在Mod下一次切换事务写入前注入错误，不破坏游戏真实兵装；此前已配置状态仍可能使原生继续运行，但不保证任务内已完整还原",
+    "boundary": "停用增强并保留F6诊断，不封锁原生出击；任务内出错仍应按提示退出任务，能飞不等于全部状态已安全恢复"
+  },
+  "configuration_changed": false,
+  "compiled": false,
+  "installed": false,
+  "tests_run_by_agent": false
+}
