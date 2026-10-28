@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| X-02R与三个J-20启用，已安装待实机确认 | codex/chore-enable-x02r-j20；基线 main/a0f4073 | C:/Users/83717/.codex/worktrees/install-x02r-j20/AC7_MultiSP | 作者确认由A切至B；四个Mod六份PAK与原包一致，174条目录含五个主要机体入口。作者页面与特殊功能边界写入[机体正文](../research/mod-aircraft-compatibility.md#2026-10-28启用x-02r与三个j-20)，见[启用回执](../../evidence/x02r-j20-enabled-20261028.json)；未启动游戏、编译或运行测试 |
 | 机体兼容反馈与资料提醒，已接收 | 本聊天；codex/docs-mod-compatibility-observations；基线main/41993d7 | C:/Users/83717/.codex/worktrees/mod-compatibility-observations/AC7_MultiSP | 记录RH-172补给冲突反馈和启动时兵装资料提醒待办；仅文档静态核对 |
 | Gunplay一键启停，待用户验证 | codex/feat-gunplay-toggle；基线 main/052b8bc | C:/Users/83717/.codex/worktrees/gunplay-toggle/AC7_MultiSP；入口 E:/AC7_MOD/管理入口/一键切换Gunplay.cmd | 为现有A5主文件提供低优先级启停入口，保护备份和其他Mod；范围与使用说明见[其他 Mod 管理](../archive/other-mod-library.md)，未实际运行启停或游戏 |
 | Mod机体测试前查询，已接收 | 本聊天；codex/docs-aircraft-nexus-precheck；基线main/e78672b | C:/Users/83717/.codex/worktrees/aircraft-nexus-requirement/AC7_MultiSP | 在AGENTS登记测试前查询作者Nexus页面、武器效果与皮肤差异的要求；仅文档静态核对 |

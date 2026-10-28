@@ -1,0 +1,132 @@
+{
+  "date": "2026-10-28",
+  "profile_before": "A",
+  "profile_after": "B",
+  "catalogue_rows": 174,
+  "catalogue_sha256": "9c9d394baa5ec8fd8c97001dbf06fcbcb4e481c41fc8bf174e30389f474d9aaa",
+  "transaction": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\transactions\\20261028-094644-328061",
+  "files": [
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\J-20.zip",
+      "member": "J-20/J20A_MainFiles_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\J20A_MainFiles_P.pak",
+      "active_before": true,
+      "sha256": "8f2c43c3ac25e7fd477afe07ba8dc054ae930f3ec57a65364abf2ccaac1be7a0",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\J20A_MainFiles_P.pak",
+      "active_after": true
+    },
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\J-20.zip",
+      "member": "J-20/~J20A_Addon_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\~J20A_Addon_P.pak",
+      "active_before": true,
+      "sha256": "b22c0c71efd4c4a71f0a3b227fb73e9cf3ff5e9f165cb50748438b40c0d9da63",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\~J20A_Addon_P.pak",
+      "active_after": true
+    },
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\J-20.zip",
+      "member": "J-20/~~~~~~~~~~~J-20B_BASE-ADDON_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~~~~~~~J-20B_BASE-ADDON_P.pak",
+      "active_before": true,
+      "sha256": "b5008aab851b5cf9a2c01fb56c3647b1654c4242f5cef62a18330bbe69686fb6",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~~~~~~~J-20B_BASE-ADDON_P.pak",
+      "active_after": true
+    },
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\J-20.zip",
+      "member": "J-20/~~~~~~~~~~~~J-20B_SKINS_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~~~~~~~~J-20B_SKINS_P.pak",
+      "active_before": true,
+      "sha256": "af97ff3ed7595dcf0b2a473a1ee663526471794567e6e2361f954db5308492de",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~~~~~~~~J-20B_SKINS_P.pak",
+      "active_after": true
+    },
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\J-20S Fagin - Addon 3765.zip",
+      "member": "J-20S Fagin - Addon 3765/~~LZ_J-20S_AddOn_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~LZ_J-20S_AddOn_P.pak",
+      "active_before": true,
+      "sha256": "227f25c40402fef61a2951a404e991df099fa7c4c664b23c025789c417dee8b6",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~LZ_J-20S_AddOn_P.pak",
+      "active_after": true
+    },
+    {
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\X-02R 3266.zip",
+      "member": "X-02R 3266/~~~~~~X-02R_Addon_P.pak",
+      "path_before": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~~~~~X-02R_Addon_P.pak",
+      "active_before": false,
+      "sha256": "a6b3b9668f1f860bd2ecb550b22b17d9064b20445c8437c30c0f1c10dfe2c8f3",
+      "path_after": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_2\\~~~~~~X-02R_Addon_P.pak",
+      "active_after": true
+    }
+  ],
+  "catalogue_entries": [
+    {
+      "PlaneID": 181,
+      "PlaneStringID": "j20a",
+      "SpWeaponID1": "laam",
+      "SpWeaponID2": "4aam",
+      "SpWeaponID3": "xsdb"
+    },
+    {
+      "PlaneID": 247,
+      "PlaneStringID": "j20b",
+      "SpWeaponID1": "laam",
+      "SpWeaponID2": "lasm",
+      "SpWeaponID3": "8aam"
+    },
+    {
+      "PlaneID": 249,
+      "PlaneStringID": "x02r",
+      "SpWeaponID1": "empm",
+      "SpWeaponID2": "xdmm",
+      "SpWeaponID3": "tgtp"
+    },
+    {
+      "PlaneID": 250,
+      "PlaneStringID": "x02rv2",
+      "SpWeaponID1": "talg",
+      "SpWeaponID2": "tls",
+      "SpWeaponID3": "uav"
+    },
+    {
+      "PlaneID": 288,
+      "PlaneStringID": "j20s",
+      "SpWeaponID1": "xlqa",
+      "SpWeaponID2": "xsdb",
+      "SpWeaponID3": "uav"
+    }
+  ],
+  "game_started": false,
+  "tests_run": false,
+  "core_compiled": false,
+  "schema": 1,
+  "user_authorization": "作者选择切到B组启用四架；冲突机体暂时停用且文件保留",
+  "backup": "E:/AC7_MultiSP/backup/x02r-j20-20261028/",
+  "scope": "使用现有机体分组工具从A切B；未修改原作者PAK、原生配弹或多SP源码",
+  "source_pages": [
+    {
+      "aircraft": "J-20A",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/2267",
+      "page_version": "1.1"
+    },
+    {
+      "aircraft": "J-20B",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3239",
+      "page_version": "3.0，正文仍有2.5记录"
+    },
+    {
+      "aircraft": "J-20S",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3765",
+      "page_version": "1.0"
+    },
+    {
+      "aircraft": "X-02R",
+      "url": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3266",
+      "page_version": "1.2"
+    }
+  ],
+  "source_notes": "页面已查询；本机PAK与已存原包一致，但未下载最新作者包，不凭页面版本号宣称本机文件是最新版。特殊功能和未知事项见唯一机体正文。",
+  "acceptance": "文件部署及目录摘要一致；机库显示、飞行、SP和长按效果待作者实机验证。"
+}
