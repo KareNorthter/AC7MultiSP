@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "version": "2.26.2 alpha2",
+  "session": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing",
+  "launcher": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-aircraft-fault-testing\\打开测试面板.cmd",
+  "panel_source": "src\\research\\aircraft_fault_test_panel.py",
+  "panel_sha256": "a81ed444110e53113c1a78fc3c7fa3b60c228af366e44151e2377a114c52bef4",
+  "snapshot_complete": true,
+  "snapshot_files_verified": 100,
+  "baseline_version": "2.26.2 alpha1",
+  "profile": "B",
+  "baseline": "E:\\AC7_MultiSP\\backup\\aircraft-fault-testing-20261028",
+  "pak_inventory_count": 212,
+  "target": {
+    "id": 109,
+    "code": "f16c",
+    "name": "F-16C"
+  },
+  "control": {
+    "id": 115,
+    "code": "mr2k",
+    "name": "Mirage 2000-5"
+  },
+  "quick_rounds": [
+    "off",
+    "T2",
+    "T5",
+    "T6",
+    "off"
+  ],
+  "extended_not_covered_by_quick": [
+    "T1独立",
+    "T3-weapon",
+    "T3-ammo",
+    "T3-aircraft",
+    "T4独立",
+    "T7",
+    "U-current",
+    "U-newer",
+    "U-failed",
+    "U-unpublished",
+    "完整双语、快捷键、多人及模型回归"
+  ],
+  "verification": [
+    "Python语法静态解析",
+    "快照全部文件摘要",
+    "两种构建源码冻结清单一致"
+  ],
+  "game_tests_executed": false,
+  "panel_launched_by_agent": false,
+  "exe_rebuilt": false,
+  "game_started_by_agent": false,
+  "supersedes_environment_pending_receipt": "2.26.2-alpha2-test-environment.json"
+}
