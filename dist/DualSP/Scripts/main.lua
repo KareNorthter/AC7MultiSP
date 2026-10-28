@@ -1939,7 +1939,7 @@ local function tick()
         local key=currentWorld..":"..tostring(planeAddress)..":"..activator:GetAddress()..":"..planeId..":"..
             startupProfile.a..":"..startupProfile.b..":"..startupProfile.c
         if mountStartup.supportKey~=key then
-            local ok,supported=mountStartup.supports(plane:GetAddress());assert(ok,supported)
+            local ok,supported=mountStartup.supports(plane:GetAddress(),startupProfile.a,startupProfile.b,startupProfile.c);assert(ok,supported)
             mountStartup.supportKey=key;mountStartup.supported=supported==true
             if not supported then note("MOUNT_STARTUP_NO_PLAN plane="..planeId)end
         end

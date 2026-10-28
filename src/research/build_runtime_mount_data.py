@@ -125,7 +125,7 @@ def apply_layout_review(planes, assets, source, targets):
         raise ValueError('五机复核缺少已登记的挂载修订')
 
 
-def build():
+def build(include_remaining=True):
     samples = {}
     for batch in range(1,4):
         for sample in json.loads((ROOT/f'evidence/mount-expansion-batch{batch}.json').read_text(encoding='utf-8'))['aircraft']:
@@ -299,6 +299,12 @@ def build():
     else:
         from f18etg_socket_r2_data import apply_f18etg_socket_r2
     apply_f18etg_socket_r2(planes, assets, preserved, ROOT)
+    if __package__:
+        from .remaining_external_mount_data import append_remaining_external
+    else:
+        from remaining_external_mount_data import append_remaining_external
+    if include_remaining:
+        append_remaining_external(planes, assets, preserved, ROOT)
     return {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
 
@@ -321,4 +327,6 @@ if __name__=='__main__':
         lua += '    '+plane['code']+'={' + ','.join(entry(i, pool) for i, pool in entries) + '},\n'
     lua += '}\n'
     (ROOT/'dist/DualSP/Scripts/mount_assets.lua').write_bytes(lua.encode('utf-8'))
-    print('已生成静态机体',len(data['planes']),'完整组合',len(data['planes'])*7,'独立挂架资源',len(data['assets']))
+    native = sum(p.get('native_only',False) for plane in data['planes'] for p in plane['plans'][1:])
+    print('已生成静态机体',len(data['planes']),'组合决策',len(data['planes'])*7,
+          '其中原生退让',native,'独立挂架资源',len(data['assets']))

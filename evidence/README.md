@@ -8,6 +8,7 @@
 
 | 主题 | 入口 | 回答的问题 |
 |---|---|---|
+| 本体/DLC外挂机体候选 | [四机来源与13份资源](remaining-external-mounts-20261028.json)、[实际编码cooked引用](remaining-external-mount-audit-20261028.json) | A-10C/Super Kai布局、F-104C双SP及MiG-21bis的RKT＋SAAM；MGP和两机三SP原生退让；未编译/测试/安装/游戏验证 |
 | 六个Mod机体入口用户验收 | [20261028作者功能反馈](mod-aircraft-user-acceptance-20261028.json) | X-02R A/B、J-20A/B/S和RH-172功能正常；不补造逐项测试或追认ZSD组合冲突已修复 |
 | X-02R与三个J-20启用 | [20261028切换B组及摘要核对](x02r-j20-enabled-20261028.json) | 作者确认由A切B；四个Mod六份PAK及目录一致，作者页面与未知项登记，未实机验证 |
 | 2.26.2 alpha1自测EXE | [构建、文档及RH-172核对](2.26.2-alpha1-exe-delivery.json) | 完整构建和签名核对；RH-172此前已安装且与原包一致，候选EXE和机库表现待作者实机验证 |

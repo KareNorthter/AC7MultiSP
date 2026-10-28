@@ -38,7 +38,8 @@
 ## 构建与封装依赖
 
 - 本机工具根为`E:/AC7_MultiSP/tools`，产品清单指定`llvm-mingw-20261006-ucrt-x86_64`；构建使用其中lupa/pefile及仓库vendor。使用前核对实际文件，不把旧版本记录当现场检查。
-- `src/build.py`的`--mount-assets-dir`为必填，必须指向当前完整的77资源/154成员输入，不再沿用旧54资源默认目录。具体原料位置先查[本机资产索引](../archive/local-assets.md)及对应来源回执；名称、字节和资格仍逐项核对，数量相同不能替代摘要。
+- `src/build.py`的`--mount-assets-dir`为必填。main基线为77资源/154成员；本分支外挂机体候选需90资源/180成员，已准备于`C:/Users/83717/.codex/worktrees/base-dlc-multi-sp/AC7_MultiSP/Temp/tasks/20261028-base-dlc-multi-sp/mount-assets-90/source`，同级上层`input-manifest.json`记录摘要。后续构建只能使用与分支白名单一致的整套输入，不沿用旧54/77资源目录。位置和保留条件见[本机资产索引](../archive/local-assets.md)，数量相同不能替代摘要。本轮未编译或打包。
+- 本批离线资源可由`src/research/prepare_remaining_external_mounts.py`重现：显式传`--source-manifest`、`--tools-root`、任务Temp内新目录`--output-root`，以及新文件`--receipt`、`--audit`；资源与来源记录均拒绝覆盖。生成器`build_runtime_mount_data.py`再输出运行表和Lua资源清单；该过程不编译核心、不运行测试或游戏。旧77资源保持原字节，新增13资源经编码/解码、cooked引用和碰撞载荷静态核对。
 - 独立工作树可用`--temp-root E:/AC7_MultiSP/Temp`，同时把`--output-dir`指定到该根内全新的任务子目录。构建拒绝覆盖旧输出，编译中间文件也留在本次目录；失败后保留现场，修正后使用新目录。
 - 封装显式提供`--build-dir`、全新`--output-dir`、`--icon-source 本机游戏ICO`及`--audio-source E:/AC7_MultiSP/dist/DualSP/Audio/SP2.wav`。ICO原料及冻结规则见[交付方案](../project/delivery.md#安装器游戏图标)，不将游戏资源提交Git。提示音核对原验收摘要，不使用个人替换音频分发；新封装不依赖旧手装ZIP。
 - EXE使用系统64位.NET Framework编译器。`build_setup.ps1`先核对冻结C#/manifest、资源、响应文件及独立ZIP摘要，编译后再复核输入，单独写`EXE编译回执.json`；编译成功不代表安装器已运行。

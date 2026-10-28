@@ -477,6 +477,7 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
         }
         require(count>0,"模型预览：没有有效兵装");
         if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && count==1) ||
+           mountExpansionNative(aircraft,mask) ||
            (mountLight(aircraft) && mountLightNative(aircraft,mask)) ||
            (mountExterior(aircraft) && !(mask&4u))) {
             mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();
