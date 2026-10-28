@@ -221,8 +221,9 @@ function Presentation.new(note)
         if not ok then self:fail(err)end
     end
     -- 补给、检查点和世界变化重新绑定页面，绝不复用旧任务控件。
-    function self:reset()
+    function self:reset(strict)
         local ok,err=pcall(restore)
+        if strict and not ok then error(err)end
         self.error=nil;self.status="waiting";self.waitingSince=nil;self.lastScan=-1
         if not ok then self:fail("重置武器提示失败："..tostring(err))end
     end

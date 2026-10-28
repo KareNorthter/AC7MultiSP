@@ -288,6 +288,7 @@ public:
     bool requestCheck(bool manual=true) noexcept {
         if(!context_.load(std::memory_order_acquire) || (!manual && !automaticEnabled_.load(std::memory_order_acquire)) || checkBusy_.exchange(true))return false;
         started_.store(true,std::memory_order_release);
+        claimed_.store(false,std::memory_order_release); // 每次明确发起的检查独立提示一次最终结果。
         status_.store(Status::Checking,std::memory_order_release);
         std::atomic_store_explicit(&snapshot_,std::shared_ptr<const Snapshot>{},std::memory_order_release);
         try {
@@ -312,10 +313,12 @@ public:
     bool outsideMission()const noexcept {const int value=context_.load(std::memory_order_acquire);return value==1 || value==3;}
     BrowserStatus browserStatus()const noexcept{return browser_.load(std::memory_order_acquire);}
     std::shared_ptr<const Snapshot> snapshot()const {return std::atomic_load_explicit(&snapshot_,std::memory_order_acquire);}
-    std::shared_ptr<const Snapshot> claimNotice() {
+    bool claimNotice() {
         const auto context=context_.load(std::memory_order_acquire);
-        if((context!=1 && context!=3) || status()!=Status::Newer || claimed_.exchange(true))return {};
-        return snapshot(); // 结果在任务内返回时暂存，回到任务外才消费，且整次启动只消费一次。
+        const auto result=status();
+        if((context!=1 && context!=3) || (result!=Status::Newer && result!=Status::Current &&
+            result!=Status::Failed && result!=Status::Unpublished) || claimed_.exchange(true))return false;
+        return true; // 本次最终结果在任务内暂存，回到任务外只消费一次；不播放等待状态。
     }
     bool openDownload(const std::string& id) noexcept {
         if(!context_.load(std::memory_order_acquire) || status()!=Status::Newer)return false;

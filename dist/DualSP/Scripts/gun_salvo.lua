@@ -25,11 +25,12 @@ function Salvo.new(options)
         end
         self.active=nil;self.reason=reason
     end
-    function self:release()
+    function self:release(strict)
         options.clearPending()
         local called,ok,_,_,_,reason=pcall(options.invoke,0,0,0,0,0)
         if not called or not ok then options.note("GUN_SALVO_RELEASE_ERROR "..tostring(called and reason or ok))end
         self.active=nil;self.reason="context_changed";self.bound=false;self.available=false;self.seen="0"
+        if strict then assert(called and ok,tostring(called and reason or ok))end
     end
     local function update()
         local c=options.context()

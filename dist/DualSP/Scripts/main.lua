@@ -14,7 +14,8 @@ local tr=runtimeContext.textKey -- 原生页面文字跟随游戏，不跟随 F8
 local runtimeAllowed=false -- 未确认单人状态前，所有模组功能均禁止。
 local runtimeReason="initializing" -- 禁用原因写日志，不在多人界面绘制提示。
 local runtimeChanging=false -- 模式清理期间阻止反射钩子重入。
-local runtimeFailed=false -- 模式识别出错后明确停用到重启，不不断重试或沿用旧许可。
+local runtimeFailed=false -- 严重故障锁住增强功能；已确认的单人环境仍保留F6诊断。
+local faultRecovery={management=false,reason=nil,mustLeave=false,planeId=nil,issues={},issuesByPlane={},catalogueReady=false}
 local syncRuntime=nil -- 完整状态清理函数在各模块定义之后建立。
 local note
 do -- 日志私有状态限于闭包，避免三线程整合后超出Lua入口局部变量上限。
@@ -113,6 +114,8 @@ loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
 local catalogExport=loadExport("dualsp_catalogue_memory_v1")
 loadExport("dualsp_mod_aircraft_catalogue_supported") -- 新Lua依赖真实机体/涂装目录，拒绝旧核心混装。
+loadExport("dualsp_aircraft_recovery_supported")
+loadExport("dualsp_aircraft_recovery_supported","DualSPUI.dll") -- 诊断门禁与目录异常须成套。
 local modAircraft=dofile(root.."Scripts/mod_aircraft.lua").new(note)
 local publish=loadExport("dualsp_publish_memory_v1","DualSPUI.dll")
 local drain=loadExport("dualsp_drain_actions_memory_v1","DualSPUI.dll")
@@ -813,8 +816,12 @@ local function releaseManagementPause()
     managementPause=nil
 end
 local function setPanel(open)
-    if open and not runtimeAllowed then return end
+    if open and not faultRecovery.management then return end
     if panelOpen==open then return end
+    if not runtimeAllowed and not managementPause and #gatedWidgets==0 then
+        -- 退让后仅显示管理页，不调用已经故障的武器、镜头或暂停接口。
+        panelOpen=open;lastUIKey=nil;return
+    end
     if open and nativeLoadout:isPreparationHandoffPending()then
         note("MANAGEMENT_WAITING_FOR_PREPARATION_CLOSE");return
     end
@@ -894,12 +901,13 @@ function weaponSwitch.gaze.update(_,generation)
 end
 
 -- 镜头保持只归还自己的轴作用域和R3计时，不改变兵装许可或原生暂停来源。
-function weaponSwitch.camera.release()
+function weaponSwitch.camera.release(strict)
     local camera=weaponSwitch.camera
     local called,ok,_,reason=pcall(camera.invoke,0,0,0,100,0,0,0)
     camera.available=false;camera.released=true
     if not called or not ok then
         camera.failed=true;camera.error=tostring(called and reason or ok);note("CAMERA_HOLD_RELEASE_ERROR "..camera.error)
+        if strict then error(camera.error)end
     end
 end
 function weaponSwitch.camera.update()
@@ -927,12 +935,15 @@ function weaponSwitch.camera.update()
     if before~=camera.available then lastUIKey=nil end
 end
 
-function weaponSwitch.view.release(force)
+function weaponSwitch.view.release(force,strict)
     local view=weaponSwitch.view
     view.marker(0)
     if force or not view.released then
         local called,ok,_,_,reason=pcall(view.invoke,0,0,0,0)
-        if not called or not ok then view.error=tostring(called and reason or ok);note("VIEW_TARGET_RELEASE_ERROR "..view.error)end
+        if not called or not ok then
+            view.error=tostring(called and reason or ok);note("VIEW_TARGET_RELEASE_ERROR "..view.error)
+            if strict then error(view.error)end
+        end
     end
     view.available=false;view.released=true
 end
@@ -970,20 +981,24 @@ local function selectionAudio(op,target)
     assert(ok,err or "选择音效接口没有返回成功")
 end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
-local function releaseRuntimeOwnership()
+local function releaseRuntimeOwnership(strict)
     weaponSwitch.pending=nil;internal=false
-    weaponSwitch.camera.release()
-    weaponSwitch.view.release()
-    if weaponSwitch.salvo.service then weaponSwitch.salvo.service:release()end
+    weaponSwitch.camera.release(strict)
+    weaponSwitch.view.release(false,strict)
+    if weaponSwitch.salvo.service then weaponSwitch.salvo.service:release(strict)end
     local gazeCall,gazeOK,_,gazeError=pcall(weaponSwitch.gaze.invoke,0,0,0,0)
     weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
     if not gazeCall or not gazeOK then note("TARGET_GAZE_RELEASE_ERROR "..tostring(gazeCall and gazeError or gazeOK))end
-    releaseMountPreview(0)
+    if strict then assert(gazeCall and gazeOK,tostring(gazeCall and gazeError or gazeOK))end
+    local released,warning=releaseMountPreview(0)
+    if strict then assert(released,warning)end
     local ok,err=pcall(function()selectionAudio(2)end)
     if not ok then note("SELECTION_AUDIO_RELEASE_ERROR "..tostring(err))end
+    if strict then assert(ok,err)end
     -- 发生任何控制器错误后已停止视觉调度，必须同时释放固定模型的所有权。
     local mountCallOK,mountOK,mountError=pcall(updateFixedMount,0,0)
     if not mountCallOK or not mountOK then note("FIXED_MOUNT_RELEASE_ERROR "..tostring(mountCallOK and mountError or mountOK))end
+    if strict then assert(mountCallOK and mountOK,tostring(mountCallOK and mountError or mountOK))end
 end
 
 -- 就绪采样与两处提示使用同一最终选择；错误只停用新 HUD，保持武器逻辑。
@@ -1520,6 +1535,7 @@ function debugWeapons.apply(action)
     lastUIKey=nil
 end
 local function applyAction(action)
+    if not runtimeAllowed and action.type~="open"and action.type~="close"and action.type~="settings"then return end
     if action.type=="open"then setPanel(true)
     elseif action.type=="close"then setPanel(false)
     elseif action.type=="select_weapon"then
@@ -1551,6 +1567,13 @@ local function applyAction(action)
         end
     elseif action.type=="debug_hotkey"then applyDebugHotkey(action)
     elseif action.type=="settings"then
+        if not runtimeAllowed then
+            -- 诊断模式可保存个人设置，但不能清除隔离、释放严重故障或调用增强接口。
+            local ok,err=pcall(function()config=configStore:applySettings(config,action)end)
+            settingsResponse=action.request
+            if ok then settingsAck=action.request;settingsError=nil else settingsError=tostring(err)end
+            lastUIKey=nil;return
+        end
         -- 普通设置保存不触发调试换装；构造完整新设置后验证并保存。
         local ok,err=xpcall(function()
             config=configStore:applySettings(config,action)
@@ -1606,7 +1629,7 @@ local function publishState()
     if isFlight or supplySession then appliedTaskMount=runtimeFixedMountEnabled end -- 机库核心状态不能冒充任务开关的应用状态。
     local info=catalogue and catalogue[tostring(planeId)]
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
-    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
+    local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and info.code and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
         management_protocol=22,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         startup_update_check_enabled=config.startup_update_check_enabled,
@@ -1625,7 +1648,13 @@ local function publishState()
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.weapon_switch={pending=weaponSwitch.pending~=nil,target=weaponSwitch.pending and weaponSwitch.pending.desired or nil,
         reason=weaponSwitch.pending and weaponSwitch.pending.reason or nil}
-    state.direct_selection_available=isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
+    state.recovery={disabled=not runtimeAllowed,severe=runtimeFailed,reason=faultRecovery.reason,
+        issue=faultRecovery.currentIssue,
+        must_leave=faultRecovery.mustLeave,catalogue_ready=faultRecovery.catalogueReady,
+        issue_count=#faultRecovery.issues,outside_mission=runtimeContext.outsideMission==true}
+    -- 异常详情仅管理页打开时传递，不在飞行轻量状态中反复编码目录。
+    if panelOpen then state.recovery.issues=faultRecovery.issues end
+    state.direct_selection_available=runtimeAllowed and runtimeModEnabled and isFlight and configured and not supplySession and not panelOpen and not internal and not errorText
         and not restorePending and not checkpointPending
         and ready()and not game:IsGamePaused(plane)
     local debugAvailable,debugReason=canDebugLoadout() -- 界面禁用原因与最终提交检查共用同一判断。
@@ -1638,8 +1667,8 @@ local function publishState()
     state.target_gaze={protocol=4,switch_available=weaponSwitch.gaze.canSwitch(),active=weaponSwitch.gaze.active,available=weaponSwitch.gaze.available,
         generation=weaponSwitch.gaze.generation,response=weaponSwitch.gaze.response,notice=weaponSwitch.gaze.notice,notice_warning=weaponSwitch.gaze.noticeWarning==true,error=weaponSwitch.gaze.error}
     state.camera_hold={protocol=8,available=weaponSwitch.camera.available,error=weaponSwitch.camera.error}
-    state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision,panelOpen)
-    state.quick_mission=quickMission:state(panelOpen)
+    state.debug_aircraft=aircraftDebug:state(debugSession,weaponRevision,panelOpen and runtimeAllowed)
+    state.quick_mission=quickMission:state(panelOpen and runtimeAllowed)
     -- 大列表只在管理页需要且来源表变化时发送；普通飞行和切换不遍历、编码旧列表。
     local lists={aircraft=state.debug_aircraft.options,tasks=state.quick_mission.tasks,planes=state.quick_mission.planes}
     state.debug_aircraft.options=nil;state.quick_mission.tasks=nil;state.quick_mission.planes=nil
@@ -1653,8 +1682,8 @@ local function publishState()
     state.management_pause={panel_open=panelOpen,owned=managementPause and managementPause.owned or false,
         error=managementPauseError,
         existing=managementPause and managementPause.existing or false,
-        effective=isFlight and valid(plane)and game:IsGamePaused(plane)or false,
-        weapon_input=isFlight and ready()and true or false} -- 明确区分面板、原生暂停与武器输入，便于复核不可选原因。
+        effective=runtimeAllowed and isFlight and valid(plane)and game:IsGamePaused(plane)or false,
+        weapon_input=runtimeAllowed and isFlight and ready()and true or false} -- 诊断快照不读取已经故障的兵装对象。
     state.sequence=publishSequence
     state.native_hud=nativeHud.status
     state.weapon_presentation=weaponPresentation.status
@@ -1673,12 +1702,58 @@ local function publishState()
     recordStage("publish_submit",submitStarted)
     for key,value in pairs(changedLists)do weaponSwitch.uiLists[key]=value end
 end
--- 禁用先关闭原生与渲染侧入口，再释放自己的控件和事务；不改多人兵装或配置。
+-- 严重错误只锁住增强功能；先尽力独立收尾，避免一次清理异常阻止其余归还。
+function faultRecovery.fatal(message)
+    if runtimeFailed then errorText=faultRecovery.reason;return end -- 严重故障收尾只执行一次。
+    runtimeFailed=true;runtimeAllowed=false;runtimeChanging=false
+    faultRecovery.reason=tostring(message)
+    errorText=faultRecovery.reason
+    note("RECOVERY_RESTART_REQUIRED "..errorText)
+    for _,entry in ipairs({
+        {"core",function()local ok,why=nativeRuntimeGate(0);assert(ok,why)end},
+        {"ownership",function()releaseRuntimeOwnership(true)end},
+        {"panel",function()setPanel(false)end},
+        {"loadout",function()nativeLoadout:reset{clearError=true,releaseInput=false,strict=true}end},
+        {"supply",function()nativeSupply:reset{clearError=true,releaseInput=false,strict=true}end},
+        {"standby",function()nativeStandby:reset{clearError=true,releaseInput=false,strict=true}end},
+        {"parts",function()nativeParts:reset{clearError=true,releaseInput=false,strict=true}end},
+        {"hud",function()nativeHud:reset(true)end},
+        {"central",function()weaponPresentation:reset(true)end},
+    })do
+        local ok,why=pcall(entry[2]);if not ok then note("RECOVERY_CLEANUP_ERROR "..entry[1].." "..tostring(why))end
+    end
+    local called,ok,why=pcall(uiRuntimeGate,faultRecovery.management and 1 or 0)
+    if not called or not ok then note("RECOVERY_UI_ERROR "..tostring(called and why or ok))end
+    requestClose=requestClose+1
+    lastUIKey=nil
+end
+-- 诊断模式只消费面板与设置动作；不调用换机、快速任务或旧兵装事务。
+function faultRecovery.service()
+    local now=os.clock()
+    if now-lastActions>=.05 then
+        lastActions=now
+        local encoded=assert(drain(),"动作内存接口没有返回结果")
+        if encoded~=""then for _,action in ipairs(json.decode(encoded))do applyAction(action)end end
+    end
+    if not lastUIKey or now-lastPublish>=(panelOpen and .1 or 1)then
+        lastPublish=now;lastUIKey="recovery";publishState()
+    end
+end
+-- 单人环境许可和增强功能许可分离：机体退让不能关闭F6。
 local function checkRuntime(activatedWidget)
     if runtimeChanging then return false end
     local allowed,reason=runtimeContext.allowed(instance) -- 每次重新检查，避免事件早于周期更新。
     if activatedWidget and runtimeContext.isMultiplayerWidget(activatedWidget)then
         runtimeContext.enterMultiplayerMenu(instance);allowed=false;reason="multiplayer_menu"
+    end
+    faultRecovery.contextConfirmed=true
+    local managementChanged=faultRecovery.management~=allowed
+    faultRecovery.management=allowed
+    if allowed and runtimeFailed then allowed=false;reason="runtime_error"end
+    if allowed and faultRecovery.mustLeave then
+        if runtimeContext.outsideMission and instance:GetSelectedPlaneID()~=faultRecovery.planeId then
+            faultRecovery.mustLeave=false
+        else allowed=false;reason="aircraft_native_only"end
     end
     if allowed then
         local id=instance:GetSelectedPlaneID()
@@ -1686,25 +1761,28 @@ local function checkRuntime(activatedWidget)
         local passive=modAircraft:nativeOnlyReason(id,info)
         if passive then
             allowed=false;reason="aircraft_native_only"
+            faultRecovery.reason=modAircraft.quarantined[tostring(id)]or(info and info.compatibility_error)or passive
+            faultRecovery.currentIssue=faultRecovery.issuesByPlane[tostring(id)]
+            if faultRecovery.currentIssue then faultRecovery.reason=faultRecovery.currentIssue.reason end
             modAircraft:warn("native_only/"..id,"plane="..id.." code="..tostring(info and info.code).." reason="..passive)
         end
     end
     modAircraft.safetyPending=false
-    local updateContext=not allowed and 0 or runtimeContext.mainMenuVisible and 3 or runtimeContext.outsideMission and 1 or 2
+    local updateContext=not faultRecovery.management and 0 or runtimeContext.mainMenuVisible and 3 or runtimeContext.outsideMission and 1 or 2
     if not versionUpdates.failed and (updateContext~=versionUpdates.context or config.startup_update_check_enabled~=versionUpdates.automatic)then
         versionUpdates.context=updateContext;versionUpdates.automatic=config.startup_update_check_enabled
         -- 仅模式或保存后的选项变化时提交整数；启动配置先交给服务，避免关闭选项仍先联网。
         local updateOK=pcall(versionUpdates.invoke,updateContext,config.startup_update_check_enabled and 1 or 0)
         if not updateOK then versionUpdates.failed=true;note("UPDATE_CONTEXT_ABANDONED")end
     end
-    if allowed==runtimeAllowed and reason==runtimeReason then return allowed end
+    if allowed==runtimeAllowed and reason==runtimeReason and not managementChanged then return allowed end
     runtimeChanging=true
     runtimeAllowed=allowed;runtimeReason=reason
     local gazeOK,_,gazeError=weaponSwitch.gaze.invoke(0,0,0,0)
     assert(gazeOK,gazeError);weaponSwitch.gaze.active=false;weaponSwitch.gaze.available=false
-    weaponSwitch.camera.release()
-    weaponSwitch.view.release()
-    local uiOK,uiErr=uiRuntimeGate(allowed and 1 or 0)
+    weaponSwitch.camera.release(true)
+    weaponSwitch.view.release(false,true)
+    local uiOK,uiErr=uiRuntimeGate(faultRecovery.management and 1 or 0)
     assert(uiOK,uiErr)
     if not allowed or reason=="mission13_fixed_sp"then
         if reason=="mission13_fixed_sp"then aircraftDebug:cancel("第13关使用任务指定SP，已取消调试换机")end
@@ -1715,10 +1793,12 @@ local function checkRuntime(activatedWidget)
         releaseMountPreview(0)
         local coreOK,coreErr=nativeRuntimeGate(0) -- 清除音效、输入、旧玩家及检查点身份。
         assert(coreOK,coreErr)
-        if panelOpen then setPanel(false)end
-        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission13_fixed_sp"or reason=="aircraft_native_only"};nativeSupply:reset{clearError=true,releaseInput=false}
-        nativeStandby:reset{clearError=true,releaseInput=false};nativeParts:reset{clearError=true,releaseInput=false}
-        nativeHud:reset();weaponPresentation:reset()
+        weaponSwitch.salvo.service:release(true) -- 退让后不再调度齐射服务，必须在此归还其输入责任。
+        if panelOpen then setPanel(false);assert(not managementPause,"管理暂停未能释放，请查看暂停日志")end
+        requestClose=requestClose+1;lastUIKey=nil -- 界面许可保留，仍需显式关闭上一增强会话的面板。
+        nativeLoadout:reset{clearError=true,releaseInput=reason=="mission13_fixed_sp"or reason=="aircraft_native_only",strict=true};nativeSupply:reset{clearError=true,releaseInput=false,strict=true}
+        nativeStandby:reset{clearError=true,releaseInput=false,strict=true};nativeParts:reset{clearError=true,releaseInput=false,strict=true}
+        nativeHud:reset(true);weaponPresentation:reset(true)
         supplySession=nil;resetCheckpointState()
         cachedPlane=nil;cachedWorld="";plane=nil;activator=nil;planeAddress=nil;currentWorld=""
         resetFlightTracking();isFlight=false;lastPlaneScan=-1
@@ -1726,7 +1806,14 @@ local function checkRuntime(activatedWidget)
         drain() -- 领取并丢弃内存队列，不留旧模式动作。
     else
         local coreOK,coreErr=nativeRuntimeGate(runtimeModEnabled and 1 or 0)
-        assert(coreOK,coreErr);errorText=nil;lastUIKey=nil
+        assert(coreOK,coreErr)
+        if faultRecovery.reason then
+            -- 只在已清理的退让会话结束、新机体重新准入后播种本Mod状态，不恢复旧请求。
+            for _,feature in ipairs({weaponSwitch.gaze,weaponSwitch.camera,weaponSwitch.view,weaponSwitch.salvo.service})do
+                feature.failed=false;feature.error=nil
+            end
+        end
+        errorText=nil;faultRecovery.reason=nil;faultRecovery.currentIssue=nil;lastUIKey=nil
     end
     note("RUNTIME_MODE "..(allowed and "enabled "or "disabled ")..reason.." "..runtimeContext.describe(instance))
     runtimeChanging=false
@@ -1734,25 +1821,32 @@ local function checkRuntime(activatedWidget)
 end
 -- 反射事件也共用显式失败边界，防止错误跨出引擎回调并留下上次的单人许可。
 syncRuntime=function(activatedWidget)
-    if runtimeFailed or runtimeChanging then return false end
+    if runtimeChanging then return false end
+    if runtimeFailed then
+        -- 严重故障不重跑增强清理，只低频确认F6是否处于允许显示的单人环境。
+        local now=os.clock()
+        if not activatedWidget and now<(faultRecovery.nextContext or 0)then return false end
+        faultRecovery.nextContext=now+.25
+        local ok,allowed=pcall(function()
+            if activatedWidget and runtimeContext.isMultiplayerWidget(activatedWidget)then
+                runtimeContext.enterMultiplayerMenu(instance);return false
+            end
+            return runtimeContext.allowed(instance)
+        end)
+        local management=ok and allowed==true
+        if management~=faultRecovery.management then
+            faultRecovery.management=management
+            local gateOK,why=uiRuntimeGate(management and 1 or 0)
+            if not gateOK then note("RECOVERY_UI_ERROR "..tostring(why))end
+            lastUIKey=nil
+        end
+        return false
+    end
+    faultRecovery.contextConfirmed=false
     local ok,result=xpcall(function()return checkRuntime(activatedWidget)end,debug.traceback)
     if ok then return result end
-    runtimeFailed=true;runtimeAllowed=false;runtimeChanging=true
-    releaseMountPreview(0)
-    errorText=tostring(result);note("RUNTIME_CONTEXT_ERROR "..errorText)
-    local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
-    if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
-    if panelOpen then
-        local closed,err=pcall(function()setPanel(false)end)
-        if not closed then note("RUNTIME_PANEL_RESTORE_ERROR "..tostring(err))end
-    end
-    -- 识别失败也释放已有自定义控件；分别记录清理错误，不让一个模块阻断其他模块收尾。
-    for _,entry in ipairs({{"loadout",nativeLoadout},{"supply",nativeSupply},{"standby",nativeStandby},
-        {"parts",nativeParts},{"hud",nativeHud},{"central",weaponPresentation}})do
-        local cleaned,err=pcall(function()entry[2]:reset{clearError=true,releaseInput=false}end)
-        if not cleaned then note("RUNTIME_VIEW_RESTORE_ERROR "..entry[1].." "..tostring(err))end
-    end
-    runtimeChanging=false
+    if not faultRecovery.contextConfirmed then faultRecovery.management=false end -- 不沿用错误前的单人显示许可。
+    faultRecovery.fatal(result)
     return false
 end
 -- 不在任务、补给、机库草稿或过渡世界切换；保存的目标会在安全入口页自动应用。
@@ -1794,12 +1888,18 @@ tryApplyMasterSwitch=function(force)
 end
 local function tick()
     if not valid(instance)then instance=FindFirstOf("NimbusGameInstance")end
-    if not mountOptionsApplied then
+    if not mountOptionsApplied and runtimeAllowed and not runtimeFailed then
         if isFlight or supplySession then applyFixedMountSetting()else applyFixedMountSetting(config.hangar_mount_enabled)end
     end
     local contextStarted=os.clock()
     local allowed=syncRuntime()
     recordStage("context",contextStarted)
+    if runtimeFailed then
+        if faultRecovery.management then faultRecovery.service()end
+        return -- 未确认单人环境时也不继续快速任务或换机的旧事务。
+    end
+    if not allowed and faultRecovery.management then faultRecovery.service();return end
+    if allowed and errorText then error(errorText)end -- 原生事件中捕获的控制器错误也走统一机体退让。
     quickMission:startup()
     if quickMission:pump(runtimeReason)then
         mountStartup.cancel();weaponSwitch.view.release()
@@ -1864,6 +1964,12 @@ local function tick()
             skinTable:GetAddress()),"机体目录内存接口没有返回结果"))
         assert(not catalogue.error,catalogue.error)
         assert(catalogue._compat and catalogue._compat.schema==1,"机体兼容目录协议不匹配");note("CATALOGUE_READY")
+        faultRecovery.issues=assert(catalogue._compat.weapon_issues,"兵装目录缺少检查结果")
+        for _,issue in ipairs(faultRecovery.issues)do
+            local id=tostring(issue.id)
+            if not faultRecovery.issuesByPlane[id]then faultRecovery.issuesByPlane[id]=issue end
+        end
+        faultRecovery.catalogueReady=true
         if not syncRuntime()then return end -- 目录刚就绪也先按纯数据退让，不先碰特殊机体/兵装对象。
     end
     quickMission:updateAuto()
@@ -2237,29 +2343,30 @@ LoopInGameThreadWithDelay(20,function()
             end
             assert(IsInGameThread(),"Controller callback is outside the game thread")
             local started=os.clock() -- 不改变输入、武器和 HUD 的既有更新频率。
-            tick();weaponSwitch.salvo.service:update();recordTickCost(started)
+            tick()
+            if runtimeAllowed and runtimeModEnabled then weaponSwitch.salvo.service:update()end
+            recordTickCost(started)
         end,debug.traceback)
         if not ok then
-            mountStartup.cancel() -- 错误退出不能留下永不消失的加载提示。
-            errorText=tostring(err);note("ERROR "..errorText)
-            aircraftDebug:failed(errorText)
-            quickMission:failed(errorText)
-            releaseMountPreview(0)
-            if runtimeChanging or not runtimeAllowed then
-                -- 模式识别/清理失败只保留诊断，绝不沿用上次单人许可。
-                runtimeAllowed=false;runtimeChanging=false;runtimeReason="context_error"
-                local uiOK,uiErr=uiRuntimeGate(0);local coreOK,coreErr=nativeRuntimeGate(0)
-                if not uiOK or not coreOK then note("RUNTIME_DISABLE_ERROR "..tostring(uiErr).." "..tostring(coreErr))end
-                return false
-            end
-            releaseRuntimeOwnership()
-            -- 尚未重建兵装时可完整交回原生；已配置/补给中的错误保留既有冻结边界，不能伪装成原生配装。
-            if not configured and not supplySession and valid(instance)and catalogue then
-                modAircraft:quarantine(instance:GetSelectedPlaneID(),errorText)
-                if not syncRuntime()then return false end
-            end
-            -- Report once, freeze weapon mutations, and keep the UI/error visible.
-            -- A user closes the panel to resume the game; no hidden loadout retry.
+            local message=tostring(err);note("ERROR "..message)
+            local handled,cleanupError=xpcall(function()
+                mountStartup.cancel()
+                errorText=message
+                aircraftDebug:failed(message);quickMission:failed(message)
+                -- 核心共享状态故障不能通过换机解除；没有可信机体归属也按严重错误处理。
+                local processError=message:find(tr("compatibility.runtime.process_blocked","zh"),1,true)
+                    or message:find(tr("compatibility.runtime.process_blocked","en"),1,true)
+                if runtimeFailed or runtimeChanging or processError or not runtimeAllowed or not valid(instance)or not catalogue then
+                    faultRecovery.fatal(message);return
+                end
+                local id=instance:GetSelectedPlaneID()
+                faultRecovery.reason=message;faultRecovery.planeId=id
+                faultRecovery.mustLeave=isFlight or configured or supplySession~=nil
+                releaseRuntimeOwnership(true)
+                modAircraft:quarantine(id,message)
+                syncRuntime() -- 当前机体统一退让；失败会由syncRuntime升级为严重错误。
+            end,debug.traceback)
+            if not handled then faultRecovery.fatal(message.."\n"..tostring(cleanupError))end
             local published,publishErr=pcall(publishState)
             if not published then note("UI_PUBLISH_ERROR "..tostring(publishErr))end
         end

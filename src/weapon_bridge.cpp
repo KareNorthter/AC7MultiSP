@@ -2308,27 +2308,46 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                     {"category",read<unsigned char>(row+32)},{"type_key",unrealString(row+224)}};
             }catch(const std::exception& error) {nativeLog(std::string("MOD_WEAPON_ROW_SKIPPED ")+error.what());}
         }
-        Json catalog=Json::object();
+        Json catalog=Json::object(),catalogIssues=Json::array();
         for(const auto row:tableRows(planes)) {
-            int id=-1;
+            int id=-1;std::string planeCode;
             try {
                 id=read<int>(row+8);require(id>=0,"机体目录：机体编号无效");
                 const auto key=std::to_string(id);
                 if(catalog.contains(key)) {
                     catalog[key]["supported"]=false;catalog[key]["compatibility_error"]="重复机体编号";
+                    catalogIssues.push_back({{"id",id},{"code",catalog[key].value("code",std::string())},
+                        {"reason","重复机体编号"},{"reason_key","recovery.duplicate_aircraft"}});
                     nativeLog("MOD_AIRCRAFT_DUPLICATE_ID "+key);continue;
                 }
-                const auto planeCode=unrealString(row+16);
+                planeCode=unrealString(row+16);
                 require(!planeCode.empty() && planeCode.size()<=128,"机体目录：机体代号无效");
                 Json options=Json::array();bool supported=true,infinite=false;std::array<int,3> maxima{};
                 for(int i=0;i<3;++i) {
-                    const auto code=unrealString(row+96+i*24);
-                    if(code=="-1") {supported=false;continue;}
-                    if(!byCode.count(code))throw std::runtime_error("机体目录：兵装引用不存在 "+code);
-                    const int maximum=read<int>(row+112+i*24);
-                    require(dualsp::validAmmoCount(maximum),"机体目录：槽位基础载量无效");
-                    maxima[i]=maximum;infinite=infinite || maximum<0;
-                    auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=maximum;options.push_back(option);
+                    std::string weaponCode;const char* issueKey="";
+                    try {
+                        const auto code=unrealString(row+96+i*24);
+                        weaponCode=code;
+                        if(code=="-1") {supported=false;continue;}
+                        if(duplicateWeaponCodes.count(code)) {
+                            issueKey="recovery.duplicate_weapon";throw std::runtime_error("机体目录：重复兵装代号 "+code);
+                        }
+                        if(!byCode.count(code)) {
+                            issueKey="recovery.missing_weapon";throw std::runtime_error("机体目录：兵装引用不存在 "+code);
+                        }
+                        const int maximum=read<int>(row+112+i*24);
+                        if(!dualsp::validAmmoCount(maximum)) {
+                            issueKey="recovery.invalid_ammo";throw std::runtime_error("机体目录：槽位基础载量无效");
+                        }
+                        maxima[i]=maximum;infinite=infinite || maximum<0;
+                        auto option=byCode.at(code);option["index"]=i;option["code"]=code;option["max"]=maximum;options.push_back(option);
+                    }catch(const std::exception& error) {
+                        // 逐槽保留异常；不能因第一项缺失而丢掉机体身份及后续缺项。
+                        supported=false;
+                        catalogIssues.push_back({{"id",id},{"code",planeCode},{"slot",i+1},
+                            {"weapon",weaponCode},{"reason",error.what()},{"reason_key",issueKey}});
+                        nativeLog("MOD_AIRCRAFT_ROW_UNAVAILABLE "+key+" "+error.what());
+                    }
                 }
                 auto& entry=catalog[key];
                 entry={{"id",id},{"code",planeCode},{"main_max",read<int>(row+88)},
@@ -2342,12 +2361,14 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
                 if(skinReferences.contains(planeCode))entry["skins"]=skinReferences[planeCode];
                 if(infinite)nativeLog(Json{{"event","MOD_AIRCRAFT_INFINITE_AMMO"},{"id",id},{"code",planeCode},{"sp_max",maxima}}.dump());
             }catch(const std::exception& error) {
-                if(id>=0)catalog[std::to_string(id)]={{"id",id},{"supported",false},{"compatibility_error",error.what()}};
+                if(id>=0)catalog[std::to_string(id)]={{"id",id},{"code",planeCode},{"supported",false},{"compatibility_error",error.what()}};
+                catalogIssues.push_back({{"id",id},{"code",planeCode},{"reason",error.what()}});
                 nativeLog("MOD_AIRCRAFT_ROW_UNAVAILABLE "+std::to_string(id)+" "+error.what());
             }
         }
         const auto planeCount=catalog.size();
-        catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError},{"skin_metadata",skinMetadata}};
+        catalog["_compat"]={{"schema",1},{"weapons",byCode},{"reference_error",referenceError},{"skin_metadata",skinMetadata},
+            {"weapon_issues",catalogIssues}};
         result=catalog.dump();nativeLog("Catalogue loaded: "+std::to_string(planeCount)+" planes");
     }catch(const std::exception& e){nativeLog(std::string("CATALOGUE_ERROR ")+e.what());result=Json{{"error",e.what()}}.dump();}
     if(api){api->string(luaState,result.data(),result.size());return 1;}
@@ -2355,3 +2376,4 @@ extern "C" __declspec(dllexport) int dualsp_catalogue_memory_v1(void* luaState) 
 }
 // 新目录与Lua必须成套；不允许旧核心缺少真实引用时静默放宽机体身份。
 extern "C" __declspec(dllexport) int dualsp_mod_aircraft_catalogue_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_aircraft_recovery_supported(void*) {return 0;}

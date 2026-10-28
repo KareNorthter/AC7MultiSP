@@ -46,6 +46,7 @@
 | 文档 | 内容与维护边界 |
 |---|---|
 | [架构](engineering/architecture.md) | 当前模块、跨语言接口、生命周期与保护机制；含未发布的通用兼容适配流程及扩展边界，不写逐轮交付 |
+| [机体故障隔离与恢复测试指导](engineering/aircraft-fault-testing.md) | 候选准备、人工故障用例、F6诊断与换机恢复、严重故障及真实兼容问题对照；区分可执行步骤和待补充注入入口 |
 | [快速进入测试任务设计](engineering/quick-mission-launch.md) | 快速任务多SP/皮肤、预设迁移及片头跳过设计，原生依据、PART待续条件与验证边界 |
 | [开发与恢复](engineering/development.md) | 源码/原料路径、工具依赖、接收恢复和未解决事项 |
 | [挂载设计](engineering/multi-sp-mount-design.md) | 挂点、净空、布局、配弹、显隐及当前取舍 |
