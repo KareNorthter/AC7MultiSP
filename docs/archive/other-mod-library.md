@@ -12,6 +12,7 @@
 | 机体-XFA-33组 | 切换到 XFA-33 替换组，会替换 Su-30M2、Su-33 和 Su-30SM |
 | 机体-恢复原安装组 | 使用同一工具恢复原安装组；不负责恢复自定义呼号包 |
 | 一键切换Gunplay | 关闭游戏后双击，在启用与停用之间切换 Enhanced Gunplay A5 主文件 |
+| 恢复B组_结束真实冲突测试 | 退出游戏后先保存日志，再将XFA-36A/F-17V/Gleipnir真实冲突组恢复到测试前B组；流程见[故障测试指导](../engineering/aircraft-fault-testing.md#2026-10-28真实冲突测试组) |
 | AC7 Integrated-图形界面 | 第三方鼠标飞控及附加 Mod 工具；功能、适用范围和操作以其自带说明为准 |
 | Vortex-Mod管理器 | 打开本机 Vortex；其管理状态、下载和部署仍由 Vortex 自己维护 |
 

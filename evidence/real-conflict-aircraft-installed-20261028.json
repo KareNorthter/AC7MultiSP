@@ -1,0 +1,185 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "purpose": "作者要求真实冲突机体检测/退让/恢复环境",
+  "active_profile": "FAULT_XFA36",
+  "previous_profile": "B",
+  "catalogue_rows": 179,
+  "installed": [
+    {
+      "id": "old-015",
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~Memory_Error_AddonPack_P.pak",
+      "sha256": "7adcf29e8a9ca4530af3e53228feb5935431254e179af7ad33c231f9cf01bea9",
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\XFA-36A 3520.zip"
+    },
+    {
+      "id": "old-013",
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~F17V_Addon_Base_P.pak",
+      "sha256": "06ad23a25bc8be69e731f7cbc3076257b1fe792326060b5e4c240f00ea7ddbc8",
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\F-17V 3600.zip"
+    },
+    {
+      "id": "old-020",
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~~F17V_DataTable&Localization_P.pak",
+      "sha256": "dcce1059201b02598655c3356a224e1f38907339cc007c14ab4aeeff615fdf0c",
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\F-17V 3600.zip"
+    },
+    {
+      "id": "old-010",
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~Gleipnir_P.pak",
+      "sha256": "2cbd9440898c4deaab57d3ae906519e449a2c965b759c3dc96767de7cef05a89",
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\Gleipnir 3301.zip"
+    },
+    {
+      "id": "old-018",
+      "target": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\Game\\Content\\Paks\\~mods\\AC7MultiSP_Compatibility_Batch3_1\\~~~~~Gleipnir_Addon_DTs_P.pak",
+      "sha256": "96a13c4967f14d5fef8b6d87d370ca0c7a208ca407e94529803d438ad5dedeca",
+      "archive": "E:\\AC7_MOD\\机体大全\\模组\\机体模组（可自选）\\Body mods\\Gleipnir 3301.zip"
+    }
+  ],
+  "backup": "E:\\AC7_MultiSP\\backup\\real-conflict-test-20261028-205002-516583",
+  "transaction": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\transactions\\20261028-205107-064219",
+  "verified_resource_differences": [
+    [
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~~F17V_Addon_Base_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_LaserRadiusMetersCurve_TTLS.uasset",
+        "sha256": "e8274702fcbcbea96a7f43f583a9951a428caf658d18aa7ca451816f9f7fa1d9"
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~~~~~X-02R_Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_LaserRadiusMetersCurve_TTLS.uasset",
+        "sha256": "bb87822af3f484b4b0c35d7976d2e2d77882364ba854d3a3eaacb74f3dfe1fe6"
+      }
+    ],
+    [
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~~F17V_Addon_Base_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_LaserRadiusMetersCurve_TTLS.uexp",
+        "sha256": "73ea99d1f8163509d6a84f6f0ede86f064a48537dd6b361d16e23a0c64f23616"
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~~~~~X-02R_Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/Data/CUR_WP_Player_LaserRadiusMetersCurve_TTLS.uexp",
+        "sha256": "8ac4cb046371d9d8d1091a491617cb7e009b8aaa3f70fe698dcb8903dfa721bf"
+      }
+    ],
+    [
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~Gleipnir_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Flare_IRCM_x02r.uasset",
+        "sha256": "323454372437441a21af0fc479eb2c01156eca9e0d36db95258078b1feb50d26"
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~~~~~X-02R_Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Flare_IRCM_x02r.uasset",
+        "sha256": "203b77987eda59e6ea8cbdec15dc69be05ae1425983bf716baf4a8cbcbe362a6"
+      }
+    ],
+    [
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~Gleipnir_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Flare_IRCM_x02r.uexp",
+        "sha256": "da95c94364db4b3400155290f0a3e19f5940ba8519bdfacd3a8bcca89ed7fea2"
+      },
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~~~~~X-02R_Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Flare_IRCM_x02r.uexp",
+        "sha256": "f4647e37959a001851e5e301422bd4d9099837babff08f5655fdf22e4d82960c"
+      }
+    ],
+    [
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~UI-4054 Aurora Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/OSLData/OSL_Impact.uasset",
+        "sha256": "31e8021b4da61f18249c1903e4b4de8189a9dc25b26e379e1f2dd401bb9969d4"
+      },
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~~Memory_Error_AddonPack_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/OSLData/OSL_Impact.uasset",
+        "sha256": "2a6667bb3c92b026e3ddbf6bdc99ce251acd5857b235b6368319112fd7a302ff"
+      }
+    ],
+    [
+      {
+        "pak": "E:\\SteamLibrary\\steamapps\\common\\ACE COMBAT 7\\AC7AircraftProfiles\\library\\new\\~~UI-4054 Aurora Addon_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/OSLData/OSL_Impact.uexp",
+        "sha256": "b263287d62cda8a0c5a7e6b69ca4d9044c9222525a3e8dc3a0a9f1adec9d78d9"
+      },
+      {
+        "pak": "E:\\AC7_MultiSP\\backup\\aircraft-mod-profiles-20261023-224624\\original-paks\\AC7MultiSP_Compatibility_Batch3_1\\~~~~Memory_Error_AddonPack_P.pak",
+        "member": "../../../Nimbus/Content/Blueprint/Weapons/Player/Base/OSLData/OSL_Impact.uexp",
+        "sha256": "edb1b8afed53c373788f28b339dab82869e14dc6ac3b7b983fe109a19ce38545"
+      }
+    ]
+  ],
+  "restored_catalogue_rows": [
+    {
+      "id": 281,
+      "code": "f17v",
+      "weapons": [
+        "6agm",
+        "12am",
+        "tls"
+      ]
+    },
+    {
+      "id": 252,
+      "code": "gleip",
+      "weapons": [
+        "shcn",
+        "swbm",
+        "hpm"
+      ]
+    },
+    {
+      "id": 157,
+      "code": "fa36",
+      "weapons": [
+        "hgp",
+        "mirv",
+        "osl"
+      ]
+    },
+    {
+      "id": 271,
+      "code": "yf36",
+      "weapons": [
+        "6asm",
+        "mirv",
+        "spb"
+      ]
+    },
+    {
+      "id": 272,
+      "code": "qfa36",
+      "weapons": [
+        "eml",
+        "lagm",
+        "uav"
+      ]
+    }
+  ],
+  "core_sha256": "c3363066621fe237e43a14b360490d39090bdd361f5c428f1eee742dc98afefe",
+  "ui_sha256": "16e3ad85510879459d46820d637854ea47058bc60e6fd04abc90f2ca060b1afb",
+  "runtime_unchanged": true,
+  "artificial_fault_config_present": false,
+  "game_started": false,
+  "compiled": false,
+  "game_tests_run": false,
+  "restore_launcher": "E:\\AC7_MOD\\管理入口\\恢复B组_结束真实冲突测试.cmd",
+  "restore_control_sha256": "956010ff8c6cf7cfc872bf525aaf65764f2a50f78baf3a5d51ba60ca38ae1cc6",
+  "scope_limit": "共享资源字节不同不等同于必然报错；当前检查器不检查所有PAK覆盖。目录可见性和效果由作者启动游戏确认。",
+  "local_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-real-conflict-test\\installation-receipt.json",
+  "design_draft_unchanged": true,
+  "author_pages": {
+    "XFA36": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3520",
+    "F17V": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3600",
+    "Gleipnir": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3301"
+  },
+  "name_verification": "来源、皮肤/长按功能及本机目录简称差异见唯一测试正文；XFA首项MGP/HGP及YF36缩写未擅自改名，当前现场显示待用户核对。",
+  "snapshot_scope": "备份原B组清单/状态/计划及完整已装DualSP；分组工具另保留每次改动的PAK事务。个人存档、Vortex与未受控PAK未修改。",
+  "ready_preparation": "E:\\AC7_MultiSP\\Temp\\tasks\\20261028-real-conflict-test\\ready\\prepared.json",
+  "preparation_failure_retained": "首次打包路径重复由回读拦截，未部署；原中间件与备份保留，r2修正后完整核对才启用。",
+  "normal_profile_recovery_executed": false
+}

@@ -120,6 +120,38 @@ T6/T7触发后，核对重启提示、F6错误详情及日志。返回菜单、�
 
 ## 真实兼容问题的对照方法
 
+### 2026-10-28真实冲突测试组
+
+作者要求安装XFA-36并故意混装冲突机体，设计稿先保持原样。本机现已启用`FAULT_XFA36`，以此前B组为基础，启用本机收藏的Memory Error、F-17V、Gleipnir共5份作者PAK；X-02R与UI-4054继续保留。来源归档成员与部署PAK的SHA256逐份一致，未改作者包，不启用人工故障注入，不更新核心或界面DLL。
+
+为避免B组过滤表继续隐藏新装机体，测试组仅从既有完整兼容目录补回5条真实记录：XFA-36A/fa36（157）、YF-36/yf36（271）、QFA-36/qfa36（272）、F-17V/f17v（281）、Gleipnir/gleip（252）。其余B组目录及纹理固定成员保留，目录共179条。不制造缺失代号或故意损坏对象；可见性和效果仍须作者启动确认。
+
+| 同时启用的组合 | 已复核的真实不同内容资源 | 当前检查边界 |
+|---|---|---|
+| XFA-36包＋UI-4054 | OSL_Impact的uasset/uexp | 命中特效覆盖，未必造成可检测的兵装资料错误 |
+| F-17V＋X-02R | 引导激光半径曲线的uasset/uexp | 数值/曲线覆盖不一定报警，不等同于缺失兵装 |
+| Gleipnir＋X-02R | Flare_IRCM_x02r的uasset/uexp | 真实IRCM蓝图覆盖；运行异常能否被现有边界捕获须实测 |
+
+启动并非必须报错。先看F6实际检查条目，再区分资料缺项、增强运行错误、单纯数值/外观覆盖；不得把最后一种未报警自动判为检查器失效，也不能声称全部冲突已检测。
+
+测试仅需三步：
+
+1. 启动，保存加载提示与F6异常详情；尝试XFA-36A，再按情况检查F-17V和Gleipnir。名称见下表，首次使用默认皮肤即可。
+2. 若发生机体隔离，退出任务换此前已通过的F-16C或Mirage 2000-5，确认多SP恢复；原出错机体本次进程继续隔离。有重启提示则完整退出，不尝试用开关解除严重状态。
+3. 退出游戏，双击`E:/AC7_MOD/管理入口/恢复B组_结束真实冲突测试.cmd`。入口先保存完整轮转日志与状态，再用原分组工具恢复B组PAK及174条目录；重新启动检查人工混装因素是否消失。
+
+本机操作回执为`E:/AC7_MultiSP/Temp/tasks/20261028-real-conflict-test/installation-receipt.json`，包含安装摘要、六个资源成员差异、原B组快照和事务位置；恢复日志保存在该目录的results下。备份为`E:/AC7_MultiSP/backup/real-conflict-test-20261028-205002-516583/`。首次准备的目录路径重复被离线回读拦截，未启用；失败中间件与首次快照保留，本次ready目录才是有效准备结果。
+
+### 本轮作者说明与SP原名核对
+
+| 机体与作者页面 | 作者说明 | 本机目录及待确认差异 |
+|---|---|---|
+| [XFA-36A包](https://www.nexusmods.com/acecombat7skiesunknown/mods/3520) | XFA-36A为MGP、MIRV-I（原界面称MSTM）、OSL（原界面称TLS）；YF-36为6SASM、MIRV-II、SFFS；QFA-36为EML、LAGM、UAV。作者未说明长按功能或皮肤改变兵装效果，记为未知 | 本机兼容目录分别为HGP/MIRV/OSL、6ASM/MIRV/SPB、EML/LAGM/UAV。首项MGP与HGP及YF-36缩写存在差异，须按实际类与显示进一步核对，不擅自重命名。网页当前1.2说明隔离UAV曲线；本次使用已收藏原包，未把它冒称最新1.2 |
+| [F-17V](https://www.nexusmods.com/acecombat7skiesunknown/mods/3600) | 6AGM（AASM Hammer）、12AAM（AIM-120C）、引导TLS；VISTA皮肤的长按切换武器功能启用IEWS | 本机6agm/12am/tls。显示原名与内部缩写须分开；先用默认皮肤检查，VISTA特殊功能另测。页面版本栏与更新日志标号不一致，本次以收藏包摘要标识版本 |
+| [Gleipnir](https://www.nexusmods.com/acecombat7skiesunknown/mods/3301) | Shock Cannon、Shock-Wave Ballistic Missile、High-Powered Microwave；长按武器切换启用引导TLS，长按雷达切换另有武器切换，T或十字键右长按2秒启用光学迷彩。要求骨数扩展、机体兼容前置及essential files | 本机shcn/swbm/hpm。作者列出的皮肤未声明改变武器；迷彩与锁定声有独立已知限制，不混入本Mod故障结论。新安装前置版本未升级，沿用此前B组共同前置及已登记缺项 |
+
+当前运行核心为此前已验收快速五轮的alpha2 T6修正版，后续IEWS显示、新Su-57/单MGP源码未编译安装。本节是已准备环境，不代表真实冲突、命名或恢复已经验收。
+
 针对LMCM等资料缺失，先按[兼容性归因记录](../research/mod-aircraft-compatibility.md#本机txt说明与兵装资料缺失的归因)核对前置与实际加载表，避免把所有问题都归咎于机体间冲突。
 
 1. 保留问题安装的文件清单和当次完整日志。记录缺失代号、机体编号、游戏PID及核心版本；目录里有记录不等于机体资源已安装。
