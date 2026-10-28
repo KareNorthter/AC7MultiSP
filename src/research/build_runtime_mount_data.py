@@ -299,14 +299,20 @@ def build(include_remaining=True):
     else:
         from f18etg_socket_r2_data import apply_f18etg_socket_r2
     apply_f18etg_socket_r2(planes, assets, preserved, ROOT)
-    if __package__:
-        from .remaining_external_mount_data import append_remaining_external
-    else:
-        from remaining_external_mount_data import append_remaining_external
-    if include_remaining:
-        append_remaining_external(planes, assets, preserved, ROOT)
-    return {'planes':planes,'assets':assets,'collision_preservation':preserved,
+    data = {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
+    if __package__:
+        from .pkfa_internal_runtime_data import append_pkfa_internal
+    else:
+        from pkfa_internal_runtime_data import append_pkfa_internal
+    data = append_pkfa_internal(data, ROOT)
+    if include_remaining:
+        if __package__:
+            from .remaining_external_mount_data import append_remaining_external
+        else:
+            from remaining_external_mount_data import append_remaining_external
+        append_remaining_external(data['planes'], data['assets'], data['collision_preservation'], ROOT)
+    return data
 
 
 if __name__=='__main__':

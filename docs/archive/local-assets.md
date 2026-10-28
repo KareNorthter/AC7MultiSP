@@ -9,6 +9,9 @@
 | 用途 | 本机位置 | 使用方法与边界 |
 |---|---|---|
 | 本体/DLC外挂机体候选输入 | `C:/Users/83717/.codex/worktrees/base-dlc-multi-sp/AC7_MultiSP/Temp/tasks/20261028-base-dlc-multi-sp/` | `native-source`为本机原版提取副本；`resources-r2`为13份新挂架，`cooked-audit`为实际编码回读；`mgp-single-pod-resources`为后续2份单MGP资源，`mgp-current-live`/`mgp-current-fire60`保只读现场，`mgp-native-*`保原生代码；`mount-assets-92/source`为当前92资源/184成员完整输入，旧`mount-assets-90/source`保留，父目录清单记录摘要。`resources-r1`仅为中间副本，保留未清理；不可作为整套输入。来源见[外挂机体候选](../engineering/multi-sp-mount-design.md#剩余外挂机体候选未发布待验证)，均未打包或安装 |
+
+| 普通Su-57切换与关舱正常现场 | C:/Users/83717/.codex/worktrees/internal-bay-multisp/AC7_MultiSP/Temp/tasks/20261028-official-bay-live/ | 599次约60秒只读通道/姿态采样、两种显示状态切换日志、有限时长采集脚本及未采用的连续性精确补丁；不入Git。关舱正常，关闭状态动态采样漏采，来源和继续条件见[现场记录](../../evidence/su57-bay-live-observation-20261028.json)；命令中断不等于子进程立即终止，第二段已自行结束 |
+| F35C关闭模型后舱门不闭合现场 | C:/Users/83717/.codex/worktrees/internal-bay-multisp/AC7_MultiSP/Temp/tasks/20261028-f35-bay-live/ | 作者启动的2.26.2 alpha1进程只读采样；玩家发现、Parts与本体/SWP2发布姿态、临时采集脚本及本次进程日志留本机，不入Git。初次旧命令地址失效，后按对象身份与控制器归属定位；结论见[挂载正文](../engineering/multi-sp-mount-design.md#官方内舱与活动机构续研2026-10-28未发布) |
 | 当前77资源输入 | Temp/integration-2.23.0-refresh/Temp/mount-assets-2.23.0-refresh/source | 原位保留154成员；来源见[开发说明](../engineering/development.md)。旧2.14/2.20输入不能代替 |
 | 挂载及动画待续原料 | Temp/remaining-native-mount-research/、Temp/mount-assets-*、Temp/f22a-*20261017-1144* | 原位保留；部分manifest和研究脚本读取绝对路径，搬动会使旧处理失败。具体方案见[研究索引](../research/README.md) |
 | 已封存工作树及冻结产物 | 工作区索引列出的Temp/integration-*及研究目录 | 原位保留；不要从文件夹名猜版本，也不要直接在封存树继续写。新工作从main开分支 |

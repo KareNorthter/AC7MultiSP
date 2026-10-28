@@ -82,6 +82,8 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         const Addr original=skeletal?read<Addr>(rack+mountProperty(rack,"SkeletalMesh","ObjectProperty",8)):
             mountBaselineMesh(rackIdentity,read<Addr>(rack+0x728));
         require(mountName(mountIdentity(original).address)==group.at("rack").get<std::string>(),("扩展挂载：原生挂架资源不匹配"+context).c_str());
+        if(group.contains("rack_package"))require(mountName(read<Addr>(original+0x20))==group.at("rack_package").get<std::string>(),
+            ("扩展挂载：原生挂架包不匹配"+context).c_str());
         const auto flags=read<unsigned char>(rack+0x1bc);
         state.visuals.push_back({rackIdentity,pool,-1,bool(flags&0x10),bool(flags&0x20)});
         const int variant=plan.at("variants").at(pool).get<int>();
@@ -125,6 +127,8 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
             const Addr mesh=mountBaselineMesh(identity,read<Addr>(component+0x728));
             if(!group.at("mesh").is_null())require(mesh && mountName(mesh)==group.at("mesh").get<std::string>(),("扩展挂载：原生弹体资源改变"+componentContext+", socket="+socket).c_str());
             else require(!mesh || mountName(read<Addr>(mountIdentity(mesh).address+0x10))=="StaticMesh",("扩展挂载：固定效果源网格类型改变"+componentContext+", socket="+socket).c_str());
+            if(group.contains("mesh_package"))require(mesh && mountName(read<Addr>(mesh+0x20))==group.at("mesh_package").get<std::string>(),
+                ("扩展挂载：原生弹体包不匹配"+componentContext).c_str());
             const auto componentFlags=read<unsigned char>(component+0x1bc);
             // 生命周期校验仍使用原生池下标，不能改成登记Socket序号。
             state.visuals.push_back({identity,pool,index,bool(componentFlags&0x10),bool(componentFlags&0x20)});

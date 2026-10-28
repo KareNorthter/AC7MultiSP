@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "research_branch": "codex/research-internal-bay-multisp",
+  "research_candidate_commit": "074fdc66b2759ad21320eb054fba2f22a11a0565",
+  "installed_version": "2.26.2 alpha1",
+  "installed_core_sha256": "cde3be50626ea3361085e89dbf4e1475fa3a589791155df44603279de21bfdc9",
+  "installed_ui_sha256": "43c5d24b921dd3225b6576877da9c981f722ad61e065bcb72ad0ce4aaaa42ff3",
+  "installed_source_commit": "8cc309b076caf751445c6b43b2842976d5ab8869",
+  "source_comparison": {
+    "baseline": "37b36a850ceceaa95e97911dfcc4eb59b93e200d",
+    "files": [
+      "src/su30sm_fixed_mount.hpp",
+      "src/aircraft_bay_animation.hpp",
+      "src/aircraft_bay_profiles.hpp"
+    ],
+    "diff_empty": true
+  },
+  "process_write": false,
+  "game_functions_called": false,
+  "input_injected": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed_by_this_task": false,
+  "game_started_by_user": true,
+  "candidate_validated": false,
+  "identity_checks": [
+    "唯一非CDO原版F35涂装派生Pawn",
+    "Controller.Pawn等于当前玩家",
+    "激活器owner回指玩家",
+    "PlaneBodyMesh网格f35c/动画f35c_AnimBP_C",
+    "引擎owner回指及Parts虚表",
+    "采样首尾玩家身份和七路输出一致"
+  ],
+  "sample": {
+    "native_config": 2,
+    "armed": 0,
+    "parts": {
+      "config": 2,
+      "request": 0,
+      "phase": 0,
+      "domain_flags": 6,
+      "held": false,
+      "outputs": {
+        "spwc": -0.009999999776482582,
+        "swc1": 1.0,
+        "swc2": 1.0,
+        "swc3": -0.009999999776482582,
+        "swca": -0.009999999776482582,
+        "swcb": -0.009999999776482582,
+        "swcc": 1.0
+      }
+    },
+    "published_pose_counts": {
+      "body": 31,
+      "SWP2": 5
+    }
+  },
+  "conclusion": "当前MSL下原生公共进度已闭，但旧swc1/swc2/swcc仍全开；与F35原本体swcc消费关系吻合，确认独立/共舱输出残留。未做姿态端点拟合，不排除额外骨发布问题。",
+  "animation_resource_basis": {
+    "path": "evidence/sp-switch-animation-research.json",
+    "sha256": "15fc5de041ccfd4f780755793ea4d38f6a903028df16c9990c7a56cad1ccc601",
+    "json_pointer": "/aircraft/10/body/controlled_bones",
+    "channels": [
+      "swcc"
+    ],
+    "bones": [
+      "SWPCoverC_01",
+      "SWPCoverC_02",
+      "SWPCoverC_03",
+      "SWPCoverC_04",
+      "SWPCoverC_05",
+      "SWPCoverC_06",
+      "SWPCoverC_07",
+      "SWPCoverC_08"
+    ]
+  },
+  "log_basis": {
+    "pid": 42944,
+    "models_enabled": false,
+    "ops": "原生日志request3选择配置1、request4选择配置2，随后SELECTION_AUDIO_COMMITTED 0；暂停页面为CampaignHudPause",
+    "boundary": "日志不包含图像，舱门视觉异常来自作者复现说明"
+  },
+  "failed_initial_capture": {
+    "reason": "旧采集工具从2026-10-21的native-command.txt读取旧地址，ReadProcessMemory错误299；未产出有效快照",
+    "resolution": "停止使用旧命令地址，当前对象表发现唯一F35并核对控制器/激活器归属",
+    "old_command_file_modified": false
+  },
+  "local_materials_root": "C:\\Users\\83717\\.codex\\worktrees\\internal-bay-multisp\\AC7_MultiSP\\Temp\\tasks\\20261028-f35-bay-live",
+  "local_material_hashes": {
+    "after-switch-msl.json": "9eb6fe0f3997f1a92948c9fa5d21d24f37f8ca6584a2aa4e5863b60ebee2e429",
+    "capture_live.py": "45b23b45ff1a90ff78b064095146e90ca1b3529151a3cf72f4c2edb4b59f311c",
+    "models-on-msl.json": "ac54e594f052ecffe0b7372ddbeaacfcca9a3d5b1a768cefc18dd7d5e5e946f0",
+    "native-log-models-on.txt": "cf4db9d2279a51a5ae43357357eb551613b7d4f05eafb043b8e99c5dd2a65cb9",
+    "native-log-observation.txt": "3cadb30255c0c3672de708e56d05be242c07468f7bf5bf7931c1263745f5ec13",
+    "player-discovery.json": "2f1a465a6d3d5f6ec3bbd0c734a02395c3f81b60a9d90bada29612468d0fc981"
+  },
+  "remaining": [
+    "候选构建和安装另按作者授权",
+    "候选SOD/4AAM半开全开连续性及MSL收拢实机观察",
+    "普通Su-57关闭显示后的同类现场",
+    "性能未采样，不能承诺帧率"
+  ],
+  "models_on_comparison": {
+    "same_player_activator_body_animation": true,
+    "sample": {
+      "native_config": 2,
+      "armed": 0,
+      "parts": {
+        "config": 2,
+        "request": 0,
+        "phase": 0,
+        "domain_flags": 6,
+        "held": false,
+        "outputs": {
+          "spwc": -0.009999999776482582,
+          "swc1": -0.009999999776482582,
+          "swc2": -0.009999999776482582,
+          "swc3": -0.009999999776482582,
+          "swca": -0.009999999776482582,
+          "swcb": -0.009999999776482582,
+          "swcc": -0.009999999776482582
+        }
+      }
+    },
+    "changed_published_bone_indices": {
+      "body": [
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "SWP2": [
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "comparison_threshold": 0.0001,
+    "interpretation": "开启模型并再次切换SP后，七输出均关闭，本体和SWP2姿态改变，说明没有永久停止发布姿态。残留输出是原异常直接原因。",
+    "operation_boundary": "原生日志models=true且request5/6/7再次切换配置0/1/2后回MSL，不能把结果描述成仅切模型开关的受控对照",
+    "bone_identity_boundary": "只比较相同组件的发布姿态索引，未将各索引按本轮运行骨名逐项拟合"
+  }
+}

@@ -1097,7 +1097,6 @@ void execute(const Command& command) {
 #ifdef DUALSP_SU30SM_MOUNT_PROTOTYPE
     try {
         fixedMountCommit(command); // 外观失败独立降级，不把已经完成的兵装事务报告为失败。
-        bindF35Cover(command.plane);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
     aircraftBayBind(command); // 舱门分域独立于多挂外观开关，失败不回滚已完成的兵装事务。
 #endif
@@ -1620,7 +1619,7 @@ extern "C" __declspec(dllexport) int dualsp_debug_fixed_mount(void* luaState) {
         fixedMountEnabled=enabled!=0;
         if(fixedMountRelease()) {
             fixedMountFailed=false;fixedMountWarning.clear();
-            if(fixedMountEnabled)try { fixedMountCommit(command);bindF35Cover(command.plane); }
+            if(fixedMountEnabled)try { fixedMountCommit(command); }
                 catch(const std::exception& error) { fixedMountFail(error.what()); }
         }
         api->boolean(luaState,true);api->string(luaState,fixedMountWarning.data(),fixedMountWarning.size());return 2;

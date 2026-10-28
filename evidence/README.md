@@ -13,6 +13,12 @@
 | alpha2作者验收及Super Kai名称核查 | [验收与来源](2.26.2-alpha2-user-validation.json) | 修正版4—5轮、四机多SP模型、三种炮类HUD亮度通过；视角待测。Super Kai官方名称IEWS，现行显示修正遗漏，效果不据名称判断 |
 | MiG-21单MGP双发候选 | [现场、原生路径与两份资源](mgp-single-pod-20261028.json)、[前次画面观察](mgp-visual-observation-20261028.json) | 真实受控玩家、双空网格发射口、成对子弹；保Gunplay当时伤害/弹道与原生双路扣弹，仅合并取位；未编译或验证新单吊舱 |
 | 本体/DLC外挂机体候选 | [四机来源与13份资源](remaining-external-mounts-20261028.json)、[实际编码cooked引用](remaining-external-mount-audit-20261028.json) | 原13资源阶段：A-10C/Super Kai、F-104C双SP及MiG-21bis的RKT＋SAAM；当时MGP退让，随后增量见上行单MGP记录；两机三SP继续原生退让 |
+
+| F22单供位架七组合接线草案 | [20261028静态转换](f22-internal-mount-design-20261028.json) | 旧方案转换为唯一SWP3/局部租约格式，区分内部与侧弹；未注册运行，旧6/6/14池和30骨记录不冒充当前现场 |
+| 普通Su-57完整内舱混挂源码候选 | [20261028同源方案与静态对照](pkfa-internal-mount-source-20261028.json) | 原28机/77资源不变；追加七组合、GPB静态供位与SWP1局部租约，模型关闭保既有行为；尚未编译/安装/实机通过 |
+| 普通Su-57关舱正常与两种显示状态操作 | [20261028只读记录](su57-bay-live-observation-20261028.json) | 作者确认无不闭合，两种状态均有成功切换日志；599次动态采样只覆盖开启状态末轮，不将数值回落认定可见故障，不改Su-57行为 |
+| F35关闭模型的旧舱门输出残留 | [20261028只读现场](f35-bay-live-observation-20261028.json) | 实际2.26.2 alpha1，MSL下spwc已闭但swc1/swc2/swcc仍为1；精确身份、安装摘要和来源代码比较，不是修复候选已通过 |
+| 官方内舱静态续研与F35候选 | [20261028方案与来源](internal-bay-static-plan-20261028.json) | 基于正式2.26.1；F35外观门禁缺口、共用收尾迁移及九机逐组合旧来源/新路线，未编译、测试、安装或实机验证 |
 | 六个Mod机体入口用户验收 | [20261028作者功能反馈](mod-aircraft-user-acceptance-20261028.json) | X-02R A/B、J-20A/B/S和RH-172功能正常；不补造逐项测试或追认ZSD组合冲突已修复 |
 | X-02R与三个J-20启用 | [20261028切换B组及摘要核对](x02r-j20-enabled-20261028.json) | 作者确认由A切B；四个Mod六份PAK及目录一致，作者页面与未知项登记，未实机验证 |
 | 2.26.2 alpha1自测EXE | [构建、文档及RH-172核对](2.26.2-alpha1-exe-delivery.json) | 完整构建和签名核对；RH-172此前已安装且与原包一致，候选EXE和机库表现待作者实机验证 |

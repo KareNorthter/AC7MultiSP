@@ -1,0 +1,356 @@
+{
+  "schema": 1,
+  "status": "runtime_source_candidate_not_validated",
+  "steam_build": 9855922,
+  "base_commit": "07eb1c549e4f238a3f1cb915d8dda5c2b54f03cc",
+  "baseline_plane_codes": [
+    "f02a",
+    "f15c",
+    "f15j",
+    "f15m",
+    "f16c",
+    "fa27",
+    "mr2k",
+    "mrgn",
+    "rflm",
+    "typn",
+    "su35",
+    "su37",
+    "f04e",
+    "f14atg",
+    "j39e",
+    "su30",
+    "su34",
+    "m29a",
+    "f16x",
+    "m35d",
+    "f14a",
+    "f18e",
+    "f18etg",
+    "m31b",
+    "f14d",
+    "f18f",
+    "su33",
+    "f18x"
+  ],
+  "baseline_data_sha256": "a8faedc126a8f988b65cf886955cf133fe96af62242e4aec7dc2e8260847009f",
+  "baseline_asset_count": 77,
+  "added_assets": [],
+  "plane": {
+    "code": "pkfa",
+    "local_mechanism": true,
+    "local_pool": 0,
+    "groups": [
+      {
+        "class": "plwp_4aam_r1_C",
+        "rack": "pkfa_SWP1",
+        "mesh": "w_4aam_r1_SM",
+        "sockets": [
+          "sp11",
+          "sp12",
+          "sp13",
+          "sp14"
+        ],
+        "window": 4,
+        "fixed": false,
+        "launcher": false,
+        "skeletal": true,
+        "skeleton": "pkfa_SWP1_Skeleton",
+        "anim": "pkfa_SWP1_AnimBP_C",
+        "bones": [
+          {
+            "name": "Body",
+            "parent": -1
+          },
+          {
+            "name": "SWPAnim1_01",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_02",
+            "parent": 1
+          },
+          {
+            "name": "SWPAnim1_03",
+            "parent": 1
+          },
+          {
+            "name": "SWPAnim1_04",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_05",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_06",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_07",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_08",
+            "parent": 0
+          },
+          {
+            "name": "SWPAnim1_09",
+            "parent": 8
+          },
+          {
+            "name": "SWPAnim1_10",
+            "parent": 8
+          }
+        ],
+        "rack_package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP1",
+        "mesh_package": "/Game/Vehicles/Weapons/w_4aam_r1/w_4aam_r1_SM"
+      },
+      {
+        "class": "plwp_gpb_r0_C",
+        "rack": "pkfa_SWP2_SM",
+        "mesh": "w_gpb_r0_SM",
+        "sockets": [
+          "sp21",
+          "sp22"
+        ],
+        "window": 2,
+        "fixed": false,
+        "launcher": false,
+        "skeletal": false,
+        "rack_package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP2_SM",
+        "mesh_package": "/Game/Vehicles/Weapons/w_gpb_r0/w_gpb_r0_SM"
+      },
+      {
+        "class": "plwp_plsl_x0_C",
+        "rack": "pkfa_SWP3_SM",
+        "mesh": null,
+        "sockets": [
+          "sp31",
+          "sp32"
+        ],
+        "window": 2,
+        "fixed": true,
+        "launcher": false,
+        "skeletal": false,
+        "rack_package": "/Game/Vehicles/Aircraft/pkfa/pkfa_SWP3_SM"
+      }
+    ],
+    "plans": [
+      null,
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [],
+          []
+        ],
+        "racks": 1,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            0,
+            1
+          ],
+          []
+        ],
+        "racks": 2,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            1
+          ],
+          []
+        ],
+        "racks": 2,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 0
+          }
+        ],
+        "full_borrowed_kinds": 1
+      },
+      {
+        "selected": [
+          [],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 4,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [
+            0,
+            1,
+            2,
+            3
+          ],
+          [],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 5,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            0,
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ]
+      },
+      {
+        "selected": [
+          [],
+          [
+            1
+          ],
+          [
+            0,
+            1
+          ]
+        ],
+        "racks": 6,
+        "variants": [
+          -1,
+          -1,
+          -1
+        ],
+        "borrowed_positions": [
+          {
+            "kind": 0,
+            "pool": 1,
+            "socket": 0
+          }
+        ],
+        "full_borrowed_kinds": 1
+      }
+    ],
+    "body": {
+      "mesh": "pkfa",
+      "mesh_package": "/Game/Vehicles/Aircraft/pkfa/pkfa",
+      "anim": "pkfa_AnimBP_C",
+      "anim_package": "/Game/Blueprint/Player/Body/pkfa_AnimBP"
+    }
+  },
+  "static_geometry_source": {
+    "path": "evidence/mount-expansion-animated.json",
+    "sha256": "c62c41b9bd069b5d355f8261c15f8993f569ccbedfba289d6079ffc5ec791543",
+    "section": "animated-sukhoi-review.json / pkfa"
+  },
+  "runtime_identity_source": {
+    "path": "evidence/su57-bay-live-observation-20261028.json",
+    "sha256": "4f725bb46c970f97130c08e9e2a310ca927f9a716f544e2216aa7c8e41bae1c4"
+  },
+  "skeleton_source": {
+    "path": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\assets\\pakchunk0-WindowsNoEditor\\decoded\\pkfa_SWP1_Skeleton.json",
+    "sha256": "028b7e696a8cd2b5b2a93769c878b842cce647dab458ac0fab5aa139743c078f",
+    "matches_original_review": true
+  },
+  "author_visual_tolerance": "轻度穿模、模型不接触，是可以接受的，肉眼难以察觉",
+  "visual_tradeoff": "4AAM使用GPB一处原站，保原弹体；较细导弹与挂架贴合可有作者允许的轻微间隙，不新增支撑或改坐标",
+  "runtime_policy": [
+    "三种单SP原生旁路",
+    "4AAM+GPB及三SP共用静态SWP2，SWP1不取得更新租约",
+    "4AAM+PLSL保原四位SWP1，仅维持这一副活动架",
+    "PLSL固定整架和原炮口，不按库存逐发隐藏",
+    "显示与真实离架同一provider，少位不缩逻辑队列或装填窗口",
+    "关闭模型、重配、补给预览和异常复用现有组件及网格归还账本",
+    "本体舱门不新增控制，保留已有Shared01Close",
+    "任务内内舱消耗弹仅真实swcc全开时显示；机库独立预览保留静态展示",
+    "只有新多SP外观有效绑定且开启时，0/1同舱互切保持实际公共及聚合输出；关闭模型不启用连续性修补",
+    "原生重建期间不读取暂不同步的舱门会话；完整事务后刷新外观",
+    "任务内SWP1/2内舱整架也受全开显示门禁，避免PLSL公共spwc打开但Body旧swcc已收拢时出现空架穿舱；SWP3整架不受影响"
+  ],
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "candidate_validated": false,
+  "remaining": [
+    "新映射真实离架、库存/装填空位和七组合场景",
+    "单活动SWP1的非当前姿态发布及失败旁路",
+    "补给/检查点/模型开关及退出恢复",
+    "性能未采样，不承诺帧率"
+  ],
+  "static_review": {
+    "original_28_planes_unchanged": true,
+    "original_assets_and_collision_qualification_unchanged": true,
+    "new_count": 29,
+    "new_combination_count": 203,
+    "source_only": true,
+    "original_local_four_selected_rack_gate_equivalent": true,
+    "new_helper_and_source_proofs_added_to_release_freeze": true,
+    "skeleton_source_matches_original_review": true
+  },
+  "limitations": [
+    "尚未取得新映射实机画面，轻微穿模/贴合间隙按作者本次尺度接受；不冒充实际外观已验收",
+    "内舱全开显隐以Parts共舱输出为门禁，需验证骨发布时序及最多100ms巡检滞后",
+    "原生碰撞资格仍在真实换网格前核对，失败不改碰撞配置，整机外观回退",
+    "局部模块新增参数默认值2，原四机沿SWP3路线；需后续构建与回归验证"
+  ],
+  "candidate_source_sha256": {
+    "src/su30sm_fixed_mount.hpp": "1c84c0600a0b619eac090bf926fa7f02d319c1a3877d1dcc0b526665574fb484",
+    "src/local_mount.hpp": "5ecaba3557d9cc0d3b8300749ef741a5319bec7439002c54f5dbcf8848a8d1d6",
+    "src/mount_expansion.hpp": "4297ccdeb905c7035862d3e14246583281f0f14898231421f52a73aabc68eeca",
+    "src/light_mount_animation.hpp": "0f31ca1ceda6602895313a5cc518f1c2de3eb5899d9d2c7bb8284b947d92dbcb",
+    "src/aircraft_bay_animation.hpp": "323a688a380ae970148f7d8a50614fc9ca1f42ad4bb791c13a0d00cd3e06e95d",
+    "src/aircraft_bay_profiles.hpp": "c95d901a9a626a7ca1c3b6dc1c9e99896d237e9c35f691fcd70908c5a93426cb",
+    "src/research/build_runtime_mount_data.py": "357739296d78c2acae5d83a49a0380f5d96a4cc6f24240569b8de1a64e91524d",
+    "src/research/pkfa_internal_runtime_data.py": "a6ac6c65bd67e3354667739256465e431996a79bfa38dce9b8bc67363bd4edcb",
+    "src/release_tools.py": "f033ef736a1bb7cd24c8c7e7f846c3bb4a0022f36fd499ecfe1916b79092b18e",
+    "src/mount_expansion_data.hpp": "50314b05dee245cbfa8548b2832e9f59b5242f1f3d4c1257103397e18253fde6",
+    "dist/DualSP/Scripts/mount_assets.lua": "0a6a8afc0b93cc3ee7cf48c45c58b1e0fbcf7fa58fa2e8a6175ace243bcebaac"
+  }
+}

@@ -21,7 +21,9 @@ struct LightMountAnimation {
 bool mountLightHasAnimation(MountAircraft aircraft) {
     // Dark的swcc收尾由独立于外观的共用模块唯一负责，失败时也不另开第二套写入者。
     // CFA在本模块仅保留公共SP互切快照，机腹独立输出也由共用模块负责。
-    return aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 || mountLocal(aircraft);
+    // 普通Su-57只复用局部挂架租约，本体swcc仍由共用舱门模块负责。
+    return aircraft==MountAircraft::Zoef || aircraft==MountAircraft::Fa44 ||
+        (mountLocal(aircraft) && aircraft!=MountAircraft::Pkfa);
 }
 bool mountLightAnimationRelease() {
     // 独立舱门动态输出已交共用模块，本模块只保有同事务快照，无需恢复旧的冻结开舱值。
@@ -94,7 +96,8 @@ void mountLightAnimationPut(const std::array<float,7>& values) {
 
 void mountLightAnimationBeforeRebuild(const Command& command,int target) {
     auto& state=lightMountAnimation;state.pending={};
-    if(!fixedMount.bound || (fixedMount.aircraft!=MountAircraft::Fa44 && !mountLocal(fixedMount.aircraft)))return;
+    if(!fixedMount.bound || fixedMount.aircraft==MountAircraft::Pkfa ||
+       (fixedMount.aircraft!=MountAircraft::Fa44 && !mountLocal(fixedMount.aircraft)))return;
     mountLightAnimationBind();
     if(command.op!="switch" || command.plane!=state.plane.address ||
        command.activator!=fixedMount.animationActivator.address)return;
