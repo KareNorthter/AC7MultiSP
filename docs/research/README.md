@@ -22,6 +22,8 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 ## 挂载、弹舱与动画
 
+2026-10-28从main/37b36a8（正式2.26.1）新开`codex/research-internal-bay-multisp`：优先将F35C关闭外观后缺失的舱门收尾迁入共用模块，并逐机评审剩余官方内舱/活动机构七组合。唯一方案、静态阻塞和游戏现场继续条件见[官方内舱续研](../engineering/multi-sp-mount-design.md#官方内舱与活动机构续研2026-10-28未发布)，逐组合来源见[静态记录](../../evidence/internal-bay-static-plan-20261028.json)。F35源码仅为未编译候选；其余新布局未启用，原Su-47/TGM掉帧与公共舱失败记录保持有效。
+
 多机舱门续研已从静态比较推进到限定源码候选，范围是普通SU-57/TGM、DarkStar、XFA-33 A/B/C；尚未编译、安装或实机验证。唯一行为说明见[挂载设计](../engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)，待反馈项仍在上方兼容性续研正文维护。旧完整共舱/Tick接管方案未恢复。
 
 | 主题/状态 | 成果锚 | 来源位置 | 已知问题与继续研究入口 |

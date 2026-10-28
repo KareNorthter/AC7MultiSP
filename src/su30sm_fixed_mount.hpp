@@ -202,13 +202,6 @@ bool mountCfaMuzzleRelease();
 void mountCfaMuzzleSync(bool forceDiscovery=false);
 bool mountPreviewOwnsTask() { return mountPreview.active && mountPreview.layout.plane.address==fixedMount.plane.address; }
 
-struct F35CoverState {
-    MountIdentity plane; // 动画通道跟随机体实例，不跟随当前武器池。
-    Addr parts{}; // 飞行引擎内的 PartsAnimation 状态，由原生包装器定位。
-    int selection{-1}; // 上一帧实际 SP 配置，用于同舱切换时继承进度。
-    float seconds{},closed{}; // 从当前 build 的原生插值常量读取。
-} f35Cover;
-
 using MountVisibility=void(*)(void*,bool,unsigned char); // 已读完整实现：0 不传播，1 仅通知子级渲染，2 改子级状态。
 using MountTransform=bool(*)(void*,void*,int,int); // MeshManager、输出 FTransform、分组、逻辑槽。
 using MountSelection=void(*)(void*,unsigned char,void*,int*); // 保留原生选槽，只替换已选槽的输出变换。
@@ -425,7 +418,6 @@ bool mountDesired(const MountVisual& visual) { return mountDesired(fixedMount,vi
 bool fixedMountRelease() {
     const bool previewReleased=mountPreviewRelease(0,false); // 预览归还失败也必须撤销任务显隐接管；待归还身份仍保存在预览上下文。
     const bool hadPending=!fixedMount.error.empty();
-    f35Cover={}; // 生命周期结束或重建后由当前飞机重新绑定动画状态。
     const bool lightAnimationReleased=mountLightAnimationRelease();
     fixedMount.bound=false; // 先直通，避免归还显示的调用再次被过滤。
     const bool animationReleased=mountAnimationRelease(fixedMount.plane.address,1);
@@ -484,7 +476,6 @@ void fixedMountFail(const char* message) noexcept {
         fixedMountRelease();
     }catch(const std::exception& cleanup) {
         fixedMount.bound=false;
-        f35Cover={};
         fixedMountWarning=failure+"；归还显示失败："+cleanup.what();
         nativeLog(std::string("FIXED_MOUNT_RELEASE_ERROR ")+fixedMountWarning);
     }
@@ -493,48 +484,8 @@ void fixedMountFail(const char* message) noexcept {
 void mountPartsUpdate(void* object,float delta,void* input) {
     if(GetCurrentThreadId()==mountGameThread.load() && aircraftBayParts(object,delta,input))return;
     if(GetCurrentThreadId()==mountGameThread.load() && mountLightAnimationParts(object,delta,input))return;
-    if(GetCurrentThreadId()!=mountGameThread.load() || !f35Cover.parts ||
-       reinterpret_cast<Addr>(object)!=f35Cover.parts || !input) {
-        mountOriginalPartsUpdate(object,delta,input);
-        if(GetCurrentThreadId()==mountGameThread.load())mountAnimationPartsAfter(object);
-        return;
-    }
-    bool called=false; // 错误也不能重复执行整套原生动画更新。
-    try {
-        require(mountAlive(f35Cover.plane),"F-35C 舱门：机体身份失效");
-        const Addr parts=f35Cover.parts; // 现场核对的状态基址，不使用其他机型偏移猜测。
-        require(read<Addr>(f35Cover.plane.address+0x1410)+0xf90==parts,"F-35C 舱门：引擎实例改变");
-        require(reinterpret_cast<Addr>(input)==parts+0xc,"F-35C 舱门：原生输入结构改变");
-        require(std::isfinite(delta) && delta>=0,"F-35C 舱门：帧间隔无效");
-        const int selected=read<int>(parts+0x178); // 与 PlaneSWP 同步的原生配置编号。
-        require(selected>=0 && selected<3,"F-35C 舱门：配置编号无效");
-        std::array<float,3> before{}; // 三个独立舱门通道在本帧开始时的姿态。
-        for(int index=0;index<3;++index) {
-            before[index]=read<float>(parts+0x180+index*4);
-            require(std::isfinite(before[index]) && before[index]>=-1 && before[index]<=1,"F-35C 舱门：动画进度越界");
-        }
-        if(selected!=f35Cover.selection && selected!=2) {
-            // SOD 与 4AAM 的共有舱体保持已打开的最大进度；从外置 8AGM 切回也不跳回动画起点。
-            write<float>(parts+0x17c,std::max(before[0],before[1]));
-        }
-        called=true;mountOriginalPartsUpdate(object,delta,input);
-        const unsigned options=read<unsigned>(reinterpret_cast<Addr>(input)+0x58); // 原生同一分支的开关速率选项。
-        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 与原生公式使用同一常量。
-        const float speed=(options&0x40)?read<float>(base+0x257beec):1.f;
-        require(std::isfinite(speed) && speed>0,"F-35C 舱门：原生速率无效");
-        for(int index=0;index<3;++index)if(index!=selected) {
-            // 非当前舱仍按原生速率收拢，不锁死姿态，也不重新启动动画实例。
-            write<float>(parts+0x180+index*4,std::max(f35Cover.closed,before[index]-delta/f35Cover.seconds*speed));
-        }
-        const float first=read<float>(parts+0x180),second=read<float>(parts+0x184),third=read<float>(parts+0x188); // 当前通道保留原生发射/开关决策。
-        write<float>(parts+0x18c,std::max(second,third)); // 原生 SWP2/3 共用输出。
-        write<float>(parts+0x190,std::max(first,third)); // 原生 SWP1/3 共用输出。
-        write<float>(parts+0x194,std::max(first,second)); // 原生 SWP1/2 共用输出。
-        f35Cover.selection=selected;
-    }catch(const std::exception& error) {
-        fixedMountFail(error.what());
-        if(!called)mountOriginalPartsUpdate(object,delta,input);
-    }
+    mountOriginalPartsUpdate(object,delta,input);
+    if(GetCurrentThreadId()==mountGameThread.load())mountAnimationPartsAfter(object);
 }
 // 原生显隐请求仍记账，但固定布局的组件由聚合状态决定；挂架请求不传播到武器。
 void mountFilterVisibility(void* object,bool requested,unsigned char propagation,bool hidden) {
@@ -944,27 +895,8 @@ void fixedMountCommit(const Command& command) {
     fixedMount.animatedVisualAudit=0; // 兵装重建后所有布局立即刷新，不能被稳定期巡检限频挡住。
     fixedMountRefresh(command.time);
 }
-// 动画状态独立于是否选择多挂；补给转单挂后也应正常关闭上一组舱门。
-void bindF35Cover(Addr plane) {
-    if(!fixedMountEnabled || fixedMountFailed) { f35Cover={};return; }
-    if(mountAircraft(plane)!=MountAircraft::F35c) { f35Cover={};return; }
-    const Addr parts=read<Addr>(plane+0x1410)+0xf90; // 已核对原生包装器与 PartsAnimation 的地址关系。
-    if(f35Cover.plane.address==plane && f35Cover.parts==parts)return;
-    mountInstallHooks();
-    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 常量来自原生插值指令，不设置自行猜测的动画时长。
-    const float seconds=read<float>(base+0x25a35ec),closed=read<float>(base+0x2d7cb00);
-    require(std::abs(seconds-.4f)<.00001f && std::abs(closed+.01f)<.00001f,"F-35C 舱门：原生插值常量改变");
-    require(((read<unsigned>(parts+0x27c)>>18)&15)==6 && !(read<unsigned>(parts+0xb0)&(1u<<20)),
-        "F-35C 舱门：原生配置不再是独立 SP1/SP2 舱门"); // 已采样的模型与动画选项必须同时匹配。
-    f35Cover={mountIdentity(plane),parts,read<int>(parts+0x178),seconds,closed};
-    nativeLog("F35_COVER_CHANNELS_BOUND");
-}
-
 // 核心只传递重建上下文，不直接改写挂载/舱门内部状态。
 struct MountRebuildSnapshot {
-    Addr cover{};
-    std::array<float,7> progress{};
-    int request{},state{};
     ::dualsp::common_bay::Snapshot common;
 };
 MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeConfig,const Session& current) {
@@ -986,18 +918,6 @@ MountRebuildSnapshot fixedMountBeforeRebuild(const Command& command,int nativeCo
                     "动画挂载：同舱切换快照失败");
             } else if(command.op!="switch")require(mountAnimationRelease(command.plane,1),"动画挂载：重建前归还失败");
         }
-        const bool sameBay=command.op=="switch" && f35Cover.parts && f35Cover.plane.address==command.plane &&
-            current.configs[current.active]<2 && nativeConfig<2;
-        saved.cover=sameBay?f35Cover.parts:0;
-        if(sameBay) {
-            require(mountAlive(f35Cover.plane) && read<Addr>(command.plane+0x1410)+0xf90==saved.cover,"同舱切换：飞机或动画实例改变");
-            saved.request=read<int>(saved.cover+0x58);saved.state=read<int>(saved.cover+0x274);
-            require(saved.request>=0 && saved.request<=3 && saved.state>=0 && saved.state<=3,"同舱切换：舱门状态无效");
-            for(int i=0;i<7;++i) {
-                saved.progress[i]=read<float>(saved.cover+0x17c+i*4);
-                require(std::isfinite(saved.progress[i]) && saved.progress[i]>=-1 && saved.progress[i]<=1,"同舱切换：动画进度无效");
-            }
-        }
         fixedMount.rebuilding=true;
         fixedMount.pendingReadyMask.reset();
         return saved;
@@ -1011,10 +931,6 @@ void fixedMountAfterRebuild(const MountRebuildSnapshot& saved) {
             // Init完成并不代表原生SP已恢复；keepArmed仍要执行完整切换，等它结束后再还快照。
             mountAnimationQueueSwitch(saved.common);
         } else if(mountAnimationHost.controller.active())require(mountAnimationHost.maintain(),"动画挂载：重建后维持失败");
-        if(!saved.cover)return;
-        // 原生初始化后、keepArmed 前恢复，保留原有交接顺序。
-        write<int>(saved.cover+0x58,saved.request);write<int>(saved.cover+0x274,saved.state);
-        for(int i=0;i<7;++i)write<float>(saved.cover+0x17c+i*4,saved.progress[i]);
     }catch(const std::exception& error) { fixedMountFail(error.what()); }
 }
 void fixedMountRecordReload(bool special,int slot,float logicalElapsed,float elapsed,float duration) {

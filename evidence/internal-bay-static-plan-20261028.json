@@ -1,0 +1,2194 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "base_main": "37b36a850ceceaa95e97911dfcc4eb59b93e200d",
+  "base_version": "2.26.1",
+  "branch": "codex/research-internal-bay-multisp",
+  "scope": "静态源码和历史证据复读；未重新计算几何、生成PAK或采集新游戏现场",
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "game_process_access": false,
+  "runtime_ready": false,
+  "sources": {
+    "mount-expansion-catalog": {
+      "path": "evidence/mount-expansion-catalog.json",
+      "sha256": "ab15ace94dd0e83748e6e81f3cadcc0105dc5f87c361c66e7055dd2042aa3dc5"
+    },
+    "mount-expansion-batch3": {
+      "path": "evidence/mount-expansion-batch3.json",
+      "sha256": "be313f92bd86cd8168122baef653b2f01c0336fb2792f77653d57a5f60544329"
+    },
+    "mount-expansion-animated": {
+      "path": "evidence/mount-expansion-animated.json",
+      "sha256": "c62c41b9bd069b5d355f8261c15f8993f569ccbedfba289d6079ffc5ec791543"
+    },
+    "sp-bay-domains": {
+      "path": "evidence/sp-bay-domains.json",
+      "sha256": "218a52c040620abd498424e7b89d4b9e0eb65ac16f4235a67f52226f67e19d6d"
+    },
+    "sp-common-bay-control": {
+      "path": "evidence/sp-common-bay-control.json",
+      "sha256": "bfcb97f304b37ad2d5c0d1f509abd0a4c907fdd5340a7276c85ed9e4e1c807a9"
+    },
+    "bay-domain-multi-aircraft-static-20261024": {
+      "path": "evidence/bay-domain-multi-aircraft-static-20261024.json",
+      "sha256": "27d2aaf500a0af7b0a0b18bd18efc58716fc3d79b6940f1cd2fbe341af1aec0b"
+    },
+    "cfa44-belly-bay-source-20261025": {
+      "path": "evidence/cfa44-belly-bay-source-20261025.json",
+      "sha256": "419d222ced8969e5b232b4d909ba3e796e988b5b7e2c5a51cc9c88c94db7173c"
+    },
+    "sp-animation-product-access": {
+      "path": "evidence/sp-animation-product-access.json",
+      "sha256": "25f1de3b93658d92c81034d3136d478c6eedfa539b5764aa5d4c75cb3c353dcf"
+    }
+  },
+  "f35_candidate": {
+    "root_cause_confirmed_statically": [
+      "旧bindF35Cover同时要求fixedMountEnabled且没有fixedMountFailed",
+      "fixedMountRelease清空旧f35Cover",
+      "旧同舱快照在外观门禁后，关闭外观即跳过"
+    ],
+    "native_mechanism": "原生只更新当前配置输出；跨配置后旧独立输出可冻结。公共舱进度重置及骨发布故障分别判断，不据此宣称全机同因。",
+    "implementation": "迁入唯一共用模块IndependentClose，配置集合3限定SOD/4AAM连续性，保留原速收尾，删除旧写入者",
+    "resource_profile": "f35c原资源，原生配置SOD/4AAM/8AGM，旗帜6",
+    "timing_change": "同舱快照从Init后恢复改至完整keepArmed后恢复；尚未实机验证",
+    "runtime_overhead": "共用弱身份/资源/会话核对增加读取；不新增骨操作、强制求值或Actor扫描，没有帧率数据",
+    "next_capture": "现有2.26.1原版F35三SP，关闭多SP模型后SOD/4AAM/8AGM/MSL切换；只读区分七路输出与骨发布"
+  },
+  "aircraft": [
+    {
+      "code": "pkfa",
+      "new_route": "静态GPB架分区，PLSL独立保留；优先补运行池与swcc现场",
+      "remaining": "等待运行池、真实支撑、离架及同舱连续性现场",
+      "combinations": [
+        {
+          "weapons": [
+            "4AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp14",
+                "sp13",
+                "sp12",
+                "sp11"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "GPB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "GPB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "GPB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "GPB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "GPB",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "GPB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "GPB",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/1/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "GPB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "f22a",
+      "new_route": "唯一SWP3供位/呈现架，不恢复腹部九骨显隐",
+      "remaining": "等待单供位架当帧发布、公共舱实际重置与离架现场",
+      "combinations": [
+        {
+          "weapons": [
+            "QAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "QAAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "XSDB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24",
+                "sp25",
+                "sp26"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "8AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "8AAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp37",
+                "sp38",
+                "sp42",
+                "sp41",
+                "sp34",
+                "sp36",
+                "sp33",
+                "sp35",
+                "sp40",
+                "sp39",
+                "sp44",
+                "sp43"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "QAAM",
+            "XSDB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "QAAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp43",
+                "sp44"
+              ]
+            },
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp39",
+                "sp40",
+                "sp41",
+                "sp42"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "QAAM",
+            "8AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "QAAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp43",
+                "sp44"
+              ]
+            },
+            {
+              "weapon": "8AAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34",
+                "sp35",
+                "sp36",
+                "sp37",
+                "sp38"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "XSDB",
+            "8AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp39",
+                "sp40",
+                "sp41",
+                "sp42"
+              ]
+            },
+            {
+              "weapon": "8AAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34",
+                "sp35",
+                "sp36",
+                "sp37",
+                "sp38"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "QAAM",
+            "XSDB",
+            "8AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/aircraft/0/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "QAAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp43",
+                "sp44"
+              ]
+            },
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp39",
+                "sp40",
+                "sp41",
+                "sp42"
+              ]
+            },
+            {
+              "weapon": "8AAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34",
+                "sp35",
+                "sp36",
+                "sp37",
+                "sp38"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "su57tg",
+      "new_route": "统一SWP3静态LACM架供位，不恢复两副活动内架",
+      "remaining": "公共舱旧修订已获失败反馈，先定位重置，布局未准入",
+      "combinations": [
+        {
+          "weapons": [
+            "4AAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp13",
+                "sp14",
+                "sp11",
+                "sp12"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "HCAA"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "HCAA",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp23",
+                "sp24",
+                "sp21",
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "LACM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "LACM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "HCAA"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            },
+            {
+              "weapon": "HCAA",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "LACM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            },
+            {
+              "weapon": "LACM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "HCAA",
+            "LACM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "HCAA",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            },
+            {
+              "weapon": "LACM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "HCAA",
+            "LACM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/2/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            },
+            {
+              "weapon": "HCAA",
+              "owner": "SWP2",
+              "provider": "SWP3",
+              "sockets": [
+                "sp33"
+              ]
+            },
+            {
+              "weapon": "LACM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "su47",
+      "new_route": "保留旧七组合，先审单供位架替代双活动架的可能性",
+      "remaining": "旧最多两副活动架仍有性能风险，未恢复控制器",
+      "combinations": [
+        {
+          "weapons": [
+            "SAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "SAAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "UGB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "UGB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "QAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "QAAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "SAAM",
+            "UGB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "SAAM",
+              "owner": "SWP1",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "UGB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp24",
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "SAAM",
+            "QAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "SAAM",
+              "owner": "SWP1",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "QAAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp34",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "UGB",
+            "QAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "UGB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp23"
+              ]
+            },
+            {
+              "weapon": "QAAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp34",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "SAAM",
+            "UGB",
+            "QAAM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/1/report/aircraft/0/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "SAAM",
+              "owner": "SWP1",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "UGB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp24"
+              ]
+            },
+            {
+              "weapon": "QAAM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "dark",
+      "new_route": "中央派生架分侧保支撑，不直接叠完整原架",
+      "remaining": "旧中央整架真实穿面；尚未制作派生资产",
+      "combinations": [
+        {
+          "weapons": [
+            "SASM"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "SASM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp12",
+                "sp11"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "XSDB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "SASM",
+            "XSDB"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "SASM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22",
+                "sp24"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "SASM",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "SASM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp12",
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "XSDB",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "SASM",
+            "XSDB",
+            "PLSL"
+          ],
+          "source": "mount-expansion-animated",
+          "json_pointer": "/reviews/2/report/aircraft/0/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "SASM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "XSDB",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22",
+                "sp24"
+              ]
+            },
+            {
+              "weapon": "PLSL",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "x02s",
+      "new_route": "保持原炮口与弹体，先重做EML和腹舱冲突几何",
+      "remaining": "旧EML路线仍撤回，容量须重新确定",
+      "combinations": [
+        {
+          "weapons": [
+            "4AAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "LASM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "EML"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "EML",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp12",
+                "sp15"
+              ]
+            },
+            {
+              "weapon": "LASM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "EML"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            },
+            {
+              "weapon": "EML",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "LASM",
+            "EML"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "LASM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22"
+              ]
+            },
+            {
+              "weapon": "EML",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "LASM",
+            "EML"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/20/proposal/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp12",
+                "sp15"
+              ]
+            },
+            {
+              "weapon": "LASM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "EML",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "yf23",
+      "new_route": "原HVAA弹体/站位优先，其余兵装重排",
+      "remaining": "旧小SAAM外形与固定隔框阻塞路线不采纳",
+      "combinations": [
+        {
+          "weapons": [
+            "HVAA"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "HVAA",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp12",
+                "sp11"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "4AAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "UGB"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "UGB",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32",
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "HVAA",
+            "4AAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "HVAA",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "4AAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "HVAA",
+            "UGB"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "HVAA",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "UGB",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "4AAM",
+            "UGB"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "4AAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22"
+              ]
+            },
+            {
+              "weapon": "UGB",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp33",
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "HVAA",
+            "4AAM",
+            "UGB"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/21/proposal/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "HVAA",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "4AAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp22"
+              ]
+            },
+            {
+              "weapon": "UGB",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp34"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "fb22",
+      "new_route": "SFFS原位优先，XSDB/LAAM重做分区",
+      "remaining": "旧SFFS借六站均有新增Body穿面；未定新容量",
+      "combinations": [
+        {
+          "weapons": [
+            "XSDB"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "LAAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "LAAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21",
+                "sp22",
+                "sp23",
+                "sp24",
+                "sp25",
+                "sp26"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "SFFS"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "SFFS",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "XSDB",
+            "LAAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12"
+              ]
+            },
+            {
+              "weapon": "LAAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp25",
+                "sp26"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "XSDB",
+            "SFFS"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "SFFS",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "LAAM",
+            "SFFS"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "LAAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp21"
+              ]
+            },
+            {
+              "weapon": "SFFS",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "XSDB",
+            "LAAM",
+            "SFFS"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/11/proposal/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "XSDB",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11"
+              ]
+            },
+            {
+              "weapon": "LAAM",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp25"
+              ]
+            },
+            {
+              "weapon": "SFFS",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    },
+    {
+      "code": "asfx",
+      "new_route": "完整76管口表示、固定巢规则与LASM/Body分域",
+      "remaining": "超过现有64位逐位置表示，需离线派生重复几何",
+      "combinations": [
+        {
+          "weapons": [
+            "6AAM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/0",
+          "historical_assignments_only": [
+            {
+              "weapon": "6AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "RKT"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/1",
+          "historical_assignments_only": [
+            {
+              "weapon": "RKT",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp201",
+                "sp203",
+                "sp205",
+                "sp207",
+                "sp209",
+                "sp211",
+                "sp213",
+                "sp215",
+                "sp217",
+                "sp219",
+                "sp221",
+                "sp223",
+                "sp225",
+                "sp227",
+                "sp229",
+                "sp231",
+                "sp265",
+                "sp269",
+                "sp273",
+                "sp233",
+                "sp235",
+                "sp237",
+                "sp239",
+                "sp241",
+                "sp243",
+                "sp245",
+                "sp247",
+                "sp249",
+                "sp251",
+                "sp253",
+                "sp255",
+                "sp257",
+                "sp259",
+                "sp261",
+                "sp263",
+                "sp267",
+                "sp271",
+                "sp275",
+                "sp234",
+                "sp236",
+                "sp238",
+                "sp240",
+                "sp242",
+                "sp244",
+                "sp246",
+                "sp248",
+                "sp250",
+                "sp252",
+                "sp254",
+                "sp256",
+                "sp258",
+                "sp260",
+                "sp262",
+                "sp264",
+                "sp268",
+                "sp272",
+                "sp276",
+                "sp202",
+                "sp204",
+                "sp206",
+                "sp208",
+                "sp210",
+                "sp212",
+                "sp214",
+                "sp216",
+                "sp218",
+                "sp220",
+                "sp222",
+                "sp224",
+                "sp226",
+                "sp228",
+                "sp230",
+                "sp232",
+                "sp266",
+                "sp270",
+                "sp274"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/2",
+          "historical_assignments_only": [
+            {
+              "weapon": "LASM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "原生单SP保持"
+        },
+        {
+          "weapons": [
+            "6AAM",
+            "RKT"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/3",
+          "historical_assignments_only": [
+            {
+              "weapon": "6AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12"
+              ]
+            },
+            {
+              "weapon": "RKT",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp201",
+                "sp203",
+                "sp205",
+                "sp207",
+                "sp209",
+                "sp211",
+                "sp213",
+                "sp215",
+                "sp217",
+                "sp219",
+                "sp221",
+                "sp223",
+                "sp225",
+                "sp227",
+                "sp229",
+                "sp231",
+                "sp265",
+                "sp269",
+                "sp273",
+                "sp233",
+                "sp235",
+                "sp237",
+                "sp239",
+                "sp241",
+                "sp243",
+                "sp245",
+                "sp247",
+                "sp249",
+                "sp251",
+                "sp253",
+                "sp255",
+                "sp257",
+                "sp259",
+                "sp261",
+                "sp263",
+                "sp267",
+                "sp271",
+                "sp275",
+                "sp234",
+                "sp236",
+                "sp238",
+                "sp240",
+                "sp242",
+                "sp244",
+                "sp246",
+                "sp248",
+                "sp250",
+                "sp252",
+                "sp254",
+                "sp256",
+                "sp258",
+                "sp260",
+                "sp262",
+                "sp264",
+                "sp268",
+                "sp272",
+                "sp276",
+                "sp202",
+                "sp204",
+                "sp206",
+                "sp208",
+                "sp210",
+                "sp212",
+                "sp214",
+                "sp216",
+                "sp218",
+                "sp220",
+                "sp222",
+                "sp224",
+                "sp226",
+                "sp228",
+                "sp230",
+                "sp232",
+                "sp266",
+                "sp270",
+                "sp274"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "6AAM",
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/4",
+          "historical_assignments_only": [
+            {
+              "weapon": "6AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12",
+                "sp13",
+                "sp14",
+                "sp15",
+                "sp16"
+              ]
+            },
+            {
+              "weapon": "LASM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "RKT",
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/5",
+          "historical_assignments_only": [
+            {
+              "weapon": "RKT",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp201",
+                "sp203",
+                "sp205",
+                "sp207",
+                "sp209",
+                "sp211",
+                "sp213",
+                "sp215",
+                "sp217",
+                "sp219",
+                "sp221",
+                "sp223",
+                "sp225",
+                "sp227",
+                "sp229",
+                "sp231",
+                "sp265",
+                "sp269",
+                "sp273",
+                "sp233",
+                "sp235",
+                "sp237",
+                "sp239",
+                "sp241",
+                "sp243",
+                "sp245",
+                "sp247",
+                "sp249",
+                "sp251",
+                "sp253",
+                "sp255",
+                "sp257",
+                "sp259",
+                "sp261",
+                "sp263",
+                "sp267",
+                "sp271",
+                "sp275",
+                "sp234",
+                "sp236",
+                "sp238",
+                "sp240",
+                "sp242",
+                "sp244",
+                "sp246",
+                "sp248",
+                "sp250",
+                "sp252",
+                "sp254",
+                "sp256",
+                "sp258",
+                "sp260",
+                "sp262",
+                "sp264",
+                "sp268",
+                "sp272",
+                "sp276",
+                "sp202",
+                "sp204",
+                "sp206",
+                "sp208",
+                "sp210",
+                "sp212",
+                "sp214",
+                "sp216",
+                "sp218",
+                "sp220",
+                "sp222",
+                "sp224",
+                "sp226",
+                "sp228",
+                "sp230",
+                "sp232",
+                "sp266",
+                "sp270",
+                "sp274"
+              ]
+            },
+            {
+              "weapon": "LASM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        },
+        {
+          "weapons": [
+            "6AAM",
+            "RKT",
+            "LASM"
+          ],
+          "source": "mount-expansion-batch3",
+          "json_pointer": "/aircraft/1/proposal/combinations/6",
+          "historical_assignments_only": [
+            {
+              "weapon": "6AAM",
+              "owner": "SWP1",
+              "provider": "SWP1",
+              "sockets": [
+                "sp11",
+                "sp12"
+              ]
+            },
+            {
+              "weapon": "RKT",
+              "owner": "SWP2",
+              "provider": "SWP2",
+              "sockets": [
+                "sp201",
+                "sp203",
+                "sp205",
+                "sp207",
+                "sp209",
+                "sp211",
+                "sp213",
+                "sp215",
+                "sp217",
+                "sp219",
+                "sp221",
+                "sp223",
+                "sp225",
+                "sp227",
+                "sp229",
+                "sp231",
+                "sp265",
+                "sp269",
+                "sp273",
+                "sp233",
+                "sp235",
+                "sp237",
+                "sp239",
+                "sp241",
+                "sp243",
+                "sp245",
+                "sp247",
+                "sp249",
+                "sp251",
+                "sp253",
+                "sp255",
+                "sp257",
+                "sp259",
+                "sp261",
+                "sp263",
+                "sp267",
+                "sp271",
+                "sp275",
+                "sp234",
+                "sp236",
+                "sp238",
+                "sp240",
+                "sp242",
+                "sp244",
+                "sp246",
+                "sp248",
+                "sp250",
+                "sp252",
+                "sp254",
+                "sp256",
+                "sp258",
+                "sp260",
+                "sp262",
+                "sp264",
+                "sp268",
+                "sp272",
+                "sp276",
+                "sp202",
+                "sp204",
+                "sp206",
+                "sp208",
+                "sp210",
+                "sp212",
+                "sp214",
+                "sp216",
+                "sp218",
+                "sp220",
+                "sp222",
+                "sp224",
+                "sp226",
+                "sp228",
+                "sp230",
+                "sp232",
+                "sp266",
+                "sp270",
+                "sp274"
+              ]
+            },
+            {
+              "weapon": "LASM",
+              "owner": "SWP3",
+              "provider": "SWP3",
+              "sockets": [
+                "sp31",
+                "sp32"
+              ]
+            }
+          ],
+          "candidate_enabled": false,
+          "current_disposition": "按本轮路线继续，旧映射不自动准入"
+        }
+      ]
+    }
+  ],
+  "candidate_source_hashes": {
+    "src/aircraft_bay_animation.hpp": "fac2d01b8a4398077d8cbb73ee366b368ae437c7f7a4bfd5cdac456b39eb588d",
+    "src/aircraft_bay_profiles.hpp": "caf89d022797e7ed1c48be7bac6d43b2dcac9c60607cb6024a85c723d124ee64",
+    "src/su30sm_fixed_mount.hpp": "a505e40306d39db36d1d10d80030b5f3f69a9b0b67b49e6f076086b556a856db",
+    "src/weapon_bridge.cpp": "8b534e58eca2ffb07a96af9d30dbd458e42fe3b9991f63a6ce0328ed7a1c11b1"
+  }
+}
