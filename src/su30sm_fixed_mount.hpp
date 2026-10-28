@@ -610,6 +610,14 @@ bool mountCopyTransform(void* output,int slot) {
     require(slot>=0 && slot<count,"固定挂载：发射槽超出原生范围");
     const int ordinal=fixedMount.order[slot],kind=fixedMount.weaponKinds[session.active]; // 已重排的持久序号。
     require(ordinal>=0 && ordinal<count,"固定挂载：持久挂点序号无效");
+    if(fixedMount.aircraft==MountAircraft::M21b && kind==0) {
+        const NativeReadBatch memory;
+        const Addr weapon=memory.read<Addr>(groupOf(session.activator,true)+0x40);
+        require(count==2 && mountName(weapon)=="Default__plwp_mgp_r0_C" &&
+            memory.read<int>(weapon+0x44c)==2 && memory.read<unsigned char>(weapon+0x450)==1 &&
+            memory.read<unsigned char>(weapon+0x451)==1,"单MGP：原生两槽齐射契约改变");
+        // 不写Damage、LoadTime、弹道或弹药；保留Gunplay等Mod当时的实际两发效果。
+    }
     const int physical=mountPhysical(kind,ordinal); // 与显隐聚合共用映射。
     if(mountLight(fixedMount.aircraft))return mountLightCopyTransform(output,fixedMount,physical);
     if(mountAnimated(fixedMount.aircraft))return mountAnimationCopyTransform(output,fixedMount,physical);

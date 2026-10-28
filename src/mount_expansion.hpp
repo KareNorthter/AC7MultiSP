@@ -20,6 +20,10 @@ bool mountNeedsMappedTransform(const FixedMountState& state,int kind) {
     if(state.aircraft==MountAircraft::Fa44 && (state.kindsMask&3u)!=3u)return false;
     if(mountLight(state.aircraft))return mountLightMapped(state.aircraft,kind);
     if(mountExterior(state.aircraft))return false; // 机外外观保留不换原生发射点。
+    if(mountExpanded(state.aircraft) && mountExpansionDefinition(state.aircraft).at("groups").at(kind).value("mapped_fixed",false)) {
+        require(state.aircraft==MountAircraft::M21b && kind==0,"固定发射源：未登记取位契约");
+        return true; // MGP空网格发射组件仍固定显示，两路逻辑槽共用单吊舱真实炮口。
+    }
     return !mountFixedEmitter(state.aircraft,kind);
 }
 // 根据登记Socket列表建立周期表；逻辑槽保留原序号，登记序号不等于运行池下标。
@@ -133,7 +137,8 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
                 group.at("sockets").at(ordinal).get<std::string>()).c_str());
     }
     // 全部原生池核对完成后才处理跨池位置，不能在供位池尚未遍历时误判缺件。
-    for(int kind=0;kind<3;++kind)if((state.kindsMask&(1u<<kind)) && !groups.at(kind).at("fixed").get<bool>())
+    for(int kind=0;kind<3;++kind)if((state.kindsMask&(1u<<kind)) &&
+        (!groups.at(kind).at("fixed").get<bool>() || groups.at(kind).value("mapped_fixed",false)))
         for(int physical:state.expansionPositions[kind])require(state.physical[physical]!=0,"扩展挂载：预期发射组件缺失");
     for(int kind=0;kind<3;++kind)for(size_t index=0;index<state.expansionPositions[kind].size();++index) {
         if(state.expansionPools[kind][index]==kind)continue;

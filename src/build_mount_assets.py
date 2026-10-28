@@ -16,11 +16,13 @@ def build(source, output):
     audit=json.loads((ROOT/'evidence/mount-socket-reference-audit-20261021.json').read_text(encoding='utf-8'))
     remaining=json.loads((ROOT/'evidence/remaining-external-mounts-20261028.json').read_text(encoding='utf-8'))
     extra_audit=json.loads((ROOT/'evidence/remaining-external-mount-audit-20261028.json').read_text(encoding='utf-8'))
+    mgp=json.loads((ROOT/'evidence/mgp-single-pod-20261028.json').read_text(encoding='utf-8'))
     qualified=[row for row in audit['rows'] if row['candidate']]
     qualified.extend(extra_audit['rows'])
+    qualified.extend(mgp['resource_audits'])
     if (audit['schema']!=1 or audit['status']!='completed' or audit['candidate_failures'] or
             audit['candidate_asset_names']!=remaining['baseline_assets'] or
-            audit['candidate_asset_names']+remaining['appended_assets']!=names or len(qualified)!=len(names) or
+            audit['candidate_asset_names']+remaining['appended_assets']+mgp['appended_assets']!=names or len(qualified)!=len(names) or
             len({row['asset'] for row in qualified})!=len(names) or
             {row['asset'] for row in qualified}!=set(names) or any(not row['passed'] or row['errors'] for row in qualified)):
         raise ValueError('整套资源缺少与当前白名单一致的离线引用资格，须先复核再打包')
@@ -31,7 +33,7 @@ def build(source, output):
                      'static-mount-five-aircraft-review.json', 'static-native-three-aircraft.json',
                      'local-four-mount-runtime.json', 'm31b-saam-offset-r1.json', 'm31b-saam-offset-r2.json',
                      'm31b-saam-offset-r3.json', 'f18e-layout-feedback-r1.json', 'f18etg-whole-rack-socket-r2.json',
-                     'remaining-external-mounts-20261028.json'):
+                     'remaining-external-mounts-20261028.json', 'mgp-single-pod-20261028.json'):
         extra = json.loads((ROOT/'evidence'/evidence).read_text(encoding='utf-8'))
         for report in extra['resource_reports']:
             name = report['recipe']['name']
