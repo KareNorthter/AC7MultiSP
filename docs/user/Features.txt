@@ -18,7 +18,7 @@ I. Main features
 
 II. Common controls
 The following are the default controls. Keyboard bindings can be customized.
-• F6 or controller Select + Y: open the management interface.
+• F6 or hold Start on the controller for 3 seconds: open the management interface.
 • Keyboard 1 / 2 / 3 / 4: select standard missiles / the first / second / third special weapon.
 • Controller D-pad left / up / right / down: select the same four weapons. Controller X still cycles weapons.
 • Ctrl + Alt + F5: toggle linked gun fire.

@@ -146,6 +146,40 @@ bool continuousClassDerived(Addr cls,const char* name,const char* package) {
 }
 bool continuousElectronicClass(Addr cls) {return continuousClassDerived(cls,"ElectronicSupportMeasures","/Script/Nimbus");}
 bool continuousUavClass(Addr cls) {return continuousClassDerived(cls,"WeaponUAV","/Script/Nimbus");}
+// 仅核对本机现场涉及的原生请求、Release与最终退场代码；首次计算后复用版本结论。
+bool continuousStandaloneEndCodeQualified() {
+    static int qualified=0;
+    if(qualified)return qualified>0;
+    verifyVersion();const Addr base=continuousBase();
+    auto code=[base](size_t rva,size_t size,uint64_t expected) {
+        checkMemory(base+rva,size);
+        const auto* bytes=reinterpret_cast<const unsigned char*>(base+rva);
+        uint64_t hash=14695981039346656037ull;
+        for(size_t i=0;i<size;++i)hash=(hash^bytes[i])*1099511628211ull;
+        return hash==expected;
+    };
+    const bool ok=code(0x895f30,0x7e,0x886dca572ee0b094ull) &&
+        code(0x895fd0,0x1a,0x11b908550b18d887ull) &&
+        code(0x894850,0xac,0x0c769108d5b4b325ull) &&
+        code(0x897740,0xb7,0x386ab6f1d72c9888ull);
+    qualified=ok?1:-1;return ok;
+}
+bool continuousStandaloneEndQualified(Addr weapon) {
+    const Addr cls=read<Addr>(weapon+0x10),table=read<Addr>(weapon),base=continuousBase();
+    for(const auto& profile:continuousStandaloneEndProfiles()) {
+        if(!continuousClass(cls,profile.weaponClass,profile.weaponPackage))continue;
+        if(!continuousClassDerived(cls,"WeaponBase","/Script/Nimbus") ||
+            read<unsigned char>(weapon+0x3b0)!=25 || read<unsigned char>(weapon+0x458)!=1 ||
+            read<unsigned char>(weapon+0x459)!=0 || read<Addr>(weapon+0x5d8)!=0 ||
+            read<float>(weapon+0x438)!=0 || read<float>(weapon+0x518)!=0)return false;
+        const Addr root=read<Addr>(weapon+0x160);
+        if(!root || read<Addr>(root+0x100)!=0)return false;
+        for(const auto& callback:profile.callbacks)
+            if(read<Addr>(table+callback.offset)!=base+callback.rva)return false;
+        return continuousStandaloneEndCodeQualified();
+    }
+    return false;
+}
 bool continuousPlaneClass(Addr plane,const char* name,const char* package) {
     const ContinuousReadBatch memory;memory.identity(plane);
     Addr cls=memory.read<Addr>(plane+0x10);

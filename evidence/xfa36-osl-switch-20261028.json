@@ -1,0 +1,47 @@
+{
+  "主题": "XFA-36A OSL切换导致TLS收尾失败",
+  "日期": "2026-10-28",
+  "源码基线": "main / 37b36a850ceceaa95e97911dfcc4eb59b93e200d / 正式2.26.1",
+  "游戏现场": {
+    "运行版本": "2.26.2 alpha2",
+    "核心SHA256": "c3363066621fe237e43a14b360490d39090bdd361f5c428f1eee742dc98afefe",
+    "进程": 9008,
+    "任务": "ms02",
+    "机体": "fa36 / 157",
+    "组合": "MIRV / OSL",
+    "现象": "第二SP切回MSL后再次切换，TLS原生收尾接口不匹配；Lua隔离该机体并回退原生。",
+    "界限": "本次不是同源码版本的前后对照，不能据此判定由2.26.2引入；当前现场已经退让。",
+    "日志快照": "E:/AC7_MultiSP/Temp/tasks/20261028-xfa36-osl-switch/",
+    "只读现场": "本工作树Temp/tasks/20261028-xfa36-osl/snapshot.json；进程、对象地址和原始蓝图导出只留本机。"
+  },
+  "作者资料": {
+    "页面": "https://www.nexusmods.com/acecombat7skiesunknown/mods/3520",
+    "页面版本": "1.2；本机PAK与页面版本未独立对应",
+    "已确认": "XFA-36A原包描述MGP、MIRV与OSL；原版游戏中MIRV显示MSTM、OSL显示TLS；OSL来源为X-49作品。",
+    "未知": "页面没有说明长按附加功能，也未说明皮肤是否改变武器或效果；不由皮肤列表推断。",
+    "兼容表页面": "https://www.nexusmods.com/acecombat7skiesunknown/mods/2154",
+    "兼容表说明": "兼容表记录XFA-36A的HGP、MIRV、OSL选装名称；不能将其视为多SP运行验收。"
+  },
+  "作者PAK": {
+    "来源": "AC7MultiSP_Compatibility_Batch3_1/~~~~Memory_Error_AddonPack_P.pak",
+    "SHA256": "7adcf29e8a9ca4530af3e53228feb5935431254e179af7ad33c231f9cf01bea9",
+    "OSL资源": "/Game/Blueprint/Weapons/Player/Base/plwp_osl_fa36.plwp_osl_fa36_C",
+    "导出头和体合并SHA256": "5c98c0f9aef6e20b2ff4dc951e93d2101fc72fa2bd5fe804a1d3a1d75b74efce",
+    "效果资源": "/Game/Blueprint/Weapons/Player/Base/OSLData/OSL_LaserBeam",
+    "效果导出头和体合并SHA256": "1324a251ca99475b26d9f17386248dde4cec6e346547e26a8a5ae7fd2044dfde"
+  },
+  "只读发现": {
+    "对象": "plwp_osl_fa36_C直接继承/Script/Nimbus.WeaponBase，WeaponID为25；不继承原生LaserWeapon。",
+    "活动状态": "归属于当前玩家，位于ActiveWeapons而不在SpawnedWeapons；根组件无父挂接；原生LifeTime和TrailTime均为0。",
+    "回调RVA": {"0x618": "0x8980e0", "0x628": "0x895fd0", "0x648": "0x894850", "0x668": "0x897010", "0x670": "0x85d940", "0x680": "0x897740"},
+    "收尾链": "原生结束请求0x894af0走0x895f30，再由0x895fd0分派Release和Retire；0x894850与0x897740分别通知原生激活器，零尾迹时进入最终退场。",
+    "蓝图": "OnInitialized另行生成OSL_LaserBeam并设置LaserLifeSpan=1秒，另生成伤害效果；激光Actor的蓝图包含时间线缩放，没有发现持续跟随机头的附着调用。观察到TargetToHome变换用于生成流程；不据此断言全部视觉/伤害位置。",
+    "局限": "现场在出错后暂停，只读一次；未观察正常完整自然退场或新实现的切槽行为。"
+  },
+  "候选与验证": {
+    "策略": "在原有结束请求路径新增独立效果源描述及契约；只接受精确资源、WeaponBase父类、当前玩家、独立根组件、原生装填及六回调和四段代码指纹全部匹配的对象。",
+    "边界": "不改作者PAK、不把OSL纳入持续保有、不改变其他TLS；不强行关闭独立激光Actor，不能承诺切槽瞬间画面消失或继续从机头发出。不同字节的同路径蓝图不能仅因原生回调匹配而视为已验收。",
+    "待验收": "在与运行版一致的集成候选中，验证OSL射击后切MSL及MIRV、独立库存和再次发射；观察激光消失、位置、目标伤害和无异常退让；对照普通TLS及其他机体。",
+    "执行": "只读进程、离线解析已安装PAK、静态差异核对；未编译、编写或运行测试、安装、操作游戏、推送或上传。"
+  }
+}

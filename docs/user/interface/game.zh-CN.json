@@ -2,7 +2,7 @@
   "schema": 1,
   "language": "zh-CN",
   "texts": {
-    "recovery.missing_weapon": "找不到兵装资料：{weapon}",
+    "recovery.missing_weapon": "找不到SP资料：{weapon}",
     "recovery.duplicate_weapon": "兵装代号重复：{weapon}",
     "recovery.invalid_ammo": "SP 槽位的基础载量无效。",
     "recovery.duplicate_aircraft": "机体编号重复，无法确定有效资料。",
@@ -133,7 +133,7 @@
     "mod.off.modenabled.000955e4": "模组：关闭###ModEnabled",
     "save.to.apply.at.the.3d03eef2": "总开关在保存后，于主菜单或单人任务选择页生效。关闭时下方页面变灰；标题开关、保存和关闭始终可用。",
     "management.6009aa3c": "管理界面",
-    "back.y.also.toggles.management.b588258e": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+    "back.y.also.toggles.management.b588258e": "手柄长按Start键3秒可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
     "game.language.chinese.english.c0b892a6": "跟随游戏\u0000中文\u0000English\u0000",
     "saved.return.to.the.main.4b8dc61e": "已保存，返回主菜单后应用总开关。",
     "game.is.paused.48376114": "游戏暂停中",

@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "source": "作者在本聊天的实际游玩反馈",
+  "environment": "FAULT_XFA36真实混装组；运行此前安装的2.26.2 alpha2 T6修正版",
+  "passed": {
+    "aircraft": ["F-17V", "Gleipnir", "X-02R A", "X-02R B", "UI-4054"],
+    "observations": ["机库选择三SP正常", "任务内游玩三SP正常", "没有报错"],
+    "limit": "不据此追认全部皮肤、SP具体效果、性能或所有资源冲突已验证。"
+  },
+  "xfa36": {
+    "user_observation": "激光问题需要按Mod飞机兼容性研究修复。",
+    "observed_log": "native.log记录TLS_END_ERROR：TLS 原生收尾接口不匹配；现场细节见OSL研究记录。",
+    "research_source_thread": "01a171a1-28f2-7202-b724-8f05cb28bed5",
+    "research_source_commit": "f7be4054f4a8cda992dc058f54fcddd0df88a4bf",
+    "source_evidence": "xfa36-osl-switch-20261028.json",
+    "integration": "接收独立OSL效果源的严格资格检查与原生收尾候选；其他TLS继续原契约。",
+    "pending": "未编译或安装修正；切换后的伤害、视觉和恢复需作者实机验证。"
+  },
+  "compiled": false,
+  "game_tests_by_agent": false,
+  "installed": false
+}

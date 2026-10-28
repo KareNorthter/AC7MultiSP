@@ -436,7 +436,8 @@ void finishSeekerAudio(Addr plane,Addr activator) {
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }
 bool continuousElectronicClass(Addr cls); // 后文持续兵装模块定义，供TLS旧入口排除被重用的编号。
-// 只结束当前玩家发出的 TLS，走原生收尾以同时停止伤害、粒子和声源。
+bool continuousStandaloneEndQualified(Addr weapon); // 独立效果源必须通过资源及原生收尾契约。
+// 只结束当前玩家发出的已核对兵装；TLS走原生收尾，独立效果由作者蓝图自行退场。
 void finishPlayerTLS(Addr plane,Addr activator) {
     require(read<Addr>(plane+0x11a8)==activator,"TLS 收尾的玩家身份不匹配");
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr)); // 原生自然终止请求入口。
@@ -454,10 +455,11 @@ void finishPlayerTLS(Addr plane,Addr activator) {
         if(continuousElectronicClass(read<Addr>(weapon+0x10)))continue;
         if(!read<unsigned char>(weapon+0x368) || read<unsigned char>(weapon+0x5c0))continue;
         // 玩家 plwp_tls_x2 继承 AttachedInstantWeapon，不能用 LaserWeapon 的 Tick 排除它。
-        // 两者共享下面三个收尾入口；校验真正要调用的生命周期，不限定不同的更新函数。
+        // 两者共享下面三个收尾入口；独立效果源须另过完整契约，不按编号放行。
         const auto table=read<Addr>(weapon); // 已匹配 TLS 编号和当前玩家归属的活动对象。
         const auto end=read<Addr>(table+0x628),release=read<Addr>(table+0x648),detach=read<Addr>(table+0x680); // 完整收尾链。
-        if(end!=base+0x85f1c0 || release!=base+0x894850 || detach!=base+0x861490)
+        if((end!=base+0x85f1c0 || release!=base+0x894850 || detach!=base+0x861490) &&
+            !continuousStandaloneEndQualified(weapon))
             throw std::runtime_error(Json{{"error","TLS 原生收尾接口不匹配"},{"vtable_rva",table-base},
                 {"end_rva",end-base},{"release_rva",release-base},{"detach_rva",detach-base}}.dump());
         lasers.push_back(weapon);

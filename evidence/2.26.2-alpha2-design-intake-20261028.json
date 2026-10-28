@@ -1,0 +1,45 @@
+{
+  "schema": 1,
+  "date": "2026-10-28",
+  "design_source": "F:\\下载\\AC7管理界面设计稿-2026-10-28T13-38-37.html",
+  "design_sha256": "adb58d713697f7e9cb305ac8450b5aade60f2288ff7095ce53c358c6172b4759",
+  "approved_items": [
+    {
+      "file": "docs/user/interface/game.zh-CN.json",
+      "key": "recovery.missing_weapon",
+      "old": "找不到兵装资料：{weapon}",
+      "new": "找不到SP资料：{weapon}",
+      "approval": "作者将设计稿的S更正为SP"
+    },
+    {
+      "file": "docs/user/interface/game.zh-CN.json",
+      "key": "back.y.also.toggles.management.b588258e",
+      "old": "手柄Back+Y也可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+      "new": "手柄长按Start键3秒可开关管理界面。键盘Tab选项，Enter操作，Ctrl+Tab切页，Esc返回。",
+      "approval": "作者逐条同意"
+    },
+    {
+      "file": "docs/user/功能说明.txt",
+      "old": "• F6或手柄Select＋Y：打开管理界面。",
+      "new": "• F6或长按手柄Start键3秒：打开管理界面。",
+      "approval": "作者逐条同意"
+    }
+  ],
+  "approved_behavior": [
+    "手柄长按Start 3秒开关管理界面",
+    "已是最新版本时不弹通知，版本页仍显示结果"
+  ],
+  "deferred_design_items": [
+    "任务中使用多SP模型",
+    "机库中使用多SP模型",
+    "HUD中央保持显示当前武器名称",
+    "显示视角中心白点",
+    "当前机体退让提示文案",
+    "资料异常详情帮助文案",
+    "加载提示文案"
+  ],
+  "deferred_reason": "尚未逐条明确审核；保持原文字节",
+  "english": "已逐条等义同步",
+  "player_changelog_changed": false,
+  "scope": "自测修订包；正式2.26.1状态及此前alpha2交付不回改。"
+}

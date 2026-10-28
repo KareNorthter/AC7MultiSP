@@ -122,6 +122,7 @@ std::string weaponCatalogueReason(const Json& issue) {
     return reason;
 }
 void drawManagementErrors() {
+    std::string recoveryDetail;
     if(state.contains("recovery")&&state.at("recovery").value("disabled",false)) {
         const auto& recovery=state.at("recovery");
         ImGui::TextWrapped("%s",recoveryText(recovery.value("severe",false)?"recovery.severe":
@@ -129,17 +130,25 @@ void drawManagementErrors() {
         const auto reason=recovery.value("reason",std::string());
         if(!recovery.value("severe",false)&&recovery.contains("issue"))
             ImGui::TextWrapped("%s",weaponCatalogueReason(recovery.at("issue")).c_str());
-        else if(!reason.empty())ImGui::TextWrapped("%s",uiError(reason).c_str());
+        else if(!reason.empty())recoveryDetail=uiError(reason);
     }
     const char* fields[]={"error","menu_error","hud_error","central_error","settings_error"};
-    bool errors=false;for(const char* field:fields)errors=errors||state.contains(field);
+    bool errors=!recoveryDetail.empty();for(const char* field:fields)errors=errors||state.contains(field);
     for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})errors=errors||(state.contains(field)&&state.at(field).contains("error"));
     if(errors) {
         ImGui::TextColored({1,.65f,.4f,1},"%s",uiText("a.feature.or.save.operation.2aa58920"));
         if(ImGui::CollapsingHeader(uiText("view.error.details.managementerrors.3daf489c"))) {
-            for(const char* field:fields)if(state.contains(field))ImGui::TextWrapped("%s",uiError(state.at(field).get<std::string>()).c_str());
+            bool recoveryShown=false;
+            const auto showDetail=[&](const std::string& raw) {
+                const auto detail=uiError(raw);
+                ImGui::TextWrapped("%s",detail.c_str());
+                recoveryShown=recoveryShown||detail==recoveryDetail;
+            };
+            for(const char* field:fields)if(state.contains(field))showDetail(state.at(field).get<std::string>());
             for(const char* field:{"target_gaze","camera_hold","management_pause","gun_salvo","view_target","debug_weapons"})if(state.contains(field)&&state.at(field).contains("error"))
-                ImGui::TextWrapped("%s",uiError(state.at(field).at("error").get<std::string>()).c_str());
+                showDetail(state.at(field).at("error").get<std::string>());
+            // 仅有恢复原因、没有其他错误字段时，仍可在详情中查看；与已有详情相同时不重复。
+            if(!recoveryDetail.empty()&&!recoveryShown)ImGui::TextWrapped("%s",recoveryDetail.c_str());
         }
     }
 }

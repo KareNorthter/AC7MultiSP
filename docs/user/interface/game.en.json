@@ -2,7 +2,7 @@
   "schema": 1,
   "language": "en",
   "texts": {
-    "recovery.missing_weapon": "Weapon data not found: {weapon}",
+    "recovery.missing_weapon": "SP weapon data not found: {weapon}",
     "recovery.duplicate_weapon": "Duplicate weapon code: {weapon}",
     "recovery.invalid_ammo": "The SP slot has an invalid base ammunition value.",
     "recovery.duplicate_aircraft": "Duplicate aircraft ID; the valid data cannot be determined.",
@@ -133,7 +133,7 @@
     "mod.off.modenabled.000955e4": "Mod: OFF###ModEnabled",
     "save.to.apply.at.the.3d03eef2": "Save to apply at the main menu or single-player mission selection. Disabled pages are dimmed; this switch, Save and Close remain available.",
     "management.6009aa3c": "Management",
-    "back.y.also.toggles.management.b588258e": "Back+Y also toggles management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.",
+    "back.y.also.toggles.management.b588258e": "Hold Start on the controller for 3 seconds to toggle management. Tab navigates, Enter activates, Ctrl+Tab changes pages and Esc returns.",
     "game.language.chinese.english.c0b892a6": "Game language\u0000Chinese\u0000English\u0000",
     "saved.return.to.the.main.4b8dc61e": "Saved; return to the main menu to apply the master switch.",
     "game.is.paused.48376114": "Game is paused",

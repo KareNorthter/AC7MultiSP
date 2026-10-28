@@ -42,3 +42,19 @@ const std::array<ContinuousTLSProfile,3>& continuousTLSProfiles() {
     }};
     return profiles;
 }
+
+// 独立效果由作者蓝图生成，切槽只按已核对的原生WeaponBase契约结束源对象。
+// 资源登记不授予持续保有或附着改写权限；其他机体复用同一资源时也走相同核对。
+struct ContinuousStandaloneEndProfile {
+    const char* weaponClass;
+    const char* weaponPackage;
+    std::array<ContinuousNativeContract::Callback,6> callbacks;
+};
+const std::array<ContinuousStandaloneEndProfile,1>& continuousStandaloneEndProfiles() {
+    static const std::array<ContinuousStandaloneEndProfile,1> profiles={{
+        {"plwp_osl_fa36_C","/Game/Blueprint/Weapons/Player/Base/plwp_osl_fa36",
+            {{{0x618,0x8980e0},{0x628,0x895fd0},{0x648,0x894850},
+              {0x668,0x897010},{0x670,0x85d940},{0x680,0x897740}}}}
+    }};
+    return profiles;
+}

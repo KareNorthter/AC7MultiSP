@@ -1051,9 +1051,9 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     if(down!=mouseWas[k]){ImGui::GetIO().AddMouseButtonEvent(k,down);mouseWas[k]=down;}
                 }
                 // 复用同一次手柄读取；启用直接选择时最多每 20 ms 采样一次。
-                static bool chordWas=false,padWasConnected=false;
+                static bool startHoldFired=false,padWasConnected=false;
                 static WORD previousPadButtons=0;
-                static ULONGLONG lastPadPoll{};
+                static ULONGLONG lastPadPoll{},startHoldSince{};
                 const auto padNow=GetTickCount64();
                 const ULONGLONG pollInterval=dpadInputEnabled()?20:100;
                 if(padNow-lastPadPoll>=pollInterval) {
@@ -1061,9 +1061,13 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                     XINPUT_STATE pad{};
                     const bool connected=XInputGetState(0,&pad)==ERROR_SUCCESS;
                     const WORD buttons=connected?pad.Gamepad.wButtons:0;
-                    const bool chord=foreground&&connected&&(buttons&(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y))==(XINPUT_GAMEPAD_BACK|XINPUT_GAMEPAD_Y);
-                    if(reseedPad.exchange(false)){chordWas=chord;previousPadButtons=buttons;padWasConnected=connected;}
-                    if(chord&&!chordWas)togglePanel(!panel);chordWas=chord;
+                    const bool startDown=foreground&&connected&&(buttons&XINPUT_GAMEPAD_START)!=0;
+                    if(reseedPad.exchange(false)){startHoldSince=0;startHoldFired=false;previousPadButtons=buttons;padWasConnected=connected;}
+                    if(!startDown){startHoldSince=0;startHoldFired=false;}
+                    else if(!startHoldFired) {
+                        if(!startHoldSince)startHoldSince=padNow;
+                        else if(padNow-startHoldSince>=3000){startHoldFired=true;togglePanel(!panel);}
+                    }
                     const WORD pressed=buttons&~previousPadButtons;
                     if(connected&&padWasConnected&&dpadInputEnabled()) {
                         const WORD keys[]={XINPUT_GAMEPAD_DPAD_LEFT,XINPUT_GAMEPAD_DPAD_UP,XINPUT_GAMEPAD_DPAD_RIGHT,XINPUT_GAMEPAD_DPAD_DOWN};
@@ -1095,7 +1099,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         auto& updates=dualsp::updates::service();
                         std::string message;
                         switch(updates.status()) {
-                        case dualsp::updates::Status::Current:message=uiText("already.up.to.date.9c218466");break;
+                        case dualsp::updates::Status::Current:break; // 已是最新时不弹通知；版本页仍显示结果。
                         case dualsp::updates::Status::Failed:message=uiText("unable.to.check.for.updates.f4fdc2e6");break;
                         case dualsp::updates::Status::Unpublished:message=uiText("update.information.has.not.been.4e698d95");break;
                         default:
@@ -1104,7 +1108,7 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                                 uiText("version.and.updates.and.choose.cd6e7a78");
                             break;
                         }
-                        showToast(message,ToastKind::Important);updateToastActive=true;
+                        if(!message.empty()){showToast(message,ToastKind::Important);updateToastActive=true;}
                     }
                 }
                 const bool toastVisible=foreground && (!updateToastActive || dualsp::updates::service().outsideMission()) &&
