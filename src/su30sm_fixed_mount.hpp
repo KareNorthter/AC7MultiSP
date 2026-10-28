@@ -766,7 +766,7 @@ bool mountInternalBayOpen(const FixedMountState& state) {
     if(mountPreview.active && &state==&mountPreview.layout && !mountPreviewOwnsTask())return true;
     const auto& bay=aircraftBayAnimation;
     if(!bay.bound || !mountSameIdentity(bay.plane,state.plane) || !bay.profile ||
-       std::strcmp(bay.profile->body,"pkfa")!=0)return false;
+       std::strcmp(bay.profile->body,"pkfa")!=0 || !aircraftBaySession(bay))return false; // 新会话尚未绑定时先隐藏，不把旧会话失效记成挂载故障。
     return aircraftBayCurrent().combined==1.f;
 }
 // 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。

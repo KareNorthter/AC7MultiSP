@@ -302,10 +302,10 @@ def build():
     data = {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
     if __package__:
-        from .pkfa_internal_runtime_data import append_pkfa_internal
+        from .pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
     else:
-        from pkfa_internal_runtime_data import append_pkfa_internal
-    return append_pkfa_internal(data, ROOT)
+        from pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
+    return apply_pkfa_dual_4aam(append_pkfa_internal(data, ROOT), ROOT)
 
 
 if __name__=='__main__':

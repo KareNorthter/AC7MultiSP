@@ -89,3 +89,5 @@ F22的[下一阶段静态接线草案](../../evidence/f22-internal-mount-design-
 | `three-sp-ui-polish/AC7_MultiSP` | `archive/20261017/pending-ui-polish` / `7e2fe4a` | 登记名与旧分支名不同；核对历史UI资料及本机快照，不猜造目录 |
 
 恢复时先定位Git提交，再核对未提交快照，最后确认ignored原料和工具。缺少任一层就明确缺项，不反复试错，不删除旧资源、构建、转储或个人备份。
+
+普通Su-57的[现场反馈与双4AAM调整](../../evidence/pkfa-dual-4aam-feedback-20261028.json)取代静态前单弹方案；4AAM与GPB互切重复开舱已由作者观察确认，事务退出原因待新候选诊断，详细边界见挂载正文。

@@ -275,13 +275,18 @@ bool aircraftBayParts(void* object,float delta,void* input) {
     return true;
 }
 
+// 诊断失败不能影响舱门控制；只在切换事务中调用。
+void aircraftBayContinuityLog(const Json& event) noexcept {try {nativeLog(event.dump());}catch(...) { }}
 // 公共域只消除模组Init对同一本体开合状态的重置。MSL→SP、SP→MSL和主动关闭仍完整走原生。
 void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
     auto& state=aircraftBayAnimation;state.pending={};
     if(!state.bound || (state.profile->strategy!=AircraftBayStrategy::PublicSwitchContinuity && !state.profile->continuityConfigs) ||
        !runtimeEnabled || command.op!="switch")return;
     if(state.profile->continuityRequiresModels && (!fixedMountEnabled || fixedMountFailed || !fixedMount.bound ||
-       !mountSameIdentity(fixedMount.plane,state.plane)))return;
+       !mountSameIdentity(fixedMount.plane,state.plane))) {
+        aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_SKIP"},{"stage","before"},{"reason","models_not_bound"},{"request",command.request}});
+        return;
+    }
     try {
         require(command.plane==state.plane.address && command.activator==state.activator.address &&
             target>=0 && target<3,"公共舱：事务身份或目标改变");
@@ -291,17 +296,27 @@ void aircraftBayBeforeRebuild(const Command& command,int target) noexcept {
            (!(state.profile->continuityConfigs&(1u<<frame.config)) || !(state.profile->continuityConfigs&(1u<<target))))return;
         const auto armed=read<unsigned char>(command.activator+0x2a1);
         require(armed<=1,"公共舱：兵装类别无效");
-        if(!armed || frame.held || (frame.request!=1 && frame.request!=2))return;
+        if(!armed || frame.held || (frame.request!=1 && frame.request!=2)) {
+            if(state.profile->continuityRequiresModels)aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_SKIP"},{"stage","before"},
+                {"reason","not_opening"},{"request",command.request},{"armed",armed},{"held",frame.held},
+                {"cover_request",frame.request},{"phase",frame.phase}});
+            return;
+        }
         require(frame.phase!=2 || frame.progress==1.f,"公共舱：全开阶段与进度不同步");
         state.pending={state.plane,state.activator,state.profile,state.engine,state.parts,
             state.generation,command.request,target,frame.request,frame.phase,frame.progress,frame.outputs,true};
+        if(state.profile->continuityRequiresModels)aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_CAPTURED"},
+            {"request",command.request},{"target",target},{"cover_request",frame.request},{"phase",frame.phase}});
     }catch(const std::exception& error) {aircraftBayFail(error.what(),"before_rebuild");}
 }
 void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
     auto& state=aircraftBayAnimation;const auto saved=state.pending;state.pending={};
     if(!saved.valid || !state.bound || !runtimeEnabled)return;
     if(state.profile->continuityRequiresModels && (!fixedMountEnabled || fixedMountFailed || !fixedMount.bound ||
-       !mountSameIdentity(fixedMount.plane,state.plane)))return;
+       !mountSameIdentity(fixedMount.plane,state.plane))) {
+        aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_SKIP"},{"stage","after"},{"reason","models_not_bound"},{"request",command.request}});
+        return;
+    }
     try {
         require(command.op=="switch" && armed && command.request==saved.transaction &&
             command.plane==saved.plane.address && command.activator==saved.activator.address &&
@@ -311,7 +326,12 @@ void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
             read<unsigned char>(command.activator+0x2a1)==1,"公共舱：切换完成身份改变");
         const auto native=aircraftBayCurrent();
         require(native.config==saved.target,"公共舱：切换完成配置不同步");
-        if(native.held || (native.request!=1 && native.request!=2))return; // 新兵装保舱或主动关闭时保留新请求。
+        if(native.held || (native.request!=1 && native.request!=2)) {
+            if(state.profile->continuityRequiresModels)aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_SKIP"},{"stage","after"},
+                {"reason","native_request"},{"request",command.request},{"held",native.held},
+                {"cover_request",native.request},{"phase",native.phase}});
+            return; // 新兵装保舱或主动关闭时保留新请求。
+        }
         const bool independent=state.profile->strategy==AircraftBayStrategy::IndependentClose;
         const bool shared=state.profile->strategy==AircraftBayStrategy::Shared01Close;
         if(native.request==saved.request && native.phase==saved.phase && native.progress==saved.progress &&

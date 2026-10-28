@@ -49,3 +49,24 @@ def append_pkfa_internal(data, root):
             raise ValueError('Su-57候选必须保持静态双站分区及原生单挂/PLSL路线')
     data['planes'].append(plane)
     return data
+
+
+def apply_pkfa_dual_4aam(data, root):
+    """在原候选校验之后应用作者现场反馈，保留原始记录。"""
+    record = json.loads((root/'evidence/pkfa-dual-4aam-feedback-20261028.json').read_text(encoding='utf-8'))
+    source = root/record['source']
+    if (record['schema'] != 1 or record['aircraft'] != 'pkfa'
+            or hashlib.sha256(source.read_bytes()).hexdigest() != record['source_sha256']):
+        raise ValueError('Su-57双弹反馈的原候选来源已变化')
+    plane = next(p for p in data['planes'] if p['code'] == 'pkfa')
+    for mask in (3, 7):
+        old = {'selected': [[], [1], [] if mask == 3 else [0, 1]],
+               'racks': 2 if mask == 3 else 6, 'variants': [-1, -1, -1],
+               'borrowed_positions': [{'kind': 0, 'pool': 1, 'socket': 0}],
+               'full_borrowed_kinds': 1}
+        expected = {'selected': [[0, 1], [1], [] if mask == 3 else [0, 1]],
+                    'racks': 1 if mask == 3 else 5, 'variants': [-1, -1, -1]}
+        if plane['plans'][mask] != old or record['plans'][str(mask)] != expected:
+            raise ValueError('Su-57双弹反馈与已核对的原供位不符')
+        plane['plans'][mask] = expected
+    return data
