@@ -127,6 +127,8 @@ struct FixedMountState {
     MountIdentity animatedRack; // 已选择并需要持续播放的 F-35C SWP2；显隐接管也必须接管动画生命周期。
     bool nativeRackPaused{},nativeRackTick{}; // 最近一次原生重建请求，解除固定挂载时归还。
     uint64_t f22InternalMask{},f22SideMask{}; // 按逻辑兵装分别门禁，不能按同一SWP3池一刀切。
+    std::array<int,6> f22XsdbPositions{}; // 六槽共用四点时，按当前待发窗口维护持久序号到挂点的映射。
+    bool f22XsdbPositionsReady{};
     uint64_t readyMask{}; // 实际物理位置的聚合就绪状态。
     ULONGLONG animatedVisualAudit{}; // 无状态变化时只周期核对显隐，骨骼/附着位置仍由原生逐帧更新。
     ULONGLONG localAnimationAudit{}; // 局部机构资格巡检独立计时，不被弹药显隐刷新延后。
@@ -398,6 +400,9 @@ bool mountDesired(const FixedMountState& state,const MountVisual& visual,bool gr
         const int gate=animationGate<0?mountF22Gate(state):animationGate;
         if((visual.physicalBit&state.f22InternalMask) && !(gate&1))return false;
         if((visual.physicalBit&state.f22SideMask) && !(gate&2))return false;
+        // 借用位置在网格替换完成前不得显示旧弹体；原生换网格可能同步触发显隐回调。
+        for(const auto& item:state.meshOverrides)if(mountSameIdentity(item.component,visual.identity) &&
+            read<Addr>(visual.identity.address+0x728)!=item.replacement.address)return false;
     }
     return (state.readyMask&visual.physicalBit)!=0;
 }
@@ -551,6 +556,25 @@ void mountFilterVisibility(void* object,bool requested,unsigned char propagation
 void mountVisibility(void* object,bool visible,unsigned char propagation) { mountFilterVisibility(object,visible,propagation,false); }
 void mountHidden(void* object,bool hidden,unsigned char propagation) { mountFilterVisibility(object,hidden,propagation,true); }
 
+// F-22共舱XSDB六槽只占四点；待发窗口内的四槽必须互不重合。
+bool mountF22CompactXsdb(const FixedMountState& state,int kind) {
+    return state.aircraft==MountAircraft::F22a && kind==1 && state.logicalCounts[kind]==6 &&
+        state.expansionPositions[kind].size()==4;
+}
+void mountF22UpdateXsdbPositions(FixedMountState& state,int cursor,int window,const std::array<int,6>& order) {
+    require(cursor>=0 && cursor<6 && window==4,"F22：XSDB队列窗口改变");
+    std::array<bool,6> seen{};
+    for(int ordinal:order) {
+        require(ordinal>=0 && ordinal<6 && !seen[ordinal],"F22：XSDB持久槽序无效");
+        seen[ordinal]=true;
+    }
+    const int head=order[cursor];
+    const int anchor=state.f22XsdbPositionsReady?state.f22XsdbPositions[head]:0;
+    require(anchor>=0 && anchor<4,"F22：XSDB挂点序号无效");
+    for(int distance=0;distance<6;++distance)
+        state.f22XsdbPositions[order[(cursor+distance)%6]]=(anchor+distance)%4;
+    state.f22XsdbPositionsReady=true;
+}
 // 同一个映射同时用于显示和发射；QAAM 四槽、6AAM/LAGM 六槽均按原生顺序轮转。
 int mountPhysical(const FixedMountState& state,int kind,int ordinal) {
     require(kind>=0 && kind<3,"固定挂载：未知武器种类");
@@ -558,6 +582,8 @@ int mountPhysical(const FixedMountState& state,int kind,int ordinal) {
         require(ordinal>=0 && ordinal<(mountAnimated(state.aircraft)?256:state.logicalCounts[kind]),"扩展挂载：持久序号越界");
         const auto& positions=state.expansionPositions[kind];
         require(!positions.empty(),"扩展挂载：未登记发射位置");
+        if(mountF22CompactXsdb(state,kind) && state.f22XsdbPositionsReady)
+            return positions.at(static_cast<size_t>(state.f22XsdbPositions[ordinal]));
         return positions.at(static_cast<size_t>(ordinal)%positions.size());
     }
     const int count=state.logicalCounts[kind]; // 逻辑数量不因物理位置减少而改变。
@@ -593,6 +619,12 @@ bool mountCopyTransform(void* output,int slot) {
             memory.read<int>(weapon+0x44c)==2 && memory.read<unsigned char>(weapon+0x450)==1 &&
             memory.read<unsigned char>(weapon+0x451)==1,"单MGP：原生两槽齐射契约改变");
         // 不写Damage、LoadTime、弹道或弹药；保留Gunplay等Mod当时的实际两发效果。
+    }
+    if(mountF22CompactXsdb(fixedMount,kind)) {
+        const Addr group=groupOf(session.activator,true);
+        std::array<int,6> order{};
+        std::copy_n(fixedMount.order.begin(),6,order.begin());
+        mountF22UpdateXsdbPositions(fixedMount,read<int>(group+0x14),read<int>(group+0x10),order);
     }
     const int physical=mountPhysical(kind,ordinal); // 与显隐聚合共用映射。
     if(mountLight(fixedMount.aircraft))return mountLightCopyTransform(output,fixedMount,physical);
@@ -858,6 +890,13 @@ void fixedMountRefresh(double time) {
         const int ammo=scalarInt(group,0),window=scalarInt(group,8),cursor=scalarInt(group,12); // 原生队列状态。
         const int count=fixedMount.logicalCounts[fixedMount.weaponKinds[weapon]]; // 槽数与模型池一一核对。
         require(group.slots.size()==static_cast<size_t>(count) && dualsp::validAmmoCount(ammo) && window>=0 && window<=count && cursor>=0 && cursor<count,"固定挂载：逻辑队列无效");
+        const int kind=fixedMount.weaponKinds[weapon];
+        const bool compactXsdb=mountF22CompactXsdb(fixedMount,kind);
+        if(compactXsdb) {
+            std::array<int,6> order{};
+            for(int i=0;i<6;++i)order[i]=group.slots[i].mountOrdinal;
+            mountF22UpdateXsdbPositions(fixedMount,cursor,window,order);
+        }
         require(time+0.001>=group.capturedTime,"固定挂载：游戏时间回退，等待检查点恢复");
         const double delta=std::max(0.0,time-group.capturedTime); // 与现有冷却缓存使用相同的时间校验。
         const bool showReserve=mountShowReserve(fixedMount.aircraft,fixedMount.kindsMask,fixedMount.weaponKinds[weapon]); // 备用弹外观不表示同时可发射。
@@ -880,7 +919,8 @@ void fixedMountRefresh(double time) {
                 const Slot& loading=group.slots[(cursor+distance)%count]; // 新进入待发窗口的槽。
                 if(dualsp::advanceReload(loading.duration,loading.elapsed,delta,true)>=loading.duration)continue;
                 const Slot& fired=group.slots[(cursor+distance+count-window)%count]; // 由原生轮转关系确定空位，不另外计时。
-                vacancies|=uint64_t{1}<<mountPhysical(fixedMount.weaponKinds[weapon],fired.mountOrdinal);
+                // 四点窗口中新补装槽与刚发射槽共享同一物理点；不能按六槽环绕的静态余数回推。
+                vacancies|=uint64_t{1}<<mountPhysical(kind,compactXsdb?loading.mountOrdinal:fired.mountOrdinal);
             }
             weaponMask=(weaponMask&~vacancies)|readyWindow; // 共用位置已有真实待发弹时，真实待发状态优先。
         }

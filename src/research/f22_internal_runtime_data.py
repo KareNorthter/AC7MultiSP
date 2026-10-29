@@ -18,6 +18,15 @@ def append_f22_internal(data, root):
     plane = copy.deepcopy(design['plane_candidate'])
     if plane['code'] != 'f22a' or plane['local_pool'] != 2 or len(plane['plans']) != 8:
         raise ValueError('F-22候选机型或组合不完整')
+    # 侧舱独占8AAM时，腹舱另一种兵装使用六个原生位置；共舱仍保持内二外四。
+    for mask, kind, sockets in ((5, 0, (13, 12, 11, 10, 5, 4)),
+                                (6, 1, (11, 10, 5, 4, 13, 12))):
+        plan = plane['plans'][mask]
+        if (plan['selected'][kind] or plan.get('full_borrowed_kinds') != 1 << kind
+                or [p['socket'] for p in plan['borrowed_positions']] != list(sockets[:len(plan['borrowed_positions'])])
+                or any(p['kind'] != kind or p['pool'] != 2 for p in plan['borrowed_positions'])):
+            raise ValueError('F-22双SP腹舱原始供位改变')
+        plan['borrowed_positions'] = [{'kind': kind, 'pool': 2, 'socket': socket} for socket in sockets]
     plane['groups'][2]['bones'] = observation['live_observation']['mesh_bones']
     pose = record['closed_side_pose']
     if [p['index'] for p in pose] != observation['live_observation']['side_candidates'] or any(
