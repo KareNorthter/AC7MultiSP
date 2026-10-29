@@ -201,6 +201,7 @@ bool mountLightCopyTransform(void*,const FixedMountState&,int);
 bool mountLightAnimationParts(void*,float,void*);
 bool aircraftBayParts(void*,float,void*);
 bool mountInternalBayOpen(const FixedMountState&);
+bool mountLocalBayQualified(const FixedMountState&, Addr);
 int mountF22Gate(const FixedMountState&);
 void mountLocalBeforePublish(void*) noexcept;
 void mountLocalUpdateF22(FixedMountState&,double);
@@ -789,6 +790,16 @@ template<class T> T mountAnimationRead(Addr address) { return read<T>(address); 
 #include "local_mount.hpp"
 #include "light_mount_animation.hpp"
 #include "aircraft_bay_animation.hpp"
+// 仅在公共舱已核对同一机体、兵装会话和引擎时接管活动骨。
+bool mountLocalBayQualified(const FixedMountState& state, Addr engine) {
+    const auto& bay=aircraftBayAnimation;
+    const char* body=state.aircraft==MountAircraft::F22a?"f22a":
+        state.aircraft==MountAircraft::Pkfa?"pkfa":nullptr;
+    return body && bay.bound && bay.profile && bay.engine==engine &&
+        mountSameIdentity(bay.plane,state.plane) &&
+        mountSameIdentity(bay.activator,state.animationActivator) &&
+        aircraftBaySession(bay) && std::strcmp(bay.profile->body,body)==0;
+}
 // 任务内的内舱弹体只在真实共舱输出全开时显示，不隐藏Body或修改原生发射门槛。
 bool mountInternalBayOpen(const FixedMountState& state) {
     if(state.rebuilding || controlledWeaponSwitch)return false; // Init中原生选择与会话暂不同步，不读取旧事务。
@@ -805,11 +816,11 @@ int mountF22Gate(const FixedMountState& state) {
     const auto& bay=aircraftBayAnimation;
     if(!bay.bound || !bay.profile || std::strcmp(bay.profile->body,"f22a")!=0 ||
        !mountSameIdentity(bay.plane,state.plane) || !aircraftBaySession(bay))return 0;
-    const auto frame=aircraftBayCurrent();
+    aircraftBayCurrent(); // 核对当前会话与原生选择一致。
     const auto armed=read<unsigned char>(bay.activator.address+0x2a1);
     require(armed<=1,"F22：兵装类别无效");
     if(!state.local || !state.local->f22ClockReady)return 0;
-    const bool belly=armed && frame.config==2?state.local->f22BellyProgress>.001f:frame.progress>bay.closed+.001f;
+    const bool belly=state.local->f22BellyProgress>.001f;
     const bool side=state.local->f22SideProgress>.001f;
     return (belly?1:0) | (side?2:0);
 }

@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "status": "source_candidate_not_validated",
+  "date": "2026-10-29",
+  "version_observed": "2.26.2 beta3",
+  "author_feedback": {
+    "f22": [
+      "QAAM/XSDB切至8AAM时机腹门关闭但六个腹内支架未收回",
+      "8AAM切至QAAM/XSDB时机腹门突开",
+      "8AAM切至MSL时已关闭的机腹门先突开再关闭"
+    ],
+    "pkfa": [
+      "4AAM/GPB切至PLSL时机腹关闭但4AAM及活动架未回缩，切至MSL时正常回缩"
+    ]
+  },
+  "observation": "evidence/pkfa-rack-retraction-endpoints-20261029.json",
+  "f22_rack_endpoints": "evidence/f22-rack-retraction-endpoints-20261029.json",
+  "source_response": [
+    "F22机腹与侧舱分别依据当前开度向目标平滑过渡；机腹门与腹内支架同用机腹开度，MSL保持关闭目标",
+    "F22 SWP3机腹15骨和机身9骨同步，侧舱14骨保持独立",
+    "普通Su-57 SWP1十根活动骨按实际聚合舱门swcc开合，不跟随PLSL公共spwc",
+    "支架中间姿态基于现场收拢采样分段插值；输入、弹药与发射路径不改"
+  ],
+  "boundaries": [
+    "未编译、运行测试或安装；实机动作、发射一致性和帧率待验证",
+    "取证期间仅只读观察，未调用游戏函数或写入游戏",
+    "用户此前报告的崩溃本轮未定位，不能因本次动画修改宣称已修复",
+    "main beta3已整合其他机体，需按增量接收，不能整表覆盖"
+  ]
+}
