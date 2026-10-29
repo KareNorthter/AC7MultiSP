@@ -43,5 +43,18 @@
   "compiled": false,
   "installed": false,
   "debugger_attached": false,
-  "stale_recorder": "旧取证器报告仍在监控PID 37536；该进程已不存在，调试器及工作进程残留，未连接本次PID 12408。未终止旧进程，不能将该状态视为新取证就绪。"
+  "stale_recorder": "旧取证器报告仍在监控PID 37536；该进程已不存在，调试器及工作进程残留，未连接本次PID 12408。未终止旧进程，不能将该状态视为新取证就绪。",
+  "capture_inventory": {
+    "checked_at": "2026-10-29 11:28 Asia/Shanghai",
+    "latest_windows_dump": "C:/Users/83717/AppData/Local/CrashDumps/Ace7Game.exe.29668.dmp，10:51:41，旧PID，非本次。",
+    "capture_root": "E:/AC7_MultiSP/Temp/crash-capture-20261028-221940-802",
+    "session_directories": [
+      "session-1-pid-37536"
+    ],
+    "session_dump_count": 0,
+    "requested_pid_session_found": false,
+    "old_debugger_log_last_modified": "2026-10-28 22:20:40",
+    "stale_monitor_reason": "入口复用monitoring时仅检查心跳，没有核对当前被监控游戏PID；工作循环等待旧cdb退出，目标游戏进程退出时不会自动结束循环。当前旧进程37536不存在，后台状态仍更新为monitoring。",
+    "boundary": "已核对项目取证目录及系统CrashDumps，未发现本次PID 12408的转储；未删除或停止旧进程。"
+  }
 }
