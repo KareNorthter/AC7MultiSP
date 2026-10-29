@@ -792,11 +792,11 @@ int mountF22Gate(const FixedMountState& state) {
     const auto& bay=aircraftBayAnimation;
     if(!bay.bound || !bay.profile || std::strcmp(bay.profile->body,"f22a")!=0 ||
        !mountSameIdentity(bay.plane,state.plane) || !aircraftBaySession(bay))return 0;
-    const auto frame=aircraftBayCurrent();
+    aircraftBayCurrent(); // 核对当前会话与原生选择一致。
     const auto armed=read<unsigned char>(bay.activator.address+0x2a1);
     require(armed<=1,"F22：兵装类别无效");
     if(!state.local || !state.local->f22ClockReady)return 0;
-    const bool belly=armed && frame.config==2?state.local->f22BellyProgress>.001f:frame.progress>bay.closed+.001f;
+    const bool belly=state.local->f22BellyProgress>.001f;
     const bool side=state.local->f22SideProgress>.001f;
     return (belly?1:0) | (side?2:0);
 }

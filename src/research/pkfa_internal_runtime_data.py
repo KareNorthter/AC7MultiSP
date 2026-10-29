@@ -69,4 +69,10 @@ def apply_pkfa_dual_4aam(data, root):
         if plane['plans'][mask] != old or record['plans'][str(mask)] != expected:
             raise ValueError('Su-57双弹反馈与已核对的原供位不符')
         plane['plans'][mask] = expected
+    rack = json.loads((root/'evidence/pkfa-rack-retraction-endpoints-20261029.json').read_text(encoding='utf-8'))
+    if (rack['schema'] != 1 or len(rack['rack_pose']) != 10 or
+            [item['index'] for item in rack['rack_pose']] != list(range(1, 11)) or any(
+                plane['groups'][0]['bones'][item['index']]['name'] != item['name'] for item in rack['rack_pose'])):
+        raise ValueError('Su-57活动供位架端点或骨序改变')
+    plane['feedback_rack_pose'] = rack['rack_pose']
     return data

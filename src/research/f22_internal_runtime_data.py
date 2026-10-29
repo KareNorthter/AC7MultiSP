@@ -32,5 +32,11 @@ def append_f22_internal(data, root):
     plane['body']['bones'] = feedback['body_bones']
     plane['body']['feedback_pose'] = feedback['body_pose']
     plane['feedback_side_pose'] = feedback['side_pose']
+    racks = json.loads((root/'evidence/f22-rack-retraction-endpoints-20261029.json').read_text(encoding='utf-8'))
+    if (racks['schema'] != 1 or racks['source_capture_sha256'] != feedback['raw_record_sha256']
+            or len(racks['rack_belly_pose']) != 15 or any(
+                plane['groups'][2]['bones'][p['index']]['name'] != p['name'] for p in racks['rack_belly_pose'])):
+        raise ValueError('F-22腹部供位架端点或骨序改变')
+    plane['feedback_rack_belly_pose'] = racks['rack_belly_pose']
     data['planes'].append(plane)
     return data
