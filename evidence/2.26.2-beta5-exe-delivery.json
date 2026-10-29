@@ -1,0 +1,13 @@
+{
+  "version": "2.26.2 beta5",
+  "channel": "candidate",
+  "source_commit": "3ac51aad152000eb65ea79912b02f2de5b7de3fb",
+  "research_base": "789c6fd0bd08fc45e0c200cc98c97f57c414158e",
+  "research_uncommitted_patch": "E:/AC7_MultiSP/Temp/tasks/20261029-bay-beta5-intake/research-uncommitted.patch",
+  "research_uncommitted_patch_sha256": "755ae0a8c3f0245fb642b10a0f178c539a818eb6e46aa07db0f0ab36e47fcead",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta5/AC7MultiSP_Installer_2.26.2_beta5.exe",
+  "sha256": "30dc5bf26665bd6b2be8bbb4c8df93ad592210057e8f8d77eaa59ab4fc459601",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261029-2.26.2-beta5-build-r2/delivery-receipt.json",
+  "validation": "完整构建、签名封装与文件一致性核对完成；首次构建因声明顺序失败，修正后在新目录成功；未运行测试、安装或操作游戏。",
+  "scope": "F-22双挂六点布局与XSDB四点队列的连发、补装、切换、检查点和实际离架待实机验证；按作者要求未修改更新日志。"
+}
