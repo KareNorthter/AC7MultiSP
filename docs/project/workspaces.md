@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 内舱反馈集成交付，进行中 | 本集成聊天；基线main/0ea42f2；来源a00e6d7 | C:/Users/83717/.codex/worktrees/integrate-bay-beta3/AC7_MultiSP | 接收F-22及Su-57反馈修订和崩溃记录，保留34机与92资源；beta3日志已获作者逐条确认，候选待编译及实机验证。 |
 | 内舱成果集成，已出包待验证 | 本集成交付聊天；基线 main/158f2bd；来源研究分支 c43f0e9 | C:/Users/83717/.codex/worktrees/integrate-2-26-2-alpha3/AC7_MultiSP | 接收F-22与Su-57后续候选，合并现有四机及92资源；beta2编号及两条中文日志已获作者确认；已完成完整构建及签名封装，待作者实机验收；源码、构建及验收分别记录。 |
 | 集成交付：2.26.2 alpha2，已出包待测试 | codex/integrate-2.26.2-alpha2；基线 main/37b36a8，延续alpha1/53305aa | C:/Users/83717/.codex/worktrees/integrate-2-26-2-alpha2/AC7_MultiSP | 接收外挂模型6e3581f及故障恢复733aa35，中文alpha2日志逐条获准；已构建常规/开发两包，提供默认关闭的故障入口和离线控制工具；已完成测试前alpha1快照及PAK摘要，单面板快速五轮自动归档；T6漏触发已修正并独立出开发包，作者确认五轮及四机模型、炮类HUD亮度通过；视角待测；本轮已修Super Kai的IEWS源码，接收1b56361与f59e81f，合并为33机/231决策/92资源。另提供当前四分页中文设计稿及提示清单，待作者审核；当时未编译；随后按作者授权启用XFA-36A/F-17V/Gleipnir真实冲突测试组，提供保存日志后恢复B组入口；现已按作者批准接收XFA-36修复、手柄及更新通知调整并编译整合修订EXE，七项设计稿中文仍待审核。环境/流程见[故障测试指导](../engineering/aircraft-fault-testing.md)，不自动启动游戏或执行实机用例 |
 | 机体故障隔离与启动检查，源码待验证 | 本聊天；codex/feat-aircraft-fault-recovery；基线main/9075581 | C:/Users/83717/.codex/worktrees/aircraft-fault-recovery/AC7_MultiSP | 已编写机体级退让、F6诊断、换机恢复及严重错误提示；启动加载与更新结果分开提示，兵装异常在第一页查看。十二项中文词条经作者两次确认，同步英文与生成表；边界见[架构](../engineering/architecture.md#机体故障退让与f6诊断alpha2候选)。补充[测试指导](../engineering/aircraft-fault-testing.md)及本机TXT/原始日志归因核对；人工注入入口未实现。仅静态审阅，未编译、测试、安装或操作游戏，未合main |

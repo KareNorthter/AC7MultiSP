@@ -1,5 +1,9 @@
 AC7MultiSP
 
+2.26.2 beta3 (beta test build)
+• Adjusted special weapon launch positions and weapon visibility timing in the bays of the F-22A and standard Su-57.
+• Adjusted the opening and closing of the F-22A belly and side bays and improved bay switching on the standard Su-57.
+
 2.26.2 beta2 (beta test build)
 • Added multi-SP internal weapon-bay models for the F-22A and adjusted side-bay visibility.
 • Adjusted the standard Su-57 dual-4AAM bay layout and switching behavior.
