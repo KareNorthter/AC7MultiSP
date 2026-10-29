@@ -119,3 +119,5 @@
 普通Su-57切换后崩溃：[20261029初查](su57-switch-crash-20261029.json)，本次无异常栈，原因未确认。
 
 F-22与普通Su-57用户反馈：[20261029反馈修订](internal-bay-feedback-20261029.json)、[F-22动画端点](f22-feedback-animation-endpoints-20261029.json)，均待编译与实机确认。
+
+- [2.26.2 beta3 安装包交付](2.26.2-beta3-exe-delivery.json)：反馈修订来源、包摘要与验证边界。

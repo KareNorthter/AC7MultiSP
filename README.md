@@ -7,7 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式发布版本 | **2.26.1**，作者于2026-10-25验收alpha3：CFA-44 EML持续掉帧已消除、舱门正常，F-2A普通飞行性能恢复，其他功能总体正常；现已由作者确认发布；[验收与授权](evidence/2.26.1-release-authorization.json)和[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)分别保留阶段依据。 |
-| 本轮内测候选 | **2.26.2 beta2**，已接收F-22内舱混挂与侧舱控制及普通Su-57双4AAM布局和切换调整，完成[内测安装包](evidence/2.26.2-beta2-exe-delivery.json)，等待作者游戏验证。继承2.26.2 beta范围；MiG-21单MGP两侧炮口火光仍待修复，ADFX-00(SP)选机卡死未复现、原因未确定。管理界面中文设计稿剩余七项待审核。正式版本仍为2.26.1，旧候选和回执保留。 |
+| 本轮内测候选 | **2.26.2 beta3**，基于beta2接收F-22及普通Su-57发射取位、弹体显隐和舱门动作修订，已制作[内测安装包](evidence/2.26.2-beta3-exe-delivery.json)，等待作者实机验证。Su-57切换崩溃原因未确定；MiG-21单MGP两侧炮口火光仍待修复。正式版本仍为2.26.1，旧候选和回执保留。 |
 | 上一正式版本 | **2.26.0**；[原验收](evidence/2.26.0-main-acceptance-20261025.json)及EXE/ZIP保持原样。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
@@ -17,7 +17,7 @@
 | Mod机体实机反馈 | 作者于2026-10-28确认X-02R A/B、J-20A/B/S及RH-172六个机体入口功能正常，见[用户验收](evidence/mod-aircraft-user-acceptance-20261028.json)。正式版本不变；此前ZSD组合冲突不据此记为已修复。 |
 | 当前真实冲突测试环境 | 作者授权启用XFA-36A包、F-17V、Gleipnir，与B组X-02R/UI-4054混装，目录179条；已核对6个资源成员内容差异。作者确认F-17V、Gleipnir、X-02R A/B及UI-4054三SP正常，XFA-36激光收尾修复已编译，作者确认 OSL 正常。真实武器表冲突测试未触发错误，不能据此证明所有冲突可检测；作者已停止测试并恢复兼容表。见[作者反馈](evidence/real-conflict-user-feedback-20261028.json)和[检测/恢复流程](docs/engineering/aircraft-fault-testing.md#2026-10-28真实冲突测试组)。 |
 | 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。作者已确认完成发布，site/stable.json已按交付材料同步2.26.1；[原网页回执](evidence/2.26.1-pages-delivery.json)保留制作时远端未核事实，[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)记录作者后续反馈。本轮未独立下载或部署核验。 |
-| 当前主线源码 | VERSION为**2.26.2 beta2**，candidate=true；基于2.26.1及2.26.2 beta继续接收内舱候选，尚待实机验收。正式发布版本仍为2.26.1；中文玩家正文按作者逐条审核维护。 |
+| 当前主线源码 | VERSION为**2.26.2 beta3**，candidate=true；内舱反馈修订尚待实机验收。正式发布版本仍为2.26.1；中文玩家正文按作者逐条审核维护。 |
 | 最近验收安装包 | **2.26.1 alpha3**，SHA256为647be5d4…；[原交付回执](evidence/2.26.1-alpha3-integration-delivery.json)不回改。正式2.26.1重新构建后单独记录，不将候选验收冒充新字节已安装。 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。

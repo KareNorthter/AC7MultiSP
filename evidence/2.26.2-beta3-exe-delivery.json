@@ -1,0 +1,11 @@
+{
+  "version": "2.26.2 beta3",
+  "channel": "candidate",
+  "source_commit": "05e3c9a50f961554ddaadbad739b07fd8db12f32",
+  "research_source": "a00e6d7a47109d3a34f3be41531ee4bc9734031a",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta3/AC7MultiSP_Installer_2.26.2_beta3.exe",
+  "sha256": "54d8548476d71370ea8db04ecf9dcd1425679949d642863481c6dd62b397853b",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261029-2.26.2-beta3-build/delivery-receipt.json",
+  "validation": "完整构建、签名封装和文件一致性核对完成；未运行测试、安装或操作游戏。",
+  "scope": "F-22和普通Su-57发射取位、弹体显隐及舱门动作修订待实机验证；Su-57切换崩溃原因未确定，MiG-21单MGP两侧火光待修复。"
+}
