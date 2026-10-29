@@ -91,3 +91,5 @@ F22的[下一阶段静态接线草案](../../evidence/f22-internal-mount-design-
 恢复时先定位Git提交，再核对未提交快照，最后确认ignored原料和工具。缺少任一层就明确缺项，不反复试错，不删除旧资源、构建、转储或个人备份。
 
 普通Su-57的[现场反馈与双4AAM调整](../../evidence/pkfa-dual-4aam-feedback-20261028.json)取代静态前单弹方案；4AAM与GPB互切重复开舱已由作者观察确认，事务退出原因待新候选诊断，详细边界见挂载正文。
+
+快速出击过渡期黄色提示：本次日志与beta源码存在[故障提示误判候选](../../evidence/quick-mission-transition-notice-20261029.json)；提示原文未确认，按主线单行补丁接入并验证，不降低多人保护。
