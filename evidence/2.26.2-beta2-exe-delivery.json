@@ -1,0 +1,11 @@
+{
+  "version": "2.26.2 beta2",
+  "channel": "candidate",
+  "source_commit": "18f174e6ea88e62044d598b63762b7d5b487bc12",
+  "research_source": "c43f0e9c147686bde1288ed69aad4eec893c354c",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta2/AC7MultiSP_Installer_2.26.2_beta2.exe",
+  "sha256": "ecb4f0f68fc46c8354e95f5d18105d74bf65aad827b2d84779321e4788655bbc",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261029-2.26.2-beta2-build/delivery-receipt.json",
+  "validation": "完整构建及签名封装完成；安装包签名与文件一致，资源表34机/238决策/92资源。未安装、运行游戏或测试模块。",
+  "scope": "F-22内舱混挂及侧舱、普通Su-57双4AAM布局和切换调整待作者实机验证；保留MiG-21单MGP两侧火光已知问题。"
+}

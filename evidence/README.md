@@ -114,3 +114,5 @@
 
 - [2.26.2 beta 安装包交付](2.26.2-beta-exe-delivery.json)：候选源码、包摘要与验证范围。
 快速出击黄色提示：[20261029日志和候选](quick-mission-transition-notice-20261029.json)，弹窗原文尚未确认。
+
+- [2.26.2 beta2 安装包交付](2.26.2-beta2-exe-delivery.json)：内舱整合来源、包摘要与验证边界。
