@@ -120,6 +120,7 @@ void mountAnimationDisable(void* owner,void* component) {
     mountAnimationRemember(component,4u); // Tick由其独立入口记账，随后直接写的NoSkeletonUpdate单独记录。
 }
 void mountAnimationPublish(void* component) {
+    if(!mountAnimationNativeDepth)mountLocalBeforePublish(component); // F-22仅在原生发布前处理已绑定侧舱，不改变其他组件。
     auto& host=mountAnimationHost;
     if(GetCurrentThreadId()!=mountGameThread.load() || mountAnimationNativeDepth ||
        !host.controller.active() || !mountAnimationExact.prepared) {

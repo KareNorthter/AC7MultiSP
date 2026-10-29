@@ -305,7 +305,12 @@ def build():
         from .pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
     else:
         from pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
-    return apply_pkfa_dual_4aam(append_pkfa_internal(data, ROOT), ROOT)
+    data = apply_pkfa_dual_4aam(append_pkfa_internal(data, ROOT), ROOT)
+    if __package__:
+        from .f22_internal_runtime_data import append_f22_internal
+    else:
+        from f22_internal_runtime_data import append_f22_internal
+    return append_f22_internal(data, ROOT)
 
 
 if __name__=='__main__':

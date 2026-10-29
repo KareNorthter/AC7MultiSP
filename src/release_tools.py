@@ -103,6 +103,8 @@ def source_snapshot(root=ROOT):
         'evidence/mod-electronic-compat-static.json','evidence/mod-infinite-ammo-compat-static.json',
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'src/research/pkfa_internal_runtime_data.py','evidence/pkfa-internal-mount-source-20261028.json',
+        'src/research/f22_internal_runtime_data.py','evidence/f22-internal-runtime-source-20261029.json',
+        'evidence/f22-internal-mount-design-20261028.json','evidence/f22-requested-bay-behavior-20261029.json',
         'evidence/pkfa-dual-4aam-feedback-20261028.json',
         'evidence/su57-bay-live-observation-20261028.json',
         'evidence/local-four-mount-runtime.json','evidence/active-five-mount-static-plan.json',

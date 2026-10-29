@@ -2,6 +2,11 @@
 // 在反射、轻量Socket读取器和旧动画入口定义后包含。
 #pragma once
 
+struct F22ClosedSideBone {
+    int index{};
+    std::array<float,4> rotation{};
+    std::array<float,3> translation{};
+};
 struct LocalMountOwnership {
     MountIdentity plane,base,component,componentClass,mesh,skeleton,anim;
     size_t rackOffset{},meshOffset{},skeletonOffset{},animOffset{};
@@ -14,6 +19,8 @@ struct LocalMountOwnership {
     bool owned{},nativeNoSkeleton{},nativeTick{};
     unsigned char nativeRefresh{},writtenRefresh{};
     std::map<Addr,MountAnimationReflection::SocketName> nativeSockets;
+    std::array<F22ClosedSideBone,14> f22ClosedSide{};
+    bool f22SideQualified{},f22SideFault{};
 };
 bool mountLocalWriting=false; // 本模块的写入不记作新的原生请求。
 struct LocalMountWriteScope {
@@ -121,6 +128,26 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
         "EMeshComponentUpdateFlag":"EVisibilityBasedAnimTickOption","AlwaysTickPoseAndRefreshBones");
     require(lease->always<=255,"局部机构：骨刷新枚举越界");
     mountLocalQualifyBones(*lease,group);
+    if(state.aircraft==MountAircraft::F22a) {
+        require(mountProperty(object,"MasterPoseComponent","WeakObjectProperty",8)==0x720 &&
+            read<int>(object+0x724)==0 && (read<int>(object+0x720)==0 || read<int>(object+0x720)==-1),
+            "F22侧舱：不支持主姿态共享组件");
+        const auto& poses=definition.at("closed_side_pose");
+        require(pool==2 && poses.size()==lease->f22ClosedSide.size(),"F22侧舱：关闭姿态数量不符");
+        std::bitset<30> seen;
+        for(size_t i=0;i<poses.size();++i) {
+            const auto& pose=poses.at(i);auto& bone=lease->f22ClosedSide[i];
+            bone.index=pose.at("index").get<int>();
+            require(bone.index>0 && bone.index<30 && !seen.test(bone.index) &&
+                group.at("bones").at(bone.index).at("name")==pose.at("name"),"F22侧舱：骨序不符");
+            seen.set(bone.index);bone.rotation=pose.at("rotation").get<std::array<float,4>>();
+            bone.translation=pose.at("translation").get<std::array<float,3>>();
+            float norm=0;for(float v:bone.rotation) {require(std::isfinite(v),"F22侧舱：旋转无效");norm+=v*v;}
+            for(float v:bone.translation)require(std::isfinite(v),"F22侧舱：位置无效");
+            require(std::abs(norm-1.f)<.001f,"F22侧舱：旋转不是单位四元数");
+        }
+        lease->f22SideQualified=true;
+    }
     lease->sockets.prepare(api,lease->component);
     for(const auto& visual:state.visuals)if(visual.pool==pool && visual.index>=0) {
         MountAnimationReflection::SocketName name{read<unsigned>(visual.identity.address+0x108),read<unsigned>(visual.identity.address+0x10c)};
@@ -151,6 +178,7 @@ void mountLocalMaintain(FixedMountState& state) {
         return;
     }
     auto& lease=*state.local;mountLocalCurrent(lease);
+    require(!lease.f22SideFault,"F22侧舱：姿态发布校验失败，已退回原生外观");
     mountAnimationInstallHooks(); // 复用按实例过滤的Tick/停用观察入口，不启动旧完整共舱控制器。
     const auto flags=read<unsigned char>(lease.component.address+0x9b0);
     const bool no=(flags&2)!=0,tick=read<unsigned char>(lease.component.address+0x3f)!=0;
@@ -231,4 +259,57 @@ bool mountLocalCopyTransform(void* output,const FixedMountState& state,int posit
     require(!socket.number && found!=lease.nativeSockets.end() && LightMountBones::same(found->second,socket),
         "局部机构：发射挂点身份改变");
     lease.sockets.copy(lease.reflection,lease.component,socket,output);return true;
+}
+
+// 只修改原生即将发布的组件空间侧骨；原生发布负责后续附着、通知与渲染。
+// 仅任务内已绑定的原版F-22有效；开火取位和腹舱骨继续使用同一原生发布。
+void mountLocalBeforePublish(void* component) noexcept {
+    if(GetCurrentThreadId()!=mountGameThread.load() || !runtimeEnabled || !fixedMountEnabled || fixedMountFailed ||
+       controlledWeaponSwitch || !fixedMount.bound || fixedMount.rebuilding || fixedMount.aircraft!=MountAircraft::F22a ||
+       !fixedMount.local || mountPreviewOwnsTask())return;
+    auto& lease=*fixedMount.local;
+    if(!lease.owned || !lease.f22SideQualified || lease.f22SideFault ||
+       lease.component.address!=reinterpret_cast<Addr>(component))return;
+    try {
+        const MountIdentityBatch ids;
+        require(ids.alive(lease.plane) && ids.alive(lease.component) && ids.alive(lease.mesh) && ids.alive(lease.anim) &&
+            ids.alive(fixedMount.animationActivator),"F22侧舱：实例身份失效");
+        require(session.plane==lease.plane.address && session.activator==fixedMount.animationActivator.address &&
+            ids.read<Addr>(lease.plane.address+lease.rackOffset)==lease.component.address &&
+            ids.read<Addr>(lease.component.address+lease.meshOffset)==lease.mesh.address &&
+            ids.read<Addr>(lease.component.address+lease.animOffset)==lease.anim.address,"F22侧舱：会话或资源改变");
+        const Addr engine=ids.read<Addr>(lease.plane.address+0x1410),parts=engine+0xf90;
+        const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+        require(engine && ids.read<Addr>(engine+0x1268)==lease.plane.address+0xb40 &&
+            ids.read<Addr>(parts)==base+0x2fff178,"F22侧舱：引擎身份改变");
+        const int config=ids.read<int>(parts+0x178);
+        const auto armed=ids.read<unsigned char>(session.activator+0x2a1);
+        require(config>=0 && config<3 && armed<=1,"F22侧舱：选择状态无效");
+        if(armed && config==2)return; // 选中8AAM时完整保留原生活动姿态。
+        const Addr object=lease.component.address;
+        if(ids.read<unsigned char>(object+0x828)!=1)return; // 没有待发布姿态时不触碰缓冲。
+        const auto frame=ids.read<std::uint64_t>(base+0x3ac5520);
+        if(ids.read<unsigned>(object+0xd24)!=static_cast<unsigned>(frame))return;
+        const auto doubleBuffered=ids.read<unsigned char>(object+0x750);
+        const int index=ids.read<int>(object+0x748);
+        const int published=ids.read<int>(object+0x74c);
+        require(doubleBuffered==1 && index>=0 && index<=1 && published>=0 && published<=1 && index!=published &&
+            ids.read<int>(object+0x724)==0 && (ids.read<int>(object+0x720)==0 || ids.read<int>(object+0x720)==-1),
+            "F22侧舱：要求独立双缓冲及未共享的待发布姿态");
+        const Addr array=object+0x728+static_cast<Addr>(index)*16;
+        const Addr data=ids.read<Addr>(array);const int count=ids.read<int>(array+8),capacity=ids.read<int>(array+12);
+        require(count==30 && capacity>=count && capacity<=1000 && data &&
+            MountAnimationReflection::writable(data,static_cast<size_t>(count)*48),"F22侧舱：待发布姿态不可写");
+        require(ids.read<unsigned char>(object+0x828)==1 && ids.read<int>(object+0x748)==index &&
+            ids.read<int>(object+0x74c)==published && ids.read<Addr>(array)==data,
+            "F22侧舱：写入前发布状态改变");
+        for(const auto& bone:lease.f22ClosedSide) {
+            const Addr transform=data+static_cast<Addr>(bone.index)*48;
+            // 仅旋转与位移被动画驱动；原生缩放和填充字节保持不动。
+            if(std::memcmp(reinterpret_cast<void*>(transform),bone.rotation.data(),sizeof(bone.rotation))!=0)
+                std::memcpy(reinterpret_cast<void*>(transform),bone.rotation.data(),sizeof(bone.rotation));
+            if(std::memcmp(reinterpret_cast<void*>(transform+16),bone.translation.data(),sizeof(bone.translation))!=0)
+                std::memcpy(reinterpret_cast<void*>(transform+16),bone.translation.data(),sizeof(bone.translation));
+        }
+    }catch(...) {lease.f22SideFault=true;} // 下次维护统一退回原生，不在引擎发布栈中归还资源。
 }

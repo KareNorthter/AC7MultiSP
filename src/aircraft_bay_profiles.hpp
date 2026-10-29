@@ -13,8 +13,11 @@ struct AircraftBayProfile {
     unsigned continuityConfigs{}; // 指定同舱配置集合；只在该集合内SP互切时保留真实进度。
     bool continuityRequiresModels{}; // 仅已绑定的多SP外观需要连续性，关闭外观仍走原生切换。
 };
-const std::array<AircraftBayProfile,9>& aircraftBayProfiles() {
-    static const std::array<AircraftBayProfile,9> profiles={{
+const std::array<AircraftBayProfile,10>& aircraftBayProfiles() {
+    static const std::array<AircraftBayProfile,10> profiles={{
+        {"f22a","f22a",{"/Game/Blueprint/Weapons/Player/Base/plwp_qaam_a0",
+            "/Game/Blueprint/Weapons/Player/Base/plwp_xsdb_a0",
+            "/Game/Blueprint/Weapons/Player/Base/plwp_8aam_a0"},AircraftBayStrategy::PublicSwitchContinuity,1,-1,false,3},
         {"f35c","f35c",{"/Game/Blueprint/Weapons/Player/Base/plwp_sod_a0",
             "/Game/Blueprint/Weapons/Player/Base/plwp_4aam_a0",
             "/Game/Blueprint/Weapons/Player/Base/plwp_8agm_a0"},AircraftBayStrategy::IndependentClose,6,-1,false,3},

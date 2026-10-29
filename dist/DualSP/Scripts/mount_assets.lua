@@ -29,4 +29,5 @@ return {
     su33={{70,"MSP_su33_hvaa_outer",1,136}},
     f18x={{71,"MSP_f18x_lacm_outer",1,136},{72,"MSP_f18x_agm_inner_tips_sensor",2,136}},
     pkfa={},
+    f22a={},
 }
