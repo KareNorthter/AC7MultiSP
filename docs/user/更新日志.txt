@@ -1,5 +1,9 @@
 AC7MultiSP
 
+2.26.2 beta2（内测版）
+• 增加 F-22A 的多 SP 内置弹舱模型，并调整侧舱显示。
+• 调整普通 Su-57 的双 4AAM 弹舱布局和切换处理。
+
 2.26.2 beta（内测版）
 • 增加 A-10C、F-2A Super Kai 的双 SP 及三 SP 模型；增加 F-104C 的双 SP 模型，以及 MiG-21bis 的 RKT＋SAAM 双 SP 模型。
 • 增加普通 Su-57 的多 SP 内置弹舱模型，调整 F-35C 的弹舱收尾处理。

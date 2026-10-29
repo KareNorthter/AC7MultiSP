@@ -96,7 +96,7 @@ namespace AC7MultiSP.Setup {
             string actualVersion = Text(manifest, "version"), channel = Text(manifest, "channel");
             Require(Number(manifest, "schema") == 1 && Text(manifest, "product") == "AC7MultiSP" && Text(manifest, "purpose") == purpose &&
                 ReleaseVersion.Valid(actualVersion) && (version == null || actualVersion == version) &&
-                (channel == "stable" || channel == "candidate") && (!(actualVersion.Contains(" alpha") || actualVersion.EndsWith(" beta", StringComparison.Ordinal)) || channel == "candidate") &&
+                (channel == "stable" || channel == "candidate") && (!(actualVersion.Contains(" alpha") || actualVersion.Contains(" beta")) || channel == "candidate") &&
                 Regex.IsMatch(Text(manifest, "release_id"), @"\A[0-9a-f]{32}\z") && Regex.IsMatch(Text(manifest, "source_commit"), @"\A[0-9a-f]{40}\z"));
             var files = Object(manifest["files"]); Require(files.Count > 0 && files.Count <= 256);
             var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase); var resources = new HashSet<string>(StringComparer.Ordinal);
@@ -121,7 +121,7 @@ namespace AC7MultiSP.Setup {
                 Require(manifest["candidate"] is bool);
                 info = Json().Deserialize<BundleInfo>(Utf8.GetString(raw));
                 Require(info.schema == 1 && info.version == version && info.delivery_version == version &&
-                    (!(version.Contains(" alpha") || version.EndsWith(" beta", StringComparison.Ordinal)) || info.candidate) && Text(manifest, "channel") == (info.candidate ? "candidate" : "stable") &&
+                    (!(version.Contains(" alpha") || version.Contains(" beta")) || info.candidate) && Text(manifest, "channel") == (info.candidate ? "candidate" : "stable") &&
                     info.zip_name == "AC7MultiSP-" + version + "-Universal.zip" &&
                     Regex.IsMatch(Text(manifest, "universal_sha256"), @"\A[0-9a-f]{64}\z"));
                 // 初始化期间不调用UiText，失败提示使用同源生成的最小常量。

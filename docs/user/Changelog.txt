@@ -1,5 +1,9 @@
 AC7MultiSP
 
+2.26.2 beta2 (beta test build)
+• Added multi-SP internal weapon-bay models for the F-22A and adjusted side-bay visibility.
+• Adjusted the standard Su-57 dual-4AAM bay layout and switching behavior.
+
 2.26.2 beta (beta test build)
 • Added dual-SP and triple-SP models for A-10C and F-2A Super Kai, dual-SP models for F-104C, and an RKT + SAAM dual-SP model for MiG-21bis.
 • Added multi-SP internal weapon-bay models for the standard Su-57 and adjusted F-35C bay closing behavior.

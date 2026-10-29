@@ -25,5 +25,5 @@
     "mount_assets.lua",
     "mod_aircraft.lua"
   ],
-  "receipt_prefix": "2.26.2-beta"
+  "receipt_prefix": "2.26.2-beta2"
 }
