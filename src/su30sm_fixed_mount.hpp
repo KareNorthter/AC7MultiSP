@@ -3,6 +3,7 @@
 #pragma once
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
+bool mountSameIdentity(const MountIdentity&,const MountIdentity&);
 enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x, A10a, F02x, F104, M21b }; // 新机只追加索引，既有机体编号保持。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
