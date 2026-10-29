@@ -42,5 +42,6 @@
   "next": "若用户同意，使用项目现有取证工具附加新进程，作者操作复现；需以捕获的首个异常、调用栈和实际模块定位，不能仅凭日志末行归因。",
   "compiled": false,
   "installed": false,
-  "debugger_attached": false
+  "debugger_attached": false,
+  "stale_recorder": "旧取证器报告仍在监控PID 37536；该进程已不存在，调试器及工作进程残留，未连接本次PID 12408。未终止旧进程，不能将该状态视为新取证就绪。"
 }
