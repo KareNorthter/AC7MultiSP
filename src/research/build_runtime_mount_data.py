@@ -302,11 +302,10 @@ def build(include_remaining=True):
     data = {'planes':planes,'assets':assets,'collision_preservation':preserved,
             'collision_body_layout':{k:collision['body_layout'][k] for k in ('size','guid_offset')}}
     if __package__:
-        from .pkfa_internal_runtime_data import append_pkfa_internal
+        from .pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
     else:
-        from pkfa_internal_runtime_data import append_pkfa_internal
-    data = append_pkfa_internal(data, ROOT)
-    # 独立研究先核对28机基线；整合后将Su-57追加到现有32机末尾，避免挤占四机的索引。
+        from pkfa_internal_runtime_data import append_pkfa_internal, apply_pkfa_dual_4aam
+    data = apply_pkfa_dual_4aam(append_pkfa_internal(data, ROOT), ROOT)
     pkfa = data['planes'].pop()
     if include_remaining:
         if __package__:
@@ -315,6 +314,12 @@ def build(include_remaining=True):
             from remaining_external_mount_data import append_remaining_external
         append_remaining_external(data['planes'], data['assets'], data['collision_preservation'], ROOT)
     data['planes'].append(pkfa)
+    if include_remaining:
+        if __package__:
+            from .f22_internal_runtime_data import append_f22_internal
+        else:
+            from f22_internal_runtime_data import append_f22_internal
+        append_f22_internal(data, ROOT)
     return data
 
 

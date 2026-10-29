@@ -38,7 +38,7 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 普通Su-57完整七组合随后已成为[源码候选](../../evidence/pkfa-internal-mount-source-20261028.json)：静态GPB架分区、原双PLSL及一副SWP1局部租约，表增至29机/203组合且77资源不变。作者允许轻微外观贴合差异；任务内门禁、仅模型开启的共舱连续性和仍待实机事项见挂载正文，未编译/安装/测试。
 
-F22的[下一阶段静态接线草案](../../evidence/f22-internal-mount-design-20261028.json)已转换为单SWP3供位的七组合格式；尚未注册运行，等待当前原生池、骨架与公共舱现场。旧完整控制器及腹骨显隐仍不恢复。
+F22的[内舱混挂源码候选](../../evidence/f22-internal-runtime-source-20261029.json)已按原网格骨序接入；QAAM/XSDB同舱连续性及8AAM侧舱分离均待编译和实机验证，详见挂载正文。
 
 多机舱门续研已从静态比较推进到限定源码候选，范围是普通SU-57/TGM、DarkStar、XFA-33 A/B/C；尚未编译、安装或实机验证。唯一行为说明见[挂载设计](../engineering/multi-sp-mount-design.md#多机舱门收尾源码候选待逐机验证)，待反馈项仍在上方兼容性续研正文维护。旧完整共舱/Tick接管方案未恢复。
 
@@ -103,3 +103,7 @@ F22的[下一阶段静态接线草案](../../evidence/f22-internal-mount-design-
 | `three-sp-ui-polish/AC7_MultiSP` | `archive/20261017/pending-ui-polish` / `7e2fe4a` | 登记名与旧分支名不同；核对历史UI资料及本机快照，不猜造目录 |
 
 恢复时先定位Git提交，再核对未提交快照，最后确认ignored原料和工具。缺少任一层就明确缺项，不反复试错，不删除旧资源、构建、转储或个人备份。
+
+普通Su-57的[现场反馈与双4AAM调整](../../evidence/pkfa-dual-4aam-feedback-20261028.json)取代静态前单弹方案；4AAM与GPB互切重复开舱已由作者观察确认，事务退出原因待新候选诊断，详细边界见挂载正文。
+
+快速出击过渡期黄色提示：本次日志与beta源码存在[故障提示误判候选](../../evidence/quick-mission-transition-notice-20261029.json)；提示原文未确认，单行补丁保留为候选，尚未接入；不降低多人保护。

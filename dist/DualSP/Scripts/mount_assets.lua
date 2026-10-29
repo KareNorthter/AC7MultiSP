@@ -33,4 +33,5 @@ return {
     f104={{84,"MSP_f104_saam_left_r1",1,40},{85,"MSP_f104_grkt_right_r1",2,8},{86,"MSP_f104_grkt_left_r1",2,64},{87,"MSP_f104_hpaa_right_r1",3,96}},
     m21b={{88,"MSP_m21b_rkt_left_r1",2,64},{89,"MSP_m21b_saam_right_r1",3,96},{90,"MSP_m21b_mgp_left_r1",1,40},{91,"MSP_m21b_rkt_right_r1",2,8}},
     pkfa={},
+    f22a={},
 }

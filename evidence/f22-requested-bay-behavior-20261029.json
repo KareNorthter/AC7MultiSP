@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "status": "live_observation_completed_runtime_design_pending",
+  "aircraft": "f22a",
+  "user_request": "QAAM与XSDB共存时QAAM在内侧、XSDB在外侧；二者互切保持腹舱开度；8AAM侧舱仅在选中8AAM时打开。",
+  "existing_candidate": "evidence\\f22-internal-mount-design-20261028.json",
+  "existing_candidate_sha256": "b35ceff6aad0d86d22d9e1b5e6d9d4d9ae5410f2c77476952d4a384263838938",
+  "inner_qaam": {
+    "sockets": [
+      "sp43",
+      "sp44"
+    ],
+    "reference_y": [
+      -2.12729,
+      2.11975
+    ]
+  },
+  "outer_xsdb": {
+    "sockets": [
+      "sp39",
+      "sp40",
+      "sp41",
+      "sp42"
+    ],
+    "reference_y": [
+      -7.85457,
+      7.74406,
+      -4.93761,
+      4.98522
+    ]
+  },
+  "evidence": "evidence/mount-expansion-animated.json 中F-22原生资源供位；此为参考姿态坐标，不是当前运行时观测。",
+  "animation_boundary": "旧资源记录显示机身及SWP1/2/3都只有公共spwc通道；不能仅关闭此通道而同时保留腹舱动画。侧舱分离需要识别对应机身与SWP3骨骼及姿态发布路径。",
+  "pending": [
+    "修正旧草案骨序并接入七组合布局",
+    "核清8AAM真实待发窗口与现场字段14的关系",
+    "设计并核查分离侧舱与腹舱的骨姿态发布路径和性能",
+    "实现QAAM↔XSDB连续性并保留8AAM/MSL边界",
+    "编译安装及性能、发射、补给验收按后续授权进行"
+  ],
+  "compiled": false,
+  "installed": false,
+  "gameplay_validated": false,
+  "live_observation": {
+    "version": "2.26.2 beta",
+    "game_pid": 29668,
+    "scope": "作者操控下只读采样；游戏未注入、未写入、未调用函数；采样因操作完成主动结束",
+    "capture_path": "Temp/tasks/20261028-official-bay-live/f22-stream-103123.jsonl",
+    "capture_sha256": "71d396374b8d81189967e0955c0278885cf645e098fb7353392aa52c2c92b972",
+    "samples": 1720,
+    "duration_s": 43.5342,
+    "parts_domain_flags": 1,
+    "pool_counts": [
+      6,
+      6,
+      14
+    ],
+    "active_8aam_logical_count": 14,
+    "active_8aam_slot_window_field": 14,
+    "window_boundary": "现场字段为14，历史研究窗口为8；不得视作同一含义或修改发射规则，需厘清实际待发窗口。",
+    "switching": "QAAM↔XSDB及其他SP互切时公共spwc从1回落约0.04–0.06，再逐步回1；MSL期间回-0.01。跨进程非同帧原子采样。",
+    "full_open_qaam_vs_8aam": "所采同为全开时，Body与SWP3姿态逐骨无大于0.0001的变换差异；不能按当前全开公共姿态自动区分侧舱。",
+    "mesh_bones_source": "E:\\AC7_MultiSP\\Temp\\su30sm-fixed-mount-prototype\\Temp\\mount-assets-20261015-182045-025844\\assets\\pakchunk0-WindowsNoEditor\\decoded\\f22a_SWP3.json",
+    "mesh_source_sha256": "7f84895ddb857d747c09271719201152ec726fa5fc743509f11f41b966a379e9",
+    "mesh_bones": [
+      {
+        "name": "Body",
+        "parent": -1
+      },
+      {
+        "name": "SWPCover_29",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_31",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_30",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_32",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_21",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_08",
+        "parent": 5
+      },
+      {
+        "name": "SWPCover_07",
+        "parent": 5
+      },
+      {
+        "name": "SWPCover_35",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_36",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_34",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_28",
+        "parent": 10
+      },
+      {
+        "name": "SWPCover_27",
+        "parent": 10
+      },
+      {
+        "name": "SWPCover_33",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_26",
+        "parent": 13
+      },
+      {
+        "name": "SWPCover_25",
+        "parent": 13
+      },
+      {
+        "name": "SWPCover_38",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_37",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_24",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_10",
+        "parent": 18
+      },
+      {
+        "name": "SWPCover_09",
+        "parent": 18
+      },
+      {
+        "name": "SWPCover_18",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_06",
+        "parent": 21
+      },
+      {
+        "name": "SWPCover_05",
+        "parent": 21
+      },
+      {
+        "name": "SWPCover_20",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_19",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_16",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_17",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_23",
+        "parent": 0
+      },
+      {
+        "name": "SWPCover_22",
+        "parent": 0
+      }
+    ],
+    "mesh_order_boundary": "旧20261028草案使用Skeleton资源序，实际SkeletalMesh参考骨序不同；当前local_mount按网格骨序核对，直接沿用旧草案会拒绝绑定。",
+    "side_candidates": [
+      1,
+      2,
+      3,
+      4,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17
+    ],
+    "side_boundary": "侧部候选按网格参考位置及原生侧挂点划分。MSL全闭采样这些骨骼的组件空间位置、旋转（四元数符号无关）及单位缩放均与原网格参考姿态一致；切换及发布时序仍需核准。",
+    "publication_static": "旧原生发布函数在pending非零时把writeIndex发布为readIndex，然后更新和通知；候选可评估在游戏线程验证身份、待发布帧与双缓冲后修正待发布侧骨，保留腹骨及原生发布，但并发安全、生命周期和帧率仍需证明，尚未写代码。"
+  },
+  "candidate_boundary": "复用20261028未注册草案；将其SWP3的bones替换为本记录live_observation.mesh_bones。侧舱独立控制、8AAM真实窗口与当前资源完整身份需进一步核对。"
+}

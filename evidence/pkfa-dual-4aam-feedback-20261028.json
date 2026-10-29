@@ -1,0 +1,59 @@
+{
+  "schema": 1,
+  "status": "runtime_source_candidate_not_validated",
+  "aircraft": "pkfa",
+  "source": "evidence/pkfa-internal-mount-source-20261028.json",
+  "source_sha256": "05a775a2c4e3e970c248540ee34b6741fb4c448f12af3e063c2655e10abb1677",
+  "user_feedback": "4AAM与GPB共存时希望前部两枚4AAM并排，并优先保留原活动供位；允许肉眼难察的轻度穿模或间隙。",
+  "plans": {
+    "3": {
+      "selected": [
+        [
+          0,
+          1
+        ],
+        [
+          1
+        ],
+        []
+      ],
+      "racks": 1,
+      "variants": [
+        -1,
+        -1,
+        -1
+      ]
+    },
+    "7": {
+      "selected": [
+        [
+          0,
+          1
+        ],
+        [
+          1
+        ],
+        [
+          0,
+          1
+        ]
+      ],
+      "racks": 5,
+      "variants": [
+        -1,
+        -1,
+        -1
+      ]
+    }
+  },
+  "basis": "4AAM沿用原SWP1的sp11/sp12及其活动骨，GPB保留SWP2的sp22；混挂时隐藏SWP2整架，避免两套整架重叠；原GPB组件保留原父链。",
+  "geometry": "历史101帧采样中前部双4AAM彼此分离，4AAM前部与GPB后部的全帧纵向包围盒间距约17.97资源单位；不代表挂架与弹体或机身已通过完整碰撞验证。",
+  "live": "2.26.2 alpha2现场中作者确认4AAM与GPB互切有舱门动画；25ms只读采样记录两方向spwc最低约0.04至0.06、swcc最低约0.49至0.50，随后恢复1。切回MSL后输出闭合。非原子采样无法判定事务中哪一项阻止连续性恢复。",
+  "session_fault": "重新配置日志在FIXED_MOUNT_BOUND之后、AIRCRAFT_BAY_BOUND之前记录旧会话失效；门禁先判断舱门会话与当前会话相同，尚未绑定时先隐藏。",
+  "limitations": [
+    "尚未编译、安装或实机验证",
+    "GPB与SWP1活动架支撑、穿模及动画须实机确认",
+    "连续性故障原因尚未定位，新增按切换事务输出的诊断，不改变舱门恢复条件",
+    "发射、补给、单SP旁路和性能须后续核对"
+  ]
+}

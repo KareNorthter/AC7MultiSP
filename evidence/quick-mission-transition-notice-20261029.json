@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "status": "static_candidate_not_integrated",
+  "date": "2026-10-29",
+  "version": "2.26.2 beta",
+  "base_main_commit": "158f2bd3e43b549c814d1fc89de60495b37ef7c4",
+  "installed_main_lua_sha256": "d5a28b0f1fee9064541445f3163e331c4f395ce54fa659222ec81c3a6508078d",
+  "user_feedback": "快速出击加载过程中或进入任务时有黄色提示，大意为Mod失效；具体文字未记清。三SP正常。",
+  "observed": "本次快速出击10:28:43经Transition世界时RUNTIME_MODE disabled multiplayer_mode；10:28:58进入单人任务后恢复enabled；10:29:01三SP成功初始化并应用。未记录弹窗原文，不能断言就是该条。",
+  "source_cause": "beta发布状态把not runtimeAllowed直接作为recovery.disabled；快速出击过渡期仍发布状态，UI据此生成recovery.aircraft错误通知，即使只是正常禁止过渡世界运行。",
+  "candidate_patch": "src/research/quick-mission-recovery-notice-candidate.patch",
+  "patch_sha256": "fb3cf59d3ffd5be326ff84d10516daded04b54c36640fd8a04c721780f9e4477",
+  "candidate": "仅在runtimeFailed或aircraft_native_only时报告故障恢复禁用；保持runtimeAllowed、多人保护、功能清理和实际准入原样。",
+  "limitations": [
+    "只静态对照，未编译、安装或运行测试",
+    "用户弹窗原文未知，仍需复现确认",
+    "主线beta实现不在本研究分支基线中，候选补丁须由整合者按main精确接入，不能覆盖主线Lua"
+  ]
+}
