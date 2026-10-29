@@ -103,3 +103,5 @@
 快速出击黄色提示：[20261029日志和候选](quick-mission-transition-notice-20261029.json)，弹窗原文尚未确认。
 
 普通Su-57切换后崩溃：[20261029初查](su57-switch-crash-20261029.json)，本次无异常栈，原因未确认。
+
+F-22与普通Su-57用户反馈：[20261029反馈修订](internal-bay-feedback-20261029.json)、[F-22动画端点](f22-feedback-animation-endpoints-20261029.json)，均待编译与实机确认。

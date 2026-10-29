@@ -198,6 +198,7 @@ bool aircraftBayParts(void*,float,void*);
 bool mountInternalBayOpen(const FixedMountState&);
 int mountF22Gate(const FixedMountState&);
 void mountLocalBeforePublish(void*) noexcept;
+void mountLocalUpdateF22(FixedMountState&,double);
 bool mountLightAnimationRelease();
 void mountLightAnimationCommit();
 void mountLightAnimationBeforeRebuild(const Command&,int);
@@ -781,8 +782,8 @@ bool mountInternalBayOpen(const FixedMountState& state) {
     if(mountPreview.active && &state==&mountPreview.layout && !mountPreviewOwnsTask())return true;
     const auto& bay=aircraftBayAnimation;
     if(!bay.bound || !mountSameIdentity(bay.plane,state.plane) || !bay.profile || !aircraftBaySession(bay))return false;
-    if(state.aircraft==MountAircraft::Pkfa && std::strcmp(bay.profile->body,"pkfa")==0)return aircraftBayCurrent().combined==1.f;
-    if(state.aircraft==MountAircraft::F22a && std::strcmp(bay.profile->body,"f22a")==0)return aircraftBayCurrent().progress==1.f;
+    if(state.aircraft==MountAircraft::Pkfa && std::strcmp(bay.profile->body,"pkfa")==0)return aircraftBayCurrent().combined>bay.closed+.001f;
+    if(state.aircraft==MountAircraft::F22a && std::strcmp(bay.profile->body,"f22a")==0)return aircraftBayCurrent().progress>bay.closed+.001f;
     return false; // 新会话尚未绑定时先隐藏，不把旧会话失效记成挂载故障。
 }
 int mountF22Gate(const FixedMountState& state) {
@@ -792,10 +793,12 @@ int mountF22Gate(const FixedMountState& state) {
     if(!bay.bound || !bay.profile || std::strcmp(bay.profile->body,"f22a")!=0 ||
        !mountSameIdentity(bay.plane,state.plane) || !aircraftBaySession(bay))return 0;
     const auto frame=aircraftBayCurrent();
-    if(frame.progress!=1.f)return 0;
     const auto armed=read<unsigned char>(bay.activator.address+0x2a1);
     require(armed<=1,"F22：兵装类别无效");
-    return 1 | (frame.config==2 && armed==1?2:0);
+    if(!state.local || !state.local->f22ClockReady)return 0;
+    const bool belly=armed && frame.config==2?state.local->f22BellyProgress>.001f:frame.progress>bay.closed+.001f;
+    const bool side=state.local->f22SideProgress>.001f;
+    return (belly?1:0) | (side?2:0);
 }
 // 与已有 restore 使用同一次队列旋转，禁止将物理映射重新按新数组下标编号。
 void fixedMountRestoreOrder(const Group& saved,int next) {
@@ -807,6 +810,7 @@ void fixedMountRestoreOrder(const Group& saved,int next) {
 void fixedMountRefresh(double time) {
     if(!fixedMountEnabled || fixedMountFailed) { mountPreviewRelease(0,false);fixedMountRelease();return; }
     if(!fixedMount.bound || mountPreviewOwnsTask())return;
+    if(fixedMount.aircraft==MountAircraft::F22a)mountLocalUpdateF22(fixedMount,time);
     if(mountExterior(fixedMount.aircraft)) { mountExteriorRefresh(time);return; }
     if(mountLocal(fixedMount.aircraft) && GetTickCount64()-fixedMount.localAnimationAudit>=100) {
         mountLocalMaintain(fixedMount);fixedMount.localAnimationAudit=GetTickCount64();

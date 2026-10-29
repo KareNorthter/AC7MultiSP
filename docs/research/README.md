@@ -95,3 +95,5 @@ F22的[内舱混挂源码候选](../../evidence/f22-internal-runtime-source-2026
 快速出击过渡期黄色提示：本次日志与beta源码存在[故障提示误判候选](../../evidence/quick-mission-transition-notice-20261029.json)；提示原文未确认，按主线单行补丁接入并验证，不降低多人保护。
 
 普通Su-57切换后崩溃：[20261029初查](../../evidence/su57-switch-crash-20261029.json)已保留末次事务及本机日志，崩溃调用栈缺失；切换重开舱的已证实退出条件不能当作崩溃原因。
+
+F-22与普通Su-57的[作者现场反馈及源码修订](../../evidence/internal-bay-feedback-20261029.json)涵盖发射取位、弹体显隐及分舱开合，修订未编译或实机验证。
