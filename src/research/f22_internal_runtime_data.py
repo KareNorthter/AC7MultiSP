@@ -24,5 +24,13 @@ def append_f22_internal(data, root):
             plane['groups'][2]['bones'][p['index']]['name'] != p['name'] for p in pose):
         raise ValueError('F-22侧舱骨序或关闭姿态不符')
     plane['closed_side_pose'] = pose
+    feedback = json.loads((root/'evidence/f22-feedback-animation-endpoints-20261029.json').read_text(encoding='utf-8'))
+    if (feedback['schema'] != 1 or feedback['raw_record_sha256'] != observation['live_observation']['capture_sha256']
+            or [p['index'] for p in feedback['side_pose']] != observation['live_observation']['side_candidates']
+            or len(feedback['body_bones']) != 50 or len(feedback['body_pose']) != 9):
+        raise ValueError('F-22反馈姿态来源或骨数改变')
+    plane['body']['bones'] = feedback['body_bones']
+    plane['body']['feedback_pose'] = feedback['body_pose']
+    plane['feedback_side_pose'] = feedback['side_pose']
     data['planes'].append(plane)
     return data

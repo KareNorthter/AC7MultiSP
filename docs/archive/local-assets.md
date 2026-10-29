@@ -15,9 +15,11 @@
 | 当前77资源输入 | Temp/integration-2.23.0-refresh/Temp/mount-assets-2.23.0-refresh/source | 原位保留154成员；来源见[开发说明](../engineering/development.md)。旧2.14/2.20输入不能代替 |
 | 挂载及动画待续原料 | Temp/remaining-native-mount-research/、Temp/mount-assets-*、Temp/f22a-*20261017-1144* | 原位保留；部分manifest和研究脚本读取绝对路径，搬动会使旧处理失败。具体方案见[研究索引](../research/README.md) |
 | F-22 2026-10-29只读现场 | 本研究工作树`Temp/tasks/20261028-official-bay-live/`，`f22-stream-103123.jsonl`及配套快照；原始SWP3网格仍在上列挂载原料目录 | 记录当前beta的切换姿态、池与骨序；见[研究证据](../../evidence/f22-requested-bay-behavior-20261029.json)，原始记录不提交 |
+| F-22本体骨架原料2026-10-29 | 本研究工作树`Temp/tasks/20261029-f22-body-asset/` | 原版本体及动画的提取副本和manifest；摘要与端点来源见[反馈端点](../../evidence/f22-feedback-animation-endpoints-20261029.json)，原始资源不提交 |
 | 已封存工作树及冻结产物 | 工作区索引列出的Temp/integration-*及研究目录 | 原位保留；不要从文件夹名猜版本，也不要直接在封存树继续写。新工作从main开分支 |
 | 未接收的原根目录资料 | Temp/preserved-local-20261023 | 27项原未提交资料与兼容现场；本身是Git工作树，不是普通临时文件 |
 | 崩溃与诊断现场 | Temp/crash-capture-*、Temp/pw01-*及其他诊断目录 | 完整转储和现场原位保留，按回执定位；不能把普通退出记录当作已找到根因 |
+| Su-57切换崩溃2026-10-29 | 本研究工作树`Temp/tasks/20261029-su57-crash-investigation/` | 原始日志快照及摘要见[初查](../../evidence/su57-switch-crash-20261029.json)，不可将此前PID转储当作本次现场 |
 | alpha2性能与EML持续掉帧现场 | Temp/tasks/20261025-runtime-preview-performance/；Temp/tasks/20261025-eml-steady-performance/ | 前者保留基线、构建与首轮反馈日志；后者保留暂停对象/原生代码、两轮10秒主线程采样、部分栈展开、对照日志及分析脚本。原始进程数据不入Git，不凭Temp名称清理；结论见[性能评估](../research/runtime-performance.md)与[EML回执](../../evidence/cfa44-eml-steady-performance-20261025.json) |
 | 视角平滑与连续环绕只读现场 | C:/Users/83717/.codex/worktrees/camera-orbit-smoothing/AC7_MultiSP/Temp/tasks/20261026-camera-orbit-smoothing/ | 2026-10-26用户授权的原生输入/输出函数、常量分析、45/30/60秒观察与汇总脚本；原始进程数据不入Git，不凭Temp名称清理。有效输入仅覆盖第一/第三人称，座舱未实测；结论见[唯一研究正文](../research/camera-orbit-smoothing.md) |
 | 安装器、Vortex与兼容研究 | Temp/delivery-*、Temp/vortex-*、Temp/compatibility-*等 | 保留现有来源与现场；安装器代码仍在独立分支，本轮未接收 |

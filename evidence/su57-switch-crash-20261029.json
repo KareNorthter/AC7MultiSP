@@ -1,0 +1,60 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "status": "crash_cause_unresolved",
+  "version": "2.26.2 beta2",
+  "installed_core_sha256": "e6ed77f6fc8218d01915f164a13c2ef8fcd92cdb9a6584735f88fa18ac68f58f",
+  "source_commit": "18f174e6ea88e62044d598b63762b7d5b487bc12",
+  "process_id": 12408,
+  "aircraft": "pkfa",
+  "user_report": "测试普通Su-57时切换武器崩溃，具体退出方式和报错内容待用户确认。",
+  "flight_setup": {
+    "selected_configs": [
+      0,
+      1,
+      2
+    ],
+    "kinds_mask": 7,
+    "physical_positions": 5,
+    "rack_mask": 5
+  },
+  "last_recorded_switch": {
+    "at_local": "2026-10-29T11:05:56.917+08:00",
+    "request": 61,
+    "from_config": 0,
+    "to_config": 1,
+    "native_done": true,
+    "hud_committed": true,
+    "log_boundary": "最后一笔已完成回执不是异常发生时刻；日志不含这次崩溃地址或异常栈。"
+  },
+  "separate_bay_finding": "两次0→1切换均捕获前一状态request=1、phase=2；重建后request=0、phase=2，连续性判断因native_request跳过。这能解释之前互切重开，不能证明是崩溃原因。",
+  "windows_crash_evidence": "当前Windows应用日志和CrashDumps没有本次PID 12408对应记录；10:51的PID 29668属于之前进程，不能当成这次崩溃。",
+  "local_snapshots": {
+    "native.log": {
+      "path": "Temp/tasks/20261029-su57-crash-investigation/snapshot-native.log",
+      "sha256": "ebd27231ab0ffad2c598843d028e76a7f73b743122564d09c7188528fc58c56f"
+    },
+    "mod.log": {
+      "path": "Temp/tasks/20261029-su57-crash-investigation/snapshot-mod.log",
+      "sha256": "5fb2dc92e1c7618971bcb0c1d0d70b065bcbe46d4dd0df4aeae518e6c85fbdae"
+    }
+  },
+  "next": "若用户同意，使用项目现有取证工具附加新进程，作者操作复现；需以捕获的首个异常、调用栈和实际模块定位，不能仅凭日志末行归因。",
+  "compiled": false,
+  "installed": false,
+  "debugger_attached": false,
+  "stale_recorder": "旧取证器报告仍在监控PID 37536；该进程已不存在，调试器及工作进程残留，未连接本次PID 12408。未终止旧进程，不能将该状态视为新取证就绪。",
+  "capture_inventory": {
+    "checked_at": "2026-10-29 11:28 Asia/Shanghai",
+    "latest_windows_dump": "C:/Users/83717/AppData/Local/CrashDumps/Ace7Game.exe.29668.dmp，10:51:41，旧PID，非本次。",
+    "capture_root": "E:/AC7_MultiSP/Temp/crash-capture-20261028-221940-802",
+    "session_directories": [
+      "session-1-pid-37536"
+    ],
+    "session_dump_count": 0,
+    "requested_pid_session_found": false,
+    "old_debugger_log_last_modified": "2026-10-28 22:20:40",
+    "stale_monitor_reason": "入口复用monitoring时仅检查心跳，没有核对当前被监控游戏PID；工作循环等待旧cdb退出，目标游戏进程退出时不会自动结束循环。当前旧进程37536不存在，后台状态仍更新为monitoring。",
+    "boundary": "已核对项目取证目录及系统CrashDumps，未发现本次PID 12408的转储；未删除或停止旧进程。"
+  }
+}

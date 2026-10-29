@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "status": "source_candidate_not_validated",
+  "user_feedback": {
+    "f22": [
+      "QAAM/XSDB模型出现太晚、消失太早",
+      "QAAM外观内侧但发射位置仍外侧",
+      "切到8AAM侧吊舱突变全开，腹舱未关闭"
+    ],
+    "su57": [
+      "部分4AAM发射点不对应前方双弹",
+      "4AAM/GPB互切舱门轻微重开",
+      "开关舱时模型出现太晚、消失太早"
+    ],
+    "crash": "本轮暂未复现"
+  },
+  "source_changes": [
+    "腹内模型与挂架改为舱门开始开启后显示，收拢到末端隐藏",
+    "F22和Su57取最近一次稳定已发布的供位姿态，避免因不同步直接回退原生发射位置；实际发射仍需现场验证",
+    "Su57仅已核0/1同舱事务接受原生Init后request=0，保留主动关舱边界",
+    "F22根据游戏时间驱动侧舱独立开合，同时8AAM时从采样的机腹开启姿态渐进闭合"
+  ],
+  "capture": {
+    "path": "Temp/tasks/20261028-official-bay-live/pkfa-feedback-114253.jsonl",
+    "sha256": "a816aacfc0d6ee9db71028add8552678fdb221bbee090d90e8daa6e55c06a849",
+    "duration_s": 119.9881,
+    "samples": 4741,
+    "scope": "只覆盖暂停的GPB状态，未捕获发射或切换，不能作为修复验证。",
+    "swp1_current_frame_match_count": 0
+  },
+  "f22_endpoints": "evidence/f22-feedback-animation-endpoints-20261029.json",
+  "unverified": [
+    "未编译、安装或实机验证",
+    "发射点、机腹和侧舱相对动画、穿模、发射与帧率须由作者后续验证",
+    "按既有研究分支制作，接入beta2需语义合并，不能整份覆盖主线"
+  ],
+  "game_memory_written": false
+}

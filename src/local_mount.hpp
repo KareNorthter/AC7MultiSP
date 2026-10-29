@@ -7,6 +7,11 @@ struct F22ClosedSideBone {
     std::array<float,4> rotation{};
     std::array<float,3> translation{};
 };
+struct F22AnimatedBone {
+    int index{};
+    std::array<float,4> closedRotation{},openRotation{};
+    std::array<float,3> closedPosition{},openPosition{};
+};
 struct LocalMountOwnership {
     MountIdentity plane,base,component,componentClass,mesh,skeleton,anim;
     size_t rackOffset{},meshOffset{},skeletonOffset{},animOffset{};
@@ -21,6 +26,13 @@ struct LocalMountOwnership {
     std::map<Addr,MountAnimationReflection::SocketName> nativeSockets;
     std::array<F22ClosedSideBone,14> f22ClosedSide{};
     bool f22SideQualified{},f22SideFault{};
+    MountIdentity f22Body,f22BodyMesh,f22BodyAnim;
+    size_t f22BodyOffset{},f22BodyMeshOffset{},f22BodyAnimOffset{};
+    std::array<F22AnimatedBone,14> f22SideAnimation{};
+    std::array<F22AnimatedBone,9> f22BodyAnimation{};
+    double f22LastTime{};
+    float f22SideProgress{},f22BellyProgress{};
+    bool f22ClockReady{};
 };
 bool mountLocalWriting=false; // 本模块的写入不记作新的原生请求。
 struct LocalMountWriteScope {
@@ -48,8 +60,8 @@ void mountLocalCurrent(const LocalMountOwnership& lease) {
 }
 
 // 骨名与父链只在绑定时核对一次，不逐帧遍历骨骼。
-void mountLocalQualifyBones(LocalMountOwnership& lease,const Json& group) {
-    auto& api=lease.reflection;const auto object=lease.component;
+void mountLocalQualifyBones(LocalMountOwnership& lease,const Json& group,MountIdentity object={}) {
+    auto& api=lease.reflection;if(!object.address)object=lease.component;
     const auto count=api.function(object.address,"GetNumBones","SkinnedMeshComponent",1);
     const auto countResult=api.field(count.identity.address,"ReturnValue","IntProperty",4,count.size);
     const auto bone=api.function(object.address,"GetBoneName","SkinnedMeshComponent",2);
@@ -146,6 +158,37 @@ void mountLocalBind(FixedMountState& state,Addr plane) {
             for(float v:bone.translation)require(std::isfinite(v),"F22侧舱：位置无效");
             require(std::abs(norm-1.f)<.001f,"F22侧舱：旋转不是单位四元数");
         }
+        lease->f22BodyOffset=mountProperty(plane,"PlaneBodyMesh","ObjectProperty",8);
+        lease->f22Body=mountIdentity(read<Addr>(plane+lease->f22BodyOffset));
+        lease->f22BodyMeshOffset=mountProperty(lease->f22Body.address,"SkeletalMesh","ObjectProperty",8);
+        lease->f22BodyAnimOffset=mountProperty(lease->f22Body.address,"AnimClass","ClassProperty",8);
+        lease->f22BodyMesh=mountIdentity(read<Addr>(lease->f22Body.address+lease->f22BodyMeshOffset));
+        lease->f22BodyAnim=mountIdentity(read<Addr>(lease->f22Body.address+lease->f22BodyAnimOffset));
+        require(mountProperty(lease->f22Body.address,"MasterPoseComponent","WeakObjectProperty",8)==0x720 &&
+            read<int>(lease->f22Body.address+0x724)==0 &&
+            (read<int>(lease->f22Body.address+0x720)==0 || read<int>(lease->f22Body.address+0x720)==-1),
+            "F22腹舱：不支持主姿态共享组件");
+        mountLocalQualifyBones(*lease,definition.at("body"),lease->f22Body);
+        auto parsePose=[&](const Json& rows,auto& target,const Json& bones) {
+            require(rows.size()==target.size(),"F22：端点数量不符");
+            std::bitset<64> assigned;
+            for(size_t i=0;i<rows.size();++i) {
+                const auto& row=rows.at(i);auto& dst=target[i];dst.index=row.at("index").get<int>();
+                require(dst.index>0 && dst.index<static_cast<int>(bones.size()) && !assigned.test(dst.index) &&
+                    bones.at(dst.index).at("name")==row.at("name"),"F22：端点骨序不符");
+                assigned.set(dst.index);
+                const auto& a=row.at("closed");const auto& b=row.at("open");
+                dst.closedRotation=a.at("rotation").get<std::array<float,4>>();dst.openRotation=b.at("rotation").get<std::array<float,4>>();
+                dst.closedPosition=a.at("translation").get<std::array<float,3>>();dst.openPosition=b.at("translation").get<std::array<float,3>>();
+                for(const auto& q:{dst.closedRotation,dst.openRotation}) {
+                    float norm=0;for(float v:q) {require(std::isfinite(v),"F22：端点旋转无效");norm+=v*v;}
+                    require(std::abs(norm-1.f)<.001f,"F22：端点旋转不是单位四元数");
+                }
+                for(const auto& pos:{dst.closedPosition,dst.openPosition})for(float v:pos)require(std::isfinite(v),"F22：端点位置无效");
+            }
+        };
+        parsePose(definition.at("feedback_side_pose"),lease->f22SideAnimation,group.at("bones"));
+        parsePose(definition.at("body").at("feedback_pose"),lease->f22BodyAnimation,definition.at("body").at("bones"));
         lease->f22SideQualified=true;
     }
     lease->sockets.prepare(api,lease->component);
@@ -250,66 +293,125 @@ bool mountLocalCopyTransform(void* output,const FixedMountState& state,int posit
     }
     auto& lease=*state.local;mountLocalCurrent(lease);
     require(read<Addr>(component+0x100)==lease.component.address,"局部机构：发射挂点父级改变");
-    // 原生骨骼尚未发布完成时旁路本次映射；不等候、不补帧、不改变发射门槛。
-    const auto frame=read<std::uint64_t>(reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x3ac5520);
-    if(read<unsigned>(lease.component.address+0xd24)!=static_cast<unsigned>(frame) ||
-       read<unsigned char>(lease.component.address+0x828)!=0)return false;
+    // 发射读取原生已发布缓冲；待发布任务不影响旧缓冲，不因帧号差异退回错误的原生站位。
+    const Addr rack=lease.component.address;
+    if(state.aircraft!=MountAircraft::F22a && state.aircraft!=MountAircraft::Pkfa) {
+        const auto frame=read<std::uint64_t>(reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x3ac5520);
+        if(read<unsigned>(rack+0xd24)!=static_cast<unsigned>(frame) || read<unsigned char>(rack+0x828)!=0)return false;
+    }
+    const int published=read<int>(rack+0x74c),writing=read<int>(rack+0x748);
+    require(published>=0 && published<=1,"局部机构：已发布缓冲索引无效");
+    if(state.aircraft==MountAircraft::F22a || state.aircraft==MountAircraft::Pkfa)
+        require(read<unsigned char>(rack+0x750)==1 && writing>=0 && writing<=1 && writing!=published,
+            "局部机构：发射取位需要独立已发布缓冲");
+    const Addr array=rack+0x728+static_cast<Addr>(published)*16;
+    const Addr pose=read<Addr>(array);const int count=read<int>(array+8),capacity=read<int>(array+12);
+    require(pose && count>0 && count<=capacity && capacity<=1000,"局部机构：已发布姿态无效");
     MountAnimationReflection::SocketName socket{read<unsigned>(component+0x108),read<unsigned>(component+0x10c)};
     const auto found=lease.nativeSockets.find(component);
     require(!socket.number && found!=lease.nativeSockets.end() && LightMountBones::same(found->second,socket),
         "局部机构：发射挂点身份改变");
-    lease.sockets.copy(lease.reflection,lease.component,socket,output);return true;
+    alignas(16) std::array<unsigned char,48> transform{};
+    lease.sockets.copy(lease.reflection,lease.component,socket,transform.data());
+    require(read<int>(rack+0x74c)==published && read<Addr>(array)==pose &&
+        ((state.aircraft!=MountAircraft::F22a && state.aircraft!=MountAircraft::Pkfa) ||
+         (read<unsigned char>(rack+0x750)==1 && read<int>(rack+0x748)==writing)),"局部机构：取位期间姿态换代");
+    checkMemory(reinterpret_cast<Addr>(output),transform.size());std::memcpy(output,transform.data(),transform.size());return true;
 }
 
-// 只修改原生即将发布的组件空间侧骨；原生发布负责后续附着、通知与渲染。
-// 仅任务内已绑定的原版F-22有效；开火取位和腹舱骨继续使用同一原生发布。
+// 使用游戏时间驱动两舱独立开合；暂停不推进，不触碰原生发射门槛。
+void mountLocalUpdateF22(FixedMountState& state,double time) {
+    if(state.aircraft!=MountAircraft::F22a || !state.local || state.rebuilding || controlledWeaponSwitch)return;
+    auto& lease=*state.local;
+    require(std::isfinite(time) && mountAlive(lease.plane) && session.plane==lease.plane.address &&
+        session.activator==state.animationActivator.address,"F22：舱门计时会话无效");
+    const Addr engine=read<Addr>(lease.plane.address+0x1410),parts=engine+0xf90;
+    const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
+    require(engine && read<Addr>(engine+0x1268)==lease.plane.address+0xb40 && read<Addr>(parts)==base+0x2fff178,
+        "F22：舱门计时引擎无效");
+    const int config=read<int>(parts+0x178);const auto armed=read<unsigned char>(session.activator+0x2a1);
+    const float native=read<float>(parts+0x17c);
+    require(config>=0 && config<3 && armed<=1 && std::isfinite(native) && native>=-1.f && native<=1.f,
+        "F22：舱门计时状态无效");
+    const float current=std::max(0.f,std::min(1.f,native));const bool sideSelected=armed && config==2;
+    if(!lease.f22ClockReady || time<lease.f22LastTime) {
+        lease.f22ClockReady=true;lease.f22LastTime=time;
+        lease.f22SideProgress=sideSelected?current:0.f;
+        lease.f22BellyProgress=sideSelected?0.f:current;
+        return;
+    }
+    const float step=static_cast<float>(std::min(.4,std::max(0.0,time-lease.f22LastTime))/.4);
+    lease.f22LastTime=time;
+    lease.f22SideProgress=sideSelected?std::min(1.f,lease.f22SideProgress+step):std::max(0.f,lease.f22SideProgress-step);
+    lease.f22BellyProgress=sideSelected?std::max(0.f,lease.f22BellyProgress-step):current;
+}
+
+// 原生双缓冲发布前按独立开度调整F-22侧舱或腹舱，不改武器队列与原生发布。
 void mountLocalBeforePublish(void* component) noexcept {
     if(GetCurrentThreadId()!=mountGameThread.load() || !runtimeEnabled || !fixedMountEnabled || fixedMountFailed ||
        controlledWeaponSwitch || !fixedMount.bound || fixedMount.rebuilding || fixedMount.aircraft!=MountAircraft::F22a ||
        !fixedMount.local || mountPreviewOwnsTask())return;
-    auto& lease=*fixedMount.local;
-    if(!lease.owned || !lease.f22SideQualified || lease.f22SideFault ||
-       lease.component.address!=reinterpret_cast<Addr>(component))return;
+    auto& lease=*fixedMount.local;const Addr object=reinterpret_cast<Addr>(component);
+    const bool side=object==lease.component.address,belly=object==lease.f22Body.address;
+    if(!lease.owned || !lease.f22SideQualified || lease.f22SideFault || !lease.f22ClockReady || (!side && !belly))return;
     try {
         const MountIdentityBatch ids;
         require(ids.alive(lease.plane) && ids.alive(lease.component) && ids.alive(lease.mesh) && ids.alive(lease.anim) &&
-            ids.alive(fixedMount.animationActivator),"F22侧舱：实例身份失效");
+            ids.alive(lease.f22Body) && ids.alive(lease.f22BodyMesh) && ids.alive(lease.f22BodyAnim) &&
+            ids.alive(fixedMount.animationActivator),"F22舱门：实例身份失效");
         require(session.plane==lease.plane.address && session.activator==fixedMount.animationActivator.address &&
             ids.read<Addr>(lease.plane.address+lease.rackOffset)==lease.component.address &&
             ids.read<Addr>(lease.component.address+lease.meshOffset)==lease.mesh.address &&
-            ids.read<Addr>(lease.component.address+lease.animOffset)==lease.anim.address,"F22侧舱：会话或资源改变");
+            ids.read<Addr>(lease.component.address+lease.animOffset)==lease.anim.address &&
+            ids.read<Addr>(lease.plane.address+lease.f22BodyOffset)==lease.f22Body.address &&
+            ids.read<Addr>(lease.f22Body.address+lease.f22BodyMeshOffset)==lease.f22BodyMesh.address &&
+            ids.read<Addr>(lease.f22Body.address+lease.f22BodyAnimOffset)==lease.f22BodyAnim.address,
+            "F22舱门：会话或资源改变");
         const Addr engine=ids.read<Addr>(lease.plane.address+0x1410),parts=engine+0xf90;
         const Addr base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
         require(engine && ids.read<Addr>(engine+0x1268)==lease.plane.address+0xb40 &&
-            ids.read<Addr>(parts)==base+0x2fff178,"F22侧舱：引擎身份改变");
-        const int config=ids.read<int>(parts+0x178);
-        const auto armed=ids.read<unsigned char>(session.activator+0x2a1);
-        require(config>=0 && config<3 && armed<=1,"F22侧舱：选择状态无效");
-        if(armed && config==2)return; // 选中8AAM时完整保留原生活动姿态。
-        const Addr object=lease.component.address;
-        if(ids.read<unsigned char>(object+0x828)!=1)return; // 没有待发布姿态时不触碰缓冲。
+            ids.read<Addr>(parts)==base+0x2fff178,"F22舱门：引擎身份改变");
+        const int config=ids.read<int>(parts+0x178);const auto armed=ids.read<unsigned char>(session.activator+0x2a1);
+        require(config>=0 && config<3 && armed<=1,"F22舱门：选择状态无效");
+        const bool sideSelected=armed && config==2;
+        if(belly && !sideSelected)return; // 腹内武器和普通导弹保留机身原生姿态。
+        const float alpha=side?lease.f22SideProgress:lease.f22BellyProgress;
+        require(std::isfinite(alpha) && alpha>=0.f && alpha<=1.f,"F22舱门：开度无效");
+        if(side && sideSelected && alpha>=1.f && ids.read<float>(parts+0x17c)==1.f)return; // 原生全开后无需重复改侧骨。
+        if(ids.read<unsigned char>(object+0x828)!=1)return;
         const auto frame=ids.read<std::uint64_t>(base+0x3ac5520);
         if(ids.read<unsigned>(object+0xd24)!=static_cast<unsigned>(frame))return;
         const auto doubleBuffered=ids.read<unsigned char>(object+0x750);
-        const int index=ids.read<int>(object+0x748);
-        const int published=ids.read<int>(object+0x74c);
+        const int index=ids.read<int>(object+0x748),published=ids.read<int>(object+0x74c);
         require(doubleBuffered==1 && index>=0 && index<=1 && published>=0 && published<=1 && index!=published &&
             ids.read<int>(object+0x724)==0 && (ids.read<int>(object+0x720)==0 || ids.read<int>(object+0x720)==-1),
-            "F22侧舱：要求独立双缓冲及未共享的待发布姿态");
+            "F22舱门：要求独立双缓冲及未共享的待发布姿态");
         const Addr array=object+0x728+static_cast<Addr>(index)*16;
         const Addr data=ids.read<Addr>(array);const int count=ids.read<int>(array+8),capacity=ids.read<int>(array+12);
-        require(count==30 && capacity>=count && capacity<=1000 && data &&
-            MountAnimationReflection::writable(data,static_cast<size_t>(count)*48),"F22侧舱：待发布姿态不可写");
+        require(count==(side?30:50) && capacity>=count && capacity<=1000 && data &&
+            MountAnimationReflection::writable(data,static_cast<size_t>(count)*48),"F22舱门：待发布姿态不可写");
         require(ids.read<unsigned char>(object+0x828)==1 && ids.read<int>(object+0x748)==index &&
-            ids.read<int>(object+0x74c)==published && ids.read<Addr>(array)==data,
-            "F22侧舱：写入前发布状态改变");
-        for(const auto& bone:lease.f22ClosedSide) {
-            const Addr transform=data+static_cast<Addr>(bone.index)*48;
-            // 仅旋转与位移被动画驱动；原生缩放和填充字节保持不动。
-            if(std::memcmp(reinterpret_cast<void*>(transform),bone.rotation.data(),sizeof(bone.rotation))!=0)
-                std::memcpy(reinterpret_cast<void*>(transform),bone.rotation.data(),sizeof(bone.rotation));
-            if(std::memcmp(reinterpret_cast<void*>(transform+16),bone.translation.data(),sizeof(bone.translation))!=0)
-                std::memcpy(reinterpret_cast<void*>(transform+16),bone.translation.data(),sizeof(bone.translation));
-        }
+            ids.read<int>(object+0x74c)==published && ids.read<Addr>(array)==data,"F22舱门：写入前发布状态改变");
+        auto apply=[&](const auto& bones) {
+            for(const auto& bone:bones) {
+                std::array<float,4> rotation{};std::array<float,3> position{};
+                if(alpha<=0.f) {rotation=bone.closedRotation;position=bone.closedPosition;}
+                else if(alpha>=1.f) {rotation=bone.openRotation;position=bone.openPosition;}
+                else {
+                    float dot=0,norm=0;for(int i=0;i<4;++i)dot+=bone.closedRotation[i]*bone.openRotation[i];
+                    const float sign=dot<0.f?-1.f:1.f;
+                    for(int i=0;i<4;++i) {rotation[i]=(1.f-alpha)*bone.closedRotation[i]+alpha*sign*bone.openRotation[i];norm+=rotation[i]*rotation[i];}
+                    require(std::isfinite(norm) && norm>.0001f,"F22舱门：插值旋转无效");
+                    const float inv=1.f/std::sqrt(norm);for(float& v:rotation)v*=inv;
+                    for(int i=0;i<3;++i)position[i]=(1.f-alpha)*bone.closedPosition[i]+alpha*bone.openPosition[i];
+                }
+                const Addr transform=data+static_cast<Addr>(bone.index)*48;
+                if(std::memcmp(reinterpret_cast<void*>(transform),rotation.data(),sizeof(rotation))!=0)
+                    std::memcpy(reinterpret_cast<void*>(transform),rotation.data(),sizeof(rotation));
+                if(std::memcmp(reinterpret_cast<void*>(transform+16),position.data(),sizeof(position))!=0)
+                    std::memcpy(reinterpret_cast<void*>(transform+16),position.data(),sizeof(position));
+            }
+        };
+        if(side)apply(lease.f22SideAnimation);else apply(lease.f22BodyAnimation);
     }catch(...) {lease.f22SideFault=true;} // 下次维护统一退回原生，不在引擎发布栈中归还资源。
 }

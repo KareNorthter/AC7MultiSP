@@ -327,9 +327,11 @@ void aircraftBayAfterArmed(const Command& command,bool armed) noexcept {
             read<unsigned char>(command.activator+0x2a1)==1,"公共舱：切换完成身份改变");
         const auto native=aircraftBayCurrent();
         require(native.config==saved.target,"公共舱：切换完成配置不同步");
-        // F-22仅在同一笔QAAM/XSDB重建事务内接受Init产生的空闲起点；主动关舱请求3仍直通。
-        const bool f22InitIdle=std::strcmp(state.profile->body,"f22a")==0 && native.request==0;
-        if(native.held || (native.request!=1 && native.request!=2 && !f22InitIdle)) {
+        // F-22和普通Su-57仅在已核同舱重建事务中接受Init的空闲请求；主动关舱请求3仍直通。
+        const bool sameBayInitIdle=native.request==0 &&
+            (std::strcmp(state.profile->body,"f22a")==0 ||
+             (std::strcmp(state.profile->body,"pkfa")==0 && state.profile->continuityRequiresModels));
+        if(native.held || (native.request!=1 && native.request!=2 && !sameBayInitIdle)) {
             if(state.profile->continuityRequiresModels || std::strcmp(state.profile->body,"f22a")==0)aircraftBayContinuityLog(Json{{"event","AIRCRAFT_BAY_CONTINUITY_SKIP"},{"stage","after"},
                 {"reason","native_request"},{"request",command.request},{"held",native.held},
                 {"cover_request",native.request},{"phase",native.phase}});
