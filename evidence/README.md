@@ -122,3 +122,5 @@ F-22与普通Su-57用户反馈：[20261029反馈修订](internal-bay-feedback-20
 
 - [2.26.2 beta3 安装包交付](2.26.2-beta3-exe-delivery.json)：反馈修订来源、包摘要与验证边界。
 F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-feedback-20261029.json)，[F-22支架端点](f22-rack-retraction-endpoints-20261029.json)、[Su-57采样及端点](pkfa-rack-retraction-endpoints-20261029.json)；未编译或验证。
+
+- [2.26.2 beta4 安装包交付](2.26.2-beta4-exe-delivery.json)：支架修订来源、未提交差异摘要、包摘要与验证边界。

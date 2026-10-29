@@ -1,0 +1,13 @@
+{
+  "version": "2.26.2 beta4",
+  "channel": "candidate",
+  "source_commit": "4363ecd7ff6320e968ad52599f84fcd15abfcdb3",
+  "research_source": "789c6fd0bd08fc45e0c200cc98c97f57c414158e",
+  "research_uncommitted_patch": "E:/AC7_MultiSP/Temp/tasks/20261029-bay-beta4-intake/research-uncommitted.patch",
+  "research_uncommitted_patch_sha256": "e1334f4bd4010e5e546c1717515983c8df0f10c12a2b97e33a1a6c064ea22b97",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta4/AC7MultiSP_Installer_2.26.2_beta4.exe",
+  "sha256": "357fc282b86570bc6c3b4064f8d67adea981289a850c2fe6285bb01db9c44d7b",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261029-2.26.2-beta4-build/delivery-receipt.json",
+  "validation": "完整构建、签名封装与文件一致性核对完成；未运行测试、安装或操作游戏。",
+  "scope": "接收F-22和普通Su-57支架收拢及会话保护，实际动作、发射和性能待实机验证；Su-57崩溃原因未确定。按作者要求未修改更新日志。"
+}
