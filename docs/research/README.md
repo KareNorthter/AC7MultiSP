@@ -93,3 +93,5 @@ F22的[内舱混挂源码候选](../../evidence/f22-internal-runtime-source-2026
 普通Su-57的[现场反馈与双4AAM调整](../../evidence/pkfa-dual-4aam-feedback-20261028.json)取代静态前单弹方案；4AAM与GPB互切重复开舱已由作者观察确认，事务退出原因待新候选诊断，详细边界见挂载正文。
 
 快速出击过渡期黄色提示：本次日志与beta源码存在[故障提示误判候选](../../evidence/quick-mission-transition-notice-20261029.json)；提示原文未确认，按主线单行补丁接入并验证，不降低多人保护。
+
+普通Su-57切换后崩溃：[20261029初查](../../evidence/su57-switch-crash-20261029.json)已保留末次事务及本机日志，崩溃调用栈缺失；切换重开舱的已证实退出条件不能当作崩溃原因。
