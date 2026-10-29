@@ -135,37 +135,25 @@ if ($CheckOnly) {
     return
 }
 if (-not $WorkerOutput) {
-    $existing = @(Get-CimInstance Win32_Process -Filter "Name='pwsh.exe'" | Where-Object {
-        $_.ProcessId -ne $PID -and $_.CommandLine -like '*start_crash_capture.ps1*' -and $_.CommandLine -like '*-WorkerOutput*'
+    # 启动期间单独持锁，避免两个入口同时通过进程检查。
+    $launchMutex = [Threading.Mutex]::new($false, 'Local\AC7MultiSPCrashCaptureLauncher')
+    try { $launchOwned = $launchMutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $launchOwned = $true }
+    if (-not $launchOwned) {
+        $message = '另一个取证入口正在启动，请等待其完成后再操作。'
+        try { $popup = New-Object -ComObject WScript.Shell; $null = $popup.Popup($message, 0, 'AC7取证无法启动', 48) } catch { }
+        throw $message
+    }
+    # 不复用旧状态：工作进程或本工具调试器残留时，阻止启动并明确提示。
+    $existing = @(Get-CimInstance Win32_Process | Where-Object {
+        ($_.Name -match '^(pwsh|powershell)\.exe$' -and $_.ProcessId -ne $PID -and
+            $_.CommandLine -like '*start_crash_capture.ps1*' -and $_.CommandLine -like '*-WorkerOutput*') -or
+        ($_.Name -ieq 'cdb.exe' -and $_.CommandLine -like '*crash-capture-*' -and $_.CommandLine -like '*capture.cdb*')
     })
     if ($existing.Count) {
-        if ($existing.Count -eq 1 -and $existing[0].CommandLine -match '-WorkerOutput\s+"([^"]+)"') {
-            $activeDir = $Matches[1]
-            $active = Get-Content -LiteralPath (Join-Path $activeDir 'status.json') -Raw | ConvertFrom-Json
-            if ($active.state -in @('waiting','attaching','monitoring')) {
-                $activeLaunch = Get-Content -LiteralPath (Join-Path $activeDir 'launch.json') -Raw | ConvertFrom-Json
-                if ($activeLaunch.capture_revision -ne 2) { throw "旧版取证器仍在运行，未当作新版就绪。请先正常退出该轮游戏并等待收尾：$activeDir" }
-                if ($active.state -eq 'monitoring' -and (-not $active.heartbeat_at -or ([DateTimeOffset]::Now - [DateTimeOffset]$active.heartbeat_at).TotalSeconds -gt 20)) {
-                    throw "原取证状态已过期，不能当成正在监视。请先查看 $activeDir。"
-                }
-                if (-not $WaitOnly -and -not (Get-Process -Name Ace7Game -ErrorAction SilentlyContinue)) {
-                    Start-Process 'steam://rungameid/502500' | Out-Null
-                }
-                if (-not $WaitOnly -and $active.state -ne 'monitoring') {
-                    $reuseDeadline = (Get-Date).AddSeconds(60)
-                    while ((Get-Date) -lt $reuseDeadline) {
-                        $active = Get-Content -LiteralPath (Join-Path $activeDir 'status.json') -Raw | ConvertFrom-Json
-                        if ($active.state -eq 'monitoring') { break }
-                        if ($active.state -in @('error','needs_attention','finished')) { throw "已有取证器未就绪：$($active.error)；目录：$activeDir" }
-                        Start-Sleep -Milliseconds 500
-                    }
-                    if ($active.state -ne 'monitoring') { throw "60秒内未确认已有取证器附加，后台继续按状态记录；目录：$activeDir" }
-                }
-                Write-Output "沿用已有取证进程，状态：$($active.state)。本轮目录：$activeDir"
-                return
-            }
-        }
-        throw '已有取证进程状态异常，请先查看 Temp 下最近的 crash-capture 目录。'
+        $details = ($existing | ForEach-Object { '{0} PID={1}' -f $_.Name,$_.ProcessId }) -join '；'
+        $message = "已有取证进程或调试器运行（$details）。本次未启动游戏；请先结束旧取证会话，再重新启动。"
+        try { $popup = New-Object -ComObject WScript.Shell; $null = $popup.Popup($message, 0, 'AC7取证无法启动', 48) } catch { }
+        throw $message
     }
     $captureDir = Join-Path $taskRoot ('Temp/crash-capture-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
     [IO.Directory]::CreateDirectory($captureDir) | Out-Null
