@@ -1,0 +1,14 @@
+{
+  "version": "2.27.0",
+  "date": "2026-10-30",
+  "authorization": "作者改为先将已接收成果合入main，视为2.27.0并提交GitHub；暂不提供EXE、ZIP和网页文件。",
+  "tested_source": "2.26.2 beta7，作者反馈测试无误",
+  "previous_release_authorization": "evidence/2.27.0-release-authorization.json",
+  "local_build": "中断前本机构建已完成，产物保留Temp；本次不交付、不上传、不继续准备网页。",
+  "scope": "main包含已接收的功能及作者最新中英文正文；VERSION=2.27.0，candidate=false；只推送main，不自动推送其他分支或标签。",
+  "deployment": "R2、Nexus及Pages未在本次更新；site/stable.json仍保留上次发布清单。",
+  "chinese_documents": {
+    "功能说明.txt": "8196608deaa1051465812b48ee384db4a8f2fe2683a51ea40441a05c1901947f",
+    "更新日志.txt": "d4426c38c9a89906122d4f648a9b61385071e362915af29e458c29af79183e0d"
+  }
+}

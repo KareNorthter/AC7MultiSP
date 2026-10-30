@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| 2.27.0正式发布材料，进行中 | 本集成聊天；基线main/0dd3934 | codex/release-2.27.0；C:/Users/83717/.codex/worktrees/release-2-27-0/AC7_MultiSP | 作者确认beta7测试无误并授权正式发布；接收最新中文原字节，制作EXE、通用ZIP及完整Pages包；外部上传由作者完成。 |
+| 2.27.0正式源码接收，待GitHub同步 | 本集成聊天；基线main/0dd3934 | codex/release-2.27.0；C:/Users/83717/.codex/worktrees/release-2-27-0/AC7_MultiSP | 作者确认beta7测试无误；已接收最新中文原字节并设为正式2.27.0。后改为仅合main及推送GitHub，中断前本机构建完成并保留，不交付安装包或网页。 |
 | 作者玩家正文接收与英文同步，已完成 | 本集成聊天；基线main/a7d7385 | codex/docs-sync-player-2270；C:/Users/83717/.codex/worktrees/sync-player-docs-2270/AC7_MultiSP | 两份中文原字节接收，英文功能说明及2.27.0日志同步，重新生成内嵌文字；产品版本仍beta7，未编译或封装。摘要见[同步回执](../../evidence/player-docs-english-sync-20261030.json)。 |
 | beta7兼容集成交付，已出包待验证 | 本集成聊天；基线main/0416d5f | codex/integrate-beta7；C:/Users/83717/.codex/worktrees/integrate-beta7/AC7_MultiSP | 接收主武器UAV保有和第三方兵装名称修复；按作者明确要求删除启动正文第二个名称，中英文同步；不改更新日志；完整构建与签名封装完成，待作者实机验证。 |
 | Arsenal Bird持续兵装兼容，已接收待验证 | 本聊天；codex/fix-arsenal-bird；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-arsenal-bird/AC7_MultiSP | 主武器UAV按真实类与原生契约识别并保留，上限限定提高到128；锁定音失配保留保护并增加计数诊断，根因待查。用户操作游戏、只读采集，源码静态核对；未编译、测试、安装或操作游戏。 |
