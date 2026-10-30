@@ -2,6 +2,8 @@
   "schema": 1,
   "language": "en",
   "texts": {
+    "attitude.indicator": "Third-person attitude indicator",
+    "attitude.indicator.help": "Shows pitch and roll below the speed HUD in third-person view. Disabled by default.",
     "pw.weapon.selection.ui": "PW weapon selection UI",
     "recovery.missing_weapon": "SP weapon data not found: {weapon}",
     "recovery.duplicate_weapon": "Duplicate weapon code: {weapon}",

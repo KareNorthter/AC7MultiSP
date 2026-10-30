@@ -76,7 +76,7 @@ local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑�
 loadExport("dualsp_pad_x_weapon_switch_supported") -- 核心、控制器与管理页须成套。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=24") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=25") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -111,6 +111,9 @@ loadExport("dualsp_controller_clicks_supported")
 loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
 loadExport("dualsp_pw_weapon_ui_supported","DualSPUI.dll") -- PW布局开关及完整保存动作要求UI/Lua成套。
+loadExport("dualsp_attitude_indicator_supported")
+loadExport("dualsp_attitude_indicator_supported","DualSPUI.dll")
+weaponSwitch.attitude=dofile(root.."Scripts/attitude_hud.lua").new(note,loadExport("dualsp_attitude_indicator_v1"))
 loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
@@ -993,6 +996,7 @@ local function selectionAudio(op,target)
 end
 -- 错误收尾也明确报告解绑失败，避免异常穿出引擎回调或永久截住原生声音。
 local function releaseRuntimeOwnership(strict)
+    weaponSwitch.attitude:release(strict)
     if strict and valid(instance)then faultRecovery.dev.check("cleanup",instance:GetSelectedPlaneID())end
     weaponSwitch.pending=nil;internal=false
     weaponSwitch.camera.release(strict)
@@ -1372,6 +1376,7 @@ aircraftDebug=dofile(root.."Scripts/debug_aircraft.lua").new{
         requestClose=requestClose+1
         releaseWeaponInput("debug_aircraft")
         releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()
+        weaponSwitch.attitude:reset()
         -- 整关换机不携带旧机体的库存和检查点；原生重开负责生成玩家与任务系统。
         local ok,err=nativeRuntimeGate(0);assert(ok,err)
         ok,err=nativeRuntimeGate(1);assert(ok,err)
@@ -1428,6 +1433,7 @@ quickMission=dofile(root.."Scripts/quick_mission.lua").new{
         requestClose=requestClose+1
         -- 此入口只允许主菜单；没有任务玩家或武器组件，不能调用飞行中的ReleaseWeaponInput。
         releaseRuntimeOwnership();nativeHud:reset();weaponPresentation:reset()
+        weaponSwitch.attitude:reset()
         resetCheckpointState();resetFlightTracking()
     end}
 -- 用户明确应用才换装；输入/过期请求拒绝与实际重建失败分开处理。
@@ -1643,7 +1649,8 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and info.code and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=24,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=25,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        third_person_attitude_enabled=config.third_person_attitude_enabled,
         startup_update_check_enabled=config.startup_update_check_enabled,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
@@ -1706,6 +1713,8 @@ local function publishState()
     if nativeStandby.error then state.menu_error=nativeStandby.error end
     if nativeParts.error then state.menu_error=nativeParts.error end
     if nativeHud.error or hudSamplingError then state.hud_error=nativeHud.error or hudSamplingError end
+    state.attitude_indicator={available=weaponSwitch.attitude.available,error=weaponSwitch.attitude.error}
+    if weaponSwitch.attitude.error then state.hud_error=(state.hud_error and state.hud_error.."\n"or "")..weaponSwitch.attitude.error end
     if weaponPresentation.error then state.central_error=weaponPresentation.error end
     if errorText then state.error=errorText;state.state=nil end
     local encodeStarted=os.clock();local encoded=json.encode(state)
@@ -1730,6 +1739,7 @@ function faultRecovery.fatal(message)
         {"standby",function()nativeStandby:reset{clearError=true,releaseInput=false,strict=true}end},
         {"parts",function()nativeParts:reset{clearError=true,releaseInput=false,strict=true}end},
         {"hud",function()nativeHud:reset(true)end},
+        {"attitude",function()weaponSwitch.attitude:reset(true)end},
         {"central",function()weaponPresentation:reset(true)end},
     })do
         local ok,why=pcall(entry[2]);if not ok then note("RECOVERY_CLEANUP_ERROR "..entry[1].." "..tostring(why))end
@@ -1811,6 +1821,7 @@ local function checkRuntime(activatedWidget)
         nativeLoadout:reset{clearError=true,releaseInput=reason=="mission13_fixed_sp"or reason=="aircraft_native_only",strict=true};nativeSupply:reset{clearError=true,releaseInput=false,strict=true}
         nativeStandby:reset{clearError=true,releaseInput=false,strict=true};nativeParts:reset{clearError=true,releaseInput=false,strict=true}
         nativeHud:reset(true);weaponPresentation:reset(true)
+        weaponSwitch.attitude:reset(true)
         supplySession=nil;resetCheckpointState()
         cachedPlane=nil;cachedWorld="";plane=nil;activator=nil;planeAddress=nil;currentWorld=""
         resetFlightTracking();isFlight=false;lastPlaneScan=-1
@@ -1875,7 +1886,7 @@ tryApplyMasterSwitch=function(force)
         runtimeModEnabled=false -- 清理期间事件和原生钩子先保持停用。
         local disabled,why=nativeRuntimeGate(0);assert(disabled,why)
         local released,warning=releaseMountPreview(0);assert(released,warning)
-        for _,adapter in ipairs({nativeLoadout,nativeSupply,nativeStandby,nativeParts,nativeHud,weaponPresentation})do
+        for _,adapter in ipairs({nativeLoadout,nativeSupply,nativeStandby,nativeParts,nativeHud,weaponPresentation,weaponSwitch.attitude})do
             adapter:reset{clearError=true,releaseInput=false}
         end
         resetCheckpointState();resetFlightTracking()
@@ -2007,6 +2018,7 @@ local function tick()
         selectionAudio(2)
         nativeHud:reset()
         weaponPresentation:reset()
+        weaponSwitch.attitude:reset()
         nativeLoadout:reset{clearError=true,releaseInput=false}
         nativeStandby:reset{clearError=true,releaseInput=false}
         nativeParts:reset{clearError=true,releaseInput=false}
@@ -2359,6 +2371,10 @@ LoopInGameThreadWithDelay(20,function()
             assert(IsInGameThread(),"Controller callback is outside the game thread")
             local started=os.clock() -- 不改变输入、武器和 HUD 的既有更新频率。
             tick()
+            weaponSwitch.attitude:update(plane,config.third_person_attitude_enabled and runtimeAllowed and runtimeModEnabled
+                and not errorText and isFlight and valid(plane)and plane.bEnableCameraInput and plane:GetNimbusHUDEnabled()
+                and not panelOpen and not supplySession and not restorePending and not checkpointPending
+                and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane),os.clock())
             if runtimeAllowed and runtimeModEnabled then weaponSwitch.salvo.service:update()end
             recordTickCost(started)
         end,debug.traceback)

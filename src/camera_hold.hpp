@@ -548,7 +548,9 @@ void* cameraHoldOutput(void* component,void* output,float delta,void* context,co
             vertical.begin(address+0x3d4,pose);
         }
     }catch(const std::exception& error){vertical.restore();cameraHoldFailure(error.what());}
-    return originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
+    auto* result=originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
+    vertical.restore();attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 归还临时输入后更新自有姿态图。
+    return result;
 }
 void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* context,int mode,const void* a6,const void* a7) {
     try {
@@ -579,7 +581,9 @@ void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* con
             (cameraHold.viewTransfer || cameraHold.viewType!=1) && cameraHoldOrbitOutputReady(address,true))
             cameraHoldSeedViewOutput(address,true); // 保持原生座舱角度范围，衔接普通视角状态。
     }catch(const std::exception& error){cameraHoldFailure(error.what());}
-    return originalCameraHoldCockpitOutput(component,output,delta,context,mode,a6,a7);
+    auto* result=originalCameraHoldCockpitOutput(component,output,delta,context,mode,a6,a7);
+    attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 切入座舱的同帧隐藏自有指示器。
+    return result;
 }
 
 void installCameraHold() {

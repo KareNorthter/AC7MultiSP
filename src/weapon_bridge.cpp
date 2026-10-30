@@ -14,6 +14,7 @@
 #include <climits>
 #include <cstdint>
 #include <cstring>
+#include <cstdio>
 #include <cwchar>
 #include <fstream>
 #include <iomanip>
@@ -695,6 +696,7 @@ void syncPlaneWeaponSelection(Addr plane,int index) {
 #include "cfa_weapon_diagnostics.hpp"
 #include "raven_sp.hpp"
 #include "target_gaze.hpp"
+#include "attitude_indicator.hpp"
 #include "camera_hold.hpp"
 #include "view_target.hpp"
 void debugWeaponsTick(Addr activator) noexcept;
@@ -2109,6 +2111,58 @@ extern "C" __declspec(dllexport) int dualsp_refresh_weapon_icons(void* luaState)
     }
 }
 
+// 姿态控制返回成功、可见、变化后的俯仰/滚转短文本及错误；图形在原生帧更新。
+extern "C" __declspec(dllexport) int dualsp_attitude_indicator_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v1(void* luaState) {
+    const dualsp::LuaApi* api=nullptr;
+    Addr player{};
+    try {
+        static const dualsp::LuaApi bound;api=&bound;
+        require(api->top(luaState)==8,"Attitude: expected eight control parameters");
+        player=static_cast<Addr>(api->readInteger(luaState,1));
+        if(!player)attitudeIndicator.stop();
+        else {
+            require(runtimeEnabled,"Attitude: single-player permission is unavailable");
+            const auto hud=static_cast<Addr>(api->readInteger(luaState,2));
+            const auto wings=static_cast<Addr>(api->readInteger(luaState,3));
+            const auto cursor=static_cast<Addr>(api->readInteger(luaState,4));
+            if(!attitudeIndicator.error.empty()&&attitudeIndicator.failureOwner.address==player)
+                require(!continuousAlive(attitudeIndicator.failureOwner),attitudeIndicator.error.c_str());
+            if(!attitudeIndicator.current(player,hud,wings,cursor))
+                attitudeIndicator.bind(player,hud,wings,cursor,static_cast<Addr>(api->readInteger(luaState,5)),
+                    static_cast<Addr>(api->readInteger(luaState,6)),static_cast<Addr>(api->readInteger(luaState,7)),
+                    static_cast<float>(api->readNumber(luaState,8)));
+            require(GetCurrentThreadId()==attitudeIndicator.thread,"Attitude: control thread changed");
+            if(attitudeIndicator.sampled&&GetTickCount64()-attitudeIndicator.sampledAt>150) {
+                attitudeIndicator.show(false);attitudeIndicator.sampled=false;
+            }
+            attitudeIndicator.heartbeat=GetTickCount64();attitudeIndicator.enabled.store(true,std::memory_order_release);
+        }
+        const bool available=player&&attitudeIndicator.visible&&attitudeIndicator.sampled;
+        api->boolean(luaState,true);api->boolean(luaState,available);
+        // 图形走原生帧；数字只在整数变化时返回短文本，不编码高频JSON。
+        char text[32]{};
+        const int pitch=static_cast<int>(std::lround(attitudeIndicator.pitch));
+        const int bank=static_cast<int>(std::lround(attitudeIndicator.bank));
+        int length=0;
+        if(available&&pitch!=attitudeIndicator.shownPitch) {
+            length=std::snprintf(text,sizeof(text),"P %+d\xc2\xb0",pitch);attitudeIndicator.shownPitch=pitch;
+        }
+        api->string(luaState,text,static_cast<size_t>(std::max(0,length)));length=0;
+        if(available&&bank!=attitudeIndicator.shownBank) {
+            length=std::snprintf(text,sizeof(text),"B %+d\xc2\xb0",bank);attitudeIndicator.shownBank=bank;
+        }
+        api->string(luaState,text,static_cast<size_t>(std::max(0,length)));api->string(luaState,"",0);return 5;
+    }catch(const std::exception& exception) {
+        attitudeIndicator.enabled.store(false,std::memory_order_release);
+        if(player && attitudeIndicator.plane.address==player) {
+            attitudeIndicator.failureOwner=attitudeIndicator.plane;attitudeIndicator.error=exception.what();
+        }
+        if(api) {api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,"",0);api->string(luaState,"",0);
+            const std::string message=exception.what();api->string(luaState,message.data(),message.size());return 5;}
+        nativeLog(std::string("ATTITUDE_LUA_API_ERROR ")+exception.what());return 0;
+    }
+}
 // 游戏线程只读采样，直接返回 Lua 值，不经过命令文件或 JSON。
 // 返回：成功、MSL就绪、SP1就绪、SP2就绪、SP3就绪、错误文字；不修改武器或核心缓存。
 extern "C" __declspec(dllexport) int dualsp_hud_readiness(void* luaState) {

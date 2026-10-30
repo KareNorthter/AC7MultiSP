@@ -12,7 +12,7 @@
 
 | 内容 | 唯一入口或用途 |
 | --- | --- |
-| Lua运行源码 | `dist/DualSP/Scripts/`，文件名由`src/product.json`的scripts清单约束；本轮21个运行文件为18份Lua、2份DLL和VERSION |
+| Lua运行源码 | `dist/DualSP/Scripts/`，文件名由`src/product.json`的scripts清单约束；姿态指示器候选已登记`attitude_hud.lua`，运行文件数量以该清单为准，不在本文重复维护 |
 | 核心/UI | `src/weapon_bridge.cpp`及相关头文件；`src/overlay.cpp`、`src/management_panel.hpp` |
 | 产品标识 | 根`VERSION`与`src/product.json`；游戏候选标记为candidate=true，安装器程序集、manifest和清单版本均派生产品VERSION |
 | 玩家文字唯一源 | `docs/user/`四个主题的中英文TXT，以及`docs/user/interface/`下游戏和安装器的双语JSON |
