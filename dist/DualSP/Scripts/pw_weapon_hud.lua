@@ -4,6 +4,10 @@ local root=assert(path:match("^(.*)/[^/]+$"))
 local Names=dofile(root.."/weapon_names.lua")
 local Profile=dofile(root.."/loadout_profile.lua")
 local PW={}
+local BASE_CROSS=1.75
+local CROSS=BASE_CROSS*1.3
+local CROSS_GROWTH=CROSS-BASE_CROSS
+local WHEEL_ROWS=6.8+CROSS_GROWTH -- 固定四槽预留；增长部分只用于避让放大的十字。
 local TRANSIENT,COLLAPSED,HIT_TEST_INVISIBLE=0x40,1,3
 local serial=0
 local outline={{1,0},{2,0},{2,1},{3,1},{3,2},{2,2},{2,3},{1,3},{1,2},{0,2},{0,1},{1,1},{1,0}}
@@ -22,8 +26,8 @@ function PW.unit(c)
         c.widgets.GunTextBP.Font.Size,c.widgets.GunCountTextBP.Font.Size)
     return math.max(c.row,math.ceil(size*1.5))
 end
-function PW.wheelRows(c)return c.countSP==3 and 6.8 or 4.5 end
-function PW.reserveHeight(c)return (PW.wheelRows(c)+.35)*PW.unit(c)end
+function PW.wheelRows()return WHEEL_ROWS end
+function PW.reserveHeight(c)return (PW.wheelRows()+.35)*PW.unit(c)end
 function PW.compactStats(c)
     local gap=c.row*.12
     for _,column in ipairs(c.columns)do
@@ -130,42 +134,66 @@ function PW.attach(c)
     for index=1,4 do self.frame[index]=line()end
     self.separator=line()
 
-    -- 布局只随行高、字号、简称、槽数或重新显示变化，不随每发弹药重新测量。
-    local function layout(labels)
+    -- 按全部候选与EMPTY测量容量，不用当前携带的子集决定整幅UI的宽度。
+    local function measureCapacity(capacityLabels)
+        local key=table.concat({PW.unit(c),c.widgets.GunTextBP.Font.Size,c.widgets.GunCountTextBP.Font.Size,
+            table.concat(capacityLabels,"/")},":")
+        if self.capacityKey==key then return end
+        local name,count=self.cells[1].name.widget,self.cells[1].count.widget
+        local widest=0
+        for _,label in ipairs(capacityLabels)do
+            name:SetText(FText(label));name:ForceLayoutPrepass()
+            widest=math.max(widest,name:GetDesiredSize().X)
+        end
+        count:SetText(FText("100000"));count:ForceLayoutPrepass()
+        local countWidth=count:GetDesiredSize().X
+        name:SetText(FText(self.cells[1].label));count:SetText(FText(self.cells[1].ammo))
+        self.frameWidth=widest+.35*PW.unit(c)
+        self.cellWidth=math.max(2.75*PW.unit(c),self.frameWidth,countWidth+.175*PW.unit(c))
+        self.capacityKey=key
+    end
+    -- 尺寸由稳定容量与原生字号决定，不随槽位填空或每发弹药重新测量。
+    local function layout(capacityLabels)
         local r=PW.unit(c)
-        local cellWidth=2.75*r
-        local frameWidth=0
-        for index,cell in ipairs(self.cells)do
+        for _,cell in ipairs(self.cells)do
             -- 名称与数量直接采用原生字号；槽号仍是辅助小字，不通过缩小主字体压缩布局。
             cell.name.widget:SetFont(cell.name.source.Font)
             cell.count.widget:SetFont(cell.count.source.Font)
             local font=cell.number.widget.Font
             font.Size=math.max(1,math.floor(cell.name.source.Font.Size*.55+.5));cell.number.widget:SetFont(font)
-            if labels[index]then
-                cell.name.widget:ForceLayoutPrepass()
-                cell.nameWidth=cell.name.widget:GetDesiredSize().X
-                frameWidth=math.max(frameWidth,cell.nameWidth+.35*r)
-            end
         end
-        cellWidth=math.max(cellWidth,frameWidth)
-        local cross,gap=1.75*r,.18*r
+        measureCapacity(capacityLabels)
+        local cellWidth,frameWidth=self.cellWidth,self.frameWidth
+        local cross,gap=CROSS*r,.18*r
         local width=cellWidth*2+cross+gap*2
-        local height=PW.wheelRows(c)*r
+        local height=PW.wheelRows()*r
         local center=width/2
-        local positions={{0,2.05*r},{center-cellWidth/2,0},{width-cellWidth,2.05*r},{center-cellWidth/2,4.4*r}}
+        local sideY=(2.05+CROSS_GROWTH/2)*r
+        local positions={{0,sideY},{center-cellWidth/2,0},{width-cellWidth,sideY},{center-cellWidth/2,(4.4+CROSS_GROWTH)*r}}
         local crossX,crossY=center-cross/2,2.25*r
         local source=c.hboxSlot
         local anchors=source:GetAnchors()
-        self.rootSlot:SetAnchors({Minimum=vec(anchors.Minimum),Maximum=vec(anchors.Maximum)})
-        self.rootSlot:SetAlignment(vec(source:GetAlignment()));self.rootSlot:SetPosition(vec(source:GetPosition()))
-        local size=source.bAutoSize and vec(c.hbox:GetDesiredSize())or vec(source:GetSize())
+        local size=vec(source:GetSize())
+        local fontKey=table.concat({c.widgets.GunTextBP.Font.Size,c.widgets.GunCountTextBP.Font.Size},":")
+        if self.guideFontKey~=fontKey then
+            -- 水平参考在当前HUD绑定期间固定，不跟随原生自动列宽或SP组合重排。
+            c.hbox:ForceLayoutPrepass()
+            local desired=c.hbox:GetDesiredSize()
+            local widthX=source.bAutoSize and desired.X or c.hboxSize.X
+            local nativeWidth=widthX
+            if c.hboxAnchors.Minimum.X~=c.hboxAnchors.Maximum.X or nativeWidth<=0 then nativeWidth=desired.X end
+            assert(nativeWidth>0,"PW HUD stats width is invalid")
+            self.guide={sizeX=widthX,nativeWidth=nativeWidth};self.guideFontKey=fontKey
+        end
+        self.rootSlot:SetAnchors({Minimum={X=c.hboxAnchors.Minimum.X,Y=anchors.Minimum.Y},
+            Maximum={X=c.hboxAnchors.Maximum.X,Y=anchors.Maximum.Y}})
+        self.rootSlot:SetAlignment({X=c.hboxAlignment.X,Y=source:GetAlignment().Y})
+        self.rootSlot:SetPosition({X=c.hboxPos.X,Y=source:GetPosition().Y})
+        if source.bAutoSize then size=vec(c.hbox:GetDesiredSize())end
+        size.X=self.guide.sizeX
         self.rootSlot:SetSize(size);self.rootSlot:SetZOrder(source:GetZOrder()+1)
         -- 撤去旧版共同左移：统计栏回到原生位置，选择区从同一右边界向左展开。
-        local nativeWidth=size.X
-        if anchors.Minimum.X~=anchors.Maximum.X or nativeWidth<=0 then
-            c.hbox:ForceLayoutPrepass();nativeWidth=c.hbox:GetDesiredSize().X
-        end
-        assert(nativeWidth>0,"PW HUD stats width is invalid")
+        local nativeWidth=self.guide.nativeWidth
         local offset=vec(c.hboxTranslation)
         self.root:SetRenderTranslation(offset);c.hbox:SetRenderTranslation(offset)
         rect(self.wheelSlot,0,-.35*r,width,height)
@@ -192,38 +220,42 @@ function PW.attach(c)
     end
     function self:update(profile,options,state)
         assert(valid(self.root)and valid(self.wheel),"PW HUD widgets were destroyed")
-        local labels={"MSL"}
-        for index=1,c.countSP do labels[index+1]=Names.special(options,profile[Profile.fields[index]])end
+        local labels={"MSL","EMPTY","EMPTY","EMPTY"}
+        local occupied={true,false,false,false}
+        local capacityLabels={"MSL","EMPTY"}
+        for _,option in ipairs(options)do capacityLabels[#capacityLabels+1]=Names.label(option)end
+        for index=1,c.countSP do
+            labels[index+1]=Names.special(options,profile[Profile.fields[index]])
+            occupied[index+1]=true
+        end
         local position,size,anchors,alignment=c.hboxSlot:GetPosition(),c.hboxSlot:GetSize(),c.hboxSlot:GetAnchors(),c.hboxSlot:GetAlignment()
         local desired=c.hboxSlot.bAutoSize and c.hbox:GetDesiredSize()or {X=0,Y=0}
         local layoutKey=table.concat({c.row,c.mainFontSize,c.nameFontSize,c.countFontSize,c.widgets.MainWeaponCountTextBP.Font.Size,
             c.widgets.GunTextBP.Font.Size,c.widgets.GunCountTextBP.Font.Size,
-            c.countSP,labels[1],labels[2]or "",labels[3]or "",labels[4]or "",position.X,position.Y,size.X,size.Y,
-            anchors.Minimum.X,anchors.Minimum.Y,anchors.Maximum.X,anchors.Maximum.Y,alignment.X,alignment.Y,
-            desired.X,desired.Y,c.hboxSlot:GetZOrder()},":")
+            table.concat(capacityLabels,"/"),position.Y,size.Y,
+            anchors.Minimum.Y,anchors.Maximum.Y,alignment.Y,desired.Y,c.hboxSlot:GetZOrder()},":")
         for index,cell in ipairs(self.cells)do
-            local present=labels[index]~=nil
-            if cell.present~=present then
-                cell.widget:SetVisibility(present and HIT_TEST_INVISIBLE or COLLAPSED)
-                cell.number.widget:SetVisibility(present and HIT_TEST_INVISIBLE or COLLAPSED);cell.present=present
-            end
-            if present then
-                assert(valid(cell.name.widget)and valid(cell.count.widget)and valid(cell.number.widget),"PW HUD text was destroyed")
-                local label=labels[index]
+            assert(valid(cell.name.widget)and valid(cell.count.widget)and valid(cell.number.widget),"PW HUD text was destroyed")
+            local label=labels[index]
+            local count,nameFactor,countFactor="0",.35,.35
+            -- 空槽只显示占位，不读取不存在的库存/就绪下标，也不能被选中框指向。
+            if occupied[index]then
                 local ammo=state.main_ammo
                 if index>1 then ammo=state.cached_sp[index-1]end
-                local count=state.pending and "—"or Profile.ammoText(ammo)
-                if cell.label~=label then cell.name.widget:SetText(FText(label));cell.label=label end
-                if cell.ammo~=count then cell.count.widget:SetText(FText(count));cell.ammo=count end
+                count=state.pending and "—"or Profile.ammoText(ammo)
                 assert(state.ready and type(state.ready[index])=="boolean","PW HUD readiness is missing")
-                tintText(cell.name,cell.name.source,Names.brightness(label,state.ready[index],ammo))
-                tintText(cell.count,cell.count.source,state.pending and 1 or (Profile.hasAmmo(ammo)and 1 or .35))
-                tintText(cell.number,cell.number.source,1)
+                nameFactor=Names.brightness(label,state.ready[index],ammo)
+                countFactor=state.pending and 1 or (Profile.hasAmmo(ammo)and 1 or .35)
             end
+            if cell.label~=label then cell.name.widget:SetText(FText(label));cell.label=label end
+            if cell.ammo~=count then cell.count.widget:SetText(FText(count));cell.ammo=count end
+            tintText(cell.name,cell.name.source,nameFactor)
+            tintText(cell.count,cell.count.source,countFactor)
+            tintText(cell.number,cell.number.source,1)
         end
-        if self.layoutKey~=layoutKey then layout(labels);self.layoutKey=layoutKey end
+        if self.layoutKey~=layoutKey then layout(capacityLabels);self.layoutKey=layoutKey end
         local selected=state.armed and state.active+2 or 1
-        assert(labels[selected],"PW HUD selection does not match a carried weapon")
+        assert(occupied[selected],"PW HUD selection does not match a carried weapon")
         if self.frameKey~=selected then
             local box=self.cells[selected].frame
             local x,y,w,h,t=box.x,box.y,box.w,box.h,self.stroke
