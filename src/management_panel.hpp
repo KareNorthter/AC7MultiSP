@@ -26,6 +26,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
     ImGui::PopID();
 }
 bool managementDirty() {
+    if(draftPwWeaponUI!=state.at("pw_weapon_ui_enabled").get<bool>())return true;
     return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTargetMode!=state.at("view_target_mode").get<std::string>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftTaskMountEnabled!=state.at("task_mount_enabled").get<bool>() ||
         draftTargetGazePad!=state.at("target_gaze_pad_enabled").get<bool>() || draftTargetGazeKeyboard!=state.at("target_gaze_keyboard_enabled").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
@@ -45,6 +46,7 @@ void drawFeatureSettings() {
     }
     ImGui::EndChild();
     if(panelCard("MainOptions",uiText("feature.settings.540ec6f5"))) {
+        ImGui::Checkbox(uiText("pw.weapon.selection.ui"),&draftPwWeaponUI);
         bool always=draftCentralWeaponDisplay=="always";
         if(ImGui::Checkbox("##CentralWeaponDisplay",&always))draftCentralWeaponDisplay=always?"always":"switch_1s";
         ImGui::SameLine();ImGui::TextWrapped("%s",uiText("always.show.the.current.weapon.84c597b0"));

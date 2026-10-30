@@ -251,6 +251,7 @@ inline constexpr Entry entries[]={
     {"punctuation.89d1a37e","）",")"},
     {"punctuation.8ce1b17b","（"," ("},
     {"punctuation.d0866a43","。",". "},
+    {"pw.weapon.selection.ui","pw武器选择ui","PW weapon selection UI"},
     {"quick.aircraft","机体","Aircraft"},
     {"quick.auto","下次启动后自动进入此任务","Launch this mission automatically on next startup"},
     {"quick.auto_help","主菜单就绪后等待2秒，每次启动最多执行一次；打开F6时等待，可取消本次自动出击。需要Mod总开关已开启。","Runs once per game session, two seconds after the main menu is ready. Opening F6 delays launch and allows cancellation. The Mod must be enabled."},

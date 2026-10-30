@@ -75,7 +75,7 @@ local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验�
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=22") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=23") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -109,6 +109,7 @@ loadExport("dualsp_keyboard_modifier_routing_supported","DualSPUI.dll") -- 修�
 loadExport("dualsp_controller_clicks_supported")
 loadExport("dualsp_controller_clicks_supported","DualSPUI.dll")
 loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界面不能保存新增的中央简称显示方式。
+loadExport("dualsp_pw_weapon_ui_supported","DualSPUI.dll") -- PW布局开关及完整保存动作要求UI/Lua成套。
 loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
@@ -1032,8 +1033,8 @@ refreshHUD=function(now)
         end
     end
     nativeState.armed=plane:IsSpecialWeaponArmed()
-    -- 单 SP 出击也处理名称就绪状态，但保持原生面板高度。
-    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now)
+    -- 单SP同样处理名称亮度；列表模式保留原生高度，PW模式独立安排选择区。
+    nativeHud:update(plane,currentProfile,flightOptions,nativeState,enabled and not hudSamplingError,now,config.pw_weapon_ui_enabled)
     if enabled and hudSamplingError then
         if not weaponPresentation.error then weaponPresentation:fail(hudSamplingError)end
     else
@@ -1055,7 +1056,7 @@ local function primeFlightHUD(profile,options,prewarm)
         slots={{},{},{}},ready={false,false,false,false},pending=true} -- 初始化前不把原生单 SP 数量冒充多 SP 实际弹药。
     local visible=plane:GetNimbusHUDEnabled()
     -- 补给起飞过场中预建右下行；原生 HUD 祖先仍控制全局显隐，不提前修改武器。
-    nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock())
+    nativeHud:update(plane,profile,options,seed,prewarm or visible,os.clock(),config.pw_weapon_ui_enabled)
     weaponPresentation:update(plane,profile,options,seed,visible,os.clock(),config.central_weapon_display,game:GetTimeSeconds(plane))
 end
 -- 正常出击建立检查点；补给和显式调试重建保留任务检查点。
@@ -1600,7 +1601,7 @@ local function applyAction(action)
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED request="..settingsAck.." "..json.encode({
                 language=config.language,startup_updates=config.startup_update_check_enabled,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
-                dpad=config.dpad_weapon_switch_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
+                dpad=config.dpad_weapon_switch_enabled,pw_weapon_ui=config.pw_weapon_ui_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
                 gaze_keyboard=config.target_gaze_keyboard_enabled,camera_hold=config.camera_hold_enabled,view_target=config.view_target_mode,
                 ammo_two=config.ammo_percent_two,ammo_three=config.ammo_percent_three}))
         end,debug.traceback)
@@ -1641,11 +1642,11 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and info.code and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=22,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=23,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         startup_update_check_enabled=config.startup_update_check_enabled,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
-        hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,
+        hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,pw_weapon_ui_enabled=config.pw_weapon_ui_enabled,
         view_target_mode=config.view_target_mode,view_center_dot_enabled=config.view_center_dot_enabled,
         view_target={protocol=3,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,

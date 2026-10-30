@@ -2,6 +2,7 @@
   "schema": 1,
   "language": "zh-CN",
   "texts": {
+    "pw.weapon.selection.ui": "pw武器选择ui",
     "recovery.missing_weapon": "找不到SP资料：{weapon}",
     "recovery.duplicate_weapon": "兵装代号重复：{weapon}",
     "recovery.invalid_ammo": "SP 槽位的基础载量无效。",

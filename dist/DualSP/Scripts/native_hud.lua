@@ -7,6 +7,7 @@ local NativeHUD={}
 local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
 local weaponNames=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/weapon_names.lua")
 local Profile=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/loadout_profile.lua") -- 按实际槽数排列。
+local PwHUD=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/pw_weapon_hud.lua")
 local VISIBLE,COLLAPSED=0,1
 local TRANSIENT=0x40
 local function valid(o)return o and o:IsValid()end
@@ -64,7 +65,7 @@ function NativeHUD.new(note,refreshIcons)
         end
     end
     -- 固定 GUN/MSL/SP/FLR/DMG 顺序；单 SP 也使用独立的 MSL/SP 名称。
-    local function arrange(column,enabled,holder,count)
+    local function arrange(column,enabled,holder,count,pwMode)
         -- Build the fixed order once on enable, restore it once on disable.
         -- Never reparent visible rows during weapon switching.
         local function detach(widget)
@@ -86,15 +87,22 @@ function NativeHUD.new(note,refreshIcons)
         end
         if enabled then
             append(column.original[1])
-            if column.main then
-                assert(valid(holder:AddChildToVerticalBox(column.original[2].widget)),"无法保留原生 MSL 名称")
-                append({widget=column.main,style=column.original[2].style})
-            else append(column.original[2])end
-            assert(valid(holder:AddChildToVerticalBox(column.original[3].widget)),"无法保留原生 SP 来源")
-            append({widget=column.rows[1],style=column.original[3].style})
-            for index=2,3 do
-                if index<=count then append({widget=column.rows[index],style=column.original[3].style})
-                else assert(valid(holder:AddChildToVerticalBox(column.rows[index])),"无法保留未启用的 SP 行")end
+            if pwMode then
+                -- 原生统计只保留GUN/FLR/DMG；列表克隆仍保有在折叠容器内，供关闭PW时复用。
+                for index=2,3 do assert(valid(holder:AddChildToVerticalBox(column.original[index].widget)),"Cannot retain PW HUD source row")end
+                for _,widget in ipairs(column.rows)do assert(valid(holder:AddChildToVerticalBox(widget)),"Cannot retain PW HUD list row")end
+                if column.main then assert(valid(holder:AddChildToVerticalBox(column.main)),"Cannot retain PW HUD missile row")end
+            else
+                if column.main then
+                    assert(valid(holder:AddChildToVerticalBox(column.original[2].widget)),"无法保留原生 MSL 名称")
+                    append({widget=column.main,style=column.original[2].style})
+                else append(column.original[2])end
+                assert(valid(holder:AddChildToVerticalBox(column.original[3].widget)),"无法保留原生 SP 来源")
+                append({widget=column.rows[1],style=column.original[3].style})
+                for index=2,3 do
+                    if index<=count then append({widget=column.rows[index],style=column.original[3].style})
+                    else assert(valid(holder:AddChildToVerticalBox(column.rows[index])),"无法保留未启用的 SP 行")end
+                end
             end
             append(column.original[4]);append(column.original[5])
         else
@@ -105,9 +113,29 @@ function NativeHUD.new(note,refreshIcons)
         end
     end
     local function resize(c)
-        if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-c.row*(c.countSP-1)))
-        else c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+c.row*(c.countSP-1)})end
-        if not c.hboxStretched then c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y+c.row*(c.countSP-1)})end
+        if c.pwMode then
+            -- 先为选择区向上扩父面板，再将三行统计放到预留区下面；不依赖越界绘制。
+            local reserve=PwHUD.reserveRows*PwHUD.unit(c)
+            local delta=reserve-2*c.row
+            if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-delta))
+            else
+                c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+delta})
+                c.panelSlot:SetPosition(shifted(c.panelPos,-delta*(1-c.panelAlignment.Y)))
+            end
+            local shift=reserve-c.hboxAnchors.Minimum.Y*delta
+            if c.hboxStretched then
+                c.hboxSlot:SetPosition(shifted(c.hboxPos,shift))
+                c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y-(1-c.hboxAnchors.Maximum.Y)*delta})
+            else
+                c.hboxSlot:SetPosition(shifted(c.hboxPos,shift-2*c.row*c.hboxAlignment.Y))
+                c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y-2*c.row})
+            end
+        else
+            local extra=c.countSP-1
+            if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-c.row*extra))
+            else c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+c.row*extra})end
+            if not c.hboxStretched then c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y+c.row*extra})end
+        end
     end
     -- HUD 创建和武器初始化不同步。先把原生 SP 行折叠，避免双栏接管前
     -- 先画出 MSL+单 SP；接管或失败时再恢复原始可见性。
@@ -134,6 +162,7 @@ function NativeHUD.new(note,refreshIcons)
     local function restore()
         local c=self.cache
         if not c then restorePrehidden();self.prehidden={};return end
+        if c.pw then c.pw:hide()end
         if c.columnsTouched then
             for _,column in ipairs(c.columns)do
                 if valid(column.box)then arrange(column,false,c.holder)end
@@ -154,6 +183,7 @@ function NativeHUD.new(note,refreshIcons)
         if valid(c.panelSlot)and c.panelSize then c.panelSlot:SetSize(c.panelSize)end
         if valid(c.hboxSlot)and c.hboxSize then c.hboxSlot:SetSize(c.hboxSize)end
         if valid(c.panelSlot)and c.panelPos then c.panelSlot:SetPosition(c.panelPos)end
+        if valid(c.hboxSlot)and c.hboxPos then c.hboxSlot:SetPosition(c.hboxPos)end
         for _,item in ipairs(c.shifted)do
             if valid(item.widget)then item.widget:SetRenderTranslation(item.original)end
         end
@@ -161,6 +191,7 @@ function NativeHUD.new(note,refreshIcons)
         c.applied=false
         c.lastActive=nil
         c.lastSelection=nil
+        c.pwUnit=nil
         c.iconRevision=nil -- 再次显示时重新提交原生剪影，避免沿用关闭前的缓存。
     end
     local function preflight()
@@ -246,6 +277,7 @@ function NativeHUD.new(note,refreshIcons)
         c.panel=widgets.PlaneTextStatPanel
         c.panelSlot=c.panel.Slot;c.panelSize=vec(c.panelSlot:GetSize())
         c.panelPos=vec(c.panelSlot:GetPosition())
+        c.panelAlignment=vec(c.panelSlot:GetAlignment())
         local panelAnchors=c.panelSlot:GetAnchors()
         c.panelStretched=math.abs(panelAnchors.Maximum.Y-panelAnchors.Minimum.Y)>.001
         c.name=widgets.SpecialWeaponTextBP;c.count=widgets.SpecialWeaponCountTextBP;c.arrow=widgets.SpecialWeaponSel
@@ -254,8 +286,11 @@ function NativeHUD.new(note,refreshIcons)
         assert(nameBox:GetFName():ToString()=="StatsTextVBox" and countBox:GetFName():ToString()=="StatsInfoVBox","Native SP columns changed")
         local hbox=nameBox.Slot.Parent
         assert(hbox:GetAddress()==countBox.Slot.Parent:GetAddress(),"Native SP columns do not share a row container")
+        c.hbox=hbox;c.hboxTranslation=translation(hbox)
         c.hboxSlot=hbox.Slot;c.hboxSize=vec(c.hboxSlot:GetSize());c.hboxPos=vec(c.hboxSlot:GetPosition())
         local hboxAnchors=c.hboxSlot:GetAnchors()
+        c.hboxAnchors={Minimum=vec(hboxAnchors.Minimum),Maximum=vec(hboxAnchors.Maximum)}
+        c.hboxAlignment=vec(c.hboxSlot:GetAlignment())
         c.hboxStretched=math.abs(hboxAnchors.Maximum.Y-hboxAnchors.Minimum.Y)>.001
         -- Runtime native code changes Canvas sizes. Read the live geometry;
         -- cooked archetype values are not a valid runtime compatibility test.
@@ -267,6 +302,7 @@ function NativeHUD.new(note,refreshIcons)
             local widget=widgets[name]
             c.shifted[#c.shifted+1]={widget=widget,original=translation(widget)}
         end
+        c.shifted[#c.shifted+1]={widget=hbox,original=c.hboxTranslation} -- PW为宽度留白时只做可恢复的平移。
         c.columns={}
         for _,spec in ipairs({{box=nameBox,names={"GunTextBP","MainWeaponTextBP","SpecialWeaponTextBP","FlareTextBP","DamageTextBP"}},
             {box=countBox,names={"GunCountTextBP","MainWeaponCountTextBP","SpecialWeaponCountTextBP","FlareCountTextBP","DamagePercentageTextBP"}}})do
@@ -327,7 +363,7 @@ function NativeHUD.new(note,refreshIcons)
         end
         return nil
     end
-    local function update(plane,profile,options,state,enabled,now)
+    local function update(plane,profile,options,state,enabled,now,pwEnabled)
         if not enabled then restore();self.status="stock";self.waitingSince=nil;return end
         if self.error then return end
         -- 开场可能很长，输入开放前只等待控件生成；五秒诊断从正式接管时开始。
@@ -342,11 +378,13 @@ function NativeHUD.new(note,refreshIcons)
             return
         end
         -- 补给可从双 SP 改为单 SP，或反向改变；同帧还原尺寸再重排，不跨帧露出原行。
-        if c.applied and c.countSP~=Profile.count(profile)then restore()end
+        local pwMode=pwEnabled==true
+        if c.applied and (c.countSP~=Profile.count(profile)or c.pwMode~=pwMode)then restore()end
         for _,key in ipairs(required)do assert(valid(c.widgets[key]),"Native HUD control was destroyed: "..key)end
         if not c.applied then
-            -- 只有双 SP 增加一行；单 SP 保留原生面板高度。
+            -- 列表模式按SP槽数扩行；PW模式另为选择区预留高度。
             c.countSP=Profile.count(profile)
+            c.pwMode=pwMode
             retainArrows(c)
             -- In stretched Canvas slots GetSize is a margin, not a height.
             -- Grow that parent upwards by moving its top edge. A stretched
@@ -354,7 +392,7 @@ function NativeHUD.new(note,refreshIcons)
             -- 原生 SP 源已折叠，开场时从它测量必然可能得到零高。
             -- 先把实际文字放入最终可见行，再测量该行自己的 Slate 布局。
             c.columnsTouched=true -- 即使布局核验失败，也能恢复完整原生控件树。
-            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.countSP)end
+            for _,column in ipairs(c.columns)do arrange(column,true,c.holder,c.countSP,pwMode)end
             for group=1,c.countSP do
                 local weaponIndex=profile[Profile.fields[group]] -- SP 行按逻辑槽固定身份。
                 c.columns[1].rows[group]:SetText(FText(weaponNames.special(options,weaponIndex)))
@@ -366,7 +404,7 @@ function NativeHUD.new(note,refreshIcons)
             local padding=c.columns[1].original[3].style.padding
             local pitch=measured:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(pitch>0 and pitch<100,"Invalid native text row height: "..tostring(pitch))
-            c.row=pitch;if c.countSP>1 then resize(c)end
+            c.row=pitch;if c.countSP>1 or pwMode then resize(c)end
             note(string.format("NATIVE_HUD_ROW_FLOW pitch=%.3f label_font=%d count_font=%d slot_rules=%s,%s",c.row,c.nameFontSize,c.countFontSize,tostring(c.columns[1].original[3].style.size.SizeRule),tostring(c.columns[2].original[3].style.size.SizeRule)))
             c.applied=true
         end
@@ -391,8 +429,8 @@ function NativeHUD.new(note,refreshIcons)
         -- 两个可见箭头只接受最终选择；原生 MSL 中间态被源容器隔离。
         local selection=state.armed and active+1 or 0
         if c.lastSelection~=selection then
-            c.mainArrow:SetVisibility(selection==0 and VISIBLE or COLLAPSED)
-            c.arrow:SetVisibility(selection>0 and VISIBLE or COLLAPSED)
+            c.mainArrow:SetVisibility(not pwMode and selection==0 and VISIBLE or COLLAPSED)
+            c.arrow:SetVisibility(not pwMode and selection>0 and VISIBLE or COLLAPSED)
             c.lastSelection=selection
         end
         if c.widgets.SpecialWeaponSel.Font.Size~=c.arrowFontSize then
@@ -415,7 +453,7 @@ function NativeHUD.new(note,refreshIcons)
             -- The game-owned source is collapsed; measure a visible twin.
             c.row=c.columns[1].rows[1]:GetDesiredSize().Y+padding.Top+padding.Bottom
             assert(c.row>0 and c.row<100,"Invalid resized native text row height")
-            if c.countSP>1 then resize(c)end
+            if c.countSP>1 or pwMode then resize(c)end
             c.arrow:SetRenderTranslation(shifted(c.shifted[3].original,active*c.row))
         end
         assert(state.ready and type(state.ready[1])=="boolean","MSL 就绪状态缺失")
@@ -437,10 +475,16 @@ function NativeHUD.new(note,refreshIcons)
             syncNameStyle(nameWidget,c.name,weaponNames.brightness(label,state.ready[group+1],state.cached_sp[group]),c.nameStyles,"sp"..group)
         end
         c.lastCountStyle=countStyle
+        if pwMode then
+            local unit=PwHUD.unit(c)
+            if c.pwUnit~=unit then resize(c);c.pwUnit=unit end
+            if not c.pw then PwHUD.attach(c)end -- 默认关闭时不构造PW控件或查询其专用API。
+            c.pw:update(profile,options,state)
+        end
         self.status="native"
     end
-    function self:update(plane,profile,options,state,enabled,now)
-        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now)end,debug.traceback)
+    function self:update(plane,profile,options,state,enabled,now,pwEnabled)
+        local ok,err=xpcall(function()update(plane,profile,options,state,enabled,now,pwEnabled)end,debug.traceback)
         if not ok then
             self.error=tostring(err);self.status="error";note("NATIVE_HUD_ERROR "..self.error)
             local restored,restoreErr=pcall(restore)
@@ -456,6 +500,7 @@ function NativeHUD.new(note,refreshIcons)
             -- A HUD toggle keeps its cached row; a world/actor transition
             -- releases the old row so retained widgets cannot accumulate slots.
             local removed,removeErr=pcall(function()
+                if c.pw then c.pw:release()end
                 for _,widget in ipairs(c.clones or {})do
                     if valid(widget)and valid(widget.Slot)and valid(widget.Slot.Parent)then
                         assert(widget.Slot.Parent:RemoveChild(widget),"Cannot release native SP row")

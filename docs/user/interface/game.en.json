@@ -2,6 +2,7 @@
   "schema": 1,
   "language": "en",
   "texts": {
+    "pw.weapon.selection.ui": "PW weapon selection UI",
     "recovery.missing_weapon": "SP weapon data not found: {weapon}",
     "recovery.duplicate_weapon": "Duplicate weapon code: {weapon}",
     "recovery.invalid_ammo": "The SP slot has an invalid base ammunition value.",
