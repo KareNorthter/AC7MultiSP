@@ -224,7 +224,11 @@ Mod候选通过资格检查后，优先读取游戏`AircraftShort_Name_<code>`�
 
 setter按真实名称、`/Script/UMG.Widget`归属、参数数量/尺寸/类型/偏移及每次调用前后的弱身份验证。当前游戏接口实为`SetRenderAngle(FloatProperty,4字节)`、`SetRenderTranslation(StructProperty,8字节)`、`SetVisibility(EnumProperty,1字节)`，不使用不存在的`SetRenderTransformAngle`或把可见性误当ByteProperty。仅接收本功能自建`DualSPAttitudeRoot/Wings/Cursor`容器，调用只修改这些UMG副本，不写机体、相机、物理状态或输入。异常停止当前玩家实例的指示器，并在既有F6 HUD错误栏保留原始诊断；同一失败实例不因保存/切换开关而重新准入，其他玩家实例可重新绑定。普通HUD/组件销毁重建只进入等待重绑，不冒充故障或循环错误重试。暂停、补给、管理页、总开关、任务/机体/世界切换归还观察责任并隐藏/释放自有根容器；严格清理失败由既有退让路径升级，不假称安全回退。
 
-控制心跳超过150ms时在后续原生帧隐藏，原生帧超过150ms未再采样时在控制周期隐藏；这不是线程停止时仍精确计时的独立定时器。源码已做静态审阅；作者启动的进程仅用于只读核对对象、UMG参数类型及视角getter，原版资源仅离线解析。首次快照的实际视角标志为2，不把用户最初的“第一人称暂停”称呼当作已验证该视角的依据。未编译、安装或运行本候选，未注入输入/调用游戏函数；平飞、爬升/俯冲、左右滚转、倒飞、视角切换、原生HUD/暂停显隐及性能均仍待实机验证。原始材料位置见[本机资产索引](../archive/local-assets.md)。
+控制心跳超过150ms时在后续原生帧隐藏，原生帧超过150ms未再采样时在控制周期隐藏；这不是线程停止时仍精确计时的独立定时器。原始资料只读核对了对象、UMG参数类型及视角getter，原版资源仅离线解析；首次快照的实际视角标志为2，不把用户最初的“第一人称暂停”称呼当作已验证该视角的依据。
+
+2026-10-31作者运行已交付的2.27.0 beta2并反馈加载失败。当前PID23392的`mod.log`于本地00:05:13.439（UTC前日16:05:13.439）记录`ATTITUDE_HUD_ERROR ... attitude_hud.lua:168: Attitude: cannot locate native speed HUD`；安装脚本与184def5中的姿态Lua一致，Mod本身已正常进入任务。离线原版资源确认路径为`AceMainFlightHUD_C.WidgetTree → PersistentWidget(PersistentWidgetBP_C).WidgetTree → MainCanvasPanel → DefaultShowGroupPanel → SpeedMeterPanel → SpeedText`。原遍历只进入PanelWidget的Slots，不能穿过UserWidget；查找因此在五秒后超时，尚未执行控件构造和原生姿态绑定。修订复用中央武器简称的查找方式：预取UserWidget类，遇子界面继续访问它的WidgetTree.RootWidget，并排除WidgetArchetype/Default__模板；查找仍只在启用后的绑定阶段进行，不增加正常帧扫描，也不放宽当前世界检查或修改布局。
+
+beta2的编译交付见[回执](../../evidence/2.27.0-beta2-exe-delivery.json)；本次嵌套控件查找修订仅静态审阅，未编译、测试、安装或热加载，未操作游戏或读取进程内存。平飞、爬升/俯冲、左右滚转、倒飞、视角切换、原生HUD/暂停显隐及性能仍待修订包实机验证。日志快照、安装脚本摘要及离线资源位置见[本机资产索引](../archive/local-assets.md)。
 
 Lua 游戏线程约20ms调度，正式飞行 HUD 通常约100ms同步，成功切换/重建立即提交最终状态；同步周期不是画面刷新率。默认右下原生面板扩展为 MSL 与最多三组 SP，保 GUN/MSL/SP/FLR/DMG 顺序；可选PW布局见下文。中央独立 TextBlock 使用简称，原生瞬时提示隔离以免重叠。
 

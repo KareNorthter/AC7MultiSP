@@ -6,7 +6,7 @@ local function vec(value)return {X=value.X,Y=value.Y}end
 
 function Attitude.new(note,invoke)
     local self={cache=nil,error=nil,available=false,released=true,lastScan=-1,serial=0,player=nil}
-    local panelClass,canvasClass,imageClass,angleFunction,moveFunction,visibilityFunction
+    local panelClass,userClass,canvasClass,imageClass,angleFunction,moveFunction,visibilityFunction
     local function stop()
         if self.released then return end
         local ok,_,_,_,reason=invoke(0,0,0,0,0,0,0,24)
@@ -45,17 +45,20 @@ function Attitude.new(note,invoke)
             "/Script/UMG.TextBlock:SetGlowColor","/Script/UMG.TextBlock:SetUseGlobalGlowColor"})do
             assert(valid(StaticFindObject(api)),"Attitude HUD API unavailable: "..api)
         end
-        panelClass=StaticFindObject("/Script/UMG.PanelWidget");canvasClass=StaticFindObject("/Script/UMG.CanvasPanel")
+        panelClass=StaticFindObject("/Script/UMG.PanelWidget");userClass=StaticFindObject("/Script/UMG.UserWidget")
+        canvasClass=StaticFindObject("/Script/UMG.CanvasPanel")
         imageClass=StaticFindObject("/Script/UMG.Image")
         angleFunction=StaticFindObject("/Script/UMG.Widget:SetRenderAngle")
         moveFunction=StaticFindObject("/Script/UMG.Widget:SetRenderTranslation")
         visibilityFunction=StaticFindObject("/Script/UMG.Widget:SetVisibility")
-        assert(valid(panelClass)and valid(canvasClass)and valid(imageClass),"Attitude HUD classes unavailable")
+        assert(valid(panelClass)and valid(userClass)and valid(canvasClass)and valid(imageClass),"Attitude HUD classes unavailable")
     end
     local function walk(widget,result)
         if not valid(widget)then return end
         result[widget:GetFName():ToString()]=widget
         if widget:IsA(panelClass)then widget.Slots:ForEach(function(_,slot)walk(slot:get().Content,result)end)end
+        -- SPEED位于PersistentWidget子界面；UserWidget自身没有PanelWidget的Slots。
+        if widget:IsA(userClass)and valid(widget.WidgetTree)then walk(widget.WidgetTree.RootWidget,result)end
     end
     local function construct(class,tree,name)
         self.serial=self.serial+1
@@ -145,8 +148,11 @@ function Attitude.new(note,invoke)
         local world=plane:GetWorld():GetAddress()
         for _,owner in ipairs(FindAllOf("AceMainFlightHUD_C")or{})do
             if valid(owner)and valid(owner.WidgetTree)and valid(owner:GetWorld())and owner:GetWorld():GetAddress()==world then
-                local widgets={};walk(owner.WidgetTree.RootWidget,widgets)
-                if valid(widgets.SpeedText)and valid(widgets.SpeedMeterPanel)then return attach(owner,widgets)end
+                local name=owner:GetFullName()
+                if not name:find("WidgetArchetype",1,true)and not name:find("Default__",1,true)then
+                    local widgets={};walk(owner.WidgetTree.RootWidget,widgets)
+                    if valid(widgets.SpeedText)and valid(widgets.SpeedMeterPanel)then return attach(owner,widgets)end
+                end
             end
         end
     end
