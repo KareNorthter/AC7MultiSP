@@ -1,0 +1,11 @@
+{
+  "version": "2.27.0 beta2",
+  "channel": "candidate",
+  "source_commit": "c3116e6cb79ad2186d84f208736f3de6d8fef566",
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta2/AC7MultiSP_Installer_2.27.0_beta2.exe",
+  "sha256": "89fe3af3e0c3d442055e2e21933c69da02235fdb3a812d9a9ad5fd46550765d8",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261030-2.27.0-beta2-build/delivery-receipt.json",
+  "integration": "evidence/2.27.0-beta2-source-integration.json",
+  "validation": "完整编译、签名封装与文件一致性核对完成，20份Lua成套；更新日志原字节未变，旧核心保护摘要一致。",
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。姿态方向/位置/刷新及性能、PW微调与垂直环绕待本包实机验证。"
+}
