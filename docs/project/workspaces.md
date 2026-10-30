@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| 2.27.0 beta3姿态查找修订整合，进行中 | 本集成聊天；基线main/0ace5de；来源30c693e | codex/integrate-2.27.0-beta3；C:/Users/83717/.codex/worktrees/integrate-227-beta3/AC7_MultiSP | 接收嵌套子界面中SPEED查找修订，不改更新日志，准备完整构建；显示效果待实机验证。 |
+| 2.27.0 beta3姿态查找修订整合，已出包待验证 | 本集成聊天；基线main/0ace5de；来源30c693e | codex/integrate-2.27.0-beta3；C:/Users/83717/.codex/worktrees/integrate-227-beta3/AC7_MultiSP | 接收嵌套子界面中SPEED查找修订，不改更新日志；完整编译和签名封装完成，显示效果待实机验证。 |
 | 2.27.0 beta2姿态指示整合，已出包待验证 | 本集成聊天；基线main/e6d0fc9；来源184def5 | codex/integrate-2.27.0-beta2；C:/Users/83717/.codex/worktrees/integrate-227-beta2/AC7_MultiSP | 接收默认关闭的SPEED下方姿态图，连同已合HUD/视角修订完整构建；不改更新日志；完整编译和签名封装完成，实机效果待验证。 |
 | 第三人称姿态指示器，加载失败修订待接收 | 本HUD优化聊天；续接main/0ace5de（2.27.0 beta2）；codex/feat-third-person-attitude | C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP | 原功能已随beta2交付；本次按作者反馈读取PID23392日志，定位SPEED位于嵌套PersistentWidget，补齐UserWidget树遍历并排除模板。仅修改attitude_hud.lua、[架构对应正文](../engineering/architecture.md#第三人称姿态指示器未发布候选)、本机资产索引及本行。原生帧机制、SPEED下方布局、默认关闭、协议25和产品版本不变。本次仅静态差异核对，未编译/测试/安装/热加载或操作游戏，不使用computer use，不推送；原始日志与安装脚本保留于本树Temp/tasks/20261031-attitude-load-failure/，后续画面由作者截图提供 |
 | 视角垂直修订增量接收，已接收待验证 | 本集成聊天；基线main/fe654f6；来源a1868a0 | codex/integrate-camera-vertical；C:/Users/83717/.codex/worktrees/integrate-camera-vertical/AC7_MultiSP | 接收camera_hold.hpp及对应研究/资产说明；普通座舱原生限位、外部视角垂直连续候选。静态差异核对完成；不编译、测试、安装、操作游戏或推送，版本不变，既有EXE不含此修订。 |

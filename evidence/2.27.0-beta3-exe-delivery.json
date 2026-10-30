@@ -1,0 +1,11 @@
+{
+  "version": "2.27.0 beta3",
+  "channel": "candidate",
+  "source_commit": "9637257b49c3456831021889604ca9f0ab81f289",
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta3/AC7MultiSP_Installer_2.27.0_beta3.exe",
+  "sha256": "c6ad058483c98c7ae9b0f3ea2ec1076403fb3975c4f19e1960e80d1792099bd7",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261031-2.27.0-beta3-build/delivery-receipt.json",
+  "source": "30c693e9eaada606bd5f0e9ed65e886a2b013606",
+  "validation": "完整编译、签名封装与文件一致性核对完成；更新日志原字节和旧核心摘要未变。",
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。SPEED查找及姿态显示待实机验证。"
+}

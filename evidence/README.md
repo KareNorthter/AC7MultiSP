@@ -153,3 +153,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [2.27.0 beta2 EXE交付](2.27.0-beta2-exe-delivery.json)：姿态图候选安装包、签名摘要与验证边界。
 
 - [2.27.0 beta3源码整合](2.27.0-beta3-source-integration.json)：姿态图SPEED查找修订及来源。
+
+- [2.27.0 beta3 EXE交付](2.27.0-beta3-exe-delivery.json)：SPEED查找修订安装包摘要及验证边界。
