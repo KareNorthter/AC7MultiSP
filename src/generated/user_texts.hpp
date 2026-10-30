@@ -303,7 +303,7 @@ inline constexpr Entry entries[]={
     {"recovery.duplicate_weapon","兵装代号重复：{weapon}","Duplicate weapon code: {weapon}"},
     {"recovery.invalid_ammo","SP 槽位的基础载量无效。","The SP slot has an invalid base ammunition value."},
     {"recovery.leave_mission","退出当前任务并选择其他机体后，将尝试恢复本 Mod；无法确认安全回退时，请勿继续当前任务。","Exit the mission and select another aircraft to attempt Mod recovery. Do not continue this mission if safe fallback cannot be confirmed."},
-    {"recovery.loaded","AC7MultiSP {version} 已加载，按 {key} 打开管理界面。","AC7MultiSP {version} loaded. Press {key} to open management."},
+    {"recovery.loaded","{version} 已加载，按 {key} 打开管理界面。","{version} loaded. Press {key} to open management."},
     {"recovery.missing_weapon","找不到SP资料：{weapon}","SP weapon data not found: {weapon}"},
     {"recovery.severe","发生严重错误，本 Mod 已停用。请重启游戏；可打开管理界面查看错误。","A serious error has disabled the Mod. Restart the game; error details remain available in management."},
     {"refilled.89f913d7","（已补满）"," (refilled)"},

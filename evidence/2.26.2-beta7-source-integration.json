@@ -1,0 +1,23 @@
+{
+  "version": "2.26.2 beta7",
+  "baseline": "0416d5fcc0095f03c0d63bc2c28b88f4fd31617d",
+  "sources": [
+    "0e0a8eb4012f0ec7cc4f70e337d9a3c36eb3d80d",
+    "9a8532008240ff74675123fa7e79bb3cb0b9d99e"
+  ],
+  "changes": [
+    "按作者明确要求将recovery.loaded中文正文AC7MultiSP {version} 已加载改为{version} 已加载，英文同步；保留共用前缀",
+    "识别主武器UAV来源，限定涉及主武器UAV时持续对象上限128，其余64",
+    "保留锁定音失败保护，增加前后计数诊断",
+    "按机体引用、槽位与实际类修正EA-18G Type B和ADFX-00 AC2显示简称"
+  ],
+  "limits": [
+    "未运行测试、安装或游戏；新包实机行为待验证",
+    "锁定音异常根因未确定",
+    "ADFX-00作者原名称限机库，多SP候选按用户要求同时用于任务HUD"
+  ],
+  "changelog_sha256": {
+    "docs/user/更新日志.txt": "3d04152dde19397f2062e8600be9d6660d83fd28bc2e9910a907eea3e8758295",
+    "docs/user/Changelog.txt": "a8671403bdd84cd8ac406283ae66444d4af103070ffa192d3261d3dc907c5846"
+  }
+}

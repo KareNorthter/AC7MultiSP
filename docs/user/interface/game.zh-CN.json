@@ -12,7 +12,7 @@
     "recovery.catalogue_title": "SP 武器资料检查详情",
     "recovery.catalogue_help": "受影响机体在本次游戏中停用本 Mod 的增强功能。可尝试原生单 SP；武器是否正常仍取决于机体 Mod。",
     "recovery.close": "关闭",
-    "recovery.loaded": "AC7MultiSP {version} 已加载，按 {key} 打开管理界面。",
+    "recovery.loaded": "{version} 已加载，按 {key} 打开管理界面。",
     "recovery.leave_mission": "退出当前任务并选择其他机体后，将尝试恢复本 Mod；无法确认安全回退时，请勿继续当前任务。",
     "primary.download.link.f6096f63": "主要下载链接",
     "backup.download.link.76fd22fe": "备用下载链接",

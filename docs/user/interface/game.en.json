@@ -12,7 +12,7 @@
     "recovery.catalogue_title": "SP weapon data check details",
     "recovery.catalogue_help": "Mod enhancements are disabled for affected aircraft during this game session. You may try native single-SP play; weapon behavior still depends on the aircraft Mod.",
     "recovery.close": "Close",
-    "recovery.loaded": "AC7MultiSP {version} loaded. Press {key} to open management.",
+    "recovery.loaded": "{version} loaded. Press {key} to open management.",
     "recovery.leave_mission": "Exit the mission and select another aircraft to attempt Mod recovery. Do not continue this mission if safe fallback cannot be confirmed.",
     "primary.download.link.f6096f63": "Primary download link",
     "backup.download.link.76fd22fe": "Alternate download link ",

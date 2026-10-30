@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| beta7兼容集成交付，进行中 | 本集成聊天；基线main/0416d5f | codex/integrate-beta7；C:/Users/83717/.codex/worktrees/integrate-beta7/AC7_MultiSP | 接收主武器UAV保有和第三方兵装名称修复；按作者明确要求删除启动正文第二个名称，中英文同步；不改更新日志，待构建及实机验证。 |
 | Arsenal Bird持续兵装兼容，源码待接收/验证 | 本聊天；codex/fix-arsenal-bird；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-arsenal-bird/AC7_MultiSP | 主武器UAV按真实类与原生契约识别并保留，上限限定提高到128；锁定音失配保留保护并增加计数诊断，根因待查。用户操作游戏、只读采集，源码静态核对；未编译、测试、安装或操作游戏。 |
 | Mod机体兵装名称修复，源码待接收/验证 | 本聊天；codex/fix-adfx00-ea18g-names；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-mod-weapon-names/AC7_MultiSP | 核对EA-18G Type B与ADFX-00 AC2作者名称、原包及目录；共用展示配置按完整机体、槽位与类限定，保留内部键。只读调查与静态审阅，未编译、测试或安装。 |
 | beta6三线程集成交付，已出包待验证 | 本集成聊天；基线main/f397d51 | codex/integrate-beta6；C:/Users/83717/.codex/worktrees/integrate-beta6/AC7_MultiSP | 统一接收TGM静态模型、预览诊断、MiG-21火光及启动汇总显示；按作者要求不改更新日志；完整构建与签名封装完成，待作者实机验证。来源见[整合回执](../../evidence/2.26.2-beta6-source-integration.json)。 |
