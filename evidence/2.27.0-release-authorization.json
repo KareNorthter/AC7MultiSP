@@ -1,0 +1,18 @@
+{
+  "version": "2.27.0",
+  "date": "2026-10-30",
+  "authorization": "作者确认beta7测试无误，并要求根据最新user文档正式发布，提供EXE、通用ZIP和网页文件。",
+  "baseline": "0dd3934fc01e87e7dc89ef0b64a395bb1f984d65",
+  "documents": {
+    "功能说明.txt": "8196608deaa1051465812b48ee384db4a8f2fe2683a51ea40441a05c1901947f",
+    "Features.txt": "fea0911ee9fc6448b9e7094d4b32fc0c1d7de1d6cb0859fc59084cfc2d308acc",
+    "更新日志.txt": "d4426c38c9a89906122d4f648a9b61385071e362915af29e458c29af79183e0d",
+    "Changelog.txt": "68bee58f327255ed9e738f0c3da0657c830dbe42ddfda9978a77c52a54173519",
+    "安装说明.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "作者与授权.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+  },
+  "scope": "运行逻辑沿用已测试beta7；正式版重新完整构建和签名，不复用候选字节；作者最新中文原字节接收。",
+  "limits": "用户测试反馈不追认专项故障测试；本次不运行测试、安装、操作游戏、推送或上传。R2及Pages在线状态待作者上传后另核。"
+}

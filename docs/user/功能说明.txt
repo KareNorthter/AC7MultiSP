@@ -33,7 +33,7 @@ AC7MultiSP 功能说明
 • Mirage 2000-5、Rafale M、Typhoon、Gripen E
 • MiG-21bis、MiG-29A、MiG-31B、MiG-35D、Su-30M2、Su-30SM、Su-33、Su-34、Su-35S、Su-37、Su-57、Su-57 TGM
 • XFA-27、ADFX-01、ADF-01 FALKEN、ADF-11F、CFA-44
-（其中F-104C和MIG-21bis由于挂架数量优先，仅提供双SP模型方案）
+（其中F-104C和MIG-21bis由于挂架数量有限，仅提供双SP模型方案）
 
 2.暂无模型方案：
 ASF-X、Su-47、X-02S、FB-22、YF-23、DarkStar
