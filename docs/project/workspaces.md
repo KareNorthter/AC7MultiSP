@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 快速任务兼容Double Trigger，源码待接收/验证 | 本集成聊天；基线main/c90a2fa；codex/fix-quick-mission-double-trigger | C:/Users/83717/.codex/worktrees/quick-mission-double-trigger/AC7_MultiSP | 已修改src/quick_mission.hpp加载入口识别及[对应设计正文](../engineering/quick-mission-launch.md#double-trigger已安装时的单人快速任务兼容源码候选)，限定已安装0.4.0+eef8254b的钩子和原生跳板，保留原生/单人检查。静态核对129字节指纹与安装件一致，其余入口指纹未变；完整链与出击待实机验证。不改版本和玩家正文，本轮未编译、测试、安装、操作游戏、合main或推送。 |
 | 2.27.0 beta3姿态查找修订整合，已出包待验证 | 本集成聊天；基线main/0ace5de；来源30c693e | codex/integrate-2.27.0-beta3；C:/Users/83717/.codex/worktrees/integrate-227-beta3/AC7_MultiSP | 接收嵌套子界面中SPEED查找修订，不改更新日志；完整编译和签名封装完成，显示效果待实机验证。 |
 | 2.27.0 beta2姿态指示整合，已出包待验证 | 本集成聊天；基线main/e6d0fc9；来源184def5 | codex/integrate-2.27.0-beta2；C:/Users/83717/.codex/worktrees/integrate-227-beta2/AC7_MultiSP | 接收默认关闭的SPEED下方姿态图，连同已合HUD/视角修订完整构建；不改更新日志；完整编译和签名封装完成，实机效果待验证。 |
 | 第三人称姿态指示器，加载失败修订待接收 | 本HUD优化聊天；续接main/0ace5de（2.27.0 beta2）；codex/feat-third-person-attitude | C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP | 原功能已随beta2交付；本次按作者反馈读取PID23392日志，定位SPEED位于嵌套PersistentWidget，补齐UserWidget树遍历并排除模板。仅修改attitude_hud.lua、[架构对应正文](../engineering/architecture.md#第三人称姿态指示器未发布候选)、本机资产索引及本行。原生帧机制、SPEED下方布局、默认关闭、协议25和产品版本不变。本次仅静态差异核对，未编译/测试/安装/热加载或操作游戏，不使用computer use，不推送；原始日志与安装脚本保留于本树Temp/tasks/20261031-attitude-load-failure/，后续画面由作者截图提供 |

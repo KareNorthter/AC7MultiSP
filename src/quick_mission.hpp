@@ -11,6 +11,73 @@ void quickMissionSignature(Addr base,Addr rva,std::initializer_list<unsigned cha
     require(std::memcmp(reinterpret_cast<const void*>(base+rva),expected.begin(),expected.size())==0,
         "快速任务原生入口与当前构建不符");
 }
+bool quickMissionExecutable(Addr address,size_t size,DWORD type) {
+    MEMORY_BASIC_INFORMATION info{};
+    if(!address || address+size<address || !VirtualQuery(reinterpret_cast<const void*>(address),&info,sizeof(info)))return false;
+    return info.State==MEM_COMMIT && info.Type==type && !(info.Protect&(PAGE_GUARD|PAGE_NOACCESS)) &&
+        (info.Protect&(PAGE_EXECUTE_READ|PAGE_EXECUTE_READWRITE|PAGE_EXECUTE_WRITECOPY)) &&
+        address+size<=reinterpret_cast<Addr>(info.BaseAddress)+info.RegionSize;
+}
+// 仅接收已只读核对的Double Trigger 0.4.0+eef8254b；不把任意JMP当作可用入口。
+bool quickMissionDoubleTrigger(Addr base,const unsigned char* expected,size_t size) {
+    const Addr entry=base+0x3d0320;
+    if(size!=16 || read<unsigned char>(entry)!=0xe9 ||
+        std::memcmp(reinterpret_cast<const void*>(entry+5),expected+5,size-5)!=0)return false;
+    const auto relay=static_cast<Addr>(static_cast<int64_t>(entry+5)+read<int32_t>(entry+1));
+    if(!quickMissionExecutable(relay,14,MEM_PRIVATE))return false;
+    constexpr unsigned char jump[]={0xff,0x25,0,0,0,0};
+    if(std::memcmp(reinterpret_cast<const void*>(relay),jump,sizeof(jump))!=0)return false;
+    const auto target=read<Addr>(relay+6);
+    if(!quickMissionExecutable(target,0x81,MEM_IMAGE))return false;
+    HMODULE module{};
+    if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS|GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+        reinterpret_cast<LPCWSTR>(target),&module))return false;
+    const Addr owner=reinterpret_cast<Addr>(module);
+    if(target-owner!=0x457b0)return false;
+    // 系统也会加载同名dinput8；按跳转归属和游戏旁路径识别，不能按模块短名放行。
+    std::wstring gamePath(32768,L'\0'),modPath(32768,L'\0');
+    const DWORD gameLength=GetModuleFileNameW(nullptr,gamePath.data(),static_cast<DWORD>(gamePath.size()));
+    const DWORD modLength=GetModuleFileNameW(module,modPath.data(),static_cast<DWORD>(modPath.size()));
+    if(!gameLength || gameLength>=gamePath.size() || !modLength || modLength>=modPath.size())return false;
+    gamePath.resize(gameLength);modPath.resize(modLength);
+    const auto separator=gamePath.find_last_of(L"\\/");
+    if(separator==std::wstring::npos)return false;
+    gamePath.resize(separator+1);gamePath+=L"DINPUT8.dll";
+    if(_wcsicmp(gamePath.c_str(),modPath.c_str())!=0)return false;
+    if(read<WORD>(owner)!=IMAGE_DOS_SIGNATURE)return false;
+    const auto peOffset=read<LONG>(owner+0x3c);
+    if(peOffset<0x40 || peOffset>0x1000)return false;
+    const auto header=read<IMAGE_NT_HEADERS64>(owner+static_cast<Addr>(peOffset));
+    if(header.Signature!=IMAGE_NT_SIGNATURE || header.FileHeader.Machine!=IMAGE_FILE_MACHINE_AMD64 ||
+        header.OptionalHeader.Magic!=IMAGE_NT_OPTIONAL_HDR64_MAGIC ||
+        header.FileHeader.TimeDateStamp!=0x6ae46b19 || header.OptionalHeader.SizeOfImage!=0x1d0000)return false;
+    // 整个钩子无绝对地址重定位：保存参数、记录加载状态，最后经+0x1b3460转回原函数。
+    constexpr unsigned char hook[]={
+        0x40,0x53,0x55,0x56,0x57,0x48,0x83,0xec,0x38,0x49,0x8b,0xf9,0x41,0x8b,0xd8,0x48,
+        0x8b,0xf2,0x48,0x8b,0xe9,0x41,0x83,0xf8,0x01,0x75,0x0c,0xe8,0xd0,0x91,0xfc,0xff,
+        0x48,0x89,0x05,0x99,0xdc,0x16,0x00,0x48,0x83,0x3d,0x69,0xdc,0x16,0x00,0x00,0x74,
+        0x32,0xe8,0xba,0x91,0xfc,0xff,0x48,0x3b,0x05,0x5b,0xdc,0x16,0x00,0x73,0x24,0x0f,
+        0xb6,0x05,0x41,0xd3,0x14,0x00,0x3c,0x01,0x77,0x19,0x44,0x8b,0xcb,0x4c,0x8d,0x05,
+        0x7c,0x22,0x10,0x00,0xba,0x01,0x00,0x00,0x00,0xb9,0x03,0x00,0x00,0x00,0xe8,0xad,
+        0xa9,0xfc,0xff,0x4c,0x8b,0xcf,0x4c,0x8b,0x15,0x43,0xdc,0x16,0x00,0x44,0x8b,0xc3,
+        0x48,0x8b,0xd6,0x48,0x8b,0xcd,0x48,0x83,0xc4,0x38,0x5f,0x5e,0x5d,0x5b,0x49,0xff,0xe2};
+    if(std::memcmp(reinterpret_cast<const void*>(target),hook,sizeof(hook))!=0)return false;
+    // MinHook搬移前9字节，再绝对跳回entry+9；同时核对中继紧随其后，拒绝断链或二次改写。
+    const auto original=read<Addr>(owner+0x1b3460);
+    if(!quickMissionExecutable(original,23,MEM_PRIVATE) || original+23!=relay ||
+        std::memcmp(reinterpret_cast<const void*>(original),expected,9)!=0 ||
+        std::memcmp(reinterpret_cast<const void*>(original+9),jump,sizeof(jump))!=0 ||
+        read<Addr>(original+15)!=entry+9)return false;
+    return true;
+}
+void quickMissionTravelSignature(Addr base) {
+    constexpr unsigned char expected[]={0x40,0x55,0x53,0x57,0x48,0x8d,0x6c,0x24,0xc1,0x48,0x81,0xec,0xf0,0,0,0};
+    checkMemory(base+0x3d0320,sizeof(expected));
+    if(std::memcmp(reinterpret_cast<const void*>(base+0x3d0320),expected,sizeof(expected))==0)return;
+    require(quickMissionDoubleTrigger(base,expected,sizeof(expected)),"快速任务原生入口与当前构建不符");
+    static bool reported=false;
+    if(!reported){nativeLog("QUICK_MISSION_COMPAT double_trigger=0.4.0+eef8254b travel_hook=validated");reported=true;}
+}
 bool quickMissionMenuInstance(Addr widget,Addr instance) {
     // MenuBaseWidget的GI缓存不是UPROPERTY。原生Copyright激活直接读取+0x290并以GI调用3cf2b0。
     // MainMenu和Copyright共用同一菜单基类布局；先核对读取指令、继承身份，再比较缓存指针。
@@ -22,7 +89,7 @@ void quickMissionPreflight() {
     verifyVersion();
     const auto base=reinterpret_cast<Addr>(GetModuleHandleW(nullptr));
     quickMissionSignature(base,0x4f6130,{0x48,0x89,0x4c,0x24,0x08,0x55,0x53,0x56,0x57,0x41,0x57});
-    quickMissionSignature(base,0x3d0320,{0x40,0x55,0x53,0x57,0x48,0x8d,0x6c,0x24,0xc1,0x48,0x81,0xec,0xf0,0,0,0});
+    quickMissionTravelSignature(base);
     quickMissionSignature(base,0x3cfce0,{0x48,0x89,0x5c,0x24,0x08,0x48,0x89,0x74,0x24,0x10,0x57,0x48,0x83,0xec,0x20});
     quickMissionSignature(base,0x3cfc40,{0x40,0x53,0x48,0x83,0xec,0x20,0x88,0x91,0x20,0x05,0,0});
     quickMissionSignature(base,0x3cfd90,{0x40,0x53,0x48,0x83,0xec,0x20,0x80,0xb9,0x20,0x05,0,0,0x04});
@@ -172,6 +239,7 @@ extern "C" __declspec(dllexport) int dualsp_quick_mission_v2(void* luaState) {
             const auto oldMode=read<unsigned char>(instance+0x522),oldDifficulty=read<unsigned char>(instance+0x520);
             const bool oldCasual=read<unsigned char>(instance+0x521)!=0;
             const auto oldStage=read<unsigned char>(instance+0x4f1);const int oldMission=read<int>(instance+0x4d8);
+            quickMissionTravelSignature(base); // 出击前再次核对；随后仍从原入口经过Double Trigger，不直调其trampoline。
             using Mode=void(*)(Addr,unsigned char);using Difficulty=void(*)(Addr,unsigned char,bool);using Mission=void(*)(Addr,int);
             // CampaignMain自由任务选择走模式2，难度页设置520/521，Sortie激活使用阶段4。
             reinterpret_cast<Mode>(base+0x3cfce0)(instance,2);
