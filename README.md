@@ -17,7 +17,7 @@
 | Mod机体实机反馈 | 作者于2026-10-28确认X-02R A/B、J-20A/B/S及RH-172六个机体入口功能正常，见[用户验收](evidence/mod-aircraft-user-acceptance-20261028.json)。正式版本不变；此前ZSD组合冲突不据此记为已修复。 |
 | 当前真实冲突测试环境 | 作者授权启用XFA-36A包、F-17V、Gleipnir，与B组X-02R/UI-4054混装，目录179条；已核对6个资源成员内容差异。作者确认F-17V、Gleipnir、X-02R A/B及UI-4054三SP正常，XFA-36激光收尾修复已编译，作者确认 OSL 正常。真实武器表冲突测试未触发错误，不能据此证明所有冲突可检测；作者已停止测试并恢复兼容表。见[作者反馈](evidence/real-conflict-user-feedback-20261028.json)和[检测/恢复流程](docs/engineering/aircraft-fault-testing.md#2026-10-28真实冲突测试组)。 |
 | 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。作者已确认完成发布，site/stable.json已按交付材料同步2.26.1；[原网页回执](evidence/2.26.1-pages-delivery.json)保留制作时远端未核事实，[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)记录作者后续反馈。本轮未独立下载或部署核验。 |
-| 当前主线源码 | VERSION为**2.27.0 beta1**，candidate=true；[源码整合](evidence/2.27.0-beta1-source-integration.json)记录HUD与输入改动。正式2.27.0仍以原确认提交为依据，本候选不自动转正。 |
+| 当前主线源码 | VERSION为**2.27.0 beta1**，candidate=true；[源码整合](evidence/2.27.0-beta1-source-integration.json)记录HUD与输入改动。正式2.27.0仍以原确认提交为依据，本候选不自动转正。后续已接收HUD排版修订4d2c053及视角修订a1868a0（普通座舱恢复原生限制、第一/第三人称垂直环绕候选），均尚未编译；现有beta1安装包不含这些修订。 |
 | 最近验收安装包 | **2.26.2 beta7**，作者于2026-10-30反馈测试无误；[交付记录](evidence/2.26.2-beta7-exe-delivery.json)保留原包身份，不追认2.27.0新字节已安装。 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。

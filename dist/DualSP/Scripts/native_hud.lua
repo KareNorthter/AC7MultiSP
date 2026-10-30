@@ -115,8 +115,10 @@ function NativeHUD.new(note,refreshIcons)
     local function resize(c)
         if c.pwMode then
             -- 先为选择区向上扩父面板，再将三行统计放到预留区下面；不依赖越界绘制。
-            local reserve=PwHUD.reserveRows*PwHUD.unit(c)
-            local delta=reserve-2*c.row
+            local compact=PwHUD.compactStats(c)
+            local reserve=PwHUD.reserveHeight(c)
+            local removed=2*c.row+compact
+            local delta=reserve-removed
             if c.panelStretched then c.panelSlot:SetPosition(shifted(c.panelPos,-delta))
             else
                 c.panelSlot:SetSize({X=c.panelSize.X,Y=c.panelSize.Y+delta})
@@ -127,8 +129,8 @@ function NativeHUD.new(note,refreshIcons)
                 c.hboxSlot:SetPosition(shifted(c.hboxPos,shift))
                 c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y-(1-c.hboxAnchors.Maximum.Y)*delta})
             else
-                c.hboxSlot:SetPosition(shifted(c.hboxPos,shift-2*c.row*c.hboxAlignment.Y))
-                c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y-2*c.row})
+                c.hboxSlot:SetPosition(shifted(c.hboxPos,shift-removed*c.hboxAlignment.Y))
+                c.hboxSlot:SetSize({X=c.hboxSize.X,Y=c.hboxSize.Y-removed})
             end
         else
             local extra=c.countSP-1
