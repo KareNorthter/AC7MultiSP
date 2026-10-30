@@ -137,10 +137,12 @@ void panelHelp(const char* key);
 std::string uiMessage(const std::string& message,
     const char* fallbackKey="the.operation.could.not.be.1976a8f3");
 std::string uiError(const std::string& message,const char* fallbackKey="the.operation.could.not.be.1976a8f3");
-void showToast(std::string message,ToastKind kind=ToastKind::Info) {
-    message=(kind==ToastKind::Warning||kind==ToastKind::Error)?uiError(dualsp::noticeBody(std::move(message))):uiMessage(dualsp::noticeBody(std::move(message)));
+void showToast(std::string message,ToastKind kind=ToastKind::Info,bool localizedSummary=false) {
+    // 启动汇总由本地双语资源构造，保留两行；其他消息继续裁掉日志堆栈并限制长度。
+    if(!localizedSummary)
+        message=(kind==ToastKind::Warning||kind==ToastKind::Error)?uiError(dualsp::noticeBody(std::move(message))):uiMessage(dualsp::noticeBody(std::move(message)));
     // Lua保留完整堆栈供日志分析，悬浮窗只显示简短原因；截断不切开UTF-8字符。
-    if(message.size()>240) {
+    if(!localizedSummary&&message.size()>240) {
         size_t end=240;
         while(end && (static_cast<unsigned char>(message[end])&0xc0)==0x80)--end;
         message.resize(end);message+="…";
@@ -1089,9 +1091,10 @@ HRESULT __stdcall onPresent(IDXGISwapChain* swap,UINT interval,UINT flags) {
                         const int count=recovery.value("issue_count",0);
                         if(count>0) {
                             message+="\n"+recoveryText("recovery.catalogue_count",std::to_string(count));
-                            catalogueNoticeShown=true;
                         }
-                        showToast(message,ToastKind::Important);startupNoticeShown=true;
+                        showToast(message,ToastKind::Important,true);
+                        startupNoticeShown=true;
+                        if(count>0)catalogueNoticeShown=true;
                     }else if(!catalogueNoticeShown && recovery.value("issue_count",0)>0 && recovery.value("outside_mission",false)) {
                         showToast(recoveryText("recovery.catalogue_count",std::to_string(recovery.at("issue_count").get<int>())),ToastKind::Warning);
                         catalogueNoticeShown=true;
