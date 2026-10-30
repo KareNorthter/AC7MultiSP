@@ -1,0 +1,11 @@
+{
+  "version": "2.27.0 beta3",
+  "baseline": "0ace5de99cb8a65b24f39236012db8b6fce01f93",
+  "source": "30c693e9eaada606bd5f0e9ed65e886a2b013606",
+  "change": "姿态图查找SPEED时进入嵌套UserWidget控件树，过滤模板/默认HUD实例；位置及刷新机制不变。",
+  "validation": "静态差异核对；实际查找和显示仍需新包实机验证。",
+  "changelog_sha256": {
+    "docs/user/更新日志.txt": "d4426c38c9a89906122d4f648a9b61385071e362915af29e458c29af79183e0d",
+    "docs/user/Changelog.txt": "68bee58f327255ed9e738f0c3da0657c830dbe42ddfda9978a77c52a54173519"
+  }
+}
