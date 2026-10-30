@@ -26,9 +26,8 @@ struct CameraHold {
     bool stickWas{},axisWas{};
     float heldX{},heldY{},poseX{},poseY{};
     double stickVelocityX{},stickVelocityY{}; // 统一环视参考角的度/秒。
-    double stickYaw{},stickPitch{}; // 独立双精度角度；只在交给原生时折回一圈。
-    bool stickOrbit{},verticalValid{},verticalCenter{};
-    double verticalExtra{},centerPitch{};
+    double stickYaw{},stickPitch{}; // 独立双精度角度；只在交给原生时把水平角折回一圈。
+    bool stickOrbit{};
     ULONGLONG stickSeenAt{};
     void resetStick() {
         stickOrbit=false;stickYaw=stickPitch=stickVelocityX=stickVelocityY=0;stickSeenAt=0;
@@ -39,7 +38,7 @@ struct CameraHold {
     void resetPose() {
         armed=false;frozenX=frozenY=false;poseValid=viewTransfer=false;centering=false;waitNeutral=false;stickWas=axisWas=false;releasedAt=0;
         gazeTarget=gazeTransferTarget={};gazeTransfer=false;gazeWeight=0;gazeTransferAt=0;
-        resetStick();verticalValid=verticalCenter=false;verticalExtra=centerPitch=0;
+        resetStick();
     }
     void cancelGesture() {
         seeded=false;rightDown=nativePress=longDone=combo=pendingView=r3Gesture=releaseHandled=false;
@@ -135,8 +134,6 @@ void cameraHoldChangeView(int view) {
     const double yaw=cameraHold.stickYaw,pitch=cameraHold.stickPitch;
     const double velocityX=cameraHold.stickVelocityX,velocityY=cameraHold.stickVelocityY;
     const auto stickSeenAt=cameraHold.stickSeenAt;
-    const bool verticalValid=cameraHold.verticalValid,verticalCenter=cameraHold.verticalCenter;
-    const double verticalExtra=cameraHold.verticalExtra,centerPitch=cameraHold.centerPitch;
     cameraHold.resetPose();cameraHold.viewType=view;
     if(transfer) {
         const float scale=view==1?1.f:.95f;
@@ -148,14 +145,11 @@ void cameraHoldChangeView(int view) {
         cameraHold.stickOrbit=orbit;cameraHold.stickYaw=yaw;cameraHold.stickPitch=pitch;
         cameraHold.stickVelocityX=velocityX;cameraHold.stickVelocityY=velocityY;cameraHold.stickSeenAt=stickSeenAt;
         if(view==1) {
-            // 座舱使用原生有限角度，不继承外部视角的多圈状态。
+            // 座舱使用原生有限角度，不继承外部视角的水平多圈状态。
             cameraHold.stickYaw=static_cast<double>(x)*180.;cameraHold.stickPitch=static_cast<double>(y)*90.;
-        }else {
-            cameraHold.verticalValid=verticalValid;cameraHold.verticalExtra=verticalExtra;
         }
     }else if(centering) {
         cameraHold.centering=true;cameraHold.waitNeutral=waitNeutral;
-        cameraHold.verticalCenter=view!=1 && verticalCenter;cameraHold.centerPitch=centerPitch;
     }
     if(gaze) {
         cameraHold.gazeTarget=cameraHold.gazeTransferTarget=target;cameraHold.gazeTransfer=true;
@@ -167,19 +161,15 @@ void cameraHoldChangeView(int view) {
     }else cameraHold.cancelGesture();
 }
 void cameraHoldCenter() {
-    const bool vertical=cameraHold.viewType!=1 && (cameraHold.verticalCenter || cameraHold.verticalValid);
-    const double pitch=cameraHold.verticalCenter?cameraHold.centerPitch:static_cast<double>(cameraHold.poseY)*90.+cameraHold.verticalExtra;
     cameraHold.resetPose();cameraHold.centering=true;cameraHold.waitNeutral=true;
-    cameraHold.verticalCenter=vertical;cameraHold.centerPitch=std::remainder(pitch,360.);
     // 明确回正结束模组锁定注视；功能关闭时原生按住注视仍由游戏处理。
     targetGaze.active=false;
 }
 // 右摇杆在保持模式下控制相对角速度，不能继续把偏转量当作绝对目标角。
-// 第一/第三人称保留连续角；普通座舱输入和输出都遵守原生有限范围。
+// 第一/第三人称保留水平连续角；俯仰及普通座舱沿用原生有限范围。
 void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float delta,float& outX,float& outY) {
     if(!cameraHold.stickOrbit) {
-        cameraHold.stickYaw=static_cast<double>(x)*180.;
-        cameraHold.stickPitch=static_cast<double>(y)*90.+(cameraHold.verticalValid?cameraHold.verticalExtra:0.);
+        cameraHold.stickYaw=static_cast<double>(x)*180.;cameraHold.stickPitch=static_cast<double>(y)*90.;
         cameraHold.stickOrbit=true;
     }
     const bool reversed=read<unsigned char>(cameraHold.plane.address+0xe17)!=0;
@@ -203,30 +193,16 @@ void cameraHoldMoveStick(int index,float rawX,float rawY,float x,float y,float d
         return distance;
     };
     const double nextYaw=cameraHold.stickYaw+integrate(commandX,cameraHold.stickVelocityX);
+    if(index==1 && (nextYaw<-180. || nextYaw>180.))cameraHold.stickVelocityX=0;
+    cameraHold.stickYaw=index==1?std::clamp(nextYaw,-180.,180.):nextYaw;
     const double nextPitch=cameraHold.stickPitch+integrate(commandY,cameraHold.stickVelocityY);
-    if(index==1) {
-        // 限制姿态和速度，不能通过±180°折返绕过座舱轨迹边界。
-        if(nextYaw<-180. || nextYaw>180.)cameraHold.stickVelocityX=0;
-        if(nextPitch<-90. || nextPitch>90.)cameraHold.stickVelocityY=0;
-        cameraHold.stickYaw=std::clamp(nextYaw,-180.,180.);cameraHold.stickPitch=std::clamp(nextPitch,-90.,90.);
-        outX=static_cast<float>(cameraHold.stickYaw/180.);
-        outY=static_cast<float>(cameraHold.stickPitch/90.)*(reversed?-1.f:1.f);
-        cameraHold.verticalValid=false;cameraHold.verticalExtra=0;
-        if(commandX==0 && std::abs(cameraHold.stickVelocityX)<.001)cameraHold.stickVelocityX=0;
-        if(commandY==0 && std::abs(cameraHold.stickVelocityY)<.001)cameraHold.stickVelocityY=0;
-        cameraHold.frozenX=cameraHold.frozenY=false;return;
-    }
-    cameraHold.stickYaw=nextYaw;cameraHold.stickPitch=nextPitch;
-    if(std::abs(cameraHold.stickPitch)>360.*1024.)cameraHold.stickPitch=std::remainder(cameraHold.stickPitch,360.);
+    if(nextPitch<-90. || nextPitch>90.)cameraHold.stickVelocityY=0;
+    cameraHold.stickPitch=std::clamp(nextPitch,-90.,90.);
     // 跨后方只改变同一方向的表示，不清水平速度；多圈后重置整圈数以保持数值精度。
     if(std::abs(cameraHold.stickYaw)>360.*1024.)cameraHold.stickYaw=std::remainder(cameraHold.stickYaw,360.);
-    constexpr float scale=.95f;
-    outX=static_cast<float>(std::remainder(cameraHold.stickYaw,360.)/180.)*scale;
-    const double pitch=std::remainder(cameraHold.stickPitch,360.);
-    // 输入仍须落在原生范围；输出时接续剩余角度，跨顶部/底部不清速度。
-    const double nativePitch=pitch>90.?180.-pitch:pitch< -90.?-180.-pitch:pitch;
-    outY=static_cast<float>(nativePitch/90.)*scale*(reversed?-1.f:1.f);
-    cameraHold.verticalValid=true;cameraHold.verticalExtra=pitch-nativePitch;
+    const float scale=index==1?1.f:.95f;
+    outX=static_cast<float>((index==1?cameraHold.stickYaw:std::remainder(cameraHold.stickYaw,360.))/180.)*scale;
+    outY=static_cast<float>(cameraHold.stickPitch/90.)*scale*(reversed?-1.f:1.f);
     if(commandX==0 && std::abs(cameraHold.stickVelocityX)<.001)cameraHold.stickVelocityX=0;
     if(commandY==0 && std::abs(cameraHold.stickVelocityY)<.001)cameraHold.stickVelocityY=0;
     cameraHold.frozenX=cameraHold.frozenY=false;
@@ -367,11 +343,7 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     // 输入轴处理不覆盖跟踪轴；换视角时的注视缓存交接由下方输出入口单独处理。
                     if(!stick && !axes)cameraHold.waitNeutral=false;
                     if(cameraHold.holdEnabled && (stick || axes) && !cameraHold.waitNeutral) {
-                        if(cameraHold.centering && cameraHold.verticalCenter) {
-                            cameraHold.verticalValid=true;
-                            cameraHold.verticalExtra=cameraHold.centerPitch-static_cast<double>(y)*90.;
-                        }
-                        cameraHold.centering=cameraHold.verticalCenter=false;cameraHold.armed=true;
+                        cameraHold.centering=false;cameraHold.armed=true;
                     }
                     // 摇杆回中或键鼠轴归零有短暂交接，先保持实际平滑姿态，不保存回弹尾值。
                     const bool releaseTail=!stick && cameraHold.armed && cameraHold.releasedAt && now-cameraHold.releasedAt<=50;
@@ -379,11 +351,8 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     float outX=rawX,outY=rawY; // 保留原生轴作为默认输出，手动回正与保持按需覆盖。
                     if(cameraHold.centering) {
                         outX=outY=0;
-                        if(cameraHold.verticalCenter && std::isfinite(delta) && delta>0 && delta<=.1f)
-                            cameraHold.centerPitch*=std::exp(-7.*static_cast<double>(delta));
-                        if(std::abs(x)<.0001f && std::abs(y)<.0001f && !cameraHold.waitNeutral &&
-                            (!cameraHold.verticalCenter || std::abs(cameraHold.centerPitch)<.01))
-                            cameraHold.centering=cameraHold.verticalCenter=false;
+                        if(std::abs(x)<.0001f && std::abs(y)<.0001f && !cameraHold.waitNeutral)
+                            cameraHold.centering=false;
                     }else if(cameraHold.viewTransfer) {
                         outX=cameraHold.heldX;outY=cameraHold.heldY;
                         cameraDelta=1.f/7.f; // 仅首帧让原生delta*7到达保持方向，不从零重新渐进。
@@ -431,11 +400,11 @@ void cameraHoldUpdate(int index,void* component,float delta,void* actor,void* ca
                     const float x=read<float>(state),y=read<float>(state+4);
                     require(std::isfinite(x) && std::isfinite(y) && std::abs(x)<=1.01f && std::abs(y)<=1.01f,"镜头保持状态超出原生范围");
                     cameraHold.poseX=std::clamp(x,-1.f,1.f);cameraHold.poseY=std::clamp(y,-1.f,1.f);cameraHold.poseValid=true;
-                    // 记录完整俯仰与原生实际俯仰的差值，包括飞行状态引入的限制。
+                    // 原生飞行状态仍可能限制俯仰，只同步真实钳位，不逐帧损失双精度积分尾数。
                     if(cameraHold.stickOrbit && index==1) {
                         cameraHold.stickYaw=static_cast<double>(x)*180.;cameraHold.stickPitch=static_cast<double>(y)*90.;
-                    }else if(cameraHold.stickOrbit)
-                        cameraHold.verticalExtra=std::remainder(cameraHold.stickPitch,360.)-static_cast<double>(y)*90.;
+                    }else if(cameraHold.stickOrbit && std::abs(cameraHold.stickPitch-static_cast<double>(y)*90.)>.001)
+                        cameraHold.stickPitch=static_cast<double>(y)*90.;
                 }
             }
         }
@@ -453,8 +422,7 @@ void cameraHoldSpecial(void* c,float d,void* a,void* v) {
 
 // 仅在当前普通视角的输出入口接续姿态；不能把后台更新的其他相机当成当前视角。
 bool cameraHoldOrbitOutputReady(Addr component,bool cockpit) {
-    if((!cameraHold.holdEnabled && !cameraHold.verticalCenter) || !cameraHoldLive() ||
-        (!cameraHold.armed && !(cameraHold.centering && cameraHold.verticalCenter)))return false;
+    if(!cameraHold.holdEnabled || !cameraHoldLive() || !cameraHold.armed)return false;
     const ContinuousReadBatch memory;
     if(!cameraHoldIdentities(memory))return false;
     const int view=memory.read<unsigned char>(cameraHold.view.address+0x350);
@@ -464,7 +432,7 @@ bool cameraHoldOrbitOutputReady(Addr component,bool cockpit) {
         !memory.read<unsigned char>(cameraHold.plane.address+0xe12) || cameraHoldNativeSpecial())return false;
     if(cockpit && (memory.read<unsigned char>(component+0x370) || memory.read<Addr>(component+0x378)))return false;
     cameraHoldChangeView(view);
-    return cameraHold.armed || (cameraHold.centering && cameraHold.verticalCenter);
+    return cameraHold.armed;
 }
 void cameraHoldSeedViewOutput(Addr component,bool cockpit) {
     if(!cameraHold.viewTransfer || !cameraHold.poseValid || !cameraHold.armed)return;
@@ -474,24 +442,6 @@ void cameraHoldSeedViewOutput(Addr component,bool cockpit) {
     const Addr state=component+(cockpit?0x38c:0x3d4);
     checkMemory(state,sizeof(pose));write(state,pose);
 }
-// 只在一次原生输出调用内替换环视状态；第一/第三人称暂用完整俯仰。
-// 保存后直接还原同一8字节；析构不查询游戏对象、不抛异常，也不会覆盖注视缓存或输出坐标。
-struct CameraHoldScopedInput {
-    Addr state{};
-    std::array<float,2> saved{};
-    CameraHoldScopedInput()=default;
-    CameraHoldScopedInput(const CameraHoldScopedInput&)=delete;
-    CameraHoldScopedInput& operator=(const CameraHoldScopedInput&)=delete;
-    void begin(Addr address,const std::array<float,2>& replacement) {
-        checkMemory(address,sizeof(saved));saved=read<std::array<float,2>>(address);
-        write(address,replacement);state=address;
-    }
-    void restore() noexcept {
-        if(state){std::memcpy(reinterpret_cast<void*>(state),saved.data(),sizeof(saved));state=0;}
-    }
-    ~CameraHoldScopedInput(){restore();}
-};
-
 // 输出钩子也可在首次可见帧发现换视角，不能等待20毫秒Lua调度或假定输入更新先到。
 bool cameraHoldGazeOutputReady(Addr component,bool cockpit) {
     if(!cameraHold.holdEnabled)return false;
@@ -515,7 +465,6 @@ bool cameraHoldGazeOutputReady(Addr component,bool cockpit) {
 }
 void* cameraHoldOutput(void* component,void* output,float delta,void* context,const void* a5,const void* a6,
     const void* origin,const void* a8,const void* a9,bool a10,const void* a11,const void* a12,const void* a13) {
-    CameraHoldScopedInput vertical;
     try {
         const auto address=reinterpret_cast<Addr>(component);
         if(cameraHold.holdEnabled && cameraHold.poseValid && cameraHold.armed &&
@@ -537,19 +486,9 @@ void* cameraHoldOutput(void* component,void* output,float delta,void* context,co
             }
             cameraHold.gazeTransfer=false;
         }
-        if((cameraHold.verticalCenter || (cameraHold.verticalValid && std::abs(cameraHold.verticalExtra)>.001)) &&
-            cameraHoldOrbitOutputReady(address,false)) {
-            auto pose=read<std::array<float,2>>(address+0x3d4);
-            require(std::isfinite(pose[1]) && std::abs(pose[1])<=1.01f,"镜头保持状态超出原生范围");
-            // 仅本次原生输出读取完整俯仰；位置、目标注视及相机旋转仍一起由原生计算。
-            const double pitch=cameraHold.verticalCenter?cameraHold.centerPitch:static_cast<double>(pose[1])*90.+cameraHold.verticalExtra;
-            require(std::isfinite(pitch),"镜头保持状态超出原生范围");
-            pose[1]=static_cast<float>(std::remainder(pitch,360.)/90.);
-            vertical.begin(address+0x3d4,pose);
-        }
-    }catch(const std::exception& error){vertical.restore();cameraHoldFailure(error.what());}
+    }catch(const std::exception& error){cameraHoldFailure(error.what());}
     auto* result=originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
-    vertical.restore();attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 归还临时输入后更新自有姿态图。
+    attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 原生输出后更新自有姿态图。
     return result;
 }
 void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* context,int mode,const void* a6,const void* a7) {
@@ -610,11 +549,6 @@ void installCameraHold() {
     checkMemory(base+0x424200,sizeof(bounds));checkMemory(base+0x41fa10,sizeof(ease));
     require(std::memcmp(reinterpret_cast<void*>(base+0x424200),bounds,sizeof(bounds))==0 &&
         std::memcmp(reinterpret_cast<void*>(base+0x41fa10),ease,sizeof(ease))==0,"镜头注视交接接口不匹配");
-    // 第一/第三人称输出必须按完整浮点俯仰乘90度，才允许临时传入超过原生输入范围的角度。
-    constexpr unsigned char pitchOutput[]={0xf3,0x0f,0x10,0x86,0xd8,0x03,0x00,0x00,0xf3,0x0f,0x59,0x05,0xb3,0x5f,0x15,0x02};
-    checkMemory(base+0x41e4e1,sizeof(pitchOutput));
-    require(std::memcmp(reinterpret_cast<void*>(base+0x41e4e1),pitchOutput,sizeof(pitchOutput))==0 &&
-        read<float>(base+0x25744a4)==90.f,"镜头保持接口与当前游戏不匹配");
     for(size_t i=0;i<rvas.size();++i) {
         checkMemory(base+rvas[i],sizeof(signatures[i]));
         require(std::memcmp(reinterpret_cast<void*>(base+rvas[i]),signatures[i],sizeof(signatures[i]))==0,"镜头保持接口与当前游戏不匹配");
@@ -719,14 +653,8 @@ int cameraHoldLua(void* luaState) {
                         cameraHold.resetPose();cameraHold.cancelGesture();cameraHold.centerKeySeeded=false;
                     }
                     if(cameraHold.holdEnabled!=(holdEnabled==1)) {
-                        // 座舱直接归还原生；第一/第三人称从连续俯仰平滑回中。
-                        const bool vertical=view!=1 && (cameraHold.verticalCenter || cameraHold.verticalValid);
-                        const double pitch=cameraHold.verticalCenter?cameraHold.centerPitch:static_cast<double>(cameraHold.poseY)*90.+cameraHold.verticalExtra;
+                        // 归还原生镜头，不顺带关闭独立锁定注视。
                         cameraHold.resetPose();
-                        if(vertical) {
-                            cameraHold.centering=true;cameraHold.waitNeutral=true;
-                            cameraHold.verticalCenter=true;cameraHold.centerPitch=std::remainder(pitch,360.);
-                        }
                     } // 保留本次R3手势，避免切换后重复计时。
                     cameraHold.holdEnabled=holdEnabled==1;
                     cameraHoldChangeView(view);

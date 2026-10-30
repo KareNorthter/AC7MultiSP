@@ -17,9 +17,9 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 ## 视角平滑与连续环绕
 
-垂直连续环绕及座舱原生限制的新候选在`codex/fix-camera-vertical-cockpit`；已核对用户运行版为不含垂直候选的2.27.0 beta1。只读观察、源码范围及待验证项见[唯一研究正文](camera-orbit-smoothing.md#2026-10-30垂直环绕与座舱修订候选)，未编译、测试或安装。
+作者反馈垂直360°效果不好后，`codex/fix-restore-camera-pitch-limit`基于当前main恢复第一/第三人称俯仰限制，保留水平环绕与普通座舱原生限制；[唯一研究正文](camera-orbit-smoothing.md)记录历史观察、调整及验证边界。本轮未编译、测试或安装。
 
-历史水平环绕研究从当时的2.26.1/main `800f858`开展，来源`ede049a`曾纳入2.26.2 alpha1集成分支；其座舱解限已在上述新候选中撤回。机制与历史观察见[研究正文](camera-orbit-smoothing.md)。
+历史水平环绕研究从当时的2.26.1/main `800f858`开展，来源`ede049a`曾纳入2.26.2 alpha1集成分支；其座舱解限已在先前修订中撤回。机制与历史观察见[研究正文](camera-orbit-smoothing.md)。
 
 ## VR模式5°条件生效
 
