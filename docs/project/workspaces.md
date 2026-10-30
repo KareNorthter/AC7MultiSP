@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 作者玩家正文接收与英文同步，已完成 | 本集成聊天；基线main/a7d7385 | codex/docs-sync-player-2270；C:/Users/83717/.codex/worktrees/sync-player-docs-2270/AC7_MultiSP | 两份中文原字节接收，英文功能说明及2.27.0日志同步，重新生成内嵌文字；产品版本仍beta7，未编译或封装。摘要见[同步回执](../../evidence/player-docs-english-sync-20261030.json)。 |
 | beta7兼容集成交付，已出包待验证 | 本集成聊天；基线main/0416d5f | codex/integrate-beta7；C:/Users/83717/.codex/worktrees/integrate-beta7/AC7_MultiSP | 接收主武器UAV保有和第三方兵装名称修复；按作者明确要求删除启动正文第二个名称，中英文同步；不改更新日志；完整构建与签名封装完成，待作者实机验证。 |
 | Arsenal Bird持续兵装兼容，已接收待验证 | 本聊天；codex/fix-arsenal-bird；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-arsenal-bird/AC7_MultiSP | 主武器UAV按真实类与原生契约识别并保留，上限限定提高到128；锁定音失配保留保护并增加计数诊断，根因待查。用户操作游戏、只读采集，源码静态核对；未编译、测试、安装或操作游戏。 |
 | Mod机体兵装名称修复，已接收待验证 | 本聊天；codex/fix-adfx00-ea18g-names；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-mod-weapon-names/AC7_MultiSP | 核对EA-18G Type B与ADFX-00 AC2作者名称、原包及目录；共用展示配置按完整机体、槽位与类限定，保留内部键。只读调查与静态审阅，未编译、测试或安装。 |
