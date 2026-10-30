@@ -1,0 +1,11 @@
+{
+  "version": "2.26.2 beta7",
+  "channel": "candidate",
+  "source_commit": "6b69c0071192832f0773f119fde7fada8135baab",
+  "exe": "E:/AC7_MultiSP/Release/2.26.2-beta7/AC7MultiSP_Installer_2.26.2_beta7.exe",
+  "sha256": "649529af95ce32657241dd8ebfb3e97ced76e6064f45a7b0fb7be5503bd2fe52",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261030-2.26.2-beta7-build/delivery-receipt.json",
+  "integration": "evidence/2.26.2-beta7-source-integration.json",
+  "validation": "完整编译和签名封装完成，签名与文件一致；更新日志未变、旧核心保护摘要一致。",
+  "limits": "未运行测试模块、安装、操作游戏或上传。Arsenal Bird主武器UAV切换、两机兵装名称和启动提示均待本包实机验证；锁定音异常根因未确定。"
+}
