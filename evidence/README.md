@@ -133,3 +133,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [2.26.2 beta5 安装包交付](2.26.2-beta5-exe-delivery.json)：队列修订来源、构建摘要与验证边界。
 
 - [beta6源码整合](2.26.2-beta6-source-integration.json)：三线程增量、原始差异摘要和验证范围。
+
+- [beta6 EXE交付](2.26.2-beta6-exe-delivery.json)：安装包摘要、完整构建和待验证范围。

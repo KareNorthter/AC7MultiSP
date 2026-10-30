@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| beta6三线程集成交付，进行中 | 本集成聊天；基线main/f397d51 | codex/integrate-beta6；C:/Users/83717/.codex/worktrees/integrate-beta6/AC7_MultiSP | 统一接收TGM静态模型、预览诊断、MiG-21火光及启动汇总显示；按作者要求不改更新日志，待完整构建。来源见[整合回执](../../evidence/2.26.2-beta6-source-integration.json)。 |
+| beta6三线程集成交付，已出包待验证 | 本集成聊天；基线main/f397d51 | codex/integrate-beta6；C:/Users/83717/.codex/worktrees/integrate-beta6/AC7_MultiSP | 统一接收TGM静态模型、预览诊断、MiG-21火光及启动汇总显示；按作者要求不改更新日志；完整构建与签名封装完成，待作者实机验证。来源见[整合回执](../../evidence/2.26.2-beta6-source-integration.json)。 |
 | 启动资料异常提示修复，源码待接收 | 本聊天；codex/fix-startup-issue-notice；基线main/f397d51 | C:/Users/83717/.codex/worktrees/startup-issue-notice/AC7_MultiSP | 修复启动汇总第二行被错误消息截断的问题；保留已有中英文词条、其他错误的截断及更新通知。仅静态差异核对，未编译、测试、安装或操作游戏 |
 | F-22队列集成交付，已出包待验证 | 本集成聊天；基线main/98d7e6a；来源研究树未提交差异 | C:/Users/83717/.codex/worktrees/integrate-bay-beta5/AC7_MultiSP | 接收双挂六点和XSDB四点队列候选，保留34机、92资源；按作者要求不修改更新日志；首次构建暴露身份比较函数声明顺序问题，已补声明并完成重新构建，待作者实机验证。 |
 | 内舱支架集成交付，已出包待验证 | 本集成聊天；基线main/bda3af2；来源789c6fd及研究树未提交差异 | C:/Users/83717/.codex/worktrees/integrate-bay-beta4/AC7_MultiSP | 接收F-22及普通Su-57支架收拢与会话保护，保留34机、92资源；作者要求不修改更新日志，已完成构建及签名封装，待作者实机验证。 |
