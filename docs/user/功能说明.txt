@@ -18,7 +18,7 @@ AC7MultiSP 功能说明
 
 二、常用操作
 以下为默认按键。可自定义键盘按键。
-• F6或长按手柄Start键3秒：打开管理界面。
+• F6或长按手柄Start键：打开管理界面。
 • 键盘1／2／3／4：选择普通导弹／第一／第二／第三种特殊武器。
 • 手柄十字键左／上／右／下：对应上述四种武器；手柄X仍可切换武器。
 • Ctrl＋Alt＋F5：开关机炮联动功能；
@@ -27,33 +27,29 @@ AC7MultiSP 功能说明
 • L3按一下：镜头回正/结束注视。R3长按：开关视角保持功能。
 
 
-三、多SP武器模型适配列表
-1.完全适配：
-• F-4E、F-14A、F-14D、F-14A TGM、F-15C、F-15E、F-15J、F-15 S/MTD、F-16C、F-16XL、F/A-18E、F/A-18E TGM、F/A-18F、F/A-18F Block III、F-35C、F-2A
+三、多SP武器模型方案适配列表
+1.已提供模型方案：
+• A-10、F-104C、F-4E、F-2A、F-2A Super Kai、F-14A、F-14D、F-14A TGM、F-15C、F-15E、F-15J、F-15 S/MTD、F-16C、F-16XL、F/A-18E、F/A-18E TGM、F/A-18F、F/A-18F Block III、F-35C、F-22A
 • Mirage 2000-5、Rafale M、Typhoon、Gripen E
-• MiG-29A、MiG-31B（部分组合在机腹挂载SAAM）、MiG-35D、Su-30M2、Su-30SM、Su-33、Su-34、Su-35S、Su-37
-• XFA-27、ADFX-01、ADF-01 FALKEN（发射TLS时不能切换武器）、ADF-11F、CFA-44（左边ADMM，右边EML，隐藏ECM模型）
+• MiG-21bis、MiG-29A、MiG-31B、MiG-35D、Su-30M2、Su-30SM、Su-33、Su-34、Su-35S、Su-37、Su-57、Su-57 TGM
+• XFA-27、ADFX-01、ADF-01 FALKEN、ADF-11F、CFA-44
+（其中F-104C和MIG-21bis由于挂架数量优先，仅提供双SP模型方案）
 
-2.部分适配：
-• F-22A：8AAM吊舱始终显示。机腹内部弹舱的SP武器模型会在切换时变化。
-• Su-57普通型：PLSL吊舱始终显示，机腹内部弹舱的SP武器模型会在切换时变化。
-• DarkStar：PLSL吊舱始终显示，机腹内部弹舱的SP武器模型会在切换时变化。
+2.暂无模型方案：
+ASF-X、Su-47、X-02S、FB-22、YF-23、DarkStar
 
-3.暂未适配：
-A-10、ASF-X、F-2A Super Kai、F-104C、MiG-21bis
-Su-47、Su-57 TGM、X-02S、FB-22、YF-23
-热门mod机体也会优先更新适配。
 
 四、适用范围与其他Mod兼容性
 • 适用Steam版游戏，仅用于单人战役，多人模式停用。
-• 兼容的mod：大部分Addon机体、皮肤SKIN、AC7MouseAim鼠标飞控、Enhanced Gunplay、All Aircraft PSM、Modular Weapon Swap。
-• 无法共存：F-14IA
-• 可共存但本mod不生效：Pre-Campaign VR关卡
+• 兼容的mod：大部分机体、皮肤SKIN、AC7MouseAim鼠标飞控、Enhanced Gunplay、All Aircraft PSM、Modular Weapon Swap。
+• 共存但不生效：Pre-Campaign VR关卡，F-14IA
 
 五、已知问题：
-• 部分mod机体的机炮齐射功能暂未兼容。
-• 部分机体的腹部弹舱会保持打开。
-• 选用配件PART时，SP武器的性能条不会变化，此为UI问题，配件实际是生效的。
-• 部分mod机体的长按武器切换键触发的特殊效果可能不完全适配。
-• 部分含有特殊持续效果的机体（例如ADF-11的APS），无法与SP同时选择。
-• 性能较差的电脑上启用此mod时，过低的fps可能导致鼠标飞控异常，此时请关闭多SP模型功能提升fps。
+• 部分mod机体的机炮齐射功能不生效。
+• 部分mod机体的SP名称存在显示错误。
+• 部分机体的弹舱打开后或变形后，切换SP武器不会恢复。
+• 部分mod机体的长按武器切换键触发的特殊效果不完全适配。
+• 选用PART时，SP武器的性能条不会变化，属UI问题，配件实际生效。
+• 部分含有特殊持续效果的SP无法与其他SP同时选择（例如ADF-11的APS）。
+• 性能较差的电脑上启用此mod时，过低的fps可能导致鼠标飞控异常，可关闭多SP模型功能提升fps。
+• 可能无法兼容修改器，建议使用管理界面内置修改器。
