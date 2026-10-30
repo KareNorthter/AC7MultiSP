@@ -54,6 +54,22 @@ bool mountOuterContains(Addr object,Addr expected) {
     }
     return false;
 }
+// 仅在校验失败时采集诊断；读取失败不能改变原有回退和归还流程。
+void mountPreviewWeaponDiagnostic(Addr plane,Addr weaponClass,int mode,int slot,int config,
+    const MountSpecification& specification,const char* reason,const std::string& expectedPackage="") noexcept {
+    try {
+        Json event={{"event","MOUNT_PREVIEW_WEAPON_MISMATCH"},{"reason",reason},
+            {"mode",mode},{"selection_slot",slot+1},{"native_config",config+1}};
+        event["expected_classes"]=Json::array();
+        for(const char* name:specification.weaponClasses)event["expected_classes"].push_back(name?Json(name):Json(nullptr));
+        if(!expectedPackage.empty())event["expected_package"]=expectedPackage;
+        try { const Addr cls=read<Addr>(plane+0x10);mountIdentity(cls);event["plane_class"]=mountName(cls);
+            const Addr package=read<Addr>(cls+0x20);mountIdentity(package);event["plane_package"]=mountName(package); }catch(...) { }
+        try { mountIdentity(weaponClass);event["weapon_class"]=mountName(weaponClass);
+            const Addr package=read<Addr>(weaponClass+0x20);mountIdentity(package);event["weapon_package"]=mountName(package); }catch(...) { }
+        nativeLog(event.dump());
+    }catch(...) { }
+}
 // 按配弹量聚合已有持久位置，位置使用顺序与任务显隐及真实离架共用。
 uint64_t mountPreviewReadyMask(const FixedMountState& state,const std::array<int,3>& kinds,const std::array<int,3>& ammo,int count) {
     require(count>=1 && count<=3,"模型预览：槽数无效");
@@ -466,12 +482,15 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             const Addr weaponClass=read<Addr>(activator+offset);mountIdentity(weaponClass);
             int kind=-1;
             for(int candidate=0;candidate<3;++candidate)if(mountName(weaponClass)==specification.weaponClasses[candidate])kind=candidate;
+            if(kind<0)mountPreviewWeaponDiagnostic(plane,weaponClass,mode,slot,configs[slot],specification,"class_not_supported");
             require(kind>=0,"模型预览：兵装类未适配");
             const Addr package=read<Addr>(weaponClass+0x20);mountIdentity(package);
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
             const auto actual=mountName(package);
             const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            require(actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName),"模型预览：兵装原版资源路径不匹配");
+            const bool packageMatches=actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName);
+            if(!packageMatches)mountPreviewWeaponDiagnostic(plane,weaponClass,mode,slot,configs[slot],specification,"package_mismatch",expected);
+            require(packageMatches,"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }

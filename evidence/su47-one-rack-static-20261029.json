@@ -1,0 +1,166 @@
+{
+  "schema": 1,
+  "aircraft": "su47",
+  "status": "offline_candidate_not_enabled",
+  "description": "SWP2单架候选；101帧LOD0静态几何，不代表真实发射或帧率。",
+  "source_analysis_sha256": "ddd9ec38c4b5779c2bbcf18863b8efe3addea60fefc2bc97f41ae73a90915d83",
+  "manifest_sha256": "53ae1e5c7516f2297015ed33c295af6269196f861a2fe2fa5fb58e27257a186f",
+  "candidate_plans": {
+    "SAAM+UGB": {
+      "SAAM": [
+        "sp21"
+      ],
+      "UGB": [
+        "sp24",
+        "sp22"
+      ]
+    },
+    "SAAM+QAAM": {
+      "SAAM": [
+        "sp21"
+      ],
+      "QAAM": [
+        "sp23",
+        "sp24"
+      ]
+    },
+    "UGB+QAAM": {
+      "UGB": [
+        "sp21",
+        "sp22"
+      ],
+      "QAAM": [
+        "sp23",
+        "sp24"
+      ]
+    },
+    "SAAM+UGB+QAAM": {
+      "SAAM": [
+        "sp21"
+      ],
+      "UGB": [
+        "sp24"
+      ],
+      "QAAM": [
+        "sp23"
+      ]
+    }
+  },
+  "obb_boundary": "SAAM sp21和QAAM sp23的包围盒重叠不等于三角面相交",
+  "projectile_triangle_check": {
+    "first": "SAAM SWP2.sp21",
+    "second": "QAAM SWP2.sp23",
+    "frames": 101,
+    "counts": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "method": "同SWP2原生101帧Socket姿态，LOD0三角面对；触边或相交计数，不覆盖包含或离架"
+  },
+  "limits": [
+    "QAAM借UGB位置与架无三角面相交，挂耳贴合尚未实机观察",
+    "舱门打开与关闭过程的新增Body接触须按显隐及真实进度核查",
+    "不证明发射后净空、其他机体姿态或实际性能",
+    "旧报告SAAM全开未与当前Body同帧核实"
+  ],
+  "analysis_path": "Temp/tasks/20261028-official-bay-live/su47-one-rack-geometry-20261029.json"
+}

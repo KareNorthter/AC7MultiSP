@@ -1,0 +1,38 @@
+{
+  "version": "2.26.2 beta6",
+  "baseline": "f397d512184c27c4c944925c147472875182495a",
+  "three_bay_snapshot": {
+    "base": "5f6ac87f6cb9ee589480634034b8560d13d091db",
+    "patch_sha256": "5f5944bbdc982b6823d16103cd400f50e407f70a78a7942f99e0df0a88132405",
+    "untracked": {
+      "evidence/su47-one-rack-static-20261029.json": "b9ac119da96216737239b6e61c3d6d2459300b1040446c2bee060cdfb0376a62",
+      "evidence/su57tg-two-lacm-static-20261029.json": "cec433f0a471a18bea81db67c022c3990bb740a21ff611e3143726d32ab45208",
+      "evidence/three-bay-user-feedback-20261029.json": "9003ab85b7d44c91a68db27de662f642c0c64d6fbd53e177998484703229f473",
+      "evidence/yf23-native-stations-static-20261029.json": "78d85443a9869353bd781abf792ce092f0ef4cfe58d5c9103c16552ed7411a90",
+      "src/research/su47_single_rack_candidate.py": "c3de5468c7ea23c5ec7d32d3c9b757f1c737a2011ef4be8bc4199de99b58359b",
+      "src/research/su57tg_static_mount_candidate.py": "62ffb7759c6f7b62f5cbd2556780b8c5180763df432048bf1a5c2a11d30c8599",
+      "src/research/yf23_native_stations_candidate.py": "2c88e190ac2f9b40da7a4ddbfd824658d8d90f996031d57b944543aee0a35b04"
+    }
+  },
+  "sources": [
+    "174e21dae099a83489c055e26bfee69629de026b",
+    "9d636ef2410b4659f20da6b7defc92b9369577f7"
+  ],
+  "changes": [
+    "新增Su-57 TGM静态LACM供位模型，三SP为4AAM1/HCAA1/LACM2，绑定外观时维护共舱连续性",
+    "Su-47和YF-23保留原生外观及多SP兵装，未接入已放弃模型；原料脚本和证据保留",
+    "机库预览兵装或资源不匹配时增加诊断日志",
+    "MiG-21单MGP双SP仅隐藏右侧sp12火光，保留左侧与原生双发",
+    "启动SP异常汇总保留第二行异常数量"
+  ],
+  "limits": [
+    "新增修订待本包实机验证",
+    "TGM获作者先前候选实测认可，不追认本次整合字节已验收",
+    "ASF-X与DarkStar本轮放弃制作；未接收新方案",
+    "未修改更新日志，未运行测试或操作游戏"
+  ],
+  "changelog_sha256": {
+    "docs/user/更新日志.txt": "3d04152dde19397f2062e8600be9d6660d83fd28bc2e9910a907eea3e8758295",
+    "docs/user/Changelog.txt": "a8671403bdd84cd8ac406283ae66444d4af103070ffa192d3261d3dc907c5846"
+  }
+}

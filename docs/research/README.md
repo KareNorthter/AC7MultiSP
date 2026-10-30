@@ -30,6 +30,8 @@ Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-co
 
 ## 挂载、弹舱与动画
 
+YF-23、Su-47及Su-57 TGM从main/5f6ac87接续。作者实测确认TGM效果很好；Su-47和YF-23因效果问题及外观不对称，按作者决定撤除多SP模型接入，保留草案与源码差异。完整依据见[挂载设计](../engineering/multi-sp-mount-design.md#yf-23su-47su-57-tgm静态续研)和[反馈存档](../../evidence/three-bay-user-feedback-20261029.json)。
+
 本体/DLC剩余外挂机体从main/37b36a8接续，A-10C、Super Kai及F-104C/MiG-21bis双SP已有离线资源和源码候选，未编译或实机验证。两机三SP继续原生退让；MGP现场已核双空网格发射口和成对子弹，单吊舱候选复用既有取位钩子保原生两发，并保留Gunplay当前伤害/弹道/扣弹。两份同点子弹的实际命中伤害、炮口特效及性能仍待验证，唯一规则与来源见[挂载设计](../engineering/multi-sp-mount-design.md#剩余外挂机体候选未发布待验证)。
 
 2026-10-28从main/37b36a8（正式2.26.1）新开`codex/research-internal-bay-multisp`：优先将F35C关闭外观后缺失的舱门收尾迁入共用模块，并逐机评审剩余官方内舱/活动机构七组合。唯一方案、静态阻塞和游戏现场继续条件见[官方内舱续研](../engineering/multi-sp-mount-design.md#官方内舱与活动机构续研2026-10-28未发布)，逐组合来源见[静态记录](../../evidence/internal-bay-static-plan-20261028.json)。F35源码仅为未编译候选；其余新布局未启用，原Su-47/TGM掉帧与公共舱失败记录保持有效。

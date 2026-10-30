@@ -41,7 +41,7 @@ const std::array<AircraftBayProfile,10>& aircraftBayProfiles() {
             "/Game/Blueprint/Weapons/Player/Variation/plwp_tls_x5"},AircraftBayStrategy::Shared01Close,-1},
         {"su57tg","su57tg",{"/Game/Blueprint/Weapons/Player/Variation/plwp_4aam_r1",
             "/Game/Blueprint/Weapons/Player/Variation/plwp_hcaa_r1",
-            "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0"},AircraftBayStrategy::PublicSwitchContinuity,1},
+            "/Game/Blueprint/Weapons/Player/Variation/plwp_lacm_r0"},AircraftBayStrategy::PublicSwitchContinuity,1,-1,false,0,true},
         {"fa44","fa44",{"/Game/Blueprint/Weapons/Player/Base/plwp_admm_x0",
             "/Game/Blueprint/Weapons/Player/Variation/plwp_eml_x2",
             "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_x1"},AircraftBayStrategy::SelectedIndependent,1,0,true}

@@ -4,6 +4,10 @@
 
 ## 关键入口
 
+三机候选作者实测及Su-47/YF-23撤除决定见[反馈与存档](three-bay-user-feedback-20261029.json)。
+
+三机原生几何研究：[Su-47单架](su47-one-rack-static-20261029.json)、[TGM双LACM](su57tg-two-lacm-static-20261029.json)、[YF-23原生站位](yf23-native-stations-static-20261029.json)。
+
 主页源码、原上传ZIP及文档快照差异见[20261024主页接收回执](pages-workflow-intake-20261024.json)；作者的2.25.2正式发布确认、本次生成材料与下载核对见[发布准备记录](2.25.2-publication-preparation.json)。发布顺序只维护在[新版发布流程](../docs/project/release-workflow.md)；本地准备不证明Cloudflare、蓝奏云或Nexus已由本工具上传。
 
 | 主题 | 入口 | 回答的问题 |
@@ -127,3 +131,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [2.26.2 beta4 安装包交付](2.26.2-beta4-exe-delivery.json)：支架修订来源、未提交差异摘要、包摘要与验证边界。
 
 - [2.26.2 beta5 安装包交付](2.26.2-beta5-exe-delivery.json)：队列修订来源、构建摘要与验证边界。
+
+- [beta6源码整合](2.26.2-beta6-source-integration.json)：三线程增量、原始差异摘要和验证范围。

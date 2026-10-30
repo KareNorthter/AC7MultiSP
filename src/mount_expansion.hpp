@@ -76,7 +76,7 @@ void mountBindExpansionVisuals(FixedMountState& state,Addr plane) {
         state.rackOffsets[pool]=mountProperty(plane,("SWP"+std::to_string(pool+1)).c_str(),"ObjectProperty",8);
         const Addr rack=read<Addr>(plane+state.rackOffsets[pool]);
         const auto rackIdentity=mountIdentity(rack);
-        const bool skeletal=mountLocal(state.aircraft) && group.value("skeletal",false);
+        const bool skeletal=(mountLocal(state.aircraft) || state.aircraft==MountAircraft::Su57tg) && group.value("skeletal",false);
         require(mountName(read<Addr>(rack+0x10))==(skeletal?"SkeletalMeshComponent":"StaticMeshComponent") &&
             read<Addr>(rack+0x100)==state.weaponBase.address,("扩展挂载：挂架类型或父链改变"+context).c_str());
         const Addr original=skeletal?read<Addr>(rack+mountProperty(rack,"SkeletalMesh","ObjectProperty",8)):

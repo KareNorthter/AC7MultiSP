@@ -1,0 +1,118 @@
+{
+  "schema": 1,
+  "aircraft": "su57tg",
+  "status": "offline_candidate_not_enabled",
+  "requested_layout": {
+    "4AAM": [
+      "SWP3.sp31"
+    ],
+    "HCAA": [
+      "SWP3.sp32"
+    ],
+    "LACM": [
+      "SWP3.sp33",
+      "SWP3.sp34"
+    ]
+  },
+  "resource_analysis_sha256": "004775f0885aae01b73347d5721cdb5492318dc5f770d10f2d1cf96ff9a1ba63",
+  "sample_frames": 101,
+  "projectile_pair_checks": [
+    {
+      "first": "4AAM:SWP3:sp31",
+      "second": "HCAA:SWP3:sp32",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 1.999398,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    },
+    {
+      "first": "4AAM:SWP3:sp31",
+      "second": "LACM:SWP3:sp33",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 14.275597,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    },
+    {
+      "first": "4AAM:SWP3:sp31",
+      "second": "LACM:SWP3:sp34",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 14.275597,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    },
+    {
+      "first": "HCAA:SWP3:sp32",
+      "second": "LACM:SWP3:sp33",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 14.275597,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    },
+    {
+      "first": "HCAA:SWP3:sp32",
+      "second": "LACM:SWP3:sp34",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 14.275597,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    },
+    {
+      "first": "LACM:SWP3:sp33",
+      "second": "LACM:SWP3:sp34",
+      "frames": 101,
+      "all_frames_separated": true,
+      "minimum_separating_axis_gap": 1.158696,
+      "limiting_frame": 0,
+      "overlap_frames": [],
+      "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+    }
+  ],
+  "body_weapon_summary": [
+    {
+      "mesh": "w_4aam_r1_SM",
+      "socket": "sp31",
+      "max_pairs": 0,
+      "frame0_pairs": 0,
+      "frame100_pairs": 0
+    },
+    {
+      "mesh": "w_4aam_r1_SM",
+      "socket": "sp32",
+      "max_pairs": 0,
+      "frame0_pairs": 0,
+      "frame100_pairs": 0
+    },
+    {
+      "mesh": "w_lacm_r0_closed_SM",
+      "socket": "sp33",
+      "max_pairs": 78,
+      "frame0_pairs": 78,
+      "frame100_pairs": 78
+    },
+    {
+      "mesh": "w_lacm_r0_closed_SM",
+      "socket": "sp34",
+      "max_pairs": 67,
+      "frame0_pairs": 67,
+      "frame100_pairs": 67
+    }
+  ],
+  "limits": [
+    "不证明发射后的LACM展开和离架净空",
+    "静态dummy没有独立实体支撑，贴合需观察",
+    "未采所有机体姿态、独立动画相位",
+    "未解决共舱切换与少位队列，也未启用运行"
+  ],
+  "full_analysis_path": "Temp/tasks/20261028-official-bay-live/su57tg-two-lacm-geometry-20261029.json"
+}

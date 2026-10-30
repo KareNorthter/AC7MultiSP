@@ -1,0 +1,16 @@
+{
+  "schema": 1,
+  "date": "2026-10-29",
+  "source": "作者对此前三机候选安装包的游戏反馈",
+  "candidate_exe_sha256": "ecd1c5c7a6f7d148406fd09b4097d2a3650f3b170bf19c4bf88ff373813081fa",
+  "binary_identity_independently_verified_during_test": false,
+  "feedback": {
+    "su57tg": "作者反馈实测很完美，保留多SP模型方案。",
+    "su47": "作者反馈有问题，三SP外观过于不对称，决定放弃多SP模型方案；问题细节未提供。",
+    "yf23": "作者反馈有问题，三SP外观过于不对称，决定放弃多SP模型方案；问题细节未提供。"
+  },
+  "decision": "撤除Su-47、YF-23的运行接入，保留研究脚本、静态证据、原始采样及撤除前源码差异；Su-57 TGM继续保留。",
+  "before_withdrawal_patch": "Temp/tasks/20261029-archive-su47-yf23/before-withdrawal.patch",
+  "before_withdrawal_patch_sha256": "cfd8d5c856fa96d2984e7f29be4706249aed1e5288c49d6b64f8354ddd4f594c",
+  "limits": "作者反馈不自动扩展为每项边界和异常场景均完成专项测试。撤除后源码尚未编译或安装。"
+}

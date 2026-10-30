@@ -53,3 +53,7 @@
 已经冻结、被回执引用或供研究处理的目录，不为目录美观再搬一次。目录名出现Temp不表示可以删除。清单中的“原位保留”与“归组保存”都不代表准许运行、安装或清理。
 
 本轮整理保存原文件，没有永久删除或以压缩丢弃内容，也没有以释放空间为目标。大文件和本机工具继续留在本地，GitHub上传范围见[仓库与本机边界](../project/repository.md)。
+
+三机续研的原版资源副本与现场采样保留在旧研究工作树 `C:/Users/83717/.codex/worktrees/internal-bay-multisp/AC7_MultiSP/Temp/tasks/20261028-official-bay-live/`；逐机位置和摘要见[挂载设计](../engineering/multi-sp-mount-design.md#yf-23su-47su-57-tgm静态续研)。
+
+Su-47、YF-23撤除前源码差异保留在本研究工作树 `Temp/tasks/20261029-archive-su47-yf23/before-withdrawal.patch`；候选EXE和旧研究工作树的原始资料保持原位。摘要与继续条件见[反馈存档](../../evidence/three-bay-user-feedback-20261029.json)。

@@ -320,6 +320,11 @@ def build(include_remaining=True):
         else:
             from f22_internal_runtime_data import append_f22_internal
         append_f22_internal(data, ROOT)
+        if __package__:
+            from .su57tg_static_mount_candidate import prepare_su57tg_candidate
+        else:
+            from su57tg_static_mount_candidate import prepare_su57tg_candidate
+        data['planes'].append(prepare_su57tg_candidate(ROOT))
     return data
 
 

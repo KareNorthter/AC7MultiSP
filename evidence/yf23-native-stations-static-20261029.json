@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "aircraft": "yf23",
+  "status": "offline_candidate_not_enabled",
+  "scope": "保留HVAA原生站位，单显示SWP2；原生三个活动供位的实时映射尚未实现。",
+  "source_analysis_sha256": "9d64708cf8bdff9b2920fe86939793fc7754692715c10054a02aa80e42079545",
+  "sample_frames": 101,
+  "cases": [
+    {
+      "weapons": [
+        "HVAA",
+        "4AAM"
+      ],
+      "assignments": [
+        {
+          "weapon": "HVAA",
+          "provider": "SWP1",
+          "sockets": [
+            "sp11"
+          ]
+        },
+        {
+          "weapon": "4AAM",
+          "provider": "SWP2",
+          "sockets": [
+            "sp22"
+          ]
+        }
+      ],
+      "all_projectile_obbs_separated_101_frames": true,
+      "pair_checks": [
+        {
+          "first": "HVAA:SWP1:sp11",
+          "second": "4AAM:SWP2:sp22",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 4.215752,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        }
+      ]
+    },
+    {
+      "weapons": [
+        "HVAA",
+        "UGB"
+      ],
+      "assignments": [
+        {
+          "weapon": "HVAA",
+          "provider": "SWP1",
+          "sockets": [
+            "sp11"
+          ]
+        },
+        {
+          "weapon": "UGB",
+          "provider": "SWP3",
+          "sockets": [
+            "sp32"
+          ]
+        }
+      ],
+      "all_projectile_obbs_separated_101_frames": true,
+      "pair_checks": [
+        {
+          "first": "HVAA:SWP1:sp11",
+          "second": "UGB:SWP3:sp32",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 4.586934,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        }
+      ]
+    },
+    {
+      "weapons": [
+        "4AAM",
+        "UGB"
+      ],
+      "assignments": [
+        {
+          "weapon": "4AAM",
+          "provider": "SWP2",
+          "sockets": [
+            "sp21",
+            "sp22"
+          ]
+        },
+        {
+          "weapon": "UGB",
+          "provider": "SWP3",
+          "sockets": [
+            "sp33",
+            "sp34"
+          ]
+        }
+      ],
+      "all_projectile_obbs_separated_101_frames": true,
+      "pair_checks": [
+        {
+          "first": "4AAM:SWP2:sp21",
+          "second": "4AAM:SWP2:sp22",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 7.906906,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "4AAM:SWP2:sp21",
+          "second": "UGB:SWP3:sp33",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 0.678088,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "4AAM:SWP2:sp21",
+          "second": "UGB:SWP3:sp34",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 4.478088,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "4AAM:SWP2:sp22",
+          "second": "UGB:SWP3:sp33",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 4.478088,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "4AAM:SWP2:sp22",
+          "second": "UGB:SWP3:sp34",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 0.678088,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "UGB:SWP3:sp33",
+          "second": "UGB:SWP3:sp34",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 1.04927,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        }
+      ]
+    },
+    {
+      "weapons": [
+        "HVAA",
+        "4AAM",
+        "UGB"
+      ],
+      "assignments": [
+        {
+          "weapon": "HVAA",
+          "provider": "SWP1",
+          "sockets": [
+            "sp11"
+          ]
+        },
+        {
+          "weapon": "4AAM",
+          "provider": "SWP2",
+          "sockets": [
+            "sp22"
+          ]
+        },
+        {
+          "weapon": "UGB",
+          "provider": "SWP3",
+          "sockets": [
+            "sp34"
+          ]
+        }
+      ],
+      "all_projectile_obbs_separated_101_frames": true,
+      "pair_checks": [
+        {
+          "first": "HVAA:SWP1:sp11",
+          "second": "4AAM:SWP2:sp22",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 4.215752,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "HVAA:SWP1:sp11",
+          "second": "UGB:SWP3:sp34",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 0.786934,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        },
+        {
+          "first": "4AAM:SWP2:sp22",
+          "second": "UGB:SWP3:sp34",
+          "frames": 101,
+          "all_frames_separated": true,
+          "minimum_separating_axis_gap": 0.678088,
+          "limiting_frame": 0,
+          "overlap_frames": [],
+          "meaning": "正值为该帧存在分离轴的保守间隙；负值是OBB重叠而不是已证明三角面碰撞"
+        }
+      ]
+    }
+  ],
+  "rack_contacts_comparison": [
+    {
+      "weapon": "HVAA",
+      "provider": "SWP1.sp11",
+      "native_rack": "SWP1",
+      "native_pairs": 36,
+      "candidate_rack": "SWP2",
+      "candidate_pairs": 56
+    },
+    {
+      "weapon": "4AAM",
+      "provider": "SWP2.sp22",
+      "native_rack": "SWP2",
+      "native_pairs": 24,
+      "candidate_rack": "SWP2",
+      "candidate_pairs": 24
+    },
+    {
+      "weapon": "UGB",
+      "provider": "SWP3.sp34",
+      "native_rack": "SWP3",
+      "native_pairs": 156,
+      "candidate_rack": "SWP2",
+      "candidate_pairs": 156
+    }
+  ],
+  "limits": [
+    "原生HVAA站位保留避免旧SWP3借位的固定隔框新增穿面",
+    "单显示SWP2时HVAA接触增加，尚未确认是否轻微和可接受",
+    "原生多个活动供位动画可能冻结，不应恢复旧多架高开销控制",
+    "101帧同步姿态不覆盖不同活动架异相、实际发射或运行帧率",
+    "仅候选，未注册运行"
+  ]
+}

@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| beta6三线程集成交付，进行中 | 本集成聊天；基线main/f397d51 | codex/integrate-beta6；C:/Users/83717/.codex/worktrees/integrate-beta6/AC7_MultiSP | 统一接收TGM静态模型、预览诊断、MiG-21火光及启动汇总显示；按作者要求不改更新日志，待完整构建。来源见[整合回执](../../evidence/2.26.2-beta6-source-integration.json)。 |
 | 启动资料异常提示修复，源码待接收 | 本聊天；codex/fix-startup-issue-notice；基线main/f397d51 | C:/Users/83717/.codex/worktrees/startup-issue-notice/AC7_MultiSP | 修复启动汇总第二行被错误消息截断的问题；保留已有中英文词条、其他错误的截断及更新通知。仅静态差异核对，未编译、测试、安装或操作游戏 |
 | F-22队列集成交付，已出包待验证 | 本集成聊天；基线main/98d7e6a；来源研究树未提交差异 | C:/Users/83717/.codex/worktrees/integrate-bay-beta5/AC7_MultiSP | 接收双挂六点和XSDB四点队列候选，保留34机、92资源；按作者要求不修改更新日志；首次构建暴露身份比较函数声明顺序问题，已补声明并完成重新构建，待作者实机验证。 |
 | 内舱支架集成交付，已出包待验证 | 本集成聊天；基线main/bda3af2；来源789c6fd及研究树未提交差异 | C:/Users/83717/.codex/worktrees/integrate-bay-beta4/AC7_MultiSP | 接收F-22及普通Su-57支架收拢与会话保护，保留34机、92资源；作者要求不修改更新日志，已完成构建及签名封装，待作者实机验证。 |
@@ -15,6 +16,7 @@
 | 机体故障隔离与启动检查，源码待验证 | 本聊天；codex/feat-aircraft-fault-recovery；基线main/9075581 | C:/Users/83717/.codex/worktrees/aircraft-fault-recovery/AC7_MultiSP | 已编写机体级退让、F6诊断、换机恢复及严重错误提示；启动加载与更新结果分开提示，兵装异常在第一页查看。十二项中文词条经作者两次确认，同步英文与生成表；边界见[架构](../engineering/architecture.md#机体故障退让与f6诊断alpha2候选)。补充[测试指导](../engineering/aircraft-fault-testing.md)及本机TXT/原始日志归因核对；人工注入入口未实现。仅静态审阅，未编译、测试、安装或操作游戏，未合main |
 
 | 官方内舱与活动机构多SP续研，进行中 | 本聊天；codex/research-internal-bay-multisp；基线main/37b36a8，正式2.26.1；源码候选074fdc6 | C:/Users/83717/.codex/worktrees/internal-bay-multisp/AC7_MultiSP | F35收尾已迁入共用模块候选，九机七组合路线见挂载正文。作者启动的实际2.26.2 alpha1只读现场确认MSL下swc1/swc2/swcc残留全开；同实例开启显示并再次切换后全部收闭、姿态更新，见[记录](../../evidence/f35-bay-live-observation-20261028.json)。普通Su-57作者确认关舱正常，两种显示状态均有切换日志，逐次采样仅覆盖开启末轮；见[Su-57记录](../../evidence/su57-bay-live-observation-20261028.json)。随后已制作Su-57完整七组合源码候选，29机/203组合、77资源不变；新外观开关限定连续性，关显示沿既有正常行为；F35候选效果未验证。F22单SWP3七组合接线草案已登记，尚未注册，等待原生现场。范围：舱门模块、核心分类、局部机构池参数、生成表与Lua资源清单及对应工程/研究/资产索引；不改版本、玩家中文、冻结DLL或其他线程；未编译/测试/安装，未写游戏内存或调用游戏函数 |
+| 三机内舱候选接入，进行中 | 本聊天；codex/three-bay-multisp；基线main/5f6ac87 | C:/Users/83717/.codex/worktrees/three-bay-multisp/AC7_MultiSP | 延续原研究工作树并保留其未提交资料；负责YF-23、Su-47、Su-57 TGM生成表、活动供位、共舱与对应工程说明；三机候选已编译并由作者实测；TGM获认可并保留，Su-47和YF-23按作者决定撤除运行接入并存档。撤除后未重新编译或安装。 |
 | X-02R与三个J-20启用，用户已验收 | codex/chore-enable-x02r-j20；基线 main/a0f4073 | C:/Users/83717/.codex/worktrees/install-x02r-j20/AC7_MultiSP | 由A切至B，四个Mod六份PAK与原包一致。作者2026-10-28确认X-02R A/B、J-20A/B/S及RH-172功能均正常，见[用户验收](../../evidence/mod-aircraft-user-acceptance-20261028.json)；功能与未知项维护在[机体正文](../research/mod-aircraft-compatibility.md#2026-10-28启用x-02r与三个j-20)，原启用回执保持；本轮仅记录反馈，未启动游戏、编译或运行测试 |
 | 机体兼容反馈与资料提醒，已接收 | 本聊天；codex/docs-mod-compatibility-observations；基线main/41993d7 | C:/Users/83717/.codex/worktrees/mod-compatibility-observations/AC7_MultiSP | 记录RH-172补给冲突反馈和启动时兵装资料提醒待办；仅文档静态核对 |
 | Gunplay一键启停，待用户验证 | codex/feat-gunplay-toggle；基线 main/052b8bc | C:/Users/83717/.codex/worktrees/gunplay-toggle/AC7_MultiSP；入口 E:/AC7_MOD/管理入口/一键切换Gunplay.cmd | 为现有A5主文件提供低优先级启停入口，保护备份和其他Mod；范围与使用说明见[其他 Mod 管理](../archive/other-mod-library.md)，未实际运行启停或游戏 |

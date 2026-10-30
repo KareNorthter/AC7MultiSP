@@ -107,6 +107,7 @@ def source_snapshot(root=ROOT):
         'src/research/local_four_runtime_data.py','src/research/prepare_local_four_mounts.py',
         'src/research/pkfa_internal_runtime_data.py','evidence/pkfa-internal-mount-source-20261028.json',
         'src/research/f22_internal_runtime_data.py','evidence/f22-internal-runtime-source-20261029.json',
+        'src/research/su57tg_static_mount_candidate.py','evidence/su57tg-two-lacm-static-20261029.json',
         'evidence/f22-feedback-animation-endpoints-20261029.json',
         'evidence/f22-rack-retraction-endpoints-20261029.json',
         'evidence/f22-internal-mount-design-20261028.json','evidence/f22-requested-bay-behavior-20261029.json',
