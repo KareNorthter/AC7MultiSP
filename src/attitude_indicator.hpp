@@ -8,7 +8,8 @@ struct AttitudeSetter {
     int bytes{};
 };
 struct AttitudeIndicator {
-    ContinuousIdentity plane,root,view,camera,hud,wings,cursor,failureOwner;
+    ContinuousIdentity plane,root,view,hud,wings,cursor,nativeHolder,failureOwner;
+    std::array<ContinuousIdentity,3> cameras;
     AttitudeSetter angle,translation,visibility;
     using Ref=const void*(*)(const void*);
     using Process=void(*)(void*,void*,void*);
@@ -19,7 +20,8 @@ struct AttitudeIndicator {
     DWORD thread{};
     ULONGLONG heartbeat{};
     ULONGLONG sampledAt{};
-    bool visible{},sampled{},inside{};
+    bool visible{},sampled{},inside{},nativeHidden{};
+    unsigned viewMask{};
     float pitch{},bank{},lastPitch{1000},lastBank{1000};
     float travel{24};
     int shownPitch{1000},shownBank{1000};
@@ -64,27 +66,32 @@ struct AttitudeIndicator {
         {const ContinuousReadBatch memory;
             require(memory.alive(widget)&&memory.alive(method.function),"Attitude: UMG identity changed during setter");}
     }
-    void show(bool value) {
-        if(visible==value)return;
-        invoke(hud,visibility,static_cast<unsigned char>(value?3:1));visible=value;
+    void show(bool value,bool replaceNative=false) {
+        if(visible!=value) {invoke(hud,visibility,static_cast<unsigned char>(value?3:1));visible=value;}
+        const bool hideNative=value&&replaceNative;
+        if(nativeHidden!=hideNative) {
+            if(continuousAlive(nativeHolder))invoke(nativeHolder,visibility,static_cast<unsigned char>(hideNative?1:3));
+            else require(!hideNative,"Attitude: native pitch holder expired");
+            nativeHidden=hideNative;
+        }
     }
     void stop() {
         enabled.store(false,std::memory_order_release);
-        if(visible) {
-            if(continuousAlive(hud))show(false);
-            else visible=false;
-        }
+        if(!continuousAlive(hud))visible=false;
+        show(false); // 也归还原生大姿态尺，不能只折叠简易图形。
         heartbeat=sampledAt=0;sampled=false;lastPitch=lastBank=1000;shownPitch=shownBank=1000;
     }
-    bool current(Addr player,Addr indicator,Addr roll,Addr pointer) {
+    bool current(Addr player,Addr indicator,Addr roll,Addr pointer,unsigned mask,Addr holder) {
         const ContinuousReadBatch memory;
-        return plane.address==player&&hud.address==indicator&&wings.address==roll&&cursor.address==pointer &&
-            memory.alive(plane)&&memory.alive(root)&&memory.alive(view)&&memory.alive(camera)&&
+        bool source=memory.alive(plane)&&memory.alive(root)&&memory.alive(view);
+        for(size_t i=0;i<cameras.size();++i)source=source&&memory.alive(cameras[i])&&
+            memory.read<Addr>(view.address+0x318+i*0x10)==cameras[i].address;
+        return source&&viewMask==mask&&nativeHolder.address==holder&&(!holder||memory.alive(nativeHolder))&&
+            plane.address==player&&hud.address==indicator&&wings.address==roll&&cursor.address==pointer &&
             memory.alive(hud)&&memory.alive(wings)&&memory.alive(cursor)&&
-            memory.read<Addr>(player+0x160)==root.address&&memory.read<Addr>(player+0x1250)==view.address&&
-            memory.read<Addr>(view.address+0x338)==camera.address;
+            memory.read<Addr>(player+0x160)==root.address&&memory.read<Addr>(player+0x1250)==view.address;
     }
-    void bind(Addr player,Addr indicator,Addr roll,Addr pointer,Addr angleFunction,Addr moveFunction,Addr visibilityFunction,float range) {
+    void bind(Addr player,Addr indicator,Addr roll,Addr pointer,Addr angleFunction,Addr moveFunction,Addr visibilityFunction,float range,unsigned mask,Addr holder) {
         stop();verifyVersion();bindSdk();installCameraHold();
         const auto owner=continuousIdentity(player);
         require(!(failureOwner.address==owner.address&&failureOwner.index==owner.index&&failureOwner.serial==owner.serial),
@@ -94,10 +101,15 @@ struct AttitudeIndicator {
         root=continuousIdentity(read<Addr>(player+0x160));view=continuousIdentity(read<Addr>(player+0x1250));
         require(mountClassIs(root.address,"SceneComponent","/Script/Engine")&&
             mountClassIs(view.address,"CameraViewComponent","/Script/Nimbus"),"Attitude: source component type mismatch");
-        camera=continuousIdentity(read<Addr>(view.address+0x338));
-        require(mountClassIs(camera.address,"ThirdPersonCameraInputComponent","/Script/Nimbus")&&
-            read<Addr>(root.address+0x20)==player&&read<Addr>(view.address+0x20)==player&&
-            read<Addr>(camera.address+0x330)==player,"Attitude: source ownership mismatch");
+        require(read<Addr>(root.address+0x20)==player&&read<Addr>(view.address+0x20)==player,"Attitude: source ownership mismatch");
+        const char* classes[]={"FirstPersonCameraInputComponent","CockpitCameraInputComponent","ThirdPersonCameraInputComponent"};
+        for(size_t i=0;i<cameras.size();++i) {
+            cameras[i]=continuousIdentity(read<Addr>(view.address+0x318+i*0x10));
+            require(mountClassIs(cameras[i].address,classes[i],"/Script/Nimbus")&&
+                read<Addr>(cameras[i].address+0x20)==player&&
+                (!read<Addr>(cameras[i].address+0x330)||read<Addr>(cameras[i].address+0x330)==player),
+                "Attitude: camera ownership mismatch");
+        }
         hud=continuousIdentity(indicator);wings=continuousIdentity(roll);cursor=continuousIdentity(pointer);
         for(auto object:{indicator,roll,pointer})require(mountClassIs(object,"CanvasPanel","/Script/UMG"),"Attitude: target must be a CanvasPanel");
         require(continuousName(indicator).rfind("DualSPAttitudeRoot",0)==0&&
@@ -107,6 +119,13 @@ struct AttitudeIndicator {
         angle=setter(angleFunction,"SetRenderAngle",4,"FloatProperty");
         translation=setter(moveFunction,"SetRenderTranslation",8,"StructProperty");
         visibility=setter(visibilityFunction,"SetVisibility",1,"EnumProperty");
+        require(mask==3||mask==4||mask==7,"Attitude: invalid view mask");
+        nativeHolder={};nativeHidden=false;viewMask=mask;
+        if(mask&3) {
+            nativeHolder=continuousIdentity(holder);
+            require(mountClassIs(holder,"CanvasPanel","/Script/UMG")&&continuousName(holder).rfind("DualSPAttitudeNativeHolder",0)==0,
+                "Attitude: native pitch holder is not owned by this indicator");
+        }else require(!holder,"Attitude: unexpected native pitch holder");
         require(std::isfinite(range)&&range>0&&range<=96,"Attitude: pitch cursor range invalid");
         travel=range;error.clear();sampled=false;lastPitch=lastBank=1000;shownPitch=shownBank=1000;
     }
@@ -118,19 +137,25 @@ struct AttitudeIndicator {
             if(!runtimeEnabled||now-heartbeat>150) {show(false);sampled=false;inside=false;return;}
             std::array<float,4> q{};
             bool draw=false,sourceAlive=false,uiAlive=false;
+            unsigned type=3;
             {const ContinuousReadBatch memory;
-                uiAlive=memory.alive(hud)&&memory.alive(wings)&&memory.alive(cursor);
-                sourceAlive=memory.alive(plane)&&memory.alive(root)&&memory.alive(view)&&memory.alive(camera)&&
-                    memory.read<Addr>(plane.address+0x160)==root.address&&memory.read<Addr>(plane.address+0x1250)==view.address&&
-                    memory.read<Addr>(view.address+0x338)==camera.address&&memory.read<Addr>(camera.address+0x330)==plane.address;
-                draw=sourceAlive&&uiAlive&&component==camera.address&&memory.read<unsigned char>(view.address+0x350)==2&&
-                    memory.read<unsigned char>(plane.address+0xe12)!=0;
+                uiAlive=memory.alive(hud)&&memory.alive(wings)&&memory.alive(cursor)&&(!nativeHolder.address||memory.alive(nativeHolder));
+                sourceAlive=memory.alive(plane)&&memory.alive(root)&&memory.alive(view)&&
+                    memory.read<Addr>(plane.address+0x160)==root.address&&memory.read<Addr>(plane.address+0x1250)==view.address;
+                for(size_t i=0;i<cameras.size();++i)sourceAlive=sourceAlive&&memory.alive(cameras[i])&&
+                    memory.read<Addr>(view.address+0x318+i*0x10)==cameras[i].address;
+                if(sourceAlive)type=memory.read<unsigned char>(view.address+0x350);
+                // 后台相机也可能计算输出；不能由它覆盖当前视角的同帧显隐。
+                if(sourceAlive&&uiAlive&&type<3&&component!=cameras[type].address){inside=false;return;}
+                draw=sourceAlive&&uiAlive&&type<3&&(viewMask&(1u<<type))&&
+                    memory.read<Addr>(cameras[type].address+0x330)==plane.address&&memory.read<unsigned char>(plane.address+0xe12)!=0;
                 if(draw)q=memory.read<std::array<float,4>>(root.address+0x180);
             }
             // HUD/玩家正常销毁或重建只等待重新绑定，不把过渡状态记为机体故障。
             if(!sourceAlive||!uiAlive) {
                 enabled.store(false,std::memory_order_release);sampled=false;
-                if(continuousAlive(hud))show(false);else visible=false;
+                if(!continuousAlive(hud))visible=false;
+                show(false);
                 inside=false;return;
             }
             if(!draw||cameraHoldNativeSpecial()){show(false);sampled=false;inside=false;return;}
@@ -145,7 +170,7 @@ struct AttitudeIndicator {
             else if(!sampled)bank=0;
             if(bank!=lastBank){invoke(wings,angle,bank);lastBank=bank;}
             if(pitch!=lastPitch){invoke(cursor,translation,std::array<float,2>{0,-pitch/90.f*travel});lastPitch=pitch;}
-            show(true);sampled=true;sampledAt=now;
+            show(true,type<2);sampled=true;sampledAt=now;
         }catch(const std::exception& exception) {
             enabled.store(false,std::memory_order_release);failureOwner=plane;error=exception.what();
             try {show(false);}catch(...) {} // Lua诊断与清理仍会再次隐藏/释放自有根容器。

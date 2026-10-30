@@ -76,7 +76,7 @@ local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑�
 loadExport("dualsp_pad_x_weapon_switch_supported") -- 核心、控制器与管理页须成套。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=25") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=26") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -113,7 +113,9 @@ loadExport("dualsp_central_weapon_display_supported","DualSPUI.dll") -- 旧界�
 loadExport("dualsp_pw_weapon_ui_supported","DualSPUI.dll") -- PW布局开关及完整保存动作要求UI/Lua成套。
 loadExport("dualsp_attitude_indicator_supported")
 loadExport("dualsp_attitude_indicator_supported","DualSPUI.dll")
-weaponSwitch.attitude=dofile(root.."Scripts/attitude_hud.lua").new(note,loadExport("dualsp_attitude_indicator_v1"))
+loadExport("dualsp_attitude_views_supported")
+loadExport("dualsp_attitude_views_supported","DualSPUI.dll")
+weaponSwitch.attitude=dofile(root.."Scripts/attitude_hud.lua").new(note,loadExport("dualsp_attitude_indicator_v2"),function(message)faultRecovery.fatal(message)end)
 loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}
@@ -1607,6 +1609,7 @@ local function applyAction(action)
             if not isFlight and not supplySession then applyFixedMountSetting(config.hangar_mount_enabled)end
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED request="..settingsAck.." "..json.encode({
+                attitude_third_person=config.third_person_attitude_enabled,attitude_first_person=config.first_person_attitude_enabled,
                 language=config.language,startup_updates=config.startup_update_check_enabled,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
                 dpad=config.dpad_weapon_switch_enabled,pw_weapon_ui=config.pw_weapon_ui_enabled,pad_x=config.pad_x_weapon_switch_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
                 gaze_keyboard=config.target_gaze_keyboard_enabled,camera_hold=config.camera_hold_enabled,view_target=config.view_target_mode,
@@ -1649,8 +1652,9 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and info.code and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=25,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=26,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         third_person_attitude_enabled=config.third_person_attitude_enabled,
+        first_person_attitude_enabled=config.first_person_attitude_enabled,
         startup_update_check_enabled=config.startup_update_check_enabled,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
@@ -2371,10 +2375,11 @@ LoopInGameThreadWithDelay(20,function()
             assert(IsInGameThread(),"Controller callback is outside the game thread")
             local started=os.clock() -- 不改变输入、武器和 HUD 的既有更新频率。
             tick()
-            weaponSwitch.attitude:update(plane,config.third_person_attitude_enabled and runtimeAllowed and runtimeModEnabled
+            weaponSwitch.attitude:update(plane,(config.third_person_attitude_enabled or config.first_person_attitude_enabled)and runtimeAllowed and runtimeModEnabled
                 and not errorText and isFlight and valid(plane)and plane.bEnableCameraInput and plane:GetNimbusHUDEnabled()
                 and not panelOpen and not supplySession and not restorePending and not checkpointPending
-                and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane),os.clock())
+                and not(aircraftDebug and aircraftDebug:busy())and not game:IsGamePaused(plane)
+                and ((config.third_person_attitude_enabled and 4 or 0)+(config.first_person_attitude_enabled and 3 or 0))or 0,os.clock())
             if runtimeAllowed and runtimeModEnabled then weaponSwitch.salvo.service:update()end
             recordTickCost(started)
         end,debug.traceback)

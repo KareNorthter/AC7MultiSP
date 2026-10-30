@@ -49,6 +49,8 @@ inline constexpr Entry entries[]={
     {"another.game.action.changed.the.63bcfe84","重开期间原生机体选择被其他流程改变","Another game action changed the selected aircraft during restart."},
     {"apply.sp.loadout.and.refill.47b451be","应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"},
     {"applying.waiting.for.the.game.3f8f6870","正在应用，等待游戏线程确认…","Applying; waiting for the game thread..."},
+    {"attitude.first.person","第一人称/座舱简易姿态","Compact attitude in first-person/cockpit"},
+    {"attitude.first.person.help","在第一人称和座舱视角中，于速度HUD下方显示简易姿态指示器，并隐藏原生大姿态尺。关闭后恢复原生显示。默认关闭。","Shows the compact attitude indicator below the speed HUD in first-person and cockpit views, hiding the native large attitude ladder. Disabling restores the native display. Off by default."},
     {"attitude.indicator","第三人称姿态指示器","Third-person attitude indicator"},
     {"attitude.indicator.help","在第三人称视角中，于速度HUD下方显示俯仰角与滚转角。默认关闭。","Shows pitch and roll below the speed HUD in third-person view. Disabled by default."},
     {"author.and.license.5de4e76d","作者与授权","Author and license"},

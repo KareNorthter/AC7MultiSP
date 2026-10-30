@@ -27,6 +27,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
 }
 bool managementDirty() {
     if(draftThirdPersonAttitude!=state.at("third_person_attitude_enabled").get<bool>())return true;
+    if(draftFirstPersonAttitude!=state.at("first_person_attitude_enabled").get<bool>())return true;
     if(draftPwWeaponUI!=state.at("pw_weapon_ui_enabled").get<bool>())return true;
     return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftPadXWeaponSwitchEnabled!=state.at("pad_x_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTargetMode!=state.at("view_target_mode").get<std::string>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftTaskMountEnabled!=state.at("task_mount_enabled").get<bool>() ||
         draftTargetGazePad!=state.at("target_gaze_pad_enabled").get<bool>() || draftTargetGazeKeyboard!=state.at("target_gaze_keyboard_enabled").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
@@ -72,6 +73,8 @@ void drawFeatureSettings() {
 void drawCameraSettings() {
     ImGui::Checkbox(uiText("attitude.indicator"),&draftThirdPersonAttitude);
     panelHelp("attitude.indicator.help");
+    ImGui::Checkbox(uiText("attitude.first.person"),&draftFirstPersonAttitude);
+    panelHelp("attitude.first.person.help");
     if(panelCard("ViewTargetOptions",uiText("target.selection.8ff0d833"))) {
         int mode=draftViewTargetMode=="normal"?0:1;
         ImGui::SetNextItemWidth(std::min(340.f,ImGui::GetContentRegionAvail().x*.55f));

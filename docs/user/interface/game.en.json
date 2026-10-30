@@ -2,6 +2,8 @@
   "schema": 1,
   "language": "en",
   "texts": {
+    "attitude.first.person": "Compact attitude in first-person/cockpit",
+    "attitude.first.person.help": "Shows the compact attitude indicator below the speed HUD in first-person and cockpit views, hiding the native large attitude ladder. Disabling restores the native display. Off by default.",
     "attitude.indicator": "Third-person attitude indicator",
     "attitude.indicator.help": "Shows pitch and roll below the speed HUD in third-person view. Disabled by default.",
     "pw.weapon.selection.ui": "PW weapon selection UI",

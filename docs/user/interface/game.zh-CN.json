@@ -2,6 +2,8 @@
   "schema": 1,
   "language": "zh-CN",
   "texts": {
+    "attitude.first.person": "第一人称/座舱简易姿态",
+    "attitude.first.person.help": "在第一人称和座舱视角中，于速度HUD下方显示简易姿态指示器，并隐藏原生大姿态尺。关闭后恢复原生显示。默认关闭。",
     "attitude.indicator": "第三人称姿态指示器",
     "attitude.indicator.help": "在第三人称视角中，于速度HUD下方显示俯仰角与滚转角。默认关闭。",
     "pw.weapon.selection.ui": "pw武器选择ui",

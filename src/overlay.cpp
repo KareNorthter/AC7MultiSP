@@ -89,12 +89,13 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=25; // 新增姿态指示器开关，UI/Lua须成套，避免旧界面静默漏存。
+constexpr int managementProtocol=26; // 第一人称/座舱简易姿态开关，UI/Lua须成套，避免旧界面静默漏存。
 bool draftStartupUpdateCheck=true;
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
 bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true,draftPadXWeaponSwitchEnabled=true;
 bool draftPwWeaponUI=false;
 bool draftThirdPersonAttitude=false;
+bool draftFirstPersonAttitude=false;
 bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
 bool draftViewCenterDot=false;
 std::string draftViewTargetMode="normal";
@@ -590,6 +591,7 @@ void loadManagementDraft() {
     draftDpadWeaponSwitchEnabled=state.at("dpad_weapon_switch_enabled").get<bool>();
     draftPwWeaponUI=state.at("pw_weapon_ui_enabled").get<bool>();
     draftThirdPersonAttitude=state.at("third_person_attitude_enabled").get<bool>();
+    draftFirstPersonAttitude=state.at("first_person_attitude_enabled").get<bool>();
     draftPadXWeaponSwitchEnabled=state.at("pad_x_weapon_switch_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
     draftViewTargetMode=state.at("view_target_mode").get<std::string>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
@@ -877,6 +879,7 @@ void saveManagementSettings() {
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"pw_weapon_ui_enabled",draftPwWeaponUI},
         {"third_person_attitude_enabled",draftThirdPersonAttitude},
+        {"first_person_attitude_enabled",draftFirstPersonAttitude},
         {"target_gaze_pad_enabled",draftTargetGazePad},{"target_gaze_keyboard_enabled",draftTargetGazeKeyboard},{"camera_hold_enabled",draftCameraHold},
         {"camera_center_key",draftCameraCenterKey},{"camera_sensitivity",draftCameraSensitivity},
         {"ammo_percent_two",draftAmmoPercentTwo},{"ammo_percent_three",draftAmmoPercentThree},{"keyboard_keys",draftKeys},{"shortcuts",shortcutData(draftShortcuts)}});
@@ -943,6 +946,7 @@ void refreshState() {
             state.at("startup_update_check_enabled").get<bool>();
             state.at("pw_weapon_ui_enabled").get<bool>();
             state.at("third_person_attitude_enabled").get<bool>();
+            state.at("first_person_attitude_enabled").get<bool>();
             if(state.at("debug_weapons").at("protocol").get<int>()!=1)throw std::runtime_error("SP调试协议不匹配");
             state.at("debug_weapons").at("infinite").get<bool>();state.at("debug_weapons").at("fast").get<bool>();
             state.at("debug_weapons").at("available").get<bool>();
@@ -1311,6 +1315,7 @@ extern "C" __declspec(dllexport) int dualsp_view_center_marker(void* luaState) {
 extern "C" __declspec(dllexport) int dualsp_central_weapon_display_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_pw_weapon_ui_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_attitude_indicator_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_attitude_views_supported(void*) {return 0;}
 // 第 5 版参数握手：避免新控制器误装仍可关闭中央提示的旧界面。
 extern "C" __declspec(dllexport) int dualsp_management_options_supported(void*) {return 0;}
 // 调试换装保留独立能力标记；Lua 要求此扩展存在。

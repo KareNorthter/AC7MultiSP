@@ -2111,14 +2111,15 @@ extern "C" __declspec(dllexport) int dualsp_refresh_weapon_icons(void* luaState)
     }
 }
 
-// 姿态控制返回成功、可见、变化后的俯仰/滚转短文本及错误；图形在原生帧更新。
+// 姿态v2返回成功、可见、变化后的俯仰/滚转数字、错误和两项警示色标志；图形在原生帧更新。
 extern "C" __declspec(dllexport) int dualsp_attitude_indicator_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v1(void* luaState) {
+extern "C" __declspec(dllexport) int dualsp_attitude_views_supported(void*) {return 0;}
+extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v2(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     Addr player{};
     try {
         static const dualsp::LuaApi bound;api=&bound;
-        require(api->top(luaState)==8,"Attitude: expected eight control parameters");
+        require(api->top(luaState)==10,"Attitude: expected ten control parameters");
         player=static_cast<Addr>(api->readInteger(luaState,1));
         if(!player)attitudeIndicator.stop();
         else {
@@ -2126,12 +2127,16 @@ extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v1(void* luaState
             const auto hud=static_cast<Addr>(api->readInteger(luaState,2));
             const auto wings=static_cast<Addr>(api->readInteger(luaState,3));
             const auto cursor=static_cast<Addr>(api->readInteger(luaState,4));
+            const auto maskValue=api->readInteger(luaState,9);
+            require(maskValue==3||maskValue==4||maskValue==7,"Attitude: invalid view mask");
+            const auto mask=static_cast<unsigned>(maskValue);
+            const auto holder=static_cast<Addr>(api->readInteger(luaState,10));
             if(!attitudeIndicator.error.empty()&&attitudeIndicator.failureOwner.address==player)
                 require(!continuousAlive(attitudeIndicator.failureOwner),attitudeIndicator.error.c_str());
-            if(!attitudeIndicator.current(player,hud,wings,cursor))
+            if(!attitudeIndicator.current(player,hud,wings,cursor,mask,holder))
                 attitudeIndicator.bind(player,hud,wings,cursor,static_cast<Addr>(api->readInteger(luaState,5)),
                     static_cast<Addr>(api->readInteger(luaState,6)),static_cast<Addr>(api->readInteger(luaState,7)),
-                    static_cast<float>(api->readNumber(luaState,8)));
+                    static_cast<float>(api->readNumber(luaState,8)),mask,holder);
             require(GetCurrentThreadId()==attitudeIndicator.thread,"Attitude: control thread changed");
             if(attitudeIndicator.sampled&&GetTickCount64()-attitudeIndicator.sampledAt>150) {
                 attitudeIndicator.show(false);attitudeIndicator.sampled=false;
@@ -2146,20 +2151,23 @@ extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v1(void* luaState
         const int bank=static_cast<int>(std::lround(attitudeIndicator.bank));
         int length=0;
         if(available&&pitch!=attitudeIndicator.shownPitch) {
-            length=std::snprintf(text,sizeof(text),"P %+d\xc2\xb0",pitch);attitudeIndicator.shownPitch=pitch;
+            length=std::snprintf(text,sizeof(text),"%+d\xc2\xb0",pitch);attitudeIndicator.shownPitch=pitch;
         }
         api->string(luaState,text,static_cast<size_t>(std::max(0,length)));length=0;
         if(available&&bank!=attitudeIndicator.shownBank) {
-            length=std::snprintf(text,sizeof(text),"B %+d\xc2\xb0",bank);attitudeIndicator.shownBank=bank;
+            length=std::snprintf(text,sizeof(text),"%+d\xc2\xb0",bank);attitudeIndicator.shownBank=bank;
         }
-        api->string(luaState,text,static_cast<size_t>(std::max(0,length)));api->string(luaState,"",0);return 5;
+        api->string(luaState,text,static_cast<size_t>(std::max(0,length)));api->string(luaState,"",0);
+        // 以实际显示的整数判色，避免+0°或90°看起来已越过警示边界。
+        api->boolean(luaState,pitch<0);api->boolean(luaState,std::abs(bank)>90);return 7;
     }catch(const std::exception& exception) {
         attitudeIndicator.enabled.store(false,std::memory_order_release);
         if(player && attitudeIndicator.plane.address==player) {
             attitudeIndicator.failureOwner=attitudeIndicator.plane;attitudeIndicator.error=exception.what();
         }
         if(api) {api->boolean(luaState,false);api->boolean(luaState,false);api->string(luaState,"",0);api->string(luaState,"",0);
-            const std::string message=exception.what();api->string(luaState,message.data(),message.size());return 5;}
+            const std::string message=exception.what();api->string(luaState,message.data(),message.size());
+            api->boolean(luaState,false);api->boolean(luaState,false);return 7;}
         nativeLog(std::string("ATTITUDE_LUA_API_ERROR ")+exception.what());return 0;
     }
 }
