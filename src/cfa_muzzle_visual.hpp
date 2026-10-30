@@ -60,7 +60,7 @@ struct CfaChildrenMetadata {
     MountIdentity componentClass;
     MountAnimationReflection::Field children;
 } cfaChildrenMetadata;
-std::map<Addr,std::pair<MountIdentity,bool>> cfaMuzzleTemplates;
+std::map<std::pair<Addr,bool>,std::pair<MountIdentity,bool>> cfaMuzzleTemplates;
 void mountCfaMuzzleFieldCurrent(const MountAnimationReflection::Field& field,const MountIdentityBatch& identities) {
     require(identities.alive(field.identity),"CFA炮口：缓存字段身份失效");
     require(identities.read<int>(field.identity.address+0x44)==field.offset && identities.read<int>(field.identity.address+0x34)==field.size,
@@ -126,14 +126,16 @@ const CfaMuzzleMetadata& mountCfaMuzzleFields(Addr object,MountAnimationReflecti
     }
     return cached;
 }
-bool mountCfaMuzzleTemplate(Addr particle) {
+bool mountCfaMuzzleTemplate(Addr particle,bool mgp=false) {
     if(!particle)return false;
-    auto found=cfaMuzzleTemplates.find(particle);
+    const auto key=std::make_pair(particle,mgp);
+    auto found=cfaMuzzleTemplates.find(key);
     if(found!=cfaMuzzleTemplates.end() && mountAlive(found->second.first))return found->second.second;
     const auto identity=mountIdentity(particle);
-    const bool matches=mountClassIs(particle,"ParticleSystem","/Script/Engine") && mountName(particle)=="FX_EML_Muzzleflash02";
+    const char* expected=mgp?"FX_AutoCannon_Muzzleflash02":"FX_EML_Muzzleflash02";
+    const bool matches=mountClassIs(particle,"ParticleSystem","/Script/Engine") && mountName(particle)==expected;
     if(cfaMuzzleTemplates.size()>=32)cfaMuzzleTemplates.clear(); // 只丢资格缓存，不涉及对象归还。
-    cfaMuzzleTemplates[particle]={identity,matches};return matches;
+    cfaMuzzleTemplates[key]={identity,matches};return matches;
 }
 // 复用setup本来就会执行的EML初始化，只预热元数据；不取得显隐所有权、不激活或发射。
 void mountCfaMuzzlePrewarm(Addr plane,uint64_t request) noexcept {
@@ -177,8 +179,19 @@ void mountCfaMuzzlePrewarm(Addr plane,uint64_t request) noexcept {
     }catch(...) { } // 可选预热失败不改变既有武器事务，也不反复重试。
 }
 bool mountCfaMuzzleScope() {
-    return fixedMountEnabled && fixedMount.bound && !fixedMountFailed && fixedMount.light &&
-        fixedMount.aircraft==MountAircraft::Fa44 && (fixedMount.kindsMask&3u)==3u;
+    if(!fixedMountEnabled || !fixedMount.bound || fixedMountFailed)return false;
+    if(fixedMount.aircraft==MountAircraft::Fa44)return fixedMount.light && (fixedMount.kindsMask&3u)==3u;
+    return fixedMount.aircraft==MountAircraft::M21b && (fixedMount.kindsMask==3 || fixedMount.kindsMask==5);
+}
+MountIdentity mountMuzzleRack() {
+    if(fixedMount.aircraft==MountAircraft::Fa44)return fixedMount.light->racks[1].component;
+    for(const auto& visual:fixedMount.visuals)if(visual.pool==0 && visual.index==-1)return visual.identity;
+    throw std::runtime_error("MGP炮口：缺少原生SWP1挂架");
+}
+const char* mountMuzzleSocket() {return fixedMount.aircraft==MountAircraft::M21b?"sp12":"sp21";}
+MountAnimationReflection& mountMuzzleReflection() {
+    if(fixedMount.aircraft==MountAircraft::Fa44)return fixedMount.light->reflection;
+    static MountAnimationReflection api;api.bindSdk();return api;
 }
 bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item,const MountIdentityBatch& identities) {
     return identities.alive(item.component) && identities.alive(item.plane) && identities.alive(item.rack) && identities.alive(item.particle) &&
@@ -192,7 +205,7 @@ bool mountCfaMuzzleAttached(const CfaMuzzleVisual& item) {
 }
 bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item,const MountIdentityBatch& identities) {
     return mountSameIdentity(item.plane,fixedMount.plane) &&
-        mountSameIdentity(item.rack,fixedMount.light->racks[1].component) && mountCfaMuzzleAttached(item,identities);
+        mountSameIdentity(item.rack,mountMuzzleRack()) && mountCfaMuzzleAttached(item,identities);
 }
 bool mountCfaMuzzleCurrent(const CfaMuzzleVisual& item) {
     const MountIdentityBatch identities;return mountCfaMuzzleCurrent(item,identities);
@@ -214,26 +227,26 @@ CfaMuzzleVisual* mountCfaMuzzleFind(Addr object) {
         // 旧归属失配后同次重新识别，且不把失效账本当成已发现目标。
         cfaMuzzleDiscovery.ready=false;cfaMuzzleVisuals.erase(found);
     }
-    const auto& rack=fixedMount.light->racks[1].component;
+    const auto& rack=mountMuzzleRack();
     {
         const NativeReadBatch memory;
         if(memory.read<Addr>(object+0x100)!=rack.address || memory.read<unsigned>(object+0x10c)!=0 ||
-           mountNameIndex(memory.read<unsigned>(object+0x108),memory)!="sp21")return nullptr;
+           mountNameIndex(memory.read<unsigned>(object+0x108),memory)!=mountMuzzleSocket())return nullptr;
     } // 后续解析元数据及显隐调用不共享这份批次。
     // 非目标模板先快速退出；Outer和反射字段不再随每个持续特效请求从头扫描。
     if((!mountAlive(cfaMuzzleMetadata.componentClass) || read<Addr>(object+0x10)!=cfaMuzzleMetadata.componentClass.address) &&
        !mountClassIs(object,"ParticleSystemComponent","/Script/Engine"))return nullptr;
-    const auto& fields=mountCfaMuzzleFields(object,fixedMount.light->reflection);
+    const auto& fields=mountCfaMuzzleFields(object,mountMuzzleReflection());
     const size_t offset=fields.particle.offset;
     const Addr particle=read<Addr>(object+offset);
-    if(!mountCfaMuzzleTemplate(particle))return nullptr;
+    if(!mountCfaMuzzleTemplate(particle,fixedMount.aircraft==MountAircraft::M21b))return nullptr;
     require(mountAlive(fixedMount.plane) && mountAlive(rack) && mountOuterContains(object,fixedMount.plane.address),
         "CFA炮口：粒子不属于当前玩家机体");
     const auto inserted=cfaMuzzleVisuals.emplace(object,CfaMuzzleVisual{mountIdentity(object),fixedMount.plane,rack,mountIdentity(particle),offset,
         read<unsigned>(object+0x108),
         (read<unsigned char>(object+0x1bc)&0x10)!=0});
     cfaMuzzleDiscovery.ready=false;
-    nativeLog("CFA_LEFT_EML_MUZZLE_SUPPRESSED sp21 FX_EML_Muzzleflash02");
+    nativeLog(fixedMount.aircraft==MountAircraft::M21b?"M21B_RIGHT_MGP_MUZZLE_SUPPRESSED sp12":"CFA_LEFT_EML_MUZZLE_SUPPRESSED sp21 FX_EML_Muzzleflash02");
     return &inserted.first->second;
 }
 bool mountCfaMuzzleFilter(void* object,bool requested,unsigned char propagation,bool hidden) {
@@ -271,7 +284,7 @@ void mountCfaMuzzlePrune() {
 bool mountCfaMuzzleCollect(const CfaMuzzleDiscovery& snapshot,std::array<Addr,256>& visible,int& visibleCount) {
     visibleCount=0;
     if(!snapshot.ready || !mountSameIdentity(snapshot.plane,fixedMount.plane) ||
-       !mountSameIdentity(snapshot.rack,fixedMount.light->racks[1].component))return false;
+       !mountSameIdentity(snapshot.rack,mountMuzzleRack()))return false;
     const MountIdentityBatch identities;
     if(!identities.alive(snapshot.plane) || !identities.alive(snapshot.rack) || !identities.alive(snapshot.rackClass) ||
        identities.read<Addr>(snapshot.rack.address+0x10)!=snapshot.rackClass.address)return false;
@@ -308,12 +321,12 @@ bool mountCfaMuzzleCollect(const CfaMuzzleDiscovery& snapshot,std::array<Addr,25
 // 绑定/重建或快照失配后才重新分类；所有临时读取批次在反射、分配和引擎调用前结束。
 CfaMuzzleDiscovery mountCfaMuzzleDiscover() {
     CfaMuzzleDiscovery next;next.plane=fixedMount.plane;
-    const auto& rack=fixedMount.light->racks[1].component;
+    const auto& rack=mountMuzzleRack();
     require(mountAlive(rack),"CFA炮口：右炮原生挂架失效");
     const auto cls=mountIdentity(read<Addr>(rack.address+0x10));
     auto& cached=cfaChildrenMetadata;
     if(!mountMeshIdentityEqual(cls,cached.componentClass) || !mountAlive(cached.componentClass)) {
-        auto& api=fixedMount.light->reflection;
+        auto& api=mountMuzzleReflection();
         cached={cls,api.field(cls.address,"AttachChildren","ArrayProperty",16,api.typeSize(cls.address),true)};
     }
     next.rack=rack;next.rackClass=cls;next.childrenField=cached.children;
@@ -336,12 +349,12 @@ CfaMuzzleDiscovery mountCfaMuzzleDiscover() {
             child.socketIndex=identities.read<unsigned>(object+0x108);child.socketNumber=identities.read<unsigned>(object+0x10c);
         }
         bool expectedManaged=false;
-        if(child.parent==rack.address && !child.socketNumber && mountNameIndex(child.socketIndex)=="sp21" &&
+        if(child.parent==rack.address && !child.socketNumber && mountNameIndex(child.socketIndex)==mountMuzzleSocket() &&
            mountClassIs(object,"ParticleSystemComponent","/Script/Engine")) {
-            child.particleField=mountCfaMuzzleFields(object,fixedMount.light->reflection).particle;
+            child.particleField=mountCfaMuzzleFields(object,mountMuzzleReflection()).particle;
             const Addr particle=read<Addr>(object+child.particleField.offset);
             if(particle)child.particle=mountIdentity(particle);
-            expectedManaged=mountCfaMuzzleTemplate(particle);
+            expectedManaged=mountCfaMuzzleTemplate(particle,fixedMount.aircraft==MountAircraft::M21b);
         }
         child.managed=mountCfaMuzzleFind(object)!=nullptr;
         // 分类依据先入快照，再核对账本结果，不能把识别失败后的新Template记成稳定的非目标。
@@ -366,6 +379,7 @@ void mountCfaMuzzleSync(bool forceDiscovery) {
     }
 }
 bool mountCfaMuzzleRelease() {
+    cfaMuzzleTemplates.clear(); // 机型切换后重新核对不同粒子模板。
     cfaMuzzleDiscovery={}; // 资格缓存可丢弃；未归还的原生显隐请求仍留在下面的独立账本。
     std::map<Addr,CfaMuzzleVisual> pending;
     for(const auto& entry:cfaMuzzleVisuals)try {

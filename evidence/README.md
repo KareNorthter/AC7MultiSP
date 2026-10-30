@@ -15,6 +15,7 @@
 | 2.26.2 alpha2自测与开发故障EXE | [源码接收](2.26.2-alpha2-source-integration.json)／[两包交付核对](2.26.2-alpha2-exe-delivery.json)／[首次环境状态](2.26.2-alpha2-test-environment.json)／[快照完成与简化入口](2.26.2-alpha2-test-panel-ready.json) | 四机外挂、检查/隔离/恢复、常规包和默认关闭的开发注入；90资源、双语正文及签名已核对。游戏退出后已完成alpha1快照，入口简化为面板快速五轮；实机用例未执行 |
 | alpha2快速验收与T6漏触发 | [作者反馈及定位](2.26.2-alpha2-quick-feedback-t6.json)／[修正版开发包](2.26.2-alpha2-t6-fix-delivery.json) | 作者确认快速1—3轮通过；第4轮T6已启用但未触发，事件注入漏覆盖轮询接入。已修正并独立出包，面板支持保留结果重测第4轮；待补测4—5轮，不追认严重保护通过 |
 | alpha2作者验收及Super Kai名称核查 | [验收与来源](2.26.2-alpha2-user-validation.json) | 修正版4—5轮、四机多SP模型、三种炮类HUD亮度通过；视角待测。Super Kai官方名称IEWS，现行显示修正遗漏，效果不据名称判断 |
+| MiG-21右侧MGP炮口火光 | [20261030只读现场](m21b-mgp-muzzle-20261030.json) | SWP1的sp11/sp12均挂同一机炮粒子；右侧限定显隐源码候选，未编译或实机验证 |
 | MiG-21单MGP双发候选 | [现场、原生路径与两份资源](mgp-single-pod-20261028.json)、[前次画面观察](mgp-visual-observation-20261028.json) | 真实受控玩家、双空网格发射口、成对子弹；保Gunplay当时伤害/弹道与原生双路扣弹，仅合并取位；未编译或验证新单吊舱 |
 | 本体/DLC外挂机体候选 | [四机来源与13份资源](remaining-external-mounts-20261028.json)、[实际编码cooked引用](remaining-external-mount-audit-20261028.json) | 原13资源阶段：A-10C/Super Kai、F-104C双SP及MiG-21bis的RKT＋SAAM；当时MGP退让，随后增量见上行单MGP记录；两机三SP继续原生退让 |
 

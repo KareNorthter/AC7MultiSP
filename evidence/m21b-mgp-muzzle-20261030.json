@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "user_report": "单MGP时两侧均有炮口火光",
+  "plane_class": "AcePlayerPawn_m21b_s05_C",
+  "rack": "SWP1",
+  "particle_components": [
+    {
+      "socket": "sp11",
+      "class_name": "ParticleSystemComponent",
+      "template": "FX_AutoCannon_Muzzleflash02"
+    },
+    {
+      "socket": "sp12",
+      "class_name": "ParticleSystemComponent",
+      "template": "FX_AutoCannon_Muzzleflash02"
+    }
+  ],
+  "samples": 204,
+  "actor_count": 7,
+  "stop_reason": "对象身份失效",
+  "source_path": "C:\\Users\\83717\\.codex\\worktrees\\base-dlc-multi-sp\\AC7_MultiSP\\Temp\\tasks\\20261028-base-dlc-multi-sp\\mgp-muzzle-20261030\\capture.json",
+  "source_sha256": "12ced5913b67370e80ee5c268d0c02d045084f20a7b6cc2078a4ba73a80db52c",
+  "process_write": false,
+  "input_injected": false,
+  "compiled": false,
+  "tests_run": false,
+  "installed": false,
+  "fix_game_verified": false
+}

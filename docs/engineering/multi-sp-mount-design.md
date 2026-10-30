@@ -124,6 +124,8 @@ Super Kai的`plwp_ecmp_j0`实际继承`plwp_esm_x0_C`；不新增ECM专用控制
 
 MGP＋RKT及MGP＋SAAM分别使用左MGP/右完整火箭巢、左MGP/右SAAM；额外两份挂架分区和cooked引用沿用完整碰撞保持守卫。三SP仍原生退让，任务与机库/补给同步。来源、现场摘要、资源与精确覆盖见[单MGP双发记录](../../evidence/mgp-single-pod-20261028.json)。前一次只有画面且地址过期的[观察记录](../../evidence/mgp-visual-observation-20261028.json)保留原阶段含义，不能替代这次成功采集。
 
+作者反馈单MGP开火时左右仍有炮口火光。2026-10-30只读现场确认SWP1下两个ParticleSystemComponent分别附着`sp11`/`sp12`，模板均为`FX_AutoCannon_Muzzleflash02`；采样后段短寿命对象失效而停止，挂接关系已记录。源码候选复用CFA显隐账本、弱身份和归还机制，仅在MiG-21的MGP＋RKT或MGP＋SAAM模型接管时抑制`sp12`对应模板，保左侧`sp11`、原生两发和Gunplay数值；单MGP、三SP、模型关闭及其他模板不纳入抑制。重建和MGP取位时维护，关闭/换机归还原生显隐；实际显示、两发伤害与性能仍待验证。现场依据见[炮口采样](../../evidence/m21b-mgp-muzzle-20261030.json)。
+
 当前仅完成源码和离线挂架候选，未编译、安装或在游戏里验证单吊舱。后续须在同一Gunplay配置下比较原双吊舱与新单吊舱的真实子弹数、库存下降、目标伤害、弹道和炮口特效；尤其确认两份同点子弹不会被命中去重，且另一侧没有残留炮口闪光。未取得这些结果前，不宣称实际DPS已保持。
 
 [源记录](../../evidence/remaining-external-mounts-20261028.json)记录原版资源摘要、四机精确位置、13份分区副本和完整BodySetup/NavCollision身份；[cooked引用核对](../../evidence/remaining-external-mount-audit-20261028.json)从实际编码副本解码，逐项核包引用、Socket及全部LOD。新副本只改索引，不改材质、父链、Socket、非索引字节或碰撞子对象，沿用现有碰撞保真运行守卫。原77资源和原28架布局不变；先追加13资源，再由单MGP精确增量追加2资源，完整输入为92资源/184成员。旧90资源候选输入保留原样。来源脚本为`prepare_remaining_external_mounts.py`，运行表通过`remaining_external_mount_data.py`接入同源生成器。

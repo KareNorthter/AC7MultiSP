@@ -627,6 +627,7 @@ bool mountCopyTransform(void* output,int slot) {
         std::copy_n(fixedMount.order.begin(),6,order.begin());
         mountF22UpdateXsdbPositions(fixedMount,read<int>(group+0x14),read<int>(group+0x10),order);
     }
+    if(fixedMount.aircraft==MountAircraft::M21b && kind==0)mountCfaMuzzleSync(); // 单吊舱开火时维护右侧火光，保留两发。
     const int physical=mountPhysical(kind,ordinal); // 与显隐聚合共用映射。
     if(mountLight(fixedMount.aircraft))return mountLightCopyTransform(output,fixedMount,physical);
     if(mountAnimated(fixedMount.aircraft))return mountAnimationCopyTransform(output,fixedMount,physical);
