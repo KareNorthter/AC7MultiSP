@@ -4,6 +4,8 @@
 
 当前产品机制见[架构](../engineering/architecture.md)和[挂载设计](../engineering/multi-sp-mount-design.md)，可复用教训见[工程经验](../engineering/engineering-lessons.md)。历史原文见[归档索引](../archive/README.md)及`archive/20261023/pre-governance-main`标签。本机来源位置只提供恢复线索，实际续研前仍须核对文件与摘要。
 
+Arsenal Bird主武器UAV与三SP切换源码候选、锁定音待查和只读现场见[兼容性续研](mod-aircraft-compatibility.md#arsenal-bird主武器uav与切换2026-10-30)；候选未编译或实机验证。
+
 Mod机体兼容性已按用户指定从main新开`codex/research-mod-aircraft-compat`续接，旧未提交现场继续封存。最新7e255e1及前阶段名称/IRCM修订已进入2.25.3 alpha1完整构建；[交付与待测清单](../../evidence/2.25.3-alpha1-exe-delivery.json)明确尚未安装或游戏验收。用户随后确认XFA-33 B、Su-57 TGM公共舱互切修订未生效，已按指令暂缓；其他已测项无问题，范围见[反馈记录](../../evidence/2.25.3-alpha1-feedback-alpha2-source.json)。当前分组安装与待办只在[兼容性续研正文](mod-aircraft-compatibility.md)维护；用户已确认S-44/Arkbird此前问题解决，不再当作未修复。
 
 游戏启动后的兵装资料不完整提醒正在独立分支开发源码，尚未编译或验证；RH-172补给与ZSD/Gunplay组合的用户反馈也已记录，继续条件和边界见[兼容性续研正文](mod-aircraft-compatibility.md#启动时兵装资料提醒源码开发中)。

@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| Arsenal Bird持续兵装兼容，源码待接收/验证 | 本聊天；codex/fix-arsenal-bird；基线main/0416d5f | C:/Users/83717/.codex/worktrees/fix-arsenal-bird/AC7_MultiSP | 主武器UAV按真实类与原生契约识别并保留，上限限定提高到128；锁定音失配保留保护并增加计数诊断，根因待查。用户操作游戏、只读采集，源码静态核对；未编译、测试、安装或操作游戏。 |
 | beta6三线程集成交付，已出包待验证 | 本集成聊天；基线main/f397d51 | codex/integrate-beta6；C:/Users/83717/.codex/worktrees/integrate-beta6/AC7_MultiSP | 统一接收TGM静态模型、预览诊断、MiG-21火光及启动汇总显示；按作者要求不改更新日志；完整构建与签名封装完成，待作者实机验证。来源见[整合回执](../../evidence/2.26.2-beta6-source-integration.json)。 |
 | 启动资料异常提示修复，源码待接收 | 本聊天；codex/fix-startup-issue-notice；基线main/f397d51 | C:/Users/83717/.codex/worktrees/startup-issue-notice/AC7_MultiSP | 修复启动汇总第二行被错误消息截断的问题；保留已有中英文词条、其他错误的截断及更新通知。仅静态差异核对，未编译、测试、安装或操作游戏 |
 | F-22队列集成交付，已出包待验证 | 本集成聊天；基线main/98d7e6a；来源研究树未提交差异 | C:/Users/83717/.codex/worktrees/integrate-bay-beta5/AC7_MultiSP | 接收双挂六点和XSDB四点队列候选，保留34机、92资源；按作者要求不修改更新日志；首次构建暴露身份比较函数声明顺序问题，已补声明并完成重新构建，待作者实机验证。 |

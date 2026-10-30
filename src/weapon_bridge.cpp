@@ -430,8 +430,11 @@ void finishSeekerAudio(Addr plane,Addr activator) {
     require(std::memcmp(reinterpret_cast<void*>(base+0x4c98a0),stop,sizeof(stop))==0,"原生锁定音收尾入口不匹配");
     using Stop=void(*)(void*); // 原生内部按每个槽的播放标记发送对应停止事件。
     reinterpret_cast<Stop>(base+0x4c98a0)(reinterpret_cast<void*>(seeker));
-    for(const int count:read<std::array<int,4>>(seeker+0x4f0))
-        require(count==0,"旧锁定音引用已失配，请重新开始任务；停止重建兵装");
+    const auto after=read<std::array<int,4>>(seeker+0x4f0);
+    if(std::any_of(after.begin(),after.end(),[](int count){return count!=0;})) {
+        nativeLog(Json{{"event","SEEKER_AUDIO_MISMATCH"},{"before",before},{"after",after}}.dump());
+        require(false,"旧锁定音引用已失配，请重新开始任务；停止重建兵装");
+    }
     if(std::any_of(before.begin(),before.end(),[](int count){return count!=0;}))
         nativeLog(Json{{"event","SEEKER_AUDIO_RELEASED"},{"before",before}}.dump());
 }

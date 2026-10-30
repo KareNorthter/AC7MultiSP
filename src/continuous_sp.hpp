@@ -502,7 +502,9 @@ void continuousDrain(Addr plane,Addr activator);
 
 // RootSet 仅覆盖同步重建的引用空窗。正常帧仍由原生 UPROPERTY 数组保有对象。
 // FUObjectItem::Flags 是 UE4.18 的内部标志；绝不写 UObject::ObjectFlags。
-std::array<ContinuousIdentity,64> continuousRootLeases; // 释放失败后保留责任，不能跟随栈对象一起丢失。
+constexpr size_t continuousMainUavLimit=128; // 主武器可能同时发出多架UAV，仍保持有界。
+constexpr int continuousMainSource=-2; // -1保留给不属于武器槽的电子战效果。
+std::array<ContinuousIdentity,continuousMainUavLimit> continuousRootLeases; // 释放失败后保留责任，不能跟随栈对象一起丢失。
 struct ContinuousRoot {
     ContinuousIdentity id;bool owned{};size_t lease=continuousRootLeases.size();
     explicit ContinuousRoot(ContinuousIdentity identity):id(identity) {
@@ -569,15 +571,27 @@ struct ContinuousRebuild {
             e.level=continuousIdentity(read<Addr>(plane+0x20));e.weaponClass=read<Addr>(w+0x10);e.kind=support.kind;e.source=-1;
             // 同一真实类可被多个配置槽复用，先记录当前槽；电子战附加效果也可不属于选中的三SP。
             if(session.plane==plane && session.activator==activator) {
+                const bool mainUav=e.kind==ContinuousKind::UAV && session.main.valid &&
+                    session.main.weaponClass==e.weaponClass && read<Addr>(groupOf(activator,false))==e.weaponClass;
+                bool specialMatch=false;
+                for(int slot=0;slot<session.count;++slot)
+                    if(session.special[slot].valid && session.special[slot].weaponClass==e.weaponClass)specialMatch=true;
+                // 同类同时用于主武器和SP时，仅凭类无法确定发射来源，不能猜测。
+                require(!(mainUav && specialMatch),"持续兵装：主武器与SP共用UAV类，无法确定发射来源");
                 if(session.active>=0 && session.active<session.count && session.special[session.active].valid &&
                     session.special[session.active].weaponClass==e.weaponClass)e.source=session.active;
                 else for(int slot=0;slot<session.count;++slot)if(session.special[slot].valid && session.special[slot].weaponClass==e.weaponClass)e.source=slot;
+                if(mainUav)e.source=continuousMainSource;
             }
-            require(e.source>=0 || e.kind==ContinuousKind::Electronic,"持续兵装：找不到发射源逻辑槽");
+            require(e.source>=0 || e.source==continuousMainSource || e.kind==ContinuousKind::Electronic,"持续兵装：找不到发射源逻辑槽");
             e.age=read<float>(w+0x610);e.retirement=read<uint64_t>(w+0x370);e.released=read<unsigned char>(w+0x5c0)!=0;
             require(std::isfinite(e.age) && e.age>=0,"持续兵装：对象时间无效");continuousAttachment(e);additions.push_back(std::move(e));
         }
-        require(continuousEffects.size()+additions.size()<=64,"持续兵装：待退场对象过多");
+        const auto mainUav=[](const ContinuousEffect& e){return e.source==continuousMainSource && e.kind==ContinuousKind::UAV;};
+        const bool hasMainUav=std::any_of(additions.begin(),additions.end(),mainUav) ||
+            std::any_of(continuousEffects.begin(),continuousEffects.end(),mainUav);
+        const size_t limit=hasMainUav?continuousMainUavLimit:64;
+        require(continuousEffects.size()+additions.size()<=limit,"持续兵装：待退场对象过多");
         const bool retained=std::any_of(continuousEffects.begin(),continuousEffects.end(),[this](const auto& e){
             return e.plane.address==plane && e.activator.address==activator;});
         if(additions.empty() && !retained){plane=activator=0;return;}
