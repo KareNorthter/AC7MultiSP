@@ -523,7 +523,9 @@ void* cameraHoldOutput(void* component,void* output,float delta,void* context,co
             cameraHold.gazeTransfer=false;
         }
     }catch(const std::exception& error){cameraHoldFailure(error.what());}
-    return originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
+    auto* result=originalCameraHoldOutput(component,output,delta,context,a5,a6,origin,a8,a9,a10,a11,a12,a13);
+    attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 原生相机完成本帧后只读采样；默认关闭时立即旁路。
+    return result;
 }
 void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* context,int mode,const void* a6,const void* a7) {
     CameraHoldNeutralInput neutral;
@@ -564,7 +566,9 @@ void* cameraHoldCockpitOutput(void* component,void* output,float delta,void* con
             neutral.begin(address+0x38c);base=&look;
         }
     }catch(const std::exception& error){neutral.restore();base=a7;cameraHoldFailure(error.what());}
-    return originalCameraHoldCockpitOutput(component,output,delta,context,mode,a6,base);
+    auto* result=originalCameraHoldCockpitOutput(component,output,delta,context,mode,a6,base);
+    neutral.restore();attitudeCameraFrame(reinterpret_cast<Addr>(component)); // 切入座舱的同帧隐藏自有指示器。
+    return result;
 }
 
 void installCameraHold() {

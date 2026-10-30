@@ -49,6 +49,8 @@ inline constexpr Entry entries[]={
     {"another.game.action.changed.the.63bcfe84","重开期间原生机体选择被其他流程改变","Another game action changed the selected aircraft during restart."},
     {"apply.sp.loadout.and.refill.47b451be","应用 SP 方案并补满###ApplyDebug","Apply SP loadout and refill###ApplyDebug"},
     {"applying.waiting.for.the.game.3f8f6870","正在应用，等待游戏线程确认…","Applying; waiting for the game thread..."},
+    {"attitude.indicator","第三人称姿态指示器","Third-person attitude indicator"},
+    {"attitude.indicator.help","在第三人称视角中，于速度HUD下方显示俯仰角与滚转角。默认关闭。","Shows pitch and roll below the speed HUD in third-person view. Disabled by default."},
     {"author.and.license.5de4e76d","作者与授权","Author and license"},
     {"author.coffee.f1fa8278","请我喝咖啡","Buy me a coffee"},
     {"author.homepage.44eb1411","访问我的主页","Visit my homepage"},
