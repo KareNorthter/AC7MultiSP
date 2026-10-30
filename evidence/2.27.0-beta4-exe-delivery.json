@@ -1,0 +1,31 @@
+{
+  "version": "2.27.0 beta4",
+  "channel": "candidate",
+  "source_commit": "4dc439f9b9685a19a0207253b0ea9758486a05d1",
+  "sources": {
+    "camera": "988e8050a65e374d43f075e5fbf31c214afba874",
+    "hud": "ce6f221e857c3bfb71360a85da5a6b3c4626ec78",
+    "attitude": "1ef1003dfd0f4ae2f00989b1b9220651c292e325",
+    "double_trigger": "b65e2c9f53fa7884d3495a3806422b655ed6644d"
+  },
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta4/AC7MultiSP_Installer_2.27.0_beta4.exe",
+  "sha256": "058999c74f745daa6df645447f3d51bac89fe8d1280caf7374144cfa5d56e849",
+  "size": 74764288,
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261031-2.27.0-beta4-build/delivery-receipt.json",
+  "checks": {
+    "full_build": true,
+    "author_signatures_verified": true,
+    "copied_exe_matches": true,
+    "packaged_version": "2.27.0 beta4",
+    "changelog_unchanged": true,
+    "changelog_members": [
+      "ReadMe_zhCN请读我/更新日志.txt",
+      "ue4ss/Mods/DualSP/docs/更新日志.txt",
+      "ReadMe_EN/Changelog.txt",
+      "ue4ss/Mods/DualSP/docs/Changelog.txt"
+    ],
+    "attitude_v2_exports_present": true,
+    "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。视角、HUD、原生姿态尺恢复和Double Trigger单人快速出击待作者实机验收。"
+}
