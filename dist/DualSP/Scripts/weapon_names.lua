@@ -1,10 +1,13 @@
 -- 选装、HUD和管理页面共用显示简称与名称亮度；内部代号保留用于资源键和兵装身份。
+local modulePath=debug.getinfo(1,"S").source:gsub("^@",""):gsub("\\","/")
+local Profile=dofile(assert(modulePath:match("^(.*)/[^/]+$")).."/loadout_profile.lua")
 local WeaponNames={}
 local steadyLabels={PLSL=true,MGP=true,HGP=true}
 
--- 炮类的极短装填会让名称闪烁；只豁免文字变暗，不改核心就绪状态。
-function WeaponNames.brightness(label,ready)
-    return (steadyLabels[label]or ready)and 1 or .35
+-- 炮类名称只按库存变暗，不随极短装填闪烁；合法负库存沿用无限弹药规则。
+function WeaponNames.brightness(label,ready,ammo)
+    if steadyLabels[label]then return Profile.hasAmmo(ammo)and 1 or .35 end
+    return ready and 1 or .35
 end
 
 -- 原版四机的IEWS共用ecm目录代号。只修正完整资源身份相符的原版兵装，保留Mod自定义名称。

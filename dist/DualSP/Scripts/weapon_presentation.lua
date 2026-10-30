@@ -188,9 +188,11 @@ function Presentation.new(note)
         end
         local label=names.current(profile,options,state)
         if label~=c.lastLabel then c.label:SetText(FText(label));c.lastLabel=label end
-        -- 与右下角共用核心就绪结果及炮类名称豁免；未锁目标不属于装填状态。
+        -- 与右下角使用同一逻辑槽的库存；炮类名称不随装填变暗，零库存时仍变暗。
         assert(state.ready and type(state.ready[selection])=="boolean","中央武器提示缺少当前武器就绪状态")
-        local factor=names.brightness(label,state.ready[selection]) -- PLSL/MGP/HGP名称始终保持正常亮度。
+        local ammo=state.main_ammo
+        if state.armed then ammo=state.cached_sp[state.active+1]end
+        local factor=names.brightness(label,state.ready[selection],ammo)
         if factor~=c.lastFactor then
             c.label:SetColorAndOpacity({SpecifiedColor={R=c.tint.R,G=c.tint.G,B=c.tint.B,A=c.tint.A*factor},ColorUseRule=0})
             c.label:SetShadowColorAndOpacity({R=c.shadow.R,G=c.shadow.G,B=c.shadow.B,A=c.shadow.A*factor})
