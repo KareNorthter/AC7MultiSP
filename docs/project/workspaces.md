@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 2.27.0 beta2姿态指示整合，进行中 | 本集成聊天；基线main/e6d0fc9；来源184def5 | codex/integrate-2.27.0-beta2；C:/Users/83717/.codex/worktrees/integrate-227-beta2/AC7_MultiSP | 接收默认关闭的SPEED下方姿态图，连同已合HUD/视角修订完整构建；不改更新日志，实机效果待验证。 |
 | 第三人称姿态指示器，源码候选待验证 | 本HUD优化聊天；建树main/cf49fc0（2.27.0 beta1），已同步main/e6d0fc9；codex/feat-third-person-attitude | C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP | 已接入作者批准的微型姿态图，最终位于SPEED下方，F6视角页默认关闭。原生镜头帧读取根四元数，并经已核对UMG setter更新自有图形；机制与未验证项唯一正文见[架构](../engineering/architecture.md#第三人称姿态指示器未发布候选)。范围：新增attitude_indicator.hpp、attitude_hud.lua，camera_hold.hpp帧观察接点、weapon_bridge.cpp、overlay.cpp、main.lua许可/生命周期、管理配置协议25、product.json脚本清单、同源双语词条/生成表、架构/开发正文、本机资产索引及本行。本次全部文本修改已获作者授权，无需再次逐条确认；离线原料与只读快照位于本树Temp/tasks/20261030-third-person-attitude/。已静态审阅，未编译/测试/安装，不改产品版本、不推送；不使用computer use，后续画面由作者截图提供 |
 | 视角垂直修订增量接收，已接收待验证 | 本集成聊天；基线main/fe654f6；来源a1868a0 | codex/integrate-camera-vertical；C:/Users/83717/.codex/worktrees/integrate-camera-vertical/AC7_MultiSP | 接收camera_hold.hpp及对应研究/资产说明；普通座舱原生限位、外部视角垂直连续候选。静态差异核对完成；不编译、测试、安装、操作游戏或推送，版本不变，既有EXE不含此修订。 |
 | PW HUD排版增量接收，已接收待验证 | 本集成聊天；基线main/cf49fc0；来源4d2c053 | codex/integrate-hud-tighten；C:/Users/83717/.codex/worktrees/integrate-hud-tighten/AC7_MultiSP | 仅接收两份HUD Lua及对应架构正文；主线管理协议24、手柄X开关和版本不变。静态差异核对完成，按作者要求不编译，不运行测试、安装、操作游戏或推送；既有EXE不含此微调。 |

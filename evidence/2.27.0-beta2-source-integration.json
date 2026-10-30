@@ -1,0 +1,23 @@
+{
+  "version": "2.27.0 beta2",
+  "baseline": "e6d0fc97b33728b7d82c3229414043f6beafbb66",
+  "source": "184def5b6a0940da572a25127c8a10ca0f323927",
+  "included_previous_unbuilt": [
+    "4d2c053 HUD右对齐与紧凑布局",
+    "a1868a0 普通座舱原生限制和外部视角垂直环绕候选"
+  ],
+  "changes": [
+    "SPEED下方第三人称姿态指示器，显示俯仰与滚转，默认关闭",
+    "复用原生镜头帧更新图形，数字整数变化才更新",
+    "管理协议25，姿态Lua与新核心/UI成套，旧配置缺项补false"
+  ],
+  "author_approval": "来源线程作者已批准姿态词条和下方位置，并授权本次功能文本修改。",
+  "limits": [
+    "未运行测试、安装或游戏",
+    "姿态方向、位置、帧刷新和性能，HUD微调及垂直环绕待本包实机验证"
+  ],
+  "changelog_sha256": {
+    "docs/user/更新日志.txt": "d4426c38c9a89906122d4f648a9b61385071e362915af29e458c29af79183e0d",
+    "docs/user/Changelog.txt": "68bee58f327255ed9e738f0c3da0657c830dbe42ddfda9978a77c52a54173519"
+  }
+}

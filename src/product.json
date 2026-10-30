@@ -27,5 +27,5 @@
     "mod_aircraft.lua",
     "pw_weapon_hud.lua"
   ],
-  "receipt_prefix": "2.27.0-beta1"
+  "receipt_prefix": "2.27.0-beta2"
 }

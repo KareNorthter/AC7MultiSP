@@ -147,3 +147,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [2.27.0 beta1源码整合](2.27.0-beta1-source-integration.json)：HUD及手柄开关来源、协议整合与验证边界。
 
 - [2.27.0 beta1 EXE交付](2.27.0-beta1-exe-delivery.json)：签名安装包摘要与待验证范围。
+
+- [2.27.0 beta2源码整合](2.27.0-beta2-source-integration.json)：姿态来源、同步的HUD和视角候选及验证边界。
