@@ -86,7 +86,7 @@ def package(args, signer):
     verify_build(receipt, build)
     policy = read_json(SOURCE / 'settings.json')
     version = info['version']
-    release = re.fullmatch(r'(\d+\.\d+\.\d+)(?: alpha([1-9]\d*)|( beta(?:[2-9]|[1-9][0-9]+)?))?', version)
+    release = re.fullmatch(r'(\d+\.\d+\.\d+)(?: alpha([1-9]\d*)|( beta(?:[1-9][0-9]*)?))?', version)
     if not release:
         raise ValueError('交付版本必须为三段数字，可附加测试标识 alphaN 或 betaN')
     alpha = int(release[2] or 0)

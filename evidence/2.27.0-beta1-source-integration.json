@@ -1,0 +1,26 @@
+{
+  "version": "2.27.0 beta1",
+  "baseline": "8c8f07f4dd8475affb66e73048dc0b445f63990a",
+  "sources": [
+    "abcf493",
+    "c47d4118fd892aaf0abf2ee0180d09944fdaefcf",
+    "666acb4e4cdfa33a8d4b85d1bc992f2918153d7b"
+  ],
+  "changes": [
+    "PW武器HUD默认关闭，MSL与三SP十字选择区位于GUN/FLR/DMG上方，关闭恢复原布局",
+    "PLSL/MGP/HGP有弹药时不随装填变暗，空弹半透明",
+    "手柄X循环切换开关默认开启，关闭时保留原生长按链",
+    "合并管理协议24及两个配置字段，新增Lua产品清单登记，支持显式beta1版本识别"
+  ],
+  "author_approval": "来源线程中作者批准PW中文名称及X开关和配置错误提示；功能说明明确保持原文。",
+  "limits": [
+    "未运行测试模块、安装或操作游戏",
+    "PW位置、字号、泛光和恢复，以及X长按效果待实机验证",
+    "X与原生键盘切换同时按下可能被拦截，作者在来源线程明确接受",
+    "正式2.27.0晚于同号beta1，安装器按降级规则处理"
+  ],
+  "changelog_sha256": {
+    "docs/user/更新日志.txt": "d4426c38c9a89906122d4f648a9b61385071e362915af29e458c29af79183e0d",
+    "docs/user/Changelog.txt": "68bee58f327255ed9e738f0c3da0657c830dbe42ddfda9978a77c52a54173519"
+  }
+}

@@ -220,7 +220,7 @@ def validate_manifest(value, purpose, version=None):
     if (not isinstance(value, dict) or set(value) != common | extra or type(value['schema']) is not int or
             value['schema'] != 1 or value['product'] != 'AC7MultiSP' or value['purpose'] != purpose or
             purpose not in ('content', 'bundle', 'release') or
-            not isinstance(value['version'], str) or not re.fullmatch(r'\d+\.\d+\.\d+(?: alpha[1-9]\d*| beta(?:[2-9]|[1-9][0-9]+)?)?', value['version']) or
+            not isinstance(value['version'], str) or not re.fullmatch(r'\d+\.\d+\.\d+(?: alpha[1-9]\d*| beta(?:[1-9][0-9]*)?)?', value['version']) or
             (version is not None and value['version'] != version) or value['channel'] not in ('stable', 'candidate') or
             ((' alpha' in value['version'] or ' beta' in value['version']) and value['channel'] != 'candidate') or
             not isinstance(value['release_id'], str) or not re.fullmatch(r'[0-9a-f]{32}', value['release_id']) or

@@ -8,7 +8,7 @@ namespace AC7MultiSP.Setup {
         readonly int stage, sequence;
         ReleaseVersion(Version number, int stage, int sequence) { this.number = number; this.stage = stage; this.sequence = sequence; }
         static ReleaseVersion Parse(string text) {
-            var match = Regex.Match(text ?? "", @"^([0-9]+\.[0-9]+\.[0-9]+)(?: alpha([1-9][0-9]*)|( beta([2-9]|[1-9][0-9]+)?))?$");
+            var match = Regex.Match(text ?? "", @"^([0-9]+\.[0-9]+\.[0-9]+)(?: alpha([1-9][0-9]*)|( beta([1-9][0-9]*)?))?$");
             if (!match.Success) throw new FormatException();
             var number = new Version(match.Groups[1].Value);
             int stage = match.Groups[2].Success ? 0 : match.Groups[3].Success ? 1 : 2;

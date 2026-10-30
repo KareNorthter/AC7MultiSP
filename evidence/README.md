@@ -143,3 +143,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [玩家正文英文同步](player-docs-english-sync-20261030.json)：作者中文原稿摘要、英文同步范围和交付边界。
 
 - [2.27.0源码确认](2.27.0-source-confirmation-20261030.json)：作者验收反馈、正式版本及改为仅同步GitHub的范围；[先前出包授权](2.27.0-release-authorization.json)保留当时事实。
+
+- [2.27.0 beta1源码整合](2.27.0-beta1-source-integration.json)：HUD及手柄开关来源、协议整合与验证边界。

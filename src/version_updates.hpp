@@ -54,13 +54,14 @@ inline std::array<unsigned,3> version(const std::string& text) {
     ensure(offset==text.size(),"稳定版不接受测试版本标识");return parts;
 }
 inline bool newerThanCurrent(const std::string& latest,const std::string& current=currentVersion) {
-    const bool beta=current.size()>=5 && current.substr(current.size()-5)==" beta";
-    const auto split=beta?current.size()-5:current.find(" alpha");
+    const auto betaAt=current.find(" beta"),alphaAt=current.find(" alpha");
+    const bool beta=betaAt!=std::string::npos;
+    const auto split=beta?betaAt:alphaAt;
     const auto base=split==std::string::npos?current:current.substr(0,split);
-    if(split!=std::string::npos && !beta) {
-        const auto number=current.substr(split+6);
-        ensure(!number.empty() && number.front()>='1' && number.front()<='9' &&
-            std::all_of(number.begin(),number.end(),[](char ch){return ch>='0' && ch<='9';}),"当前测试版本标识无效");
+    if(split!=std::string::npos) {
+        const auto number=current.substr(split+(beta?5:6));
+        ensure((beta && number.empty()) || (!number.empty() && number.front()>='1' && number.front()<='9' &&
+            std::all_of(number.begin(),number.end(),[](char ch){return ch>='0' && ch<='9';})),"当前测试版本标识无效");
     }
     const auto target=version(latest),local=version(base);
     return target>local || (split!=std::string::npos && target==local); // 同号正式版晚于测试版。
