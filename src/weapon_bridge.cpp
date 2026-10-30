@@ -299,6 +299,12 @@ bool emptySwitchRequested=false; // 当前挂载耗尽，原生无法产生 arme
 bool switchInputAllowed=false; // 使用既有任务、暂停和补给状态，在不可操作时清空请求。
 bool cycleSwitchRequested=false; // 多SP循环先交给逻辑选择，不让原生MSL中间态进入HUD。
 bool controlledWeaponSwitch=false; // 模组自己的完整飞机切换不再被当成用户循环。
+bool padXWeaponSwitchEnabled=true;
+using WeaponPadReader=DWORD(WINAPI*)(DWORD,XINPUT_STATE*);
+WeaponPadReader weaponPadReader() {
+    const auto module=GetModuleHandleW(L"xinput1_3.dll");
+    return module?reinterpret_cast<WeaponPadReader>(GetProcAddress(module,"XInputGetState")):nullptr;
+}
 struct ControlledWeaponSwitch {
     bool previous{controlledWeaponSwitch};
     ControlledWeaponSwitch(){controlledWeaponSwitch=true;}
@@ -341,6 +347,14 @@ bool observeEmptyWeaponSwitch(void* object) {
     const auto activator=reinterpret_cast<Addr>(object); // 仅监听已绑定的当前玩家。
     const auto caller=reinterpret_cast<Addr>(__builtin_return_address(0));
     const auto inputCaller=reinterpret_cast<Addr>(GetModuleHandleW(nullptr))+0x823999;
+    if(runtimeEnabled && switchInputAllowed && !controlledWeaponSwitch && caller==inputCaller &&
+        session.gameThread && GetCurrentThreadId()==session.gameThread &&
+        activator==selectionAudio.activator && session.activator==activator && session.plane==selectionAudio.plane &&
+        !padXWeaponSwitchEnabled) {
+        // 只拦截类别切换；真实按下和松开仍交给原生，以保留副油箱及机体长按效果。
+        XINPUT_STATE pad{};const auto reader=weaponPadReader();
+        if(reader && reader(0,&pad)==ERROR_SUCCESS && (pad.Gamepad.wButtons&XINPUT_GAMEPAD_X))return false;
+    }
     if(runtimeEnabled && switchInputAllowed && !controlledWeaponSwitch &&
         caller==inputCaller &&
         activator==selectionAudio.activator && session.activator==activator &&
@@ -1499,14 +1513,18 @@ extern "C" __declspec(dllexport) int dualsp_debug_owned_aircraft(void* luaState)
 }
 
 // 按游戏线程现有调度更新暂停和音量；不通过扫描多个存档副本猜测当前设置。
+extern "C" __declspec(dllexport) int dualsp_pad_x_weapon_switch_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_custom_audio_update(void* luaState) {
     const dualsp::LuaApi* api=nullptr; // 与选择接口相同的明确错误回执。
     try {
         static const dualsp::LuaApi bound;api=&bound; // 专用加载器栈接口。
-        require(api->top(luaState)==2,"自定义选择音状态参数数量无效");
+        require(api->top(luaState)==3,"自定义选择音状态参数数量无效");
         const auto instance=static_cast<Addr>(api->readInteger(luaState,1)); // 当前 NimbusGameInstance。
         const auto allowed=api->readInteger(luaState,2); // Lua 已核对任务、补给、暂停和面板状态。
-        require(allowed==0 || allowed==1,"自定义选择音播放状态无效");
+        const auto padSwitch=api->readInteger(luaState,3);
+        require((allowed==0 || allowed==1) && (padSwitch==0 || padSwitch==1),"自定义选择音播放状态无效");
+        if(allowed && !padSwitch)require(weaponPadReader()!=nullptr,"手柄观察接口接入失败");
+        padXWeaponSwitchEnabled=padSwitch!=0;
         require(runtimeEnabled || allowed==0,"Mod disabled outside single-player");
         switchInputAllowed=runtimeEnabled && allowed!=0 && selectionAudio.plane!=0;
         if(!switchInputAllowed){emptySwitchRequested=false;cycleSwitchRequested=false;}

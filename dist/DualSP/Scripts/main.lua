@@ -73,9 +73,10 @@ local nativeTakeoff=loadExport("dualsp_resupply_takeoff") -- 候选 5：真正�
 local nativeSupplyControl=loadExport("dualsp_resupply_control") -- 候选 6：隔离原生补给输入入口。
 local nativePreparationAction=loadExport("dualsp_preparation_action") -- 体验候选：原生机库一步确认/返回。
 local nativeSelectionAudio=loadExport("dualsp_selection_audio") -- 最终逻辑选择统一提交 A/B/C 音效。
+loadExport("dualsp_pad_x_weapon_switch_supported") -- 核心、控制器与管理页须成套。
 local nativeCustomAudioUpdate=loadExport("dualsp_custom_audio_update") -- 自定义 WAV 跟随游戏音量与暂停。
 local updateFixedMount=loadExport("dualsp_fixed_mount_update") -- 独立 Su-30SM 原型必须与候选核心成套部署。
-note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=23") -- 新源码须与新核心及 UI 成套构建。
+note("MANAGEMENT_OPTIONS_DEVELOPMENT base=2.0.0 core_memory_protocol=1 management_protocol=24") -- 新源码须与新核心及 UI 成套构建。
 local takeEmptySwitch=loadExport("dualsp_take_empty_switch") -- 按下原生切换键才处理耗尽挂载，不预先换模型。
 loadExport("dualsp_raven_sp_supported") -- UAV方案须与新核心成套部署。
 loadExport("dualsp_mod_electronic_supported") -- 通用电子战资格和核心保有流程须成套，拒绝只替换Lua。
@@ -980,7 +981,7 @@ end
 local function updateCustomAudio()
     local allowed=isFlight and configured and not errorText and not supplySession and not panelOpen
         and valid(plane)and ready()and not game:IsGamePaused(plane) -- 原生暂停包含 F8 之外的暂停菜单。
-    local ok,err=nativeCustomAudioUpdate(instance:GetAddress(),allowed and 1 or 0) -- 核心另核对前台与 SFXVolume。
+    local ok,err=nativeCustomAudioUpdate(instance:GetAddress(),allowed and 1 or 0,config.pad_x_weapon_switch_enabled and 1 or 0) -- 核心另核对前台与 SFXVolume。
     assert(ok,err or "自定义选择音状态更新失败")
 end
 
@@ -1601,7 +1602,7 @@ local function applyAction(action)
             settingsAck=action.request;settingsError=nil;inputNotice=nil
             lastUIKey=nil;note("MANAGEMENT_SETTINGS_SAVED request="..settingsAck.." "..json.encode({
                 language=config.language,startup_updates=config.startup_update_check_enabled,mod=config.mod_enabled,task_models=config.task_mount_enabled,hangar_models=config.hangar_mount_enabled,
-                dpad=config.dpad_weapon_switch_enabled,pw_weapon_ui=config.pw_weapon_ui_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
+                dpad=config.dpad_weapon_switch_enabled,pw_weapon_ui=config.pw_weapon_ui_enabled,pad_x=config.pad_x_weapon_switch_enabled,salvo=config.gun_salvo_enabled,gaze_pad=config.target_gaze_pad_enabled,
                 gaze_keyboard=config.target_gaze_keyboard_enabled,camera_hold=config.camera_hold_enabled,view_target=config.view_target_mode,
                 ammo_two=config.ammo_percent_two,ammo_three=config.ammo_percent_three}))
         end,debug.traceback)
@@ -1642,11 +1643,11 @@ local function publishState()
     -- 普通管理参数与显式调试事务分开发布，渲染线程不接触玩家对象。
     local state={schema=1,scene=isFlight and "flight"or"menu",plane_id=planeId,plane_name=info and info.code and (names[info.code]or info.code:upper())or tr("select.an.aircraft.7809e2b7"),
         configured=configured,state=nativeState,request_open=requestOpen,request_close=requestClose,
-        management_protocol=23,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
+        management_protocol=24,shortcuts=config.shortcuts,language=config.language,game_language=runtimeContext.language,
         startup_update_check_enabled=config.startup_update_check_enabled,
         mission_fixed_sp=runtimeReason=="mission13_fixed_sp",
         mod_enabled=config.mod_enabled,task_mount_enabled=config.task_mount_enabled,gun_salvo_enabled=config.gun_salvo_enabled,
-        hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,pw_weapon_ui_enabled=config.pw_weapon_ui_enabled,
+        hangar_mount_enabled=config.hangar_mount_enabled,dpad_weapon_switch_enabled=config.dpad_weapon_switch_enabled,pw_weapon_ui_enabled=config.pw_weapon_ui_enabled,pad_x_weapon_switch_enabled=config.pad_x_weapon_switch_enabled,
         view_target_mode=config.view_target_mode,view_center_dot_enabled=config.view_center_dot_enabled,
         view_target={protocol=3,available=weaponSwitch.view.available,error=weaponSwitch.view.error},
         gun_salvo={available=weaponSwitch.salvo.service.available,reason=weaponSwitch.salvo.service.reason,error=weaponSwitch.salvo.service.error},central_weapon_display=config.central_weapon_display,

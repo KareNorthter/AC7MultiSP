@@ -27,7 +27,7 @@ void bindingButton(int slot,const std::string& label,float width=210) {
 }
 bool managementDirty() {
     if(draftPwWeaponUI!=state.at("pw_weapon_ui_enabled").get<bool>())return true;
-    return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTargetMode!=state.at("view_target_mode").get<std::string>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftTaskMountEnabled!=state.at("task_mount_enabled").get<bool>() ||
+    return draftHangarMountEnabled!=state.at("hangar_mount_enabled").get<bool>() || draftDpadWeaponSwitchEnabled!=state.at("dpad_weapon_switch_enabled").get<bool>() || draftPadXWeaponSwitchEnabled!=state.at("pad_x_weapon_switch_enabled").get<bool>() || draftGunSalvo!=state.at("gun_salvo_enabled").get<bool>() || draftViewTargetMode!=state.at("view_target_mode").get<std::string>() || draftViewCenterDot!=state.at("view_center_dot_enabled").get<bool>() || draftCentralWeaponDisplay!=state.at("central_weapon_display").get<std::string>() || draftModEnabled!=state.at("mod_enabled").get<bool>() || draftTaskMountEnabled!=state.at("task_mount_enabled").get<bool>() ||
         draftTargetGazePad!=state.at("target_gaze_pad_enabled").get<bool>() || draftTargetGazeKeyboard!=state.at("target_gaze_keyboard_enabled").get<bool>() || draftCameraHold!=state.at("camera_hold_enabled").get<bool>() ||
         draftCameraCenterKey!=state.at("camera_center_key").get<int>() || draftCameraSensitivity!=state.at("camera_sensitivity").get<int>() ||
         draftAmmoPercentTwo!=state.at("ammo_percent_two").get<int>() || draftAmmoPercentThree!=state.at("ammo_percent_three").get<int>() ||
@@ -102,6 +102,7 @@ void drawBasicBindings() {
     if(panelCard("DirectKeys",uiText("additional.weapon.selection.3cf00ef8"))) {
         ImGui::TextWrapped("%s",uiText("the.native.weapon.action.cycles.48a65ba7"));
         ImGui::Checkbox(uiText("switch.weapons.with.the.controller.80495bbe"),&draftDpadWeaponSwitchEnabled);
+        ImGui::Checkbox(uiText("pad.x.weapon.switch"),&draftPadXWeaponSwitchEnabled);
         if(ImGui::BeginTable("DirectBindings",3,ImGuiTableFlags_SizingStretchProp|ImGuiTableFlags_RowBg)) {
             ImGui::TableSetupColumn(uiText("weapon.f84ecfb3"));ImGui::TableSetupColumn(uiText("keyboard.1725fafc"));ImGui::TableSetupColumn(uiText("controller.90ab65bf"));ImGui::TableHeadersRow();
             const char* weapons[]={"MSL","SP1","SP2","SP3"};

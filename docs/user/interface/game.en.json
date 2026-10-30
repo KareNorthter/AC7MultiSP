@@ -118,6 +118,7 @@
     "additional.weapon.selection.3cf00ef8": "Additional weapon selection",
     "the.native.weapon.action.cycles.48a65ba7": "The native weapon action cycles through weapons. Use the D-pad or custom keyboard bindings for direct selection.",
     "switch.weapons.with.the.controller.80495bbe": "Switch weapons with the controller D-pad###DpadWeaponSwitch",
+    "pad.x.weapon.switch": "Switch weapons with controller X###PadXWeaponSwitch",
     "weapon.f84ecfb3": "Weapon",
     "keyboard.1725fafc": "Keyboard",
     "controller.90ab65bf": "Controller",
@@ -232,6 +233,7 @@
     "management.configuration.revision.19.is.f8683818": "Management configuration revision 19 is required.",
     "the.hangar.multi.sp.model.69e69a4b": "The hangar multi-SP model option must be a boolean.",
     "the.d.pad.weapon.switch.a3cb85be": "The D-pad weapon switch option must be a boolean.",
+    "pad.x.weapon.switch.invalid": "The controller X weapon switch option must be a boolean.",
     "the.old.configuration.contains.unknown.b42f0294": "The old configuration contains unknown hangar or D-pad options.",
     "management.configuration.revision.16.is.d786d33b": "Management configuration revision 16 is required.",
     "management.configuration.revision.18.is.c6705a71": "Management configuration revision 18 is required.",
@@ -551,6 +553,7 @@
     "management.configuration.revision.19.is.f8683818",
     "the.hangar.multi.sp.model.69e69a4b",
     "the.d.pad.weapon.switch.a3cb85be",
+    "pad.x.weapon.switch.invalid",
     "the.old.configuration.contains.unknown.b42f0294",
     "management.configuration.revision.16.is.d786d33b",
     "management.configuration.revision.18.is.c6705a71",
@@ -862,6 +865,10 @@
     "the.d.pad.weapon.switch.a3cb85be": {
       "zh": "手柄十字键切换武器开关必须为布尔值",
       "en": "The D-pad weapon switch option must be a boolean."
+    },
+    "pad.x.weapon.switch.invalid": {
+      "zh": "手柄X键切换武器开关必须为布尔值",
+      "en": "The controller X weapon switch option must be a boolean."
     },
     "the.old.configuration.contains.unknown.b42f0294": {
       "zh": "旧配置含未知机库或十字键开关",

@@ -118,6 +118,7 @@
     "additional.weapon.selection.3cf00ef8": "额外的武器切换方式",
     "the.native.weapon.action.cycles.48a65ba7": "游戏原本的武器切换键会依次切换每个武器。可使用手柄十字键快速选择武器，或自定义键盘快捷键",
     "switch.weapons.with.the.controller.80495bbe": "手柄十字键切换武器###DpadWeaponSwitch",
+    "pad.x.weapon.switch": "手柄X键切换武器###PadXWeaponSwitch",
     "weapon.f84ecfb3": "兵装",
     "keyboard.1725fafc": "键盘",
     "controller.90ab65bf": "手柄",
@@ -232,6 +233,7 @@
     "management.configuration.revision.19.is.f8683818": "需要管理参数第 19 版",
     "the.hangar.multi.sp.model.69e69a4b": "机库多SP模型开关必须为布尔值",
     "the.d.pad.weapon.switch.a3cb85be": "手柄十字键切换武器开关必须为布尔值",
+    "pad.x.weapon.switch.invalid": "手柄X键切换武器开关必须为布尔值",
     "the.old.configuration.contains.unknown.b42f0294": "旧配置含未知机库或十字键开关",
     "management.configuration.revision.16.is.d786d33b": "需要管理参数第 16 版",
     "management.configuration.revision.18.is.c6705a71": "需要管理参数第 18 版",
@@ -551,6 +553,7 @@
     "management.configuration.revision.19.is.f8683818",
     "the.hangar.multi.sp.model.69e69a4b",
     "the.d.pad.weapon.switch.a3cb85be",
+    "pad.x.weapon.switch.invalid",
     "the.old.configuration.contains.unknown.b42f0294",
     "management.configuration.revision.16.is.d786d33b",
     "management.configuration.revision.18.is.c6705a71",
@@ -862,6 +865,10 @@
     "the.d.pad.weapon.switch.a3cb85be": {
       "zh": "手柄十字键切换武器开关必须为布尔值",
       "en": "The D-pad weapon switch option must be a boolean."
+    },
+    "pad.x.weapon.switch.invalid": {
+      "zh": "手柄X键切换武器开关必须为布尔值",
+      "en": "The controller X weapon switch option must be a boolean."
     },
     "the.old.configuration.contains.unknown.b42f0294": {
       "zh": "旧配置含未知机库或十字键开关",

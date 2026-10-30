@@ -89,10 +89,10 @@ std::atomic<bool> runtimeEnabled{false}; // 默认不占用输入，只有游戏
 std::atomic<bool> reseedPad{true}; // 返回单人时以当前按住状态为基线，不重放多人期间的按键。
 // 普通管理草稿与保存回执；调试换装另设请求，不随保存设置触发。
 int lastRequest=-1,lastClose=-1,saveRequest=0,pendingSave=0,captureSlot=-1,suppressedCaptureKey=0;
-constexpr int managementProtocol=23; // 新增PW武器UI选项，UI/Lua须成套，避免旧界面静默漏存。
+constexpr int managementProtocol=24; // 整合PW武器UI和手柄X开关，UI/Lua须成套，避免旧界面静默漏存。
 bool draftStartupUpdateCheck=true;
 bool draftModEnabled=true,draftTaskMountEnabled=true,draftGunSalvo=true;
-bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true;
+bool draftHangarMountEnabled=true,draftDpadWeaponSwitchEnabled=true,draftPadXWeaponSwitchEnabled=true;
 bool draftPwWeaponUI=false;
 bool draftTargetGazePad=false,draftTargetGazeKeyboard=false,draftCameraHold=false;
 bool draftViewCenterDot=false;
@@ -588,6 +588,7 @@ void loadManagementDraft() {
     draftHangarMountEnabled=state.at("hangar_mount_enabled").get<bool>();
     draftDpadWeaponSwitchEnabled=state.at("dpad_weapon_switch_enabled").get<bool>();
     draftPwWeaponUI=state.at("pw_weapon_ui_enabled").get<bool>();
+    draftPadXWeaponSwitchEnabled=state.at("pad_x_weapon_switch_enabled").get<bool>();
     draftGunSalvo=state.at("gun_salvo_enabled").get<bool>();
     draftViewTargetMode=state.at("view_target_mode").get<std::string>();draftViewCenterDot=state.at("view_center_dot_enabled").get<bool>();
     draftCentralWeaponDisplay=state.at("central_weapon_display").get<std::string>();
@@ -870,7 +871,7 @@ void saveManagementSettings() {
     pendingSave=++saveRequest;
     enqueue({{"type","settings"},{"management_protocol",managementProtocol},{"request",pendingSave},{"language",draftLanguage},
         {"startup_update_check_enabled",draftStartupUpdateCheck},
-        {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
+        {"mod_enabled",draftModEnabled},{"task_mount_enabled",draftTaskMountEnabled},{"hangar_mount_enabled",draftHangarMountEnabled},{"dpad_weapon_switch_enabled",draftDpadWeaponSwitchEnabled},{"pad_x_weapon_switch_enabled",draftPadXWeaponSwitchEnabled},{"gun_salvo_enabled",draftGunSalvo},{"view_target_mode",draftViewTargetMode},{"view_center_dot_enabled",draftViewCenterDot},
         {"central_weapon_display",draftCentralWeaponDisplay},
         {"pw_weapon_ui_enabled",draftPwWeaponUI},
         {"target_gaze_pad_enabled",draftTargetGazePad},{"target_gaze_keyboard_enabled",draftTargetGazeKeyboard},{"camera_hold_enabled",draftCameraHold},
@@ -931,7 +932,7 @@ void refreshState() {
                 for(size_t prior=0;prior<index;++prior)if(checkedKeys[index]==checkedKeys[prior])
                     throw std::runtime_error("Management keyboard bindings must be distinct");
             state.at("direct_selection_available").get<bool>(); // 键盘直选与手柄开关分别核对。
-            state.at("task_mount_enabled").get<bool>();state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();
+            state.at("task_mount_enabled").get<bool>();state.at("hangar_mount_enabled").get<bool>();state.at("dpad_weapon_switch_enabled").get<bool>();state.at("pad_x_weapon_switch_enabled").get<bool>();
             if(!dualsp::validShortcuts(checkedShortcuts,checkedKeys))throw std::runtime_error("快捷键有重复绑定");
             state.at("target_gaze_pad_enabled").get<bool>();state.at("target_gaze_keyboard_enabled").get<bool>();
             state.at("camera_hold_enabled").get<bool>();

@@ -52,6 +52,7 @@ local function validateSettings(settings)
     assert(type(settings.hangar_mount_enabled)=="boolean","机库多SP模型开关必须为布尔值")
     assert(type(settings.dpad_weapon_switch_enabled)=="boolean","手柄十字键切换武器开关必须为布尔值")
     assert(type(settings.pw_weapon_ui_enabled)=="boolean","Invalid pw_weapon_ui_enabled: expected boolean")
+    assert(type(settings.pad_x_weapon_switch_enabled)=="boolean","手柄X键切换武器开关必须为布尔值")
     assert(type(settings.gun_salvo_enabled)=="boolean","机炮齐射开关必须为布尔值")
     assert(settings.view_target_mode=="normal"or settings.view_target_mode=="vr","NEXT模式必须为普通或VR模式")
     assert(type(settings.view_center_dot_enabled)=="boolean","视野中心白点开关必须为布尔值")
@@ -85,7 +86,7 @@ local function validateSettings(settings)
 end
 
 function Config.defaults()
-    return {schema=2,management_revision=19,startup_update_check_enabled=true,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,pw_weapon_ui_enabled=false,view_target_mode="normal",view_center_dot_enabled=false,gun_salvo_enabled=true,central_weapon_display="switch_1s",profiles={},language="auto",mod_enabled=true,target_gaze_pad_enabled=false,target_gaze_keyboard_enabled=false,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
+    return {schema=2,management_revision=19,startup_update_check_enabled=true,task_mount_enabled=true,hangar_mount_enabled=true,dpad_weapon_switch_enabled=true,pw_weapon_ui_enabled=false,pad_x_weapon_switch_enabled=true,view_target_mode="normal",view_center_dot_enabled=false,gun_salvo_enabled=true,central_weapon_display="switch_1s",profiles={},language="auto",mod_enabled=true,target_gaze_pad_enabled=false,target_gaze_keyboard_enabled=false,camera_hold_enabled=false,camera_center_key=4,camera_sensitivity=100,ammo_percent_two=50,ammo_percent_three=33,keyboard_keys={49,50,51,52},management_key=117,
             shortcuts={management={key=117,mods=0},cycle={key=0,mods=0},mount={key=0,mods=0},salvo={key=116,mods=3},camera_hold={key=117,mods=3}}}
 end
 
@@ -121,6 +122,7 @@ function Config.new(options)
             local diskSnapshot=json.decode(json.encode(config))
             if config.startup_update_check_enabled==nil then config.startup_update_check_enabled=true end
             if config.pw_weapon_ui_enabled==nil then config.pw_weapon_ui_enabled=false end
+            if config.pad_x_weapon_switch_enabled==nil then config.pad_x_weapon_switch_enabled=true end
             validateSettings(config)
             savedConfig=diskSnapshot -- 首次实际保存时按原字节备份旧配置并补齐新字段。
             return config
@@ -154,9 +156,9 @@ function Config.new(options)
     function self:applySettings(config,action)
         assert(type(action.request)=="number"and action.request%1==0 and action.request>0,"管理保存请求编号无效")
         local nextConfig=json.decode(json.encode(config))
-        assert(action.management_protocol==23,"管理界面协议不匹配，请成套安装")
+        assert(action.management_protocol==24,"管理界面协议不匹配，请成套安装")
         assert(action.central_hint==nil,"中央武器提示已固定开启")
-        for _,field in ipairs({"language","startup_update_check_enabled","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","pw_weapon_ui_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_pad_enabled","target_gaze_keyboard_enabled","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
+        for _,field in ipairs({"language","startup_update_check_enabled","mod_enabled","task_mount_enabled","hangar_mount_enabled","dpad_weapon_switch_enabled","pw_weapon_ui_enabled","pad_x_weapon_switch_enabled","gun_salvo_enabled","view_target_mode","view_center_dot_enabled","central_weapon_display","target_gaze_pad_enabled","target_gaze_keyboard_enabled","camera_hold_enabled","camera_center_key","camera_sensitivity","ammo_percent_two","ammo_percent_three","keyboard_keys","shortcuts"})do
             assert(action[field]~=nil,"管理设置缺少字段："..field);nextConfig[field]=action[field]
         end
         nextConfig.management_key=nextConfig.shortcuts.management.key
