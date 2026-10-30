@@ -1,0 +1,11 @@
+{
+  "version": "2.27.0 beta1",
+  "channel": "candidate",
+  "source_commit": "be2213f5403a4bc551f8efa0de48d7970851e5e4",
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta1/AC7MultiSP_Installer_2.27.0_beta1.exe",
+  "sha256": "af780378d3263ab477526eb166762dd54a11ac733a8722059a21a79f6b2acdd0",
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261030-2.27.0-beta1-build/delivery-receipt.json",
+  "integration": "evidence/2.27.0-beta1-source-integration.json",
+  "validation": "完整编译、签名封装及文件一致性核对完成；19份Lua成套，旧核心保护摘要不变，更新日志未改。",
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传；HUD布局/恢复和X长按仍待实机验证。"
+}

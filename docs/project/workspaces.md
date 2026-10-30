@@ -6,7 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
-| 2.27.0 beta1 HUD与手柄输入整合，进行中 | 本集成聊天；基线main/8c8f07f | codex/integrate-2.27.0-beta1；C:/Users/83717/.codex/worktrees/integrate-227-beta1/AC7_MultiSP | 接收abcf493、c47d411和666acb4，语义合并管理保存协议24、成套Lua/UI与版本识别；来源中文已获作者审核，功能说明保持原文；待编译及实机验证。 |
+| 2.27.0 beta1 HUD与手柄输入整合，已出包待验证 | 本集成聊天；基线main/8c8f07f | codex/integrate-2.27.0-beta1；C:/Users/83717/.codex/worktrees/integrate-227-beta1/AC7_MultiSP | 接收abcf493、c47d411和666acb4，语义合并管理保存协议24、成套Lua/UI与版本识别；来源中文已获作者审核，功能说明保持原文；完整编译和签名封装完成，待作者实机验证。 |
 | 手柄X切换武器开关，待验证（源码候选） | 本聊天；基线main/8c8f07f（2.27.0）；codex/feat-pad-x-weapon-switch | C:/Users/83717/.codex/worktrees/pad-x-weapon-switch/AC7_MultiSP | 独占手柄X切换路径、F6管理设置/配置协议及架构对应正文；源码候选已准备，默认开启、关闭时保留原生长按；用户接受键盘与X同时按下的来源识别限制，同意两项界面中文、要求功能说明保留原文；双语资源和生成表已同步。不编译、测试或安装 |
 | 2.27.0正式源码接收，已合main | 本集成聊天；基线main/0dd3934 | codex/release-2.27.0；C:/Users/83717/.codex/worktrees/release-2-27-0/AC7_MultiSP | 作者确认beta7测试无误；已接收最新中文原字节并设为正式2.27.0。后改为仅合main及推送GitHub，中断前本机构建完成并保留，不交付安装包或网页；GitHub同步结果以远端main回读为准。 |
 | 作者玩家正文接收与英文同步，已完成 | 本集成聊天；基线main/a7d7385 | codex/docs-sync-player-2270；C:/Users/83717/.codex/worktrees/sync-player-docs-2270/AC7_MultiSP | 两份中文原字节接收，英文功能说明及2.27.0日志同步，重新生成内嵌文字；产品版本仍beta7，未编译或封装。摘要见[同步回执](../../evidence/player-docs-english-sync-20261030.json)。 |
