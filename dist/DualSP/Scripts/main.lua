@@ -388,10 +388,11 @@ local function readOptionsFor(id)
         assert(type(weaponIds[i])=="number","原生兵装编号类型异常："..info.code.."/"..i)
         assert(weaponIds[i]%1==0 and weaponIds[i]>=0 and weaponIds[i]<102,"当前兵装超出核心支持范围："..info.code.."/"..i)
         presentation[i]=modAircraft:weapon(catalogue,info,i,weaponClass,weaponIds[i],baseWeapons)
-        -- 展示代号另存，不改ecm资源键、购买编号及核心配置。
-        if presentation[i].code=="ecm"then
-            displayCodes[i]=weaponNames.forClass(presentation[i].code,weaponClass:GetFullName():match("^[^ ]+ (.+)$"))
-        end
+        -- 真实机体、槽位和兵装类吻合时保留作者目录键，简称另存，不改购买或核心配置。
+        local label,authorKey=weaponNames.forClass(presentation[i].code,
+            weaponClass:GetFullName():match("^[^ ]+ (.+)$"),info,i)
+        if authorKey then presentation[i]=info.weapons[i]end
+        if label~=presentation[i].code:upper()then displayCodes[i]=label end
         local ok,supported,electronic,reason,uav,interceptor=continuousSPOption(sourcePlane:GetAddress(),weaponDefault:GetAddress())
         assert(ok,supported)
         assert(type(supported)=="boolean"and type(electronic)=="boolean"and type(reason)=="string"and type(uav)=="boolean"and type(interceptor)=="boolean",
@@ -416,9 +417,9 @@ local function readOptionsFor(id)
     local owned=ownedWeapons();local options={}
     for i,item in ipairs(info.weapons)do
         local display=presentation[i]
-        local displayCode=displayCodes[i]=="IEWS"and "IEWS"or nil
+        local displayCode=displayCodes[i]
         options[i]={index=item.index,code=display.code,display_code=displayCode,runtime_weapon_id=weaponIds[i],salvo_supported=salvoOptions[i],max=amounts[i],base_max=item.max,category=display.category,type_key=display.type_key,generic=display.generic,
-            stats=display.stats,description=displayCode=="IEWS"and "IEWS"or descriptions[display.code]or display.code:upper(),
+            stats=display.stats,description=displayCode or descriptions[display.code]or display.code:upper(),
             owned=item.index==0 or owned[id*10+item.index]==true, -- 不再绕过游戏购买记录。
             available=continuousOptions[i]==true}
     end

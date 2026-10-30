@@ -17,10 +17,38 @@ local nativeIEWS={
 local nativeIEWSClasses={}
 for _,profile in pairs(nativeIEWS)do nativeIEWSClasses[profile.class]=true end
 
+-- 目录代码是资源键，不能直接作为作者的显示简称。只在机体、槽位和兵装类均吻合时采用。
+local modLabels={
+    ea18g1={codes={"ecm","lagm","6aam"},labels={"IEWS",false,false},classes={
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_ecmp_a99.plwp_ecmp_a99_C",false,false}},
+    zx01={codes={"zp01","ecm","zp02"},labels={"RAAM","IEWS","RGUN"},classes={
+        "/Game/Blueprint/Weapons/Player/Base/plwp_raam_zp.plwp_raam_zp_C",
+        "/Game/Blueprint/Weapons/Player/Variation/plwp_esm_zp.plwp_esm_zp_C",
+        "/Game/Blueprint/Weapons/Player/Base/plwp_rgun_zp.plwp_rgun_zp_C"}}
+}
+local function reference(info)
+    local value=type(info.reference)=="string"and (info.reference:match("^%w+'([^']+)'$")or info.reference)or ""
+    if value~=""and not value:find(".",1,true)then value=value.."."..(value:match("([^/]+)$")or "")end
+    if value~=""and value:sub(-2)~="_C"then value=value.."_C"end
+    return value
+end
+local function modProfile(info)
+    if not info or type(info.code)~="string"or type(info.weapons)~="table"then return nil end
+    local profile=modLabels[info.code]
+    local expected="/Game/Blueprint/Player/Pawn/AcePlayerPawn_"..info.code..".AcePlayerPawn_"..info.code.."_C"
+    if not profile or reference(info)~=expected or #info.weapons~=3 then return nil end
+    for i,weapon in ipairs(info.weapons)do if weapon.code~=profile.codes[i]then return nil end end
+    return profile
+end
+
 -- 运行时以当前配置的真实类核对，不按WeaponID、类短名或机体代号推断效果。
-function WeaponNames.forClass(code,classPath)
+function WeaponNames.forClass(code,classPath,info,index)
     assert(type(code)=="string"and code~="","武器简称数据缺失")
     if code=="ecm"and nativeIEWSClasses[classPath]then return "IEWS"end
+    local profile=modProfile(info)
+    if profile and profile.labels[index] and profile.classes[index]==classPath then
+        return profile.labels[index],true
+    end
     return code:upper()
 end
 
@@ -33,20 +61,16 @@ end
 -- 返回展示副本，不改目录本身；进入选装/任务后仍按真实兵装类重新生成显示名。
 function WeaponNames.catalogueOptions(info)
     local profile=nativeIEWS[info.code]
-    local reference=type(info.reference)=="string"and (info.reference:match("^%w+'([^']+)'$")or info.reference)or ""
-    if reference~=""and not reference:find(".",1,true)then
-        reference=reference.."."..(reference:match("([^/]+)$")or "")
-    end
-    if reference~=""and reference:sub(-2)~="_C"then reference=reference.."_C"end
     local expected="/Game/Blueprint/Player/Pawn/AcePlayerPawn_"..info.code..".AcePlayerPawn_"..info.code.."_C"
-    local native=profile~=nil and reference==expected and #info.weapons==3
+    local native=profile~=nil and reference(info)==expected and #info.weapons==3
     if native then
         for i,weapon in ipairs(info.weapons)do if weapon.code~=profile.weapons[i]then native=false;break end end
     end
+    local mod=modProfile(info)
     local options={}
     for i,weapon in ipairs(info.weapons)do
         local copy={};for field,value in pairs(weapon)do copy[field]=value end
-        copy.display_code=native and i==3 and "IEWS"or nil
+        copy.display_code=(native and i==3 and "IEWS")or(mod and mod.labels[i])or nil
         options[i]=copy
     end
     return options

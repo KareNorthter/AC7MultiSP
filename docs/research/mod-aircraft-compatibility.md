@@ -30,6 +30,13 @@ CFA-50用户已更正：EML炮体在机腹，实际存在。当前问题是切EM
 完整重启游戏后进程31028进入另一任务：无无人机在途时两次SP换槽成功；只读确认主武器为`plwp_WeaponUAV_m101_arsb_s00_C`、80个发射槽，三SP为`plwp_gtls_arsb_C`、`plwp_gplsl_arsb_C`、`plwp_vls_arsb_C`。用户发射后暂停，现场20个活动无人机真实类与主武器完全一致，继承原生`WeaponUAV`，装填字段与五个回调符合现有契约，均不属于三个SP类；锁定音计数为0/20/0/0。用户随后直接重启任务，检查点恢复成功且未回退；任务、操作时序与首次现场不同，不能据此排除首次锁定音失配，也不能认定两次故障有因果关系。
 
 源码候选以实际主武器类和现有UAV契约核对来源，限定提升容量至128，规则见[架构](../engineering/architecture.md#第三方机体与特殊兵装)。新增锁定音失配计数日志以便未来定位，保留原有拒绝和机体隔离；首次失配根因仍未知。本轮由用户操作游戏、仅只读采集；候选未编译、安装、测试或实机验证，切换后无人机持续攻击、装填、退场、大数量性能与检查点行为均待验证。原始日志和快照位置见[本机资产](../archive/local-assets.md)。
+## EA-18G与ADFX-00兵装名称（2026-10-30）
+
+用户反馈EA-18G Type B三SP时IEWS显示ECM，ADFX-00（AC2）的名称也不对。[EA-18G作者页面](https://www.nexusmods.com/acecombat7skiesunknown/mods/2172)版本1.5列出Type B为IEWS/LAGM/6AAM，Type A长按武器切换键触发IEWS；两型使用相同皮肤，页面没有声明皮肤改变兵装。[ADFX-00作者资料](https://www.nexusmods.com/acecombat7skiesunknown/articles/164)列出AC2型为RAAM/IEWS/RGUN，并说明RAAM和RGUN的原作者显示名称只在机库出现；ACI、EX、SP型各有不同组合。其长按效果及皮肤是否改变兵装未确认。
+
+本机启用的EA-18G AddOn及ADFX-00 Base与历史静态扫描原包SHA256分别一致（95907848…、35bbcf26…）。扫描中`ea18g1`首槽为`plwp_ecmp_a99_C`；`zx01`三槽依次为`plwp_raam_zp_C`、`plwp_esm_zp_C`、`plwp_rgun_zp_C`。本机兼容表包的机体行分别给出`ecm/lagm/6aam`和`zp01/ecm/zp02`，包内记录不单独证明运行时覆盖顺序。RAAM、RGUN目录编号与真实武器运行编号不同，基础类未能核对时旧回退可能显示MSL/MGP；基础类已核对时简称则直接显示ZP01/ZP02。没有本轮游戏现场，不将其中某种路径认定为用户当时实际画面。
+
+源码候选按[架构](../engineering/architecture.md#兵装显示代号与内部代号)对准确机体、槽位和真实类显示作者简称，快速任务只按基础目录签名；不将其它皮肤或同编号武器视为相同。未运行游戏、编译或测试，实际选装、HUD、管理界面和皮肤替换结果均待验证；作者的机库专用RAAM/RGUN名称在多SP共用显示中会用于任务HUD，是本次用户要求的显示适配，不宣称原版游戏HUD原本如此。
 
 ## 分组与安装方式
 
