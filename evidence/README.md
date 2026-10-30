@@ -139,3 +139,5 @@ F-22与普通Su-57支架回缩反馈：[20261029修订](internal-bay-retraction-
 - [beta7源码整合](2.26.2-beta7-source-integration.json)：启动文案修改及Mod兼容修订来源和边界。
 
 - [beta7 EXE交付](2.26.2-beta7-exe-delivery.json)：安装包摘要、完整构建和待验证范围。
+
+- [玩家正文英文同步](player-docs-english-sync-20261030.json)：作者中文原稿摘要、英文同步范围和交付边界。
