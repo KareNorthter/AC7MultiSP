@@ -11,28 +11,31 @@ const MountSpecification& mountLightSpecification(MountAircraft aircraft) {
         {1,4,2},{},{},{nullptr,"w_qaam_a0_SM","w_uav_x0_SM"},0,{1,2,2}};
     static const MountSpecification cfa{"fa44",{"plwp_admm_x0_C","plwp_eml_x2_C","plwp_ecmp_x1_C"},
         {126,2,1},{},{},{nullptr,nullptr,nullptr},0,{12,2,1}};
+    static const MountSpecification x02{"x02s",{"plwp_4aam_x0_C","plwp_lasm_x0_C","plwp_eml_x1_C"},
+        {6,2,1},{},{},{nullptr,nullptr,nullptr},0,{4,2,1}};
     switch(aircraft) {
         case MountAircraft::Dark:return dark;
         case MountAircraft::Zoef:return zoef;
         case MountAircraft::Adf11f:return raven;
         case MountAircraft::Fa44:return cfa;
+        case MountAircraft::X02s:return x02;
         default:throw std::runtime_error("轻量挂载：机型未登记");
     }
 }
 bool mountLightNative(MountAircraft aircraft,unsigned mask) {
     require(mask>=1 && mask<=7,"轻量挂载：组合越界");
-    return (mask&(mask-1))==0;
+    return aircraft==MountAircraft::X02s?!(mask&4u):(mask&(mask-1))==0;
 }
 bool mountLightOwnsPool(MountAircraft aircraft,int pool) {
-    return aircraft==MountAircraft::Dark?false:aircraft==MountAircraft::Fa44?true:pool>0;
+    return (aircraft==MountAircraft::Dark || aircraft==MountAircraft::X02s)?false:aircraft==MountAircraft::Fa44?true:pool>0;
 }
 bool mountLightMapped(MountAircraft aircraft,int kind) {
-    if(aircraft==MountAircraft::Dark)return false;
+    if(aircraft==MountAircraft::Dark || aircraft==MountAircraft::X02s)return false;
     if(aircraft==MountAircraft::Fa44)return kind<2;
     return kind>0;
 }
 unsigned mountLightRackMask(MountAircraft aircraft,unsigned mask) {
-    if(aircraft==MountAircraft::Dark)return mask&4;
+    if(aircraft==MountAircraft::Dark || aircraft==MountAircraft::X02s)return mask&4;
     if(aircraft==MountAircraft::Zoef)return (mask&6)==6?2:mask&6;
     if(aircraft==MountAircraft::Fa44)return mask&3;
     return mask&6;
@@ -310,13 +313,17 @@ struct LightMountSocketReader {
     }
 };
 
+#include "x02_mount_pose.hpp"
+
 struct LightMountOwnership {
     struct Point { MountIdentity component;int pool{},index{};MountAnimationReflection::SocketName socket; };
     struct Rack {
-        MountIdentity component,mesh;
+        MountIdentity component,mesh,emitter;
+        MountAnimationReflection::SocketName emitterSocket;
         size_t meshOffset{};
         bool skeletal{},animationOwned{},nativeNoSkeleton{},nativeTick{};
         LightMountBones bones;
+        X02MountPose pose;
         std::vector<MountAnimationReflection::SocketName> effectSockets;
     };
     std::array<Rack,3> racks;
@@ -325,7 +332,7 @@ struct LightMountOwnership {
     LightMountSocketReader socketReader;
 };
 
-// 单挂均原生；多挂七集合由mask明确推导，只控制上述白名单内的组件。
+// X-02S含EML时仅接管SWP3；其他未选择的组合保留原生。
 void mountBindLightVisuals(FixedMountState& state,Addr plane) {
     require(!mountLightNative(state.aircraft,state.kindsMask),"轻量挂载：本组合应使用原生");
     const auto& spec=mountSpecification(state.aircraft);
@@ -334,13 +341,13 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
     std::map<Addr,LightMountOwnership::Point> points;
     std::map<Addr,MountIdentity> componentClasses; // 仅同栈绑定批次复用类资格，不缓存组件、父链或原生显隐。
     for(int pool=0;pool<3;++pool) {
-        const bool owned=state.aircraft==MountAircraft::Dark?(pool==2 && (state.kindsMask&4)):
+        const bool owned=(state.aircraft==MountAircraft::Dark || state.aircraft==MountAircraft::X02s)?(pool==2 && (state.kindsMask&4)):
             mountLightOwnsPool(state.aircraft,pool);
         if(!owned)continue; // TLS、SASM、XSDB完全不进入本路线显隐账本。
         auto& record=state.light->racks[pool];
         state.rackOffsets[pool]=mountProperty(plane,("SWP"+std::to_string(pool+1)).c_str(),"ObjectProperty",8);
         const Addr rack=read<Addr>(plane+state.rackOffsets[pool]);record.component=mountIdentity(rack);
-        record.skeletal=state.aircraft==MountAircraft::Fa44;
+        record.skeletal=state.aircraft==MountAircraft::Fa44 || state.aircraft==MountAircraft::X02s;
         require(mountClassIs(rack,record.skeletal?"SkeletalMeshComponent":"StaticMeshComponent","/Script/Engine") &&
             read<Addr>(rack+0x100)==state.weaponBase.address,"轻量挂载：原生挂架类型或父链改变");
         record.meshOffset=mountProperty(rack,record.skeletal?"SkeletalMesh":"StaticMesh","ObjectProperty",8);
@@ -350,14 +357,40 @@ void mountBindLightVisuals(FixedMountState& state,Addr plane) {
             record.skeletal?"SkeletalMesh":"StaticMesh");
         const auto flags=read<unsigned char>(rack+0x1bc);
         state.visuals.push_back({record.component,pool,-1,bool(flags&0x10),bool(flags&0x20)});
-        if(record.skeletal && pool<2) {
-            // 核对CFA原骨架更新接口，保留真实通道。
+        if(record.skeletal && (pool<2 || state.aircraft==MountAircraft::X02s)) {
+            // 核对原骨架更新接口；X-02S另以独立姿态账本管理。
             state.light->reflection.bindSdk();
             const Addr cls=read<Addr>(rack+0x10);const int extent=state.light->reflection.typeSize(cls);
             const auto no=state.light->reflection.boolean(cls,"bNoSkeletonUpdate",extent,true);
             const auto pause=state.light->reflection.boolean(cls,"bPauseAnims",extent,true);
             require(no.field.offset==0x9b0 && no.fieldMask==2 && pause.field.offset==0x9b0 && pause.fieldMask==4,
                 "轻量挂载：骨架控制字段布局改变");
+        }
+        if(state.aircraft==MountAircraft::X02s) {
+            auto& api=state.light->reflection;
+            const Addr skeleton=read<Addr>(record.mesh.address+mountProperty(record.mesh.address,"Skeleton","ObjectProperty",8));
+            const Addr animation=read<Addr>(rack+mountProperty(rack,"AnimClass","ClassProperty",8));
+            mountAnimatedResource(skeleton,"x02s_SWP3_Skeleton","/Game/Vehicles/Aircraft/x02s/x02s_SWP3_Skeleton","Skeleton");
+            mountAnimatedResource(animation,"x02s_SWP3_AnimBP_C","/Game/Blueprint/Player/Body/x02s_SWP3_AnimBP","AnimBlueprintGeneratedClass");
+            const Addr array=state.meshManager.address+0x170;
+            require(read<int>(array+8)==1 && read<int>(array+12)>=1,"X-02S：原生EML效果源池改变");
+            const Addr data=read<Addr>(array);checkMemory(data,sizeof(Addr));
+            const Addr point=read<Addr>(data);record.emitter=mountIdentity(point);
+            const MountAnimationReflection::SocketName socket{read<unsigned>(point+0x108),read<unsigned>(point+0x10c)};
+            require(mountClassIs(point,"StaticMeshComponent","/Script/Engine") && read<Addr>(point+0x100)==rack &&
+                LightMountBones::label(socket)=="sp" && !read<Addr>(point+0x728) && api.socketExists(record.component,socket),
+                "X-02S：EML原生效果源或父链改变");
+            record.emitterSocket=socket;
+            const auto bone=api.function(rack,"GetSocketBoneName","SkinnedMeshComponent",2);
+            const auto input=api.field(bone.identity.address,"InSocketName","NameProperty",8,bone.size);
+            const auto result=api.field(bone.identity.address,"ReturnValue","NameProperty",8,bone.size);
+            MountAnimationReflection::separate(input,result);
+            alignas(16) std::array<unsigned char,256> params{};std::memcpy(params.data()+input.offset,&socket,8);
+            api.invoke(record.component,bone,params.data());MountAnimationReflection::SocketName actual{};
+            std::memcpy(&actual,params.data()+result.offset,8);
+            require(LightMountBones::label(actual)=="SWPCover_06","X-02S：原生EML炮口骨支路改变");
+            require(read<Addr>(array)==data && read<int>(array+8)==1,"X-02S：效果源池绑定期间改变");
+            state.poolCounts[2]=1;continue; // 仅保炮体；效果源显隐、取位与发射仍由原生处理。
         }
         if(state.aircraft==MountAircraft::Dark)continue; // PLSL炮体本身就是完整静态架。
         const Addr array=state.meshManager.address+0x150+pool*16;
@@ -450,6 +483,16 @@ bool mountLightLayoutChanged(const FixedMountState& state,const MountIdentityBat
             identities.read<Addr>(state.plane.address+state.rackOffsets[pool])!=rack.component.address ||
             identities.read<Addr>(rack.component.address+rack.meshOffset)!=rack.mesh.address)return true;
         if(state.aircraft==MountAircraft::Dark)continue;
+        if(state.aircraft==MountAircraft::X02s) {
+            const Addr array=state.meshManager.address+0x170;
+            if(identities.read<int>(array+8)!=1 || identities.read<int>(array+12)<1)return true;
+            const Addr data=identities.read<Addr>(array);
+            if(!data || identities.read<Addr>(data)!=rack.emitter.address || !identities.alive(rack.emitter) ||
+               identities.read<Addr>(rack.emitter.address+0x100)!=rack.component.address ||
+               identities.read<unsigned>(rack.emitter.address+0x108)!=rack.emitterSocket.index ||
+               identities.read<unsigned>(rack.emitter.address+0x10c)!=rack.emitterSocket.number)return true;
+            continue;
+        }
         const Addr array=state.meshManager.address+0x150+pool*16;
         if(identities.read<int>(array+8)!=state.poolCounts[pool])return true;
         const Addr data=identities.read<Addr>(array);
@@ -471,6 +514,7 @@ void mountLightRelease(FixedMountState& state,bool keepBones) {
     if(!state.light)return;
     std::string failure;
     for(auto& rack:state.light->racks) {
+        try {rack.pose.release();}catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
         try {
             CfaWorkScope cost(1);
             if(keepBones) {
@@ -507,7 +551,8 @@ void mountLightInherit(FixedMountState& next,const FixedMountState& prior) {
     bool same=mountMeshIdentityEqual(next.plane,prior.plane) && next.physicalCount==prior.physicalCount;
     for(int pool=0;pool<3;++pool)same=same &&
         mountMeshIdentityEqual(next.light->racks[pool].component,prior.light->racks[pool].component) &&
-        mountMeshIdentityEqual(next.light->racks[pool].mesh,prior.light->racks[pool].mesh);
+        mountMeshIdentityEqual(next.light->racks[pool].mesh,prior.light->racks[pool].mesh) &&
+        mountMeshIdentityEqual(next.light->racks[pool].emitter,prior.light->racks[pool].emitter);
     for(int i=0;same && i<next.physicalCount;++i) {
         const auto& a=next.light->positions[i];const auto& b=prior.light->positions[i];
         same=mountMeshIdentityEqual(a.component,b.component) && a.pool==b.pool && a.index==b.index &&
@@ -523,6 +568,12 @@ void mountLightMaintain(FixedMountState& state) {
             identities.alive(state.animationActivator) && identities.read<Addr>(state.animationActivator.address+0x260)==state.manager.address &&
             identities.read<Addr>(state.manager.address+0x150)==state.meshManager.address && !mountLightLayoutChanged(state,identities),
             "轻量挂载：模型池、资源或管理器身份改变");
+    }
+    if(state.aircraft==MountAircraft::X02s) {
+        auto& rack=state.light->racks[2];
+        rack.pose.prepare(rack.component,rack.mesh);
+        rack.pose.maintain(); // 包含EML时始终保持展开端点，不随当前SP或MSL切换。
+        return;
     }
     if(state.aircraft!=MountAircraft::Fa44)return;
     // SWP3两组机构只控制外形；sp31仍在Body上，不能隐藏根骨或压低公共开盖进度。

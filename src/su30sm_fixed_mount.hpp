@@ -4,7 +4,7 @@
 
 struct MountIdentity { Addr address{}; int index{},serial{}; }; // 地址和对象序列号共同标识实例。
 bool mountSameIdentity(const MountIdentity&,const MountIdentity&);
-enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x, A10a, F02x, F104, M21b }; // 新机只追加索引，既有机体编号保持。
+enum class MountAircraft { Unsupported, Su30sm, F35c, F15e, F02a, F15c, F15j, F15m, F16c, Fa27, Mr2k, Mrgn, Rflm, Typn, F22a, Su47, Su57tg, Pkfa, Dark, Zoef, Adf11f, Fa44, Su35, Su37, F04e, F14atg, J39e, Su30, Su34, M29a, F16x, M35d, F14a, F18e, F18etg, M31b, F14d, F18f, Su33, F18x, A10a, F02x, F104, M21b, X02s }; // 新机只追加索引，既有机体编号保持。
 struct MountSpecification {
     const char* code; // 原版资源前缀。
     std::array<const char*,3> weaponClasses; // 真实武器类；空项表示该组合未适配。
@@ -39,7 +39,7 @@ MountAircraft mountExpansionAircraft(size_t index) {
 }
 bool mountAnimated(MountAircraft aircraft) {return aircraft==MountAircraft::Su47;}
 bool mountExterior(MountAircraft) { return false; } // F-22已转入统一内舱布局。
-bool mountLight(MountAircraft aircraft) { return aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44; }
+bool mountLight(MountAircraft aircraft) { return (aircraft>=MountAircraft::Dark && aircraft<=MountAircraft::Fa44) || aircraft==MountAircraft::X02s; }
 bool mountNativeOnly(MountAircraft aircraft) { return aircraft==MountAircraft::Su47; }
 const MountSpecification& mountAnimatedSpecification(MountAircraft aircraft);
 const MountSpecification& mountLightSpecification(MountAircraft aircraft);
@@ -325,6 +325,7 @@ MountAircraft mountAircraft(Addr plane) {
         if(name=="AcePlayerPawn_f35c_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f35c")return MountAircraft::F35c;
         if(name=="AcePlayerPawn_f15e_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_f15e")return MountAircraft::F15e;
         if(name=="AcePlayerPawn_pkfa_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_pkfa")return MountAircraft::Pkfa;
+        if(name=="AcePlayerPawn_x02s_C" && mountName(read<Addr>(cls+0x20))=="/Game/Blueprint/Player/Pawn/AcePlayerPawn_x02s")return MountAircraft::X02s;
         for(int i=0;i<4;++i) {
             const auto aircraft=static_cast<MountAircraft>(static_cast<int>(MountAircraft::Dark)+i);
             const std::string code=mountLightSpecification(aircraft).code;
@@ -959,6 +960,11 @@ void fixedMountCommit(const Command& command) {
         for(int candidate=0;candidate<3;++candidate)
             if(specification.weaponClasses[candidate] && name==specification.weaponClasses[candidate])kind=candidate;
         if(kind<0) { fixedMountRelease();return; }
+        if(aircraft==MountAircraft::X02s) {
+            const auto shortName=name.substr(0,name.size()-2);
+            if(mountName(read<Addr>(session.special[index].weaponClass+0x20))!=
+                "/Game/Blueprint/Weapons/Player/Variation/"+shortName) { fixedMountRelease();return; }
+        }
         if(mountAnimated(aircraft))require(mountName(read<Addr>(session.special[index].weaponClass+0x20))==
             mountAnimatedDefinition(aircraft).at("groups").at(kind).at("packages").at("class").get<std::string>(),
             "动画挂载：原生兵装类包不符");
@@ -966,14 +972,15 @@ void fixedMountCommit(const Command& command) {
         require(!(kindsMask&(1u<<kinds[index])),"固定挂载：武器类重复");
         kindsMask|=1u<<kinds[index];
     }
-    // 单 QAAM 也接管显隐，保留原生四处库存外观；其他单挂仍由原生管理。
+    // 单QAAM保留四处库存外观；X-02S单EML也固定炮体，其余单挂仍由原生管理。
     const bool singleQaam=session.count==1 && aircraft==MountAircraft::Su30sm && kindsMask==4;
     admission.stop();
-    if(session.count==1 && !singleQaam) { fixedMountRelease();return; }
+    const bool singleX02Eml=session.count==1 && aircraft==MountAircraft::X02s && kindsMask==4;
+    if(session.count==1 && !singleQaam && !singleX02Eml) { fixedMountRelease();return; }
     if(mountExpansionNative(aircraft,kindsMask)) { fixedMountRelease();return; }
     if(mountExterior(aircraft) && !(kindsMask&4u)) { fixedMountRelease();return; } // 无8AAM/PLSL的组合完全原生。
     if(mountLight(aircraft) && mountLightNative(aircraft,kindsMask)) { fixedMountRelease();return; }
-    require(singleQaam || (session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
+    require(singleQaam || singleX02Eml || (session.count==2 && (kindsMask==3 || kindsMask==5 || kindsMask==6)) ||
         (session.count==3 && kindsMask==7),"固定挂载：已识别兵装组合与槽数不符");
         if(!fixedMount.bound || fixedMount.plane.address!=command.plane || fixedMount.aircraft!=aircraft || fixedMount.kindsMask!=kindsMask) {
         const auto order=fixedMount.order; // restore 可能已为检查点的新实例重建顺序。

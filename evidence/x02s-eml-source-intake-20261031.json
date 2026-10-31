@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-31",
+  "base_main": "57e6e8fb7153f49d4374c74bd8a8b772c19cff7f",
+  "source_thread": "01a1921f-e345-7af1-a0fc-b9165456fb3b",
+  "source_branch": "codex/feat-x02s-eml-model",
+  "source_root": "C:/Users/83717/.codex/worktrees/x02s-eml-model/AC7_MultiSP",
+  "source_head": "5d1bd56841e37e1afdb2d1fd7ad284bc15c076bc",
+  "source_form": "已获作者合并授权的未提交差异，源工作树保持原样",
+  "source_files_sha256": {
+    "dist/DualSP/Scripts/main.lua": "6d585a9be3ae00b60fd5f2441d82fe8741d3db17a32fa3b1188103a44b0a08cd",
+    "docs/engineering/multi-sp-mount-design.md": "8c1162bd839f447c3416ea9f35c6367bd667ea4fec9fbf84317eaea66ca362be",
+    "docs/project/workspaces.md": "da0fd3adb6553d1349896f3086e0aa445f74dd820488a83bcab0ee48ed7b8d1a",
+    "docs/research/README.md": "7ae8190d73152c9abba3eaf4ce7e443cadce3d7069d6323f932b70241ad6847d",
+    "src/light_mount.hpp": "63f0bd92254cc234f64c9712def89e975ea1e2c10985c945379227e6448fdb77",
+    "src/mount_preview.hpp": "b75f1cfa75239093c23dba530423473c36cf17fd01dde9b7f49f378fb474729b",
+    "src/su30sm_fixed_mount.hpp": "3b82886566edeeee13880ea0dc23bab83f368aa1c77db97c7ea460589720333c",
+    "src/x02_mount_pose.hpp": "fc2904d39743e9319b855e8cbd91e40900cc5cd75caa0ac2e6bed5f63b7050cc"
+  },
+  "snapshot_patch_sha256": "b4a630486f03b1fa849ffac2fd4801f8a37173d2344a7d8827dad4f6a8e5e14b",
+  "snapshot_dir": "C:/Users/83717/.codex/worktrees/integrate-x02s-eml/AC7_MultiSP/Temp/tasks/20261031-x02s-eml-intake",
+  "scope": "模型开关开启且所选SP含原版EML时，固定X-02S的SWP3展开末帧；不因当前SP或MSL变化交还EML动画，其余弹舱与发射路径保留原生。作者接受既有视觉冲突。",
+  "validation": "静态差异核对，四份C++源码与来源逐字一致；Lua仅增加x02s轻量入口，保留beta5恢复误报修复及姿态/HUD。",
+  "limits": "未编译、运行测试、安装、操作游戏或推送；现有beta5 EXE不含本增量，实际模型、发射及归还待验收。"
+}

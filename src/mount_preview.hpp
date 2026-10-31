@@ -488,14 +488,20 @@ void mountPreviewUpdate(Addr owner,Addr plane,Addr activator,int mode,const std:
             const std::string expected=std::string("/Game/Blueprint/Weapons/Player/")+(aircraft==MountAircraft::Su30sm?"Variation/":"Base/")+std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
             const auto actual=mountName(package);
             const auto shortName=std::string(specification.weaponClasses[kind]).substr(0,std::strlen(specification.weaponClasses[kind])-2);
-            const bool packageMatches=actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName);
+            const bool packageMatches=aircraft==MountAircraft::X02s?
+                actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName:
+                actual==expected || ((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && actual=="/Game/Blueprint/Weapons/Player/Variation/"+shortName);
             if(!packageMatches)mountPreviewWeaponDiagnostic(plane,weaponClass,mode,slot,configs[slot],specification,"package_mismatch",expected);
             require(packageMatches,"模型预览：兵装原版资源路径不匹配");
             require(!(mask&(1u<<kind)),"模型预览：兵装重复");
             kinds[count++]=kind;mask|=1u<<kind;
         }
         require(count>0,"模型预览：没有有效兵装");
-        if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && count==1) ||
+        if(aircraft==MountAircraft::X02s && (mask&4u) && read<int>(meshManager+0x178)==0) {
+            mountPreview.pending=true;mountPreview.nativeOnly=true;mountPreviewRestoreVisuals();return;
+        } // EML效果源池尚未建立时等待下一次预览，非空池再严格核对。
+        if(((mountExpanded(aircraft) || mountAnimated(aircraft) || mountExterior(aircraft) || mountLight(aircraft)) && count==1 &&
+            !(aircraft==MountAircraft::X02s && mask==4)) ||
            mountExpansionNative(aircraft,mask) ||
            (mountLight(aircraft) && mountLightNative(aircraft,mask)) ||
            (mountExterior(aircraft) && !(mask&4u))) {

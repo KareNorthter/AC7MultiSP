@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| X-02S EML常驻，源码待验证 | 本聊天；基线main/5d1bd56；codex/feat-x02s-eml-model | C:/Users/83717/.codex/worktrees/x02s-eml-model/AC7_MultiSP | 责任范围：X-02S轻量挂架与姿态、挂载识别和预览接线、Lua预览入口及[挂载设计](../engineering/multi-sp-mount-design.md#x-02s-eml常驻续研)。作者接受已有视觉冲突；选装含EML时固定炮体并取消其展开动画，其他弹舱原生。静态审阅；未编译、测试、安装或操作游戏。 |
 | 2.27.0 beta5加载误报修复与姿态修订整合，已出包待验证 | 本集成聊天；基线main/5d1bd56；姿态来源91894fe | codex/integrate-2.27.0-beta5；C:/Users/83717/.codex/worktrees/integrate-227-beta5/AC7_MultiSP | 独占main.lua的恢复状态语义、overlay.cpp/management_panel.hpp的告警判断与对应架构正文；接收姿态局部颜色补偿和再放大10%，连同已合HUD紧凑增量完整构建EXE。保留真实机体故障/严重故障提示、现有协议和玩家更新日志；[EXE交付回执](../../evidence/2.27.0-beta5-exe-delivery.json)记录完整构建、签名及包内字节核对。未运行测试模块、安装、操作游戏或推送，实机效果待验收。 |
 | 2.27.0 beta4视角/HUD/姿态与Double Trigger整合，已出包待验证 | 本集成聊天；基线main/c90a2fa；来源988e805、ce6f221、1ef1003、b65e2c9 | codex/integrate-2.27.0-beta4；C:/Users/83717/.codex/worktrees/integrate-227-beta4/AC7_MultiSP | 接收恢复俯仰限制、固定PW四槽、姿态视觉及第一人称/座舱替换，以及Double Trigger单人快速任务兼容。管理协议26及姿态v2成套；新开关文字已由作者在来源聊天授权自行命名，无需审核；玩家更新日志保留原字节。已完整构建并签名封装[候选EXE](../../evidence/2.27.0-beta4-exe-delivery.json)，内嵌版本/更新日志及交付摘要已核对；未运行测试模块、安装、操作游戏或推送，待作者实机验收。 |
 | 快速任务兼容Double Trigger，已接入beta4待验证 | 本集成聊天；基线main/c90a2fa；codex/fix-quick-mission-double-trigger | C:/Users/83717/.codex/worktrees/quick-mission-double-trigger/AC7_MultiSP | 已修改src/quick_mission.hpp加载入口识别及[对应设计正文](../engineering/quick-mission-launch.md#double-trigger已安装时的单人快速任务兼容源码候选)，限定已安装0.4.0+eef8254b的钩子和原生跳板，保留原生/单人检查。静态核对129字节指纹与安装件一致，其余入口指纹未变；完整链与出击待实机验证。不改版本和玩家正文，本轮未编译、测试、安装、操作游戏、合main或推送。 |
