@@ -905,6 +905,11 @@ std::string recoveryText(const char* key,const std::string& count={}) {
     }
     return result;
 }
+bool recoveryDisabled(const Json& recovery) {
+    // 也防御旧控制器的过渡快照；真实故障须有原因，严重故障即使缺少原因也不能隐藏。
+    return recovery.value("disabled",false) &&
+        (recovery.value("severe",false)||!recovery.value("reason",std::string()).empty());
+}
 #include "management_panel.hpp"
 
 // 消费游戏线程发布的完整状态；保留未保存草稿，按请求编号显示保存结果。
@@ -1017,9 +1022,11 @@ void refreshState() {
         if(state.contains("recovery")) {
             const auto& recovery=state.at("recovery");
             const auto reason=recovery.value("reason",std::string());
-            const bool disabled=recovery.value("disabled",false),severe=recovery.value("severe",false);
+            const bool disabled=recoveryDisabled(recovery),severe=recovery.value("severe",false);
             const auto key=disabled?(std::string(severe?"severe/":"aircraft/")+reason):std::string();
             if(!key.empty() && key!=recoveryNoticeKey) {
+                nativeLog(Json{{"event","RECOVERY_NOTICE"},{"plane_id",state.value("plane_id",-1)},
+                    {"severe",severe},{"must_leave",recovery.value("must_leave",false)},{"reason",reason}}.dump());
                 showToast(recoveryText(severe?"recovery.severe":
                     recovery.value("must_leave",false)?"recovery.leave_mission":"recovery.aircraft"),ToastKind::Error);
             }

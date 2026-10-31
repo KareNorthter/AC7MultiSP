@@ -132,7 +132,7 @@ std::string weaponCatalogueReason(const Json& issue) {
 }
 void drawManagementErrors() {
     std::string recoveryDetail;
-    if(state.contains("recovery")&&state.at("recovery").value("disabled",false)) {
+    if(state.contains("recovery")&&recoveryDisabled(state.at("recovery"))) {
         const auto& recovery=state.at("recovery");
         ImGui::TextWrapped("%s",recoveryText(recovery.value("severe",false)?"recovery.severe":
             recovery.value("must_leave",false)?"recovery.leave_mission":"recovery.aircraft").c_str());

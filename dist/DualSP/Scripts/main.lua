@@ -1671,7 +1671,10 @@ local function publishState()
         settings_ack=settingsAck,settings_response=settingsResponse,settings_error=settingsError,input_notice=inputNotice}
     state.weapon_switch={pending=weaponSwitch.pending~=nil,target=weaponSwitch.pending and weaponSwitch.pending.desired or nil,
         reason=weaponSwitch.pending and weaponSwitch.pending.reason or nil}
-    state.recovery={disabled=not runtimeAllowed,severe=runtimeFailed,reason=faultRecovery.reason,
+    -- 单人许可在加载过渡中也会暂时撤回；只有真实故障才发布机体停用，不能把过渡快照当作故障。
+    local recoveryDisabled=not runtimeAllowed and (runtimeFailed or
+        type(faultRecovery.reason)=="string"and faultRecovery.reason~="")
+    state.recovery={disabled=recoveryDisabled,severe=runtimeFailed,reason=faultRecovery.reason,
         issue=faultRecovery.currentIssue,
         must_leave=faultRecovery.mustLeave,catalogue_ready=faultRecovery.catalogueReady,
         issue_count=#faultRecovery.issues,outside_mission=runtimeContext.outsideMission==true}
