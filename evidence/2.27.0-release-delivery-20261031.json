@@ -1,0 +1,206 @@
+{
+  "version": "2.27.0",
+  "channel": "stable",
+  "date": "2026-10-31",
+  "source_commit": "b9c3f1a2fb0d558a7957fac28819a143b95cba85",
+  "preparation": "evidence/2.27.0-release-preparation-20261031.json",
+  "build_receipt": "E:\\AC7_MultiSP\\Temp\\tasks\\20261031-2.27.0-final-build\\delivery-receipt.json",
+  "build_receipt_sha256": "e2b72fed8a1240dd920cba6c3e74da376bfdaa5c9cdd161ae99564227c8c4221",
+  "release_dir": "E:\\AC7_MultiSP\\Release\\2.27.0",
+  "artifacts": {
+    "AC7MultiSP_Installer.exe": {
+      "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\AC7MultiSP_Installer.exe",
+      "size": 74807296,
+      "sha256": "bae318573b4836e75e122de3a37815e97a8933298ba9980acb256558c304a734"
+    },
+    "AC7MultiSP-2.27.0-Universal.zip": {
+      "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\AC7MultiSP-2.27.0-Universal.zip",
+      "size": 27463538,
+      "sha256": "f13994a8e9264361201e799ce4f2ff483a7de03af3446b1000278aed9c7b9576"
+    },
+    "AC7MultiSP-Pages-homepage.zip": {
+      "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\AC7MultiSP-Pages-homepage.zip",
+      "size": 93319,
+      "sha256": "ae27e0749ea8b7efe5ac75249f62c42858682f4af171021a85e079dbf488067c"
+    },
+    "AC7MultiSP-release.json": {
+      "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\AC7MultiSP-release.json",
+      "size": 550,
+      "sha256": "7ebff4daca97886c30e6449bcf3161a4c710d02221731dcb76d32346ffca75cb"
+    },
+    "AC7MultiSP-release.sig.json": {
+      "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\AC7MultiSP-release.sig.json",
+      "size": 662,
+      "sha256": "26f678dd87262c1522be92c6fe2c53ff1e3586ee5d065e43dac9cf5c2c313e0a"
+    }
+  },
+  "author_signing": {
+    "release_id": "26799497f2a846668dcc0e251d784a93",
+    "channel": "stable",
+    "bundle_verified": true,
+    "release_verified": true
+  },
+  "documents": {
+    "功能说明.txt": "fd2475a253c6c6b6a3560372ccdbe57122f490799f28bb75d9f992d32d5fb1f5",
+    "Features.txt": "0b6b7951c11362107fe6b40266d973bc7f0da12c710e18a1f82d5e03aafc67c5",
+    "更新日志.txt": "80fcfa5747548fb93b3b4a7a88b0b30711116e6b4f5d7a921a60349120af013a",
+    "Changelog.txt": "56cbe5f121eab205914be605935707396519dc18c5f8517de66de97443ce69b9",
+    "安装说明.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "作者与授权.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+  },
+  "checks": {
+    "full_build": true,
+    "beta7_runtime_unchanged": true,
+    "exe_embedded_resources_verified": 58,
+    "assembly_version": "2.27.0.0",
+    "exe_zip_documents_match_source": true,
+    "chinese_author_bytes_preserved": true,
+    "all_packaged_scripts_match_source": true,
+    "vortex_mapping_excludes_readme": true,
+    "no_personal_files": true,
+    "pages_members_verified": 30,
+    "pages_documents_match_source": true,
+    "latest_notes_complete": true,
+    "history_excludes_latest": true,
+    "preview_unchanged": true,
+    "historical_signatures_verified": [
+      "2f35cfa13faa4c93841da77e8fbed037",
+      "6758d0157e8d4bed9008171cadc51023",
+      "78b97c323d0d422ba657a01135f44dd7"
+    ],
+    "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "pages": {
+    "path": "E:\\AC7_MultiSP\\Release\\2.27.0\\Pages",
+    "zip_sha256": "ae27e0749ea8b7efe5ac75249f62c42858682f4af171021a85e079dbf488067c",
+    "members": {
+      "_headers": {
+        "size": 717,
+        "sha256": "4f29fb3eb27922b58f513e00e7a2b5d768cd278cc815e956a852e2a1950d1de6"
+      },
+      "AC7MultiSP-release.json": {
+        "size": 550,
+        "sha256": "7ebff4daca97886c30e6449bcf3161a4c710d02221731dcb76d32346ffca75cb"
+      },
+      "AC7MultiSP-release.sig.json": {
+        "size": 662,
+        "sha256": "26f678dd87262c1522be92c6fe2c53ff1e3586ee5d065e43dac9cf5c2c313e0a"
+      },
+      "app.js": {
+        "size": 28353,
+        "sha256": "11ec307681b3dbb4d472e47b7caf8a3635f6c1fb8c62f365b08313fa373feb0c"
+      },
+      "assets/alipay-qr.jpg": {
+        "size": 63182,
+        "sha256": "4e74a016dc49308b59b8181455c73761176f3197ec595e5257ebe7499919babe"
+      },
+      "assets/mastercard.svg": {
+        "size": 178,
+        "sha256": "b1ca921334ea354ed30b537236a6528225a4470190b461d677666e04143d3ab7"
+      },
+      "assets/paypal.svg": {
+        "size": 229,
+        "sha256": "d68fb04a134b6b046e019bc46f24ac4a989304bd80f0b4bc2ba2e3d538cf4464"
+      },
+      "assets/visa.svg": {
+        "size": 196,
+        "sha256": "22e530a4590b8972361da851ecc43074eab0cfb9d03e1d4f1b727e78cbc15275"
+      },
+      "index.html": {
+        "size": 10243,
+        "sha256": "e22f7d3c540ddbeb10eec6c5f217f8225583aeb612aafe519c6a53f038fde126"
+      },
+      "preview.json": {
+        "size": 1024,
+        "sha256": "e6560d0fcfdb07a7f1af994d2898f0c63d21c600813656821c72d18c57a4a03a"
+      },
+      "releases/26799497f2a846668dcc0e251d784a93/AC7MultiSP-release.json": {
+        "size": 550,
+        "sha256": "7ebff4daca97886c30e6449bcf3161a4c710d02221731dcb76d32346ffca75cb"
+      },
+      "releases/26799497f2a846668dcc0e251d784a93/AC7MultiSP-release.sig.json": {
+        "size": 662,
+        "sha256": "26f678dd87262c1522be92c6fe2c53ff1e3586ee5d065e43dac9cf5c2c313e0a"
+      },
+      "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.json": {
+        "size": 550,
+        "sha256": "b23e4d1fc4efc98a2963eed168b941115f73e4c56b8212c85476e558a13135f9"
+      },
+      "releases/2f35cfa13faa4c93841da77e8fbed037/AC7MultiSP-release.sig.json": {
+        "size": 662,
+        "sha256": "eaa372fb4eeb2877f409a81309e9f68435c66e61f101a57beb9c244ae7404909"
+      },
+      "releases/6758d0157e8d4bed9008171cadc51023/AC7MultiSP-release.json": {
+        "size": 550,
+        "sha256": "6331599341dda5186e3f0ec7d04e7c34c47c4176d0b6a67312e44ab165a0759d"
+      },
+      "releases/6758d0157e8d4bed9008171cadc51023/AC7MultiSP-release.sig.json": {
+        "size": 662,
+        "sha256": "44b0c491ac44719740faa46e859cfd7a153d3a40e04e9510b15b4b666b31b649"
+      },
+      "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.json": {
+        "size": 550,
+        "sha256": "fd988f730a5bbc63fc99537c300ba6f17d82574b1b613a2fef1496db621c0c7c"
+      },
+      "releases/78b97c323d0d422ba657a01135f44dd7/AC7MultiSP-release.sig.json": {
+        "size": 662,
+        "sha256": "e45a121a942968a77e4e2086e36acaca42c9b89411d5f03fee4c84d549dd091e"
+      },
+      "stable.json": {
+        "size": 1901,
+        "sha256": "f7d6517a97b0f27e7921186c48b719d58d44c8937c81afcf9fb67d40516362ff"
+      },
+      "styles.css": {
+        "size": 14013,
+        "sha256": "23329b646cef22111e27878be4861fb9b90c576de1ce59215d5880733af3edf0"
+      },
+      "user-docs/Author-and-License.txt": {
+        "size": 2677,
+        "sha256": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+      },
+      "user-docs/changelog-history.en.txt": {
+        "size": 2598,
+        "sha256": "8cfd9baf78257aa0fd9081ecd68e5c16995f5135d79eedf0ed56bbca2140482f"
+      },
+      "user-docs/changelog-history.zh-CN.txt": {
+        "size": 2004,
+        "sha256": "f4e812e432482c3c2bf46929635572e94c9391f833a7d08795bd6ef1daabb8d7"
+      },
+      "user-docs/Changelog.txt": {
+        "size": 3440,
+        "sha256": "56cbe5f121eab205914be605935707396519dc18c5f8517de66de97443ce69b9"
+      },
+      "user-docs/Features.txt": {
+        "size": 4513,
+        "sha256": "0b6b7951c11362107fe6b40266d973bc7f0da12c710e18a1f82d5e03aafc67c5"
+      },
+      "user-docs/Installation.txt": {
+        "size": 1419,
+        "sha256": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608"
+      },
+      "user-docs/作者与授权.txt": {
+        "size": 2466,
+        "sha256": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa"
+      },
+      "user-docs/功能说明.txt": {
+        "size": 3782,
+        "sha256": "fd2475a253c6c6b6a3560372ccdbe57122f490799f28bb75d9f992d32d5fb1f5"
+      },
+      "user-docs/安装说明.txt": {
+        "size": 1230,
+        "sha256": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad"
+      },
+      "user-docs/更新日志.txt": {
+        "size": 2673,
+        "sha256": "80fcfa5747548fb93b3b4a7a88b0b30711116e6b4f5d7a921a60349120af013a"
+      }
+    },
+    "r2_verified": false,
+    "uploaded": false,
+    "status": "待上传、远端未核",
+    "source_stable_version": "2.26.1"
+  },
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传；本地字节/签名核对不代表实机性能或线上已验证。正式版本不变更原有验收、旧标签及历史回执。"
+}
