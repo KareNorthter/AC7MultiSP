@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-31",
+  "version": "2.27.0 beta5",
+  "user_feedback": "功能都没问题。",
+  "context": "紧接本聊天2.27.0 beta5 EXE交付后的作者反馈，作为该候选功能验收记录。",
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta5/AC7MultiSP_Installer_2.27.0_beta5.exe",
+  "sha256": "c77d9862a6c07ec8f82e8d61dd402128d9f6a30a20ab4cfbf62cd9b3382461dc",
+  "delivery_receipt": "evidence/2.27.0-beta5-exe-delivery.json",
+  "limits": "作者总体功能反馈；本轮未独立核对安装字节或操作游戏，不追认所有异常恢复、故障注入及性能专项通过。不涵盖随后接收且未编译的X-02S EML常驻增量，不据此自动正式发布或推送。"
+}
