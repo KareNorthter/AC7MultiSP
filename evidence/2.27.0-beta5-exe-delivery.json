@@ -1,0 +1,42 @@
+{
+  "version": "2.27.0 beta5",
+  "channel": "candidate",
+  "source_commit": "84dd42b95d726db7e2247e9f1bcbf91e751fd4b5",
+  "sources": {
+    "attitude": "91894fe7d83aebb3eb4afb70dd42630b551a521f",
+    "hud": "b0e63914416858339edfafbd5793eee4142c6946",
+    "false_notice_fix": "220ee852d8a4ef52c22430cfe6d44c0cb88c6af8"
+  },
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta5/AC7MultiSP_Installer_2.27.0_beta5.exe",
+  "sha256": "c77d9862a6c07ec8f82e8d61dd402128d9f6a30a20ab4cfbf62cd9b3382461dc",
+  "size": 74772480,
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261031-2.27.0-beta5-build/delivery-receipt.json",
+  "changes": [
+    "加载过渡不再发布为机体故障停用；弹窗及F6顶部共用真实故障判断，保留严重错误和机体隔离提示",
+    "实际故障通知记录RECOVERY_NOTICE，便于追溯",
+    "姿态警示数字补偿绿色祖先染色，B标签保留，beta4基础上再放大10%",
+    "纳入此前已合main但未编译的紧凑PW HUD增量"
+  ],
+  "checks": {
+    "full_build": true,
+    "author_signatures_verified": true,
+    "copied_exe_matches": true,
+    "packaged_version": "2.27.0 beta5",
+    "packaged_changed_scripts_match_source": true,
+    "changelog_unchanged": true,
+    "changelog_members": [
+      "ReadMe_zhCN请读我/更新日志.txt",
+      "ue4ss/Mods/DualSP/docs/更新日志.txt",
+      "ReadMe_EN/Changelog.txt",
+      "ue4ss/Mods/DualSP/docs/Changelog.txt"
+    ],
+    "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "diagnosis": {
+    "pid": 38372,
+    "notice_time_local": "2026-10-31 21:12:04.868 +08:00",
+    "basis": "只读保留通知、当前已清空的恢复键、当次三SP/模型及切换成功日志，与发布/消费代码次序一致",
+    "raw_record": "C:/Users/83717/.codex/worktrees/integrate-hud-compact/AC7_MultiSP/Temp/tasks/20261031-m31b-quick-mission-notice/inspection-38372.json"
+  },
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。新包的加载无误报、真实故障提示、红色数字观感及大小仍待作者实机验收。"
+}
