@@ -1,0 +1,26 @@
+{
+  "date": "2026-10-31",
+  "source_thread": "01a1921f-e345-7af1-a0fc-b9165456fb3b",
+  "source_head": "5d1bd56841e37e1afdb2d1fd7ad284bc15c076bc",
+  "base_main": "6de6d7e60426d7dc87f6bb0da45ece7d8d9d0f0a",
+  "source_form": "研究线程未提交优化，已保存全部差异及新头文件原件，源工作树保持原样",
+  "snapshot_dir": "C:/Users/83717/.codex/worktrees/integrate-227-beta7/AC7_MultiSP/Temp/tasks/20261031-x02s-eml-performance-intake",
+  "source_files_sha256": {
+    "dist/DualSP/Scripts/main.lua": "6d585a9be3ae00b60fd5f2441d82fe8741d3db17a32fa3b1188103a44b0a08cd",
+    "docs/engineering/multi-sp-mount-design.md": "8fd63cc583fba3d35a121e57c38ad7367f226f0dccd01c5b00d4ac9dc33f6004",
+    "docs/project/workspaces.md": "0c8c9048384ae7e0048b2539edf95eece53ff86d8e81a7d0ff778117ef600913",
+    "docs/research/README.md": "2ccb56e1a2b457612cce845b8d8dc4fcb847c6e0ac1bfa4ceaaed463575fa56f",
+    "src/light_mount.hpp": "3b87beeb5693d00cf9f3923e3101ad644d707378e0f5f4d8f36fd17541455092",
+    "src/mount_preview.hpp": "b75f1cfa75239093c23dba530423473c36cf17fd01dde9b7f49f378fb474729b",
+    "src/su30sm_fixed_mount.hpp": "3b82886566edeeee13880ea0dc23bab83f368aa1c77db97c7ea460589720333c",
+    "src/x02_mount_pose.hpp": "4a518c85e9e1a32777b82286aa0bf7181d496018e7e19323fdfaead0938033ea",
+    "docs/research/runtime-performance.md": "e5797bf875b3f923b94dfba9ba80118d23d97b2c45c8777228387c37a1b1272a"
+  },
+  "patch_sha256": "c9283e7d9bc63430faf3845a80793bc700d2af3852ad7f46f0c039e48cab5423",
+  "accepted_runtime_files": [
+    "src/light_mount.hpp",
+    "src/x02_mount_pose.hpp"
+  ],
+  "scope": "同实例普通switch保留单节点姿态，只归还更新许可；缓存Tick接口和跳过同值读写，必要时重设端点，非普通switch仍完整归还。",
+  "limits": "20ms是待实测目标，不能由静态审阅或构建通过宣称达标；本次不安装或操作游戏，不运行测试模块。"
+}

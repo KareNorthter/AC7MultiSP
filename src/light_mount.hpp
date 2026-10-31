@@ -514,7 +514,9 @@ void mountLightRelease(FixedMountState& state,bool keepBones) {
     if(!state.light)return;
     std::string failure;
     for(auto& rack:state.light->racks) {
-        try {rack.pose.release();}catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
+        try {
+            if(keepBones && state.aircraft==MountAircraft::X02s)rack.pose.releaseUpdate();else rack.pose.release();
+        }catch(const std::exception& e) {if(!failure.empty())failure+="；";failure+=e.what();}
         try {
             CfaWorkScope cost(1);
             if(keepBones) {
@@ -536,7 +538,7 @@ void mountLightRelease(FixedMountState& state,bool keepBones) {
 void mountLightBeforeRebuild(const Command& command) {
     auto& state=fixedMount;
     bool keep=false;
-    if(command.op=="switch" && state.bound && state.aircraft==MountAircraft::Fa44 &&
+    if(command.op=="switch" && state.bound && (state.aircraft==MountAircraft::Fa44 || state.aircraft==MountAircraft::X02s) &&
        state.plane.address==command.plane && state.animationActivator.address==command.activator) {
         const MountIdentityBatch identities;
         keep=identities.alive(state.plane) && identities.alive(state.animationActivator) && identities.alive(state.manager) &&
