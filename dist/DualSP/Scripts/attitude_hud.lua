@@ -1,7 +1,7 @@
 -- 微型姿态图形只在启用时构造；Lua维护生命周期和整数读数，原生镜头帧更新两个变换。
 local Attitude={}
 local TRANSIENT,COLLAPSED,HIT_TEST_INVISIBLE=0x40,1,3
-local SCALE=1.3
+local SCALE=1.3*1.1 -- 在beta4的1.3倍基础上再放大10%。
 local function valid(widget)return widget and widget:IsValid()end
 local function vec(value)return {X=value.X,Y=value.Y}end
 local function layout(slot)
@@ -95,12 +95,18 @@ function Attitude.new(note,invoke,fatal)
         visibilityFunction=StaticFindObject("/Script/UMG.Widget:SetVisibility")
         assert(valid(panelClass)and valid(userClass)and valid(canvasClass)and valid(imageClass),"Attitude HUD classes unavailable")
     end
-    local function walk(widget,result)
+    local function walk(widget,result,tintParents)
         if not valid(widget)then return end
-        result[widget:GetFName():ToString()]=widget
-        if widget:IsA(panelClass)then widget.Slots:ForEach(function(_,slot)walk(slot:get().Content,result)end)end
+        local name=widget:GetFName():ToString()
+        result[name]=widget
+        if name=="SpeedText"then result.attitudeTintParents=tintParents end
+        if widget:IsA(panelClass)then widget.Slots:ForEach(function(_,slot)walk(slot:get().Content,result,tintParents)end)end
         -- SPEED位于PersistentWidget子界面；UserWidget自身没有PanelWidget的Slots。
-        if widget:IsA(userClass)and valid(widget.WidgetTree)then walk(widget.WidgetTree.RootWidget,result)end
+        if widget:IsA(userClass)and valid(widget.WidgetTree)then
+            local nested={};for index,parent in ipairs(tintParents)do nested[index]=parent end
+            nested[#nested+1]=widget
+            walk(widget.WidgetTree.RootWidget,result,nested)
+        end
     end
     local function construct(class,tree,name)
         self.serial=self.serial+1
@@ -133,7 +139,8 @@ function Attitude.new(note,invoke,fatal)
         local source=widgets.SpeedText
         local panel=widgets.SpeedMeterPanel
         assert(source.Slot.Parent:GetAddress()==panel:GetAddress()and panel:IsA(canvasClass),"Attitude: speed label layout changed")
-        local c={owner=owner,source=source,panel=panel,lines={},texts={},stockPanel=widgets.PitchMeterPanel,mask=mask}
+        local c={owner=owner,source=source,panel=panel,lines={},texts={},stockPanel=widgets.PitchMeterPanel,mask=mask,
+            tintParents=assert(widgets.attitudeTintParents,"Attitude: speed HUD tint ancestry unavailable")}
         self.cache=c -- 先登记所有权，部分构造错误也可以隐藏/归还。
         c.root=construct(canvasClass,owner.WidgetTree,"Root");c.root:SetVisibility(COLLAPSED)
         c.slot=panel:AddChildToCanvas(c.root);assert(valid(c.slot),"Attitude: cannot attach root")
@@ -223,11 +230,15 @@ function Attitude.new(note,invoke,fatal)
             if valid(owner)and valid(owner.WidgetTree)and valid(owner:GetWorld())and owner:GetWorld():GetAddress()==world then
                 local name=owner:GetFullName()
                 if not name:find("WidgetArchetype",1,true)and not name:find("Default__",1,true)then
-                    local widgets={};walk(owner.WidgetTree.RootWidget,widgets)
+                    local widgets={};walk(owner.WidgetTree.RootWidget,widgets,{owner})
                     if valid(widgets.SpeedText)and valid(widgets.SpeedMeterPanel)then return attach(owner,widgets,mask)end
                 end
             end
         end
+    end
+    local function tintParentsValid(c)
+        for _,parent in ipairs(c.tintParents)do if not valid(parent)then return false end end
+        return true
     end
     local function update(plane,mask,now)
         if mask==0 then self:release();self.waitingSince=nil;return end
@@ -235,7 +246,7 @@ function Attitude.new(note,invoke,fatal)
         if self.player~=address then self:reset(true);self.player=address end
         if self.error then return end
         local c=self.cache
-        if c and (not valid(c.owner)or not valid(c.root)or not valid(c.source)or not valid(c.wings)or not valid(c.cursor)
+        if c and (not valid(c.owner)or not valid(c.root)or not valid(c.source)or not valid(c.wings)or not valid(c.cursor)or not tintParentsValid(c)
             or (mask%4~=0 and not valid(c.stockPanel)))then
             self:reset(true);self.player=address;c=nil
         end
@@ -249,7 +260,16 @@ function Attitude.new(note,invoke,fatal)
             end
         end
         local color=c.source.ColorAndOpacity.SpecifiedColor
-        local signature=table.concat({color.R,color.G,color.B,color.A},":")
+        -- 原生PersistentWidget会把所有后代乘上绿色。只补偿自有警示数字，保留整棵原生HUD的颜色。
+        local tintR,tintG,tintB=1,1,1
+        for _,parent in ipairs(c.tintParents)do
+            assert(valid(parent),"Attitude: HUD tint ancestor expired")
+            local tint=parent.ColorAndOpacity
+            tintR=tintR*tint.R;tintG=tintG*tint.G;tintB=tintB*tint.B
+        end
+        local glow=c.source.GlowColor.SpecifiedColor
+        local signature=table.concat({color.R,color.G,color.B,color.A,tintR,tintG,tintB,glow.R,glow.G,glow.B,glow.A,
+            tostring(c.source.bUseGlobalGlowColor)},":")
         local styleChanged=c.style~=signature
         if styleChanged then
             for _,entry in ipairs(c.lines)do entry.widget:SetColorAndOpacity({R=color.R,G=color.G,B=color.B,A=color.A*entry.alpha})end
@@ -266,10 +286,15 @@ function Attitude.new(note,invoke,fatal)
         if bank~=""then c.bank:SetText(FText(bank))end
         local function numberStyle(object,warning,previous)
             if not styleChanged and warning==previous then return end
-            local tint=warning and {SpecifiedColor={R=1,G=.12,B=.08,A=color.A},ColorUseRule=0}or c.source.ColorAndOpacity
+            -- 使用线性色补偿，允许本地分量大于1；父级相乘后才得到目标红色，不额外降低Alpha。
+            local tint=warning and {SpecifiedColor={R=1/math.max(tintR,.001),G=.12/math.max(tintG,.001),
+                B=.08/math.max(tintB,.001),A=color.A},ColorUseRule=0}or c.source.ColorAndOpacity
             object:SetColorAndOpacity(tint)
             object:SetUseGlobalGlowColor(not warning and c.source.bUseGlobalGlowColor)
-            object:SetGlowColor(warning and tint or c.source.GlowColor)
+            if warning then
+                local red=tint.SpecifiedColor
+                object:SetGlowColor({SpecifiedColor={R=red.R,G=red.G,B=red.B,A=glow.A},ColorUseRule=0})
+            else object:SetGlowColor(c.source.GlowColor)end
         end
         numberStyle(c.pitch,pitchWarning,c.pitchWarning);numberStyle(c.bank,bankWarning,c.bankWarning)
         c.pitchWarning=pitchWarning;c.bankWarning=bankWarning

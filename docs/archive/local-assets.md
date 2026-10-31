@@ -8,6 +8,7 @@
 
 | 用途 | 本机位置 | 使用方法与边界 |
 |---|---|---|
+| 简易姿态警示色只读核对 | `C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP/Temp/tasks/20261031-attitude-warning-color/` | 作者启动的PID38372，TextBlock颜色/泛光接口与原生函数体、控件和Slate颜色、祖先UserWidget染色快照；不写进程、不调用游戏函数、不注入输入，不入Git。恢复入口为inspect_text.py；结论与修订边界见[架构](../engineering/architecture.md#第三人称姿态指示器未发布候选) |
 | 姿态指示器beta2加载失败日志 | `C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP/Temp/tasks/20261031-attitude-load-failure/` | PID23392的UE4SS/mod/native日志、安装版姿态Lua和VERSION快照，manifest记录来源及SHA256；仅文件只读采集，不入Git。根因及源码修订边界见[架构](../engineering/architecture.md#第三人称姿态指示器未发布候选)，原版资源沿用下一行的离线副本 |
 | 第三人称姿态图与原生HUD核对 | `C:/Users/83717/.codex/worktrees/third-person-attitude/AC7_MultiSP/Temp/tasks/20261030-third-person-attitude/` | 原版HUD加密/解码副本、JSON及作者启动进程的只读快照与观察脚本；不入Git。转换使用既有`DOTNET_ROOT_X64=E:/AC7_MultiSP/tools/dotnet8`，首次漏设环境的超时记录保留。原始快照名沿当时用户称呼为first-person-paused，实际视角标志为2；不据此声称完成第一人称或新候选的实测。唯一机制与验证边界见[架构](../engineering/architecture.md#第三人称姿态指示器未发布候选) |
 | Arsenal Bird主武器UAV现场 | Temp/tasks/20261030-arsenal-bird-observation/ | 2.26.2 beta6两进程日志、初始/20架在途/重启后只读快照和采集脚本，不入Git；来源与结论见[兼容性续研](../research/mod-aircraft-compatibility.md#arsenal-bird主武器uav与切换2026-10-30)。 |
