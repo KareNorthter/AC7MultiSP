@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 2.27.0 beta6姿态天地显示与X-02S EML构建，准备构建 | 本集成聊天；基线main/0f70952；姿态来源1017687、EML接收77e025d | codex/integrate-2.27.0-beta6；C:/Users/83717/.codex/worktrees/integrate-227-beta6/AC7_MultiSP | 接收姿态地平圈与天地填色成套v3，包含已合X-02S EML常驻，保留已验收beta5及HUD修订。管理协议26、配置19和更新日志原字节保持；获授权完整构建EXE，不安装、运行测试模块、操作游戏或推送。 |
 | X-02S EML常驻增量整合，已接收未编译 | 本集成聊天；基线main/57e6e8f；来源聊天01a1921f-e345-7af1-a0fc-b9165456fb3b的未提交快照，接收77e025d | codex/integrate-x02s-eml；C:/Users/83717/.codex/worktrees/integrate-x02s-eml/AC7_MultiSP | 按[接收记录](../../evidence/x02s-eml-source-intake-20261031.json)接收七项已跟踪差异及新姿态头；只解决登记冲突，运行源码与来源一致，Lua保留beta5恢复修复。记录beta5作者验收，不改版本和玩家正文。未编译、运行测试、安装、操作游戏或推送；现有EXE不含此增量。 |
 | X-02S EML常驻，源码已接收待验证 | 本聊天；基线main/5d1bd56；codex/feat-x02s-eml-model | C:/Users/83717/.codex/worktrees/x02s-eml-model/AC7_MultiSP | 责任范围：X-02S轻量挂架与姿态、挂载识别和预览接线、Lua预览入口及[挂载设计](../engineering/multi-sp-mount-design.md#x-02s-eml常驻续研)。作者接受已有视觉冲突；选装含EML时固定炮体并取消其展开动画，其他弹舱原生。静态审阅；未编译、测试、安装或操作游戏。 |
 | 2.27.0 beta5加载误报修复与姿态修订整合，作者反馈功能正常 | 本集成聊天；基线main/5d1bd56；姿态来源91894fe | codex/integrate-2.27.0-beta5；C:/Users/83717/.codex/worktrees/integrate-227-beta5/AC7_MultiSP | 独占main.lua的恢复状态语义、overlay.cpp/management_panel.hpp的告警判断与对应架构正文；接收姿态局部颜色补偿和再放大10%，连同已合HUD紧凑增量完整构建EXE。保留真实机体故障/严重故障提示、现有协议和玩家更新日志；[EXE交付回执](../../evidence/2.27.0-beta5-exe-delivery.json)记录完整构建、签名及包内字节核对。本轮未运行测试模块、安装、操作游戏或推送；作者后续反馈功能正常，见[验收记录](../../evidence/2.27.0-beta5-user-acceptance-20261031.json)，不扩大全部故障边界。 |
