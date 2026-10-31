@@ -200,8 +200,7 @@ function Attitude.new(note,invoke,fatal)
             local length=math.sqrt((x2-x1)^2+(y2-y1)^2)
             line(c.horizon,(x1+x2)/2-length/2-.15,(y1+y2)/2-.8,length+.3,1.6,(a+b)/2*180/math.pi+90,.7)
         end
-        -- 地平线实体Alpha为1，只有羽化边缘透明；不再叠乘速度文字的0.5透明度。
-        line(c.horizon,0,23.3,48,1.4,0,1,true)
+        -- 天地仅由填色边界区分，不再额外绘制贯穿圆圈的细水平线。
         for _,point in ipairs({{24,0},{48,24},{24,48},{0,24}})do
             if point[1]==24 then line(c.horizon,point[1]-.8,point[2]-2.5,1.6,5,0,.8)
             else line(c.horizon,point[1]-2.5,point[2]-.8,5,1.6,0,.8)end
@@ -215,7 +214,7 @@ function Attitude.new(note,invoke,fatal)
         local side=6/math.sqrt(2)
         line(triangle,-side/2,3-side/2,side,side,45,1)
         local aircraft=canvas(c.root,"Aircraft",36,20,48,48)
-        aircraft.Slot:SetZOrder(1) -- 固定机体符号盖在地面填色与水平线上。
+        aircraft.Slot:SetZOrder(1) -- 固定机体符号盖在地面填色上。
         line(aircraft,10,22.9,28,2.2,0,1)
         line(aircraft,22.9,12,2.2,12,0,1)
         line(aircraft,22.3,22.3,3.4,3.4,0,1)
