@@ -7,7 +7,7 @@
 | 项目 | 状态与依据 |
 |---|---|
 | 正式版本 | **2.27.0**；作者确认beta7测试无误，并明确将已接收改动及最新玩家正文合入main作为2.27.0，见[源码确认](evidence/2.27.0-source-confirmation-20261030.json)。本轮仅同步源码到GitHub，暂不交付安装包或网页，不代表R2、Nexus及Pages已更新。 |
-| 本轮候选阶段 | **2.27.0 beta4**，接收视角俯仰限制恢复、PW固定四槽、简易姿态视觉及第一人称/座舱替换，并纳入Double Trigger单人快速任务兼容；已制作[候选EXE](evidence/2.27.0-beta4-exe-delivery.json)，待作者实机验证。旧候选和回执保留。 |
+| 本轮候选阶段 | **2.27.0 beta5**，修复快速加载过渡误报机体停用，接收姿态警示色局部补偿和再放大10%，连同已合HUD紧凑增量准备完整构建。旧候选和回执保留。 |
 | 上一正式版本 | **2.26.1**，已发布交付记录及旧包保持原样；2.26.0等更早版本见证据及归档入口。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
@@ -17,7 +17,7 @@
 | Mod机体实机反馈 | 作者于2026-10-28确认X-02R A/B、J-20A/B/S及RH-172六个机体入口功能正常，见[用户验收](evidence/mod-aircraft-user-acceptance-20261028.json)。正式版本不变；此前ZSD组合冲突不据此记为已修复。 |
 | 当前真实冲突测试环境 | 作者授权启用XFA-36A包、F-17V、Gleipnir，与B组X-02R/UI-4054混装，目录179条；已核对6个资源成员内容差异。作者确认F-17V、Gleipnir、X-02R A/B及UI-4054三SP正常，XFA-36激光收尾修复已编译，作者确认 OSL 正常。真实武器表冲突测试未触发错误，不能据此证明所有冲突可检测；作者已停止测试并恢复兼容表。见[作者反馈](evidence/real-conflict-user-feedback-20261028.json)和[检测/恢复流程](docs/engineering/aircraft-fault-testing.md#2026-10-28真实冲突测试组)。 |
 | 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。作者已确认完成发布，site/stable.json已按交付材料同步2.26.1；[原网页回执](evidence/2.26.1-pages-delivery.json)保留制作时远端未核事实，[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)记录作者后续反馈。本轮未独立下载或部署核验。 |
-| 当前主线源码 | VERSION仍为**2.27.0 beta4**，candidate=true；在已构建候选基础上接收HUD紧凑与GUN整行居中增量b0e6391。此增量未编译，现有beta4 EXE不含；管理协议26、姿态v2及其他已接收功能保持，更新日志未变，实际布局待验证。 |
+| 当前主线源码 | main仍为**2.27.0 beta4**加HUD紧凑增量；本轮整合分支VERSION为**2.27.0 beta5**，candidate=true，准备完整构建。管理协议26、姿态v2及配置19保持，更新日志未变，合入和交付状态完成后登记。 |
 | 最近验收安装包 | **2.26.2 beta7**，作者于2026-10-30反馈测试无误；[交付记录](evidence/2.26.2-beta7-exe-delivery.json)保留原包身份，不追认2.27.0新字节已安装。 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。
