@@ -115,7 +115,7 @@ loadExport("dualsp_attitude_indicator_supported")
 loadExport("dualsp_attitude_indicator_supported","DualSPUI.dll")
 loadExport("dualsp_attitude_views_supported")
 loadExport("dualsp_attitude_views_supported","DualSPUI.dll")
-weaponSwitch.attitude=dofile(root.."Scripts/attitude_hud.lua").new(note,loadExport("dualsp_attitude_indicator_v2"),function(message)faultRecovery.fatal(message)end)
+weaponSwitch.attitude=dofile(root.."Scripts/attitude_hud.lua").new(note,loadExport("dualsp_attitude_indicator_v3"),function(message)faultRecovery.fatal(message)end)
 loadExport("dualsp_gun_salvo_supported")
 loadExport("dualsp_gun_salvo_supported","DualSPUI.dll")
 weaponSwitch.salvo={invoke=loadExport("dualsp_gun_salvo")}

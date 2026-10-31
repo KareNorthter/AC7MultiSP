@@ -152,7 +152,7 @@ function Attitude.new(note,invoke,fatal)
             place(slot,x*size,y*size,w*size,h*size);object:SetVisibility(HIT_TEST_INVISIBLE)
             return object
         end
-        local function patch(parent,x,y,w,h,angle,alpha)
+        local function patch(parent,x,y,w,h,angle,alpha,absoluteAlpha)
             local object=construct(imageClass,owner.WidgetTree,"Line")
             local brush=object.Brush;brush.DrawAs=1;object:SetBrush(brush);object.bIsImageHidingEnable=false
             object:SetGlowColor(source.GlowColor);object:SetUseGlobalGlowColor(source.bUseGlobalGlowColor)
@@ -160,14 +160,14 @@ function Attitude.new(note,invoke,fatal)
             place(slot,x*size,y*size,w*size,h*size)
             object:SetRenderTransformPivot({X=.5,Y=.5});object:SetRenderAngle(angle or 0)
             object:SetVisibility(HIT_TEST_INVISIBLE)
-            c.lines[#c.lines+1]={widget=object,alpha=alpha or 1}
+            c.lines[#c.lines+1]={widget=object,alpha=alpha or 1,absoluteAlpha=absoluteAlpha}
         end
-        local function line(parent,x,y,w,h,angle,alpha)
+        local function line(parent,x,y,w,h,angle,alpha,absoluteAlpha)
             -- 两层低透明度边缘包住实体线；沿整条边羽化，减轻旋转时的硬台阶。
             alpha=alpha or 1
-            patch(parent,x-.6,y-.6,w+1.2,h+1.2,angle,alpha*.16)
-            patch(parent,x-.3,y-.3,w+.6,h+.6,angle,alpha*.32)
-            patch(parent,x,y,w,h,angle,alpha)
+            patch(parent,x-.6,y-.6,w+1.2,h+1.2,angle,alpha*.16,absoluteAlpha)
+            patch(parent,x-.3,y-.3,w+.6,h+.6,angle,alpha*.32,absoluteAlpha)
+            patch(parent,x,y,w,h,angle,alpha,absoluteAlpha)
         end
         local function text(x,y,w,value,justification)
             local object=construct(source:GetClass(),owner.WidgetTree,"Text")
@@ -181,19 +181,30 @@ function Attitude.new(note,invoke,fatal)
         end
         text(14,0,22,"P",2);c.pitch=text(39,0,65,"---",0)
         text(14,70,22,"B",2);c.bank=text(39,70,65,"---",0)
-        -- 圆环与水平基准固定；非对称尾翼让180°倒飞与平飞明显不同。
+        -- 地平圈整体反向滚转；中央倒T另建固定容器，不参与旋转。
+        c.horizon=canvas(c.root,"Horizon",36,20,48,48)
+        c.horizon:SetRenderTransformPivot({X=.5,Y=.5})
+        -- 下半圆用连续横带填满，外缘藏在圆环实体线下；只在构造时生成。
+        local radius,bands=23.2,32
+        local step=radius/bands
+        for index=0,bands-1 do
+            local y=(index+.5)*step
+            local halfWidth=math.sqrt(radius*radius-y*y)
+            patch(c.horizon,24-halfWidth,24+index*step,halfWidth*2,step,0,.18,true)
+        end
         local segments=64
         for index=0,segments-1 do
             local a,b=index*2*math.pi/segments,(index+1)*2*math.pi/segments
-            local x1,y1=60+24*math.cos(a),44+24*math.sin(a)
-            local x2,y2=60+24*math.cos(b),44+24*math.sin(b)
+            local x1,y1=24+24*math.cos(a),24+24*math.sin(a)
+            local x2,y2=24+24*math.cos(b),24+24*math.sin(b)
             local length=math.sqrt((x2-x1)^2+(y2-y1)^2)
-            line(c.root,(x1+x2)/2-length/2-.15,(y1+y2)/2-.8,length+.3,1.6,(a+b)/2*180/math.pi+90,.7)
+            line(c.horizon,(x1+x2)/2-length/2-.15,(y1+y2)/2-.8,length+.3,1.6,(a+b)/2*180/math.pi+90,.7)
         end
-        line(c.root,34,43.3,52,1.4,0,.3)
-        for _,point in ipairs({{60,20},{84,44},{60,68},{36,44}})do
-            if point[1]==60 then line(c.root,point[1]-.8,point[2]-2.5,1.6,5,0,.8)
-            else line(c.root,point[1]-2.5,point[2]-.8,5,1.6,0,.8)end
+        -- 地平线实体Alpha为1，只有羽化边缘透明；不再叠乘速度文字的0.5透明度。
+        line(c.horizon,0,23.3,48,1.4,0,1,true)
+        for _,point in ipairs({{24,0},{48,24},{24,48},{0,24}})do
+            if point[1]==24 then line(c.horizon,point[1]-.8,point[2]-2.5,1.6,5,0,.8)
+            else line(c.horizon,point[1]-2.5,point[2]-.8,5,1.6,0,.8)end
         end
         line(c.root,21.2,20,1.6,48,0,.7)
         for _,y in ipairs({20,44,68})do line(c.root,18,y-.8,8,1.6,0,.8)end
@@ -203,11 +214,11 @@ function Attitude.new(note,invoke,fatal)
         triangle.Clipping=1;triangle:SetRenderTransformPivot({X=0,Y=0});triangle:SetRenderScale({X=2,Y=1})
         local side=6/math.sqrt(2)
         line(triangle,-side/2,3-side/2,side,side,45,1)
-        c.wings=canvas(c.root,"Wings",36,20,48,48)
-        c.wings:SetRenderTransformPivot({X=.5,Y=.5})
-        line(c.wings,10,22.9,28,2.2,0,1)
-        line(c.wings,22.9,12,2.2,12,0,1)
-        line(c.wings,22.3,22.3,3.4,3.4,0,1)
+        local aircraft=canvas(c.root,"Aircraft",36,20,48,48)
+        aircraft.Slot:SetZOrder(1) -- 固定机体符号盖在地面填色与水平线上。
+        line(aircraft,10,22.9,28,2.2,0,1)
+        line(aircraft,22.9,12,2.2,12,0,1)
+        line(aircraft,22.3,22.3,3.4,3.4,0,1)
         -- 直接以原生速度面板为父级，在整个数值区底边下留12个逻辑像素。
         local anchors=source.Slot:GetAnchors()
         assert(math.abs(anchors.Maximum.X-anchors.Minimum.X)<.001,"Attitude: speed label horizontal anchors changed")
@@ -246,7 +257,7 @@ function Attitude.new(note,invoke,fatal)
         if self.player~=address then self:reset(true);self.player=address end
         if self.error then return end
         local c=self.cache
-        if c and (not valid(c.owner)or not valid(c.root)or not valid(c.source)or not valid(c.wings)or not valid(c.cursor)or not tintParentsValid(c)
+        if c and (not valid(c.owner)or not valid(c.root)or not valid(c.source)or not valid(c.horizon)or not valid(c.cursor)or not tintParentsValid(c)
             or (mask%4~=0 and not valid(c.stockPanel)))then
             self:reset(true);self.player=address;c=nil
         end
@@ -272,13 +283,15 @@ function Attitude.new(note,invoke,fatal)
             tostring(c.source.bUseGlobalGlowColor)},":")
         local styleChanged=c.style~=signature
         if styleChanged then
-            for _,entry in ipairs(c.lines)do entry.widget:SetColorAndOpacity({R=color.R,G=color.G,B=color.B,A=color.A*entry.alpha})end
+            for _,entry in ipairs(c.lines)do
+                entry.widget:SetColorAndOpacity({R=color.R,G=color.G,B=color.B,A=(entry.absoluteAlpha and 1 or color.A)*entry.alpha})
+            end
             for _,object in ipairs(c.texts)do object:SetColorAndOpacity(c.source.ColorAndOpacity);object:SetShadowColorAndOpacity(c.source.ShadowColorAndOpacity)end
             c.style=signature
         end
         self.released=false -- 跨接口失败也必须尝试停止原生观察责任。
         retainStock(c)
-        local ok,available,pitch,bank,reason,pitchWarning,bankWarning=invoke(address,c.root:GetAddress(),c.wings:GetAddress(),c.cursor:GetAddress(),
+        local ok,available,pitch,bank,reason,pitchWarning,bankWarning=invoke(address,c.root:GetAddress(),c.horizon:GetAddress(),c.cursor:GetAddress(),
             angleFunction:GetAddress(),moveFunction:GetAddress(),visibilityFunction:GetAddress(),24*c.scale,mask,c.stockHolder and c.stockHolder:GetAddress()or 0)
         assert(ok,reason or "Attitude: control failed")
         self.available=available

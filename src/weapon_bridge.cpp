@@ -2111,10 +2111,10 @@ extern "C" __declspec(dllexport) int dualsp_refresh_weapon_icons(void* luaState)
     }
 }
 
-// 姿态v2返回成功、可见、变化后的俯仰/滚转数字、错误和两项警示色标志；图形在原生帧更新。
+// 姿态v3第三参数为旋转地平圈；返回值保留v2结构，滚转数字仍表示机体角度。
 extern "C" __declspec(dllexport) int dualsp_attitude_indicator_supported(void*) {return 0;}
 extern "C" __declspec(dllexport) int dualsp_attitude_views_supported(void*) {return 0;}
-extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v2(void* luaState) {
+extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v3(void* luaState) {
     const dualsp::LuaApi* api=nullptr;
     Addr player{};
     try {
@@ -2125,7 +2125,7 @@ extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v2(void* luaState
         else {
             require(runtimeEnabled,"Attitude: single-player permission is unavailable");
             const auto hud=static_cast<Addr>(api->readInteger(luaState,2));
-            const auto wings=static_cast<Addr>(api->readInteger(luaState,3));
+            const auto horizon=static_cast<Addr>(api->readInteger(luaState,3));
             const auto cursor=static_cast<Addr>(api->readInteger(luaState,4));
             const auto maskValue=api->readInteger(luaState,9);
             require(maskValue==3||maskValue==4||maskValue==7,"Attitude: invalid view mask");
@@ -2133,8 +2133,8 @@ extern "C" __declspec(dllexport) int dualsp_attitude_indicator_v2(void* luaState
             const auto holder=static_cast<Addr>(api->readInteger(luaState,10));
             if(!attitudeIndicator.error.empty()&&attitudeIndicator.failureOwner.address==player)
                 require(!continuousAlive(attitudeIndicator.failureOwner),attitudeIndicator.error.c_str());
-            if(!attitudeIndicator.current(player,hud,wings,cursor,mask,holder))
-                attitudeIndicator.bind(player,hud,wings,cursor,static_cast<Addr>(api->readInteger(luaState,5)),
+            if(!attitudeIndicator.current(player,hud,horizon,cursor,mask,holder))
+                attitudeIndicator.bind(player,hud,horizon,cursor,static_cast<Addr>(api->readInteger(luaState,5)),
                     static_cast<Addr>(api->readInteger(luaState,6)),static_cast<Addr>(api->readInteger(luaState,7)),
                     static_cast<float>(api->readNumber(luaState,8)),mask,holder);
             require(GetCurrentThreadId()==attitudeIndicator.thread,"Attitude: control thread changed");

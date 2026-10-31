@@ -8,7 +8,7 @@ struct AttitudeSetter {
     int bytes{};
 };
 struct AttitudeIndicator {
-    ContinuousIdentity plane,root,view,hud,wings,cursor,nativeHolder,failureOwner;
+    ContinuousIdentity plane,root,view,hud,horizon,cursor,nativeHolder,failureOwner;
     std::array<ContinuousIdentity,3> cameras;
     AttitudeSetter angle,translation,visibility;
     using Ref=const void*(*)(const void*);
@@ -87,8 +87,8 @@ struct AttitudeIndicator {
         for(size_t i=0;i<cameras.size();++i)source=source&&memory.alive(cameras[i])&&
             memory.read<Addr>(view.address+0x318+i*0x10)==cameras[i].address;
         return source&&viewMask==mask&&nativeHolder.address==holder&&(!holder||memory.alive(nativeHolder))&&
-            plane.address==player&&hud.address==indicator&&wings.address==roll&&cursor.address==pointer &&
-            memory.alive(hud)&&memory.alive(wings)&&memory.alive(cursor)&&
+            plane.address==player&&hud.address==indicator&&horizon.address==roll&&cursor.address==pointer &&
+            memory.alive(hud)&&memory.alive(horizon)&&memory.alive(cursor)&&
             memory.read<Addr>(player+0x160)==root.address&&memory.read<Addr>(player+0x1250)==view.address;
     }
     void bind(Addr player,Addr indicator,Addr roll,Addr pointer,Addr angleFunction,Addr moveFunction,Addr visibilityFunction,float range,unsigned mask,Addr holder) {
@@ -110,10 +110,10 @@ struct AttitudeIndicator {
                 (!read<Addr>(cameras[i].address+0x330)||read<Addr>(cameras[i].address+0x330)==player),
                 "Attitude: camera ownership mismatch");
         }
-        hud=continuousIdentity(indicator);wings=continuousIdentity(roll);cursor=continuousIdentity(pointer);
+        hud=continuousIdentity(indicator);horizon=continuousIdentity(roll);cursor=continuousIdentity(pointer);
         for(auto object:{indicator,roll,pointer})require(mountClassIs(object,"CanvasPanel","/Script/UMG"),"Attitude: target must be a CanvasPanel");
         require(continuousName(indicator).rfind("DualSPAttitudeRoot",0)==0&&
-            continuousName(roll).rfind("DualSPAttitudeWings",0)==0&&continuousName(pointer).rfind("DualSPAttitudeCursor",0)==0,
+            continuousName(roll).rfind("DualSPAttitudeHorizon",0)==0&&continuousName(pointer).rfind("DualSPAttitudeCursor",0)==0,
             "Attitude: target is not an owned indicator widget");
         // 仅接受Lua交付的自建控件和确定的三种setter，不解析任意函数签名。
         angle=setter(angleFunction,"SetRenderAngle",4,"FloatProperty");
@@ -139,7 +139,7 @@ struct AttitudeIndicator {
             bool draw=false,sourceAlive=false,uiAlive=false;
             unsigned type=3;
             {const ContinuousReadBatch memory;
-                uiAlive=memory.alive(hud)&&memory.alive(wings)&&memory.alive(cursor)&&(!nativeHolder.address||memory.alive(nativeHolder));
+                uiAlive=memory.alive(hud)&&memory.alive(horizon)&&memory.alive(cursor)&&(!nativeHolder.address||memory.alive(nativeHolder));
                 sourceAlive=memory.alive(plane)&&memory.alive(root)&&memory.alive(view)&&
                     memory.read<Addr>(plane.address+0x160)==root.address&&memory.read<Addr>(plane.address+0x1250)==view.address;
                 for(size_t i=0;i<cameras.size();++i)sourceAlive=sourceAlive&&memory.alive(cameras[i])&&
@@ -168,7 +168,8 @@ struct AttitudeIndicator {
             if(1.-forwardZ*forwardZ>1.e-6)
                 bank=static_cast<float>(std::atan2(-2.*(y*z+w*x)/norm,1.-2.*(x*x+y*y)/norm)*degrees);
             else if(!sampled)bank=0;
-            if(bank!=lastBank){invoke(wings,angle,bank);lastBank=bank;}
+            // 固定倒T表示机体；地平圈反向转动，正B右倾时水平线向左转。
+            if(bank!=lastBank){invoke(horizon,angle,-bank);lastBank=bank;}
             if(pitch!=lastPitch){invoke(cursor,translation,std::array<float,2>{0,-pitch/90.f*travel});lastPitch=pitch;}
             show(true,type<2);sampled=true;sampledAt=now;
         }catch(const std::exception& exception) {
