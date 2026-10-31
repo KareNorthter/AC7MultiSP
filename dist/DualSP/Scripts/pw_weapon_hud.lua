@@ -4,10 +4,13 @@ local root=assert(path:match("^(.*)/[^/]+$"))
 local Names=dofile(root.."/weapon_names.lua")
 local Profile=dofile(root.."/loadout_profile.lua")
 local PW={}
+local TEXT_SCALE=.7
 local BASE_CROSS=1.75
 local CROSS=BASE_CROSS*1.3
-local CROSS_GROWTH=CROSS-BASE_CROSS
-local WHEEL_ROWS=6.8+CROSS_GROWTH -- 固定四槽预留；增长部分只用于避让放大的十字。
+local COUNT_ROW,LINE_GAP,NAME_ROW,FRAME_PAD=.72,.03,.74,.09
+local CELL_ROWS=COUNT_ROW+LINE_GAP+NAME_ROW+FRAME_PAD*2
+local CROSS_GAP,SEPARATOR_GAP=.10,.18
+local WHEEL_ROWS=CELL_ROWS*2+CROSS+CROSS_GAP*2+SEPARATOR_GAP -- 固定四槽预留，与实际携带数量无关。
 local TRANSIENT,COLLAPSED,HIT_TEST_INVISIBLE=0x40,1,3
 local serial=0
 local outline={{1,0},{2,0},{2,1},{3,1},{3,2},{2,2},{2,3},{1,3},{1,2},{0,2},{0,1},{1,1},{1,0}}
@@ -86,7 +89,7 @@ function PW.attach(c)
         widget:SetVisibility(HIT_TEST_INVISIBLE)
         return widget,slot
     end
-    -- 根容器与原生统计HBox共父容器、共布局，选择区和统计栏对齐原生右边界。
+    -- 根容器与原生统计HBox共父容器、共布局，十字中心对齐GUN名称与数量整行的中心。
     self.root=StaticConstructObject(canvasClass,tree,identity("DualSPPwRoot"),TRANSIENT,0,false,false)
     assert(valid(self.root),"Cannot construct PW HUD root")
     self.root:SetVisibility(COLLAPSED)
@@ -95,8 +98,8 @@ function PW.attach(c)
     assert(valid(self.rootSlot),"Cannot attach PW HUD root")
     self.rootSlot:SetAutoSize(false)
     self.wheel,self.wheelSlot=canvas(self.root,"DualSPPwWheel")
-    self.wheelSlot:SetAnchors({Minimum={X=1,Y=0},Maximum={X=1,Y=0}})
-    self.wheelSlot:SetAlignment({X=1,Y=1});self.wheelSlot:SetAutoSize(false)
+    self.wheelSlot:SetAnchors({Minimum={X=.5,Y=0},Maximum={X=.5,Y=0}})
+    self.wheelSlot:SetAlignment({X=.5,Y=1});self.wheelSlot:SetAutoSize(false)
     local function text(parent,source,prefix)
         -- 整份克隆原生GUN模板，保留字体材质、字面样式和辉光参数，避免干净TextBlock漏掉效果。
         local widget=StaticConstructObject(source:GetClass(),tree,identity(prefix),TRANSIENT,0,false,false,source)
@@ -146,31 +149,38 @@ function PW.attach(c)
             widest=math.max(widest,name:GetDesiredSize().X)
         end
         count:SetText(FText("100000"));count:ForceLayoutPrepass()
-        local countWidth=count:GetDesiredSize().X
+        local countSize=count:GetDesiredSize()
+        local countWidth=countSize.X
+        self.countHeight=countSize.Y
         name:SetText(FText(self.cells[1].label));count:SetText(FText(self.cells[1].ammo))
-        self.frameWidth=widest+.35*PW.unit(c)
-        self.cellWidth=math.max(2.75*PW.unit(c),self.frameWidth,countWidth+.175*PW.unit(c))
+        self.frameWidth=widest+.28*PW.unit(c)
+        self.cellWidth=math.max(2.75*TEXT_SCALE*PW.unit(c),self.frameWidth,countWidth+.12*PW.unit(c))
         self.capacityKey=key
     end
     -- 尺寸由稳定容量与原生字号决定，不随槽位填空或每发弹药重新测量。
     local function layout(capacityLabels)
         local r=PW.unit(c)
         for _,cell in ipairs(self.cells)do
-            -- 名称与数量直接采用原生字号；槽号仍是辅助小字，不通过缩小主字体压缩布局。
-            cell.name.widget:SetFont(cell.name.source.Font)
-            cell.count.widget:SetFont(cell.count.source.Font)
+            -- 仅缩小四槽名称和数量，保留原生字体效果；不改变GUN等统计行及十字槽号。
+            for _,entry in ipairs({cell.name,cell.count})do
+                entry.widget:SetFont(entry.source.Font)
+                local font=entry.widget.Font
+                font.Size=math.max(1,math.floor(entry.source.Font.Size*TEXT_SCALE+.5))
+                entry.widget:SetFont(font)
+            end
             local font=cell.number.widget.Font
             font.Size=math.max(1,math.floor(cell.name.source.Font.Size*.55+.5));cell.number.widget:SetFont(font)
         end
         measureCapacity(capacityLabels)
         local cellWidth,frameWidth=self.cellWidth,self.frameWidth
-        local cross,gap=CROSS*r,.18*r
+        local cross,gap=CROSS*r,CROSS_GAP*r
         local width=cellWidth*2+cross+gap*2
         local height=PW.wheelRows()*r
         local center=width/2
-        local sideY=(2.05+CROSS_GROWTH/2)*r
-        local positions={{0,sideY},{center-cellWidth/2,0},{width-cellWidth,sideY},{center-cellWidth/2,(4.4+CROSS_GROWTH)*r}}
-        local crossX,crossY=center-cross/2,2.25*r
+        local cellHeight=CELL_ROWS*r
+        local crossX,crossY=center-cross/2,cellHeight+gap
+        local sideY=crossY+(cross-cellHeight)/2
+        local positions={{0,sideY},{center-cellWidth/2,0},{width-cellWidth,sideY},{center-cellWidth/2,crossY+cross+gap}}
         local source=c.hboxSlot
         local anchors=source:GetAnchors()
         local size=vec(source:GetSize())
@@ -192,20 +202,21 @@ function PW.attach(c)
         if source.bAutoSize then size=vec(c.hbox:GetDesiredSize())end
         size.X=self.guide.sizeX
         self.rootSlot:SetSize(size);self.rootSlot:SetZOrder(source:GetZOrder()+1)
-        -- 撤去旧版共同左移：统计栏回到原生位置，选择区从同一右边界向左展开。
+        -- 统计栏保留原生位置，选择区以其整行中心展开，不再按选择区右边缘定位。
         local nativeWidth=self.guide.nativeWidth
         local offset=vec(c.hboxTranslation)
         self.root:SetRenderTranslation(offset);c.hbox:SetRenderTranslation(offset)
         rect(self.wheelSlot,0,-.35*r,width,height)
         for index,cell in ipairs(self.cells)do
             local position=positions[index]
-            rect(cell.slot,position[1],position[2],cellWidth,2.15*r)
-            local inset=index==3 and cellWidth-frameWidth or (cellWidth-frameWidth)/2
-            -- 数量保留完整列宽以容纳六位库存；右侧数量沿边界内缩少量后右对齐。
-            cell.count.widget.Justification=index==3 and 2 or 1
-            rect(cell.count.slot,0,0,cellWidth-(index==3 and .175*r or 0),1.05*r)
-            rect(cell.name.slot,inset,1.05*r,frameWidth,1.1*r)
-            cell.frame={x=position[1]+inset,y=position[2]+1.01*r,w=frameWidth,h=1.14*r}
+            rect(cell.slot,position[1],position[2],cellWidth,cellHeight)
+            local inset=(cellWidth-frameWidth)/2
+            local frameY=(COUNT_ROW+LINE_GAP)*r
+            -- 四槽文字均居中；名称框水平各留0.14单位、竖向至少留0.09单位，线条不压文字。
+            cell.count.widget.Justification=1
+            rect(cell.count.slot,0,math.max(0,COUNT_ROW*r-self.countHeight),cellWidth,self.countHeight)
+            rect(cell.name.slot,inset+.14*r,frameY+FRAME_PAD*r,frameWidth-.28*r,NAME_ROW*r)
+            cell.frame={x=position[1]+inset,y=position[2]+frameY,w=frameWidth,h=(NAME_ROW+FRAME_PAD*2)*r}
             local direction=directions[index]
             rect(cell.number.slot,crossX+(direction[1]-.5)*cross/3,crossY+(direction[2]-.5)*cross/3+.04*r,cross/3,cross/3)
         end
@@ -215,7 +226,8 @@ function PW.attach(c)
             rect(entry.slot,crossX+math.min(a[1],b[1])*cross/3-stroke/2,crossY+math.min(a[2],b[2])*cross/3-stroke/2,
                 math.max(math.abs(a[1]-b[1])*cross/3,stroke),math.max(math.abs(a[2]-b[2])*cross/3,stroke))
         end
-        rect(self.separator.slot,math.max(0,width-nativeWidth),height-stroke,math.min(width,nativeWidth),stroke)
+        local separatorWidth=math.min(width,nativeWidth)
+        rect(self.separator.slot,(width-separatorWidth)/2,height-stroke,separatorWidth,stroke)
         self.stroke=stroke;self.frameKey=nil
     end
     function self:update(profile,options,state)
