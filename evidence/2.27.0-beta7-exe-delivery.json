@@ -1,0 +1,37 @@
+{
+  "version": "2.27.0 beta7",
+  "channel": "candidate",
+  "source_commit": "9b47465e3177dc51033e893442eeaa36e21b6e9e",
+  "sources": {
+    "attitude": "d759ca94207e90a515be2285788e202ede5b6106",
+    "x02s_performance_intake": "da4c30bcab3ac80a3beb8f6c307ea3fbbde3330e",
+    "x02s_snapshot_receipt": "evidence/x02s-eml-performance-intake-20261031.json"
+  },
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta7/AC7MultiSP_Installer_2.27.0_beta7.exe",
+  "sha256": "69ff95ea63bbca750dfaff947a2a8929664b98490aaa7051e3cb6ef90151e0d5",
+  "size": 74805248,
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261031-2.27.0-beta7-build/delivery-receipt.json",
+  "changes": [
+    "姿态圆移除中间细线，保留倒T、圆环、刻度、反向滚转及天地填色",
+    "X-02S同实例普通switch保留单节点姿态，减少重复动画重建，缓存Tick接口、合并身份核对并跳过同值写入；非普通switch仍完整归还"
+  ],
+  "checks": {
+    "full_build": true,
+    "author_signatures_verified": true,
+    "copied_exe_matches": true,
+    "packaged_version": "2.27.0 beta7",
+    "changed_scripts_match_source": true,
+    "changed_headers_match_build_snapshot": true,
+    "attitude_v3_export_verified": true,
+    "changelog_unchanged": true,
+    "changelog_members": [
+      "ReadMe_zhCN请读我/更新日志.txt",
+      "ue4ss/Mods/DualSP/docs/更新日志.txt",
+      "ReadMe_EN/Changelog.txt",
+      "ue4ss/Mods/DualSP/docs/Changelog.txt"
+    ],
+    "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "performance_limit": "20ms为作者目标，尚无本候选实机切换样本；构建通过不证明响应达标，核心SP_SWITCH_COST亦不等同于输入至画面完整延迟。",
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。姿态去线观感、X-02S优化耗时、模型/发射及归还仍待作者实机验收。"
+}
