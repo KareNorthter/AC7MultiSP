@@ -6,8 +6,8 @@
 
 | 项目 | 状态与依据 |
 |---|---|
-| 正式版本 | **2.27.0**；作者确认beta7测试无误，并明确将已接收改动及最新玩家正文合入main作为2.27.0，见[源码确认](evidence/2.27.0-source-confirmation-20261030.json)。本轮仅同步源码到GitHub，暂不交付安装包或网页，不代表R2、Nexus及Pages已更新。 |
-| 本轮候选阶段 | **2.27.0 beta7**已完整构建为[候选EXE](evidence/2.27.0-beta7-exe-delivery.json)：姿态圆移除中间细线，X-02S EML普通SP切换保留同实例动画以减少重复重建。20ms目标仍待实测；旧候选和回执保留。 |
+| 正式版本 | **2.27.0**；作者本次要求将2.27.0 beta7作为正式2.27.0，接收最新自改中文、同步英文并制作EXE、通用ZIP及网页包，见[本次发布准备](evidence/2.27.0-release-preparation-20261031.json)。此前[源码确认](evidence/2.27.0-source-confirmation-20261030.json)保留。本地制作不代表R2、Nexus或Pages已更新。 |
+| 本轮候选阶段 | **2.27.0 beta7**运行功能已纳入本次正式版；原[候选EXE及回执](evidence/2.27.0-beta7-exe-delivery.json)保持。20ms目标仍待实测，不以正式编号代替性能验收。 |
 | 上一正式版本 | **2.26.1**，已发布交付记录及旧包保持原样；2.26.0等更早版本见证据及归档入口。 |
 | 正式源码入口 | main；主工作区E:/AC7_MultiSP。旧正式产物及验收记录不回改 |
 | GitHub源码备份 | [KareNorthter/AC7MultiSP](https://github.com/KareNorthter/AC7MultiSP)，私有；主线历史、正式标签及研究恢复锚，范围见[仓库说明](docs/project/repository.md) |
@@ -17,7 +17,7 @@
 | Mod机体实机反馈 | 作者于2026-10-28确认X-02R A/B、J-20A/B/S及RH-172六个机体入口功能正常，见[用户验收](evidence/mod-aircraft-user-acceptance-20261028.json)。正式版本不变；此前ZSD组合冲突不据此记为已修复。 |
 | 当前真实冲突测试环境 | 作者授权启用XFA-36A包、F-17V、Gleipnir，与B组X-02R/UI-4054混装，目录179条；已核对6个资源成员内容差异。作者确认F-17V、Gleipnir、X-02R A/B及UI-4054三SP正常，XFA-36激光收尾修复已编译，作者确认 OSL 正常。真实武器表冲突测试未触发错误，不能据此证明所有冲突可检测；作者已停止测试并恢复兼容表。见[作者反馈](evidence/real-conflict-user-feedback-20261028.json)和[检测/恢复流程](docs/engineering/aircraft-fault-testing.md#2026-10-28真实冲突测试组)。 |
 | 主页与发布流程 | 已交付[2.26.1完整Pages包](Release/2.26.1/AC7MultiSP-Pages-homepage.zip)，顶部只显示2.26.1两条更新，底部历史由最早至2.26.0（含2.25.X），下载区仅描述R2并保留历史签名。作者已确认完成发布，site/stable.json已按交付材料同步2.26.1；[原网页回执](evidence/2.26.1-pages-delivery.json)保留制作时远端未核事实，[发布确认](evidence/2.26.1-publication-confirmation-20261025.json)记录作者后续反馈。本轮未独立下载或部署核验。 |
-| 当前主线源码 | VERSION为**2.27.0 beta7**，candidate=true；姿态去线及X-02S切换优化已成套构建，姿态v3、管理协议26及配置19保持。更新日志未变，实际观感、耗时及生命周期待实机验证；正式2.27.0来源及确认记录保留。 |
+| 当前主线源码 | 本轮待合入：VERSION为**2.27.0**，candidate=false；beta7运行源码不变，姿态v3、管理协议26、配置19保持。作者最新两份中文原字节接收，英文同步并重新生成文字资源；正式构建与交付结果另记。 |
 | 最近验收安装包 | **2.27.0 beta5**，作者于2026-10-31反馈“功能都没问题”，见[验收记录](evidence/2.27.0-beta5-user-acceptance-20261031.json)。原[交付回执](evidence/2.27.0-beta5-exe-delivery.json)及旧包保持，不把未编译的新源码视为已安装。 |
 
 旧研究曾使用2.25/2.26等编号，不代表当时正式发布；2.25.2以本次来源锚和用户发布确认为准。原构建元数据中的candidate仍保留当时事实，后续构建由整合任务统一处理。判断新旧看Git祖先关系、正式标签和回执，不按目录名排序。

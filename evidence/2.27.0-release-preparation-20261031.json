@@ -1,0 +1,30 @@
+{
+  "version": "2.27.0",
+  "date": "2026-10-31",
+  "baseline": "ea31de47ffdfd6516e3bac3da0d08fc5340ea6a1",
+  "authorization": "作者要求检查两份自改中文并更新英文，将2.27.0 beta7合入main，版本仍为2.27.0，制作EXE、通用ZIP及网页包用于发布。",
+  "runtime_scope": "beta7运行源码不变，仅正式版本元数据和玩家正文更新。",
+  "author_source": "E:/AC7_MultiSP/docs/user",
+  "author_chinese_sha256": {
+    "更新日志.txt": "80fcfa5747548fb93b3b4a7a88b0b30711116e6b4f5d7a921a60349120af013a",
+    "功能说明.txt": "fd2475a253c6c6b6a3560372ccdbe57122f490799f28bb75d9f992d32d5fb1f5"
+  },
+  "documents": {
+    "功能说明.txt": "fd2475a253c6c6b6a3560372ccdbe57122f490799f28bb75d9f992d32d5fb1f5",
+    "Features.txt": "0b6b7951c11362107fe6b40266d973bc7f0da12c710e18a1f82d5e03aafc67c5",
+    "更新日志.txt": "80fcfa5747548fb93b3b4a7a88b0b30711116e6b4f5d7a921a60349120af013a",
+    "Changelog.txt": "56cbe5f121eab205914be605935707396519dc18c5f8517de66de97443ce69b9",
+    "安装说明.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "作者与授权.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+  },
+  "review": [
+    "更新日志2.27.0条目1补入X-02S，条目6补入十字HUD和简易姿态指示器。",
+    "功能说明新增HUD两项；X-02S移入已提供模型并说明弹舱限制；同步扩展兼容清单。",
+    "中文保留原字节、标点和Mod名称；英文按当前中文等义更新，不扩展Double Trigger合作任务支持。"
+  ],
+  "source_copy_backup": "C:\\Users\\83717\\.codex\\worktrees\\release-227-final\\AC7_MultiSP\\Temp\\tasks\\20261031-2.27.0-final-docs",
+  "publication": "沿用当前R2唯一下载入口，不添加未知蓝奏云地址。先交付本地材料；上传及远端核对由作者后续执行。",
+  "limits": "本次授权不代表beta7专项性能或异常恢复已全面验收。不运行测试模块、不安装、不操作游戏、不推送或上传，不更改旧标签及历史回执。"
+}

@@ -6,6 +6,7 @@
 
 | 任务/状态 | 分支与责任 | 路径或来源 | 范围与下一步 |
 |---|---|---|---|
+| 2.27.0正式发布材料，制作中 | 本集成聊天；基线main/ea31de4；codex/release-2.27.0-final | C:/Users/83717/.codex/worktrees/release-227-final/AC7_MultiSP | beta7运行源码保持，接收作者两份中文原字节并同步英文，改正式元数据，独占本轮构建和发布材料。授权与正文摘要见[发布准备](../../evidence/2.27.0-release-preparation-20261031.json)。不安装、操作游戏、运行测试模块、推送或上传，原候选及历史回执保持。 |
 | 2.27.0 beta7姿态去线与X-02S切换优化整合，已出包待验证 | 本集成聊天；基线main/6de6d7e；姿态d759ca9、X-02S未提交快照 | codex/integrate-2.27.0-beta7；C:/Users/83717/.codex/worktrees/integrate-227-beta7/AC7_MultiSP | 接收姿态圆内细线移除及EML同实例动画保留，独占本树整合、版本和构建。来源快照见[优化接收](../../evidence/x02s-eml-performance-intake-20261031.json)。保留姿态v3、管理协议26、配置19和玩家日志原字节，已完整构建并签名封装[候选EXE](../../evidence/2.27.0-beta7-exe-delivery.json)，包内版本/脚本/更新日志及头文件构建来源已核对。未安装、运行测试模块、操作游戏或推送；20ms为待实测目标。 |
 | 2.27.0 beta6姿态天地显示与X-02S EML构建，已出包待验证 | 本集成聊天；基线main/0f70952；姿态来源1017687、EML接收77e025d | codex/integrate-2.27.0-beta6；C:/Users/83717/.codex/worktrees/integrate-227-beta6/AC7_MultiSP | 接收姿态地平圈与天地填色成套v3，包含已合X-02S EML常驻，保留已验收beta5及HUD修订。管理协议26、配置19和更新日志原字节保持；已完整构建并签名封装[候选EXE](../../evidence/2.27.0-beta6-exe-delivery.json)，核对包内脚本、v3导出、EML头来源、版本及原字节更新日志。未安装、运行测试模块、操作游戏或推送，待作者实机验收。 |
 | X-02S EML常驻增量整合，已构建beta6待验证 | 本集成聊天；基线main/57e6e8f；来源聊天01a1921f-e345-7af1-a0fc-b9165456fb3b的未提交快照，接收77e025d | codex/integrate-x02s-eml；C:/Users/83717/.codex/worktrees/integrate-x02s-eml/AC7_MultiSP | 按[接收记录](../../evidence/x02s-eml-source-intake-20261031.json)接收七项已跟踪差异及新姿态头；只解决登记冲突，运行源码与来源一致，Lua保留beta5恢复修复。记录beta5作者验收，不改版本和玩家正文。已纳入beta6完整构建；未运行测试、安装、操作游戏或推送，模型/发射/归还待实机验收，beta5原EXE不含此增量。 |

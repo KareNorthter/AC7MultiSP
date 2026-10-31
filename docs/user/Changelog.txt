@@ -2,12 +2,12 @@ AC7MultiSP Changelog
 
 
 2.27.0
-1. Added or improved multi-SP weapon model layouts for A-10C, F-2A Super Kai, F-104C, MiG-21bis, F-22A, Su-57 and Su-57 TGM.
+1. Added or improved multi-SP weapon model layouts for A-10C, F-2A Super Kai, F-104C, MiG-21bis, F-22A, Su-57, Su-57 TGM and X-02S.
 2. Improved error detection and handling. The mod is disabled when an error occurs, and recovery is attempted after changing aircraft or leaving the mission.
 3. Fixed mod compatibility issues with XFA-36A and Arsenal Bird.
 4. Fixed weapon bays failing to close on some aircraft. However, weapon bays on many mod aircraft may still remain open after switching weapons.
 5. Corrected SP weapon names on some aircraft, such as IEWS being displayed as ECM.
-6. Refined camera controls, the HUD, the management interface and other details.
+6. Added a cross-layout weapon HUD and a compact attitude indicator. Refined camera controls, the HUD, the management interface and other details.
 7. Changed the controller shortcut for opening the management interface to holding Start.
 
 

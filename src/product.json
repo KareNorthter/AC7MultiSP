@@ -4,7 +4,7 @@
   "toolchain": "llvm-mingw-20261006-ucrt-x86_64",
   "core_define": "DUALSP_SU30SM_MOUNT_PROTOTYPE",
   "upgrade_receipt": "evidence/2.24.0-alpha1-installed.json",
-  "candidate": true,
+  "candidate": false,
   "scripts": [
     "attitude_hud.lua",
     "config_store.lua",
@@ -27,5 +27,5 @@
     "mod_aircraft.lua",
     "pw_weapon_hud.lua"
   ],
-  "receipt_prefix": "2.27.0-beta7"
+  "receipt_prefix": "2.27.0"
 }
