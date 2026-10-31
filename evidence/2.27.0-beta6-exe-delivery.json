@@ -1,0 +1,36 @@
+{
+  "version": "2.27.0 beta6",
+  "channel": "candidate",
+  "source_commit": "e278e8605e1d504d49d414a2e88f4bc2ab3bd97b",
+  "sources": {
+    "attitude": "1017687f598ec5e418ac2ac6e611848503261305",
+    "x02s_eml_intake": "77e025d7aea39fef121674a31361d4512a1fa400"
+  },
+  "exe": "E:/AC7_MultiSP/Release/2.27.0-beta6/AC7MultiSP_Installer_2.27.0_beta6.exe",
+  "sha256": "d2ba139535a67d1e1450ff9f1a773ea665f8a8a8eaa19ca68712ea5b08ded5ef",
+  "size": 74800128,
+  "build_receipt": "E:/AC7_MultiSP/Temp/tasks/20261031-2.27.0-beta6-build/delivery-receipt.json",
+  "changes": [
+    "固定中央倒T，圆环/全亮水平线及半透明地面共同反向滚转，上半圆保持透明；保留P/B及警示色和大小",
+    "姿态v3与Lua成套，管理协议26及配置19保持",
+    "首次完整构建已接收的X-02S EML常驻增量，保留作者接受的视觉冲突及其他弹舱原生处理"
+  ],
+  "checks": {
+    "full_build": true,
+    "author_signatures_verified": true,
+    "copied_exe_matches": true,
+    "packaged_version": "2.27.0 beta6",
+    "packaged_changed_scripts_match_source": true,
+    "attitude_v3_export_verified": true,
+    "x02s_source_headers_match_build_snapshot": true,
+    "changelog_unchanged": true,
+    "changelog_members": [
+      "ReadMe_zhCN请读我/更新日志.txt",
+      "ue4ss/Mods/DualSP/docs/更新日志.txt",
+      "ReadMe_EN/Changelog.txt",
+      "ue4ss/Mods/DualSP/docs/Changelog.txt"
+    ],
+    "protected_core_sha256": "d7d7055ca7909021eeaca15e63ff5ff253d2eb7e60a3fe3b79dceeab231de339"
+  },
+  "limits": "未运行测试模块、安装、操作游戏、推送或上传。旋转天地显示、X-02S的模型/发射取位/开关及归还待作者实机验收，beta5验收不扩大到这些新增字节。"
+}
