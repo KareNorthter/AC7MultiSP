@@ -1,0 +1,50 @@
+AC7MultiSP 源码公开与非商业使用许可 v1.0
+AC7MultiSP Source-Available Noncommercial License v1.0
+
+Copyright (c) 2026 Northter / KareNorthter
+
+中文
+
+1. 适用范围
+本许可仅适用于本项目作者依法享有并有权许可的原创代码、脚本、文档及其他原创成果，包括本公开仓库中相应的历史版本。第三方组件、素材、商标以及游戏本体和相关内容不属于作者在本许可下授权的范围；它们继续遵循各自的许可及权利要求。第三方原有的许可和版权声明必须保留，本许可不限制第三方许可已经授予的权利。
+
+2. 免费使用与源码公开
+在遵守本许可的前提下，任何人均可永久免费使用、学习、复制、修改和编译上述原创成果，并可为非商业目的免费分享原版或修改版。上述已明确允许的用途无需逐次申请作者许可。作者对这些原创成果保留版权；公开源码不等于放弃版权。
+
+3. 非商业限制
+未经作者事先书面许可，不得将上述原创成果或其修改版用于商业用途，不得出售、变卖、出租或收取下载、获取、使用费用，也不得将其作为收费整合包、付费产品或付费服务的组成部分。不得以会员、订阅或其他付费条件限制他人获取或使用。商业用途包括主要为了商业利益或报酬而使用这些成果。自愿打赏不得成为获取或使用这些成果的前提。
+
+4. 分享与修改
+分享原版或修改版时，须保留本许可、版权声明、作者署名及原项目链接 https://github.com/KareNorthter/AC7MultiSP 。修改版须说明已经修改，不得冒充作者原版或作者认可的发布。基于这些原创成果制作并分享的修改版，仍须遵守本许可的免费和非商业限制；不得借重新打包、更名或少量修改规避这些条件。
+
+5. 与其他说明的关系
+本文件是上述原创成果的源码使用许可。现有玩家说明中关于“游玩之外的其他用途须事先取得同意”的一般性表述，不限制本文件已经明确允许的非商业学习、修改、编译和免费分享。涉及商业用途或超出本许可的用途，须另行取得作者事先书面许可。
+
+6. 第三方权利及非官方声明
+本许可不授权使用作者无权许可的任何第三方内容，不授予游戏、DLC、其他 Mod 或商标的权利，也不表示本项目得到游戏权利方认可或支持。第三方许可证见 payload/ue4ss/Mods/DualSP/licenses/ 及各 vendor 目录。本项目包含非商业限制，因此使用“源码公开 / source-available”描述，不宣称符合 OSI 开源定义。
+
+7. 不提供保证
+在适用法律允许的范围内，这些成果按现状提供，不附带适销性、特定用途适用性或不侵权等保证。使用者自行承担使用、修改和分发带来的风险。本许可不排除依法不能排除的责任。违反本许可的使用不在本许可授权范围内。
+
+English
+
+1. Scope
+This license applies only to original code, scripts, documentation and other original works that the project author owns and is entitled to license, including the corresponding historical versions in this public repository. Third-party components, assets, trademarks, the game and related content are outside the author's grant under this license and remain subject to their own licenses and rights. Existing third-party licenses and copyright notices must be retained. This license does not restrict rights already granted by third-party licenses.
+
+2. Free use and source availability
+Subject to this license, anyone may use, study, copy, modify and compile the covered original works free of charge forever, and may share original or modified versions free of charge for noncommercial purposes. These expressly permitted uses do not require individual permission from the author. The author retains copyright in the covered original works; publishing source code does not waive copyright.
+
+3. Noncommercial restriction
+Without the author's prior written permission, you must not use the covered original works or modified versions for commercial purposes, sell, resell or rent them, charge for downloading, obtaining or using them, or include them in a paid bundle, product or service. Access or use must not be conditional on membership fees, subscriptions or other payment. Commercial purposes include uses primarily intended for commercial advantage or compensation. Voluntary donations must not be a prerequisite for obtaining or using the covered works.
+
+4. Sharing and modifications
+When sharing an original or modified version, retain this license, copyright notices, author attribution and the original project link: https://github.com/KareNorthter/AC7MultiSP . Modified versions must be identified as modified and must not be presented as the author's original or an author-endorsed release. Shared modifications based on the covered original works remain subject to this license's free-of-charge and noncommercial restrictions. Repackaging, renaming or minor changes do not avoid these conditions.
+
+5. Relationship to other notices
+This file governs source use of the covered original works. General statements in existing player documentation requiring prior consent for uses beyond gameplay do not limit the noncommercial study, modification, compilation and free sharing expressly permitted here. Commercial uses and uses outside this license require the author's prior written permission.
+
+6. Third-party rights and unofficial status
+This license grants no rights in third-party content that the author is not entitled to license, nor in the game, DLC, other mods or trademarks. It does not imply endorsement or support by the game's rights holders. Third-party licenses are provided in payload/ue4ss/Mods/DualSP/licenses/ and the respective vendor directories. Because this license restricts commercial use, the project is described as source-available and is not represented as meeting the OSI Open Source Definition.
+
+7. No warranty
+To the extent permitted by applicable law, the covered works are provided as is, without warranties of merchantability, fitness for a particular purpose or noninfringement. Users bear the risks of use, modification and distribution. This license does not exclude liability that cannot lawfully be excluded. Uses that violate this license are outside its grant of permission.
