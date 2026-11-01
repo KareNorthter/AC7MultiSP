@@ -3,10 +3,10 @@
   "product": "AC7MultiSP",
   "channel": "stable",
   "status": "ready",
-  "latest_version": "2.26.1",
+  "latest_version": "2.27.0",
   "release_notes": {
-    "zh": "• 优化整体性能表现。特别优化CFA-44和F-2A的多SP模型方案的性能。\n• 修正CFA-44机腹舱未闭合的问题。",
-    "en": "• Improved overall performance, with particular improvements to the CFA-44 and F-2A multi-SP model implementations.\n• Fixed the CFA-44 ventral weapon bay failing to close."
+    "zh": "1. 增加/完善 A-10C、F-2A Super Kai、F-104C、MiG-21bis、F-22A、Su-57、Su-57 TGM、X-02S的多SP模型方案。\n2. 优化错误识别和处理。发生错误时停用mod，换机或退出任务后尝试恢复。\n3. 修复XFA-36A 、 Arsenal Bird的mod兼容问题。\n4. 修复部分机体的弹舱未闭合问题。但是许多mod机体仍存在切换武器后弹舱保持打开的问题。\n5. 修正部分机体SP名称错误，例如IEWS显示为ECM的错误。\n6. 增加十字布局武器HUD，新增简易姿态指示器。视角操作、HUD、管理界面等细节优化\n7. 手柄打开管理界面的操作改为长按 Start 键。",
+    "en": "1. Added or improved multi-SP weapon model layouts for A-10C, F-2A Super Kai, F-104C, MiG-21bis, F-22A, Su-57, Su-57 TGM and X-02S.\n2. Improved error detection and handling. The mod is disabled when an error occurs, and recovery is attempted after changing aircraft or leaving the mission.\n3. Fixed mod compatibility issues with XFA-36A and Arsenal Bird.\n4. Fixed weapon bays failing to close on some aircraft. However, weapon bays on many mod aircraft may still remain open after switching weapons.\n5. Corrected SP weapon names on some aircraft, such as IEWS being displayed as ECM.\n6. Added a cross-layout weapon HUD and a compact attitude indicator. Refined camera controls, the HUD, the management interface and other details.\n7. Changed the controller shortcut for opening the management interface to holding Start."
   },
   "downloads": [
     {

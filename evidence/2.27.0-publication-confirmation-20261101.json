@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "date": "2026-11-01",
+  "version": "2.27.0",
+  "author_statement": "我已发布成功。请你提交到github",
+  "publication_basis": "作者确认已完成发布；本次不另行下载R2或核验Pages、Nexus部署。",
+  "author_reported_published": true,
+  "independently_verified_online_this_turn": false,
+  "source_main_before": "d37b86cb3c68246b130549ad3f1a230a37f952c0",
+  "origin_main_before": "8c8f07f4dd8475affb66e73048dc0b445f63990a",
+  "source_delivery": "evidence/2.27.0-release-delivery-20261031.json",
+  "manifest_source": "E:\\AC7_MultiSP\\Release\\2.27.0\\Pages\\stable.json",
+  "manifest_sha256": "f7d6517a97b0f27e7921186c48b719d58d44c8937c81afcf9fb67d40516362ff",
+  "site_stable_synced_to": "2.27.0",
+  "documents_unchanged": {
+    "功能说明.txt": "fd2475a253c6c6b6a3560372ccdbe57122f490799f28bb75d9f992d32d5fb1f5",
+    "Features.txt": "0b6b7951c11362107fe6b40266d973bc7f0da12c710e18a1f82d5e03aafc67c5",
+    "更新日志.txt": "80fcfa5747548fb93b3b4a7a88b0b30711116e6b4f5d7a921a60349120af013a",
+    "Changelog.txt": "56cbe5f121eab205914be605935707396519dc18c5f8517de66de97443ce69b9",
+    "安装说明.txt": "0dc47828d882bb639d2fa650952cdb49b7f6a6bf7ebde52d4533e15920519bad",
+    "Installation.txt": "998e7ede8ce372e43afd92247fc70c99509b0cd718643182244e8f4471fc0608",
+    "作者与授权.txt": "864bfcb3709b77569d669e689e5fbd9aad7b8b41ecf90d4056345f6806b642aa",
+    "Author-and-License.txt": "cac5da900464b02fea0a3daeb2cc3bcf034c16858f33047c34c5bcbe41fdabbe"
+  },
+  "github_push_authorized": true,
+  "github_push_scope": "仅origin的main，保留全部历史；不强推、不改旧标签、不上传发布包。实际推送提交与远端核对结果在本聊天交付。",
+  "packages_committed": false,
+  "build_run": false,
+  "tests_run": false,
+  "installed": false,
+  "game_started": false,
+  "release_uploaded_by_agent": false,
+  "kept_local": [
+    "Release/2.27.0及所有旧发布产物",
+    "Temp和backup及研究原料",
+    "docs/支付宝.jpg",
+    "docs/赞助.txt"
+  ],
+  "limits": "发布成功反馈不扩大为所有实机故障边界、性能目标或独立在线核验均通过；原准备及交付回执保持。"
+}
